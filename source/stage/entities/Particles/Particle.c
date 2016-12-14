@@ -338,7 +338,8 @@ void Particle_show(Particle this)
 	ASSERT(this, "Particle::show: null this");
 	ASSERT(this->objectSprite, "Particle::show: null objectSprite");
 
-	ObjectSprite_show(this->objectSprite);
+	Sprite_show(__SAFE_CAST(Sprite, this->objectSprite));
+
 	Body_setActive(this->body, true);
 
 	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
@@ -360,7 +361,8 @@ void Particle_hide(Particle this)
 	ASSERT(this, "Particle::hide: null this");
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
 
-	ObjectSprite_hide(this->objectSprite);
+	Sprite_hide(__SAFE_CAST(Sprite, this->objectSprite));
+
 	Body_setActive(this->body, false);
 }
 

@@ -23,6 +23,7 @@
 #include <SpriteManager.h>
 #include <AnimationController.h>
 #include <VIPManager.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,6 +59,8 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->texture = NULL;
 	this->displacement = (VBVec3D){0, 0, 0};
 	this->hidden = false;
+	this->visible = true;
+	this->transparent = spriteDefinition? spriteDefinition->transparent : false;
     this->writeAnimationFrame = false;
 }
 
@@ -276,6 +279,25 @@ void Sprite_update(Sprite this)
         	this->writeAnimationFrame = false;
 		}
 	}
+
+	if(this->transparent)
+	{
+		this->visible = !this->visible;
+	}
+}
+
+bool Sprite_isTransparent(Sprite this)
+{
+	ASSERT(this, "Sprite::isTransparent: null this");
+
+	return this->transparent;
+}
+
+bool Sprite_setTransparent(Sprite this, bool value)
+{
+	ASSERT(this, "Sprite::setTransparent: null this");
+
+	this->transparent = value;
 }
 
 void Sprite_animate(Sprite this)

@@ -511,17 +511,25 @@ void SpriteManager_render(SpriteManager this)
         {
             Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 
-        	if(sprite->animationController)
-        	{
-                Sprite_update(sprite);
-            }
+			static WorldAttributes* worldPointer = NULL;
 
-            __VIRTUAL_CALL(Sprite, render, sprite);
+			// first update
+			Sprite_update(__SAFE_CAST(Sprite, sprite));
 
-            // must make sure that no sprite has the end world
-            // which can be the case when a new sprite is added
-            // and the previous end world is assigned to it
-            _worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
+			if(sprite->hidden || !sprite->visible)
+			{
+				worldPointer = &_worldAttributesBaseAddress[sprite->worldLayer];
+				worldPointer->head = __WORLD_OFF;
+			}
+			else
+			{
+	            __VIRTUAL_CALL(Sprite, render, sprite);
+			}
+
+			// must make sure that no sprite has the end world
+			// which can be the case when a new sprite is added
+			// and the previous end world is assigned to it
+			_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 
             if(sprite->worldLayer && sprite->worldLayer < this->freeLayer)
             {

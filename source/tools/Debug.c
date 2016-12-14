@@ -829,6 +829,8 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 10, y, NULL);
 		Printing_text(Printing_getInstance(), "Head:                         ", x, ++y, NULL);
 		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 10, y, 8, NULL);
+		Printing_text(Printing_getInstance(), "Transparent:                         ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), Sprite_isTransparent(sprite)? "true" : "false", x + 13, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).x), x + 10, y, NULL);
 		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).y), x + 20, y, NULL);

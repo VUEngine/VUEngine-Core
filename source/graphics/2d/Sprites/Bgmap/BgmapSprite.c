@@ -346,16 +346,8 @@ void BgmapSprite_render(BgmapSprite this)
 	        return;
 	    }
 */
-		if(this->hidden)
-		{
-			worldPointer->head = __WORLD_OFF;
-			return;
-		}
-		else
-		{
-            // set the head
-            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-		}
+		// set the head
+		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
 		// get coordinates
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);

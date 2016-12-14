@@ -98,7 +98,11 @@
         /*  */																							\
         bool hidden;																					\
         /* update animation */																            \
-        bool writeAnimationFrame;															            \
+        bool writeAnimationFrame : 2;															            \
+        /* flag for making it transparent */															\
+        bool transparent : 2;															            		\
+        /* flag for transparency control */																\
+        bool visible : 2;															            			\
 
 __CLASS(Sprite);
 
@@ -114,6 +118,9 @@ typedef struct SpriteDefinition
 
 	// texture to use with the sprite
 	TextureDefinition* textureDefinition;
+
+	// is it transparent
+	bool transparent;															            \
 
 	// displacement modifier to achieve better control over display
 	VBVec3D displacement;
@@ -180,6 +187,9 @@ u16 Sprite_getHead(Sprite this);
 void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
+bool Sprite_isTransparent(Sprite this);
+bool Sprite_setTransparent(Sprite this, bool value);
+
 
 // Animation
 void Sprite_update(Sprite this);

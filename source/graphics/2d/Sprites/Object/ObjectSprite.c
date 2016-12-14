@@ -227,7 +227,7 @@ void ObjectSprite_render(ObjectSprite this)
         ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
     }
 
-    if(this->hidden)
+    if(this->hidden || !this->visible)
     {
         if(0 <= this->objectIndex)
         {
@@ -349,21 +349,6 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 			}
 		}
 	}
-}
-
-void ObjectSprite_show(ObjectSprite this)
-{
-	ASSERT(this, "ObjectSprite::show: null this");
-
-	Sprite_show(__SAFE_CAST(Sprite, this));
-}
-
-// hide
-void ObjectSprite_hide(ObjectSprite this)
-{
-	ASSERT(this, "ObjectSprite::hide: null this");
-
-	this->hidden = true;
 }
 
 u8 ObjectSprite_getWorldLayer(ObjectSprite this)

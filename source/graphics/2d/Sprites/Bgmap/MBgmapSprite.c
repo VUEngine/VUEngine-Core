@@ -293,6 +293,9 @@ void MBgmapSprite_render(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
 
+	// first update
+	Sprite_update(__SAFE_CAST(Sprite, this));
+
 	// if render flag is set
 	if(this->texture && this->worldLayer)
 	{
@@ -308,15 +311,9 @@ void MBgmapSprite_render(MBgmapSprite this)
             return;
         }
 */
-		if(this->hidden)
-		{
-			worldPointer->head = __WORLD_OFF;
-			return;
-		}
-		else
-		{
-            worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
-		}
+
+		// set the head
+		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
         int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
         int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);

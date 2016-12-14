@@ -52,8 +52,6 @@
         __VIRTUAL_SET(ClassName, ObjectSprite, position);												\
         __VIRTUAL_SET(ClassName, ObjectSprite, setDirection);											\
         __VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
-        __VIRTUAL_SET(ClassName, ObjectSprite, show);													\
-        __VIRTUAL_SET(ClassName, ObjectSprite, hide);													\
         __VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
         __VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
 
@@ -109,8 +107,6 @@ void ObjectSprite_render(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);
 s16 ObjectSprite_getObjectIndex(ObjectSprite this);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
-void ObjectSprite_show(ObjectSprite this);
-void ObjectSprite_hide(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
 void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement);
 
