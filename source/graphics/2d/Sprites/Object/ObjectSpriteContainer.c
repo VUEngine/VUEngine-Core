@@ -386,8 +386,8 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->worldLayer)
 	{
 		// make sure to not render again
-//		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
-		_worldAttributesBaseAddress[this->worldLayer].head = this->head | __WORLD_OVR;
+		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
+//		_worldAttributesBaseAddress[this->worldLayer].head = this->head | __WORLD_OVR;
 	}
 
 	// defragmentation takes priority over z sorting
