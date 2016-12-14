@@ -386,7 +386,8 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	if(this->worldLayer)
 	{
 		// make sure to not render again
-		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
+//		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
+		_worldAttributesBaseAddress[this->worldLayer].head = this->head | __WORLD_OVR;
 	}
 
 	// defragmentation takes priority over z sorting
@@ -400,6 +401,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 
 	VirtualNode node = this->objectSprites->head;
+
 	for(; node; node = node->next)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
@@ -437,7 +439,8 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 		}
 	}
 
-	this->hidden = true;
+	// I can never be hidden, otherwise the OBJ rendering gets messed up
+	this->hidden = false;
 }
 
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
@@ -517,7 +520,8 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Segment: ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->spt, x + 24, y, NULL);
-	Printing_text(Printing_getInstance(), "Available objects: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "WORLD: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), this->worldLayer, x + 24, y, NULL);	Printing_text(Printing_getInstance(), "Available objects: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getAvailableObjects(this), x + 24, y, NULL);
 	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getTotalUsedObjects(this), x + 24, y, NULL);

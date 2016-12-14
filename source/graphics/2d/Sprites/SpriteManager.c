@@ -572,7 +572,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 			__VIRTUAL_CALL(Sprite, show, sprite);
 		}
 
-		// force inialization
+		// force initialization
 		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 

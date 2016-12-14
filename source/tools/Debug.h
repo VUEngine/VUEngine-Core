@@ -60,6 +60,7 @@ Debug Debug_getInstance();
 
 void Debug_destructor(Debug this);
 void Debug_update(Debug this);
+void Debug_render(Debug this);
 void Debug_show(Debug this, GameState gameState);
 void Debug_hide(Debug this);
 void Debug_showPreviousPage(Debug this);

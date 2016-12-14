@@ -78,6 +78,8 @@
 #include <UiContainer.h>
 #include <Mem.h>
 
+#include <debugUtilities.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											 CLASS' MACROS
@@ -264,6 +266,14 @@ void Debug_update(Debug this)
 	if(this->update)
 	{
 		((void (*)(Debug))this->update)(this);
+	}
+}
+
+void Debug_render(Debug this)
+{
+	if(this->currentPage->data == &Debug_showTextureStatus && 0 <= this->bgmapSegment)
+	{
+		Debug_showDebugBgmap(this);
 	}
 }
 
@@ -684,6 +694,8 @@ static void Debug_showDebugBgmap(Debug this)
 		return;
 	}
 
+	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
+
 	// write the head
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
@@ -719,8 +731,6 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Segment: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->bgmapSegment, x + 9, y, NULL);
-
-		SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
 		this->bgmapDisplacement.x = 0;
 		this->bgmapDisplacement.y = 0;
@@ -772,13 +782,7 @@ static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
 
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager_getInstance(), this->objectSegment);
 		SpriteManager_showLayer(SpriteManager_getInstance(), Sprite_getWorldLayer(__SAFE_CAST(Sprite, objectSpriteContainer)));
-
 		ObjectSpriteContainer_print(objectSpriteContainer, x, ++y);
-
-		this->bgmapDisplacement.x = 0;
-		this->bgmapDisplacement.y = 0;
-
-		Debug_showDebugBgmap(this);
 		Debug_lightUpGame(this);
 	}
 	else

@@ -29,6 +29,9 @@
 #include <SpriteManager.h>
 #include <Mem.h>
 #include <Printing.h>
+#ifdef __DEBUG_TOOLS
+#include <Debug.h>
+#endif
 #include <debugConfig.h>
 
 
@@ -282,6 +285,13 @@ u32 VIPManager_writeDRAM(VIPManager this)
 
     // write to DRAM
     SpriteManager_render(_spriteManager);
+
+#ifdef __DEBUG_TOOLS
+	if(Game_isInDebugMode(Game_getInstance()))
+	{
+		Debug_render(Debug_getInstance());
+	}
+#endif
 
     // check if the current frame buffer set is valid
     VirtualNode node = this->postProcessingEffects->head;
