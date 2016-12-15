@@ -57,7 +57,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->displacement = (VBVec3D){0, 0, 0};
+	this->displacement = (VBVecWorld){0, 0, 0, 0};
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = spriteDefinition? spriteDefinition->transparent : false;
@@ -236,7 +236,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
 }
 
 // get displacement
-VBVec3D Sprite_getDisplacement(Sprite this)
+VBVecWorld Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getRenderFlag: null this");
 
@@ -293,7 +293,7 @@ bool Sprite_isTransparent(Sprite this)
 	return this->transparent;
 }
 
-bool Sprite_setTransparent(Sprite this, bool value)
+void Sprite_setTransparent(Sprite this, bool value)
 {
 	ASSERT(this, "Sprite::setTransparent: null this");
 

@@ -67,6 +67,17 @@ typedef struct VBVec3D
 
 } VBVec3D;
 
+// WORLD vector
+typedef struct VBVecWorld
+{
+	// fps increases a lot in hardware with ints
+	fix19_13 x;
+	fix19_13 y;
+	fix19_13 z;
+	fix19_13 p;
+
+} VBVecWorld;
+
 typedef struct VBVec3DFlag
 {
 	int x: 2;

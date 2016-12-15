@@ -320,8 +320,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 
         worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
         worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
-
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
         worldPointer->mx = this->drawSpec.textureSource.mx;
         worldPointer->my = this->drawSpec.textureSource.my;

@@ -80,7 +80,7 @@
         /* super's attributes */																		\
         Object_ATTRIBUTES																				\
         /* displacement modifier to achieve better control over display */								\
-        VBVec3D displacement;																			\
+        VBVecWorld displacement;																			\
         /* animation controller */																		\
         AnimationController animationController;														\
         /* this is our texture */																		\
@@ -123,7 +123,7 @@ typedef struct SpriteDefinition
 	bool transparent;															            \
 
 	// displacement modifier to achieve better control over display
-	VBVec3D displacement;
+	VBVecWorld displacement;
 
 } SpriteDefinition;
 
@@ -188,7 +188,7 @@ void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
 bool Sprite_isTransparent(Sprite this);
-bool Sprite_setTransparent(Sprite this, bool value);
+void Sprite_setTransparent(Sprite this, bool value);
 
 
 // Animation
@@ -204,7 +204,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 s8 Sprite_getFrameDelay(Sprite this);
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
 void Sprite_writeAnimation(Sprite this);
-VBVec3D Sprite_getDisplacement(Sprite this);
+VBVecWorld Sprite_getDisplacement(Sprite this);
 void Sprite_rotate(Sprite this, const Rotation* rotation);
 int Sprite_getHalfWidth(Sprite this);
 int Sprite_getHalfHeight(Sprite this);

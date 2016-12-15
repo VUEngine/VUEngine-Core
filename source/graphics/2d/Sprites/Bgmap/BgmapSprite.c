@@ -362,7 +362,7 @@ void BgmapSprite_render(BgmapSprite this)
         // cap coordinates to screen space
         worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
         worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
         // clip texture's source to screen space
         int mxDisplacement = 0 > gx ? -gx : 0;

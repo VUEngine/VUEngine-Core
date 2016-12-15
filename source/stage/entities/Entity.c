@@ -315,7 +315,7 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 			halfHeight = Sprite_getHalfHeight(sprite);
 			halfDepth = this->size.z >> 1;
 
-			VBVec3D spriteDisplacement = Sprite_getDisplacement(sprite);
+			VBVecWorld spriteDisplacement = Sprite_getDisplacement(sprite);
 
 			if(left > -halfWidth + FIX19_13TOI(spriteDisplacement.x))
 			{
