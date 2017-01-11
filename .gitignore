@@ -1,5 +1,6 @@
-/.make-*/
-/.idea/workspace.xml
+.idea/workspace.xml
+doc/html/
+build/
 /.settings/
 /old/
 .cdtproject
@@ -12,5 +13,6 @@ cproject
 *.ram
 *.lnk
 *.asm
-sections.txt
+*.map
+sections*.txt
 debugConfig.h
