@@ -32,8 +32,9 @@ body {
 	font-size: 40px !important;
 	height: auto !important;
 	letter-spacing: 1px;
-	line-height: 66px !important;
+	line-height: 80px !important;
 	margin-left: 0 !important;
+	padding: 0 15px !important;
 }
 
 .navbar-brand > img {

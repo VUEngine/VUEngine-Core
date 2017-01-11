@@ -1,17 +1,22 @@
-/* VBJaEngine: bitmap graphics engine for the Nintendo Virtual Boy
+/* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
+ * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007 Jorge Eremiev <jorgech3@gmail.com>
+ * Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
  *
- * This program is free software; you can redistribute it and/or modify it under the terms of the GNU
- * General Public License as published by the Free Software Foundation; either version 3 of the License,
- * or (at your option) any later version.
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+ * associated documentation files (the "Software"), to deal in the Software without restriction, including
+ * without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to
+ * the following conditions:
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even
- * the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
- * License for more details.
+ * The above copyright notice and this permission notice shall be included in all copies or substantial
+ * portions of the Software.
  *
- * You should have received a copy of the GNU General Public License along with this program. If not,
- * see <http://www.gnu.org/licenses/>.
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+ * LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+ * NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+ * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
 
@@ -181,7 +186,7 @@ u32 Sprite_getWorldHead(Sprite this)
 // get sprites's layer's width
 s16 Sprite_getWorldX(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldWidth: null this");
+	ASSERT(this, "Sprite::getWorldX: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gx;
@@ -190,7 +195,7 @@ s16 Sprite_getWorldX(Sprite this)
 // get sprites's layer's width
 s16 Sprite_getWorldY(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldHeight: null this");
+	ASSERT(this, "Sprite::getWorldY: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gy;
@@ -217,7 +222,7 @@ u16 Sprite_getWorldHeight(Sprite this)
 // reload the sprite in bgmap memory
 void Sprite_rewrite(Sprite this)
 {
-	ASSERT(this, "Sprite::reload: null this");
+	ASSERT(this, "Sprite::rewrite: null this");
 
 	if(this->texture)
 	{
@@ -238,7 +243,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
 // get displacement
 VBVecWorld Sprite_getDisplacement(Sprite this)
 {
-	ASSERT(this, "Sprite::getRenderFlag: null this");
+	ASSERT(this, "Sprite::getDisplacement: null this");
 
 	return this->displacement;
 }

@@ -4,7 +4,7 @@ Printing
 The Printing Layer
 ------------------
 
-Out of the Virtual Boy's 32 available Worlds, the VBJaEngine always uses the lowest available one for text 
+Out of the Virtual Boy's 32 available Worlds, the VUEngine always uses the lowest available one for text 
 output. It provides methods to output different variable types to this so-called *Printing Layer*.
 
 - `Printing_text`
@@ -38,7 +38,7 @@ An offset of the printing layer can be defined using the
 Font management
 ---------------
 
-The VBJaEngine comes with a default font for writing to the Printing Layer, but you can replace it with any number of custom fonts. To tell the engine to ignore the default font and load your custom font(s) instead, you have to define the `__CUSTOM_FONTS` macro in your game's `config.h` file.
+The VUEngine comes with a default font for writing to the Printing Layer, but you can replace it with any number of custom fonts. To tell the engine to ignore the default font and load your custom font(s) instead, you have to define the `__CUSTOM_FONTS` macro in your game's `config.h` file.
 
     #define __CUSTOM_FONTS
 
@@ -72,6 +72,6 @@ With that macro defined, the engine expects you to define a *NULL terminated* ar
 
 Note that the first font in the `__FONTS` array is always the default one, and is used when `NULL` is passed to the various Printing methods instead of a font name.
 
-The engine's default font will not be loaded when custom fonts are enabled. If you still want to use it, simply add `&VBJAENGINE_FONT` to your `__FONTS` array. It will then be accessible under the name "VBJaEngineFont". Don't forget to also declare it as extern in your font definition file, like so:
+The engine's default font will not be loaded when custom fonts are enabled. If you still want to use it, simply add `&VUENGINE_FONT` to your `__FONTS` array. It will then be accessible under the name "VUEngineFont". Don't forget to also declare it as extern in your font definition file, like so:
 
-    extern FontROMDef VBJAENGINE_FONT;
+    extern FontROMDef VUENGINE_FONT;

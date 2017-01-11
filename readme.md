@@ -1,8 +1,9 @@
-VBJaEngine
-==========
+VUEngine
+========
 
-VBJaEngine is an attempt to provide other indie developers the base functionality to facilitate the 
-creation of content for the Nintendo Virtual Boy by taking care of most hardware management task to create
+The VUEngine (Virtual Utopia Engine, based on the Virtual Boy's code name, Virtual Utopia Experience) 
+is an attempt to provide other indie developers the base functionality to facilitate the 
+creation of content for the Nintendo Virtual Boy by taking care of most hardware management tasks to create
 3D games with 2D graphics or "sprites".
 
 Features:
@@ -72,27 +73,27 @@ Features:
 LICENSE
 -------
 
-Copyright (C) 2008 Jorge Eremiev <jorgech3@gmail.com>
+Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
 
-This software is provided 'as-is', without any express or implied
-warranty. In no event will the authors be held liable for any damages
-arising from the use of this software.
+This software is licensed under the MIT License, which means you can basically you can do with it whatever 
+you want as long as you include the original copyright and license notice in any copy of the software/source. 
 
-Permission is granted to anyone to use this software for any purpose,
-including commercial applications, and to alter it and redistribute it
-freely, subject to the following restrictions:
+	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
+	associated documentation files (the "Software"), to deal in the Software without restriction, including
+	without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to
+	the following conditions:
+	
+	The above copyright notice and this permission notice shall be included in all copies or substantial
+	portions of the Software.
+	
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT
+	LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+	NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+	WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+	SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-1. The origin of this software must not be misrepresented; you must not
-   claim that you wrote the original software. If you use this software
-   in a product, an acknowledgment in the product documentation would be
-   appreciated but is not required.
-2. Altered source versions must be plainly marked as such, and must not be
-   misrepresented as being the original software.
-3. This notice may not be removed or altered from any source distribution.
-
-See See GPL-license.txt for the full GNU GENERAL PUBLIC LICENSE.
-
-Some source code in this release that may not be covered by the GPL:
+Some source code in this release that may not be covered by the license:
 
 - libgccvb: compiled by a lot of other people.
 
@@ -102,7 +103,7 @@ GENERAL NOTES
 
 A short summary of the file layout:
 
-- source: VBJaEngine source code.
+- source: VUEngine source code.
 - source/base/libgccvb: heavily modified libgccvb
 - lib: miscellaneous files needed for linking, etc.
 - lib/src: miscellaneous files needed for linking, etc.    sources, and other utilities sources.
@@ -114,38 +115,25 @@ Full documentation can be found in doc/html/index.html
 COMPILING ON WIN32
 ------------------
 
-The VBJaEngine comes bundled with VBDE (http://vbde.planetvb.com). 
+The VUEngine comes bundled with VBDE <http://vbde.planetvb.com>. 
 Compile by starting the VBDE build system. 
-This will produce the file libvbjae.a which must be linked against the game's code.
+This will produce the file libvuengine.a which must be linked against the game's code.
 
 
 ACKNOWLEDGMENTS
 ---------------
 
 - David Tucker, for always being open to answer all my questions (even the silly ones).
-
 - DogP, for all the performance tips which really helped this project to be feasible, and
   for providing the code necessary to make sound support possible in the engine.
-
-- Christian Radke (KR155E):
-    * Co-development
-    * Engine's features and structure advisor
-    * Debugging and testing
-    * Documentation
-
 - RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy development forums
   who always are kind enough to share their knowledge.
-
 - ElmerPCFX, for giving access to a much better compiler through his GCC 4.7 patches, and for all
   the tips, suggestions and knowledge about best practices and bad practices (of which the engine was
   previously plagued with).
-
 - Libgccvb has been refactored to accommodate better to this engine, all its code is credited to
   its creators, Jorge Eremiev doesn't take any credit on it.
 
----
 
-V810 is a trade mark of NEC.
-Virtual Boy is a trade mark of Nintendo.
-
-Jorge Eremiev is in no way affiliated with either of these parties.
+V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo.
+Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.

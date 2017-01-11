@@ -88,15 +88,15 @@ endif
 DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
 
 # engine's home
-VBJAENGINE_HOME = $(VBDE)libs/vbjaengine
+VUENGINE_HOME = $(VBDE)libs/vuengine
 
 # Which directories contain source files
-DIRS = $(shell find $(VBJAENGINE_HOME)/source $(VBJAENGINE_HOME)/assets $(VBJAENGINE_HOME)/lib/compiler -type d -print)
+DIRS = $(shell find $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets $(VUENGINE_HOME)/lib/compiler -type d -print)
 
 # Obligatory headers
 CONFIG_FILE =       $(shell pwd)/config.h
 ESSENTIAL_HEADERS = -include $(CONFIG_FILE) \
-                    -include $(VBJAENGINE_HOME)/libvbjae.h
+                    -include $(VUENGINE_HOME)/libvuengine.h
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
@@ -128,7 +128,7 @@ MACROS = $(COMMON_MACROS)
 endif
 
 # Add directories to the include and library paths
-VBJAENGINE_INCLUDE_PATHS = $(shell find $(VBJAENGINE_HOME) -type d -print)
+VUENGINE_INCLUDE_PATHS = $(shell find $(VUENGINE_HOME) -type d -print)
 
 # Where to store object and dependency files.
 STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
@@ -152,7 +152,7 @@ ASSEMBLY_OBJECTS = $(addprefix $(STORE)/, $(ASSEMBLY_SOURCE:.s=.o))
 D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
 
 # the target file
-TARGET_FILE = libvbjae
+TARGET_FILE = libvuengine
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
@@ -174,7 +174,7 @@ $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
 	@echo Compiling $<
-	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VBJAENGINE_INCLUDE_PATHS),-I$(INC))\
+	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS)  -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd

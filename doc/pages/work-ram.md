@@ -1,7 +1,7 @@
 Work RAM
 ========
 
-To be able to efficiently allocate memory to dynamically created objects, the VBJaEngine makes use of a MemoryPool construct rather than working with WRAM directly.
+To be able to efficiently allocate memory to dynamically created objects, the VUEngine makes use of a MemoryPool construct rather than working with WRAM directly.
 
 Basically, what the engine does is to divide the available WRAM into a number of differently sized pools to fill in objects based on their amount of required memory.
 
@@ -43,7 +43,7 @@ Please note that the __BLOCK_DEFINITONs have to be sorted by size in descending 
 Maximum size
 ------------
 
-The required memory for the VBJaEngine showing an empty stage without any objects or preloaded textures is about 12 KB of the Virtual Boy's 64 KB of WRAM. Therefore, the absolute maximum amount of WRAM that can be allocated to the MemoryPool before overflowing the stack, is about **52 KB**. However, the more the game's stages are populated, the more memory will be required for the stack and lower the MemoryPool's maximum size.
+The required memory for the VUEngine showing an empty stage without any objects or preloaded textures is about 12 KB of the Virtual Boy's 64 KB of WRAM. Therefore, the absolute maximum amount of WRAM that can be allocated to the MemoryPool before overflowing the stack, is about **52 KB**. However, the more the game's stages are populated, the more memory will be required for the stack and lower the MemoryPool's maximum size.
 
 
 Practical application
@@ -59,6 +59,6 @@ During the development of your game, you will want to constantly refine your Mem
 Determining object sizes
 ------------------------
 
-The most convenient way of finding out the exact memory footprints of your game's objects is to use the engine's debug tools. Slate 2 of the Debug System (accessed with LT+RT+RU) shows detailed information about the individual pools' usage, the MemoryPool's total size and usage as well as the required sizes of all of the VBJaEngine's as well as user defined classes.
+The most convenient way of finding out the exact memory footprints of your game's objects is to use the engine's debug tools. Slate 2 of the Debug System (accessed with LT+RT+RU) shows detailed information about the individual pools' usage, the MemoryPool's total size and usage as well as the required sizes of all of the VUEngine's as well as user defined classes.
 
 For a programmatical approach, you can use sizeof(ObjectClass) if you know an Object's class, otherwise __VIRTUAL_CALL(int, Object, getObjectSize, objectPointer) has to be be used.

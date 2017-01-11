@@ -7,4 +7,4 @@ David Tucker
 Pat "DogP" Daderko
 And probably others... (You know who you are!)
 
-Refactored to work better with the VBJaEngine.
+Refactored to work better with the VUEngine.

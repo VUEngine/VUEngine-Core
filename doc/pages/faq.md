@@ -11,7 +11,3 @@ When things begin to break unexpectedly and in random places, it is almost guara
     /opt/gccvb/lib/gcc/v810/4.4.2/../../../../v810/bin/ld: region 'ram' overflowed by xx bytes
 
 In the context of the engine, it means that the memory pool is too big. You're trying to reserve more RAM than physically exists.
-
-**What does "VBJaEngine" stand for anyway?**
-
-"JaE" are the initials of the engine's lead developer, Jorge Andres Eremiev. You'll figure out the rest for yourself from here. ;-) 

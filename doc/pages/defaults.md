@@ -1,19 +1,18 @@
 Defaults
 ========
 
-The VBJaEngine includes defaults for common Virtual Boy software features.
+The VUEngine includes defaults for common Virtual Boy software features.
 
 
 Splash screens
 --------------
 
-Default versions of common screens are available in the VBJaEngine Barebone project. Those can easily be directly used, modified, replaced and/or reordered and eliminate the need to create those by hand.
+Default versions of common screens are available in the VUEngine Barebone project. Those can easily be directly used, modified, replaced and/or reordered and eliminate the need to create those by hand.
 
-- Adjustment screen
 - Precaution screen
+- Adjustment screen
 - Automatic Pause selection screen
 - Language selection screen
-- VBJaEngine splash screen
 - Automatic Pause screen
 
 

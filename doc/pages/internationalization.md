@@ -11,7 +11,7 @@ Create an enum that defines all translatable strings that are in the game.
 
     enum {
         STR_HELLO,
-        STR_VBJAENGINE_ROCKS
+        STR_VUENGINE_ROCKS
     };
 
 
@@ -31,8 +31,8 @@ The following gives an example for an English language definition.
             // STR_HELLO
             "Hello",
             
-            // STR_VBJAENGINE_ROCKS
-            "The VBJaEngine rocks! :-)",
+            // STR_VUENGINE_ROCKS
+            "The VUEngine rocks! :-)",
         },
     };
 
