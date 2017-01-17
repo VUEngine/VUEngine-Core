@@ -1,91 +1,76 @@
 @font-face {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 400;
-  src: local('Roboto'), local('Roboto-Regular'), url('roboto.woff2') format('woff2');
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
-}
-
-@font-face {
     font-family: 'VB';
     src: url('virtual_logo.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
-body {
-    background-color: #f1f1f1 !important;
-    overflow-y: scroll !important;
+#titlearea {
+    background: #000 url('../assets/background.png') repeat-x 279px 0;
+    border-bottom-color: #000;
 }
 
-.panel {
-    border-width: 0 !important;
+#projectname {
+    color: #f00;
+    font-family: 'VB', Verdana, Arial, sans-serif;
+    left: -100px;
+    letter-spacing: 1px;
+    position: relative;
+    text-shadow: 0px 1px #000,
+    	0px -1px #000,
+    	1px 0px #000,
+    	-1px 0px #000,
+    	-1px -1px #000,
+    	-1px 1px #000,
+    	1px -1px #000,
+    	1px 1px #000,
+    	2px 2px #000,
+    	3px 3px #000,
+    	4px 4px #000,
+    	5px 5px #000;
 }
 
-.navbar-header {
-	float: none !important;
+#projectname:before {
+	content: '// ';
 }
 
-.navbar-brand {
-	color: #e0313f !important;
-	font-family: 'VB';
-	font-size: 40px !important;
-	height: auto !important;
-	letter-spacing: 1px;
-	line-height: 80px !important;
-	margin-left: 0 !important;
-	padding: 0 15px !important;
+#projectnumber {
+	color: #a00;
+	font: inherit;
 }
 
-.navbar-brand > img {
-    display: inline-block !important;
-    margin-right: 10px;
+/*
+.tabs, .tabs2, .tabs3 {
+    background: #400;
+    border-bottom: 1px solid #000;
 }
 
-.navbar-version {
-    color: #820606 !important;
+.tablist {
+    padding: 5px;
 }
 
-
-.navbar {
-	background-color: #111 !important;
-	border-radius: 0 !important;
+.tablist li {
+    background: transparent;
 }
 
+.tablist a {
+    background: #a00;
+    color: #fff;
+    text-shadow: none;
+    border-radius: 5px;
+    margin-right: 3px;
+}
+*/
 
-.col-sm-12 > div:first-child > div:first-child {
-	background-color: #f1f1f1;
-	border-bottom: 1px solid #e0313f;
-	padding-top: 5px;
-	padding-bottom: 5px;
+.navpath ul {
+	background: #000 url('../assets/background.png') repeat-x 279px 0;
+	border-bottom-width: 0;
+	border-left-width: 0;
+	border-right-width: 0;
+	border-top: 1px solid #000;
+	padding: 5px;
 }
 
-.icon {
-    background-color: #e0313f !important;
-}
-
-.h1, h1 {
-    font-family: "VB" !important;
-    letter-spacing: 1px !important;
-}
-
-address.footer {
-	margin: 0 0 20px !important;
-	padding: 15px !important;
-	text-align: center !important;
-}
-
-a {
-    color: #e0313f !important;
-}
-
-.nav-pills > li.active > a,
-.nav-pills > li.active > a:focus,
-.nav-pills > li.active > a:hover {
-    background-color: #e0313f !important;
-    color: #f1f1f1 !important;
-}
-
-.breadcrumb {
-    background-color: transparent !important;
+.navpath li.footer {
+	color: #f1f1f1;
 }
