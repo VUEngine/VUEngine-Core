@@ -41,7 +41,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __WORLD_SIZE_DISPLACEMENT			1
-#define __TOTAL_SIN_ENTRIES					(sizeof(SINLUT) / sizeof(u16))
 #define __GX_LIMIT							511
 #define __GY_LIMIT							223
 
@@ -275,9 +274,7 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
 
-	this->drawSpec.rotation.x = rotation->x % __TOTAL_SIN_ENTRIES;
-	this->drawSpec.rotation.y = rotation->y % __TOTAL_SIN_ENTRIES;
-	this->drawSpec.rotation.z = rotation->z % __TOTAL_SIN_ENTRIES;
+	this->drawSpec.rotation = *rotation;
 
 	if(this->param)
 	{
