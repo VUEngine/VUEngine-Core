@@ -489,7 +489,7 @@ VirtualNode VirtualList_find(VirtualList this, const void* const dataPointer)
  * @param this          Function scope
  * @param dataPointer
  *
- * @return              Numeric position of node
+ * @return              Numeric position of node, or -1 when node could not be found
  */
 int VirtualList_getDataPosition(VirtualList this, const void* const dataPointer)
 {

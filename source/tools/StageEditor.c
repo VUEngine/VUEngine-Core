@@ -1050,7 +1050,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getDepth(entity), x + 27, y, NULL);
 		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Entity_isVisible(entity, 16, true), x + 13, y, NULL);
+		Printing_text(Printing_getInstance(), Entity_isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 13, y, NULL);
 	}
 }
 

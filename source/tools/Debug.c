@@ -833,23 +833,23 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 
 		Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), this->currentLayer, x + 10, y, NULL);
+		Printing_int(Printing_getInstance(), this->currentLayer, x + 14, y, NULL);
 		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 14, y, NULL);
 		Printing_text(Printing_getInstance(), "Head:                         ", x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 10, y, 8, NULL);
+		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 14, y, 8, NULL);
 		Printing_text(Printing_getInstance(), "Transparent:                         ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), Sprite_isTransparent(sprite)? "true" : "false", x + 13, y, NULL);
+		Printing_text(Printing_getInstance(), Sprite_isTransparent(sprite) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
 		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).x), x + 10, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).y), x + 20, y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL(Sprite, getPosition, sprite).z + Sprite_getDisplacement(sprite).z), x + 30, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).x), x + 14, y, NULL);
+		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).y), x + 24, y, NULL);
+		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL(Sprite, getPosition, sprite).z + Sprite_getDisplacement(sprite).z), x + 34, y, NULL);
 		Printing_text(Printing_getInstance(), "WORLD (x, y):                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldX(sprite), x + 15, y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldY(sprite), x + 25, y, NULL);
+		Printing_int(Printing_getInstance(), Sprite_getWorldX(sprite), x + 14, y, NULL);
+		Printing_int(Printing_getInstance(), Sprite_getWorldY(sprite), x + 24, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 15, y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 25, y, NULL);
+		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 14, y, NULL);
+		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 24, y, NULL);
 		//Debug_lightUpGame(this);
     }
 	else

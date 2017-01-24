@@ -90,18 +90,19 @@ __CLASS(KeypadManager);
 KeypadManager KeypadManager_getInstance();
 
 void KeypadManager_destructor(KeypadManager this);
-void KeypadManager_enableInterrupt(KeypadManager this);
+
+void KeypadManager_clear(KeypadManager this);
+void KeypadManager_disable(KeypadManager this);
 void KeypadManager_disableInterrupt(KeypadManager this);
 void KeypadManager_enable(KeypadManager this);
-void KeypadManager_disable(KeypadManager this);
+void KeypadManager_enableInterrupt(KeypadManager this);
+void KeypadManager_flush(KeypadManager this);
+u32 KeypadManager_getHoldKey(KeypadManager this);
+u32 KeypadManager_getPressedKey(KeypadManager this);
+u32 KeypadManager_getPreviousKey(KeypadManager this);
+u32 KeypadManager_getReleasedKey(KeypadManager this);
 int KeypadManager_isEnabled(KeypadManager this);
 void KeypadManager_read(KeypadManager this);
-void KeypadManager_clear(KeypadManager this);
-void KeypadManager_flush(KeypadManager this);
-u32 KeypadManager_getPressedKey(KeypadManager this);
-u32 KeypadManager_getReleasedKey(KeypadManager this);
-u32 KeypadManager_getHoldKey(KeypadManager this);
-u32 KeypadManager_getPreviousKey(KeypadManager this);
 
 
 #endif

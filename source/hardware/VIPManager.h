@@ -59,8 +59,8 @@
 #define	__SBOUT			0x8000	// In FrameBuffer drawing included
 #define	__OVERTIME		0x0010	// Processing
 #define	__XPBSYR		0x000C	// In the midst of drawing processing reset
-#define	__XPBSY1		0x0008	// In the midst of FrameBuffer1 picture editing
-#define	__XPBSY0		0x0004	// In the midst of FrameBuffer0 picture editing
+#define	__XPBSY1		0x0008	// In the midst of FrameBuffer 1 picture editing
+#define	__XPBSY0		0x0004	// In the midst of FrameBuffer 0 picture editing
 #define	__XPEN			0x0002	// Start of drawing
 #define	__XPRST			0x0001	// Forcing idling
 
@@ -69,40 +69,40 @@
 extern volatile u16* _vipRegisters;
 
 /****** VIP Register Mnemonics ******/
-#define	__INTPND			0x00
-#define	__INTENB			0x01
-#define	__INTCLR			0x02
+#define	__INTPND			0x00 // Interrupt Pending
+#define	__INTENB			0x01 // Interrupt Enable
+#define	__INTCLR			0x02 // Interrupt Clear
 
-#define	__DPSTTS			0x10
-#define	__DPCTRL			0x11
-#define	__BRTA				0x12
-#define	__BRTB				0x13
-#define	__BRTC				0x14
-#define	__REST				0x15
+#define	__DPSTTS			0x10 // Display Status
+#define	__DPCTRL			0x11 // Display Control
+#define	__BRTA				0x12 // Brightness A
+#define	__BRTB				0x13 // Brightness B
+#define	__BRTC				0x14 // Brightness C
+#define	__REST				0x15 // Brightness Idle
 
-#define	__FRMCYC			0x17
-#define	__CTA				0x18
+#define	__FRMCYC			0x17 // Frame Repeat
+#define	__CTA				0x18 // Column Table Pointer
 
-#define	__XPSTTS			0x20
-#define	__XPCTRL			0x21
-#define	__VER				0x22
+#define	__XPSTTS			0x20 // Drawing Status
+#define	__XPCTRL			0x21 // Drawing Control
+#define	__VER				0x22 // VIP Version
 
-#define	__SPT0				0x24
-#define	__SPT1				0x25
-#define	__SPT2				0x26
-#define	__SPT3				0x27
+#define	__SPT0				0x24 // OBJ Group 0 Pointer
+#define	__SPT1				0x25 // OBJ Group 1 Pointer
+#define	__SPT2				0x26 // OBJ Group 2 Pointer
+#define	__SPT3				0x27 // OBJ Group 3 Pointer
 
-#define	__GPLT0				0x30
-#define	__GPLT1				0x31
-#define	__GPLT2				0x32
-#define	__GPLT3				0x33
+#define	__GPLT0				0x30 // BGMap Palette 0
+#define	__GPLT1				0x31 // BGMap Palette 1
+#define	__GPLT2				0x32 // BGMap Palette 2
+#define	__GPLT3				0x33 // BGMap Palette 3
 
-#define	__JPLT0				0x34
-#define	__JPLT1				0x35
-#define	__JPLT2				0x36
-#define	__JPLT3				0x37
+#define	__JPLT0				0x34 // OBJ Palette 0
+#define	__JPLT1				0x35 // OBJ Palette 1
+#define	__JPLT2				0x36 // OBJ Palette 2
+#define	__JPLT3				0x37 // OBJ Palette 3
 
-#define	__BACKGROUND_COLOR	0x38
+#define	__BACKGROUND_COLOR	0x38 // Background Color
 
 // Display RAM
 /*@null@*/

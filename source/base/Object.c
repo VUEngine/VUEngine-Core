@@ -312,7 +312,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
  * @param this			Function scope
  * @param eventCode		The code of the event
  */
-void Object_fireEvent(Object this,	u32 eventCode)
+void Object_fireEvent(Object this, u32 eventCode)
 {
 	ASSERT(this, "Object::fireEvent: null this");
 

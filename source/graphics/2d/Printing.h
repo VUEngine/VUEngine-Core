@@ -91,6 +91,9 @@ typedef struct FontSize
 #define __CHAR_MEDIUM_RED_BOX		"\x8F"
 #define __CHAR_BRIGHT_RED_BOX		"\x90"
 
+#define __CHAR_CHECKBOX_UNCHECKED	"\x81"
+#define __CHAR_CHECKBOX_CHECKED		"\x9D"
+
 
 //---------------------------------------------------------------------------------------------------------
 // 											CLASS'S DECLARATION
