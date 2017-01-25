@@ -765,15 +765,27 @@ inline static void Game_updateLogic(Game this)
 
 #ifdef __DEBUG_TOOLS
 	if(!Game_isInSpecialMode(this))
+	{
 #endif
 #ifdef __STAGE_EDITOR
 	if(!Game_isInSpecialMode(this))
+	{
 #endif
 #ifdef __ANIMATION_EDITOR
 	if(!Game_isInSpecialMode(this))
+	{
 #endif
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
+#ifdef __DEBUG_TOOLS
+	}
+#endif
+#ifdef __STAGE_EDITOR
+	}
+#endif
+#ifdef __ANIMATION_EDITOR
+	}
+#endif
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 	this->lastProcessName = "state machine update";

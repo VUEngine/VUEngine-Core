@@ -173,7 +173,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 
 	int area = (cols + colsPad) * (rows + rowsPad);
 
-	//if texture already defined, don't allocate
+	// if texture already defined, don't allocate
 	if(Texture_getNumberOfChars(__SAFE_CAST(Texture, bgmapTexture)))
 	{
 		for(i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i++)
@@ -182,11 +182,11 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 			// there are 4096 chars in each bgmap segment
 			if((int)(4096 - this->numberOfChars[i]) >= (int)area )
 			{
-				//check if there is space within the segment
+				// check if there is space within the segment
 				// we check the next so don't go to the last element
 				for(j = 0; j < __NUM_BGMAPS_PER_SEGMENT - 1; j++)
 				{
-					//determine the y offset inside the bgmap segment
+					// determine the y offset inside the bgmap segment
 					if(!this->yOffset[i][j + 1])
 					{
 						aux = 64;
@@ -196,7 +196,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 						aux = this->yOffset[i][j + 1];
 					}
 
-					//determine if there is still mem space (columns) in the current y offset
+					// determine if there is still mem space (columns) in the current y offset
 					if(rows + rowsPad <= aux - this->yOffset[i][j] || (!this->yOffset[i][j + 1]))
 					{
 						if(rows + rowsPad <= 64 - this->yOffset[i][j])
@@ -210,11 +210,11 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 								this->offset[id][kYOffset] = this->yOffset[i][j] + (rowsPad >> 1);
 								this->offset[id][kBgmapSegment] = i;
 
-								//increment the x offset
+								// increment the x offset
 								this->xOffset[i][j] += cols + colsPad;
 
-								//if the number of rows of the bgmap definition is greater than the
-								//next y offset defined, increase the next y offset
+								// if the number of rows of the bgmap definition is greater than the
+								// next y offset defined, increase the next y offset
 								if(this->yOffset[i][j + 1] - this->yOffset[i][j] < rows + rowsPad)
 								{
 									this->yOffset[i][j + 1] = this->yOffset[i][j] + rows + rowsPad;
