@@ -27,8 +27,6 @@
 // 											 DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef enum { false, true } bool;
-
 // quick, easy types
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -47,6 +45,10 @@ typedef unsigned long WORD;
 #define f8 s8
 #define f16 s16
 #define f32 s32
+
+// define of boolean type
+typedef u8 bool;
+enum { false, true };
 
 
 #endif
