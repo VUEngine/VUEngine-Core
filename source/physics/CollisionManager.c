@@ -470,9 +470,9 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 			}
 		}
 
-		displacement.x += 0 < direction.x? __1I_FIX19_13: ITOFIX19_13(-1);
-		displacement.y += 0 < direction.y? __1I_FIX19_13: ITOFIX19_13(-1);
-		displacement.z += 0 < direction.z? __1I_FIX19_13: ITOFIX19_13(-1);
+		displacement.x += 0 < direction.x ? __1I_FIX19_13 : ITOFIX19_13(-1);
+		displacement.y += 0 < direction.y ? __1I_FIX19_13 : ITOFIX19_13(-1);
+		displacement.z += 0 < direction.z ? __1I_FIX19_13 : ITOFIX19_13(-1);
 	}
 	while(!collidingObject && ITOFIX19_13(__SCREEN_WIDTH) > __ABS(displacement.x) && ITOFIX19_13(__SCREEN_HEIGHT) > __ABS(displacement.y) && ITOFIX19_13(__SCREEN_WIDTH) > __ABS(displacement.z));
 

@@ -193,7 +193,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 
-    this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z)  || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+    this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
         ? __UPDATE_SPRITE_POSITION
         : 0;
 
