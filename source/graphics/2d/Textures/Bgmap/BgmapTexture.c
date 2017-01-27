@@ -96,7 +96,7 @@ void BgmapTexture_write(BgmapTexture this)
 	    return;
 	}
 
-	if(0 == this->remainingRowsToBeWritten)
+	if(0 >= this->remainingRowsToBeWritten)
 	{
 		this->remainingRowsToBeWritten = this->textureDefinition->rows;
 	}
@@ -133,7 +133,7 @@ void BgmapTexture_write(BgmapTexture this)
 			NM_ASSERT(false, "BgmapTexture::write: no allocation type");
 	}
 
-	this->written = !this->remainingRowsToBeWritten;
+	this->written = 0 >= this->remainingRowsToBeWritten;
 }
 
 // write an animated map
@@ -164,8 +164,6 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-
-	this->remainingRowsToBeWritten++;
 }
 
 // write an animated map
@@ -196,8 +194,6 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-
-	this->remainingRowsToBeWritten++;
 }
 
 // write an animated and shared map
@@ -237,8 +233,6 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 					(palette) | (charLocation + area * (j - 1)));
 		}
 	}
-
-	this->remainingRowsToBeWritten++;
 }
 
 // write an inanimated map
@@ -269,11 +263,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 				this->textureDefinition->cols,
 				(palette) | (charLocation));
 	}
-
-	this->remainingRowsToBeWritten++;
 }
-
-
 
 // get texture's x offset within bgmap mem
 s32 BgmapTexture_getXOffset(BgmapTexture this)
