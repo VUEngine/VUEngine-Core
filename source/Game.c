@@ -1190,7 +1190,7 @@ bool Game_handleMessage(Game this, Telegram telegram)
 #ifdef __LOW_BATTERY_INDICATOR
 		case kLowBatteryIndicator:
 
-			Game_printLowBatteryIndicator(this, ((bool)Telegram_getExtraInfo(telegram)));
+			Game_printLowBatteryIndicator(this, (Telegram_getExtraInfo(telegram)? true: false));
 			return true;
 			break;
 #endif

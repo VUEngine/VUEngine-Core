@@ -84,6 +84,16 @@ void BgmapTexture_destructor(BgmapTexture this)
 }
 
 // write into memory the chars and this
+void BgmapTexture_rewrite(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::write: null this");
+
+	this->remainingRowsToBeWritten = this->textureDefinition->rows;
+
+	BgmapTexture_write(this);
+}
+
+// write into memory the chars and this
 void BgmapTexture_write(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
@@ -266,7 +276,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 }
 
 // get texture's x offset within bgmap mem
-s32 BgmapTexture_getXOffset(BgmapTexture this)
+s16 BgmapTexture_getXOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getXOffset: null this");
 
@@ -274,7 +284,7 @@ s32 BgmapTexture_getXOffset(BgmapTexture this)
 }
 
 // get texture's y offset within bgmap mem
-s32 BgmapTexture_getYOffset(BgmapTexture this)
+s16 BgmapTexture_getYOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getYOffset: null this");
 
@@ -282,7 +292,7 @@ s32 BgmapTexture_getYOffset(BgmapTexture this)
 }
 
 //get texture's bgmap segment
-u32 BgmapTexture_getBgmapSegment(BgmapTexture this)
+u16 BgmapTexture_getBgmapSegment(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getBgmapSegment: null this");
 

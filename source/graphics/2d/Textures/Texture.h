@@ -44,10 +44,12 @@
 #define Texture_METHODS(ClassName)																	    \
         Object_METHODS(ClassName)																		\
         __VIRTUAL_DEC(ClassName, void, write);															\
+        __VIRTUAL_DEC(ClassName, void, rewrite);															\
 
 #define Texture_SET_VTABLE(ClassName)																	\
         Object_SET_VTABLE(ClassName)																	\
         __VIRTUAL_SET(ClassName, Texture, write);														\
+        __VIRTUAL_SET(ClassName, Texture, rewrite);															\
 
 #define Texture_ATTRIBUTES																				\
         /* super's attributes */																		\

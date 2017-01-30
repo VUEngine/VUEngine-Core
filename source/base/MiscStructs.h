@@ -46,9 +46,9 @@ typedef struct Brightness
 // spatial size
 typedef struct Size
 {
-	u32 x;
-	u32 y;
-	u32 z;
+	u16 x;
+	u16 y;
+	u16 z;
 
 } Size;
 
@@ -221,9 +221,9 @@ typedef struct VBVec2D
 // used to representthe m coordinates of the bgmaps
 typedef struct TextureSource
 {
-	s32 mx;
-	s32 mp;
-	s32 my;
+	s16 mx;
+	s16 mp;
+	s16 my;
 
 }TextureSource;
 

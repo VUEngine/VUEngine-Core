@@ -80,13 +80,13 @@ typedef struct InGameEntityDefinition
 	u32 inGameType;
 
 	// object's size over the x axis
-	u32 width;
+	u16 width;
 
 	// object's size over the y axis
-	u32 height;
+	u16 height;
 
 	// object's size over the z axis
-	u32 depth;
+	u16 depth;
 
 } InGameEntityDefinition;
 
