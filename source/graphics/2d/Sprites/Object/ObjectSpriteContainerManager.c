@@ -103,10 +103,10 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 	// clean OBJ memory
 	for(i = 0; i < __AVAILABLE_CHAR_OBJECTS; i++)
 	{
-		_objecAttributesBaseAddress[(i << 2) + 0] = 0;
-		_objecAttributesBaseAddress[(i << 2) + 1] = 0;
-		_objecAttributesBaseAddress[(i << 2) + 2] = 0;
-		_objecAttributesBaseAddress[(i << 2) + 3] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 0] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 1] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 2] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
 }
