@@ -89,6 +89,9 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	this->freedObjectIndex = 0;
 	this->z = 0;
 	this->removingObjectSprite = false;
+	this->hidden = false;
+	this->visible = true;
+	this->transparent = false;
 
 	this->node = NULL;
 	this->previousNode = NULL;
@@ -98,10 +101,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
 	for(; i < this->firstObjectIndex + this->totalObjects; i++)
 	{
-		_objecAttributesBaseAddress[(i << 2) + 0] = 0;
-		_objecAttributesBaseAddress[(i << 2) + 1] = 0;
-		_objecAttributesBaseAddress[(i << 2) + 2] = 0;
-		_objecAttributesBaseAddress[(i << 2) + 3] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 0] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 1] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 2] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
     if(this->totalObjects)
@@ -187,7 +190,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		int i = 0;
 		for(; i < objectSprite->totalObjects; i++)
 		{
-			_objecAttributesBaseAddress[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+			_objectAttributesBaseAddress[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 		}
 	}
 
@@ -368,7 +371,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 					int i = 0;
 					for(; i < sprite->totalObjects; i++)
 					{
-						_objecAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
 
 					// swap array entries
@@ -388,12 +391,14 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
 	//if render flag is set
-	if(this->worldLayer)
+	if(!this->worldLayer)
 	{
-		// make sure to not render again
-		_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
-//		_worldAttributesBaseAddress[this->worldLayer].head = this->head | __WORLD_OVR;
+		return;
 	}
+
+	// make sure to not render again
+	_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
+//	_worldAttributesBaseAddress[this->worldLayer].head = this->head | __WORLD_OVR;
 
 	// defragmentation takes priority over z sorting
 	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)

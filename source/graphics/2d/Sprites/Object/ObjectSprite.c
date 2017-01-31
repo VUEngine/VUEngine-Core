@@ -239,7 +239,7 @@ void ObjectSprite_render(ObjectSprite this)
             int i = 0;
             for(; i < this->totalObjects; i++)
             {
-                _objecAttributesBaseAddress[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+                _objectAttributesBaseAddress[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
             }
         }
 
@@ -276,7 +276,7 @@ void ObjectSprite_render(ObjectSprite this)
             // screen's bounds
             if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
             {
-                _objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+                _objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
                 continue;
             }
 
@@ -284,14 +284,14 @@ void ObjectSprite_render(ObjectSprite this)
 
             if((unsigned)(outputY + 8) > __SCREEN_HEIGHT + 8)
             {
-                _objecAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+                _objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
                 continue;
             }
 
-            _objecAttributesBaseAddress[(objectIndex << 2)] = outputX;
-            _objecAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
-            _objecAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
-            _objecAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
+            _objectAttributesBaseAddress[(objectIndex << 2)] = outputX;
+            _objectAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
+            _objectAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
+            _objectAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
         }
     }
 }
@@ -331,7 +331,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 			int j = previousObjectIndex;
 			for(; j < previousObjectIndex + this->totalObjects; j++)
 			{
-				_objecAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 			}
 
 			if(!this->hidden)
@@ -345,7 +345,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 					int j = previousObjectIndex + this->totalObjects - 1;
 					for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
 					{
-						_objecAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						_objectAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 					}
 				}
 				else
