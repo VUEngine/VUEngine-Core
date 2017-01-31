@@ -139,13 +139,13 @@ typedef struct MovementType
 
 typedef struct Rotation
 {
-	// arount x axis
+	// rotation around x axis
 	s16 x;
 
-	// arount y axis
+	// rotation around y axis
 	s16 y;
 
-	// arount z axis
+	// rotation around z axis
 	s16 z;
 
 } Rotation;
@@ -218,14 +218,14 @@ typedef struct VBVec2D
 
 } VBVec2D;
 
-// used to representthe m coordinates of the bgmaps
+// used to represent the m coordinates of the bgmaps
 typedef struct TextureSource
 {
 	s16 mx;
 	s16 mp;
 	s16 my;
 
-}TextureSource;
+} TextureSource;
 
 
 typedef struct TexturePadding
@@ -233,7 +233,7 @@ typedef struct TexturePadding
 	u8 cols;
 	u8 rows;
 
-}TexturePadding;
+} TexturePadding;
 
 // a spatial description
 typedef struct DrawSpec

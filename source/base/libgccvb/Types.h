@@ -49,5 +49,9 @@ enum { false, true };
 #define f16 s16
 #define f32 s32
 
+// define of boolean type
+typedef u8 bool;
+enum { false, true };
+
 
 #endif
