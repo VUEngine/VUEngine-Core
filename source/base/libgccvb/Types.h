@@ -41,9 +41,6 @@ typedef unsigned char BYTE;
 typedef unsigned short HWORD;
 typedef unsigned long WORD;
 
-typedef u8 bool;
-enum { false, true };
-
 // for fixed point maths
 #define f8 s8
 #define f16 s16
