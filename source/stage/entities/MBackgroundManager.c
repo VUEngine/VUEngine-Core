@@ -143,7 +143,7 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 		selectedTextureRegistry->free = false;
 		Texture_setDefinition(selectedTextureRegistry->texture, textureDefinition);
 		Texture_setPalette(selectedTextureRegistry->texture, textureDefinition->palette);
-		Texture_rewrite(selectedTextureRegistry->texture);
+		__VIRTUAL_CALL(Texture, rewrite, selectedTextureRegistry->texture);
 	}
 	else
 	{

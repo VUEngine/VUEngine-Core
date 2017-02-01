@@ -227,7 +227,7 @@ void Sprite_rewrite(Sprite this)
 	if(this->texture)
 	{
 		// write it in graphical memory
-		Texture_rewrite(this->texture);
+		__VIRTUAL_CALL(Texture, rewrite, this->texture);
 	}
 }
 

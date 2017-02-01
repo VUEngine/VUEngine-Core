@@ -88,6 +88,7 @@ void BgmapTexture_rewrite(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
+    this->written = false;
 	this->remainingRowsToBeWritten = this->textureDefinition->rows;
 
 	BgmapTexture_write(this);
