@@ -34,6 +34,6 @@
 
 FontDefinition* const __FONTS[] =
 {
-    (FontDefinition*)&VUENGINE_FONT,
-    NULL
+	(FontDefinition*)&VUENGINE_FONT,
+	NULL
 };

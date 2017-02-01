@@ -33,16 +33,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Telegram_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* the message itself. These are all enumerated in a file */									\
-        int message;																					\
-        /* any additional information that may accompany the message */									\
-        void* extraInfo;																				\
-        /* who sent this telegram */																	\
-        void* sender;																					\
-        /* who is to receive this telegram */															\
-        void* receiver;																					\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* the message itself. These are all enumerated in a file */									\
+		int message;																					\
+		/* any additional information that may accompany the message */									\
+		void* extraInfo;																				\
+		/* who sent this telegram */																	\
+		void* sender;																					\
+		/* who is to receive this telegram */															\
+		void* receiver;																					\
 
 __CLASS_DEFINITION(Telegram, Object);
 

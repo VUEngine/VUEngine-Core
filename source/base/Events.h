@@ -29,29 +29,29 @@
 
 enum Events
 {
-    // do not remove me
-    kFirstEngineEvent = 0,
+	// do not remove me
+	kFirstEngineEvent = 0,
 
-    // add events here
-    kEventSpatialObjectDeleted,
-    kEventContainerDeleted,
-    kEventEntityLoaded,
+	// add events here
+	kEventSpatialObjectDeleted,
+	kEventContainerDeleted,
+	kEventEntityLoaded,
 
-    kEventSecondChanged,
-    kEventMinuteChanged,
-    kEventHourChanged,
+	kEventSecondChanged,
+	kEventMinuteChanged,
+	kEventHourChanged,
 
-    kEventAnimationCompleted,
-    kEventTextureRewritten,
-    kEventCharSetRewritten,
-    kEventCharSetDeleted,
+	kEventAnimationCompleted,
+	kEventTextureRewritten,
+	kEventCharSetRewritten,
+	kEventCharSetDeleted,
 
-    kEventEffectFadeComplete,
-    kEventEffectFadeStart,
-    kEventEffectFadeStop,
+	kEventEffectFadeComplete,
+	kEventEffectFadeStart,
+	kEventEffectFadeStop,
 
-    // do not remove me
-    kLastEngineEvent
+	// do not remove me
+	kLastEngineEvent
 };
 
 

@@ -42,13 +42,13 @@
 
 
 // MemoryPool's defines
-#define __BLOCK_DEFINITION(BlockSize, Elements)											                \
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 									                \
+#define __BLOCK_DEFINITION(BlockSize, Elements)															\
+	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
 
-#define __SET_MEMORY_POOL_ARRAY(BlockSize)												                \
-	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];						                \
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);			                \
-	this->poolSizes[pool++][eBlockSize] = BlockSize;									                \
+#define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
+	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
+	this->poolSizes[pool++][eBlockSize] = BlockSize;													\
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,16 +56,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define MemoryPool_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* dynamic memory area */																		\
-        /* must always put together the pools! */														\
-        /* first byte is used as a usage flag */														\
-        __MEMORY_POOL_ARRAYS																			\
-        /* pointer to the beginning of each memory pool */												\
-        BYTE* poolLocation[__MEMORY_POOLS];																\
-        /* pool's size and pool's block size */															\
-        int poolSizes[__MEMORY_POOLS][2];																\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* dynamic memory area */																		\
+		/* must always put together the pools! */														\
+		/* first byte is used as a usage flag */														\
+		__MEMORY_POOL_ARRAYS																			\
+		/* pointer to the beginning of each memory pool */												\
+		BYTE* poolLocation[__MEMORY_POOLS];																\
+		/* pool's size and pool's block size */															\
+		int poolSizes[__MEMORY_POOLS][2];																\
 
 __CLASS_DEFINITION(MemoryPool, Object);
 
@@ -90,52 +90,52 @@ static void MemoryPool_reset(MemoryPool this);
 
 // defines a singleton (unique instance of a class)
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
-																								        \
-	/* declare the static instance */															        \
-	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;                    \
-																								        \
+																										\
+	/* declare the static instance */																	\
+	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;					\
+																										\
 	/* global pointer to speed up allocation and free */												\
-	ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = &_instance ## ClassName;               \
-																								        \
-	/* a flag to know when to allow construction */												        \
-	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE                                \
-	                                = __SINGLETON_NOT_CONSTRUCTED;                                      \
-																								        \
-	/* define get instance method */															        \
+	ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = &_instance ## ClassName;				\
+																										\
+	/* a flag to know when to allow construction */														\
+	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE								\
+									= __SINGLETON_NOT_CONSTRUCTED;										\
+																										\
+	/* define get instance method */																	\
 	static void __attribute__ ((noinline)) ClassName ## _instantiate()									\
-	{																							        \
-        NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,                               \
-            ClassName get instance during construction);						                        \
-                                                                                                        \
-		/* set the vtable */																	        \
-		__SET_CLASS(ClassName);																	        \
-                                                                                                        \
-        _singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;								            \
-                                                                                                        \
-        /* set the vtable pointer */														            \
-        _instance ## ClassName.vTable = &ClassName ## _vTable;								            \
-                                                                                                        \
-        /* call constructor */																            \
-        ClassName ## _constructor(&_instance ## ClassName);									            \
-                                                                                                        \
-        /* set the vtable pointer */														            \
-        _instance ## ClassName.vTable = &ClassName ## _vTable;								            \
-                                                                                                        \
-        /* don't allow more constructs */													            \
-        _singletonConstructed = __SINGLETON_CONSTRUCTED;									            \
-    }																						            \
-                                                                                                        \
-	/* define get instance method */															        \
-	ClassName ClassName ## _getInstance()														        \
-	{																							        \
-		/* first check if not constructed yet */												        \
-		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)								        \
-		{																						        \
-		    ClassName ## _instantiate();                                                                \
-		}																						        \
-																								        \
-		/* return the created singleton */														        \
-		return &_instance ## ClassName;															        \
+	{																									\
+		NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,								\
+			ClassName get instance during construction);												\
+																										\
+		/* set the vtable */																			\
+		__SET_CLASS(ClassName);																			\
+																										\
+		_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;											\
+																										\
+		/* set the vtable pointer */																	\
+		_instance ## ClassName.vTable = &ClassName ## _vTable;											\
+																										\
+		/* call constructor */																			\
+		ClassName ## _constructor(&_instance ## ClassName);												\
+																										\
+		/* set the vtable pointer */																	\
+		_instance ## ClassName.vTable = &ClassName ## _vTable;											\
+																										\
+		/* don't allow more constructs */																\
+		_singletonConstructed = __SINGLETON_CONSTRUCTED;												\
+	}																									\
+																										\
+	/* define get instance method */																	\
+	ClassName ClassName ## _getInstance()																\
+	{																									\
+		/* first check if not constructed yet */														\
+		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)										\
+		{																								\
+			ClassName ## _instantiate();																\
+		}																								\
+																										\
+		/* return the created singleton */																\
+		return &_instance ## ClassName;																	\
 	}
 
 
@@ -188,8 +188,8 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 
 	// look for a free block
 	for(i = 0, displacement = 0;
-	    i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
-	    i++, displacement += blockSize);
+		i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
+		i++, displacement += blockSize);
 
 	if(i >= numberOfOjects)
 	{
@@ -360,7 +360,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
-		Printing_text(Printing_getInstance(), "                  ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), "	              ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, y, NULL);
 		Printing_int(Printing_getInstance(), this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
 		Printing_int(Printing_getInstance(), totalUsedBlocks, x + 10, y, NULL);
@@ -421,7 +421,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
-			Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize],  x, y, NULL);
+			Printing_int(Printing_getInstance(), this->poolSizes[pool][eBlockSize], x, y, NULL);
 			Printing_int(Printing_getInstance(), usedBlocksPercentage, x + 7 - Utilities_intLength(usedBlocksPercentage), y, NULL);
 			Printing_text(Printing_getInstance(), "% ", x + 7, y++, NULL);
 		}

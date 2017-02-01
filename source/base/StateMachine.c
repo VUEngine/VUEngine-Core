@@ -34,16 +34,16 @@
 
 // a state machine
 #define StateMachine_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* that which owns this instance */																\
-        void* owner;																					\
-        /* pointer to the current state */																\
-        State currentState;																				\
-        /* pointer to the previous state */					    										\
-        State previousState;																			\
-        /* stack of states */																			\
-        VirtualList stateStack;																			\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* that which owns this instance */																\
+		void* owner;																					\
+		/* pointer to the current state */																\
+		State currentState;																				\
+		/* pointer to the previous state */																\
+		State previousState;																			\
+		/* stack of states */																			\
+		VirtualList stateStack;																			\
 
 __CLASS_DEFINITION(StateMachine, Object);
 

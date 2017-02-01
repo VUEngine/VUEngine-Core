@@ -41,7 +41,7 @@ static void VirtualNode_destructor(VirtualNode this);
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class   VirtualNode
+ * @class	VirtualNode
  * @extends Object
  * @brief
  */
@@ -59,10 +59,10 @@ __CLASS_NEW_END(VirtualNode, data);
 /**
  * Class constructor
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  * @param data
  */
 static void VirtualNode_constructor(VirtualNode this, const void* const data)
@@ -78,10 +78,10 @@ static void VirtualNode_constructor(VirtualNode this, const void* const data)
 /**
  * Class destructor
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 __attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
 {
@@ -95,10 +95,10 @@ __attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
 /**
  * Set node's data pointer
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  * @param data
  */
 void VirtualNode_setData(VirtualNode this, const void* const data)
@@ -111,12 +111,12 @@ void VirtualNode_setData(VirtualNode this, const void* const data)
 /**
  * Retrieve node's data pointer
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Data pointer
+ * @return		Data pointer
  */
 void* VirtualNode_getData(VirtualNode this)
 {
@@ -128,12 +128,12 @@ void* VirtualNode_getData(VirtualNode this)
 /**
  * Get next node's address
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Node
+ * @return		Node
  */
 VirtualNode VirtualNode_getNext(VirtualNode this)
 {
@@ -145,10 +145,10 @@ VirtualNode VirtualNode_getNext(VirtualNode this)
 /**
  * set next node's address
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  * @param next
  */
 void VirtualNode_setNext(VirtualNode this, VirtualNode next)
@@ -161,12 +161,12 @@ void VirtualNode_setNext(VirtualNode this, VirtualNode next)
 /**
  * Get previous node's address
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Node
+ * @return		Node
  */
 VirtualNode VirtualNode_getPrevious(VirtualNode this)
 {
@@ -178,10 +178,10 @@ VirtualNode VirtualNode_getPrevious(VirtualNode this)
 /**
  * Set previous node's address
  *
- * @memberof        VirtualNode
+ * @memberof		VirtualNode
  * @public
  *
- * @param this      Function scope
+ * @param this		Function scope
  * @param previous
  */
 void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
@@ -194,10 +194,10 @@ void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
 /**
  * Swap the data between two nodes
  *
- * @memberof    VirtualNode
+ * @memberof	VirtualNode
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  * @param node
  */
 void VirtualNode_swapData(VirtualNode this, VirtualNode node)

@@ -41,9 +41,9 @@
 		__VIRTUAL_DEC(ClassName, void, enter, void* owner);												\
 		__VIRTUAL_DEC(ClassName, void, execute, void* owner);											\
 		__VIRTUAL_DEC(ClassName, void, exit, void* owner);												\
-		__VIRTUAL_DEC(ClassName, void, suspend, void* owner);										    \
-		__VIRTUAL_DEC(ClassName, void, resume, void* owner);                                            \
-	    __VIRTUAL_DEC(ClassName, bool, processMessage, void* owner, void* telegram);					\
+		__VIRTUAL_DEC(ClassName, void, suspend, void* owner);											\
+		__VIRTUAL_DEC(ClassName, void, resume, void* owner);											\
+		__VIRTUAL_DEC(ClassName, bool, processMessage, void* owner, void* telegram);					\
 
 // declare the virtual methods which are redefined
 #define State_SET_VTABLE(ClassName)																		\

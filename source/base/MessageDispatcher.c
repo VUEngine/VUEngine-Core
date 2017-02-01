@@ -47,14 +47,14 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 
 // text box based on bgmaps
 #define MessageDispatcher_ATTRIBUTES																	\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* delayed messages */																			\
-        VirtualList delayedMessages;																	\
-        /* delayed messages */																			\
-        VirtualList delayedMessagesToDiscard;															\
-        /* delayed messages */																			\
-        VirtualList delayedMessagesToDispatch;															\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* delayed messages */																			\
+		VirtualList delayedMessages;																	\
+		/* delayed messages */																			\
+		VirtualList delayedMessagesToDiscard;															\
+		/* delayed messages */																			\
+		VirtualList delayedMessagesToDispatch;															\
 
 __CLASS_DEFINITION(MessageDispatcher, Object);
 
@@ -198,7 +198,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
-    u32 messagesDispatched = false;
+	u32 messagesDispatched = false;
 
 	MessageDispatcher_processDiscardedMessages(this);
 
@@ -238,13 +238,13 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			void* sender = Telegram_getSender(telegram);
 			void* receiver = Telegram_getReceiver(telegram);
 
-        	ASSERT(sender, "MessageDispatcher::dispatchDelayedMessages: null sender");
-        	ASSERT(receiver, "MessageDispatcher::dispatchDelayedMessages: null receiver");
+			ASSERT(sender, "MessageDispatcher::dispatchDelayedMessages: null sender");
+			ASSERT(receiver, "MessageDispatcher::dispatchDelayedMessages: null receiver");
 
 			// check if sender and receiver are still alive
 			if(!auxNode && (sender && *(u32*)sender) && (receiver && *(u32*)receiver))
 			{
-    			messagesDispatched |= true;
+				messagesDispatched |= true;
 				__VIRTUAL_CALL(Object, handleMessage, __SAFE_CAST(Object, receiver), telegram);
 			}
 
@@ -252,8 +252,8 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 			if(auxNode)
 			{
-			    VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
-            }
+				VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
+			}
 
 			if(*(u32*)telegram)
 			{

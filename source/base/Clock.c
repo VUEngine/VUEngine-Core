@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class   Clock
+ * @class	Clock
  * @extends Object
  */
 __CLASS_DEFINITION(Clock, Object);
@@ -60,10 +60,10 @@ __CLASS_NEW_END(Clock);
 /**
  * Class constructor
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void Clock_constructor(Clock this)
 {
@@ -87,10 +87,10 @@ static void Clock_constructor(Clock this)
 /**
  * Class destructor
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Clock_destructor(Clock this)
 {
@@ -107,10 +107,10 @@ void Clock_destructor(Clock this)
 /**
  * Print formatted class' attributes's states
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  * @param col
  * @param row
  * @param font
@@ -122,13 +122,13 @@ void Clock_print(Clock this, int col, int row, const char* font)
 	char output[] = "00:00";
 	char* minutes = Utilities_itoa(Clock_getMinutes(this), 10, 2);
 
-    output[0] = minutes[0];
-    output[1] = minutes[1];
+	output[0] = minutes[0];
+	output[1] = minutes[1];
 
-    char* seconds = Utilities_itoa((Clock_getSeconds(this) - Clock_getMinutes(this) * 60) % 60, 10, 2);
+	char* seconds = Utilities_itoa((Clock_getSeconds(this) - Clock_getMinutes(this) * 60) % 60, 10, 2);
 
-    output[3] = seconds[0];
-    output[4] = seconds[1];
+	output[3] = seconds[0];
+	output[4] = seconds[1];
 
 	Printing_text(Printing_getInstance(), output, col, row, font);
 }
@@ -136,10 +136,10 @@ void Clock_print(Clock this, int col, int row, const char* font)
 /**
  * Called on each timer interrupt
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  * @param ticks
  */
 void Clock_update(Clock this, u32 ticks)
@@ -174,10 +174,10 @@ void Clock_update(Clock this, u32 ticks)
 /**
  * Reset clock's attributes
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Clock_reset(Clock this)
 {
@@ -191,12 +191,12 @@ void Clock_reset(Clock this)
 /**
  * Retrieve clock's milliseconds
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Current milliseconds
+ * @return		Current milliseconds
  */
 u32 Clock_getMilliSeconds(Clock this)
 {
@@ -208,12 +208,12 @@ u32 Clock_getMilliSeconds(Clock this)
 /**
  * Retrieve clock's seconds
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Current seconds
+ * @return		Current seconds
  */
 u32 Clock_getSeconds(Clock this)
 {
@@ -225,12 +225,12 @@ u32 Clock_getSeconds(Clock this)
 /**
  * Retrieve clock's minutes
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Current minutes
+ * @return		Current minutes
  */
 u32 Clock_getMinutes(Clock this)
 {
@@ -242,12 +242,12 @@ u32 Clock_getMinutes(Clock this)
 /**
  * Retrieve clock's total elapsed time in milliseconds
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Current milliseconds
+ * @return		Current milliseconds
  */
 u32 Clock_getTime(Clock this)
 {
@@ -259,12 +259,12 @@ u32 Clock_getTime(Clock this)
 /**
  * Retrieve current elapsed milliseconds in the current second
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Elapsed milliseconds in the current second
+ * @return		Elapsed milliseconds in the current second
  */
 int Clock_getTimeInCurrentSecond(Clock this)
 {
@@ -276,10 +276,10 @@ int Clock_getTimeInCurrentSecond(Clock this)
 /**
  * Set clock's total elapsed time from seconds parameters
  *
- * @memberof            Clock
+ * @memberof			Clock
  * @public
  *
- * @param this          Function scope
+ * @param this			Function scope
  * @param totalSeconds
  */
 void Clock_setTimeInSeconds(Clock this, float totalSeconds)
@@ -292,10 +292,10 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 /**
  * Set clock's total elapsed time
  *
- * @memberof            Clock
+ * @memberof			Clock
  * @public
  *
- * @param this          Function scope
+ * @param this			Function scope
  * @param milliSeconds
  */
 void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
@@ -308,10 +308,10 @@ void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
 /**
  * Start the clock
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Clock_start(Clock this)
 {
@@ -324,10 +324,10 @@ void Clock_start(Clock this)
 /**
  * Stop the clock
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Clock_stop(Clock this)
 {
@@ -340,11 +340,11 @@ void Clock_stop(Clock this)
 /**
  * Pause the clock
  *
- * @memberof        Clock
+ * @memberof		Clock
  * @public
  *
- * @param this      Function scope
- * @param paused    Set to paused or unpaused?
+ * @param this		Function scope
+ * @param paused	Set to paused or unpaused?
  */
 void Clock_pause(Clock this, bool paused)
 {
@@ -356,12 +356,12 @@ void Clock_pause(Clock this, bool paused)
 /**
  * Whether the clock is running or not
  *
- * @memberof    Clock
+ * @memberof	Clock
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  *
- * @return      Paused flag
+ * @return		Paused flag
  */
 bool Clock_isPaused(Clock this)
 {

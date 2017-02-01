@@ -49,10 +49,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Error_ATTRIBUTES																				\
-        Object_ATTRIBUTES																				\
+		Object_ATTRIBUTES																				\
 
 /**
- * @class   Error
+ * @class	Error
  * @extends Object
  */
 __CLASS_DEFINITION(Error, Object);
@@ -74,21 +74,21 @@ bool Game_isConstructed();
 /**
  * Get instance
  *
- * @fn          Error_getInstance()
- * @memberof    Error
+ * @fn			Error_getInstance()
+ * @memberof	Error
  * @public
  *
- * @return      Error instance
+ * @return		Error instance
  */
 __SINGLETON(Error);
 
 /**
  * Class constructor
  *
- * @memberof    Error
+ * @memberof	Error
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void __attribute__ ((noinline)) Error_constructor(Error this)
 {
@@ -98,10 +98,10 @@ static void __attribute__ ((noinline)) Error_constructor(Error this)
 /**
  * Class destructor
  *
- * @memberof    Error
+ * @memberof	Error
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Error_destructor(Error this)
 {
@@ -111,10 +111,10 @@ void Error_destructor(Error this)
 /**
  * Setup the error message and lock program here
  *
- * @memberof        Error
+ * @memberof		Error
  * @public
  *
- * @param this      Function scope
+ * @param this		Function scope
  * @param message
  * @param detail
  */
@@ -123,8 +123,8 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
-    // disable vip interrupts
-    VIPManager_disableInterrupts(VIPManager_getInstance());
+	// disable vip interrupts
+	VIPManager_disableInterrupts(VIPManager_getInstance());
 
 	// disable timers
 	TimerManager_enable(TimerManager_getInstance(), false);
@@ -133,10 +133,10 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	TimerManager_setInterrupt(TimerManager_getInstance(), false);
 
 	// turn on the display
-    HardwareManager_displayOn(HardwareManager_getInstance());
+	HardwareManager_displayOn(HardwareManager_getInstance());
 
 	// make sure the brightness is ok
-    HardwareManager_upBrightness(HardwareManager_getInstance());
+	HardwareManager_upBrightness(HardwareManager_getInstance());
 
 	//print error message to screen
 	if(0 < y)
