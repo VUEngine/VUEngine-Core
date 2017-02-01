@@ -166,8 +166,8 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
-	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
-//	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
+//	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
+	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
 		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
 		this->invalidateGlobalTransformation = 0;
