@@ -850,6 +850,15 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 14, y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 24, y, NULL);
+		Printing_text(Printing_getInstance(), "Texture (segment):                         ", x, ++y, NULL);
+
+		int segment = -1;
+		if(__GET_CAST(BgmapTexture, Sprite_getTexture(sprite)))
+		{
+			segment = BgmapTexture_getBgmapSegment(__GET_CAST(BgmapTexture, Sprite_getTexture(sprite)));
+		}
+
+		Printing_int(Printing_getInstance(), segment, x + 24, y, NULL);
 		//Debug_lightUpGame(this);
     }
 	else
