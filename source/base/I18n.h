@@ -51,12 +51,12 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define I18n_ATTRIBUTES																					\
-	    Object_ATTRIBUTES																				\
+		Object_ATTRIBUTES																				\
 		/**
-         * @var u8		activeLanguage
-         * @brief		Currently active language
-         * @memberof	I18n
-         */																								\
+		 * @var u8		activeLanguage
+		 * @brief		Currently active language
+		 * @memberof	I18n
+		 */																								\
 		u8 activeLanguage;																				\
 
 // declare a I18n

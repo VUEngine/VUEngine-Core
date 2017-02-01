@@ -41,25 +41,25 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define VirtualNode_ATTRIBUTES																			\
-	    Object_ATTRIBUTES																				\
-	    /**
-         * @var VirtualNode next
-         * @brief           pointer to next node
-         * @memberof        VirtualNode
+		Object_ATTRIBUTES																				\
+		/**
+		 * @var VirtualNode next
+		 * @brief			pointer to next node
+		 * @memberof		VirtualNode
 		 */																								\
-	    VirtualNode next;																				\
-	    /**
-         * @var VirtualNode previous
-         * @brief           pointer to previous node
-         * @memberof        VirtualNode
+		VirtualNode next;																				\
+		/**
+		 * @var VirtualNode previous
+		 * @brief			pointer to previous node
+		 * @memberof		VirtualNode
 		 */																								\
-	    VirtualNode previous;																			\
-	    /**
-         * @var void*       data
-         * @brief           pointer to the data
-         * @memberof        VirtualNode
+		VirtualNode previous;																			\
+		/**
+		 * @var void*		data
+		 * @brief			pointer to the data
+		 * @memberof		VirtualNode
 		 */																								\
-	    void* data;																						\
+		void* data;																						\
 
 __CLASS(VirtualNode);
 

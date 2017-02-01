@@ -34,16 +34,16 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define FrameRate_ATTRIBUTES																			\
-        Object_ATTRIBUTES																				\
-        /**
-         * @var u16     fps
-         * @brief       Frames per second
-         * @memberof    FrameRate
+		Object_ATTRIBUTES																				\
+		/**
+		 * @var u16	 fps
+		 * @brief		Frames per second
+		 * @memberof	FrameRate
 		 */																								\
-        u16 fps;																						\
+		u16 fps;																						\
 
 /**
- * @class   FrameRate
+ * @class	FrameRate
  * @extends Object
  */
 __CLASS_DEFINITION(FrameRate, Object);
@@ -63,21 +63,21 @@ static void FrameRate_constructor(FrameRate this);
 /**
  * Get instance
  *
- * @fn          FrameRate_getInstance()
- * @memberof    FrameRate
+ * @fn			FrameRate_getInstance()
+ * @memberof	FrameRate
  * @public
  *
- * @return      FrameRate instance
+ * @return		FrameRate instance
  */
 __SINGLETON(FrameRate);
 
 /**
  * Class constructor
  *
- * @memberof    FrameRate
+ * @memberof	FrameRate
  * @private
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
 {
@@ -89,10 +89,10 @@ static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
 /**
  * Class destructor
  *
- * @memberof    FrameRate
+ * @memberof	FrameRate
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void FrameRate_destructor(FrameRate this)
 {
@@ -105,10 +105,10 @@ void FrameRate_destructor(FrameRate this)
 /**
  * Reset internal values
  *
- * @memberof    FrameRate
+ * @memberof	FrameRate
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void FrameRate_reset(FrameRate this)
 {
@@ -120,10 +120,10 @@ void FrameRate_reset(FrameRate this)
 /**
  * Retrieve FPS
  *
- * @memberof    FrameRate
+ * @memberof	FrameRate
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 u16 FrameRate_getFps(FrameRate this)
 {
@@ -135,10 +135,10 @@ u16 FrameRate_getFps(FrameRate this)
 /**
  * Increase the FPS count
  *
- * @memberof    FrameRate
+ * @memberof	FrameRate
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void FrameRate_increaseFps(FrameRate this)
 {
@@ -150,12 +150,12 @@ void FrameRate_increaseFps(FrameRate this)
 /**
  * Print FPS
  *
- * @memberof    FrameRate
+ * @memberof	FrameRate
  * @public
  *
- * @param this  Function scope
- * @param col   Column to start printing at
- * @param row   Row to start printing at
+ * @param this	Function scope
+ * @param col	Column to start printing at
+ * @param row	Row to start printing at
  */
 void FrameRate_print(FrameRate this, int col, int row)
 {

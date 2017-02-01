@@ -47,7 +47,7 @@
 // declare the virtual methods which are redefined
 #define Game_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Game, handleMessage);              									\
+		__VIRTUAL_SET(ClassName, Game, handleMessage);													\
 
 __CLASS(Game);
 

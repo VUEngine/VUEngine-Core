@@ -35,19 +35,19 @@
 void Mem_copy(u8* dest, const u8* src, u32 num)
 {
 /*
-    asm("          \n\t"      \
-        "mov r29,r1\n\t"      \
-        "mov %0,r26\n\t"      \
-        "mov %1,r27\n\t"      \
-        "mov %2,r28\n\t"      \
-        "mov %3,r29\n\t"      \
-        "mov %4,r30\n\t"      \
-        ".hword 0x7C0B\n\t"   \
-        "mov r1,r29"
-        : // output
-        : "r" (((u32)dest & 0x3) << 2), "r" (((u32)src & 0x3) << 2), "r" (num << 3), "r" ((u32)dest & ~0x3), "r" ((u32)src & ~0x3) // input
-        : "r1", "r26", "r27", "r28", "r29", "r30" // trashed
-        );
+	asm("          \n\t"      \
+		"mov r29,r1\n\t"      \
+		"mov %0,r26\n\t"      \
+		"mov %1,r27\n\t"      \
+		"mov %2,r28\n\t"      \
+		"mov %3,r29\n\t"      \
+		"mov %4,r30\n\t"      \
+		".hword 0x7C0B\n\t"   \
+		"mov r1,r29"
+		: // output
+		: "r" (((u32)dest & 0x3) << 2), "r" (((u32)src & 0x3) << 2), "r" (num << 3), "r" ((u32)dest & ~0x3), "r" ((u32)src & ~0x3) // input
+		: "r1", "r26", "r27", "r28", "r29", "r30" // trashed
+		);
 */
 
 	u32 i;
@@ -58,7 +58,7 @@ void Mem_copy(u8* dest, const u8* src, u32 num)
 	}
 }
 
-void Mem_clear(u32* dest,  u32 num )
+void Mem_clear(u32* dest, u32 num )
 {
 	u32 i;
 	for(i = 0; i < num; i++) *dest++ = 0;
@@ -73,6 +73,6 @@ void Mem_add(u8* dest, const u8* src, u32 num, u32 offset)
 
 	for(i = 0; i < num; i++)
 	{
-	    *dest16++ = *src16++ + offset;
+		*dest16++ = *src16++ + offset;
 	}
 }
