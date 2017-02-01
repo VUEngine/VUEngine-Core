@@ -161,7 +161,7 @@ static u16* const	_objectAttributesBaseAddress			=	(u16*)__OBJECT_SPACE_BASE_ADD
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)
 
-#define	__WORLD_OFF		0x3FFF
+#define	__WORLD_OFF		0x0000
 #define	__WORLD_ON		0xC000
 #define	__WORLD_LON		0x8000
 #define	__WORLD_RON		0x4000

@@ -79,7 +79,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
 	__CONSTRUCT_BASE(Sprite, NULL, NULL);
 
-	this->head = __WORLD_OBJ | __WORLD_ON;
+	this->head = __WORLD_ON | __WORLD_OBJ | __WORLD_OVR;
 	this->spt = spt;
 	this->totalObjects = totalObjects;
 	this->availableObjects = this->totalObjects;
@@ -327,7 +327,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		if(node)
 		{
 			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, node->data);
-			this->availableObjects = this->totalObjects - (lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
+			this->availableObjects = this->totalObjects - (this->firstObjectIndex - lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
 		}
 		else
 		{
@@ -397,8 +397,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 
 	// make sure to not render again
-	_worldAttributesBaseAddress[this->worldLayer].head = this->totalObjects ? this->head | __WORLD_OVR : __WORLD_OFF;
-//	_worldAttributesBaseAddress[this->worldLayer].head = this->head | __WORLD_OVR;
+	_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_ON | __WORLD_OBJ | __WORLD_OVR;
 
 	// defragmentation takes priority over z sorting
 	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
@@ -531,7 +530,10 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 	Printing_text(Printing_getInstance(), "Segment: ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->spt, x + 24, y, NULL);
 	Printing_text(Printing_getInstance(), "WORLD: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->worldLayer, x + 24, y, NULL);	Printing_text(Printing_getInstance(), "Available objects: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), this->worldLayer, x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "HEAD: ", x, ++y, NULL);
+	Printing_hex(Printing_getInstance(), _worldAttributesBaseAddress[this->worldLayer].head, x + 24, y, 4, NULL);
+	Printing_text(Printing_getInstance(), "Available objects: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getAvailableObjects(this), x + 24, y, NULL);
 	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getTotalUsedObjects(this), x + 24, y, NULL);

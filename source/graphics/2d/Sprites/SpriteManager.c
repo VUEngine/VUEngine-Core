@@ -516,15 +516,12 @@ void SpriteManager_render(SpriteManager this)
         {
             Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 
-			static WorldAttributes* worldPointer = NULL;
-
 			// first update
 			Sprite_update(__SAFE_CAST(Sprite, sprite));
 
 			if(sprite->hidden || !sprite->visible)
 			{
-				worldPointer = &_worldAttributesBaseAddress[sprite->worldLayer];
-				worldPointer->head = __WORLD_OFF;
+				_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
 			}
 			else
 			{
@@ -695,6 +692,8 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 
 	for(; node; node = node->next)
 	{
+	#define __MAX_SPRITE_CLASS_NAME_SIZE			10
+
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
@@ -705,11 +704,12 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 		Printing_int(Printing_getInstance(), Sprite_getWorldLayer(sprite), auxX, auxY, NULL);
 		Printing_text(Printing_getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing_text(Printing_getInstance(), spriteClassName, auxX + 4, auxY, NULL);
+		Printing_hex(Printing_getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + 14, auxY, 4, NULL);
 
 		if((__SCREEN_HEIGHT >> 3) - 2 <= ++auxY)
 		{
 			auxY = y + 2;
-			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 5;
+			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 10;
 		}
 	}
 
