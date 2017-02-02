@@ -24,14 +24,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 struct Shape_str;
@@ -51,20 +51,20 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);											\
 
 #define InGameEntity_ATTRIBUTES																			\
-        /* it is derived from */																		\
-        Entity_ATTRIBUTES																				\
-        /* pointer to the ROM definition */																\
-        InGameEntityDefinition* inGameEntityDefinition;													\
-        /* direction */																					\
-        Direction direction;																			\
-        /* Gap to calculate collisions */																\
-        Gap gap;																						\
+		/* it is derived from */																		\
+		Entity_ATTRIBUTES																				\
+		/* pointer to the ROM definition */																\
+		InGameEntityDefinition* inGameEntityDefinition;													\
+		/* direction */																					\
+		Direction direction;																			\
+		/* Gap to calculate collisions */																\
+		Gap gap;																						\
 
 __CLASS(InGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines a InGameEntity in ROM memory
@@ -94,7 +94,7 @@ typedef const InGameEntityDefinition InGameEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(InGameEntity, InGameEntityDefinition* inGameEntityDefinition, s16 id, s16 internalId, const char* const name);

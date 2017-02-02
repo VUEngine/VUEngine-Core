@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 // movement type
@@ -41,7 +41,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define Body_METHODS(ClassName)																			\
@@ -51,46 +51,42 @@
 
 #define Body_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Body, update);														    \
-		__VIRTUAL_SET(ClassName, Body, calculateFrictionForce);										    \
+		__VIRTUAL_SET(ClassName, Body, update);															\
+		__VIRTUAL_SET(ClassName, Body, calculateFrictionForce);											\
 
 #define Body_ATTRIBUTES																					\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* owner */																						\
-        SpatialObject owner;																			\
-        /* direction */																					\
-        Force appliedForce;																				\
-        /* friction surrounding object */																\
-        Force friction;																					\
-        /* spatial position */																			\
-        VBVec3D position;																				\
-        /* velocity on each instante */																	\
-        Velocity velocity;																				\
-        /* acelearion structure */																		\
-        Acceleration acceleration;																		\
-        /* elasticity */																				\
-        fix19_13 elasticity;																			\
-        /* mass */																						\
-        fix19_13 mass;																					\
-        /* movement type on each axis */																\
-        MovementType movementType;																		\
-        /* raise flag to make the body active */														\
-        u8 active;																				        \
-        /* raise flag to update body's physics */														\
-        u8 awake;																				        \
-        /* axis that is subject to gravity */															\
-        u8 axisSubjectToGravity;																		\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* owner */																						\
+		SpatialObject owner;																			\
+		/* direction */																					\
+		Force appliedForce;																				\
+		/* friction surrounding object */																\
+		Force friction;																					\
+		/* spatial position */																			\
+		VBVec3D position;																				\
+		/* velocity on each instante */																	\
+		Velocity velocity;																				\
+		/* acelearion structure */																		\
+		Acceleration acceleration;																		\
+		/* elasticity */																				\
+		fix19_13 elasticity;																			\
+		/* mass */																						\
+		fix19_13 mass;																					\
+		/* movement type on each axis */																\
+		MovementType movementType;																		\
+		/* raise flag to make the body active */														\
+		u8 active;																						\
+		/* raise flag to update body's physics */														\
+		u8 awake;																						\
+		/* axis that is subject to gravity */															\
+		u8 axisSubjectToGravity;																		\
 
 __CLASS(Body);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-//---------------------------------------------------------------------------------------------------------
-// 										CLASS' STATIC METHODS
+//										CLASS' STATIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
 void Body_setCurrentWorldFriction(fix19_13 _currentWorldFriction);
@@ -99,7 +95,7 @@ void Body_setCurrentGravity(const Acceleration* currentGravity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										CLASS' INSTANCE METHODS
+//										CLASS' INSTANCE METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);

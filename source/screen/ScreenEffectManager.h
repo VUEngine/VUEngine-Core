@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 enum ScreenFX
@@ -47,38 +47,38 @@ enum ScreenFX
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define ScreenEffectManager_METHODS(ClassName)															\
-    	Object_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, startEffect, int effect, va_list args);							\
 		__VIRTUAL_DEC(ClassName, void, stopEffect, int effect);											\
 
 // declare the virtual methods which are redefined
 #define ScreenEffectManager_SET_VTABLE(ClassName)														\
-    	Object_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ScreenEffectManager, startEffect);										\
 		__VIRTUAL_SET(ClassName, ScreenEffectManager, stopEffect);										\
 		__VIRTUAL_SET(ClassName, ScreenEffectManager, handleMessage);									\
 
 #define ScreenEffectManager_ATTRIBUTES																	\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* target brightness for current fade effect */													\
-        Brightness fxFadeTargetBrightness;																\
-        /* delay for current fade effect */																\
-        u8 fxFadeDelay;																					\
-        /* callback scope for current fade effect */													\
-        Object fxFadeCallbackScope;
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* target brightness for current fade effect */													\
+		Brightness fxFadeTargetBrightness;																\
+		/* delay for current fade effect */																\
+		u8 fxFadeDelay;																					\
+		/* callback scope for current fade effect */													\
+		Object fxFadeCallbackScope;
 
 // declare a ScreenEffectManager
 __CLASS(ScreenEffectManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 ScreenEffectManager ScreenEffectManager_getInstance();

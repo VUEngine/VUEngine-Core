@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Affine.h>
@@ -31,54 +31,54 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern double fabs (double);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											DEFINES
+//											DEFINES
 //---------------------------------------------------------------------------------------------------------
 
 typedef struct AffineEntry
 {
-    fix13_3	pb_y;		// *y+Dx /= 8.0
-    s16		paralax;
-    fix13_3	pd_y;		// *y+Dy /= 8.0
-    fix7_9	pa;			// /=512.0
-    fix7_9	pc;			// /=512.0
-    u16 spacer[3];		//unknown
+	fix13_3	pb_y;		// *y+Dx /= 8.0
+	s16		parallax;
+	fix13_3	pd_y;		// *y+Dy /= 8.0
+	fix7_9	pa;			// /=512.0
+	fix7_9	pc;			// /=512.0
+	u16 	spacer[3];		//unknown
 } AffineEntry ;
 
 typedef struct FixedAffineMatrix
 {
-	fix7_9 pa;
+	fix7_9 	pa;
 	fix13_3 pb;
-	fix7_9 pc;
+	fix7_9 	pc;
 	fix13_3 pd;
 	fix13_3 dx;
 	fix13_3 dy;
-	s16   paralax;
+	s16		parallax;
 } FixedAffineMatrix ;
 
 
 typedef struct AffineInfo
 {
-	fix19_13 x;
-	fix19_13 y;
-	fix13_3 mx;
-	fix13_3 my;
-	fix13_3 halfWidth;
-	fix13_3 halfHeight;
-	Rotation* rotation;
-	Scale* scale;
-	u32 param;
-	s16   paralax;
+	fix19_13 	x;
+	fix19_13 	y;
+	fix13_3 	mx;
+	fix13_3 	my;
+	fix13_3 	halfWidth;
+	fix13_3 	halfHeight;
+	Rotation* 	rotation;
+	Scale* 		scale;
+	u32 		param;
+	s16			parallax;
 } AffineInfo ;
 
 //---------------------------------------------------------------------------------------------------------
-// 											FUNCTIONS
+//											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
 fix19_13 Affine_applyAll(u32 param, fix19_13 paramTableRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation)
@@ -86,67 +86,67 @@ fix19_13 Affine_applyAll(u32 param, fix19_13 paramTableRow, fix19_13 x, fix19_13
 	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
 	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
 
-    fix19_13 highPrecisionPa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
-    fix19_13 highPrecisionPb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
-    fix19_13 highPrecisionPc = FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->y));
-    fix19_13 highPrecisionPd = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->y));
+	fix19_13 highPrecisionPa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
+	fix19_13 highPrecisionPb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
+	fix19_13 highPrecisionPc = FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->y));
+	fix19_13 highPrecisionPd = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->y));
 
 	FixedAffineMatrix fixedAffineMatrix;
 	fixedAffineMatrix.pa = FIX19_13TOFIX7_9(highPrecisionPa);
 	fixedAffineMatrix.pc = FIX19_13TOFIX7_9(highPrecisionPc);
 
-    // bgX + bgWidth - pa * dispX - pb * dispY
+	// bgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
-	    mx
-	    +
-	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(__ABS(scale->x))))
-	    -
-	    FIX19_13TOFIX13_3
-	    (
-	        FIX19_13_MULT(highPrecisionPa, x)
-	        +
-	        FIX19_13_MULT(highPrecisionPb, y)
-        );
+		mx
+		+
+		FIX19_13TOFIX13_3(FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(__ABS(scale->x))))
+		-
+		FIX19_13TOFIX13_3
+		(
+			FIX19_13_MULT(highPrecisionPa, x)
+			+
+			FIX19_13_MULT(highPrecisionPb, y)
+		);
 
-    // bgY + bgHeight - pc * dispX - pd * dispY
+	// bgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
-	    my
-	    +
-	    FIX19_13TOFIX13_3(FIX19_13_DIV(halfHeight, FIX7_9TOFIX19_13(__ABS(scale->y))))
-	    -
-	    (
-	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, x))
-	        +
-	        FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, y))
-    	);
+		my
+		+
+		FIX19_13TOFIX13_3(FIX19_13_DIV(halfHeight, FIX7_9TOFIX19_13(__ABS(scale->y))))
+		-
+		(
+			FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, x))
+			+
+			FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, y))
+		);
 
-	fixedAffineMatrix.paralax = 0;
+	fixedAffineMatrix.parallax = 0;
 
 	AffineEntry* affine = (AffineEntry*)(param & 0xFFFFFFF0);
 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
-    int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(__ABS(scale->y))));
+	int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(__ABS(scale->y))));
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
 	for(;counter && i <= lastRow; i++, counter--)
 	{
 		affine[i].pb_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;
-		affine[i].paralax = fixedAffineMatrix.paralax;
+		affine[i].parallax = fixedAffineMatrix.parallax;
 		affine[i].pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPd)) + fixedAffineMatrix.dy;
 		affine[i].pa = fixedAffineMatrix.pa;
 		affine[i].pc = fixedAffineMatrix.pc;
 	}
 
-    if(i <= lastRow)
-    {
-        return i;
-    }
+	if(i <= lastRow)
+	{
+		return i;
+	}
 
-    affine[i].pb_y = 0;
-    affine[i].paralax = 0;
-    affine[i].pd_y = 0;
-    affine[i].pa = 0;
-    affine[i].pc = 0;
+	affine[i].pb_y = 0;
+	affine[i].parallax = 0;
+	affine[i].pd_y = 0;
+	affine[i].pa = 0;
+	affine[i].pc = 0;
 
 	return -1;
 }

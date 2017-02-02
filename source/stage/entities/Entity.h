@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
@@ -35,26 +35,26 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __UPDATE_SPRITE_TRANSFORMATION		0x07
 #define __UPDATE_SPRITE_POSITION			0x01
-#define __UPDATE_SPRITE_SCALE       		0x02
-#define __UPDATE_SPRITE_ROTATION       		0x04
+#define __UPDATE_SPRITE_SCALE				0x02
+#define __UPDATE_SPRITE_ROTATION			0x04
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define Entity_METHODS(ClassName)																		\
 		Container_METHODS(ClassName)																	\
-		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);								            \
-		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);									        \
+		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);											\
+		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
 		__VIRTUAL_DEC(ClassName, bool, updateSpritePosition);											\
-		__VIRTUAL_DEC(ClassName, bool, updateSpriteScale);									            \
-		__VIRTUAL_DEC(ClassName, bool, updateSpriteRotation);									        \
+		__VIRTUAL_DEC(ClassName, bool, updateSpriteScale);												\
+		__VIRTUAL_DEC(ClassName, bool, updateSpriteRotation);											\
 		__VIRTUAL_DEC(ClassName, void, initialize, u32);												\
 		__VIRTUAL_DEC(ClassName, void, ready, u32);														\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
@@ -69,8 +69,8 @@
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);													\
 		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);											\
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);									        \
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteRotation);									        \
+		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);											\
+		__VIRTUAL_SET(ClassName, Entity, updateSpriteRotation);											\
 		__VIRTUAL_SET(ClassName, Entity, getPosition);													\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);														\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);													\
@@ -83,70 +83,70 @@
 		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
-		__VIRTUAL_SET(ClassName, Entity, hide);											                \
+		__VIRTUAL_SET(ClassName, Entity, hide);															\
 
 #define Entity_ATTRIBUTES																				\
-        Container_ATTRIBUTES																			\
-        /**
-		 * @var EntityFactory       entityFactory
-		 * @brief                   Entity factory
-		 * @memberof		        Entity
+		Container_ATTRIBUTES																			\
+		/**
+		 * @var EntityFactory		entityFactory
+		 * @brief					Entity factory
+		 * @memberof				Entity
 		 */ 																							\
-        EntityFactory entityFactory;                                                                    \
-        /**
-		 * @var VirtualList         sprites
-		 * @brief                   Sprites list
-		 * @memberof		        Entity
+		EntityFactory entityFactory;																	\
+		/**
+		 * @var VirtualList		 	sprites
+		 * @brief					Sprites list
+		 * @memberof				Entity
 		 */ 																							\
-        VirtualList sprites;																			\
-        /**
-		 * @var Shape               shape
-		 * @brief                   Shape for collision detection
-		 * @memberof		        Entity
+		VirtualList sprites;																			\
+		/**
+		 * @var Shape				shape
+		 * @brief					Shape for collision detection
+		 * @memberof				Entity
 		 */ 																							\
-        Shape shape;																					\
-        /**
-		 * @var Size                size
-		 * @brief                   Size
-		 * @memberof		        Entity
+		Shape shape;																					\
+		/**
+		 * @var Size				size
+		 * @brief					Size
+		 * @memberof				Entity
 		 */ 																							\
-        Size size;																						\
-        /**
-		 * @var EntityDefinition*   entityDefinition
-		 * @brief                   Entity's definition
-		 * @memberof		        Entity
+		Size size;																						\
+		/**
+		 * @var EntityDefinition*	entityDefinition
+		 * @brief					Entity's definition
+		 * @memberof				Entity
 		 */ 																							\
-        EntityDefinition* entityDefinition;																\
-        /**
-		 * @var VBVec3D*            centerDisplacement
-		 * @brief                   Center displacement
-		 * @memberof		        Entity
+		EntityDefinition* entityDefinition;																\
+		/**
+		 * @var VBVec3D*			centerDisplacement
+		 * @brief					Center displacement
+		 * @memberof				Entity
 		 */ 																							\
-        VBVec3D* centerDisplacement;																	\
-        /**
-		 * @var s16                 id
-		 * @brief                   Entity's id, set by the user
-		 * @memberof		        Entity
+		VBVec3D* centerDisplacement;																	\
+		/**
+		 * @var s16				 	id
+		 * @brief					Entity's id, set by the user
+		 * @memberof				Entity
 		 */ 																							\
-        s16 id;																					        \
-        /**
-		 * @var s16                 internalId
-		 * @brief                   Entity's internal id, set by the engine
-		 * @memberof		        Entity
+		s16 id;																							\
+		/**
+		 * @var s16				 	internalId
+		 * @brief					Entity's internal id, set by the engine
+		 * @memberof				Entity
 		 */ 																							\
-        s16 internalId;																					\
-        /**
-		 * @var bool                updateSprites
-		 * @brief                   Flag to update sprites' attributes
-		 * @memberof		        Entity
+		s16 internalId;																					\
+		/**
+		 * @var bool				updateSprites
+		 * @brief					Flag to update sprites' attributes
+		 * @memberof				Entity
 		 */ 																							\
-        bool updateSprites;																				\
+		bool updateSprites;																				\
 
 __CLASS(Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);

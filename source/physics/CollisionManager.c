@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <CollisionManager.h>
@@ -35,24 +35,24 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionManager_ATTRIBUTES												                        \
-        /* super's attributes */													                    \
-        Object_ATTRIBUTES															                    \
-        /* a list of registered shapes */											                    \
-        VirtualList	shapes;															                    \
-        /* a list of shapes which must detect collisions */							                    \
-        VirtualList	activeShapes;													                    \
-        /* a list of moving shapes */												                    \
-        VirtualList	movingShapes;													                    \
-        /* a list of shapes which must be removed */								                    \
-        VirtualList	removedShapes;													                    \
-        /* a list of shapes which became inactive */								                    \
-        VirtualList	inactiveShapes;													                    \
-        /* flag to block removals when traversing the shapes list */				                    \
-        bool checkingCollisions;													                    \
+#define CollisionManager_ATTRIBUTES																		\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* a list of registered shapes */																\
+		VirtualList	shapes;																				\
+		/* a list of shapes which must detect collisions */												\
+		VirtualList	activeShapes;																		\
+		/* a list of moving shapes */																	\
+		VirtualList	movingShapes;																		\
+		/* a list of shapes which must be removed */													\
+		VirtualList	removedShapes;																		\
+		/* a list of shapes which became inactive */													\
+		VirtualList	inactiveShapes;																		\
+		/* flag to block removals when traversing the shapes list */									\
+		bool checkingCollisions;																		\
 
 // define the CollisionManager
 __CLASS_DEFINITION(CollisionManager, Object);
@@ -64,14 +64,14 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 Shape SpatialObject_getShape(SpatialObject this);
 static void CollisionManager_processInactiveShapes(CollisionManager this);
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DEFINITION(CollisionManager)
@@ -168,7 +168,7 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape)
 		// will be removed in the next update
 		Shape_setActive(shape, false);
 
-		// place in  the removed shapes list
+		// place in the removed shapes list
 		VirtualList_pushFront(this->removedShapes, (BYTE*)shape);
 	}
 }
@@ -192,22 +192,22 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 
 	VirtualNode node = this->removedShapes->head;
 
-    for(; node; node = node->next)
-    {
-        Shape shape = __SAFE_CAST(Shape, node->data);
+	for(; node; node = node->next)
+	{
+		Shape shape = __SAFE_CAST(Shape, node->data);
 
-        // remove from the list
-        VirtualList_removeElement(this->shapes, shape);
-        VirtualList_removeElement(this->activeShapes, shape);
-        VirtualList_removeElement(this->movingShapes, shape);
-        VirtualList_removeElement(this->inactiveShapes, shape);
+		// remove from the list
+		VirtualList_removeElement(this->shapes, shape);
+		VirtualList_removeElement(this->activeShapes, shape);
+		VirtualList_removeElement(this->movingShapes, shape);
+		VirtualList_removeElement(this->inactiveShapes, shape);
 
-        // delete it
-        __DELETE(shape);
-    }
+		// delete it
+		__DELETE(shape);
+	}
 
-    // clear the list
-    VirtualList_clear(this->removedShapes);
+	// clear the list
+	VirtualList_clear(this->removedShapes);
 }
 
 // process inactive shapes
@@ -260,57 +260,57 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 		if(shape->checkForCollisions)
 		{
-            VirtualList collidingObjects = NULL;
+			VirtualList collidingObjects = NULL;
 
-            // the result thrown by the collision algorithm
-            int collisionResult = kNoCollision;
+			// the result thrown by the collision algorithm
+			int collisionResult = kNoCollision;
 
-            // don't check the current shape again when processing other movable shapes
-            Shape_checked(shape, true);
+			// don't check the current shape again when processing other movable shapes
+			Shape_checked(shape, true);
 
-            VirtualNode nodeForActiveShapes = this->activeShapes->head;
+			VirtualNode nodeForActiveShapes = this->activeShapes->head;
 
-            // check the shapes
-            for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
-            {
-                // load the current shape to check against
-                Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
+			// check the shapes
+			for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
+			{
+				// load the current shape to check against
+				Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
 
-                // don't compare with current movable shape, when the shape already has been checked
-                // and when it is not active
-                if(shape != shapeToCheck && !shapeToCheck->checked)
-                {
-                    // check if shapes overlap
-                    collisionResult = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
+				// don't compare with current movable shape, when the shape already has been checked
+				// and when it is not active
+				if(shape != shapeToCheck && !shapeToCheck->checked)
+				{
+					// check if shapes overlap
+					collisionResult = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
 
-                    if(collisionResult)
-                    {
-                        if(!collidingObjects)
-                        {
-                            collidingObjects = __NEW(VirtualList);
-                        }
+					if(collisionResult)
+					{
+						if(!collidingObjects)
+						{
+							collidingObjects = __NEW(VirtualList);
+						}
 
-                        // add object to list
-                        VirtualList_pushFront(collidingObjects, shapeToCheck->owner);
-                    }
-                }
-            }
+						// add object to list
+						VirtualList_pushFront(collidingObjects, shapeToCheck->owner);
+					}
+				}
+			}
 
-            if(collidingObjects)
-            {
-                // inform the owner about the collision
-               returnValue |= MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
+			if(collidingObjects)
+			{
+				// inform the owner about the collision
+				returnValue |= MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
 
-                __DELETE(collidingObjects);
-            }
+				__DELETE(collidingObjects);
+			}
 
-            collidingObjects = NULL;
-        }
+			collidingObjects = NULL;
+		}
 	}
 
 	this->checkingCollisions = false;
 
-    return returnValue;
+	return returnValue;
 }
 
 // unregister all shapes
@@ -371,11 +371,11 @@ void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape)
 
 	if(VirtualList_find(this->activeShapes, shape))
 	{
-	    return;
-    }
+		return;
+	}
 
-    VirtualList_pushFront(this->activeShapes, shape);
-    VirtualList_removeElement(this->inactiveShapes, shape);
+	VirtualList_pushFront(this->activeShapes, shape);
+	VirtualList_removeElement(this->inactiveShapes, shape);
 }
 
 // inform of a change in the shape
@@ -392,7 +392,7 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 		return;
 	}
 
-    VirtualList_pushBack(this->inactiveShapes, shape);
+	VirtualList_pushBack(this->inactiveShapes, shape);
 }
 
 // draw shapes
@@ -432,8 +432,8 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 	ASSERT(this, "CollisionManager::searchNextShapeOfCollision: null this");
 
 	VBVec3D displacement =
-    {
-    	direction.x ? 0 < direction.x ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0,
+	{
+		direction.x ? 0 < direction.x ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0,
 		direction.y ? 0 < direction.y ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0,
 		direction.z ? 0 < direction.z ? __1I_FIX19_13 : ITOFIX19_13(-1) : 0
 	};

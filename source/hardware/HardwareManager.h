@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -32,34 +32,34 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DEFINES
+//												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
 static u8* const _hardwareRegisters =			(u8*)0x02000000;
 
-// Hardware Register Mnemonics
+// hardware register mnemonics
 #define	__CCR		0x00	// Communication Control Register	(0x0200 0000)
-#define	__CCSR	0x04	// COMCNT Control Register			(0x0200 0004)
-#define	__CDTR	0x08	// Transmitted Data Register		(0x0200 0008)
-#define	__CDRR	0x0C	// Received Data Register			(0x0200 000C)
-#define	__SDLR	0x10	// Serial Data Low Register			(0x0200 0010)
-#define	__SDHR	0x14	// Serial Data High Register		(0x0200 0014)
+#define	__CCSR		0x04	// COMCNT Control Register			(0x0200 0004)
+#define	__CDTR		0x08	// Transmitted Data Register		(0x0200 0008)
+#define	__CDRR		0x0C	// Received Data Register			(0x0200 000C)
+#define	__SDLR		0x10	// Serial Data Low Register			(0x0200 0010)
+#define	__SDHR		0x14	// Serial Data High Register		(0x0200 0014)
 #define	__TLR		0x18	// Timer Low Register				(0x0200 0018)
 #define	__THR		0x1C	// Timer High Register				(0x0200 001C)
 #define	__TCR		0x20	// Timer Control Register			(0x0200 0020)
 #define	__WCR		0x24	// Wait-state Control Register		(0x0200 0024)
 #define	__SCR		0x28	// Serial Control Register			(0x0200 0028)
 
-// Cache Management
-#define CACHE_ENABLE    asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
-#define CACHE_DISABLE   asm("ldsr r0,sr24")
+// cache management
+#define CACHE_ENABLE	asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
+#define CACHE_DISABLE	asm("ldsr r0,sr24")
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+// defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
 #define HardwareManager_METHODS(ClassName)																\
@@ -73,7 +73,7 @@ __CLASS(HardwareManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 HardwareManager HardwareManager_getInstance();

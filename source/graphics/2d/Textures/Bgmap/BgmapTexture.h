@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Texture.h>
@@ -33,39 +33,31 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define BgmapTexture_METHODS(ClassName)																	\
-        Texture_METHODS(ClassName)																		\
+		Texture_METHODS(ClassName)																		\
 
 #define BgmapTexture_SET_VTABLE(ClassName)																\
-    	Texture_SET_VTABLE(ClassName)																	\
-	    __VIRTUAL_SET(ClassName, BgmapTexture, write);													\
-	    __VIRTUAL_SET(ClassName, BgmapTexture, rewrite);												\
+		Texture_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, BgmapTexture, write);													\
+		__VIRTUAL_SET(ClassName, BgmapTexture, rewrite);												\
 
 #define BgmapTexture_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Texture_ATTRIBUTES																				\
-        /* how many textures are using me */															\
-        s8 usageCount;																					\
-        /* remaining rows to be written */																\
-        s8 remainingRowsToBeWritten;																	\
+		/* super's attributes */																		\
+		Texture_ATTRIBUTES																				\
+		/* how many textures are using me */															\
+		s8 usageCount;																					\
+		/* remaining rows to be written */																\
+		s8 remainingRowsToBeWritten;																	\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(BgmapTexture);
 
-//use a BgmapTexture when you want to show a static background or a character that must be scaled according
-//its depth on the screen so there exists consistency between the depth and the size of the character
-
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef const TextureDefinition BgmapTextureDefinition;
@@ -73,7 +65,7 @@ typedef const BgmapTextureDefinition BgmapTextureROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Screen.h>
@@ -32,21 +32,21 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(Screen, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void Screen_constructor(Screen this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												GLOBALS
+//												GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
 const Optical* _optical = NULL;
@@ -55,7 +55,7 @@ const VBVec3D* _screenDisplacement = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // it's a singleton
@@ -79,7 +79,7 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 	// set the default screen movement manager
 	this->screenMovementManager = ScreenMovementManager_getInstance();
 
-    // set the default screen effect manager
+	// set the default screen effect manager
 	this->screenEffectManager = ScreenEffectManager_getInstance();
 
 	this->focusEntityPositionDisplacement.x = 0;
@@ -129,14 +129,14 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 {
 	ASSERT(this, "Screen::setScreenMovementManager: null this");
 
-    if(this->screenMovementManager != screenMovementManager)
-    {
-        if(this->screenMovementManager)
-        {
-            __DELETE(this->screenMovementManager);
-        }
+	if(this->screenMovementManager != screenMovementManager)
+	{
+		if(this->screenMovementManager)
+		{
+			__DELETE(this->screenMovementManager);
+		}
 
-        this->screenMovementManager = screenMovementManager;
+		this->screenMovementManager = screenMovementManager;
 	}
 }
 
@@ -145,15 +145,15 @@ void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffect
 {
 	ASSERT(this, "Screen::setScreenEffectManager: null this");
 
-    if(this->screenEffectManager != screenEffectManager)
-    {
-        if(this->screenEffectManager)
-        {
-            __DELETE(this->screenEffectManager);
-        }
+	if(this->screenEffectManager != screenEffectManager)
+	{
+		if(this->screenEffectManager)
+		{
+			__DELETE(this->screenEffectManager);
+		}
 
-        this->screenEffectManager = screenEffectManager;
-    }
+		this->screenEffectManager = screenEffectManager;
+	}
 }
 
 // center world's screen in function of focus actor's position
@@ -182,10 +182,10 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
 
 	this->focusInGameEntity = focusInGameEntity;
 
-    if(focusInGameEntity)
-    {
-        // focus now
-        Screen_focus(this, false);
+	if(focusInGameEntity)
+	{
+		// focus now
+		Screen_focus(this, false);
 	}
 }
 
@@ -289,9 +289,9 @@ void Screen_setPosition(Screen this, VBVec3D position)
 
 	this->position = position;
 
-    this->lastDisplacement.x = __1I_FIX19_13;
-    this->lastDisplacement.y = __1I_FIX19_13;
-    this->lastDisplacement.z = __1I_FIX19_13;
+	this->lastDisplacement.x = __1I_FIX19_13;
+	this->lastDisplacement.y = __1I_FIX19_13;
+	this->lastDisplacement.z = __1I_FIX19_13;
 
 	Screen_capPosition(this);
 }
@@ -343,8 +343,8 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
 
-    // focus now
-    Screen_focus(this, false);
+	// focus now
+	Screen_focus(this, false);
 
 	// make sure that any other entity knows about the change
 	Screen_forceDisplacement(this, true);
@@ -389,9 +389,9 @@ void Screen_startEffect(Screen this, int effect, ...)
 	ASSERT(this, "Screen::startEffect: null this");
 
 	va_list args;
-    va_start(args, effect);
-    __VIRTUAL_CALL(ScreenEffectManager, startEffect, this->screenEffectManager, effect, args);
-    va_end(args);
+	va_start(args, effect);
+	__VIRTUAL_CALL(ScreenEffectManager, startEffect, this->screenEffectManager, effect, args);
+	va_end(args);
 }
 
 void Screen_stopEffect(Screen this, int effect)

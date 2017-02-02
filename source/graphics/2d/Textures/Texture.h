@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -33,47 +33,39 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-#define Texture_METHODS(ClassName)																	    \
-        Object_METHODS(ClassName)																		\
-        __VIRTUAL_DEC(ClassName, void, write);															\
-        __VIRTUAL_DEC(ClassName, void, rewrite);															\
+#define Texture_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, write);															\
+		__VIRTUAL_DEC(ClassName, void, rewrite);														\
 
 #define Texture_SET_VTABLE(ClassName)																	\
-        Object_SET_VTABLE(ClassName)																	\
-        __VIRTUAL_SET(ClassName, Texture, write);														\
-        __VIRTUAL_SET(ClassName, Texture, rewrite);															\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Texture, write);														\
+		__VIRTUAL_SET(ClassName, Texture, rewrite);														\
 
 #define Texture_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* char group to use int this texture */														\
-        CharSet charSet;																				\
-        /* pointer to ROM definition */																	\
-        TextureDefinition* textureDefinition;															\
-        /* texture's id */																				\
-        u16 id;																							\
-        /* color palette */																				\
-        u8 palette;																						\
-        /* written flag */																				\
-        u8 written;																						\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* char group to use int this texture */														\
+		CharSet charSet;																				\
+		/* pointer to ROM definition */																	\
+		TextureDefinition* textureDefinition;															\
+		/* texture's id */																				\
+		u16 id;																							\
+		/* color palette */																				\
+		u8 palette;																						\
+		/* written flag */																				\
+		u8 written;																						\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(Texture);
 
-// use a Texture when you want to show a static background or a character that must be scaled according to
-// its depth on the screen so there exists consistency between the depth and the size of the character
-
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines a background in ROM memory
@@ -106,7 +98,7 @@ typedef const TextureDefinition TextureROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
@@ -132,5 +124,6 @@ u16 Texture_getId(Texture this);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 bool Texture_isWritten(Texture this);
+
 
 #endif

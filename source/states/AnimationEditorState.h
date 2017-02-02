@@ -26,14 +26,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -46,13 +46,13 @@
 	__VIRTUAL_SET(ClassName, AnimationEditorState, enter);												\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, execute);											\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, exit);												\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, processMessage);		                                \
+	__VIRTUAL_SET(ClassName, AnimationEditorState, processMessage);										\
 
 __CLASS(AnimationEditorState);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 // setup the init focus screen

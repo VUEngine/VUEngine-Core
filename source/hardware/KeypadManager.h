@@ -24,25 +24,25 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											MACROS
+//											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// Hardware reg __SCR definitions
-#define	__S_INTDIS	0x80 	// Disable Interrups
+// hardware reg __SCR definitions
+#define	__S_INTDIS	0x80 	// Disable Interrupts
 #define	__S_SW		0x20 	// Software Reading
 #define	__S_SWCK	0x10 	// Software Clock, Interrupt?
 #define	__S_HW		0x04 	// Hardware Reading
 #define	__S_STAT	0x02 	// Hardware Reading Status
 #define	__S_HWDIS	0x01	// Disable Hardware Reading
 
-// Keypad Definitions
+// keypad definitions
 #define	K_PWR	0x0001		// Low Battery
 #define	K_SGN	0x0002		// Signature; 1 = Standard Pad
 #define	K_A		0x0004		// A Button
@@ -51,10 +51,10 @@
 #define	K_LT	0x0020		// L Trigger
 #define	K_RU	0x0040		// Right Pad, Up
 #define	K_RR	0x0080		// Right Pad, Right
-#define	K_LR	0x0100		// Left Pad,  Right
-#define	K_LL	0x0200		// Left Pad,  Left
-#define	K_LD	0x0400		// Left Pad,  Down
-#define	K_LU	0x0800		// Left Pad,  Up
+#define	K_LR	0x0100		// Left Pad, Right
+#define	K_LL	0x0200		// Left Pad, Left
+#define	K_LD	0x0400		// Left Pad, Down
+#define	K_LU	0x0800		// Left Pad, Up
 #define	K_STA	0x1000		// Start Button
 #define	K_SEL	0x2000		// Select Button
 #define	K_RL	0x4000		// Right Pad, Left
@@ -67,10 +67,10 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
+// defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
 
 // declare the virtual methods
 #define KeypadManager_METHODS(ClassName)																\
@@ -84,7 +84,7 @@ __CLASS(KeypadManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 KeypadManager KeypadManager_getInstance();

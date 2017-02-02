@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimatedInGameEntity.h>
@@ -35,7 +35,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -73,16 +73,16 @@
 
 
 #define Actor_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        AnimatedInGameEntity_ATTRIBUTES																	\
-        /* definition */																				\
-        const ActorDefinition* actorDefinition;															\
-        /* a state machine to handle entity's logic	*/													\
-        StateMachine stateMachine;																		\
-        /* a physical body	*/																			\
-        Body body;																						\
-        /* collision solver */																			\
-        CollisionSolver collisionSolver;																\
+		/* super's attributes */																		\
+		AnimatedInGameEntity_ATTRIBUTES																	\
+		/* definition */																				\
+		const ActorDefinition* actorDefinition;															\
+		/* a state machine to handle entity's logic	*/													\
+		StateMachine stateMachine;																		\
+		/* a physical body	*/																			\
+		Body body;																						\
+		/* collision solver */																			\
+		CollisionSolver collisionSolver;																\
 
 __CLASS(Actor);
 
@@ -106,7 +106,7 @@ typedef const ActorDefinition ActorROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);

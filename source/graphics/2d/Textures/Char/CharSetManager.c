@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSetManager.h>
@@ -33,16 +33,16 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define CharSetManager_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* charsets defined */																			\
-        VirtualList charSets;															                \
-        /* next offset to reclaim */																	\
-        u16 freedOffset;																                \
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* charsets defined */																			\
+		VirtualList charSets;																			\
+		/* next offset to reclaim */																	\
+		u16 freedOffset;																				\
 
 // define the CharSetManager
 __CLASS_DEFINITION(CharSetManager, Object);
@@ -52,7 +52,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void CharSetManager_constructor(CharSetManager this);
@@ -61,7 +61,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(CharSetManager);
@@ -71,8 +71,8 @@ static void __attribute__ ((noinline)) CharSetManager_constructor(CharSetManager
 {
 	__CONSTRUCT_BASE(Object);
 
-    this->charSets = __NEW(VirtualList);
-    this->freedOffset = 1;
+	this->charSets = __NEW(VirtualList);
+	this->freedOffset = 1;
 }
 
 // class's destructor
@@ -80,10 +80,10 @@ void CharSetManager_destructor(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::destructor: null this");
 
-    CharSetManager_reset(this);
+	CharSetManager_reset(this);
 
-    __DELETE(this->charSets);
-    this->charSets = NULL;
+	__DELETE(this->charSets);
+	this->charSets = NULL;
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -94,19 +94,19 @@ void CharSetManager_reset(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::reset: null this");
 
-    if(this->charSets)
-    {
-        VirtualNode node = this->charSets->head;
+	if(this->charSets)
+	{
+		VirtualNode node = this->charSets->head;
 
-        for(; node; node = node->next)
-        {
-            __DELETE(node->data);
-        }
+		for(; node; node = node->next)
+		{
+			__DELETE(node->data);
+		}
 
-        VirtualList_clear(this->charSets);
-    }
+		VirtualList_clear(this->charSets);
+	}
 
-    this->freedOffset = 1;
+	this->freedOffset = 1;
 }
 
 // find a charset
@@ -115,17 +115,17 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 	ASSERT(this, "CharSetManager::findCharSet: null this");
 
 	// try to find a charset with the same char definition
-    VirtualNode node = this->charSets->head;
+	VirtualNode node = this->charSets->head;
 
-    for(; node; node = node->next)
-    {
-        CharSet charSet = __SAFE_CAST(CharSet, node->data);
+	for(; node; node = node->next)
+	{
+		CharSet charSet = __SAFE_CAST(CharSet, node->data);
 
-        if(charSet && CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
-        {
-            return charSet;
-        }
-    }
+		if(charSet && CharSet_getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet_getAllocationType(charSet) == charSetDefinition->allocationType)
+		{
+			return charSet;
+		}
+	}
 
 	return NULL;
 }
@@ -198,27 +198,27 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::allocateCharSet: null this");
-    ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
+	ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
 	ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 
-    u16 offset = 1;
+	u16 offset = 1;
 
-    if(this->charSets->head)
-    {
-        CharSet lastCharSet = __SAFE_CAST(CharSet, VirtualList_back(this->charSets));
-        offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
-    }
+	if(this->charSets->head)
+	{
+		CharSet lastCharSet = __SAFE_CAST(CharSet, VirtualList_back(this->charSets));
+		offset += CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
+	}
 
-    if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
-    {
-        CharSet charSet = __NEW(CharSet, charSetDefinition, offset);
+	if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
+	{
+		CharSet charSet = __NEW(CharSet, charSetDefinition, offset);
 
-        CharSet_write(charSet);
+		CharSet_write(charSet);
 
-        VirtualList_pushBack(this->charSets, charSet);
+		VirtualList_pushBack(this->charSets, charSet);
 
-        return charSet;
-    }
+		return charSet;
+	}
 
 	// if there isn't enough memory thrown an exception
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: char mem depleted");
@@ -231,34 +231,34 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
-    if(this->freedOffset)
-    {
-        VirtualNode node = this->charSets->head;
+	if(this->freedOffset)
+	{
+		VirtualNode node = this->charSets->head;
 
-        for(; node; node = node->next)
-        {
-            CharSet charSet = __SAFE_CAST(CharSet, node->data);
+		for(; node; node = node->next)
+		{
+			CharSet charSet = __SAFE_CAST(CharSet, node->data);
 
-            if(this->freedOffset == CharSet_getOffset(charSet))
-            {
-                this->freedOffset = 1;
-                return;
-            }
+			if(this->freedOffset == CharSet_getOffset(charSet))
+			{
+				this->freedOffset = 1;
+				return;
+			}
 
-            if(this->freedOffset < CharSet_getOffset(charSet))
-            {
-                Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
+			if(this->freedOffset < CharSet_getOffset(charSet))
+			{
+				Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
 
-                CharSet_setOffset(charSet, this->freedOffset);
-                //write to char memory
-                CharSet_rewrite(charSet);
-                this->freedOffset += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
-                return;
-            }
-        }
+				CharSet_setOffset(charSet, this->freedOffset);
+				//write to char memory
+				CharSet_rewrite(charSet);
+				this->freedOffset += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
+				return;
+			}
+		}
 
-        this->freedOffset = 1;
-    }
+		this->freedOffset = 1;
+	}
 }
 
 int CharSetManager_getTotalUsedChars(CharSetManager this)
@@ -266,8 +266,8 @@ int CharSetManager_getTotalUsedChars(CharSetManager this)
 	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
 	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
-    CharSet lastCharSet = VirtualList_back(this->charSets);
-    return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
+	CharSet lastCharSet = VirtualList_back(this->charSets);
+	return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 }
 
 int CharSetManager_getTotalFreeChars(CharSetManager this)

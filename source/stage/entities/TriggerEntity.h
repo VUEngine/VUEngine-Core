@@ -24,14 +24,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <InGameEntity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define TriggerEntity_METHODS(ClassName)																\
@@ -42,16 +42,16 @@
 		__VIRTUAL_SET(ClassName, TriggerEntity, moves);													\
 
 #define TriggerEntity_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        InGameEntity_ATTRIBUTES																			\
-        /* ROM definition */																			\
-        TriggerEntityDefinition* triggerEntityDefinition;
+		/* super's attributes */																		\
+		InGameEntity_ATTRIBUTES																			\
+		/* ROM definition */																			\
+		TriggerEntityDefinition* triggerEntityDefinition;
 
 __CLASS(TriggerEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines a TriggerEntity in ROM memory
@@ -72,7 +72,7 @@ typedef const TriggerEntityDefinition TriggerEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinition, s16 id, s16 internalId, const char* const name);

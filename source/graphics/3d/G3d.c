@@ -509,7 +509,7 @@ void G3d_calculateProjection(vector3d* o)
 	"shl %[fixShift],         r11\n"
 	//F_MUL(o->x,cam.d)
 	"shl 8,                   r6\n"                   //specific to cam.d of 256 and fixShift of 3 << 11 >> 3
-	                                                  //This is a multiply of cam.d or shift left 11 and a F_NUM_DN of the fix point shift value of 3
+													  //This is a multiply of cam.d or shift left 11 and a F_NUM_DN of the fix point shift value of 3
 	//F_MUL(o->y,cam.d)
 	"shl 8,                   r7\n"                   //specific to cam.d of 256 and fixShift of 3 << 11 >> 3
 	//F_ADD(cam.d, o->z)
@@ -517,7 +517,7 @@ void G3d_calculateProjection(vector3d* o)
 	//F_DIV : sx
 	"shl %[fixShift],         r6\n"
 	"div r8,                  r6\n"                   //Need to find a way to eliminate this divide
-	                                                  //Perhaps lookup table of some sort?
+													  //Perhaps lookup table of some sort?
 	//F_DIV : sy
 	"shl %[fixShift],         r7\n"
 	"div r8,                  r7\n"                   //Need to find a way to eliminate this divide
@@ -1153,7 +1153,7 @@ collision detection.
 void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag)
 {
 	s32 c1minX, c1maxX,
-	    c1minY, c1maxY,
+		c1minY, c1maxY,
 		c1minZ, c1maxZ,
 		c2minX, c2maxX,
 		c2minY, c2maxY,
@@ -1207,7 +1207,7 @@ void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* posi
 			if(
 				(c2minY >= c1minY && c2minY <= c1maxY) ||
 				(c2maxY >= c1minY && c2maxY <= c1maxY))
-	        {
+			{
 					if(
 						(c2minZ >= c1minZ && c2minZ <= c1maxZ) ||
 						(c2maxZ >= c1minZ && c2maxZ <= c1maxZ))

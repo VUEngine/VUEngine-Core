@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
@@ -31,21 +31,21 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(GameState, State);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void GameState_initialTransform(GameState this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
@@ -103,7 +103,7 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::enter: null this");
 
-    GameState_pauseClocks(this);
+	GameState_pauseClocks(this);
 
 	Clock_start(this->messagingClock);
 }
@@ -137,8 +137,8 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 
 	this->stage = NULL;
 
-    // stop my clocks
-    GameState_stopClocks(this);
+	// stop my clocks
+	GameState_stopClocks(this);
 }
 
 // state's suspend
@@ -218,8 +218,8 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// move the screen to its previous position
 	Screen_focus(Screen_getInstance(), false);
 
-    // force all transformations to take place again
-    GameState_initialTransform(this);
+	// force all transformations to take place again
+	GameState_initialTransform(this);
 
 	// set up visual representation
 	GameState_updateVisuals(this);
@@ -261,9 +261,9 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
 // state's execute
 void GameState_stream(GameState this)
 {
-    ASSERT(this, "GameState::stream: null this");
+	ASSERT(this, "GameState::stream: null this");
 
-    Stage_stream(this->stage);
+	Stage_stream(this->stage);
 }
 
 // update level entities' positions
@@ -316,7 +316,7 @@ static void GameState_initialTransform(GameState this)
 		{__1I_FIX7_9, __1I_FIX7_9},
 	};
 
-    __VIRTUAL_CALL(Container, initialTransform, this->stage, &environmentTransform, true);
+	__VIRTUAL_CALL(Container, initialTransform, this->stage, &environmentTransform, true);
 }
 
 
@@ -381,8 +381,8 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// move the screen to its previous position
 	Screen_focus(Screen_getInstance(), false);
 
-    // transform everything
-    GameState_initialTransform(this);
+	// transform everything
+	GameState_initialTransform(this);
 
 	// set up visual representation
 	GameState_updateVisuals(this);

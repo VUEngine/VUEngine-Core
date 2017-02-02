@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -36,7 +36,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 // define the MBackground
@@ -47,7 +47,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void MBackground_registerTextures(MBackground this);
@@ -55,7 +55,7 @@ static void MBackground_releaseTextures(MBackground this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -82,7 +82,7 @@ void MBackground_destructor(MBackground this)
 {
 	ASSERT(this, "MBackground::destructor: null this");
 
-    MBackground_releaseTextures(this);
+	MBackground_releaseTextures(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -105,7 +105,7 @@ void MBackground_suspend(MBackground this)
 {
 	ASSERT(this, "MBackground::suspend: null this");
 
-    MBackground_releaseTextures(this);
+	MBackground_releaseTextures(this);
 
 	Entity_suspend(__SAFE_CAST(Entity, this));
 }
@@ -132,7 +132,7 @@ static void MBackground_registerTextures(MBackground this)
 		{
 			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
-			    MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
 			}
 			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
 			{
@@ -149,17 +149,17 @@ static void MBackground_registerTextures(MBackground this)
 
 static void MBackground_releaseTextures(MBackground this)
 {
-    // speed up my destruction by deleting my sprites
+	// speed up my destruction by deleting my sprites
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
 
-        for(; node; node = node->next)
-        {
-            Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
-            __DELETE(node->data);
-            MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), texture);
-        }
+		for(; node; node = node->next)
+		{
+			Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
+			__DELETE(node->data);
+			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), texture);
+		}
 
 		// delete the sprites
 		__DELETE(this->sprites);

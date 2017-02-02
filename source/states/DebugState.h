@@ -26,14 +26,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -46,13 +46,13 @@
 	__VIRTUAL_SET(ClassName, DebugState, enter);														\
 	__VIRTUAL_SET(ClassName, DebugState, execute);														\
 	__VIRTUAL_SET(ClassName, DebugState, exit);															\
-	__VIRTUAL_SET(ClassName, DebugState, processMessage);					                            \
+	__VIRTUAL_SET(ClassName, DebugState, processMessage);												\
 
 __CLASS(DebugState);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 // setup the init focus screen

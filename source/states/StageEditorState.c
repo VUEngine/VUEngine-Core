@@ -23,7 +23,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <StageEditorState.h>
@@ -34,30 +34,30 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void StageEditorState_destructor(StageEditorState this);
 static void StageEditorState_constructor(StageEditorState this);
-static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
-static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
-static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
-static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram);
+static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
+static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
+static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
+static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define StageEditorState_ATTRIBUTES																		\
-        /* inherits */																					\
-        GameState_ATTRIBUTES																			\
+		/* inherits */																					\
+		GameState_ATTRIBUTES																			\
 
 __CLASS_DEFINITION(StageEditorState, GameState);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // it's a singleton
@@ -77,27 +77,27 @@ static void StageEditorState_destructor(StageEditorState this)
 }
 
 // state's enter
-static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
+static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	StageEditor_start(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute
-static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
+static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	StageEditor_update(StageEditor_getInstance());
 }
 
 // state's exit
-static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
+static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	StageEditor_stop(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's on message
-static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram)
+static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	// process message
 	switch(Telegram_getMessage(telegram))

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Actor.h>
@@ -39,14 +39,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // global
@@ -58,7 +58,7 @@ static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject colliding
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -107,9 +107,9 @@ void Actor_destructor(Actor this)
 	// destroy state machine
 	if(this->stateMachine)
 	{
-    	__DELETE(this->stateMachine);
-    	this->stateMachine = NULL;
-    }
+		__DELETE(this->stateMachine);
+		this->stateMachine = NULL;
+	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -145,9 +145,9 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	this->transform.globalPosition.z += displacement.z;
 
 	if(this->body)
-    {
+	{
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
-    }
+	}
 
 	this->invalidateGlobalTransformation = (displacement.x ? __XAXIS: 0) | (displacement.y ? __YAXIS: 0) | (displacement.y ? __ZAXIS: 0);
 }
@@ -180,38 +180,38 @@ void Actor_syncWithBody(Actor this)
 	localPosition.y += bodyLastDisplacement.y;
 	localPosition.z += bodyLastDisplacement.z;
 
-    // sync direction with velocity
-    if(Body_isMoving(this->body))
-    {
-        Velocity velocity = Body_getVelocity(this->body);
+	// sync direction with velocity
+	if(Body_isMoving(this->body))
+	{
+		Velocity velocity = Body_getVelocity(this->body);
 
-        if(0 < velocity.x)
-        {
-            this->direction.x = __RIGHT;
-        }
-        else if(0 > velocity.x)
-        {
-            this->direction.x = __LEFT;
-        }
+		if(0 < velocity.x)
+		{
+			this->direction.x = __RIGHT;
+		}
+		else if(0 > velocity.x)
+		{
+			this->direction.x = __LEFT;
+		}
 
-        if(0 < velocity.y)
-        {
-            this->direction.y = __DOWN;
-        }
-        else if(0 > velocity.y)
-        {
-            this->direction.y = __UP;
-        }
+		if(0 < velocity.y)
+		{
+			this->direction.y = __DOWN;
+		}
+		else if(0 > velocity.y)
+		{
+			this->direction.y = __UP;
+		}
 
-        if(0 < velocity.z)
-        {
-            this->direction.z = __FAR;
-        }
-        else if(0 > velocity.z)
-        {
-            this->direction.z = __NEAR;
-        }
-    }
+		if(0 < velocity.z)
+		{
+			this->direction.z = __FAR;
+		}
+		else if(0 > velocity.z)
+		{
+			this->direction.z = __NEAR;
+		}
+	}
 
 	Entity_setLocalPosition(__SAFE_CAST(Entity, this), &localPosition);
 }
@@ -234,12 +234,12 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	if(this->body)
 	{
 		Actor_syncWithBody(this);
-    }
+	}
 
 	// call base
 	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
 /*
-  	if(this->shape)
+	if(this->shape)
 	{
 		__VIRTUAL_CALL(Shape, draw, this->shape);
 	}
@@ -364,11 +364,11 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	if((__XAXIS & axis))
 	{
 		if(__RIGHT == this->direction.x)
-	    {
+		{
 			this->direction.x = __LEFT;
 		}
 		else
-	    {
+		{
 			this->direction.x = __RIGHT;
 		}
 	}
@@ -376,11 +376,11 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	if((__YAXIS & axis))
 	{
 		if(__NEAR == this->direction.y)
-	    {
+		{
 			this->direction.y = __FAR;
 		}
 		else
-	    {
+		{
 			this->direction.x = __NEAR;
 		}
 	}
@@ -388,11 +388,11 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	if((__ZAXIS & axis))
 	{
 		if(__RIGHT == this->direction.z)
-	    {
+		{
 			this->direction.x = __LEFT;
 		}
 		else
-	    {
+		{
 			this->direction.x = __RIGHT;
 		}
 	}
@@ -432,44 +432,44 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 		int message = Telegram_getMessage(telegram);
 
 		if(this->body)
-	    {
-            switch(message)
-            {
-                case kCollision:
+		{
+			switch(message)
+			{
+				case kCollision:
 
-                    Actor_resolveCollisions(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
-                    return true;
-                    break;
+					Actor_resolveCollisions(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
+					return true;
+					break;
 
-                case kCollisionWithYou:
+				case kCollisionWithYou:
 
-                    Actor_resolveCollisionsAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
-                    return true;
-                    break;
+					Actor_resolveCollisionsAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
+					return true;
+					break;
 
-                case kBodyStartedMoving:
+				case kBodyStartedMoving:
 
-                    ASSERT(this->shape, "Actor::handleMessage: null shape");
-                    CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-                    Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
-                    return true;
-                    break;
+					ASSERT(this->shape, "Actor::handleMessage: null shape");
+					CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+					Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
+					return true;
+					break;
 
-                case kBodyStopped:
+				case kBodyStopped:
 
-                    if(!Body_isMoving(this->body))
-                    {
-                        ASSERT(this->shape, "Actor::handleMessage: null shape");
-                        CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-                    }
-                    break;
+					if(!Body_isMoving(this->body))
+					{
+						ASSERT(this->shape, "Actor::handleMessage: null shape");
+						CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+					}
+					break;
 
-                case kBodyBounced:
+				case kBodyBounced:
 
-                    Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
-                    return true;
-                    break;
-            }
+					Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
+					return true;
+					break;
+			}
 		}
 	}
 	return false;
@@ -496,8 +496,8 @@ void Actor_stopMovement(Actor this, u32 stopShape)
 	if(stopShape && this->shape)
 	{
 		// unregister the shape for collision detections
-        CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-    }
+		CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+	}
 }
 
 void Actor_addForce(Actor this, const Force* force)
@@ -506,10 +506,10 @@ void Actor_addForce(Actor this, const Force* force)
 	ASSERT(this->body, "Actor::Force: null body");
 
 	Acceleration acceleration =
-    {
-    	force->x,
-    	force->y,
-    	force->z
+	{
+		force->x,
+		force->y,
+		force->z
 	};
 
 	Velocity velocity = Body_getVelocity(this->body);
@@ -526,12 +526,12 @@ void Actor_addForce(Actor this, const Force* force)
 	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
 	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
-    if(this->shape)
-    {
-        // register the shape for collision detections
-        Shape_setActive(this->shape, true);
-        CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-    }
+	if(this->shape)
+	{
+		// register the shape for collision detections
+		Shape_setActive(this->shape, true);
+		CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+	}
 
 }
 
@@ -539,18 +539,18 @@ void Actor_moveUniformly(Actor this, Velocity* velocity)
 {
 	ASSERT(this, "Actor::moveUniformly: null this");
 
-    // move me with physics
+	// move me with physics
 	if(this->body)
 	{
-    	Body_moveUniformly(this->body, *velocity);
+		Body_moveUniformly(this->body, *velocity);
 
-        if(this->shape)
-        {
-            // register the shape for collision detections
-            Shape_setActive(this->shape, true);
-            CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-        }
-    }
+		if(this->shape)
+		{
+			// register the shape for collision detections
+			Shape_setActive(this->shape, true);
+			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+		}
+	}
 }
 
 // does it move?
@@ -605,17 +605,17 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 	this->transform.localPosition.z -= displacement.z;
 
 	if(this->body)
-    {
+	{
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
-    this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 
-    if(this->shape)
-    {
-        __VIRTUAL_CALL(Shape, position, this->shape);
-    }
+	if(this->shape)
+	{
+		__VIRTUAL_CALL(Shape, position, this->shape);
+	}
 }
 
 // retrieve global position
@@ -632,11 +632,11 @@ bool Actor_updateSpritePosition(Actor this)
 	ASSERT(this, "Actor::updateSpritePosition: null this");
 
 	return (
-	    this->invalidateGlobalTransformation ||
-	    Actor_isMoving(this) ||
-	    _screenDisplacement->x ||
-	    _screenDisplacement->y ||
-	    _screenDisplacement->z
+		this->invalidateGlobalTransformation ||
+		Actor_isMoving(this) ||
+		_screenDisplacement->x ||
+		_screenDisplacement->y ||
+		_screenDisplacement->z
 	);
 }
 
@@ -645,7 +645,7 @@ bool Actor_updateSpriteScale(Actor this)
 {
 	ASSERT(this, "Actor::updateSpriteScale: null this");
 
-	if(this->body && Body_isAwake(this->body) &&  Body_getVelocity(this->body).z)
+	if(this->body && Body_isAwake(this->body) && Body_getVelocity(this->body).z)
 	{
 		return true;
 	}
@@ -674,11 +674,11 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
 		if(!(axisOfCollision & Body_isMoving(this->body)))
-	    {
+		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
 		else
-	    {
+		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
 		}
 	}

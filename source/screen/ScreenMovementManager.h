@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -33,29 +33,29 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define ScreenMovementManager_METHODS(ClassName)														\
-    	Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, focus, u32 checkIfFocusEntityIsMoving);						    \
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, focus, u32 checkIfFocusEntityIsMoving);							\
 
 // declare the virtual methods which are redefined
 #define ScreenMovementManager_SET_VTABLE(ClassName)														\
-    	Object_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ScreenMovementManager, focus); 										\
 
 #define ScreenMovementManager_ATTRIBUTES																\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
 
 // declare a ScreenMovementManager
 __CLASS(ScreenMovementManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 ScreenMovementManager ScreenMovementManager_getInstance();

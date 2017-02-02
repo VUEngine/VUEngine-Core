@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define ParticleSystem_METHODS(ClassName)																\
@@ -51,7 +51,7 @@
 #define ParticleSystem_ATTRIBUTES																		\
 		Entity_ATTRIBUTES																				\
 		/*
-		 * @var ParticleSystemDefinition*   particleSystemDefinition
+		 * @var ParticleSystemDefinition*	particleSystemDefinition
 		 * @brief							system's definition
 		 * @memberof						ParticleSystem
 		 */																								\
@@ -103,7 +103,7 @@ __CLASS(ParticleSystem);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -166,7 +166,7 @@ typedef const ParticleSystemDefinition ParticleSystemROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name);

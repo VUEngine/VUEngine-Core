@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Particle.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										MISC
+//										MISC
 //---------------------------------------------------------------------------------------------------------
 
 // needed because of interdependency between Shape's and SpatialObject's headers
@@ -41,7 +41,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -61,43 +61,43 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
 
 #define SolidParticle_ATTRIBUTES																		\
-        Particle_ATTRIBUTES																				\
+		Particle_ATTRIBUTES																				\
 		/*
 		 * @var Shape 						shape
 		 * @brief							Particle's shape for collision detection
 		 * @memberof						SolidParticle
 		 */																								\
-        Shape shape;																					\
+		Shape shape;																					\
 		/*
 		 * @var SolidParticleDefinition*	solidParticleDefinition
 		 * @brief
 		 * @memberof						SolidParticle
 		 */																								\
-        const SolidParticleDefinition* solidParticleDefinition;											\
+		const SolidParticleDefinition* solidParticleDefinition;											\
 		/*
 		 * @var VBVec3D 					previousGlobalPosition
 		 * @brief							Particle's previous position, for collision handling
 		 * @memberof						SolidParticle
 		 */																								\
-        VBVec3D previousGlobalPosition;																	\
+		VBVec3D previousGlobalPosition;																	\
 		/*
 		 * @var CollisionSolver 			collisionSolver
 		 * @brief							Particle's collision solver
 		 * @memberof						SolidParticle
 		 */																								\
-        CollisionSolver collisionSolver;																\
+		CollisionSolver collisionSolver;																\
 		/*
 		 * @var VBVec3D 					position
 		 * @brief							Particle's position
 		 * @memberof						SolidParticle
 		 */																								\
-        VBVec3D position;																				\
+		VBVec3D position;																				\
 
 __CLASS(SolidParticle);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -145,7 +145,7 @@ typedef const SolidParticleDefinition SolidParticleROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundManager.h>
@@ -30,7 +30,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS' MACROS
+//											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 // some wave forms data
@@ -100,68 +100,67 @@ static const unsigned char sinWave[32] =
 
 typedef struct SOUNDREG
 {
-	//this table is for the most part untested, but looks to be accurate
-	//                 |      D7      ||      D6      ||      D5      ||      D4      ||      D3      ||      D2      ||      D1      ||      D0      |
-	u8 SxINT; //       [----Enable----][--XXXXXXXXXX--][-Interval/??--][--------------------------------Interval Data---------------------------------]
+	// this table is for the most part untested, but looks to be accurate
+	//				 	|		D7	   ||		D6	   ||		D5	   ||		D4	   ||		D3	   ||		D2	   ||		D1	   ||		D0	   |
+	u8 SxINT; //		[----Enable----][--XXXXXXXXXX--][-Interval/??--][--------------------------------Interval Data---------------------------------]
 	u8 spacer1[3];
-	u8 SxLRV; //       [---------------------------L Level----------------------------][---------------------------R Level----------------------------]
+	u8 SxLRV; //		[---------------------------L Level----------------------------][---------------------------R Level----------------------------]
 	u8 spacer2[3];
-	u8 SxFQL; //       [------------------------------------------------------Frequency Low Byte------------------------------------------------------]
+	u8 SxFQL; //		[------------------------------------------------------Frequency Low Byte------------------------------------------------------]
 	u8 spacer3[3];
-	u8 SxFQH; //       [--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Frequency High Byte-------------]
+	u8 SxFQH; //		[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Frequency High Byte-------------]
 	u8 spacer4[3];
-	u8 SxEV0; //       [---------------------Initial Envelope Value-------------------][------U/D-----][-----------------Envelope Step----------------]
+	u8 SxEV0; //		[---------------------Initial Envelope Value-------------------][------U/D-----][-----------------Envelope Step----------------]
 	u8 spacer5[3];
-		 	 //Ch. 1-4 [--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
-	         //Ch. 5   [--XXXXXXXXXX--][------E/D-----][----?/Short---][--Mod./Sweep--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
-	u8 SxEV1; //Ch. 6  [--XXXXXXXXXX--][----------------------E/D---------------------][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+			 //Ch. 1-4 	[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+			 //Ch. 5	[--XXXXXXXXXX--][------E/D-----][----?/Short---][--Mod./Sweep--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+	u8 SxEV1; //Ch. 6	[--XXXXXXXXXX--][----------------------E/D---------------------][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
 	u8 spacer6[3];
 	//Ch. 1-5 only (I believe address is only 3 bits, but may be 4, needs testing)
-	u8 SxRAM; //       [--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Waveform RAM Address------------]
+	u8 SxRAM; //		[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Waveform RAM Address------------]
 	u8 spacer7[3];
 	//Ch. 5 only
-	u8 S5SWP; //       [------CLK-----][-------------Sweep/Modulation Time------------][------U/D-----][----------------Number of Shifts--------------]
+	u8 S5SWP; //		[------CLK-----][-------------Sweep/Modulation Time------------][------U/D-----][----------------Number of Shifts--------------]
 	u8 spacer8[35];
 } SOUNDREG;
 
-//reserved for world's background
+// reserved for world's background
 static u8* const WAVEDATA1 =		(u8*)0x01000000;
 static u8* const WAVEDATA2 =		(u8*)0x01000080;
-//reserved for world's background
+// reserved for world's background
 static u8* const WAVEDATA3 =		(u8*)0x01000100;
 static u8* const WAVEDATA4 =		(u8*)0x01000180;
 static u8* const WAVEDATA5 =		(u8*)0x01000200;
 static u8* const MODDATA =			(u8*)0x01000280;
 static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0;
-#define SSTOP					   *(u8*)0x01000580
+#define SSTOP						*(u8*)0x01000580
 
 #define __MAXIMUM_OUTPUT_LEVEL		0xF
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define SoundManager_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* actual note of each sound being played*/														\
-        int actualNote[__TOTAL_SOUNDS];																	\
-        /* note delay for each sound being played */													\
-        BYTE noteWait[__TOTAL_SOUNDS];																	\
-        /* background music */																			\
-        const u16 (*bgm)[__BGM_CHANNELS];																\
-        /* fx sound */																					\
-        const u16* fxSound[__FXS];																		\
-        /* space position of each fx */																	\
-        VBVec2D fxPosition[__FXS];																		\
-
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* actual note of each sound being played*/														\
+		int actualNote[__TOTAL_SOUNDS];																	\
+		/* note delay for each sound being played */													\
+		BYTE noteWait[__TOTAL_SOUNDS];																	\
+		/* background music */																			\
+		const u16 (*bgm)[__BGM_CHANNELS];																\
+		/* fx sound */																					\
+		const u16* fxSound[__FXS];																		\
+		/* space position of each fx */																	\
+		VBVec2D fxPosition[__FXS];																		\
 
 __CLASS_DEFINITION(SoundManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // globals
@@ -174,7 +173,7 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
@@ -260,32 +259,32 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 
 	int i;
 
-	//only if bgm loaded
+	// only if bgm loaded
 	if(this->bgm != NULL)
 	{
-		//check if note's length has been played
+		// check if note's length has been played
 		if(this->noteWait[0] > this->bgm[0][1])
 		{
-			//move to the next note
+			// move to the next note
 			this->actualNote[0]++;
 
-			//initialize this->noteWait[0]
+			// initialize this->noteWait[0]
 			this->noteWait[0] = 0;
 
-			//if note is greater than song's length
+			// if note is greater than song's length
 			if(this->actualNote[0] >= this->bgm[0][0])
 			{
-				//rewind song
+				// rewind song
 				this->actualNote[0] = 0;
 			}
 		}
 
-		//if note has changed
+		// if note has changed
 		if(!this->noteWait[0])
 		{
 			for(channel = 0, i = 0; channel < 2; channel++)
 			{
-				//stop sound on the current channel
+				// stop sound on the current channel
 				/* There is a bug which makes the sound of
 				 * SND_REGS 0 to not stop if not explicitly
 				 * done.
@@ -293,7 +292,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 
 				SND_REGS[channel].SxINT = 0x00;
 
-				//grab note
+				// grab note
 				for(; i < 2 && !this->bgm[this->actualNote[0] + 3][i]; i++);
 
 				if(i<2)
@@ -301,30 +300,30 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 					note = this->bgm[this->actualNote[0] + 3][i];
 				}
 
-				//if note is not off
+				// if note is not off
 				if(note != 0)
 				{
-					//set note's output level
+					// set note's output level
 					SND_REGS[channel].SxLRV = this->bgm[0][2];
 
-					//set note's frequency
+					// set note's frequency
 					SND_REGS[channel].SxFQL = (note & 0xFF);
 					SND_REGS[channel].SxFQH = (note >> 8);
 
-					//set note's envelope
+					// set note's envelope
 					SND_REGS[channel].SxEV0 = this->bgm[0][3];
 
-					//set note's envelope mode
+					// set note's envelope mode
 					SND_REGS[channel].SxEV1 = this->bgm[0][4];
 
-					//set waveform source
+					// set waveform source
 					SND_REGS[channel].SxRAM = this->bgm[0][5];
 
-					//output note
+					// output note
 					SND_REGS[channel].SxINT = 0x80;
 				}
 
-				//not sure about this
+				// not sure about this
 				if(channel == 4)
 				{
 					SND_REGS[channel].S5SWP = this->bgm[0][5];
@@ -361,7 +360,7 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 			int leftMinus = 0, rightMinus = 0;
 			int leftOutput, rightOutput;
 
-			//calculate the amount of sound that reachs each ear
+			// calculate the amount of sound that reaches each ear
 			//xDistance / (384/15)
 			leftMinus = leftDistance / ((1 << _optical->maximumViewDistancePower) / maxOutputLevel);
 			rightMinus = rightDistance / ((1 << _optical->maximumViewDistancePower) / maxOutputLevel);
@@ -398,22 +397,22 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 
 	for(; fxS < __FXS; fxS++)
 	{
-		//only if fx defined
+		// only if fx defined
 		if(this->fxSound[fxS])
 		{
-			//check if note's length has been played
+			// check if note's length has been played
 			if(this->noteWait[fxS + 1] > this->fxSound[fxS][1])
 			{
-				//move to the next note
+				// move to the next note
 				this->actualNote[fxS + 1]++;
 
-				//initialize this->noteWait[0]
+				// initialize this->noteWait[0]
 				this->noteWait[fxS + 1] = 0;
 
-				//if note if greater than song's length
+				// if note if greater than song's length
 				if(this->actualNote[fxS + 1] > this->fxSound[fxS][0])
 				{
-					//stop sound
+					// stop sound
 					this->fxSound[fxS] = NULL;
 					this->fxPosition[fxS].parallax = -10000;
 					this->noteWait[fxS + 1] = 0;
@@ -425,39 +424,39 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 				}
 			}
 
-			//if note has changed
+			// if note has changed
 			if(!this->noteWait[fxS + 1])
 			{
-				//stop sound on the current channel
+				// stop sound on the current channel
 				/* There is a bug which makes the sound of
 				 * SND_REGS 0 to not stop if not explicitly
 				 * done.
 				 */
 				SND_REGS[fxS + 2].SxINT = 0x00;
 
-				//grab note
+				// grab note
 				note=this->fxSound[fxS][this->actualNote[fxS + 1] + 6];
 
-				//if note is not off
+				// if note is not off
 				if(note != 0)
 				{
-					//if sound is positioned
+					// if sound is positioned
 					SND_REGS[fxS + 2].SxLRV = SoundManager_calculateSoundPosition(this, fxS);
 
-					//set note's frequency
+					// set note's frequency
 					SND_REGS[fxS + 2].SxFQL = (note & 0xFF);
 					SND_REGS[fxS + 2].SxFQH = (note >> 8);
 
-					//set note's envelope
+					// set note's envelope
 					SND_REGS[fxS + 2].SxEV0 = this->fxSound[fxS][3];
 
-					//set note's envelope mode
+					// set note's envelope mode
 					SND_REGS[fxS + 2].SxEV1 = this->fxSound[fxS][4];
 
-					//set waveform source
+					// set waveform source
 					SND_REGS[fxS + 2].SxRAM = this->fxSound[fxS][5];
 
-					//output note
+					// output note
 					SND_REGS[fxS + 2].SxINT = 0x80;
 				}
 			}
@@ -475,8 +474,8 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 }
 
 // load a fx sound to be played
-// it is not guaranted that the sound has been loaded
-int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  position)
+// it is not guaranteed that the sound has been loaded
+int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D	position)
 {
 	ASSERT(this, "SoundManager::loadFxSound: null this");
 

@@ -24,33 +24,33 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationCoordinator.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define ObjectAnimationCoordinator_METHODS(ClassName)													\
-    	AnimationCoordinator_METHODS(ClassName) 														\
+		AnimationCoordinator_METHODS(ClassName) 														\
 
 #define ObjectAnimationCoordinator_SET_VTABLE(ClassName)												\
-        AnimationCoordinator_SET_VTABLE(ClassName)														\
-        __VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);					\
-        __VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, removeAnimationController);                \
+		AnimationCoordinator_SET_VTABLE(ClassName)														\
+		__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);					\
+		__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, removeAnimationController);				\
 
 #define ObjectAnimationCoordinator_ATTRIBUTES															\
-        /* super's attributes */																		\
-        AnimationCoordinator_ATTRIBUTES																\
+		/* super's attributes */																		\
+		AnimationCoordinator_ATTRIBUTES																	\
 
 __CLASS(ObjectAnimationCoordinator);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ObjectAnimationCoordinator, const CharSetDefinition* charSetDefinition);

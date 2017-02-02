@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -35,7 +35,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 // state of movement
@@ -44,44 +44,44 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define Screen_METHODS(ClassName)																		\
-        Object_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define Screen_SET_VTABLE(ClassName)																	\
-        Object_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 
 #define Screen_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* optic values used in projection values */													\
-        Optical optical;																				\
-        /* screen position */																			\
-        VBVec3D position;																				\
-        VBVec3D positionBackup;																			\
-        /* screen position displacement manager */														\
-        ScreenMovementManager screenMovementManager;													\
-	    /* screen effect manager */																		\
-    	ScreenEffectManager screenEffectManager;														\
-        /* screen position displacement */																\
-        VBVec3D focusEntityPositionDisplacement;														\
-        /* actor to center the screen around */															\
-        InGameEntity focusInGameEntity;																	\
-        /* world's screen's last displacement */														\
-        VBVec3D lastDisplacement;																		\
-        /* stage's size in pixels */																	\
-        Size stageSize;																					\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* optic values used in projection values */													\
+		Optical optical;																				\
+		/* screen position */																			\
+		VBVec3D position;																				\
+		VBVec3D positionBackup;																			\
+		/* screen position displacement manager */														\
+		ScreenMovementManager screenMovementManager;													\
+		/* screen effect manager */																		\
+		ScreenEffectManager screenEffectManager;														\
+		/* screen position displacement */																\
+		VBVec3D focusEntityPositionDisplacement;														\
+		/* actor to center the screen around */															\
+		InGameEntity focusInGameEntity;																	\
+		/* world's screen's last displacement */														\
+		VBVec3D lastDisplacement;																		\
+		/* stage's size in pixels */																	\
+		Size stageSize;																					\
 
 // declare a Screen
 __CLASS(Screen);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 Screen Screen_getInstance();

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Sprite.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(Sprite, Object);
@@ -40,14 +40,14 @@ __CLASS_DEFINITION(Sprite, Object);
 __CLASS_FRIEND_DEFINITION(Texture);
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
@@ -66,7 +66,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = spriteDefinition? spriteDefinition->transparent : false;
-    this->writeAnimationFrame = false;
+	this->writeAnimationFrame = false;
 }
 
 // class's destructor
@@ -89,7 +89,7 @@ Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
 			__1I_FIX7_9, __1I_FIX7_9
 	};
 
-	//  return the scale
+	// return the scale
 	return scale;
 }
 
@@ -146,7 +146,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
-    this->worldLayer = worldLayer;
+	this->worldLayer = worldLayer;
 }
 
 //get map's world layer
@@ -257,18 +257,18 @@ int Sprite_getHalfWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfWidth: null this");
 
-    return FIX19_13TOI(this->halfWidth);
+	return FIX19_13TOI(this->halfWidth);
 }
 
 int Sprite_getHalfHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfHeight: null this");
 
-    return FIX19_13TOI(this->halfHeight);
+	return FIX19_13TOI(this->halfHeight);
 }
 
 //---------------------------------------------------------------------------------------------------------
-// 										Animation
+//										Animation
 //---------------------------------------------------------------------------------------------------------
 
 void Sprite_update(Sprite this)
@@ -281,7 +281,7 @@ void Sprite_update(Sprite this)
 		if(this->writeAnimationFrame)
 		{
 			__VIRTUAL_CALL(Sprite, writeAnimation, this);
-        	this->writeAnimationFrame = false;
+			this->writeAnimationFrame = false;
 		}
 	}
 
@@ -431,7 +431,7 @@ void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										FXs
+//										FXs
 //---------------------------------------------------------------------------------------------------------
 
 // write directly to texture

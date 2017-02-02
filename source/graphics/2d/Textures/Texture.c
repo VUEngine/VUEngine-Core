@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Texture.h>
@@ -32,14 +32,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(Texture, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer);
@@ -48,7 +48,7 @@ static void Texture_loadCharSet(Texture this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -76,8 +76,8 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// I will fire events, so save some time when preloaded by already creating the event list
 	if(!this->events)
 	{
-        this->events = __NEW(VirtualList);
-    }
+		this->events = __NEW(VirtualList);
+	}
 }
 
 // class's destructor
@@ -102,7 +102,7 @@ static void Texture_loadCharSet(Texture this)
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 	// if the char definition is NULL, it must be a text
 	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-    Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
+	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 }
 
 // write an animated map
@@ -113,7 +113,7 @@ void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
 
 	this->textureDefinition = textureDefinition;
 
-    Texture_releaseCharSet(this);
+	Texture_releaseCharSet(this);
 }
 
 TextureDefinition* Texture_getDefinition(Texture this)
@@ -132,10 +132,10 @@ void Texture_releaseCharSet(Texture this)
 	{
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 
-        if(this->charSet)
-        {
-    		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-            Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
+		if(this->charSet)
+		{
+			Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
+			Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 		}
 
 		this->charSet = NULL;
@@ -153,7 +153,7 @@ void Texture_write(Texture this)
 
 	if(!this->charSet)
 	{
-	    Texture_loadCharSet(this);
+		Texture_loadCharSet(this);
 	}
 
 	this->written = true;
@@ -164,7 +164,7 @@ void Texture_rewrite(Texture this)
 {
 	ASSERT(this, "Texture::rewrite: null this");
 
-    this->written = false;
+	this->written = false;
 
 	__VIRTUAL_CALL(Texture, write, this);
 }
@@ -287,7 +287,7 @@ CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
 
 	if(!this->charSet && loadIfNeeded)
 	{
-	    Texture_loadCharSet(this);
+		Texture_loadCharSet(this);
 	}
 
 	return this->charSet;
@@ -357,7 +357,7 @@ static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
 {
 	ASSERT(this, "Texture::onCharSetRewritten: null this");
 
-    this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
+	this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
 }
 
 // write directly to texture

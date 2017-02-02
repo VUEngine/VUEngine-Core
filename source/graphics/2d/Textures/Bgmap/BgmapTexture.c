@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapTexture.h>
@@ -34,14 +34,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 // define the class
 __CLASS_DEFINITION(BgmapTexture, Texture);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
@@ -52,7 +52,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 
@@ -88,7 +88,7 @@ void BgmapTexture_rewrite(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
-    this->written = false;
+	this->written = false;
 	this->remainingRowsToBeWritten = this->textureDefinition->rows;
 
 	BgmapTexture_write(this);
@@ -103,8 +103,8 @@ void BgmapTexture_write(BgmapTexture this)
 
 	if(!this->charSet)
 	{
-    	this->written = false;
-	    return;
+		this->written = false;
+		return;
 	}
 
 	if(0 >= this->remainingRowsToBeWritten)

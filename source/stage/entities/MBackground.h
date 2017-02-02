@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define MBackground_METHODS(ClassName)																	\
@@ -44,16 +44,16 @@
 		__VIRTUAL_SET(ClassName, MBackground, resume);													\
 
 #define MBackground_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Entity_ATTRIBUTES																				\
-        /* ROM definition */																			\
-        MBackgroundDefinition* mBackgroundDefinition;													\
+		/* super's attributes */																		\
+		Entity_ATTRIBUTES																				\
+		/* ROM definition */																			\
+		MBackgroundDefinition* mBackgroundDefinition;													\
 
 __CLASS(MBackground);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines a Scrolling background
@@ -64,7 +64,7 @@ typedef const EntityDefinition MBackgroundROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name);

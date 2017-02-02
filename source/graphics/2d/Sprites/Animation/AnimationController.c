@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 // define the AnimationController
@@ -41,14 +41,14 @@ __CLASS_DEFINITION(AnimationController, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern int strcmp(const char *, const char *);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -187,31 +187,31 @@ bool AnimationController_animate(AnimationController this)
 	// reduce frame delay count
 	if(0 > this->frameDelay)
 	{
-		// incrase the frame to show
+		// increase the frame to show
 		this->previousFrame = this->actualFrame++;
 
-        // check if the actual frame is out of bounds
-        if(this->actualFrame >= this->animationFunction->numberOfFrames)
-        {
-            // the last frame has been reached
-            if(this->animationFunction->onAnimationComplete)
-            {
-                Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
-            }
+		// check if the actual frame is out of bounds
+		if(this->actualFrame >= this->animationFunction->numberOfFrames)
+		{
+			// the last frame has been reached
+			if(this->animationFunction->onAnimationComplete)
+			{
+				Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+			}
 
-            // rewind to first frame
-            this->actualFrame = 0;
+			// rewind to first frame
+			this->actualFrame = 0;
 
-            // if the animation is not a loop
-            if(!this->animationFunction->loop)
-            {
-                // not playing anymore
-                this->playing = false;
+			// if the animation is not a loop
+			if(!this->animationFunction->loop)
+			{
+				// not playing anymore
+				this->playing = false;
 
-                // invalidate animation
-                this->actualFrame = this->animationFunction->numberOfFrames - 1;
-            }
-        }
+				// invalidate animation
+				this->actualFrame = this->animationFunction->numberOfFrames - 1;
+			}
+		}
 
 		// reset frame delay
 		this->frameDelay = this->animationFunction->delay;
@@ -230,7 +230,7 @@ bool AnimationController_animate(AnimationController this)
 		return true;
 	}
 
-    return false;
+	return false;
 }
 
 // play animation
@@ -251,7 +251,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// register event callback
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-    	Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update

@@ -24,47 +24,47 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define MBgmapSprite_METHODS(ClassName)																	\
-	    BgmapSprite_METHODS(ClassName)																	\
+		BgmapSprite_METHODS(ClassName)																	\
 
 // declare the virtual methods which are redefined
 #define MBgmapSprite_SET_VTABLE(ClassName)																\
-        BgmapSprite_SET_VTABLE(ClassName)																\
-        __VIRTUAL_SET(ClassName, MBgmapSprite, position);												\
-        __VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);											\
-        __VIRTUAL_SET(ClassName, MBgmapSprite, render);													\
-        __VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);											\
-        __VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
-        __VIRTUAL_SET(ClassName, MBgmapSprite, resize);													\
+		BgmapSprite_SET_VTABLE(ClassName)																\
+		__VIRTUAL_SET(ClassName, MBgmapSprite, position);												\
+		__VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);											\
+		__VIRTUAL_SET(ClassName, MBgmapSprite, render);													\
+		__VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);											\
+		__VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
+		__VIRTUAL_SET(ClassName, MBgmapSprite, resize);													\
 
 
 #define MBgmapSprite_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        BgmapSprite_ATTRIBUTES																			\
-        /* this is our texture */																		\
-        VirtualList textures;																			\
-        /* pinter to definition */																		\
-        const MBgmapSpriteDefinition* mBgmapSpriteDefinition;											\
-        /* to speed up rendering */																		\
-        u32 textureXOffset;																				\
-        u32 textureYOffset;																				\
+		/* super's attributes */																		\
+		BgmapSprite_ATTRIBUTES																			\
+		/* this is our texture */																		\
+		VirtualList textures;																			\
+		/* pinter to definition */																		\
+		const MBgmapSpriteDefinition* mBgmapSpriteDefinition;											\
+		/* to speed up rendering */																		\
+		u32 textureXOffset;																				\
+		u32 textureYOffset;																				\
 
 __CLASS(MBgmapSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef struct MBgmapSpriteDefinition
@@ -90,7 +90,7 @@ typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object );

@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <InGameEntity.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines an AnimatedInGameEntity
@@ -54,7 +54,7 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -63,28 +63,28 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 
 #define AnimatedInGameEntity_SET_VTABLE(ClassName)														\
 		InGameEntity_SET_VTABLE(ClassName)																\
-		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, ready);										    \
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, ready);											\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);											\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);										\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, resume);											\
 
 #define AnimatedInGameEntity_ATTRIBUTES																	\
-        /* super's attributes */																		\
-        InGameEntity_ATTRIBUTES																		    \
-        /* Pointer to the ROM definition */																\
-        AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;									\
-        /* Pointer to the animation description */														\
-        AnimationDescription* animationDescription;														\
-        /* used to know if gap must be changed */														\
-        Direction previousDirection;																	\
-        /* need to save for pausing */																	\
-        char* currentAnimationName;																		\
+		/* super's attributes */																		\
+		InGameEntity_ATTRIBUTES																			\
+		/* Pointer to the ROM definition */																\
+		AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;									\
+		/* Pointer to the animation description */														\
+		AnimationDescription* animationDescription;														\
+		/* used to know if gap must be changed */														\
+		Direction previousDirection;																	\
+		/* need to save for pausing */																	\
+		char* currentAnimationName;																		\
 
 __CLASS(AnimatedInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name);

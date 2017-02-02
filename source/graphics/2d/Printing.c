@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <string.h>
@@ -35,14 +35,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												DECLARATIONS
+//												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
 extern FontROMDef* const __FONTS[];
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 // horizontal tab size in chars
@@ -50,7 +50,7 @@ extern FontROMDef* const __FONTS[];
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -62,7 +62,7 @@ __CLASS_DEFINITION(Printing, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void Printing_constructor(Printing this);
@@ -70,7 +70,7 @@ static void Printing_out(Printing this, u8 x, u8 y, const char* string, const ch
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -171,9 +171,9 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
 	for(i = 0; __FONTS[i]; i++)
 	{
 		// instance and initialize a new fontdata instance
-        FontData* fontData = __NEW_BASIC(FontData);
-        fontData->fontDefinition = __FONTS[i];
-        fontData->charSet = NULL;
+		FontData* fontData = __NEW_BASIC(FontData);
+		fontData->fontDefinition = __FONTS[i];
+		fontData->charSet = NULL;
 
 		// preload charset for font if in list of fonts to preload
 		if(fontDefinitions)
@@ -241,7 +241,7 @@ FontData* Printing_getFontByName(Printing this, const char* font)
 	// if font's charset has not been preloaded, load it now
 	if(!result->charSet)
 	{
-	    result->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition);
+		result->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition);
 	}
 
 	return result;
@@ -446,7 +446,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 		size /= 10;
 	}
 
-	Printing_out(this, x + length  + i, y, Utilities_itoa(decimal, 10, 0), font);
+	Printing_out(this, x + length + i, y, Utilities_itoa(decimal, 10, 0), font);
 }
 
 /**

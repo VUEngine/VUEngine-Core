@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <MBackground.h>
@@ -34,7 +34,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(ManagedMBackground, MBackground);
@@ -45,7 +45,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern const VBVec3D* _screenPosition;
@@ -53,7 +53,7 @@ extern const Optical* _optical;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -144,19 +144,19 @@ void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation
 
 	this->previous2DPosition = position2D;
 
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
 void ManagedMBackground_ready(ManagedMBackground this, u32 recursive)
 {
 	ASSERT(this, "ManagedMBackground::ready: null this");
 
-    Entity_ready(__SAFE_CAST(Entity, this), recursive);
+	Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
 	if(!VirtualList_getSize(this->managedSprites))
 	{
-	    ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
-    }
+		ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+	}
 }
 
 // transform class
@@ -201,7 +201,7 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 	// apply environment transform
 	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
-    this->updateSprites |= __UPDATE_SPRITE_POSITION;
+	this->updateSprites |= __UPDATE_SPRITE_POSITION;
 
 	this->invalidateGlobalTransformation = 0;
 }
@@ -267,16 +267,16 @@ void ManagedMBackground_resume(ManagedMBackground this)
 {
 	ASSERT(this, "ManagedMBackground::resume: null this");
 
-    MBackground_resume(__SAFE_CAST(MBackground, this));
+	MBackground_resume(__SAFE_CAST(MBackground, this));
 
-    ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+	ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
 }
 
 void ManagedMBackground_suspend(ManagedMBackground this)
 {
 	ASSERT(this, "ManagedMBackground::suspend: null this");
 
-    MBackground_suspend(__SAFE_CAST(MBackground, this));
+	MBackground_suspend(__SAFE_CAST(MBackground, this));
 
-    VirtualList_clear(this->managedSprites);
+	VirtualList_clear(this->managedSprites);
 }
