@@ -1636,6 +1636,7 @@ void Game_resetProfiling(Game this)
 	this->gameFrameEffectiveDurationAverage = 0;
 	this->tornGameFrameCount = 0;
 
+#ifdef __PROFILE_GAME
 	updateVisualsTotalTime = 0;
 	updateLogicTotalTime = 0;
 	updatePhysicsTotalTime = 0;
@@ -1656,7 +1657,9 @@ void Game_resetProfiling(Game this)
 	dispatchDelayedMessageHighestTime = 0;
 	processCollisionsHighestTime = 0;
 	renderingHighestTime = 0;
+#endif
 }
+
 void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x, int y)
 {
 	ASSERT(this, "Game::showProfiling: this null");
