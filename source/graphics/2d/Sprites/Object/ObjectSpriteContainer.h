@@ -24,70 +24,70 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSprite.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 MACROS
+//											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __AVAILABLE_CHAR_OBJECTS	1024
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define ObjectSpriteContainer_METHODS(ClassName)														\
-	    Sprite_METHODS(ClassName)																		\
+		Sprite_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define ObjectSpriteContainer_SET_VTABLE(ClassName)														\
-        Sprite_SET_VTABLE(ClassName)																	\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);										\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);									\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);									\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);										\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);									\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);								\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
-        __VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
+		Sprite_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);										\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);									\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);									\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);										\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);									\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);								\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
 
 #define ObjectSpriteContainer_ATTRIBUTES																\
-        /* super's attributes */																		\
-        Sprite_ATTRIBUTES																				\
-        /* object sprites */																			\
-        VirtualList objectSprites;																		\
-        /* for z sorting */																				\
-        VirtualNode node;																				\
-        VirtualNode previousNode;																		\
-        /* next object sprite node to defragment */														\
-        VirtualNode objectSpriteNodeToDefragment;														\
-        /* for WORLD sorting */																			\
-        fix19_13 z;											    										\
-        /* used for defragmentation */																	\
-        int freedObjectIndex;																			\
-        /* first object index */																		\
-        int firstObjectIndex;																			\
-        /* total objects */																				\
-        int totalObjects;																				\
-        /* OBJs available */																			\
-        int availableObjects;																			\
-        /* spt index */																					\
-        int spt;																						\
-        /* flag to halt defragmentation while sprite removal is taking place */							\
-        bool removingObjectSprite;																		\
+		/* super's attributes */																		\
+		Sprite_ATTRIBUTES																				\
+		/* object sprites */																			\
+		VirtualList objectSprites;																		\
+		/* for z sorting */																				\
+		VirtualNode node;																				\
+		VirtualNode previousNode;																		\
+		/* next object sprite node to defragment */														\
+		VirtualNode objectSpriteNodeToDefragment;														\
+		/* for WORLD sorting */																			\
+		fix19_13 z;																						\
+		/* used for defragmentation */																	\
+		int freedObjectIndex;																			\
+		/* first object index */																		\
+		int firstObjectIndex;																			\
+		/* total objects */																				\
+		int totalObjects;																				\
+		/* OBJs available */																			\
+		int availableObjects;																			\
+		/* spt index */																					\
+		int spt;																						\
+		/* flag to halt defragmentation while sprite removal is taking place */							\
+		bool removingObjectSprite;																		\
 
 __CLASS(ObjectSpriteContainer);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);

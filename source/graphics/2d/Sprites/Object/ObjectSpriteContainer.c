@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainer.h>
@@ -37,7 +37,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 // define the ObjectSpriteContainer
@@ -49,7 +49,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // globals
@@ -64,7 +64,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -107,13 +107,13 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
-    if(this->totalObjects)
-    {
-    	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+	if(this->totalObjects)
+	{
+		_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
-        // register to sprite manager
-    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
-    }
+		// register to sprite manager
+		Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+	}
 }
 
 // class's destructor
@@ -122,11 +122,11 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
-    if(this->totalObjects && this->worldLayer)
-    {
-        // remove from sprite manager
-        SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-    }
+	if(this->totalObjects && this->worldLayer)
+	{
+		// remove from sprite manager
+		SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+	}
 
 	VirtualNode node = this->objectSprites->head;
 
@@ -197,8 +197,8 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	if(this->objectSpriteNodeToDefragment)
 	{
 		int objectSpritePosition = VirtualList_getDataPosition(this->objectSprites, objectSprite);
-		int objectSpriteNodeToDefragmentPosition =  VirtualList_getNodePosition(this->objectSprites, this->objectSpriteNodeToDefragment);
-    	ASSERT(0 <= objectSpriteNodeToDefragmentPosition, "ObjectSpriteContainer::removeObjectSprite: position not found");
+		int objectSpriteNodeToDefragmentPosition = VirtualList_getNodePosition(this->objectSprites, this->objectSpriteNodeToDefragment);
+		ASSERT(0 <= objectSpriteNodeToDefragmentPosition, "ObjectSpriteContainer::removeObjectSprite: position not found");
 
 		if(0 <= objectSpriteNodeToDefragmentPosition && objectSpritePosition <= objectSpriteNodeToDefragmentPosition)
 		{

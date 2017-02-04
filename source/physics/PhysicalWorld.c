@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <PhysicalWorld.h>
@@ -32,28 +32,28 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define PhysicalWorld_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* registered of bodies  */																		\
-        VirtualList	bodies;																				\
-        /* a list of bodies which must detect collisions */												\
-        VirtualList	activeBodies;																		\
-        /* a list of bodies which must be removed */													\
-        VirtualList	removedBodies;																		\
-        /* gravity */																					\
-        Acceleration gravity;																			\
-        /* friction */																					\
-        fix19_13 friction;																				\
-        /* elapsed time on last cycle */																\
-        fix19_13 elapsedTime;																			\
-        /* time on last cycle */																		\
-        fix19_13 previousTime;																			\
-        /* body to check for gravity */																	\
-        VirtualNode nextBodyToCheckForGravity;															\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* registered of bodies */																		\
+		VirtualList	bodies;																				\
+		/* a list of bodies which must detect collisions */												\
+		VirtualList	activeBodies;																		\
+		/* a list of bodies which must be removed */													\
+		VirtualList	removedBodies;																		\
+		/* gravity */																					\
+		Acceleration gravity;																			\
+		/* friction */																					\
+		fix19_13 friction;																				\
+		/* elapsed time on last cycle */																\
+		fix19_13 elapsedTime;																			\
+		/* time on last cycle */																		\
+		fix19_13 previousTime;																			\
+		/* body to check for gravity */																	\
+		VirtualNode nextBodyToCheckForGravity;															\
 
 // define the PhysicalWorld
 __CLASS_DEFINITION(PhysicalWorld, Object);
@@ -65,7 +65,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DEFINITION(PhysicalWorld)
@@ -137,12 +137,12 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator,
 
 	if(bodyAllocator)
 	{
-	    Body body = bodyAllocator(owner, mass);
-        VirtualList_pushFront(this->bodies, body);
-        ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::registerBody: bad class body");
+		Body body = bodyAllocator(owner, mass);
+		VirtualList_pushFront(this->bodies, body);
+		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::registerBody: bad class body");
 
-        // return created shape
-        return __SAFE_CAST(Body, VirtualList_front(this->bodies));
+		// return created shape
+		return __SAFE_CAST(Body, VirtualList_front(this->bodies));
 	}
 
 	return NULL;
@@ -156,10 +156,10 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
 #ifdef __DEBUG
-    if(!body)
-    {
-        Printing_text(Printing_getInstance(), __GET_CLASS_NAME(owner), 1, 15, NULL);
-    }
+	if(!body)
+	{
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(owner), 1, 15, NULL);
+	}
 
 	ASSERT(body, "PhysicalWorld::unregisterBody: body not found");
 #endif
@@ -252,31 +252,31 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			// check if necessary to apply gravity
 			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
 
-            if(gravitySensibleAxis)
-            {
-                int movingState = Body_isMoving(body);
+			if(gravitySensibleAxis)
+			{
+				int movingState = Body_isMoving(body);
 
-                gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+				gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
 
-                if(gravitySensibleAxis)
-                {
-                    // must account for the fps to avoid situations is which a collision is not detected
-                    // when a body starts to fall and doesn't have enough time to detect a shape below
-                    // when moving from one shape over another
-                    Acceleration gravity =
-                    {
-                        gravitySensibleAxis & __XAXIS ? this->gravity.x >> (__FRAME_CYCLE) : 0,
-                        gravitySensibleAxis & __YAXIS ? this->gravity.y >> (__FRAME_CYCLE) : 0,
-                        gravitySensibleAxis & __ZAXIS ? this->gravity.z >> (__FRAME_CYCLE) : 0
-                    };
+				if(gravitySensibleAxis)
+				{
+					// must account for the fps to avoid situations is which a collision is not detected
+					// when a body starts to fall and doesn't have enough time to detect a shape below
+					// when moving from one shape over another
+					Acceleration gravity =
+					{
+						gravitySensibleAxis & __XAXIS ? this->gravity.x >> (__FRAME_CYCLE) : 0,
+						gravitySensibleAxis & __YAXIS ? this->gravity.y >> (__FRAME_CYCLE) : 0,
+						gravitySensibleAxis & __ZAXIS ? this->gravity.z >> (__FRAME_CYCLE) : 0
+					};
 
-                    if(gravity.x || gravity.y || gravity.z)
-                    {
-                        // add gravity
-                        Body_applyGravity(body, &gravity);
-                    }
-                }
-            }
+					if(gravity.x || gravity.y || gravity.z)
+					{
+						// add gravity
+						Body_applyGravity(body, &gravity);
+					}
+				}
+			}
 		}
 	}
 
@@ -292,10 +292,10 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	if(clock->paused)
 	{
-	    // prevent that the initial update after unpausing the clock
-	    // gets a bigger that usual elapsed time
-	    this->previousTime = 0;
-        this->elapsedTime = 0;
+		// prevent that the initial update after unpausing the clock
+		// gets a bigger that usual elapsed time
+		this->previousTime = 0;
+		this->elapsedTime = 0;
 		return;
 	}
 
@@ -306,30 +306,30 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	Clock_pause(clock, false);
 
-    if(this->previousTime)
-    {
-        this->elapsedTime = elapsedTime;
+	if(this->previousTime)
+	{
+		this->elapsedTime = elapsedTime;
 
-        PhysicalWorld_checkForGravity(this);
+		PhysicalWorld_checkForGravity(this);
 
-        if(!elapsedTime)
-        {
-        	this->previousTime = ITOFIX19_13(Clock_getTime(clock));
-            return;
-        }
+		if(!elapsedTime)
+		{
+			this->previousTime = ITOFIX19_13(Clock_getTime(clock));
+			return;
+		}
 
-        VirtualNode node = this->activeBodies->head;
+		VirtualNode node = this->activeBodies->head;
 
-        Body_setCurrentWorldFriction(this->friction);
-        Body_setCurrentElapsedTime(elapsedTime);
-        Body_setCurrentGravity(&this->gravity);
+		Body_setCurrentWorldFriction(this->friction);
+		Body_setCurrentElapsedTime(elapsedTime);
+		Body_setCurrentGravity(&this->gravity);
 
-        // check the bodies
-        for(; node; node = node->next)
-        {
-            __VIRTUAL_CALL(Body, update, __SAFE_CAST(Body, node->data));
-        }
-    }
+		// check the bodies
+		for(; node; node = node->next)
+		{
+			__VIRTUAL_CALL(Body, update, __SAFE_CAST(Body, node->data));
+		}
+	}
 
 	this->previousTime = ITOFIX19_13(Clock_getTime(clock));
 }
@@ -353,8 +353,8 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);
 
-    this->elapsedTime = 0;
-    this->previousTime = 0;
+	this->elapsedTime = 0;
+	this->previousTime = 0;
 }
 
 // check if an entity has been registered

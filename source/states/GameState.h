@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <State.h>
@@ -36,7 +36,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -56,33 +56,32 @@
 		__VIRTUAL_SET(ClassName, GameState, transform);													\
 
 #define GameState_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        State_ATTRIBUTES																				\
-        /* a pointer to the game's stage */																\
-        PhysicalWorld physicalWorld;																	\
-        /* a pointer to the game's stage */																\
-        CollisionManager collisionManager;																\
-        /* a pointer to the game's stage */																\
-        Stage stage;																					\
-        /* flag to allow streaming */																	\
-        int canStream;																					\
-        /* must save to allow pause */																	\
-        VBVec3D screenPosition;																			\
-        /* clock for messaging */																		\
-        Clock messagingClock;																			\
-        /* clock for cycle update */														            \
-        Clock updateClock;																			    \
-        /* clock for physics */																	        \
-        Clock physicsClock;																				\
-        /* previous update time */																		\
-        u32 previousUpdateTime;																			\
-
+		/* super's attributes */																		\
+		State_ATTRIBUTES																				\
+		/* a pointer to the game's stage */																\
+		PhysicalWorld physicalWorld;																	\
+		/* a pointer to the game's stage */																\
+		CollisionManager collisionManager;																\
+		/* a pointer to the game's stage */																\
+		Stage stage;																					\
+		/* flag to allow streaming */																	\
+		int canStream;																					\
+		/* must save to allow pause */																	\
+		VBVec3D screenPosition;																			\
+		/* clock for messaging */																		\
+		Clock messagingClock;																			\
+		/* clock for cycle update */																	\
+		Clock updateClock;																				\
+		/* clock for physics */																			\
+		Clock physicsClock;																				\
+		/* previous update time */																		\
+		u32 previousUpdateTime;																			\
 
 __CLASS(GameState);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 void GameState_constructor(GameState this);

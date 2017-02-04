@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <InverseCuboid.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(InverseCuboid, Cuboid);
@@ -40,7 +40,7 @@ __CLASS_FRIEND_DEFINITION(Cuboid);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner);
@@ -49,7 +49,7 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DEFINITION(InverseCuboid, SpatialObject owner)
@@ -78,7 +78,7 @@ int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
 {
 	ASSERT(this, "InverseCuboid::overlaps: null this");
 
-    if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
+	if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
 	{
 		return InverseCuboid_overlapsCuboid(this, __SAFE_CAST(Cuboid, shape));
 	}

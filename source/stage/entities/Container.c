@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
@@ -30,7 +30,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(Container, SpatialObject);
@@ -40,7 +40,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void Container_applyEnvironmentToPosition(Container this, const Transformation* environmentTransform);
@@ -49,7 +49,7 @@ static void Container_applyEnvironmentToScale(Container this, const Transformati
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -118,26 +118,26 @@ void Container_destructor(Container this)
 
 		// destroy each child
 		for(; node ; node = node->next)
-	    {
+		{
 			Container child = __SAFE_CAST(Container, node->data);
 
 #ifdef __DEBUG
-            if(child->parent != this)
-            {
-                Printing_text(Printing_getInstance(), "Me: ", 1, 15, NULL);
-                Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 5, 15, NULL);
-                Printing_text(Printing_getInstance(), "It: ", 1, 16, NULL);
-                Printing_text(Printing_getInstance(), child ? __GET_CLASS_NAME(child) : "NULL", 5, 16, NULL);
-            }
+			if(child->parent != this)
+			{
+				Printing_text(Printing_getInstance(), "Me: ", 1, 15, NULL);
+				Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 5, 15, NULL);
+				Printing_text(Printing_getInstance(), "It: ", 1, 16, NULL);
+				Printing_text(Printing_getInstance(), child ? __GET_CLASS_NAME(child) : "NULL", 5, 16, NULL);
+			}
 #endif
 			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 			child->parent = NULL;
 			__DELETE(child);
 		}
 
-        // delete children list
-        __DELETE(this->children);
-        this->children = NULL;
+		// delete children list
+		__DELETE(this->children);
+		this->children = NULL;
 
 	}
 
@@ -186,34 +186,34 @@ void Container_addChild(Container this, Container child)
 	if(!child)
 	{
 		ASSERT(false, "Container::addChild: adding null child");
-	    return;
-    }
+		return;
+	}
 
-    // if don't have any child yet
-    if(!this->children)
-    {
-        // create children list
-        this->children = __NEW(VirtualList);
-    }
+	// if don't have any child yet
+	if(!this->children)
+	{
+		// create children list
+		this->children = __NEW(VirtualList);
+	}
 
-    // first remove from previous parent
-    if(this != child->parent)
-    {
-        if(child->parent)
-        {
-            Container_removeChild(child->parent, child);
+	// first remove from previous parent
+	if(this != child->parent)
+	{
+		if(child->parent)
+		{
+			Container_removeChild(child->parent, child);
 
-            __VIRTUAL_CALL(Container, changeEnvironment, child, &this->transform);
-        }
+			__VIRTUAL_CALL(Container, changeEnvironment, child, &this->transform);
+		}
 
-        // set new parent
-        child->parent = this;
+		// set new parent
+		child->parent = this;
 
-        // add to the children list
-        VirtualList_pushBack(this->children, (void*)child);
+		// add to the children list
+		VirtualList_pushBack(this->children, (void*)child);
 
-    	Container_invalidateGlobalTransformation(child);
-    }
+		Container_invalidateGlobalTransformation(child);
+	}
 }
 
 // remove child Container
@@ -224,21 +224,21 @@ void Container_removeChild(Container this, Container child)
 	// check if child is valid and if I'm its parent
 	if(!(child && this == child->parent && this->children))
 	{
-	    return;
+		return;
 	}
 
-    // if don't have any children to remove yet
-    if(!this->removedChildren)
-    {
-        // create children list
-        this->removedChildren = __NEW(VirtualList);
-    }
+	// if don't have any children to remove yet
+	if(!this->removedChildren)
+	{
+		// create children list
+		this->removedChildren = __NEW(VirtualList);
+	}
 
-    // register for removing
-    VirtualList_pushBack(this->removedChildren, (void*)child);
+	// register for removing
+	VirtualList_pushBack(this->removedChildren, (void*)child);
 
-    // set no parent
-    child->parent = NULL;
+	// set no parent
+	child->parent = NULL;
 }
 
 // process removed children
@@ -248,30 +248,30 @@ void Container_processRemovedChildren(Container this)
 
 	if(!this->removedChildren)
 	{
-	    return;
-    }
+		return;
+	}
 
 	ASSERT(this->children, "Container::processRemovedChildren: null children list");
 
-    VirtualNode node = this->removedChildren->head;
+	VirtualNode node = this->removedChildren->head;
 
-    // remove each child
-    for(; node ; node = node->next)
-    {
-        Container child = __SAFE_CAST(Container, node->data);
+	// remove each child
+	for(; node ; node = node->next)
+	{
+		Container child = __SAFE_CAST(Container, node->data);
 
-        VirtualList_removeElement(this->children, child);
+		VirtualList_removeElement(this->children, child);
 
-        if(child->deleteMe)
-        {
-            child->parent = NULL;
-            __DELETE(child);
-        }
-    }
+		if(child->deleteMe)
+		{
+			child->parent = NULL;
+			__DELETE(child);
+		}
+	}
 
-    __DELETE(this->removedChildren);
+	__DELETE(this->removedChildren);
 
-    this->removedChildren = NULL;
+	this->removedChildren = NULL;
 }
 
 // update each Container's child
@@ -282,14 +282,14 @@ void Container_update(Container this, u32 elapsedTime)
 	// if I have children
 	if(this->children)
 	{
-        // first remove children
-        Container_processRemovedChildren(this);
+		// first remove children
+		Container_processRemovedChildren(this);
 
 		VirtualNode node = this->children->head;
 
 		// update each child
 		for(; node ; node = node->next)
-	    {
+		{
 			__VIRTUAL_CALL(Container, update, node->data, elapsedTime);
 		}
 	}
@@ -302,32 +302,32 @@ Transformation Container_getEnvironmentTransform(Container this)
 
 	if(!this->parent)
 	{
-        Transformation environmentTransform =
-        {
-                // local position
-                {0, 0, 0},
-                // global position
-                {0, 0, 0},
-                // local rotation
-                {0, 0, 0},
-                // global rotation
-                {0, 0, 0},
-                // local scale
-                {__1I_FIX7_9, __1I_FIX7_9},
-                // global scale
-                {__1I_FIX7_9, __1I_FIX7_9}
-        };
+		Transformation environmentTransform =
+		{
+				// local position
+				{0, 0, 0},
+				// global position
+				{0, 0, 0},
+				// local rotation
+				{0, 0, 0},
+				// global rotation
+				{0, 0, 0},
+				// local scale
+				{__1I_FIX7_9, __1I_FIX7_9},
+				// global scale
+				{__1I_FIX7_9, __1I_FIX7_9}
+		};
 
-        Container_concatenateTransform(&environmentTransform, &this->transform);
+		Container_concatenateTransform(&environmentTransform, &this->transform);
 
-        return environmentTransform;
-    }
+		return environmentTransform;
+	}
 
-    Transformation transformation = Container_getEnvironmentTransform(this->parent);
+	Transformation transformation = Container_getEnvironmentTransform(this->parent);
 
-    Container_concatenateTransform(&transformation, &this->transform);
+	Container_concatenateTransform(&transformation, &this->transform);
 
-    return transformation;
+	return transformation;
 
 }
 
@@ -391,9 +391,9 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	ASSERT(this, "Container::initialTransform: null this");
 
 	// concatenate transform
-    Container_applyEnvironmentToPosition(this, environmentTransform);
-    Container_applyEnvironmentToRotation(this, environmentTransform);
-    Container_applyEnvironmentToScale(this, environmentTransform);
+	Container_applyEnvironmentToPosition(this, environmentTransform);
+	Container_applyEnvironmentToRotation(this, environmentTransform);
+	Container_applyEnvironmentToScale(this, environmentTransform);
 
 	Container_invalidateGlobalTransformation(this);
 
@@ -463,18 +463,18 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	// apply environment transform
 	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
 	{
-	    Container_applyEnvironmentToPosition(this, environmentTransform);
-    }
+		Container_applyEnvironmentToPosition(this, environmentTransform);
+	}
 
 	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
 	{
-	    Container_applyEnvironmentToRotation(this, environmentTransform);
-    }
+		Container_applyEnvironmentToRotation(this, environmentTransform);
+	}
 
 	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 	{
-	    Container_applyEnvironmentToScale(this, environmentTransform);
-    }
+		Container_applyEnvironmentToScale(this, environmentTransform);
+	}
 
 	// if I have children
 	if(this->children)
@@ -504,18 +504,18 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	// apply environment transform
 	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
 	{
-	    Container_applyEnvironmentToPosition(this, environmentTransform);
-    }
+		Container_applyEnvironmentToPosition(this, environmentTransform);
+	}
 
 	if(__INVALIDATE_ROTATION & this->invalidateGlobalTransformation)
 	{
-	    Container_applyEnvironmentToRotation(this, environmentTransform);
-    }
+		Container_applyEnvironmentToRotation(this, environmentTransform);
+	}
 
 	if(__INVALIDATE_SCALE & this->invalidateGlobalTransformation)
 	{
-	    Container_applyEnvironmentToScale(this, environmentTransform);
-    }
+		Container_applyEnvironmentToScale(this, environmentTransform);
+	}
 
 	// if I have children
 	if(this->children)
@@ -726,11 +726,11 @@ int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(C
 	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
 
 	va_list args;
-    va_start(args, propagatedMessageHandler);
-    int result = __VIRTUAL_CALL(Container, passMessage, this, propagatedMessageHandler, args);
-    va_end(args);
+	va_start(args, propagatedMessageHandler);
+	int result = __VIRTUAL_CALL(Container, passMessage, this, propagatedMessageHandler, args);
+	va_end(args);
 
-    return result;
+	return result;
 }
 
 // pass message to children recursively
@@ -741,30 +741,30 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 	// if message is valid
 	if(!propagatedMessageHandler)
 	{
-	    return false;
-    }
+		return false;
+	}
 
-    // propagate if I have children
-    if(this->children)
-    {
-        // first remove children
-        Container_processRemovedChildren(this);
+	// propagate if I have children
+	if(this->children)
+	{
+		// first remove children
+		Container_processRemovedChildren(this);
 
-        VirtualNode node = this->children->head;
+		VirtualNode node = this->children->head;
 
-        // update each child
-        for(; node ; node = node->next)
-        {
-            // pass message to each child
-            if(__VIRTUAL_CALL(Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
-            {
-                return true;
-            }
-        }
-    }
+		// update each child
+		for(; node ; node = node->next)
+		{
+			// pass message to each child
+			if(__VIRTUAL_CALL(Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
+			{
+				return true;
+			}
+		}
+	}
 
-    // if no child processed the message, I process it
-    return propagatedMessageHandler(this, args);
+	// if no child processed the message, I process it
+	return propagatedMessageHandler(this, args);
 }
 
 // process user input
@@ -848,32 +848,32 @@ static Container Container_findChildByName(Container this, VirtualList children,
 {
 	ASSERT(this, "Container::findChildByName: null this");
 
-    Container child, grandChild;
-    VirtualNode node = children->head;
+	Container child, grandChild;
+	VirtualNode node = children->head;
 
-    // first remove children
-    Container_processRemovedChildren(this);
+	// first remove children
+	Container_processRemovedChildren(this);
 
-    // look through all children
-    for(; node ; node = node->next)
-    {
-        child = __SAFE_CAST(Container, node->data);
+	// look through all children
+	for(; node ; node = node->next)
+	{
+		child = __SAFE_CAST(Container, node->data);
 
-        if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
-        {
-            return child;
-        }
-        else if(recursive && child->children)
-        {
-            grandChild = Container_findChildByName(this, child->children, childName, recursive);
-            if(grandChild)
-            {
-                return grandChild;
-            }
-        }
-    }
+		if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
+		{
+			return child;
+		}
+		else if(recursive && child->children)
+		{
+			grandChild = Container_findChildByName(this, child->children, childName, recursive);
+			if(grandChild)
+			{
+				return grandChild;
+			}
+		}
+	}
 
-    return NULL;
+	return NULL;
 }
 
 // get child by name
@@ -881,18 +881,18 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 {
 	ASSERT(this, "Container::getChildByName: null this");
 
-    Container foundChild = NULL;
+	Container foundChild = NULL;
 
 	if(childName && this->children)
 	{
-        // search through direct children
+		// search through direct children
 		foundChild = Container_findChildByName(this, this->children, childName, false);
 
-        // if no direct child could be found, do a recursive search, if applicable
-        if(!foundChild && recursive)
-        {
-            foundChild = Container_findChildByName(this, this->children, childName, true);
-        }
+		// if no direct child could be found, do a recursive search, if applicable
+		if(!foundChild && recursive)
+		{
+			foundChild = Container_findChildByName(this, this->children, childName, true);
+		}
 	}
 
 	return foundChild;

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <BgmapSprite.h>
@@ -37,7 +37,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS' MACROS
+//											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __WORLD_SIZE_DISPLACEMENT			1
@@ -46,13 +46,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class   BgmapSprite
+ * @class	BgmapSprite
  * @extends Sprite
- * @brief   Sprite which holds a texture and a drawing specification.
+ * @brief	Sprite which holds a texture and a drawing specification.
  */
 
 __CLASS_DEFINITION(BgmapSprite, Sprite);
@@ -61,7 +61,7 @@ __CLASS_FRIEND_DEFINITION(Texture);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // global
@@ -73,7 +73,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -101,8 +101,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 
-        this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-        this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 	else
 	{
@@ -170,11 +170,11 @@ void BgmapSprite_destructor(BgmapSprite this)
 	// make sure I'm hidden
 	__VIRTUAL_CALL(Sprite, hide, this);
 
-    if(this->worldLayer)
-    {
-        // remove from sprite manager before I become invalid
-        // and the VPU triggers a new render cycle
-        SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+	if(this->worldLayer)
+	{
+		// remove from sprite manager before I become invalid
+		// and the VPU triggers a new render cycle
+		SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 	}
 
 	// if affine or bgmap
@@ -201,7 +201,7 @@ Scale BgmapSprite_getScale(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getScale: null this");
 
-	//  return the scale
+	// return the scale
 	return this->drawSpec.scale;
 }
 
@@ -242,8 +242,8 @@ void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 
 	if(!this->worldLayer)
 	{
-    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
-    }
+		Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+	}
 }
 
 void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
@@ -266,8 +266,8 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 	if(!this->worldLayer)
 	{
 		// register with sprite manager
-    	Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
-    }
+		Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+	}
 }
 
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
@@ -301,8 +301,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 	if(this->texture)
 	{
-        this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-        this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
+		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 
 	if(this->param)
@@ -342,99 +342,99 @@ void BgmapSprite_render(BgmapSprite this)
 
 		// TODO: check if required, causes that the sprite is turned off when changing the texture definition
 /*
-	    if(!this->texture->written)
-	    {
+		if(!this->texture->written)
+		{
 			worldPointer->head = 0x0000;
-	        return;
-	    }
+			return;
+		}
 */
 		// set the head
 		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 
 		// get coordinates
-        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
-        // get sprite's size
-        int width = Texture_getCols(this->texture) << 3;
-        int height = Texture_getRows(this->texture) << 3;
-        int w = width;
-        int h = height;
+		// get sprite's size
+		int width = Texture_getCols(this->texture) << 3;
+		int height = Texture_getRows(this->texture) << 3;
+		int w = width;
+		int h = height;
 
-        // cap coordinates to screen space
-        worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
-        worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
+		// cap coordinates to screen space
+		worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
+		worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
+		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
-        // clip texture's source to screen space
-        int mxDisplacement = 0 > gx ? -gx : 0;
-        int myDisplacement = 0 > gy ? -gy : 0;
+		// clip texture's source to screen space
+		int mxDisplacement = 0 > gx ? -gx : 0;
+		int myDisplacement = 0 > gy ? -gy : 0;
 
-        worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-        worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
-        worldPointer->mp = this->drawSpec.textureSource.mp;
+		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
+		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
+		worldPointer->mp = this->drawSpec.textureSource.mp;
 
-        // clip sprite's size to screen space
-        // reduce by 1 since 0 means 1 in the vb
-        w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
-        h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
+		// clip sprite's size to screen space
+		// reduce by 1 since 0 means 1 in the vb
+		w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
+		h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
 
-        w = w + worldPointer->gx >= __SCREEN_WIDTH ? __SCREEN_WIDTH - worldPointer->gx : w;
-        h = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy : h;
+		w = w + worldPointer->gx >= __SCREEN_WIDTH ? __SCREEN_WIDTH - worldPointer->gx : w;
+		h = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy : h;
 
-        if (0 > w)
-        {
+		if (0 > w)
+		{
 			worldPointer->head = __WORLD_OFF;
-            return;
-        }
+			return;
+		}
 
-        if (0 > h)
-        {
+		if (0 > h)
+		{
 			worldPointer->head = __WORLD_OFF;
-            return;
-        }
+			return;
+		}
 
-        worldPointer->w = w;
-        worldPointer->h = h;
+		worldPointer->w = w;
+		worldPointer->h = h;
 
-        // set the world size according to the zoom
-        if(__WORLD_AFFINE & this->head)
-        {
-            // set param table's souce
-            worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+		// set the world size according to the zoom
+		if(__WORLD_AFFINE & this->head)
+		{
+			// set param table's souce
+			worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
-            // un-cap x coordinate in affine mode
-            if(0 > gx)
-            {
-                worldPointer->gx = gx;
-                worldPointer->w = width;
-            }
+			// un-cap x coordinate in affine mode
+			if(0 > gx)
+			{
+				worldPointer->gx = gx;
+				worldPointer->w = width;
+			}
 
-            // apply scaling and add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-            worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
-            worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
+			// apply scaling and add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
+			worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
+			worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
 
-             if(0 <= this->paramTableRow)
-            {
+			 if(0 <= this->paramTableRow)
+			{
 
-                // provide a little bit of performance gain by only calculation transform equations
-                // for the visible rows, but causes that some sprites not be rendered completely when the
-                // screen moves vertically
-                // int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
-                // this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
+				// provide a little bit of performance gain by only calculation transform equations
+				// for the visible rows, but causes that some sprites not be rendered completely when the
+				// screen moves vertically
+				// int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
+				// this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
-                // apply affine transformation
-                __VIRTUAL_CALL(BgmapSprite, doApplyAffineTransformations, this);
+				// apply affine transformation
+				__VIRTUAL_CALL(BgmapSprite, doApplyAffineTransformations, this);
 
-                if(0 >= this->paramTableRow)
-                {
-                    this->paramTableRow = -1;
-                }
-            }
-        }
+				if(0 >= this->paramTableRow)
+				{
+					this->paramTableRow = -1;
+				}
+			}
+		}
 		else if(__WORLD_HBIAS & this->head)
 		{
-            __VIRTUAL_CALL(BgmapSprite, doApplyHbiasTransformations, this);
+			__VIRTUAL_CALL(BgmapSprite, doApplyHbiasTransformations, this);
 		}
 	}
 }
@@ -461,84 +461,84 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
 		// set the world screen position
-        int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-        int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
+		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
 
-        int w = Texture_getCols(this->texture)<< 3;
-        int h = Texture_getRows(this->texture)<< 3;
+		int w = Texture_getCols(this->texture)<< 3;
+		int h = Texture_getRows(this->texture)<< 3;
 
-        int mxDisplacement = 0 > gx ? -gx : 0;
-        int myDisplacement = 0 > gy ? -gy : 0;
+		int mxDisplacement = 0 > gx ? -gx : 0;
+		int myDisplacement = 0 > gy ? -gy : 0;
 
-        worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
-        worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
-        worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+		worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
+		worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
+		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
-        worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-        worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
-        worldPointer->mp = this->drawSpec.textureSource.mp;
+		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
+		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
+		worldPointer->mp = this->drawSpec.textureSource.mp;
 
-        // -1 because 0 means 1 pixel for width
-        w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
-        h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
+		// -1 because 0 means 1 pixel for width
+		w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
+		h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
 
-        worldPointer->w = 0;
-        worldPointer->h = 0;
+		worldPointer->w = 0;
+		worldPointer->h = 0;
 
-        if(w + worldPointer->gx >= __SCREEN_WIDTH)
-        {
-            worldPointer->w = __SCREEN_WIDTH - worldPointer->gx;
-        }
-        else if (0 <= w)
-        {
-            worldPointer->w = w;
-        }
+		if(w + worldPointer->gx >= __SCREEN_WIDTH)
+		{
+			worldPointer->w = __SCREEN_WIDTH - worldPointer->gx;
+		}
+		else if (0 <= w)
+		{
+			worldPointer->w = w;
+		}
 
-        if(h + worldPointer->gy >= __SCREEN_HEIGHT)
-        {
-            worldPointer->h = __SCREEN_HEIGHT - worldPointer->gy;
-        }
-        else if (0 <= h)
-        {
-            worldPointer->h = h;
-        }
+		if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+		{
+			worldPointer->h = __SCREEN_HEIGHT - worldPointer->gy;
+		}
+		else if (0 <= h)
+		{
+			worldPointer->h = h;
+		}
 
-        // set the world size according to the zoom
-        if(__WORLD_AFFINE & this->head)
-        {
-            if(__UPDATE_G)
-            {
-                if(0 > this->paramTableRow && (0 > gx || 0 > gy))
-                {
-                    this->paramTableRow = 0;
-                }
-            }
+		// set the world size according to the zoom
+		if(__WORLD_AFFINE & this->head)
+		{
+			if(__UPDATE_G)
+			{
+				if(0 > this->paramTableRow && (0 > gx || 0 > gy))
+				{
+					this->paramTableRow = 0;
+				}
+			}
 
-            if(_screenDisplacement->y && 0 > this->paramTableRow)
-            {
-                this->paramTableRow = 0;
-            }
+			if(_screenDisplacement->y && 0 > this->paramTableRow)
+			{
+				this->paramTableRow = 0;
+			}
 
-            worldPointer->w *= FIX7_9TOF(__ABS(this->drawSpec.scale.x));
-            worldPointer->h *= FIX7_9TOF(__ABS(this->drawSpec.scale.y));
+			worldPointer->w *= FIX7_9TOF(__ABS(this->drawSpec.scale.x));
+			worldPointer->h *= FIX7_9TOF(__ABS(this->drawSpec.scale.y));
 
-             if(0 <= this->paramTableRow)
-            {
-                h = Texture_getRows(this->texture)<< 3;
-                int lastRow = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: h;
+			 if(0 <= this->paramTableRow)
+			{
+				h = Texture_getRows(this->texture)<< 3;
+				int lastRow = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: h;
 
-                BgmapSprite_doApplyAffineTransformations(this, lastRow);
+				BgmapSprite_doApplyAffineTransformations(this, lastRow);
 
-                if(0 >= this->paramTableRow)
-                {
-                    this->paramTableRow = -1;
-                }
-            }
+				if(0 >= this->paramTableRow)
+				{
+					this->paramTableRow = -1;
+				}
+			}
 
-            worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
-        }
+			worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
+		}
 
-        worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
 	}
 }
 */
@@ -596,7 +596,7 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										MAP FXs
+//										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
 void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
@@ -607,20 +607,20 @@ void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 	if(this->param)
 	{
 		this->paramTableRow = Affine_applyAll(
-		    this->param,
-            this->paramTableRow,
-            // geometrically accurate, but kills the CPU
-            // (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
-            // (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
-            // don't do translations
-            this->halfWidth,
-            this->halfHeight,
-            ITOFIX13_3(this->drawSpec.textureSource.mx),
-            ITOFIX13_3(this->drawSpec.textureSource.my),
-            this->halfWidth,
-            this->halfHeight,
-            &this->drawSpec.scale,
-            &this->drawSpec.rotation
+			this->param,
+			this->paramTableRow,
+			// geometrically accurate, but kills the CPU
+			// (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
+			// (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
+			// don't do translations
+			this->halfWidth,
+			this->halfHeight,
+			ITOFIX13_3(this->drawSpec.textureSource.mx),
+			ITOFIX13_3(this->drawSpec.textureSource.my),
+			this->halfWidth,
+			this->halfHeight,
+			&this->drawSpec.scale,
+			&this->drawSpec.rotation
 		);
 	}
 }

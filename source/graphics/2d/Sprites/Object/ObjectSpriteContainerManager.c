@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainerManager.h>
@@ -30,20 +30,20 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define ObjectSpriteContainerManager_ATTRIBUTES															\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* object groups */																				\
-        ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* object groups */																				\
+		ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
 
 __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex);
@@ -52,7 +52,7 @@ static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManage
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
@@ -182,16 +182,16 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i, size[i], availableObjects);
 		}
 
-        if(this->objectSpriteContainers[i])
-        {
-            VBVec2D position =
-            {
-                    0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
-            };
+		if(this->objectSpriteContainers[i])
+		{
+			VBVec2D position =
+			{
+					0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
+			};
 
-            ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
-            previousZ = z[i];
-        }
+			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
+			previousZ = z[i];
+		}
 	}
 }
 

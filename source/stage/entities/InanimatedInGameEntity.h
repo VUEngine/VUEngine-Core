@@ -24,14 +24,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <InGameEntity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define InanimatedInGameEntity_METHODS(ClassName)														\
@@ -43,16 +43,16 @@
 		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);									\
 
 #define InanimatedInGameEntity_ATTRIBUTES																\
-        /* super's attributes */																		\
-        InGameEntity_ATTRIBUTES																			\
-        /* ROM definition */																			\
-        InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;								\
+		/* super's attributes */																		\
+		InGameEntity_ATTRIBUTES																			\
+		/* ROM definition */																			\
+		InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition;								\
 
 __CLASS(InanimatedInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines a InanimatedInGameEntity in ROM memory
@@ -76,7 +76,7 @@ typedef const InanimatedInGameEntityDefinition InanimatedInGameEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(InanimatedInGameEntity, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name);

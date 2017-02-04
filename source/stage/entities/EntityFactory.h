@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -33,48 +33,48 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ENTITY_PENDING_PROCESSING     0x00
-#define __LIST_EMPTY                    0x01
-#define __ENTITY_PROCESSED              0x02
+#define __ENTITY_PENDING_PROCESSING		0x00
+#define __LIST_EMPTY					0x01
+#define __ENTITY_PROCESSED				0x02
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define EntityFactory_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																	    \
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define EntityFactory_SET_VTABLE(ClassName)																\
 		Object_SET_VTABLE(ClassName)																	\
 
 #define EntityFactory_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																			    \
-        /* the EntityFactory entities to test for streaming */ 											\
-        VirtualList entitiesToInstantiate;																\
-        /* streaming's uninitialized entities */ 														\
-        VirtualList entitiesToInitialize;																\
-        /* streaming's non yet transformed entities */ 													\
-        VirtualList entitiesToTransform;																\
-        /* streaming's non yet transformed entities */ 													\
-        VirtualList entitiesToMakeReady;															    \
-        /* entities loaded */ 													                        \
-        VirtualList spawnedEntities;															        \
-        /* index for method to execute */													            \
-        int streamingPhase;                                                                             \
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* the EntityFactory entities to test for streaming */ 											\
+		VirtualList entitiesToInstantiate;																\
+		/* streaming's uninitialized entities */ 														\
+		VirtualList entitiesToInitialize;																\
+		/* streaming's non yet transformed entities */ 													\
+		VirtualList entitiesToTransform;																\
+		/* streaming's non yet transformed entities */ 													\
+		VirtualList entitiesToMakeReady;																\
+		/* entities loaded */ 																			\
+		VirtualList spawnedEntities;																	\
+		/* index for method to execute */																\
+		int streamingPhase;																				\
 
 // declare a EntityFactory, which holds the objects in a game world
 __CLASS(EntityFactory);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // defines an entity in ROM memory
@@ -100,8 +100,8 @@ typedef const struct PositionedEntity
 	// position in the world
 	VBVec3D position;
 
-    // entity's id
-    s16 id;
+	// entity's id
+	s16 id;
 
 	// name
 	char* name;
@@ -119,8 +119,9 @@ typedef const struct PositionedEntity
 
 typedef const PositionedEntity PositionedEntityROMDef;
 
+
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(EntityFactory);
@@ -130,5 +131,6 @@ u32 EntityFactory_prepareEntities(EntityFactory this);
 void EntityFactory_prepareAllEntities(EntityFactory this);
 void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
 u32 EntityFactory_hasEntitiesPending(EntityFactory this);
+
 
 #endif

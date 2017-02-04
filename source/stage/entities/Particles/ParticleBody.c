@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <ParticleBody.h>
@@ -29,7 +29,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -40,7 +40,7 @@ __CLASS_DEFINITION(ParticleBody, Body);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											    PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern fix19_13 _currentWorldFriction;
@@ -51,7 +51,7 @@ int Body_updateMovement(Body this, fix19_13 gravity, fix19_13* position, fix19_1
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -106,26 +106,26 @@ void ParticleBody_update(ParticleBody this)
 
 	if(this->active && this->awake)
 	{
-        Force frictionForce = {0, 0, 0};
+		Force frictionForce = {0, 0, 0};
 
-        // update each axis
-        if(this->velocity.x || this->acceleration.x || this->appliedForce.x || ((__ACCELERATED_MOVEMENT & this->movementType.x) && _currentGravity->x && this->acceleration.x))
-        {
-            Body_updateMovement(__SAFE_CAST(Body, this), __XAXIS & this->axisSubjectToGravity? _currentGravity->x: 0, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, frictionForce.x);
-        }
+		// update each axis
+		if(this->velocity.x || this->acceleration.x || this->appliedForce.x || ((__ACCELERATED_MOVEMENT & this->movementType.x) && _currentGravity->x && this->acceleration.x))
+		{
+			Body_updateMovement(__SAFE_CAST(Body, this), __XAXIS & this->axisSubjectToGravity? _currentGravity->x: 0, &this->position.x, &this->velocity.x, &this->acceleration.x, this->appliedForce.x, this->movementType.x, frictionForce.x);
+		}
 
-        if(this->velocity.y || this->acceleration.y || this->appliedForce.y || ((__ACCELERATED_MOVEMENT & this->movementType.y) && _currentGravity->y && this->acceleration.y))
-        {
-            Body_updateMovement(__SAFE_CAST(Body, this), __YAXIS & this->axisSubjectToGravity? _currentGravity->y: 0, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, frictionForce.y);
-        }
+		if(this->velocity.y || this->acceleration.y || this->appliedForce.y || ((__ACCELERATED_MOVEMENT & this->movementType.y) && _currentGravity->y && this->acceleration.y))
+		{
+			Body_updateMovement(__SAFE_CAST(Body, this), __YAXIS & this->axisSubjectToGravity? _currentGravity->y: 0, &this->position.y, &this->velocity.y, &this->acceleration.y, this->appliedForce.y, this->movementType.y, frictionForce.y);
+		}
 
-        if(this->velocity.z || this->acceleration.z || this->appliedForce.z || ((__ACCELERATED_MOVEMENT & this->movementType.z) && _currentGravity->z && this->acceleration.z))
-        {
-            Body_updateMovement(__SAFE_CAST(Body, this), __ZAXIS & this->axisSubjectToGravity? _currentGravity->z: 0, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, frictionForce.z);
-        }
+		if(this->velocity.z || this->acceleration.z || this->appliedForce.z || ((__ACCELERATED_MOVEMENT & this->movementType.z) && _currentGravity->z && this->acceleration.z))
+		{
+			Body_updateMovement(__SAFE_CAST(Body, this), __ZAXIS & this->axisSubjectToGravity? _currentGravity->z: 0, &this->position.z, &this->velocity.z, &this->acceleration.z, this->appliedForce.z, this->movementType.z, frictionForce.z);
+		}
 
-        // clear any force so the next update does not get influenced
-        Body_clearForce(__SAFE_CAST(Body, this));
+		// clear any force so the next update does not get influenced
+		Body_clearForce(__SAFE_CAST(Body, this));
 	}
 }
 

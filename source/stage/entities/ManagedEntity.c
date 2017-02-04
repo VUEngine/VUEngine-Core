@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <ManagedEntity.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 // define the ManagedEntity
@@ -44,7 +44,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // global
@@ -56,7 +56,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -147,19 +147,19 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 	this->previous2DPosition = position2D;
 
-    this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
 void ManagedEntity_ready(ManagedEntity this, u32 recursive)
 {
 	ASSERT(this, "ManagedEntity::ready: null this");
 
-    Entity_ready(__SAFE_CAST(Entity, this), recursive);
+	Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
 	if(!VirtualList_getSize(this->managedSprites))
 	{
-    	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
-    }
+		ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
+	}
 }
 
 // transform class
@@ -193,12 +193,12 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 
-    this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-        ? __UPDATE_SPRITE_POSITION
-        : 0;
+	this->updateSprites = (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) || (__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+		? __UPDATE_SPRITE_POSITION
+		: 0;
 
-    // call base class's transform method
-    Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
+	// call base class's transform method
+	Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 }
 
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
@@ -256,16 +256,16 @@ void ManagedEntity_resume(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::resume: null this");
 
-    Entity_resume(__SAFE_CAST(Entity, this));
+	Entity_resume(__SAFE_CAST(Entity, this));
 
-    ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
+	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
 }
 
 void ManagedEntity_suspend(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::suspend: null this");
 
-    Entity_suspend(__SAFE_CAST(Entity, this));
+	Entity_suspend(__SAFE_CAST(Entity, this));
 
-    VirtualList_clear(this->managedSprites);
+	VirtualList_clear(this->managedSprites);
 }

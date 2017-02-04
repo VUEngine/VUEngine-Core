@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <stdarg.h>
@@ -36,16 +36,16 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS'S MACROS
+//											 CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
 /*
 // position
-       1 X = 01
-      10 Y = 02
-     100 Z = 04
+	   1 X = 01
+	  10 Y = 02
+	 100 Z = 04
 // rotation
-    1000 X = 08
+	1000 X = 08
    10000 Y = 10
   100000 Z = 20
 //scale
@@ -54,25 +54,25 @@
 */
 
 #define __INVALIDATE_TRANSFORMATION			0xFF
-#define __INVALIDATE_POSITION			    0x07
-#define __INVALIDATE_ROTATION			    0x38
-#define __INVALIDATE_SCALE			        0xC0
+#define __INVALIDATE_POSITION				0x07
+#define __INVALIDATE_ROTATION				0x38
+#define __INVALIDATE_SCALE					0xC0
 
 
 #define __MAX_CONTAINER_NAME_LENGTH			8
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define Container_METHODS(ClassName)																	\
 		SpatialObject_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, update, u32);													\
-		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*);			                    \
+		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*);								\
 		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
-		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);	                \
+		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
 		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
 		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
 		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
@@ -104,30 +104,30 @@
 		__VIRTUAL_SET(ClassName, Container, passMessage);												\
 
 #define Container_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        SpatialObject_ATTRIBUTES																		\
-        /* 3d transformation */																			\
-        Transformation transform;																		\
-        /* children list */																				\
-        VirtualList children;																			\
-        /* removed children list */																		\
-        VirtualList removedChildren;																	\
-        /* parent */																					\
-        Container parent;																				\
-        /* name */																						\
-        char* name;																						\
-        /* flag for parent to know to delete it */														\
-        u8 deleteMe;																				    \
-        /* flag to hide the entity */																	\
-        u8 hidden;                                                                                      \
-        /* flag to recalculate global transformations */												\
-        u8 invalidateGlobalTransformation;														        \
+		/* super's attributes */																		\
+		SpatialObject_ATTRIBUTES																		\
+		/* 3d transformation */																			\
+		Transformation transform;																		\
+		/* children list */																				\
+		VirtualList children;																			\
+		/* removed children list */																		\
+		VirtualList removedChildren;																	\
+		/* parent */																					\
+		Container parent;																				\
+		/* name */																						\
+		char* name;																						\
+		/* flag for parent to know to delete it */														\
+		u8 deleteMe;																					\
+		/* flag to hide the entity */																	\
+		u8 hidden;																						\
+		/* flag to recalculate global transformations */												\
+		u8 invalidateGlobalTransformation;																\
 
 __CLASS(Container);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										MISC
+//										MISC
 //---------------------------------------------------------------------------------------------------------
 
 // needed because of interdependency between Shape's and SpatialObject's headers
@@ -135,7 +135,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(Container, const char* const name);
@@ -179,7 +179,7 @@ void Container_resume(Container this);
 void Container_setLocalPosition(Container this, const VBVec3D* position);
 void Container_setLocalRotation(Container this, const Rotation* rotation);
 void Container_setLocalScale(Container this, const Scale* scale);
-void Container_setName(Container this, const char* const  name);
+void Container_setName(Container this, const char* const name);
 void Container_show(Container this);
 void Container_suspend(Container this);
 void Container_transform(Container this, const Transformation* environmentTransform);

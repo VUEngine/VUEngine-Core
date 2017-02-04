@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <SolidParticle.h>
@@ -31,7 +31,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -44,7 +44,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -256,11 +256,11 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 		Body_bounce(this->body, axisOfCollision, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
 		if(!(axisOfCollision & Body_isMoving(this->body)))
-	    {
+		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
 		else
-	    {
+		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
 		}
 	}
@@ -289,7 +289,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 			VirtualNode node = NULL;
 
 			for(node = collidingSpatialObjects->head; node; node = node->next)
-		    {
+			{
 				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, node->data);
 
 				if(__GET_CAST(Particle, spatialObject))
@@ -299,7 +299,7 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 			}
 
 			for(node = collidingObjectsToRemove->head; node; node = node->next)
-		    {
+			{
 				// whenever you process some objects of a collisions list remove them and leave the Actor handle
 				// the ones you don't care about, i.e.: in most cases, the ones which are solid
 				VirtualList_removeElement(collidingSpatialObjects, node->data);
@@ -332,7 +332,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 	ASSERT(this, "SolidParticle::handleMessage: null this");
 
 	switch(Telegram_getMessage(telegram))
-    {
+	{
 		case kCollision:
 
 			SolidParticle_resolveCollision(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
@@ -349,7 +349,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 		case kBodyStopped:
 
 			if(!Body_isMoving(this->body))
-            {
+			{
 				//CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}
 			break;

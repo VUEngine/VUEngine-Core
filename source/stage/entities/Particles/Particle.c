@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Particle.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -44,14 +44,14 @@ __CLASS_DEFINITION(Particle, SpatialObject);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void Particle_addSprite(Particle this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -174,7 +174,7 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
 			return true;
 		}
 
-        Sprite_animate(__SAFE_CAST(Sprite, this->objectSprite));
+		Sprite_animate(__SAFE_CAST(Sprite, this->objectSprite));
 	}
 
 	return false;
@@ -194,7 +194,7 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 	ASSERT(this, "Particle::updateVisualRepresentation: null this");
 
 	if(updateSpritePosition || Body_isAwake(this->body))
-    {
+	{
 		const VBVec3D* position = Body_getPosition(this->body);
 
 		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
@@ -207,7 +207,7 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 
 		// update sprite's 2D position
 		__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
-    }
+	}
 }
 
 /**
@@ -226,34 +226,34 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
-	    fix19_13 mass = Body_getMass(this->body);
+		fix19_13 mass = Body_getMass(this->body);
 
-	    Acceleration acceleration =
-	    {
-	        force->x,
-	        force->y,
-	        force->z
-	    };
-
-	    if(mass)
-	    {
-    	    acceleration.x = FIX19_13_DIV(acceleration.x, mass);
-    	    acceleration.x = FIX19_13_DIV(acceleration.y, mass);
-    	    acceleration.x = FIX19_13_DIV(acceleration.z, mass);
-	    };
-
-		Velocity velocity =
-        {
-        	acceleration.x,
-        	acceleration.y,
-        	acceleration.z
+		Acceleration acceleration =
+		{
+			force->x,
+			force->y,
+			force->z
 		};
 
-        Body_moveUniformly(this->body, velocity);
+		if(mass)
+		{
+			acceleration.x = FIX19_13_DIV(acceleration.x, mass);
+			acceleration.x = FIX19_13_DIV(acceleration.y, mass);
+			acceleration.x = FIX19_13_DIV(acceleration.z, mass);
+		};
+
+		Velocity velocity =
+		{
+			acceleration.x,
+			acceleration.y,
+			acceleration.z
+		};
+
+		Body_moveUniformly(this->body, velocity);
 	}
-    else
-    {
-	    Body_addForce(this->body, force);
+	else
+	{
+		Body_addForce(this->body, force);
 	}
 }
 
@@ -379,7 +379,7 @@ void Particle_hide(Particle this)
  *
  * @param this	Function scope
  *
- * @return      Always true
+ * @return		Always true
  */
 bool Particle_moves(Particle this __attribute__ ((unused)))
 {
@@ -398,7 +398,7 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
  * @param this			Function scope
  * @param acceleration
  *
- * @return      		Boolean that tells whether the Particle's body can move over axis (defaults to true)
+ * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
 int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
 {
@@ -413,7 +413,7 @@ int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __a
  * @memberof	Particle
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Particle_resume(Particle this)
 {
@@ -430,7 +430,7 @@ void Particle_resume(Particle this)
  * @memberof	Particle
  * @public
  *
- * @param this  Function scope
+ * @param this	Function scope
  */
 void Particle_suspend(Particle this)
 {

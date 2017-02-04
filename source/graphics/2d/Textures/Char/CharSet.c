@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <CharSet.h>
@@ -32,14 +32,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(CharSet, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // globals
@@ -48,7 +48,7 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -71,8 +71,8 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 	// I will fire events, so save some time when preloaded by already creating the event list
 	if(!this->events)
 	{
-        this->events = __NEW(VirtualList);
-    }
+		this->events = __NEW(VirtualList);
+	}
 }
 
 // class's destructor
@@ -160,10 +160,10 @@ void CharSet_write(CharSet this)
 	ASSERT(this, "CharSet::write: null this");
 
 	Mem_copy(
-	    (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4),
-	    (u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
-	    (u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4
-    );
+		(u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4),
+		(u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
+		(u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4
+	);
 }
 
 // rewrite char on memory

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationCoordinatorFactory.h>
@@ -32,14 +32,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinatorFactory_ATTRIBUTES                                                          \
-        /* super's attributes */                                                                        \
-        Object_ATTRIBUTES                                                                              \
-        /* entities that use bgmap sprites */                                                           \
-        VirtualList animationCoordinators;                                                              \
+#define AnimationCoordinatorFactory_ATTRIBUTES															\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* entities that use bgmap sprites */															\
+		VirtualList animationCoordinators;																\
 
 __CLASS_DEFINITION(AnimationCoordinatorFactory, Object);
 
@@ -48,14 +48,14 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(AnimationCoordinatorFactory);

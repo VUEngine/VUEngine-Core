@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -32,12 +32,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define SpriteManager_METHODS(ClassName)															    \
-		Object_METHODS(ClassName)														    			\
+#define SpriteManager_METHODS(ClassName)																\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define SpriteManager_SET_VTABLE(ClassName)																\
@@ -48,7 +48,7 @@ __CLASS(SpriteManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 SpriteManager SpriteManager_getInstance();

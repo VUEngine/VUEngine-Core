@@ -24,14 +24,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Cuboid.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define InverseCuboid_METHODS(ClassName)																\
@@ -42,14 +42,14 @@
 		__VIRTUAL_SET(ClassName, InverseCuboid, overlaps);												\
 
 #define InverseCuboid_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Cuboid_ATTRIBUTES																				\
+		/* super's attributes */																		\
+		Cuboid_ATTRIBUTES																				\
 
 __CLASS(InverseCuboid);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(InverseCuboid, SpatialObject owner);

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <SRAMManager.h>
@@ -30,7 +30,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define	__SRAM_ACCESS_DELAY				200
@@ -41,21 +41,21 @@ extern u32 _sram_bss_end;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define SRAMManager_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* save space start address */																	\
-        u16* saveSpaceStartAddress;																	    \
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* save space start address */																	\
+		u16* saveSpaceStartAddress;																		\
 
 // define the manager
 __CLASS_DEFINITION(SRAMManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void SRAMManager_constructor(SRAMManager this);
@@ -63,7 +63,7 @@ static void SRAMManager_initialize(SRAMManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(SRAMManager);
@@ -75,7 +75,7 @@ static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 
 	__CONSTRUCT_BASE(Object);
 
-    this->saveSpaceStartAddress = (u16*)&_sram_bss_end;
+	this->saveSpaceStartAddress = (u16*)&_sram_bss_end;
 
 	SRAMManager_initialize(this);
 }

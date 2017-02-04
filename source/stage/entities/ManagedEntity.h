@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define ManagedEntity_METHODS(ClassName)																\
@@ -45,23 +45,23 @@
 		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
 		__VIRTUAL_SET(ClassName, ManagedEntity, updateVisualRepresentation);							\
 		__VIRTUAL_SET(ClassName, ManagedEntity, passMessage);											\
-		__VIRTUAL_SET(ClassName, ManagedEntity, ready);											        \
-		__VIRTUAL_SET(ClassName, ManagedEntity, suspend);											    \
-		__VIRTUAL_SET(ClassName, ManagedEntity, resume);											    \
+		__VIRTUAL_SET(ClassName, ManagedEntity, ready);													\
+		__VIRTUAL_SET(ClassName, ManagedEntity, suspend);												\
+		__VIRTUAL_SET(ClassName, ManagedEntity, resume);												\
 
 #define ManagedEntity_ATTRIBUTES																		\
-        /* it is derived from */																		\
-        Entity_ATTRIBUTES																				\
-        /* sprites' list */																				\
-        VirtualList managedSprites;																		\
-        /* previous 2d projected position */															\
-        VBVec2D previous2DPosition;																		\
+		/* it is derived from */																		\
+		Entity_ATTRIBUTES																				\
+		/* sprites' list */																				\
+		VirtualList managedSprites;																		\
+		/* previous 2d projected position */															\
+		VBVec2D previous2DPosition;																		\
 
 __CLASS(ManagedEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef EntityDefinition ManagedEntityDefinition;
@@ -69,7 +69,7 @@ typedef const ManagedEntityDefinition ManagedEntityROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name);

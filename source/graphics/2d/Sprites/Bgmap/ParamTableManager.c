@@ -21,7 +21,7 @@
 
 
 // ---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 // ---------------------------------------------------------------------------------------------------------
 
 #include <ParamTableManager.h>
@@ -30,7 +30,7 @@
 #include <Printing.h>
 
 // ---------------------------------------------------------------------------------------------------------
-// 											  DECLARATIONS
+//												DECLARATIONS
 // ---------------------------------------------------------------------------------------------------------
 
 typedef struct ParamTableFreeData
@@ -40,26 +40,26 @@ typedef struct ParamTableFreeData
 } ParamTableFreeData;
 
 // ---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 // ---------------------------------------------------------------------------------------------------------
 
-#define ParamTableManager_ATTRIBUTES                                                                    \
-        /* super's attributes */                                                                        \
-        Object_ATTRIBUTES                                                                              \
-        /* total size of param table */                                                                 \
-        int size;                                                                                       \
-        /* number of used bytes */                                                                      \
-        u32 used;                                                                                       \
-        /* allocated bgmapSprites */                                                                        \
-        VirtualList bgmapSprites;                                                                           \
-        /* removed bgmapSprites' sizes */                                                                   \
-        VirtualList removedBgmapSpritesSizes;                                                           \
-        /* user for defragmentation */                                                                  \
-        ParamTableFreeData paramTableFreeData;                                                          \
-        /* user for defragmentation */                                                                  \
-        BgmapSprite previouslyMovedBgmapSprite;                                                         \
-        /* user for defragmentation */                                                                  \
-        u32 paramTableBase;                                                                             \
+#define ParamTableManager_ATTRIBUTES																	\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* total size of param table */																	\
+		int size;																						\
+		/* number of used bytes */																		\
+		u32 used;																						\
+		/* allocated bgmapSprites */																	\
+		VirtualList bgmapSprites;																		\
+		/* removed bgmapSprites' sizes */																\
+		VirtualList removedBgmapSpritesSizes;															\
+		/* user for defragmentation */																	\
+		ParamTableFreeData paramTableFreeData;															\
+		/* user for defragmentation */																	\
+		BgmapSprite previouslyMovedBgmapSprite;															\
+		/* user for defragmentation */																	\
+		u32 paramTableBase;																				\
 
 __CLASS_DEFINITION(ParamTableManager, Object);
 
@@ -68,7 +68,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 // ---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 // ---------------------------------------------------------------------------------------------------------
 
 void ParamTableManager_constructor(ParamTableManager this);
@@ -76,7 +76,7 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
 
 
 // ---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 // ---------------------------------------------------------------------------------------------------------
 
 // a singleton
@@ -149,27 +149,27 @@ void ParamTableManager_calculateParamTableBase(ParamTableManager this, int avail
 
 	if(!availableBgmapSegmentsForParamTable)
 	{
-	    this->paramTableBase = __PARAM_TABLE_END;
+		this->paramTableBase = __PARAM_TABLE_END;
 	}
-    else
-    {
-        this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
-    }
+	else
+	{
+		this->paramTableBase = __PARAM_TABLE_END - __BGMAP_SEGMENT_SIZE * availableBgmapSegmentsForParamTable;
+	}
 
-    for(; (this->paramTableBase - (__PRINTABLE_BGMAP_AREA << 1)) % __BGMAP_SEGMENT_SIZE && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);
+	for(; (this->paramTableBase - (__PRINTABLE_BGMAP_AREA << 1)) % __BGMAP_SEGMENT_SIZE && this->paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; this->paramTableBase--);
 
 	NM_ASSERT(this->paramTableBase <= __PARAM_TABLE_END, "ParamTableManager::calculateParamTableBase: param table size is negative");
 
-    this->size = __PARAM_TABLE_END - this->paramTableBase;
+	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
-    BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
+	BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
 }
 
 u32 ParamTableManager_getParamTableBase(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::getParamTableBase: null this");
 
-    return this->paramTableBase;
+	return this->paramTableBase;
 }
 
 // calculate size of param table

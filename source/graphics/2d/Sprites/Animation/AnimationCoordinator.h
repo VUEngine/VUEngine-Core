@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -34,30 +34,30 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define AnimationCoordinator_METHODS(ClassName)															\
-        Object_METHODS(ClassName)																		\
-        __VIRTUAL_DEC(ClassName, void, addAnimationController, AnimationController animationController);\
-        __VIRTUAL_DEC(ClassName, void, removeAnimationController, AnimationController animationController);\
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, addAnimationController, AnimationController animationController);\
+		__VIRTUAL_DEC(ClassName, void, removeAnimationController, AnimationController animationController);\
 
 #define AnimationCoordinator_SET_VTABLE(ClassName)														\
-	    Object_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
 
 #define AnimationCoordinator_ATTRIBUTES																	\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* controllers to sync */																		\
-        VirtualList animationControllers;																\
-        /* char set definition shared among entities */													\
-        const CharSetDefinition* charSetDefinition;														\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* controllers to sync */																		\
+		VirtualList animationControllers;																\
+		/* char set definition shared among entities */													\
+		const CharSetDefinition* charSetDefinition;														\
 
 __CLASS(AnimationCoordinator);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition);

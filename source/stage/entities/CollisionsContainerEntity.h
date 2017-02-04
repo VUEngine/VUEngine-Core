@@ -24,14 +24,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define CollisionsContainerEntity_METHODS(ClassName)													\
@@ -44,21 +44,21 @@
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateVisualRepresentation);				\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handleMessage);								\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpritePosition);						\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpriteRotation);				        \
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpriteScale);				            \
+		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpriteRotation);						\
+		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpriteScale);							\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, ready);										\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handlePropagatedMessage);					\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, passMessage);								\
 
 #define CollisionsContainerEntity_ATTRIBUTES															\
-        /* it is derived from */																		\
-        Entity_ATTRIBUTES																				\
+		/* it is derived from */																		\
+		Entity_ATTRIBUTES																				\
 
 __CLASS(CollisionsContainerEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef EntityDefinition CollisionsContainerEntityDefinition;
@@ -66,7 +66,7 @@ typedef const CollisionsContainerEntityDefinition CollisionsContainerEntityROMDe
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(CollisionsContainerEntity, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name);

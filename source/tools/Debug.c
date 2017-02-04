@@ -23,7 +23,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Debug.h>
@@ -88,48 +88,48 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS' MACROS
+//											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define DISPLACEMENT_STEP_X	                512 - 384
-#define DISPLACEMENT_STEP_Y	                512 - 224
+#define DISPLACEMENT_STEP_X					512 - 384
+#define DISPLACEMENT_STEP_Y					512 - 224
 
-#define __CHARS_PER_SEGMENT_TO_SHOW         512
+#define __CHARS_PER_SEGMENT_TO_SHOW		 512
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define Debug_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* current in game state */																		\
-        GameState gameState;																			\
-        /* pages */																						\
-        VirtualList pages;																				\
-        /* sub pages */																					\
-        VirtualList subPages;																			\
-        /* current page */																				\
-        VirtualNode currentPage;																		\
-        /* current subb page */																			\
-        VirtualNode currentSubPage;																		\
-        /* current layer */																				\
-        u8 currentLayer;																				\
-        /* current bgmap */																				\
-        int bgmapSegment;																				\
-        /* current obj segment */																		\
-        int objectSegment;																				\
-        /* current char segment */																		\
-        int charSegment;																				\
-        /* current page in sram inspector */															\
-        int sramPage;																					\
-        /* window to look into bgmap memory */															\
-        VBVec2D bgmapDisplacement;																		\
-        /* update function pointer */																	\
-        void (*update)(void *);																			\
-        /* temporal array to hold char data */															\
-    	BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];                                                \
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* current in game state */																		\
+		GameState gameState;																			\
+		/* pages */																						\
+		VirtualList pages;																				\
+		/* sub pages */																					\
+		VirtualList subPages;																			\
+		/* current page */																				\
+		VirtualNode currentPage;																		\
+		/* current subb page */																			\
+		VirtualNode currentSubPage;																		\
+		/* current layer */																				\
+		u8 currentLayer;																				\
+		/* current bgmap */																				\
+		int bgmapSegment;																				\
+		/* current obj segment */																		\
+		int objectSegment;																				\
+		/* current char segment */																		\
+		int charSegment;																				\
+		/* current page in sram inspector */															\
+		int sramPage;																					\
+		/* window to look into bgmap memory */															\
+		VBVec2D bgmapDisplacement;																		\
+		/* update function pointer */																	\
+		void (*update)(void *);																			\
+		/* temporal array to hold char data */															\
+		BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];												\
 
 // define the Debug
 __CLASS_DEFINITION(Debug, Object);
@@ -139,7 +139,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern ClassSizeData _userClassesSizeData[];
@@ -187,7 +187,7 @@ static void Debug_showSramPage(Debug this, int increment, int x, int y);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(Debug);
@@ -384,10 +384,10 @@ void Debug_showNextSubPage(Debug this)
 static void Debug_printHeader(Debug this)
 {
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-    Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
-    Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-    Printing_int(Printing_getInstance(), Debug_getCurrentPageNumber(this), 17, 0, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
+	Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
+	Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
+	Printing_int(Printing_getInstance(), Debug_getCurrentPageNumber(this), 17, 0, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
 }
 
 // show page
@@ -400,7 +400,7 @@ static void Debug_showPage(Debug this, int increment)
 		VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 
-        Debug_printHeader(this);
+		Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
 
 		Debug_dimmGame(this);
@@ -418,7 +418,7 @@ static void Debug_showSubPage(Debug this, int increment)
 
 		VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
-        Debug_printHeader(this);
+		Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);
 
 		((void (*)(Debug, int, int, int))VirtualNode_getData(this->currentSubPage))(this, increment, 1, 2);
@@ -903,7 +903,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 			Printing_int(Printing_getInstance(), BgmapTexture_getRemainingRowsToBeWritten(bgmapTexture), x + 24, y, NULL);
 		}
 		//Debug_lightUpGame(this);
-    }
+	}
 	else
 	{
 		this->currentLayer = __TOTAL_LAYERS;
@@ -963,29 +963,29 @@ static void Debug_showSramStatus(Debug this, int increment __attribute__ ((unuse
 
 static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
-    u8 value;
-    int i, j, totalPages;
-    char word[9];
+	u8 value;
+	int i, j, totalPages;
+	char word[9];
 
-    totalPages = __TOTAL_SAVE_RAM >> 7;
+	totalPages = __TOTAL_SAVE_RAM >> 7;
 
-    extern u32 _sram_bss_end;
+	extern u32 _sram_bss_end;
 
-    this->sramPage += increment;
+	this->sramPage += increment;
 
-    if(this->sramPage < 0)
-    {
-       this->sramPage = totalPages - 1;
-    }
-    else if(this->sramPage >= totalPages)
-    {
-       this->sramPage = 0;
-    }
+	if(this->sramPage < 0)
+	{
+	   this->sramPage = totalPages - 1;
+	}
+	else if(this->sramPage >= totalPages)
+	{
+	   this->sramPage = 0;
+	}
 
-    // get sram base address
-    u16* startAddress = (u16*)&_sram_bss_end;
+	// get sram base address
+	u16* startAddress = (u16*)&_sram_bss_end;
 
-    // print status header
+	// print status header
 	Printing_text(Printing_getInstance(), "SRAM STATUS", 1, y++, NULL);
 	Printing_text(Printing_getInstance(), "Total (kb):", 1, ++y, NULL);
 	Printing_int(Printing_getInstance(), __TOTAL_SAVE_RAM >> 10, 13, y, NULL);
@@ -999,40 +999,40 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
 	Printing_text(Printing_getInstance(), "Address     00 01 02 03 04 05 06 07 Word", 1, ++y, NULL);
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 1, ++y, NULL);
 
-    // print values
-    for(i = 0; i < 16; i++)
-    {
-        // print address
-	    Printing_text(Printing_getInstance(), "0x00000000: ", 1, ++y, NULL);
-	    Printing_hex(Printing_getInstance(), (int)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
+	// print values
+	for(i = 0; i < 16; i++)
+	{
+		// print address
+		Printing_text(Printing_getInstance(), "0x00000000: ", 1, ++y, NULL);
+		Printing_hex(Printing_getInstance(), (int)startAddress + (this->sramPage << 7) + (i << 3), 3, y, 8, NULL);
 
-        // values
-        for(j = 0; j < 8; j++)
-        {
-            // read byte from sram
+		// values
+		for(j = 0; j < 8; j++)
+		{
+			// read byte from sram
 			value = startAddress[(this->sramPage << 7) + (i << 3) + j];
 
-            // print byte
-            Printing_hex(Printing_getInstance(), value, 13 + (j*3), y, 2, NULL);
+			// print byte
+			Printing_hex(Printing_getInstance(), value, 13 + (j*3), y, 2, NULL);
 
-            // add current character to line word
-            // if outside of extended ascii range, print whitespace
-            word[j] = (value >= 32) ? (char)value : (char)32;
-            //word[j] = value ? (char)value : (char)32;
-        }
+			// add current character to line word
+			// if outside of extended ascii range, print whitespace
+			word[j] = (value >= 32) ? (char)value : (char)32;
+			//word[j] = value ? (char)value : (char)32;
+		}
 
-        // add termination character to string
-        word[8] = (char)0;
+		// add termination character to string
+		word[8] = (char)0;
 
-        // print word
-        Printing_text(Printing_getInstance(), word, 37, y, NULL);
+		// print word
+		Printing_text(Printing_getInstance(), word, 37, y, NULL);
 
-        // print scroll bar
-        Printing_text(Printing_getInstance(), __CHAR_MEDIUM_RED_BOX, 46, y, NULL);
-    }
+		// print scroll bar
+		Printing_text(Printing_getInstance(), __CHAR_MEDIUM_RED_BOX, 46, y, NULL);
+	}
 
-    // mark scroll bar position
-    Printing_text(Printing_getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
+	// mark scroll bar position
+	Printing_text(Printing_getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
 }
 
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message)

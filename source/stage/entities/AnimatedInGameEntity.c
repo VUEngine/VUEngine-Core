@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimatedInGameEntity.h>
@@ -39,7 +39,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
@@ -49,14 +49,14 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
@@ -145,7 +145,7 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 		this->previousDirection.y = this->direction.y;
 	}
 
-    this->previousDirection.z = this->direction.z;
+	this->previousDirection.z = this->direction.z;
 
 	// call base
 	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
@@ -161,8 +161,8 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 
 	// if direction changed
 	if(this->direction.x != this->previousDirection.x ||
-	   this->direction.y != this->previousDirection.y ||
-	   this->direction.z != this->previousDirection.z
+		this->direction.y != this->previousDirection.y ||
+		this->direction.z != this->previousDirection.z
 	)
 	{
 		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
@@ -171,10 +171,10 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 		InGameEntity_setGap(__SAFE_CAST(InGameEntity, this));
 	}
 
-    if(elapsedTime)
-    {
-        AnimatedInGameEntity_animate(this);
-    }
+	if(elapsedTime)
+	{
+		AnimatedInGameEntity_animate(this);
+	}
 }
 
 // update animations
@@ -184,15 +184,15 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 
 	if(this->sprites)
 	{
-        VirtualNode node = this->sprites->head;
+		VirtualNode node = this->sprites->head;
 
-        // move each child to a temporary list
-        for(; node ; node = node->next)
-        {
-            // first animate the frame
-            Sprite_animate(__SAFE_CAST(Sprite, node->data));
-        }
-    }
+		// move each child to a temporary list
+		for(; node ; node = node->next)
+		{
+			// first animate the frame
+			Sprite_animate(__SAFE_CAST(Sprite, node->data));
+		}
+	}
 }
 
 // pause animation
@@ -207,7 +207,7 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 
 		// play animation on each sprite
 		for(; node ; node = node->next)
-	    {
+		{
 			Sprite_pause(__SAFE_CAST(Sprite, node->data), pause);
 		}
 	}
@@ -226,7 +226,7 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 
 		// play animation on each sprite
 		for(; node ; node = node->next)
-	    {
+		{
 			Sprite_play(__SAFE_CAST(Sprite, node->data), this->animationDescription, animationName);
 		}
 	}

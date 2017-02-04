@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <SpatialObject.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -59,43 +59,43 @@
 
 
 #define Particle_ATTRIBUTES																				\
-        SpatialObject_ATTRIBUTES																		\
+		SpatialObject_ATTRIBUTES																		\
 		/*
 		 * @var ParticleDefinition* particleDefinition
 		 * @brief					Particle's definition
 		 * @memberof				Particle
 		 */																								\
-        const ParticleDefinition* particleDefinition;													\
+		const ParticleDefinition* particleDefinition;													\
 		/*
 		 * @var SpriteDefinition* 	spriteDefinition
 		 * @brief					Particle's SpriteDefinition
 		 * @memberof				Particle
 		 */																								\
-        const SpriteDefinition* spriteDefinition;														\
+		const SpriteDefinition* spriteDefinition;														\
 		/*
 		 * @var ObjectSprite 		objectSprite
 		 * @brief					OBJ based sprite
 		 * @memberof				Particle
 		 */																								\
-        ObjectSprite objectSprite;																		\
+		ObjectSprite objectSprite;																		\
 		/*
 		 * @var Body 				body
 		 * @brief					Particle's physical body
 		 * @memberof				Particle
 		 */																								\
-        Body body;																						\
+		Body body;																						\
 		/*
 		 * @var int 				lifeSpan
 		 * @brief					Particle's life span in milliseconds
 		 * @memberof				Particle
 		 */																								\
-        int lifeSpan;																					\
+		int lifeSpan;																					\
 
 __CLASS(Particle);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -143,7 +143,7 @@ typedef const ParticleDefinition ParticleROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);

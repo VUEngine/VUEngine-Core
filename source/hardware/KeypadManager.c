@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <KeypadManager.h>
@@ -31,32 +31,32 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define KeypadManager_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /*  */																							\
-        u32 currentKey;																					\
-        /*  */																							\
-        u32 previousKey;																				\
-        /*  */																							\
-        u32 enabled;																						\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/*  */																							\
+		u32 currentKey;																					\
+		/*  */																							\
+		u32 previousKey;																				\
+		/*  */																							\
+		u32 enabled;																					\
 
 // define the KeypadManager
 __CLASS_DEFINITION(KeypadManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void KeypadManager_constructor(KeypadManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 static unsigned int volatile* _readingStatus = NULL;
@@ -91,7 +91,7 @@ void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::enable: null this");
 
-    KeypadManager_flush(this);
+	KeypadManager_flush(this);
 
 	_hardwareRegisters[__SCR] = 0;
 	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);

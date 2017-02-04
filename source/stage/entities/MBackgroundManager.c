@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <MBackgroundManager.h>
@@ -30,14 +30,14 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define MBackgroundManager_ATTRIBUTES																	\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* textureRegistries */																			\
-        VirtualList textureRegistries;																	\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* textureRegistries */																			\
+		VirtualList textureRegistries;																	\
 
 __CLASS_DEFINITION(MBackgroundManager, Object);
 
@@ -55,14 +55,14 @@ typedef struct TextureRegistry
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void MBackgroundManager_constructor(MBackgroundManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
@@ -187,7 +187,7 @@ void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((un
 
 		if(texture == textureRegistry->texture)
 		{
-    		textureRegistry->free = true;
+			textureRegistry->free = true;
 			break;
 		}
 	}

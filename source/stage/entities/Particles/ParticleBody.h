@@ -24,32 +24,32 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Body.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define ParticleBody_METHODS(ClassName)																	\
-		Body_METHODS(ClassName)																	        \
+		Body_METHODS(ClassName)																			\
 
 #define ParticleBody_SET_VTABLE(ClassName)																\
-		Body_SET_VTABLE(ClassName)																        \
-		__VIRTUAL_SET(ClassName, ParticleBody, update);									                \
+		Body_SET_VTABLE(ClassName)																		\
+		__VIRTUAL_SET(ClassName, ParticleBody, update);													\
 		__VIRTUAL_SET(ClassName, ParticleBody, calculateFrictionForce);									\
 
 #define ParticleBody_ATTRIBUTES																			\
-        Body_ATTRIBUTES																			        \
+		Body_ATTRIBUTES																					\
 
 __CLASS(ParticleBody);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ParticleBody, SpatialObject owner, fix19_13 mass);

@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <HardwareManager.h>
@@ -38,7 +38,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											MACROS
+//											MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #ifdef __ALERT_STACK_OVERFLOW
@@ -47,27 +47,27 @@ extern u32 _bss_end;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define HardwareManager_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* Timer manager */																				\
-        TimerManager timerManager;																		\
-        /* VPU manager */																				\
-        VIPManager vipManager;																			\
-        /* VPU manager */																				\
-        KeypadManager keypadManager;																	\
-        /* HW registry */																				\
-        u8*  hwRegisters;																				\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* Timer manager */																				\
+		TimerManager timerManager;																		\
+		/* VPU manager */																				\
+		VIPManager vipManager;																			\
+		/* VPU manager */																				\
+		KeypadManager keypadManager;																	\
+		/* HW registry */																				\
+		u8*  hwRegisters;																				\
 
 // define the HardwareManager
 __CLASS_DEFINITION(HardwareManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern u32 key_vector;
@@ -88,7 +88,7 @@ static void HardwareManager_constructor(HardwareManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(HardwareManager);
@@ -118,14 +118,14 @@ void HardwareManager_destructor(HardwareManager this)
 	__SINGLETON_DESTROY;
 }
 
-// cro's interrupt handler
-void HardwareManager_croInterruptHandler(void)   // Expansion Port Interrupt Handler
+// cro's (expansion port) interrupt handler
+void HardwareManager_croInterruptHandler(void)
 {
 	Printing_text(Printing_getInstance(), "EXP cron", 48 - 13, 0, NULL);
 }
 
-// com's interrupt handler
-void HardwareManager_communicationInterruptHandler(void)   // Link Port Interrupt Handler
+// com's (link port) interrupt handler
+void HardwareManager_communicationInterruptHandler(void)
 {
 	Printing_text(Printing_getInstance(), "COM interrupt", 48 - 13, 0, NULL);
 }

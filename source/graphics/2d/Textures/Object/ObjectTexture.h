@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Texture.h>
@@ -33,38 +33,30 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												MACROS
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-#define ObjectTexture_METHODS(ClassName)															    \
-    	Texture_METHODS(ClassName)																		\
+#define ObjectTexture_METHODS(ClassName)																\
+		Texture_METHODS(ClassName)																		\
 
 #define ObjectTexture_SET_VTABLE(ClassName)																\
-	    Texture_SET_VTABLE(ClassName)																	\
-	    __VIRTUAL_SET(ClassName, ObjectTexture, write);													\
+		Texture_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, ObjectTexture, write);													\
 
 #define ObjectTexture_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Texture_ATTRIBUTES																				\
-        /* object index */																				\
-        int objectIndex;																				\
-        /* bgmap displacement */																		\
-        int bgmapDisplacement;																			\
+		/* super's attributes */																		\
+		Texture_ATTRIBUTES																				\
+		/* object index */																				\
+		int objectIndex;																				\
+		/* bgmap displacement */																		\
+		int bgmapDisplacement;																			\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(ObjectTexture);
 
-//use a ObjectTexture when you want to show a static background or a character that must be scaled according
-//its depth on the screen so there exists consistency between the depth and the size of the character
-
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef const TextureDefinition ObjectTextureDefinition;
@@ -72,7 +64,7 @@ typedef const ObjectTextureDefinition ObjectTextureROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ObjectTexture, ObjectTextureDefinition* objectTextureDefinition, u16 id);

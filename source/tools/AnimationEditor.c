@@ -23,7 +23,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <AnimationEditor.h>
@@ -43,44 +43,44 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 CLASS' MACROS
+//											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 	6
 
-#define __TRANSLATION_STEP	    8
+#define __TRANSLATION_STEP				8
 #define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
 #define __SCREEN_Y_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP		__SCREEN_HEIGHT / 4
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define AnimationEditor_ATTRIBUTES																		\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* current in game gameState */																	\
-        GameState gameState;																			\
-        /* current animated sprite */																	\
-        Sprite animatedSprite;																			\
-        /* current animation description */																\
-        AnimationDescription* animationDescription;														\
-        /* current animation function */																\
-        AnimationFunction animationFunction;															\
-        /* animated in game entity selector */															\
-        OptionsSelector animatedInGameEntitySelector;													\
-        /* animated sprite selector */																	\
-        OptionsSelector spriteSelector;																	\
-        /* animations selector */																		\
-        OptionsSelector animationsSelector;																\
-        /* animation edition selector */																\
-        OptionsSelector animationEditionSelector;														\
-        /* frame edition selector */																	\
-        OptionsSelector frameEditionSelector;															\
-        /* mode */																						\
-        int mode;																						\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* current in game gameState */																	\
+		GameState gameState;																			\
+		/* current animated sprite */																	\
+		Sprite animatedSprite;																			\
+		/* current animation description */																\
+		AnimationDescription* animationDescription;														\
+		/* current animation function */																\
+		AnimationFunction animationFunction;															\
+		/* animated in game entity selector */															\
+		OptionsSelector animatedInGameEntitySelector;													\
+		/* animated sprite selector */																	\
+		OptionsSelector spriteSelector;																	\
+		/* animations selector */																		\
+		OptionsSelector animationsSelector;																\
+		/* animation edition selector */																\
+		OptionsSelector animationEditionSelector;														\
+		/* frame edition selector */																	\
+		OptionsSelector frameEditionSelector;															\
+		/* mode */																						\
+		int mode;																						\
 
 // define the AnimationEditor
 __CLASS_DEFINITION(AnimationEditor, Object);
@@ -105,7 +105,7 @@ enum AnimationProperties
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern UserAnimatedInGameEntity _userAnimatedInGameEntities[];
@@ -132,7 +132,7 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eve
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(AnimationEditor);
@@ -196,10 +196,10 @@ void AnimationEditor_update(AnimationEditor this)
 
 	if(this->gameState && this->animatedSprite)
 	{
-        Sprite_animate(this->animatedSprite);
+		Sprite_animate(this->animatedSprite);
 		Sprite_update(this->animatedSprite);
-    	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
-    	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this->animatedSprite);
+		__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
+		__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this->animatedSprite);
 	}
 }
 
@@ -225,10 +225,10 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	{
 		ASSERT(_userAnimatedInGameEntities[i].name, "AnimationEditor::start: push null name");
 
-        Option* option = __NEW_BASIC(Option);
-        option->value = (char*)(_userAnimatedInGameEntities[i].name);
-        option->type = kString;
-        VirtualList_pushBack(animatedInGameEntitiesNames, option);
+		Option* option = __NEW_BASIC(Option);
+		option->value = (char*)(_userAnimatedInGameEntities[i].name);
+		option->type = kString;
+		VirtualList_pushBack(animatedInGameEntitiesNames, option);
 	}
 
 	ASSERT(animatedInGameEntitiesNames, "AnimationEditor::start: null animatedInGameEntitiesNames");
@@ -242,7 +242,7 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	SpriteManager_showLayer(SpriteManager_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
-    SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 }
 
 // hide editor screens
@@ -280,7 +280,7 @@ void AnimationEditor_stop(AnimationEditor this)
 
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
-    SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
+	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
 // print title
@@ -589,7 +589,7 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey)
 
 				if(0 < this->animationFunction.frames[selectedFrame])
 				{
-				    this->animationFunction.frames[selectedFrame]--;
+					this->animationFunction.frames[selectedFrame]--;
 				}
 
 				break;

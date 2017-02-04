@@ -23,7 +23,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <DebugState.h>
@@ -34,30 +34,30 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void DebugState_destructor(DebugState this);
 static void DebugState_constructor(DebugState this);
-static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
-static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
-static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)));
-static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram);
+static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
+static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
+static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
+static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define DebugState_ATTRIBUTES																			\
-        /* inherits */																					\
-        GameState_ATTRIBUTES																			\
+		/* inherits */																					\
+		GameState_ATTRIBUTES																			\
 
 __CLASS_DEFINITION(DebugState, GameState);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // it's a singleton
@@ -77,27 +77,27 @@ static void DebugState_destructor(DebugState this)
 }
 
 // state's enter
-static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
+static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's execute
-static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
+static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	Debug_update(Debug_getInstance());
 }
 
 // state's exit
-static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)))
+static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 // state's on message
-static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner  __attribute__ ((unused)), Telegram telegram)
+static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	// process message
 	switch(Telegram_getMessage(telegram))

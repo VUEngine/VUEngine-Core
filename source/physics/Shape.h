@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 #define Shape_METHODS(ClassName)																		\
@@ -40,28 +40,28 @@
 		__VIRTUAL_DEC(ClassName, int, overlaps, Shape shape);											\
 		__VIRTUAL_DEC(ClassName, void, setup);															\
 		__VIRTUAL_DEC(ClassName, void, position);														\
-		__VIRTUAL_DEC(ClassName, int, getAxisOfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);												\
-		__VIRTUAL_DEC(ClassName, int, testIfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement);																	\
+		__VIRTUAL_DEC(ClassName, int, getAxisOfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);	\
+		__VIRTUAL_DEC(ClassName, int, testIfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement);									\
 		__VIRTUAL_DEC(ClassName, void, deleteDirectDrawData);											\
 		__VIRTUAL_DEC(ClassName, void, draw);															\
-		__VIRTUAL_DEC(ClassName, void, print, int x, int y);                                            \
+		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
 
 #define Shape_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
 
 #define Shape_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /* the entity to which the shape belongs */														\
-        SpatialObject owner;																			\
-        /* flag to know if the shapes below to an entity which moves */									\
-        u8 moves;																				        \
-        /* whether it has been checked for collision in current update */								\
-        u8 checked;																				        \
-        /* flag to know if setup is needed */															\
-        u8 ready;																				        \
-        /* flag to check against other shapes */														\
-        u8 checkForCollisions;																	        \
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* the entity to which the shape belongs */														\
+		SpatialObject owner;																			\
+		/* flag to know if the shapes below to an entity which moves */									\
+		u8 moves;																						\
+		/* whether it has been checked for collision in current update */								\
+		u8 checked;																						\
+		/* flag to know if setup is needed */															\
+		u8 ready;																						\
+		/* flag to check against other shapes */														\
+		u8 checkForCollisions;																			\
 
 __CLASS(Shape);
 
@@ -75,7 +75,7 @@ enum ShapeTypes
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 void Shape_constructor(Shape this, SpatialObject owner);

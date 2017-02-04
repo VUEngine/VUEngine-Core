@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Sprite.h>
@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											 MACROS
+//											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __OBJECT_CHAR_SHOW_MASK						0xC000
@@ -41,42 +41,42 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
 #define ObjectSprite_METHODS(ClassName)																	\
-	    Sprite_METHODS(ClassName)																		\
+		Sprite_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
 #define ObjectSprite_SET_VTABLE(ClassName)																\
-        Sprite_SET_VTABLE(ClassName)																	\
-        __VIRTUAL_SET(ClassName, ObjectSprite, render);													\
-        __VIRTUAL_SET(ClassName, ObjectSprite, getPosition);											\
-        __VIRTUAL_SET(ClassName, ObjectSprite, setPosition);											\
-        __VIRTUAL_SET(ClassName, ObjectSprite, position);												\
-        __VIRTUAL_SET(ClassName, ObjectSprite, setDirection);											\
-        __VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
-        __VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
-        __VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
+		Sprite_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, ObjectSprite, render);													\
+		__VIRTUAL_SET(ClassName, ObjectSprite, getPosition);											\
+		__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);											\
+		__VIRTUAL_SET(ClassName, ObjectSprite, position);												\
+		__VIRTUAL_SET(ClassName, ObjectSprite, setDirection);											\
+		__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
+		__VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
+		__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
 
 #define ObjectSprite_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Sprite_ATTRIBUTES																				\
-        /* parent sprite */																				\
-        ObjectSpriteContainer objectSpriteContainer;													\
-        /* positioning */																				\
-        VBVec2D position;																				\
-        /* object index */																				\
-        s16 objectIndex;																				\
-        /* number of objects */																			\
-        s16 totalObjects;																				\
+		/* super's attributes */																		\
+		Sprite_ATTRIBUTES																				\
+		/* parent sprite */																				\
+		ObjectSpriteContainer objectSpriteContainer;													\
+		/* positioning */																				\
+		VBVec2D position;																				\
+		/* object index */																				\
+		s16 objectIndex;																				\
+		/* number of objects */																			\
+		s16 totalObjects;																				\
 
 __CLASS(ObjectSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S ROM DECLARATION
+//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef struct ObjectSpriteDefinition
@@ -96,7 +96,7 @@ typedef const ObjectSpriteDefinition ObjectSpriteROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 __CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);

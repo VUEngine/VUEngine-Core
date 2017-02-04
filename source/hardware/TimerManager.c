@@ -21,7 +21,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <TimerManager.h>
@@ -32,23 +32,23 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DEFINITION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define TimerManager_ATTRIBUTES																			\
-        /* super's attributes */																		\
-        Object_ATTRIBUTES																				\
-        /*  */																							\
-        u32 milliseconds;																					    \
-        /*  */																							\
-        u8 tcrValue;																					\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/*  */																							\
+		u32 milliseconds;																				\
+		/*  */																							\
+		u8 tcrValue;																					\
 
 // define the TimerManager
 __CLASS_DEFINITION(TimerManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S MACROS
+//												CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
 // use with 20us timer (range = 0 to 1300)
@@ -75,7 +75,7 @@ __CLASS_DEFINITION(TimerManager, Object);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 static void TimerManager_constructor(TimerManager this);
@@ -86,7 +86,7 @@ static TimerManager _timerManager;
 static SoundManager _soundManager;
 
 //---------------------------------------------------------------------------------------------------------
-// 												CLASS'S METHODS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 __SINGLETON(TimerManager);
@@ -144,17 +144,17 @@ void TimerManager_interruptHandler(void)
 	// update clocks
 	_timerManager->milliseconds += __TIMER_RESOLUTION;
 
-    // play sounds
+	// play sounds
 	static u32 previousHundredthSecond = 0;
 	static u32 currentHundredthSecond = 0;
 	currentHundredthSecond += __TIMER_RESOLUTION;
 
-    if(previousHundredthSecond < (u32)(currentHundredthSecond / 10))
-    {
-        previousHundredthSecond = (u32)(currentHundredthSecond / 10);
-	    // update sounds
-    	SoundManager_playSounds(_soundManager);
-    }
+	if(previousHundredthSecond < (u32)(currentHundredthSecond / 10))
+	{
+		previousHundredthSecond = (u32)(currentHundredthSecond / 10);
+		// update sounds
+		SoundManager_playSounds(_soundManager);
+	}
 
 	// enable interrupts
 	TimerManager_setInterrupt(_timerManager, true);
@@ -164,18 +164,18 @@ u32 TimerManager_getMillisecondsElapsed(TimerManager this)
 {
 	ASSERT(this, "TimerManager::getMillisecondsElapsed: null this");
 
-    return this->milliseconds;
+	return this->milliseconds;
 }
 
 u32 TimerManager_resetMilliseconds(TimerManager this)
 {
 	ASSERT(this, "TimerManager::resetMilliseconds: null this");
 
-    u32 milliseconds = this->milliseconds;
+	u32 milliseconds = this->milliseconds;
 
-    this->milliseconds = 0;
+	this->milliseconds = 0;
 
-    return milliseconds;
+	return milliseconds;
 }
 
 // enable timer
@@ -258,34 +258,34 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 {
 	ASSERT(this, "ClockManager::wait: null this");
 
-    // declare as volatile to prevent the compiler to optimize currentTicks away
-    // making the last assignment invalid
-    volatile u32 currentMilliseconds = this->milliseconds;
+	// declare as volatile to prevent the compiler to optimize currentTicks away
+	// making the last assignment invalid
+	volatile u32 currentMilliseconds = this->milliseconds;
 	u32 waitStartTime = this->milliseconds;
-    volatile u32 *milliseconds = (u32*)&this->milliseconds;
+	volatile u32 *milliseconds = (u32*)&this->milliseconds;
 
-    while ((*milliseconds - waitStartTime) < milliSeconds);
+	while ((*milliseconds - waitStartTime) < milliSeconds);
 
-    this->milliseconds = currentMilliseconds;
+	this->milliseconds = currentMilliseconds;
 
 }
 
 void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
 {
-    if(object && method)
-    {
-        // declare as volatile to prevent the compiler to optimize currentMilliseconds away
-        // making the last assignment invalid
-        volatile u32 currentMilliseconds = this->milliseconds;
+	if(object && method)
+	{
+		// declare as volatile to prevent the compiler to optimize currentMilliseconds away
+		// making the last assignment invalid
+		volatile u32 currentMilliseconds = this->milliseconds;
 
-        u32 i = 0;
+		u32 i = 0;
 
-        for(; i < callTimes; i++)
-        {
-            TimerManager_wait(this, __TIMER_RESOLUTION * duration / callTimes);
-            method(object, i);
-        }
+		for(; i < callTimes; i++)
+		{
+			TimerManager_wait(this, __TIMER_RESOLUTION * duration / callTimes);
+			method(object, i);
+		}
 
-        this->milliseconds = currentMilliseconds;
-    }
+		this->milliseconds = currentMilliseconds;
+	}
 }

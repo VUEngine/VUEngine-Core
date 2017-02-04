@@ -24,7 +24,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											MACROS
+//											MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define	BGM0	0x00	// Voluntary bgm channel #1
@@ -187,7 +187,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
@@ -202,7 +202,7 @@ __CLASS(SoundManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-// 										PUBLIC INTERFACE
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
 SoundManager SoundManager_getInstance();
@@ -210,7 +210,7 @@ SoundManager SoundManager_getInstance();
 void SoundManager_destructor(SoundManager this);
 void SoundManager_setWaveForm(SoundManager this);
 void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[]);
-int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D  position);
+int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D position);
 int SoundManager_playingSound(SoundManager this, const u16* fxSound);
 void SoundManager_stopSound(SoundManager this);
 void SoundManager_stopAllSound(SoundManager this);

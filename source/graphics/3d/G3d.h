@@ -105,22 +105,22 @@ typedef struct
 /*********************************************************
 3d Calculations/Functions
 *********************************************************/
-void  G3d_copyVector3d(vector3d* from, vector3d* to);
-void  G3d_scale(vector3d* factor, vector3d* v, vector3d* o);
-void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o);
-void  G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o);
-void  G3d_rotateZAxis(s32 degrees, vector3d* v, vector3d* o);
-void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o);
-void  G3d_translate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o);
-void  G3d_cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o);
-void  G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o);
-void  G3d_initObject(object* o, objectData* objData);
-void  G3d_moveObject(object* o);
-void  G3d_moveCamera(camera* c);
-void  G3d_calculateProjection(vector3d* o);
-void  G3d_clipZAxis(vector3d* v1, vector3d* v2);
-void  G3d_clipObject(object* o);
-void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag);
+void G3d_copyVector3d(vector3d* from, vector3d* to);
+void G3d_scale(vector3d* factor, vector3d* v, vector3d* o);
+void G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o);
+void G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o);
+void G3d_rotateZAxis(s32 degrees, vector3d* v, vector3d* o);
+void G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o);
+void G3d_translate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o);
+void G3d_cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o);
+void G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o);
+void G3d_initObject(object* o, objectData* objData);
+void G3d_moveObject(object* o);
+void G3d_moveCamera(camera* c);
+void G3d_calculateProjection(vector3d* o);
+void G3d_clipZAxis(vector3d* v1, vector3d* v2);
+void G3d_clipObject(object* o);
+void G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag);
 /********************************************************/
 /********************************************************
 Core Drawing Functions
