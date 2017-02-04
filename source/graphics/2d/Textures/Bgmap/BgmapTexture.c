@@ -276,6 +276,13 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	}
 }
 
+s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::getRemainingRowsToBeWritten: null this");
+
+	return this->remainingRowsToBeWritten;
+}
+
 // get texture's x offset within bgmap mem
 s16 BgmapTexture_getXOffset(BgmapTexture this)
 {
