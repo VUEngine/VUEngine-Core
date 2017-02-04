@@ -81,6 +81,7 @@ __CLASS_NEW_DECLARE(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition
 void BgmapTexture_destructor(BgmapTexture this);
 void BgmapTexture_write(BgmapTexture this);
 void BgmapTexture_rewrite(BgmapTexture this);
+s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this);
 s16 BgmapTexture_getXOffset(BgmapTexture this);
 s16 BgmapTexture_getYOffset(BgmapTexture this);
 u16 BgmapTexture_getBgmapSegment(BgmapTexture this);
