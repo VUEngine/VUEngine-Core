@@ -938,7 +938,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 	ParticleRemover_update(this->particleRemover);
 
 #ifdef __SHOW_STREAMING_PROFILING
-	Stage_showStreamingProfiling(this, 1, 18);
+	Stage_showStreamingProfiling(this, 1, 1);
 #endif
 
 }

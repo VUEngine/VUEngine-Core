@@ -152,7 +152,7 @@ static void Game_checkLowBattery(Game this, u16 keyPressed);
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
 
-static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y, bool reset);
+static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y);
 
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
 u32 VIPManager_writeDRAM(VIPManager this);
@@ -996,6 +996,11 @@ inline static void Game_checkForNewState(Game this)
 
 inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 {
+	if(Game_isInSpecialMode(this))
+	{
+		return;
+	}
+
 	FrameRate frameRate = FrameRate_getInstance();
 
 	this->gameFrameTotalTime += gameFrameDuration;
@@ -1008,8 +1013,16 @@ inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 #ifdef __SHOW_GAME_PROFILING
 		if(updateProfiling)
 		{
-			Game_showProfiling(this, 1, 2, true);
+			Game_showProfiling(this, 1, 2);
+			Game_resetProfiling(this);
 		}
+#else
+#ifdef __PROFILE_GAME
+		if(updateProfiling)
+		{
+			Game_resetProfiling(this);
+		}
+#endif
 #endif
 		this->gameFrameTotalTime = 0;
 
@@ -1543,7 +1556,7 @@ bool Game_isGameFrameDone(Game this)
 }
 #endif
 
-static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y, bool reset)
+static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y)
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
@@ -1619,10 +1632,6 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y,
 	Printing_int(Printing_getInstance(), renderingTotalTime + updateVisualsTotalTime + handleInputTotalTime + dispatchDelayedMessageTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime + processCollisionsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	if(reset)
-	{
-		Game_resetProfiling(this);
-	}
 #endif
 }
 
@@ -1664,5 +1673,5 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x, 
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
-	Game_showProfiling(this, x, y, false);
+	Game_showProfiling(this, x, y);
 }
