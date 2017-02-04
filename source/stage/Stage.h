@@ -231,5 +231,6 @@ void Stage_resume(Stage this);
 bool Stage_handlePropagatedMessage(Stage this, int message);
 StageDefinition* Stage_getStageDefinition(Stage this);
 ParticleRemover Stage_getParticleRemover(Stage this);
+void Stage_printStreamingStatus(Stage this, int x, int y);
 
 #endif

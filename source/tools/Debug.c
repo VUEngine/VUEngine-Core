@@ -40,6 +40,7 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
+#include <MBackgroundManager.h>
 #include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
@@ -157,15 +158,19 @@ static void Debug_lightUpGame(Debug this);
 // pages
 static void Debug_showGeneralStatus(Debug this, int increment, int x, int y);
 static void Debug_showMemoryStatus(Debug this, int increment, int x, int y);
-static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y);
+static void Debug_showGameProfiling(Debug this, int increment, int x, int y);
+static void Debug_showStreamingStatus(Debug this, int increment, int x, int y);
+static void Debug_showSpritesStatus(Debug this, int increment, int x, int y);
 static void Debug_showTextureStatus(Debug this, int increment, int x, int y);
 static void Debug_showObjectStatus(Debug this, int increment, int x, int y);
-static void Debug_showSpritesStatus(Debug this, int increment, int x, int y);
+static void Debug_showCharMemoryStatus(Debug this, int increment, int x, int y);
 static void Debug_showPhysicsStatus(Debug this, int increment, int x, int y);
 static void Debug_showHardwareStatus(Debug this, int increment, int x, int y);
 static void Debug_showSramStatus(Debug this, int increment, int x, int y);
 
 // sub pages
+static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
+static void Debug_mBackgroundManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_texturesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_objectsShowStatus(Debug this, int increment, int x, int y);
@@ -229,6 +234,8 @@ static void Debug_setupPages(Debug this)
 {
 	VirtualList_pushBack(this->pages, &Debug_showGeneralStatus);
 	VirtualList_pushBack(this->pages, &Debug_showMemoryStatus);
+	VirtualList_pushBack(this->pages, &Debug_showGameProfiling);
+	VirtualList_pushBack(this->pages, &Debug_showStreamingStatus);
 	VirtualList_pushBack(this->pages, &Debug_showSpritesStatus);
 	VirtualList_pushBack(this->pages, &Debug_showTextureStatus);
 	VirtualList_pushBack(this->pages, &Debug_showObjectStatus);
@@ -300,6 +307,8 @@ void Debug_hide(Debug this)
 	CollisionManager_flushShapesDirectDrawData(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
+	Game_resetProfiling(Game_getInstance());
+
 	Debug_lightUpGame(this);
 }
 
@@ -591,6 +600,35 @@ static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute
 	Debug_printClassSizes(_userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
 
+static void Debug_showGameProfiling(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+{
+	Debug_removeSubPages(this);
+
+	Game_showLastGameFrameProfiling(Game_getInstance(), x, y);
+}
+
+static void Debug_showStreamingStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+{
+	Debug_removeSubPages(this);
+
+	VirtualList_pushBack(this->subPages, &Debug_streamingShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_mBackgroundManagerShowStatus);
+	this->currentSubPage = this->subPages->head;
+
+	Debug_showSubPage(this, 0);
+}
+
+static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+{
+	Stage_showStreamingProfiling(GameState_getStage(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), x, y);
+}
+
+static void Debug_mBackgroundManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+{
+	Printing_text(Printing_getInstance(), "STREAMING STATUS", x, y++, NULL);
+	MBackgroundManager_print(MBackgroundManager_getInstance(), x, ++y);
+}
+
 static void Debug_showCharMemoryStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
@@ -675,7 +713,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 	}
 }
 
-static void Debug_showTextureStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int  __attribute__ ((unused))y)
+static void Debug_showTextureStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
@@ -858,7 +896,11 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 			Printing_text(Printing_getInstance(), "Texture (segment):                         ", x, ++y, NULL);
 			Printing_int(Printing_getInstance(), BgmapTexture_getBgmapSegment(bgmapTexture), x + 24, y, NULL);
 			Printing_text(Printing_getInstance(), "Texture (definition):                         ", x, ++y, NULL);
-			Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(bgmapTexture), x + 24, y, 8, NULL);
+			Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + 24, y, 8, NULL);
+			Printing_text(Printing_getInstance(), "Texture (written):                         ", x, ++y, NULL);
+			Printing_text(Printing_getInstance(), Texture_isWritten(__SAFE_CAST(Texture, bgmapTexture)) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 24, y, NULL);
+			Printing_text(Printing_getInstance(), "Texture (rows rem.):                         ", x, ++y, NULL);
+			Printing_int(Printing_getInstance(), BgmapTexture_getRemainingRowsToBeWritten(bgmapTexture), x + 24, y, NULL);
 		}
 		//Debug_lightUpGame(this);
     }

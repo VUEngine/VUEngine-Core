@@ -93,6 +93,8 @@ void Game_removePostProcessingEffect(Game this, PostProcessingEffect postProcess
 CollisionManager Game_getCollisionManager(Game this);
 PhysicalWorld Game_getPhysicalWorld(Game this);
 void Game_wait(Game this, u32 milliSeconds);
+void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x, int y);
+void Game_resetProfiling(Game this);
 
 #ifdef __DEBUG_TOOLS
 bool Game_isInDebugMode(Game this);
@@ -103,9 +105,4 @@ bool Game_isInStageEditor(Game this);
 #ifdef __ANIMATION_EDITOR
 bool Game_isInAnimationEditor(Game this);
 #endif
-
-#ifdef __PROFILE_GAME
-void Game_showProfiling(Game this);
-#endif
-
 #endif

@@ -884,8 +884,6 @@ void Stage_stream(Stage this)
 #ifdef __PROFILE_STREAMING
         u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
         entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
-
-        EntityFactory_showStatus(this->entityFactory, 0, 18);
 #endif
     }
 
@@ -938,6 +936,11 @@ void Stage_update(Stage this, u32 elapsedTime)
 	}
 
 	ParticleRemover_update(this->particleRemover);
+
+#ifdef __SHOW_STREAMING_PROFILING
+	Stage_showStreamingProfiling(this, 1, 18);
+#endif
+
 }
 
 // transform state
@@ -1135,25 +1138,41 @@ ParticleRemover Stage_getParticleRemover(Stage this)
 	return this->particleRemover;
 }
 
-#ifdef __PROFILE_STREAMING
 void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, int y)
 {
     ASSERT(this, "Stage::showStreamingProfiling: null this");
-    int xDisplacement = 11;
 
-    Printing_text(Printing_getInstance(), "STREAMING PROFILING", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "STREAMING STATUS", x, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Unload:            ", x, y, NULL);
-    Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement + 4, y++, NULL);
+	Printing_text(Printing_getInstance(), "Stage's status", x, ++y, NULL);
 
-    Printing_text(Printing_getInstance(), "Load:              ", x, y, NULL);
-    Printing_int(Printing_getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement + 4, y++, NULL);
+    int originalY = y;
+    int xDisplacement = 18;
+	y++;
 
-    Printing_text(Printing_getInstance(), "Factory:              ", x, y, NULL);
-    Printing_int(Printing_getInstance(), entityFactoryHighestTime, x + xDisplacement + 4, y++, NULL);
+	Printing_text(Printing_getInstance(), "Regist. entities: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->stageEntities), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Loaded entities: ", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->loadedStageEntities), x + xDisplacement, y++, NULL);
+
+#ifdef __PROFILE_STREAMING
+    Printing_text(Printing_getInstance(), "Process duration (ms):", x, ++y, NULL);
+
+    Printing_text(Printing_getInstance(), "Unload:               ", x, ++y, NULL);
+    Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
+
+    Printing_text(Printing_getInstance(), "Load:                 ", x, ++y, NULL);
+    Printing_int(Printing_getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
+
+    Printing_text(Printing_getInstance(), "Factory:              ", x, ++y, NULL);
+    Printing_int(Printing_getInstance(), entityFactoryHighestTime, x + xDisplacement, y++, NULL);
 
     unloadOutOfRangeEntitiesHighestTime = 0;
     loadInRangeEntitiesHighestTime = 0;
     entityFactoryHighestTime = 0;
-}
+
+	++y;
+	EntityFactory_showStatus(this->entityFactory, x + 24, originalY);
+
 #endif
+}

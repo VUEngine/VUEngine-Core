@@ -509,11 +509,12 @@ void EntityFactory_prepareAllEntities(EntityFactory this)
 }
 
 #ifdef __PROFILE_STREAMING
-    void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y)
+void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y)
 {
     ASSERT(this, "EntityFactory::showStreamingProfiling: null this");
-    int xDisplacement = 16;
+    int xDisplacement = 18;
 
+    Printing_text(Printing_getInstance(), "Factory's status", x, y++, NULL);
     Printing_text(Printing_getInstance(), "", x, y++, NULL);
 
     Printing_text(Printing_getInstance(), "Entities pending...", x, y++, NULL);
