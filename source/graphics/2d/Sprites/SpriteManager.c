@@ -58,7 +58,6 @@ typedef struct SpritesList
 	Object_ATTRIBUTES																					\
 	/* list of sprites to render */																		\
 	VirtualList sprites;																				\
-	VirtualList spritesPerType;																			\
 	/* sorting nodes */																					\
 	VirtualNode node;																					\
 	VirtualNode nextNode;																				\
@@ -112,7 +111,6 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->nextNode = NULL;
 
 	this->sprites = NULL;
-	this->spritesPerType = NULL;
 
 	this->recoveringLayers = false;
 	this->textureToWrite = NULL;
@@ -137,21 +135,6 @@ void SpriteManager_destructor(SpriteManager this)
 		this->sprites = NULL;
 	}
 
-	if(this->spritesPerType)
-	{
-		VirtualNode node = this->spritesPerType->head;
-
-		for(; node; node = node->next)
-		{
-			SpritesList* spritesList = (SpritesList*)node->data;
-			__DELETE(spritesList->sprites);
-			__DELETE_BASIC(spritesList);
-		}
-
-		__DELETE(this->spritesPerType);
-		this->spritesPerType = NULL;
-	}
-
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
@@ -170,24 +153,7 @@ void SpriteManager_reset(SpriteManager this)
 		this->sprites = NULL;
 	}
 
-	if(this->spritesPerType)
-	{
-		VirtualNode node = this->spritesPerType->head;
-
-		for(; node; node = node->next)
-		{
-			SpritesList* spritesList = (SpritesList*)node->data;
-			__DELETE(spritesList->sprites);
-			__DELETE_BASIC(spritesList);
-		}
-
-		__DELETE(this->spritesPerType);
-		this->spritesPerType = NULL;
-	}
-
 	this->sprites = __NEW(VirtualList);
-	this->spritesPerType = __NEW(VirtualList);
-
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
 	this->node = NULL;
@@ -299,31 +265,6 @@ u8 SpriteManager_getWorldLayer(SpriteManager this, Sprite sprite)
 	if(!alreadyLoadedSpriteNode)
 	{
 #endif
-		// add to the right sprite list
-		const void* spriteClassVTable = Object_getVTable(__SAFE_CAST(Object, sprite));
-
-		VirtualNode node = this->spritesPerType->head;
-
-		for(; node; node = node->next)
-		{
-			SpritesList* spritesList = (SpritesList*)node->data;
-
-			if(spritesList->spriteClassVTable == spriteClassVTable)
-			{
-				VirtualList_pushBack(spritesList->sprites, sprite);
-				break;
-			}
-		}
-
-		if(!node)
-		{
-			SpritesList* spritesList = __NEW_BASIC(SpritesList);
-			spritesList->spriteClassVTable = spriteClassVTable;
-			spritesList->sprites = __NEW(VirtualList);
-			VirtualList_pushBack(spritesList->sprites, sprite);
-			VirtualList_pushBack(this->spritesPerType, spritesList);
-		}
-
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
 		s8 layer = __TOTAL_LAYERS - 1;
@@ -363,25 +304,9 @@ void SpriteManager_relinquishWorldLayer(SpriteManager this, Sprite sprite)
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
 	{
-		// remove from the rendering list
-		const void* spriteClassVTable = Object_getVTable(__SAFE_CAST(Object, sprite));
-
-		VirtualNode node = this->spritesPerType->head;
-
-		for(; node; node = node->next)
-		{
-			SpritesList* spritesList = (SpritesList*)node->data;
-
-			if(spritesList->spriteClassVTable == spriteClassVTable)
-			{
-				VirtualList_removeElement(spritesList->sprites, sprite);
-				break;
-			}
-		}
-
 		u8 spriteLayer = sprite->worldLayer;
 
-		node = this->sprites->head;
+		VirtualNode node = this->sprites->head;
 
 		for(; node; node = node->next)
 		{
@@ -402,9 +327,7 @@ void SpriteManager_relinquishWorldLayer(SpriteManager this, Sprite sprite)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			NM_ASSERT(spriteLayer == sprite->worldLayer + 1, "SpriteManager::relinquishWorldLayer: wrong layers");
-
-			spriteLayer--;
+			ASSERT(spriteLayer-- == sprite->worldLayer + 1, "SpriteManager::relinquishWorldLayer: wrong layers");
 
 			// move the sprite to the freed layer
 			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
@@ -412,7 +335,6 @@ void SpriteManager_relinquishWorldLayer(SpriteManager this, Sprite sprite)
 
 		// allow sorting
 		this->recoveringLayers = false;
-
 
 		// sorting needs to restart
 		this->node = NULL;
@@ -501,40 +423,34 @@ void SpriteManager_render(SpriteManager this)
 		SpriteManager_sortLayersProgressively(this);
 	}
 
-	VirtualNode node = this->spritesPerType->head;
+	VirtualNode node = this->sprites->head;
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
 	for(; node; node = node->next)
 	{
-		// render from WORLD 31 to the lowest active one
-		VirtualNode spriteNode = (__SAFE_CAST(VirtualList, ((SpritesList*)node->data)->sprites))->head;
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		for(; spriteNode; spriteNode = spriteNode->next)
+		// first update
+		Sprite_update(__SAFE_CAST(Sprite, sprite));
+
+		if(sprite->hidden || !sprite->visible)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+			_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
+		}
+		else
+		{
+			__VIRTUAL_CALL(Sprite, render, sprite);
+		}
 
-			// first update
-			Sprite_update(__SAFE_CAST(Sprite, sprite));
+		// must make sure that no sprite has the end world
+		// which can be the case when a new sprite is added
+		// and the previous end world is assigned to it
+		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 
-			if(sprite->hidden || !sprite->visible)
-			{
-				_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
-			}
-			else
-			{
-				__VIRTUAL_CALL(Sprite, render, sprite);
-			}
-
-			// must make sure that no sprite has the end world
-			// which can be the case when a new sprite is added
-			// and the previous end world is assigned to it
-			_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
-
-			if(sprite->worldLayer && sprite->worldLayer < this->freeLayer)
-			{
-				this->freeLayer = sprite->worldLayer;
-			}
+		if(sprite->worldLayer && sprite->worldLayer < this->freeLayer)
+		{
+			this->freeLayer = sprite->worldLayer;
 		}
 	}
 
