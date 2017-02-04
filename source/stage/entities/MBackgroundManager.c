@@ -26,6 +26,7 @@
 
 #include <MBackgroundManager.h>
 #include <BgmapTextureManager.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -110,30 +111,40 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 	{
 		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
-		if(textureRegistry->free)
+		if(Texture_getTextureDefinition(textureRegistry->texture) == textureDefinition)
 		{
-			if(textureDefinition->cols <= textureRegistry->cols &&
-				textureDefinition->rows <= textureRegistry->rows
-			)
+			selectedTextureRegistry = textureRegistry;
+			break;
+		}
+	}
+
+	if(!selectedTextureRegistry)
+	{
+		for(node = this->textureRegistries->head; node; node = node->next)
+		{
+			TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
+
+			if(textureRegistry->free)
 			{
-				if(!selectedTextureRegistry)
+				if(textureDefinition->cols <= textureRegistry->cols &&
+					textureDefinition->rows <= textureRegistry->rows
+				)
 				{
-					selectedTextureRegistry = textureRegistry;
-				}
-				else if(textureDefinition->cols == textureRegistry->cols && textureDefinition->rows == textureRegistry->rows)
-				{
-					selectedTextureRegistry = textureRegistry;
-					break;
-				}
-				else if(textureRegistry->cols <= selectedTextureRegistry->cols && textureRegistry->rows <= selectedTextureRegistry->rows)
-				{
-					selectedTextureRegistry = textureRegistry;
+					if(!selectedTextureRegistry)
+					{
+						selectedTextureRegistry = textureRegistry;
+					}
+					else if(textureDefinition->cols == textureRegistry->cols && textureDefinition->rows == textureRegistry->rows)
+					{
+						selectedTextureRegistry = textureRegistry;
+						break;
+					}
+					else if(textureRegistry->cols <= selectedTextureRegistry->cols && textureRegistry->rows <= selectedTextureRegistry->rows)
+					{
+						selectedTextureRegistry = textureRegistry;
+					}
 				}
 			}
-		}
-		else if(Texture_getTextureDefinition(textureRegistry->texture) == textureDefinition)
-		{
-			return textureRegistry->texture;
 		}
 	}
 
@@ -210,3 +221,48 @@ void MBackgroundManager_reset(MBackgroundManager this)
 
 	VirtualList_clear(this->textureRegistries);
 }
+
+void MBackgroundManager_print(MBackgroundManager this, int x, int y)
+{
+	Printing_text(Printing_getInstance(), "MBackgroundManager's status", x, y++, NULL);
+	y++;
+	Printing_text(Printing_getInstance(), "Texture entries: ", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->textureRegistries), x + 17, y++, NULL);
+	Printing_text(Printing_getInstance(), "Free entries: ", x, y++, NULL);
+	y++;
+
+	Printing_text(Printing_getInstance(), "#  Tex.Def. Free", x, y++, NULL);
+
+	int i = 0;
+	int j = 0;
+	int counter = 0;
+	int freeEntries = 0;
+
+	VirtualNode node = this->textureRegistries->head;
+
+	for(; node; node = node->next)
+	{
+		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
+
+		freeEntries += textureRegistry->free? 1 : 0;
+
+		Printing_int(Printing_getInstance(), ++counter, x, y + i, NULL);
+		Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(textureRegistry->texture), x + j + 3, y + i, 8, NULL);
+		Printing_text(Printing_getInstance(), textureRegistry->free? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 12, y + i, NULL);
+
+		if(++i + y > __SCREEN_HEIGHT / 8)
+		{
+			i = 0;
+			j += 14;
+
+			if(j + x > __SCREEN_WIDTH / 8)
+			{
+				i = 0;
+				j = 0;
+			}
+		}
+	}
+
+	Printing_int(Printing_getInstance(), freeEntries, x + 17, y - 3, NULL);
+}
+
