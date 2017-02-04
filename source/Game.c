@@ -1560,9 +1560,9 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y)
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
-	int xDisplacement = 20;
-
 #ifdef __PROFILE_GAME
+
+	int xDisplacement = 20;
 
 	Printing_text(Printing_getInstance(), "GAME's PROFILING", x, y++, NULL);
 
