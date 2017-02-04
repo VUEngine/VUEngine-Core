@@ -50,7 +50,7 @@ typedef struct PositionedEntityDescription
 	Entity entity;
 	EventListener callback;
 	s16 id;
-    u16 transformed;
+	u16 transformed;
 } PositionedEntityDescription;
 
 
@@ -70,10 +70,10 @@ typedef u32 (*StreamingPhase)(EntityFactory);
 
 static const StreamingPhase _streamingPhases[] =
 {
-    &EntityFactory_instantiateEntities,
-    &EntityFactory_initializeEntities,
-    &EntityFactory_transformEntities,
-    &EntityFactory_makeReadyEntities
+	&EntityFactory_instantiateEntities,
+	&EntityFactory_initializeEntities,
+	&EntityFactory_transformEntities,
+	&EntityFactory_makeReadyEntities
 };
 
 static int _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
@@ -95,13 +95,13 @@ static void EntityFactory_constructor(EntityFactory this)
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
-    this->entitiesToInstantiate = __NEW(VirtualList);
+	this->entitiesToInstantiate = __NEW(VirtualList);
 	this->entitiesToInitialize = __NEW(VirtualList);
 	this->entitiesToTransform = __NEW(VirtualList);
 	this->entitiesToMakeReady = __NEW(VirtualList);
 	this->spawnedEntities = __NEW(VirtualList);
 
-    this->streamingPhase = 0;
+	this->streamingPhase = 0;
 }
 
 // class's destructor
@@ -109,86 +109,86 @@ void EntityFactory_destructor(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::destructor: null this");
 
-    VirtualNode node = this->entitiesToInstantiate->head;
+	VirtualNode node = this->entitiesToInstantiate->head;
 
-    for(; node; node = node->next)
-    {
-        PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
+	for(; node; node = node->next)
+	{
+		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-        if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    __DELETE(this->entitiesToInstantiate);
-    this->entitiesToInstantiate = NULL;
+	__DELETE(this->entitiesToInstantiate);
+	this->entitiesToInstantiate = NULL;
 
-    node = this->entitiesToInitialize->head;
+	node = this->entitiesToInitialize->head;
 
-    for(; node; node = node->next)
-    {
-        PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
+	for(; node; node = node->next)
+	{
+		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-        if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    __DELETE(this->entitiesToInitialize);
-    this->entitiesToInitialize = NULL;
+	__DELETE(this->entitiesToInitialize);
+	this->entitiesToInitialize = NULL;
 
-    node = this->entitiesToTransform->head;
+	node = this->entitiesToTransform->head;
 
-    for(; node; node = node->next)
-    {
-        PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
+	for(; node; node = node->next)
+	{
+		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-        if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    __DELETE(this->entitiesToTransform);
-    this->entitiesToTransform = NULL;
+	__DELETE(this->entitiesToTransform);
+	this->entitiesToTransform = NULL;
 
-    node = this->entitiesToMakeReady->head;
+	node = this->entitiesToMakeReady->head;
 
-    for(; node; node = node->next)
-    {
-        PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
+	for(; node; node = node->next)
+	{
+		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-        if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    __DELETE(this->entitiesToMakeReady);
-    this->entitiesToMakeReady = NULL;
+	__DELETE(this->entitiesToMakeReady);
+	this->entitiesToMakeReady = NULL;
 
 
-    node = this->spawnedEntities->head;
+	node = this->spawnedEntities->head;
 
-    for(; node; node = node->next)
-    {
-        PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
+	for(; node; node = node->next)
+	{
+		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    __DELETE(this->spawnedEntities);
-    this->spawnedEntities = NULL;
+	__DELETE(this->spawnedEntities);
+	this->spawnedEntities = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -199,66 +199,66 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
 {
 	ASSERT(this, "EntityFactory::spawnEntity: null this");
 
-    if(!positionedEntity || !parent)
-    {
-        return;
-    }
+	if(!positionedEntity || !parent)
+	{
+		return;
+	}
 
-    PositionedEntityDescription* positionedEntityDescription = __NEW_BASIC(PositionedEntityDescription);
+	PositionedEntityDescription* positionedEntityDescription = __NEW_BASIC(PositionedEntityDescription);
 
-    positionedEntityDescription->positionedEntity = positionedEntity;
-    positionedEntityDescription->parent = parent;
-    positionedEntityDescription->entity = NULL;
-    positionedEntityDescription->callback = callback;
-    positionedEntityDescription->id = id;
-    positionedEntityDescription->transformed = false;
+	positionedEntityDescription->positionedEntity = positionedEntity;
+	positionedEntityDescription->parent = parent;
+	positionedEntityDescription->entity = NULL;
+	positionedEntityDescription->callback = callback;
+	positionedEntityDescription->id = id;
+	positionedEntityDescription->transformed = false;
 
-    VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
+	VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
 
 u32 EntityFactory_instantiateEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
 
-    if(!this->entitiesToInstantiate->head)
-    {
-        return __LIST_EMPTY;
-    }
+	if(!this->entitiesToInstantiate->head)
+	{
+		return __LIST_EMPTY;
+	}
 
-    PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInstantiate->head->data;
+	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInstantiate->head->data;
 
-    if(*(u32*)positionedEntityDescription->parent)
-    {
-        if(positionedEntityDescription->entity)
-        {
-            if(Entity_areAllChildrenInstantiated(positionedEntityDescription->entity))
-            {
-                VirtualList_pushBack(this->entitiesToInitialize, positionedEntityDescription);
-                VirtualList_removeElement(this->entitiesToInstantiate, positionedEntityDescription);
+	if(*(u32*)positionedEntityDescription->parent)
+	{
+		if(positionedEntityDescription->entity)
+		{
+			if(Entity_areAllChildrenInstantiated(positionedEntityDescription->entity))
+			{
+				VirtualList_pushBack(this->entitiesToInitialize, positionedEntityDescription);
+				VirtualList_removeElement(this->entitiesToInstantiate, positionedEntityDescription);
 
-                return __ENTITY_PROCESSED;
-            }
+				return __ENTITY_PROCESSED;
+			}
 
-            return __ENTITY_PENDING_PROCESSING;
-        }
-        else
-        {
-            positionedEntityDescription->entity = Entity_loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->id);
-            ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
+			return __ENTITY_PENDING_PROCESSING;
+		}
+		else
+		{
+			positionedEntityDescription->entity = Entity_loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->id);
+			ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
-            if(positionedEntityDescription->callback)
-            {
-                Object_addEventListener(__SAFE_CAST(Object, positionedEntityDescription->entity), __SAFE_CAST(Object, positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
-            }
-        }
-    }
-    else
-    {
-        VirtualList_removeElement(this->entitiesToInstantiate, positionedEntityDescription);
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+			if(positionedEntityDescription->callback)
+			{
+				Object_addEventListener(__SAFE_CAST(Object, positionedEntityDescription->entity), __SAFE_CAST(Object, positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
+			}
+		}
+	}
+	else
+	{
+		VirtualList_removeElement(this->entitiesToInstantiate, positionedEntityDescription);
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    return __ENTITY_PROCESSED;
+	return __ENTITY_PROCESSED;
 }
 
 // initialize loaded entities
@@ -268,40 +268,40 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 
 	if(!this->entitiesToInitialize->head)
 	{
-	    return __LIST_EMPTY;
+		return __LIST_EMPTY;
 	}
 
-    PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInitialize->head->data;
+	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInitialize->head->data;
 
-    if(*(u32*)positionedEntityDescription->parent)
-    {
-        ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
+	if(*(u32*)positionedEntityDescription->parent)
+	{
+		ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
 
-        if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
-        {
-            __VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
+		if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
+		{
+			__VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
 
-            VirtualList_pushBack(this->entitiesToTransform, positionedEntityDescription);
-            VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
+			VirtualList_pushBack(this->entitiesToTransform, positionedEntityDescription);
+			VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
 
-            return __ENTITY_PROCESSED;
-        }
+			return __ENTITY_PROCESSED;
+		}
 
-        return __ENTITY_PENDING_PROCESSING;
-    }
-    else
-    {
-        VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
+		return __ENTITY_PENDING_PROCESSING;
+	}
+	else
+	{
+		VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
 
-        if(*(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(*(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    return __ENTITY_PROCESSED;
+	return __ENTITY_PROCESSED;
 }
 
 // transform spawned entities
@@ -309,49 +309,49 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::transformEntities: null this");
 
-    if(!this->entitiesToTransform->head)
-    {
-        return __LIST_EMPTY;
-    }
+	if(!this->entitiesToTransform->head)
+	{
+		return __LIST_EMPTY;
+	}
 
-    PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToTransform->head->data;
-    ASSERT(positionedEntityDescription->entity, "EntityFactory::transformEntities: null entity");
-    ASSERT(positionedEntityDescription->parent, "EntityFactory::transformEntities: null parent");
+	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToTransform->head->data;
+	ASSERT(positionedEntityDescription->entity, "EntityFactory::transformEntities: null entity");
+	ASSERT(positionedEntityDescription->parent, "EntityFactory::transformEntities: null parent");
 
-    if(*(u32*)positionedEntityDescription->parent)
-    {
-        if(!positionedEntityDescription->transformed)
-        {
-            positionedEntityDescription->transformed = true;
+	if(*(u32*)positionedEntityDescription->parent)
+	{
+		if(!positionedEntityDescription->transformed)
+		{
+			positionedEntityDescription->transformed = true;
 
-            Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
+			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
 
-            __VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, &environmentTransform, false);
-        }
+			__VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, &environmentTransform, false);
+		}
 
-        if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
-        {
-            VirtualList_pushBack(this->entitiesToMakeReady, positionedEntityDescription);
-            VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
+		if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
+		{
+			VirtualList_pushBack(this->entitiesToMakeReady, positionedEntityDescription);
+			VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
 
-            return __ENTITY_PROCESSED;
-        }
+			return __ENTITY_PROCESSED;
+		}
 
-        return __ENTITY_PENDING_PROCESSING;
-    }
-    else
-    {
-        VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
+		return __ENTITY_PENDING_PROCESSING;
+	}
+	else
+	{
+		VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
 
-        if(*(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(*(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    return __ENTITY_PROCESSED;
+	return __ENTITY_PROCESSED;
 }
 
 u32 EntityFactory_makeReadyEntities(EntityFactory this)
@@ -360,41 +360,41 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 
 	if(!this->entitiesToMakeReady->head)
 	{
-	    return __LIST_EMPTY;
+		return __LIST_EMPTY;
 	}
 
-    PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToMakeReady->head->data;
+	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToMakeReady->head->data;
 
-    if(*(u32*)positionedEntityDescription->parent)
-    {
-        if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
-        {
-            __VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
+	if(*(u32*)positionedEntityDescription->parent)
+	{
+		if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
+		{
+			__VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
 
-            // call ready method
-            __VIRTUAL_CALL(Entity, ready, positionedEntityDescription->entity, false);
+			// call ready method
+			__VIRTUAL_CALL(Entity, ready, positionedEntityDescription->entity, false);
 
-            VirtualList_pushBack(this->spawnedEntities, positionedEntityDescription);
-            VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
+			VirtualList_pushBack(this->spawnedEntities, positionedEntityDescription);
+			VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
 
-            return __ENTITY_PROCESSED;
-        }
+			return __ENTITY_PROCESSED;
+		}
 
-        return __ENTITY_PENDING_PROCESSING;
-    }
-    else
-    {
-        VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
+		return __ENTITY_PENDING_PROCESSING;
+	}
+	else
+	{
+		VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
 
-        if(*(u32*)positionedEntityDescription->entity)
-        {
-            __DELETE(positionedEntityDescription->entity);
-        }
+		if(*(u32*)positionedEntityDescription->entity)
+		{
+			__DELETE(positionedEntityDescription->entity);
+		}
 
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    return __ENTITY_PROCESSED;
+	return __ENTITY_PROCESSED;
 }
 
 u32 EntityFactory_cleanUp(EntityFactory this)
@@ -403,135 +403,135 @@ u32 EntityFactory_cleanUp(EntityFactory this)
 
 	if(!this->spawnedEntities->head)
 	{
-	    return __LIST_EMPTY;
+		return __LIST_EMPTY;
 	}
 
-    PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->spawnedEntities->head->data;
+	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->spawnedEntities->head->data;
 
-    if(*(u32*)positionedEntityDescription->parent && *(u32*)positionedEntityDescription->entity)
-    {
-        if(positionedEntityDescription->callback)
-        {
-            Object_fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
+	if(*(u32*)positionedEntityDescription->parent && *(u32*)positionedEntityDescription->entity)
+	{
+		if(positionedEntityDescription->callback)
+		{
+			Object_fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
 
-            Object_removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
-        }
+			Object_removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
+		}
 
-        VirtualList_removeElement(this->spawnedEntities, positionedEntityDescription);
-        __DELETE_BASIC(positionedEntityDescription);
+		VirtualList_removeElement(this->spawnedEntities, positionedEntityDescription);
+		__DELETE_BASIC(positionedEntityDescription);
 
-        return __ENTITY_PROCESSED;
-    }
-    else
-    {
-        VirtualList_removeElement(this->spawnedEntities, positionedEntityDescription);
-        __DELETE_BASIC(positionedEntityDescription);
-    }
+		return __ENTITY_PROCESSED;
+	}
+	else
+	{
+		VirtualList_removeElement(this->spawnedEntities, positionedEntityDescription);
+		__DELETE_BASIC(positionedEntityDescription);
+	}
 
-    return __ENTITY_PROCESSED;
+	return __ENTITY_PROCESSED;
 }
 
 u32 EntityFactory_prepareEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::prepareEntities: null this");
 
-    EntityFactory_cleanUp(this);
+	EntityFactory_cleanUp(this);
 
-    if(this->streamingPhase >= _streamingPhasesCount)
-    {
-        this->streamingPhase = 0;
-    }
+	if(this->streamingPhase >= _streamingPhasesCount)
+	{
+		this->streamingPhase = 0;
+	}
 
-    u32 result = _streamingPhases[this->streamingPhase](this);
+	u32 result = _streamingPhases[this->streamingPhase](this);
 
-    int counter = _streamingPhasesCount;
+	int counter = _streamingPhasesCount;
 
-    while(__LIST_EMPTY == result)
-    {
-        if(!--counter)
-        {
-            return false;
-        }
+	while(__LIST_EMPTY == result)
+	{
+		if(!--counter)
+		{
+			return false;
+		}
 
-        this->streamingPhase++;
+		this->streamingPhase++;
 
-        if(this->streamingPhase >= _streamingPhasesCount)
-        {
-            this->streamingPhase = 0;
-        }
+		if(this->streamingPhase >= _streamingPhasesCount)
+		{
+			this->streamingPhase = 0;
+		}
 
-        result = _streamingPhases[this->streamingPhase](this);
-    }
+		result = _streamingPhases[this->streamingPhase](this);
+	}
 
-    this->streamingPhase += __ENTITY_PENDING_PROCESSING != result ? 1 : 0;
+	this->streamingPhase += __ENTITY_PENDING_PROCESSING != result ? 1 : 0;
 
-    return __LIST_EMPTY != result;
+	return __LIST_EMPTY != result;
 }
 
 u32 EntityFactory_hasEntitiesPending(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::hasEntitiesPending: null this");
 
-    return VirtualList_getSize(this->entitiesToInstantiate) ||
-           VirtualList_getSize(this->entitiesToInitialize) ||
-           VirtualList_getSize(this->entitiesToTransform) ||
-           VirtualList_getSize(this->entitiesToMakeReady);
+	return VirtualList_getSize(this->entitiesToInstantiate) ||
+			VirtualList_getSize(this->entitiesToInitialize) ||
+			VirtualList_getSize(this->entitiesToTransform) ||
+			VirtualList_getSize(this->entitiesToMakeReady);
 }
 
 int EntityFactory_getPhase(EntityFactory this)
 {
-    return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
+	return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
 }
 
 void EntityFactory_prepareAllEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::prepareAllEntities: null this");
 
-    while(this->entitiesToInstantiate->head)
-    {
-        EntityFactory_instantiateEntities(this);
-    }
+	while(this->entitiesToInstantiate->head)
+	{
+		EntityFactory_instantiateEntities(this);
+	}
 
-    while(this->entitiesToInitialize->head)
-    {
-        EntityFactory_initializeEntities(this);
-    }
+	while(this->entitiesToInitialize->head)
+	{
+		EntityFactory_initializeEntities(this);
+	}
 
-    while(this->entitiesToTransform->head)
-    {
-        EntityFactory_transformEntities(this);
-    }
+	while(this->entitiesToTransform->head)
+	{
+		EntityFactory_transformEntities(this);
+	}
 
-    while(this->entitiesToMakeReady->head)
-    {
-        EntityFactory_makeReadyEntities(this);
-    }
+	while(this->entitiesToMakeReady->head)
+	{
+		EntityFactory_makeReadyEntities(this);
+	}
 }
 
 #ifdef __PROFILE_STREAMING
 void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y)
 {
-    ASSERT(this, "EntityFactory::showStreamingProfiling: null this");
-    int xDisplacement = 18;
+	ASSERT(this, "EntityFactory::showStreamingProfiling: null this");
+	int xDisplacement = 18;
 
-    Printing_text(Printing_getInstance(), "Factory's status", x, y++, NULL);
-    Printing_text(Printing_getInstance(), "", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Factory's status", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "", x, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Entities pending...", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Entities pending...", x, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Instantiation:            ", x, y, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Instantiation:			", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Initialization:            ", x, y, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInitialize), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Initialization:			", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInitialize), x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Transformation:            ", x, y, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Transformation:			", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Make ready:            ", x, y, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Make ready:			", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
 
-    Printing_text(Printing_getInstance(), "Call listeners:            ", x, y, NULL);
-    Printing_int(Printing_getInstance(), VirtualList_getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Call listeners:			", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
 }
 #endif
