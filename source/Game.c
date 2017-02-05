@@ -1556,7 +1556,7 @@ bool Game_isGameFrameDone(Game this)
 }
 #endif
 
-static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y)
+static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
