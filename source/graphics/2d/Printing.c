@@ -151,7 +151,7 @@ void Printing_reset(Printing this)
 {
 	VirtualNode node = this->fonts->head;
 
-	for(; node; node = node->next)
+	for(; node; node = VirtualNode_getNext(node))
 	{
 		__DELETE_BASIC(node->data);
 	}
