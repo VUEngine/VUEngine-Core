@@ -50,6 +50,12 @@
 #include <BgmapAnimationCoordinator.h>
 #include <ObjectAnimationCoordinator.h>
 #include <KeyPadManager.h>
+#include <SRAMManager.h>
+#include <I18n.h>
+#include <Screen.h>
+#include <ScreenEffectManager.h>
+#include <ScreenMovementManager.h>
+#include <TimerManager.h>
 
 #include <Clock.h>
 #include <State.h>
@@ -64,25 +70,43 @@
 #include <CollisionSolver.h>
 #include <Circle.h>
 #include <Cuboid.h>
+#include <InverseCuboid.h>
 #include <Shape.h>
 #include <Polygon.h>
 
 #include <Container.h>
 #include <Entity.h>
+#include <CollisionsContainerEntity.h>
 #include <InGameEntity.h>
 #include <AnimatedInGameEntity.h>
+#include <AnimationCoordinatorFactory.h>
 #include <InanimatedInGameEntity.h>
 #include <Actor.h>
 #include <Image.h>
 #include <ManagedEntity.h>
 #include <MBackground.h>
+#include <ManagedMBackground.h>
 #include <Particle.h>
+#include <ParticleBody.h>
 #include <ParticleSystem.h>
+#include <SolidParticle.h>
+#include <TriggerEntity.h>
+
 
 #include <GameState.h>
 #include <Stage.h>
 #include <UiContainer.h>
 #include <Mem.h>
+
+#include <AnimationEditorState.h>
+#include <DebugState.h>
+#include <GameState.h>
+#include <StageEditorState.h>
+
+#include <AnimationEditor.h>
+#include <Debug.h>
+#include <OptionsSelector.h>
+#include <StageEditor.h>
 
 #include <debugUtilities.h>
 
@@ -178,10 +202,14 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowZeroPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowThirdPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFourthPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowFifthPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowSixthPage(Debug this, int increment, int x, int y);
+static void Debug_memoryStatusShowSeventhPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
 static void Debug_showSramPage(Debug this, int increment, int x, int y);
 
@@ -501,15 +529,39 @@ static void Debug_showMemoryStatus(Debug this, int increment __attribute__ ((unu
 {
 	Debug_removeSubPages(this);
 
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowZeroPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSecondPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowThirdPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFourthPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFifthPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSixthPage);
+	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSeventhPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
 
 	this->currentSubPage = this->subPages->head;
 
 	Debug_showSubPage(this, 0);
+}
+
+static void Debug_memoryStatusShowZeroPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+{
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&Game_getObjectSize, 							"Game"},
+		{&DirectDraw_getObjectSize, 					"DirectDraw"},
+		{&Error_getObjectSize, 							"Error"},
+		{&FrameRate_getObjectSize, 						"FrameRate"},
+		{&I18n_getObjectSize, 							"I18n"},
+		{&MemoryPool_getObjectSize, 					"MemoryPool"},
+		{&MessageDispatcher_getObjectSize, 				"MessageDispatcher"},
+		{&Printing_getObjectSize, 						"Printing"},
+		{&Screen_getObjectSize, 						"Screen"},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
@@ -518,13 +570,21 @@ static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)),
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Clock_getObjectSize, "Clock"},
-		{&Object_getObjectSize, "Object"},
-		{&State_getObjectSize, "State"},
-		{&StateMachine_getObjectSize, "StateMachine"},
-		{&Telegram_getObjectSize, "Telegram"},
-		{&VirtualList_getObjectSize, "VirtualList"},
-		{&VirtualNode_getObjectSize, "VirtualNode"},
+		{&BgmapTextureManager_getObjectSize, 			"BgmapTextureManager"},
+		{&CharSetManager_getObjectSize, 				"CharSetManager"},
+		{&ClockManager_getObjectSize, 					"ClockManager"},
+		{&CollisionManager_getObjectSize, 				"CollisionManager"},
+		{&HardwareManager_getObjectSize, 				"HardwareManager"},
+		{&KeypadManager_getObjectSize, 					"KeypadManager"},
+		{&MBackgroundManager_getObjectSize, 			"MBackgroundManager"},
+		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
+		{&ScreenEffectManager_getObjectSize, 			"ScreenEff.Manager"},
+		{&ScreenMovementManager_getObjectSize, 			"ScreenMov.Manager"},
+		{&SpriteManager_getObjectSize, 					"SpriteManager"},
+		{&SoundManager_getObjectSize, 					"SoundManager"},
+		{&SRAMManager_getObjectSize, 					"SRAMManager"},
+		{&TimerManager_getObjectSize, 					"TimerManager"},
+		{&VIPManager_getObjectSize, 					"VIPManager"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -536,19 +596,13 @@ static void Debug_memoryStatusShowSecondPage(Debug this __attribute__ ((unused))
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&CharSet_getObjectSize, "CharSet"},
-		{&Texture_getObjectSize, "Texture"},
-		{&Sprite_getObjectSize, "Sprite"},
-		{&BgmapTexture_getObjectSize, "BgmapTexture"},
-		{&BgmapSprite_getObjectSize, "BgmapSprite"},
-		{&MBgmapSprite_getObjectSize, "MBgmapSprite"},
-		{&BgmapAnimatedSprite_getObjectSize, "BgmapAnim. Sprite"},
-		{&BgmapAnimationCoordinator_getObjectSize, "BgmapAnim. Coord."},
-		{&ObjectTexture_getObjectSize, "ObjectTexture"},
-		{&ObjectSprite_getObjectSize, "ObjectSprite"},
-		{&ObjectSpriteContainer_getObjectSize, "ObjectSpriteCont."},
-		{&ObjectAnimatedSprite_getObjectSize, "ObjectAnim. Sprite"},
-		{&ObjectAnimationCoordinator_getObjectSize, "ObjectAnim.Coord."},
+		{&Clock_getObjectSize, 							"Clock"},
+		{&Object_getObjectSize, 						"Object"},
+		{&State_getObjectSize, 							"State"},
+		{&StateMachine_getObjectSize, 					"StateMachine"},
+		{&Telegram_getObjectSize, 						"Telegram"},
+		{&VirtualList_getObjectSize, 					"VirtualList"},
+		{&VirtualNode_getObjectSize, 					"VirtualNode"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -560,13 +614,22 @@ static void Debug_memoryStatusShowThirdPage(Debug this __attribute__ ((unused)),
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&SpatialObject_getObjectSize, "SpatialObject"},
-		{&Body_getObjectSize, "Body"},
-		{&CollisionSolver_getObjectSize, "CollisionSolver"},
-		{&Circle_getObjectSize, "Circle"},
-		{&Cuboid_getObjectSize, "Cuboid"},
-		{&Shape_getObjectSize, "Shape"},
-		{&Polygon_getObjectSize, "Polygon"},
+		{&AnimationController_getObjectSize, 			"AnimationController"},
+		{&AnimationCoordinator_getObjectSize, 			"AnimationCoordinat."},
+		{&AnimationCoordinatorFactory_getObjectSize,	"AnimationCoor.Fact."},
+		{&BgmapAnimatedSprite_getObjectSize,			"BgmapAnim. Sprite"},
+		{&BgmapAnimationCoordinator_getObjectSize,		"BgmapAnim. Coord."},
+		{&BgmapSprite_getObjectSize, 					"BgmapSprite"},
+		{&BgmapTexture_getObjectSize, 					"BgmapTexture"},
+		{&CharSet_getObjectSize, 						"CharSet"},
+		{&MBgmapSprite_getObjectSize, 					"MBgmapSprite"},
+		{&ObjectAnimatedSprite_getObjectSize,			"ObjectAnim. Sprite"},
+		{&ObjectAnimationCoordinator_getObjectSize,		"ObjectAnim.Coord."},
+		{&ObjectSprite_getObjectSize,					"ObjectSprite"},
+		{&ObjectSpriteContainer_getObjectSize,			"ObjectSpriteCont."},
+		{&ObjectTexture_getObjectSize,					"ObjectTexture"},
+		{&Texture_getObjectSize, 						"Texture"},
+		{&Sprite_getObjectSize, 						"Sprite"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -578,23 +641,83 @@ static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused))
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Container_getObjectSize, "Container"},
-		{&Entity_getObjectSize, "Entity"},
-		{&Image_getObjectSize, "Image"},
-		{&ManagedEntity_getObjectSize, "ManagedEntity"},
-		{&MBackground_getObjectSize, "MBackground"},
-		{&InGameEntity_getObjectSize, "InGameEntity"},
-		{&InanimatedInGameEntity_getObjectSize, "Inanim. InGam. Ent."},
-		{&AnimatedInGameEntity_getObjectSize, "Anim. InGameEntity"},
-		{&Actor_getObjectSize, "Actor"},
-		{&Particle_getObjectSize, "Particle"},
-		{&ParticleSystem_getObjectSize, "ParticleSystem"},
-		{&GameState_getObjectSize, "GameState"},
-		{&GameState_getObjectSize, "Stage"},
+		{&Body_getObjectSize, 							"Body"},
+		{&CollisionSolver_getObjectSize, 				"CollisionSolver"},
+		{&Circle_getObjectSize, 						"Circle"},
+		{&Cuboid_getObjectSize,		 					"Cuboid"},
+		{&InverseCuboid_getObjectSize,		 			"InverseCuboid"},
+		{&PhysicalWorld_getObjectSize, 					"PhysicalWorld"},
+		{&Polygon_getObjectSize, 						"Polygon"},
+		{&Shape_getObjectSize, 							"Shape"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
+
+static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+{
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&Actor_getObjectSize,							"Actor"},
+		{&AnimatedInGameEntity_getObjectSize,			"Anim. InGameEntity"},
+		{&Container_getObjectSize,						"Container"},
+		{&CollisionsContainerEntity_getObjectSize,		"CollisionsCont.Ent."},
+		{&Entity_getObjectSize,							"Entity"},
+		{&EntityFactory_getObjectSize,					"EntityFactory"},
+		{&GameState_getObjectSize,						"GameState"},
+		{&GameState_getObjectSize,						"Stage"},
+		{&Image_getObjectSize,							"Image"},
+		{&InanimatedInGameEntity_getObjectSize,			"Inanim. InGam. Ent."},
+		{&InGameEntity_getObjectSize,					"InGameEntity"},
+		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
+		{&ManagedMBackground_getObjectSize,				"ManagedMBackground"},
+		{&MBackground_getObjectSize,					"MBackground"},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+}
+
+static void Debug_memoryStatusShowSixthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+{
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&Particle_getObjectSize,						"Particle"},
+		{&ParticleBody_getObjectSize,					"ParticleBody"},
+		{&ParticleRemover_getObjectSize,				"ParticleRemover"},
+		{&ParticleSystem_getObjectSize,					"ParticleSystem"},
+		{&SolidParticle_getObjectSize,					"SolidParticle"},
+		{&SpatialObject_getObjectSize,					"SpatialObject"},
+		{&Stage_getObjectSize,							"Stage"},
+		{&TriggerEntity_getObjectSize,					"TriggerEntity"},
+		{&UiContainer_getObjectSize,					"UiContainer"},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+}
+
+static void Debug_memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+{
+	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
+
+	ClassSizeData classesSizeData[] =
+	{
+		{&AnimationEditorState_getObjectSize,			"AnimationEditorSt."},
+		{&DebugState_getObjectSize,						"DebugState"},
+		{&GameState_getObjectSize,						"GameState"},
+		{&StageEditorState_getObjectSize,				"StageEditorState"},
+		{&AnimationEditor_getObjectSize,				"AnimationEditor"},
+		{&Debug_getObjectSize,							"Debug"},
+		{&OptionsSelector_getObjectSize,				"OptionsSelector"},
+		{&StageEditor_getObjectSize,					"StageEditor"},
+	};
+
+	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+}
+
 
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -610,7 +733,7 @@ static void Debug_showGameProfiling(Debug this, int increment __attribute__ ((un
 	Game_showLastGameFrameProfiling(Game_getInstance(), x, y);
 }
 
-static void Debug_showStreamingStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+static void Debug_showStreamingStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug_removeSubPages(this);
 
