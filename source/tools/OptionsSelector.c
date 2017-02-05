@@ -168,6 +168,14 @@ static void OptionsSelector_flushPages(OptionsSelector this)
 		for(; node; node = node->next)
 		{
 			ASSERT(node->data, "flushPages: null node data");
+
+			VirtualNode optionsNode = (__SAFE_CAST(VirtualList, node->data))->head;
+
+			for(; optionsNode; optionsNode = optionsNode->next)
+			{
+				__DELETE_BASIC(optionsNode->data);
+			}
+
 			__DELETE(node->data);
 		}
 
