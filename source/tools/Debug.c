@@ -225,6 +225,9 @@ void Debug_destructor(Debug this)
 {
 	ASSERT(this, "Debug::destructor: null this");
 
+	__DELETE(this->pages);
+	__DELETE(this->subPages);
+
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
