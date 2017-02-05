@@ -31,6 +31,7 @@
 #include <Game.h>
 #include <SpriteManager.h>
 #include <HardwareManager.h>
+#include <VIPManager.h>
 #include <TimerManager.h>
 #include <Printing.h>
 #include <debugConfig.h>
