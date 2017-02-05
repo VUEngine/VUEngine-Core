@@ -325,7 +325,7 @@ void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = 0;
 
-	VIPManager_enableDrawing
+	VIPManager_enableDrawing(this);
 }
 
 // turn display off
