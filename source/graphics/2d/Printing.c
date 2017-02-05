@@ -149,6 +149,13 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
  */
 void Printing_reset(Printing this)
 {
+	VirtualNode node = this->fonts->head;
+
+	for(; node; node = node->next)
+	{
+		__DELETE_BASIC(node->data);
+	}
+
 	VirtualList_clear(this->fonts);
 }
 
