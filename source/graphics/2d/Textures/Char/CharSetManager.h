@@ -58,6 +58,7 @@ void CharSetManager_destructor(CharSetManager this);
 void CharSetManager_reset(CharSetManager this);
 CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
 void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet);
+void CharSetManager_defragment(CharSetManager this);
 void CharSetManager_defragmentProgressively(CharSetManager this);
 int CharSetManager_getTotalUsedChars(CharSetManager this);
 int CharSetManager_getTotalFreeChars(CharSetManager this);

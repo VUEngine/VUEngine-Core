@@ -221,6 +221,12 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// force all transformations to take place again
 	GameState_initialTransform(this);
 
+	// force all streaming right now
+	Stage_streamAll(this->stage);
+
+	// force char memory defragmentation
+	CharSetManager_defragment(CharSetManager_getInstance());
+
 	// set up visual representation
 	GameState_updateVisuals(this);
 

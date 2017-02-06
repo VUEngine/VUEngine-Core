@@ -226,7 +226,18 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 	return NULL;
 }
 
-// defrag char memory
+// defragment char memory
+void CharSetManager_defragment(CharSetManager this)
+{
+	ASSERT(this, "CharSetManager::defragment: null this");
+
+	while(1 < this->freedOffset)
+	{
+		CharSetManager_defragmentProgressively(this);
+	}
+}
+
+// defragment progressively char memory
 void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
