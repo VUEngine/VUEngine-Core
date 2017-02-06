@@ -345,7 +345,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Pool", x, ++y, NULL);
 	Printing_text(Printing_getInstance(), "Free", x + 5, y, NULL);
-	Printing_text(Printing_getInstance(), "Used", x + 10, y++, NULL);
+	Printing_text(Printing_getInstance(), "Used", x + 10, y, NULL);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
