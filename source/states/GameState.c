@@ -224,9 +224,6 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// set up visual representation
 	GameState_updateVisuals(this);
 
-	// transform everything before showing up
-//	GameState_transform(this);
-
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());
 

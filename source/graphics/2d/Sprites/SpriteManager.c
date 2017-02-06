@@ -72,7 +72,7 @@ typedef struct SpritesList
 	/* number of rows to write in texture's writing	*/													\
 	s8 texturesMaximumRowsToWrite;																		\
 	/* flag to control texture's writing deferring */													\
-	s8 deferTextureWriting;																				\
+	bool deferTextureWriting;																				\
 	/* number of rows to write in affine transformations */												\
 	s8 maximumAffineRowsToComputePerCall;																\
 	/* flag to control texture's writing deferring */													\
