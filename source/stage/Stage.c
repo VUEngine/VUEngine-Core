@@ -1146,7 +1146,7 @@ void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, in
 
 	Printing_text(Printing_getInstance(), "Stage's status", x, ++y, NULL);
 
-	int originalY = y;
+	int originalY __attribute__ ((unused)) = y;
 	int xDisplacement = 18;
 	y++;
 
