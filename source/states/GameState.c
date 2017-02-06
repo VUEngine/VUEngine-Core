@@ -28,6 +28,7 @@
 #include <Game.h>
 #include <Screen.h>
 #include <SpriteManager.h>
+#include <CharSetManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
