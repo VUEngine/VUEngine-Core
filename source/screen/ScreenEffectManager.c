@@ -171,7 +171,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialD
 	}
 
 	// set effect parameters
-	this->fxFadeDelay = 0 >= delayBetweenSteps ? 1 : delayBetweenSteps;
+	this->fxFadeDelay = 0 >= delayBetweenSteps ? 1 : (u8)delayBetweenSteps;
 
 	// set callback
 	if(callback != NULL && callbackScope != NULL)

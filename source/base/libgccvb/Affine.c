@@ -62,7 +62,6 @@ typedef struct FixedAffineMatrix
 	s16		parallax;
 } FixedAffineMatrix ;
 
-
 typedef struct AffineInfo
 {
 	fix19_13 	x;
@@ -76,6 +75,7 @@ typedef struct AffineInfo
 	u32 		param;
 	s16			parallax;
 } AffineInfo ;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											FUNCTIONS
@@ -150,4 +150,3 @@ fix19_13 Affine_applyAll(u32 param, fix19_13 paramTableRow, fix19_13 x, fix19_13
 
 	return -1;
 }
-
