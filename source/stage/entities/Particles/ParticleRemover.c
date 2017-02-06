@@ -48,11 +48,11 @@
 		 */																								\
 		int removalDelayCycles;																			\
 		/**
-		 * @var int 		leftRemoveDelayCycles
+		 * @var int 		remainingRemoveDelayCycles
 		 * @brief			Removal delay
 		 * @memberof		ParticleRemover
 		 */																								\
-		int leftRemoveDelayCycles;																		\
+		int remainingRemoveDelayCycles;																		\
 
 /**
  * @class	ParticleRemover
@@ -95,7 +95,7 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
 
 	this->particlesLists = __NEW(VirtualList);
 	this->removalDelayCycles = 0;
-	this->leftRemoveDelayCycles = this->removalDelayCycles;
+	this->remainingRemoveDelayCycles = this->removalDelayCycles;
 }
 
 /**
@@ -151,7 +151,7 @@ void ParticleRemover_reset(ParticleRemover this)
 
 	VirtualList_clear(this->particlesLists);
 
-	this->leftRemoveDelayCycles = this->removalDelayCycles;
+	this->remainingRemoveDelayCycles = this->removalDelayCycles;
 }
 
 /**
@@ -170,7 +170,7 @@ void ParticleRemover_update(ParticleRemover this)
 	{
 		ParticleRemover_reset(this);
 	}
-	else if(0 >= --this->leftRemoveDelayCycles)
+	else if(0 >= --this->remainingRemoveDelayCycles)
 	{
 		if(this->particlesLists->head)
 		{
@@ -183,13 +183,18 @@ void ParticleRemover_update(ParticleRemover this)
 
 				if(!VirtualList_getSize(particlesList))
 				{
-					VirtualList_popFront(this->particlesLists);
 					__DELETE(particlesList);
+					VirtualList_popFront(this->particlesLists);
 				}
+			}
+			else
+			{
+				__DELETE(particlesList);
+				VirtualList_popFront(this->particlesLists);
 			}
 		}
 
-		this->leftRemoveDelayCycles = this->removalDelayCycles;
+		this->remainingRemoveDelayCycles = this->removalDelayCycles;
 	}
 }
 
