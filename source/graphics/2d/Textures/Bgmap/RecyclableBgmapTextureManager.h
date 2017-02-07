@@ -19,61 +19,42 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef M_BACKGROUND_H_
-#define M_BACKGROUND_H_
+#ifndef RECYCLABLE_BGMAP_TEXTURE_MANAGER_H_
+#define RECYCLABLE_BGMAP_TEXTURE_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
-#include <MBgmapSprite.h>
+#include <RecyclableImage.h>
+#include <Texture.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackground_METHODS(ClassName)																	\
-		Entity_METHODS(ClassName)																		\
+#define RecyclableBgmapTextureManager_METHODS(ClassName)												\
+	Object_METHODS(ClassName)																			\
 
-#define MBackground_SET_VTABLE(ClassName)																\
-		Entity_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, MBackground, suspend);													\
-		__VIRTUAL_SET(ClassName, MBackground, resume);													\
+#define RecyclableBgmapTextureManager_SET_VTABLE(ClassName)												\
+	Object_SET_VTABLE(ClassName)																		\
 
-#define MBackground_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Entity_ATTRIBUTES																				\
-		/* ROM definition */																			\
-		MBackgroundDefinition* mBackgroundDefinition;													\
-
-__CLASS(MBackground);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-// defines a Scrolling background
-typedef EntityDefinition MBackgroundDefinition;
-
-// defines a Scrolling background in ROM memory
-typedef const EntityDefinition MBackgroundROMDef;
+__CLASS(RecyclableBgmapTextureManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name);
+RecyclableBgmapTextureManager RecyclableBgmapTextureManager_getInstance();
 
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name);
-void MBackground_destructor(MBackground this);
-void MBackground_setDefinition(MBackground this, MBackgroundDefinition* mBackgroundDefinition);
-void MBackground_suspend(MBackground this);
-void MBackground_resume(MBackground this);
+void RecyclableBgmapTextureManager_destructor(RecyclableBgmapTextureManager this);
+Texture RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager this, TextureDefinition* textureDefinition);
+void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager this, Texture texture);
+void RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager this);
+void RecyclableBgmapTextureManager_print(RecyclableBgmapTextureManager this, int x, int y);
 
 
 #endif

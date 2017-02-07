@@ -40,7 +40,7 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <MBackgroundManager.h>
+#include <RecyclableBgmapTextureManager.h>
 #include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
@@ -84,8 +84,8 @@
 #include <Actor.h>
 #include <Image.h>
 #include <ManagedEntity.h>
-#include <MBackground.h>
-#include <ManagedMBackground.h>
+#include <RecyclableImage.h>
+#include <ManagedRecyclableImage.h>
 #include <Particle.h>
 #include <ParticleBody.h>
 #include <ParticleSystem.h>
@@ -194,7 +194,7 @@ static void Debug_showSramStatus(Debug this, int increment, int x, int y);
 
 // sub pages
 static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
-static void Debug_mBackgroundManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
+static void Debug_RecyclableBgmapTextureManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_texturesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_objectsShowStatus(Debug this, int increment, int x, int y);
@@ -575,7 +575,7 @@ static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)),
 		{&CollisionManager_getObjectSize, 				"CollisionManager"},
 		{&HardwareManager_getObjectSize, 				"HardwareManager"},
 		{&KeypadManager_getObjectSize, 					"KeypadManager"},
-		{&MBackgroundManager_getObjectSize, 			"MBackgroundManager"},
+		{&RecyclableBgmapTextureManager_getObjectSize, 			"RecyclableBgmapTextureManager"},
 		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
 		{&ScreenEffectManager_getObjectSize, 			"ScreenEff.Manager"},
 		{&ScreenMovementManager_getObjectSize, 			"ScreenMov.Manager"},
@@ -671,8 +671,8 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&InanimatedInGameEntity_getObjectSize,			"Inanim. InGam. Ent."},
 		{&InGameEntity_getObjectSize,					"InGameEntity"},
 		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
-		{&ManagedMBackground_getObjectSize,				"ManagedMBackground"},
-		{&MBackground_getObjectSize,					"MBackground"},
+		{&ManagedRecyclableImage_getObjectSize,				"ManagedRecyclableImage"},
+		{&RecyclableImage_getObjectSize,					"RecyclableImage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -737,7 +737,7 @@ static void Debug_showStreamingStatus(Debug this, int increment __attribute__ ((
 	Debug_removeSubPages(this);
 
 	VirtualList_pushBack(this->subPages, &Debug_streamingShowStatus);
-	VirtualList_pushBack(this->subPages, &Debug_mBackgroundManagerShowStatus);
+	VirtualList_pushBack(this->subPages, &Debug_RecyclableBgmapTextureManagerShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	Debug_showSubPage(this, 0);
@@ -748,10 +748,10 @@ static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int i
 	Stage_showStreamingProfiling(GameState_getStage(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), x, y);
 }
 
-static void Debug_mBackgroundManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+static void Debug_RecyclableBgmapTextureManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Printing_text(Printing_getInstance(), "STREAMING STATUS", x, y++, NULL);
-	MBackgroundManager_print(MBackgroundManager_getInstance(), x, ++y);
+	RecyclableBgmapTextureManager_print(RecyclableBgmapTextureManager_getInstance(), x, ++y);
 }
 
 static void Debug_showCharMemoryStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))

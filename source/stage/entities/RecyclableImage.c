@@ -25,12 +25,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <MBackground.h>
+#include <RecyclableImage.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <Prototypes.h>
 #include <Game.h>
-#include <MBackgroundManager.h>
+#include <RecyclableBgmapTextureManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
 
@@ -39,8 +39,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the MBackground
-__CLASS_DEFINITION(MBackground, Entity);
+// define the RecyclableImage
+__CLASS_DEFINITION(RecyclableImage, Entity);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
@@ -50,8 +50,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MBackground_registerTextures(MBackground this);
-static void MBackground_releaseTextures(MBackground this);
+static void RecyclableImage_registerTextures(RecyclableImage this);
+static void RecyclableImage_releaseTextures(RecyclableImage this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,30 +59,30 @@ static void MBackground_releaseTextures(MBackground this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(MBackground, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(MBackground, mBackgroundDefinition, id, internalId, name);
+__CLASS_NEW_DEFINITION(RecyclableImage, RecyclableImageDefinition* RecyclableImageDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(RecyclableImage, RecyclableImageDefinition, id, internalId, name);
 
 // class's constructor
-void MBackground_constructor(MBackground this, MBackgroundDefinition* mBackgroundDefinition, s16 id, s16 internalId, const char* const name)
+void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition* RecyclableImageDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "MBackground::constructor: null this");
-	ASSERT(mBackgroundDefinition, "MBackground::constructor: null definition");
-	ASSERT(mBackgroundDefinition->spritesDefinitions[0], "MBackground::constructor: null sprite definition");
+	ASSERT(this, "RecyclableImage::constructor: null this");
+	ASSERT(RecyclableImageDefinition, "RecyclableImage::constructor: null definition");
+	ASSERT(RecyclableImageDefinition->spritesDefinitions[0], "RecyclableImage::constructor: null sprite definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, (EntityDefinition*)mBackgroundDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(Entity, (EntityDefinition*)RecyclableImageDefinition, id, internalId, name);
 
-	this->mBackgroundDefinition = mBackgroundDefinition;
+	this->RecyclableImageDefinition = RecyclableImageDefinition;
 
-	MBackground_registerTextures(this);
+	RecyclableImage_registerTextures(this);
 }
 
 // class's destructor
-void MBackground_destructor(MBackground this)
+void RecyclableImage_destructor(RecyclableImage this)
 {
-	ASSERT(this, "MBackground::destructor: null this");
+	ASSERT(this, "RecyclableImage::destructor: null this");
 
-	MBackground_releaseTextures(this);
+	RecyclableImage_releaseTextures(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -90,64 +90,64 @@ void MBackground_destructor(MBackground this)
 }
 
 // set definition
-void MBackground_setDefinition(MBackground this, MBackgroundDefinition* mBackgroundDefinition)
+void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* RecyclableImageDefinition)
 {
-	ASSERT(this, "MBackground::setDefinition: null this");
-	ASSERT(mBackgroundDefinition, "MBackground::setDefinition: null definition");
+	ASSERT(this, "RecyclableImage::setDefinition: null this");
+	ASSERT(RecyclableImageDefinition, "RecyclableImage::setDefinition: null definition");
 
 	// save definition
-	this->mBackgroundDefinition = mBackgroundDefinition;
+	this->RecyclableImageDefinition = RecyclableImageDefinition;
 
-	Entity_setDefinition(__SAFE_CAST(Entity, this), (EntityDefinition*)mBackgroundDefinition);
+	Entity_setDefinition(__SAFE_CAST(Entity, this), (EntityDefinition*)RecyclableImageDefinition);
 }
 
-void MBackground_suspend(MBackground this)
+void RecyclableImage_suspend(RecyclableImage this)
 {
-	ASSERT(this, "MBackground::suspend: null this");
+	ASSERT(this, "RecyclableImage::suspend: null this");
 
-	MBackground_releaseTextures(this);
+	RecyclableImage_releaseTextures(this);
 
 	Entity_suspend(__SAFE_CAST(Entity, this));
 }
 
-void MBackground_resume(MBackground this)
+void RecyclableImage_resume(RecyclableImage this)
 {
-	ASSERT(this, "MBackground::resume: null this");
+	ASSERT(this, "RecyclableImage::resume: null this");
 
 	// first register with the manager so it handles the texture loading process
-	MBackground_registerTextures(this);
+	RecyclableImage_registerTextures(this);
 
 	Entity_resume(__SAFE_CAST(Entity, this));
 }
 
-static void MBackground_registerTextures(MBackground this)
+static void RecyclableImage_registerTextures(RecyclableImage this)
 {
-	ASSERT(this, "MBackground::registerTextures: null this");
+	ASSERT(this, "RecyclableImage::registerTextures: null this");
 
-	if(this->mBackgroundDefinition->spritesDefinitions[0])
+	if(this->RecyclableImageDefinition->spritesDefinitions[0])
 	{
 		int i = 0;
 
-		for(; this->mBackgroundDefinition->spritesDefinitions[i]; i++)
+		for(; this->RecyclableImageDefinition->spritesDefinitions[i]; i++)
 		{
-			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
+			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->RecyclableImageDefinition->spritesDefinitions[i]->allocator))
 			{
-				MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->mBackgroundDefinition->spritesDefinitions[i]->textureDefinition);
+				RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->RecyclableImageDefinition->spritesDefinitions[i]->textureDefinition);
 			}
-			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->mBackgroundDefinition->spritesDefinitions[i]->allocator))
+			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->RecyclableImageDefinition->spritesDefinitions[i]->allocator))
 			{
 				int j = 0;
 
-				for(; ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
+				for(; ((MBgmapSpriteDefinition*)this->RecyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
 				{
-					MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), ((MBgmapSpriteDefinition*)this->mBackgroundDefinition->spritesDefinitions[i])->textureDefinitions[j]);
+					RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), ((MBgmapSpriteDefinition*)this->RecyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]);
 				}
 			}
 		}
 	}
 }
 
-static void MBackground_releaseTextures(MBackground this)
+static void RecyclableImage_releaseTextures(RecyclableImage this)
 {
 	// speed up my destruction by deleting my sprites
 	if(this->sprites)
@@ -158,7 +158,7 @@ static void MBackground_releaseTextures(MBackground this)
 		{
 			Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
 			__DELETE(node->data);
-			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), texture);
+			RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager_getInstance(), texture);
 		}
 
 		// delete the sprites

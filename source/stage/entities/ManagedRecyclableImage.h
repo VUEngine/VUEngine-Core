@@ -19,40 +19,40 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MANAGED_M_BACKGROUND_H_
-#define MANAGED_M_BACKGROUND_H_
+#ifndef MANAGED_RECYCLABLE_IMAGE_H_
+#define MANAGED_RECYCLABLE_IMAGE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MBackground.h>
+#include <RecyclableImage.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ManagedMBackground_METHODS(ClassName)															\
-		MBackground_METHODS(ClassName)																	\
+#define ManagedRecyclableImage_METHODS(ClassName)														\
+		RecyclableImage_METHODS(ClassName)																\
 
-#define ManagedMBackground_SET_VTABLE(ClassName)														\
-		MBackground_SET_VTABLE(ClassName)																\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, initialTransform);									\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, transform);										\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, updateVisualRepresentation);						\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, update);											\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, passMessage);										\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, ready);											\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, suspend);											\
-		__VIRTUAL_SET(ClassName, ManagedMBackground, resume);											\
+#define ManagedRecyclableImage_SET_VTABLE(ClassName)													\
+		RecyclableImage_SET_VTABLE(ClassName)															\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, initialTransform);								\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, transform);									\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, updateVisualRepresentation);					\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, update);										\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, passMessage);									\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, ready);										\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, suspend);										\
+		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, resume);										\
 
-__CLASS(ManagedMBackground);
+__CLASS(ManagedRecyclableImage);
 
-#define ManagedMBackground_ATTRIBUTES																	\
+#define ManagedRecyclableImage_ATTRIBUTES																\
 		/* it is derived from */																		\
-		MBackground_ATTRIBUTES																			\
+		RecyclableImage_ATTRIBUTES																		\
 		/* sprites' list */																				\
 		VirtualList managedSprites;																		\
 		/* previous 2d projected position */															\
@@ -63,18 +63,18 @@ __CLASS(ManagedMBackground);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedMBackground, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name);
+__CLASS_NEW_DECLARE(ManagedRecyclableImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
 
-void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name);
-void ManagedMBackground_destructor(ManagedMBackground this);
-void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform, u32 recursive);
-void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform);
-void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this);
-void ManagedMBackground_update(ManagedMBackground this, u32 elapsedTime);
-int ManagedMBackground_passMessage(ManagedMBackground this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
-void ManagedMBackground_ready(ManagedMBackground this, u32 recursive);
-void ManagedMBackground_suspend(ManagedMBackground this);
-void ManagedMBackground_resume(ManagedMBackground this);
+void ManagedRecyclableImage_constructor(ManagedRecyclableImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
+void ManagedRecyclableImage_destructor(ManagedRecyclableImage this);
+void ManagedRecyclableImage_initialTransform(ManagedRecyclableImage this, Transformation* environmentTransform, u32 recursive);
+void ManagedRecyclableImage_transform(ManagedRecyclableImage this, const Transformation* environmentTransform);
+void ManagedRecyclableImage_updateVisualRepresentation(ManagedRecyclableImage this);
+void ManagedRecyclableImage_update(ManagedRecyclableImage this, u32 elapsedTime);
+int ManagedRecyclableImage_passMessage(ManagedRecyclableImage this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
+void ManagedRecyclableImage_ready(ManagedRecyclableImage this, u32 recursive);
+void ManagedRecyclableImage_suspend(ManagedRecyclableImage this);
+void ManagedRecyclableImage_resume(ManagedRecyclableImage this);
 
 
 #endif

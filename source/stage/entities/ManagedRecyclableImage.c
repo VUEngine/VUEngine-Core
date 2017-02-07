@@ -24,12 +24,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MBackground.h>
+#include <RecyclableImage.h>
 #include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <MBgmapSprite.h>
-#include <ManagedMBackground.h>
+#include <ManagedRecyclableImage.h>
 #include <debugUtilities.h>
 
 
@@ -37,7 +37,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(ManagedMBackground, MBackground);
+__CLASS_DEFINITION(ManagedRecyclableImage, RecyclableImage);
 
 __CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
@@ -57,16 +57,16 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedMBackground, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ManagedMBackground, definition, id, internalId, name);
+__CLASS_NEW_DEFINITION(ManagedRecyclableImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ManagedRecyclableImage, definition, id, internalId, name);
 
 // class's constructor
-void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefinition* definition, s16 id, s16 internalId, const char* const name)
+void ManagedRecyclableImage_constructor(ManagedRecyclableImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ManagedMBackground::constructor: null this");
+	ASSERT(this, "ManagedRecyclableImage::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(MBackground, definition, id, internalId, name);
+	__CONSTRUCT_BASE(RecyclableImage, definition, id, internalId, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);
@@ -78,9 +78,9 @@ void ManagedMBackground_constructor(ManagedMBackground this, MBackgroundDefiniti
 }
 
 // class's destructor
-void ManagedMBackground_destructor(ManagedMBackground this)
+void ManagedRecyclableImage_destructor(ManagedRecyclableImage this)
 {
-	ASSERT(this, "ManagedMBackground::destructor: null this");
+	ASSERT(this, "ManagedRecyclableImage::destructor: null this");
 
 	if(this->managedSprites)
 	{
@@ -93,10 +93,10 @@ void ManagedMBackground_destructor(ManagedMBackground this)
 	__DESTROY_BASE;
 }
 
-static void ManagedMBackground_registerSprites(ManagedMBackground this, Entity child)
+static void ManagedRecyclableImage_registerSprites(ManagedRecyclableImage this, Entity child)
 {
-	ASSERT(this, "ManagedMBackground::registerSprites: null this");
-	ASSERT(child, "ManagedMBackground::registerSprites: null child");
+	ASSERT(this, "ManagedRecyclableImage::registerSprites: null this");
+	ASSERT(child, "ManagedRecyclableImage::registerSprites: null child");
 
 	if(child)
 	{
@@ -117,16 +117,16 @@ static void ManagedMBackground_registerSprites(ManagedMBackground this, Entity c
 
 			for(; childNode; childNode = childNode->next)
 			{
-				ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
+				ManagedRecyclableImage_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
 			}
 		}
 	}
 }
 
 // transform class
-void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation* environmentTransform, u32 recursive)
+void ManagedRecyclableImage_initialTransform(ManagedRecyclableImage this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "ManagedMBackground::initialTransform: null this");
+	ASSERT(this, "ManagedRecyclableImage::initialTransform: null this");
 
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform, recursive);
 
@@ -147,22 +147,22 @@ void ManagedMBackground_initialTransform(ManagedMBackground this, Transformation
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
-void ManagedMBackground_ready(ManagedMBackground this, u32 recursive)
+void ManagedRecyclableImage_ready(ManagedRecyclableImage this, u32 recursive)
 {
-	ASSERT(this, "ManagedMBackground::ready: null this");
+	ASSERT(this, "ManagedRecyclableImage::ready: null this");
 
 	Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
 	if(!VirtualList_getSize(this->managedSprites))
 	{
-		ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+		ManagedRecyclableImage_registerSprites(this, __SAFE_CAST(Entity, this));
 	}
 }
 
 // transform class
-void ManagedMBackground_transform(ManagedMBackground this, const Transformation* environmentTransform)
+void ManagedRecyclableImage_transform(ManagedRecyclableImage this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "ManagedMBackground::transform: null this");
+	ASSERT(this, "ManagedRecyclableImage::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
@@ -206,9 +206,9 @@ void ManagedMBackground_transform(ManagedMBackground this, const Transformation*
 	this->invalidateGlobalTransformation = 0;
 }
 
-void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
+void ManagedRecyclableImage_updateVisualRepresentation(ManagedRecyclableImage this)
 {
-	ASSERT(this, "ManagedMBackground::updateVisualRepresentation: null this");
+	ASSERT(this, "ManagedRecyclableImage::updateVisualRepresentation: null this");
 
 	if(this->updateSprites)
 	{
@@ -251,32 +251,32 @@ void ManagedMBackground_updateVisualRepresentation(ManagedMBackground this)
 }
 
 // execute logic
-void ManagedMBackground_update(ManagedMBackground this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
+void ManagedRecyclableImage_update(ManagedRecyclableImage this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
-	ASSERT(this, "ManagedMBackground::update: null this");
+	ASSERT(this, "ManagedRecyclableImage::update: null this");
 }
 
-int ManagedMBackground_passMessage(ManagedMBackground this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
+int ManagedRecyclableImage_passMessage(ManagedRecyclableImage this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
-	ASSERT(this, "ManagedMBackground::passMessage: null this");
+	ASSERT(this, "ManagedRecyclableImage::passMessage: null this");
 
 	return false;
 }
 
-void ManagedMBackground_resume(ManagedMBackground this)
+void ManagedRecyclableImage_resume(ManagedRecyclableImage this)
 {
-	ASSERT(this, "ManagedMBackground::resume: null this");
+	ASSERT(this, "ManagedRecyclableImage::resume: null this");
 
-	MBackground_resume(__SAFE_CAST(MBackground, this));
+	RecyclableImage_resume(__SAFE_CAST(RecyclableImage, this));
 
-	ManagedMBackground_registerSprites(this, __SAFE_CAST(Entity, this));
+	ManagedRecyclableImage_registerSprites(this, __SAFE_CAST(Entity, this));
 }
 
-void ManagedMBackground_suspend(ManagedMBackground this)
+void ManagedRecyclableImage_suspend(ManagedRecyclableImage this)
 {
-	ASSERT(this, "ManagedMBackground::suspend: null this");
+	ASSERT(this, "ManagedRecyclableImage::suspend: null this");
 
-	MBackground_suspend(__SAFE_CAST(MBackground, this));
+	RecyclableImage_suspend(__SAFE_CAST(RecyclableImage, this));
 
 	VirtualList_clear(this->managedSprites);
 }

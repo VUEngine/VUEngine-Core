@@ -41,7 +41,7 @@
 #include <Texture.h>
 #include <ParamTableManager.h>
 #include <VIPManager.h>
-#include <MBackgroundManager.h>
+#include <RecyclableBgmapTextureManager.h>
 #include <ParticleRemover.h>
 #include <debugConfig.h>
 #ifdef __PROFILE_STREAMING
@@ -541,7 +541,7 @@ static void Stage_preloadAssets(Stage this)
 
 				if(this->stageDefinition->assets.stageTextureEntryDefinitions[i].isManaged)
 				{
-					texture = MBackgroundManager_registerTexture(MBackgroundManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition);
+					texture = RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition);
 					VirtualList_pushBack(managedTextures, texture );
 				}
 				else
@@ -564,7 +564,7 @@ static void Stage_preloadAssets(Stage this)
 
 		for(; node; node = node->next)
 		{
-			MBackgroundManager_removeTexture(MBackgroundManager_getInstance(), __SAFE_CAST(Texture, node->data));
+			RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager_getInstance(), __SAFE_CAST(Texture, node->data));
 		}
 
 		__DELETE(managedTextures);

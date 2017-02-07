@@ -24,7 +24,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <MBackgroundManager.h>
+#include <RecyclableBgmapTextureManager.h>
 #include <BgmapTextureManager.h>
 #include <Printing.h>
 
@@ -33,13 +33,13 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define MBackgroundManager_ATTRIBUTES																	\
+#define RecyclableBgmapTextureManager_ATTRIBUTES																	\
 		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
 		/* textureRegistries */																			\
 		VirtualList textureRegistries;																	\
 
-__CLASS_DEFINITION(MBackgroundManager, Object);
+__CLASS_DEFINITION(RecyclableBgmapTextureManager, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
@@ -58,7 +58,7 @@ typedef struct TextureRegistry
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MBackgroundManager_constructor(MBackgroundManager this);
+static void RecyclableBgmapTextureManager_constructor(RecyclableBgmapTextureManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,10 +66,10 @@ static void MBackgroundManager_constructor(MBackgroundManager this);
 //---------------------------------------------------------------------------------------------------------
 
 // a singleton
-__SINGLETON(MBackgroundManager);
+__SINGLETON(RecyclableBgmapTextureManager);
 
 //class constructor
-static void MBackgroundManager_constructor(MBackgroundManager this)
+static void RecyclableBgmapTextureManager_constructor(RecyclableBgmapTextureManager this)
 {
 	__CONSTRUCT_BASE(Object);
 
@@ -77,10 +77,10 @@ static void MBackgroundManager_constructor(MBackgroundManager this)
 }
 
 // class destructor
-void MBackgroundManager_destructor(MBackgroundManager this)
+void RecyclableBgmapTextureManager_destructor(RecyclableBgmapTextureManager this)
 {
-	ASSERT(this, "MBackgroundManager::destructor: null this");
-	ASSERT(this->textureRegistries, "MBackgroundManager::destructor: null textureRegistries");
+	ASSERT(this, "RecyclableBgmapTextureManager::destructor: null this");
+	ASSERT(this->textureRegistries, "RecyclableBgmapTextureManager::destructor: null textureRegistries");
 
 	VirtualNode node = this->textureRegistries->head;
 
@@ -98,10 +98,10 @@ void MBackgroundManager_destructor(MBackgroundManager this)
 }
 
 // register coin
-Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefinition* textureDefinition)
+Texture RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager this, TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "MBackgroundManager::registerTexture: null this");
-	ASSERT(textureDefinition, "MBackgroundManager::registerTexture: null texture definition");
+	ASSERT(this, "RecyclableBgmapTextureManager::registerTexture: null this");
+	ASSERT(textureDefinition, "RecyclableBgmapTextureManager::registerTexture: null texture definition");
 
 	VirtualNode node = this->textureRegistries->head;
 
@@ -167,17 +167,17 @@ Texture MBackgroundManager_registerTexture(MBackgroundManager this, TextureDefin
 		VirtualList_pushBack(this->textureRegistries, selectedTextureRegistry);
 	}
 
-	ASSERT(selectedTextureRegistry, "MBackgroundManager::registerTexture: null selectedTextureRegistry");
-	ASSERT(selectedTextureRegistry->texture, "MBackgroundManager::registerTexture: null selectedTextureRegistry");
+	ASSERT(selectedTextureRegistry, "RecyclableBgmapTextureManager::registerTexture: null selectedTextureRegistry");
+	ASSERT(selectedTextureRegistry->texture, "RecyclableBgmapTextureManager::registerTexture: null selectedTextureRegistry");
 
 	return selectedTextureRegistry? selectedTextureRegistry->texture : NULL;
 }
 
 // remove background
-void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((unused)), Texture texture)
+void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager this __attribute__ ((unused)), Texture texture)
 {
-	ASSERT(this, "MBackgroundManager::removeTexture: null this");
-	ASSERT(texture, "MBackgroundManager::removeTexture: null texture");
+	ASSERT(this, "RecyclableBgmapTextureManager::removeTexture: null this");
+	ASSERT(texture, "RecyclableBgmapTextureManager::removeTexture: null texture");
 
 	VirtualNode node = this->textureRegistries->head;
 
@@ -192,13 +192,13 @@ void MBackgroundManager_removeTexture(MBackgroundManager this __attribute__ ((un
 		}
 	}
 
-	ASSERT(node, "MBackgroundManager::removeTexture: texture not found");
+	ASSERT(node, "RecyclableBgmapTextureManager::removeTexture: texture not found");
 }
 
 // remove texture
-void MBackgroundManager_reset(MBackgroundManager this)
+void RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager this)
 {
-	ASSERT(this, "MBackgroundManager::reset: null this");
+	ASSERT(this, "RecyclableBgmapTextureManager::reset: null this");
 
 	VirtualNode node = this->textureRegistries->head;
 
@@ -209,9 +209,9 @@ void MBackgroundManager_reset(MBackgroundManager this)
 		// textures could be deleted externally
 		if(*(u32*)textureRegistry->texture)
 		{
-			ASSERT(textureRegistry, "MBackgroundManager::reset: null textureRegistry");
-			ASSERT(textureRegistry->texture, "MBackgroundManager::reset: null texture");
-			ASSERT(__SAFE_CAST(BgmapTexture, textureRegistry->texture), "MBackgroundManager::reset: no BgmapTexture");
+			ASSERT(textureRegistry, "RecyclableBgmapTextureManager::reset: null textureRegistry");
+			ASSERT(textureRegistry->texture, "RecyclableBgmapTextureManager::reset: null texture");
+			ASSERT(__SAFE_CAST(BgmapTexture, textureRegistry->texture), "RecyclableBgmapTextureManager::reset: no BgmapTexture");
 
 			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, textureRegistry->texture));
 		}
@@ -222,9 +222,9 @@ void MBackgroundManager_reset(MBackgroundManager this)
 	VirtualList_clear(this->textureRegistries);
 }
 
-void MBackgroundManager_print(MBackgroundManager this, int x, int y)
+void RecyclableBgmapTextureManager_print(RecyclableBgmapTextureManager this, int x, int y)
 {
-	Printing_text(Printing_getInstance(), "MBackgroundManager's status", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "RecyclableBgmapTextureManager's status", x, y++, NULL);
 	y++;
 	Printing_text(Printing_getInstance(), "Texture entries: ", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->textureRegistries), x + 17, y++, NULL);
