@@ -435,6 +435,8 @@ static void Debug_showPage(Debug this, int increment)
 
 		Debug_dimmGame(this);
 
+		CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
+
 		((void (*)(Debug, int, int, int))this->currentPage->data)(this, increment, 1, 2);
 	}
 }

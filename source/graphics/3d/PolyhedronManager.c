@@ -26,6 +26,7 @@
 
 #include <PolyhedronManager.h>
 #include <VirtualList.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
