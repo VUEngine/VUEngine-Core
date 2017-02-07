@@ -8,15 +8,51 @@ Graphics
 
 ### AnimatedSprite
 
+#### Overview
+
+The engine abstracts Virtual Boy's VIP's memory sections in the following classes:
+
+•	CHAR memory: CharSet
+
+•	BGMAP memory: BgmapTexture
+
+•	OBJ memory: ObjectTexture
+
+•	WORLD memory: Sprite (BgmapSprite and ObjectSprite)
+
+To allocate CHAR memory, the CharSetManager's getCharSet method must be called, which, depending on the CharSetDefintion's allocation type, will create a new CharSet or return an existing one.
+
+To allocate BGMAP memory, the BgmapTextureManager's getTexture method must be called, which, depending on the CharSetDefintion's allocation type, will create a new Texture or return an existing one.
+
+Both CharSet and BgmapTextures are allocated using reference counting in order to reduce both VRAM and WRAM footprint.
+
+Each object segment is allocated by an ObjectSpriteContainer.
+
 
 #### Animation allocation types
 
-Since there can be Characters with many frames of animations like the game's hero on one hand, and Characters with simple animations like enemies on the other hand, there is a need to allocate each kind in different ways. There are three ways to allocate animations in memory:
+Since there can be sprites with many frames of animations like the game's main character, and sprites with simple animations like enemies or background elements, there is the need to allocate textures in different ways to maximize the hardware's resources. Because of this, the engine provides multiple ways to allocate animations in memory:
 
 
 ##### __ANIMATED
 
-Each Character has its dedicated Char and BGMap memory. On each animation frame change, the char definition is rewritten with the next. Since this kind of texture is the most expensive one performance-wise, it is recommended to use it only for either Characters with lots of animations, or when the number of chars for all the frames of animation is too large to be be allocated as `__ANIMATED_SHARED` (that'd be more than 511 chars, 1 is always reserved by the engine for each CharSet).
+When using this animation type, the engine allocates a new CharSet and Texture for each request, and each time a new frame must be show, the engines writes directly to CHAR memory.
+For example, each one of the following AnimatedSprite has its own Texture and CharSet:
+
+[TODO] IMAGE
+
+The inspection of the CHAR memory reveals that the CHARs corresponding to the current frame of animation of each AnimatedSprite, have been loaded, even if they belong to the same CHAR definition:
+
+[TODO] IMAGE
+
+If all AnimatedSprites are BgmapSprites, then, the inspection of BGMAP memory will show that only one frame of animation is loaded for each AnimatedSprite:
+
+[TODO] IMAGE
+
+If the AnimatedSprites at both ends are ObjectSprites, then, the inspection of OBJ memory will show the appropriate frame of animation for each AnimatedSprite:
+
+[TODO] IMAGE
+
 
 
 ##### __ANIMATED_SHARED
