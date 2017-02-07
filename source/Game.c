@@ -1580,7 +1580,7 @@ bool Game_isGameFrameDone(Game this)
 }
 #endif
 
-void Game_resetProfiling(Game this)
+void Game_resetProfiling(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::resetProfiling: this null");
 
@@ -1723,7 +1723,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 }
 #endif
 
-void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x, int y)
+void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
