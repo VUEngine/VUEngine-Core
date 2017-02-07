@@ -74,3 +74,8 @@
 .navpath li.footer {
 	color: #f1f1f1;
 }
+
+.image {
+	margin: 14px 0;
+    text-align: left;
+}

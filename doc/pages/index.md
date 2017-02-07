@@ -6,6 +6,8 @@ required to produce visual and audio results on the Nintendo Virtual Boy. The en
 which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical 
 and CPU's memory to hold the definitions of such images. 
 
+@image html example.png "Optional Example Caption"
+
 
 Features
 --------
