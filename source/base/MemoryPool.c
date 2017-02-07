@@ -341,7 +341,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 	int pool;
 	int displacement = 0;
 
-	Printing_text(Printing_getInstance(), "MEMORY STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "MEMORY POOL'S STATUS", x, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Pool", x, ++y, NULL);
 	Printing_text(Printing_getInstance(), "Free", x + 5, y, NULL);

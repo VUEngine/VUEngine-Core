@@ -1147,7 +1147,7 @@ void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, in
 {
 	ASSERT(this, "Stage::showStreamingProfiling: null this");
 
-	Printing_text(Printing_getInstance(), "STREAMING STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "STREAMING'S STATUS", x, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Stage's status", x, ++y, NULL);
 
