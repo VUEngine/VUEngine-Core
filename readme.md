@@ -75,8 +75,8 @@ LICENSE
 
 Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
 
-This software is licensed under the MIT License, which means you can basically you can do with it whatever 
-you want as long as you include the original copyright and license notice in any copy of the software/source. 
+This software is licensed under the MIT License, which means you can basically do with it whatever you 
+want as long as you include the original copyright and license notice in any copy of the software/source. 
 
 	Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
 	associated documentation files (the "Software"), to deal in the Software without restriction, including
