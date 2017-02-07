@@ -39,7 +39,7 @@ Since there can be sprites with many frames of animations like the game's main c
 When using this animation type, the engine allocates a new CharSet and Texture for each request, and each time a new frame must be show, the engines writes directly to CHAR memory.
 For example, each one of the following AnimatedSprite has its own Texture and CharSet:
 
-[TODO] IMAGE
+"@image html example.png"
 
 The inspection of the CHAR memory reveals that the CHARs corresponding to the current frame of animation of each AnimatedSprite, have been loaded, even if they belong to the same CHAR definition:
 
