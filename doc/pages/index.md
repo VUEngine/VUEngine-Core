@@ -17,33 +17,36 @@ The engine provides the following features for the programmer to take advantage 
 - Automatic Char memory allocation
 - Automatic BGMap memory allocation
 - Automatic OBJ memory allocation
-- Automatic world layer assignment based on the object's Z position
+- Automatic WORLD layer assignment based on the object's Z position
 - Automatic frame rate control
-- Memory Pool to allocate memory dynamically
 - Automatic memory allocation for Param tables (used in Affine and H-Bias modes)
+- Memory Pool to allocate memory dynamically
 - Easy to use printing functions to facilitate debug
 - Sound reproduction of one BGM and up to two FX sounds simultaneously
-- A generic container
 - Messaging system
 - Generic State Machine
-- Automatic collision detection and notification
-- Particle system
 - Object Oriented support through the use of Metaprogramming (C MACROS):
     - Inheritance
     - Polymorphism
     - Encapsulation
 - Useful classes to speed up the content creation process:
+	- Container
+	- Entity
     - Image
-    - Background
-    - Character
-    - Scroll
-- Automatic loading/unloading of objects in/outside the screen
+    - RecyclableImage
+    - Actor
+    - Trigger
+- Level streaming
 - 3D stages
 - Simple physics simulation:
-    - Accelerated/uniform movement.
+    - Accelerated/uniform movement
     - Gravity
     - Friction
-    - Scaling/rotation effects.
+    - Scaling/rotation effects
+	- Collision detection and notification
+- Particle system
+	- Physics based particles
+	- Collision detection on particles
 - Post-processing effects
 - Clocking system
 - Automatic projection/parallax/scale calculation and rendering
