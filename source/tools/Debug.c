@@ -82,7 +82,7 @@
 #include <AnimationCoordinatorFactory.h>
 #include <InanimatedInGameEntity.h>
 #include <Actor.h>
-#include <Image.h>
+#include <StaticImage.h>
 #include <ManagedEntity.h>
 #include <RecyclableImage.h>
 #include <ManagedStaticImage.h>
@@ -666,12 +666,12 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&EntityFactory_getObjectSize,					"EntityFactory"},
 		{&GameState_getObjectSize,						"GameState"},
 		{&GameState_getObjectSize,						"Stage"},
-		{&Image_getObjectSize,							"Image"},
+		{&StaticImage_getObjectSize,					"StaticImage"},
 		{&InanimatedInGameEntity_getObjectSize,			"Inanim. InGam. Ent."},
 		{&InGameEntity_getObjectSize,					"InGameEntity"},
 		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
 		{&ManagedStaticImage_getObjectSize,				"ManagedStaticImage"},
-		{&RecyclableImage_getObjectSize,					"RecyclableImage"},
+		{&RecyclableImage_getObjectSize,				"RecyclableImage"},
 	};
 
 	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");

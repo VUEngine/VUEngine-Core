@@ -19,51 +19,46 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef IMAGE_H_
-#define IMAGE_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
-#include <BgmapSprite.h>
-#include <ObjectSprite.h>
+#include <StaticImage.h>
+#include <Shape.h>
+#include <Prototypes.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Image_METHODS(ClassName)																		\
-		Entity_METHODS(ClassName)																		\
-
-#define Image_SET_VTABLE(ClassName)																		\
-		Entity_SET_VTABLE(ClassName)																	\
-
-#define Image_ATTRIBUTES																				\
-		Entity_ATTRIBUTES																				\
-
-__CLASS(Image);
+// define the StaticImage
+__CLASS_DEFINITION(StaticImage, Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-typedef EntityDefinition ImageDefinition;
-typedef const EntityDefinition ImageROMDef;
+// always call these two macros next to each other
+__CLASS_NEW_DEFINITION(StaticImage, StaticImageDefinition* StaticImageDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(StaticImage, StaticImageDefinition, id, internalId, name);
 
+// class's constructor
+void StaticImage_constructor(StaticImage this, StaticImageDefinition* StaticImageDefinition, s16 id, s16 internalId, const char* const name)
+{
+	ASSERT(this, "StaticImage::constructor: null this");
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+	__CONSTRUCT_BASE(Entity, StaticImageDefinition, id, internalId, name);
+}
 
-__CLASS_NEW_DECLARE(Image, ImageDefinition* imageDefinition, s16 id, s16 internalId, const char* const name);
+// class's destructor
+void StaticImage_destructor(StaticImage this)
+{
+	ASSERT(this, "StaticImage::destructor: null this");
 
-void Image_constructor(Image this, ImageDefinition* imageDefinition, s16 id, s16 internalId, const char* const name);
-void Image_destructor(Image this);
-
-
-#endif
+	// destroy the super object
+	// must always be called at the end of the destructor
+	__DESTROY_BASE;
+}
