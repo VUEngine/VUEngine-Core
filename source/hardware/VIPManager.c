@@ -563,7 +563,7 @@ void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this)
 
 	u32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
 
-	this->currentDrawingFrameBufferSet = 0xFFFF;
+	this->currentDrawingFrameBufferSet = 0;
 
 	if(0x0004 == currentDrawingFrameBufferSet)
 	{

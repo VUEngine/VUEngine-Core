@@ -1013,7 +1013,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 14, y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 24, y, NULL);
 
-		if(__GET_CAST(BgmapTexture, Sprite_getTexture(sprite)))
+		if(Sprite_getTexture(sprite) && __GET_CAST(BgmapTexture, Sprite_getTexture(sprite)))
 		{
 			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite_getTexture(sprite));
 
