@@ -46,7 +46,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F800;
-
+u32* _currentDrawingFrameBufferSet = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //												DECLARATIONS
@@ -124,6 +124,8 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
 	_polyhedronManager = PolyhedronManager_getInstance();
+
+	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }
 
 // class's destructor

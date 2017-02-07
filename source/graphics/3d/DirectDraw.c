@@ -35,12 +35,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// left buffer base addresses
-#define __LEFT_BUFFER_1 	(u32)0x00000000
-
-// right buffer base address
-#define __RIGHT_BUFFER_1 	(u32)0x00010000
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -62,6 +56,8 @@ __CLASS_DEFINITION(DirectDraw, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void DirectDraw_constructor(DirectDraw this);
+
+extern u32* _currentDrawingFrameBufferSet;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -177,6 +173,9 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
  */
 void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int color)
 {
+	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
 	fromPoint.x = FIX19_13TOI(fromPoint.x);
 	fromPoint.y = FIX19_13TOI(fromPoint.y);
 
@@ -218,8 +217,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	{
 		if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 		{
-			DirectDraw_drawBlackPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y);
-			DirectDraw_drawBlackPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y);
+			DirectDraw_drawBlackPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y);
+			DirectDraw_drawBlackPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y);
 		}
 
 		if(dx > dy)
@@ -243,8 +242,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 				if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 				{
-					DirectDraw_drawBlackPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y);
-					DirectDraw_drawBlackPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y);
+					DirectDraw_drawBlackPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y);
+					DirectDraw_drawBlackPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y);
 				}
 			}
 		}
@@ -269,8 +268,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 				if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 				{
-					DirectDraw_drawBlackPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y);
-					DirectDraw_drawBlackPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y);
+					DirectDraw_drawBlackPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y);
+					DirectDraw_drawBlackPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y);
 				}
 			}
 		}
@@ -280,8 +279,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	{
 		if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 		{
-			DirectDraw_drawPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, color);
-			DirectDraw_drawPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, color);
+			DirectDraw_drawPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y, color);
+			DirectDraw_drawPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y, color);
 		}
 
 		if(dx > dy)
@@ -305,8 +304,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 				if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH) && ((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 				{
-					DirectDraw_drawPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, color);
-					DirectDraw_drawPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, color);
+					DirectDraw_drawPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y, color);
+					DirectDraw_drawPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y, color);
 				}
 			}
 		}
@@ -331,8 +330,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 				if(((unsigned)(fromPoint.x) < __SCREEN_WIDTH)&&((unsigned)(fromPoint.y) < __SCREEN_HEIGHT))
 				{
-					DirectDraw_drawPixel(this, __LEFT_BUFFER_1, fromPoint.x - parallax, fromPoint.y, color);
-					DirectDraw_drawPixel(this, __RIGHT_BUFFER_1, fromPoint.x + parallax, fromPoint.y, color);
+					DirectDraw_drawPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y, color);
+					DirectDraw_drawPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y, color);
 				}
 			}
 		}
