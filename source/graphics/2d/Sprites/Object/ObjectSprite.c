@@ -289,7 +289,7 @@ void ObjectSprite_render(ObjectSprite this)
 			}
 
 			_objectAttributesBaseAddress[(objectIndex << 2)] = outputX;
-			_objectAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue | __OBJECT_CHAR_SHOW_MASK;
+			_objectAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue;
 			_objectAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
 			_objectAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
 		}
