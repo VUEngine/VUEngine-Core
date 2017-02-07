@@ -32,6 +32,7 @@
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
 #include <SpriteManager.h>
+#include <PolyhedronManager.h>
 #include <Mem.h>
 #include <Printing.h>
 #ifdef __DEBUG_TOOLS
@@ -94,6 +95,7 @@ bool Game_isGameFrameDone(Game this);
 static VIPManager _vipManager;
 static ParamTableManager _paramTableManager;
 static CharSetManager _charSetManager;
+static PolyhedronManager _polyhedronManager;
 static SpriteManager _spriteManager;
 u32 VIPManager_writeDRAM(VIPManager this);
 
@@ -121,6 +123,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	_paramTableManager = ParamTableManager_getInstance();
 	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
+	_polyhedronManager = PolyhedronManager_getInstance();
 }
 
 // class's destructor
@@ -297,6 +300,9 @@ u32 VIPManager_writeDRAM(VIPManager this)
 		Debug_render(Debug_getInstance());
 	}
 #endif
+
+	// draw 3d objects
+	PolyhedronManager_drawPolyhedrons(_polyhedronManager);
 
 	// check if the current frame buffer set is valid
 	VirtualNode node = this->postProcessingEffects->head;

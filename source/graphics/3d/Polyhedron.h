@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef POLYGON_H_
-#define POLYGON_H_
+#ifndef POLYHEDRON_H_
+#define POLYHEDRON_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,30 +34,32 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Polygon_METHODS(ClassName)																		\
+#define Polyhedron_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 
-#define Polygon_SET_VTABLE(ClassName)																	\
+#define Polyhedron_SET_VTABLE(ClassName)																	\
 		Object_SET_VTABLE(ClassName)																	\
 
-#define Polygon_ATTRIBUTES																				\
+#define Polyhedron_ATTRIBUTES																				\
 		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
 		/* vertices */																					\
 		VirtualList vertices;																			\
 
-__CLASS(Polygon);
+__CLASS(Polyhedron);
 
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Polygon);
+__CLASS_NEW_DECLARE(Polyhedron);
 
-void Polygon_destructor(Polygon this);
-void Polygon_addVertex(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z);
-void Polygon_draw(Polygon this, int calculateParallax);
+void Polyhedron_destructor(Polyhedron this);
+void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z);
+void Polyhedron_show(Polyhedron this);
+void Polyhedron_hide(Polyhedron this);
+void Polyhedron_draw(Polyhedron this, int calculateParallax);
 
 
 #endif

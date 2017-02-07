@@ -18,6 +18,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 //#define __ALERT_VIP_OVERTIME
 //#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+//#define __DRAW_SHAPES
 
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __PRINT_DETAILED_MEMORY_POOL_STATUS

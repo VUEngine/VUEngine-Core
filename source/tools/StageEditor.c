@@ -239,14 +239,9 @@ void StageEditor_destructor(StageEditor this)
  *
  * @param this	Function scope
  */
-void StageEditor_update(StageEditor this)
+void StageEditor_update(StageEditor this __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditor::update: null this");
-
-	if(this->gameState && this->shape)
-	{
-		__VIRTUAL_CALL(Shape, draw, this->shape);
-	}
 }
 
 /**
@@ -283,7 +278,7 @@ void StageEditor_stop(StageEditor this)
 {
 	ASSERT(this, "StageEditor::stop: null this");
 
-	CollisionManager_flushShapesDirectDrawData(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
+	CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	StageEditor_removePreviousSprite(this);
 	StageEditor_releaseShape(this);
@@ -447,7 +442,7 @@ static void StageEditor_releaseShape(StageEditor this)
 		}
 		else if(this->shape)
 		{
-			__VIRTUAL_CALL(Shape, deleteDirectDrawData, this->shape);
+			__VIRTUAL_CALL(Shape, hide, this->shape);
 		}
 
 		this->shape = NULL;
@@ -487,6 +482,11 @@ static void StageEditor_getShape(StageEditor this)
 				this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
 				break;
 		}
+	}
+
+	if(this->shape)
+	{
+		__VIRTUAL_CALL(Shape, show, this->shape);
 	}
 }
 

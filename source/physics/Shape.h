@@ -42,8 +42,8 @@
 		__VIRTUAL_DEC(ClassName, void, position);														\
 		__VIRTUAL_DEC(ClassName, int, getAxisOfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);	\
 		__VIRTUAL_DEC(ClassName, int, testIfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement);									\
-		__VIRTUAL_DEC(ClassName, void, deleteDirectDrawData);											\
-		__VIRTUAL_DEC(ClassName, void, draw);															\
+		__VIRTUAL_DEC(ClassName, void, hide);															\
+		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
 
 #define Shape_SET_VTABLE(ClassName)																		\
@@ -90,8 +90,8 @@ bool Shape_isReady(Shape this);
 void Shape_setReady(Shape this, bool ready);
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 bool Shape_checkForCollisions(Shape this);
-void Shape_draw(Shape this);
-void Shape_deleteDirectDrawData(Shape this);
+void Shape_show(Shape this);
+void Shape_hide(Shape this);
 void Shape_print(Shape this, int x, int y);
 
 

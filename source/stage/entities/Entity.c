@@ -35,6 +35,7 @@
 #include <CollisionManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -1090,6 +1091,10 @@ static void Entity_setupShape(Entity this)
 		}
 
 		Shape_setActive(this->shape, true);
+
+#ifdef __DRAW_SHAPES
+		__VIRTUAL_CALL(Shape, show, this->shape);
+#endif
 	}
 }
 
@@ -1362,13 +1367,6 @@ void Entity_updateVisualRepresentation(Entity this)
 	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_POSITION, this->updateSprites & __UPDATE_SPRITE_SCALE, this->updateSprites & __UPDATE_SPRITE_ROTATION);
 
 	this->updateSprites = 0;
-
-/*
-	if(this->shape)
-	{
-		__VIRTUAL_CALL(Shape, draw, this->shape);
-	}
-*/
 }
 
 /**

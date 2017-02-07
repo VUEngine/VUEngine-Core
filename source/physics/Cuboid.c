@@ -27,7 +27,7 @@
 #include <Cuboid.h>
 #include <InverseCuboid.h>
 #include <Optics.h>
-#include <Polygon.h>
+#include <Polyhedron.h>
 #include <Math.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
@@ -58,7 +58,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 
 static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*));
 static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
-static void Cuboid_configurePolygon(Cuboid this, int renew);
+static void Cuboid_configurePolyhedron(Cuboid this, int renew);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 static bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other);
 static bool Cuboid_overlapsWithRightCuboid(RightCuboid* first, RightCuboid* second);
@@ -82,7 +82,7 @@ void Cuboid_constructor(Cuboid this, SpatialObject owner)
 
 	__CONSTRUCT_BASE(Shape, owner);
 
-	this->polygon = NULL;
+	this->polyhedron = NULL;
 }
 
 // class's destructor
@@ -90,7 +90,7 @@ void Cuboid_destructor(Cuboid this)
 {
 	ASSERT(this, "Cuboid::destructor: null this");
 
-	Cuboid_deleteDirectDrawData(this);
+	Cuboid_hide(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -531,54 +531,57 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 	return axisOfPossibleCollision;
 }
 
-// configure polygon
-static void Cuboid_configurePolygon(Cuboid this, int renew)
+// configure Polyhedron
+static void Cuboid_configurePolyhedron(Cuboid this, int renew)
 {
 	ASSERT(this, "Cuboid::draw: null this");
 
 	if(renew)
 	{
-		Cuboid_deleteDirectDrawData(this);
+		Cuboid_hide(this);
 	}
-	else if(this->polygon)
+	else if(this->polyhedron)
 	{
 		return;
 	}
 
-	// create a polygon
-	this->polygon = __NEW(Polygon);
+	// create a Polyhedron
+	this->polyhedron = __NEW(Polyhedron);
 
 	// add vertices
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
 
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
-	Polygon_addVertex(this->polygon, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
+	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
 }
 
-// draw rect
-void Cuboid_draw(Cuboid this)
+// show me
+void Cuboid_show(Cuboid this)
 {
-	Cuboid_configurePolygon(this, this->moves || !this->ready);
+	ASSERT(this, "Cuboid::draw: null this");
 
-	// draw the polygon
-	Polygon_draw(this->polygon, true);
+	Cuboid_configurePolyhedron(this, this->moves || !this->ready);
+
+	// draw the Polyhedron
+	Polyhedron_show(this->polyhedron);
 }
 
-// flush direct draw data
-void Cuboid_deleteDirectDrawData(Cuboid this)
+// hide polyhedron
+void Cuboid_hide(Cuboid this)
 {
-	if(this->polygon)
+	if(this->polyhedron)
 	{
-		__DELETE(this->polygon);
+		// draw the Polyhedron
+		__DELETE(this->polyhedron);
 
-		this->polygon = NULL;
+		this->polyhedron = NULL;
 	}
 }
 

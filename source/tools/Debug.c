@@ -72,7 +72,7 @@
 #include <Cuboid.h>
 #include <InverseCuboid.h>
 #include <Shape.h>
-#include <Polygon.h>
+#include <Polyhedron.h>
 
 #include <Container.h>
 #include <Entity.h>
@@ -335,7 +335,7 @@ void Debug_show(Debug this, GameState gameState)
 // hide debug screens
 void Debug_hide(Debug this)
 {
-	CollisionManager_flushShapesDirectDrawData(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
+	CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
@@ -643,7 +643,7 @@ static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused))
 		{&Cuboid_getObjectSize,		 					"Cuboid"},
 		{&InverseCuboid_getObjectSize,		 			"InverseCuboid"},
 		{&PhysicalWorld_getObjectSize, 					"PhysicalWorld"},
-		{&Polygon_getObjectSize, 						"Polygon"},
+		{&Polyhedron_getObjectSize, 						"Polyhedron"},
 		{&Shape_getObjectSize, 							"Shape"},
 	};
 
@@ -1060,7 +1060,7 @@ static void Debug_physicStatusShowShapes(Debug this __attribute__ ((unused)), in
 
 static void Debug_showCollisionShapes(Debug this __attribute__ ((unused)))
 {
-	CollisionManager_drawShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
+	CollisionManager_showShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 }
 
 static void Debug_showHardwareStatus(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)

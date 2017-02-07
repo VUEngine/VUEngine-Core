@@ -24,11 +24,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Polygon.h>
+#include <Polyhedron.h>
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VirtualList.h>
-#include <VIPManager.h>
+#include <PolyhedronManager.h>
 #include <debugConfig.h>
 
 
@@ -36,7 +36,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(Polygon, Object);
+__CLASS_DEFINITION(Polyhedron, Object);
 
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
@@ -50,18 +50,18 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 extern const VBVec3D* _screenPosition;
 extern const Optical* _optical;
 
-static void Polygon_constructor(Polygon this);
+static void Polyhedron_constructor(Polyhedron this);
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(Polygon)
-__CLASS_NEW_END(Polygon);
+__CLASS_NEW_DEFINITION(Polyhedron)
+__CLASS_NEW_END(Polyhedron);
 
 // class's constructor
-static void Polygon_constructor(Polygon this)
+static void Polyhedron_constructor(Polyhedron this)
 {
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -71,8 +71,12 @@ static void Polygon_constructor(Polygon this)
 }
 
 // class's destructor
-void Polygon_destructor(Polygon this)
+void Polyhedron_destructor(Polyhedron this)
 {
+	ASSERT(this, "Polyhedron::destructor: null this");
+
+	Polyhedron_hide(this);
+
 	// delete the vertices list
 	if(this->vertices)
 	{
@@ -94,8 +98,10 @@ void Polygon_destructor(Polygon this)
 }
 
 // add a vertex
-void Polygon_addVertex(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
+void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
 {
+	ASSERT(this, "Polyhedron::addVertex: null this");
+
 	// create the vertex
 	VBVec3D* vertex = __NEW_BASIC(VBVec3D);
 	vertex->x = x;
@@ -113,9 +119,25 @@ void Polygon_addVertex(Polygon this, fix19_13 x, fix19_13 y, fix19_13 z)
 	VirtualList_pushBack(this->vertices, vertex);
 }
 
-// draw polygon to screen
-void Polygon_draw(Polygon this, int calculateParallax)
+void Polyhedron_show(Polyhedron this)
 {
+	ASSERT(this, "Polyhedron::show: null this");
+
+	PolyhedronManager_register(PolyhedronManager_getInstance(), this);
+}
+
+void Polyhedron_hide(Polyhedron this)
+{
+	ASSERT(this, "Polyhedron::hide: null this");
+
+	PolyhedronManager_remove(PolyhedronManager_getInstance(), this);
+}
+
+// draw Polyhedron to screen
+void Polyhedron_draw(Polyhedron this, int calculateParallax)
+{
+	ASSERT(this, "Polyhedron::draw: null this");
+
 	int color = __COLOR_BRIGHT_RED;
 
 	// if I have some vertex, draw them

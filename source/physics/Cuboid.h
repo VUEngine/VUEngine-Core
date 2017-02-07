@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Shape.h>
-#include <Polygon.h>
+#include <Polyhedron.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,14 +40,13 @@
 
 #define Cuboid_SET_VTABLE(ClassName)																	\
 		Shape_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);															\
 		__VIRTUAL_SET(ClassName, Cuboid, overlaps);														\
 		__VIRTUAL_SET(ClassName, Cuboid, setup);														\
 		__VIRTUAL_SET(ClassName, Cuboid, position);														\
 		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);											\
 		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);												\
-		__VIRTUAL_SET(ClassName, Cuboid, deleteDirectDrawData);											\
-		__VIRTUAL_SET(ClassName, Cuboid, draw);															\
+		__VIRTUAL_SET(ClassName, Cuboid, hide);															\
+		__VIRTUAL_SET(ClassName, Cuboid, show);															\
 		__VIRTUAL_SET(ClassName, Cuboid, print);														\
 
 #define Cuboid_ATTRIBUTES																				\
@@ -58,7 +57,7 @@
 		/* the rightCuboid to check */																	\
 		RightCuboid positionedRightCuboid;																\
 		/* for debugging purposes */																	\
-		Polygon polygon;																				\
+		Polyhedron polyhedron;																				\
 
 __CLASS(Cuboid);
 
@@ -78,8 +77,8 @@ RightCuboid Cuboid_getRightCuboid(Cuboid this);
 RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this);
 int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);
 int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement);
-void Cuboid_draw(Cuboid this);
-void Cuboid_deleteDirectDrawData(Cuboid this);
+void Cuboid_show(Cuboid this);
+void Cuboid_hide(Cuboid this);
 void Cuboid_print(Cuboid this, int x, int y);
 
 

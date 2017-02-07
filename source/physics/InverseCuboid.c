@@ -26,7 +26,7 @@
 
 #include <InverseCuboid.h>
 #include <Optics.h>
-#include <Polygon.h>
+#include <Polyhedron.h>
 #include <Math.h>
 #include <VirtualList.h>
 

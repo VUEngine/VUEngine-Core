@@ -19,56 +19,42 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef COLLISION_MANAGER_H_
-#define COLLISION_MANAGER_H_
+#ifndef POLYHEDRON_MANAGER_H_
+#define POLYHEDRON_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <SpatialObject.h>
-#include <Shape.h>
-#include <Clock.h>
+#include <Polyhedron.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define CollisionManager_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
+#define PolyhedronManager_METHODS(ClassName)												\
+	Object_METHODS(ClassName)																			\
 
-// declare the virtual methods which are redefined
-#define CollisionManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
+#define PolyhedronManager_SET_VTABLE(ClassName)												\
+	Object_SET_VTABLE(ClassName)																		\
 
-__CLASS(CollisionManager);
+__CLASS(PolyhedronManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(CollisionManager);
+PolyhedronManager PolyhedronManager_getInstance();
 
-void CollisionManager_constructor(CollisionManager this);
-void CollisionManager_destructor(CollisionManager this);
-Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType);
-void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
-Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner);
-void CollisionManager_processRemovedShapes(CollisionManager this);
-u32 CollisionManager_update(CollisionManager this, Clock clock);
-void CollisionManager_reset(CollisionManager this);
-void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
-void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);
-void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
-void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
-void CollisionManager_showShapes(CollisionManager this);
-void CollisionManager_hideShapes(CollisionManager this);
-void CollisionManager_print(CollisionManager this, int x, int y);
+void PolyhedronManager_destructor(PolyhedronManager this);
+void PolyhedronManager_register(PolyhedronManager this, Polyhedron polyhedron);
+void PolyhedronManager_remove(PolyhedronManager this, Polyhedron polyhedron);
+void PolyhedronManager_reset(PolyhedronManager this);
+void PolyhedronManager_drawPolyhedrons(PolyhedronManager this);
+void PolyhedronManager_print(PolyhedronManager this, int x, int y);
 
 
 #endif

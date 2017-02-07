@@ -100,14 +100,7 @@ void CollisionManager_destructor(CollisionManager this)
 	ASSERT(this, "CollisionManager::destructor: null this");
 	ASSERT(this->shapes, "CollisionManager::destructor: null shapes");
 
-	// delete the shapes
-	VirtualNode node = this->shapes->head;
-
-	// delete all shapes registered
-	for(;node; node = node->next)
-	{
-		__DELETE(node->data);
-	}
+	CollisionManager_reset(this);
 
 	// delete lists
 	__DELETE(this->shapes);
@@ -319,6 +312,8 @@ void CollisionManager_reset(CollisionManager this)
 	ASSERT(this, "CollisionManager::reset: null this");
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
+	CollisionManager_processRemovedShapes(this);
+
 	VirtualNode node = this->shapes->head;
 
 	for(; node; node = node->next)
@@ -334,7 +329,6 @@ void CollisionManager_reset(CollisionManager this)
 	VirtualList_clear(this->movingShapes);
 	VirtualList_clear(this->removedShapes);
 }
-
 
 // inform of a change in the shape
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
@@ -396,7 +390,7 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 }
 
 // draw shapes
-void CollisionManager_drawShapes(CollisionManager this)
+void CollisionManager_showShapes(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::drawShapes: null this");
 
@@ -406,12 +400,12 @@ void CollisionManager_drawShapes(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Shape, draw, node->data);
+		__VIRTUAL_CALL(Shape, show, node->data);
 	}
 }
 
-// free memory by deleting direct draw polygons
-void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
+// free memory by deleting direct draw Polyhedrons
+void CollisionManager_hideShapes(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::drawShapes: null this");
 //	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
@@ -422,7 +416,7 @@ void CollisionManager_flushShapesDirectDrawData(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Shape, deleteDirectDrawData, node->data);
+		__VIRTUAL_CALL(Shape, hide, node->data);
 	}
 }
 
