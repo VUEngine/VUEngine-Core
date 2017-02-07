@@ -38,7 +38,9 @@
 
 enum ScreenFX
 {
-	kFadeIn = 0,
+	kShow = 0,
+	kHide,
+	kFadeIn,
 	kFadeOut,
 	kFadeTo,
 

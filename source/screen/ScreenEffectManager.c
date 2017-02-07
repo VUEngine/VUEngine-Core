@@ -45,6 +45,8 @@ __CLASS_FRIEND_DEFINITION(Screen);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+void ScreenEffectManager_showScreen(ScreenEffectManager this);
+void ScreenEffectManager_hideScreen(ScreenEffectManager this);
 void ScreenEffectManager_FXFadeIn(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int duration);
@@ -122,7 +124,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 	{
 		case kFadeIn:
 
-			__SET_BRIGHT(0, 0, 0);
+			ScreenEffectManager_hideScreen(this);
 
 			TimerManager_repeatMethodCall(
 				TimerManager_getInstance(),
@@ -135,11 +137,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 
 		case kFadeOut:
 
-			__SET_BRIGHT(
-				defaultBrightness.darkRed,
-				defaultBrightness.mediumRed,
-				defaultBrightness.brightRed
-			);
+			ScreenEffectManager_showScreen(this);
 
 			TimerManager_repeatMethodCall(
 				TimerManager_getInstance(),
@@ -216,6 +214,16 @@ void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_li
 
 	switch(effect)
 	{
+		case kShow:
+
+			ScreenEffectManager_showScreen(this);
+			break;
+
+		case kHide:
+
+			ScreenEffectManager_hideScreen(this);
+			break;
+
 		case kFadeIn:
 		case kFadeOut:
 
@@ -248,8 +256,30 @@ void ScreenEffectManager_stopEffect(ScreenEffectManager this, int effect)
 	}
 }
 
+void ScreenEffectManager_showScreen(ScreenEffectManager this __attribute__ ((unused)))
+{
+	ASSERT(this, "ScreenEffectManager::showScreen: null this");
+
+	Brightness defaultBrightness = ScreenEffectManager_getDefaultBrightness(this);
+
+	__SET_BRIGHT(
+		defaultBrightness.darkRed,
+		defaultBrightness.mediumRed,
+		defaultBrightness.brightRed
+	);
+}
+
+void ScreenEffectManager_hideScreen(ScreenEffectManager this __attribute__ ((unused)))
+{
+	ASSERT(this, "ScreenEffectManager::hideScreen: null this");
+
+	__SET_BRIGHT(0, 0, 0);
+}
+
 void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
 {
+	ASSERT(this, "ScreenEffectManager::FXFadeIn: null this");
+
 	__SET_BRIGHT(
 		_vipRegisters[__BRTA] + 1,
 		_vipRegisters[__BRTB] + 2,
@@ -259,6 +289,8 @@ void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unuse
 
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
 {
+	ASSERT(this, "ScreenEffectManager::FXFadeOut: null this");
+
 	// decrease brightness
 	__SET_BRIGHT(
 		_vipRegisters[__BRTA] - 1,
