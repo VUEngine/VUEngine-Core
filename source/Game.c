@@ -116,13 +116,6 @@ enum StateOperations
 		u32 gameFrameTotalTime;																			\
 		/* low battery indicator showing flag */														\
 		bool isShowingLowBatteryIndicator;																\
-		/* low battery indicator showing flag */														\
-		u16 gameFrameDuration;																			\
-		u16 gameFrameDurationAverage;																	\
-		u16 gameFrameEffectiveDuration;																	\
-		u16 gameFrameEffectiveDurationAverage;															\
-		u16 tornGameFrameCount;																			\
-		u16 gameFrameHighestEffectiveDuration;
 
 __CLASS_DEFINITION(Game, Object);
 
@@ -161,38 +154,76 @@ u32 VIPManager_writeDRAM(VIPManager this);
 
 static bool updateProfiling = false;
 
-static u32 updateVisualsTotalTime = 0;
-static u32 updateLogicTotalTime = 0;
-static u32 updatePhysicsTotalTime = 0;
-static u32 updateTransformationsTotalTime = 0;
-static u32 streamingTotalTime = 0;
-static u32 handleInputTotalTime = 0;
-static u32 dispatchDelayedMessageTotalTime = 0;
-static u32 renderingTotalTime = 0;
+static u16 gameFrameDuration = 0;
+static u16 gameFrameDurationAverage = 0;
+static u16 gameFrameEffectiveDuration = 0;
+static u16 gameFrameEffectiveDurationAverage = 0;
+static u16 gameFrameHighestEffectiveDuration = 0;
+static u16 tornGameFrameCount = 0;
 
-static u32 updateVisualsHighestTime = 0;
-static u32 updateLogicHighestTime = 0;
-static u32 streamingHighestTime = 0;
-static u32 updatePhysicsHighestTime = 0;
-static u32 updateTransformationsHighestTime = 0;
-static u32 handleInputHighestTime = 0;
-static u32 dispatchDelayedMessageHighestTime = 0;
-static u32 processCollisionsTotalTime = 0;
-static u32 processCollisionsHighestTime = 0;
-static u32 renderingHighestTime = 0;
+static u16 updateVisualsTotalTime = 0;
+static u16 updateLogicTotalTime = 0;
+static u16 updatePhysicsTotalTime = 0;
+static u16 updateTransformationsTotalTime = 0;
+static u16 streamingTotalTime = 0;
+static u16 handleInputTotalTime = 0;
+static u16 dispatchDelayedMessageTotalTime = 0;
+static u16 renderingTotalTime = 0;
 
-static u32 gameFrameProcessTime = 0;
-static u32 updateVisualsProcessTime = 0;
-static u32 updateLogicProcessTime = 0;
-static u32 streamingProcessTime = 0;
-static u32 updatePhysicsProcessTime = 0;
-static u32 updateTransformationsProcessTime = 0;
-static u32 handleInputProcessTime = 0;
-static u32 dispatchDelayedMessageProcessTime = 0;
-static u32 processCollisionsProcessTime = 0;
-static u32 renderingProcessTime = 0;
+static u16 updateVisualsHighestTime = 0;
+static u16 updateLogicHighestTime = 0;
+static u16 streamingHighestTime = 0;
+static u16 updatePhysicsHighestTime = 0;
+static u16 updateTransformationsHighestTime = 0;
+static u16 handleInputHighestTime = 0;
+static u16 dispatchDelayedMessageHighestTime = 0;
+static u16 processCollisionsTotalTime = 0;
+static u16 processCollisionsHighestTime = 0;
+static u16 renderingHighestTime = 0;
 
-static u32 gameFrameHighestTime = 0;
+static u16 gameFrameProcessTime = 0;
+static u16 updateVisualsProcessTime = 0;
+static u16 updateLogicProcessTime = 0;
+static u16 streamingProcessTime = 0;
+static u16 updatePhysicsProcessTime = 0;
+static u16 updateTransformationsProcessTime = 0;
+static u16 handleInputProcessTime = 0;
+static u16 dispatchDelayedMessageProcessTime = 0;
+static u16 processCollisionsProcessTime = 0;
+static u16 renderingProcessTime = 0;
+
+static u16 gameFrameHighestTime = 0;
+
+static u16 previousGameFrameDuration = 0;
+static u16 previousGameFrameDurationAverage = 0;
+static u16 previousGameFrameEffectiveDuration = 0;
+static u16 previousGameFrameEffectiveDurationAverage = 0;
+static u16 previousGameFrameHighestEffectiveDuration = 0;
+static u16 previousTornGameFrameCount = 0;
+
+static u16 previousUpdateVisualsTotalTime = 0;
+static u16 previousUpdateLogicTotalTime = 0;
+static u16 previousUpdatePhysicsTotalTime = 0;
+static u16 previousUpdateTransformationsTotalTime = 0;
+static u16 previousStreamingTotalTime = 0;
+static u16 previousHandleInputTotalTime = 0;
+static u16 previousDispatchDelayedMessageTotalTime = 0;
+static u16 previousRenderingTotalTime = 0;
+
+static u16 previousUpdateVisualsHighestTime = 0;
+static u16 previousUpdateLogicHighestTime = 0;
+static u16 previousStreamingHighestTime = 0;
+static u16 previousUpdatePhysicsHighestTime = 0;
+static u16 previousUpdateTransformationsHighestTime = 0;
+static u16 previousHandleInputHighestTime = 0;
+static u16 previousDispatchDelayedMessageHighestTime = 0;
+static u16 previousProcessCollisionsTotalTime = 0;
+static u16 previousProcessCollisionsHighestTime = 0;
+static u16 previousRenderingHighestTime = 0;
+
+static u16 previousGameFrameHighestTime = 0;
+static u16 previouGameFrameTotalTime = 0;
+
 #endif
 
 //---------------------------------------------------------------------------------------------------------
@@ -256,13 +287,6 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	DirectDraw_getInstance();
 	I18n_getInstance();
 	ParamTableManager_getInstance();
-
-	// profiling
-	this->gameFrameDuration = 0;
-	this->gameFrameDurationAverage = 0;
-	this->gameFrameEffectiveDuration = 0;
-	this->gameFrameEffectiveDurationAverage = 0;
-	this->tornGameFrameCount = 0;
 
 #ifdef __DEBUG_TOOLS
 	DebugState_getInstance();
@@ -1104,15 +1128,14 @@ static void Game_update(Game this)
 			static u32 totalGameFrameDuration = 0;
 			totalGameFrameDuration += gameFrameDuration;
 
-			this->gameFrameEffectiveDuration = gameFrameDuration;
-			this->gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
-
-			this->gameFrameHighestEffectiveDuration = 0;
+			gameFrameEffectiveDuration = gameFrameDuration;
+			gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
+			gameFrameHighestEffectiveDuration = 0;
 
 			if(gameFrameDuration > __GAME_FRAME_DURATION)
 			{
-				this->gameFrameHighestEffectiveDuration = gameFrameDuration;
-				this->tornGameFrameCount++;
+				gameFrameHighestEffectiveDuration = gameFrameDuration;
+				tornGameFrameCount++;
 			}
 		}
 #endif
@@ -1187,7 +1210,7 @@ static void Game_update(Game this)
 		if(updateProfiling)
 		{
 			static u32 cycleCount = 0;
-			u32 gameFrameRealDuration = gameFrameProcessTime +
+			gameFrameDuration = gameFrameProcessTime +
 										updateVisualsProcessTime +
 										updateLogicProcessTime +
 										streamingProcessTime +
@@ -1198,10 +1221,9 @@ static void Game_update(Game this)
 										processCollisionsProcessTime +
 										renderingProcessTime;
 			static u32 totalGameFrameRealDuration = 0;
-			totalGameFrameRealDuration += gameFrameRealDuration;
+			totalGameFrameRealDuration += gameFrameDuration;
 
-			this->gameFrameDuration = gameFrameRealDuration;
-			this->gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
+			gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
 		}
 #endif
 
@@ -1556,11 +1578,74 @@ bool Game_isGameFrameDone(Game this)
 }
 #endif
 
+void Game_resetProfiling(Game this)
+{
+	ASSERT(this, "Game::resetProfiling: this null");
+
+#ifdef __PROFILE_GAME
+
+	previouGameFrameTotalTime = this->gameFrameTotalTime;
+
+	previousGameFrameDuration = gameFrameDuration;
+	previousGameFrameDurationAverage = gameFrameDurationAverage;
+	previousGameFrameEffectiveDuration = gameFrameEffectiveDuration;
+	previousGameFrameEffectiveDurationAverage = gameFrameEffectiveDurationAverage;
+	previousTornGameFrameCount = tornGameFrameCount;
+
+	previousUpdateVisualsTotalTime = updateVisualsTotalTime;
+	previousUpdateLogicTotalTime = updateLogicTotalTime;
+	previousUpdatePhysicsTotalTime = updatePhysicsTotalTime;
+	previousUpdateTransformationsTotalTime = updateTransformationsTotalTime;
+	previousStreamingTotalTime = streamingTotalTime;
+	previousHandleInputTotalTime = handleInputTotalTime;
+	previousDispatchDelayedMessageTotalTime = dispatchDelayedMessageTotalTime;
+	previousProcessCollisionsTotalTime = processCollisionsTotalTime;
+	previousRenderingTotalTime = renderingTotalTime;
+
+	previousGameFrameHighestTime = gameFrameHighestTime;
+	previousUpdateVisualsHighestTime = updateVisualsHighestTime;
+	previousUpdateLogicHighestTime = updateLogicHighestTime;
+	previousUpdatePhysicsHighestTime = updatePhysicsHighestTime;
+	previousUpdateTransformationsHighestTime = updateTransformationsHighestTime;
+	previousStreamingHighestTime = streamingHighestTime;
+	previousHandleInputHighestTime = handleInputHighestTime;
+	previousDispatchDelayedMessageHighestTime = dispatchDelayedMessageHighestTime;
+	previousProcessCollisionsHighestTime = processCollisionsHighestTime;
+	previousRenderingHighestTime = renderingHighestTime;
+
+	gameFrameDuration = 0;
+	gameFrameDurationAverage = 0;
+	gameFrameEffectiveDuration = 0;
+	gameFrameEffectiveDurationAverage = 0;
+	tornGameFrameCount = 0;
+
+	updateVisualsTotalTime = 0;
+	updateLogicTotalTime = 0;
+	updatePhysicsTotalTime = 0;
+	updateTransformationsTotalTime = 0;
+	streamingTotalTime = 0;
+	handleInputTotalTime = 0;
+	dispatchDelayedMessageTotalTime = 0;
+	processCollisionsTotalTime = 0;
+	renderingTotalTime = 0;
+
+	gameFrameHighestTime = 0;
+	updateVisualsHighestTime = 0;
+	updateLogicHighestTime = 0;
+	updatePhysicsHighestTime = 0;
+	updateTransformationsHighestTime = 0;
+	streamingHighestTime = 0;
+	handleInputHighestTime = 0;
+	dispatchDelayedMessageHighestTime = 0;
+	processCollisionsHighestTime = 0;
+	renderingHighestTime = 0;
+#endif
+}
+
+#ifdef __SHOW_GAME_PROFILING
 static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
-
-#ifdef __PROFILE_GAME
 
 	int xDisplacement = 20;
 
@@ -1569,18 +1654,18 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 	Printing_text(Printing_getInstance(), "Last game's info  (ms)", x, ++y, NULL);
 
 	Printing_text(Printing_getInstance(), "Real duration:        ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->gameFrameDuration, x + xDisplacement, y++, NULL);
+	Printing_int(Printing_getInstance(), gameFrameDuration, x + xDisplacement, y++, NULL);
 	Printing_text(Printing_getInstance(), "Average real dura.:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), this->gameFrameDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_int(Printing_getInstance(), gameFrameDurationAverage, x + xDisplacement, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Effective duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), this->gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_int(Printing_getInstance(), gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
 	Printing_text(Printing_getInstance(), "Average effe. dur.:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), this->gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_int(Printing_getInstance(), gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
 	Printing_text(Printing_getInstance(), "Highest duration:    ", x, y, NULL);
-	Printing_int(Printing_getInstance(), this->gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_int(Printing_getInstance(), gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
 	Printing_text(Printing_getInstance(), "Torn frames count:    ", x, y, NULL);
-	Printing_int(Printing_getInstance(), this->tornGameFrameCount, x + xDisplacement, y++, NULL);
+	Printing_int(Printing_getInstance(), tornGameFrameCount, x + xDisplacement, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Processes' duration (ms)", x, ++y, NULL);
 
@@ -1631,47 +1716,84 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 	Printing_text(Printing_getInstance(), "Total:          ", x, y, NULL);
 	Printing_int(Printing_getInstance(), renderingTotalTime + updateVisualsTotalTime + handleInputTotalTime + dispatchDelayedMessageTotalTime + updateLogicTotalTime + streamingTotalTime + updatePhysicsTotalTime + updateTransformationsTotalTime + processCollisionsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-#endif
 }
-
-void Game_resetProfiling(Game this)
-{
-	ASSERT(this, "Game::resetProfiling: this null");
-
-	this->gameFrameDuration = 0;
-	this->gameFrameDurationAverage = 0;
-	this->gameFrameEffectiveDuration = 0;
-	this->gameFrameEffectiveDurationAverage = 0;
-	this->tornGameFrameCount = 0;
-
-#ifdef __PROFILE_GAME
-	updateVisualsTotalTime = 0;
-	updateLogicTotalTime = 0;
-	updatePhysicsTotalTime = 0;
-	updateTransformationsTotalTime = 0;
-	streamingTotalTime = 0;
-	handleInputTotalTime = 0;
-	dispatchDelayedMessageTotalTime = 0;
-	processCollisionsTotalTime = 0;
-	renderingTotalTime = 0;
-
-	gameFrameHighestTime = 0;
-	updateVisualsHighestTime = 0;
-	updateLogicHighestTime = 0;
-	updatePhysicsHighestTime = 0;
-	updateTransformationsHighestTime = 0;
-	streamingHighestTime = 0;
-	handleInputHighestTime = 0;
-	dispatchDelayedMessageHighestTime = 0;
-	processCollisionsHighestTime = 0;
-	renderingHighestTime = 0;
 #endif
-}
 
 void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x, int y)
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
-	Game_showProfiling(this, x, y);
+#ifdef __PROFILE_GAME
+
+	int xDisplacement = 20;
+
+	Printing_text(Printing_getInstance(), "GAME's PROFILING", x, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Last game's info  (ms)", x, ++y, NULL);
+
+	Printing_text(Printing_getInstance(), "Real duration:        ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), previousGameFrameDuration, x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Average real dura.:   ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Effective duration:   ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousGameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Average effe. dur.:   ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousGameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Highest duration:    ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousGameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Torn frames count:    ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousTornGameFrameCount, x + xDisplacement, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Processes' duration (ms)", x, ++y, NULL);
+
+	xDisplacement = 17;
+	int xDisplacement2 = 7;
+
+	Printing_text(Printing_getInstance(), "     (ms/sec)   total highest", x, ++y, NULL);
+
+	Printing_text(Printing_getInstance(), "Time:    ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), previouGameFrameTotalTime, x + xDisplacement, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Rendering:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousRenderingTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousRenderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Update visuals:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdateVisualsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Input handling:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousHandleInputTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousHandleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Messaging:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousDispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Logic:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Streaming:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousStreamingTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousStreamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Physics:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdatePhysicsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Transforming:     ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdateTransformationsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousUpdateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Collisions:         ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Total:          ", x, y, NULL);
+	Printing_int(Printing_getInstance(), previousRenderingTotalTime + previousUpdateVisualsTotalTime + previousHandleInputTotalTime + previousDispatchDelayedMessageTotalTime + previousUpdateLogicTotalTime + previousStreamingTotalTime + previousUpdatePhysicsTotalTime + previousUpdateTransformationsTotalTime + previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(Printing_getInstance(), previousGameFrameHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+
+#endif
 }
