@@ -483,11 +483,6 @@ static void StageEditor_getShape(StageEditor this)
 				break;
 		}
 	}
-
-	if(this->shape)
-	{
-		__VIRTUAL_CALL(Shape, show, this->shape);
-	}
 }
 
 /**
@@ -514,6 +509,11 @@ static void StageEditor_positionShape(StageEditor this)
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
 		__VIRTUAL_CALL(Shape, position, this->shape);
+	}
+
+	if(this->shape)
+	{
+		__VIRTUAL_CALL(Shape, show, this->shape);
 	}
 }
 
