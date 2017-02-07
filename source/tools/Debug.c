@@ -85,7 +85,7 @@
 #include <Image.h>
 #include <ManagedEntity.h>
 #include <RecyclableImage.h>
-#include <ManagedRecyclableImage.h>
+#include <ManagedStaticImage.h>
 #include <Particle.h>
 #include <ParticleBody.h>
 #include <ParticleSystem.h>
@@ -671,7 +671,7 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&InanimatedInGameEntity_getObjectSize,			"Inanim. InGam. Ent."},
 		{&InGameEntity_getObjectSize,					"InGameEntity"},
 		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
-		{&ManagedRecyclableImage_getObjectSize,				"ManagedRecyclableImage"},
+		{&ManagedStaticImage_getObjectSize,				"ManagedStaticImage"},
 		{&RecyclableImage_getObjectSize,					"RecyclableImage"},
 	};
 

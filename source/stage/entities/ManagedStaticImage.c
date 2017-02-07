@@ -24,12 +24,9 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <RecyclableImage.h>
+#include <ManagedStaticImage.h>
 #include <Prototypes.h>
 #include <Optics.h>
-#include <Shape.h>
-#include <MBgmapSprite.h>
-#include <ManagedRecyclableImage.h>
 #include <debugUtilities.h>
 
 
@@ -37,7 +34,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(ManagedRecyclableImage, RecyclableImage);
+__CLASS_DEFINITION(ManagedStaticImage, RecyclableImage);
 
 __CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
@@ -57,13 +54,13 @@ extern const Optical* _optical;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedRecyclableImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ManagedRecyclableImage, definition, id, internalId, name);
+__CLASS_NEW_DEFINITION(ManagedStaticImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ManagedStaticImage, definition, id, internalId, name);
 
 // class's constructor
-void ManagedRecyclableImage_constructor(ManagedRecyclableImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name)
+void ManagedStaticImage_constructor(ManagedStaticImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ManagedRecyclableImage::constructor: null this");
+	ASSERT(this, "ManagedStaticImage::constructor: null this");
 
 	// construct base
 	__CONSTRUCT_BASE(RecyclableImage, definition, id, internalId, name);
@@ -78,9 +75,9 @@ void ManagedRecyclableImage_constructor(ManagedRecyclableImage this, RecyclableI
 }
 
 // class's destructor
-void ManagedRecyclableImage_destructor(ManagedRecyclableImage this)
+void ManagedStaticImage_destructor(ManagedStaticImage this)
 {
-	ASSERT(this, "ManagedRecyclableImage::destructor: null this");
+	ASSERT(this, "ManagedStaticImage::destructor: null this");
 
 	if(this->managedSprites)
 	{
@@ -93,10 +90,10 @@ void ManagedRecyclableImage_destructor(ManagedRecyclableImage this)
 	__DESTROY_BASE;
 }
 
-static void ManagedRecyclableImage_registerSprites(ManagedRecyclableImage this, Entity child)
+static void ManagedStaticImage_registerSprites(ManagedStaticImage this, Entity child)
 {
-	ASSERT(this, "ManagedRecyclableImage::registerSprites: null this");
-	ASSERT(child, "ManagedRecyclableImage::registerSprites: null child");
+	ASSERT(this, "ManagedStaticImage::registerSprites: null this");
+	ASSERT(child, "ManagedStaticImage::registerSprites: null child");
 
 	if(child)
 	{
@@ -117,16 +114,16 @@ static void ManagedRecyclableImage_registerSprites(ManagedRecyclableImage this, 
 
 			for(; childNode; childNode = childNode->next)
 			{
-				ManagedRecyclableImage_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
+				ManagedStaticImage_registerSprites(this, __SAFE_CAST(Entity, childNode->data));
 			}
 		}
 	}
 }
 
 // transform class
-void ManagedRecyclableImage_initialTransform(ManagedRecyclableImage this, Transformation* environmentTransform, u32 recursive)
+void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "ManagedRecyclableImage::initialTransform: null this");
+	ASSERT(this, "ManagedStaticImage::initialTransform: null this");
 
 	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform, recursive);
 
@@ -147,22 +144,22 @@ void ManagedRecyclableImage_initialTransform(ManagedRecyclableImage this, Transf
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
-void ManagedRecyclableImage_ready(ManagedRecyclableImage this, u32 recursive)
+void ManagedStaticImage_ready(ManagedStaticImage this, u32 recursive)
 {
-	ASSERT(this, "ManagedRecyclableImage::ready: null this");
+	ASSERT(this, "ManagedStaticImage::ready: null this");
 
 	Entity_ready(__SAFE_CAST(Entity, this), recursive);
 
 	if(!VirtualList_getSize(this->managedSprites))
 	{
-		ManagedRecyclableImage_registerSprites(this, __SAFE_CAST(Entity, this));
+		ManagedStaticImage_registerSprites(this, __SAFE_CAST(Entity, this));
 	}
 }
 
 // transform class
-void ManagedRecyclableImage_transform(ManagedRecyclableImage this, const Transformation* environmentTransform)
+void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "ManagedRecyclableImage::transform: null this");
+	ASSERT(this, "ManagedStaticImage::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
@@ -206,9 +203,9 @@ void ManagedRecyclableImage_transform(ManagedRecyclableImage this, const Transfo
 	this->invalidateGlobalTransformation = 0;
 }
 
-void ManagedRecyclableImage_updateVisualRepresentation(ManagedRecyclableImage this)
+void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 {
-	ASSERT(this, "ManagedRecyclableImage::updateVisualRepresentation: null this");
+	ASSERT(this, "ManagedStaticImage::updateVisualRepresentation: null this");
 
 	if(this->updateSprites)
 	{
@@ -251,30 +248,30 @@ void ManagedRecyclableImage_updateVisualRepresentation(ManagedRecyclableImage th
 }
 
 // execute logic
-void ManagedRecyclableImage_update(ManagedRecyclableImage this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
+void ManagedStaticImage_update(ManagedStaticImage this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
-	ASSERT(this, "ManagedRecyclableImage::update: null this");
+	ASSERT(this, "ManagedStaticImage::update: null this");
 }
 
-int ManagedRecyclableImage_passMessage(ManagedRecyclableImage this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
+int ManagedStaticImage_passMessage(ManagedStaticImage this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
-	ASSERT(this, "ManagedRecyclableImage::passMessage: null this");
+	ASSERT(this, "ManagedStaticImage::passMessage: null this");
 
 	return false;
 }
 
-void ManagedRecyclableImage_resume(ManagedRecyclableImage this)
+void ManagedStaticImage_resume(ManagedStaticImage this)
 {
-	ASSERT(this, "ManagedRecyclableImage::resume: null this");
+	ASSERT(this, "ManagedStaticImage::resume: null this");
 
 	RecyclableImage_resume(__SAFE_CAST(RecyclableImage, this));
 
-	ManagedRecyclableImage_registerSprites(this, __SAFE_CAST(Entity, this));
+	ManagedStaticImage_registerSprites(this, __SAFE_CAST(Entity, this));
 }
 
-void ManagedRecyclableImage_suspend(ManagedRecyclableImage this)
+void ManagedStaticImage_suspend(ManagedStaticImage this)
 {
-	ASSERT(this, "ManagedRecyclableImage::suspend: null this");
+	ASSERT(this, "ManagedStaticImage::suspend: null this");
 
 	RecyclableImage_suspend(__SAFE_CAST(RecyclableImage, this));
 

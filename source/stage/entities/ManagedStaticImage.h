@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MANAGED_RECYCLABLE_IMAGE_H_
-#define MANAGED_RECYCLABLE_IMAGE_H_
+#ifndef MANAGED_STATIC_IMAGE_H_
+#define MANAGED_STATIC_IMAGE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -34,23 +34,23 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ManagedRecyclableImage_METHODS(ClassName)														\
+#define ManagedStaticImage_METHODS(ClassName)														\
 		RecyclableImage_METHODS(ClassName)																\
 
-#define ManagedRecyclableImage_SET_VTABLE(ClassName)													\
+#define ManagedStaticImage_SET_VTABLE(ClassName)													\
 		RecyclableImage_SET_VTABLE(ClassName)															\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, initialTransform);								\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, transform);									\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, updateVisualRepresentation);					\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, update);										\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, passMessage);									\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, ready);										\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, suspend);										\
-		__VIRTUAL_SET(ClassName, ManagedRecyclableImage, resume);										\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, initialTransform);								\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, transform);									\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, updateVisualRepresentation);					\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, update);										\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, passMessage);									\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, ready);										\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, suspend);										\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, resume);										\
 
-__CLASS(ManagedRecyclableImage);
+__CLASS(ManagedStaticImage);
 
-#define ManagedRecyclableImage_ATTRIBUTES																\
+#define ManagedStaticImage_ATTRIBUTES																\
 		/* it is derived from */																		\
 		RecyclableImage_ATTRIBUTES																		\
 		/* sprites' list */																				\
@@ -63,18 +63,18 @@ __CLASS(ManagedRecyclableImage);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedRecyclableImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
+__CLASS_NEW_DECLARE(ManagedStaticImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
 
-void ManagedRecyclableImage_constructor(ManagedRecyclableImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
-void ManagedRecyclableImage_destructor(ManagedRecyclableImage this);
-void ManagedRecyclableImage_initialTransform(ManagedRecyclableImage this, Transformation* environmentTransform, u32 recursive);
-void ManagedRecyclableImage_transform(ManagedRecyclableImage this, const Transformation* environmentTransform);
-void ManagedRecyclableImage_updateVisualRepresentation(ManagedRecyclableImage this);
-void ManagedRecyclableImage_update(ManagedRecyclableImage this, u32 elapsedTime);
-int ManagedRecyclableImage_passMessage(ManagedRecyclableImage this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
-void ManagedRecyclableImage_ready(ManagedRecyclableImage this, u32 recursive);
-void ManagedRecyclableImage_suspend(ManagedRecyclableImage this);
-void ManagedRecyclableImage_resume(ManagedRecyclableImage this);
+void ManagedStaticImage_constructor(ManagedStaticImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
+void ManagedStaticImage_destructor(ManagedStaticImage this);
+void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation* environmentTransform, u32 recursive);
+void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform);
+void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this);
+void ManagedStaticImage_update(ManagedStaticImage this, u32 elapsedTime);
+int ManagedStaticImage_passMessage(ManagedStaticImage this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
+void ManagedStaticImage_ready(ManagedStaticImage this, u32 recursive);
+void ManagedStaticImage_suspend(ManagedStaticImage this);
+void ManagedStaticImage_resume(ManagedStaticImage this);
 
 
 #endif
