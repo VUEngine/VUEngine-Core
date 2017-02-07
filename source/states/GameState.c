@@ -140,6 +140,10 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 
 	// stop my clocks
 	GameState_stopClocks(this);
+
+	// make sure that all my bodies and colliders get deleted
+	PhysicalWorld_reset(this->physicalWorld);
+	CollisionManager_reset(this->collisionManager);
 }
 
 // state's suspend
