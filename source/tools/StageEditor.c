@@ -751,6 +751,7 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 
 	StageEditor_printProjectionValues(this);
 	GameState_transform(this->gameState);
+	GameState_updateVisuals(this->gameState);
 }
 
 /**
@@ -1067,6 +1068,7 @@ static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D trans
 {
 	Screen_move(Screen_getInstance(), translation, true);
 	GameState_transform(this->gameState);
+	GameState_updateVisuals(this->gameState);
 	StageEditor_printScreenPosition(this);
 	Stage_streamAll(GameState_getStage(this->gameState));
 	CollisionManager_processRemovedShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
