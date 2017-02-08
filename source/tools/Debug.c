@@ -415,9 +415,9 @@ static void Debug_printHeader(Debug this)
 {
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing_text(Printing_getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
-	Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-	Printing_int(Printing_getInstance(), Debug_getCurrentPageNumber(this), 17, 0, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 19, 0, NULL);
+	Printing_text(Printing_getInstance(), "   /   ", 16, 0, NULL);
+	Printing_int(Printing_getInstance(), Debug_getCurrentPageNumber(this), Debug_getCurrentPageNumber(this) < 10 ? 18 : 17, 0, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->pages), 20, 0, NULL);
 }
 
 // show page

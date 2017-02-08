@@ -49,7 +49,7 @@ void ScreenEffectManager_showScreen(ScreenEffectManager this);
 void ScreenEffectManager_hideScreen(ScreenEffectManager this);
 void ScreenEffectManager_FXFadeIn(ScreenEffectManager this, u32 duration);
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this, u32 duration);
-void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int duration);
+void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int delay);
 void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this);
 void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope);
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this);
@@ -114,7 +114,7 @@ Brightness ScreenEffectManager_getDefaultBrightness(ScreenEffectManager this __a
 	return brightness;
 }
 
-void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int duration)
+void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int delay)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeStart: null this");
 
@@ -129,7 +129,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 			TimerManager_repeatMethodCall(
 				TimerManager_getInstance(),
 				defaultBrightness.darkRed,
-				duration,
+				delay * defaultBrightness.darkRed,
 				__SAFE_CAST(Object, this),
 				(void (*)(Object, u32))&ScreenEffectManager_FXFadeIn
 			);
@@ -142,7 +142,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 			TimerManager_repeatMethodCall(
 				TimerManager_getInstance(),
 				defaultBrightness.darkRed,
-				duration,
+				delay * defaultBrightness.darkRed,
 				__SAFE_CAST(Object, this),
 				(void (*)(Object, u32))&ScreenEffectManager_FXFadeOut
 			);
