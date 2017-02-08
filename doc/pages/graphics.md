@@ -5,10 +5,7 @@ Graphics
 2D
 --
 
-
-### AnimatedSprite
-
-#### Overview
+### Overview
 
 The engine abstracts Virtual Boy's VIP's memory sections in the following classes:
 
@@ -29,72 +26,26 @@ Both CharSet and BgmapTextures are allocated using reference counting in order t
 Each object segment is allocated by an ObjectSpriteContainer.
 
 
-#### Animation allocation types
+### CharSets
 
-Since there can be sprites with many frames of animations like the game's main character, and sprites with simple animations like enemies or background elements, there is the need to allocate textures in different ways to maximize the hardware's resources. Because of this, the engine provides multiple ways to allocate animations in memory:
+### Textures
 
+#### BgmapTexture
 
-##### __ANIMATED
+##### BgmapTextureManager
 
-When using this animation type, the engine allocates a new CharSet and Texture for each request, and each time a new frame must be show, the engines writes directly to CHAR memory.
-For example, each one of the following AnimatedSprite has its own Texture and CharSet:
+##### RecyclableBgmapTextureManager
 
-"@image html example.png"
-
-The inspection of the CHAR memory reveals that the CHARs corresponding to the current frame of animation of each AnimatedSprite, have been loaded, even if they belong to the same CHAR definition:
-
-[TODO] IMAGE
-
-If all AnimatedSprites are BgmapSprites, then, the inspection of BGMAP memory will show that only one frame of animation is loaded for each AnimatedSprite:
-
-[TODO] IMAGE
-
-If the AnimatedSprites at both ends are ObjectSprites, then, the inspection of OBJ memory will show the appropriate frame of animation for each AnimatedSprite:
-
-[TODO] IMAGE
+#### ObjectTexture
 
 
+### Sprites
 
-##### __ANIMATED_SHARED
+`Sprites` are the base class used to display the graphics
 
-Both the Char and BGMap definitions are shared between Characters of the same type. All animation frames are allocated in both memories, so in order to display each animation frame, the world layer window is moved to the proper frame in case of BGMap mode being used, or the param table is rewritten in the case of affine mode. This is useful for example for an enemy Character which has few chars and few animation frames and when there are lot of the same Character on screen.
+#### BgmapSprite
 
-
-##### __ANIMATED_SHARED_COORDINATED
-
-[TODO]
-
-
-##### __NO_ANIMATED
-
-Used with static images like backgrounds, logos, etc.
-
-
-In order to play a specific animation, call the following method:
-
-    Character_playAnimation((Character)this, "Blink");
-
-Or directly:
-
-    AnimatedSprite_play((AnimatedSprite)this->sprite, this->characterDefinition->animationDescription, animationName); 
-
-
-### Sprite
-
-#### Displacement vector
-
-Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's coordinates relative to those of it's entity's parent <i>after</i> the projection from 3D to 2D space has taken place. It is to be used...
-
-- when you need to do "internal sorting" for multi sprite entities, since the order of Sprites in the Definition are not reliable
-- when you want a Sprite to be always offset by a fixed number of pixels with respect to it's parent's 2D position (can be used for parallax offsets too)
-
-
-#### Sprite
-
-[TODO]
-
-
-#### MSprite
+#### ObjectSprite
 
 [TODO]
 
@@ -114,14 +65,145 @@ Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's co
 [TODO]
 
 
-### Texture
 
-[TODO]
+### Animation
+
+Since there can be sprites with many frames of animations like the game's main character, and sprites with simple animations like enemies or background elements, there is the need to allocate textures in different ways to maximize the hardware's resources. Because of this, the engine provides multiple ways to allocate animations in memory:
 
 
-#### TextureManager
+##### __ANIMATED
 
-[TODO]
+When using this animation type, the engine allocates a new CharSet and Texture for each request, and each time a new frame must be show, the engines writes directly to CHAR memory.
+For example, each one of the following AnimatedSprite has its own Texture and CharSet:
+
+@image html graphics-animation-single-sample.png
+
+The inspection of the CHAR memory reveals that the CHARs corresponding to the current frame of animation of each AnimatedSprite, have been loaded, even if they belong to the same CHAR definition:
+
+@image html graphics-animation-single-char-memory-inspection.png
+
+If all animated sprites are BgmapSprites, then the inspection of BGMAP memory will show that only one frame of animation is loaded for each AnimatedSprite:
+
+@image html graphics-animation-single-bgmap-memory-inspection.png
+
+If the animated sprites at both ends are ObjectSprites, then the inspection of OBJ memory will show the appropriate frame of animation for each AnimatedSprite:
+
+@image html graphics-animation-single-object-memory-inspection.png
+
+###### Usages: 
+- This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs.
+###### Limitations:
+- Textures that use CharSets with this type of allocation must not be preloaded, since the preloaded instance will be unusable.
+- Char definition must not be optimized and each group of CHARs that form a frame of animation must preserve the order of the first frame's CHARs as specified by the BGMAP definition. Supposing that a Sprite has 3 animation frames, the Texture's size is 3x3 CHARS, and the BGMAP definition looks like:
+	
+		0 1 2
+	
+		3 4 5
+
+		6 7 8
+
+where each number signifies and index in CHAR memory; then if the 9 CHARs (0-8) that form the first frame of animation have the following appearance: 
+
+@image html graphics-animation-single-char-memory-inspection-frame-0.png
+
+then the second group of CHARs (9-17), that form the second frame of animation, must look like:
+
+@image html graphics-animation-single-char-memory-inspection-frame-1.png
+
+and finally, the third group of CHARs (9-26), that form the last frame of animation, must look like:
+
+@image html graphics-animation-single-char-memory-inspection-frame-2.png
+
+###### Downsides:
+- Impacts performance.
+
+
+##### __ANIMATED_SHARED
+
+When using this animation type, the engine allocates a new CharSet once (and only a Texture if BgmapSprites are used); and for each new request with the same char definition, returns the same reference(s). Each time a new frame must be show, the engines writes directly to CHAR memory, and every Sprite that uses the same CharSet wiil display the change.
+In the following example, the AnimatedSprite in the center uses an __ANIMATED_SINGLE CharSet, while the AnimatedInGameEntities at both ends use the same __ANIMATED_SHARED CharSet:
+
+@image html graphics-animation-shared-sample.png
+
+The inspection of the CHAR memory reveals that the CHARs corresponding to the current frame of animation of the first and second animated sprites, have been loaded, being the first CHAR's sequence the one shared by the animated sprites at both ends of the screen:
+
+@image html graphics-animation-shared-char-memory-inspection.png
+
+If all animated sprites are BgmapSprites, then the inspection of BGMAP memory will show that only one BgmapTexture has been loaded for the animated sprites at both ends of the screen:
+
+@image html graphics-animation-shared-bgmap-memory-inspection.png
+
+If the animated sprites at both ends are ObjectSprites, then the inspection of OBJ memory will show the same frame of animation for both:
+
+@image html graphics-animation-shared-object-memory-inspection.png
+
+###### Usages:
+- This type of animation should be used when there are many instances of the same AnimatedSprite definition, which has with too many animation frames or whose graphics occupies too many CHARs, and whose animations can be synchronized.
+###### Limitations: 
+- Playing an animation in one AnimatedSprite instance will affect the others, and playing animations in different instances will waste processor time, since only the last rendered AnimatedSprite's current animation frame will be shown.
+###### Downsides:
+- Impacts performance.
+###### Remarks:
+- If only one animated sprite instance use the CharSet, it behaves exactly as the __ANIMATED_SINGLE type.
+
+
+##### __ANIMATED_SHARED_COORDINATED
+
+This animation type works exactly the same as the __ANIMATED_SHARED, but for each CHAR definition, the engine spawns an AnimationCoordinator that ensures that only one AnimationController is playing an animation at any given time.
+
+###### Usages:
+- The same as __ANIMATED_SHARED_COORDINATED, but saves processor's time when multiple animated sprites must be synchronized.
+
+
+##### __ANIMATED_MULTI
+
+When using this animation type, the engine allocates a new CharSet once (an only Texture when using BgmapSprites); and for each new request, with the same char definition and allocation type, returns the same reference(s). Depending on the Sprite's type, when a new frame of animation must be shown, the engine either modifies the WORLD's mx and my values, or writes to OBJ memory. 
+In the following example, the AnimatedSprite in the center uses an __ANIMATED_SHARED CharSet, while the AniamtedSprites at both ends use the same __ANIMATED_MULTI CharSet:
+
+@image html graphics-animation-multi-sample.png
+
+The inspection of the CHAR memory reveals that all the CHARs used by all the animation frames have been loaded into CHAR memory for the animated sprites at both ends of the screen (the last CHARs correspond to the AnimatedSprite at the center, that uses an __ANIMATED_SINGLE CharSet):
+
+@image html graphics-animation-multi-char-memory-inspection.png
+
+If all the animated sprites are BgmapSprites, then the inspection of BGMAP memory will show that all frames of animation have been loaded for the animated sprites at both ends of the screen (the last frame corresponds to the AnimatedSprite in the center, that uses an __ANIMATED_SINGLE CharSet):
+
+@image html graphics-animation-multi-bgmap-memory-inspection.png
+
+If the animated sprites at both ends are ObjectSprites, then the inspection of OBJ memory will show the corresponding animation frame has been loaded for each of the animated sprites at each end of the screen:
+
+@image html graphics-animation-multi-object-memory-inspection.png
+
+###### Usages:
+- This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs, but when their instances must not be necessarily synchronized.
+###### Limitations:
+- When using a __WRLD_AFFINE BgmapSprite, each time that an animation frame have to be rendered, the affine table must be computed.
+###### Downsides:
+- Uses too much CHAR memory.
+
+##### __NO_ANIMATED
+
+Used for static images like backgrounds, logos, etc.
+
+
+In order to play a specific animation, call the following method:
+
+    AnimatedInGameEntity_playAnimation(__SAFE_CAST(AnimatedInGameEntity, this), "Blink");
+
+Or directly:
+
+    Sprite_play(__SAFE_CAST(SpriteSprite, this->sprite), animationDescription, "Blink");
+
+
+### Sprite
+
+#### Displacement vector
+
+Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's coordinates relative to those of it's entity's parent <i>after</i> the projection from 3D to 2D space has taken place. It is to be used...
+
+- when you need to do "internal sorting" for multi sprite entities, since the order of Sprites in the Definition are not reliable
+- when you want a Sprite to be always offset by a fixed number of pixels with respect to it's parent's 2D position (can be used for parallax offsets too)
+
 
 
 3D
