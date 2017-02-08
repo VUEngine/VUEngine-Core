@@ -6,7 +6,7 @@ required to produce visual and audio results on the Nintendo Virtual Boy. The en
 which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical 
 and CPU's memory to hold the definitions of such images. 
 
-@image html example.png "Optional Example Caption"
+@image html vuengine.png
 
 
 Features
@@ -14,51 +14,82 @@ Features
 
 The engine provides the following features for the programmer to take advantage of:
 
-- Automatic Char memory allocation
-- Automatic BGMap memory allocation
-- Automatic OBJ memory allocation
-- Automatic WORLD layer assignment based on the object's Z position
-- Automatic frame rate control
-- Automatic memory allocation for Param tables (used in Affine and H-Bias modes)
-- Memory Pool to allocate memory dynamically
-- Easy to use printing functions to facilitate debug
-- Sound reproduction of one BGM and up to two FX sounds simultaneously
-- Messaging system
-- Generic State Machine
+#### Features:
+- General features:
+	- Automatic frame rate control
+	- Generic clocks based on hardware interrupts
+	- Memory Pool to allocate memory dynamically
+	- Generic state machines
+	- Generic parenting system
+	- Generic messaging system
+	- Generic event listening/firing system
+	- Easy to use printing functions to facilitate debug
+	- User data saving support
+	- Program's memory layout management
+		- Use DRAM as WRAM
+		- Use SRAM as WRAM
+		- Variables' in-program-section allocation control
+- Debugging / Development
+	- Memory usage
+	- Profiling data
+	- Streaming status
+	- Hardware registers' usage
+	- Real time tools to check:
+		- CHAR memory status
+		- BGMAP memory status
+		- WORLD layer status
+	- Collision boxes
+	- Real time stage editor
+	- Real time animation inspector
 - Object Oriented support through the use of Metaprogramming (C MACROS):
-    - Inheritance
-    - Polymorphism
-    - Encapsulation
+	- Simple inheritance
+	- Polymorphism
+	- Encapsulation
+	- Friend classes support
+	- Runtime type checking
+- Rendering:
+	- Automatic CHAR memory allocation
+	- Real time CHAR memory defragmentation
+	- Automatic BGMAP memory allocation
+	- Automatic OBJECT memory allocation
+	- Automatic WORLD layer assignment based on the objects' z position
+	- Texture preloading
+	- Scaling/rotation effects
+	- Automatic projection/parallax/scale calculations and rendering
+	- Customizable perspective/deep effects on real time
+	- Automatic memory allocation for param tables (used in affine and h-bias modes)
+- Animation:
+	- Multiple memory allocation schemas to improve efficiency
+	- Frame based animation system with callback support
+- Sound:
+	- Sound reproduction of one BGM and up to two FX sounds simultaneous.
+- Physics:
+	- Basic accelerated/uniform movement
+	- Gravity
+	- Friction
+	- Bouncing
+	- Automatic collision detection and notification
+- Particles:
+	- Physically based particles
+	- Recyclable particles
+- Stages:
+	- 3D stages
+	- Level streaming
 - Useful classes to speed up the content creation process:
-	- Container
-	- Entity
-    - Image
-    - RecyclableImage
-    - Actor
-    - Trigger
-- Level streaming
-- 3D stages
-- Simple physics simulation:
-    - Accelerated/uniform movement
-    - Gravity
-    - Friction
-    - Scaling/rotation effects
-	- Collision detection and notification
-- Particle system
-	- Physics based particles
-	- Collision detection on particles
-- Post-processing effects
-- Clocking system
-- Automatic projection/parallax/scale calculation and rendering
-- Customizable perspective/deep effects on real time
-- Frame based animation system with callback support
-- Generic main game algorithm (game loop)
+	- Container: for transformation propagation (translation/rotation/scaling)
+	- Entity: a container with a list of sprites (a "visual object")
+	- InGameEntity: interactive entities in the levels (collision detection)
+	- AnimatedInGameEntity: an entity with animated sprites.
+	- InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
+	- Actor: animated in game entity which coordinates a physical body with a collision shape
+	- StaticImage: handy entity to display non interactive images
+	- RecyclableImage: useful to optimize BGMAP memory usage
 
 TODO
 
-- Polygons
+- High performance polygon based rendering
 - Tile based collision detection
-- BGMAP defragmentation
+- BGMAP memory defragmentation
 - More collision shapes: spheres, complex polyhedrons, etc.
 
 
@@ -93,3 +124,28 @@ you want as long as you include the original copyright and license notice in any
 Some source code in this release that may not be covered by the license:
 
 - libgccvb: compiled by a lot of other people.
+
+General Notes
+-------
+A short summary of the file layout:
+- source: VUEngine source code.
+- source/base/libgccvb: heavily modified libgccvb
+- lib: miscellaneous files needed for linking, etc.
+- lib/src: miscellaneous files needed for linking, etc. sources, and other utilities sources.
+- utilities: miscellaneous utilities for padding, sound, etc.
+
+Full documentation can be found in doc/html/index.html
+
+#### Compiling on Win32 platforms
+The VUEngine comes bundled with VBDE http://vbde.planetvb.com. Compile by starting the VBDE build system. This will produce the file libvuengine.a which must be linked against the game's code.
+
+
+Acknowledgments
+---------------
+- David Tucker, for always being open to answer all my questions (even the silly ones).
+- DogP, for all the performance tips which really helped this project to be feasible, and for providing the code necessary to make sound support possible in the engine.
+- RunnerPack, DanB, Dasi and all the other people in Planet Virtual Boy development forums who always are kind enough to share their knowledge.
+- ElmerPCFX, for giving access to a much better compiler through his GCC 4.7 patches, and for all the tips, suggestions and knowledge about best practices and bad practices (of which the engine was previously plagued with).
+- Libgccvb has been refactored to accommodate better to this engine, all its code is credited to its creators, Jorge Eremiev doesn't take any credit on it.
+
+V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo. Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.
