@@ -16,3 +16,4 @@ cproject
 *.map
 sections*.txt
 debugConfig.h
+.DS_Store
