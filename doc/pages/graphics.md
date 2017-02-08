@@ -210,3 +210,4 @@ Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's co
 --
 
 [not yet implemented]
+

@@ -50,7 +50,7 @@ InanimatedInGameEntity
 InGameEntity with physical properties but with no animation (friction, elasticity, etc.). In general, it is not supposed to move.
 
 
-Image
+StaticImage
 -----
 
 A handy `Entity` for non-interactive images.
@@ -82,3 +82,4 @@ TriggerEntity
 -----------
 
 A handy `Entity` for collisions detection against non-physical entities.
+

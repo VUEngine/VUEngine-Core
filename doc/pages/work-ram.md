@@ -32,9 +32,10 @@ The following example shows a very basic definition of available memory pools an
 This configuration will create 3 pools; one that holds up to 64 objects with sizes of 0 up to 64 bytes, another that holds up to 64 objects of sizes between 68 and 128 bytes, and finally, one that holds up to 32 objects of sizes between 132 and 256 bytes.
 
 The size of each pool is the product of both numbers passed as arguments to the __BLOCK_DEFINITION macro. In this example that amounts to:
-256 * 32 	= 	8,192 bytes
-128 * 64 	= 	8,192 bytes
-64 * 64 	= 	4,096 bytes
+
+	256 * 32 	= 	8,192 bytes
+	128 * 64 	= 	8,192 bytes
+	64 * 64 	= 	4,096 bytes
 	**TOTAL	= 	20,480 bytes**
 
 Please note that the __BLOCK_DEFINITONs have to be sorted by size in descending order. Furthermore, the sizes always have to be multiples of 4.

@@ -30,3 +30,4 @@ Streaming
 [TODO]
 
 - Constructing a Stage: Here we have to address the PositionedEntity struct in detail, specially the extra info attribute which must only be used in "final" classes. 
+

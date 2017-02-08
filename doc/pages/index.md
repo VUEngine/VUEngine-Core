@@ -149,3 +149,4 @@ Acknowledgments
 - Libgccvb has been refactored to accommodate better to this engine, all its code is credited to its creators, Jorge Eremiev doesn't take any credit on it.
 
 V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo. Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.
+
