@@ -61,11 +61,11 @@ Similarly, they should never be deleted manually, but must be released calling t
 When a released `BgmapTexture`'s usage count is zero, the manager deletes it, but since there is no BGMAP memory defragmentation mechanism within the engine, only WRAM is freed, BGMAP VRAM remains used until the current `GameState` exits.
 
 
-##### BgmapTextureManager
+#### BgmapTextureManager
 
 The instance of this class manages the BGMAP memory. All textures must be retrieved by calling this class' methods instead of being instantiated or destroyed manually.
 
-##### RecyclableBgmapTextureManager
+#### RecyclableBgmapTextureManager
 
 The instance of this class facilitates the re-usage of textures. It keeps a list of registered textures whose definitions can be replaced by new ones when released. Generally, the textures registered with this manager should be those that occupy big amounts of BGMAP memory, like those used to represent the levels' backgrounds or platforms.
 
