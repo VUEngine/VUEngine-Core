@@ -233,5 +233,16 @@ Or directly:
 3D
 --
 
-[not yet implemented]
+### Overview
 
+The engine has a very primitive, and still highly inefficient, support for 3D wireframe graphics by writing directly into the Virtual Boy's display buffers.
+
+It is meant to be used mainly for debugging purposes and for very light game features like simple graphical effects. In any case, it is not intended to be used to create a purely polygon based game.
+
+### Polyhedron
+
+This class is used to draw 3D bodies into the screen. They are composed of a list of sorted vertexes.
+
+### PolyhedronManager
+
+Each `Polyhedron` must register itself against the unique instance of this class to be draw during the VIP's end of drawing interrupt. When a registered `Polyhedron` is deleted, it must inform this manager in order for it to be unregistered.
