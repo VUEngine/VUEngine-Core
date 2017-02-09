@@ -39,10 +39,10 @@ Similarly, they should never be deleted manually, but must be released calling t
 
 When a released `CharSet`'s usage count is zero, the manager deletes it and starts defragmenting the CHAR memory.
 
+
 ### Texture
 
 Textures are akin to Bitmap, PNG, JPEG, other formats used to hold graphical data. Roughly, they are the images to be displayed by the VIP either through the BGMAP memory or through the OBJECT memory.
-
 
 #### BgmapTexture
 
@@ -59,7 +59,6 @@ Similarly, they should never be deleted manually, but must be released calling t
 	BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), bgmapTexture);
 
 When a released `BgmapTexture`'s usage count is zero, the manager deletes it, but since there is no BGMAP memory defragmentation mechanism within the engine, only WRAM is freed, BGMAP VRAM remains used until the current `GameState` exits.
-
 
 #### BgmapTextureManager
 
@@ -78,6 +77,12 @@ This `Texture` type abstracts the Virtual Boy's OBJECT memory in order to optimi
 
 This is the base class used to display textures. It abstract the WORLD layers used by the VIP to display BGMAPs or OBJECTs.
 
+##### Displacement vector
+
+Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's coordinates relative to those of it's entity's parent <i>after</i> the projection from 3D to 2D space has taken place. It is to be used...
+- when you need to do "internal sorting" for multi sprite entities, since the order of Sprites in the definition are not reliable
+- when you want a `Sprite` to be always offset by a fixed number of pixels with respect to it's parent's 2D position (can be used for parallax offsets too)
+
 #### BgmapSprite
 
 This kind of `Sprite` uses a `BgmapTexture` and is displayed in one of the VIP's 32 WORLD layers. It requests a WORLD to the `SpriteManager` and relinquish it when deleted. The WORLD that it uses is constantly updated according to its z coordinate and that of the other sprites.
@@ -90,7 +95,6 @@ This kind of `Sprite` uses an `ObjectTexture` and is displayed in one of the VIP
 
 The instance of this class manages the VIP's 32 WORLD layers. All sprites, besides those that are OBJECT based sprites, must register themselves with this manager. It handles the sorting of the WORLDs assigned to each registered `Sprite` based on their z coordinate.
 
-
 #### ParamTableManager
 
 The instance of this class manages the DRAM allocated by the engine for affine or h-bias transformation on those BGMAP based spritres that use those operations.
@@ -99,7 +103,6 @@ The instance of this class manages the DRAM allocated by the engine for affine o
 ### Animation
 
 Since there can be sprites with many frames of animations like the game's main character, and sprites with simple animations like enemies or background elements, there is the need to allocate textures in different ways to maximize the hardware's resources. Because of this, the engine provides multiple ways to allocate animations in memory:
-
 
 ##### __ANIMATED
 
@@ -122,14 +125,13 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 
 ###### Usages: 
 - This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs.
+
 ###### Limitations:
 - Textures that use CharSets with this type of allocation must not be preloaded, since the preloaded instance will be unusable.
 - Char definition must not be optimized and each group of CHARs that form a frame of animation must preserve the order of the first frame's CHARs as specified by the BGMAP definition. Supposing that a Sprite has 3 animation frames, the Texture's size is 3x3 CHARS, and the BGMAP definition looks like:
 	
 		0 1 2
-	
 		3 4 5
-
 		6 7 8
 
 where each number signifies and index in CHAR memory; then if the 9 CHARs (0-8) that form the first frame of animation have the following appearance: 
@@ -146,7 +148,6 @@ and finally, the third group of CHARs (9-26), that form the last frame of animat
 
 ###### Downsides:
 - Impacts performance.
-
 
 ##### __ANIMATED_SHARED
 
@@ -169,13 +170,15 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 
 ###### Usages:
 - This type of animation should be used when there are many instances of the same AnimatedSprite definition, which has with too many animation frames or whose graphics occupies too many CHARs, and whose animations can be synchronized.
+
 ###### Limitations: 
 - Playing an animation in one AnimatedSprite instance will affect the others, and playing animations in different instances will waste processor time, since only the last rendered AnimatedSprite's current animation frame will be shown.
+
 ###### Downsides:
 - Impacts performance.
+
 ###### Remarks:
 - If only one animated sprite instance use the CharSet, it behaves exactly as the __ANIMATED_SINGLE type.
-
 
 ##### __ANIMATED_SHARED_COORDINATED
 
@@ -183,7 +186,6 @@ This animation type works exactly the same as the __ANIMATED_SHARED, but for eac
 
 ###### Usages:
 - The same as __ANIMATED_SHARED_COORDINATED, but saves processor's time when multiple animated sprites must be synchronized.
-
 
 ##### __ANIMATED_MULTI
 
@@ -206,8 +208,10 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 
 ###### Usages:
 - This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs, but when their instances must not be necessarily synchronized.
+
 ###### Limitations:
 - When using a __WRLD_AFFINE BgmapSprite, each time that an animation frame have to be rendered, the affine table must be computed.
+
 ###### Downsides:
 - Uses too much CHAR memory.
 
@@ -223,16 +227,6 @@ In order to play a specific animation, call the following method:
 Or directly:
 
     Sprite_play(__SAFE_CAST(SpriteSprite, this->sprite), animationDescription, "Blink");
-
-
-### Sprite
-
-#### Displacement vector
-
-Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's coordinates relative to those of it's entity's parent <i>after</i> the projection from 3D to 2D space has taken place. It is to be used...
-
-- when you need to do "internal sorting" for multi sprite entities, since the order of Sprites in the Definition are not reliable
-- when you want a Sprite to be always offset by a fixed number of pixels with respect to it's parent's 2D position (can be used for parallax offsets too)
 
 
 
