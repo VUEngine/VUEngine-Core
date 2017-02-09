@@ -35,7 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the BgmapAnimatedSprite
+/**
+ * @class 	BgmapAnimatedSprite
+ * @extends BgmapSprite
+ */
 __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 
 

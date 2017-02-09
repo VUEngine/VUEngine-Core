@@ -36,8 +36,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	Polyhedron
+ * @extends Object
+ */
 __CLASS_DEFINITION(Polyhedron, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

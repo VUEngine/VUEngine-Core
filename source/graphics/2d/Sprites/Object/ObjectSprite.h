@@ -103,6 +103,7 @@ __CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinitio
 
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 void ObjectSprite_destructor(ObjectSprite this);
+
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
 VBVec2D ObjectSprite_getPosition(ObjectSprite this);
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);

@@ -32,6 +32,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class 	State
+ * @extends Object
+ */
 __CLASS_DEFINITION(State, Object);
 
 

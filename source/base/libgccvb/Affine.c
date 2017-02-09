@@ -41,6 +41,11 @@ extern double fabs (double);
 //											DEFINES
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * An Affine Entry
+ *
+ * @memberof Affine
+ */
 typedef struct AffineEntry
 {
 	fix13_3	pb_y;		// *y+Dx /= 8.0
@@ -51,6 +56,11 @@ typedef struct AffineEntry
 	u16 	spacer[3];		//unknown
 } AffineEntry ;
 
+/**
+ * A Fixed Affine Matrix
+ *
+ * @memberof Affine
+ */
 typedef struct FixedAffineMatrix
 {
 	fix7_9 	pa;
@@ -62,6 +72,11 @@ typedef struct FixedAffineMatrix
 	s16		parallax;
 } FixedAffineMatrix ;
 
+/**
+ * Affine Info
+ *
+ * @memberof Affine
+ */
 typedef struct AffineInfo
 {
 	fix19_13 	x;

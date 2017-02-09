@@ -35,6 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	InverseCuboid
+ * @extends Cuboid
+ */
 __CLASS_DEFINITION(InverseCuboid, Cuboid);
 __CLASS_FRIEND_DEFINITION(Cuboid);
 

@@ -31,6 +31,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class 	BgmapAnimationCoordinator
+ * @extends AnimationCoordinator
+ */
 __CLASS_DEFINITION(BgmapAnimationCoordinator, AnimationCoordinator);
 
 

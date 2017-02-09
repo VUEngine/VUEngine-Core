@@ -55,9 +55,11 @@
 		/* body to check for gravity */																	\
 		VirtualNode nextBodyToCheckForGravity;															\
 
-// define the PhysicalWorld
+/**
+ * @class	PhysicalWorld
+ * @extends Object
+ */
 __CLASS_DEFINITION(PhysicalWorld, Object);
-
 __CLASS_FRIEND_DEFINITION(Body);
 __CLASS_FRIEND_DEFINITION(Clock);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

@@ -117,6 +117,10 @@ enum StateOperations
 		/* low battery indicator showing flag */														\
 		bool isShowingLowBatteryIndicator;																\
 
+/**
+ * @class	Game
+ * @extends Object
+ */
 __CLASS_DEFINITION(Game, Object);
 
 

@@ -43,7 +43,10 @@
 		/*  */																							\
 		u8 tcrValue;																					\
 
-// define the TimerManager
+/**
+ * @class	TimerManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(TimerManager, Object);
 
 

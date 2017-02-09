@@ -50,9 +50,7 @@
  * @extends Sprite
  * @brief	Sprite which holds a texture and a drawing specification.
  */
-
 __CLASS_DEFINITION(ObjectSprite, Sprite);
-
 __CLASS_FRIEND_DEFINITION(Texture);
 
 

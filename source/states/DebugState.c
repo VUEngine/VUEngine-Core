@@ -53,6 +53,10 @@ static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), 
 		/* inherits */																					\
 		GameState_ATTRIBUTES																			\
 
+/**
+ * @class	DebugState
+ * @extends GameState
+ */
 __CLASS_DEFINITION(DebugState, GameState);
 
 

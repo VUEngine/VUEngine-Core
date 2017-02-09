@@ -46,6 +46,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Sprites List
+ *
+ * @memberof SpriteManager
+ */
 typedef struct SpritesList
 {
 	const void* spriteClassVTable;
@@ -80,8 +85,11 @@ typedef struct SpritesList
 	/* delay before writing again */																	\
 	s8 waitToWrite;																						\
 
+/**
+ * @class 	SpriteManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(SpriteManager, Object);
-
 __CLASS_FRIEND_DEFINITION(Sprite);
 __CLASS_FRIEND_DEFINITION(Texture);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

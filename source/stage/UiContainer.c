@@ -38,7 +38,10 @@
         /* super's attributes */						    		    			    	        	\
         Container_ATTRIBUTES								    		    			        	    \
 
-// define the UiContainer
+/**
+ * @class	UiContainer
+ * @extends Container
+ */
 __CLASS_DEFINITION(UiContainer, Container);
 
 

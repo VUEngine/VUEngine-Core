@@ -35,22 +35,36 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class 	Sprite
+ * @extends Object
+ */
 __CLASS_DEFINITION(Sprite, Object);
-
 __CLASS_FRIEND_DEFINITION(Texture);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+AnimationController Sprite_getAnimationController(Sprite this);
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//										CLASS'S METHODS (General)
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof				Sprite
+ * @public
+ *
+ * @param this				Function scope
+ * @param spriteDefinition	Definition of the Sprite
+ * @param owner				Entity the Sprite belongs to
+ */
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __attribute__ ((unused)), Object owner __attribute__ ((unused)))
 {
 	__CONSTRUCT_BASE(Object);
@@ -69,7 +83,14 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->writeAnimationFrame = false;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_destructor(Sprite this)
 {
 	ASSERT(this, "Sprite::destructor: null this");
@@ -80,20 +101,40 @@ void Sprite_destructor(Sprite this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Get scale
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Scale struct
+ */
 Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::getScale: null this");
 
 	Scale scale =
 	{
-			__1I_FIX7_9, __1I_FIX7_9
+		__1I_FIX7_9,
+		__1I_FIX7_9,
 	};
 
 	// return the scale
 	return scale;
 }
 
-// calculate zoom scaling factor
+/**
+ * Calculate zoom scaling factor
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ * @param scale	Scale struct to apply
+ * @param z
+ */
 void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::resize: null this");
@@ -102,7 +143,16 @@ void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z
 	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
 }
 
-// retrieve the texture
+/**
+ * Retrieve the texture
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Texture struct
+ */
 Texture Sprite_getTexture(Sprite this)
 {
 	ASSERT(this, "Sprite::getTexture: null this");
@@ -110,7 +160,14 @@ Texture Sprite_getTexture(Sprite this)
 	return this->texture;
 }
 
-// show
+/**
+ * Show
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_show(Sprite this)
 {
 	ASSERT(this, "Sprite::show: null this");
@@ -118,7 +175,14 @@ void Sprite_show(Sprite this)
 	this->hidden = false;
 }
 
-// hide
+/**
+ * Hide
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_hide(Sprite this)
 {
 	ASSERT(this, "Sprite::hide: null this");
@@ -126,6 +190,16 @@ void Sprite_hide(Sprite this)
 	this->hidden = true;
 }
 
+/**
+ * Is the Sprite hidden?
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean telling whether the sprite is hidden
+ */
 bool Sprite_isHidden(Sprite this)
 {
 	ASSERT(this, "Sprite::isHidden: null this");
@@ -133,15 +207,32 @@ bool Sprite_isHidden(Sprite this)
 	return this->hidden;
 }
 
-// retrieve animation controller
+/**
+ * Retrieve animation controller
+ *
+ * @memberof	Sprite
+ * @private
+ *
+ * @param this	Function scope
+ *
+ * @return		Sprite's AnimationController
+ */
 AnimationController Sprite_getAnimationController(Sprite this)
 {
-	ASSERT(this, "Sprite::hide: getAnimationController this");
+	ASSERT(this, "Sprite::getAnimationController: null this");
 
 	return this->animationController;
 }
 
-// set map's world layer
+/**
+ * Set map's world layer
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param worldLayer	World layer
+ */
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
 	ASSERT(this, "Sprite::setWorldLayer: null this");
@@ -149,7 +240,16 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 	this->worldLayer = worldLayer;
 }
 
-//get map's world layer
+/**
+ * Get map's world layer
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		World layer
+ */
 u8 Sprite_getWorldLayer(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldLayer: null this");
@@ -157,7 +257,16 @@ u8 Sprite_getWorldLayer(Sprite this)
 	return this->worldLayer;
 }
 
-// get sprite's render head
+/**
+ * Get sprite's render head
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 u16 Sprite_getHead(Sprite this)
 {
 	ASSERT(this, "Sprite::getHead: null this");
@@ -165,7 +274,16 @@ u16 Sprite_getHead(Sprite this)
 	return this->head;
 }
 
-// get sprite's render mode
+/**
+ * Get sprite's render mode
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Mode
+ */
 u16 Sprite_getMode(Sprite this)
 {
 	ASSERT(this, "Sprite::getMode: null this");
@@ -173,7 +291,16 @@ u16 Sprite_getMode(Sprite this)
 	return this->head & 0x3000;
 }
 
-// get sprites's layer's width
+/**
+ * Get sprites's world head
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 u32 Sprite_getWorldHead(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldHead: null this");
@@ -182,8 +309,16 @@ u32 Sprite_getWorldHead(Sprite this)
 	return worldPointer->head;
 }
 
-
-// get sprites's layer's width
+/**
+ * Get sprites's layer's gx
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 s16 Sprite_getWorldX(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldX: null this");
@@ -192,7 +327,16 @@ s16 Sprite_getWorldX(Sprite this)
 	return worldPointer->gx;
 }
 
-// get sprites's layer's width
+/**
+ * Get sprites's layer's gy
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 s16 Sprite_getWorldY(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldY: null this");
@@ -201,7 +345,16 @@ s16 Sprite_getWorldY(Sprite this)
 	return worldPointer->gy;
 }
 
-// get sprites's layer's width
+/**
+ * Get sprites's layer's width
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Width
+ */
 u16 Sprite_getWorldWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldWidth: null this");
@@ -210,7 +363,16 @@ u16 Sprite_getWorldWidth(Sprite this)
 	return worldPointer->w;
 }
 
-// get sprites's layer's width
+/**
+ * Get sprites's layer's height
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Width
+ */
 u16 Sprite_getWorldHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getWorldHeight: null this");
@@ -219,7 +381,14 @@ u16 Sprite_getWorldHeight(Sprite this)
 	return worldPointer->h;
 }
 
-// reload the sprite in bgmap memory
+/**
+ * Reload the sprite in BGMap memory
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_rewrite(Sprite this)
 {
 	ASSERT(this, "Sprite::rewrite: null this");
@@ -231,7 +400,15 @@ void Sprite_rewrite(Sprite this)
 	}
 }
 
-// process event
+/**
+ * Process event
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param eventFirer
+ */
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::onTextureRewritten: null this");
@@ -240,7 +417,16 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
 	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this);
 }
 
-// get displacement
+/**
+ * Get displacement
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 VBVecWorld Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getDisplacement: null this");
@@ -248,11 +434,30 @@ VBVecWorld Sprite_getDisplacement(Sprite this)
 	return this->displacement;
 }
 
+/**
+ * Rotate
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ * @param rotation	Rotation struct
+ */
 void Sprite_rotate(Sprite this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::rotate: null this");
 }
 
+/**
+ * Get half width
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 int Sprite_getHalfWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfWidth: null this");
@@ -260,6 +465,16 @@ int Sprite_getHalfWidth(Sprite this)
 	return FIX19_13TOI(this->halfWidth);
 }
 
+/**
+ * Get half height
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
 int Sprite_getHalfHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfHeight: null this");
@@ -267,10 +482,19 @@ int Sprite_getHalfHeight(Sprite this)
 	return FIX19_13TOI(this->halfHeight);
 }
 
+
 //---------------------------------------------------------------------------------------------------------
-//										Animation
+//										CLASS'S METHODS (Animation)
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Update
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
@@ -291,6 +515,16 @@ void Sprite_update(Sprite this)
 	}
 }
 
+/**
+ * Is Sprite transparent?
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether Sprite is transparent
+ */
 bool Sprite_isTransparent(Sprite this)
 {
 	ASSERT(this, "Sprite::isTransparent: null this");
@@ -298,6 +532,15 @@ bool Sprite_isTransparent(Sprite this)
 	return this->transparent;
 }
 
+/**
+ * Set Sprite transparent
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ * @param value	Boolean
+ */
 void Sprite_setTransparent(Sprite this, bool value)
 {
 	ASSERT(this, "Sprite::setTransparent: null this");
@@ -305,6 +548,14 @@ void Sprite_setTransparent(Sprite this, bool value)
 	this->transparent = value;
 }
 
+/**
+ * Animate Sprite
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_animate(Sprite this)
 {
 	ASSERT(this, "Sprite::animate: null this");
@@ -316,6 +567,15 @@ void Sprite_animate(Sprite this)
 	}
 }
 
+/**
+ * Pause animation
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ * @param pause	Boolean
+ */
 void Sprite_pause(Sprite this, bool pause)
 {
 	ASSERT(this, "Sprite::pause: null this");
@@ -327,6 +587,16 @@ void Sprite_pause(Sprite this, bool pause)
 	}
 }
 
+/**
+ * Play a given animation
+ *
+ * @memberof					Sprite
+ * @public
+ *
+ * @param this					Function scope
+ * @param animationDescription	AnimationDescription
+ * @param functionName			Name of animation function to play
+ */
 void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName)
 {
 	ASSERT(this, "Sprite::play: null this");
@@ -339,6 +609,16 @@ void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* 
 	}
 }
 
+/**
+ * Is Sprite playing an animation?
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether Sprite is playing an animation
+ */
 bool Sprite_isPlaying(Sprite this)
 {
 	ASSERT(this, "Sprite::isPlaying: null this");
@@ -352,6 +632,17 @@ bool Sprite_isPlaying(Sprite this)
 	return false;
 }
 
+/**
+ * Is Sprite playing a function?
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param functionName	Name of function to play
+ *
+ * @return				Boolean whether Sprite is playing a function
+ */
 bool Sprite_isPlayingFunction(Sprite this, char* functionName)
 {
 	ASSERT(this, "Sprite::isPlayingFunction: null this");
@@ -365,6 +656,15 @@ bool Sprite_isPlayingFunction(Sprite this, char* functionName)
 	return false;
 }
 
+/**
+ * Set Frame Delay Delta
+ *
+ * @memberof				Sprite
+ * @public
+ *
+ * @param this				Function scope
+ * @param frameDelayDelta	Frame Delay Delta
+ */
 void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta)
 {
 	ASSERT(this, "Sprite::setFrameDelayDelta: null this");
@@ -376,6 +676,16 @@ void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta)
 	}
 }
 
+/**
+ * Get actual frame
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Frame number
+ */
 s8 Sprite_getActualFrame(Sprite this)
 {
 	ASSERT(this, "Sprite::getActualFrame: null this");
@@ -389,6 +699,15 @@ s8 Sprite_getActualFrame(Sprite this)
 	return -1;
 }
 
+/**
+ * Set actual frame
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param actualFrame	Frame number
+ */
 void Sprite_setActualFrame(Sprite this, s8 actualFrame)
 {
 	ASSERT(this, "Sprite::setActualFrame: null this");
@@ -400,6 +719,16 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame)
 	}
 }
 
+/**
+ * Get frame delay
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Frame delay
+ */
 s8 Sprite_getFrameDelay(Sprite this)
 {
 	ASSERT(this, "Sprite::getFrameDelay: null this");
@@ -413,6 +742,15 @@ s8 Sprite_getFrameDelay(Sprite this)
 	return -1;
 }
 
+/**
+ * Set frame delay
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param frameDelay	Frame delay
+ */
 void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
 {
 	ASSERT(this, "Sprite::setFrameDelay: null this");
@@ -424,6 +762,14 @@ void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
 	}
 }
 
+/**
+ * Write animation
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::writeAnimation: null this");
@@ -431,10 +777,19 @@ void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 
 
 //---------------------------------------------------------------------------------------------------------
-//										FXs
+//										CLASS'S METHODS (Direct Draw)
 //---------------------------------------------------------------------------------------------------------
 
-// write directly to texture
+/**
+ * Write a char directly to the Sprite's Texture
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param texturePixel	Point that defines the position of the char in the Sprite's texture
+ * @param newChar		Char to write
+ */
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 {
 	ASSERT(this, "Sprite::putChar: null this");
@@ -445,7 +800,16 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 	}
 }
 
-// write directly to texture
+/**
+ * Write a single pixel directly to the Sprite's Texture
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param charSetPixel	Point that defines the position of the pixel in the Sprite's texture
+ * @param newPixelColor	Color value of pixel
+ */
 void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "Sprite::putPixel: null this");
@@ -456,15 +820,32 @@ void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE
 	}
 }
 
-/*
- * Affine FX
- */
 
+//---------------------------------------------------------------------------------------------------------
+//										CLASS'S METHODS (Affine & HBias FX)
+//---------------------------------------------------------------------------------------------------------
+
+/**
+ * Apply Affine transformations to Sprite
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_applyAffineTransformations(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::applyAffineTransformations: null this");
 }
 
+/**
+ * Apply HBias transformations to Sprite
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Sprite_applyHbiasTransformations(Sprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::applyHbiasTransformations: null this");

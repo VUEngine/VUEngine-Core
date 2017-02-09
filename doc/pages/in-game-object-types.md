@@ -15,7 +15,7 @@ A `Container` with a list of Sprites. It is the base class for any visual object
 
 
 EntityFactory
-------
+-------------
 
 Allows the deferring of the instantiation and initialization of entities to be added to the stage.
 
@@ -33,13 +33,13 @@ An entity with animated sprites.
 
 
 Actor
---------------------
+-----
 
 `AnimatedInGameEntity` with a physical body and a collision solver. It coordinates the collisions and the way the body must react to them. This class is designed to handle movable entities.
 
 
 CollisionsContainerEntity
---------------------
+-------------------------
 
 Just a handy `Entity` for non-visual collisions.
 
@@ -51,19 +51,19 @@ InGameEntity with physical properties but with no animation (friction, elasticit
 
 
 StaticImage
------
+-----------
 
 A handy `Entity` for non-interactive images.
 
 
 ManagedEntity
------------
+-------------
 
 `Container` that manages the sprites of all its children. It helps to reduce the performance overhead of translating lots of sprites, and helps to workaround rounding problems when projecting 3D coordinates into 2D caused by the low resolution of the Virtual Boy's displays.
 
 
 RecyclableImage
------------
+---------------
 
 Used to display the level's backgrounds. These allow for the textures used as backgrounds to be recycled, allowing better usage of CHAR and BGMAP.
 
@@ -73,13 +73,13 @@ Texture allocation must be planned ahead with texture preloading to work with mu
 
 
 ManagedStaticImage
------------
+------------------
 
 Like the `ManagedEntity`, it manages the sprites of all its children, but it is meant to hold entities that don't need to do anything in their update methods.
 
 
 TriggerEntity
------------
+-------------
 
 A handy `Entity` for collisions detection against non-physical entities.
 

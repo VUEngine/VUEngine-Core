@@ -53,6 +53,10 @@ static bool StageEditorState_processMessage(StageEditorState this __attribute__ 
 		/* inherits */																					\
 		GameState_ATTRIBUTES																			\
 
+/**
+ * @class	StageEditorState
+ * @extends GameState
+ */
 __CLASS_DEFINITION(StageEditorState, GameState);
 
 

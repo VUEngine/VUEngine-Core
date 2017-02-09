@@ -35,6 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class 	CharSet
+ * @extends Object
+ */
 __CLASS_DEFINITION(CharSet, Object);
 
 

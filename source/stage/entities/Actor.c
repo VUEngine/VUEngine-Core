@@ -42,6 +42,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	Actor
+ * @extends AnimatedInGameEntity
+ */
 __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 
 

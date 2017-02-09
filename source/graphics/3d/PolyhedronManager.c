@@ -36,11 +36,14 @@
 #define PolyhedronManager_ATTRIBUTES																	\
 		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* polyhedrons */																			\
-		VirtualList polyhedrons;																	\
+		/* polyhedrons */																				\
+		VirtualList polyhedrons;																		\
 
+/**
+ * @class	PolyhedronManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(PolyhedronManager, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

@@ -36,7 +36,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the TriggerEntity
+/**
+ * @class	TriggerEntity
+ * @extends InGameEntity
+ */
 __CLASS_DEFINITION(TriggerEntity, InGameEntity);
 
 

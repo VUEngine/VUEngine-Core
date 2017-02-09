@@ -62,7 +62,10 @@ extern u32 _bss_end;
 		/* HW registry */																				\
 		u8*  hwRegisters;																				\
 
-// define the HardwareManager
+/**
+ * @class	HardwareManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(HardwareManager, Object);
 
 

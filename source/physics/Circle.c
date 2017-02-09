@@ -32,7 +32,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Circle
+/**
+ * @class	Circle
+ * @extends Shape
+ */
 __CLASS_DEFINITION(Circle, Shape);
 
 

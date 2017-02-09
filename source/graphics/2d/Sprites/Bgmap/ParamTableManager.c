@@ -33,11 +33,17 @@
 //												DECLARATIONS
 // ---------------------------------------------------------------------------------------------------------
 
+/**
+ * Param Table Free Data
+ *
+ * @memberof ParamTableManager
+ */
 typedef struct ParamTableFreeData
 {
 	u32 param;
 	u32 recoveredSize;
 } ParamTableFreeData;
+
 
 // ---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -61,8 +67,11 @@ typedef struct ParamTableFreeData
 		/* user for defragmentation */																	\
 		u32 paramTableBase;																				\
 
+/**
+ * @class 	ParamTableManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(ParamTableManager, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

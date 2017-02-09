@@ -38,6 +38,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	ScreenMovementManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(ScreenMovementManager, Object);
 __CLASS_FRIEND_DEFINITION(Screen);
 

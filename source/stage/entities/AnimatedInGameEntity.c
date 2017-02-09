@@ -42,8 +42,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	AnimatedInGameEntity
+ * @extends InGameEntity
+ */
 __CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

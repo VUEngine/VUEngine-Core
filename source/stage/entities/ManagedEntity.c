@@ -35,9 +35,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ManagedEntity
+/**
+ * @class	ManagedEntity
+ * @extends Entity
+ */
 __CLASS_DEFINITION(ManagedEntity, Entity);
-
 __CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);

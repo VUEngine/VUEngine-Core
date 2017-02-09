@@ -40,9 +40,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ObjectSpriteContainer
+/**
+ * @class 	ObjectSpriteContainer
+ * @extends Sprite
+ */
 __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
-
 __CLASS_FRIEND_DEFINITION(ObjectSprite);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);

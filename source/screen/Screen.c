@@ -35,6 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	Screen
+ * @extends Object
+ */
 __CLASS_DEFINITION(Screen, Object);
 
 

@@ -9,65 +9,74 @@ creation of content for the Nintendo Virtual Boy by taking care of most hardware
 Features:
 
 - General features:
-    - Automatic frame rate control
-    - Generic clocks based on hardware interrupts
-    - Memory Pool to allocate memory dynamically
-    - Generic state machines
-    - Generic parenting system
-    - Generic messaging system
-    - Generic event listening/firing system
-    - Easy to use printing functions to facilitate debug
-- Debugging
-    - Memory usage
-    - Hardware registers' usage
-    - Real time tools to check:
-        - Char memory status
-        - BGMap memory status
-        - World layer status
-        - Collision boxes
+  - Automatic frame rate control
+  - Generic clocks based on hardware interrupts
+  - Memory Pool to allocate memory dynamically
+  - Generic state machines
+  - Generic parenting system
+  - Generic messaging system
+  - Generic event listening/firing system
+  - Easy to use printing functions to facilitate debug
+  - User data saving support
+  - Program's memory layout management
+    - Use DRAM as WRAM
+    - Use SRAM as WRAM
+    - Variables' in-program-section allocation control
+- Debugging / Development:
+  - Memory usage
+  - Profiling data
+  - Streaming status
+  - Hardware registers' usage
+  - Real time tools to check:
+    - CHAR memory status
+    - BGMAP memory status
+    - WORLD layer status
+  - Collision boxes
+  - Real time stage editor
+  - Real time animation inspector
 - Object Oriented support through the use of Metaprogramming (C MACROS):
-    - Simple inheritance
-    - Polymorphism
-    - Encapsulation
-    - Friend classes support
-    - Runtime type checking
+  - Simple inheritance
+  - Polymorphism
+  - Encapsulation
+  - Friend classes support
+  - Runtime type checking
 - Rendering:
-    - Automatic char memory allocation
-    - Real time char memory defragmentation
-    - Automatic BGMap memory allocation
-    - Automatic OBJ memory allocation
-    - Automatic world layer assignment based on the objects' z position
-    - Preloading textures
-    - Automatic char memory defragmentation
-    - Scaling/rotation effects
-    - Automatic projection/parallax/scale calculations and rendering
-    - Customizable perspective/deep effects on real time
-    - Automatic memory allocation for param tables (used in affine and h-bias modes)
+  - Automatic CHAR memory allocation
+  - Real time CHAR memory defragmentation
+  - Automatic BGMAP memory allocation
+  - Automatic OBJECT memory allocation
+  - Automatic WORLD layer assignment based on the objects' z position
+  - Texture preloading
+  - Scaling/rotation effects
+  - Automatic projection/parallax/scale calculations and rendering
+  - Customizable perspective/deep effects on real time
+  - Automatic memory allocation for param tables (used in affine and h-bias modes)
 - Animation:
-    - Multiple memory allocation schemas to improve efficiency
-    - Frame based animation system with callback support
+  - Multiple memory allocation schemas to improve efficiency
+  - Frame based animation system with callback support
 - Sound:
-    - Sound reproduction of one BGM and up to two FX sounds simultaneous.
+  - Sound reproduction of one BGM and up to two FX sounds simultaneous.
 - Physics:
-    - Accelerated/uniform movement
-    - Gravity
-    - Friction
-    - Bouncing
-    - Automatic collision detection and notification
+  - Basic accelerated/uniform movement
+  - Gravity
+  - Friction
+  - Bouncing
+  - Automatic collision detection and notification
 - Particles:
-    - Physically based
+  - Physically based particles
+  - Recyclable particles
 - Stages:
-    - 3D stages
-    - Level streaming
+  - 3D stages
+  - Level streaming
 - Useful classes to speed up the content creation process:
-    - Container: for transformation propagation (translation/rotation/scaling)
-    - Entity: a container with a list of sprites (a "visual object")
-    - InGameEntity: interactive entities in the levels (collision detection)
-    - AnimatedInGameEntity: an entity with animated sprites.
-    - InAnimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
-    - Actor: animated in game entity which coordinates a physical body with a collision shape
-    - Image: handy entity to display non interactive images
-    - ScrollBackground: infinite loop image (currently only supports looping over the x axe)
+  - Container: for transformation propagation (translation/rotation/scaling)
+  - Entity: a container with a list of sprites (a "visual object")
+  - InGameEntity: interactive entities in the levels (collision detection)
+  - AnimatedInGameEntity: an entity with animated sprites.
+  - InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
+  - Actor: animated in game entity which coordinates a physical body with a collision shape
+  - StaticImage: handy entity to display non interactive images
+  - RecyclableImage: useful to optimize BGMAP memory usage
 
 
 LICENSE
@@ -106,10 +115,10 @@ A short summary of the file layout:
 - source: VUEngine source code.
 - source/base/libgccvb: heavily modified libgccvb
 - lib: miscellaneous files needed for linking, etc.
-- lib/src: miscellaneous files needed for linking, etc.    sources, and other utilities sources.
+- lib/src: miscellaneous files needed for linking, etc. sources, and other utilities sources.
 - utilities: miscellaneous utilities for padding, sound, etc.
 
-Full documentation can be found in doc/html/index.html
+Full documentation can be found in doc/DevelopmentManual.htm
 
 
 COMPILING ON WIN32

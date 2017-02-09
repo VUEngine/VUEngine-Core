@@ -39,6 +39,10 @@
 		/* object groups */																				\
 		ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
 
+/**
+ * @class 	ObjectSpriteContainerManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 
 

@@ -35,6 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class 	Texture
+ * @extends Object
+ */
 __CLASS_DEFINITION(Texture, Object);
 
 

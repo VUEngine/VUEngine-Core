@@ -50,7 +50,10 @@ extern u32 _sram_bss_end;
 		/* save space start address */																	\
 		u16* saveSpaceStartAddress;																		\
 
-// define the manager
+/**
+ * @class	SRAMManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(SRAMManager, Object);
 
 

@@ -37,7 +37,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the ObjectAnimatedSprite
+/**
+ * @class 	ObjectAnimatedSprite
+ * @extends ObjectSprite
+ */
 __CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 
 

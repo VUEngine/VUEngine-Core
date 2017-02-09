@@ -39,9 +39,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the RecyclableImage
+/**
+ * @class	RecyclableImage
+ * @extends Entity
+ */
 __CLASS_DEFINITION(RecyclableImage, Entity);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

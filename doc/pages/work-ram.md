@@ -36,7 +36,7 @@ The size of each pool is the product of both numbers passed as arguments to the 
 	256 * 32 	= 	8,192 bytes
 	128 * 64 	= 	8,192 bytes
 	64 * 64 	= 	4,096 bytes
-	**TOTAL	= 	20,480 bytes**
+	**TOTAL		= 	20,480 bytes**
 
 Please note that the __BLOCK_DEFINITONs have to be sorted by size in descending order. Furthermore, the sizes always have to be multiples of 4.
 
@@ -62,4 +62,4 @@ Determining object sizes
 
 The most convenient way of finding out the exact memory footprints of your game's objects is to use the engine's debug tools. Slate 2 of the Debug System (accessed with LT+RT+RU) shows detailed information about the individual pools' usage, the MemoryPool's total size and usage as well as the required sizes of all of the VUEngine's as well as user defined classes.
 
-For a programmatical approach, you can use sizeof(ObjectClass) if you know an Object's class, otherwise __VIRTUAL_CALL(int, Object, getObjectSize, objectPointer) has to be be used.
+For a programmatic approach, you can use `sizeof(ObjectClass)` if you know an Object's class, otherwise `__VIRTUAL_CALL(int, Object, getObjectSize, objectPointer)` has to be be used.

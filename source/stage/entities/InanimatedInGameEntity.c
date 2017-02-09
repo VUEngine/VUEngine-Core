@@ -36,7 +36,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the InanimatedInGameEntity
+/**
+ * @class	InanimatedInGameEntity
+ * @extends InGameEntity
+ */
 __CLASS_DEFINITION(InanimatedInGameEntity, InGameEntity);
 
 

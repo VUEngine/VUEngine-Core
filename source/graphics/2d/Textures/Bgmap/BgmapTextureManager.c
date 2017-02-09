@@ -57,7 +57,10 @@
 		/* segment for printing */																		\
 		s16 printingBgmapSegment;																		\
 
-// define the BgmapTextureManager
+/**
+ * @class 	BgmapTextureManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(BgmapTextureManager, Object);
 
 enum OffsetIndex

@@ -43,8 +43,7 @@
         __VIRTUAL_SET(ClassName, BgmapAnimationCoordinator, removeAnimationController);					\
 
 #define BgmapAnimationCoordinator_ATTRIBUTES															\
-        /* super's attributes */																		\
-        AnimationCoordinator_ATTRIBUTES																\
+        AnimationCoordinator_ATTRIBUTES																	\
 
 __CLASS(BgmapAnimationCoordinator);
 
@@ -57,6 +56,7 @@ __CLASS_NEW_DECLARE(BgmapAnimationCoordinator, const CharSetDefinition* charSetD
 
 void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition);
 void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this);
+
 void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
 void BgmapAnimationCoordinator_removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
 

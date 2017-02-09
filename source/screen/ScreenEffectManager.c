@@ -37,6 +37,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	ScreenEffectManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(ScreenEffectManager, Object);
 __CLASS_FRIEND_DEFINITION(Screen);
 

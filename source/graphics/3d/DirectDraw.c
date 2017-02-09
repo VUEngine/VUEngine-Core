@@ -40,14 +40,13 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+#define DirectDraw_ATTRIBUTES																			\
+		Object_ATTRIBUTES																				\
+
 /**
  * @class	DirectDraw
  * @extends Object
  */
-
-#define DirectDraw_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-
 __CLASS_DEFINITION(DirectDraw, Object);
 
 

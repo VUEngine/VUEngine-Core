@@ -4,9 +4,7 @@ Introduction
 The VUEngine has been developed to fill the gap between the developer's game logic and the hardware management 
 required to produce visual and audio results on the Nintendo Virtual Boy. The engine is a sprite based engine, 
 which takes care of all the work necessary to display user defined sprite images on screen, allocating graphical 
-and CPU's memory to hold the definitions of such images. 
-
-@image html vuengine.png
+and CPU's memory to hold the definitions of such images.
 
 
 Features
@@ -14,78 +12,79 @@ Features
 
 The engine provides the following features for the programmer to take advantage of:
 
-#### Features:
-- General features:
-	- Automatic frame rate control
-	- Generic clocks based on hardware interrupts
-	- Memory Pool to allocate memory dynamically
-	- Generic state machines
-	- Generic parenting system
-	- Generic messaging system
-	- Generic event listening/firing system
-	- Easy to use printing functions to facilitate debug
-	- User data saving support
-	- Program's memory layout management
-		- Use DRAM as WRAM
-		- Use SRAM as WRAM
-		- Variables' in-program-section allocation control
-- Debugging / Development
-	- Memory usage
-	- Profiling data
-	- Streaming status
-	- Hardware registers' usage
-	- Real time tools to check:
-		- CHAR memory status
-		- BGMAP memory status
-		- WORLD layer status
-	- Collision boxes
-	- Real time stage editor
-	- Real time animation inspector
-- Object Oriented support through the use of Metaprogramming (C MACROS):
-	- Simple inheritance
-	- Polymorphism
-	- Encapsulation
-	- Friend classes support
-	- Runtime type checking
-- Rendering:
-	- Automatic CHAR memory allocation
-	- Real time CHAR memory defragmentation
-	- Automatic BGMAP memory allocation
-	- Automatic OBJECT memory allocation
-	- Automatic WORLD layer assignment based on the objects' z position
-	- Texture preloading
-	- Scaling/rotation effects
-	- Automatic projection/parallax/scale calculations and rendering
-	- Customizable perspective/deep effects on real time
-	- Automatic memory allocation for param tables (used in affine and h-bias modes)
-- Animation:
-	- Multiple memory allocation schemas to improve efficiency
-	- Frame based animation system with callback support
-- Sound:
-	- Sound reproduction of one BGM and up to two FX sounds simultaneous.
-- Physics:
-	- Basic accelerated/uniform movement
-	- Gravity
-	- Friction
-	- Bouncing
-	- Automatic collision detection and notification
-- Particles:
-	- Physically based particles
-	- Recyclable particles
-- Stages:
-	- 3D stages
-	- Level streaming
-- Useful classes to speed up the content creation process:
-	- Container: for transformation propagation (translation/rotation/scaling)
-	- Entity: a container with a list of sprites (a "visual object")
-	- InGameEntity: interactive entities in the levels (collision detection)
-	- AnimatedInGameEntity: an entity with animated sprites.
-	- InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
-	- Actor: animated in game entity which coordinates a physical body with a collision shape
-	- StaticImage: handy entity to display non interactive images
-	- RecyclableImage: useful to optimize BGMAP memory usage
+### Features
 
-TODO
+- General features:
+  - Automatic frame rate control
+  - Generic clocks based on hardware interrupts
+  - Memory Pool to allocate memory dynamically
+  - Generic state machines
+  - Generic parenting system
+  - Generic messaging system
+  - Generic event listening/firing system
+  - Easy to use printing functions to facilitate debug
+  - User data saving support
+  - Program's memory layout management
+    - Use DRAM as WRAM
+    - Use SRAM as WRAM
+    - Variables' in-program-section allocation control
+- Debugging / Development:
+  - Memory usage
+  - Profiling data
+  - Streaming status
+  - Hardware registers' usage
+  - Real time tools to check:
+    - CHAR memory status
+    - BGMAP memory status
+    - WORLD layer status
+  - Collision boxes
+  - Real time stage editor
+  - Real time animation inspector
+- Object Oriented support through the use of Metaprogramming (C MACROS):
+  - Simple inheritance
+  - Polymorphism
+  - Encapsulation
+  - Friend classes support
+  - Runtime type checking
+- Rendering:
+  - Automatic CHAR memory allocation
+  - Real time CHAR memory defragmentation
+  - Automatic BGMAP memory allocation
+  - Automatic OBJECT memory allocation
+  - Automatic WORLD layer assignment based on the objects' z position
+  - Texture preloading
+  - Scaling/rotation effects
+  - Automatic projection/parallax/scale calculations and rendering
+  - Customizable perspective/deep effects on real time
+  - Automatic memory allocation for param tables (used in affine and h-bias modes)
+- Animation:
+  - Multiple memory allocation schemas to improve efficiency
+  - Frame based animation system with callback support
+- Sound:
+  - Sound reproduction of one BGM and up to two FX sounds simultaneous.
+- Physics:
+  - Basic accelerated/uniform movement
+  - Gravity
+  - Friction
+  - Bouncing
+  - Automatic collision detection and notification
+- Particles:
+  - Physically based particles
+  - Recyclable particles
+- Stages:
+  - 3D stages
+  - Level streaming
+- Useful classes to speed up the content creation process:
+  - Container: for transformation propagation (translation/rotation/scaling)
+  - Entity: a container with a list of sprites (a "visual object")
+  - InGameEntity: interactive entities in the levels (collision detection)
+  - AnimatedInGameEntity: an entity with animated sprites.
+  - InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
+  - Actor: animated in game entity which coordinates a physical body with a collision shape
+  - StaticImage: handy entity to display non interactive images
+  - RecyclableImage: useful to optimize BGMAP memory usage
+
+### TODO
 
 - High performance polygon based rendering
 - Tile based collision detection
@@ -125,8 +124,10 @@ Some source code in this release that may not be covered by the license:
 
 - libgccvb: compiled by a lot of other people.
 
+
 General Notes
--------
+-------------
+
 A short summary of the file layout:
 - source: VUEngine source code.
 - source/base/libgccvb: heavily modified libgccvb
@@ -134,10 +135,12 @@ A short summary of the file layout:
 - lib/src: miscellaneous files needed for linking, etc. sources, and other utilities sources.
 - utilities: miscellaneous utilities for padding, sound, etc.
 
-Full documentation can be found in doc/html/index.html
+See `classes` for full documentation.
 
-#### Compiling on Win32 platforms
-The VUEngine comes bundled with VBDE http://vbde.planetvb.com. Compile by starting the VBDE build system. This will produce the file libvuengine.a which must be linked against the game's code.
+Compiling on Win32 platforms
+----------------------------
+
+The VUEngine comes bundled with VBDE <http://vbde.planetvb.com>. Compile by starting the VBDE build system. This will produce the file libvuengine.a which must be linked against the game's code.
 
 
 Acknowledgments
@@ -149,4 +152,3 @@ Acknowledgments
 - Libgccvb has been refactored to accommodate better to this engine, all its code is credited to its creators, Jorge Eremiev doesn't take any credit on it.
 
 V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo. Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.
-

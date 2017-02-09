@@ -67,6 +67,10 @@
 		/* pool's size and pool's block size */															\
 		int poolSizes[__MEMORY_POOLS][2];																\
 
+/**
+ * @class 	MemoryPool
+ * @extends Object
+ */
 __CLASS_DEFINITION(MemoryPool, Object);
 
 enum MemoryPoolSizes
