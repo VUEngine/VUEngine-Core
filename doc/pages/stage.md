@@ -1,7 +1,7 @@
 Stages
 ======
 
-Each `GameState` has a `Stage` that works as the `Container` for all the `Entities` that compose a game level. In the general case, the stage's child entities are defined in a `StageDefinition` struct that is managed by the `GameState`.
+Each `GameState` has a `Stage` that works as the `Container` for all the entities that compose a game level. In the general case, the stage's child entities are defined in a StageDefinition struct that is managed by the `GameState`.
 
 Adding entities to the stage
 ----------------------------
@@ -19,7 +19,7 @@ In any case, it is never legal to call the Entity's allocator (or that of any cl
 Deleting entities
 -----------------
 
-Since the whole stage is composed of containers, the safe way to delete them is to use the Container_deleteMyself method, otherwise the container could be being deleted from within a list's loop, causing undefined behavior.
+Since the whole stage is composed of containers, the safe way to delete them is to use the Container_deleteMyself method, otherwise the container could be deleted from within a list's loop, causing undefined behavior.
 
 Don't delete directly entities added to the parenting hierarchy by using the __DELETE macro.
 

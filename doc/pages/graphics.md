@@ -151,8 +151,8 @@ and finally, the third group of CHARs (9-26), that form the last frame of animat
 
 ##### __ANIMATED_SHARED
 
-When using this animation type, the engine allocates a new CharSet once (and only a Texture if BgmapSprites are used); and for each new request with the same char definition, returns the same reference(s). Each time a new frame must be show, the engines writes directly to CHAR memory, and every Sprite that uses the same CharSet wiil display the change.
-In the following example, the AnimatedSprite in the center uses an __ANIMATED_SINGLE CharSet, while the AnimatedInGameEntities at both ends use the same __ANIMATED_SHARED CharSet:
+When using this animation type, the engine allocates a new CharSet once (and only a Texture if BgmapSprites are used); and for each new request with the same char definition, returns the same reference(s). Each time a new frame must be show, the engines writes directly to CHAR memory, and every Sprite that uses the same CharSet will display the change.
+In the following example, the AnimatedSprite in the center uses an __ANIMATED_SINGLE `CharSet`, while the animated in game entities at both ends use the same __ANIMATED_SHARED `CharSet`:
 
 @image html graphics-animation-shared-sample.png
 
@@ -190,7 +190,7 @@ This animation type works exactly the same as the __ANIMATED_SHARED, but for eac
 ##### __ANIMATED_MULTI
 
 When using this animation type, the engine allocates a new CharSet once (an only Texture when using BgmapSprites); and for each new request, with the same char definition and allocation type, returns the same reference(s). Depending on the Sprite's type, when a new frame of animation must be shown, the engine either modifies the WORLD's mx and my values, or writes to OBJ memory. 
-In the following example, the AnimatedSprite in the center uses an __ANIMATED_SHARED CharSet, while the AniamtedSprites at both ends use the same __ANIMATED_MULTI CharSet:
+In the following example, the AnimatedSprite in the center uses an __ANIMATED_SHARED CharSet, while the animated sprites at both ends use the same __ANIMATED_MULTI `CharSet`:
 
 @image html graphics-animation-multi-sample.png
 
