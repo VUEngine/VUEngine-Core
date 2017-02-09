@@ -7,63 +7,93 @@ Graphics
 
 ### Overview
 
-The engine abstracts Virtual Boy's VIP's memory sections in the following classes:
+The engine abstracts Virtual Boy's VIP's memory sections with the following classes:
 
-•	CHAR memory: CharSet
-
-•	BGMAP memory: BgmapTexture
-
-•	OBJ memory: ObjectTexture
-
-•	WORLD memory: Sprite (BgmapSprite and ObjectSprite)
+- CHAR memory: CharSet
+- BGMAP memory: BgmapTexture
+- OBJECT memory: ObjectTexture
+- WORLD memory: Sprite (BgmapSprite and ObjectSprite)
 
 To allocate CHAR memory, the CharSetManager's getCharSet method must be called, which, depending on the CharSetDefintion's allocation type, will create a new CharSet or return an existing one.
 
 To allocate BGMAP memory, the BgmapTextureManager's getTexture method must be called, which, depending on the CharSetDefintion's allocation type, will create a new Texture or return an existing one.
 
-Both CharSet and BgmapTextures are allocated using reference counting in order to reduce both VRAM and WRAM footprint.
+OBJECT memory is managed by four ObjectSpriteContainers.
 
-Each object segment is allocated by an ObjectSpriteContainer.
+Both CharSet and BgmapTextures are allocated using reference counting in order to reduce both VRAM and WRAM usage.
 
 
-### CharSets
+### CharSet
 
-### Textures
+CharSets abstract the Virtual Boy's CHAR memory in order to optimize its usage. They are allocated and managed through reference counting by the `CharSetManager`. 
+
+They must not be instantiated manually, but instead a request to the manager for it allocate a new `CharSet` if needed:
+
+	CharSet charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), charSetDefinition);
+
+Whenever possible, the manager tries to return a previously allocated `CharSet` with the same CharSetDefinition as the one received on the request. That this happens depends on the allocation type used in the definition. For information about the different allocation types check the section about the animations.
+
+Similarly, they should never be deleted manually, but must be released calling the manager:
+
+	CharSetManager_releaseCharSet(CharSetManager_getInstance(), charSet);
+
+When a released `CharSet`'s usage count is zero, the manager deletes it and starts defragmenting the CHAR memory.
+
+### Texture
+
+Textures are akin to Bitmap, PNG, JPEG, other formats used to hold graphical data. Roughly, they are the images to be displayed by the VIP either through the BGMAP memory or through the OBJECT memory.
+
 
 #### BgmapTexture
 
+This `Texture` type abstracts the Virtual Boy's BGMAP memory in order to optimize its usage. They are allocated and managed through reference counting by the `BgmapTextureManager`. 
+
+They must not be instantiated manually, but instead a request to the manager for it allocate a new `BgmapTexture` if needed:
+
+	BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
+
+Whenever possible, the manager tries to return a previously allocated `BgmapTexture` with the same TextureDefinition as the one received on the request. That this happens depends on the allocation type used in the CharSetDefinition referenced by the TextureDefinition. For information about the different `CharSet` allocation types check the section about the animations.
+
+Similarly, they should never be deleted manually, but must be released calling the manager:
+
+	BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), bgmapTexture);
+
+When a released `BgmapTexture`'s usage count is zero, the manager deletes it, but since there is no BGMAP memory defragmentation mechanism within the engine, only WRAM is freed, BGMAP VRAM remains used until the current `GameState` exits.
+
+
 ##### BgmapTextureManager
+
+The instance of this class manages the BGMAP memory. All textures must be retrieved by calling this class' methods instead of being instantiated or destroyed manually.
 
 ##### RecyclableBgmapTextureManager
 
+The instance of this class facilitates the re-usage of textures. It keeps a list of registered textures whose definitions can be replaced by new ones when released. Generally, the textures registered with this manager should be those that occupy big amounts of BGMAP memory, like those used to represent the levels' backgrounds or platforms.
+
 #### ObjectTexture
 
+This `Texture` type abstracts the Virtual Boy's OBJECT memory in order to optimize its usage. They are allocated individually by the object sprites. In contrast to the BGMAP textures, these are no managed at all, and are used exclusively by OBJECT based sprites.
+ 
 
-### Sprites
+### Sprite
 
-`Sprites` are the base class used to display the graphics
+This is the base class used to display textures. It abstract the WORLD layers used by the VIP to display BGMAPs or OBJECTs.
 
 #### BgmapSprite
 
+This kind of `Sprite` uses a `BgmapTexture` and is displayed in one of the VIP's 32 WORLD layers. It requests a WORLD to the `SpriteManager` and relinquish it when deleted. The WORLD that it uses is constantly updated according to its z coordinate and that of the other sprites.
+
 #### ObjectSprite
 
-[TODO]
-
+This kind of `Sprite` uses an `ObjectTexture` and is displayed in one of the VIP's 4 WORLD layers dedicated to OBJECTS. It registers itself with one of the 4 object sprite containers created by the engine and unregisters from it when deleted.
 
 #### SpriteManager
 
-[TODO]
-
-
-### ParamTable
-
-[TODO]
+The instance of this class manages the VIP's 32 WORLD layers. All sprites, besides those that are OBJECT based sprites, must register themselves with this manager. It handles the sorting of the WORLDs assigned to each registered `Sprite` based on their z coordinate.
 
 
 #### ParamTableManager
 
-[TODO]
-
+The instance of this class manages the DRAM allocated by the engine for affine or h-bias transformation on those BGMAP based spritres that use those operations.
 
 
 ### Animation
