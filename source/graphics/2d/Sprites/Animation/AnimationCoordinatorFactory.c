@@ -41,8 +41,11 @@
 		/* entities that use bgmap sprites */															\
 		VirtualList animationCoordinators;																\
 
+/**
+ * @class 	AnimationCoordinatorFactory
+ * @extends Object
+ */
 __CLASS_DEFINITION(AnimationCoordinatorFactory, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -58,9 +61,25 @@ static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory 
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			AnimationCoordinatorFactory_getInstance()
+ * @memberof	AnimationCoordinatorFactory
+ * @public
+ *
+ * @return		AnimationCoordinatorFactory instance
+ */
 __SINGLETON(AnimationCoordinatorFactory);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof	AnimationCoordinatorFactory
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
@@ -70,7 +89,14 @@ static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(A
 	this->animationCoordinators = __NEW(VirtualList);
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof	AnimationCoordinatorFactory
+ * @public
+ *
+ * @param this	Function scope
+ */
 void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::destructor: null this");
@@ -84,6 +110,14 @@ void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
 	__SINGLETON_DESTROY;
 }
 
+/**
+ * Reset
+ *
+ * @memberof	AnimationCoordinatorFactory
+ * @private
+ *
+ * @param this	Function scope
+ */
 void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::reset: null this");
@@ -98,6 +132,19 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 	VirtualList_clear(this->animationCoordinators);
 }
 
+/**
+ * Get Coordinator
+ *
+ * @memberof					AnimationCoordinatorFactory
+ * @public
+ *
+ * @param this					Function scope
+ * @param animationController
+ * @param sprite
+ * @param charSetDefinition
+ *
+ * @return						AnimationCoordinator instance
+ */
 AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");

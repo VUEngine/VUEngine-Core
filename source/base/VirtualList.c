@@ -44,7 +44,6 @@
 /**
  * @class	VirtualList
  * @extends Object
- * @brief
  */
 __CLASS_DEFINITION(VirtualList, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

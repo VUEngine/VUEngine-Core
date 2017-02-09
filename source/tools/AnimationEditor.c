@@ -82,7 +82,10 @@
 		/* mode */																						\
 		int mode;																						\
 
-// define the AnimationEditor
+/**
+ * @class	AnimationEditor
+ * @extends Object
+ */
 __CLASS_DEFINITION(AnimationEditor, Object);
 
 enum Modes

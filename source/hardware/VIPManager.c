@@ -55,6 +55,11 @@ u32* _currentDrawingFrameBufferSet = NULL;
 extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 extern BrightnessRepeatROMDef DEFAULT_BRIGHTNESS_REPEAT;
 
+/**
+ * Texture Post Processing Effect Registry
+ *
+ * @memberof VIPManager
+ */
 typedef struct PostProcessingEffectRegistry
 {
 	PostProcessingEffect postProcessingEffect;
@@ -76,10 +81,11 @@ typedef struct PostProcessingEffectRegistry
 		u32 currentDrawingFrameBufferSet;																\
 		u16 gameFrameStarted;																			\
 
-
-// define the VIPManager
+/**
+ * @class	VIPManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(VIPManager, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

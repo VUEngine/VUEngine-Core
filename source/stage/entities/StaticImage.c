@@ -33,7 +33,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the StaticImage
+/**
+ * @class	StaticImage
+ * @extends Entity
+ */
 __CLASS_DEFINITION(StaticImage, Entity);
 
 

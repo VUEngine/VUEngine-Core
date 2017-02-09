@@ -9,13 +9,10 @@ Graphics
 
 The engine abstracts Virtual Boy's VIP's memory sections in the following classes:
 
-•	CHAR memory: CharSet
-
-•	BGMAP memory: BgmapTexture
-
-•	OBJ memory: ObjectTexture
-
-•	WORLD memory: Sprite (BgmapSprite and ObjectSprite)
+- CHAR memory: CharSet
+- BGMAP memory: BgmapTexture
+- OBJ memory: ObjectTexture
+- WORLD memory: Sprite (BgmapSprite and ObjectSprite)
 
 To allocate CHAR memory, the CharSetManager's getCharSet method must be called, which, depending on the CharSetDefintion's allocation type, will create a new CharSet or return an existing one.
 
@@ -41,7 +38,7 @@ Each object segment is allocated by an ObjectSpriteContainer.
 
 ### Sprites
 
-`Sprites` are the base class used to display the graphics
+A `Sprite` is the base class used to display the graphics.
 
 #### BgmapSprite
 
@@ -71,7 +68,7 @@ Each object segment is allocated by an ObjectSpriteContainer.
 Since there can be sprites with many frames of animations like the game's main character, and sprites with simple animations like enemies or background elements, there is the need to allocate textures in different ways to maximize the hardware's resources. Because of this, the engine provides multiple ways to allocate animations in memory:
 
 
-##### __ANIMATED
+##### __ANIMATED_SINGLE
 
 When using this animation type, the engine allocates a new CharSet and Texture for each request, and each time a new frame must be show, the engines writes directly to CHAR memory.
 For example, each one of the following AnimatedSprite has its own Texture and CharSet:
@@ -92,14 +89,13 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 
 ###### Usages: 
 - This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs.
+
 ###### Limitations:
 - Textures that use CharSets with this type of allocation must not be preloaded, since the preloaded instance will be unusable.
 - Char definition must not be optimized and each group of CHARs that form a frame of animation must preserve the order of the first frame's CHARs as specified by the BGMAP definition. Supposing that a Sprite has 3 animation frames, the Texture's size is 3x3 CHARS, and the BGMAP definition looks like:
 	
 		0 1 2
-	
 		3 4 5
-
 		6 7 8
 
 where each number signifies and index in CHAR memory; then if the 9 CHARs (0-8) that form the first frame of animation have the following appearance: 
@@ -139,10 +135,13 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 
 ###### Usages:
 - This type of animation should be used when there are many instances of the same AnimatedSprite definition, which has with too many animation frames or whose graphics occupies too many CHARs, and whose animations can be synchronized.
+
 ###### Limitations: 
 - Playing an animation in one AnimatedSprite instance will affect the others, and playing animations in different instances will waste processor time, since only the last rendered AnimatedSprite's current animation frame will be shown.
+
 ###### Downsides:
 - Impacts performance.
+
 ###### Remarks:
 - If only one animated sprite instance use the CharSet, it behaves exactly as the __ANIMATED_SINGLE type.
 
@@ -176,8 +175,10 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 
 ###### Usages:
 - This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs, but when their instances must not be necessarily synchronized.
+
 ###### Limitations:
 - When using a __WRLD_AFFINE BgmapSprite, each time that an animation frame have to be rendered, the affine table must be computed.
+
 ###### Downsides:
 - Uses too much CHAR memory.
 

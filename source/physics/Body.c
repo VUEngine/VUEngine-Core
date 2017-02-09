@@ -37,7 +37,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Body
+/**
+ * @class	Body
+ * @extends Object
+ */
 __CLASS_DEFINITION(Body, Object);
 
 

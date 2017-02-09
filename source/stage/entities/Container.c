@@ -33,8 +33,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	Container
+ * @extends SpatialObject
+ */
 __CLASS_DEFINITION(Container, SpatialObject);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

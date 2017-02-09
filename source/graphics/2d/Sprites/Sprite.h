@@ -82,31 +82,73 @@
 		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
 
 #define Sprite_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* displacement modifier to achieve better control over display */								\
+		/*
+		 * @var VBVecWorld 			displacement
+		 * @brief					Displacement modifier to achieve better control over display
+		 * @memberof				Sprite
+		 */																								\
 		VBVecWorld displacement;																		\
-		/* animation controller */																		\
+		/*
+		 * @var AnimationController animationController
+		 * @brief					AnimationController
+		 * @memberof				Sprite
+		 */																								\
 		AnimationController animationController;														\
-		/* this is our texture */																		\
+		/*
+		 * @var Texture 			texture
+		 * @brief					Our texture
+		 * @memberof				Sprite
+		 */																								\
 		Texture texture;																				\
-		/* texture's half width */																		\
+		/*
+		 * @var fix19_13 			halfWidth
+		 * @brief					Texture's half width
+		 * @memberof				Sprite
+		 */																								\
 		fix19_13 halfWidth;																				\
-		/* texture's half height */																		\
+		/*
+		 * @var fix19_13 			halfHeight
+		 * @brief					Texture's half height
+		 * @memberof				Sprite
+		 */																								\
 		fix19_13 halfHeight;																			\
-		/* head definition for world entry setup */														\
+		/*
+		 * @var u16 				head
+		 * @brief					Head definition for world entry setup
+		 * @memberof				Sprite
+		 */																								\
 		u16 head;																						\
-		/* world layer where to render the texture */													\
+		/*
+		 * @var u8 					worldLayer
+		 * @brief					World layer where to render the texture
+		 * @memberof				Sprite
+		 */																								\
 		u8 worldLayer;																					\
-		/* h-bias max amplitude */																		\
-		/* int hbiasAmplitude; */																		\
-		/*	*/																							\
+		/*int hbiasAmplitude;*/																			\
+		/*
+		 * @var bool 				hidden
+		  * @brief
+		  * @memberof				Sprite
+		  */																							\
 		bool hidden;																					\
-		/* update animation */																			\
+		/*
+		 * @var bool 				writeAnimationFrame
+		 * @brief					Update animation
+		 * @memberof				Sprite
+		 */																								\
 		bool writeAnimationFrame : 2;																	\
-		/* flag for making it transparent */															\
+		/*
+		 * @var bool 				transparent
+		 * @brief					Flag for making it transparent
+		 * @memberof				Sprite
+		 */																								\
 		bool transparent : 2;																			\
-		/* flag for transparency control */																\
+		/*
+		 * @var bool 				visible
+		 * @brief					Flag for transparency control
+		 * @memberof				Sprite
+		 */																								\
 		bool visible : 2;																				\
 
 __CLASS(Sprite);
@@ -116,57 +158,88 @@ __CLASS(Sprite);
 //											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A SpriteDefinition
+ *
+ * @memberof	Sprite
+ */
 typedef struct SpriteDefinition
 {
-	// the class allocator
+	/// the class allocator
 	AllocatorPointer allocator;
 
-	// texture to use with the sprite
+	/// texture to use with the sprite
 	TextureDefinition* textureDefinition;
 
-	// is it transparent
+	/// is it transparent
 	bool transparent;
 
-	// displacement modifier to achieve better control over display
+	/// displacement modifier to achieve better control over display
 	VBVecWorld displacement;
 
 } SpriteDefinition;
 
+/**
+ * A SpriteDefinition that is stored in ROM
+ *
+ * @memberof	Sprite
+ */
 typedef const SpriteDefinition SpriteROMDef;
 
-// a function which defines the frames to play
+
+/**
+ * A function which defines the frames to play
+ *
+ * @memberof	Sprite
+ */
 typedef struct AnimationFunction
 {
-	// number of frames of this animation function
+	/// number of frames of this animation function
 	int numberOfFrames;
 
-	// frames to play in animation
+	/// frames to play in animation
 	u32 frames[__MAX_FRAMES_PER_ANIMATION_FUNCTION];
 
-	// number of cycles a frame of animation is displayed
+	/// number of cycles a frame of animation is displayed
 	int delay;
 
-	// whether to play it in loop or not
+	/// whether to play it in loop or not
 	int loop;
 
-	// method to call on function completion
+	/// method to call on function completion
 	EventListener onAnimationComplete;
 
-	// function's name
+	/// function's name
 	char name[__MAX_ANIMATION_FUNCTION_NAME_LENGTH];
 
 } AnimationFunction;
 
+/**
+ * An AnimationFunction that is stored in ROM
+ *
+ * @memberof	Sprite
+ */
 typedef const AnimationFunction AnimationFunctionROMDef;
 
-// an animation definition
+
+
+/**
+ * An animation definition
+ *
+ * @memberof	Sprite
+ */
 typedef struct AnimationDescription
 {
-	// animation functions
+	/// animation functions
 	AnimationFunction* animationFunctions[__MAX_ANIMATION_FUNCTIONS];
 
 } AnimationDescription;
 
+/**
+ * An AnimationDescription that is stored in ROM
+ *
+ * @memberof	Sprite
+ */
 typedef const AnimationDescription AnimationDescriptionROMDef;
 
 
@@ -176,48 +249,50 @@ typedef const AnimationDescription AnimationDescriptionROMDef;
 
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, Object owner);
 void Sprite_destructor(Sprite this);
-Scale Sprite_getScale(Sprite this);
-void Sprite_resize(Sprite this, Scale scale, fix19_13 z);
-Texture Sprite_getTexture(Sprite this);
+
+// general
+u16 Sprite_getHead(Sprite this);
 u16 Sprite_getMode(Sprite this);
+Scale Sprite_getScale(Sprite this);
+Texture Sprite_getTexture(Sprite this);
 u32 Sprite_getWorldHead(Sprite this);
+u16 Sprite_getWorldHeight(Sprite this);
+u8 Sprite_getWorldLayer(Sprite this);
+u16 Sprite_getWorldWidth(Sprite this);
 s16 Sprite_getWorldX(Sprite this);
 s16 Sprite_getWorldY(Sprite this);
-u16 Sprite_getWorldWidth(Sprite this);
-u16 Sprite_getWorldHeight(Sprite this);
-void Sprite_rewrite(Sprite this);
-void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
-u8 Sprite_getWorldLayer(Sprite this);
-u16 Sprite_getHead(Sprite this);
-void Sprite_show(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
 bool Sprite_isTransparent(Sprite this);
+void Sprite_resize(Sprite this, Scale scale, fix19_13 z);
+void Sprite_rewrite(Sprite this);
 void Sprite_setTransparent(Sprite this, bool value);
+void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
+void Sprite_show(Sprite this);
 
 // animation
-void Sprite_update(Sprite this);
 void Sprite_animate(Sprite this);
-void Sprite_pause(Sprite this, bool pause);
-void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName);
+s8 Sprite_getActualFrame(Sprite this);
+VBVecWorld Sprite_getDisplacement(Sprite this);
+s8 Sprite_getFrameDelay(Sprite this);
+int Sprite_getHalfHeight(Sprite this);
+int Sprite_getHalfWidth(Sprite this);
 bool Sprite_isPlaying(Sprite this);
 bool Sprite_isPlayingFunction(Sprite this, char* functionName);
-void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta);
-s8 Sprite_getActualFrame(Sprite this);
-void Sprite_setActualFrame(Sprite this, s8 actualFrame);
-s8 Sprite_getFrameDelay(Sprite this);
-void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
-void Sprite_writeAnimation(Sprite this);
-VBVecWorld Sprite_getDisplacement(Sprite this);
+void Sprite_pause(Sprite this, bool pause);
+void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName);
 void Sprite_rotate(Sprite this, const Rotation* rotation);
-int Sprite_getHalfWidth(Sprite this);
-int Sprite_getHalfHeight(Sprite this);
+void Sprite_setActualFrame(Sprite this, s8 actualFrame);
+void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta);
+void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
+void Sprite_update(Sprite this);
+void Sprite_writeAnimation(Sprite this);
 
 // direct draw
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
 void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
-// affine fx
+// affine & hbias fx
 void Sprite_applyAffineTransformations(Sprite this);
 void Sprite_applyHbiasTransformations(Sprite this);
 

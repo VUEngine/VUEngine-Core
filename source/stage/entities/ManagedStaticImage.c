@@ -34,8 +34,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	ManagedStaticImage
+ * @extends RecyclableImage
+ */
 __CLASS_DEFINITION(ManagedStaticImage, RecyclableImage);
-
 __CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);

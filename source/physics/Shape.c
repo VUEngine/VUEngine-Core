@@ -33,7 +33,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the Shape
+/**
+ * @class	Shape
+ * @extends Object
+ */
 __CLASS_DEFINITION(Shape, Object);
 
 

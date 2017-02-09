@@ -45,8 +45,11 @@
 		/* stack of states */																			\
 		VirtualList stateStack;																			\
 
+/**
+ * @class 	StateMachine
+ * @extends Object
+ */
 __CLASS_DEFINITION(StateMachine, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

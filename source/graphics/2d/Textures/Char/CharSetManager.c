@@ -44,9 +44,11 @@
 		/* next offset to reclaim */																	\
 		u16 freedOffset;																				\
 
-// define the CharSetManager
+/**
+ * @class 	CharSetManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(CharSetManager, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

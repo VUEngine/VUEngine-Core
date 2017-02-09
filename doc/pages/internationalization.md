@@ -1,7 +1,7 @@
 Internationalization
 ====================
 
-The Internationalization ("I18n") module allows you to add multiple selectable languages to your project.
+The Internationalization ("I18n") class allows you to add multiple selectable languages to your project.
 
 
 Defining strings

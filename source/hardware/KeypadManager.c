@@ -44,7 +44,10 @@
 		/*  */																							\
 		u32 enabled;																					\
 
-// define the KeypadManager
+/**
+ * @class	KeypadManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(KeypadManager, Object);
 
 

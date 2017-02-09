@@ -41,6 +41,10 @@ Shape SpatialObject_getShape(SpatialObject this);
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	SpatialObject
+ * @extends Object
+ */
 __CLASS_DEFINITION(SpatialObject, Object);
 
 

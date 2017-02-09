@@ -36,12 +36,16 @@
 
 #define __ALIGN_PADDING		1
 
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	CollisionSolver
+ * @extends Object
+ */
 __CLASS_DEFINITION(CollisionSolver, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

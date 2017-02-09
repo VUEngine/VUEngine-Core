@@ -35,9 +35,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the InGameEntity
+/**
+ * @class	InGameEntity
+ * @extends Entity
+ */
 __CLASS_DEFINITION(InGameEntity, Entity);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

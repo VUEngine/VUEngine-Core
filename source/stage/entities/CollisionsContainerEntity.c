@@ -32,7 +32,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the CollisionsContainerEntity
+/**
+ * @class	CollisionsContainerEntity
+ * @extends Entity
+ */
 __CLASS_DEFINITION(CollisionsContainerEntity, Entity);
 
 

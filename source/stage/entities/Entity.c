@@ -45,7 +45,6 @@
 /**
  * @class	Entity
  * @extends	Container
- * @brief
  */
 __CLASS_DEFINITION(Entity, Container);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

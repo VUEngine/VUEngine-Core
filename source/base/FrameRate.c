@@ -36,7 +36,7 @@
 #define FrameRate_ATTRIBUTES																			\
 		Object_ATTRIBUTES																				\
 		/**
-		 * @var u16	 fps
+		 * @var u16	 	fps
 		 * @brief		Frames per second
 		 * @memberof	FrameRate
 		 */																								\

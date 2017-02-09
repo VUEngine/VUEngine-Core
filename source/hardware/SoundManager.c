@@ -98,6 +98,11 @@ static const unsigned char sinWave[32] =
 	0x20, 0x21, 0x22, 0x25, 0x29, 0x2E, 0x33, 0x39
 };
 
+/**
+ * Sound Registry
+ *
+ * @memberof SoundManager
+ */
 typedef struct SOUNDREG
 {
 	// this table is for the most part untested, but looks to be accurate
@@ -156,6 +161,10 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 		/* space position of each fx */																	\
 		VBVec2D fxPosition[__FXS];																		\
 
+/**
+ * @class	SoundManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(SoundManager, Object);
 
 

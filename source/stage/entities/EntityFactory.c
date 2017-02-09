@@ -36,13 +36,19 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-
-// define the EntityFactory
+/**
+ * @class	EntityFactory
+ * @extends Object
+ */
 __CLASS_DEFINITION(EntityFactory, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-
+/**
+ * Positioned Entity Description
+ *
+ * @memberof EntityFactory
+ */
 typedef struct PositionedEntityDescription
 {
 	PositionedEntity* positionedEntity;

@@ -54,9 +54,11 @@
 		/* flag to block removals when traversing the shapes list */									\
 		bool checkingCollisions;																		\
 
-// define the CollisionManager
+/**
+ * @class	CollisionManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(CollisionManager, Object);
-
 __CLASS_FRIEND_DEFINITION(Shape);
 __CLASS_FRIEND_DEFINITION(Clock);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

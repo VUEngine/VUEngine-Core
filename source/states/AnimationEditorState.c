@@ -53,6 +53,10 @@ static bool AnimationEditorState_processMessage(AnimationEditorState this __attr
 		/* inherits */																					\
 		GameState_ATTRIBUTES																			\
 
+/**
+ * @class	AnimationEditorState
+ * @extends GameState
+ */
 __CLASS_DEFINITION(AnimationEditorState, GameState);
 
 

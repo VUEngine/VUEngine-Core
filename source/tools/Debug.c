@@ -155,9 +155,11 @@
 		/* temporal array to hold char data */															\
 		BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];												\
 
-// define the Debug
+/**
+ * @class	Debug
+ * @extends Object
+ */
 __CLASS_DEFINITION(Debug, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

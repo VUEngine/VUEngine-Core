@@ -31,8 +31,11 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class 	ObjectAnimationCoordinator
+ * @extends AnimationCoordinator
+ */
 __CLASS_DEFINITION(ObjectAnimationCoordinator, AnimationCoordinator);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 

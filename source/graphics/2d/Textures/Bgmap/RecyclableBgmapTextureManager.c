@@ -39,12 +39,19 @@
 		/* textureRegistries */																			\
 		VirtualList textureRegistries;																	\
 
+/**
+ * @class 	RecyclableBgmapTextureManager
+ * @extends Object
+ */
 __CLASS_DEFINITION(RecyclableBgmapTextureManager, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-
+/**
+ * Texture Registry
+ *
+ * @memberof RecyclableBgmapTextureManager
+ */
 typedef struct TextureRegistry
 {
 	Texture texture;

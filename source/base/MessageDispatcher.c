@@ -56,21 +56,26 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 		/* delayed messages */																			\
 		VirtualList delayedMessagesToDispatch;															\
 
+/**
+ * @class 	MessageDispatcher
+ * @extends Object
+ */
 __CLASS_DEFINITION(MessageDispatcher, Object);
-
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-
+/**
+ * Delayed Message
+ *
+ * @memberof MessageDispatcher
+ */
 typedef struct DelayedMessage
 {
-	// pointer to the telegram to dispatch
+	/// pointer to the telegram to dispatch
 	Telegram telegram;
-
-	// time of arrival
+	/// time of arrival
 	u32 timeOfArrival;
-
-	// reference to clock
+	/// reference to clock
 	Clock clock;
 
 } DelayedMessage;

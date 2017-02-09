@@ -36,7 +36,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// define the AnimationController
+/**
+ * @class 	AnimationController
+ * @extends Object
+ */
 __CLASS_DEFINITION(AnimationController, Object);
 
 

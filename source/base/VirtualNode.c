@@ -43,9 +43,7 @@ static void VirtualNode_destructor(VirtualNode this);
 /**
  * @class	VirtualNode
  * @extends Object
- * @brief
  */
-
 __CLASS_DEFINITION(VirtualNode, Object);
 
 

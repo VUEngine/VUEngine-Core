@@ -44,6 +44,10 @@
 		/* who is to receive this telegram */															\
 		void* receiver;																					\
 
+/**
+ * @class 	Telegram
+ * @extends Object
+ */
 __CLASS_DEFINITION(Telegram, Object);
 
 

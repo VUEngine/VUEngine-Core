@@ -49,10 +49,10 @@
 #include <Printing.h>
 #endif
 
+
 //---------------------------------------------------------------------------------------------------------
 // 												MACROS
 //---------------------------------------------------------------------------------------------------------
-
 
 #define __STREAMING_CYCLES		5
 
@@ -69,15 +69,20 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-
-// define the Stage
+/**
+ * @class	Stage
+ * @extends Container
+ */
 __CLASS_DEFINITION(Stage, Container);
-
 __CLASS_FRIEND_DEFINITION(Container);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-
+/**
+ * Stage Entity Description
+ *
+ * @memberof Stage
+ */
 typedef struct StageEntityDescription
 {
 	PositionedEntity* positionedEntity;
@@ -86,6 +91,7 @@ typedef struct StageEntityDescription
 	long distance;
 
 } StageEntityDescription;
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES

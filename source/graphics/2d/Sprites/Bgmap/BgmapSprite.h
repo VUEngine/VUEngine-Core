@@ -45,6 +45,7 @@
 
 #define __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1	1
 
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -117,6 +118,8 @@ __CLASS_NEW_DECLARE(BgmapSprite, const BgmapSpriteDefinition* bgmapSpriteDefinit
 
 void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 void BgmapSprite_destructor(BgmapSprite this);
+
+// general
 Scale BgmapSprite_getScale(BgmapSprite this);
 void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
@@ -134,20 +137,15 @@ void BgmapSprite_setParam(BgmapSprite this, u32 param);
 void BgmapSprite_render(BgmapSprite this);
 void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement);
 
-
-//---------------------------------------------------------------------------------------------------------
-//										BgmapSprites FXs
-//---------------------------------------------------------------------------------------------------------
-
 // direct draw
 void BgmapSprite_putChar(BgmapSprite this, Point* texturePixel, BYTE* newChar);
 void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 
-// Affine FX
+// affine & hbias fx
 void BgmapSprite_applyAffineTransformations(BgmapSprite this);
 void BgmapSprite_applyHbiasTransformations(BgmapSprite this);
-
 void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
 void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
+
 
 #endif

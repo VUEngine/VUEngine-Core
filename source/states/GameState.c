@@ -35,6 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * @class	GameState
+ * @extends State
+ */
 __CLASS_DEFINITION(GameState, State);
 
 
