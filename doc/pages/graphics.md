@@ -214,7 +214,7 @@ If the animated sprites at both ends are ObjectSprites, then the inspection of O
 - This type of animation should be used for animated sprites with too many animation frames or whose graphics occupies too many CHARs, but when their instances must not be necessarily synchronized.
 
 ###### Limitations:
-- When using a __WRLD_AFFINE BgmapSprite, each time that an animation frame have to be rendered, the affine table must be computed.
+- When using a __WORLD_AFFINE BgmapSprite, each time that an animation frame have to be rendered, the affine table must be computed.
 
 ###### Downsides:
 - Uses too much CHAR memory.

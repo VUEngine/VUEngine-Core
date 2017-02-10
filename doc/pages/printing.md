@@ -16,11 +16,11 @@ Here's an example that outputs the string "Hello, World!" at position {10, 0} us
 registered under the name "CustomFont".
 
     Printing_text(
-        Printing_getInstance(), // Printing instance
-        "Hello, World!", // text
-        10, // x position
-        0, // y position
-        "CustomFont", // font name
+        Printing_getInstance(),		// Printing instance
+        "Hello, World!",			// text
+        10,							// x position
+        0,							// y position
+        "CustomFont",				// font name
     );
 
 The whole printing layer can be cleared with the `Printing_clear` method.
@@ -48,20 +48,11 @@ With that macro defined, the engine expects you to define a *NULL terminated* ar
     
     FontROMDef FONT_8x8 =
     {
-        // font chars definition pointer
-        font8x8Tiles,
-        
-        // number of characters in font
-        256,
-        
-        // character number at which the font starts, allows you to skip the control characters for example
-        0,
-        
-        // size of a single character (in chars) ({width, height})
-        {1, 1},
-        
-        // font's name
-        "Font8x8",
+	    font8x8Tiles,			// font chars definition pointer
+        256,					// number of characters in font
+        0,						// character number at which the font starts, allows you to skip the control characters for example
+        {1, 1},					// size of a single character (in chars) ({width, height})
+        "Font8x8",				// font's name
     };
     
     const FontROMDef* __FONTS[] =
