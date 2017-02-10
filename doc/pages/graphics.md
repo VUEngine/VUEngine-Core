@@ -87,6 +87,10 @@ Displacement vectors in SpriteDefinitions are used to manipulate the Sprite's co
 
 This kind of `Sprite` uses a `BgmapTexture` and is displayed in one of the VIP's 32 WORLD layers. It requests a WORLD to the `SpriteManager` and relinquish it when deleted. The WORLD that it uses is constantly updated according to its z coordinate and that of the other sprites.
 
+#### MBgmapSprite
+
+This kind of `BgmapSprite` is used to display textures that expand across multiple BGMAP segments. Check the Virtual Boy's documentation for an explanation of the available configurations.
+
 #### ObjectSprite
 
 This kind of `Sprite` uses an `ObjectTexture` and is displayed in one of the VIP's 4 WORLD layers dedicated to OBJECTS. It registers itself with one of the 4 object sprite containers created by the engine and unregisters from it when deleted.
@@ -241,7 +245,7 @@ It is meant to be used mainly for debugging purposes and for very light game fea
 
 ### Polyhedron
 
-This class is used to draw 3D bodies into the screen. They are composed of a list of sorted vertexes.
+This class is used to draw 3D bodies into the screen. It keeps a list of sorted vertexes.
 
 ### PolyhedronManager
 
