@@ -140,8 +140,11 @@ Trying to instantiate an abstract Entity will result in an exception in `__DEBUG
 Friend class
 ------------
 
-[TODO]
+The engine supports friend classes through the use of the following macro:
+ 
+	__CLASS_FRIEND_DEFINITION(ClassName)
 
+This allow access to the friend class' attributes through a pointer to an instance of that class.
 
 Singleton
 ---------
@@ -165,3 +168,38 @@ In any case, a singleton's instance can get retrieved through the `[ClassName]_g
 A singleton instance is destroyed with a call to `__SINGLETON_DESTROY` in the class' destructor. 
 In the case of a `__SINGLETON_DYNAMIC`, destroying the instance results in the next call to `getInstance()` to allocate a new instance in the memory pool. 
 In the case of a `__SINGLETON`, the only thing that trying to delete it accomplishes is that the constructor gets called again during the next call to `getInstance()`.
+
+Runtime type checking
+---------------------
+
+The engine supports runtime type checking through the following methods and macros:
+
+#### Upcast and downcast
+
+It is possible to upcast or downcast object pointers by using the following macro:
+
+	__GET_CAST(ClassName, object)
+	
+If the cast success, the returned value is the same object pointer; if it fails, the returned value is NULL.
+
+These cases should be sparingly used since the performance overhead that they produce can have a negative impact in the game's performance.
+
+#### Get object's class' name
+
+To get the name of the class of a given object use the following macro:
+
+	__GET_CLASS_NAME(object)
+	
+This macro replaces the call:
+
+	__VIRTUAL_CALL(Object, getClassName, (Object)object)
+
+The call will return a pointer to const char* that holds the name of the object's class
+
+#### Check if an object is an instance of a class
+
+It is possible to check if an object is an instance of a given class without having to type cast it by using the following code:
+
+	__IS_INSTANCE(ClassName, object)
+	
+The drawback is that this check can only detect if the object was instantiated calling the given class' allocator, but cannot tell whether the object inherits from the class or not.

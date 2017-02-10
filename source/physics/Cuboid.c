@@ -106,11 +106,11 @@ int Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
-	if(Cuboid_isInstance(__SAFE_CAST(Object, shape)))
+	if(__IS_INSTANCE(Cuboid, shape))
 	{
 		return Cuboid_overlapsCuboid(this, __SAFE_CAST(Cuboid, shape));
 	}
-	else if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
+	else if(__IS_INSTANCE(InverseCuboid, shape))
 	{
 		return Cuboid_overlapsInverseCuboid(this, __SAFE_CAST(InverseCuboid, shape));
 	}
@@ -254,11 +254,11 @@ int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject,
 
 	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
 
-	if(Cuboid_isInstance(__SAFE_CAST(Object, shape)))
+	if(__IS_INSTANCE(Cuboid, shape))
 	{
 		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithRightCuboid);
 	}
-	else if(InverseCuboid_isInstance(__SAFE_CAST(Object, shape)))
+	else if(__IS_INSTANCE(InverseCuboid, shape))
 	{
 		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithInverseRightCuboid);
 	}

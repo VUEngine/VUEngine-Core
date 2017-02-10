@@ -154,6 +154,11 @@
 		(ClassName)Object_getCast((Object)object,														\
 			(ObjectBaseClassPointer)&ClassName ## _getBaseClass, NULL)									\
 
+#define __IS_INSTANCE(ClassName, object)																	\
+																										\
+		/* try to up cast object */																		\
+		ClassName ## _isInstance(__SAFE_CAST(Object, object))
+
 // declare a virtual method
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)											\
 																										\
