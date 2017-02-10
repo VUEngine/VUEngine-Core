@@ -2,7 +2,7 @@ Configuration files
 ===================
 
 Configure the engine's behavior
--------------------------------------------
+-------------------------------
 
 The engine uses a header file called config.h were different aspects of its behavior are defined.
 
@@ -13,7 +13,7 @@ The engine provides its own config.h file, but each game should provide its own 
 For a description of the configuration parameters check the config.h file.
 
 Compilation options
--------------------------------------------
+-------------------
 
 The engine supports various options for its compilation. Among these are:
 

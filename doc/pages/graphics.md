@@ -108,7 +108,7 @@ The instance of this class manages the DRAM allocated by the engine for affine o
 
 Since there can be sprites with many frames of animations like the game's main character, and sprites with simple animations like enemies or background elements, there is the need to allocate textures in different ways to maximize the hardware's resources. Because of this, the engine provides multiple ways to allocate animations in memory:
 
-##### __ANIMATED
+##### __ANIMATED_SINGLE
 
 When using this animation type, the engine allocates a new CharSet and Texture for each request, and each time a new frame must be show, the engines writes directly to CHAR memory.
 For example, each one of the following AnimatedSprite has its own Texture and CharSet:
@@ -231,7 +231,6 @@ In order to play a specific animation, call the following method:
 Or directly:
 
     Sprite_play(__SAFE_CAST(SpriteSprite, this->sprite), animationDescription, "Blink");
-
 
 
 3D

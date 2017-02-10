@@ -807,7 +807,8 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
  * @public
  *
  * @param this			Function scope
- * @param charSetPixel	Point that defines the position of the pixel in the Sprite's texture
+ * @param texturePixel
+ * @param charSetPixel
  * @param newPixelColor	Color value of pixel
  */
 void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)

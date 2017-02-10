@@ -35,7 +35,7 @@
 
 /**
  * @class	Object
- * @brief	Base class for all other classes in the engine. It derives from nothing but itself.
+ * @brief	Base class for all other classes in the engine, it derives from nothing but itself
  */
 __CLASS_DEFINITION(Object, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
