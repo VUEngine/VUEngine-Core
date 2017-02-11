@@ -402,7 +402,7 @@ void GameState_transform(GameState this)
  * Call the initial transformation on the Stage to setup its children
  *
  * @memberof		GameState
- * @public
+ * @private
  *
  * @param this		Function scope
  */

@@ -106,7 +106,7 @@ static void AnimationEditorState_destructor(AnimationEditorState this)
  * Method called when the Game's StateMachine enters to this state
  *
  * @memberof		AnimationEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -121,7 +121,7 @@ static void AnimationEditorState_enter(AnimationEditorState this __attribute__ (
  * Method called when by the StateMachine's update method
  *
  * @memberof		AnimationEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -135,7 +135,7 @@ static void AnimationEditorState_execute(AnimationEditorState this __attribute__
  * Method called when the Game's StateMachine exits from this state
  *
  * @memberof		AnimationEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -150,7 +150,7 @@ static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((
  * Method called when the Game's StateMachine receives a message to be processed
  *
  * @memberof		AnimationEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner

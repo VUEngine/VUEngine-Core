@@ -106,7 +106,7 @@ static void StageEditorState_destructor(StageEditorState this)
  * Method called when the Game's StateMachine enters to this state
  *
  * @memberof		StageEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -121,7 +121,7 @@ static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)
  * Method called when by the StateMachine's update method
  *
  * @memberof		StageEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -135,7 +135,7 @@ static void StageEditorState_execute(StageEditorState this __attribute__ ((unuse
  * Method called when the Game's StateMachine exits from this state
  *
  * @memberof		StageEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -150,7 +150,7 @@ static void StageEditorState_exit(StageEditorState this __attribute__ ((unused))
  * Method called when the Game's StateMachine receives a message to be processed
  *
  * @memberof		StageEditorState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner

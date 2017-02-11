@@ -106,7 +106,7 @@ static void DebugState_destructor(DebugState this)
  * Method called when the Game's StateMachine enters to this state
  *
  * @memberof		DebugState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -121,7 +121,7 @@ static void DebugState_enter(DebugState this __attribute__ ((unused)), void* own
  * Method called when by the StateMachine's update method
  *
  * @memberof		DebugState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -135,7 +135,7 @@ static void DebugState_execute(DebugState this __attribute__ ((unused)), void* o
  * Method called when the Game's StateMachine exits from this state
  *
  * @memberof		DebugState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
@@ -150,7 +150,7 @@ static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owne
  * Method called when the Game's StateMachine receives a message to be processed
  *
  * @memberof		DebugState
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param owner		StateMachine's owner
