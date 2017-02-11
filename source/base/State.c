@@ -43,10 +43,6 @@ __CLASS_DEFINITION(State, Object);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// defined just to get rid of a warning
-__CLASS_NEW_DEFINITION(State)
-__CLASS_NEW_END(State);
-
 /**
  * Class constructor
  *
@@ -85,7 +81,7 @@ void State_destructor(State this)
  * @public
  *
  * @param this		Function scope
- * @param owner		the StateMachine's owner
+ * @param owner		StateMachine's owner
  */
 void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {

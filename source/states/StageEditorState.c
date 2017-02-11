@@ -64,43 +64,99 @@ __CLASS_DEFINITION(StageEditorState, GameState);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// it's a singleton
+/**
+ * Get instance
+ *
+ * @fn			StageEditorState_getInstance()
+ * @memberof	StageEditorState
+ * @public
+ *
+ * @return		StageEditorState instance
+ */
 __SINGLETON(StageEditorState);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	StageEditorState
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorState this)
 {
 	__CONSTRUCT_BASE(GameState);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	StageEditorState
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void StageEditorState_destructor(StageEditorState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
-// state's enter
+/**
+ * Method called when the Game's StateMachine enters to this state
+ *
+ * @memberof		StageEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	StageEditor_start(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
-// state's execute
+/**
+ * Method called when by the StateMachine's update method
+ *
+ * @memberof		StageEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	StageEditor_update(StageEditor_getInstance());
 }
 
-// state's exit
+/**
+ * Method called when the Game's StateMachine exits from this state
+ *
+ * @memberof		StageEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	StageEditor_stop(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
-// state's on message
+/**
+ * Method called when the Game's StateMachine receives a message to be processed
+ *
+ * @memberof		StageEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ *
+ * @return 			True if no further processing of the message is required
+ */
 static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	// process message

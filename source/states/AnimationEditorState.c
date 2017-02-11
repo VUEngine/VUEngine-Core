@@ -64,43 +64,99 @@ __CLASS_DEFINITION(AnimationEditorState, GameState);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// it's a singleton
+/**
+ * Get instance
+ *
+ * @fn			AnimationEditorState_getInstance()
+ * @memberof	AnimationEditorState
+ * @public
+ *
+ * @return		AnimationEditorState instance
+ */
 __SINGLETON(AnimationEditorState);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	AnimationEditorState
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) AnimationEditorState_constructor(AnimationEditorState this)
 {
 	__CONSTRUCT_BASE(GameState);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	AnimationEditorState
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void AnimationEditorState_destructor(AnimationEditorState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
-// state's enter
+/**
+ * Method called when the Game's StateMachine enters to this state
+ *
+ * @memberof		AnimationEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void AnimationEditorState_enter(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	AnimationEditor_start(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
-// state's execute
+/**
+ * Method called when by the StateMachine's update method
+ *
+ * @memberof		AnimationEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void AnimationEditorState_execute(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	AnimationEditor_update(AnimationEditor_getInstance());
 }
 
-// state's exit
+/**
+ * Method called when the Game's StateMachine exits from this state
+ *
+ * @memberof		AnimationEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	AnimationEditor_stop(AnimationEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
-// state's on message
+/**
+ * Method called when the Game's StateMachine receives a message to be processed
+ *
+ * @memberof		AnimationEditorState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ *
+ * @return 			True if no further processing of the message is required
+ */
 static bool AnimationEditorState_processMessage(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	// process message

@@ -64,43 +64,99 @@ __CLASS_DEFINITION(DebugState, GameState);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// it's a singleton
+/**
+ * Get instance
+ *
+ * @fn			DebugState_getInstance()
+ * @memberof	DebugState
+ * @public
+ *
+ * @return		DebugState instance
+ */
 __SINGLETON(DebugState);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	DebugState
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) DebugState_constructor(DebugState this)
 {
 	__CONSTRUCT_BASE(GameState);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	DebugState
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void DebugState_destructor(DebugState this)
 {
 	// destroy base
 	__SINGLETON_DESTROY;
 }
 
-// state's enter
+/**
+ * Method called when the Game's StateMachine enters to this state
+ *
+ * @memberof		DebugState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
-// state's execute
+/**
+ * Method called when by the StateMachine's update method
+ *
+ * @memberof		DebugState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	Debug_update(Debug_getInstance());
 }
 
-// state's exit
+/**
+ * Method called when the Game's StateMachine exits from this state
+ *
+ * @memberof		DebugState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
-// state's on message
+/**
+ * Method called when the Game's StateMachine receives a message to be processed
+ *
+ * @memberof		DebugState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ *
+ * @return 			True if no further processing of the message is required
+ */
 static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	// process message

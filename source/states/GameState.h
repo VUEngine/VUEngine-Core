@@ -70,7 +70,7 @@
 		VBVec3D screenPosition;																			\
 		/* clock for messaging */																		\
 		Clock messagingClock;																			\
-		/* clock for cycle update */																	\
+		/* clock for update cycle */																	\
 		Clock updateClock;																				\
 		/* clock for physics */																			\
 		Clock physicsClock;																				\
@@ -92,12 +92,13 @@ void GameState_exit(GameState this, void* owner);
 void GameState_suspend(GameState this, void* owner);
 void GameState_resume(GameState this, void* owner);
 bool GameState_processMessage(GameState this, void* owner, Telegram telegram);
+int GameState_propagateMessage(GameState this, int message);
 void GameState_stream(GameState this);
 void GameState_transform(GameState this);
 void GameState_updateVisuals(GameState this);
-int GameState_propagateMessage(GameState this, int message);
+void GameState_updatePhysics(GameState this);
+u32 GameState_processCollisions(GameState this);
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
-void GameState_setCanStream(GameState this, int canStream);
 Stage GameState_getStage(GameState this);
 Clock GameState_getMessagingClock(GameState this);
 Clock GameState_getUpdateClock(GameState this);
@@ -106,15 +107,13 @@ void GameState_startClocks(GameState this);
 void GameState_stopClocks(GameState this);
 void GameState_pauseClocks(GameState this);
 void GameState_resumeClocks(GameState this);
-void GameState_startMessagingClock(GameState this);
+void GameState_startDispatchingDelayedMessages(GameState this);
 void GameState_startAnimations(GameState this);
 void GameState_startPhysics(GameState this);
-void GameState_pauseInGameClock(GameState this, bool pause);
+void GameState_pauseMessagingClock(GameState this, bool pause);
 void GameState_pauseAnimations(GameState this, bool pause);
 void GameState_pausePhysics(GameState this, bool pause);
-void GameState_updatePhysics(GameState this);
 PhysicalWorld GameState_getPhysicalWorld(GameState this);
-u32 GameState_processCollisions(GameState this);
 CollisionManager GameState_getCollisionManager(GameState this);
 
 

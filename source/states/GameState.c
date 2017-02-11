@@ -53,7 +53,14 @@ static void GameState_initialTransform(GameState this);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_constructor(GameState this)
 {
 	ASSERT(this, "GameState::constructor: null this");
@@ -77,7 +84,14 @@ void GameState_constructor(GameState this)
 	this->previousUpdateTime = 0;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_destructor(GameState this)
 {
 	ASSERT(this, "GameState::destructor: null this");
@@ -103,7 +117,15 @@ void GameState_destructor(GameState this)
 	__DESTROY_BASE;
 }
 
-// state's enter
+/**
+ * Method called when the Game's StateMachine enters to this state
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::enter: null this");
@@ -113,7 +135,15 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 	Clock_start(this->messagingClock);
 }
 
-// state's execute
+/**
+ * Method called when by the StateMachine's update method
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::execute: null this");
@@ -128,7 +158,15 @@ void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 	}
 }
 
-// state's exit
+/**
+ * Method called when the Game's StateMachine exits from this state
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::exit: null this");
@@ -150,7 +188,15 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 	CollisionManager_reset(this->collisionManager);
 }
 
-// state's suspend
+/**
+ * Method called when the StateMachine enters another state without exiting this one
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::suspend: null this");
@@ -189,7 +235,15 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 #endif
 }
 
-// state's execute
+/**
+ * Method called when the StateMachine returns to this state from another
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::resume: null this");
@@ -262,7 +316,17 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	Clock_pause(this->messagingClock, false);
 }
 
-// state's on message
+/**
+ * Method called when the Game's StateMachine receives a message to be processed
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ *
+ * @return 			True if no further processing of the message is required
+ */
 bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
@@ -270,7 +334,29 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
 	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, Telegram_getMessage(telegram));
 }
 
-// state's execute
+/**
+ * Start pass a message to the Stage for it to forward to its children
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			The result of the propagation of the message
+ */
+int GameState_propagateMessage(GameState this, int message)
+{
+	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, message);
+}
+
+/**
+ * Start a streaming cycle on the Stage
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_stream(GameState this)
 {
 	ASSERT(this, "GameState::stream: null this");
@@ -278,7 +364,14 @@ void GameState_stream(GameState this)
 	Stage_stream(this->stage);
 }
 
-// update level entities' positions
+/**
+ * Start a transformation cycle on the Stage
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_transform(GameState this)
 {
 	ASSERT(this, "GameState::transform: null this");
@@ -305,7 +398,14 @@ void GameState_transform(GameState this)
 	__VIRTUAL_CALL(Container, transform, this->stage, &environmentTransform);
 }
 
-// update level entities' positions
+/**
+ * Call the initial transformation on the Stage to setup its children
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 static void GameState_initialTransform(GameState this)
 {
 	ASSERT(this, "GameState::initialTransform: null this");
@@ -332,7 +432,14 @@ static void GameState_initialTransform(GameState this)
 }
 
 
-// update level entities' positions
+/**
+ * Start a cycle on the Stage that coordinates the entities with their sprites
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_updateVisuals(GameState this)
 {
 	ASSERT(this, "GameState::updateVisuals: null this");
@@ -342,19 +449,49 @@ void GameState_updateVisuals(GameState this)
 	__VIRTUAL_CALL(Container, updateVisualRepresentation, this->stage);
 }
 
-// propagate message to all entities in the level
-int GameState_propagateMessage(GameState this, int message)
+/**
+ * Start a physics simulation cycle on the Stage
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
+void GameState_updatePhysics(GameState this)
 {
-	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, message);
+	ASSERT(this, "GameState::updatePhysics: null this");
+
+	PhysicalWorld_update(this->physicalWorld, this->physicsClock);
 }
 
-// process user input
-void GameState_onPropagatedMessage(GameState this __attribute__ ((unused)), int message __attribute__ ((unused)))
+/**
+ * Start a cycle for collision processing
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			The result of the collision processing
+ */
+u32 GameState_processCollisions(GameState this)
 {
-	ASSERT(this, "GameState::onPropagatedMessage: null this");
+	ASSERT(this, "GameState::processCollisions: null this");
 
+	return CollisionManager_update(this->collisionManager, this->physicsClock);
 }
-// load a stage
+
+/**
+ * Load the Stage with the give definition
+ *
+ * @memberof							GameState
+ * @public
+ *
+ * @param this							Function scope
+ * @param stageDefinition				Stage's configuration
+ * @param positionedEntitiesToIgnore	List of entities from the definition to not load
+ * @param overrideScreenPosition		Flag to override or not the Screen's current position
+ */
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
 {
 	ASSERT(this, "GameState::loadStage: null this");
@@ -410,7 +547,16 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
-// retrieve stage
+/**
+ * Retrieve the Stage
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Stage
+ */
 Stage GameState_getStage(GameState this)
 {
 	ASSERT(this, "GameState::getStage: null this");
@@ -418,6 +564,16 @@ Stage GameState_getStage(GameState this)
 	return this->stage;
 }
 
+/**
+ * Retrieve the Clock used for delayed messages
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Clock
+ */
 Clock GameState_getMessagingClock(GameState this)
 {
 	ASSERT(this, "GameState::getMessagingClock: null this");
@@ -425,6 +581,16 @@ Clock GameState_getMessagingClock(GameState this)
 	return this->messagingClock;
 }
 
+/**
+ * Retrieve the Clock passed to the Stage's update method (used for animations)
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Clock
+ */
 Clock GameState_getUpdateClock(GameState this)
 {
 	ASSERT(this, "GameState::getUpdateClock: null this");
@@ -432,6 +598,16 @@ Clock GameState_getUpdateClock(GameState this)
 	return this->updateClock;
 }
 
+/**
+ * Retrieve the Clock used for physic calculations
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Clock
+ */
 Clock GameState_getPhysicsClock(GameState this)
 {
 	ASSERT(this, "GameState::getPhysicsClock: null this");
@@ -439,6 +615,14 @@ Clock GameState_getPhysicsClock(GameState this)
 	return this->physicsClock;
 }
 
+/**
+ * Start all clocks
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_startClocks(GameState this)
 {
 	ASSERT(this, "GameState::startClocks: null this");
@@ -450,6 +634,14 @@ void GameState_startClocks(GameState this)
 	this->previousUpdateTime = Clock_getTime(this->messagingClock);
 }
 
+/**
+ * Stop all clocks
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_stopClocks(GameState this)
 {
 	ASSERT(this, "GameState::stopClocks: null this");
@@ -459,6 +651,14 @@ void GameState_stopClocks(GameState this)
 	Clock_stop(this->physicsClock);
 }
 
+/**
+ * Pause all clocks
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_pauseClocks(GameState this)
 {
 	ASSERT(this, "GameState::pauseClocks: null this");
@@ -468,6 +668,14 @@ void GameState_pauseClocks(GameState this)
 	Clock_pause(this->physicsClock, true);
 }
 
+/**
+ * Resume all clocks
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_resumeClocks(GameState this)
 {
 	ASSERT(this, "GameState::resumeClocks: null this");
@@ -477,13 +685,29 @@ void GameState_resumeClocks(GameState this)
 	Clock_pause(this->physicsClock, false);
 }
 
-void GameState_startMessagingClock(GameState this)
+/**
+ * Start the Clock used for delayed messages
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
+void GameState_startDispatchingDelayedMessages(GameState this)
 {
 	ASSERT(this, "GameState::startInGameClock: null this");
 
 	Clock_start(this->messagingClock);
 }
 
+/**
+ * Start the Clock passed to the Stage's update method (used for animations)
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_startAnimations(GameState this)
 {
 	ASSERT(this, "GameState::startAnimations: null this");
@@ -491,6 +715,14 @@ void GameState_startAnimations(GameState this)
 	Clock_start(this->updateClock);
 }
 
+/**
+ * Start the Clock used for physics simulations
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ */
 void GameState_startPhysics(GameState this)
 {
 	ASSERT(this, "GameState::startPhysics: null this");
@@ -498,13 +730,31 @@ void GameState_startPhysics(GameState this)
 	Clock_start(this->physicsClock);
 }
 
-void GameState_pauseInGameClock(GameState this, bool pause)
+/**
+ * Pause the Clock used for delayed messages
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param pause		Pause flag
+ */
+void GameState_pauseMessagingClock(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pauseInGameClock: null this");
 
 	Clock_pause(this->messagingClock, pause);
 }
 
+/**
+ * Pause the Clock used for animations
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param pause		Pause flag
+ */
 void GameState_pauseAnimations(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pauseAnimations: null this");
@@ -512,6 +762,15 @@ void GameState_pauseAnimations(GameState this, bool pause)
 	Clock_pause(this->updateClock, pause);
 }
 
+/**
+ * Pause the Clock used for physics simulations
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ * @param pause		Pause flag
+ */
 void GameState_pausePhysics(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pausePhysics: null this");
@@ -519,13 +778,16 @@ void GameState_pausePhysics(GameState this, bool pause)
 	Clock_pause(this->physicsClock, pause);
 }
 
-void GameState_updatePhysics(GameState this)
-{
-	ASSERT(this, "GameState::updatePhysics: null this");
-
-	PhysicalWorld_update(this->physicalWorld, this->physicsClock);
-}
-
+/**
+ * Retrieve the PhysicalWorld
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			PhysicalWorld
+ */
 PhysicalWorld GameState_getPhysicalWorld(GameState this)
 {
 	ASSERT(this, "GameState::getPhysicalWorld: null this");
@@ -533,13 +795,16 @@ PhysicalWorld GameState_getPhysicalWorld(GameState this)
 	return this->physicalWorld;
 }
 
-u32 GameState_processCollisions(GameState this)
-{
-	ASSERT(this, "GameState::processCollisions: null this");
-
-	return CollisionManager_update(this->collisionManager, this->physicsClock);
-}
-
+/**
+ * Retrieve the CollisionManager
+ *
+ * @memberof		GameState
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			CollisionManager
+ */
 CollisionManager GameState_getCollisionManager(GameState this)
 {
 	ASSERT(this, "GameState::getCollisionManager: null this");
