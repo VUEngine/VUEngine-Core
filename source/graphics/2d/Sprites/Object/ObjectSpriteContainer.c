@@ -45,6 +45,7 @@
  * @extends Sprite
  */
 __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
+__CLASS_FRIEND_DEFINITION(Sprite);
 __CLASS_FRIEND_DEFINITION(ObjectSprite);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
@@ -356,7 +357,7 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 			VBVec2D previousPosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
 
 			// check if z positions are swapped
-			if(previousPosition.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, previousSprite)).z > position.z + Sprite_getDisplacement(__SAFE_CAST(Sprite, sprite)).z)
+			if(previousPosition.z + (__SAFE_CAST(Sprite, previousSprite))->displacement.z > position.z + (__SAFE_CAST(Sprite, sprite))->displacement.z)
 			{
 				if(this->availableObjects >= sprite->totalObjects)
 				{
