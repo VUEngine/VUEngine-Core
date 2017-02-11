@@ -41,7 +41,15 @@ extern const VBVec3D* _screenPosition;
 //												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-// calculate the parallax
+/**
+ * Calculate parallax based on the x and z coordinates
+ *
+ * @memberof		Optics
+ * @public
+ *
+ * @param x			x parameter for the calculation of the parallax displacement
+ * @param x			z parameter for the calculation of the parallax displacement
+ */
 inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 {
 	fix19_13 leftEyePoint, rightEyePoint;
@@ -57,17 +65,6 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 	rightEyeGx = x + FIX19_13_DIV(FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
 	return FIX19_13TOI(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
-}
-
-// calculate the size of a given magnitude, being it a 8 pixel multiple
-inline int Optics_calculateRealSize(int magnitude, u16 mapMode, fix7_9 scale)
-{
-	if(__WORLD_AFFINE != mapMode)
-	{
-		return  FIX19_13_ROUNDTOI(FIX19_13_DIV(ITOFIX19_13(magnitude), FIX7_9TOFIX19_13(scale)));
-	}
-
-	return magnitude;
 }
 
 // determine the squared length of a given vector

@@ -58,7 +58,6 @@
 
 extern int Optics_calculateParallax(fix19_13 x, fix19_13 z);
 extern VBVec3D Optics_normalizePosition(const VBVec3D* const position3D);
-extern int Optics_calculateRealSize(int magnitude, u16 mapMode, fix7_9 scale);
 extern int vbjInsideGame(VBVec3D position3D, int width, int height);
 extern int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2);
 
