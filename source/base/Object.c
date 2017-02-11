@@ -35,6 +35,7 @@
 
 /**
  * @class	Object
+ * @ingroup base
  * @brief	Base class for all other classes in the engine, it derives from nothing but itself
  */
 __CLASS_DEFINITION(Object, Object);
