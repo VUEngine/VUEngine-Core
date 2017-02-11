@@ -62,7 +62,16 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 __CLASS_NEW_DEFINITION(StateMachine, void* owner)
 __CLASS_NEW_END(StateMachine, owner);
 
-// allocate memory and call the constructor
+
+/**
+ * Class constructor
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		the StateMachine's owner
+ */
 void StateMachine_constructor(StateMachine this, void* owner)
 {
 	// construct base object
@@ -75,7 +84,15 @@ void StateMachine_constructor(StateMachine this, void* owner)
 	this->stateStack = __NEW(VirtualList);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void StateMachine_destructor(StateMachine this)
 {
 	ASSERT(this, "StateMachine::destructor: null this");
@@ -97,7 +114,14 @@ void StateMachine_destructor(StateMachine this)
 	__DESTROY_BASE;
 }
 
-// update state
+/**
+ * Method to propagate the update process to the current state
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ */
 void StateMachine_update(StateMachine this)
 {
 	ASSERT(this, "StateMachine::update: null this");
@@ -108,7 +132,15 @@ void StateMachine_update(StateMachine this)
 	}
 }
 
-// change state
+/**
+ * Replace the current state for a new one
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ * @param newState	State to switch to
+ */
 void StateMachine_swapState(StateMachine this, State newState)
 {
 	ASSERT(this, "StateMachine::swapState: null this");
@@ -136,8 +168,17 @@ void StateMachine_swapState(StateMachine this, State newState)
 	__VIRTUAL_CALL(State, enter, this->currentState, this->owner);
 }
 
-// push a state in the stack
-// returns the resulting stack size
+/**
+ * Push a new state at top of the stack, making it the current one
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ * @param newState	state to push
+ *
+ * @return 			Resulting stack's size
+ */
 u32 StateMachine_pushState(StateMachine this, State newState)
 {
 	ASSERT(this, "StateMachine::pushState: null this");
@@ -169,8 +210,16 @@ u32 StateMachine_pushState(StateMachine this, State newState)
 	return StateMachine_getStackSize(this);
 }
 
-// pop a state from the stack
-// returns the resulting stack size
+/**
+ * Remove the current state, the one at the top of the stack
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return 			Resulting stack's size
+ */
 u32 StateMachine_popState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::popState: null this");
@@ -205,7 +254,14 @@ u32 StateMachine_popState(StateMachine this)
 	return StateMachine_getStackSize(this);
 }
 
-// return to previous state
+/**
+ * Return the state just below the current one at the top of the stack
+ *
+ * @memberof		StateMachine
+ * @public
+ *
+ * @param this		Function scope
+ */
 void StateMachine_returnToPreviousState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::returnToPreviousState: null this");
@@ -223,7 +279,15 @@ void StateMachine_returnToPreviousState(StateMachine this)
 	}
 }
 
-// change to a global state
+/**
+ * Change the current state to a new one but don't push it into the stack
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ * @param globalState	State to switch to
+ */
 void StateMachine_changeToGlobal(StateMachine this, State globalState)
 {
 	ASSERT(this, "StateMachine::changeToGlobal: null this");
@@ -244,7 +308,15 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 	__VIRTUAL_CALL(State, enter, this->currentState, this->owner);
 }
 
-// return to previous state
+/**
+ * Method to forward a message to the current state
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ * @param telegram		Telegram to forward
+ */
 bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 {
 	ASSERT(this, "StateMachine::handleMessage: null this");
@@ -257,7 +329,17 @@ bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 	return false;
 }
 
-// returns true if the current state's type is equal to the type of the class passed as a parameter.
+/**
+ * Check if a given state is the current one
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ * @param state			State to check
+ *
+ * @return				True if the given state is the current one
+ */
 bool StateMachine_isInState(StateMachine this, const State state)
 {
 	ASSERT(this, "StateMachine::isInState: null this");
@@ -265,7 +347,15 @@ bool StateMachine_isInState(StateMachine this, const State state)
 	return (this->currentState == state) ? true : false;
 }
 
-// set owner
+/**
+ * Set the StageMachine's owner
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ * @param owner			New owner
+ */
 void StateMachine_setOwner(StateMachine this, void* owner)
 {
 	ASSERT(this, "StateMachine::setOwner: null this");
@@ -273,7 +363,16 @@ void StateMachine_setOwner(StateMachine this, void* owner)
 	this->owner = owner;
 }
 
-// retrieve current state
+/**
+ * Retrieve the current state
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Current state
+ */
 State StateMachine_getCurrentState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::getCurrentState: null this");
@@ -281,7 +380,16 @@ State StateMachine_getCurrentState(StateMachine this)
 	return this->currentState;
 }
 
-// retrieve previous state in the stack
+/**
+ * Get the second state from the top of the stack
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Second state in the stack
+ */
 State StateMachine_getPreviousState(StateMachine this)
 {
 	ASSERT(this, "StateMachine::getPreviousState: null this");
@@ -298,7 +406,16 @@ State StateMachine_getPreviousState(StateMachine this)
 	return NULL;
 }
 
-// retrieve the stack's size
+/**
+ * Get the StateMachine's stack's size
+ *
+ * @memberof			StateMachine
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				The size of the stack
+ */
 int StateMachine_getStackSize(StateMachine this)
 {
 	ASSERT(this, "StateMachine::getStackSize: null this");

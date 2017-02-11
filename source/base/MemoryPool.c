@@ -143,10 +143,25 @@ static void MemoryPool_reset(MemoryPool this);
 	}
 
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn			MemoryPool_getInstance()
+ * @memberof	MemoryPool
+ * @public
+ *
+ * @return		MemoryPool instance
+ */
 __MEMORY_POOL_SINGLETON(MemoryPool)
 
-// class constructor
+/**
+ * Class constructor
+ *
+ * @memberof	MemoryPool
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -155,8 +170,15 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	MemoryPool_cleanUp(this);
 }
 
-// class's destructor
-void MemoryPool_destructor(MemoryPool this)
+/**
+ * Class destructor
+ *
+ * @memberof	MemoryPool
+ * @public
+ *
+ * @param this	Function scope
+ */
+ void MemoryPool_destructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::destructor: null this");
 
@@ -164,8 +186,18 @@ void MemoryPool_destructor(MemoryPool this)
 	__SINGLETON_DESTROY;
 }
 
-// allocate memory for data
-BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
+/**
+ * Allocate a given amount of bytes in one of the memory pools
+ *
+ * @memberof				Error
+ * @public
+ *
+ * @param this				Function scope
+ * @param numberOfBytes		Number of bytes to allocate
+ *
+ * @return					Pointer to the memory pool entry allocated
+ */
+ BYTE* MemoryPool_allocate(MemoryPool this, int numberOfBytes)
 {
 	ASSERT(this, "MemoryPool::allocate: null this");
 
@@ -176,13 +208,13 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	int displacement = 0;
 
 	// seach for the shortest pool which can hold the data
-	for(; numBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
+	for(; numberOfBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
 
 	if(0 > pool)
 	{
 		Printing_clear(Printing_getInstance());
 		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
-		Printing_int(Printing_getInstance(), numBytes, 44, 12, NULL);
+		Printing_int(Printing_getInstance(), numberOfBytes, 44, 12, NULL);
 
 		NM_ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
 	}
@@ -202,7 +234,7 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 		Printing_text(Printing_getInstance(), "Pool's size: ", 20, 12, NULL);
 		Printing_int(Printing_getInstance(), blockSize, 44, 12, NULL);
 		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 13, NULL);
-		Printing_int(Printing_getInstance(), numBytes, 44, 13, NULL);
+		Printing_int(Printing_getInstance(), numberOfBytes, 44, 13, NULL);
 
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
@@ -214,8 +246,15 @@ BYTE* MemoryPool_allocate(MemoryPool this, int numBytes)
 	return &this->poolLocation[pool][displacement];
 }
 
-// free memory when an object is no longer used
-// remove an object from heap
+/**
+ * Free the memory pool entry were the given object is allocated
+ *
+ * @memberof		MemoryPool
+ * @public
+ *
+ * @param this		Function scope
+ * @param object	Pointer to the memory pool entry to free
+ */
 void MemoryPool_free(MemoryPool this, BYTE* object)
 {
 	ASSERT(this, "MemoryPool::free: null this");
@@ -271,7 +310,14 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	*((u32*)&object[0]) = __MEMORY_FREE_BLOCK_FLAG;
 }
 
-// clear all dynamic memory
+/**
+ * Clear all memory pool
+ *
+ * @memberof		MemoryPool
+ * @private
+ *
+ * @param this		Function scope
+ */
 static void MemoryPool_reset(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::reset: null this");
@@ -282,7 +328,7 @@ static void MemoryPool_reset(MemoryPool this)
 	// initialize pool's sizes and pointers
 	__SET_MEMORY_POOL_ARRAYS
 
-	// clear all allocable objects usage
+	// clear all memory pool entries
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
@@ -292,14 +338,21 @@ static void MemoryPool_reset(MemoryPool this)
 	}
 }
 
-// clear all dynamic memory
+/**
+ * Clear all memory pool
+ *
+ * @memberof		MemoryPool
+ * @public
+ *
+ * @param this		Function scope
+ */
 void MemoryPool_cleanUp(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::reset: null this");
 
 	int pool = 0;
 
-	// clear all allocable objects usage
+	// clear all memory pool entries
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		int i = 0;
@@ -317,7 +370,16 @@ void MemoryPool_cleanUp(MemoryPool this)
 	}
 }
 
-// retrieve pool size
+/**
+ * Retrieve the pool's size
+ *
+ * @memberof		MemoryPool
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Total size of the memory pool
+ */
 int MemoryPool_getPoolSize(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::reset: null this");
@@ -334,7 +396,16 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	return size;
 }
 
-// print dynamic memory usage
+/**
+ * Print the pools' detailed usage
+ *
+ * @memberof		MemoryPool
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			Screen column for the output
+ * @param y			Screen row for the output
+ */
 void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 {
 	ASSERT(this, "MemoryPool::printMemUsage: null this");
@@ -389,7 +460,16 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 	Printing_text(Printing_getInstance(), "% ", x + 17, y++, NULL);
 }
 
-// print dynamic memory usage
+/**
+ * Print the pools' resumed usage
+ *
+ * @memberof		MemoryPool
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			Screen column for the output
+ * @param y			Screen row for the output
+ */
 void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 {
 	ASSERT(this, "MemoryPool::printMemUsage: null this");

@@ -85,11 +85,26 @@ typedef struct DelayedMessage
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
-__SINGLETON(MessageDispatcher);
+/**
+ * Get instance
+ *
+ * @fn			MessageDispatcher_getInstance()
+ * @memberof	MessageDispatcher
+ * @public
+ *
+ * @return		MessageDispatcher instance
+ */
+ __SINGLETON(MessageDispatcher);
 
-// class's constructor
-static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDispatcher this)
+/**
+ * Class constructor
+ *
+ * @memberof		MessageDispatcher
+ * @public
+ *
+ * @param this		Function scope
+ */
+ static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDispatcher this)
 {
 	__CONSTRUCT_BASE(Object);
 
@@ -98,7 +113,14 @@ static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDisp
 	this->delayedMessagesToDispatch = __NEW(VirtualList);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof		MessageDispatcher
+ * @public
+ *
+ * @param this		Function scope
+ */
 __attribute__((unused)) void MessageDispatcher_destructor(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::destructor: null this");
@@ -110,14 +132,20 @@ __attribute__((unused)) void MessageDispatcher_destructor(MessageDispatcher this
 	__SINGLETON_DESTROY;
 }
 
-// dispatch a telegram
-/*
-static int MessageDispatcher_discharge(StateMachine receiver, Telegram telegram)
-{
-	return StateMachine_handleMessage(receiver, telegram);
-}
-*/
-
+/**
+ * Dispatch a message
+ *
+ * @memberof		MessageDispatcher
+ * @public
+ *
+ * @param delay		milliseconds to wait before dispatching the message
+ * @param sender	the object that sends the message
+ * @param receiver	the object that receives the message
+ * @param message	the actual message code
+ * @param extraInfo	pointer to any extra data that must accompany the message
+ *
+ * @return			a flag indicating the status of the processing of the message
+ */
 bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
 {
 	// make sure the receiver is valid
@@ -143,7 +171,19 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 	return false;
 }
 
-// dispatch delayed messages
+/**
+ * Dispatch delayed message
+ *
+ * @memberof		MessageDispatcher
+ * @private
+ *
+ * @param this		Function scope
+ * @param delay		milliseconds to wait before dispatching the message
+ * @param sender	the object that sends the message
+ * @param receiver	the object that receives the message
+ * @param message	the actual message code
+ * @param extraInfo	pointer to any extra data that must accompany the message
+ */
 static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
 		Object receiver, int message, void* extraInfo)
 {
@@ -161,7 +201,14 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	VirtualList_pushFront(this->delayedMessages, delayMessage);
 }
 
-// dispatch delayed messages
+/**
+ * Take care of any discarded message
+ *
+ * @memberof		MessageDispatcher
+ * @public
+ *
+ * @param this		Function scope
+ */
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::processDiscardedMessages: null this");
@@ -197,7 +244,14 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 
 }
 
-// dispatch delayed messages
+/**
+ * Dispatch the delayed messages whose delay has expired
+ *
+ * @memberof		MessageDispatcher
+ * @public
+ *
+ * @param this		Function scope
+ */
 u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
@@ -277,7 +331,15 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 	return messagesDispatched;
 }
 
-// discard delayed messages
+/**
+ * Discarded delayed messages associated to the given clock
+ *
+ * @memberof		MessageDispatcher
+ * @private
+ *
+ * @param this		Function scope
+ * @param clock		the clock against which the message's delay is measured
+ */
 void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
@@ -295,7 +357,16 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
 	}
 }
 
-// discard delayed messages of an specific type
+/**
+ * Discarded delayed messages sent by an object
+ *
+ * @memberof		MessageDispatcher
+ * @private
+ *
+ * @param this		Function scope
+ * @param sender	the object that originally sent the message
+ * @param message	the actual message code
+ */
 void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");

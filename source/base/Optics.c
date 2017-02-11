@@ -47,8 +47,8 @@ extern const VBVec3D* _screenPosition;
  * @memberof		Optics
  * @public
  *
- * @param x			x parameter for the calculation of the parallax displacement
- * @param x			z parameter for the calculation of the parallax displacement
+ * @param x			X parameter for the calculation of the parallax displacement
+ * @param x			Z parameter for the calculation of the parallax displacement
  */
 inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 {
@@ -67,10 +67,20 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 	return FIX19_13TOI(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
 }
 
-// determine the squared length of a given vector
-inline int Optics_lengthSquared3D(VBVec3D vect1, VBVec3D vect2)
+/**
+ * Calculate the squared length of a given vector
+ *
+ * @memberof			Optics
+ * @public
+ *
+ * @param vector1
+ * @param vector2
+ *
+ * @return 				Squared length of the result vector
+ */
+inline int Optics_lengthSquared3D(VBVec3D vector1, VBVec3D vector2)
 {
-	return  FIX19_13TOI(FIX19_13_MULT((vect1.x - vect2.x), (vect1.x - vect2.x)) +
-			FIX19_13_MULT((vect1.y - vect2.y), (vect1.y - vect2.y))+
-			FIX19_13_MULT((vect1.z - vect2.z), (vect1.z - vect2.z)));
+	return  FIX19_13TOI(FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +
+			FIX19_13_MULT((vector1.y - vector2.y), (vector1.y - vector2.y))+
+			FIX19_13_MULT((vector1.z - vector2.z), (vector1.z - vector2.z)));
 }

@@ -47,14 +47,28 @@ __CLASS_DEFINITION(State, Object);
 __CLASS_NEW_DEFINITION(State)
 __CLASS_NEW_END(State);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	State
+ * @public
+ *
+ * @param this	Function scope
+ */
 void State_constructor(State this)
 {
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	State
+ * @public
+ *
+ * @param this	Function scope
+ */
 void State_destructor(State this)
 {
 	ASSERT(this, "State::destructor: null this");
@@ -64,31 +78,71 @@ void State_destructor(State this)
 	__DESTROY_BASE;
 }
 
-// state's enter
+/**
+ * Method called when the StateMachine enters to this state
+ *
+ * @memberof		State
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		the StateMachine's owner
+ */
 void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::enter: null this");
 }
 
-// state's execute
+/**
+ * Method called when by the StateMachine's update method
+ *
+ * @memberof		State
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void State_execute(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::execute: null this");
 }
 
-// state's exit
+/**
+ * Method called when the StateMachine exits from this state
+ *
+ * @memberof		State
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void State_exit(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::exit: null this");
 }
 
-// state's suspend
+/**
+ * Method called when the StateMachine enters another state without exiting this one
+ *
+ * @memberof		State
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void State_suspend(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::suspend: null this");
 }
 
-// state's resume
+/**
+ * Method called when the StateMachine returns to this state from another
+ *
+ * @memberof		State
+ * @public
+ *
+ * @param this		Function scope
+ * @param owner		StateMachine's owner
+ */
 void State_resume(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::resume: null this");
