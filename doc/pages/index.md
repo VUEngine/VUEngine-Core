@@ -93,8 +93,8 @@ The engine provides the following features for the programmer to take advantage 
 
 
 > This document is a work in progress and thus contains incomplete or partially outdated information.
-> If you have any problems which this document is unable to help you resolve, please refer to the 
-> (http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0 "VUEngine support forum").
+> If you have any problems which this document is unable to help you resolve, please refer to the official 
+> <a href="http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0">VUEngine support forum</a>.
 
 
 License
@@ -135,7 +135,7 @@ A short summary of the file layout:
 - lib/src: miscellaneous files needed for linking, etc. sources, and other utilities sources.
 - utilities: miscellaneous utilities for padding, sound, etc.
 
-See `classes` for full documentation.
+See <a href="annotated.html">classes</a> for full documentation.
 
 Compiling on Win32 platforms
 ----------------------------

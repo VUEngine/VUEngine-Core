@@ -21,7 +21,6 @@ The `Object`'s handleMessage method can be overrode to specify each class' behav
 States don't override the handleMessage method, instead, they define a processMessage method that is called by the `StateMachine` class and can be overrode by derived class for specialization. The `StateMachine`'s owner must receive the `Telegram` by overriding the `Object`'s handleMessage method and then forward the telegram by calling the `StateMachine` handleMessage method.  
 
 
-
 Events
 ------
 

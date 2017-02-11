@@ -195,6 +195,7 @@ void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
 {
 	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStop: null this");
 
+	// remove event listener
 	if(this->fxFadeCallbackScope)
 	{
 		Object_removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, kEventEffectFadeComplete);

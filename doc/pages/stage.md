@@ -4,7 +4,7 @@ Stages
 Each `GameState` has a `Stage` that works as the `Container` for all the entities that compose a game level. The `Stage`'s child entities are defined in a StageDefinition struct.
 
 Adding entity containers to the stage
-----------------------------
+-------------------------------------
 
 There are two ways to add entities to the `Stage` during gameplay. The first is to add the entity directly into the `Stage`and must be done using the following interface:
  
@@ -85,6 +85,7 @@ When the game reaches a cycle were texture writing is allowed, it starts writing
 
 The maximumAffineRowsToComputePerCall attribute limits how many rows can be calculated per `Sprite` per rendering cycle for affine effects.
 
-##### Limitations
+Limitations
+-----------
 
 The PositionEntity entries must be arranged in the array that defines the `Stage`'s children in such a way that their position in it reflects their spatial position within the level (except for those that has the loadRegardlessOfPosition flag to true) and the level's general shape must be roughly linear. This is because the engine does not implement octrees or any other similar approach to level construction.
