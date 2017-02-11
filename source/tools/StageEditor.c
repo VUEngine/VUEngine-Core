@@ -114,6 +114,7 @@
 /**
  * @class	StageEditor
  * @extends Object
+ * @ingroup tools
  * @brief	In-game stage editor for debug and productivity purposes
  */
 __CLASS_DEFINITION(StageEditor, Object);

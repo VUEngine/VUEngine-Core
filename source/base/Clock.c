@@ -38,6 +38,7 @@
 /**
  * @class	Clock
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(Clock, Object);
 

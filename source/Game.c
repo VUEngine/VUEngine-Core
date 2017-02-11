@@ -120,6 +120,7 @@ enum StateOperations
 /**
  * @class	Game
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(Game, Object);
 
@@ -607,7 +608,7 @@ static u32 Game_handleInput(Game this)
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RU))
+	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RL))
 	{
 		if(Game_isInDebugMode(this))
 		{

@@ -164,6 +164,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 /**
  * @class	SoundManager
  * @extends Object
+ * @ingroup hardware
  */
 __CLASS_DEFINITION(SoundManager, Object);
 

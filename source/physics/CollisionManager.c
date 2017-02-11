@@ -57,6 +57,7 @@
 /**
  * @class	CollisionManager
  * @extends Object
+ * @ingroup physics
  */
 __CLASS_DEFINITION(CollisionManager, Object);
 __CLASS_FRIEND_DEFINITION(Shape);

@@ -44,6 +44,7 @@
 /**
  * @class	CollisionSolver
  * @extends Object
+ * @ingroup physics
  */
 __CLASS_DEFINITION(CollisionSolver, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

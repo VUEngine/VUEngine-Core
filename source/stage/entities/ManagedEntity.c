@@ -38,6 +38,7 @@
 /**
  * @class	ManagedEntity
  * @extends Entity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(ManagedEntity, Entity);
 __CLASS_FRIEND_DEFINITION(Entity);

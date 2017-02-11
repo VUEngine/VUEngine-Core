@@ -50,6 +50,7 @@
 /**
  * @class	ClockManager
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(ClockManager, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

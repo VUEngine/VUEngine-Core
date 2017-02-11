@@ -85,6 +85,7 @@
 /**
  * @class	AnimationEditor
  * @extends Object
+ * @ingroup tools
  */
 __CLASS_DEFINITION(AnimationEditor, Object);
 

@@ -35,6 +35,7 @@
 /**
  * @class 	State
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(State, Object);
 

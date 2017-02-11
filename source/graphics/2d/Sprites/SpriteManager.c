@@ -87,6 +87,7 @@ typedef struct SpritesList
 /**
  * @class 	SpriteManager
  * @extends Object
+ * @ingroup graphics-2d-sprites
  */
 __CLASS_DEFINITION(SpriteManager, Object);
 __CLASS_FRIEND_DEFINITION(Sprite);

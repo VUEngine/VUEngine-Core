@@ -56,6 +56,7 @@ static bool StageEditorState_processMessage(StageEditorState this __attribute__ 
 /**
  * @class	StageEditorState
  * @extends GameState
+ * @ingroup states
  */
 __CLASS_DEFINITION(StageEditorState, GameState);
 

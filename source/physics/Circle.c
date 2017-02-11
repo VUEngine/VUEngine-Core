@@ -35,6 +35,7 @@
 /**
  * @class	Circle
  * @extends Shape
+ * @ingroup physics
  */
 __CLASS_DEFINITION(Circle, Shape);
 

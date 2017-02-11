@@ -42,6 +42,7 @@
 /**
  * @class 	ObjectSpriteContainerManager
  * @extends Object
+ * @ingroup graphics-2d-sprites-object
  */
 __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 

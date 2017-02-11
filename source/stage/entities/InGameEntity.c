@@ -38,6 +38,7 @@
 /**
  * @class	InGameEntity
  * @extends Entity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(InGameEntity, Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

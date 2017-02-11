@@ -39,6 +39,7 @@
 /**
  * @class	TriggerEntity
  * @extends InGameEntity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(TriggerEntity, InGameEntity);
 

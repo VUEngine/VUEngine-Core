@@ -36,6 +36,7 @@
 /**
  * @class	StaticImage
  * @extends Entity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(StaticImage, Entity);
 

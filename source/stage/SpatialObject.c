@@ -44,6 +44,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 /**
  * @class	SpatialObject
  * @extends Object
+ * @ingroup stage
  */
 __CLASS_DEFINITION(SpatialObject, Object);
 

@@ -40,6 +40,7 @@
 /**
  * @class 	BgmapTexture
  * @extends Texture
+ * @ingroup graphics-2d-textures-bgmap
  */
 __CLASS_DEFINITION(BgmapTexture, Texture);
 

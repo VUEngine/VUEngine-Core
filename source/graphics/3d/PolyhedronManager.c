@@ -42,6 +42,7 @@
 /**
  * @class	PolyhedronManager
  * @extends Object
+ * @ingroup graphics-3d
  */
 __CLASS_DEFINITION(PolyhedronManager, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

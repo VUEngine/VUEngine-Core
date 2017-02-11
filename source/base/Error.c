@@ -55,6 +55,7 @@
 /**
  * @class	Error
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(Error, Object);
 

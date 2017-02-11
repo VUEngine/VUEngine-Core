@@ -58,6 +58,7 @@
 /**
  * @class	PhysicalWorld
  * @extends Object
+ * @ingroup physics
  */
 __CLASS_DEFINITION(PhysicalWorld, Object);
 __CLASS_FRIEND_DEFINITION(Body);

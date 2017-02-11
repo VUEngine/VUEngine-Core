@@ -47,6 +47,7 @@
 /**
  * @class 	CharSetManager
  * @extends Object
+ * @ingroup graphics-2d-textures-char
  */
 __CLASS_DEFINITION(CharSetManager, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

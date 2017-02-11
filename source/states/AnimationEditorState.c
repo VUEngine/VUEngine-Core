@@ -56,6 +56,7 @@ static bool AnimationEditorState_processMessage(AnimationEditorState this __attr
 /**
  * @class	AnimationEditorState
  * @extends GameState
+ * @ingroup states
  */
 __CLASS_DEFINITION(AnimationEditorState, GameState);
 

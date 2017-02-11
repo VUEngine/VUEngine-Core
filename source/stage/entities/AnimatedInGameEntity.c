@@ -45,6 +45,7 @@
 /**
  * @class	AnimatedInGameEntity
  * @extends InGameEntity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

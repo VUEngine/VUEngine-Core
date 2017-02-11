@@ -37,6 +37,7 @@
 /**
  * @class	ManagedStaticImage
  * @extends RecyclableImage
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(ManagedStaticImage, RecyclableImage);
 __CLASS_FRIEND_DEFINITION(Entity);

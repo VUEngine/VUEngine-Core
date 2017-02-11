@@ -45,6 +45,7 @@
 /**
  * @class	FrameRate
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(FrameRate, Object);
 

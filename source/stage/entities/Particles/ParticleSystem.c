@@ -41,6 +41,7 @@
 /**
  * @class	ParticleSystem
  * @extends Entity
+ * @ingroup stage-entities-particles
  */
 __CLASS_DEFINITION(ParticleSystem, Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

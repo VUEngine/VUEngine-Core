@@ -70,6 +70,7 @@
 /**
  * @class 	MemoryPool
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(MemoryPool, Object);
 

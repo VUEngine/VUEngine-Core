@@ -39,6 +39,7 @@
 /**
  * @class	EntityFactory
  * @extends Object
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(EntityFactory, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

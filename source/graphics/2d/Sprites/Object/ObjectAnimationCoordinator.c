@@ -34,6 +34,7 @@
 /**
  * @class 	ObjectAnimationCoordinator
  * @extends AnimationCoordinator
+ * @ingroup graphics-2d-sprites-object
  */
 __CLASS_DEFINITION(ObjectAnimationCoordinator, AnimationCoordinator);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

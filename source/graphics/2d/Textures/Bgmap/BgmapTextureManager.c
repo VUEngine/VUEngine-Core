@@ -60,6 +60,7 @@
 /**
  * @class 	BgmapTextureManager
  * @extends Object
+ * @ingroup graphics-2d-textures-bgmap
  */
 __CLASS_DEFINITION(BgmapTextureManager, Object);
 

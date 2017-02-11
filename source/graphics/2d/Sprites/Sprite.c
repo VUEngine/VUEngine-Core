@@ -38,6 +38,7 @@
 /**
  * @class 	Sprite
  * @extends Object
+ * @ingroup graphics-2d-sprites
  */
 __CLASS_DEFINITION(Sprite, Object);
 __CLASS_FRIEND_DEFINITION(Texture);

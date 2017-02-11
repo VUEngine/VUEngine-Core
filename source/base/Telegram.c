@@ -47,6 +47,7 @@
 /**
  * @class 	Telegram
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(Telegram, Object);
 

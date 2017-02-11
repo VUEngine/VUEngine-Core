@@ -38,6 +38,7 @@
 /**
  * @class 	CharSet
  * @extends Object
+ * @ingroup graphics-2d-textures-char
  */
 __CLASS_DEFINITION(CharSet, Object);
 

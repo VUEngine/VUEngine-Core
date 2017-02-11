@@ -56,6 +56,7 @@ static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), 
 /**
  * @class	DebugState
  * @extends GameState
+ * @ingroup states
  */
 __CLASS_DEFINITION(DebugState, GameState);
 

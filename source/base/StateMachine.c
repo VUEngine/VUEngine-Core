@@ -48,6 +48,7 @@
 /**
  * @class 	StateMachine
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(StateMachine, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

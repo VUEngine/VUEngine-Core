@@ -70,6 +70,7 @@ typedef struct ParamTableFreeData
 /**
  * @class 	ParamTableManager
  * @extends Object
+ * @ingroup graphics-2d-sprites-bgmap
  */
 __CLASS_DEFINITION(ParamTableManager, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

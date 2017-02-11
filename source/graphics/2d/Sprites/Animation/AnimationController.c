@@ -39,6 +39,7 @@
 /**
  * @class 	AnimationController
  * @extends Object
+ * @ingroup graphics-2d-sprites-animation
  */
 __CLASS_DEFINITION(AnimationController, Object);
 

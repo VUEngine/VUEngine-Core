@@ -38,6 +38,7 @@
 /**
  * @class	InverseCuboid
  * @extends Cuboid
+ * @ingroup physics
  */
 __CLASS_DEFINITION(InverseCuboid, Cuboid);
 __CLASS_FRIEND_DEFINITION(Cuboid);

@@ -43,6 +43,7 @@ extern LangROMDef* __LANGUAGES[];
 /**
  * @class	I18n
  * @extends Object
+ * @ingroup base
  * @brief	Handles internationalization of text output and thus allows multiple selectable languages.
  */
 __CLASS_DEFINITION(I18n, Object);

@@ -84,6 +84,7 @@ typedef struct PostProcessingEffectRegistry
 /**
  * @class	VIPManager
  * @extends Object
+ * @ingroup hardware
  */
 __CLASS_DEFINITION(VIPManager, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

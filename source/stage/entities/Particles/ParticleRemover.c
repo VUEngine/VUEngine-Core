@@ -57,6 +57,7 @@
 /**
  * @class	ParticleRemover
  * @extends Object
+ * @ingroup stage-entities-particles
  */
 __CLASS_DEFINITION(ParticleRemover, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

@@ -39,6 +39,7 @@
 /**
  * @class	Polyhedron
  * @extends Object
+ * @ingroup graphics-3d
  */
 __CLASS_DEFINITION(Polyhedron, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

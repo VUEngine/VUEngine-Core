@@ -37,6 +37,7 @@
 /**
  * @class 	ObjectTexture
  * @extends Texture
+ * @ingroup graphics-2d-textures-object
  */
 __CLASS_DEFINITION(ObjectTexture, Texture);
 

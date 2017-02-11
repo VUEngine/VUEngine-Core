@@ -38,6 +38,7 @@
 /**
  * @class 	BgmapAnimatedSprite
  * @extends BgmapSprite
+ * @ingroup graphics-2d-sprites-bgmap
  */
 __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 
