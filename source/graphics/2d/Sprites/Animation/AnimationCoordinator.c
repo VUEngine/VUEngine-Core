@@ -46,7 +46,15 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof					AnimationCoordinator
+ * @public
+ *
+ * @param this					Function scope
+ * @param charSetDefinition		CharSetDefinition
+ */
 void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationCoordinator::constructor: null this");
@@ -57,7 +65,14 @@ void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDe
 	this->charSetDefinition = charSetDefinition;
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof			AnimationCoordinator
+ * @public
+ *
+ * @param this			Function scope
+ */
 void AnimationCoordinator_destructor(AnimationCoordinator this)
 {
 	ASSERT(this, "AnimationCoordinator::destructor: null this");
@@ -71,6 +86,16 @@ void AnimationCoordinator_destructor(AnimationCoordinator this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Class constructor
+ *
+ * @memberof			AnimationCoordinator
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return 				CharSetDefinition
+ */
 const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoordinator this)
 {
 	ASSERT(this, "AnimationCoordinator::getCharSetDefinition: null this");
@@ -78,6 +103,19 @@ const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoor
 	return this->charSetDefinition;
 }
 
+/**
+ * Class constructor
+ *
+ * @memberof						AnimationCoordinator
+ * @public
+ *
+ * @param this						Function scope
+ * @param animationController		Animation controller
+ * @param animationDescription		Animation description holding the animation function
+ * @param functionName				Name of the animation function's to play
+ *
+ * @return 							True if the animation started playing
+ */
 bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
 {
 	ASSERT(this, "AnimationCoordinator::playAnimation: null this");

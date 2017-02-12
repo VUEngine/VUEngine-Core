@@ -395,8 +395,8 @@ const AnimationFunction* AnimationController_getPlayingAnimationFunction(Animati
  * @private
  *
  * @param this						Function scope
- * @param animationDescription		The animation description
- * @param functionName				The animation function's name
+ * @param animationDescription		Animation description holding the animation function
+ * @param functionName				Name of the animation function's to play
  *
  * @return							True if the animation started playing
  */
