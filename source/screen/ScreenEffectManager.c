@@ -40,6 +40,7 @@
 /**
  * @class	ScreenEffectManager
  * @extends Object
+ * @ingroup screen
  */
 __CLASS_DEFINITION(ScreenEffectManager, Object);
 __CLASS_FRIEND_DEFINITION(Screen);

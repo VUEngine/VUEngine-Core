@@ -48,6 +48,7 @@
 /**
  * @class	ObjectSprite
  * @extends Sprite
+ * @ingroup graphics-2d-sprites-object
  * @brief	Sprite which holds a texture and a drawing specification.
  */
 __CLASS_DEFINITION(ObjectSprite, Sprite);

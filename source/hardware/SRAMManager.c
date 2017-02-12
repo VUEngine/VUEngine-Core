@@ -53,6 +53,7 @@ extern u32 _sram_bss_end;
 /**
  * @class	SRAMManager
  * @extends Object
+ * @ingroup hardware
  */
 __CLASS_DEFINITION(SRAMManager, Object);
 

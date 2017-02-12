@@ -45,6 +45,7 @@
 /**
  * @class	Actor
  * @extends AnimatedInGameEntity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 

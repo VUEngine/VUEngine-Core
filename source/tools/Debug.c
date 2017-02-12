@@ -158,6 +158,7 @@
 /**
  * @class	Debug
  * @extends Object
+ * @ingroup tools
  */
 __CLASS_DEFINITION(Debug, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

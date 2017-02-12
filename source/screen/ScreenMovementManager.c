@@ -41,6 +41,7 @@
 /**
  * @class	ScreenMovementManager
  * @extends Object
+ * @ingroup screen
  */
 __CLASS_DEFINITION(ScreenMovementManager, Object);
 __CLASS_FRIEND_DEFINITION(Screen);

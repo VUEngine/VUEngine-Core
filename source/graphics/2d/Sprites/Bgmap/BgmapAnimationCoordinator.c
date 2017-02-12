@@ -34,6 +34,7 @@
 /**
  * @class 	BgmapAnimationCoordinator
  * @extends AnimationCoordinator
+ * @ingroup graphics-2d-sprites-bgmap
  */
 __CLASS_DEFINITION(BgmapAnimationCoordinator, AnimationCoordinator);
 

@@ -39,6 +39,7 @@
 /**
  * @class	Particle
  * @extends SpatialObject
+ * @ingroup stage-entities-particles
  */
 __CLASS_DEFINITION(Particle, SpatialObject);
 

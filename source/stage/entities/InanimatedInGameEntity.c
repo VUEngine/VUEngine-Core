@@ -39,6 +39,7 @@
 /**
  * @class	InanimatedInGameEntity
  * @extends InGameEntity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(InanimatedInGameEntity, InGameEntity);
 

@@ -40,6 +40,7 @@
 /**
  * @class 	ObjectAnimatedSprite
  * @extends ObjectSprite
+ * @ingroup graphics-2d-sprites-object
  */
 __CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 

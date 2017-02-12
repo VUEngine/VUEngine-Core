@@ -36,6 +36,7 @@
 /**
  * @class	Container
  * @extends SpatialObject
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(Container, SpatialObject);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

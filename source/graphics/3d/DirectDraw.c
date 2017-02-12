@@ -46,6 +46,7 @@
 /**
  * @class	DirectDraw
  * @extends Object
+ * @ingroup graphics-3d
  */
 __CLASS_DEFINITION(DirectDraw, Object);
 

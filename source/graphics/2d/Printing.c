@@ -56,6 +56,7 @@ extern FontROMDef* const __FONTS[];
 /**
  * @class 	Printing
  * @extends Object
+ * @ingroup graphics-2d
  * @brief 	Manages printing layer and offers various functions to write to it.
  */
 __CLASS_DEFINITION(Printing, Object);

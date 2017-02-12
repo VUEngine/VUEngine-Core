@@ -41,6 +41,7 @@
 /**
  * @class	UiContainer
  * @extends Container
+ * @ingroup stage
  */
 __CLASS_DEFINITION(UiContainer, Container);
 

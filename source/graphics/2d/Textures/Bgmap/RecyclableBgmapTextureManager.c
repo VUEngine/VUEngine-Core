@@ -42,6 +42,7 @@
 /**
  * @class 	RecyclableBgmapTextureManager
  * @extends Object
+ * @ingroup graphics-2d-textures-bgmap
  */
 __CLASS_DEFINITION(RecyclableBgmapTextureManager, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

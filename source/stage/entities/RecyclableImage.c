@@ -42,6 +42,7 @@
 /**
  * @class	RecyclableImage
  * @extends Entity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(RecyclableImage, Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

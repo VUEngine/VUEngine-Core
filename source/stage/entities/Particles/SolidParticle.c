@@ -37,6 +37,7 @@
 /**
  * @class	SolidParticle
  * @extends Particle
+ * @ingroup stage-entities-particles
  */
 __CLASS_DEFINITION(SolidParticle, Particle);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

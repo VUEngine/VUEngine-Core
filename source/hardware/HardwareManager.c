@@ -65,6 +65,7 @@ extern u32 _bss_end;
 /**
  * @class	HardwareManager
  * @extends Object
+ * @ingroup hardware
  */
 __CLASS_DEFINITION(HardwareManager, Object);
 

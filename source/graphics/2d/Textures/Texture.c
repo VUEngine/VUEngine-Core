@@ -38,6 +38,7 @@
 /**
  * @class 	Texture
  * @extends Object
+ * @ingroup graphics-2d-textures
  */
 __CLASS_DEFINITION(Texture, Object);
 

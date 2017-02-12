@@ -36,6 +36,7 @@
 /**
  * @class	Shape
  * @extends Object
+ * @ingroup physics
  */
 __CLASS_DEFINITION(Shape, Object);
 

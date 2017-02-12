@@ -59,6 +59,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 /**
  * @class 	MessageDispatcher
  * @extends Object
+ * @ingroup base
  */
 __CLASS_DEFINITION(MessageDispatcher, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

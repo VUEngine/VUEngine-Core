@@ -45,6 +45,7 @@
 /**
  * @class	Entity
  * @extends	Container
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(Entity, Container);
 __CLASS_FRIEND_DEFINITION(VirtualNode);

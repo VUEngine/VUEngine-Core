@@ -47,6 +47,7 @@
 /**
  * @class	KeypadManager
  * @extends Object
+ * @ingroup hardware
  */
 __CLASS_DEFINITION(KeypadManager, Object);
 

@@ -72,6 +72,7 @@
 /**
  * @class	Stage
  * @extends Container
+ * @ingroup stage
  */
 __CLASS_DEFINITION(Stage, Container);
 __CLASS_FRIEND_DEFINITION(Container);

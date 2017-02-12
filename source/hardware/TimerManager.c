@@ -46,6 +46,7 @@
 /**
  * @class	TimerManager
  * @extends Object
+ * @ingroup hardware
  */
 __CLASS_DEFINITION(TimerManager, Object);
 

@@ -52,6 +52,7 @@
 /**
  * @class	BgmapSprite
  * @extends Sprite
+ * @ingroup graphics-2d-sprites-bgmap
  * @brief	Sprite which holds a texture and a drawing specification.
  */
 __CLASS_DEFINITION(BgmapSprite, Sprite);

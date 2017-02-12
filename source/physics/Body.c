@@ -40,6 +40,7 @@
 /**
  * @class	Body
  * @extends Object
+ * @ingroup physics
  */
 __CLASS_DEFINITION(Body, Object);
 

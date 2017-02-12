@@ -35,6 +35,7 @@
 /**
  * @class	ParticleBody
  * @extends Body
+ * @ingroup stage-entities-particles
  */
 __CLASS_DEFINITION(ParticleBody, Body);
 

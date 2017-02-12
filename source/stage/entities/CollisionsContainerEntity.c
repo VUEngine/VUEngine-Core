@@ -35,6 +35,7 @@
 /**
  * @class	CollisionsContainerEntity
  * @extends Entity
+ * @ingroup stage-entities
  */
 __CLASS_DEFINITION(CollisionsContainerEntity, Entity);
 

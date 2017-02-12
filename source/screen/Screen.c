@@ -38,6 +38,7 @@
 /**
  * @class	Screen
  * @extends Object
+ * @ingroup screen
  */
 __CLASS_DEFINITION(Screen, Object);
 

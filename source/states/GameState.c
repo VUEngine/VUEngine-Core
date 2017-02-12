@@ -38,6 +38,7 @@
 /**
  * @class	GameState
  * @extends State
+ * @ingroup states
  */
 __CLASS_DEFINITION(GameState, State);
 
