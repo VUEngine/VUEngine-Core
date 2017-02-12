@@ -60,10 +60,25 @@ static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManage
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn			ObjectSpriteContainerManager_getInstance()
+ * @memberof	ObjectSpriteContainerManager
+ * @public
+ *
+ * @return		ObjectSpriteContainerManager instance
+ */
 __SINGLETON(ObjectSpriteContainerManager);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof		ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
@@ -78,7 +93,14 @@ void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectS
 	}
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof		ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::destructor: null this");
@@ -89,7 +111,14 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 	__SINGLETON_DESTROY;
 }
 
-// reset
+/**
+ * Reset manager's status
+ *
+ * @memberof		ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::reset: null this");
@@ -116,7 +145,18 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 
 }
 
-// retrieve a mega sprite
+/**
+ * Retrieve an ObjectSpriteContainer capable of allocating the given number of OBJECTs and close to the given z coordinate
+ *
+ * @memberof					ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this					Function scope
+ * @param numberOfObjects		Number of OBJECTs required
+ * @param z						Z coordinate
+ *
+ * @return 						ObjectSpriteContainer instance
+ */
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
@@ -158,6 +198,17 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 	return suitableObjectSpriteContainer;
 }
 
+/**
+ * Retrieve the ObjectSpriteContainer for the given segment
+ *
+ * @memberof			ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param segment		Spt segment
+ *
+ * @return 				ObjectSpriteContainer instance
+ */
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: null this");
@@ -166,6 +217,16 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
 	return (unsigned)segment < __TOTAL_OBJECT_SEGMENTS? this->objectSpriteContainers[segment]: NULL;
 }
 
+/**
+ * Setup the object sprite containers
+ *
+ * @memberof			ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param size[4]		Array with the number of OBJECTs per container
+ * @param z[4]			Z coordintat of each container
+ */
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
@@ -200,6 +261,16 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	}
 }
 
+/**
+ * Set the z position of the ObjectSpriteContainer in the given segment
+ *
+ * @memberof		ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param spt		Spt segment of the ObjectSpriteContainer to modify
+ * @param z			New z coordinate
+ */
 void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
@@ -217,7 +288,16 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
 	}
 }
 
-// print status
+/**
+ * Print the manager's status
+ *
+ * @memberof		ObjectSpriteContainerManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			Screen x coordinate
+ * @param y			Screen y coordinate
+ */
 void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::print: null this");

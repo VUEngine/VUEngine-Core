@@ -78,8 +78,11 @@
 		__VIRTUAL_SET(ClassName, Sprite, writeAnimation);												\
 		__VIRTUAL_SET(ClassName, Sprite, show);															\
 		__VIRTUAL_SET(ClassName, Sprite, hide);															\
+		__VIRTUAL_SET(ClassName, Sprite, setDirection);													\
 		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
 		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
+		__VIRTUAL_SET(ClassName, Sprite, position);														\
+		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
 
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
@@ -269,6 +272,9 @@ void Sprite_rewrite(Sprite this);
 void Sprite_setTransparent(Sprite this, bool value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
+void Sprite_setDirection(Sprite this, int axis, int direction);
+void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)));
+void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)));
 
 // animation
 void Sprite_updateAnimation(Sprite this);

@@ -62,7 +62,16 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 __CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 __CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof						ObjectAnimatedSprite
+ * @public
+ *
+ * @param this						Function scope
+ * @param bgmapSpriteDefinition		Sprite definition
+ * @param owner						Owner
+ */
 static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
@@ -73,7 +82,14 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
 
-// destructor
+/**
+ * Class destructor
+ *
+ * @memberof						ObjectAnimatedSprite
+ * @public
+ *
+ * @param this						Function scope
+ */
 void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::destructor: null this");
@@ -89,7 +105,14 @@ void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 	__DESTROY_BASE;
 }
 
-// write char animation frame to char memory
+/**
+ * Write animation
+ *
+ * @memberof		ObjectAnimatedSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");

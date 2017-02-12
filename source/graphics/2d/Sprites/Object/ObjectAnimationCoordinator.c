@@ -49,7 +49,15 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 __CLASS_NEW_DEFINITION(ObjectAnimationCoordinator, const CharSetDefinition* charSetDefinition)
 __CLASS_NEW_END(ObjectAnimationCoordinator, charSetDefinition);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof					ObjectAnimationCoordinator
+ * @public
+ *
+ * @param this					Function scope
+ * @param charSetDefinition		CharSetDefinition
+ */
 void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
@@ -57,7 +65,14 @@ void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, con
 	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof					ObjectAnimationCoordinator
+ * @public
+ *
+ * @param this					Function scope
+ */
 void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::destructor: null this");
@@ -67,6 +82,15 @@ void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Add an AnimationController
+ *
+ * @memberof					ObjectAnimationCoordinator
+ * @public
+ *
+ * @param this					Function scope
+ * @param animationController		Animation controller to register
+ */
 void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::addAnimationController: null this");
@@ -81,6 +105,15 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
 	VirtualList_pushBack(this->animationControllers, animationController);
 }
 
+/**
+ * Remove an AnimationController
+ *
+ * @memberof						ObjectAnimationCoordinator
+ * @public
+ *
+ * @param this						Function scope
+ * @param animationController		Animation controller to unregister
+ */
 void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::removeAnimationController: null this");

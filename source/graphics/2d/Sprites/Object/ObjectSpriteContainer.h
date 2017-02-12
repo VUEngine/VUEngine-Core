@@ -51,9 +51,6 @@
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);										\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);									\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);									\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, position);										\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setDirection);									\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, calculateParallax);								\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
@@ -95,7 +92,6 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);
-void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this, int axis, int direction);
 VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
 void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position);

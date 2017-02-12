@@ -209,6 +209,49 @@ bool Sprite_isHidden(Sprite this)
 }
 
 /**
+ * Set direction
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param axis			Axis to modify
+ * @param direction		Direction value
+ */
+void Sprite_setDirection(Sprite this __attribute__ ((unused)), int axis __attribute__ ((unused)), int direction __attribute__ ((unused)))
+{
+	ASSERT(this, "Sprite::setDirection: null this");
+}
+
+/**
+ * Calculate 2D position
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		3D position
+ */
+void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
+{
+	ASSERT(this, "Sprite::position: null this");
+}
+
+/**
+ * Calculate parallax
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param z				Z coordinate to base on the calculation
+ */
+void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
+{
+	ASSERT(this, "Sprite::calculateParallax: null this");
+}
+
+/**
  * Retrieve animation controller
  *
  * @memberof	Sprite
@@ -242,7 +285,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 }
 
 /**
- * Get map's world layer
+ * Get WORLD layer
  *
  * @memberof	Sprite
  * @public

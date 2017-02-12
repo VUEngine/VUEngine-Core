@@ -82,10 +82,12 @@ __CLASS_NEW_END(BgmapSprite, bgmapSpriteDefinition, owner);
 /**
  * Class constructor
  *
- * @memberof			BgmapSprite
+ * @memberof						BgmapSprite
  * @public
  *
- * @param this			Function scope
+ * @param this						Function scope
+ * @param bgmapSpriteDefinition		Sprite definition
+ * @param owner						Owner
  */
 void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {

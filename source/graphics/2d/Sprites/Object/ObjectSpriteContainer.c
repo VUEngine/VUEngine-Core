@@ -75,7 +75,14 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this);
 __CLASS_NEW_DEFINITION(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex)
 __CLASS_NEW_END(ObjectSpriteContainer, spt, totalObjects, firstObjectIndex);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof				ObjectSpriteContainer
+ * @public
+ *
+ * @param this				Function scope
+ */
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex)
 {
 	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
@@ -120,7 +127,14 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	}
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof				ObjectSpriteContainer
+ * @public
+ *
+ * @param this				Function scope
+ */
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
@@ -148,6 +162,16 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Add an ObjectSprite to this container
+ *
+ * @memberof				ObjectSpriteContainer
+ * @public
+ *
+ * @param this				Function scope
+ * @param objectSprite		Sprite to add
+ * @param numberOfObjects	The number of OBJECTs used by the Sprite
+ */
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::addObjectSprite: null this");
@@ -180,6 +204,16 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 	return -1;
 }
 
+/**
+ * Remove a previously registered ObjectSprite
+ *
+ * @memberof				ObjectSpriteContainer
+ * @public
+ *
+ * @param this				Function scope
+ * @param objectSprite		Sprite to remove
+ * @param numberOfObjects	The number of OBJECTs used by the Sprite
+ */
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
@@ -246,6 +280,17 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	this->removingObjectSprite = false;
 }
 
+/**
+ * Check if this container has enough free OBJECTs
+ *
+ * @memberof				ObjectSpriteContainer
+ * @public
+ *
+ * @param this				Function scope
+ * @param numberOfObjects	The number of OBJECTs to check
+ *
+ * @return 					True if there is enough OBJECT space in this container
+ */
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects)
 {
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
@@ -253,11 +298,16 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfOb
 	return this->availableObjects >= numberOfObjects;
 }
 
-void ObjectSpriteContainer_setDirection(ObjectSpriteContainer this __attribute__ ((unused)), int axis __attribute__ ((unused)), int direction __attribute__ ((unused)))
-{
-	ASSERT(this, "ObjectSpriteContainer::setDirection: null this");
-}
-
+/**
+ * Retrieve 2D position
+ *
+ * @memberof		ObjectSpriteContainer
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			2D position
+ */
 VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
@@ -272,6 +322,15 @@ VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 	return position;
 }
 
+/**
+ * Set 2D position
+ *
+ * @memberof			ObjectSpriteContainer
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		New 2D position
+ */
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position)
 {
 	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
@@ -292,16 +351,14 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
 	this->z = position->z;
 }
 
-void ObjectSpriteContainer_position(ObjectSpriteContainer this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
-{
-	ASSERT(this, "ObjectSpriteContainer::position: null this");
-}
-
-void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
-{
-	ASSERT(this, "ObjectSpriteContainer::calculateParallax: null this");
-}
-
+/**
+ * Defragment the ObjectSpriteContainer's OBJECT segment
+ *
+ * @memberof		ParamTableManager
+ * @private
+ *
+ * @param this		Function scope
+ */
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::defragment: null this");
@@ -340,6 +397,14 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 	}
 }
 
+/**
+ * Sort the object sprites within this container according to their z coordinates
+ *
+ * @memberof		ParamTableManager
+ * @private
+ *
+ * @param this		Function scope
+ */
 static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::sort: null this");
@@ -389,7 +454,14 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 	}
 }
 
-// render a world layer with the map's information
+/**
+ * Write WORLD data to DRAM
+ *
+ * @memberof		ObjectSpriteContainer
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
@@ -423,6 +495,14 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 }
 
+/**
+ * Show
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::show: null this");
@@ -437,6 +517,14 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 	this->hidden = false;
 }
 
+/**
+ * Hide
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ */
 void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::hide: null this");
@@ -456,6 +544,16 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 	this->hidden = false;
 }
 
+/**
+ * Retrieve the number of free OBJECTs within the segment assigned to this container
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Number of free OBJECTs
+ */
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
@@ -463,6 +561,16 @@ int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
 	return this->availableObjects;
 }
 
+/**
+ * Retrieve the number of used OBJECTs within the segment assigned to this container
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Number of used OBJECTs
+ */
 int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getTotalUsedObjects: null this");
@@ -481,6 +589,16 @@ int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 	return totalUsedObjects;
 }
 
+/**
+ * Retrieve the index of the next free OBJECT within the segment assigned to this container
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Index of the next free OBJECT
+ */
 int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
@@ -497,6 +615,16 @@ int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 	return 0;
 }
 
+/**
+ * Retrieve the index of the first OBJECT within the segment assigned to this container
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Index of the first OBJECT
+ */
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
@@ -504,6 +632,16 @@ int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this)
 	return this->firstObjectIndex;
 }
 
+/**
+ * Retrieve the index of the last OBJECT within the segment assigned to this container
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Index of the last OBJECT
+ */
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
@@ -511,6 +649,15 @@ int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
 	return this->firstObjectIndex + this->totalObjects;
 }
 
+/**
+ * Add displacement to position
+ *
+ * @memberof				ObjectSpriteContainer
+ * @public
+ *
+ * @param this				Function scope
+ * @param displacement		2D position displacement
+ */
 void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBVec2D* displacement)
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
@@ -526,7 +673,16 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBV
 	}
 }
 
-
+/**
+ * Print the container's status
+ *
+ * @memberof		ObjectSpriteContainer
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			Screen x coordinate
+ * @param y			Screen y coordinate
+ */
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 {
 	ASSERT(this, "ObjectSpriteContainer::print: null this");

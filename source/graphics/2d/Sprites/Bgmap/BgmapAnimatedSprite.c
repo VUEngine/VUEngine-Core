@@ -112,10 +112,10 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 /**
  * Write animation
  *
- * @memberof						BgmapAnimatedSprite
+ * @memberof		BgmapAnimatedSprite
  * @public
  *
- * @param this						Function scope
+ * @param this		Function scope
  */
 void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {

@@ -294,7 +294,7 @@ u32 VIPManager_writeDRAM(VIPManager this)
 #endif
 
 	// do some defragmenting
-	if(!ParamTableManager_processRemovedSprites(_paramTableManager))
+	if(!ParamTableManager_defragmentProgressively(_paramTableManager))
 	{
 		CharSetManager_defragmentProgressively(_charSetManager);
 		// TODO: bgmap memory defragmentation

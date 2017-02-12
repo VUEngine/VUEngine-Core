@@ -74,7 +74,16 @@ static void ObjectSprite_checkForContainer(ObjectSprite this);
 __CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 __CLASS_NEW_END(ObjectSprite, objectSpriteDefinition, owner);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof						ObjectSprite
+ * @public
+ *
+ * @param this						Function scope
+ * @param objectSpriteDefinition	Sprite definition
+ * @param owner						Owner
+ */
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectSprite::constructor: null this");
@@ -103,7 +112,14 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof						ObjectSprite
+ * @public
+ *
+ * @param this						Function scope
+ */
 void ObjectSprite_destructor(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::destructor: null this");
@@ -129,6 +145,16 @@ void ObjectSprite_destructor(ObjectSprite this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Set direction
+ *
+ * @memberof			ObjectSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param axis			Axis to modify
+ * @param direction		Direction value
+ */
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 {
 	ASSERT(this, "ObjectSprite::setDirection: null this");
@@ -163,6 +189,16 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 	this->texture->written = false;
 }
 
+/**
+ * Retrieve 2D position
+ *
+ * @memberof		ObjectSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			2D position
+ */
 VBVec2D ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
@@ -170,6 +206,15 @@ VBVec2D ObjectSprite_getPosition(ObjectSprite this)
 	return this->position;
 }
 
+/**
+ * Set 2D position
+ *
+ * @memberof			ObjectSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		New 2D position
+ */
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
@@ -179,6 +224,15 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 	ObjectSprite_checkForContainer(this);
 }
 
+/**
+ * Calculate 2D position
+ *
+ * @memberof			ObjectSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		3D position
+ */
 void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "ObjectSprite::position: null this");
@@ -197,6 +251,14 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 	ObjectSprite_checkForContainer(this);
 }
 
+/**
+ * Check if assigned to a container
+ *
+ * @memberof			ObjectSprite
+ * @private
+ *
+ * @param this			Function scope
+ */
 static void ObjectSprite_checkForContainer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::checkForContainer: null this");
@@ -209,6 +271,15 @@ static void ObjectSprite_checkForContainer(ObjectSprite this)
 	}
 }
 
+/**
+ * Calculate parallax
+ *
+ * @memberof			ObjectSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param z				Z coordinate to base on the calculation
+ */
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
 {
 	ASSERT(this, "ObjectSprite::calculateParallax: null this");
@@ -217,7 +288,14 @@ void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
 	this->position.parallax = Optics_calculateParallax(this->position.x, z);
 }
 
-// render a world layer with the map's information
+/**
+ * Write WORLD data to DRAM
+ *
+ * @memberof		ObjectSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ObjectSprite_render(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::render: null this");
@@ -295,7 +373,15 @@ void ObjectSprite_render(ObjectSprite this)
 	}
 }
 
-
+/**
+ * Retrieved number of OBJECTs
+ *
+ * @memberof			ObjectSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @return				Number of used OBJECTs
+ */
 s16 ObjectSprite_getTotalObjects(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
@@ -304,6 +390,16 @@ s16 ObjectSprite_getTotalObjects(ObjectSprite this)
 	return this->totalObjects;
 }
 
+/**
+ * Retrieved the OBJECT index
+ *
+ * @memberof			ObjectSprite
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Number of used OBJECTs
+ */
 s16 ObjectSprite_getObjectIndex(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
@@ -311,6 +407,15 @@ s16 ObjectSprite_getObjectIndex(ObjectSprite this)
 	return this->objectIndex;
 }
 
+/**
+ * Set the OBJECT index
+ *
+ * @memberof				ObjectSprite
+ * @public
+ *
+ * @param this				Function scope
+ * @param objectIndex		Set the OBJECT index
+ */
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 {
 	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
@@ -355,6 +460,16 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 	}
 }
 
+/**
+ * Get WORLD layer
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		World layer
+ */
 u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
@@ -363,6 +478,15 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 	return this->objectSpriteContainer ? __VIRTUAL_CALL(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)) : 0;
 }
 
+/**
+ * Add displacement to position
+ *
+ * @memberof				ObjectSprite
+ * @public
+ *
+ * @param this				Function scope
+ * @param displacement		2D position displacement
+ */
 void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement)
 {
 	ASSERT(this, "ObjectSprite::addDisplacement: null this");
@@ -373,7 +497,14 @@ void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement
 	this->position.parallax += displacement->parallax;
 }
 
-
+/**
+ * Set ObjectSpriteContainer to NULL
+ *
+ * @memberof				ObjectSprite
+ * @public
+ *
+ * @param this				Function scope
+ */
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::invalidateObjectSpriteContainer: null this");
