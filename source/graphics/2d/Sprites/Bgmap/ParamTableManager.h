@@ -65,7 +65,7 @@ void ParamTableManager_calculateParamTableBase(ParamTableManager this, int avail
 u32 ParamTableManager_getParamTableBase(ParamTableManager this);
 int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bsprite);
 void ParamTableManager_free(ParamTableManager this, BgmapSprite bsprite);
-bool ParamTableManager_processRemovedSprites(ParamTableManager this);
+bool ParamTableManager_defragmentProgressively(ParamTableManager this);
 void ParamTableManager_print(ParamTableManager this,int x, int y);
 
 #endif

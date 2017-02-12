@@ -60,7 +60,16 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
 __CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 __CLASS_NEW_END(BgmapAnimatedSprite, bgmapSpriteDefinition, owner);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof						BgmapAnimatedSprite
+ * @public
+ *
+ * @param this						Function scope
+ * @param bgmapSpriteDefinition		Sprite definition
+ * @param owner						Owner
+ */
 static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
@@ -77,7 +86,14 @@ static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const Bgma
     this->originalTextureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 }
 
-//destructor
+/**
+ * Class destructor
+ *
+ * @memberof						BgmapAnimatedSprite
+ * @public
+ *
+ * @param this						Function scope
+ */
 void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::destructor: null this");
@@ -93,7 +109,14 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 	__DESTROY_BASE;
 }
 
-// write char animation frame to char memory
+/**
+ * Write animation
+ *
+ * @memberof						BgmapAnimatedSprite
+ * @public
+ *
+ * @param this						Function scope
+ */
 void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");

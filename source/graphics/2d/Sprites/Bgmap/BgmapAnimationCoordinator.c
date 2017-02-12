@@ -47,7 +47,14 @@ __CLASS_DEFINITION(BgmapAnimationCoordinator, AnimationCoordinator);
 __CLASS_NEW_DEFINITION(BgmapAnimationCoordinator, const CharSetDefinition* charSetDefinition)
 __CLASS_NEW_END(BgmapAnimationCoordinator, charSetDefinition);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof		BgmapAnimationCoordinator
+ * @public
+ *
+ * @param this		Function scope
+ */
 void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
@@ -55,7 +62,14 @@ void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const
 	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof		BgmapAnimationCoordinator
+ * @public
+ *
+ * @param this		Function scope
+ */
 void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::destructor: null this");
@@ -65,6 +79,15 @@ void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Add an AnimationController
+ *
+ * @memberof						BgmapAnimationCoordinator
+ * @public
+ *
+ * @param this						Function scope
+ * @param animationController		Animation controller to register
+ */
 void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::addAnimationController: null this");
@@ -90,6 +113,15 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
 	VirtualList_pushBack(this->animationControllers, animationController);
 }
 
+/**
+ * Remove an AnimationController
+ *
+ * @memberof						BgmapAnimationCoordinator
+ * @public
+ *
+ * @param this						Function scope
+ * @param animationController		Animation controller to unregister
+ */
 void BgmapAnimationCoordinator_removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::removeAnimationController: null this");

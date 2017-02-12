@@ -79,7 +79,14 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 __CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 __CLASS_NEW_END(BgmapSprite, bgmapSpriteDefinition, owner);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
 	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)bgmapSpriteDefinition, owner);
@@ -160,7 +167,14 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	}
 }
 
-// class's destructor
+/**
+ * Class denstructor
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapSprite_destructor(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::destructor: null this");
@@ -196,6 +210,16 @@ void BgmapSprite_destructor(BgmapSprite this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Retrieve scale
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Scale
+ */
 Scale BgmapSprite_getScale(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getScale: null this");
@@ -204,7 +228,16 @@ Scale BgmapSprite_getScale(BgmapSprite this)
 	return this->drawSpec.scale;
 }
 
-// set the direction
+/**
+ * Set direction
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param axis			Axis to modify
+ * @param direction		Direction value
+ */
 void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 {
 	ASSERT(this, "BgmapSprite::setDirection: null this");
@@ -226,6 +259,16 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 	BgmapSprite_invalidateParamTable(this);
 }
 
+/**
+ * Retrieve 2D position
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			2D position
+ */
 VBVec2D BgmapSprite_getPosition(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
@@ -233,6 +276,15 @@ VBVec2D BgmapSprite_getPosition(BgmapSprite this)
 	return this->drawSpec.position;
 }
 
+/**
+ * Set 2D position
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		New 2D position
+ */
 void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "BgmapSprite::setPosition: null this");
@@ -245,6 +297,15 @@ void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 	}
 }
 
+/**
+ * Calculate 2D position
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		3D position
+ */
 void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "BgmapSprite::position: null this");
@@ -269,6 +330,15 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 	}
 }
 
+/**
+ * Rotate
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param rotation		Rotation
+ */
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
@@ -281,7 +351,16 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 	}
 }
 
-// calculate zoom scaling factor
+/**
+ * Resize
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param scale			Scale to apply
+ * @param z				Z coordinate to base on the size calculation
+ */
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::resize: null this");
@@ -310,7 +389,15 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	}
 }
 
-// calculate the parallax
+/**
+ * Calculate parallax
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param z				Z coordinate to base on the calculation
+ */
 void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
@@ -319,7 +406,16 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z)
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 
-// retrieve drawspec
+/**
+ * Retrieve the drawspec
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			DrawSpec
+ */
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getDrawSpec: null this");
@@ -327,7 +423,14 @@ DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this)
 	return this->drawSpec;
 }
 
-// render a world layer with the map's information
+/**
+ * Write WORLD data to DRAM
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void BgmapSprite_render(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::render: null this");
@@ -542,6 +645,15 @@ void BgmapSprite_render(BgmapSprite this)
 }
 */
 
+/**
+ * Add displacement to position
+ *
+ * @memberof				BgmapSprite
+ * @public
+ *
+ * @param this				Function scope
+ * @param displacement		2D position displacement
+ */
 void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
@@ -552,7 +664,16 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 	this->drawSpec.position.parallax += displacement->parallax;
 }
 
-// get map's param table address
+/**
+ * Retrieve param table address
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Param table address
+ */
 u32 BgmapSprite_getParam(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getParam: null this");
@@ -560,7 +681,15 @@ u32 BgmapSprite_getParam(BgmapSprite this)
 	return this->param;
 }
 
-// set map's param table address
+/**
+ * Set param table address
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ * @param param		Net param table address
+ */
 void BgmapSprite_setParam(BgmapSprite this, u32 param)
 {
 	ASSERT(this, "BgmapSprite::setParam: null this");
@@ -571,7 +700,14 @@ void BgmapSprite_setParam(BgmapSprite this, u32 param)
 	BgmapSprite_invalidateParamTable(this);
 }
 
-// force refresh param table in the next render
+/**
+ * Force to refresh param table in the next render cycle
+ *
+ * @memberof		BgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void BgmapSprite_invalidateParamTable(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
@@ -579,7 +715,15 @@ void BgmapSprite_invalidateParamTable(BgmapSprite this)
 	BgmapSprite_applyAffineTransformations(this);
 }
 
-// set drawspec
+/**
+ * Set drawspec
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param drawSpec		New drawSpec
+ */
 void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
 {
 	ASSERT(this, "BgmapSprite::setDrawSpec: null this");
@@ -587,7 +731,16 @@ void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
 	this->drawSpec = *drawSpec;
 }
 
-// retrieve param table current row
+/**
+ * Retrieve the next param table row to calculate
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Next param table row to calculate
+ */
 fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 {
 	return this->paramTableRow;
@@ -598,6 +751,14 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
 //										MAP FXs
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Start affine calculations
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
@@ -624,11 +785,27 @@ void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 	}
 }
 
+/**
+ * Start h-bias calculations
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this __attribute__ ((unused)))
 {
 	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
 }
 
+/**
+ * Trigger affine calculations
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
@@ -637,6 +814,14 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
 	this->paramTableRow = 0;
 }
 
+/**
+ * Trigger h-bias calculations
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");

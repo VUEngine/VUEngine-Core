@@ -89,10 +89,25 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
 //												CLASS'S METHODS
 // ---------------------------------------------------------------------------------------------------------
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn			ParamTableManager_getInstance()
+ * @memberof	ParamTableManager
+ * @public
+ *
+ * @return		ParamTableManager instance
+ */
 __SINGLETON(ParamTableManager);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof		ParamTableManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void __attribute__ ((noinline)) ParamTableManager_constructor(ParamTableManager this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -104,7 +119,14 @@ void __attribute__ ((noinline)) ParamTableManager_constructor(ParamTableManager 
 	ParamTableManager_reset(this);
 }
 
-// class destructor
+/**
+ * Class denstructor
+ *
+ * @memberof		ParamTableManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ParamTableManager_destructor(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::destructor: null this");
@@ -121,7 +143,14 @@ void ParamTableManager_destructor(ParamTableManager this)
 	__SINGLETON_DESTROY;
 }
 
-// reset
+/**
+ * Reset management
+ *
+ * @memberof		ParamTableManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void ParamTableManager_reset(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::reset: null this");
@@ -147,12 +176,20 @@ void ParamTableManager_reset(ParamTableManager this)
 	// all the memory is free
 	this->used = 1;
 
-
 	this->paramTableFreeData.param = 0;
 	this->paramTableFreeData.recoveredSize = 0;
 	this->previouslyMovedBgmapSprite = NULL;
 }
 
+/**
+ * Calculate the param table's base address
+ *
+ * @memberof										ParamTableManager
+ * @public
+ *
+ * @param this										Function scope
+ * @param availableBgmapSegmentsForParamTable		Number of BGMAP segments for the param tables
+ */
 void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable)
 {
 	ASSERT(this, "ParamTableManager::calculateParamTableBase: null this");
@@ -175,6 +212,16 @@ void ParamTableManager_calculateParamTableBase(ParamTableManager this, int avail
 	BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager_getInstance());
 }
 
+/**
+ * Retrieve the param table's base address
+ *
+ * @memberof		ParamTableManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			The base address of the param table
+ */
 u32 ParamTableManager_getParamTableBase(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::getParamTableBase: null this");
@@ -182,7 +229,17 @@ u32 ParamTableManager_getParamTableBase(ParamTableManager this)
 	return this->paramTableBase;
 }
 
-// calculate size of param table
+/**
+ * Calculate the param table'size for the given Sprite
+ *
+ * @memberof			ParamTableManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param bgmapSprite	Sprite to base the calculation on
+ *
+ * @return				Param table's size for the Sprite
+ */
 static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
@@ -194,7 +251,17 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
 	return (((int)Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bgmapSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
 }
 
-// allocate param table space for sprite
+/**
+ * Allocate param table space for the given Sprite
+ *
+ * @memberof			ParamTableManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param bgmapSprite	Sprite for which the param table space will be allocated
+ *
+ * @return				True if param table space was allocated
+ */
 int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
@@ -227,7 +294,15 @@ int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 	return false;
 }
 
-// deallocate param table space
+/**
+ * Free the param table space used by the Sprite
+ *
+ * @memberof			ParamTableManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param bgmapSprite	Sprite of which param table space will be freed
+ */
 void ParamTableManager_free(ParamTableManager this, BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::free: null this");
@@ -253,8 +328,17 @@ void ParamTableManager_free(ParamTableManager this, BgmapSprite bgmapSprite)
 	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 }
 
-// relocate bgmapSprites
-bool ParamTableManager_processRemovedSprites(ParamTableManager this)
+/**
+ * Defragment the param table space
+ *
+ * @memberof		ParamTableManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return 			True if defragmentation took place
+ */
+bool ParamTableManager_defragmentProgressively(ParamTableManager this)
 {
 	ASSERT(this, "ParamTableManager::processRemoved: null this");
 
@@ -314,7 +398,16 @@ bool ParamTableManager_processRemovedSprites(ParamTableManager this)
 	return false;
 }
 
-// print param table's attributes state
+/**
+ * Print the manager's state
+ *
+ * @memberof			ParamTableManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param x				Screen x coordinate
+ * @param y				Screen y coordinate
+ */
 void ParamTableManager_print(ParamTableManager this, int x, int y)
 {
 	ASSERT(this, "ParamTableManager::print: null this");

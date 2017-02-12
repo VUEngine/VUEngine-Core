@@ -81,7 +81,14 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this);
 __CLASS_NEW_DEFINITION(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 __CLASS_NEW_END(MBgmapSprite, mBgmapSpriteDefinition, owner);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 {
 	__CONSTRUCT_BASE(BgmapSprite, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
@@ -106,7 +113,14 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 */
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void MBgmapSprite_destructor(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::destructor: null this");
@@ -118,7 +132,14 @@ void MBgmapSprite_destructor(MBgmapSprite this)
 	__DESTROY_BASE;
 }
 
-// release loaded textures
+/**
+ * Release the loaded textures
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::releaseTextures: null this");
@@ -139,7 +160,14 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 	}
 }
 
-// load textures
+/**
+ * Load textures from definition
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 static void MBgmapSprite_loadTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::loadTextures: null this");
@@ -164,7 +192,15 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 	}
 }
 
-// load texture
+/**
+ * Load a texture
+ *
+ * @memberof					MBgmapSprite
+ * @public
+ *
+ * @param this					Function scope
+ * @param textureDefinition		TextureDefinition to use
+ */
 static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition)
 {
 	ASSERT(this, "MBgmapSprite::loadTexture: null this");
@@ -179,7 +215,15 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
 	VirtualList_pushBack(this->textures, bgmapTexture);
 }
 
-// set sprite's position
+/**
+ * Calculate 2D position
+ *
+ * @memberof			MBgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		3D position
+ */
 void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
@@ -200,6 +244,15 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 	MBgmapSprite_setPosition(this, &position2D);
 }
 
+/**
+ * Set 2D position
+ *
+ * @memberof			BgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		New 2D position
+ */
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
@@ -252,6 +305,15 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	}
 }
 
+/**
+ * Add displacement to position
+ *
+ * @memberof				MBgmapSprite
+ * @public
+ *
+ * @param this				Function scope
+ * @param displacement		2D position displacement
+ */
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
@@ -292,7 +354,14 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	this->drawSpec.position.parallax += displacement->parallax;
 }
 
-// render a world layer with the map's information
+/**
+ * Write WORLD data to DRAM
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ */
 void MBgmapSprite_render(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
@@ -366,6 +435,16 @@ void MBgmapSprite_render(MBgmapSprite this)
 	}
 }
 
+/**
+ * Retrieve position
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			2D position
+ */
 VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
@@ -373,6 +452,16 @@ VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 	return this->drawSpec.position;
 }
 
+/**
+ * Resize
+ *
+ * @memberof			MBgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param scale			Scale to apply
+ * @param z				Z coordinate to base on the size calculation
+ */
 void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "MBgmapSprite::resize: null this");
@@ -382,6 +471,14 @@ void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
 	MBgmapSprite_calculateSize(this);
 }
 
+/**
+ * Calculate Sprite's size
+ *
+ * @memberof			MBgmapSprite
+ * @public
+ *
+ * @param this			Function scope
+ */
 static void MBgmapSprite_calculateSize(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::calculateSize: null this");

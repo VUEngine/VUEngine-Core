@@ -195,5 +195,4 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 	}
 
 	return NULL;
-
 }
