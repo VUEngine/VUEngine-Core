@@ -271,10 +271,10 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
 
 // animation
-void Sprite_animate(Sprite this);
+void Sprite_updateAnimation(Sprite this);
 s8 Sprite_getActualFrame(Sprite this);
 VBVecWorld Sprite_getDisplacement(Sprite this);
-s8 Sprite_getFrameDelay(Sprite this);
+s8 Sprite_getFrameDuration(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 int Sprite_getHalfWidth(Sprite this);
 bool Sprite_isPlaying(Sprite this);
@@ -283,8 +283,8 @@ void Sprite_pause(Sprite this, bool pause);
 void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName);
 void Sprite_rotate(Sprite this, const Rotation* rotation);
 void Sprite_setActualFrame(Sprite this, s8 actualFrame);
-void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta);
-void Sprite_setFrameDelay(Sprite this, u8 frameDelay);
+void Sprite_setFrameCycleDecrement(Sprite this, u8 frameDelayDelta);
+void Sprite_setFrameDuration(Sprite this, u8 frameDuration);
 void Sprite_update(Sprite this);
 void Sprite_writeAnimation(Sprite this);
 

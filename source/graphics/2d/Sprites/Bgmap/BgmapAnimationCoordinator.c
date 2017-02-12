@@ -80,9 +80,9 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
 		{
 			AnimationController_playAnimationFunction(animationController, AnimationController_getPlayingAnimationFunction(firstAnimationController));
 			s8 currentFrame = AnimationController_getActualFrame(firstAnimationController);
-			s8 frameDelay = AnimationController_getFrameDelay(firstAnimationController);
+			s8 frameDuration = AnimationController_getFrameDuration(firstAnimationController);
 			AnimationController_setActualFrame(animationController, currentFrame);
-			AnimationController_setFrameDelay(animationController, frameDelay);
+			AnimationController_setFrameDuration(animationController, frameDuration);
 		}
 	}
 

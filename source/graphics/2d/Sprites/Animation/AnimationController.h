@@ -59,10 +59,10 @@
 		s8 actualFrame;																					\
 		/* previous animation's frame shown */															\
 		s8 previousFrame;																				\
-		/* actual frame cycle in a given direction (i.e. when walking) */								\
-		s8 frameDelay;																					\
-		/* frame delay increment update cycle */														\
-		s8 frameDelayDelta;																				\
+		/* the number of game cycles that an animation frame is show */									\
+		s8 frameDuration;																				\
+		/* frame delay decrement update cycle */														\
+		s8 frameCycleDecrement;																			\
 		/* a pointer to the animation function being played */											\
 		const AnimationFunction* animationFunction;														\
 		/* flag to know if playing an animation */														\
@@ -86,11 +86,11 @@ s8 AnimationController_getActualFrameIndex(AnimationController this);
 s8 AnimationController_getActualFrame(AnimationController this);
 s8 AnimationController_getPreviousFrame(AnimationController this);
 void AnimationController_setActualFrame(AnimationController this, s8 actualFrame);
-s8 AnimationController_getFrameDelay(AnimationController this);
-void AnimationController_setFrameDelay(AnimationController this, u8 frameDelay);
-u8 AnimationController_geFrameDelayDelta(AnimationController this);
-void AnimationController_setFrameDelayDelta(AnimationController this, u8 frameDelayDelta);
-bool AnimationController_animate(AnimationController this);
+s8 AnimationController_getFrameDuration(AnimationController this);
+void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration);
+u8 AnimationController_geFrameCycleDecrement(AnimationController this);
+void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement);
+bool AnimationController_updateAnimation(AnimationController this);
 void AnimationController_fx(AnimationController this);
 bool AnimationController_update(AnimationController this, Clock clock);
 u8 AnimationController_getRows(AnimationController this);

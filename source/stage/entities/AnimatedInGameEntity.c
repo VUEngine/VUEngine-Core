@@ -193,7 +193,7 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 		for(; node ; node = node->next)
 		{
 			// first animate the frame
-			Sprite_animate(__SAFE_CAST(Sprite, node->data));
+			Sprite_updateAnimation(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 }

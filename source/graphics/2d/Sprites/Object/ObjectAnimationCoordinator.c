@@ -98,9 +98,9 @@ void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordin
 			{
 				AnimationController_playAnimationFunction(firstAnimationController, AnimationController_getPlayingAnimationFunction(animationController));
 				s8 currentFrame = AnimationController_getActualFrame(firstAnimationController);
-				s8 frameDelay = AnimationController_getFrameDelay(firstAnimationController);
+				s8 frameDuration = AnimationController_getFrameDuration(firstAnimationController);
 				AnimationController_setActualFrame(firstAnimationController, currentFrame);
-				AnimationController_setFrameDelay(firstAnimationController, frameDelay);
+				AnimationController_setFrameDuration(firstAnimationController, frameDuration);
 				AnimationController_stop(animationController);
 			}
 		}

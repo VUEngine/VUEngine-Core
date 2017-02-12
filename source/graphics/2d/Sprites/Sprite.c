@@ -549,21 +549,21 @@ void Sprite_setTransparent(Sprite this, bool value)
 }
 
 /**
- * Animate Sprite
+ * Animate the Sprite
  *
  * @memberof	Sprite
  * @public
  *
  * @param this	Function scope
  */
-void Sprite_animate(Sprite this)
+void Sprite_updateAnimation(Sprite this)
 {
-	ASSERT(this, "Sprite::animate: null this");
+	ASSERT(this, "Sprite::updateAnimation: null this");
 
 	if(this->animationController)
 	{
 		// first animate the frame
-		this->writeAnimationFrame |= AnimationController_animate(this->animationController);
+		this->writeAnimationFrame |= AnimationController_updateAnimation(this->animationController);
 	}
 }
 
@@ -657,22 +657,22 @@ bool Sprite_isPlayingFunction(Sprite this, char* functionName)
 }
 
 /**
- * Set Frame Delay Delta
+ * Set frame cycle decrement
  *
- * @memberof				Sprite
+ * @memberof					Sprite
  * @public
  *
- * @param this				Function scope
- * @param frameDelayDelta	Frame Delay Delta
+ * @param this					Function scope
+ * @param frameCycleDecrement	Frame cycle decrement
  */
-void Sprite_setFrameDelayDelta(Sprite this, u8 frameDelayDelta)
+void Sprite_setFrameCycleDecrement(Sprite this, u8 frameCycleDecrement)
 {
-	ASSERT(this, "Sprite::setFrameDelayDelta: null this");
+	ASSERT(this, "Sprite::setFrameCycleDecrement: null this");
 
 	if(this->animationController)
 	{
 		// first animate the frame
-		AnimationController_setFrameDelayDelta(this->animationController, frameDelayDelta);
+		AnimationController_setFrameCycleDecrement(this->animationController, frameCycleDecrement);
 	}
 }
 
@@ -729,14 +729,14 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame)
  *
  * @return		Frame delay
  */
-s8 Sprite_getFrameDelay(Sprite this)
+s8 Sprite_getFrameDuration(Sprite this)
 {
-	ASSERT(this, "Sprite::getFrameDelay: null this");
+	ASSERT(this, "Sprite::getFrameDuration: null this");
 
 	if(this->animationController)
 	{
 		// first animate the frame
-		return AnimationController_getFrameDelay(this->animationController);
+		return AnimationController_getFrameDuration(this->animationController);
 	}
 
 	return -1;
@@ -749,16 +749,16 @@ s8 Sprite_getFrameDelay(Sprite this)
  * @public
  *
  * @param this			Function scope
- * @param frameDelay	Frame delay
+ * @param frameDuration	Frame delay
  */
-void Sprite_setFrameDelay(Sprite this, u8 frameDelay)
+void Sprite_setFrameDuration(Sprite this, u8 frameDuration)
 {
-	ASSERT(this, "Sprite::setFrameDelay: null this");
+	ASSERT(this, "Sprite::setFrameDuration: null this");
 
 	if(this->animationController)
 	{
 		// first animate the frame
-		AnimationController_setFrameDelay(this->animationController, frameDelay);
+		AnimationController_setFrameDuration(this->animationController, frameDuration);
 	}
 }
 

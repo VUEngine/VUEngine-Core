@@ -61,7 +61,7 @@ __CLASS_NEW_END(Clock);
  * Class constructor
  *
  * @memberof	Clock
- * @private
+ * @public
  *
  * @param this	Function scope
  */
