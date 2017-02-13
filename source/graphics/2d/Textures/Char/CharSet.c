@@ -297,7 +297,7 @@ void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDispl
 }
 
 /**
- * Rewrite a single CHAR to DRAM
+ * Write a single CHAR to DRAM
  *
  * @memberof			CharSet
  * @public
@@ -316,7 +316,7 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 }
 
 /**
- * Rewrite a single pixel to DRAM
+ * Write a single pixel to DRAM
  *
  * @memberof				CharSet
  * @public

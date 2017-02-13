@@ -64,7 +64,14 @@ static void Polyhedron_constructor(Polyhedron this);
 __CLASS_NEW_DEFINITION(Polyhedron)
 __CLASS_NEW_END(Polyhedron);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	Polyhedron
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void Polyhedron_constructor(Polyhedron this)
 {
 	// construct base object
@@ -74,7 +81,14 @@ static void Polyhedron_constructor(Polyhedron this)
 	this->vertices = NULL;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Polyhedron
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Polyhedron_destructor(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::destructor: null this");
@@ -101,7 +115,17 @@ void Polyhedron_destructor(Polyhedron this)
 	__DESTROY_BASE;
 }
 
-// add a vertex
+/**
+ * Add a vertex
+ *
+ * @memberof	Polyhedron
+ * @public
+ *
+ * @param this	Function scope
+ * @param x		Vertex' x coordinate
+ * @param y		Vertex' y coordinate
+ * @param z		Vertex' x coordinate
+ */
 void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
 {
 	ASSERT(this, "Polyhedron::addVertex: null this");
@@ -123,6 +147,14 @@ void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
 	VirtualList_pushBack(this->vertices, vertex);
 }
 
+/**
+ * Start being rendered
+ *
+ * @memberof	Polyhedron
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Polyhedron_show(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::show: null this");
@@ -130,6 +162,14 @@ void Polyhedron_show(Polyhedron this)
 	PolyhedronManager_register(PolyhedronManager_getInstance(), this);
 }
 
+/**
+ * Stop being rendered
+ *
+ * @memberof	Polyhedron
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Polyhedron_hide(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::hide: null this");
@@ -137,7 +177,14 @@ void Polyhedron_hide(Polyhedron this)
 	PolyhedronManager_remove(PolyhedronManager_getInstance(), this);
 }
 
-// draw Polyhedron to screen
+/**
+ * Write to the frame buffers
+ *
+ * @memberof	Polyhedron
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Polyhedron_draw(Polyhedron this, int calculateParallax)
 {
 	ASSERT(this, "Polyhedron::draw: null this");

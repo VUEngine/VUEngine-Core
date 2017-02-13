@@ -60,10 +60,25 @@ static void PolyhedronManager_constructor(PolyhedronManager this);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn			PolyhedronManager_getInstance()
+ * @memberof	PolyhedronManager
+ * @public
+ *
+ * @return		PolyhedronManager instance
+ */
 __SINGLETON(PolyhedronManager);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof	PolyhedronManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void PolyhedronManager_constructor(PolyhedronManager this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -71,7 +86,14 @@ static void PolyhedronManager_constructor(PolyhedronManager this)
 	this->polyhedrons = __NEW(VirtualList);
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof	PolyhedronManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void PolyhedronManager_destructor(PolyhedronManager this)
 {
 	ASSERT(this, "PolyhedronManager::destructor: null this");
@@ -92,7 +114,15 @@ void PolyhedronManager_destructor(PolyhedronManager this)
 	__SINGLETON_DESTROY;
 }
 
-// register coin
+/**
+ * Register a Polyhedron to be rendered
+ *
+ * @memberof			PolyhedronManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param polyhedron	Polyhedron to register
+ */
 void PolyhedronManager_register(PolyhedronManager this, Polyhedron polyhedron)
 {
 	ASSERT(this, "PolyhedronManager::register: null this");
@@ -104,7 +134,15 @@ void PolyhedronManager_register(PolyhedronManager this, Polyhedron polyhedron)
 	}
 }
 
-// remove background
+/**
+ * Remove a registered Polyhedron
+ *
+ * @memberof			PolyhedronManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param polyhedron	Polyhedron to remove
+ */
 void PolyhedronManager_remove(PolyhedronManager this, Polyhedron polyhedron)
 {
 	ASSERT(this, "PolyhedronManager::remove: null this");
@@ -113,7 +151,14 @@ void PolyhedronManager_remove(PolyhedronManager this, Polyhedron polyhedron)
 	VirtualList_removeElement(this->polyhedrons, polyhedron);
 }
 
-// remove texture
+/**
+ * Reset manager's state
+ *
+ * @memberof			PolyhedronManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void PolyhedronManager_reset(PolyhedronManager this)
 {
 	ASSERT(this, "PolyhedronManager::reset: null this");
@@ -121,6 +166,14 @@ void PolyhedronManager_reset(PolyhedronManager this)
 	VirtualList_clear(this->polyhedrons);
 }
 
+/**
+ * Draw the polyhedrons to the frame buffers
+ *
+ * @memberof			PolyhedronManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void PolyhedronManager_drawPolyhedrons(PolyhedronManager this)
 {
 	ASSERT(this, "PolyhedronManager::draw: null this");
@@ -135,6 +188,16 @@ void PolyhedronManager_drawPolyhedrons(PolyhedronManager this)
 	}
 }
 
+/**
+ * Print manager's state
+ *
+ * @memberof			PolyhedronManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param x				Screen's x coordinate
+ * @param y				Screen's y coordinate
+ */
 void PolyhedronManager_print(PolyhedronManager this, int x, int y)
 {
 	Printing_text(Printing_getInstance(), "PolyhedronManager's status", x, y++, NULL);

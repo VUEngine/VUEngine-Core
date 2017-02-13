@@ -60,7 +60,16 @@ static void Texture_loadCharSet(Texture this);
 __CLASS_NEW_DEFINITION(Texture, TextureDefinition* textureDefinition, u16 id)
 __CLASS_NEW_END(Texture, textureDefinition, id);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof					Texture
+ * @private
+ *
+ * @param this					Function scope
+ * @param textureDefinition		Definition to use
+ * @param id					Texture's identification
+ */
 void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
 {
 	ASSERT(this, "Texture::constructor: null this");
@@ -85,7 +94,14 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	}
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Texture
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Texture_destructor(Texture this)
 {
 	ASSERT(this, "Texture::destructor: null this");
@@ -97,6 +113,14 @@ void Texture_destructor(Texture this)
 	__DESTROY_BASE;
 }
 
+/**
+ * Load the CharSet defined by the TextureDefinition
+ *
+ * @memberof	Texture
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void Texture_loadCharSet(Texture this)
 {
 	ASSERT(this, "Texture::getCharSet: null this");
@@ -110,7 +134,15 @@ static void Texture_loadCharSet(Texture this)
 	Object_addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 }
 
-// write an animated map
+/**
+ * Set the TextureDefinition
+ *
+ * @memberof					Texture
+ * @public
+ *
+ * @param this					Function scope
+ * @param textureDefinition		New TextureDefinition
+ */
 void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
 {
 	ASSERT(this, "Texture::setDefinition: null this");
@@ -121,6 +153,16 @@ void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
 	Texture_releaseCharSet(this);
 }
 
+/**
+ * Retrieve the TextureDefinition
+ *
+ * @memberof			Texture
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				TextureDefinition
+ */
 TextureDefinition* Texture_getDefinition(Texture this)
 {
 	ASSERT(this, "Texture::getDefinition: null this");
@@ -128,7 +170,14 @@ TextureDefinition* Texture_getDefinition(Texture this)
 	return this->textureDefinition;
 }
 
-// free char memory
+/**
+ * Release the CharSet
+ *
+ * @memberof					Texture
+ * @public
+ *
+ * @param this					Function scope
+ */
 void Texture_releaseCharSet(Texture this)
 {
 	ASSERT(this, "Texture::releaseCharSet: null this");
@@ -149,7 +198,14 @@ void Texture_releaseCharSet(Texture this)
 	this->written = false;
 }
 
-// write into memory the chars and this
+/**
+ * Write the map to DRAM
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ */
 void Texture_write(Texture this)
 {
 	ASSERT(this, "Texture::write: null this");
@@ -164,7 +220,14 @@ void Texture_write(Texture this)
 	this->written = true;
 }
 
-// write into memory the chars and this
+/**
+ * Rewrite the map to DRAM
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ */
 void Texture_rewrite(Texture this)
 {
 	ASSERT(this, "Texture::rewrite: null this");
@@ -175,6 +238,14 @@ void Texture_rewrite(Texture this)
 }
 
 // write map in hbias mode
+/**
+ * Write to DRAM in h-bias mode
+ *
+ * @memberof					Texture
+ * @public
+ *
+ * @param this					Function scope
+ */
 void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
 {
 	ASSERT(this, "Texture::writeHBiasMode: null this");
@@ -193,7 +264,16 @@ void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
 	*/
 }
 
-// get texture's number of chars
+/**
+ * Retrieve the number of CHARs according to the TextureDefinition's CharDefinition
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of CHARs
+ */
 int Texture_getNumberOfChars(Texture this)
 {
 	ASSERT(this, "Texture::getNumberOfChars: null this");
@@ -201,7 +281,16 @@ int Texture_getNumberOfChars(Texture this)
 	return this->textureDefinition->charSetDefinition->numberOfChars;
 }
 
-// get texture's definition
+/**
+ * Retrieve the TextureDefinition
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			TextureDefinition
+ */
 TextureDefinition* Texture_getTextureDefinition(Texture this)
 {
 	ASSERT(this, "Texture::getTextureDefinition: null this");
@@ -209,7 +298,16 @@ TextureDefinition* Texture_getTextureDefinition(Texture this)
 	return this->textureDefinition;
 }
 
-// get texture's cols
+/**
+ * Retrieve map's total column size, accounting for the total frames of animation
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of total columns
+ */
 u32 Texture_getTotalCols(Texture this)
 {
 	ASSERT(this, "Texture::getTotalCols: null this");
@@ -243,7 +341,16 @@ u32 Texture_getTotalCols(Texture this)
 	return 0;
 }
 
-//get texture's rows
+/**
+ * Retrieve map's total row size, accounting for the total frames of animation
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of total rows
+ */
 u32 Texture_getTotalRows(Texture this)
 {
 	ASSERT(this, "Texture::getTotalRows: null this");
@@ -277,7 +384,16 @@ u32 Texture_getTotalRows(Texture this)
 	return 0;
 }
 
-// get number of frames of animation
+/**
+ * Retrieve number of frames for animation
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of frames for animation
+ */
 u32 Texture_getNumberOfFrames(Texture this)
 {
 	ASSERT(this, "Texture::getNumberOfFrames: null this");
@@ -285,7 +401,17 @@ u32 Texture_getNumberOfFrames(Texture this)
 	return this->textureDefinition->numberOfFrames;
 }
 
-//get texture's charset
+/**
+ * Retrieve CharSet
+ *
+ * @memberof				Texture
+ * @public
+ *
+ * @param this				Function scope
+ * @param loadIfNeeded		Flag to force loading if CharSet is NULL
+ *
+ * @return					CharSet
+ */
 CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
 {
 	ASSERT(this, "Texture::getCharSet: null this");
@@ -298,7 +424,16 @@ CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
 	return this->charSet;
 }
 
-//get texture's bgmap definition
+/**
+ * Retrieve map definition
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Pointer to the map definition
+ */
 BYTE* Texture_getMapDefinition(Texture this)
 {
 	ASSERT(this, "Texture::getBgmapDef: null this");
@@ -306,7 +441,15 @@ BYTE* Texture_getMapDefinition(Texture this)
 	return this->textureDefinition ? this->textureDefinition->mapDefinition : NULL;
 }
 
-// set the palette
+/**
+ * Set palette
+ *
+ * @memberof			Texture
+ * @public
+ *
+ * @param this			Function scope
+ * @param palette		New palette
+ */
 void Texture_setPalette(Texture this, u8 palette)
 {
 	ASSERT(this, "Texture::setPalette: null this");
@@ -314,6 +457,16 @@ void Texture_setPalette(Texture this, u8 palette)
 	this->palette = palette;
 }
 
+/**
+ * Retrieve palette
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Palette
+ */
 u8 Texture_getPalette(Texture this)
 {
 	ASSERT(this, "Texture::getPalette: null this");
@@ -321,7 +474,16 @@ u8 Texture_getPalette(Texture this)
 	return this->palette;
 }
 
-// retrieve texture's rows
+/**
+ * Retrieve map's row size
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of rows
+ */
 u32 Texture_getRows(Texture this)
 {
 	ASSERT(this, "Texture::getRows: null this");
@@ -330,7 +492,16 @@ u32 Texture_getRows(Texture this)
 	return this->textureDefinition->rows;
 }
 
-// retrieve texture's cols
+/**
+ * Retrieve map's column size
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of columns
+ */
 u32 Texture_getCols(Texture this)
 {
 	ASSERT(this, "Texture::getCols: null this");
@@ -338,7 +509,16 @@ u32 Texture_getCols(Texture this)
 	return this->textureDefinition->cols;
 }
 
-// retrieve texture's id
+/**
+ * Retrieve identification
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Identification number
+ */
 u16 Texture_getId(Texture this)
 {
 	ASSERT(this, "Texture::getId: null this");
@@ -346,7 +526,15 @@ u16 Texture_getId(Texture this)
 	return this->id;
 }
 
-// process event
+/**
+ * Event listener for CharSet re-writing to DRAM
+ *
+ * @memberof				Texture
+ * @private
+ *
+ * @param this				Function scope
+ * @param eventFirer		CharSet
+ */
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribute__ ((unused)))
 {
 	ASSERT(this, "Texture::onCharSetRewritten: null this");
@@ -357,7 +545,15 @@ static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribu
 	Object_fireEvent(__SAFE_CAST(Object, this), kEventTextureRewritten);
 }
 
-// process event
+/**
+ * Event listener for CharSet deletion
+ *
+ * @memberof				Texture
+ * @private
+ *
+ * @param this				Function scope
+ * @param eventFirer		CharSet
+ */
 static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
 {
 	ASSERT(this, "Texture::onCharSetRewritten: null this");
@@ -365,7 +561,16 @@ static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
 	this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
 }
 
-// write directly to texture
+/**
+ * Write a single CHAR to DRAM
+ *
+ * @memberof				Texture
+ * @public
+ *
+ * @param this				Function scope
+ * @param texturePixel		Coordinates within the map definition to write
+ * @param newChar			CHAR data to write
+ */
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 {
 	ASSERT(this, "Texture::putChar: null this");
@@ -378,7 +583,16 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 	}
 }
 
-// write directly to texture
+/**
+ * Write a single pixel to DRAM
+ *
+ * @memberof				Texture
+ * @public
+ *
+ * @param this				Function scope
+ * @param charSetPixel		Pixel data
+ * @param newPixelColor		Pixel color
+ */
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "Texture::putPixel: null this");
@@ -391,6 +605,16 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BY
 	}
 }
 
+/**
+ * Check if writing to DRAM is done
+ *
+ * @memberof		Texture
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			True if completely written to DRAM
+ */
 bool Texture_isWritten(Texture this)
 {
 	ASSERT(this, "Texture::isWritten: null this");
