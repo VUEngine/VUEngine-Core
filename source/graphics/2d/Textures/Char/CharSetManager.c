@@ -67,9 +67,25 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			CharSetManager_getInstance()
+ * @memberof	CharSetManager
+ * @public
+ *
+ * @return		CharSetManager instance
+ */
 __SINGLETON(CharSetManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof			CharSetManager
+ * @private
+ *
+ * @param this			Function scope
+ */
 static void __attribute__ ((noinline)) CharSetManager_constructor(CharSetManager this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -78,7 +94,14 @@ static void __attribute__ ((noinline)) CharSetManager_constructor(CharSetManager
 	this->freedOffset = 1;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof			CharSetManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void CharSetManager_destructor(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::destructor: null this");
@@ -92,7 +115,14 @@ void CharSetManager_destructor(CharSetManager this)
 	__SINGLETON_DESTROY;
 }
 
-// reset
+/**
+ * Reset manager's state
+ *
+ * @memberof			CharSetManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void CharSetManager_reset(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::reset: null this");
@@ -112,7 +142,15 @@ void CharSetManager_reset(CharSetManager this)
 	this->freedOffset = 1;
 }
 
-// find a charset
+/**
+ * Find a previously registered CharSet with the given definition
+ *
+ * @memberof					CharSetManager
+ * @private
+ *
+ * @param this					Function scope
+ * @param charSetDefinition		CharSet definition
+ */
 static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::findCharSet: null this");
@@ -133,7 +171,17 @@ static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition
 	return NULL;
 }
 
-// get charset
+/**
+ * Retrieve a CharSet
+ *
+ * @memberof							CharSetManager
+ * @private
+ *
+ * @param this							Function scope
+ * @param charSetDefinition				CharSet definition to find o allocate a CharSet
+ *
+ * @return 								Allocated CharSet
+ */
 CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::loadCharSet: null this");
@@ -177,7 +225,15 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 	return charSet;
 }
 
-// release char graphic memory
+/**
+ * Release a previously allocated CharSet
+ *
+ * @memberof				CharSetManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param charSet			CharSet to release
+ */
 void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 {
 	ASSERT(this, "CharSetManager::releaseCharSet: null this");
@@ -197,7 +253,17 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 	}
 }
 
-// allocate a char definition within char graphic memory
+/**
+ * Try to allocate a CHAR memory space for a new CharSet
+ *
+ * @memberof					CharSetManager
+ * @private
+ *
+ * @param this					Function scope
+ * @param charSetDefinition		CharSet definition to allocate space for
+ *
+ * @return 						Allocated CharSet
+ */
 static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::allocateCharSet: null this");
@@ -229,7 +295,14 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 	return NULL;
 }
 
-// defragment char memory
+/**
+ * Deframent CHAR memory
+ *
+ * @memberof		CharSetManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void CharSetManager_defragment(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragment: null this");
@@ -240,7 +313,14 @@ void CharSetManager_defragment(CharSetManager this)
 	}
 }
 
-// defragment progressively char memory
+/**
+ * Deframent CHAR memory progressively
+ *
+ * @memberof		CharSetManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
@@ -275,6 +355,16 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 	}
 }
 
+/**
+ * Retrieve the total number of used CHARs
+ *
+ * @memberof			CharSetManager
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return 				Total number of used CHARs
+ */
 int CharSetManager_getTotalUsedChars(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
@@ -284,6 +374,16 @@ int CharSetManager_getTotalUsedChars(CharSetManager this)
 	return (int)CharSet_getOffset(lastCharSet) + CharSet_getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 }
 
+/**
+ * Retrieve the total number of free CHARs
+ *
+ * @memberof			CharSetManager
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return 				Total number of free CHARs
+ */
 int CharSetManager_getTotalFreeChars(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
@@ -291,6 +391,16 @@ int CharSetManager_getTotalFreeChars(CharSetManager this)
 	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager_getTotalUsedChars(this);
 }
 
+/**
+ * Retrieve the total number of registered char sets
+ *
+ * @memberof			CharSetManager
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return 				Total number of registered char sets
+ */
 int CharSetManager_getTotalCharSets(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::getTotalCharSets: null this");
@@ -298,7 +408,16 @@ int CharSetManager_getTotalCharSets(CharSetManager this)
 	return VirtualList_getSize(this->charSets);
 }
 
-// print class's attributes's states
+/**
+ * Print manager's state
+ *
+ * @memberof			CharSetManager
+ * @public
+ *
+ * @param this			Function scope
+ * @param x				Screen's x coordinate
+ * @param y				Screen's y coordinate
+ */
 void CharSetManager_print(CharSetManager this, int x, int y)
 {
 	ASSERT(this, "CharSetManager::print: null this");
