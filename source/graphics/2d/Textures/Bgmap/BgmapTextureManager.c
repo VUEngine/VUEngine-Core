@@ -86,9 +86,25 @@ static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			BgmapTextureManager_getInstance()
+ * @memberof	BgmapTextureManager
+ * @public
+ *
+ * @return		BgmapTextureManager instance
+ */
 __SINGLETON(BgmapTextureManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof			BgmapTextureManager
+ * @private
+ *
+ * @param this			Function scope
+ */
 static void __attribute__ ((noinline)) BgmapTextureManager_constructor(BgmapTextureManager this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -96,7 +112,14 @@ static void __attribute__ ((noinline)) BgmapTextureManager_constructor(BgmapText
 	BgmapTextureManager_reset(this);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof			BgmapTextureManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapTextureManager_destructor(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::destructor: null this");
@@ -105,7 +128,14 @@ void BgmapTextureManager_destructor(BgmapTextureManager this)
 	__SINGLETON_DESTROY;
 }
 
-// reset
+/**
+ * Reset manager's state
+ *
+ * @memberof			BgmapTextureManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void BgmapTextureManager_reset(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::reset: null this");
@@ -155,7 +185,17 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 	this->freeBgmapSegment = 0;
 }
 
-// allocate texture in bgmap graphic memory
+/**
+ * Try to allocate a BGMAP memory space for a new Texture
+ *
+ * @memberof				BgmapTextureManager
+ * @private
+ *
+ * @param this				Function scope
+ * @param bgmapTexture		Texture to allocate space for
+ *
+ * @return 					True if the required space was successfully allocated
+ */
 static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
 	ASSERT(this, "BgmapTextureManager::doAllocate: null this");
@@ -271,10 +311,16 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 	return false;
 }
 
-// retrieve free bgmap segment number
-// allocate bgmap text boxes
-// this bgmap segment is handled as one only bgmap defined inside so, only
-// BgmapTextureManager.xOffset[textbgmap][0] is used
+/**
+ * Allocate a BGMAP memory space for text
+ *
+ * @memberof				BgmapTextureManager
+ * @private
+ *
+ * @param this				Function scope
+ * @param bgmapTexture		Texture to allocate space for
+ */
+/*
 void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
 	ASSERT(this, "BgmapTextureManager::allocateText: null this");
@@ -304,8 +350,17 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
 	// if there are no more rows in the segment thrown an exception
 	ASSERT(this->xOffset[this->freeBgmapSegment][0] < 64, "BgmapTextureManager::allocateText: mem depleted (TextBox)");
 }
+*/
 
-// deallocate texture from bgmap graphic memory
+/**
+ * Release a previously allocated Texture
+ *
+ * @memberof				BgmapTextureManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param bgmapTexture		Texture to release
+ */
 void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
 	ASSERT(this, "BgmapTextureManager::free: null this");
@@ -336,7 +391,17 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 	}
 }
 
-// retrieve a texture previously loaded
+/**
+ * Retrieve a previously allocated Texture
+ *
+ * @memberof							BgmapTextureManager
+ * @private
+ *
+ * @param this							Function scope
+ * @param bgmapTextureDefinition		Texture definition
+ *
+ * @return								Allocated Texture
+ */
 static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
 	ASSERT(this, "BgmapTextureManager::findTexture: null this");
@@ -351,7 +416,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]), false);
 			TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i]));
 
-			if(Texture_getBgmapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->bgmapDefinition &&
+			if(Texture_getMapDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i])) == bgmapTextureDefinition->mapDefinition &&
 				(!charSet || textureDefinition->charSetDefinition->allocationType == bgmapTextureDefinition->charSetDefinition->allocationType) &&
 				(textureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && textureDefinition->padding.rows == bgmapTextureDefinition->padding.rows)
 			)
@@ -365,7 +430,17 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	return NULL;
 }
 
-// load a texture
+/**
+ * Allocate a BGMAP memory space for a new Texture
+ *
+ * @memberof				BgmapTextureManager
+ * @private
+ *
+ * @param this				Function scope
+ * @param bgmapTexture		Texture to allocate space for
+ *
+ * @return 					True if the required space was successfully allocated
+ */
 static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
 	ASSERT(this, "BgmapTextureManager::allocateTexture: null this");
@@ -390,7 +465,17 @@ static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this
 	return NULL;
 }
 
-// load and retrieve a texture
+/**
+ * Retrieve a Texture
+ *
+ * @memberof							BgmapTextureManager
+ * @private
+ *
+ * @param this							Function scope
+ * @param bgmapTextureDefinition		Texture definition to find o allocate a Texture
+ *
+ * @return 								Allocated Texture
+ */
 BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
 	ASSERT(this, "BgmapTextureManager::getTexture: null this");
@@ -439,7 +524,17 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 	return bgmapTexture;
 }
 
-// retrieve x offset
+/**
+ * Retrieve the x offset within a BGMAP segment of the Texture with the given id
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ * @param id		Texture identification
+ *
+ * @return 			X offset within a BGMAP segment
+ */
 s16 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
 {
 	ASSERT(this, "BgmapTextureManager::getXOffset: null this");
@@ -447,7 +542,17 @@ s16 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
 	return this->offset[id][kXOffset];
 }
 
-// retrieve y offset
+/**
+ * Retrieve the y offset within a BGMAP segment of the Texture with the given id
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ * @param id		Texture identification
+ *
+ * @return 			Y offset within a BGMAP segment
+ */
 s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 {
 	ASSERT(this, "BgmapTextureManager::getYOffset: null this");
@@ -455,7 +560,17 @@ s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 	return this->offset[id][kYOffset];
 }
 
-// retrieve bgmap segment
+/**
+ * Retrieve the BGMAP segment of the Texture with the given id
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ * @param id		Texture identification
+ *
+ * @return 			BGMAP segment
+ */
 u16 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
 {
 	ASSERT(this, "BgmapTextureManager::getBgmapSegment: null this");
@@ -463,7 +578,16 @@ u16 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
 	return this->offset[id][kBgmapSegment];
 }
 
-// retrieve available bgmap segments
+/**
+ * Retrieve the number of non used BGMAP segments
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ *
+ * @return 			Number of non used BGMAP segments
+ */
 s16 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegments: null this");
@@ -471,7 +595,16 @@ s16 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
 	return this->availableBgmapSegments;
 }
 
-// retrieve available bgmap segments
+/**
+ * Retrieve the number of non used BGMAP segments for texture allocation
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ *
+ * @return 			Number of non used BGMAP segments for texture allocation
+ */
 s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegmentsForTextures: null this");
@@ -479,7 +612,16 @@ s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager
 	return this->availableBgmapSegmentsForTextures;
 }
 
-// retrieve available bgmap segments
+/**
+ * Retrieve the BGMAP segment available for printing
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ *
+ * @return 			BGMAP segment available for printing
+ */
 s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::getPrintingBgmapSegment: null this");
@@ -487,7 +629,14 @@ s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 	return this->printingBgmapSegment;
 }
 
-// calculate the available bgmap segments based on usage
+/**
+ * Compute the available BGMAP segments based on texture usage
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ */
 void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::calculateAvailableBgmapSegments: null this");
@@ -506,7 +655,16 @@ void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager thi
 	}
 }
 
-// print status
+/**
+ * Print manager's status
+ *
+ * @memberof		BgmapTextureManager
+ * @private
+ *
+ * @param this		Function scope
+ * @param x			Screen's x coocrinate
+ * @param y			Screen's y coocrinate
+ */
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y)
 {
 	ASSERT(this, "BgmapTextureManager::print: null this");

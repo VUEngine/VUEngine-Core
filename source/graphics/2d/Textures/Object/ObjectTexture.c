@@ -58,17 +58,31 @@ static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinitio
 __CLASS_NEW_DEFINITION(ObjectTexture, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 __CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof			ObjectTexture
+ * @private
+ *
+ * @param this			Function scope
+ */
 static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
 	// construct base object
 	__CONSTRUCT_BASE(Texture, (TextureDefinition*)objectTextureDefinition, id);
 
 	this->objectIndex = -1;
-	this->bgmapDisplacement = 0;
+	this->mapDisplacement = 0;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof			ObjectTexture
+ * @public
+ *
+ * @param this			Function scope
+ */
 void ObjectTexture_destructor(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::destructor: null this");
@@ -80,7 +94,14 @@ void ObjectTexture_destructor(ObjectTexture this)
 	__DESTROY_BASE;
 }
 
-// write into memory the chars and this
+/**
+ * Write the texture to DRAM
+ *
+ * @memberof			ObjectTexture
+ * @public
+ *
+ * @param this			Function scope
+ */
 void ObjectTexture_write(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::write: null this");
@@ -101,7 +122,7 @@ void ObjectTexture_write(ObjectTexture this)
 	int charLocation = CharSet_getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
 	int cols = this->textureDefinition->cols;
-	BYTE* framePointer = this->textureDefinition->bgmapDefinition + this->bgmapDisplacement;
+	BYTE* framePointer = this->textureDefinition->mapDefinition + this->mapDisplacement;
 
 	int i = 0;
 
@@ -118,6 +139,15 @@ void ObjectTexture_write(ObjectTexture this)
 	}
 }
 
+/**
+ * Set the start OBJECT index
+ *
+ * @memberof				ObjectTexture
+ * @public
+ *
+ * @param this				Function scope
+ * @param objectIndex		OBJECT index
+ */
 void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 {
 	ASSERT(this, "ObjectTexture::setObjectIndex: null this");
@@ -129,18 +159,35 @@ void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 	}
 }
 
-void ObjectTexture_resetBgmapDisplacement(ObjectTexture this)
+/**
+ * Set to zero the BGMAP displacement relative to the Texture's definition
+ *
+ * @memberof				ObjectTexture
+ * @public
+ *
+ * @param this				Function scope
+ */
+void ObjectTexture_resetMapDisplacement(ObjectTexture this)
 {
-	ASSERT(this, "ObjectTexture::resetBgmapDisplacement: null this");
+	ASSERT(this, "ObjectTexture::resetMapDisplacement: null this");
 
-	this->bgmapDisplacement = 0;
+	this->mapDisplacement = 0;
 }
 
-void ObjectTexture_addBgmapDisplacement(ObjectTexture this, int frame)
+/**
+ * Add a displacement to be applied to the Texture's BGMAP definition
+ *
+ * @memberof				ObjectTexture
+ * @public
+ *
+ * @param this				Function scope
+ * @param frame				Function scope
+ */
+void ObjectTexture_addMapDisplacement(ObjectTexture this, int frame)
 {
-	ASSERT(this, "ObjectTexture::setBgmapDisplacement: null this");
-	ASSERT(0 <= frame, "ObjectTexture::setBgmapDisplacement: negative frame");
+	ASSERT(this, "ObjectTexture::addMapDisplacement: null this");
+	ASSERT(0 <= frame, "ObjectTexture::addMapDisplacement: negative frame");
 
-	this->bgmapDisplacement = (this->textureDefinition->cols * this->textureDefinition->rows) * frame << 1;
+	this->mapDisplacement = (this->textureDefinition->cols * this->textureDefinition->rows) * frame << 1;
 }
 

@@ -49,7 +49,7 @@
 		/* object index */																				\
 		int objectIndex;																				\
 		/* bgmap displacement */																		\
-		int bgmapDisplacement;																			\
+		int mapDisplacement;																			\
 
 // A texture which has the logic to be allocated in graphic memory
 __CLASS(ObjectTexture);
@@ -72,8 +72,8 @@ __CLASS_NEW_DECLARE(ObjectTexture, ObjectTextureDefinition* objectTextureDefinit
 void ObjectTexture_destructor(ObjectTexture this);
 void ObjectTexture_write(ObjectTexture this);
 void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex);
-void ObjectTexture_resetBgmapDisplacement(ObjectTexture this);
-void ObjectTexture_addBgmapDisplacement(ObjectTexture this, int frame);
+void ObjectTexture_resetMapDisplacement(ObjectTexture this);
+void ObjectTexture_addMapDisplacement(ObjectTexture this, int frame);
 
 
 #endif

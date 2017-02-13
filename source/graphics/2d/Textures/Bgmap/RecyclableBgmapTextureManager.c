@@ -73,10 +73,25 @@ static void RecyclableBgmapTextureManager_constructor(RecyclableBgmapTextureMana
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn			RecyclableBgmapTextureManager_getInstance()
+ * @memberof	RecyclableBgmapTextureManager
+ * @public
+ *
+ * @return		RecyclableBgmapTextureManager instance
+ */
 __SINGLETON(RecyclableBgmapTextureManager);
 
-//class constructor
+/**
+ * Class constructor
+ *
+ * @memberof			RecyclableBgmapTextureManager
+ * @private
+ *
+ * @param this			Function scope
+ */
 static void RecyclableBgmapTextureManager_constructor(RecyclableBgmapTextureManager this)
 {
 	__CONSTRUCT_BASE(Object);
@@ -84,7 +99,14 @@ static void RecyclableBgmapTextureManager_constructor(RecyclableBgmapTextureMana
 	this->textureRegistries = __NEW(VirtualList);
 }
 
-// class destructor
+/**
+ * Class destructor
+ *
+ * @memberof			RecyclableBgmapTextureManager
+ * @public
+ *
+ * @param this			Function scope
+ */
 void RecyclableBgmapTextureManager_destructor(RecyclableBgmapTextureManager this)
 {
 	ASSERT(this, "RecyclableBgmapTextureManager::destructor: null this");
@@ -105,7 +127,17 @@ void RecyclableBgmapTextureManager_destructor(RecyclableBgmapTextureManager this
 	__SINGLETON_DESTROY;
 }
 
-// register coin
+/**
+ * Register a Texture to be recycled
+ *
+ * @memberof					RecyclableBgmapTextureManager
+ * @public
+ *
+ * @param this					Function scope
+ * @param textureDefinition		The definition of the Texture
+ *
+ * @return						The recyclable Texture
+ */
 Texture RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager this, TextureDefinition* textureDefinition)
 {
 	ASSERT(this, "RecyclableBgmapTextureManager::registerTexture: null this");
@@ -181,8 +213,16 @@ Texture RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureMana
 	return selectedTextureRegistry? selectedTextureRegistry->texture : NULL;
 }
 
-// remove background
-void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager this __attribute__ ((unused)), Texture texture)
+/**
+ * Unregister a recyclable Texture
+ *
+ * @memberof					RecyclableBgmapTextureManager
+ * @public
+ *
+ * @param this					Function scope
+ * @param texture				The recyclable Texture to unregister
+ */
+void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager this, Texture texture)
 {
 	ASSERT(this, "RecyclableBgmapTextureManager::removeTexture: null this");
 	ASSERT(texture, "RecyclableBgmapTextureManager::removeTexture: null texture");
@@ -203,7 +243,14 @@ void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager t
 	ASSERT(node, "RecyclableBgmapTextureManager::removeTexture: texture not found");
 }
 
-// remove texture
+/**
+ * Reset manager's state
+ *
+ * @memberof					RecyclableBgmapTextureManager
+ * @public
+ *
+ * @param this					Function scope
+ */
 void RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager this)
 {
 	ASSERT(this, "RecyclableBgmapTextureManager::reset: null this");
@@ -230,6 +277,16 @@ void RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager this)
 	VirtualList_clear(this->textureRegistries);
 }
 
+/**
+ * Print manager's state
+ *
+ * @memberof					RecyclableBgmapTextureManager
+ * @public
+ *
+ * @param this					Function scope
+ * @param x						Screen's x coordinate
+ * @param y						Screen's y coordinate
+ */
 void RecyclableBgmapTextureManager_print(RecyclableBgmapTextureManager this, int x, int y)
 {
 	Printing_text(Printing_getInstance(), "RecyclableBgmapTextureManager's status", x, y++, NULL);

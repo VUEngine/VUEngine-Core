@@ -149,8 +149,8 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 
 		case __ANIMATED_MULTI:
 
-			ObjectTexture_resetBgmapDisplacement(__SAFE_CAST(ObjectTexture, this->texture));
-			ObjectTexture_addBgmapDisplacement(__SAFE_CAST(ObjectTexture, this->texture), animationFrame);
+			ObjectTexture_resetMapDisplacement(__SAFE_CAST(ObjectTexture, this->texture));
+			ObjectTexture_addMapDisplacement(__SAFE_CAST(ObjectTexture, this->texture), animationFrame);
 			ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
 			break;
 	}

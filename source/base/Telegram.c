@@ -67,7 +67,18 @@ static void Telegram_constructor(Telegram this, void* sender, void* receiver, in
 __CLASS_NEW_DEFINITION(Telegram, void* sender, void* receiver, int message, void* extraInfo)
 __CLASS_NEW_END(Telegram, sender, receiver, message, extraInfo);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof			Telegram
+ * @private
+ *
+ * @param this			Function scope
+ * @param sender		Sender of the message
+ * @param receiver		Intended receiver
+ * @param message		Message code
+ * @param extraInfo		Pointer to any attachment to the message
+ */
 static void Telegram_constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo)
 {
 	// construct base object
@@ -80,7 +91,14 @@ static void Telegram_constructor(Telegram this, void* sender, void* receiver, in
 	this->extraInfo = extraInfo;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof			Telegram
+ * @private
+ *
+ * @param this			Function scope
+ */
 void Telegram_destructor(Telegram this)
 {
 	ASSERT(this, "Telegram::destructor: null this");
@@ -94,7 +112,16 @@ void Telegram_destructor(Telegram this)
 	__DESTROY_BASE;
 }
 
-// retrieve sender
+/**
+ * Retrieve the sender
+ *
+ * @memberof			Telegram
+ * @private
+ *
+ * @param this			Function scope
+ *
+ * @return				Sender of the message
+ */
 void* Telegram_getSender(Telegram this)
 {
 	ASSERT(this, "Telegram::getSender: null this");
@@ -102,7 +129,16 @@ void* Telegram_getSender(Telegram this)
 	return this->sender;
 }
 
-// retrieve receiver
+/**
+ * Retrieve the receiver
+ *
+ * @memberof			Telegram
+ * @private
+ *
+ * @param this			Function scope
+ *
+ * @return				Intended receiver
+ */
 void* Telegram_getReceiver(Telegram this)
 {
 	ASSERT(this, "Telegram::getReceiver: null this");
@@ -110,7 +146,16 @@ void* Telegram_getReceiver(Telegram this)
 	return this->receiver;
 }
 
-// retrieve message
+/**
+ * Retrieve the message code
+ *
+ * @memberof			Telegram
+ * @private
+ *
+ * @param this			Function scope
+ *
+ * @return				Message code
+ */
 int Telegram_getMessage(Telegram this)
 {
 	ASSERT(this, "Telegram::getMessage: null this");
@@ -118,7 +163,16 @@ int Telegram_getMessage(Telegram this)
 	return this->message;
 }
 
-// retrieve extra info
+/**
+ * Retrieve the message's attachment
+ *
+ * @memberof			Telegram
+ * @private
+ *
+ * @param this			Function scope
+ *
+ * @return				Pointer to any attachment to the message
+ */
 void* Telegram_getExtraInfo(Telegram this)
 {
 	ASSERT(this, "Telegram::getExtraInfo: null this");

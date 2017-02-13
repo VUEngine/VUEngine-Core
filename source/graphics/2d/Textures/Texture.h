@@ -75,7 +75,7 @@ typedef struct TextureDefinition
 	CharSetDefinition* charSetDefinition;
 
 	// pointer to the bgtexture definition in ROM
-	BYTE* bgmapDefinition;
+	BYTE* mapDefinition;
 
 	// x size, 1 column represents 8 pixels
 	u32 cols;
@@ -115,7 +115,7 @@ u32 Texture_getTotalCols(Texture this);
 u32 Texture_getTotalRows(Texture this);
 u32 Texture_getNumberOfFrames(Texture this);
 CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded);
-BYTE* Texture_getBgmapDefinition(Texture this);
+BYTE* Texture_getMapDefinition(Texture this);
 void Texture_setPalette(Texture this, u8 palette);
 u8 Texture_getPalette(Texture this);
 u32 Texture_getRows(Texture this);

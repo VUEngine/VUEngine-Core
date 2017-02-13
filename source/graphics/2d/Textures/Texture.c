@@ -187,8 +187,8 @@ void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
 	{
 		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
 		//specifying the char displacement inside the char mem
-		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet_getCharSet(&this->charSet)<<9)+CharSet_getOffset(&this->charSet)));
-		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->bgmapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet_getCharSet(&this->charSet)<<9)+CharSet_getOffset(&this->charSet)));
+		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->mapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet_getCharSet(&this->charSet)<<9)+CharSet_getOffset(&this->charSet)));
+		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->mapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet_getCharSet(&this->charSet)<<9)+CharSet_getOffset(&this->charSet)));
 	}
 	*/
 }
@@ -299,11 +299,11 @@ CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
 }
 
 //get texture's bgmap definition
-BYTE* Texture_getBgmapDefinition(Texture this)
+BYTE* Texture_getMapDefinition(Texture this)
 {
 	ASSERT(this, "Texture::getBgmapDef: null this");
 
-	return this->textureDefinition ? this->textureDefinition->bgmapDefinition : NULL;
+	return this->textureDefinition ? this->textureDefinition->mapDefinition : NULL;
 }
 
 // set the palette
@@ -373,7 +373,7 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
 		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
-		u32 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
+		u32 charToReplace = this->textureDefinition->mapDefinition[displacement];
 		CharSet_putChar(this->charSet, charToReplace, newChar);
 	}
 }
@@ -386,7 +386,7 @@ void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BY
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
 		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
-		u32 charToReplace = this->textureDefinition->bgmapDefinition[displacement];
+		u32 charToReplace = this->textureDefinition->mapDefinition[displacement];
 		CharSet_putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }

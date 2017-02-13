@@ -149,7 +149,7 @@
 		/* current page in sram inspector */															\
 		int sramPage;																					\
 		/* window to look into bgmap memory */															\
-		VBVec2D bgmapDisplacement;																		\
+		VBVec2D mapDisplacement;																		\
 		/* update function pointer */																	\
 		void (*update)(void *);																			\
 		/* temporal array to hold char data */															\
@@ -245,8 +245,8 @@ static void __attribute__ ((noinline)) Debug_constructor(Debug this)
 
 	this->update = NULL;
 
-	this->bgmapDisplacement.x = 0;
-	this->bgmapDisplacement.y = 0;
+	this->mapDisplacement.x = 0;
+	this->mapDisplacement.y = 0;
 
 	Debug_setupPages(this);
 }
@@ -463,28 +463,28 @@ static void Debug_showSubPage(Debug this, int increment)
 // displace view to the left
 void Debug_displaceLeft(Debug this)
 {
-	this->bgmapDisplacement.x = 0;
+	this->mapDisplacement.x = 0;
 	Debug_showDebugBgmap(this);
 }
 
 // displace view to the right
 void Debug_displaceRight(Debug this)
 {
-	this->bgmapDisplacement.x = DISPLACEMENT_STEP_X;
+	this->mapDisplacement.x = DISPLACEMENT_STEP_X;
 	Debug_showDebugBgmap(this);
 }
 
 // displace view up
 void Debug_displaceUp(Debug this)
 {
-	this->bgmapDisplacement.y = 0;
+	this->mapDisplacement.y = 0;
 	Debug_showDebugBgmap(this);
 }
 
 // displace view down
 void Debug_displaceDown(Debug this)
 {
-	this->bgmapDisplacement.y = DISPLACEMENT_STEP_Y;
+	this->mapDisplacement.y = DISPLACEMENT_STEP_Y;
 	Debug_showDebugBgmap(this);
 }
 
@@ -849,8 +849,8 @@ static void Debug_showTextureStatus(Debug this, int increment __attribute__ ((un
 	this->currentSubPage = this->subPages->head;
 
 	this->bgmapSegment = -1;
-	this->bgmapDisplacement.x = 0;
-	this->bgmapDisplacement.y = 0;
+	this->mapDisplacement.x = 0;
+	this->mapDisplacement.y = 0;
 
 	Debug_showSubPage(this, 0);
 }
@@ -868,9 +868,9 @@ static void Debug_showDebugBgmap(Debug this)
 
 	// write the head
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = this->bgmapDisplacement.x;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = this->mapDisplacement.x;
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mp = 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].my = this->bgmapDisplacement.y;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].my = this->mapDisplacement.y;
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gx = 0;
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gp = 3;
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gy = 0;
@@ -902,8 +902,8 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Segment: ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), this->bgmapSegment, x + 9, y, NULL);
 
-		this->bgmapDisplacement.x = 0;
-		this->bgmapDisplacement.y = 0;
+		this->mapDisplacement.x = 0;
+		this->mapDisplacement.y = 0;
 
 		Debug_showDebugBgmap(this);
 		Debug_lightUpGame(this);
