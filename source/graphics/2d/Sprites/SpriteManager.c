@@ -68,9 +68,9 @@ typedef struct SpritesList
 	/* texture writing */																				\
 	Texture textureToWrite;																				\
 	/* next world layer	*/																				\
-	s8 freeLayer;																						\
+	u8 freeLayer;																						\
 	/* flag to stop sorting while recovering layers	*/													\
-	s8 recoveringLayers;																				\
+	u8 recoveringLayers;																				\
 	/* number of cycles that the texture writing is idle */												\
 	s8 cyclesToWaitForTextureWriting;																	\
 	/* number of rows to write in texture's writing	*/													\
@@ -107,9 +107,25 @@ static void SpriteManager_constructor(SpriteManager this);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			SpriteManager_getInstance()
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @return		SpriteManager instance
+ */
 __SINGLETON(SpriteManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	SpriteManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager this)
 {
 	// construct base object
@@ -132,7 +148,14 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	SpriteManager_reset(this);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SpriteManager_destructor(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::destructor: null this");
@@ -147,7 +170,14 @@ void SpriteManager_destructor(SpriteManager this)
 	__SINGLETON_DESTROY;
 }
 
-// reset
+/**
+ * Reset manager's state
+ *
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SpriteManager_reset(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::reset: null this");
@@ -172,10 +202,17 @@ void SpriteManager_reset(SpriteManager this)
 	this->deferTextureWriting = false;
 	this->waitToWrite = 0;
 
-	SpriteManager_setLastLayer(this);
+	SpriteManager_renderLastLayer(this);
 }
 
-// sort all layers
+/**
+ * Sort sprites according to their z coordinate
+ *
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SpriteManager_sortLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayers: null this");
@@ -222,6 +259,14 @@ void SpriteManager_sortLayers(SpriteManager this)
 }
 
 // check if any entity must be assigned another world layer
+/**
+ * Deferred sorting sprites according to their z coordinate
+ *
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SpriteManager_sortLayersProgressively(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
@@ -260,10 +305,21 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 	}
 }
 
-u8 SpriteManager_getWorldLayer(SpriteManager this, Sprite sprite)
+/**
+ * Register a Sprite and assign a WORLD layer to it
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param sprite	Sprite to assign the WORLD layer
+ */
+void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::getWorldLayer: null this");
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::getWorldLayer: adding no sprite");
+
+	s8 layer = 0;
 
 #ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
@@ -275,7 +331,7 @@ u8 SpriteManager_getWorldLayer(SpriteManager this, Sprite sprite)
 #endif
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
-		s8 layer = __TOTAL_LAYERS - 1;
+		layer = __TOTAL_LAYERS - 1;
 
 		VirtualNode head = this->sprites->head;
 
@@ -292,17 +348,23 @@ u8 SpriteManager_getWorldLayer(SpriteManager this, Sprite sprite)
 		this->node = NULL;
 		this->nextNode = NULL;
 
-		return (u8)layer;
-
 #ifdef __DEBUG
 	}
 #endif
 
-	return 0;
+	Sprite_setWorldLayer(sprite, layer);
 }
 
-// remove sprite
-void SpriteManager_relinquishWorldLayer(SpriteManager this, Sprite sprite)
+/**
+ * Remove a registered Sprite and get back the WORLD layer previously assigned to it
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param sprite	Sprite to assign the WORLD layer
+ */
+void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::relinquishWorldLayer: null this");
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::relinquishWorldLayer: removing no sprite");
@@ -354,8 +416,15 @@ void SpriteManager_relinquishWorldLayer(SpriteManager this, Sprite sprite)
 	}
 }
 
-// set free layers off
-void SpriteManager_setLastLayer(SpriteManager this)
+/**
+ * Render the WORLD destined to printing output
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ */
+void SpriteManager_renderLastLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::setLastLayer: null this");
 
@@ -372,7 +441,14 @@ void SpriteManager_setLastLayer(SpriteManager this)
 	}
 }
 
-// render sprites
+/**
+ * Write WORLD data to DRAM
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
@@ -465,18 +541,35 @@ void SpriteManager_render(SpriteManager this)
 	this->freeLayer--;
 
 	// configure printing layer and shutdown unused layers
-	SpriteManager_setLastLayer(this);
+	SpriteManager_renderLastLayer(this);
 }
 
-// retrieve free layer
-int SpriteManager_getFreeLayer(SpriteManager this)
+/**
+ * Retrieve the next free WORLD layer
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Free WORLD layer
+ */
+u8 SpriteManager_getFreeLayer(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::getFreeLayer: null this");
 
 	return this->freeLayer;
 }
 
-// show a given layer
+/**
+ * Show the Sprite in the given WORLD layer and hide the rest
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param layer		WORLD layer to show
+ */
 void SpriteManager_showLayer(SpriteManager this, u8 layer)
 {
 	ASSERT(this, "SpriteManager::showLayer: null this");
@@ -504,7 +597,14 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 	}
 }
 
-// show all layers
+/**
+ * Show all WORLD layers
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void SpriteManager_recoverLayers(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::recoverLayers: null this");
@@ -523,9 +623,20 @@ void SpriteManager_recoverLayers(SpriteManager this)
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}
 
-	SpriteManager_setLastLayer(this);
+	SpriteManager_renderLastLayer(this);
 }
 
+/**
+ * Retrieve the Sprite assigned to the given WORLD
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param layer		WORLD layer to show
+ *
+ * @return			Sprite with the given WORLD layer
+ */
 Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 {
 	ASSERT(this, "SpriteManager::getSpriteAtLayer: null this");
@@ -544,6 +655,15 @@ Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer)
 	return NULL;
 }
 
+/**
+ * Set the flag to defer texture writing
+ *
+ * @memberof						SpriteManager
+ * @public
+ *
+ * @param this						Function scope
+ * @param deferTextureWriting		Flag
+ */
 void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting)
 {
 	ASSERT(this, "SpriteManager::print: null this");
@@ -552,6 +672,16 @@ void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWrit
 	this->deferTextureWriting = deferTextureWriting;
 }
 
+/**
+ * Retrieve the maximum number of texture rows allowed to be written on each render cycle
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return 			Maximum number of texture rows to write
+ */
 s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
@@ -559,6 +689,15 @@ s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this)
 	return this->deferTextureWriting? this->texturesMaximumRowsToWrite : -1;
 }
 
+/**
+ * Set the number of idle cycles before allowing texture wrinting
+ *
+ * @memberof								SpriteManager
+ * @public
+ *
+ * @param this								Function scope
+ * @param cyclesToWaitForTextureWriting		Number of idle cycles
+ */
 void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting)
 {
 	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
@@ -566,6 +705,15 @@ void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cycle
 	this->cyclesToWaitForTextureWriting = cyclesToWaitForTextureWriting;
 }
 
+/**
+ * Set the maximum number of texture rows allowed to be written on each render cycle
+ *
+ * @memberof								SpriteManager
+ * @public
+ *
+ * @param this								Function scope
+ * @param texturesMaximumRowsToWrite		Number of texture rows allowed to be written
+ */
 void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite)
 {
 	ASSERT(this, "SpriteManager::setMaximumTextureRowsToWrite: null this");
@@ -573,6 +721,15 @@ void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 textures
 	this->texturesMaximumRowsToWrite = 2 > (s8)texturesMaximumRowsToWrite ? 2 : texturesMaximumRowsToWrite;
 }
 
+/**
+ * Set the flag to defer affine transformation calculations
+ *
+ * @memberof							SpriteManager
+ * @public
+ *
+ * @param this							Function scope
+ * @param deferAffineTransformations	Flag
+ */
 void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffineTransformations)
 {
 	ASSERT(this, "SpriteManager::deferAffineTransformations: null this");
@@ -580,6 +737,16 @@ void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffi
 	this->deferAffineTransformations = deferAffineTransformations;
 }
 
+/**
+ * Retrieve the maximum number of affine transformation rows to compute per render cycle
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Number of affine transformation rows to compute
+ */
 int SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::getMaximumAffineRowsPerCall: null this");
@@ -587,6 +754,15 @@ int SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager this)
 	return this->deferAffineTransformations ? this->maximumAffineRowsToComputePerCall : -1;
 }
 
+/**
+ * Set the maximum number of affine transformation rows to compute per render cycle
+ *
+ * @memberof									SpriteManager
+ * @public
+ *
+ * @param this									Function scope
+ * @param maximumAffineRowsToComputePerCall		Number of affine transformation rows to compute per render cycle
+ */
 void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall)
 {
 	ASSERT(this, "SpriteManager::setMaximumAffineRowsToComputePerCall: null this");
@@ -594,8 +770,16 @@ void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int 
 	this->maximumAffineRowsToComputePerCall = maximumAffineRowsToComputePerCall;
 }
 
-
-// print status
+/**
+ * Print manager's status
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			Screen x coordinate
+ * @param y			Screen y coordinate
+ */
 void SpriteManager_print(SpriteManager this, int x, int y)
 {
 	ASSERT(this, "SpriteManager::print: null this");

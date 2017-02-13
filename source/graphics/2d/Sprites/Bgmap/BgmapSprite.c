@@ -189,7 +189,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 	{
 		// remove from sprite manager before I become invalid
 		// and the VPU triggers a new render cycle
-		SpriteManager_relinquishWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
+		SpriteManager_unregisterSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 	}
 
 	// if affine or bgmap
@@ -295,7 +295,7 @@ void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
 
 	if(!this->worldLayer)
 	{
-		Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 	}
 }
 
@@ -328,7 +328,7 @@ void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
 	if(!this->worldLayer)
 	{
 		// register with sprite manager
-		Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 	}
 }
 

@@ -301,7 +301,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	if(!this->worldLayer)
 	{
 		// register with sprite manager
-		Sprite_setWorldLayer(__SAFE_CAST(Sprite, this), SpriteManager_getWorldLayer(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this)));
+		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 	}
 }
 

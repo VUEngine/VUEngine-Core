@@ -70,8 +70,16 @@ static void ClockManager_constructor(ClockManager this);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			ClockManager_getInstance()
+ * @memberof	ClockManager
+ * @public
+ *
+ * @return		ClockManager instance
+ */
 __SINGLETON(ClockManager);
-
 
 /**
  * Class constructor
