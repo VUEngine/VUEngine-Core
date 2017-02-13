@@ -128,11 +128,8 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	// disable vip interrupts
 	VIPManager_disableInterrupts(VIPManager_getInstance());
 
-	// disable timers
-	TimerManager_enable(TimerManager_getInstance(), false);
-
 	// disable timer
-	TimerManager_setInterrupt(TimerManager_getInstance(), false);
+	TimerManager_enable(TimerManager_getInstance(), false);
 
 	// turn on the display
 	HardwareManager_displayOn(HardwareManager_getInstance());

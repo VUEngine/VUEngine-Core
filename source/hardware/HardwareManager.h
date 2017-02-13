@@ -83,7 +83,7 @@ void HardwareManager_setInterruptVectors(HardwareManager this);
 void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
 int HardwareManager_getPSW(HardwareManager this);
 int HardwareManager_getStackPointer(HardwareManager this);
-int HardwareManager_getLPointer(HardwareManager this);
+int HardwareManager_getLinkPointer(HardwareManager this);
 void HardwareManager_initializeTimer(HardwareManager this);
 void HardwareManager_clearScreen(HardwareManager this);
 void HardwareManager_displayOn(HardwareManager this);

@@ -186,10 +186,25 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
+/**
+ * Get instance
+ *
+ * @fn			SoundManager_getInstance()
+ * @memberof	SoundManager
+ * @public
+ *
+ * @return		SoundManager instance
+ */
 __SINGLETON(SoundManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	SoundManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::constructor: null this");
@@ -217,7 +232,14 @@ static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager thi
 	}
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	SoundManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SoundManager_destructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::destructor: null this");
@@ -225,7 +247,14 @@ void SoundManager_destructor(SoundManager this)
 	__SINGLETON_DESTROY;
 }
 
-// load wave form data in the VB memory
+/**
+ * Load wave form data
+ *
+ * @memberof	SoundManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SoundManager_setWaveForm(SoundManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "SoundManager::setWaveForm: null this");
@@ -241,15 +270,14 @@ void SoundManager_setWaveForm(SoundManager this __attribute__ ((unused)))
 	}
 }
 
-// load a bgm
-void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
-{
-	ASSERT(this, "SoundManager::loadBGM: null this");
-
-	SoundManager_stopAllSound(this);
-	this->bgm = bgm;
-}
-
+/**
+ * Update sound playback
+ *
+ * @memberof	SoundManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SoundManager_playSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playSounds: null this");
@@ -258,7 +286,14 @@ void SoundManager_playSounds(SoundManager this)
 	SoundManager_continuePlayingFxSounds(this);
 }
 
-// play background song loaded
+/**
+ * Update background musig playback
+ *
+ * @memberof	SoundManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void SoundManager_continuePlayingBGM(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playBGM: null this");
@@ -344,8 +379,15 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 	}
 }
 
-
-// calculate sound volume according to its spatial position
+/**
+ * Calculate sound volume according to its spatial position
+ *
+ * @memberof	SoundManager
+ * @private
+ *
+ * @param this	Function scope
+ * @param bgm	Background music
+ */
 static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 {
 	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
@@ -397,8 +439,15 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 	return output;
 }
 
-// play sound
-void SoundManager_continuePlayingFxSounds(SoundManager this)
+/**
+ * Update fx sounds playback
+ *
+ * @memberof	SoundManager
+ * @private
+ *
+ * @param this	Function scope
+ */
+static void SoundManager_continuePlayingFxSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playFxSounds: null this");
 
@@ -480,11 +529,37 @@ void SoundManager_continuePlayingFxSounds(SoundManager this)
 			SND_REGS[fxS + 2].SxINT = 0x00;
 		}
 	}
-
 }
 
-// load a fx sound to be played
-// it is not guaranteed that the sound has been loaded
+/**
+ * Start playback of background music
+ *
+ * @memberof	SoundManager
+ * @public
+ *
+ * @param this	Function scope
+ * @param bgm	Background music
+ */
+void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
+{
+	ASSERT(this, "SoundManager::loadBGM: null this");
+
+	SoundManager_stopAllSound(this);
+	this->bgm = bgm;
+}
+
+/**
+ * Start playback of fx sound. If all fx channels are in use, it is not guaranteed that the sound will be played
+ *
+ * @memberof		SoundManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param fxSound	Fx sound to play
+ * @param position	3D position
+ *
+ * @return 			True if playback started
+ */
 int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D	position)
 {
 	ASSERT(this, "SoundManager::loadFxSound: null this");
@@ -531,35 +606,14 @@ int SoundManager_playingSound(SoundManager this, const u16* fxSound)
 	return false;
 }
 
-// stop sound
-void SoundManager_stopSound(SoundManager this __attribute__ ((unused)))
-{
-	ASSERT(this, "SoundManager::stopSound: null this");
-
-	// TODO: complete implementation
-	// disables sound on all channels
-	/* if not explicitly done
-	 * SND_REGS 0 doesn't get off
-	 */
-	SND_REGS[0].SxINT = 0x00;
-	SND_REGS[1].SxINT = 0x00;
-	SND_REGS[2].SxINT = 0x00;
-	SND_REGS[3].SxINT = 0x00;
-	SND_REGS[4].SxINT = 0x00;
-	SND_REGS[5].SxINT = 0x00;
-}
-
-/*
-// continue BGM play
-void SoundManager_continueBGM(SoundManager this, BYTE *sound)
-{
-	ASSERT(this, "SoundManager::continueBGM: null this");
-
-	// TODO:
-}
-*/
-
-// stop all playing sounds
+/**
+ * Stop all sound playback
+ *
+ * @memberof		SoundManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void SoundManager_stopAllSound(SoundManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "SoundManager::stopAllSound: null this");
@@ -571,5 +625,6 @@ void SoundManager_stopAllSound(SoundManager this __attribute__ ((unused)))
 	{
 		SND_REGS[channel].SxINT = 0x00;
 	}
-	SSTOP=0x01;
+
+	SSTOP = 0x01;
 }

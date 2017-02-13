@@ -326,7 +326,7 @@ void Debug_render(Debug this)
 // show debug screens
 void Debug_show(Debug this, GameState gameState)
 {
-	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 	this->gameState = gameState;
@@ -339,7 +339,7 @@ void Debug_show(Debug this, GameState gameState)
 void Debug_hide(Debug this)
 {
 	CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
-	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 	Debug_lightUpGame(this);
@@ -430,7 +430,7 @@ static void Debug_showPage(Debug this, int increment)
 	{
 		this->update = NULL;
 
-		VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+		VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 		Debug_printHeader(this);
@@ -451,7 +451,7 @@ static void Debug_showSubPage(Debug this, int increment)
 	{
 		this->update = NULL;
 
-		VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+		VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
 		Debug_printHeader(this);
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D ", 40, 0, NULL);

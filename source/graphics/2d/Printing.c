@@ -215,7 +215,7 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
 {
 	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
-	VIPManager_clearBgmap(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmapSegment(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
 /**

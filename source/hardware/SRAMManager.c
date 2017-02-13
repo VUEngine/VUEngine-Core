@@ -70,9 +70,25 @@ static void SRAMManager_initialize(SRAMManager this);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			SRAMManager_getInstance()
+ * @memberof	SRAMManager
+ * @public
+ *
+ * @return		SRAMManager instance
+ */
 __SINGLETON(SRAMManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	SRAMManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::constructor: null this");
@@ -84,7 +100,14 @@ static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 	SRAMManager_initialize(this);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	SRAMManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void SRAMManager_destructor(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::destructor: null this");
@@ -93,6 +116,14 @@ void SRAMManager_destructor(SRAMManager this)
 	__SINGLETON_DESTROY;
 }
 
+/**
+ * Initialize SRAM
+ *
+ * @memberof	SRAMManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void SRAMManager_initialize(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::initialize: null this");
@@ -105,6 +136,16 @@ static void SRAMManager_initialize(SRAMManager this)
 	}
 }
 
+/**
+ * Delete all data in SRAM range
+ *
+ * @memberof				SRAMManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param startOffset		Start address of range to clear
+ * @param endOffset			End address of range to clear
+ */
 void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
 {
 	ASSERT(this, "SRAMManager::clear: null this");
@@ -116,6 +157,17 @@ void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
 	}
 }
 
+/**
+ * Save data from SRAM
+ *
+ * @memberof				SRAMManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param source			WRAM address from were data will be copied
+ * @param startOffset		WRAM address offset
+ * @param dataSize			Number of BYTES to read
+ */
 void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
 {
 	ASSERT(this, "SRAMManager::save: null this");
@@ -131,6 +183,17 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffs
 	}
 }
 
+/**
+ * Retrieve data from SRAM
+ *
+ * @memberof				SRAMManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param destination		WRAM address were data will be loaded
+ * @param startOffset		WRAM address offset
+ * @param dataSize			Number of BYTES to read
+ */
 void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)
 {
 	ASSERT(this, "SRAMManager::read: null this");

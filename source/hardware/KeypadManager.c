@@ -65,9 +65,25 @@ static void KeypadManager_constructor(KeypadManager this);
 
 static unsigned int volatile* _readingStatus = NULL;
 
+/**
+ * Get instance
+ *
+ * @fn			KeypadManager_getInstance()
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @return		KeypadManager instance
+ */
 __SINGLETON(KeypadManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	KeypadManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
@@ -81,7 +97,14 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_destructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::destructor: null this");
@@ -90,7 +113,14 @@ void KeypadManager_destructor(KeypadManager this)
 	__SINGLETON_DESTROY;
 }
 
-// enable keypad reads
+/**
+ * Enable user input interrupts
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::enable: null this");
@@ -102,7 +132,14 @@ void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
 //	_hardwareRegisters[__SCR] |= __S_HW;
 }
 
-// disable keypad reads
+/**
+ * Disable user input interrupts
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::disable: null this");
@@ -110,7 +147,14 @@ void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 }
 
-// enable keypad reads
+/**
+ * Enable user input
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_enable(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::enable: null this");
@@ -120,7 +164,14 @@ void KeypadManager_enable(KeypadManager this)
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 }
 
-// disable keypad reads
+/**
+ * Disable user input
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_disable(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::disable: null this");
@@ -128,7 +179,16 @@ void KeypadManager_disable(KeypadManager this)
 	this->enabled = false;
 }
 
-// get status
+/**
+ * Check if user input is enabled
+ *
+ * @memberof		KeypadManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			True if user input is enabled
+ */
 int KeypadManager_isEnabled(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::disable: null this");
@@ -136,7 +196,14 @@ int KeypadManager_isEnabled(KeypadManager this)
 	return this->enabled;
 }
 
-// read keypad
+/**
+ * Read user input
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
@@ -151,7 +218,14 @@ void KeypadManager_read(KeypadManager this)
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 }
 
-// clear previous saved key
+/**
+ * Clear the current user input
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_clear(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::clear: null this");
@@ -160,7 +234,14 @@ void KeypadManager_clear(KeypadManager this)
 	this->currentKey = 0;
 }
 
-// clear previous saved keys
+/**
+ * Clear any user input previously registered
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void KeypadManager_flush(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::flush: null this");
@@ -169,7 +250,16 @@ void KeypadManager_flush(KeypadManager this)
 	this->previousKey = 0;
 }
 
-// get pressed key
+/**
+ * Retrieve the current pressed keys
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Currently pressed keys
+ */
 u32 KeypadManager_getPressedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPressedKey: null this");
@@ -177,7 +267,16 @@ u32 KeypadManager_getPressedKey(KeypadManager this)
 	return this->currentKey & ~this->previousKey;
 }
 
-// get released key
+/**
+ * Retrieve the current released keys
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Currently released keys
+ */
 u32 KeypadManager_getReleasedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
@@ -193,7 +292,16 @@ u32 KeypadManager_getHoldKey(KeypadManager this)
 	return this->currentKey & this->previousKey;
 }
 
-// get previous key
+/**
+ * Retrieve the previously pressed keys
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Previously pressed keys
+ */
 u32 KeypadManager_getPreviousKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPreviousKey: null this");
@@ -202,7 +310,13 @@ u32 KeypadManager_getPreviousKey(KeypadManager this)
 	//return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
 }
 
-// keypad's interrupt handler
+/**
+ * Interrupt handler
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ */
 void KeypadManager_interruptHandler(void)
 {
 	// broadcast keypad event

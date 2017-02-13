@@ -93,9 +93,25 @@ static SoundManager _soundManager;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			TimerManager_getInstance()
+ * @memberof	TimerManager
+ * @public
+ *
+ * @return		TimerManager instance
+ */
 __SINGLETON(TimerManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	TimerManager
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager this)
 {
 	ASSERT(this, "TimerManager::constructor: null this");
@@ -109,7 +125,14 @@ static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager thi
 	_soundManager = SoundManager_getInstance();
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	TimerManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void TimerManager_destructor(TimerManager this)
 {
 	ASSERT(this, "TimerManager::destructor: null this");
@@ -118,12 +141,41 @@ void TimerManager_destructor(TimerManager this)
 	__SINGLETON_DESTROY;
 }
 
-// enable interruptions
-void TimerManager_setInterrupt(TimerManager this, int value)
+/**
+ * Initialize manager
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ */
+void TimerManager_initialize(TimerManager this)
 {
-	ASSERT(this, "TimerManager::setInterrupt: null this");
+	ASSERT(this, "TimerManager::initialize: null this");
 
-	if(value)
+	//setup timer interrupts
+	HardwareManager_setInterruptLevel(HardwareManager_getInstance(), 0);
+	//setup timer
+	TimerManager_setFrequency(this, __TIMER_FREQUENCY);
+	TimerManager_setTime(this, __TIMER_RESOLUTION_FUNCTION(__TIMER_RESOLUTION));
+	TimerManager_clearStat(this);
+	TimerManager_enable(this, true);
+}
+
+/**
+ * Enable / disable interrupt
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param value		Flag to eable or disable
+ */
+void TimerManager_enable(TimerManager this, bool flag)
+{
+	ASSERT(this, "TimerManager::enable: null this");
+
+	if(flag)
 	{
 		this->tcrValue |= __TIMER_INT;
 	}
@@ -135,11 +187,16 @@ void TimerManager_setInterrupt(TimerManager this, int value)
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
-// timer's interrupt handler
+/**
+ * Interrupt handler
+ *
+ * @memberof		TimerManager
+ * @public
+ */
 void TimerManager_interruptHandler(void)
 {
 	//disable interrupts
-	TimerManager_setInterrupt(_timerManager, false);
+	TimerManager_enable(_timerManager, false);
 
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
@@ -161,9 +218,19 @@ void TimerManager_interruptHandler(void)
 	}
 
 	// enable interrupts
-	TimerManager_setInterrupt(_timerManager, true);
+	TimerManager_enable(_timerManager, true);
 }
 
+/**
+ * Retrieve the total milliseconds elapsed
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Total milliseconds elapsed
+ */
 u32 TimerManager_getMillisecondsElapsed(TimerManager this)
 {
 	ASSERT(this, "TimerManager::getMillisecondsElapsed: null this");
@@ -171,6 +238,14 @@ u32 TimerManager_getMillisecondsElapsed(TimerManager this)
 	return this->milliseconds;
 }
 
+/**
+ * Reset the total milliseconds elapsed
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 u32 TimerManager_resetMilliseconds(TimerManager this)
 {
 	ASSERT(this, "TimerManager::resetMilliseconds: null this");
@@ -182,24 +257,15 @@ u32 TimerManager_resetMilliseconds(TimerManager this)
 	return milliseconds;
 }
 
-// enable timer
-void TimerManager_enable(TimerManager this, int value)
-{
-	ASSERT(this, "TimerManager::enable: null this");
-
-	if(value)
-	{
-		this->tcrValue |= __TIMER_ENB;
-	}
-	else
-	{
-		this->tcrValue &= ~__TIMER_ENB;
-	}
-
-	_hardwareRegisters[__TCR] = this->tcrValue;
-}
-
-// sest time
+/**
+ * Set Timer's time
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param time		New time
+ */
 void TimerManager_setTime(TimerManager this __attribute__ ((unused)), u16 time)
 {
 	ASSERT(this, "TimerManager::setTime: null this");
@@ -208,7 +274,15 @@ void TimerManager_setTime(TimerManager this __attribute__ ((unused)), u16 time)
 	_hardwareRegisters[__THR] = (time >> 8);
 }
 
-// set frequency
+/**
+ * Set Timer's frequency
+ *
+ * @memberof				TimerManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param frequency			New frequency
+ */
 void TimerManager_setFrequency(TimerManager this, int frequency)
 {
 	ASSERT(this, "TimerManager::setFrequency: null this");
@@ -225,8 +299,16 @@ void TimerManager_setFrequency(TimerManager this, int frequency)
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
-
-// get stat
+/**
+ * Retrieve Timer's ZSTAT
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			ZSTAT
+ */
 int TimerManager_getStat(TimerManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "TimerManager::getStat: null this");
@@ -234,7 +316,14 @@ int TimerManager_getStat(TimerManager this __attribute__ ((unused)))
 	return (_hardwareRegisters[__TCR] & __TIMER_ZSTAT);
 }
 
-// clear stat
+/**
+ * Clear Timer's ZSTAT
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ */
 void TimerManager_clearStat(TimerManager this)
 {
 	ASSERT(this, "TimerManager::clearStat: null this");
@@ -242,22 +331,15 @@ void TimerManager_clearStat(TimerManager this)
 	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_ZCLR);
 }
 
-// initialize
-void TimerManager_initialize(TimerManager this)
-{
-	ASSERT(this, "TimerManager::initialize: null this");
-
-	//setup timer interrupts
-	HardwareManager_setInterruptLevel(HardwareManager_getInstance(), 0);
-	//setup timer
-	TimerManager_setFrequency(this, __TIMER_FREQUENCY);
-	TimerManager_setTime(this, __TIMER_RESOLUTION_FUNCTION(__TIMER_RESOLUTION));
-	TimerManager_clearStat(this);
-	TimerManager_setInterrupt(this, true);
-	TimerManager_enable(this, true);
-}
-
-// produce a wait
+/**
+ * Produce a wait
+ *
+ * @memberof				TimerManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param milliSeconds		Time to wait
+ */
 void TimerManager_wait(TimerManager this, u32 milliSeconds)
 {
 	ASSERT(this, "ClockManager::wait: null this");
@@ -271,9 +353,20 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 	while ((*milliseconds - waitStartTime) < milliSeconds);
 
 	this->milliseconds = currentMilliseconds;
-
 }
 
+/**
+ * Call a method a number of times during a certain lapse
+ *
+ * @memberof				TimerManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param callTimes			Number of calls to produce during the total duration
+ * @param duration			Time that must take the callTimes
+ * @param object			Called method's scope
+ * @param method			Method to call
+ */
 void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
 {
 	if(object && method)

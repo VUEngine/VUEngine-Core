@@ -254,7 +254,7 @@ void AnimationEditor_stop(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::stop: null this");
 
-	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
 	AnimationEditor_removePreviousSprite(this);
 
@@ -290,7 +290,7 @@ void AnimationEditor_stop(AnimationEditor this)
 // print title
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
-	VIPManager_clearBgmap(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
+	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing_text(Printing_getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
 	Printing_text(Printing_getInstance(), " Accept \x13  ", 38, 1, NULL);

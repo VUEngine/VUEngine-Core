@@ -292,7 +292,7 @@ void VIPManager_upBrightness(VIPManager this);
 void VIPManager_lowerBrightness(VIPManager this);
 void VIPManager_displayHide(VIPManager this);
 void VIPManager_clearScreen(VIPManager this);
-void VIPManager_clearBgmap(VIPManager this, int bgmap, int size);
+void VIPManager_clearBgmapSegment(VIPManager this, int segment, int size);
 void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnTableDefinition);
 void VIPManager_useInternalColumnTable(VIPManager this, bool internal);
 void VIPManager_setupBrightnessRepeat(VIPManager this, BrightnessRepeatDefinition* brightnessRepeat);
