@@ -92,7 +92,6 @@ void StateMachine_constructor(StateMachine this, void* owner)
  * @public
  *
  * @param this		Function scope
- * @param owner		StateMachine's owner
  */
 void StateMachine_destructor(StateMachine this)
 {

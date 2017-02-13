@@ -433,13 +433,13 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 /**
  * Allocate a BGMAP memory space for a new Texture
  *
- * @memberof				BgmapTextureManager
+ * @memberof							BgmapTextureManager
  * @private
  *
- * @param this				Function scope
- * @param bgmapTexture		Texture to allocate space for
+ * @param this							Function scope
+ * @param bgmapTextureDefinition		Texture to allocate space for
  *
- * @return 					True if the required space was successfully allocated
+ * @return 								True if the required space was successfully allocated
  */
 static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {

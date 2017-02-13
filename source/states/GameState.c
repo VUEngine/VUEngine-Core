@@ -320,13 +320,14 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 /**
  * Method called when the Game's StateMachine receives a message to be processed
  *
- * @memberof		GameState
+ * @memberof			GameState
  * @public
  *
- * @param this		Function scope
- * @param owner		StateMachine's owner
+ * @param this			Function scope
+ * @param owner			StateMachine's owner
+ * @param telegram		Message wrapper
  *
- * @return 			True if no further processing of the message is required
+ * @return 				True if no further processing of the message is required
  */
 bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused)), Telegram telegram)
 {
@@ -342,6 +343,7 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
  * @public
  *
  * @param this		Function scope
+ * @param message	Message code
  *
  * @return			The result of the propagation of the message
  */

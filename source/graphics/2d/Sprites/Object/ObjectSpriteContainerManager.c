@@ -224,8 +224,8 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  * @public
  *
  * @param this			Function scope
- * @param size[4]		Array with the number of OBJECTs per container
- * @param z[4]			Z coordintat of each container
+ * @param size			Array with the number of OBJECTs per container
+ * @param z				Z coordinate of each container
  */
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {

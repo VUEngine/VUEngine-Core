@@ -44,7 +44,7 @@ extern const VBVec3D* _screenPosition;
 /**
  * Calculate parallax based on the x and z coordinates
  *
- * @memberof		Optics
+ * @fn				Optics_calculateParallax()
  * @public
  *
  * @param x			X parameter for the calculation of the parallax displacement
@@ -65,22 +65,4 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 	rightEyeGx = x + FIX19_13_DIV(FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
 	return FIX19_13TOI(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
-}
-
-/**
- * Calculate the squared length of a given vector
- *
- * @memberof			Optics
- * @public
- *
- * @param vector1
- * @param vector2
- *
- * @return 				Squared length of the result vector
- */
-inline int Optics_lengthSquared3D(VBVec3D vector1, VBVec3D vector2)
-{
-	return  FIX19_13TOI(FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +
-			FIX19_13_MULT((vector1.y - vector2.y), (vector1.y - vector2.y))+
-			FIX19_13_MULT((vector1.z - vector2.z), (vector1.z - vector2.z)));
 }

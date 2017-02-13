@@ -299,11 +299,12 @@ void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDispl
 /**
  * Write a single CHAR to DRAM
  *
- * @memberof			CharSet
+ * @memberof				CharSet
  * @public
  *
- * @param this			Function scope
- * @param newChar		CHAR data to write
+ * @param this				Function scope
+ * @param charToReplace		Index of the CHAR to overwrite
+ * @param newChar			CHAR data to write
  */
 void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 {
@@ -322,8 +323,9 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
  * @public
  *
  * @param this				Function scope
+ * @param charToReplace		Index of the CHAR to overwrite
  * @param charSetPixel		Pixel data
- * @param newPixelColor		Pixel color
+ * @param newPixelColor		Color value of pixel
  */
 void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE newPixelColor)
 {

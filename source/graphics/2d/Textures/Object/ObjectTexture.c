@@ -61,10 +61,12 @@ __CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
 /**
  * Class constructor
  *
- * @memberof			ObjectTexture
+ * @memberof							ObjectTexture
  * @private
  *
- * @param this			Function scope
+ * @param this							Function scope
+ * @param objectTextureDefinition		Texture definition
+ * @param id							Identifier
  */
 static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {

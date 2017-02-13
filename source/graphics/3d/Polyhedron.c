@@ -180,10 +180,11 @@ void Polyhedron_hide(Polyhedron this)
 /**
  * Write to the frame buffers
  *
- * @memberof	Polyhedron
+ * @memberof					Polyhedron
  * @public
  *
- * @param this	Function scope
+ * @param this					Function scope
+ * @param calculateParallax		Tru to compute the parallax displacement for each pixel
  */
 void Polyhedron_draw(Polyhedron this, int calculateParallax)
 {

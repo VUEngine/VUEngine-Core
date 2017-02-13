@@ -62,10 +62,13 @@ __CLASS_NEW_END(AnimationController, owner, sprite, charSetDefinition);
 /**
  * Class constructor
  *
- * @memberof	AnimationController
+ * @memberof					AnimationController
  * @public
  *
- * @param this	Function scope
+ * @param this					Function scope
+ * @param owner					Controller's owner
+ * @param sprite				Sprite to animate
+ * @param charSetDefinition		CharSetDefinition used to decide the animation allocation type
  */
 void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
@@ -204,12 +207,13 @@ s8 AnimationController_getFrameDuration(AnimationController this)
 }
 
 /**
- * RetriSeteve the number of cycles that each frame of animation is shown
+ * Set the number of cycles that each frame of animation is shown
  *
- * @memberof		AnimationController
+ * @memberof				AnimationController
  * @private
  *
- * @param this		Function scope
+ * @param this				Function scope
+ * @param frameDuration		Number of cycles that each frame of animation is shown
  */
 void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration)
 {
@@ -238,10 +242,11 @@ u8 AnimationController_geframeCycleDecrement(AnimationController this)
 /**
  * Set the frame duration decrement per cycle
  *
- * @memberof		AnimationController
+ * @memberof						AnimationController
  * @private
  *
- * @param this		Function scope
+ * @param this						Function scope
+ * @param frameCycleDecrement		Decrement value for the frame cycle on each game cycle
  */
 void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement)
 {

@@ -827,12 +827,12 @@ void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 /**
  * Write a char directly to the Sprite's Texture
  *
- * @memberof			Sprite
+ * @memberof				Sprite
  * @public
  *
- * @param this			Function scope
- * @param texturePixel	Point that defines the position of the char in the Sprite's texture
- * @param newChar		Char to write
+ * @param this				Function scope
+ * @param texturePixel		Point that defines the position of the char in the Sprite's texture
+ * @param newChar			Char to write
  */
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 {
@@ -847,13 +847,13 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 /**
  * Write a single pixel directly to the Sprite's Texture
  *
- * @memberof			Sprite
+ * @memberof				Sprite
  * @public
  *
- * @param this			Function scope
- * @param texturePixel
- * @param charSetPixel
- * @param newPixelColor	Color value of pixel
+ * @param this				Function scope
+ * @param texturePixel		Point that defines the position of the char in the Sprite's texture
+ * @param charSetPixel		Pixel data
+ * @param newPixelColor		Color value of pixel
  */
 void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
 {

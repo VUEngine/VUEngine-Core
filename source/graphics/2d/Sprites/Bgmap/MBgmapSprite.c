@@ -84,10 +84,12 @@ __CLASS_NEW_END(MBgmapSprite, mBgmapSpriteDefinition, owner);
 /**
  * Class constructor
  *
- * @memberof		MBgmapSprite
+ * @memberof							MBgmapSprite
  * @public
  *
- * @param this		Function scope
+ * @param this							Function scope
+ * @param mBgmapSpriteDefinition		Definition to use
+ * @param owner							Sprite's owner
  */
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 {

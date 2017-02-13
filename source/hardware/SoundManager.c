@@ -386,7 +386,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
  * @private
  *
  * @param this	Function scope
- * @param bgm	Background music
+ * @param fxS	Fx sound index
  */
 static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 {

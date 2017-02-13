@@ -150,8 +150,6 @@ void HardwareManager_destructor(HardwareManager this)
  *
  * @memberof	HardwareManager
  * @public
- *
- * @param this	Function scope
  */
 void HardwareManager_croInterruptHandler(void)
 {
@@ -163,8 +161,6 @@ void HardwareManager_croInterruptHandler(void)
  *
  * @memberof	HardwareManager
  * @public
- *
- * @param this	Function scope
  */
 void HardwareManager_communicationInterruptHandler(void)
 {
@@ -493,6 +489,8 @@ void HardwareManager_disableKeypad(HardwareManager this)
  * @public
  *
  * @param this		Function scope
+ * @param x			Screen's x coordinate
+ * @param y			Screen's y coordinate
  */
 void HardwareManager_print(HardwareManager this, int x, int y)
 {

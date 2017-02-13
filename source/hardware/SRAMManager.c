@@ -165,7 +165,7 @@ void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
  *
  * @param this				Function scope
  * @param source			WRAM address from were data will be copied
- * @param startOffset		WRAM address offset
+ * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
 void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
@@ -191,7 +191,7 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffs
  *
  * @param this				Function scope
  * @param destination		WRAM address were data will be loaded
- * @param startOffset		WRAM address offset
+ * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
 void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)

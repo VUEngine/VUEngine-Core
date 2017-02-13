@@ -50,10 +50,11 @@ __CLASS_NEW_END(BgmapAnimationCoordinator, charSetDefinition);
 /**
  * Class constructor
  *
- * @memberof		BgmapAnimationCoordinator
+ * @memberof					BgmapAnimationCoordinator
  * @public
  *
- * @param this		Function scope
+ * @param this					Function scope
+ * @param charSetDefinition		CharSetDefinition used by the sprites to be coordinated
  */
 void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {

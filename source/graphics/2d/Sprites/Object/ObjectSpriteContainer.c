@@ -78,10 +78,13 @@ __CLASS_NEW_END(ObjectSpriteContainer, spt, totalObjects, firstObjectIndex);
 /**
  * Class constructor
  *
- * @memberof				ObjectSpriteContainer
+ * @memberof					ObjectSpriteContainer
  * @public
  *
- * @param this				Function scope
+ * @param this					Function scope
+ * @param spt					SPT assigned to this container
+ * @param totalObjects			Total number of OBJECTs that manages by this container
+ * @param firstObjectIndex		The index of the first OBJECT managed by this container
  */
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex)
 {

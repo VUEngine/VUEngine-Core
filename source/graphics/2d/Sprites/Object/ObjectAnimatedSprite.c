@@ -69,7 +69,7 @@ __CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
  * @public
  *
  * @param this						Function scope
- * @param bgmapSpriteDefinition		Sprite definition
+ * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
 static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
@@ -85,10 +85,10 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 /**
  * Class destructor
  *
- * @memberof						ObjectAnimatedSprite
+ * @memberof		ObjectAnimatedSprite
  * @public
  *
- * @param this						Function scope
+ * @param this		Function scope
  */
 void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 {
