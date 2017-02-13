@@ -169,7 +169,7 @@ void TimerManager_initialize(TimerManager this)
  * @public
  *
  * @param this		Function scope
- * @param value		Flag to eable or disable
+ * @param flag		Bool to enable or disable
  */
 void TimerManager_enable(TimerManager this, bool flag)
 {
