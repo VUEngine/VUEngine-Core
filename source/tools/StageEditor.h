@@ -74,8 +74,8 @@ StageEditor StageEditor_getInstance();
 void StageEditor_destructor(StageEditor this);
 
 bool StageEditor_handleMessage(StageEditor this, Telegram telegram);
-void StageEditor_start(StageEditor this, GameState gameState);
-void StageEditor_stop(StageEditor this);
+void StageEditor_show(StageEditor this, GameState gameState);
+void StageEditor_hide(StageEditor this);
 void StageEditor_update(StageEditor this);
 
 

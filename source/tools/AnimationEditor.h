@@ -68,8 +68,8 @@ AnimationEditor AnimationEditor_getInstance();
 
 void AnimationEditor_destructor(AnimationEditor this);
 void AnimationEditor_update(AnimationEditor this);
-void AnimationEditor_start(AnimationEditor this, GameState gameState);
-void AnimationEditor_stop(AnimationEditor this);
+void AnimationEditor_show(AnimationEditor this, GameState gameState);
+void AnimationEditor_hide(AnimationEditor this);
 bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram);
 
 

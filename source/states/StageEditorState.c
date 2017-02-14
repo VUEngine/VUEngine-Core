@@ -115,7 +115,7 @@ static void StageEditorState_destructor(StageEditorState this)
 static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	StageEditor_start(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	StageEditor_show(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 /**
@@ -143,7 +143,7 @@ static void StageEditorState_execute(StageEditorState this __attribute__ ((unuse
  */
 static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	StageEditor_stop(StageEditor_getInstance());
+	StageEditor_hide(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 

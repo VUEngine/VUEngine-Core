@@ -115,7 +115,7 @@ static void AnimationEditorState_destructor(AnimationEditorState this)
 static void AnimationEditorState_enter(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	AnimationEditor_start(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	AnimationEditor_show(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 /**
@@ -143,7 +143,7 @@ static void AnimationEditorState_execute(AnimationEditorState this __attribute__
  */
 static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	AnimationEditor_stop(AnimationEditor_getInstance());
+	AnimationEditor_hide(AnimationEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 

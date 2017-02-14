@@ -113,15 +113,17 @@ enum AnimationProperties
 //---------------------------------------------------------------------------------------------------------
 
 extern UserAnimatedInGameEntity _userAnimatedInGameEntities[];
+extern const VBVec3D* _screenPosition;
+
 AnimationController Sprite_getAnimationController(Sprite this);
 
 static void AnimationEditor_constructor(AnimationEditor this);
 static void AnimationEditor_setupMode(AnimationEditor this);
 static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this);
 static void AnimationEditor_printSprites(AnimationEditor this);
-static void AnimationEditor_printActorAnimations(AnimationEditor this);
+static void AnimationEditor_printAnimatedInGameEntityAnimations(AnimationEditor this);
 static void AnimationEditor_printAnimationConfig(AnimationEditor this);
-static void AnimationEditor_selectActor(AnimationEditor this, u32 pressedKey);
+static void AnimationEditor_selectAnimatedInGameEntity(AnimationEditor this, u32 pressedKey);
 static void AnimationEditor_selectSprite(AnimationEditor this, u32 pressedKey);
 static void AnimationEditor_removePreviousSprite(AnimationEditor this);
 static void AnimationEditor_selectAnimation(AnimationEditor this, u32 pressedKey);
@@ -139,9 +141,25 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eve
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			AnimationEditor_getInstance()
+ * @memberof	AnimationEditor
+ * @public
+ *
+ * @return		AnimationEditor instance
+ */
 __SINGLETON(AnimationEditor);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	AnimationEditor
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) AnimationEditor_constructor(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::constructor: null this");
@@ -159,7 +177,14 @@ static void __attribute__ ((noinline)) AnimationEditor_constructor(AnimationEdit
 	this->mode = kFirstMode + 1;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	AnimationEditor
+ * @public
+ *
+ * @param this	Function scope
+ */
 void AnimationEditor_destructor(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::destructor: null this");
@@ -193,7 +218,14 @@ void AnimationEditor_destructor(AnimationEditor this)
 	__SINGLETON_DESTROY;
 }
 
-// update
+/**
+ * Update
+ *
+ * @memberof	AnimationEditor
+ * @public
+ *
+ * @param this	Function scope
+ */
 void AnimationEditor_update(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::update: null this");
@@ -207,8 +239,16 @@ void AnimationEditor_update(AnimationEditor this)
 	}
 }
 
-// start editor
-void AnimationEditor_start(AnimationEditor this, GameState gameState)
+/**
+ * Show editor
+ *
+ * @memberof		AnimationEditor
+ * @public
+ *
+ * @param this		Function scope
+ * @param gameState Current game state
+ */
+void AnimationEditor_show(AnimationEditor this, GameState gameState)
 {
 	ASSERT(this, "AnimationEditor::start: null this");
 	ASSERT(gameState, "AnimationEditor::start: null gameState");
@@ -249,8 +289,15 @@ void AnimationEditor_start(AnimationEditor this, GameState gameState)
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 }
 
-// hide editor screens
-void AnimationEditor_stop(AnimationEditor this)
+/**
+ * Hide editor
+ *
+ * @memberof		AnimationEditor
+ * @public
+ *
+ * @param this		Function scope
+ */
+void AnimationEditor_hide(AnimationEditor this)
 {
 	ASSERT(this, "AnimationEditor::stop: null this");
 
@@ -287,7 +334,14 @@ void AnimationEditor_stop(AnimationEditor this)
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
-// print title
+/**
+ * Setup editor's current page
+ *
+ * @memberof		AnimationEditor
+ * @private
+ *
+ * @param this		Function scope
+ */
 static void AnimationEditor_setupMode(AnimationEditor this)
 {
 	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
@@ -315,7 +369,7 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 
 			AnimationEditor_createAnimationsSelector(this);
 			Sprite_pause(this->animatedSprite, true);
-			AnimationEditor_printActorAnimations(this);
+			AnimationEditor_printAnimatedInGameEntityAnimations(this);
 			break;
 
 		case kEditAnimation:
@@ -332,7 +386,17 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 	}
 }
 
-// process a telegram
+/**
+ * Process messages
+ *
+ * @memberof			AnimationEditor
+ * @public
+ *
+ * @param this			Function scope
+ * @param telegram		Message wrapper
+ *
+ * @return				Result of message processing
+ */
 bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 {
 	ASSERT(this, "AnimationEditor::handleMessage: null this");
@@ -368,7 +432,7 @@ bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 				{
 					case kSelectActor:
 
-						AnimationEditor_selectActor(this, pressedKey);
+						AnimationEditor_selectAnimatedInGameEntity(this, pressedKey);
 						break;
 
 					case kSelectSprite:
@@ -392,7 +456,16 @@ bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
 	return true;
 }
 
-static void AnimationEditor_selectActor(AnimationEditor this, u32 pressedKey)
+/**
+ * Select AnimatedInGameEntity to work on
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ * @param pressedKey		User input
+ */
+static void AnimationEditor_selectAnimatedInGameEntity(AnimationEditor this, u32 pressedKey)
 {
 	int userAnimatedInGameEntitiesCount = 0;
 	for(; _userAnimatedInGameEntities[userAnimatedInGameEntitiesCount].animatedInGameEntityDefinition; userAnimatedInGameEntitiesCount++);
@@ -413,6 +486,15 @@ static void AnimationEditor_selectActor(AnimationEditor this, u32 pressedKey)
 	}
 }
 
+/**
+ * Select the Sprite to work on
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ * @param pressedKey		User input
+ */
 static void AnimationEditor_selectSprite(AnimationEditor this, u32 pressedKey)
 {
 	int userAnimatedInGameEntitiesCount = 0;
@@ -436,6 +518,14 @@ static void AnimationEditor_selectSprite(AnimationEditor this, u32 pressedKey)
 	}
 }
 
+/**
+ * Discard previous selected Sprite
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_removePreviousSprite(AnimationEditor this)
 {
 	if(this->animatedSprite)
@@ -445,6 +535,15 @@ static void AnimationEditor_removePreviousSprite(AnimationEditor this)
 	}
 }
 
+/**
+ * Select the animation to work on
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ * @param pressedKey		User input
+ */
 static void AnimationEditor_selectAnimation(AnimationEditor this, u32 pressedKey)
 {
 	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
@@ -467,6 +566,15 @@ static void AnimationEditor_selectAnimation(AnimationEditor this, u32 pressedKey
 	}
 }
 
+/**
+ * Start editing the selected animation
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ * @param pressedKey		User input
+ */
 static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_A)
@@ -628,6 +736,14 @@ static void AnimationEditor_editAnimation(AnimationEditor this, u32 pressedKey)
 	AnimationEditor_printAnimationConfig(this);
 }
 
+/**
+ * Print the list of user AnimatedInGameEntities
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this)
 {
 	Printing_text(Printing_getInstance(), "ACTORS", 1, 2, NULL);
@@ -635,6 +751,14 @@ static void AnimationEditor_printUserAnimatedInGameEntities(AnimationEditor this
 	OptionsSelector_printOptions(this->animatedInGameEntitySelector, 1, 4);
 }
 
+/**
+ * Print available sprites for the selected AnimatedInGameEntity
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_printSprites(AnimationEditor this)
 {
 	Printing_text(Printing_getInstance(), "SPRITES", 1, 2, NULL);
@@ -642,13 +766,29 @@ static void AnimationEditor_printSprites(AnimationEditor this)
 	OptionsSelector_printOptions(this->spriteSelector, 1, 4);
 }
 
-static void AnimationEditor_printActorAnimations(AnimationEditor this)
+/**
+ * Print a list of animation for the selected AnimatedInGameEntity
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
+static void AnimationEditor_printAnimatedInGameEntityAnimations(AnimationEditor this)
 {
-	Printing_text(Printing_getInstance(), "ACTOR'S ANIMATIONS", 1, 2, NULL);
+	Printing_text(Printing_getInstance(), "AVAILABLE ANIMATIONS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
 	OptionsSelector_printOptions(this->animationsSelector, 1, 4);
 }
 
+/**
+ * Print selected animation' values
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 {
 	int x = 1;
@@ -690,6 +830,14 @@ static void AnimationEditor_printAnimationConfig(AnimationEditor this)
 	}
 }
 
+/**
+ * Load the selected animation function to edit
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_loadAnimationFunction(AnimationEditor this)
 {
 	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
@@ -708,8 +856,15 @@ static void AnimationEditor_loadAnimationFunction(AnimationEditor this)
 	this->animationFunction.loop = animationFunction->loop;
 	this->animationFunction.onAnimationComplete = (EventListener)&AnimationEditor_onAnimationComplete;
 }
-extern const VBVec3D* _screenPosition;
 
+/**
+ * Create a Sprite to work on
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_createSprite(AnimationEditor this)
 {
 	AnimationEditor_removePreviousSprite(this);
@@ -742,6 +897,14 @@ static void AnimationEditor_createSprite(AnimationEditor this)
 	__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 }
 
+/**
+ * Create OptionSelector for sprites
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_createSpriteSelector(AnimationEditor this)
 {
 	if(this->spriteSelector)
@@ -768,6 +931,14 @@ static void AnimationEditor_createSpriteSelector(AnimationEditor this)
 	__DELETE(spriteIndexes);
 }
 
+/**
+ * Create OptionSelector for animations
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 {
 	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
@@ -801,6 +972,14 @@ static void AnimationEditor_createAnimationsSelector(AnimationEditor this)
 	}
 }
 
+/**
+ * Create OptionSelector for editing the animation
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 {
 	if(this->animationEditionSelector)
@@ -839,6 +1018,14 @@ static void AnimationEditor_createAnimationEditionSelector(AnimationEditor this)
 	this->mode = kEditAnimation;
 }
 
+/**
+ * Create OptionSelector for the frames of the current animation
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 {
 	if(this->frameEditionSelector)
@@ -864,6 +1051,14 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
 	__DELETE(framesIndexes);
 }
 
+/**
+ * Callback for when animation completes its playback
+ *
+ * @memberof				AnimationEditor
+ * @private
+ *
+ * @param this				Function scope
+ */
 static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)

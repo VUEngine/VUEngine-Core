@@ -171,6 +171,15 @@ static void StageEditor_showSelectedUserObject(StageEditor this);
 //												CLASS' METHODS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Get instance
+ *
+ * @fn			StageEditor_getInstance()
+ * @memberof	StageEditor
+ * @public
+ *
+ * @return		StageEditor instance
+ */
 __SINGLETON(StageEditor);
 
 /**
@@ -246,7 +255,7 @@ void StageEditor_update(StageEditor this __attribute__ ((unused)))
 }
 
 /**
- * Show debug screens
+ * Show editor
  *
  * @memberof		StageEditor
  * @public
@@ -254,7 +263,7 @@ void StageEditor_update(StageEditor this __attribute__ ((unused)))
  * @param this		Function scope
  * @param gameState Current game state
  */
-void StageEditor_start(StageEditor this, GameState gameState)
+void StageEditor_show(StageEditor this, GameState gameState)
 {
 	ASSERT(this, "StageEditor::start: null this");
 	ASSERT(gameState, "StageEditor::start: gameState this");
@@ -268,14 +277,14 @@ void StageEditor_start(StageEditor this, GameState gameState)
 }
 
 /**
- * Hide debug screens
+ * Hide editor
  *
  * @memberof	StageEditor
  * @public
  *
  * @param this	Function scope
  */
-void StageEditor_stop(StageEditor this)
+void StageEditor_hide(StageEditor this)
 {
 	ASSERT(this, "StageEditor::stop: null this");
 
