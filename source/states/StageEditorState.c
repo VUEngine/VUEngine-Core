@@ -150,13 +150,14 @@ static void StageEditorState_exit(StageEditorState this __attribute__ ((unused))
 /**
  * Method called when the Game's StateMachine receives a message to be processed
  *
- * @memberof		StageEditorState
+ * @memberof			StageEditorState
  * @private
  *
- * @param this		Function scope
- * @param owner		StateMachine's owner
+ * @param this			Function scope
+ * @param owner			StateMachine's owner
+ * @param telegram		Message wrapper
  *
- * @return 			True if no further processing of the message is required
+ * @return 				True if no further processing of the message is required
  */
 static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
 {
