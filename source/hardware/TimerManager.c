@@ -344,7 +344,7 @@ void TimerManager_wait(TimerManager this, u32 milliSeconds)
 {
 	ASSERT(this, "ClockManager::wait: null this");
 
-	// declare as volatile to prevent the compiler to optimize currentTicks away
+	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// making the last assignment invalid
 	volatile u32 currentMilliseconds = this->milliseconds;
 	u32 waitStartTime = this->milliseconds;

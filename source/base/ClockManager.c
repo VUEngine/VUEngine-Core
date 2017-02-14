@@ -159,13 +159,13 @@ void ClockManager_unregister(ClockManager this, Clock clock)
 /**
  * Update clocks
  *
- * @memberof			ClockManager
+ * @memberof					ClockManager
  * @private
  *
- * @param this			Function scope
- * @param ticksElapsed	Miliseconds elapsed between calls
+ * @param this					Function scope
+ * @param millisecondsElapsed	Milliseconds elapsed between calls
  */
-void ClockManager_update(ClockManager this, u32 ticksElapsed)
+void ClockManager_update(ClockManager this, u32 millisecondsElapsed)
 {
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
@@ -175,7 +175,7 @@ void ClockManager_update(ClockManager this, u32 ticksElapsed)
 	// update all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock_update(__SAFE_CAST(Clock, node->data), ticksElapsed);
+		Clock_update(__SAFE_CAST(Clock, node->data), millisecondsElapsed);
 	}
 }
 

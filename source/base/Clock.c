@@ -137,20 +137,20 @@ void Clock_print(Clock this, int col, int row, const char* font)
 /**
  * Called on each timer interrupt
  *
- * @memberof	Clock
+ * @memberof						Clock
  * @public
  *
- * @param this	Function scope
- * @param ticks
+ * @param this						Function scope
+ * @param millisecondsElapsed		Time elapsed between calls
  */
-void Clock_update(Clock this, u32 ticks)
+void Clock_update(Clock this, u32 millisecondsElapsed)
 {
 	ASSERT(this, "Clock::update: null this");
 
 	// increase count
 	if(!this->paused)
 	{
-		this->milliSeconds += ticks;
+		this->milliSeconds += millisecondsElapsed;
 
 		u32 currentSecond = Clock_getSeconds(this);
 

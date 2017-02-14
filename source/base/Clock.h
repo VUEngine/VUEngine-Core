@@ -38,7 +38,7 @@
 // declare the virtual methods
 #define Clock_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, update, u32 ticks);												\
+		__VIRTUAL_DEC(ClassName, void, update, u32 millisecondsElapsed);								\
 
 // declare the virtual methods which are redefined
 #define Clock_SET_VTABLE(ClassName)																		\
@@ -99,7 +99,7 @@ void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds);
 void Clock_setTimeInSeconds(Clock this, float totalSeconds);
 void Clock_start(Clock this);
 void Clock_stop(Clock this);
-void Clock_update(Clock this, u32 ticks);
+void Clock_update(Clock this, u32 millisecondsElapsed);
 
 
 #endif

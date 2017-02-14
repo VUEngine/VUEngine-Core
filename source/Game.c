@@ -516,7 +516,7 @@ static void Game_setNextState(Game this, GameState state)
 	// save current state
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 
-	// reset timer's ticks
+	// reset timer
 	TimerManager_resetMilliseconds(this->timerManager);
 
 	// reset profiling
