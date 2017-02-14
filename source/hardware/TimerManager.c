@@ -177,11 +177,11 @@ void TimerManager_enable(TimerManager this, bool flag)
 
 	if(flag)
 	{
-		this->tcrValue |= __TIMER_INT;
+		this->tcrValue |= __TIMER_ENB | __TIMER_INT;
 	}
 	else
 	{
-		this->tcrValue &= ~__TIMER_INT;
+		this->tcrValue &= ~(__TIMER_ENB | __TIMER_INT);
 	}
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
