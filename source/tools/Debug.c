@@ -172,7 +172,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 extern ClassSizeData _userClassesSizeData[];
 
 static void Debug_constructor(Debug this);
-static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message);
+static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message);
 static void Debug_showCollisionShapes(Debug this);
 static void Debug_showDebugBgmap(Debug this);
 static void Debug_setupPages(Debug this);
@@ -760,7 +760,7 @@ static void Debug_memoryStatusShowZeroPage(Debug this __attribute__ ((unused)), 
 		{&Screen_getObjectSize, 						"Screen"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -797,7 +797,7 @@ static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)),
 		{&VIPManager_getObjectSize, 					"VIPManager"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -826,7 +826,7 @@ static void Debug_memoryStatusShowSecondPage(Debug this __attribute__ ((unused))
 		{&VirtualNode_getObjectSize, 					"VirtualNode"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -864,7 +864,7 @@ static void Debug_memoryStatusShowThirdPage(Debug this __attribute__ ((unused)),
 		{&Sprite_getObjectSize, 						"Sprite"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -894,7 +894,7 @@ static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused))
 		{&Shape_getObjectSize, 							"Shape"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -930,7 +930,7 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&RecyclableImage_getObjectSize,				"RecyclableImage"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -961,7 +961,7 @@ static void Debug_memoryStatusShowSixthPage(Debug this __attribute__ ((unused)),
 		{&UiContainer_getObjectSize,					"UiContainer"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -991,7 +991,7 @@ static void Debug_memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)
 		{&StageEditor_getObjectSize,					"StageEditor"},
 	};
 
-	Debug_printClassSizes(classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
+	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
 }
 
 /**
@@ -1009,22 +1009,23 @@ static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
 
-	Debug_printClassSizes(_userClassesSizeData, 0, x + 21, y, "User defined classes:");
+	Debug_printClassSizes(this, _userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
 
 /**
  * Print classes' sizes
  *
- * @memberof			Debug
+ * @memberof					Debug
  * @private
  *
- * @param this			Function scope
- * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
- * @param message		Message to add to the output
+ * @param this					Function scope
+ * @param classesSizeData		Array with a class names and their sizes
+ * @param count					Number of entries to print
+ * @param x						Screen's x coordinate
+ * @param y						Screen's y coordinate
+ * @param message				Message to add to the output
  */
-static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message)
+static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message)
 {
 	int columnIncrement = 20;
 
@@ -1040,7 +1041,7 @@ static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int 
 	y++;
 
 	int i = 0;
-	for(; classesSizeData[i].classSizeFunction && (0 == size || i < size); i++)
+	for(; classesSizeData[i].classSizeFunction && (0 == count || i < count); i++)
 	{
 		Printing_text(Printing_getInstance(), classesSizeData[i].name, x, ++y, NULL);
 		Printing_int(Printing_getInstance(), ((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
