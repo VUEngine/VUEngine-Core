@@ -1058,6 +1058,7 @@ static void AnimationEditor_createFrameEditionSelector(AnimationEditor this)
  * @private
  *
  * @param this				Function scope
+ * @param eventFirer		AnimationController
  */
 static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eventFirer __attribute__ ((unused)))
 {

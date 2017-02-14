@@ -1022,6 +1022,7 @@ static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute
  * @param increment		Increment
  * @param x				Screen's x coordinate
  * @param y				Screen's y coordinate
+ * @param message		Message to add to the output
  */
 static void Debug_printClassSizes(ClassSizeData* classesSizeData, int size, int x, int y, char* message)
 {
@@ -1269,9 +1270,6 @@ static void Debug_texturesPage(Debug this, int increment __attribute__ ((unused)
  * @private
  *
  * @param this			Function scope
- * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
  */
 static void Debug_showDebugBgmap(Debug this)
 {
@@ -1576,9 +1574,6 @@ static void Debug_physicStatusShowShapes(Debug this __attribute__ ((unused)), in
  * @private
  *
  * @param this			Function scope
- * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
  */
 static void Debug_showCollisionShapes(Debug this __attribute__ ((unused)))
 {
