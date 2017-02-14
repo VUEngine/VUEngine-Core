@@ -154,10 +154,10 @@
 		(ClassName)Object_getCast((Object)object,														\
 			(ObjectBaseClassPointer)&ClassName ## _getBaseClass, NULL)									\
 
-#define __IS_INSTANCE(ClassName, object)																	\
+#define __IS_INSTANCE_OF(ClassName, object)																\
 																										\
 		/* try to up cast object */																		\
-		ClassName ## _isInstance(__SAFE_CAST(Object, object))
+		(void*)&ClassName ## _vTable == (void*)*((void**)object)										\
 
 // declare a virtual method
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)											\
@@ -174,16 +174,27 @@
 		}
 
 // call configure class's vtable method
+#ifndef __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
 #define __SET_CLASS(ClassName)																			\
 																										\
 		/* setup the class's vtable only if destructor is NULL */										\
 		if(!ClassName ## _vTable.destructor)															\
 		{																								\
 			ClassName ## _setVTable();																	\
-			ClassName ## _checkVTable();																	\
-		}																								\
+			ClassName ## _checkVTable();																\
+		}
+#else
+#define __SET_CLASS(ClassName)																			\
+																										\
+		/* setup the class's vtable only if destructor is NULL */										\
+		if(!ClassName ## _vTable.destructor)															\
+		{																								\
+			ClassName ## _setVTable();																	\
+		}
+#endif
 
 // configure class's vtable
+#ifndef __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
 #define __CHECK_VTABLE_DEFINITION(ClassName)															\
 																										\
 		/* define the static method */																	\
@@ -195,7 +206,10 @@
 			{																							\
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##	is abstract);		\
 			}																							\
-		}																								\
+		}
+#else
+#define __CHECK_VTABLE_DEFINITION(ClassName)
+#endif
 
 // configure class's vtable
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)												\
@@ -246,7 +260,10 @@
 																										\
 			/* insert class's virtual methods names */													\
 			ClassName ## _METHODS(ClassName)															\
-		}																								\
+		};																								\
+																										\
+		/* declare virtual table for external reference */												\
+		extern struct ClassName ## _vTable ClassName ## _vTable											\
 
 // declare a class
 #define __CLASS(ClassName)																					\
@@ -262,9 +279,6 @@
 																										\
 		/* declare vtable */																			\
 		__VTABLE(ClassName);																			\
-																										\
-		/* define class's isInstance method */															\
-		u32 ClassName ## _isInstance(Object object);													\
 																										\
 		/* declare vtable */																			\
 		void ClassName ## _setVTable();																	\
@@ -289,6 +303,19 @@
 			/* end definition */																		\
 		} ClassName ## _str 																			\
 
+
+// define method only when compiling with debugging tools
+#ifdef __DEBUG_TOOLS
+#define __GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
+																										\
+		int ClassName ## _getObjectSize()																\
+		{																								\
+			return sizeof(ClassName ## _str);															\
+		}
+#else
+#define __GET_INSTANCE_SIZE_DEFINITION(ClassName)
+#endif
+
 // define a class
 #define __CLASS_DEFINITION(ClassName, BaseClassName)													\
 																										\
@@ -303,21 +330,12 @@
 		/* class' vtable's definition */																\
 		struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;		\
 																										\
-		static void (* const _baseDestructor)(Object) =									 			\
+		static void (* const _baseDestructor)(Object) =									 				\
 		/* class' base's destructor */																	\
 			(void (*)(Object))&BaseClassName ## _destructor;											\
 																										\
-		/* define class's isInstance method */															\
-		u32 ClassName ## _isInstance(Object object)														\
-		{																								\
-			return (void*)&ClassName ## _vTable == (void*)*((void**)object);							\
-		}																								\
-																										\
 		/* define class's getSize method */																\
-		int ClassName ## _getObjectSize()																\
-		{																								\
-			return sizeof(ClassName ## _str);															\
-		}																								\
+		__GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
 																										\
 		/* define class's getBaseClass method */														\
 		ObjectBaseClassPointer ClassName ## _getBaseClass(Object this __attribute__ ((unused)))		 \

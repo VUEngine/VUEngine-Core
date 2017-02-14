@@ -200,6 +200,6 @@ The call will return a pointer to const char* that holds the name of the object'
 
 It is possible to check if an object is an instance of a given class without having to type cast it by using the following code:
 
-	__IS_INSTANCE(ClassName, object)
+	__IS_INSTANCE_OF(ClassName, object)
 	
 The drawback is that this check can only detect if the object was instantiated calling the given class' allocator, but cannot tell whether the object inherits from the class or not.
