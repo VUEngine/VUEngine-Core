@@ -864,8 +864,10 @@ void SpriteManager_print(SpriteManager this, int x, int y, bool resumed)
 	ASSERT(this, "SpriteManager::print: null this");
 
 	Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
+#ifdef __PROFILE_GAME
 	Printing_text(Printing_getInstance(), "Total pixels:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), _totalPixelsToDraw, x + 17, y, NULL);
+#endif
 	Printing_text(Printing_getInstance(), "Last free layer:     ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->freeLayer, x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Free layers:         ", x, ++y, NULL);
