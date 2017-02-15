@@ -140,7 +140,6 @@ inline static void Game_updatePhysics(Game this);
 inline static void Game_updateTransformations(Game this);
 inline static u32 Game_updateCollisions(Game this);
 inline static void Game_stream(Game this);
-inline static void Game_render(Game this);
 inline static void Game_checkForNewState(Game this);
 inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration);
 static void Game_update(Game this);
@@ -175,7 +174,6 @@ static u16 updateTransformationsTotalTime = 0;
 static u16 streamingTotalTime = 0;
 static u16 handleInputTotalTime = 0;
 static u16 dispatchDelayedMessageTotalTime = 0;
-static u16 renderingTotalTime = 0;
 
 static u16 updateVisualsHighestTime = 0;
 static u16 updateLogicHighestTime = 0;
@@ -215,7 +213,6 @@ static u16 previousUpdateTransformationsTotalTime = 0;
 static u16 previousStreamingTotalTime = 0;
 static u16 previousHandleInputTotalTime = 0;
 static u16 previousDispatchDelayedMessageTotalTime = 0;
-static u16 previousRenderingTotalTime = 0;
 
 static u16 previousUpdateVisualsHighestTime = 0;
 static u16 previousUpdateLogicHighestTime = 0;
@@ -229,7 +226,7 @@ static u16 previousProcessCollisionsHighestTime = 0;
 static u16 previousRenderingHighestTime = 0;
 
 static u16 previousGameFrameHighestTime = 0;
-static u16 previouGameFrameTotalTime = 0;
+static u16 previousGameFrameTotalTime = 0;
 
 #endif
 
@@ -979,25 +976,6 @@ inline static void Game_stream(Game this)
 #endif
 }
 
-inline static void Game_render(Game this)
-{
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-	this->lastProcessName = "rendering";
-#endif
-
-
-#ifdef __PROFILE_GAME
-	if(updateProfiling)
-	{
-		renderingProcessTime = VIPManager_writeDRAM(this->vipManager);
-		renderingHighestTime = renderingProcessTime > renderingHighestTime ? renderingProcessTime : renderingHighestTime;
-		renderingTotalTime += renderingProcessTime;
-	}
-#else
-	VIPManager_writeDRAM(this->vipManager);
-#endif
-}
-
 inline static void Game_checkForNewState(Game this)
 {
 	ASSERT(this, "Game::checkForNewState: null this");
@@ -1210,8 +1188,6 @@ static void Game_update(Game this)
 		{
 			Game_stream(this);
 		}
-
-//		Game_render(this);
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)
@@ -1591,7 +1567,7 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 
 #ifdef __PROFILE_GAME
 
-	previouGameFrameTotalTime = this->gameFrameTotalTime;
+	previousGameFrameTotalTime = this->gameFrameTotalTime;
 
 	previousGameFrameDuration = gameFrameDuration;
 	previousGameFrameDurationAverage = gameFrameDurationAverage;
@@ -1607,7 +1583,6 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	previousHandleInputTotalTime = handleInputTotalTime;
 	previousDispatchDelayedMessageTotalTime = dispatchDelayedMessageTotalTime;
 	previousProcessCollisionsTotalTime = processCollisionsTotalTime;
-	previousRenderingTotalTime = renderingTotalTime;
 
 	previousGameFrameHighestTime = gameFrameHighestTime;
 	previousUpdateVisualsHighestTime = updateVisualsHighestTime;
@@ -1634,7 +1609,6 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	handleInputTotalTime = 0;
 	dispatchDelayedMessageTotalTime = 0;
 	processCollisionsTotalTime = 0;
-	renderingTotalTime = 0;
 
 	gameFrameHighestTime = 0;
 	updateVisualsHighestTime = 0;
@@ -1656,75 +1630,89 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 
 	int xDisplacement = 32;
 
-	Printing_text(Printing_getInstance(), "PROFILING", x, y++, NULL);
+	Printing printing = Printing_getInstance();
 
-	Printing_text(Printing_getInstance(), "Last game frame's info        (ms)", x, ++y, NULL);
+	Printing_text(printing, "PROFILING", x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Real duration:        ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), gameFrameDuration, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Average real duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), gameFrameDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Last game frame's info        (ms)", x, ++y, NULL);
 
-	Printing_text(Printing_getInstance(), "Effective duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Average effective duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Highest effective duration:    ", x, y, NULL);
-	Printing_int(Printing_getInstance(), gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Torn frames count:    ", x, y, NULL);
-	Printing_int(Printing_getInstance(), tornGameFrameCount, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Real duration:", x, ++y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, gameFrameDuration, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Average real duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, gameFrameDurationAverage, x + xDisplacement, y++, NULL);
+
+	Printing_text(printing, "Effective duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Average effective duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Highest effective duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Torn frames count:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, tornGameFrameCount, x + xDisplacement, y++, NULL);
 
 
-	Printing_text(Printing_getInstance(), "Processes' duration (ms/sec)", x, ++y, NULL);
+	Printing_text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
 
 	int xDisplacement2 = 7;
 
-	Printing_text(Printing_getInstance(), "                              total highest", x, ++y, NULL);
+	Printing_text(printing, "                              total highest", x, ++y, NULL);
 
-	Printing_text(Printing_getInstance(), "Rendering:     ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), renderingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), renderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Updating visuals:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, updateVisualsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, updateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Updating visuals:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), updateVisualsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), updateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Handling input:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, handleInputTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, handleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Handling input:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), handleInputTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), handleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Processing messages:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, dispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Processing messages:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), dispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Updating logic:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, updateLogicTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, updateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Updating logic:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), updateLogicTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), updateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Streaming:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, streamingTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, streamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Streaming:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), streamingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), streamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Updating physics:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, updatePhysicsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, updatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Updating physics:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), updatePhysicsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), updatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Transforming:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, updateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Transforming:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), updateTransformationsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), updateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Processing collisions:         ", x, y, NULL);
-	Printing_int(Printing_getInstance(), processCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), processCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Processing collisions:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, processCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
 	y++;
-	Printing_text(Printing_getInstance(), "Last second processing (ms)", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Real processing time:          ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), renderingTotalTime + previousUpdateVisualsTotalTime + previousHandleInputTotalTime + previousDispatchDelayedMessageTotalTime + previousUpdateLogicTotalTime + previousStreamingTotalTime + previousUpdatePhysicsTotalTime + previousUpdateTransformationsTotalTime + previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-//	Printing_int(Printing_getInstance(), gameFrameHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing_text(printing, "Last second processing (ms)", x, y++, NULL);
+	Printing_text(printing, "Real processing time:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateVisualsTotalTime + previousHandleInputTotalTime + previousDispatchDelayedMessageTotalTime + previousUpdateLogicTotalTime + previousStreamingTotalTime + previousUpdatePhysicsTotalTime + previousUpdateTransformationsTotalTime + previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+//	Printing_int(printing, gameFrameHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
-	Printing_text(Printing_getInstance(), "Effective processing time:    ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->gameFrameTotalTime, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Effective processing time:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, this->gameFrameTotalTime, x + xDisplacement, y++, NULL);
 }
 #endif
 
@@ -1736,74 +1724,88 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x _
 
 	int xDisplacement = 32;
 
-	Printing_text(Printing_getInstance(), "PROFILING", x, y++, NULL);
+	Printing printing = Printing_getInstance();
 
-	Printing_text(Printing_getInstance(), "Last game frame's info (ms)", x, ++y, NULL);
+	Printing_text(printing, "PROFILING", x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Real duration:        ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), previousGameFrameDuration, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Average real duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Last game frame's info (ms)", x, ++y, NULL);
 
-	Printing_text(Printing_getInstance(), "Effective duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousGameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Average effective duration:   ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousGameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Highest effective duration:    ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousGameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Torn frames count:    ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousTornGameFrameCount, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Real duration:", x, ++y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousGameFrameDuration, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Average real duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Processes' duration (ms in sec)", x, ++y, NULL);
+	Printing_text(printing, "Effective duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousGameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Average effective duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousGameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Highest effective duration:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousGameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Torn frames count:", x, y, NULL);
+	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousTornGameFrameCount, x + xDisplacement, y++, NULL);
+
+	Printing_text(printing, "Processes' duration (ms in sec)", x, ++y, NULL);
 
 	int xDisplacement2 = 7;
 
-	Printing_text(Printing_getInstance(), "                              total highest", x, ++y, NULL);
+	Printing_text(printing, "                              total highest", x, ++y, NULL);
 
-	Printing_text(Printing_getInstance(), "Rendering:     ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), previousRenderingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousRenderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Updating visuals:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateVisualsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Updating visuals:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdateVisualsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Handling input:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousHandleInputTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousHandleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Handling input:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousHandleInputTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousHandleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Processing messages:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousDispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Processing messages:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousDispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Updating logic:     ", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Updating logic:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Streaming:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousStreamingTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousStreamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Streaming:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousStreamingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousStreamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Updating physics:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdatePhysicsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Updating physics:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdatePhysicsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Transforming:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateTransformationsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Transforming:     ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdateTransformationsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousUpdateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Processing collisions:         ", x, y, NULL);
-	Printing_int(Printing_getInstance(), previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(Printing_getInstance(), previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing_text(printing, "Processing collisions:", x, y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
 	y++;
-	Printing_text(Printing_getInstance(), "Last second processing (ms)", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Real processing time:          ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), previousRenderingTotalTime + previousUpdateVisualsTotalTime + previousHandleInputTotalTime + previousDispatchDelayedMessageTotalTime + previousUpdateLogicTotalTime + previousStreamingTotalTime + previousUpdatePhysicsTotalTime + previousUpdateTransformationsTotalTime + previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-//	Printing_int(Printing_getInstance(), previousGameFrameHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing_text(printing, "Last second processing (ms)", x, y++, NULL);
+	Printing_text(printing, "Real processing time:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousUpdateVisualsTotalTime + previousHandleInputTotalTime + previousDispatchDelayedMessageTotalTime + previousUpdateLogicTotalTime + previousStreamingTotalTime + previousUpdatePhysicsTotalTime + previousUpdateTransformationsTotalTime + previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+//	Printing_int(printing, previousGameFrameHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
-	Printing_text(Printing_getInstance(), "Effective processing time:    ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), previouGameFrameTotalTime, x + xDisplacement, y++, NULL);
+	Printing_text(printing, "Effective processing time:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, previousGameFrameTotalTime, x + xDisplacement, y++, NULL);
 
 #endif
 }

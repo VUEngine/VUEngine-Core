@@ -1461,12 +1461,13 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	if(__TOTAL_LAYERS == this->currentLayer)
 	{
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		SpriteManager_print(SpriteManager_getInstance(), x, y);
+		SpriteManager_print(SpriteManager_getInstance(), x, y, false);
 	}
 	else if(SpriteManager_getFreeLayer(SpriteManager_getInstance()) < this->currentLayer)
 	{
 		Sprite sprite = SpriteManager_getSpriteAtLayer(SpriteManager_getInstance(), this->currentLayer);
-		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
+
+		SpriteManager_recoverLayers(SpriteManager_getInstance());
 
 		Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
@@ -1488,6 +1489,8 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 14, y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 24, y, NULL);
 
+//		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
+
 		if(Sprite_getTexture(sprite) && __GET_CAST(BgmapTexture, Sprite_getTexture(sprite)))
 		{
 			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite_getTexture(sprite));
@@ -1507,7 +1510,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	{
 		this->currentLayer = __TOTAL_LAYERS;
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
-		SpriteManager_print(SpriteManager_getInstance(), x, y);
+		SpriteManager_print(SpriteManager_getInstance(), x, y, false);
 		Debug_dimmGame(this);
 	}
 }
