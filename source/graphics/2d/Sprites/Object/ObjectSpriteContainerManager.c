@@ -230,7 +230,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
+void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
@@ -244,7 +244,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	{
 		NM_ASSERT(z[i] <= previousZ, "ObjectSpriteContainerManager::setupObjectSpriteContainers: wrong z");
 
-		if(size[i] && !this->objectSpriteContainers[i])
+		if(0 <= size[i] && !this->objectSpriteContainers[i])
 		{
 			availableObjects -= size[i];
 			NM_ASSERT(0 <= availableObjects, "ObjectSpriteContainerManager::setupObjectSpriteContainers: OBJs depleted");

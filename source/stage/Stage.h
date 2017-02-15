@@ -152,7 +152,7 @@ typedef struct StageDefinition
 		int paramTableSegments;
 
 		// obj segments' sizes (__spt0 to __spt3)
-		fix19_13 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
+		s16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
 		// obj segments z coordinates (__spt0 to __spt3)
 		fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];

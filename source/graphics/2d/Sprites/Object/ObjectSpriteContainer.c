@@ -391,7 +391,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 		if(node)
 		{
 			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, node->data);
-			this->availableObjects = this->totalObjects - (this->firstObjectIndex - lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
+			this->availableObjects = this->totalObjects - (-this->firstObjectIndex + lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
 		}
 		else
 		{
@@ -477,8 +477,8 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 
 	_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_ON | __WORLD_OBJ | __WORLD_OVR;
 #ifdef __PROFILE_GAME
-	_worldAttributesBaseAddress[this->worldLayer].w = 0;
-	_worldAttributesBaseAddress[this->worldLayer].h = 0;
+	_worldAttributesBaseAddress[this->worldLayer].w = __SCREEN_WIDTH;
+	_worldAttributesBaseAddress[this->worldLayer].h = __SCREEN_HEIGHT;
 #endif
 
 	// defragmentation takes priority over z sorting
@@ -693,19 +693,21 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 {
 	ASSERT(this, "ObjectSpriteContainer::print: null this");
 
-	Printing_text(Printing_getInstance(), "Segment: ", x, y, NULL);
+	Printing_text(Printing_getInstance(), "Segment:                ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->spt, x + 24, y, NULL);
-	Printing_text(Printing_getInstance(), "WORLD: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "WORLD:                  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->worldLayer, x + 24, y, NULL);
-	Printing_text(Printing_getInstance(), "HEAD: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "HEAD:                   ", x, ++y, NULL);
 	Printing_hex(Printing_getInstance(), _worldAttributesBaseAddress[this->worldLayer].head, x + 24, y, 4, NULL);
-	Printing_text(Printing_getInstance(), "Available objects: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Total OBJECTs:           ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), this->totalObjects, x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "Available OBJECTs:       ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getAvailableObjects(this), x + 24, y, NULL);
-	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Total used OBJECTs:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getTotalUsedObjects(this), x + 24, y, NULL);
-	Printing_text(Printing_getInstance(), "Next free object index: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Next free OBJECT index:  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getNextFreeObjectIndex(this), x + 24, y, NULL);
-	Printing_text(Printing_getInstance(), "Object index range: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Object index range:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getFirstObjectIndex(this), x + 24, y, NULL);
 	Printing_text(Printing_getInstance(), "-", x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)), y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getLastObjectIndex(this), x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)) + 1, y, NULL);
