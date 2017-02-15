@@ -73,7 +73,7 @@ void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int 
 s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this);
 void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
 void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
-void SpriteManager_print(SpriteManager this, int x, int y);
+void SpriteManager_print(SpriteManager this, int x, int y, bool resumed);
 
 
 #endif

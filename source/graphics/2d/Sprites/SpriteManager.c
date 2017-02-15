@@ -31,7 +31,7 @@
 #include <VIPManager.h>
 #include <Screen.h>
 #include <Printing.h>
-#include <debugUtilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -102,6 +102,10 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 static void SpriteManager_constructor(SpriteManager this);
 
+
+#ifdef __PROFILE_GAME
+int _totalPixelsToDraw = 0;
+#endif
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -511,6 +515,13 @@ void SpriteManager_render(SpriteManager this)
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
+#ifdef __PROFILE_GAME
+	if(!Game_isInSpecialMode(Game_getInstance()))
+	{
+		_totalPixelsToDraw = __SCREEN_WIDTH * __SCREEN_HEIGHT;
+	}
+#endif
+
 	for(; node; node = node->next)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
@@ -521,10 +532,22 @@ void SpriteManager_render(SpriteManager this)
 		if(sprite->hidden || !sprite->visible)
 		{
 			_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
+#ifdef __PROFILE_GAME
+			if(!Game_isInSpecialMode(Game_getInstance()) && (!sprite->hidden && sprite->transparent))
+			{
+				_totalPixelsToDraw += Sprite_getWorldWidth(sprite) * Sprite_getWorldHeight(sprite);
+			}
+#endif
 		}
 		else
 		{
 			__VIRTUAL_CALL(Sprite, render, sprite);
+#ifdef __PROFILE_GAME
+			if(!Game_isInSpecialMode(Game_getInstance()))
+			{
+				_totalPixelsToDraw += Sprite_getWorldWidth(sprite) * Sprite_getWorldHeight(sprite);
+			}
+#endif
 		}
 
 		// must make sure that no sprite has the end world
@@ -542,6 +565,13 @@ void SpriteManager_render(SpriteManager this)
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager_renderLastLayer(this);
+
+#ifdef __SHOW_SPRITES_PROFILING
+	if(!Game_isInSpecialMode(Game_getInstance()))
+	{
+		SpriteManager_print(this, 1, 15, true);
+	}
+#endif
 }
 
 /**
@@ -780,16 +810,24 @@ void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int 
  * @param x			Screen x coordinate
  * @param y			Screen y coordinate
  */
-void SpriteManager_print(SpriteManager this, int x, int y)
+void SpriteManager_print(SpriteManager this, int x, int y, bool resumed)
 {
 	ASSERT(this, "SpriteManager::print: null this");
 
 	Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Total pixels:      ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), _totalPixelsToDraw, x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Last free layer:     ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->freeLayer, x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Free layers:         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __TOTAL_LAYERS - 1 - VirtualList_getSize(this->sprites), x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Sprites' count:      ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), x + 17, y, NULL);
+
+	if(resumed)
+	{
+		return;
+	}
 
 	int auxY = y + 2;
 	int auxX = x;
@@ -816,6 +854,4 @@ void SpriteManager_print(SpriteManager this, int x, int y)
 			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 10;
 		}
 	}
-
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), x + 17, y, NULL);
 }

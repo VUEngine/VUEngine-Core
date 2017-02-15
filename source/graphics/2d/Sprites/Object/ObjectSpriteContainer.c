@@ -33,7 +33,7 @@
 #include <VIPManager.h>
 #include <Printing.h>
 #include <Utilities.h>
-#include <debugUtilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -475,8 +475,11 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		return;
 	}
 
-	// make sure to not render again
 	_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_ON | __WORLD_OBJ | __WORLD_OVR;
+#ifdef __PROFILE_GAME
+	_worldAttributesBaseAddress[this->worldLayer].w = 0;
+	_worldAttributesBaseAddress[this->worldLayer].h = 0;
+#endif
 
 	// defragmentation takes priority over z sorting
 	if(!this->removingObjectSprite && this->objectSpriteNodeToDefragment)
