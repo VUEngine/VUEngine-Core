@@ -43,12 +43,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define ObjectSpriteContainerManager_METHODS(ClassName)									\
-	Object_METHODS(ClassName)																\
+#define ObjectSpriteContainerManager_METHODS(ClassName)													\
+	Object_METHODS(ClassName)																			\
 
 // declare the virtual methods which are redefined
-#define ObjectSpriteContainerManager_SET_VTABLE(ClassName)						\
-	Object_SET_VTABLE(ClassName)												\
+#define ObjectSpriteContainerManager_SET_VTABLE(ClassName)												\
+	Object_SET_VTABLE(ClassName)																		\
 
 
 // declare a ObjectSpriteContainerManager, which holds a texture and a drawing specification
@@ -60,14 +60,14 @@ __CLASS(ObjectSpriteContainerManager);
 //---------------------------------------------------------------------------------------------------------
 
 ObjectSpriteContainerManager ObjectSpriteContainerManager_getInstance();
-
 void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this);
-void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
+
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z);
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment);
+void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y);
+void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, fix19_13 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS]);
 void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z);
-void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y);
 
 
 #endif

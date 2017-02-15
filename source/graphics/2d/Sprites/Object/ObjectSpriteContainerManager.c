@@ -34,9 +34,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ObjectSpriteContainerManager_ATTRIBUTES															\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* object groups */																				\
+		/**
+		 * @var ObjectSpriteContainer 	objectSpriteContainers
+		 * @brief						object groups
+		 * @memberof					ObjectSpriteContainerManager
+		 */																								\
 		ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
 
 /**

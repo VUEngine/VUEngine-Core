@@ -48,10 +48,16 @@
 // declare a Debug
 __CLASS(Debug);
 
-// for debugging
+/**
+ * For debugging
+ *
+ * @memberof	Debug
+ */
 typedef struct ClassSizeData
 {
+	/// size
 	int (*classSizeFunction)(void);
+	/// name
 	char* name;
 
 } ClassSizeData;

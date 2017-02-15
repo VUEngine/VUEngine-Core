@@ -277,7 +277,6 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* positi
 void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)));
 
 // animation
-void Sprite_updateAnimation(Sprite this);
 s8 Sprite_getActualFrame(Sprite this);
 VBVecWorld Sprite_getDisplacement(Sprite this);
 s8 Sprite_getFrameDuration(Sprite this);
@@ -292,6 +291,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 void Sprite_setFrameCycleDecrement(Sprite this, u8 frameDelayDelta);
 void Sprite_setFrameDuration(Sprite this, u8 frameDuration);
 void Sprite_update(Sprite this);
+void Sprite_updateAnimation(Sprite this);
 void Sprite_writeAnimation(Sprite this);
 
 // direct draw

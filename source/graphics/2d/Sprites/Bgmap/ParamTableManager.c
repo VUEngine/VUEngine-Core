@@ -50,21 +50,48 @@ typedef struct ParamTableFreeData
 // ---------------------------------------------------------------------------------------------------------
 
 #define ParamTableManager_ATTRIBUTES																	\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* total size of param table */																	\
+		/**
+		 * @var int 				size
+		 * @brief 					total size of param table
+		 * @memberof				ParamTableManager
+		 */																								\
 		int size;																						\
-		/* number of used bytes */																		\
+		/**
+		 * @var u32 				used
+		 * @brief 					number of used bytes
+		 * @memberof				ParamTableManager
+		 */																								\
 		u32 used;																						\
-		/* allocated bgmapSprites */																	\
+		/**
+		 * @var VirtualList 		bgmapSprites
+		 * @brief 					allocated bgmapSprites
+		 * @memberof				ParamTableManager
+		 */																								\
 		VirtualList bgmapSprites;																		\
-		/* removed bgmapSprites' sizes */																\
+		/**
+		 * @var VirtualList 		removedBgmapSpritesSizes
+		 * @brief 					removed bgmapSprites' sizes
+		 * @memberof				ParamTableManager
+		 */																								\
 		VirtualList removedBgmapSpritesSizes;															\
-		/* user for defragmentation */																	\
+		/**
+		 * @var ParamTableFreeData 	paramTableFreeData
+		 * @brief 					used for defragmentation
+		 * @memberof				ParamTableManager
+		 */																								\
 		ParamTableFreeData paramTableFreeData;															\
-		/* user for defragmentation */																	\
+		/**
+		 * @var BgmapSprite 		previouslyMovedBgmapSprite
+		 * @brief 					used for defragmentation
+		 * @memberof				ParamTableManager
+		 */																								\
 		BgmapSprite previouslyMovedBgmapSprite;															\
-		/* user for defragmentation */																	\
+		/**
+		 * @var u32 				paramTableBase
+		 * @brief 					used for defragmentation
+		 * @memberof				ParamTableManager
+		 */																								\
 		u32 paramTableBase;																				\
 
 /**

@@ -29,9 +29,9 @@ Applications
 
 Since the image frame has been fully processed and written to the frame buffer at the moment, post-processing kicks in, you are free to manipulate the image in any way you like. You can thus use post-processing to achieve visual effects which would not be possible by other means on the Virtual Boy.
 
-For example, shift down each row of the screen by a different amount of bytes, to achieve a wave like wobble effect as seen in the screen below. The `VUEngine Platformer Demo` comes with this and a few more example post-processing effects, which can be found in the file `source/componentn/PostProcessingEffects.c`.
+For example, shift down each row of the screen by a different amount of bytes to achieve a wave like wobble effect as seen in the screen below. The `VUEngine Platformer Demo` comes with this and a few more example post-processing effects, which can be found in the file `source/components/PostProcessingEffects.c`.
 
-@image html post-processing-effect-wobble.png
+@image html post-processing-effect-wobble.png "Post-processing effect example: \"wobble\"" 
 
 
 Advices

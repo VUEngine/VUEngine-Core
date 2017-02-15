@@ -85,36 +85,108 @@ enum StateOperations
 //---------------------------------------------------------------------------------------------------------
 
 #define Game_ATTRIBUTES																					\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* game's state machine */																		\
+		/**
+		 * @var StateMachine	stateMachine
+		 * @brief				game's state machine
+		 * @memberof			Game
+		 */																								\
 		StateMachine stateMachine;																		\
-		/* game's state machine */																		\
+		/**
+		 * @var GameState		currentState
+		 * @brief				game's current state
+		 * @memberof			Game
+		 */																								\
 		GameState currentState;																			\
-		/* engine's global timer */																		\
+		/**
+		 * @var Clock			clock
+		 * @brief				engine's global timer
+		 * @memberof			Game
+		 */																								\
 		Clock clock;																					\
-		/* managers */																					\
+		/**
+		 * @var ClockManager	clockManager
+		 * @brief				managers
+		 * @memberof			Game
+		 */																								\
 		ClockManager clockManager;																		\
+		/**
+		 * @var KeypadManager 	keypadManager
+		 * @brief
+		 * @memberof			Game
+		 */																								\
 		KeypadManager keypadManager;																	\
+		/**
+		 * @var VIPManager 		vipManager
+		 * @brief
+		 * @memberof			Game
+		 */																								\
 		VIPManager vipManager;																			\
+		/**
+		 * @var TimerManager 	timerManager
+		 * @brief
+		 * @memberof			Game
+		 */																								\
 		TimerManager timerManager;																		\
+		/**
+		 * @var Screen 			screen
+		 * @brief
+		 * @memberof			Game
+		 */																								\
 		Screen screen;																					\
-		/* game's next state */																			\
+		/**
+		 * @var GameState		nextState
+		 * @brief				game's next state
+		 * @memberof			Game
+		 */																								\
 		GameState nextState;																			\
-		/* game's next state operation */																\
+		/**
+		 * @var int				nextStateOperation
+		 * @brief				game's next state operation
+		 * @memberof			Game
+		 */																								\
 		int nextStateOperation; 																		\
-		/* last process' name */																		\
+		/**
+		 * @var char*			lastProcessName
+		 * @brief				last process' name
+		 * @memberof			Game
+		 */																								\
 		char* lastProcessName;																			\
-		/* auto pause state */																			\
+		/**
+		 * @var GameState		automaticPauseState
+		 * @brief				auto pause state
+		 * @memberof			Game
+		 */																								\
 		GameState automaticPauseState;																	\
-		/* auto pause last checked time */																\
+		/**
+		 * @var u32				lastAutoPauseCheckTime
+		 * @brief				auto pause last checked time
+		 * @memberof			Game
+		 */																								\
 		u32 lastAutoPauseCheckTime;																		\
-		/* current process flags */																		\
+		/**
+		 * @var u32				gameFrameDone
+		 * @brief				current process flags
+		 * @memberof			Game
+		 */																								\
 		u32 gameFrameDone;																				\
+		/**
+		 * @var u32				updatingVisuals
+		 * @brief
+		 * @memberof			Game
+		 */																								\
 		u32 updatingVisuals;																			\
-		/* elapsed time in current 50hz cycle */														\
+		/**
+		 * @var u32				gameFrameTotalTime
+		 * @brief				elapsed time in current 50hz cycle
+		 * @memberof			Game
+		 */																								\
 		u32 gameFrameTotalTime;																			\
-		/* low battery indicator showing flag */														\
+		/**
+		 * @var bool			isShowingLowBatteryIndicator
+		 * @brief				low battery indicator showing flag
+		 * @memberof			Game
+		 */																								\
 		bool isShowingLowBatteryIndicator;																\
 
 /**
@@ -229,6 +301,7 @@ static u16 previousGameFrameHighestTime = 0;
 static u16 previousGameFrameTotalTime = 0;
 
 #endif
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS

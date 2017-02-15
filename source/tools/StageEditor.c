@@ -121,6 +121,11 @@ __CLASS_DEFINITION(StageEditor, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
+/**
+ * The different modes of the StageEditor
+ *
+ * @memberof	AnimationEditor
+ */
 enum Modes
 {
 	kFirstMode = 0,

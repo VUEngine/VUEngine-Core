@@ -48,16 +48,31 @@
 		__VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
 		__VIRTUAL_SET(ClassName, MBgmapSprite, resize);													\
 
-
 #define MBgmapSprite_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		BgmapSprite_ATTRIBUTES																			\
-		/* this is our texture */																		\
+		/**
+		 * @var VirtualList 			textures
+		 * @brief						this is our texture
+		 * @memberof 					MBgmapSprite
+		 */																								\
 		VirtualList textures;																			\
-		/* pinter to definition */																		\
+		/**
+		 * @var MBgmapSpriteDefinition*	mBgmapSpriteDefinition
+		 * @brief						pinter to definition
+		 * @memberof 					MBgmapSprite
+		 */																								\
 		const MBgmapSpriteDefinition* mBgmapSpriteDefinition;											\
-		/* to speed up rendering */																		\
+		/**
+		 * @var u32 					textureXOffset
+		 * @brief						to speed up rendering
+		 * @memberof 					MBgmapSprite
+		 */																								\
 		u32 textureXOffset;																				\
+		/**
+		 * @var u32 					textureYOffset
+		 * @brief						to speed up rendering
+		 * @memberof 					MBgmapSprite
+		 */																								\
 		u32 textureYOffset;																				\
 
 __CLASS(MBgmapSprite);
@@ -97,12 +112,13 @@ __CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefi
 
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
 void MBgmapSprite_destructor(MBgmapSprite this);
-void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position);
-void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position);
-void MBgmapSprite_render(MBgmapSprite this);
-VBVec2D MBgmapSprite_getPosition(MBgmapSprite this);
+
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement);
+VBVec2D MBgmapSprite_getPosition(MBgmapSprite this);
+void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position);
+void MBgmapSprite_render(MBgmapSprite this);
 void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z);
+void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position);
 
 
 #endif

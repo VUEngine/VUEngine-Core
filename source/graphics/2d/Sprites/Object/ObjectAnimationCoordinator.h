@@ -43,7 +43,6 @@
 		__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, removeAnimationController);				\
 
 #define ObjectAnimationCoordinator_ATTRIBUTES															\
-		/* super's attributes */																		\
 		AnimationCoordinator_ATTRIBUTES																	\
 
 __CLASS(ObjectAnimationCoordinator);

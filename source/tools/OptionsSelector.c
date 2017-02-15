@@ -75,7 +75,7 @@
  * @class	OptionsSelector
  * @extends Object
  * @ingroup tools
- * @brief	Tool to render a menu
+ * @brief	Utility class to render a menu
  */
 __CLASS_DEFINITION(OptionsSelector, Object);
 __CLASS_FRIEND_DEFINITION(VirtualList);

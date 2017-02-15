@@ -136,19 +136,36 @@
 // declare the optionsselector class
 __CLASS(OptionsSelector);
 
+/**
+ * An option of the OptionsSelector
+ *
+ * @memberof	OptionsSelector
+ */
 typedef struct Option
 {
+	/// value of Option
 	void* value;
+	/// OptionType
 	u8 type;
+	/// callback function to be executed for this menu option
 	void (*callback)(Object);
+	/// scope of callback function
 	Object callbackScope;
 
 } Option;
 
+/**
+ * The types of an Option
+ *
+ * @memberof	OptionsSelector
+ */
 enum OptionTypes
 {
+	/// a string
 	kString,
+	/// an integer
 	kInt,
+	/// a float
 	kFloat
 };
 

@@ -58,30 +58,78 @@ typedef struct SpritesList
 } SpritesList;
 
 #define SpriteManager_ATTRIBUTES																		\
-	/* super's attributes */																			\
 	Object_ATTRIBUTES																					\
-	/* list of sprites to render */																		\
+	/**
+	 * @var VirtualList	sprites
+	 * @brief 			list of sprites to render
+	 * @memberof		SpriteManager
+	 */																									\
 	VirtualList sprites;																				\
-	/* sorting nodes */																					\
+	/**
+	 * @var VirtualNode	node
+	 * @brief 			sorting nodes
+	 * @memberof		SpriteManager
+	 */																									\
 	VirtualNode node;																					\
+	/**
+	 * @var VirtualNode	nextNode
+	 * @brief
+	 * @memberof		SpriteManager
+	 */																									\
 	VirtualNode nextNode;																				\
-	/* texture writing */																				\
+	/**
+	 * @var Texture		textureToWrite
+	 * @brief 			texture writing
+	 * @memberof		SpriteManager
+	 */																									\
 	Texture textureToWrite;																				\
-	/* next world layer	*/																				\
+	/**
+	 * @var u8			freeLayer
+	 * @brief 			next world layer
+	 * @memberof		SpriteManager
+	 */																									\
 	u8 freeLayer;																						\
-	/* flag to stop sorting while recovering layers	*/													\
+	/**
+	 * @var u8			recoveringLayers
+	 * @brief 			flag to stop sorting while recovering layers
+	 * @memberof		SpriteManager
+	 */																									\
 	u8 recoveringLayers;																				\
-	/* number of cycles that the texture writing is idle */												\
+	/**
+	 * @var s8			cyclesToWaitForTextureWriting
+	 * @brief 			number of cycles that the texture writing is idle
+	 * @memberof		SpriteManager
+	 */																									\
 	s8 cyclesToWaitForTextureWriting;																	\
-	/* number of rows to write in texture's writing	*/													\
+	/**
+	 * @var s8			texturesMaximumRowsToWrite
+	 * @brief 			number of rows to write in texture's writing
+	 * @memberof		SpriteManager
+	 */																									\
 	s8 texturesMaximumRowsToWrite;																		\
-	/* flag to control texture's writing deferring */													\
-	bool deferTextureWriting;																				\
-	/* number of rows to write in affine transformations */												\
+	/**
+	 * @var bool		deferTextureWriting
+	 * @brief 			flag to control texture's writing deferring
+	 * @memberof		SpriteManager
+	 */																									\
+	bool deferTextureWriting;																			\
+	/**
+	 * @var s8			maximumAffineRowsToComputePerCall
+	 * @brief 			number of rows to write in affine transformations
+	 * @memberof		SpriteManager
+	 */																									\
 	s8 maximumAffineRowsToComputePerCall;																\
-	/* flag to control texture's writing deferring */													\
+	/**
+	 * @var s8			deferAffineTransformations
+	 * @brief 			flag to control texture's writing deferring
+	 * @memberof		SpriteManager
+	 */																									\
 	s8 deferAffineTransformations;																		\
-	/* delay before writing again */																	\
+	/**
+	 * @var s8			waitToWrite
+	 * @brief 			delay before writing again
+	 * @memberof		SpriteManager
+	 */																									\
 	s8 waitToWrite;																						\
 
 /**

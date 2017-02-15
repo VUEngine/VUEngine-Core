@@ -50,7 +50,6 @@ static bool AnimationEditorState_processMessage(AnimationEditorState this __attr
 //---------------------------------------------------------------------------------------------------------
 
 #define AnimationEditorState_ATTRIBUTES																	\
-		/* inherits */																					\
 		GameState_ATTRIBUTES																			\
 
 /**

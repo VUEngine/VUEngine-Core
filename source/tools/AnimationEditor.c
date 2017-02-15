@@ -46,7 +46,7 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __USER_ACTOR_SHOW_ROW 	6
+#define __USER_ACTOR_SHOW_ROW 			6
 
 #define __TRANSLATION_STEP				8
 #define __SCREEN_X_TRANSLATION_STEP		__SCREEN_WIDTH / 4
@@ -59,27 +59,66 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define AnimationEditor_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* current in game gameState */																	\
+		/**
+		 * @var GameState 				gameState
+		 * @brief						current in game gameState
+		 * @memberof					AnimationEditor
+		 */																								\
 		GameState gameState;																			\
-		/* current animated sprite */																	\
+		/**
+		 * @var Sprite 					animatedSprite
+		 * @brief						current animated sprite
+		 * @memberof					AnimationEditor
+		 */																								\
 		Sprite animatedSprite;																			\
-		/* current animation description */																\
+		/**
+		 * @var AnimationDescription* 	animationDescription
+		 * @brief						current animation description
+		 * @memberof					AnimationEditor
+		 */																								\
 		AnimationDescription* animationDescription;														\
-		/* current animation function */																\
+		/**
+		 * @var AnimationFunction 		animationFunction
+		 * @brief						current animation function
+		 * @memberof					AnimationEditor
+		 */																								\
 		AnimationFunction animationFunction;															\
-		/* animated in game entity selector */															\
+		/**
+		 * @var OptionsSelector 		animatedInGameEntitySelector
+		 * @brief						animated in game entity selector
+		 * @memberof					AnimationEditor
+		 */																								\
 		OptionsSelector animatedInGameEntitySelector;													\
-		/* animated sprite selector */																	\
+		/**
+		 * @var OptionsSelector 		spriteSelector
+		 * @brief						animated sprite selector
+		 * @memberof					AnimationEditor
+		 */																								\
 		OptionsSelector spriteSelector;																	\
-		/* animations selector */																		\
+		/**
+		 * @var OptionsSelector 		animationsSelector
+		 * @brief						animations selector
+		 * @memberof					AnimationEditor
+		 */																								\
 		OptionsSelector animationsSelector;																\
-		/* animation edition selector */																\
+		/**
+		 * @var OptionsSelector 		animationEditionSelector
+		 * @brief						animation edition selector
+		 * @memberof					AnimationEditor
+		 */																								\
 		OptionsSelector animationEditionSelector;														\
-		/* frame edition selector */																	\
+		/**
+		 * @var OptionsSelector 		frameEditionSelector
+		 * @brief						frame edition selector
+		 * @memberof					AnimationEditor
+		 */																								\
 		OptionsSelector frameEditionSelector;															\
-		/* mode */																						\
+		/**
+		 * @var int mode
+		 * @brief						mode
+		 * @memberof					AnimationEditor
+		 */																								\
 		int mode;																						\
 
 /**
@@ -89,6 +128,11 @@
  */
 __CLASS_DEFINITION(AnimationEditor, Object);
 
+/**
+ * The different modes of the AnimationEditor
+ *
+ * @memberof	AnimationEditor
+ */
 enum Modes
 {
 	kFirstMode = 0,
@@ -99,6 +143,11 @@ enum Modes
 	kLastMode
 };
 
+/**
+ * Properties of a Animation
+ *
+ * @memberof	AnimationEditor
+ */
 enum AnimationProperties
 {
 	kNumberOfFrames = 0,
