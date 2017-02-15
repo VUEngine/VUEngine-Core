@@ -76,6 +76,16 @@
 }
 
 .image {
+	border-radius: 5px;
+	box-shadow: 2px 2px 3px rgba(0, 0, 0, .3);
+	display: inline-block;
+	overflow: hidden;
 	margin: 14px 0;
-    text-align: left;
+}
+
+.image .caption {
+	background-color: #eee;
+	font-style: italic;
+	font-weight: normal;
+	text-align: center;
 }
