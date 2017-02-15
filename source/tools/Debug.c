@@ -1467,7 +1467,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 	{
 		Sprite sprite = SpriteManager_getSpriteAtLayer(SpriteManager_getInstance(), this->currentLayer);
 
-		SpriteManager_recoverLayers(SpriteManager_getInstance());
+		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 
 		Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
 		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
@@ -1488,8 +1488,6 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 14, y, NULL);
 		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 24, y, NULL);
-
-//		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 
 		if(Sprite_getTexture(sprite) && __GET_CAST(BgmapTexture, Sprite_getTexture(sprite)))
 		{

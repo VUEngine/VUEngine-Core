@@ -410,6 +410,10 @@ void MBgmapSprite_render(MBgmapSprite this)
 			if(!worldPointer->w)
 			{
 				worldPointer->head = __WORLD_OFF;
+#ifdef __PROFILE_GAME
+				worldPointer->w = 0;
+				worldPointer->h = 0;
+#endif
 				return;
 			}
 		}
@@ -427,6 +431,10 @@ void MBgmapSprite_render(MBgmapSprite this)
 			if(!worldPointer->h)
 			{
 				worldPointer->head = __WORLD_OFF;
+#ifdef __PROFILE_GAME
+				worldPointer->w = 0;
+				worldPointer->h = 0;
+#endif
 				return;
 			}
 		}

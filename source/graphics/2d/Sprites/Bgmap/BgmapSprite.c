@@ -489,12 +489,20 @@ void BgmapSprite_render(BgmapSprite this)
 		if (0 > w)
 		{
 			worldPointer->head = __WORLD_OFF;
+#ifdef __PROFILE_GAME
+			worldPointer->w = 0;
+			worldPointer->h = 0;
+#endif
 			return;
 		}
 
 		if (0 > h)
 		{
 			worldPointer->head = __WORLD_OFF;
+#ifdef __PROFILE_GAME
+			worldPointer->w = 0;
+			worldPointer->h = 0;
+#endif
 			return;
 		}
 
