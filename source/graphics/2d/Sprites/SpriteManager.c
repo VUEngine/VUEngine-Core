@@ -857,6 +857,7 @@ void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int 
  * @param this		Function scope
  * @param x			Screen x coordinate
  * @param y			Screen y coordinate
+ * @param resumed	If true prints info about all the Sprites in the list
  */
 void SpriteManager_print(SpriteManager this, int x, int y, bool resumed)
 {
