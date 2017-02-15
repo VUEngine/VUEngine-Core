@@ -115,10 +115,10 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define DISPLACEMENT_STEP_X					512 - 384
-#define DISPLACEMENT_STEP_Y					512 - 224
+#define DISPLACEMENT_STEP_X				512 - 384
+#define DISPLACEMENT_STEP_Y				512 - 224
 
-#define __CHARS_PER_SEGMENT_TO_SHOW		 512
+#define __CHARS_PER_SEGMENT_TO_SHOW		512
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -126,33 +126,84 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Debug_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* current in game state */																		\
+		/**
+		 * @var GameState	gameState
+		 * @brief			current in game state
+		 * @memberof		Debug
+		 */																								\
 		GameState gameState;																			\
-		/* pages */																						\
+		/**
+		 * @var VirtualList	pages
+		 * @brief			pages
+		 * @memberof		Debug
+		 */																								\
 		VirtualList pages;																				\
-		/* sub pages */																					\
+		/**
+		 * @var VirtualList	subPages
+		 * @brief			sub pages
+		 * @memberof		Debug
+		 */																								\
 		VirtualList subPages;																			\
-		/* current page */																				\
+		/**
+		 * @var VirtualNode	currentPage
+		 * @brief			current page
+		 * @memberof		Debug
+		 */																								\
 		VirtualNode currentPage;																		\
-		/* current subb page */																			\
+		/**
+		 * @var VirtualNode	currentSubPage
+		 * @brief			current sub page
+		 * @memberof		Debug
+		 */																								\
 		VirtualNode currentSubPage;																		\
-		/* current layer */																				\
+		/**
+		 * @var u8			currentLayer
+		 * @brief			current layer
+		 * @memberof		Debug
+		 */																								\
 		u8 currentLayer;																				\
-		/* current bgmap */																				\
+		/**
+		 * @var int			bgmapSegment
+		 * @brief			current bgmap
+		 * @memberof		Debug
+		 */																								\
 		int bgmapSegment;																				\
-		/* current obj segment */																		\
+		/**
+		 * @var int			objectSegment
+		 * @brief			current obj segment
+		 * @memberof		Debug
+		 */																								\
 		int objectSegment;																				\
-		/* current char segment */																		\
+		/**
+		 * @var int			charSegment
+		 * @brief			current char segment
+		 * @memberof		Debug
+		 */																								\
 		int charSegment;																				\
-		/* current page in sram inspector */															\
+		/**
+		 * @var int			sramPage
+		 * @brief			current page in sram inspector
+		 * @memberof		Debug
+		 */																								\
 		int sramPage;																					\
-		/* window to look into bgmap memory */															\
+		/**
+		 * @var VBVec2D		mapDisplacement
+		 * @brief			window to look into bgmap memory
+		 * @memberof		Debug
+		 */																								\
 		VBVec2D mapDisplacement;																		\
-		/* update function pointer */																	\
+		/**
+		 * @var void 		(*update)(void	*)
+		 * @brief			update function pointer
+		 * @memberof		Debug
+		 */																								\
 		void (*update)(void *);																			\
-		/* temporal array to hold char data */															\
+		/**
+		 * @var BYTE 		charMemoryMap[__CHARS_PER_SEGMENT_TO_SHO	]
+		 * @brief			temporary array to hold char data
+		 * @memberof		Debug
+		 */																								\
 		BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];												\
 
 /**

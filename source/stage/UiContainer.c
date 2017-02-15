@@ -35,7 +35,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define UiContainer_ATTRIBUTES								    		    		        			\
-        /* super's attributes */						    		    			    	        	\
         Container_ATTRIBUTES								    		    			        	    \
 
 /**

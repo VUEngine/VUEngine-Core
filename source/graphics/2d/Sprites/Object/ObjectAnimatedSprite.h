@@ -46,9 +46,12 @@
 		__VIRTUAL_SET(ClassName, ObjectAnimatedSprite, writeAnimation);									\
 
 #define ObjectAnimatedSprite_ATTRIBUTES																	\
-		/* super's attributes */																		\
 		ObjectSprite_ATTRIBUTES																		    \
-		/* object's source coordinates */																\
+		/**
+		 * @var TextureSource 	originalTextureSource
+		 * @brief				object's source coordinates
+		 * @memberof			ObjectAnimatedSprite
+		 */																								\
 		TextureSource originalTextureSource;															\
 
 __CLASS(ObjectAnimatedSprite);

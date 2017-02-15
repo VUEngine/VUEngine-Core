@@ -31,7 +31,7 @@
  * instantiated, the problem will silently fail. Remove only when
  * shipping the release ROM!
  */
- #define __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
+#define __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
 
 //---------------------------------------------------------------------------------------------------------
 //											DEBUGGING/ PROFILING

@@ -75,13 +75,24 @@
 		__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
 
 #define BgmapSprite_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		Sprite_ATTRIBUTES																				\
-		/* 3d world position */																			\
+		/**
+		 * @var DrawSpec 	drawSpec
+		 * @brief			3d world position
+		 * @memberof		BgmapSprite
+		 */																								\
 		DrawSpec drawSpec;																				\
-		/* param table offset */																		\
+		/**
+		 * @var u32 		param
+		 * @brief			param table offset
+		 * @memberof		BgmapSprite
+		 */																								\
 		u32 param;																						\
-		/* param table offset */																		\
+		/**
+		 * @var fix19_13 	paramTableRow
+		 * @brief			param table offset
+		 * @memberof		BgmapSprite
+		 */																								\
 		fix19_13 paramTableRow;																			\
 		/* h-bias max amplitude */																		\
 		/* int hbiasAmplitude; */																		\

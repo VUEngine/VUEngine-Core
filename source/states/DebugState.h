@@ -55,7 +55,6 @@ __CLASS(DebugState);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// setup the init focus screen
 DebugState DebugState_getInstance(void);
 
 

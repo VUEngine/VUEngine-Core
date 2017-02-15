@@ -56,28 +56,67 @@
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
 
 #define ObjectSpriteContainer_ATTRIBUTES																\
-		/* super's attributes */																		\
 		Sprite_ATTRIBUTES																				\
-		/* object sprites */																			\
+		/**
+		 * @var VirtualList	objectSprites
+		 * @brief			object sprites
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		VirtualList objectSprites;																		\
-		/* for z sorting */																				\
+		/**
+		 * @var VirtualNode	node
+		 * @brief			for z sorting
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		VirtualNode node;																				\
 		VirtualNode previousNode;																		\
-		/* next object sprite node to defragment */														\
+		/**
+		 * @var VirtualNode	objectSpriteNodeToDefragment
+		 * @brief			next object sprite node to defragment
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		VirtualNode objectSpriteNodeToDefragment;														\
-		/* for WORLD sorting */																			\
+		/**
+		 * @var fix19_13	z
+		 * @brief			for WORLD sorting
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		fix19_13 z;																						\
-		/* used for defragmentation */																	\
+		/**
+		 * @var int			freedObjectIndex
+		 * @brief			used for defragmentation
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		int freedObjectIndex;																			\
-		/* first object index */																		\
+		/**
+		 * @var int			firstObjectIndex
+		 * @brief			first object index
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		int firstObjectIndex;																			\
-		/* total objects */																				\
+		/**
+		 * @var int			totalObjects
+		 * @brief			total objects
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		int totalObjects;																				\
-		/* OBJs available */																			\
+		/**
+		 * @var int			availableObjects
+		 * @brief			OBJs available
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		int availableObjects;																			\
-		/* spt index */																					\
+		/**
+		 * @var int			spt
+		 * @brief			spt index
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		int spt;																						\
-		/* flag to halt defragmentation while sprite removal is taking place */							\
+		/**
+		 * @var bool		removingObjectSprite
+		 * @brief			flag to halt defragmentation while sprite removal is taking place
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		bool removingObjectSprite;																		\
 
 __CLASS(ObjectSpriteContainer);
@@ -89,23 +128,24 @@ __CLASS(ObjectSpriteContainer);
 
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
+
+void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBVec2D* displacement);
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
-void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
-bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);
-VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
-void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
-void ObjectSpriteContainer_render(ObjectSpriteContainer this);
-void ObjectSpriteContainer_show(ObjectSpriteContainer this);
-void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);
-void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBVec2D* displacement);
+VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
+int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
+bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);
+void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
+void ObjectSpriteContainer_position(ObjectSpriteContainer this, const VBVec3D* position);
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
+void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
+void ObjectSpriteContainer_render(ObjectSpriteContainer this);
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
+void ObjectSpriteContainer_show(ObjectSpriteContainer this);
 
 
 #endif

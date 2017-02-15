@@ -55,7 +55,6 @@ __CLASS(StageEditorState);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// setup the init focus screen
 StageEditorState StageEditorState_getInstance(void);
 
 

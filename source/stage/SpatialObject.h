@@ -70,7 +70,6 @@
 
 
 #define SpatialObject_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
 
 __CLASS(SpatialObject);

@@ -55,7 +55,6 @@ __CLASS(AnimationEditorState);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-// setup the init focus screen
 AnimationEditorState AnimationEditorState_getInstance(void);
 
 

@@ -51,10 +51,16 @@
 // declare a AnimationEditor
 __CLASS(AnimationEditor);
 
-// for animation
+/**
+ * For animation
+ *
+ * @memberof	AnimationEditor
+ */
 typedef struct UserAnimatedInGameEntity
 {
+	/// definition
 	const AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;
+	/// name
 	const char* name;
 
 } UserAnimatedInGameEntity;

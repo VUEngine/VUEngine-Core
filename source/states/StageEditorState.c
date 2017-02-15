@@ -50,7 +50,6 @@ static bool StageEditorState_processMessage(StageEditorState this __attribute__ 
 //---------------------------------------------------------------------------------------------------------
 
 #define StageEditorState_ATTRIBUTES																		\
-		/* inherits */																					\
 		GameState_ATTRIBUTES																			\
 
 /**

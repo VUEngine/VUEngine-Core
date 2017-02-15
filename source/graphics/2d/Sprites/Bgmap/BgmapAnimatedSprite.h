@@ -46,9 +46,12 @@
         __VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);									\
 
 #define BgmapAnimatedSprite_ATTRIBUTES																	\
-        /* super's attributes */																		\
         BgmapSprite_ATTRIBUTES																			\
-        /* bgmap's source coordinates */																\
+        /**
+         * @var TextureSource	originalTextureSource
+         * @brief				bgmap's source coordinates
+         * @memberof 			BgmapAnimatedSprite
+         */																								\
         TextureSource originalTextureSource;															\
 
 __CLASS(BgmapAnimatedSprite);

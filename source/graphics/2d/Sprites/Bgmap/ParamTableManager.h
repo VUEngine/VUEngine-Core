@@ -58,14 +58,15 @@ __CLASS(ParamTableManager);
 //---------------------------------------------------------------------------------------------------------
 
 ParamTableManager ParamTableManager_getInstance();
-
 void ParamTableManager_destructor(ParamTableManager this);
-void ParamTableManager_reset(ParamTableManager this);
-void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable);
-u32 ParamTableManager_getParamTableBase(ParamTableManager this);
+
 int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bsprite);
-void ParamTableManager_free(ParamTableManager this, BgmapSprite bsprite);
+void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable);
 bool ParamTableManager_defragmentProgressively(ParamTableManager this);
+void ParamTableManager_free(ParamTableManager this, BgmapSprite bsprite);
+u32 ParamTableManager_getParamTableBase(ParamTableManager this);
 void ParamTableManager_print(ParamTableManager this,int x, int y);
+void ParamTableManager_reset(ParamTableManager this);
+
 
 #endif

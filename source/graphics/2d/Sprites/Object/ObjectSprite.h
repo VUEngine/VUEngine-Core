@@ -61,15 +61,30 @@
 		__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
 
 #define ObjectSprite_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		Sprite_ATTRIBUTES																				\
-		/* parent sprite */																				\
+		/**
+		 * @var ObjectSpriteContainer 	objectSpriteContainer
+		 * @brief						parent sprite
+		 * @memberof					ObjectSprite
+		 */																								\
 		ObjectSpriteContainer objectSpriteContainer;													\
-		/* positioning */																				\
+		/**
+		 * @var VBVec2D 				position
+		 * @brief						positioning
+		 * @memberof					ObjectSprite
+		 */																								\
 		VBVec2D position;																				\
-		/* object index */																				\
+		/**
+		 * @var s16 					objectIndex
+		 * @brief						object index
+		 * @memberof					ObjectSprite
+		 */																								\
 		s16 objectIndex;																				\
-		/* number of objects */																			\
+		/**
+		 * @var s16 					totalObjects
+		 * @brief						number of objects
+		 * @memberof					ObjectSprite
+		 */																								\
 		s16 totalObjects;																				\
 
 __CLASS(ObjectSprite);
@@ -104,17 +119,17 @@ __CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinitio
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 void ObjectSprite_destructor(ObjectSprite this);
 
-void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
-VBVec2D ObjectSprite_getPosition(ObjectSprite this);
-void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
-void ObjectSprite_position(ObjectSprite this, const VBVec3D* position3D);
-void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
-void ObjectSprite_render(ObjectSprite this);
-s16 ObjectSprite_getTotalObjects(ObjectSprite this);
-s16 ObjectSprite_getObjectIndex(ObjectSprite this);
-void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
-u8 ObjectSprite_getWorldLayer(ObjectSprite this);
 void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement);
+void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
+s16 ObjectSprite_getObjectIndex(ObjectSprite this);
+VBVec2D ObjectSprite_getPosition(ObjectSprite this);
+s16 ObjectSprite_getTotalObjects(ObjectSprite this);
+u8 ObjectSprite_getWorldLayer(ObjectSprite this);
+void ObjectSprite_position(ObjectSprite this, const VBVec3D* position3D);
+void ObjectSprite_render(ObjectSprite this);
+void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
+void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
+void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
 
 
 #endif

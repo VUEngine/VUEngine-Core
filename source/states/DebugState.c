@@ -50,7 +50,6 @@ static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), 
 //---------------------------------------------------------------------------------------------------------
 
 #define DebugState_ATTRIBUTES																			\
-		/* inherits */																					\
 		GameState_ATTRIBUTES																			\
 
 /**

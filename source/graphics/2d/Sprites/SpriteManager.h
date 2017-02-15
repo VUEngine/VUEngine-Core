@@ -52,28 +52,28 @@ __CLASS(SpriteManager);
 //---------------------------------------------------------------------------------------------------------
 
 SpriteManager SpriteManager_getInstance();
-
 void SpriteManager_destructor(SpriteManager this);
-void SpriteManager_reset(SpriteManager this);
-void SpriteManager_sortLayers(SpriteManager this);
-void SpriteManager_registerSprite(SpriteManager this, Sprite sprite);
-void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite);
-void SpriteManager_processLayers(SpriteManager this);
-void SpriteManager_processFreedLayers(SpriteManager this);
-void SpriteManager_renderLastLayer(SpriteManager this);
-void SpriteManager_render(SpriteManager this);
-u8 SpriteManager_getFreeLayer(SpriteManager this);
-void SpriteManager_showLayer(SpriteManager this, u8 layer);
-void SpriteManager_recoverLayers(SpriteManager this);
-Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer);
-void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting);
+
 void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffineTransformations);
+void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting);
+u8 SpriteManager_getFreeLayer(SpriteManager this);
 int SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager this);
-void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);
 s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this);
-void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
-void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
+Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer);
+void SpriteManager_registerSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_print(SpriteManager this, int x, int y);
+void SpriteManager_processFreedLayers(SpriteManager this);
+void SpriteManager_processLayers(SpriteManager this);
+void SpriteManager_recoverLayers(SpriteManager this);
+void SpriteManager_render(SpriteManager this);
+void SpriteManager_renderLastLayer(SpriteManager this);
+void SpriteManager_reset(SpriteManager this);
+void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
+void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);
+void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
+void SpriteManager_showLayer(SpriteManager this, u8 layer);
+void SpriteManager_sortLayers(SpriteManager this);
+void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite);
 
 
 #endif

@@ -56,25 +56,60 @@
 		__VIRTUAL_SET(ClassName, GameState, transform);													\
 
 #define GameState_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		State_ATTRIBUTES																				\
-		/* a pointer to the game's stage */																\
+		/**
+		 * @var PhysicalWorld 		physicalWorld
+		 * @brief					a pointer to the game's stage
+		 * @memberof				GameState
+		 */																								\
 		PhysicalWorld physicalWorld;																	\
-		/* a pointer to the game's stage */																\
+		/**
+		 * @var CollisionManager 	collisionManager
+		 * @brief					a pointer to the game's stage
+		 * @memberof				GameState
+		 */																								\
 		CollisionManager collisionManager;																\
-		/* a pointer to the game's stage */																\
+		/**
+		 * @var Stage 				stage
+		 * @brief					a pointer to the game's stage
+		 * @memberof				GameState
+		 */																								\
 		Stage stage;																					\
-		/* flag to allow streaming */																	\
+		/**
+		 * @var int 				canStream
+		 * @brief					flag to allow streaming
+		 * @memberof				GameState
+		 */																								\
 		int canStream;																					\
-		/* must save to allow pause */																	\
+		/**
+		 * @var VBVec3D 			screenPosition
+		 * @brief					must save to allow pause
+		 * @memberof				GameState
+		 */																								\
 		VBVec3D screenPosition;																			\
-		/* clock for messaging */																		\
+		/**
+		 * @var Clock 				messagingClock
+		 * @brief					clock for messaging
+		 * @memberof				GameState
+		 */																								\
 		Clock messagingClock;																			\
-		/* clock for update cycle */																	\
+		/**
+		 * @var Clock 				updateClock
+		 * @brief					clock for update cycle
+		 * @memberof				GameState
+		 */																								\
 		Clock updateClock;																				\
-		/* clock for physics */																			\
+		/**
+		 * @var Clock 				physicsClock
+		 * @brief					clock for physics
+		 * @memberof				GameState
+		 */																								\
 		Clock physicsClock;																				\
-		/* previous update time */																		\
+		/**
+		 * @var u32 				previousUpdateTime
+		 * @brief					previous update time
+		 * @memberof				GameState
+		 */																								\
 		u32 previousUpdateTime;																			\
 
 __CLASS(GameState);
@@ -86,35 +121,36 @@ __CLASS(GameState);
 
 void GameState_constructor(GameState this);
 void GameState_destructor(GameState this);
+
 void GameState_enter(GameState this, void* owner);
 void GameState_execute(GameState this, void* owner);
 void GameState_exit(GameState this, void* owner);
-void GameState_suspend(GameState this, void* owner);
-void GameState_resume(GameState this, void* owner);
-bool GameState_processMessage(GameState this, void* owner, Telegram telegram);
-int GameState_propagateMessage(GameState this, int message);
-void GameState_stream(GameState this);
-void GameState_transform(GameState this);
-void GameState_updateVisuals(GameState this);
-void GameState_updatePhysics(GameState this);
-u32 GameState_processCollisions(GameState this);
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
-Stage GameState_getStage(GameState this);
-Clock GameState_getMessagingClock(GameState this);
-Clock GameState_getUpdateClock(GameState this);
-Clock GameState_getPhysicsClock(GameState this);
-void GameState_startClocks(GameState this);
-void GameState_stopClocks(GameState this);
-void GameState_pauseClocks(GameState this);
-void GameState_resumeClocks(GameState this);
-void GameState_startDispatchingDelayedMessages(GameState this);
-void GameState_startAnimations(GameState this);
-void GameState_startPhysics(GameState this);
-void GameState_pauseMessagingClock(GameState this, bool pause);
-void GameState_pauseAnimations(GameState this, bool pause);
-void GameState_pausePhysics(GameState this, bool pause);
-PhysicalWorld GameState_getPhysicalWorld(GameState this);
 CollisionManager GameState_getCollisionManager(GameState this);
+Clock GameState_getMessagingClock(GameState this);
+PhysicalWorld GameState_getPhysicalWorld(GameState this);
+Clock GameState_getPhysicsClock(GameState this);
+Stage GameState_getStage(GameState this);
+Clock GameState_getUpdateClock(GameState this);
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
+void GameState_pauseAnimations(GameState this, bool pause);
+void GameState_pauseClocks(GameState this);
+void GameState_pauseMessagingClock(GameState this, bool pause);
+u32 GameState_processCollisions(GameState this);
+bool GameState_processMessage(GameState this, void* owner, Telegram telegram);
+void GameState_pausePhysics(GameState this, bool pause);
+int GameState_propagateMessage(GameState this, int message);
+void GameState_resume(GameState this, void* owner);
+void GameState_resumeClocks(GameState this);
+void GameState_startAnimations(GameState this);
+void GameState_startClocks(GameState this);
+void GameState_startDispatchingDelayedMessages(GameState this);
+void GameState_startPhysics(GameState this);
+void GameState_stopClocks(GameState this);
+void GameState_stream(GameState this);
+void GameState_suspend(GameState this, void* owner);
+void GameState_transform(GameState this);
+void GameState_updatePhysics(GameState this);
+void GameState_updateVisuals(GameState this);
 
 
 #endif
