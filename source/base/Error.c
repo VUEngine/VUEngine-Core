@@ -34,6 +34,7 @@
 #include <VIPManager.h>
 #include <TimerManager.h>
 #include <Printing.h>
+#include <Fonts.h>
 #include <debugConfig.h>
 
 
@@ -136,6 +137,10 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 
 	// make sure the brightness is ok
 	HardwareManager_upBrightness(HardwareManager_getInstance());
+
+	// make sure there are fonts to show the exception
+	extern FontDefinition* const __FONTS[];
+	Printing_loadFonts(Printing_getInstance(), __FONTS);
 
 	//print error message to screen
 	if(0 < y)
