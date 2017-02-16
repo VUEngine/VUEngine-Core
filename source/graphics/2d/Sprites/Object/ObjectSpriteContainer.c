@@ -121,10 +121,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
+	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
+
 	if(this->totalObjects)
 	{
-		_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
-
 		// register to sprite manager
 		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
 	}
