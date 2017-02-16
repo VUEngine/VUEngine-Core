@@ -151,12 +151,15 @@ ASSEMBLY_OBJECTS = $(addprefix $(STORE)/, $(ASSEMBLY_SOURCE:.s=.o))
 # Same for the .d (dependency) files.
 D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
 
+# Class setup file
+SETUP_CLASSES = $(GAME_HOME)/lib/compiler/setupClasses
+
 # the target file
 TARGET_FILE = libvuengine
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printBuildingInfo $(PROJECT_DIR_UNIX)/lib/compiler/setupClasses.c $(TARGET).a
+all: printBuildingInfo $(SETUP_CLASSES).c $(TARGET).a
 
 printBuildingInfo:
 	@echo Building $(TARGET).a
@@ -164,11 +167,11 @@ printBuildingInfo:
 	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 	@echo Compiler\'s output: $(COMPILER_OUTPUT)
 
-$(PROJECT_DIR_UNIX)/lib/compiler/setupClasses.c:
+$(SETUP_CLASSES).c:
 	@echo Preprocessing classes in:
 	@echo "		"$(VUENGINE_HOME)
-	@echo "		"$(PROJECT_DIR_UNIX)
-	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh $(VUENGINE_HOME) $(PROJECT_DIR_UNIX)
+	@echo "		"$(GAME_HOME)
+	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh $(VUENGINE_HOME) $(GAME_HOME) $(SETUP_CLASSES).c
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a

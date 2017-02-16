@@ -2,12 +2,12 @@
 
 VUENGINE_HOME=$1
 GAME_HOME=$2
+OUTPUT_C_FILE=$3
+
 VUENGINE_HEADER_FILES=`find $VUENGINE_HOME/source/ -name "*.h"`
 GAME_HEADER_FILES=`find $GAME_HOME/source/  -name "*.h"`
 
-
-CLASSES_FILE="classsFile.txt"
-OUTPUT_C_FILE="$GAME_HOME/lib/compiler/setupClasses.c"
+CLASSES_FILE="classFile.txt"
 
 rm -f $CLASSES_FILE
 rm -f $OUTPUT_C_FILE
@@ -22,7 +22,7 @@ for header in $VUENGINE_HEADER_FILES; do
 		if [ -n "$className" ]; then
 			echo $className >> $CLASSES_FILE
 		fi
-	fi	
+	fi
 done
 
 for header in $GAME_HEADER_FILES; do
@@ -32,7 +32,7 @@ for header in $GAME_HEADER_FILES; do
 		if [ -n "$className" ]; then
 			echo $className >> $CLASSES_FILE
 		fi
-	fi	
+	fi
 done
 
 CLASSES_NAMES=`cat $CLASSES_FILE`
