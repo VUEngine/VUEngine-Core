@@ -877,7 +877,7 @@ void Stage_stream(Stage this)
 	// TODO: fix me
 	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
 	// inhibit the streaming to kick in
-	if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) >= __GAME_FRAME_DURATION)
+	if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
 	{
 		return;
 	}
