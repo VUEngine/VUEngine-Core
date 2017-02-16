@@ -28,6 +28,8 @@
 #include <SpriteManager.h>
 #include <AnimationController.h>
 #include <VIPManager.h>
+#include <BgmapTexture.h>
+#include <Printing.h>
 #include <debugUtilities.h>
 
 
@@ -819,7 +821,124 @@ void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 	ASSERT(this, "Sprite::writeAnimation: null this");
 }
 
+/**
+ * Check if uses affine mode
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		True if it does
+ */
+bool Sprite_isAffine(Sprite this)
+{
+	ASSERT(this, "Sprite::isAffine: null this");
 
+	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
+}
+
+/**
+ * Check if uses h-bias mode
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		True if it does
+ */
+bool Sprite_isHBias(Sprite this)
+{
+	ASSERT(this, "Sprite::isHBias: null this");
+
+	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
+}
+
+/**
+ * Check if uses OBJECT mode
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		True if it does
+ */
+bool Sprite_isObject(Sprite this)
+{
+	ASSERT(this, "Sprite::isObject: null this");
+
+	return __WORLD_OBJECT == (this->head & __WORLD_OBJECT);
+}
+
+/**
+ * Print status
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			Screen's x coordinate
+ * @param y			Screen's y coordinate
+ */
+void Sprite_print(Sprite this, int x, int y)
+{
+	ASSERT(this, "Sprite::print: null this");
+
+	Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), this->worldLayer, x + 14, y, NULL);
+	Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 14, y, NULL);
+	Printing_text(Printing_getInstance(), "Head:                         ", x, ++y, NULL);
+	Printing_hex(Printing_getInstance(), Sprite_getWorldHead(this), x + 14, y, 8, NULL);
+	Printing_text(Printing_getInstance(), "Mode:", x, ++y, NULL);
+
+	if(Sprite_isObject(this))
+	{
+		Printing_text(Printing_getInstance(), "OBJECT   ", x + 14, y, NULL);
+	}
+	else if(Sprite_isAffine(this))
+	{
+		Printing_text(Printing_getInstance(), "Affine   ", x + 14, y, NULL);
+	}
+	else if(Sprite_isHBias(this))
+	{
+		Printing_text(Printing_getInstance(), "H-bias   ", x + 14, y, NULL);
+	}
+	else
+	{
+		Printing_text(Printing_getInstance(), "BGMAP    ", x + 14, y, NULL);
+	}
+
+	Printing_text(Printing_getInstance(), "Transparent:                         ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), Sprite_isTransparent(this) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
+
+	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
+	Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
+	Printing_text(Printing_getInstance(), "WORLD (x, y):                         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldX(this), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldY(this), x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldWidth(this), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldHeight(this), x + 24, y, NULL);
+
+	if(Sprite_getTexture(this) && __GET_CAST(BgmapTexture, Sprite_getTexture(this)))
+	{
+		BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite_getTexture(this));
+
+		Printing_text(Printing_getInstance(), "Texture (segment):                         ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), BgmapTexture_getBgmapSegment(bgmapTexture), x + 24, y, NULL);
+		Printing_text(Printing_getInstance(), "Texture (definition):                         ", x, ++y, NULL);
+		Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + 24, y, 8, NULL);
+		Printing_text(Printing_getInstance(), "Texture (written):                         ", x, ++y, NULL);
+		Printing_text(Printing_getInstance(), Texture_isWritten(__SAFE_CAST(Texture, bgmapTexture)) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 24, y, NULL);
+		Printing_text(Printing_getInstance(), "Texture (rows rem.):                         ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), BgmapTexture_getRemainingRowsToBeWritten(bgmapTexture), x + 24, y, NULL);
+	}
+}
 //---------------------------------------------------------------------------------------------------------
 //										CLASS'S METHODS (Direct Draw)
 //---------------------------------------------------------------------------------------------------------

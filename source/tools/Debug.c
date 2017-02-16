@@ -1532,39 +1532,7 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 		SpriteManager_showLayer(SpriteManager_getInstance(), this->currentLayer);
 
 		Printing_text(Printing_getInstance(), "SPRITES' USAGE", x, y++, NULL);
-		Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), this->currentLayer, x + 14, y, NULL);
-		Printing_text(Printing_getInstance(), "Class: ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(sprite), x + 14, y, NULL);
-		Printing_text(Printing_getInstance(), "Head:                         ", x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), Sprite_getWorldHead(sprite), x + 14, y, 8, NULL);
-		Printing_text(Printing_getInstance(), "Transparent:                         ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), Sprite_isTransparent(sprite) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
-		Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).x), x + 14, y, NULL);
-		Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, sprite).y), x + 24, y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL(Sprite, getPosition, sprite).z + Sprite_getDisplacement(sprite).z), x + 34, y, NULL);
-		Printing_text(Printing_getInstance(), "WORLD (x, y):                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldX(sprite), x + 14, y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldY(sprite), x + 24, y, NULL);
-		Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldWidth(sprite), x + 14, y, NULL);
-		Printing_int(Printing_getInstance(), Sprite_getWorldHeight(sprite), x + 24, y, NULL);
-
-		if(Sprite_getTexture(sprite) && __GET_CAST(BgmapTexture, Sprite_getTexture(sprite)))
-		{
-			BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite_getTexture(sprite));
-
-			Printing_text(Printing_getInstance(), "Texture (segment):                         ", x, ++y, NULL);
-			Printing_int(Printing_getInstance(), BgmapTexture_getBgmapSegment(bgmapTexture), x + 24, y, NULL);
-			Printing_text(Printing_getInstance(), "Texture (definition):                         ", x, ++y, NULL);
-			Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + 24, y, 8, NULL);
-			Printing_text(Printing_getInstance(), "Texture (written):                         ", x, ++y, NULL);
-			Printing_text(Printing_getInstance(), Texture_isWritten(__SAFE_CAST(Texture, bgmapTexture)) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 24, y, NULL);
-			Printing_text(Printing_getInstance(), "Texture (rows rem.):                         ", x, ++y, NULL);
-			Printing_int(Printing_getInstance(), BgmapTexture_getRemainingRowsToBeWritten(bgmapTexture), x + 24, y, NULL);
-		}
-		//Debug_lightUpGame(this);
+		Sprite_print(sprite, x, y);
 	}
 	else
 	{

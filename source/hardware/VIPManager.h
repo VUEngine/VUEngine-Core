@@ -161,28 +161,28 @@ static u16* const	_objectAttributesBaseAddress			=	(u16*)__OBJECT_SPACE_BASE_ADD
 // "vbSetWorld" header flags
 // (OR these together to build a World Header)
 
-#define	__WORLD_OFF		0x0000
-#define	__WORLD_ON		0xC000
-#define	__WORLD_LON		0x8000
-#define	__WORLD_RON		0x4000
-#define	__WORLD_OBJ		0x3000
-#define	__WORLD_AFFINE	0x2000
-#define	__WORLD_HBIAS	0x1000
-#define	__WORLD_BGMAP	0x0000
+#define	__WORLD_OFF				0x0000
+#define	__WORLD_ON				0xC000
+#define	__WORLD_LON				0x8000
+#define	__WORLD_RON				0x4000
+#define	__WORLD_OBJECT			0x3000
+#define	__WORLD_AFFINE			0x2000
+#define	__WORLD_HBIAS			0x1000
+#define	__WORLD_BGMAP			0x0000
 
-#define	__WORLD_1x1		0x0000
-#define	__WORLD_1x2		0x0100
-#define	__WORLD_1x4		0x0200
-#define	__WORLD_1x8		0x0300
-#define	__WORLD_2x1		0x0400
-#define	__WORLD_2x2		0x0500
-#define	__WORLD_2x4		0x0600
-#define	__WORLD_4x2		0x0900
-#define	__WORLD_4x1		0x0800
-#define	__WORLD_8x1		0x0C00
+#define	__WORLD_1x1				0x0000
+#define	__WORLD_1x2				0x0100
+#define	__WORLD_1x4				0x0200
+#define	__WORLD_1x8				0x0300
+#define	__WORLD_2x1				0x0400
+#define	__WORLD_2x2				0x0500
+#define	__WORLD_2x4				0x0600
+#define	__WORLD_4x2				0x0900
+#define	__WORLD_4x1				0x0800
+#define	__WORLD_8x1				0x0C00
 
-#define	__WORLD_OVR		0x0080
-#define	__WORLD_END		0x0040
+#define	__WORLD_OVR				0x0080
+#define	__WORLD_END				0x0040
 
 // param table for affine and hbias render
 extern u32 _dram_data_start;
