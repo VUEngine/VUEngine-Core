@@ -140,7 +140,7 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 
 	// make sure there are fonts to show the exception
 	extern FontDefinition* const __FONTS[];
-	Printing_loadFonts(Printing_getInstance(), __FONTS);
+	Printing_loadFonts(Printing_getInstance(), (FontDefinition**)__FONTS);
 
 	//print error message to screen
 	if(0 < y)
