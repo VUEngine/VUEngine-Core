@@ -39,3 +39,5 @@ The removal of listeners is the responsibility of the client code. To remove a l
 	Object_removeEventListener(triggerObject, listener, method, eventCode);
 	Object_removeEventListeners(triggerObject, listener, eventCode);
 	Object_removeAllEventListeners(triggerObject, eventCode);
+
+Beware: During the processing of an event it is illegal to modify the firer's event list by adding or removing event listeners to it, or by deleting the firer. If any of that happens, the engine will trigger an exception.
