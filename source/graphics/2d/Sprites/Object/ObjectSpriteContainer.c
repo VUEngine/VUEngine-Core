@@ -121,8 +121,10 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
+	// must setup the STP registers regardless of the totalObjects
 	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
 
+	// only request a WORLD layer if can hold any OBJECT
 	if(this->totalObjects)
 	{
 		// register to sprite manager
