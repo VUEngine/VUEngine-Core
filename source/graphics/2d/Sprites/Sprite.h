@@ -293,6 +293,10 @@ void Sprite_setFrameDuration(Sprite this, u8 frameDuration);
 void Sprite_update(Sprite this);
 void Sprite_updateAnimation(Sprite this);
 void Sprite_writeAnimation(Sprite this);
+bool Sprite_isAffine(Sprite this);
+bool Sprite_isHBias(Sprite this);
+bool Sprite_isObject(Sprite this);
+void Sprite_print(Sprite this, int x, int y);
 
 // direct draw
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);

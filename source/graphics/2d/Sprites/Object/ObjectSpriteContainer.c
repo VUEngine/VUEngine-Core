@@ -93,7 +93,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
 	__CONSTRUCT_BASE(Sprite, NULL, NULL);
 
-	this->head = __WORLD_ON | __WORLD_OBJ | __WORLD_OVR;
+	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 	this->spt = spt;
 	this->totalObjects = totalObjects;
 	this->availableObjects = this->totalObjects;
@@ -475,7 +475,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		return;
 	}
 
-	_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_ON | __WORLD_OBJ | __WORLD_OVR;
+	_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 #ifdef __PROFILE_GAME
 	_worldAttributesBaseAddress[this->worldLayer].w = __SCREEN_WIDTH;
 	_worldAttributesBaseAddress[this->worldLayer].h = __SCREEN_HEIGHT;
