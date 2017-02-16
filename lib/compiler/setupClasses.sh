@@ -7,7 +7,7 @@ GAME_HEADER_FILES=`find $GAME_HOME/source/  -name "*.h"`
 
 
 CLASSES_FILE="classsFile.txt"
-OUTPUT_C_FILE="$GAME_HOME/source/setupClasses.c"
+OUTPUT_C_FILE="$GAME_HOME/lib/compiler/setupClasses.c"
 
 rm -f $CLASSES_FILE
 rm -f $OUTPUT_C_FILE

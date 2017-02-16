@@ -209,6 +209,6 @@ The drawback is that this check can only detect if the object was instantiated c
 
 The polymorphism support requires virtual tables to work, and these need to be set before the program can use any class. To automatize this setup process, the engine auto-generates the file:
 	
-	GAME_HOME/source/setupClasses.c
+	GAME_HOME/lib/compiler/setupClasses.c
 	
 When new classes are added to the project, that file needs to be manually deleted so that the building process knows that it needs to generate it again including the new class. If this step is not carried out, when trying to instantiate the new class, an exception will be triggered.
