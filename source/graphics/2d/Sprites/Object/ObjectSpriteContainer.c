@@ -695,6 +695,8 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Segment:                ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->spt, x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "STP value:                ", x, y, NULL);
+	Printing_int(Printing_getInstance(), _vipRegisters[__SPT0 + this->spt], x + 24, y, NULL);
 	Printing_text(Printing_getInstance(), "WORLD:                  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->worldLayer, x + 24, y, NULL);
 	Printing_text(Printing_getInstance(), "HEAD:                   ", x, ++y, NULL);
