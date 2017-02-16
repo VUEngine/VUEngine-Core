@@ -714,3 +714,18 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 	Printing_text(Printing_getInstance(), "Z Position: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(this->z), x + 24, y, NULL);
 }
+
+/**
+ * Set Sprite's render mode
+ *
+ * @memberof	ObjectSpriteContainer
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Mode
+ */
+void ObjectSpriteContainer_setMode(ObjectSpriteContainer this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+{
+	ASSERT(this, "ObjectSpriteContainer::setMode: null this");
+}

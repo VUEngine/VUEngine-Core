@@ -498,6 +498,19 @@ void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement
 }
 
 /**
+ * Set Sprite's render mode
+ *
+ * @memberof	ObjectSprite
+ * @public
+ *
+ * @param this	Function scope
+ */
+void ObjectSprite_setMode(ObjectSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+{
+	ASSERT(this, "ObjectSprite::setMode: null this");
+}
+
+/**
  * Set ObjectSpriteContainer to NULL
  *
  * @memberof				ObjectSprite

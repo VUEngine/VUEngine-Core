@@ -137,36 +137,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->param = 0;
 	this->paramTableRow = -1;
 
-	// set world layer's head acording to map's render mode
-	switch(bgmapSpriteDefinition->bgmapMode)
-	{
-		case __WORLD_BGMAP:
-
-			// set map head
-			this->head = bgmapSpriteDefinition->display | __WORLD_BGMAP;
-
-			break;
-
-		case __WORLD_AFFINE:
-
-			// set map head
-			this->head = bgmapSpriteDefinition->display | __WORLD_AFFINE;
-
-			// allocate param table space
-			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-
-			break;
-
-		case __WORLD_HBIAS:
-
-			// set map head
-			this->head = bgmapSpriteDefinition->display | __WORLD_HBIAS | __WORLD_OVR;
-
-			// allocate param table space
-			ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-
-			break;
-	}
+	// set WORLD layer's head according to map's render mode
+	BgmapSprite_setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
 }
 
 /**
@@ -193,7 +165,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 	}
 
 	// if affine or bgmap
-	if(__WORLD_AFFINE & this->head)
+	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
 		ParamTableManager_free(ParamTableManager_getInstance(), this);
@@ -672,6 +644,59 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 	this->drawSpec.position.y += displacement->y;
 	this->drawSpec.position.z += displacement->z;
 	this->drawSpec.position.parallax += displacement->parallax;
+}
+
+/**
+ * Set Sprite's render mode
+ *
+ * @memberof	BgmapSprite
+ * @public
+ *
+ * @param this	Function scope
+ */
+void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
+{
+	ASSERT(this, "BgmapSprite::setMode: null this");
+
+	this->head &= ~(__WORLD_BGMAP | __WORLD_AFFINE | __WORLD_HBIAS);
+
+	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+	{
+		// free param table space
+		ParamTableManager_free(ParamTableManager_getInstance(), this);
+
+		this->param = 0;
+	}
+
+	switch(mode)
+	{
+		case __WORLD_BGMAP:
+
+			// set map head
+			this->head = display | __WORLD_BGMAP;
+
+			break;
+
+		case __WORLD_AFFINE:
+
+			// set map head
+			this->head = display | __WORLD_AFFINE;
+
+			// allocate param table space
+			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+
+			break;
+
+		case __WORLD_HBIAS:
+
+			// set map head
+			this->head = display | __WORLD_HBIAS | __WORLD_OVR;
+
+			// allocate param table space
+			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+
+			break;
+	}
 }
 
 /**

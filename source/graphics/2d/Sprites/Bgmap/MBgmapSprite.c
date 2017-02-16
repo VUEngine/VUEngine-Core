@@ -610,3 +610,16 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 	}
 }
 */
+
+/**
+ * Set Sprite's render mode
+ *
+ * @memberof	MBgmapSprite
+ * @public
+ *
+ * @param this	Function scope
+ */
+void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+{
+	ASSERT(this, "MBgmapSprite::setMode: null this");
+}

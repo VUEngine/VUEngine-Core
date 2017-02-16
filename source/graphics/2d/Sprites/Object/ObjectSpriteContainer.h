@@ -54,6 +54,7 @@
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setMode);														\
 
 #define ObjectSpriteContainer_ATTRIBUTES																\
 		Sprite_ATTRIBUTES																				\
@@ -146,6 +147,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);
-
+void ObjectSpriteContainer_setMode(ObjectSpriteContainer this, u16 display, u16 mode);
 
 #endif

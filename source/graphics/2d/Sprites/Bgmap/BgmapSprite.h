@@ -73,6 +73,7 @@
 		__VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
 		__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);										\
 		__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
+		__VIRTUAL_SET(ClassName, BgmapSprite, setMode);														\
 
 #define BgmapSprite_ATTRIBUTES																			\
 		Sprite_ATTRIBUTES																				\
@@ -147,6 +148,7 @@ u32 BgmapSprite_getParam(BgmapSprite this);
 void BgmapSprite_setParam(BgmapSprite this, u32 param);
 void BgmapSprite_render(BgmapSprite this);
 void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement);
+void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode);
 
 // direct draw
 void BgmapSprite_putChar(BgmapSprite this, Point* texturePixel, BYTE* newChar);

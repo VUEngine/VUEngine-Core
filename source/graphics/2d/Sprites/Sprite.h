@@ -67,6 +67,7 @@
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
+		__VIRTUAL_DEC(ClassName, void, setMode, u16 display, u16 mode);													\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)																	\

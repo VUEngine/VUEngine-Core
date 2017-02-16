@@ -59,6 +59,7 @@
 		__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
 		__VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
 		__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
+		__VIRTUAL_SET(ClassName, ObjectSprite, setMode);														\
 
 #define ObjectSprite_ATTRIBUTES																			\
 		Sprite_ATTRIBUTES																				\
@@ -130,6 +131,7 @@ void ObjectSprite_render(ObjectSprite this);
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
+void ObjectSprite_setMode(ObjectSprite this, u16 display, u16 mode);
 
 
 #endif

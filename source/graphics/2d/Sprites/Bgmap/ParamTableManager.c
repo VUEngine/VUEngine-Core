@@ -289,7 +289,7 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
  *
  * @return				True if param table space was allocated
  */
-int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
+u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
@@ -297,11 +297,13 @@ int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 	//calculate necessary space to allocate
 	int size = ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 
+	u32 paramAddress = 0;
+
 	//if there is space in the param table, allocate
 	if(this->paramTableBase + this->used + size < (__PARAM_TABLE_END))
 	{
 		//set sprite param
-		BgmapSprite_setParam(bgmapSprite, this->paramTableBase + this->used);
+		paramAddress = this->paramTableBase + this->used;
 
 		//record sprite
 		VirtualList_pushBack(this->bgmapSprites, bgmapSprite);
@@ -309,16 +311,17 @@ int ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 		//update the param bytes ocupied
 		this->size -= size;
 		this->used += size;
-
-		return true;
 	}
 
-	Printing_text(Printing_getInstance(), "Total size: ", 20, 7, NULL);
-	Printing_int(Printing_getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
+	if(!paramAddress)
+	{
+		Printing_text(Printing_getInstance(), "Total size: ", 20, 7, NULL);
+		Printing_int(Printing_getInstance(), __PARAM_TABLE_END - this->paramTableBase, 20 + 19, 7, NULL);
 
-	NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
+		NM_ASSERT(false, "ParamTableManager::allocate: memory depleted");
+	}
 
-	return false;
+	return paramAddress;
 }
 
 /**
