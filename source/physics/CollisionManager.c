@@ -262,7 +262,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 			int collisionResult = kNoCollision;
 
 			// don't check the current shape again when processing other movable shapes
-			Shape_checked(shape, true);
+			Shape_setChecked(shape, true);
 
 			VirtualNode nodeForActiveShapes = this->activeShapes->head;
 
@@ -356,7 +356,7 @@ void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
 	VirtualList_removeElement(this->movingShapes, shape);
 
 	// make sure other moving shapes test for collisions against it
-//	Shape_checked(shape, false);
+//	Shape_setChecked(shape, false);
 }
 
 // inform of a change in the shape

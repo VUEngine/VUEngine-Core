@@ -42,7 +42,6 @@
 		__VIRTUAL_SET(ClassName, InverseCuboid, overlaps);												\
 
 #define InverseCuboid_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Cuboid_ATTRIBUTES																				\
 
 __CLASS(InverseCuboid);
@@ -55,6 +54,7 @@ __CLASS(InverseCuboid);
 __CLASS_NEW_DECLARE(InverseCuboid, SpatialObject owner);
 
 void InverseCuboid_destructor(InverseCuboid this);
+
 int InverseCuboid_overlaps(InverseCuboid this, Shape shape);
 
 

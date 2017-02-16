@@ -50,21 +50,45 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define Shape_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* the entity to which the shape belongs */														\
+		/**
+		 * @var SpatialObject 	owner
+		 * @brief				the entity to which the shape belongs
+		 * @memberof			Shape
+		 */																								\
 		SpatialObject owner;																			\
-		/* flag to know if the shapes below to an entity which moves */									\
+		/**
+		 * @var u8 				moves
+		 * @brief				flag to know if the shapes below to an entity which moves
+		 * @memberof			Shape
+		 */																								\
 		u8 moves;																						\
-		/* whether it has been checked for collision in current update */								\
+		/**
+		 * @var u8 				checked
+		 * @brief				whether it has been checked for collision in current update
+		 * @memberof			Shape
+		 */																								\
 		u8 checked;																						\
-		/* flag to know if setup is needed */															\
+		/**
+		 * @var u8 				ready
+		 * @brief				flag to know if setup is needed
+		 * @memberof			Shape
+		 */																								\
 		u8 ready;																						\
-		/* flag to check against other shapes */														\
+		/**
+		 * @var u8 				checkForCollisions
+		 * @brief				flag to check against other shapes
+		 * @memberof			Shape
+		 */																								\
 		u8 checkForCollisions;																			\
 
 __CLASS(Shape);
 
+/**
+ * Possible types of a Shape
+ *
+ * @memberof Shape
+ */
 enum ShapeTypes
 {
 	kNoShape = 0,
@@ -80,19 +104,20 @@ enum ShapeTypes
 
 void Shape_constructor(Shape this, SpatialObject owner);
 void Shape_destructor(Shape this);
-SpatialObject Shape_getOwner(Shape this);
-void Shape_setActive(Shape this, bool active);
-bool Shape_isActive(Shape this);
-bool Shape_moves(Shape this);
-bool Shape_isChecked(Shape this);
-void Shape_checked(Shape this, bool checked);
-bool Shape_isReady(Shape this);
-void Shape_setReady(Shape this, bool ready);
-void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
+
 bool Shape_checkForCollisions(Shape this);
-void Shape_show(Shape this);
+SpatialObject Shape_getOwner(Shape this);
 void Shape_hide(Shape this);
+bool Shape_isActive(Shape this);
+bool Shape_isChecked(Shape this);
+bool Shape_isReady(Shape this);
+bool Shape_moves(Shape this);
 void Shape_print(Shape this, int x, int y);
+void Shape_setActive(Shape this, bool active);
+void Shape_setChecked(Shape this, bool checked);
+void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
+void Shape_setReady(Shape this, bool ready);
+void Shape_show(Shape this);
 
 
 #endif

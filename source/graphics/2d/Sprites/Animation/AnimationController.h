@@ -49,25 +49,60 @@
 #define AnimationController_SET_VTABLE(CsName)															\
 
 #define AnimationController_ATTRIBUTES																	\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* who owns the animated sprite */																\
+		/**
+		 * @var Object 						owner
+		 * @brief							who owns the animated sprite
+		 * @memberof						AnimationController
+		 */																								\
 		Object owner;																					\
-		/* who owns the animated sprite */																\
+		/**
+		 * @var AnimationCoordinator 		animationCoordinator
+		 * @brief							who owns the animated sprite
+		 * @memberof						AnimationController
+		 */																								\
 		AnimationCoordinator animationCoordinator;														\
-		/* actual animation's frame to show */															\
+		/**
+		 * @var s8 							actualFrame
+		 * @brief							actual animation's frame to show
+		 * @memberof						AnimationController
+		 */																								\
 		s8 actualFrame;																					\
-		/* previous animation's frame shown */															\
+		/**
+		 * @var s8 							previousFrame
+		 * @brief							previous animation's frame shown
+		 * @memberof						AnimationController
+		 */																								\
 		s8 previousFrame;																				\
-		/* the number of game cycles that an animation frame is show */									\
+		/**
+		 * @var s8 							frameDuration
+		 * @brief							the number of game cycles that an animation frame is show
+		 * @memberof						AnimationController
+		 */																								\
 		s8 frameDuration;																				\
-		/* frame delay decrement update cycle */														\
+		/**
+		 * @var s8 							frameCycleDecrement
+		 * @brief							frame delay decrement update cycle
+		 * @memberof						AnimationController
+		 */																								\
 		s8 frameCycleDecrement;																			\
-		/* a pointer to the animation function being played */											\
+		/**
+		 * @var const AnimationFunction*	animationFunction
+		 * @brief							a pointer to the animation function being played
+		 * @memberof						AnimationController
+		 */																								\
 		const AnimationFunction* animationFunction;														\
-		/* flag to know if playing an animation */														\
+		/**
+		 * @var u8 							playing
+		 * @brief							flag to know if playing an animation
+		 * @memberof						AnimationController
+		 */																								\
 		u8 playing;																						\
-		/* frame changed flag */																		\
+		/**
+		 * @var u8 							animationFrameChanged
+		 * @brief							frame changed flag
+		 * @memberof						AnimationController
+		 */																								\
 		u8 animationFrameChanged;																		\
 
 __CLASS(AnimationController);

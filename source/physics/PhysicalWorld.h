@@ -50,6 +50,7 @@ __CLASS(PhysicalWorld);
 
 typedef Body (*BodyAllocator)(SpatialObject, fix19_13);
 
+
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
@@ -58,22 +59,23 @@ __CLASS_NEW_DECLARE(PhysicalWorld);
 
 void PhysicalWorld_constructor(PhysicalWorld this);
 void PhysicalWorld_destructor(PhysicalWorld this);
-Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass);
-void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner);
-void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
-void PhysicalWorld_start(PhysicalWorld this);
-void PhysicalWorld_update(PhysicalWorld this, Clock clock);
-void PhysicalWorld_reset(PhysicalWorld this);
-bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
-Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
-fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
-void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
+
 void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body);
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
-void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
-const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
+Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this);
+fix19_13 PhysicalWorld_getFriction(PhysicalWorld this);
+const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
+bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
+void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
+Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass);
+void PhysicalWorld_reset(PhysicalWorld this);
+void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
+void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction);
+void PhysicalWorld_start(PhysicalWorld this);
+void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner);
+void PhysicalWorld_update(PhysicalWorld this, Clock clock);
 
 
 #endif

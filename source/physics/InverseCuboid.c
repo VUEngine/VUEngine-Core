@@ -60,7 +60,15 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other);
 __CLASS_NEW_DEFINITION(InverseCuboid, SpatialObject owner)
 __CLASS_NEW_END(InverseCuboid, owner);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	InverseCuboid
+ * @public
+ *
+ * @param this	Function scope
+ * @param owner
+ */
 static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
 {
 	ASSERT(this, "InverseCuboid::constructor: null this");
@@ -68,8 +76,15 @@ static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
 	__CONSTRUCT_BASE(Shape, owner);
 }
 
-// class's destructor
-void InverseCuboid_destructor(InverseCuboid this)
+/**
+ * Class destructor
+ *
+ * @memberof	InverseCuboid
+ * @public
+ *
+ * @param this	Function scope
+ */
+ void InverseCuboid_destructor(InverseCuboid this)
 {
 	ASSERT(this, "InverseCuboid::destructor: null this");
 
@@ -78,7 +93,17 @@ void InverseCuboid_destructor(InverseCuboid this)
 	__DESTROY_BASE;
 }
 
-// check if two rectangles overlap
+/**
+ * Check if two rectangles overlap
+ *
+ * @memberof	InverseCuboid
+ * @public
+ *
+ * @param this	Function scope
+ * @param shape Shape to check against
+ *
+ * @return		Whether it overlaps
+ */
 int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
 {
 	ASSERT(this, "InverseCuboid::overlaps: null this");
@@ -91,7 +116,17 @@ int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
 	return false;
 }
 
-// check if overlaps with other rect
+/**
+ * Check if overlaps with other Cuboid
+ *
+ * @memberof	InverseCuboid
+ * @public
+ *
+ * @param this	Function scope
+ * @param other Cuboid to check against
+ *
+ * @return		Whether it overlaps
+ */
 bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
 {
 	ASSERT(this, "Cuboid::overlapsCuboid: null this");
@@ -99,7 +134,17 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
 	return InverseCuboid_overlapsWithRightCuboids(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
-// check if overlaps with other rect
+/**
+ * Check if overlaps with other Cuboid
+ *
+ * @memberof		InverseCuboid
+ * @public
+ *
+ * @param this		Function scope
+ * @param second 	RightCuboid to check against
+ *
+ * @return			Whether it overlaps
+ */
 bool InverseCuboid_overlapsWithRightCuboids(RightCuboid* first, RightCuboid* second)
 {
 	ASSERT(first, "Cuboid::overlapsWithRightCuboids: null first");

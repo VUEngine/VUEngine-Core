@@ -36,23 +36,54 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define PhysicalWorld_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* registered of bodies */																		\
+		/**
+		 * @var VirtualList		bodies
+		 * @brief				registered of bodies
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		VirtualList	bodies;																				\
-		/* a list of bodies which must detect collisions */												\
+		/**
+		 * @var VirtualList		activeBodies
+		 * @brief				a list of bodies which must detect collisions
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		VirtualList	activeBodies;																		\
-		/* a list of bodies which must be removed */													\
+		/**
+		 * @var VirtualList		removedBodies
+		 * @brief				a list of bodies which must be removed
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		VirtualList	removedBodies;																		\
-		/* gravity */																					\
+		/**
+		 * @var Acceleration	gravity
+		 * @brief				gravity
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		Acceleration gravity;																			\
-		/* friction */																					\
+		/**
+		 * @var fix19_13		friction
+		 * @brief				friction
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		fix19_13 friction;																				\
-		/* elapsed time on last cycle */																\
+		/**
+		 * @var fix19_13		elapsedTime
+		 * @brief				elapsed time on last cycle
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		fix19_13 elapsedTime;																			\
-		/* time on last cycle */																		\
+		/**
+		 * @var fix19_13		previousTime
+		 * @brief				time on last cycle
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		fix19_13 previousTime;																			\
-		/* body to check for gravity */																	\
+		/**
+		 * @var VirtualNode		nextBodyToCheckForGravity
+		 * @brief				body to check for gravity
+		 * @memberof 			PhysicalWorld
+		 */																								\
 		VirtualNode nextBodyToCheckForGravity;															\
 
 /**
@@ -74,7 +105,14 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 __CLASS_NEW_DEFINITION(PhysicalWorld)
 __CLASS_NEW_END(PhysicalWorld);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ */
 void PhysicalWorld_constructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::constructor: null this");
@@ -96,7 +134,14 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->previousTime = 0;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ */
 void PhysicalWorld_destructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::destructor: null this");
@@ -125,7 +170,19 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	__DESTROY_BASE;
 }
 
-// register a body
+/**
+ * Register a body
+ *
+ * @memberof			PhysicalWorld
+ * @public
+ *
+ * @param this			Function scope
+ * @param bodyAllocator
+ * @param owner
+ * @param mass
+ *
+ * @return				Registered Body
+ */
 Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass)
 {
 	ASSERT(this, "PhysicalWorld::registerBody: null this");
@@ -151,7 +208,15 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator,
 	return NULL;
 }
 
-// remove a body
+/**
+ * Remove a body
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param owner
+ */
 void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::unregisterBody: null this");
@@ -177,7 +242,17 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 	}
 }
 
-// find a body given an owner
+/**
+ * Find a body given an owner
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param owner
+ *
+ * @return		Found Body
+ */
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::getBody: null this");
@@ -204,7 +279,14 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 	return NULL;
 }
 
-// process removed bodies
+/**
+ * Process removed bodies
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ */
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::processRemovedBodies: null this");
@@ -233,7 +315,14 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 	}
 }
 
-// precalculate movable shape's position before doing collision detection on them
+/**
+ * Pre-calculate movable shape's position before doing collision detection on them
+ *
+ * @memberof	PhysicalWorld
+ * @private
+ *
+ * @param this	Function scope
+ */
 static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
@@ -286,7 +375,15 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 	this->nextBodyToCheckForGravity = node;
 }
 
-// calculate collisions
+/**
+ * Calculate collisions
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param clock
+ */
 void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
@@ -337,7 +434,14 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	this->previousTime = ITOFIX19_13(Clock_getTime(clock));
 }
 
-// unregister all bodies
+/**
+ * Unregister all bodies
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ */
 void PhysicalWorld_reset(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::reset: null this");
@@ -360,7 +464,17 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	this->previousTime = 0;
 }
 
-// check if an entity has been registered
+/**
+ * Check if an entity has been registered
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param owner
+ *
+ * @return		Whether the given SpatialObject has been registered
+ */
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::isSpatialObjectRegistered: null this");
@@ -386,7 +500,16 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 	return false;
 }
 
-// retrieve friction
+/**
+ * Retrieve friction
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		PhysicalWorld's friction
+ */
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getFriction: null this");
@@ -394,7 +517,15 @@ fix19_13 PhysicalWorld_getFriction(PhysicalWorld this)
 	return this->friction;
 }
 
-// set friction
+/**
+ * Set friction
+ *
+ * @memberof		PhysicalWorld
+ * @public
+ *
+ * @param this		Function scope
+ * @param friction
+ */
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction)
 {
 	ASSERT(this, "PhysicalWorld::setFriction: null this");
@@ -402,7 +533,15 @@ void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction)
 	this->friction = friction;
 }
 
-// a body has awoken
+/**
+ * A body has awoken
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param body
+ */
 void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
@@ -416,7 +555,15 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 	}
 }
 
-// inform of a change in the body
+/**
+ * Inform of a change in the body
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param body
+ */
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodySleep: null this");
@@ -431,7 +578,16 @@ void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
 	this->gravity = gravity;
 }
 
-// retrieve gravity
+/**
+ * Retrieve gravity
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		PhysicalWorld's gravity
+ */
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getGravity: null this");
@@ -439,7 +595,16 @@ const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
 	return (const VBVec3D*)&this->gravity;
 }
 
-// get last elapsed time
+/**
+ * Get last elapsed time
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Elapsed time
+ */
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
@@ -447,7 +612,16 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 	return this->elapsedTime;
 }
 
-// print status
+/**
+ * Print status
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param x
+ * @param y
+ */
 void PhysicalWorld_print(PhysicalWorld this, int x, int y)
 {
 	ASSERT(this, "PhysicalWorld::print: null this");

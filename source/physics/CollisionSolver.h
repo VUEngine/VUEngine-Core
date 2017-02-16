@@ -58,17 +58,42 @@ enum Axis
 		Object_SET_VTABLE(ClassName)																	\
 
 #define CollisionSolver_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* owner */																						\
+		/**
+		 * @var SpatialObject 	owner
+		 * @brief				owner
+		 * @memberof			CollisionSolver
+		 */																								\
 		SpatialObject owner;																			\
-		/* last collinding object */																	\
+		/**
+		 * @var VirtualList 	lastCollidingSpatialObject[kLastAxis]
+		 * @brief				last collinding object
+		 * @memberof			CollisionSolver
+		 */																								\
 		VirtualList lastCollidingSpatialObject[kLastAxis];												\
-		/* owner's positions for collision handling */													\
+		/**
+		 * @var const VBVec3D* 	ownerPositionToCheck
+		 * @brief				owner's positions for collision handling
+		 * @memberof			CollisionSolver
+		 */																								\
 		const VBVec3D* ownerPositionToCheck;															\
+		/**
+		 * @var const VBVec3D* 	ownerPositionToWrite
+		 * @brief
+		 * @memberof			CollisionSolver
+		 */																								\
 		const VBVec3D* ownerPositionToWrite;															\
+		/**
+		 * @var VBVec3D 		ownerPreviousPosition
+		 * @brief
+		 * @memberof			CollisionSolver
+		 */																								\
 		VBVec3D ownerPreviousPosition;																	\
-		/* flags to apply friction on each axis */														\
+		/**
+		 * @var GeneralAxisFlag	sensibleToFriction
+		 * @brief				flags to apply friction on each axis
+		 * @memberof			CollisionSolver
+		 */																								\
 		GeneralAxisFlag sensibleToFriction;																\
 
 __CLASS(CollisionSolver);
@@ -82,16 +107,17 @@ __CLASS_NEW_DECLARE(CollisionSolver, SpatialObject owner, const VBVec3D* ownerPo
 
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner, const VBVec3D* ownerPositionToCheck, const VBVec3D* ownerPositionToWrite);
 void CollisionSolver_destructor(CollisionSolver this);
-void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int movementAxis);
-const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this);
-void CollisionSolver_setOwnerPreviousPosition(CollisionSolver this, VBVec3D position);
-int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
+
+void CollisionSolver_alignTo(CollisionSolver this, SpatialObject spatialObject, int axis, int pad);
 void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, SpatialObject collidingSpatialObject, int axisOfCollision, bool registerObject);
 int CollisionSolver_getAxisOfCollision(CollisionSolver this, SpatialObject collidingSpatialObject, VBVec3D displacement);
-int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, VBVec3D displacement, bool registerObjects);
-void CollisionSolver_alignTo(CollisionSolver this, SpatialObject spatialObject, int axis, int pad);
-Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
+int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
 fix19_13 CollisionSolver_getCollidingSpatialObjectsTotalElasticity(CollisionSolver this, int axis);
+const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this);
+Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
+void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int movementAxis);
+int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList collidingSpatialObjects, VBVec3D displacement, bool registerObjects);
+void CollisionSolver_setOwnerPreviousPosition(CollisionSolver this, VBVec3D position);
 
 
 #endif

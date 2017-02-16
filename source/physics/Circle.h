@@ -42,9 +42,12 @@
 		Shape_SET_VTABLE(ClassName)																		\
 
 #define Circle_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Shape_ATTRIBUTES																				\
-		/* radius */																					\
+		/**
+		 * @var u8		radius
+		 * @brief		radius
+		 * @memberof	Shape
+		 */																								\
 		u8 radius;																						\
 
 __CLASS(Circle);

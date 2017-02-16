@@ -92,14 +92,14 @@ The engine provides the following features for the programmer to take advantage 
 - More collision shapes: spheres, complex polyhedrons, etc.
 
 
-> This document is a work in progress and thus contains incomplete or partially outdated information.
+> This document is a work in progress and not all functions and class attributes are documented, yet.
 > If you have any problems which this document is unable to help you resolve, please refer to the official 
 > <a href="http://www.planetvb.com/modules/newbb/viewforum.php?forum=14&since=0">VUEngine support forum</a>.
 
 
 License
 -------
-
+ve
 Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
 
 This software is licensed under the MIT License, which means you can basically you can do with it whatever 

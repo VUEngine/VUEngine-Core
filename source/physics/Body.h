@@ -55,31 +55,78 @@
 		__VIRTUAL_SET(ClassName, Body, calculateFrictionForce);											\
 
 #define Body_ATTRIBUTES																					\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* owner */																						\
+		/**
+		 * @var SpatialObject 	owner
+		 * @brief				owner
+		 * @memberof 			Body
+		 */																								\
 		SpatialObject owner;																			\
-		/* direction */																					\
+		/**
+		 * @var Force 			appliedForce
+		 * @brief				direction
+		 * @memberof 			Body
+		 */																								\
 		Force appliedForce;																				\
-		/* friction surrounding object */																\
+		/**
+		 * @var Force 			friction
+		 * @brief				friction surrounding object
+		 * @memberof 			Body
+		 */																								\
 		Force friction;																					\
-		/* spatial position */																			\
+		/**
+		 * @var VBVec3D 		position
+		 * @brief				spatial position
+		 * @memberof 			Body
+		 */																								\
 		VBVec3D position;																				\
-		/* velocity on each instante */																	\
+		/**
+		 * @var Velocity 		velocity
+		 * @brief				velocity on each instance
+		 * @memberof 			Body
+		 */																								\
 		Velocity velocity;																				\
-		/* acelearion structure */																		\
+		/**
+		 * @var Acceleration 	acceleration
+		 * @brief				acceleration structure
+		 * @memberof 			Body
+		 */																								\
 		Acceleration acceleration;																		\
-		/* elasticity */																				\
+		/**
+		 * @var fix19_13 		elasticity
+		 * @brief				elasticity
+		 * @memberof 			Body
+		 */																								\
 		fix19_13 elasticity;																			\
-		/* mass */																						\
+		/**
+		 * @var fix19_13 		mass
+		 * @brief				mass
+		 * @memberof 			Body
+		 */																								\
 		fix19_13 mass;																					\
-		/* movement type on each axis */																\
+		/**
+		 * @var MovementType 	movementType
+		 * @brief				movement type on each axis
+		 * @memberof 			Body
+		 */																								\
 		MovementType movementType;																		\
-		/* raise flag to make the body active */														\
+		/**
+		 * @var u8 				active
+		 * @brief				raise flag to make the body active
+		 * @memberof 			Body
+		 */																								\
 		u8 active;																						\
-		/* raise flag to update body's physics */														\
+		/**
+		 * @var u8 				awake
+		 * @brief				raise flag to update body's physics
+		 * @memberof 			Body
+		 */																								\
 		u8 awake;																						\
-		/* axis that is subject to gravity */															\
+		/**
+		 * @var u8 				axisSubjectToGravity
+		 * @brief				axis that is subject to gravity
+		 * @memberof 			Body
+		 */																								\
 		u8 axisSubjectToGravity;																		\
 
 __CLASS(Body);
@@ -102,41 +149,42 @@ __CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);
 
 void Body_constructor(Body this, SpatialObject owner, fix19_13 mass);
 void Body_destructor(Body this);
-void Body_setOwner(Body this, SpatialObject owner);
-SpatialObject Body_getOwner(Body this);
-void Body_update(Body this);
-VBVec3D Body_getLastDisplacement(Body this);
-u8 Body_getAxisSubjectToGravity(Body this);
-void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity);
-void Body_setActive(Body this, bool active);
-bool Body_isActive(Body this);
-const VBVec3D* Body_getPosition(Body this);
-void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller);
-fix19_13 Body_getElasticity(Body this);
-void Body_setElasticity(Body this, fix19_13 elasticity);
-Force Body_getFriction(Body this);
-void Body_setFriction(Body this, Force friction);
-fix19_13 Body_getMass(Body this);
-void Body_setMass(Body this, fix19_13 mass);
-bool Body_isAwake(Body body);
-void Body_sleep(Body body);
-void Body_clearForce(Body this);
+
+void Body_addForce(Body this, const Force* force);
 void Body_applyForce(Body this, const Force* force, int clearAxis);
 void Body_applyGravity(Body this, const Acceleration* gravity);
-void Body_addForce(Body this, const Force* force);
-int Body_isMoving(Body this);
-Velocity Body_getVelocity(Body this);
+void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
+Force Body_calculateFrictionForce(Body this);
+void Body_clearAcceleration(Body this, int axis);
+void Body_clearForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
+u8 Body_getAxisSubjectToGravity(Body this);
+fix19_13 Body_getElasticity(Body this);
+Force Body_getFriction(Body this);
+VBVec3D Body_getLastDisplacement(Body this);
+fix19_13 Body_getMass(Body this);
 MovementType Body_getMovementType(Body this);
-void Body_clearAcceleration(Body this, int axis);
+SpatialObject Body_getOwner(Body this);
+const VBVec3D* Body_getPosition(Body this);
+Velocity Body_getVelocity(Body this);
+bool Body_isActive(Body this);
+bool Body_isAwake(Body body);
+int Body_isMoving(Body this);
 void Body_moveAccelerated(Body this, int axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);
+void Body_setActive(Body this, bool active);
+void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity);
+void Body_setElasticity(Body this, fix19_13 elasticity);
+void Body_setFriction(Body this, Force friction);
+void Body_setMass(Body this, fix19_13 mass);
+void Body_setOwner(Body this, SpatialObject owner);
+void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller);
+void Body_sleep(Body body);
 void Body_stopMovement(Body this, int axis);
-void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 void Body_takeHitFrom(Body this, Body other);
-Force Body_calculateFrictionForce(Body this);
+void Body_update(Body this);
 
 
 #endif

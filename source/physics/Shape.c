@@ -45,7 +45,15 @@ __CLASS_DEFINITION(Shape, Object);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ * @param owner
+ */
 void Shape_constructor(Shape this, SpatialObject owner)
 {
 	ASSERT(this, "Shape::constructor: null this");
@@ -71,7 +79,14 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	Shape_setActive(this, false);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Shape_destructor(Shape this)
 {
 	ASSERT(this, "Shape::destructor: null this");
@@ -81,7 +96,16 @@ void Shape_destructor(Shape this)
 	__DESTROY_BASE;
 }
 
-// retrieve owner
+/**
+ * Retrieve owner
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Owning SpatialObject
+ */
 SpatialObject Shape_getOwner(Shape this)
 {
 	ASSERT(this, "Shape::getOwner: null this");
@@ -89,7 +113,15 @@ SpatialObject Shape_getOwner(Shape this)
 	return this->owner;
 }
 
-// set active
+/**
+ * Set active
+ *
+ * @memberof		Shape
+ * @public
+ *
+ * @param this		Function scope
+ * @param active
+ */
 void Shape_setActive(Shape this, bool active)
 {
 	ASSERT(this, "Shape::setActive: null this");
@@ -104,7 +136,16 @@ void Shape_setActive(Shape this, bool active)
 	}
 }
 
-// do I move?
+/**
+ * Do I move?
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Owning SpatialObject
+ */
 bool Shape_moves(Shape this)
 {
 	ASSERT(this, "Shape::moves: null this");
@@ -112,7 +153,16 @@ bool Shape_moves(Shape this)
 	return this->moves;
 }
 
-// has been checked
+/**
+ * Has been checked
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Checked status
+ */
 bool Shape_isChecked(Shape this)
 {
 	ASSERT(this, "Shape::isChecked: null this");
@@ -120,33 +170,75 @@ bool Shape_isChecked(Shape this)
 	return this->checked;
 }
 
-// set check status
-void Shape_checked(Shape this, bool checked)
+/**
+ * Set check status
+ *
+ * @memberof		Shape
+ * @public
+ *
+ * @param this		Function scope
+ * @param checked
+ */
+void Shape_setChecked(Shape this, bool checked)
 {
 	ASSERT(this, "Shape::checked: null this");
 
 	this->checked = checked;
 }
 
-// has been configured?
+/**
+ * Has been configured?
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Configured status
+ */
 bool Shape_isReady(Shape this)
 {
 	return this->ready;
 }
 
-// set configured flag
+/**
+ * Set configured flag
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ * @param ready
+ */
 void Shape_setReady(Shape this, bool ready)
 {
 	this->ready = ready;
 }
 
-// set flag
+/**
+ * Set flag
+ *
+ * @memberof					Shape
+ * @public
+ *
+ * @param this					Function scope
+ * @param checkForCollisions
+ */
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions)
 {
 	this->checkForCollisions = checkForCollisions;
 }
 
-// get flag
+/**
+ * Get flag
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Collision check status
+ */
 bool Shape_checkForCollisions(Shape this)
 {
 	return this->checkForCollisions;

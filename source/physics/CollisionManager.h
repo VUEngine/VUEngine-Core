@@ -56,19 +56,20 @@ __CLASS_NEW_DECLARE(CollisionManager);
 
 void CollisionManager_constructor(CollisionManager this);
 void CollisionManager_destructor(CollisionManager this);
-Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType);
-void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
+
 Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner);
-void CollisionManager_processRemovedShapes(CollisionManager this);
-u32 CollisionManager_update(CollisionManager this, Clock clock);
-void CollisionManager_reset(CollisionManager this);
-void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
-void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);
-void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
-void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
-void CollisionManager_showShapes(CollisionManager this);
 void CollisionManager_hideShapes(CollisionManager this);
 void CollisionManager_print(CollisionManager this, int x, int y);
+void CollisionManager_processRemovedShapes(CollisionManager this);
+Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType);
+void CollisionManager_reset(CollisionManager this);
+void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
+void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
+void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
+void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);
+void CollisionManager_showShapes(CollisionManager this);
+void CollisionManager_unregisterShape(CollisionManager this, Shape shape);
+u32 CollisionManager_update(CollisionManager this, Clock clock);
 
 
 #endif
