@@ -142,6 +142,17 @@ end_init_sram_bss:
 	movhi	hi(__tp),r0,tp
 	movea   lo(__tp), tp, tp
 
+/* long call setup classes */
+	.global	_setupClasses
+
+	movhi	hi(__call_main),r0,lp
+	movea	lo(__call_main),lp,lp
+
+	movhi	hi(_setupClasses), r0, r1
+	movea	lo(_setupClasses), r1, r1
+	jmp	    [r1]
+
+__call_main:
 /* long call main function */
 	movhi	hi(__end),r0,lp
 	movea	lo(__end),lp,lp

@@ -22,8 +22,6 @@
 #ifndef DEBUG_STATE_H_
 #define DEBUG_STATE_H_
 
-#ifdef __DEBUG_TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -57,7 +55,5 @@ __CLASS(DebugState);
 
 DebugState DebugState_getInstance(void);
 
-
-#endif
 
 #endif

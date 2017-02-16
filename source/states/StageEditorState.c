@@ -19,8 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __STAGE_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -172,6 +170,3 @@ static bool StageEditorState_processMessage(StageEditorState this __attribute__ 
 
 	return true;
 }
-
-
-#endif

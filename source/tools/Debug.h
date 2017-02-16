@@ -22,8 +22,6 @@
 #ifndef DEBUG_H_
 #define DEBUG_H_
 
-#ifdef __DEBUG_TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -83,7 +81,5 @@ void Debug_displaceRight(Debug this);
 void Debug_displaceUp(Debug this);
 void Debug_displaceDown(Debug this);
 
-
-#endif
 
 #endif

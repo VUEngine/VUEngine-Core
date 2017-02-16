@@ -22,8 +22,6 @@
 #ifndef STAGE_EDITOR_H_
 #define STAGE_EDITOR_H_
 
-#ifdef __STAGE_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -78,7 +76,5 @@ void StageEditor_show(StageEditor this, GameState gameState);
 void StageEditor_hide(StageEditor this);
 void StageEditor_update(StageEditor this);
 
-
-#endif
 
 #endif

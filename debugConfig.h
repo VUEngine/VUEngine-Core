@@ -14,6 +14,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
 //#define __SHOW_STREAMING_PROFILING
+//#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
 //#define __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 //#define __ALERT_VIP_OVERTIME
@@ -27,7 +28,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __ALERT_STACK_OVERFLOW
 
 //#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION	1
+//#define __TIMER_RESOLUTION	5
 //#undef __TIMER_FREQUENCY
 //#define __TIMER_FREQUENCY	__TIMER_20US
 
@@ -42,6 +43,11 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 // show streaming's profiling during game
 #ifdef __SHOW_STREAMING_PROFILING
 #define __PROFILE_STREAMING
+#endif
+
+// show sprites's profiling during game
+#ifdef __SHOW_SPRITES_PROFILING
+#define __PROFILE_GAME
 #endif
 
 #endif

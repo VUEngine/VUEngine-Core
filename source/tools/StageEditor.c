@@ -19,8 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __STAGE_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -1180,6 +1178,3 @@ static void StageEditor_printTranslationStepSize(StageEditor this)
 	Printing_text(Printing_getInstance(), "+     ", 38, 6, NULL);
 	Printing_int(Printing_getInstance(), this->translationStepSize, 39, 6, NULL);
 }
-
-
-#endif

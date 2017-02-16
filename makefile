@@ -156,13 +156,19 @@ TARGET_FILE = libvuengine
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printBuildingInfo $(TARGET).a
+all: printBuildingInfo $(PROJECT_DIR_UNIX)/source/setupClasses.c $(TARGET).a
 
 printBuildingInfo:
 	@echo Building $(TARGET).a
 	@echo Build type: $(TYPE)
 	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 	@echo Compiler\'s output: $(COMPILER_OUTPUT)
+
+$(PROJECT_DIR_UNIX)/source/setupClasses.c:
+	@echo Preprocessing classes in:
+	@echo "		"$(VUENGINE_HOME)
+	@echo "		"$(PROJECT_DIR_UNIX)
+	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh $(VUENGINE_HOME) $(PROJECT_DIR_UNIX)
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a

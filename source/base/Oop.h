@@ -43,8 +43,8 @@
 		/* define the method */																			\
 		ClassName ClassName ## _new(__VA_ARGS__)														\
 		{																								\
-			/* setup the class's vtable on first call only */											\
-			__SET_CLASS(ClassName);																		\
+			/* make sure that the class is properly set */												\
+			ClassName ## _checkVTable();																\
 																										\
 			/* to speed things up */																	\
 			extern MemoryPool _memoryPool;																\
@@ -173,33 +173,23 @@
 			*(tempPointer) = (void (*)())&ClassName ## _ ## MethodName;								 \
 		}
 
-// call configure class's vtable method
-#ifndef __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
-#define __SET_CLASS(ClassName)																			\
-																										\
-		/* setup the class's vtable only if destructor is NULL */										\
-		if(!ClassName ## _vTable.destructor)															\
-		{																								\
-			ClassName ## _setVTable();																	\
-			ClassName ## _checkVTable();																\
-		}
-#else
-#define __SET_CLASS(ClassName)																			\
-																										\
-		/* setup the class's vtable only if destructor is NULL */										\
-		if(!ClassName ## _vTable.destructor)															\
-		{																								\
-			ClassName ## _setVTable();																	\
-		}
-#endif
-
 // configure class's vtable
-#ifndef __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
 #define __CHECK_VTABLE_DEFINITION(ClassName)															\
 																										\
 		/* define the static method */																	\
 		void __attribute__ ((noinline)) ClassName ## _checkVTable()										\
 		{																								\
+			/* setup the class's vtable only if destructor is NULL */									\
+			if(ClassName ## _vTable.destructor)															\
+			{																							\
+				return;																					\
+			}																							\
+			else																						\
+			{																							\
+				NM_ASSERT(false, ClassName ## vTable not properly set. 									\
+				Delete the GAME/source/setupClasses.c file);											\
+			}																							\
+																										\
 			/* check that no method is null */															\
 			u32 i = 0;																					\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
@@ -207,9 +197,6 @@
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##	is abstract);		\
 			}																							\
 		}
-#else
-#define __CHECK_VTABLE_DEFINITION(ClassName)
-#endif
 
 // configure class's vtable
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)												\
@@ -217,6 +204,12 @@
 		/* define the static method */																	\
 		void __attribute__ ((noinline)) ClassName ## _setVTable()										\
 		{																								\
+			/* setup the class's vtable only if destructor is NULL */									\
+			if(ClassName ## _vTable.destructor)															\
+			{																							\
+				return;																					\
+			}																							\
+																										\
 			/* clean up the vtable */																	\
 			u32 i = 0;																					\
 			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
@@ -388,10 +381,10 @@
 			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,							\
 				ClassName get instance during construction);											\
 																										\
-			/* set the vtable */																		\
-			__SET_CLASS(ClassName);																		\
-																										\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;										\
+																										\
+			/* make sure that the class is properly set */												\
+			ClassName ## _checkVTable();																\
 																										\
 			/* set the vtable pointer */																\
 			_instance ## ClassName.vTable = &ClassName ## _vTable;										\
@@ -451,9 +444,6 @@
 		{																								\
 			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,							\
 				ClassName get instance during construction);											\
-																										\
-			/* set the vtable */																		\
-			__SET_CLASS(ClassName);																		\
 																										\
 			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;										\
 																										\

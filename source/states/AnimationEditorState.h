@@ -22,8 +22,6 @@
 #ifndef ANIMATION_EDITOR_STATE_H_
 #define ANIMATION_EDITOR_STATE_H_
 
-#ifdef __ANIMATION_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -57,7 +55,5 @@ __CLASS(AnimationEditorState);
 
 AnimationEditorState AnimationEditorState_getInstance(void);
 
-
-#endif
 
 #endif

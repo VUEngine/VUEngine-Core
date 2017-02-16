@@ -22,8 +22,6 @@
 #ifndef ANIMATION_EDITOR_H_
 #define ANIMATION_EDITOR_H_
 
-#ifdef __ANIMATION_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -78,7 +76,5 @@ void AnimationEditor_show(AnimationEditor this, GameState gameState);
 void AnimationEditor_hide(AnimationEditor this);
 bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram);
 
-
-#endif
 
 #endif

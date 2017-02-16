@@ -19,8 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __DEBUG_TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -205,6 +203,3 @@ static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), 
 
 	return true;
 }
-
-
-#endif

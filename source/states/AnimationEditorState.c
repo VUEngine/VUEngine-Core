@@ -19,8 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __ANIMATION_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -172,6 +170,3 @@ static bool AnimationEditorState_processMessage(AnimationEditorState this __attr
 
 	return true;
 }
-
-
-#endif

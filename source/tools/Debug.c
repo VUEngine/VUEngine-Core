@@ -19,8 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __DEBUG_TOOLS
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -220,10 +218,11 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __DEBUG_TOOLS
 extern ClassSizeData _userClassesSizeData[];
+#endif
 
 static void Debug_constructor(Debug this);
-static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message);
 static void Debug_showCollisionShapes(Debug this);
 static void Debug_showDebugBgmap(Debug this);
 static void Debug_setupPages(Debug this);
@@ -256,6 +255,10 @@ static void Debug_charMemoryShowStatus(Debug this, int increment, int x, int y);
 static void Debug_charMemoryShowMemory(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowStatistics(Debug this, int increment, int x, int y);
 static void Debug_physicStatusShowShapes(Debug this, int increment, int x, int y);
+
+#ifdef __DEBUG_TOOLS
+static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message);
+
 static void Debug_memoryStatusShowZeroPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowFirstPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowSecondPage(Debug this, int increment, int x, int y);
@@ -265,6 +268,8 @@ static void Debug_memoryStatusShowFifthPage(Debug this, int increment, int x, in
 static void Debug_memoryStatusShowSixthPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowSeventhPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
+#endif
+
 static void Debug_showSramPage(Debug this, int increment, int x, int y);
 
 
@@ -768,6 +773,8 @@ static void Debug_memoryStatusPage(Debug this, int increment __attribute__ ((unu
 {
 	Debug_removeSubPages(this);
 
+#ifdef __DEBUG_TOOLS
+
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowZeroPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowFirstPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSecondPage);
@@ -778,10 +785,14 @@ static void Debug_memoryStatusPage(Debug this, int increment __attribute__ ((unu
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowSeventhPage);
 	VirtualList_pushBack(this->subPages, &Debug_memoryStatusShowUserDefinedClassesSizes);
 
+#endif
+
 	this->currentSubPage = this->subPages->head;
 
 	Debug_showSubPage(this, 0);
 }
+
+#ifdef __DEBUG_TOOLS
 
 /**
  * Show classes' memory footprint
@@ -1059,7 +1070,6 @@ static void Debug_memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool_printDetailedUsage(MemoryPool_getInstance(), x, y);
-
 	Debug_printClassSizes(this, _userClassesSizeData, 0, x + 21, y, "User defined classes:");
 }
 
@@ -1098,6 +1108,7 @@ static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSize
 		Printing_int(Printing_getInstance(), ((int (*)(void))classesSizeData[i].classSizeFunction)(), x + columnIncrement, y, NULL);
 	}
 }
+#endif
 
 /**
  * Show Game's profiling
@@ -1759,6 +1770,3 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
 	// mark scroll bar position
 	Printing_text(Printing_getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
 }
-
-
-#endif

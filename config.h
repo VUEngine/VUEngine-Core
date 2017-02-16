@@ -22,16 +22,6 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
-//---------------------------------------------------------------------------------------------------------
-//												OOP
-//---------------------------------------------------------------------------------------------------------
-
-/* Define to remove runtime check for abstract class instantiation
- * Warning! when the check is disabled, if an abstract class is
- * instantiated, the problem will silently fail. Remove only when
- * shipping the release ROM!
- */
-#define __DISABLE_ABSTRACT_CLASS_INSTANTIATION_CHECK
 
 //---------------------------------------------------------------------------------------------------------
 //											DEBUGGING/ PROFILING
@@ -143,7 +133,7 @@
 #undef __FORCE_VIP_SYNC
 
 // Timer resolution
-#define __TIMER_RESOLUTION						1
+#define __TIMER_RESOLUTION						5
 
 // Options are __TIMER_20US and __TIMER_100US
 #define __TIMER_FREQUENCY						__TIMER_20US

@@ -112,9 +112,6 @@ static void MemoryPool_reset(MemoryPool this);
 		NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,								\
 			ClassName get instance during construction);												\
 																										\
-		/* set the vtable */																			\
-		__SET_CLASS(ClassName);																			\
-																										\
 		_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;											\
 																										\
 		/* set the vtable pointer */																	\

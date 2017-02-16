@@ -19,8 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __ANIMATION_EDITOR
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -1116,6 +1114,3 @@ static void AnimationEditor_onAnimationComplete(AnimationEditor this, Object eve
 		Printing_text(Printing_getInstance(), " Play     \x13 ", 36, 2, NULL);
 	}
 }
-
-
-#endif
