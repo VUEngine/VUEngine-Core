@@ -64,6 +64,9 @@ static Event _firingEventMarker =
 	0
 };
 
+static Event* _currentFiringEvent = NULL;
+
+
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -145,6 +148,14 @@ static void Object_checkIfFiringEvent(Object this, const char* message)
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 17, 15, NULL);
 		Printing_text(Printing_getInstance(), "During:" , 1, 16, NULL);
 		Printing_text(Printing_getInstance(), message, 17, 16, NULL);
+
+		Printing_text(Printing_getInstance(), "Event" , 1, 17, NULL);
+		Printing_text(Printing_getInstance(), "Listener:" , 5, 18, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(_currentFiringEvent->listener), 17, 18, NULL);
+		Printing_text(Printing_getInstance(), "Method:" , 5, 19, NULL);
+		Printing_hex(Printing_getInstance(), (int)_currentFiringEvent->method, 17, 19, 8, NULL);
+		Printing_text(Printing_getInstance(), "Code:" , 5, 20, NULL);
+		Printing_int(Printing_getInstance(), _currentFiringEvent->code, 17, 20, NULL);
 		NM_ASSERT(false, "Object::checkIfFiringEvent: tried to modify event list while firing event")
 	}
 }
@@ -378,10 +389,14 @@ void Object_fireEvent(Object this, u32 eventCode)
 			{
 				if(eventCode == event->code)
 				{
+					_currentFiringEvent = event;
 					event->method(event->listener, this);
 				}
 			}
 		}
+
+		// remove the marker used to prevent the modification of the events list while firing events
+		VirtualList_popFront(this->events);
 
 		for(node = eventsToRemove->head; node; node = node->next)
 		{
@@ -393,9 +408,6 @@ void Object_fireEvent(Object this, u32 eventCode)
 		}
 
 		__DELETE(eventsToRemove);
-
-		// remove the marker used to prevent the modification of the events list while firing events
-		VirtualList_popFront(this->events);
 	}
 }
 
