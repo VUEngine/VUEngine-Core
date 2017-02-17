@@ -232,7 +232,7 @@ u32 VIPManager_writeDRAM(VIPManager this);
 
 static bool updateProfiling = false;
 
-static u16 gameFrameDuration = 0;
+static u16 gameFrameRealDuration = 0;
 static u16 gameFrameDurationAverage = 0;
 static u16 gameFrameEffectiveDuration = 0;
 static u16 gameFrameEffectiveDurationAverage = 0;
@@ -271,7 +271,7 @@ static u16 renderingProcessTime = 0;
 
 static u16 gameFrameHighestTime = 0;
 
-static u16 previousGameFrameDuration = 0;
+static u16 previousGameFrameRealDuration = 0;
 static u16 previousGameFrameDurationAverage = 0;
 static u16 previousGameFrameEffectiveDuration = 0;
 static u16 previousGameFrameEffectiveDurationAverage = 0;
@@ -1279,6 +1279,7 @@ static void Game_update(Game this)
 			static u32 totalGameFrameRealDuration = 0;
 			totalGameFrameRealDuration += gameFrameDuration;
 
+			gameFrameRealDuration = gameFrameDuration;
 			gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
 		}
 #endif
@@ -1642,7 +1643,7 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 
 	previousGameFrameTotalTime = this->gameFrameTotalTime;
 
-	previousGameFrameDuration = gameFrameDuration;
+	previousGameFrameRealDuration = gameFrameRealDuration;
 	previousGameFrameDurationAverage = gameFrameDurationAverage;
 	previousGameFrameEffectiveDuration = gameFrameEffectiveDuration;
 	previousGameFrameEffectiveDurationAverage = gameFrameEffectiveDurationAverage;
@@ -1668,7 +1669,7 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	previousProcessCollisionsHighestTime = processCollisionsHighestTime;
 	previousRenderingHighestTime = renderingHighestTime;
 
-	gameFrameDuration = 0;
+	gameFrameRealDuration = 0;
 	gameFrameDurationAverage = 0;
 	gameFrameEffectiveDuration = 0;
 	gameFrameEffectiveDurationAverage = 0;
@@ -1711,7 +1712,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 
 	Printing_text(printing, "Real duration:", x, ++y, NULL);
 	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, gameFrameDuration, x + xDisplacement, y++, NULL);
+	Printing_int(printing, gameFrameRealDuration, x + xDisplacement, y++, NULL);
 	Printing_text(printing, "Average real duration:", x, y, NULL);
 	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
 	Printing_int(printing, gameFrameDurationAverage, x + xDisplacement, y++, NULL);
@@ -1805,7 +1806,7 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x _
 
 	Printing_text(printing, "Real duration:", x, ++y, NULL);
 	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, previousGameFrameDuration, x + xDisplacement, y++, NULL);
+	Printing_int(printing, previousGameFrameRealDuration, x + xDisplacement, y++, NULL);
 	Printing_text(printing, "Average real duration:", x, y, NULL);
 	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
 	Printing_int(printing, previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
