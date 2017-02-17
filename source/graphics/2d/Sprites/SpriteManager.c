@@ -575,7 +575,10 @@ void SpriteManager_render(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		// first update
-		Sprite_update(__SAFE_CAST(Sprite, sprite));
+		if(!sprite->hidden && ((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent))
+		{
+			Sprite_update(__SAFE_CAST(Sprite, sprite));
+		}
 
 		if(sprite->hidden || !sprite->visible)
 		{
