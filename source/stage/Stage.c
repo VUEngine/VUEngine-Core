@@ -946,13 +946,6 @@ void Stage_update(Stage this, u32 elapsedTime)
 	}
 
 	ParticleRemover_update(this->particleRemover);
-
-#ifdef __SHOW_STREAMING_PROFILING
-	if(!Game_isInSpecialMode(Game_getInstance()))
-	{
-		Stage_showStreamingProfiling(this, 1, 1);
-	}
-#endif
 }
 
 // transform state

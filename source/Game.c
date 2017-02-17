@@ -1095,7 +1095,7 @@ inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 #ifdef __SHOW_GAME_PROFILING
 		if(updateProfiling)
 		{
-			Game_showProfiling(this, 1, 2);
+			Game_showProfiling(this, 1, 1);
 			Game_resetProfiling(this);
 		}
 #else
@@ -1105,6 +1105,14 @@ inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 			Game_resetProfiling(this);
 		}
 #endif
+#ifdef __SHOW_STREAMING_PROFILING
+
+		if(!Game_isInSpecialMode(Game_getInstance()))
+		{
+			Stage_showStreamingProfiling(Game_getStage(this), 1, 1);
+		}
+#endif
+
 #endif
 		this->gameFrameTotalTime = 0;
 
@@ -1249,7 +1257,7 @@ static void Game_update(Game this)
 		Game_updateTransformations(this);
 
 		// process collisions
-		suspendNonCriticalProcesses |= Game_updateCollisions(this);
+		suspendNonCriticalProcesses |= Game_updateCollisions(this) | !VIPManager_waitForFrameStart(this->vipManager);
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)
