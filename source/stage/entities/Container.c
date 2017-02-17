@@ -50,7 +50,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 static void Container_applyEnvironmentToPosition(Container this, const Transformation* environmentTransform);
 static void Container_applyEnvironmentToRotation(Container this, const Transformation* environmentTransform);
 static void Container_applyEnvironmentToScale(Container this, const Transformation* environmentTransform);
-
+static void Container_processRemovedChildrenProgressively(Container this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -278,6 +278,42 @@ void Container_processRemovedChildren(Container this)
 	this->removedChildren = NULL;
 }
 
+// process removed children
+static void Container_processRemovedChildrenProgressively(Container this)
+{
+	ASSERT(this, "Container::processRemovedChildren: null this");
+
+	if(!this->removedChildren)
+	{
+		return;
+	}
+
+	ASSERT(this->children, "Container::processRemovedChildren: null children list");
+
+	VirtualNode node = this->removedChildren->head;
+
+	// remove each child
+	for(; node ; node = node->next)
+	{
+		Container child = __SAFE_CAST(Container, node->data);
+
+		VirtualList_removeElement(this->children, child);
+
+		if(child->deleteMe)
+		{
+			VirtualList_removeElement(this->removedChildren, child);
+			child->parent = NULL;
+			__DELETE(child);
+
+			return;
+		}
+	}
+
+	__DELETE(this->removedChildren);
+
+	this->removedChildren = NULL;
+}
+
 // update each Container's child
 void Container_update(Container this, u32 elapsedTime)
 {
@@ -287,7 +323,7 @@ void Container_update(Container this, u32 elapsedTime)
 	if(this->children)
 	{
 		// first remove children
-		Container_processRemovedChildren(this);
+		Container_processRemovedChildrenProgressively(this);
 
 		VirtualNode node = this->children->head;
 
