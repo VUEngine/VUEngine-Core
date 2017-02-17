@@ -71,6 +71,7 @@
 		VBVec3D focusEntityPositionDisplacement;														\
 		/* actor to center the screen around */															\
 		InGameEntity focusInGameEntity;																	\
+		const VBVec3D* focusInGameEntityPosition;														\
 		/* world's screen's last displacement */														\
 		VBVec3D lastDisplacement;																		\
 		/* stage's size in pixels */																	\

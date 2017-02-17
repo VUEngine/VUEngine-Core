@@ -93,6 +93,7 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 
 	// clear focus actor pointer
 	this->focusInGameEntity = NULL;
+	this->focusInGameEntityPosition = NULL;
 
 	this->lastDisplacement.x = 0;
 	this->lastDisplacement.y = 0;
@@ -186,9 +187,12 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
 	ASSERT(this, "Screen::setFocusInGameEntity: null this");
 
 	this->focusInGameEntity = focusInGameEntity;
+	this->focusInGameEntityPosition = NULL;
 
 	if(focusInGameEntity)
 	{
+		this->focusInGameEntityPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this->focusInGameEntity);
+
 		// focus now
 		Screen_focus(this, false);
 	}
