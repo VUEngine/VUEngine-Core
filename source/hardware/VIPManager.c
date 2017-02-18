@@ -95,6 +95,10 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __PROFILE_GAME
+void Game_setProcessDuringDRAMWritingName(Game this);
+#endif
+
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 bool Game_isGameFrameDone(Game this);
 #endif
@@ -303,6 +307,9 @@ void VIPManager_interruptHandler(void)
 
 			case __XPEND:
 
+#ifdef __PROFILE_GAME
+				Game_setProcessDuringDRAMWritingName(Game_getInstance());
+#endif
 				VIPManager_writeDRAM(_vipManager);
 				VIPManager_enableInterrupt(_vipManager, __GAMESTART);
 				break;
