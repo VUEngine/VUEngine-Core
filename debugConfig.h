@@ -28,7 +28,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __ALERT_STACK_OVERFLOW
 
 //#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION	5
+//#define __TIMER_RESOLUTION	1
 //#undef __TIMER_FREQUENCY
 //#define __TIMER_FREQUENCY	__TIMER_20US
 
@@ -47,6 +47,11 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 
 // show sprites's profiling during game
 #ifdef __SHOW_SPRITES_PROFILING
+#define __PROFILE_GAME
+#endif
+
+// enable game profiling when checking the VIP interrupt
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 #define __PROFILE_GAME
 #endif
 
