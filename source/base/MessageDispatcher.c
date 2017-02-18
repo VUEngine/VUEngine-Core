@@ -343,7 +343,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
  */
 void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
 {
-	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
+	ASSERT(this, "MessageDispatcher::discardDelayedMessagesWithClock: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 
@@ -370,7 +370,7 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
  */
 void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
 {
-	ASSERT(this, "MessageDispatcher::discardDelayedMessages: null this");
+	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 
