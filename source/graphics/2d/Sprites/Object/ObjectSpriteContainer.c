@@ -64,7 +64,7 @@ extern Optical* _optical;
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this);
 
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this);
-static void ObjectSpriteContainer_sort(ObjectSpriteContainer this);
+void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -103,12 +103,15 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	this->freedObjectIndex = 0;
 	this->z = 0;
 	this->removingObjectSprite = false;
+	this->sortingSprites = false;
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = false;
 
 	this->node = NULL;
 	this->previousNode = NULL;
+	this->spriteToSwap1Node = NULL;
+	this->spriteToSwap2Node = NULL;
 
 	// clear OBJ memory
 	int i = firstObjectIndex;
@@ -184,6 +187,13 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 
 	if(objectSprite)
 	{
+		// reset z sorting
+		this->node = NULL;
+		this->previousNode = NULL;
+
+		this->spriteToSwap1Node = NULL;
+		this->spriteToSwap2Node = NULL;
+
 		s32 lastObjectIndex = this->firstObjectIndex;
 
 		if(VirtualList_getSize(this->objectSprites))
@@ -199,9 +209,6 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
 		VirtualList_pushBack(this->objectSprites, objectSprite);
 
 		this->availableObjects -= numberOfObjects;
-
-		this->node = NULL;
-		this->previousNode = NULL;
 
 		return lastObjectIndex;
 	}
@@ -224,6 +231,13 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
+
+	// reset z sorting
+	this->node = NULL;
+	this->previousNode = NULL;
+
+	this->spriteToSwap1Node = NULL;
+	this->spriteToSwap2Node = NULL;
 
 	this->removingObjectSprite = true;
 
@@ -268,8 +282,6 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 
 	// remove the sprite to prevent rendering afterwards
 	VirtualList_removeElement(this->objectSprites, objectSprite);
-
-	this->node = this->previousNode = NULL;
 
 	// if was the last node
 	if(!this->objectSpriteNodeToDefragment || !this->objectSprites->head)
@@ -405,25 +417,36 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 /**
  * Sort the object sprites within this container according to their z coordinates
  *
- * @memberof		ParamTableManager
+ * @memberof		ObjectSpriteContainer
  * @private
  *
  * @param this		Function scope
  */
-static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
+void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::sort: null this");
 
-	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node) : this->objectSprites->tail;
-
-	for(; this->node; this->node = VirtualNode_getPrevious(this->node))
+	//if render flag is set
+	if(!this->worldLayer)
 	{
-		this->previousNode = VirtualNode_getPrevious(this->node);
+		return;
+	}
+
+	if(this->spriteToSwap1Node || this->spriteToSwap2Node)
+	{
+		return;
+	}
+
+	this->node = this->node ? this->previousNode ? this->node : this->node->previous : this->objectSprites->tail;
+
+	for(; this->node; this->node = this->node->previous)
+	{
+		this->previousNode = this->node->previous;
 
 		if(this->previousNode)
 		{
-			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
-			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
+			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, this->node->data);
+			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, this->previousNode->data);
 			VBVec2D position = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
 			VBVec2D previousPosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
 
@@ -432,31 +455,57 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 			{
 				if(this->availableObjects >= sprite->totalObjects)
 				{
-					// swap
-					s16 previousObjectIndex = previousSprite->objectIndex;
+					this->sortingSprites = true;
 
-					ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
-					s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
-
-					ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
-					ObjectSprite_setObjectIndex(sprite, previousObjectIndex);
-					ObjectSprite_setObjectIndex(previousSprite, previousObjectIndex + sprite->totalObjects);
-
-					int i = 0;
-					for(; i < sprite->totalObjects; i++)
-					{
-						_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-					}
-
-					// swap array entries
-					VirtualNode_swapData(this->node, this->previousNode);
+					this->spriteToSwap1Node = this->node;
+					this->spriteToSwap2Node = this->previousNode;
 
 					this->node = this->previousNode;
+
+					this->sortingSprites = false;
+
 					return;
 				}
 			}
 		}
 	}
+}
+
+static void ObjectSpriteContainer_swapSpritesToSort(ObjectSpriteContainer this)
+{
+	ASSERT(this, "ObjectSpriteContainer::swapSpritesToSort: null this");
+
+	if(!this->spriteToSwap1Node || !this->spriteToSwap2Node || !*(u32*)this->spriteToSwap1Node->data ||!*(u32*)this->spriteToSwap2Node->data)
+	{
+		this->spriteToSwap1Node = NULL;
+		this->spriteToSwap2Node = NULL;
+		return;
+	}
+
+	ObjectSprite sprite = __SAFE_CAST(ObjectSprite, this->spriteToSwap1Node->data);
+	ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, this->spriteToSwap2Node->data);
+
+	// swap
+	s16 previousObjectIndex = previousSprite->objectIndex;
+
+	ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
+	s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
+
+	ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
+	ObjectSprite_setObjectIndex(sprite, previousObjectIndex);
+	ObjectSprite_setObjectIndex(previousSprite, previousObjectIndex + sprite->totalObjects);
+
+	int i = 0;
+	for(; i < sprite->totalObjects; i++)
+	{
+		_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+	}
+
+	// swap array entries
+	VirtualNode_swapData(this->spriteToSwap1Node, this->spriteToSwap2Node);
+
+	this->spriteToSwap1Node = NULL;
+	this->spriteToSwap2Node = NULL;
 }
 
 /**
@@ -488,9 +537,11 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	{
 		ObjectSpriteContainer_defragment(this);
 	}
-	else
+
+	if(!this->sortingSprites)
 	{
-		ObjectSpriteContainer_sort(this);
+		// z sort sprites
+		ObjectSpriteContainer_swapSpritesToSort(this);
 	}
 
 	VirtualNode node = this->objectSprites->head;

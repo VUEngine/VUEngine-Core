@@ -332,7 +332,8 @@ void AnimationEditor_show(AnimationEditor this, GameState gameState)
 	AnimationEditor_setupMode(this);
 	SpriteManager_showLayer(SpriteManager_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
 
-	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
+	// make sure all textures are written right now
+	SpriteManager_writeTextures(SpriteManager_getInstance());
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 }
 
@@ -376,8 +377,9 @@ void AnimationEditor_hide(AnimationEditor this)
 		this->frameEditionSelector = NULL;
 	}
 
+	// make sure all textures are written right now
+	SpriteManager_writeTextures(SpriteManager_getInstance());
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
-	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 

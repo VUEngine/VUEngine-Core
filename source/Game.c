@@ -211,7 +211,7 @@ inline static void Game_updateLogic(Game this);
 inline static void Game_updatePhysics(Game this);
 inline static void Game_updateTransformations(Game this);
 inline static u32 Game_updateCollisions(Game this);
-inline static void Game_stream(Game this);
+inline static bool Game_stream(Game this);
 inline static void Game_checkForNewState(Game this);
 inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration);
 static void Game_update(Game this);
@@ -1030,7 +1030,7 @@ inline static u32 Game_updateCollisions(Game this)
 #endif
 }
 
-inline static void Game_stream(Game this)
+inline static bool Game_stream(Game this)
 {
 #ifdef __PROFILE_GAME
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
@@ -1040,7 +1040,7 @@ inline static void Game_stream(Game this)
 	this->lastProcessName = "streaming";
 #endif
 
-	GameState_stream(this->currentState);
+	bool result = GameState_stream(this->currentState);
 
 #ifdef __PROFILE_GAME
 	if(updateProfiling)
@@ -1050,6 +1050,8 @@ inline static void Game_stream(Game this)
 		streamingTotalTime += streamingProcessTime;
 	}
 #endif
+
+	return result;
 }
 
 inline static void Game_checkForNewState(Game this)
@@ -1275,7 +1277,16 @@ static void Game_update(Game this)
 		if(!suspendNonCriticalProcesses)
 		{
 			Game_stream(this);
+//			if(!Game_stream(this))
+			{
+			}
 		}
+
+#ifdef __PROFILE_GAME
+		this->lastProcessName = "z sorting";
+#endif
+
+		SpriteManager_update(SpriteManager_getInstance());
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)

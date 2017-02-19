@@ -68,6 +68,6 @@ void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x
 void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS]);
 void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z);
-
+void ObjectSpriteContainerManager_sort(ObjectSpriteContainerManager this);
 
 #endif

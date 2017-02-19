@@ -113,14 +113,14 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
-static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
-static void Stage_loadInRangeEntities(Stage this, int defer);
+static bool Stage_unloadOutOfRangeEntities(Stage this, int defer);
+static bool Stage_loadInRangeEntities(Stage this, int defer);
 
 #ifdef __PROFILE_STREAMING
 void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y);
 #endif
 
-typedef void (*StreamingPhase)(Stage, int);
+typedef bool (*StreamingPhase)(Stage, int);
 
 static const StreamingPhase _streamingPhases[] =
 {
@@ -706,13 +706,13 @@ static void Stage_loadInitialEntities(Stage this)
 }
 
 // unload non visible entities
-static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
+static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 {
 	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
 
 	if(!this->children)
 	{
-		return;
+		return false;
 	}
 
 	// need a temporal list to remove and delete entities
@@ -749,7 +749,11 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 
 			if(defer)
 			{
-				break;
+#ifdef __PROFILE_STREAMING
+				u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+				unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
+#endif
+				return true;
 			}
 		}
 	}
@@ -758,9 +762,11 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 		unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
+
+	return false;
 }
 
-static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
+static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
 
@@ -794,6 +800,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 
 	int counter = 0;
 	int amplitude = this->stageDefinition->streaming.streamingAmplitude;
+	bool result = false;
 
 	this->streamingHeadNode = NULL;
 
@@ -825,6 +832,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					stageEntityDescription->internalId = this->nextEntityId++;
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 					EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+					result = true;
 				}
 			}
 		}
@@ -857,6 +865,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					stageEntityDescription->internalId = this->nextEntityId++;
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 					EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+					result = true;
 				}
 			}
 		}
@@ -868,9 +877,11 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 		loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
 #endif
+
+	return result;
 }
 
-void Stage_stream(Stage this)
+bool Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
@@ -879,7 +890,7 @@ void Stage_stream(Stage this)
 	// inhibit the streaming to kick in
 	if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
 	{
-		return;
+		return true;
 	}
 
 	u32 alreadyStreamingIn = false;
@@ -899,7 +910,7 @@ void Stage_stream(Stage this)
 
 	if(alreadyStreamingIn)
 	{
-		return;
+		return true;
 	}
 
 	int streamingPhases = sizeof(_streamingPhases) / sizeof(StreamingPhase);
@@ -913,7 +924,7 @@ void Stage_stream(Stage this)
 	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
-	_streamingPhases[this->streamingPhase](this, true);
+	return _streamingPhases[this->streamingPhase](this, true);
 }
 
 void Stage_streamAll(Stage this)

@@ -71,6 +71,8 @@
 		 */																								\
 		VirtualNode node;																				\
 		VirtualNode previousNode;																		\
+		VirtualNode spriteToSwap1Node;																				\
+		VirtualNode spriteToSwap2Node;																		\
 		/**
 		 * @var VirtualNode	objectSpriteNodeToDefragment
 		 * @brief			next object sprite node to defragment
@@ -115,10 +117,16 @@
 		int spt;																						\
 		/**
 		 * @var bool		removingObjectSprite
-		 * @brief			flag to halt defragmentation while sprite removal is taking place
+		 * @brief			flag to halt defragmentation while rendering is taking place
 		 * @memberof		ObjectSpriteContainer
 		 */																								\
 		bool removingObjectSprite;																		\
+		/**
+		 * @var bool		sortingSprites
+		 * @brief			flag to halt z sorting while sprite rendering is taking place
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
+		bool sortingSprites;																		\
 
 __CLASS(ObjectSpriteContainer);
 
@@ -146,7 +154,9 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
+void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setMode(ObjectSpriteContainer this, u16 display, u16 mode);
+
 
 #endif

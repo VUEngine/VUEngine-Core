@@ -272,7 +272,6 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 		Game_reset(Game_getInstance());
 
 		// must make sure that all textures are completely written
-		SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
 		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 
 		// update the stage
@@ -297,11 +296,13 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());
 
+	// make sure all textures are written right now
+	SpriteManager_writeTextures(SpriteManager_getInstance());
+
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
 
 	// defer rendering again
-	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 #ifdef __DEBUG_TOOLS
 	}
@@ -360,11 +361,11 @@ int GameState_propagateMessage(GameState this, int message)
  *
  * @param this		Function scope
  */
-void GameState_stream(GameState this)
+bool GameState_stream(GameState this)
 {
 	ASSERT(this, "GameState::stream: null this");
 
-	Stage_stream(this->stage);
+	return Stage_stream(this->stage);
 }
 
 /**
@@ -524,7 +525,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
 
 	// must make sure that all textures are completely written
-	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), false);
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 
 	// load world entities
@@ -542,11 +542,13 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());
 
+	// make sure all textures are written right now
+	SpriteManager_writeTextures(SpriteManager_getInstance());
+
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
 
 	// defer rendering again
-	SpriteManager_deferTextureWriting(SpriteManager_getInstance(), true);
 	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
