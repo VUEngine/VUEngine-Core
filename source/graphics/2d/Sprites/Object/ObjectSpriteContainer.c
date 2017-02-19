@@ -292,7 +292,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		this->freedObjectIndex = 0;
 	}
 
-	ASSERT(!this->objectSpriteNodeToDefragment || *(u32*)VirtualNode_getData(this->objectSpriteNodeToDefragment), "ObjectSpriteContainer::removeObjectSprite: deleted objectSpriteNodeToDefragment data");
+	ASSERT(!this->objectSpriteNodeToDefragment || __IS_OBJECT_ALIVE(VirtualNode_getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::removeObjectSprite: deleted objectSpriteNodeToDefragment data");
 
 	this->removingObjectSprite = false;
 }
@@ -380,7 +380,16 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::defragment: null this");
 	ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteNodeToDefragment");
-	NM_ASSERT(*(u32*)VirtualNode_getData(this->objectSpriteNodeToDefragment), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
+
+	if(!__IS_OBJECT_ALIVE(VirtualNode_getData(this->objectSpriteNodeToDefragment)))
+	{
+		if(this->objectSpriteNodeToDefragment)
+		{
+			this->objectSpriteNodeToDefragment = this->objectSpriteNodeToDefragment->next;
+		}
+
+		return;
+	}
 
 	// get the next sprite to move
 	ObjectSprite objectSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->objectSpriteNodeToDefragment));
@@ -475,7 +484,7 @@ static void ObjectSpriteContainer_swapSpritesToSort(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::swapSpritesToSort: null this");
 
-	if(!this->spriteToSwap1Node || !this->spriteToSwap2Node || !*(u32*)this->spriteToSwap1Node->data ||!*(u32*)this->spriteToSwap2Node->data)
+	if(!this->spriteToSwap1Node || !this->spriteToSwap2Node || !__IS_OBJECT_ALIVE(this->spriteToSwap1Node->data) ||!__IS_OBJECT_ALIVE(this->spriteToSwap2Node->data))
 	{
 		this->spriteToSwap1Node = NULL;
 		this->spriteToSwap2Node = NULL;

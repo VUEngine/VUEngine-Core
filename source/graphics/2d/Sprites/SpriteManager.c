@@ -372,7 +372,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 void SpriteManager_swapSpritesToSort(SpriteManager this)
 {
-	if(!this->spriteToSwap1Node || !this->spriteToSwap2Node || !*(u32*)this->spriteToSwap1Node->data ||!*(u32*)this->spriteToSwap2Node->data)
+	if(!this->spriteToSwap1Node || !this->spriteToSwap2Node || !__IS_OBJECT_ALIVE(this->spriteToSwap1Node->data) ||!__IS_OBJECT_ALIVE(this->spriteToSwap2Node->data))
 	{
 		this->spriteToSwap1Node = NULL;
 		this->spriteToSwap2Node = NULL;
@@ -581,7 +581,7 @@ static void SpriteManager_selectTextureToWrite(SpriteManager this)
 	{
 		Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
 
-		if(texture && *(u32*)texture && !texture->written && texture->textureDefinition)
+		if(__IS_OBJECT_ALIVE(texture) && !texture->written && texture->textureDefinition)
 		{
 			__VIRTUAL_CALL(Texture, write, texture);
 
@@ -619,7 +619,7 @@ void SpriteManager_writeTextures(SpriteManager this)
 	{
 		Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
 
-		if(texture && *(u32*)texture && !texture->written && texture->textureDefinition)
+		if(__IS_OBJECT_ALIVE(texture) && !texture->written && texture->textureDefinition)
 		{
 			__VIRTUAL_CALL(Texture, write, texture);
 		}
@@ -646,7 +646,7 @@ void SpriteManager_render(SpriteManager this)
 		{
 			if(this->textureToWrite)
 			{
-				if(*(u32*)this->textureToWrite)
+				if(__IS_OBJECT_ALIVE(this->textureToWrite))
 				{
 					__VIRTUAL_CALL(Texture, write, this->textureToWrite);
 

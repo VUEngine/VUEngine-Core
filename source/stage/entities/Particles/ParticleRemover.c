@@ -141,7 +141,7 @@ void ParticleRemover_reset(ParticleRemover this)
 
 		for(; particleNode; particleNode = particleNode->next)
 		{
-			if(*(u32*)particleNode->data)
+			if(__IS_OBJECT_ALIVE(particleNode->data))
 			{
 				__DELETE(particleNode->data);
 			}

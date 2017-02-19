@@ -262,7 +262,7 @@ void RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager this)
 		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
 		// textures could be deleted externally
-		if(*(u32*)textureRegistry->texture)
+		if(__IS_OBJECT_ALIVE(textureRegistry->texture))
 		{
 			ASSERT(textureRegistry, "RecyclableBgmapTextureManager::reset: null textureRegistry");
 			ASSERT(textureRegistry->texture, "RecyclableBgmapTextureManager::reset: null texture");

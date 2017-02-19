@@ -148,6 +148,19 @@
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
 
+
+#define __IS_OBJECT_ALIVE(object)																		\
+																										\
+		/* test if object has not been deleted */														\
+		(object && *(u32*)object)																		\
+
+
+#define __IS_BASIC_OBJECT_ALIVE(object)																	\
+																										\
+		/* test if object has not been deleted */														\
+		(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))											\
+
+
 #define __GET_CAST(ClassName, object)																	\
 																										\
 		/* try to up cast object */																		\

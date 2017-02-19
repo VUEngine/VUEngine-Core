@@ -284,7 +284,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 			ASSERT(receiver, "MessageDispatcher::dispatchDelayedMessages: null receiver");
 
 			// check if sender and receiver are still alive
-			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage) && (sender && *(u32*)sender) && (receiver && *(u32*)receiver))
+			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage) && __IS_OBJECT_ALIVE(sender) && __IS_OBJECT_ALIVE(receiver))
 			{
 				messagesDispatched |= true;
 				__VIRTUAL_CALL(Object, handleMessage, __SAFE_CAST(Object, receiver), telegram);
@@ -297,12 +297,12 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 				VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
 			}
 
-			if(*(u32*)telegram)
+			if(__IS_OBJECT_ALIVE(telegram))
 			{
 				__DELETE(telegram);
 			}
 
-			if(*(u32*)delayedMessage)
+			if(__IS_BASIC_OBJECT_ALIVE(delayedMessage))
 			{
 				__DELETE_BASIC(delayedMessage);
 			}
@@ -361,7 +361,7 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(delayedMessage && *(u32*)delayedMessage && telegram && *(u32*)telegram && Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
 		{
 			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
 			{

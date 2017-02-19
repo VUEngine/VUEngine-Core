@@ -122,7 +122,7 @@ void EntityFactory_destructor(EntityFactory this)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -139,7 +139,7 @@ void EntityFactory_destructor(EntityFactory this)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -156,7 +156,7 @@ void EntityFactory_destructor(EntityFactory this)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -173,7 +173,7 @@ void EntityFactory_destructor(EntityFactory this)
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(positionedEntityDescription->entity && *(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -234,7 +234,7 @@ u32 EntityFactory_instantiateEntities(EntityFactory this)
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInstantiate->head->data;
 
-	if(*(u32*)positionedEntityDescription->parent)
+	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
 	{
 		if(positionedEntityDescription->entity)
 		{
@@ -280,7 +280,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInitialize->head->data;
 
-	if(*(u32*)positionedEntityDescription->parent)
+	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
 	{
 		ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
 
@@ -300,7 +300,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 	{
 		VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
 
-		if(*(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -325,7 +325,7 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 	ASSERT(positionedEntityDescription->entity, "EntityFactory::transformEntities: null entity");
 	ASSERT(positionedEntityDescription->parent, "EntityFactory::transformEntities: null parent");
 
-	if(*(u32*)positionedEntityDescription->parent)
+	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
 	{
 		if(!positionedEntityDescription->transformed)
 		{
@@ -350,7 +350,7 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 	{
 		VirtualList_removeElement(this->entitiesToTransform, positionedEntityDescription);
 
-		if(*(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -372,7 +372,7 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToMakeReady->head->data;
 
-	if(*(u32*)positionedEntityDescription->parent)
+	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
 	{
 		if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
 		{
@@ -393,7 +393,7 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 	{
 		VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
 
-		if(*(u32*)positionedEntityDescription->entity)
+		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
 			__DELETE(positionedEntityDescription->entity);
 		}
@@ -415,7 +415,7 @@ u32 EntityFactory_cleanUp(EntityFactory this)
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->spawnedEntities->head->data;
 
-	if(*(u32*)positionedEntityDescription->parent && *(u32*)positionedEntityDescription->entity)
+	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent) && __IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 	{
 		if(positionedEntityDescription->callback)
 		{

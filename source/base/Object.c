@@ -107,7 +107,7 @@ void Object_constructor(Object this)
 void Object_destructor(Object this)
 {
 	ASSERT(this, "Object::destructor: null this");
-	ASSERT(*(u32*)this, "Object::destructor: already deleted this");
+	ASSERT(__IS_OBJECT_ALIVE(this), "Object::destructor: already deleted this");
 
 	if(this->events)
 	{
@@ -126,7 +126,8 @@ void Object_destructor(Object this)
 
 
 	// free the memory
-	MemoryPool_free(_memoryPool, (void*)this);
+	//MemoryPool_free(_memoryPool, (void*)this);
+	*((u32*)this) = NULL;
 }
 
 /**
@@ -381,7 +382,7 @@ void Object_fireEvent(Object this, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-			if(!*(u32*)event->listener)
+			if(!__IS_OBJECT_ALIVE(event->listener))
 			{
 				VirtualList_pushBack(eventsToRemove, event);
 			}
@@ -432,7 +433,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 		return NULL;
 	}
 
-	if(!*(u32*)this)
+	if(!__IS_OBJECT_ALIVE(this))
 	{
 		Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
 		Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);

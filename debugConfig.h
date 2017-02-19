@@ -38,6 +38,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 // show games's profiling during game
 #ifdef __SHOW_GAME_PROFILING
 #define __PROFILE_GAME
+#define __DIMM_FOR_PROFILING
 #endif
 
 // show streaming's profiling during game
