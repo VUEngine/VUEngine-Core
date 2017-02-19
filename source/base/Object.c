@@ -126,8 +126,11 @@ void Object_destructor(Object this)
 
 
 	// free the memory
-	//MemoryPool_free(_memoryPool, (void*)this);
+#ifdef __DEBUG
+	MemoryPool_free(_memoryPool, (void*)this);
+#else
 	*((u32*)this) = NULL;
+#endif
 }
 
 /**
