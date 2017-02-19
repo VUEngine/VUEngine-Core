@@ -292,25 +292,6 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
 }
 
 /**
- * Do Z sorting
- *
- * @memberof		ObjectSpriteContainerManager
- * @public
- *
- * @param this		Function scope
- */
-void ObjectSpriteContainerManager_sort(ObjectSpriteContainerManager this)
-{
-	ASSERT(this, "ObjectSpriteContainerManager::sort: null this");
-
-	int i = 0;
-	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
-	{
-		ObjectSpriteContainer_sortProgressively(this->objectSpriteContainers[i]);
-	}
-}
-
-/**
  * Print the manager's status
  *
  * @memberof		ObjectSpriteContainerManager

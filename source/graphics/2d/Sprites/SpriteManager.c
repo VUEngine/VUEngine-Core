@@ -78,18 +78,6 @@ typedef struct SpritesList
 	 */																									\
 	VirtualNode nextNode;																				\
 	/**
-	 * @var VirtualNode	spriteToSwap1Node
-	 * @brief
-	 * @memberof		SpriteManager
-	 */																									\
-	VirtualNode spriteToSwap1Node;																		\
-	/**
-	 * @var VirtualNode	spriteToSwap2Node
-	 * @brief
-	 * @memberof		SpriteManager
-	 */																									\
-	VirtualNode spriteToSwap2Node;																		\
-	/**
 	 * @var Texture		textureToWrite
 	 * @brief 			texture writing
 	 * @memberof		SpriteManager
@@ -107,12 +95,6 @@ typedef struct SpritesList
 	 * @memberof		SpriteManager
 	 */																									\
 	u8 recoveringLayers;																				\
-	/**
-	 * @var bool		sortingSprites
-	 * @brief			flag to halt z sorting while sprite rendering is taking place
-	 * @memberof		SpriteManager
-	 */																									\
-	u8 sortingSprites;																					\
 	/**
 	 * @var s8			cyclesToWaitForTextureWriting
 	 * @brief 			number of cycles that the texture writing is idle
@@ -197,13 +179,10 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 
 	this->node = NULL;
 	this->nextNode = NULL;
-	this->spriteToSwap1Node = NULL;
-	this->spriteToSwap2Node = NULL;
 
 	this->sprites = NULL;
 
 	this->recoveringLayers = false;
-	this->sortingSprites = false;
 	this->textureToWrite = NULL;
 	this->cyclesToWaitForTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
@@ -262,8 +241,6 @@ void SpriteManager_reset(SpriteManager this)
 
 	this->node = NULL;
 	this->nextNode = NULL;
-	this->spriteToSwap1Node = NULL;
-	this->spriteToSwap2Node = NULL;
 	this->textureToWrite = NULL;
 	this->cyclesToWaitForTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
@@ -338,7 +315,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
 
-	if(this->spriteToSwap1Node || this->spriteToSwap2Node)
+	if(this->recoveringLayers)
 	{
 		return;
 	}
@@ -359,42 +336,25 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			// check if z positions are swapped
 			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 			{
-				this->sortingSprites = true;
-				this->spriteToSwap1Node = this->node;
-				this->spriteToSwap2Node = this->nextNode;
+				Sprite sprite = __SAFE_CAST(Sprite, this->node->data);
+				Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
+
+				// get each entity's layer
+				u8 worldLayer1 = sprite->worldLayer;
+				u8 worldLayer2 = nextSprite->worldLayer;
+
+				// don't render inmediately, it causes glitches
+				Sprite_setWorldLayer(nextSprite, worldLayer1);
+				Sprite_setWorldLayer(sprite, worldLayer2);
+
+				// swap nodes' data
+				VirtualNode_swapData(this->node, this->nextNode);
+
 				this->node = this->nextNode;
-				this->sortingSprites = false;
 				return;
 			}
 		}
 	}
-}
-
-void SpriteManager_swapSpritesToSort(SpriteManager this)
-{
-	if(!this->spriteToSwap1Node || !this->spriteToSwap2Node || !__IS_OBJECT_ALIVE(this->spriteToSwap1Node->data) ||!__IS_OBJECT_ALIVE(this->spriteToSwap2Node->data))
-	{
-		this->spriteToSwap1Node = NULL;
-		this->spriteToSwap2Node = NULL;
-		return;
-	}
-
-	Sprite sprite = __SAFE_CAST(Sprite, this->spriteToSwap1Node->data);
-	Sprite nextSprite = __SAFE_CAST(Sprite, this->spriteToSwap2Node->data);
-
-	// get each entity's layer
-	u8 worldLayer1 = sprite->worldLayer;
-	u8 worldLayer2 = nextSprite->worldLayer;
-
-	// don't render inmediately, it causes glitches
-	Sprite_setWorldLayer(nextSprite, worldLayer1);
-	Sprite_setWorldLayer(sprite, worldLayer2);
-
-	// swap nodes' data
-	VirtualNode_swapData(this->spriteToSwap1Node, this->spriteToSwap2Node);
-
-	this->spriteToSwap1Node = NULL;
-	this->spriteToSwap2Node = NULL;
 }
 
 /**
@@ -410,10 +370,6 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::getWorldLayer: null this");
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::getWorldLayer: adding no sprite");
-
-	// reset sorting
-	this->spriteToSwap1Node = NULL;
-	this->spriteToSwap2Node = NULL;
 
 	s8 layer = 0;
 
@@ -466,10 +422,6 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::relinquishWorldLayer: removing no sprite");
 
 	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::relinquishWorldLayer: sprite not found");
-
-	// reset sorting
-	this->spriteToSwap1Node = NULL;
-	this->spriteToSwap2Node = NULL;
 
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
@@ -542,23 +494,6 @@ void SpriteManager_renderLastLayer(SpriteManager this)
 }
 
 /**
- * Update manager
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
- */
-void SpriteManager_update(SpriteManager this)
-{
-	ASSERT(this, "SpriteManager::update: null this");
-
-	SpriteManager_selectTextureToWrite(this);
-	SpriteManager_sortLayersProgressively(this);
-	ObjectSpriteContainerManager_sort(ObjectSpriteContainerManager_getInstance());
-}
-
-/**
  * Select the texture to write
  *
  * @memberof		SpriteManager
@@ -602,15 +537,11 @@ static void SpriteManager_selectTextureToWrite(SpriteManager this)
  */
 void SpriteManager_writeTextures(SpriteManager this)
 {
-	ASSERT(this, "SpriteManager::selectTextureToWrite: null this");
-
-	if(this->textureToWrite)
-	{
-		return;
-	}
+	ASSERT(this, "SpriteManager::writeTextures: null this");
 
 	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
+	// allow complete texture writing
 	this->texturesMaximumRowsToWrite = -1;
 
 	VirtualNode node = this->sprites->head;
@@ -629,16 +560,16 @@ void SpriteManager_writeTextures(SpriteManager this)
 }
 
 /**
- * Write WORLD data to DRAM
+ * Write selected texture to DRAM
  *
  * @memberof		SpriteManager
  * @public
  *
  * @param this		Function scope
  */
-void SpriteManager_render(SpriteManager this)
+static void SpriteManager_writeSelectedTexture(SpriteManager this)
 {
-	ASSERT(this, "SpriteManager::render: null this");
+	ASSERT(this, "SpriteManager::writeSelectedTexture: null this");
 
 	if(!this->waitToWrite)
 	{
@@ -658,18 +589,34 @@ void SpriteManager_render(SpriteManager this)
 					this->textureToWrite = NULL;
 				}
 			}
+			else
+			{
+				SpriteManager_selectTextureToWrite(this);
+			}
 		}
 	}
 	else
 	{
 		this->waitToWrite--;
 	}
+}
 
-	if(!this->recoveringLayers && !this->sortingSprites)
-	{
-		// z sorting
-		SpriteManager_swapSpritesToSort(this);
-	}
+/**
+ * Write WORLD data to DRAM
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ */
+void SpriteManager_render(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::render: null this");
+
+	SpriteManager_writeSelectedTexture(this);
+
+	// z sorting
+	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
 
 	VirtualNode node = this->sprites->head;
 

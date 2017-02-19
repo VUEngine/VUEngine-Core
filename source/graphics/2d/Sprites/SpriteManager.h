@@ -66,7 +66,6 @@ void SpriteManager_processFreedLayers(SpriteManager this);
 void SpriteManager_processLayers(SpriteManager this);
 void SpriteManager_recoverLayers(SpriteManager this);
 void SpriteManager_writeTextures(SpriteManager this);
-void SpriteManager_update(SpriteManager this);
 void SpriteManager_render(SpriteManager this);
 void SpriteManager_renderLastLayer(SpriteManager this);
 void SpriteManager_reset(SpriteManager this);

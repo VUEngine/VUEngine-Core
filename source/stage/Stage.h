@@ -220,7 +220,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 void Stage_removeChild(Stage this, Container child);
 void Stage_update(Stage this, u32 elapsedTime);
 void Stage_transform(Stage this, const Transformation* environmentTransform);
-bool Stage_stream(Stage this);
+void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
 UiContainer Stage_getUiContainer(Stage this);
 void Stage_suspend(Stage this);
