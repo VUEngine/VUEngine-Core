@@ -129,7 +129,7 @@ void Object_destructor(Object this)
 #ifdef __DEBUG
 	MemoryPool_free(_memoryPool, (void*)this);
 #else
-	*((u32*)this) = NULL;
+	*((u32*)this) = 0;
 #endif
 }
 
