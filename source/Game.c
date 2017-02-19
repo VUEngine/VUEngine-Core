@@ -1275,7 +1275,10 @@ static void Game_update(Game this)
 #endif
 		if(!suspendNonCriticalProcesses)
 		{
-			Game_stream(this);
+			if(!ParamTableManager_defragmentProgressively(ParamTableManager_getInstance()))
+			{
+				Game_stream(this);
+			}
 		}
 
 #ifdef __PROFILE_GAME

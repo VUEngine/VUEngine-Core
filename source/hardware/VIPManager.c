@@ -379,11 +379,7 @@ u32 VIPManager_writeDRAM(VIPManager this)
 #endif
 
 	// do some defragmenting
-	if(!ParamTableManager_defragmentProgressively(_paramTableManager))
-	{
-		CharSetManager_defragmentProgressively(_charSetManager);
-		// TODO: bgmap memory defragmentation
-	}
+	CharSetManager_defragmentProgressively(CharSetManager_getInstance());
 
 	// write to DRAM
 	SpriteManager_render(_spriteManager);

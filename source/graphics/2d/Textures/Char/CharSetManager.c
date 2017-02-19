@@ -341,7 +341,8 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 
 			if(this->freedOffset < CharSet_getOffset(charSet))
 			{
-				Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
+				// clean previous chars
+				//Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
 
 				CharSet_setOffset(charSet, this->freedOffset);
 				//write to char memory
