@@ -592,6 +592,11 @@ void Sprite_setTransparent(Sprite this, bool value)
 	ASSERT(this, "Sprite::setTransparent: null this");
 
 	this->transparent = value;
+
+	if(!value)
+	{
+		this->visible = true;
+	}
 }
 
 /**
