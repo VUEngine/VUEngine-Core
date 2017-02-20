@@ -281,8 +281,33 @@ void VIPManager_interruptHandler(void)
 		{
 			case __GAMESTART:
 
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+				{
+					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
+
+					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
+					{
+						messageDelay = __TARGET_FPS * 2;
+						Printing_text(Printing_getInstance(), "VIP GCLK: ", 0, 0, NULL);
+						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 21, 0, NULL);
+					}
+
+					if(0 == --messageDelay)
+					{
+						Printing_text(Printing_getInstance(), "                                                ", 0, 0, NULL);
+						messageDelay = -1;
+					}
+				}
+#endif
 				_vipManager->gameFrameStarted = true;
 				VIPManager_enableInterrupt(_vipManager, __XPEND);
+				break;
+
+			case __XPEND:
+
+#ifdef __PROFILE_GAME
+				Game_setProcessDuringDRAMWritingName(Game_getInstance());
+#endif
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 				{
@@ -291,7 +316,7 @@ void VIPManager_interruptHandler(void)
 					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
 					{
 						messageDelay = __TARGET_FPS * 2;
-						Printing_text(Printing_getInstance(), "VIP GCLK: ", 0, 1, NULL);
+						Printing_text(Printing_getInstance(), "VIP XPEND: ", 0, 1, NULL);
 						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 21, 1, NULL);
 					}
 
@@ -303,13 +328,6 @@ void VIPManager_interruptHandler(void)
 				}
 #endif
 
-				break;
-
-			case __XPEND:
-
-#ifdef __PROFILE_GAME
-				Game_setProcessDuringDRAMWritingName(Game_getInstance());
-#endif
 				VIPManager_writeDRAM(_vipManager);
 				VIPManager_enableInterrupt(_vipManager, __GAMESTART);
 				break;
