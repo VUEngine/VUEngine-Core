@@ -497,7 +497,7 @@ static void Debug_lightUpGame(Debug this)
  * @param this			Function scope
  * @param userInput		User input
  */
-void Debug_processUserInput(Debug this, u16 pressedKey)
+void Debug_processUserInput(Debug this __attribute__ ((unused)), u16 pressedKey)
 {
 	ASSERT(this, "Debug::processUserInput: null this");
 
