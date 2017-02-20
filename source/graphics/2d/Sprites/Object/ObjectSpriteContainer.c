@@ -505,10 +505,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 			Sprite_update(sprite);
 		}
 
-		if(!sprite->hidden)
-		{
-			ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
-		}
+		ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
 	}
 }
 
