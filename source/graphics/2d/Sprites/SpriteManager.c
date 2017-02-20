@@ -505,11 +505,6 @@ static void SpriteManager_selectTextureToWrite(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::selectTextureToWrite: null this");
 
-	if(this->textureToWrite)
-	{
-		return;
-	}
-
 	VirtualNode node = this->sprites->head;
 
 	for(; node; node = node->next)
@@ -573,26 +568,23 @@ static void SpriteManager_writeSelectedTexture(SpriteManager this)
 
 	if(!this->waitToWrite)
 	{
-		if(0 < this->texturesMaximumRowsToWrite)
+		if(this->textureToWrite)
 		{
-			if(this->textureToWrite)
+			if(__IS_OBJECT_ALIVE(this->textureToWrite))
 			{
-				if(__IS_OBJECT_ALIVE(this->textureToWrite))
-				{
-					__VIRTUAL_CALL(Texture, write, this->textureToWrite);
+				__VIRTUAL_CALL(Texture, write, this->textureToWrite);
 
-					this->textureToWrite = !this->textureToWrite->written && this->textureToWrite->textureDefinition? this->textureToWrite : NULL;
-					this->waitToWrite = this->cyclesToWaitForTextureWriting;
-				}
-				else
-				{
-					this->textureToWrite = NULL;
-				}
+				this->textureToWrite = !this->textureToWrite->written && this->textureToWrite->textureDefinition? this->textureToWrite : NULL;
+				this->waitToWrite = this->cyclesToWaitForTextureWriting;
 			}
 			else
 			{
-				SpriteManager_selectTextureToWrite(this);
+				this->textureToWrite = NULL;
 			}
+		}
+		else
+		{
+			SpriteManager_selectTextureToWrite(this);
 		}
 	}
 	else
@@ -616,7 +608,7 @@ void SpriteManager_render(SpriteManager this)
 	SpriteManager_writeSelectedTexture(this);
 
 	// z sorting
-	SpriteManager_sortLayersProgressively(SpriteManager_getInstance());
+	SpriteManager_sortLayersProgressively(this);
 
 	VirtualNode node = this->sprites->head;
 

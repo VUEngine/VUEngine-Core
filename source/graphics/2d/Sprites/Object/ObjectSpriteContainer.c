@@ -47,6 +47,7 @@
  */
 __CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
 __CLASS_FRIEND_DEFINITION(Sprite);
+__CLASS_FRIEND_DEFINITION(Texture);
 __CLASS_FRIEND_DEFINITION(ObjectSprite);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
@@ -498,8 +499,16 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	for(; node; node = node->next)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
-		Sprite_update(sprite);
-		ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
+
+		if(!sprite->hidden && ((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent))
+		{
+			Sprite_update(sprite);
+		}
+
+		if(!sprite->hidden)
+		{
+			ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
+		}
 	}
 }
 

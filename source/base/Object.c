@@ -124,7 +124,6 @@ void Object_destructor(Object this)
 		this->events = NULL;
 	}
 
-
 	// free the memory
 #ifdef __DEBUG
 	MemoryPool_free(_memoryPool, (void*)this);
