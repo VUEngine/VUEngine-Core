@@ -29,6 +29,7 @@
 #include <Game.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,7 +41,7 @@ static void StageEditorState_constructor(StageEditorState this);
 static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
 static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
 static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram);
+static void StageEditorState_onUserInput(StageEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)));
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -113,6 +114,7 @@ static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	StageEditor_show(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	Object_addEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)StageEditorState_onUserInput, kEventUserInput);
 }
 
 /**
@@ -140,33 +142,21 @@ static void StageEditorState_execute(StageEditorState this __attribute__ ((unuse
  */
 static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	Object_removeEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)StageEditorState_onUserInput, kEventUserInput);
 	StageEditor_hide(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 /**
- * Method called when the Game's StateMachine receives a message to be processed
+ * Process user input
  *
  * @memberof			StageEditorState
  * @private
  *
  * @param this			Function scope
- * @param owner			StateMachine's owner
- * @param telegram		Message wrapper
- *
- * @return 				True if no further processing of the message is required
+ * @param eventFirer	KeypadManager
  */
-static bool StageEditorState_processMessage(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
+static void StageEditorState_onUserInput(StageEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)))
 {
-	// process message
-	switch(Telegram_getMessage(telegram))
-	{
-		case kKeyPressed:
-			{
-				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, StageEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
-			}
-			break;
-	}
-
-	return true;
+	StageEditor_processUserInput(StageEditor_getInstance(), KeypadManager_getUserInput(KeypadManager_getInstance()).pressedKey);
 }

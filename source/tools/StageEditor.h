@@ -43,7 +43,6 @@
 // declare the virtual methods which are redefined
 #define StageEditor_SET_VTABLE(ClassName)																\
 		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, StageEditor, handleMessage);											\
 
 // declare a StageEditor
 __CLASS(StageEditor);
@@ -71,10 +70,10 @@ StageEditor StageEditor_getInstance();
 
 void StageEditor_destructor(StageEditor this);
 
-bool StageEditor_handleMessage(StageEditor this, Telegram telegram);
 void StageEditor_show(StageEditor this, GameState gameState);
 void StageEditor_hide(StageEditor this);
 void StageEditor_update(StageEditor this);
+void StageEditor_processUserInput(StageEditor this, u16 pressedKey);
 
 
 #endif

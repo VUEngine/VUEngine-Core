@@ -82,6 +82,15 @@
 
 __CLASS(KeypadManager);
 
+typedef struct UserInput
+{
+	u16 allKeys;
+	u16 pressedKey;
+	u16 releasedKey;
+	u16 holdKey;
+	u16 previousKey;
+} UserInput;
+
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
@@ -91,18 +100,18 @@ KeypadManager KeypadManager_getInstance();
 
 void KeypadManager_destructor(KeypadManager this);
 
-void KeypadManager_clear(KeypadManager this);
 void KeypadManager_disable(KeypadManager this);
 void KeypadManager_disableInterrupt(KeypadManager this);
+UserInput KeypadManager_read(KeypadManager this);
+UserInput KeypadManager_getUserInput(KeypadManager this);
 void KeypadManager_enable(KeypadManager this);
 void KeypadManager_enableInterrupt(KeypadManager this);
 void KeypadManager_flush(KeypadManager this);
-u32 KeypadManager_getHoldKey(KeypadManager this);
-u32 KeypadManager_getPressedKey(KeypadManager this);
-u32 KeypadManager_getPreviousKey(KeypadManager this);
-u32 KeypadManager_getReleasedKey(KeypadManager this);
+u16 KeypadManager_getHoldKey(KeypadManager this);
+u16 KeypadManager_getPressedKey(KeypadManager this);
+u16 KeypadManager_getPreviousKey(KeypadManager this);
+u16 KeypadManager_getReleasedKey(KeypadManager this);
 int KeypadManager_isEnabled(KeypadManager this);
-void KeypadManager_read(KeypadManager this);
 
 
 #endif

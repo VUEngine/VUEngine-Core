@@ -28,7 +28,7 @@
 #include <Debug.h>
 #include <Game.h>
 #include <Telegram.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,7 +40,7 @@ static void DebugState_constructor(DebugState this);
 static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
 static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
 static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram);
+static void DebugState_onUserInput(DebugState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)));
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -113,6 +113,7 @@ static void DebugState_enter(DebugState this __attribute__ ((unused)), void* own
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	Object_addEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)DebugState_onUserInput, kEventUserInput);
 }
 
 /**
@@ -140,66 +141,21 @@ static void DebugState_execute(DebugState this __attribute__ ((unused)), void* o
  */
 static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	Object_removeEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)DebugState_onUserInput, kEventUserInput);
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 /**
- * Method called when the Game's StateMachine receives a message to be processed
+ * Process user input
  *
  * @memberof			DebugState
  * @private
  *
  * @param this			Function scope
- * @param owner			StateMachine's owner
- * @param telegram		Message wrapper
- *
- * @return 				True if no further processing of the message is required
+ * @param eventFirer	KeypadManager
  */
-static bool DebugState_processMessage(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
+static void DebugState_onUserInput(DebugState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)))
 {
-	// process message
-	switch(Telegram_getMessage(telegram))
-	{
-		case kKeyPressed:
-			{
-				u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
-
-				if(pressedKey & K_LL)
-				{
-					Debug_showPreviousPage(Debug_getInstance());
-				}
-				else if(pressedKey & K_LR)
-				{
-					Debug_showNextPage(Debug_getInstance());
-				}
-				else if(pressedKey & K_LU)
-				{
-					Debug_showPreviousSubPage(Debug_getInstance());
-				}
-				else if(pressedKey & K_LD)
-				{
-					Debug_showNextSubPage(Debug_getInstance());
-				}
-				else if(pressedKey & K_RL)
-				{
-					Debug_displaceLeft(Debug_getInstance());
-				}
-				else if(pressedKey & K_RR)
-				{
-					Debug_displaceRight(Debug_getInstance());
-				}
-				else if(pressedKey & K_RU)
-				{
-					Debug_displaceUp(Debug_getInstance());
-				}
-				else if(pressedKey & K_RD)
-				{
-					Debug_displaceDown(Debug_getInstance());
-				}
-			}
-			break;
-	}
-
-	return true;
+	Debug_processUserInput(Debug_getInstance(), KeypadManager_getUserInput(KeypadManager_getInstance()).pressedKey);
 }

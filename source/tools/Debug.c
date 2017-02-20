@@ -96,12 +96,12 @@
 #include <UiContainer.h>
 #include <Mem.h>
 
-#include <AnimationEditorState.h>
+#include <DebugState.h>
 #include <DebugState.h>
 #include <GameState.h>
 #include <StageEditorState.h>
 
-#include <AnimationEditor.h>
+#include <Debug.h>
 #include <Debug.h>
 #include <OptionsSelector.h>
 #include <StageEditor.h>
@@ -269,6 +269,15 @@ static void Debug_memoryStatusShowSixthPage(Debug this, int increment, int x, in
 static void Debug_memoryStatusShowSeventhPage(Debug this, int increment, int x, int y);
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
 #endif
+
+static void Debug_showPreviousPage(Debug this);
+static void Debug_showNextPage(Debug this);
+static void Debug_showPreviousSubPage(Debug this);
+static void Debug_showNextSubPage(Debug this);
+static void Debug_displaceLeft(Debug this);
+static void Debug_displaceRight(Debug this);
+static void Debug_displaceUp(Debug this);
+static void Debug_displaceDown(Debug this);
 
 static void Debug_showSramPage(Debug this, int increment, int x, int y);
 
@@ -480,6 +489,53 @@ static void Debug_lightUpGame(Debug this)
 }
 
 /**
+ * Process user input
+ *
+ * @memberof			Debug
+ * @public
+ *
+ * @param this			Function scope
+ * @param userInput		User input
+ */
+void Debug_processUserInput(Debug this, u16 pressedKey)
+{
+	ASSERT(this, "Debug::processUserInput: null this");
+
+	if(pressedKey & K_LL)
+	{
+		Debug_showPreviousPage(Debug_getInstance());
+	}
+	else if(pressedKey & K_LR)
+	{
+		Debug_showNextPage(Debug_getInstance());
+	}
+	else if(pressedKey & K_LU)
+	{
+		Debug_showPreviousSubPage(Debug_getInstance());
+	}
+	else if(pressedKey & K_LD)
+	{
+		Debug_showNextSubPage(Debug_getInstance());
+	}
+	else if(pressedKey & K_RL)
+	{
+		Debug_displaceLeft(Debug_getInstance());
+	}
+	else if(pressedKey & K_RR)
+	{
+		Debug_displaceRight(Debug_getInstance());
+	}
+	else if(pressedKey & K_RU)
+	{
+		Debug_displaceUp(Debug_getInstance());
+	}
+	else if(pressedKey & K_RD)
+	{
+		Debug_displaceDown(Debug_getInstance());
+	}
+}
+
+/**
  * Show previous debugging page
  *
  * @memberof		Debug
@@ -487,7 +543,7 @@ static void Debug_lightUpGame(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_showPreviousPage(Debug this)
+static void Debug_showPreviousPage(Debug this)
 {
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_dimmGame(this);
@@ -510,7 +566,7 @@ void Debug_showPreviousPage(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_showNextPage(Debug this)
+static void Debug_showNextPage(Debug this)
 {
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
 	Debug_dimmGame(this);
@@ -533,7 +589,7 @@ void Debug_showNextPage(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_showPreviousSubPage(Debug this)
+static void Debug_showPreviousSubPage(Debug this)
 {
 	if(!this->currentSubPage)
 	{
@@ -558,7 +614,7 @@ void Debug_showPreviousSubPage(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_showNextSubPage(Debug this)
+static void Debug_showNextSubPage(Debug this)
 {
 	if(!this->currentSubPage)
 	{
@@ -653,7 +709,7 @@ static void Debug_showSubPage(Debug this, int increment)
  *
  * @param this		Function scope
  */
-void Debug_displaceLeft(Debug this)
+static void Debug_displaceLeft(Debug this)
 {
 	this->mapDisplacement.x = 0;
 	Debug_showDebugBgmap(this);
@@ -667,7 +723,7 @@ void Debug_displaceLeft(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_displaceRight(Debug this)
+static void Debug_displaceRight(Debug this)
 {
 	this->mapDisplacement.x = DISPLACEMENT_STEP_X;
 	Debug_showDebugBgmap(this);
@@ -681,7 +737,7 @@ void Debug_displaceRight(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_displaceUp(Debug this)
+static void Debug_displaceUp(Debug this)
 {
 	this->mapDisplacement.y = 0;
 	Debug_showDebugBgmap(this);
@@ -695,7 +751,7 @@ void Debug_displaceUp(Debug this)
  *
  * @param this		Function scope
  */
-void Debug_displaceDown(Debug this)
+static void Debug_displaceDown(Debug this)
 {
 	this->mapDisplacement.y = DISPLACEMENT_STEP_Y;
 	Debug_showDebugBgmap(this);
@@ -1043,11 +1099,11 @@ static void Debug_memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&AnimationEditorState_getObjectSize,			"AnimationEditorSt."},
+		{&DebugState_getObjectSize,			"DebugSt."},
 		{&DebugState_getObjectSize,						"DebugState"},
 		{&GameState_getObjectSize,						"GameState"},
 		{&StageEditorState_getObjectSize,				"StageEditorState"},
-		{&AnimationEditor_getObjectSize,				"AnimationEditor"},
+		{&Debug_getObjectSize,				"Debug"},
 		{&Debug_getObjectSize,							"Debug"},
 		{&OptionsSelector_getObjectSize,				"OptionsSelector"},
 		{&StageEditor_getObjectSize,					"StageEditor"},

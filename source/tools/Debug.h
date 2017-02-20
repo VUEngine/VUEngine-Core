@@ -72,14 +72,7 @@ void Debug_update(Debug this);
 void Debug_render(Debug this);
 void Debug_show(Debug this, GameState gameState);
 void Debug_hide(Debug this);
-void Debug_showPreviousPage(Debug this);
-void Debug_showNextPage(Debug this);
-void Debug_showPreviousSubPage(Debug this);
-void Debug_showNextSubPage(Debug this);
-void Debug_displaceLeft(Debug this);
-void Debug_displaceRight(Debug this);
-void Debug_displaceUp(Debug this);
-void Debug_displaceDown(Debug this);
+void Debug_processUserInput(Debug this, u16 pressedKey);
 
 
 #endif

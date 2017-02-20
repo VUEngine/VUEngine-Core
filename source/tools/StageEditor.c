@@ -299,70 +299,58 @@ void StageEditor_hide(StageEditor this)
 }
 
 /**
- * Handles incoming messages
+ * Process user input
  *
- * @memberof		StageEditor
+ * @memberof			StageEditor
  * @public
  *
- * @param this		Function scope
- * @param telegram	The received message
- *
- * @return			True if successful, false otherwise
+ * @param this			Function scope
+ * @param userInput		User input
  */
-bool StageEditor_handleMessage(StageEditor this, Telegram telegram)
+void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 {
 	ASSERT(this, "StageEditor::handleMessage: null this");
 
 	if(!this->gameState)
 	{
-		return false;
+		return;
 	}
 
-	switch(Telegram_getMessage(telegram))
+	if(pressedKey & K_SEL)
 	{
-		case kKeyPressed:
+		this->mode++;
+
+		if(kLastMode <= this->mode)
 		{
-			u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
-
-			if(pressedKey & K_SEL)
-			{
-				this->mode++;
-
-				if(kLastMode <= this->mode)
-				{
-					this->mode = kFirstMode + 1;
-				}
-
-				StageEditor_setupMode(this);
-				break;
-			}
-
-			switch(this->mode)
-			{
-				case kMoveScreen:
-
-					StageEditor_moveScreen(this, pressedKey);
-					break;
-
-				case kChangeProjection:
-
-					StageEditor_changeProjection(this, pressedKey);
-					break;
-
-				case kTranslateEntities:
-
-					StageEditor_translateEntity(this, pressedKey);
-					break;
-
-				case kAddObjects:
-
-					StageEditor_selectUserObject(this, pressedKey);
-					break;
-			}
+			this->mode = kFirstMode + 1;
 		}
-		break;
+
+		StageEditor_setupMode(this);
+		return;
 	}
-	return true;
+
+	switch(this->mode)
+	{
+		case kMoveScreen:
+
+			StageEditor_moveScreen(this, pressedKey);
+			break;
+
+		case kChangeProjection:
+
+			StageEditor_changeProjection(this, pressedKey);
+			break;
+
+		case kTranslateEntities:
+
+			StageEditor_translateEntity(this, pressedKey);
+			break;
+
+		case kAddObjects:
+
+			StageEditor_selectUserObject(this, pressedKey);
+			break;
+	}
 }
 
 /**

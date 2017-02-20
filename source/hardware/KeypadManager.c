@@ -38,11 +38,9 @@
 		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
 		/*  */																							\
-		u32 currentKey;																					\
+		UserInput userInput;																			\
 		/*  */																							\
-		u32 previousKey;																				\
-		/*  */																							\
-		u32 enabled;																					\
+		bool enabled;																					\
 
 /**
  * @class	KeypadManager
@@ -90,8 +88,7 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 
 	__CONSTRUCT_BASE(Object);
 
-	this->currentKey = 0;
-	this->previousKey = 0;
+	KeypadManager_flush(this);
 	this->enabled = false;
 
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
@@ -160,8 +157,9 @@ void KeypadManager_enable(KeypadManager this)
 	ASSERT(this, "KeypadManager::enable: null this");
 
 	this->enabled = true;
-	this->currentKey = this->previousKey = 0;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
+
+	KeypadManager_flush(this);
 }
 
 /**
@@ -204,7 +202,7 @@ int KeypadManager_isEnabled(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager_read(KeypadManager this)
+UserInput KeypadManager_read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
@@ -212,26 +210,34 @@ void KeypadManager_read(KeypadManager this)
 	while(*_readingStatus & __S_STAT);
 
 	// now read the key
-	this->currentKey |= (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
+	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
 
 	// enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
+
+	this->userInput.pressedKey = this->userInput.allKeys & ~this->userInput.previousKey;
+	this->userInput.releasedKey = this->userInput.previousKey & ~this->userInput.allKeys;
+	this->userInput.holdKey = this->userInput.allKeys & this->userInput.previousKey;
+	this->userInput.previousKey = this->userInput.allKeys;
+
+	return this->userInput;
 }
 
 /**
- * Clear the current user input
+ * Retrieve user input
  *
  * @memberof	KeypadManager
  * @public
  *
  * @param this	Function scope
+ *
+ * @return		User input
  */
-void KeypadManager_clear(KeypadManager this)
+UserInput KeypadManager_getUserInput(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::clear: null this");
+	ASSERT(this, "KeypadManager::getUserInput: null this");
 
-	this->previousKey = this->currentKey;
-	this->currentKey = 0;
+	return this->userInput;
 }
 
 /**
@@ -246,8 +252,11 @@ void KeypadManager_flush(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::flush: null this");
 
-	this->currentKey = 0;
-	this->previousKey = 0;
+	this->userInput.allKeys = 0;
+	this->userInput.pressedKey = 0;
+	this->userInput.releasedKey = 0;
+	this->userInput.holdKey = 0;
+	this->userInput.previousKey = 0;
 }
 
 /**
@@ -260,11 +269,11 @@ void KeypadManager_flush(KeypadManager this)
  *
  * @return 		Currently pressed keys
  */
-u32 KeypadManager_getPressedKey(KeypadManager this)
+u16 KeypadManager_getPressedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPressedKey: null this");
 
-	return this->currentKey & ~this->previousKey;
+	return this->userInput.pressedKey;
 }
 
 /**
@@ -277,19 +286,19 @@ u32 KeypadManager_getPressedKey(KeypadManager this)
  *
  * @return 		Currently released keys
  */
-u32 KeypadManager_getReleasedKey(KeypadManager this)
+u16 KeypadManager_getReleasedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
-	return this->previousKey & ~this->currentKey;
+	return this->userInput.releasedKey;
 }
 
 // get hold key
-u32 KeypadManager_getHoldKey(KeypadManager this)
+u16 KeypadManager_getHoldKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKey: null this");
 
-	return this->currentKey & this->previousKey;
+	return this->userInput.holdKey;
 }
 
 /**
@@ -302,12 +311,11 @@ u32 KeypadManager_getHoldKey(KeypadManager this)
  *
  * @return 		Previously pressed keys
  */
-u32 KeypadManager_getPreviousKey(KeypadManager this)
+u16 KeypadManager_getPreviousKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPreviousKey: null this");
 
-	return this->previousKey;
-	//return this->currentKey & this->previousKey ? this->currentKey & this->previousKey : 0;
+	return this->userInput.previousKey;
 }
 
 /**

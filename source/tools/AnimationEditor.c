@@ -36,7 +36,7 @@
 #include <Texture.h>
 #include <AnimationController.h>
 #include <BgmapTextureManager.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 #include <Printing.h>
 
 
@@ -436,73 +436,61 @@ static void AnimationEditor_setupMode(AnimationEditor this)
 }
 
 /**
- * Process messages
+ * Process user input
  *
  * @memberof			AnimationEditor
  * @public
  *
  * @param this			Function scope
- * @param telegram		Message wrapper
- *
- * @return				Result of message processing
+ * @param userInput		User input
  */
-bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram)
+void AnimationEditor_processUserInput(AnimationEditor this, u16 pressedKey)
 {
-	ASSERT(this, "AnimationEditor::handleMessage: null this");
+	ASSERT(this, "AnimationEditor::processUserInput: null this");
 
 	if(!this->gameState)
 	{
-		return false;
+		return;
 	}
 
-	switch(Telegram_getMessage(telegram))
+	if(pressedKey & K_B)
 	{
-		case kKeyPressed:
+		this->mode--;
 
-			{
-				u32 pressedKey = *((u32*)Telegram_getExtraInfo(telegram));
+		if(kFirstMode >= this->mode)
+		{
+			this->mode = kFirstMode + 1;
+		}
+		else
+		{
+			AnimationEditor_setupMode(this);
+		}
 
-				if(pressedKey & K_B)
-				{
-					this->mode--;
+		return;
+	}
 
-					if(kFirstMode >= this->mode)
-					{
-						this->mode = kFirstMode + 1;
-					}
-					else
-					{
-						AnimationEditor_setupMode(this);
-					}
-					break;
-				}
+	switch(this->mode)
+	{
+		case kSelectActor:
 
-				switch(this->mode)
-				{
-					case kSelectActor:
+			AnimationEditor_selectAnimatedInGameEntity(this, pressedKey);
+			break;
 
-						AnimationEditor_selectAnimatedInGameEntity(this, pressedKey);
-						break;
+		case kSelectSprite:
 
-					case kSelectSprite:
+			AnimationEditor_selectSprite(this, pressedKey);
+			break;
 
-						AnimationEditor_selectSprite(this, pressedKey);
-						break;
+		case kSelectAnimation:
 
-					case kSelectAnimation:
+			AnimationEditor_selectAnimation(this, pressedKey);
+			break;
 
-						AnimationEditor_selectAnimation(this, pressedKey);
-						break;
+		case kEditAnimation:
 
-					case kEditAnimation:
-
-						AnimationEditor_editAnimation(this, pressedKey);
-						break;
-				}
-			}
+			AnimationEditor_editAnimation(this, pressedKey);
 			break;
 	}
-	return true;
 }
 
 /**

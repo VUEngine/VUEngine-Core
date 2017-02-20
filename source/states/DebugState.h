@@ -44,7 +44,6 @@
 	__VIRTUAL_SET(ClassName, DebugState, enter);														\
 	__VIRTUAL_SET(ClassName, DebugState, execute);														\
 	__VIRTUAL_SET(ClassName, DebugState, exit);															\
-	__VIRTUAL_SET(ClassName, DebugState, processMessage);												\
 
 __CLASS(DebugState);
 

@@ -29,6 +29,7 @@
 #include <Game.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -40,7 +41,7 @@ static void AnimationEditorState_constructor(AnimationEditorState this);
 static void AnimationEditorState_enter(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
 static void AnimationEditorState_execute(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
 static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static bool AnimationEditorState_processMessage(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram);
+static void AnimationEditorState_onUserInput(AnimationEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)));
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -113,6 +114,7 @@ static void AnimationEditorState_enter(AnimationEditorState this __attribute__ (
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	AnimationEditor_show(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	Object_addEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)AnimationEditorState_onUserInput, kEventUserInput);
 }
 
 /**
@@ -140,33 +142,21 @@ static void AnimationEditorState_execute(AnimationEditorState this __attribute__
  */
 static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	Object_removeEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)AnimationEditorState_onUserInput, kEventUserInput);
 	AnimationEditor_hide(AnimationEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
 
 /**
- * Method called when the Game's StateMachine receives a message to be processed
+ * Process user input
  *
  * @memberof			AnimationEditorState
  * @private
  *
  * @param this			Function scope
- * @param owner			StateMachine's owner
- * @param telegram		Message wrapper
- *
- * @return 				True if no further processing of the message is required
+ * @param eventFirer	KeypadManager
  */
-static bool AnimationEditorState_processMessage(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)), Telegram telegram)
+static void AnimationEditorState_onUserInput(AnimationEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)))
 {
-	// process message
-	switch(Telegram_getMessage(telegram))
-	{
-		case kKeyPressed:
-			{
-				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, AnimationEditor_getInstance()), kKeyPressed, ((u16*)Telegram_getExtraInfo(telegram)));
-			}
-			break;
-	}
-
-	return true;
+	AnimationEditor_processUserInput(AnimationEditor_getInstance(), KeypadManager_getUserInput(KeypadManager_getInstance()).pressedKey);
 }

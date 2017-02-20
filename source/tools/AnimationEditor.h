@@ -44,7 +44,6 @@
 // declare the virtual methods which are redefined
 #define AnimationEditor_SET_VTABLE(ClassName)															\
 		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, AnimationEditor, handleMessage);										\
 
 // declare a AnimationEditor
 __CLASS(AnimationEditor);
@@ -74,7 +73,7 @@ void AnimationEditor_destructor(AnimationEditor this);
 void AnimationEditor_update(AnimationEditor this);
 void AnimationEditor_show(AnimationEditor this, GameState gameState);
 void AnimationEditor_hide(AnimationEditor this);
-bool AnimationEditor_handleMessage(AnimationEditor this, Telegram telegram);
+void AnimationEditor_processUserInput(AnimationEditor this, u16 pressedKey);
 
 
 #endif

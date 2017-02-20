@@ -657,32 +657,12 @@ static u32 Game_handleInput(Game this)
 #endif
 
 	// poll the user's input
-	KeypadManager_read(this->keypadManager);
-
-	u32 pressedKey = KeypadManager_getPressedKey(this->keypadManager);
-	u32 releasedKey = KeypadManager_getReleasedKey(this->keypadManager);
-	u32 holdKey = KeypadManager_getHoldKey(this->keypadManager);
-
-#ifdef __DEBUG_TOOLS
-	u32 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
-#else
-
-#ifdef __STAGE_EDITOR
-	u32 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
-#else
-
-#ifdef __ANIMATION_EDITOR
-	u32 previousKey = KeypadManager_getPreviousKey(this->keypadManager);
-#endif
-
-#endif
-
-#endif
+	UserInput userInput = KeypadManager_read(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RL))
+	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RL))
 	{
 		if(Game_isInDebugMode(this))
 		{
@@ -704,7 +684,6 @@ static u32 Game_handleInput(Game this)
 			this->nextState = NULL;
 		}
 
-		KeypadManager_clear(this->keypadManager);
 		return true;
 	}
 #endif
@@ -712,7 +691,7 @@ static u32 Game_handleInput(Game this)
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (pressedKey & K_RD))
+	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RD))
 	{
 		if(Game_isInStageEditor(this))
 		{
@@ -734,7 +713,6 @@ static u32 Game_handleInput(Game this)
 			this->nextState = NULL;
 		}
 
-		KeypadManager_clear(this->keypadManager);
 		return true;
 	}
 #endif
@@ -742,7 +720,7 @@ static u32 Game_handleInput(Game this)
 #ifdef __ANIMATION_EDITOR
 
 	// check code to access special feature
-	if((previousKey & K_LT) && (previousKey & K_RT) && (releasedKey & K_RR))
+	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RR))
 	{
 
 		if(Game_isInAnimationEditor(this))
@@ -765,31 +743,27 @@ static u32 Game_handleInput(Game this)
 			this->nextState = NULL;
 		}
 
-		KeypadManager_clear(this->keypadManager);
 		return true;
 	}
 #endif
 
 #ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
+	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
-		KeypadManager_clear(this->keypadManager);
 		return true;
 	}
 #endif
 
 #ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
+	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
-		KeypadManager_clear(this->keypadManager);
 		return true;
 	}
 #endif
 
 #ifdef __ANIMATION_EDITOR
-	if(!Game_isInSpecialMode(this) && ((pressedKey & K_LT) || (pressedKey & K_RT)))
+	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
-		KeypadManager_clear(this->keypadManager);
 		return true;
 	}
 #endif
@@ -798,30 +772,11 @@ static u32 Game_handleInput(Game this)
 	this->lastProcessName = "input handling";
 #endif
 
-	// check for a new key pressed
-	if(pressedKey)
-	{
-		// inform the game about the pressed key
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this->stateMachine), __SAFE_CAST(Object, this->stateMachine), kKeyPressed, &pressedKey);
-	}
-
-	if(releasedKey)
-	{
-		// inform the game about the released key
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this->stateMachine), __SAFE_CAST(Object, this->stateMachine), kKeyReleased, &releasedKey);
-	}
-
-	if(holdKey)
-	{
-		// inform the game about the hold key
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this->stateMachine), __SAFE_CAST(Object, this->stateMachine), kKeyHold, &holdKey);
-	}
-
-	KeypadManager_clear(this->keypadManager);
-
 #ifdef __LOW_BATTERY_INDICATOR
-	Game_checkLowBattery(this, holdKey);
+	Game_checkLowBattery(this, userInput.holdKey);
 #endif
+
+	Object_fireEvent(__SAFE_CAST(Object, this), kEventUserInput);
 
 #ifdef __PROFILE_GAME
 	if(updateProfiling)
@@ -832,7 +787,7 @@ static u32 Game_handleInput(Game this)
 	}
 #endif
 
-	return pressedKey | releasedKey;
+	return userInput.pressedKey | userInput.releasedKey;
 }
 
 inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)))

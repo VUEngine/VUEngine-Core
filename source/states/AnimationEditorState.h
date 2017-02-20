@@ -44,7 +44,6 @@
 	__VIRTUAL_SET(ClassName, AnimationEditorState, enter);												\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, execute);											\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, exit);												\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, processMessage);										\
 
 __CLASS(AnimationEditorState);
 

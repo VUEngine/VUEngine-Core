@@ -44,7 +44,6 @@
 	__VIRTUAL_SET(ClassName, StageEditorState, enter);													\
 	__VIRTUAL_SET(ClassName, StageEditorState, execute);												\
 	__VIRTUAL_SET(ClassName, StageEditorState, exit);													\
-	__VIRTUAL_SET(ClassName, StageEditorState, processMessage);											\
 
 __CLASS(StageEditorState);
 
