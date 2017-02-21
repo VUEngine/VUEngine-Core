@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include <CollisionsContainerEntity.h>
+#include <Optics.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,6 +46,10 @@ __CLASS_DEFINITION(CollisionsContainerEntity, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // global
+extern const VBVec3D* _screenPosition;
+extern const VBVec3D* _screenDisplacement;
+extern const Optical* _optical;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -132,6 +137,66 @@ bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity
 int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::passMessage: null this");
+
+	return false;
+}
+
+
+/**
+ * Whether it is visible
+ *
+ * @memberof		CollisionsContainerEntity
+ * @public
+ *
+ * @param this		Function scope
+ * @param pad
+ * @param recursive
+ *
+ * @return			Boolean if visible
+ */
+bool CollisionsContainerEntity_isVisible(CollisionsContainerEntity this, int pad, bool recursive __attribute__ ((unused)))
+{
+	ASSERT(this, "CollisionsContainerEntity::isVisible: null this");
+
+	int x = 0;
+	int y = 0;
+	int z = 0;
+
+	VBVec3D position3D = this->transform.globalPosition;
+
+	if(this->centerDisplacement)
+	{
+		position3D.x += this->centerDisplacement->x;
+		position3D.y += this->centerDisplacement->y;
+		position3D.z += this->centerDisplacement->z;
+	}
+
+	// normalize the position to screen coordinates
+	__OPTICS_NORMALIZE(position3D);
+
+	VBVec2D position2D;
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+	int halfWidth = (int)this->size.x >> 1;
+	int halfHeight = (int)this->size.y >> 1;
+	int halfDepth = (int)this->size.z >> 1;
+
+	x = FIX19_13TOI(position2D.x);
+	y = FIX19_13TOI(position2D.y);
+	z = FIX19_13TOI(position2D.z);
+
+	if(x + halfWidth > -pad && x - halfWidth < __SCREEN_WIDTH + pad)
+	{
+		// check y visibility
+		if(y + halfHeight > -pad && y - halfHeight < __SCREEN_HEIGHT + pad)
+		{
+			// check z visibility
+			if(z + halfDepth > -pad && z - halfDepth < __SCREEN_DEPTH + pad)
+			{
+				return true;
+			}
+		}
+	}
 
 	return false;
 }
