@@ -140,7 +140,7 @@ void Object_destructor(Object this)
  * @private
  *
  * @param this			Function scope
- * @param messsage		Message to show in case of error
+ * @param message		Message to show in case of error
  */
 static void Object_checkIfFiringEvent(Object this, const char* message)
 {
