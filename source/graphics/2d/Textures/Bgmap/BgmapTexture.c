@@ -80,6 +80,7 @@ static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* 
 	// construct base object
 	__CONSTRUCT_BASE(Texture, (TextureDefinition*)bgmapTextureDefinition, id);
 
+	this->segment = -1;
 	this->usageCount = 1;
 	this->remainingRowsToBeWritten = 0;
 }
@@ -194,7 +195,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimatedSingle: null this");
 
-	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
+	int bgmapSegment = this->segment;
 	int palette = this->palette << 14;
 
 	int charLocation = (int)CharSet_getOffset(this->charSet);
@@ -231,7 +232,7 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimated: null this");
 
-	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
+	int bgmapSegment = this->segment;
 	int palette = this->palette << 14;
 
 	int charLocation = (int)CharSet_getOffset(this->charSet);
@@ -268,7 +269,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimatedShared: null this");
 
-	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
+	int bgmapSegment = this->segment;
 	int palette = this->palette << 14;
 
 	// determine the number of frames the map had
@@ -314,7 +315,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeNoAnimated: null this");
 
-	int bgmapSegment = BgmapTexture_getBgmapSegment(this);
+	int bgmapSegment = this->segment;
 	int palette = this->palette << 14;
 
 	int charLocation = (int)CharSet_getOffset(this->charSet);
@@ -391,6 +392,22 @@ s16 BgmapTexture_getYOffset(BgmapTexture this)
 }
 
 /**
+ * Set the Texture's BGMAP segment where it is allocated
+ *
+ * @memberof			BgmapTexture
+ * @public
+ *
+ * @param this			Function scope
+ * @param segment		Texture's BGMAP segment
+ */
+void BgmapTexture_setSegment(BgmapTexture this, s8 segment)
+{
+	ASSERT(this, "BgmapTexture::setSegment: null this");
+
+	this->segment = segment;
+}
+
+/**
  * Retrieve the Texture's BGMAP segment where it is allocated
  *
  * @memberof			BgmapTexture
@@ -400,11 +417,11 @@ s16 BgmapTexture_getYOffset(BgmapTexture this)
  *
  * @return				Texture's BGMAP segment
  */
-u16 BgmapTexture_getBgmapSegment(BgmapTexture this)
+s8 BgmapTexture_getSegment(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::getBgmapSegment: null this");
+	ASSERT(this, "BgmapTexture::getSegment: null this");
 
-	return BgmapTextureManager_getBgmapSegment(BgmapTextureManager_getInstance(), this->id);
+	return this->segment;
 }
 
 /**

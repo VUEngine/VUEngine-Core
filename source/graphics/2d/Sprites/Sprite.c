@@ -935,7 +935,7 @@ void Sprite_print(Sprite this, int x, int y)
 		BgmapTexture bgmapTexture = __GET_CAST(BgmapTexture, Sprite_getTexture(this));
 
 		Printing_text(Printing_getInstance(), "Texture (segment):                         ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), BgmapTexture_getBgmapSegment(bgmapTexture), x + 24, y, NULL);
+		Printing_int(Printing_getInstance(), BgmapTexture_getSegment(bgmapTexture), x + 24, y, NULL);
 		Printing_text(Printing_getInstance(), "Texture (definition):                         ", x, ++y, NULL);
 		Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + 24, y, 8, NULL);
 		Printing_text(Printing_getInstance(), "Texture (written):                         ", x, ++y, NULL);

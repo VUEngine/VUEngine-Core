@@ -45,7 +45,7 @@
 		/* current y offset to set the next bgmap */													\
 		s8 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];							\
 		/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 									\
-		s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][3];						\
+		s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][2];						\
 		/* next free bgmap used for text printing */													\
 		s16 freeBgmapSegment;																			\
 		/* the textures allocated */																	\
@@ -172,7 +172,6 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 	{
 		this->offset[i][kXOffset] = -1;
 		this->offset[i][kYOffset] = -1;
-		this->offset[i][kBgmapSegment] = -1;
 
 		if(this->bgmapTextures[i])
 		{
@@ -252,7 +251,8 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 								// register bgmap definition
 								this->offset[id][kXOffset] = this->xOffset[i][j] + (colsPad >> 1);
 								this->offset[id][kYOffset] = this->yOffset[i][j] + (rowsPad >> 1);
-								this->offset[id][kBgmapSegment] = i;
+
+								BgmapTexture_setSegment(bgmapTexture, i);
 
 								// increment the x offset
 								this->xOffset[i][j] += cols + colsPad;
@@ -558,24 +558,6 @@ s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 	ASSERT(this, "BgmapTextureManager::getYOffset: null this");
 
 	return this->offset[id][kYOffset];
-}
-
-/**
- * Retrieve the BGMAP segment of the Texture with the given id
- *
- * @memberof		BgmapTextureManager
- * @private
- *
- * @param this		Function scope
- * @param id		Texture identification
- *
- * @return 			BGMAP segment
- */
-u16 BgmapTextureManager_getBgmapSegment(BgmapTextureManager this, int id)
-{
-	ASSERT(this, "BgmapTextureManager::getBgmapSegment: null this");
-
-	return this->offset[id][kBgmapSegment];
 }
 
 /**

@@ -53,6 +53,7 @@
  */
 __CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
 __CLASS_FRIEND_DEFINITION(Texture);
+__CLASS_FRIEND_DEFINITION(BgmapTexture);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -385,11 +386,13 @@ void MBgmapSprite_render(MBgmapSprite this)
 */
 
 		// set the head
-		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
+		// get coordinates
 		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
 		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
+		// get sprite's size
 		worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
 		worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
 		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);

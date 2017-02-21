@@ -57,6 +57,7 @@
  */
 __CLASS_DEFINITION(BgmapSprite, Sprite);
 __CLASS_FRIEND_DEFINITION(Texture);
+__CLASS_FRIEND_DEFINITION(BgmapTexture);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -425,7 +426,7 @@ void BgmapSprite_render(BgmapSprite this)
 		}
 */
 		// set the head
-		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 		// get coordinates
 		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
@@ -622,7 +623,7 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 		}
 
-		worldPointer->head = this->head | BgmapTexture_getBgmapSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		worldPointer->head = this->head | BgmapTexture_getSegment(__SAFE_CAST(BgmapTexture, this->texture));
 	}
 }
 */
