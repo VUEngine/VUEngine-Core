@@ -496,7 +496,7 @@ Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* 
 
 	FontData* fontData = Printing_getFontByName(this, font);
 
-	if(!fontdata)
+	if(!fontData)
 	{
 		// just to make sure that no client code does a 0 division with these results
 		size = (Size){8, 8, 8};
