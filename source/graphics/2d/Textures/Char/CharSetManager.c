@@ -41,6 +41,7 @@
 		Object_ATTRIBUTES																				\
 		/* charsets defined */																			\
 		VirtualList charSets;																			\
+		VirtualList charSetsPendingWriting;																\
 		/* next offset to reclaim */																	\
 		u16 freedOffset;																				\
 
@@ -61,7 +62,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 static void CharSetManager_constructor(CharSetManager this);
 static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
 static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-
+static void CharSetManager_defragmentProgressively(CharSetManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -91,6 +92,7 @@ static void __attribute__ ((noinline)) CharSetManager_constructor(CharSetManager
 	__CONSTRUCT_BASE(Object);
 
 	this->charSets = __NEW(VirtualList);
+	this->charSetsPendingWriting = __NEW(VirtualList);
 	this->freedOffset = 1;
 }
 
@@ -110,6 +112,9 @@ void CharSetManager_destructor(CharSetManager this)
 
 	__DELETE(this->charSets);
 	this->charSets = NULL;
+
+	__DELETE(this->charSetsPendingWriting);
+	this->charSetsPendingWriting = NULL;
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -248,6 +253,7 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 		}
 
 		VirtualList_removeElement(this->charSets, charSet);
+		VirtualList_removeElement(this->charSetsPendingWriting, charSet);
 
 		__DELETE(charSet);
 	}
@@ -282,9 +288,22 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 	{
 		CharSet charSet = __NEW(CharSet, charSetDefinition, offset);
 
-		CharSet_write(charSet);
-
 		VirtualList_pushBack(this->charSets, charSet);
+
+		switch(charSetDefinition->allocationType)
+		{
+			case __ANIMATED_SINGLE:
+			case __ANIMATED_SHARED:
+			case __ANIMATED_SHARED_COORDINATED:
+
+				break;
+
+			case __ANIMATED_MULTI:
+			case __NOT_ANIMATED:
+
+				VirtualList_pushBack(this->charSetsPendingWriting, charSet);
+				break;
+		}
 
 		return charSet;
 	}
@@ -293,6 +312,54 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 	NM_ASSERT(false, "CharSetManager::allocateCharSet: char mem depleted");
 
 	return NULL;
+}
+
+/**
+ * Write char sets pending writing
+ *
+ * @memberof		CharSetManager
+ * @public
+ *
+ * @param this		Function scope
+ */
+void CharSetManager_writeCharSets(CharSetManager this)
+{
+	ASSERT(this, "CharSetManager::writeCharSets: null this");
+
+	VirtualNode node = this->charSetsPendingWriting->head;
+
+	for(; node; node = node->next)
+	{
+		CharSet_write(__SAFE_CAST(CharSet, node->data));
+	}
+
+	VirtualList_clear(this->charSetsPendingWriting);
+}
+
+/**
+ * Write char sets pending writing
+ *
+ * @memberof		CharSetManager
+ * @public
+ *
+ * @param this		Function scope
+ */
+void CharSetManager_writeCharSetsProgressively(CharSetManager this)
+{
+	ASSERT(this, "CharSetManager::writeCharSetsProgressively: null this");
+
+	CharSet charSet = VirtualList_front(this->charSetsPendingWriting);
+
+	if(charSet)
+	{
+		CharSet_write(charSet);
+		VirtualList_popFront(this->charSetsPendingWriting);
+	}
+	else
+	{
+		// do some defragmenting
+    	CharSetManager_defragmentProgressively(this);
+	}
 }
 
 /**
@@ -321,7 +388,7 @@ void CharSetManager_defragment(CharSetManager this)
  *
  * @param this		Function scope
  */
-void CharSetManager_defragmentProgressively(CharSetManager this)
+static void CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
@@ -348,6 +415,8 @@ void CharSetManager_defragmentProgressively(CharSetManager this)
 				//write to char memory
 				CharSet_rewrite(charSet);
 				this->freedOffset += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
+
+				VirtualList_removeElement(this->charSetsPendingWriting, charSet);
 				return;
 			}
 		}

@@ -28,6 +28,7 @@
 #include <SpriteManager.h>
 #include <Game.h>
 #include <ObjectSpriteContainerManager.h>
+#include <CharSetManager.h>
 #include <VIPManager.h>
 #include <Screen.h>
 #include <Printing.h>
@@ -534,6 +535,8 @@ void SpriteManager_writeTextures(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::writeTextures: null this");
 
+	CharSetManager_writeCharSets(CharSetManager_getInstance());
+
 	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
 
 	// allow complete texture writing
@@ -605,6 +608,7 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
+	// write textures
 	SpriteManager_writeSelectedTexture(this);
 
 	// z sorting
@@ -612,7 +616,6 @@ void SpriteManager_render(SpriteManager this)
 
 	VirtualNode node = this->sprites->head;
 
-	this->freeLayer = __TOTAL_LAYERS - 1;
 
 #ifdef __PROFILE_GAME
 	if(!Game_isInSpecialMode(Game_getInstance()))
@@ -621,7 +624,16 @@ void SpriteManager_render(SpriteManager this)
 	}
 #endif
 
-	for(; node; node = node->next, this->freeLayer--)
+	if(!node)
+	{
+		this->freeLayer = __TOTAL_LAYERS - 1;
+	}
+	else
+	{
+		this->freeLayer = (__SAFE_CAST(Sprite, node->data))->worldLayer - 1;
+	}
+
+	for(; node; node = node->next)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 

@@ -397,8 +397,8 @@ u32 VIPManager_writeDRAM(VIPManager this)
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
-	// do some defragmenting
-	CharSetManager_defragmentProgressively(CharSetManager_getInstance());
+	// write newly created chars
+	CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance());
 
 	// write to DRAM
 	SpriteManager_render(_spriteManager);
