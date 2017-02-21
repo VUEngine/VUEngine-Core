@@ -633,9 +633,11 @@ bool Actor_updateSpritePosition(Actor this)
 	return (
 		this->invalidateGlobalTransformation ||
 		Actor_isMoving(this) ||
-		_screenDisplacement->x ||
-		_screenDisplacement->y ||
-		_screenDisplacement->z
+		(
+			_screenDisplacement->x |
+			_screenDisplacement->y |
+			_screenDisplacement->z
+		)
 	);
 }
 

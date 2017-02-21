@@ -1193,8 +1193,15 @@ static void Game_update(Game this)
 		// conditions against the VIP
 		Game_updateVisuals(this);
 
+#ifdef __PRINT_FRAMERATE
 		// increase game frame total time
 		Game_checkFrameRate(this, gameFrameDuration);
+#else
+#ifdef __PROFILE_GAME
+		// increase game frame total time
+		Game_checkFrameRate(this, gameFrameDuration);
+#endif
+#endif
 
 		// update the clocks
 		ClockManager_update(this->clockManager, gameFrameDuration);
@@ -1221,15 +1228,17 @@ static void Game_update(Game this)
 		{
 #endif
 
-		// process collisions
-		suspendNonCriticalProcesses |= Game_updateCollisions(this);
-
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
 
 		// apply transformations
 		Game_updateTransformations(this);
+
+		// process collisions
+		suspendNonCriticalProcesses |= Game_updateCollisions(this);
+
+		__SKIP_REST_OF_FRAME;
 
 		// update game's logic
 		Game_updateLogic(this);

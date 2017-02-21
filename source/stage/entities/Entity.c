@@ -1657,8 +1657,14 @@ bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
-	return (_screenDisplacement->x || _screenDisplacement->y || _screenDisplacement->z) ||
-		(__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
+	return (
+		__INVALIDATE_POSITION & this->invalidateGlobalTransformation ||
+		(
+			_screenDisplacement->x |
+			_screenDisplacement->y |
+			_screenDisplacement->z
+		)
+	);
 }
 
 /**
