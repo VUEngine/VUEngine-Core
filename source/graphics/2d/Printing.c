@@ -247,7 +247,7 @@ FontData* Printing_getFontByName(Printing this, const char* font)
 	}
 
 	// if font's charset has not been preloaded, load it now
-	if(!result->charSet)
+	if(result && !result->charSet)
 	{
 		result->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition);
 	}
@@ -277,6 +277,11 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	FontData* fontData = Printing_getFontByName(this, font);
+
+	if(!fontData)
+	{
+		return;
+	}
 
 	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
@@ -490,6 +495,14 @@ Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* 
 	u16 i = 0, currentLineLength = 0;
 
 	FontData* fontData = Printing_getFontByName(this, font);
+
+	if(!fontdata)
+	{
+		// just to make sure that no client code does a 0 division with these results
+		size = (Size){8, 8, 8};
+		return size;
+	}
+
 	size.y = fontData->fontDefinition->fontSize.y;
 
 	while(string[i])
