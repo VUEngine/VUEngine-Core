@@ -503,35 +503,35 @@ void Debug_processUserInput(Debug this, u16 pressedKey)
 
 	if(pressedKey & K_LL)
 	{
-		Debug_showPreviousPage(Debug_getInstance());
+		Debug_showPreviousPage(this);
 	}
 	else if(pressedKey & K_LR)
 	{
-		Debug_showNextPage(Debug_getInstance());
+		Debug_showNextPage(this);
 	}
 	else if(pressedKey & K_LU)
 	{
-		Debug_showPreviousSubPage(Debug_getInstance());
+		Debug_showPreviousSubPage(this);
 	}
 	else if(pressedKey & K_LD)
 	{
-		Debug_showNextSubPage(Debug_getInstance());
+		Debug_showNextSubPage(this);
 	}
 	else if(pressedKey & K_RL)
 	{
-		Debug_displaceLeft(Debug_getInstance());
+		Debug_displaceLeft(this);
 	}
 	else if(pressedKey & K_RR)
 	{
-		Debug_displaceRight(Debug_getInstance());
+		Debug_displaceRight(this);
 	}
 	else if(pressedKey & K_RU)
 	{
-		Debug_displaceUp(Debug_getInstance());
+		Debug_displaceUp(this);
 	}
 	else if(pressedKey & K_RD)
 	{
-		Debug_displaceDown(Debug_getInstance());
+		Debug_displaceDown(this);
 	}
 }
 
