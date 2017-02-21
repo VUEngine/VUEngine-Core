@@ -1141,6 +1141,10 @@ static void Game_update(Game this)
 		}
 #endif
 
+#ifndef __ALLOW_TORN_FRAMES
+		VIPManager_resetGameFrameStarted(this->vipManager);
+#endif
+
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -1198,8 +1202,6 @@ static void Game_update(Game this)
 		// register the frame buffer in use by the VPU's drawing process
 		VIPManager_registerCurrentDrawingFrameBufferSet(this->vipManager);
 
-		__SKIP_REST_OF_FRAME;
-
 		// update each subsystem
 #if __FRAME_CYCLE == 1
 		if(cycle)
@@ -1219,12 +1221,8 @@ static void Game_update(Game this)
 		{
 #endif
 
-		__SKIP_REST_OF_FRAME;
-
 		// process collisions
 		suspendNonCriticalProcesses |= Game_updateCollisions(this);
-
-		__SKIP_REST_OF_FRAME;
 
 		// physics' update takes place after game's logic
 		// has been done
@@ -1232,8 +1230,6 @@ static void Game_update(Game this)
 
 		// apply transformations
 		Game_updateTransformations(this);
-
-		__SKIP_REST_OF_FRAME;
 
 		// update game's logic
 		Game_updateLogic(this);
@@ -1256,13 +1252,6 @@ static void Game_update(Game this)
 		__SKIP_REST_OF_FRAME;
 
 		Game_stream(this);
-
-		__SKIP_REST_OF_FRAME;
-
-		if(!suspendNonCriticalProcesses)
-		{
-			ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
-		}
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)

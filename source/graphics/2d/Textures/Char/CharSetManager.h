@@ -60,7 +60,7 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet);
 void CharSetManager_defragment(CharSetManager this);
 void CharSetManager_writeCharSets(CharSetManager this);
-void CharSetManager_writeCharSetsProgressively(CharSetManager this);
+bool CharSetManager_writeCharSetsProgressively(CharSetManager this);
 int CharSetManager_getTotalUsedChars(CharSetManager this);
 int CharSetManager_getTotalFreeChars(CharSetManager this);
 int CharSetManager_getTotalCharSets(CharSetManager this);

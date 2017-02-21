@@ -354,7 +354,7 @@ void VIPManager_interruptHandler(void)
 					}
 				}
 
-				// VIPManager_enableInterrupt(_vipManager, __GAMESTART);
+				VIPManager_enableInterrupt(_vipManager, __GAMESTART);
 				break;
 #endif
 		}
@@ -398,7 +398,10 @@ u32 VIPManager_writeDRAM(VIPManager this)
 #endif
 
 	// write newly created chars
-	CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance());
+	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
+	{
+		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
+	}
 
 	// write to DRAM
 	SpriteManager_render(_spriteManager);

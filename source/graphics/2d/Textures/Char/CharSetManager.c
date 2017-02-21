@@ -62,7 +62,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 static void CharSetManager_constructor(CharSetManager this);
 static CharSet CharSetManager_findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
 static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-static void CharSetManager_defragmentProgressively(CharSetManager this);
+static bool CharSetManager_defragmentProgressively(CharSetManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -344,7 +344,7 @@ void CharSetManager_writeCharSets(CharSetManager this)
  *
  * @param this		Function scope
  */
-void CharSetManager_writeCharSetsProgressively(CharSetManager this)
+bool CharSetManager_writeCharSetsProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::writeCharSetsProgressively: null this");
 
@@ -354,12 +354,11 @@ void CharSetManager_writeCharSetsProgressively(CharSetManager this)
 	{
 		CharSet_write(charSet);
 		VirtualList_popFront(this->charSetsPendingWriting);
+		return true;
 	}
-	else
-	{
-		// do some defragmenting
-    	CharSetManager_defragmentProgressively(this);
-	}
+
+	// do some defragmenting
+    return CharSetManager_defragmentProgressively(this);
 }
 
 /**
@@ -388,7 +387,7 @@ void CharSetManager_defragment(CharSetManager this)
  *
  * @param this		Function scope
  */
-static void CharSetManager_defragmentProgressively(CharSetManager this)
+static bool CharSetManager_defragmentProgressively(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
 
@@ -403,7 +402,7 @@ static void CharSetManager_defragmentProgressively(CharSetManager this)
 			if(this->freedOffset == CharSet_getOffset(charSet))
 			{
 				this->freedOffset = 1;
-				return;
+				return false;
 			}
 
 			if(this->freedOffset < CharSet_getOffset(charSet))
@@ -417,12 +416,14 @@ static void CharSetManager_defragmentProgressively(CharSetManager this)
 				this->freedOffset += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
 
 				VirtualList_removeElement(this->charSetsPendingWriting, charSet);
-				return;
+				return true;
 			}
 		}
 
 		this->freedOffset = 1;
 	}
+
+	return false;
 }
 
 /**
