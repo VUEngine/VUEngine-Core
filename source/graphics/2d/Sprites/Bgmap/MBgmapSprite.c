@@ -368,9 +368,6 @@ void MBgmapSprite_render(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
 
-	// first update
-	Sprite_update(__SAFE_CAST(Sprite, this));
-
 	// if render flag is set
 	if(this->texture && this->worldLayer)
 	{
