@@ -621,7 +621,7 @@ void SpriteManager_render(SpriteManager this)
 	}
 #endif
 
-	for(; node; node = node->next)
+	for(; node; node = node->next, this->freeLayer--)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
@@ -651,19 +651,7 @@ void SpriteManager_render(SpriteManager this)
 			}
 #endif
 		}
-
-		// must make sure that no sprite has the end world
-		// which can be the case when a new sprite is added
-		// and the previous end world is assigned to it
-		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
-
-		if(sprite->worldLayer && sprite->worldLayer < this->freeLayer)
-		{
-			this->freeLayer = sprite->worldLayer;
-		}
 	}
-
-	this->freeLayer--;
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager_renderLastLayer(this);

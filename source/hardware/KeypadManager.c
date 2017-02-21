@@ -206,8 +206,8 @@ UserInput KeypadManager_read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
-	// wait for screen to idle
-//	while(*_readingStatus & __S_STAT);
+	// wait keypad to stabilize
+	while(*_readingStatus & __S_STAT);
 
 	// now read the key
 	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
