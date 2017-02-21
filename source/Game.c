@@ -77,6 +77,12 @@
 #define __SKIP_REST_OF_FRAME
 #endif
 
+#ifdef __PROFILE_GAME
+#ifndef __REGISTER_LAST_PROCESS_NAME
+#define __REGISTER_LAST_PROCESS_NAME
+#endif
+#endif
+
 enum StateOperations
 {
 	kSwapState = 0,
@@ -530,7 +536,7 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kSwapState:
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "state swap";
 #endif
 
@@ -547,7 +553,7 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kPushState:
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "state push";
 #endif
 			// setup new state
@@ -556,7 +562,7 @@ static void Game_setNextState(Game this, GameState state)
 
 		case kPopState:
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "state pop";
 #endif
 
@@ -774,7 +780,7 @@ static u32 Game_handleInput(Game this)
 	}
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "input handling";
 #endif
 
@@ -802,7 +808,7 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "messaging";
 #endif
 
@@ -866,7 +872,7 @@ inline static void Game_updateLogic(Game this)
 	}
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "state machine";
 #endif
 
@@ -890,7 +896,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "visuals update";
 #endif
 
@@ -918,7 +924,7 @@ inline static void Game_updatePhysics(Game this)
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "physics";
 #endif
 
@@ -941,13 +947,13 @@ inline static void Game_updateTransformations(Game this)
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "focus screen";
 #endif
 	// position the screen
 	Screen_focus(this->screen, true);
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "transformation";
 #endif
 
@@ -971,7 +977,7 @@ inline static u32 Game_updateCollisions(Game this)
 #endif
 
 	// process the collisions after the transformations have taken place
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "collisions";
 #endif
 
@@ -998,7 +1004,7 @@ inline static void Game_stream(Game this)
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "streaming";
 #endif
 
@@ -1020,7 +1026,7 @@ inline static void Game_checkForNewState(Game this)
 
 	if(this->nextState)
 	{
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = "set next state";
 #endif
 		Game_setNextState(this, this->nextState);
@@ -1126,15 +1132,6 @@ static void Game_update(Game this)
 	while(true)
 	{
 #ifdef __PROFILE_GAME
-		updateProfiling = !Game_isInSpecialMode(this);
-#endif
-		this->gameFrameDone = true;
-
-#ifdef __PROFILE_GAME
-		this->lastProcessName = "frame done";
-#endif
-
-#ifdef __PROFILE_GAME
 		u32 gameFrameTotalTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 
 		if(gameFrameHighestTime < gameFrameTotalTime)
@@ -1149,6 +1146,17 @@ static void Game_update(Game this)
 		// this wait actually controls the frame rate
 		while(VIPManager_waitForFrameStart(this->vipManager));
 		VIPManager_resetGameFrameStarted(this->vipManager);
+
+#ifndef __SHOW_GAME_PROFILING
+#ifdef __REGISTER_LAST_PROCESS_NAME
+		Printing_text(Printing_getInstance(), "                    ", 1, 1, NULL);
+		Printing_text(Printing_getInstance(), this->lastProcessName, 1, 1, NULL);
+#endif
+#endif
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+		this->lastProcessName = "start frame";
+#endif
 
 		this->gameFrameDone = false;
 
@@ -1189,6 +1197,8 @@ static void Game_update(Game this)
 
 		// register the frame buffer in use by the VPU's drawing process
 		VIPManager_registerCurrentDrawingFrameBufferSet(this->vipManager);
+
+		__SKIP_REST_OF_FRAME;
 
 		// update each subsystem
 #if __FRAME_CYCLE == 1
@@ -1280,6 +1290,16 @@ static void Game_update(Game this)
 		cycle = true;
 		}
 #endif
+
+#ifdef __PROFILE_GAME
+		updateProfiling = !Game_isInSpecialMode(this);
+#endif
+		this->gameFrameDone = true;
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+		this->lastProcessName = "frame done";
+#endif
+
 	}
 }
 
