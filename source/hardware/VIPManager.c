@@ -285,11 +285,12 @@ void VIPManager_interruptHandler(void)
 				{
 					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
-					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
+					if(/*!Game_isGameFrameDone(Game_getInstance()) &&*/ 0 >= messageDelay)
 					{
-						messageDelay = __TARGET_FPS * 2;
-						Printing_text(Printing_getInstance(), "VIP GCLK: ", 0, 0, NULL);
-						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 21, 0, NULL);
+						messageDelay = __TARGET_FPS;
+						Printing_text(Printing_getInstance(), "VIP GCLK:                  ", 0, 0, NULL);
+						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 11, 0, NULL);
+
 					}
 
 					if(0 == --messageDelay)
@@ -309,15 +310,15 @@ void VIPManager_interruptHandler(void)
 				Game_setProcessDuringDRAMWritingName(Game_getInstance());
 #endif
 
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT1
 				{
 					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
 					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
 					{
-						messageDelay = __TARGET_FPS * 2;
-						Printing_text(Printing_getInstance(), "VIP XPEND: ", 0, 1, NULL);
-						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 21, 1, NULL);
+						messageDelay = __TARGET_FPS;
+						Printing_text(Printing_getInstance(), "VIP XPEND:                  ", 0, 1, NULL);
+						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 11, 1, NULL);
 					}
 
 					if(0 == --messageDelay)
@@ -340,9 +341,9 @@ void VIPManager_interruptHandler(void)
 
 					if(0 >= messageDelay)
 					{
-						messageDelay = __TARGET_FPS * 2;
+						messageDelay = __TARGET_FPS;
 						static u32 count = 0;
-						Printing_text(Printing_getInstance(), "VPU Overtime! (   )", 0, 2, NULL);
+						Printing_text(Printing_getInstance(), "VIP Overtime! (   )", 0, 2, NULL);
 						Printing_int(Printing_getInstance(), ++count, 15, 2, NULL);
 					}
 
