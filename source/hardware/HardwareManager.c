@@ -74,11 +74,11 @@ __CLASS_DEFINITION(HardwareManager, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern u32 key_vector;
-extern u32 tim_vector;
-extern u32 cro_vector;
-extern u32 com_vector;
-extern u32 vpu_vector;
+extern u32 keyVector;
+extern u32 timVector;
+extern u32 croVector;
+extern u32 comVector;
+extern u32 vipVector;
 
 
 int _lp = 0;
@@ -177,11 +177,11 @@ void HardwareManager_communicationInterruptHandler(void)
  */
 void HardwareManager_setInterruptVectors(HardwareManager this __attribute__ ((unused)))
 {
-	key_vector = (u32)KeypadManager_interruptHandler;
-	tim_vector = (u32)TimerManager_interruptHandler;
-	cro_vector = (u32)HardwareManager_croInterruptHandler;
-	com_vector = (u32)HardwareManager_communicationInterruptHandler;
-	vpu_vector = (u32)VIPManager_interruptHandler;
+	keyVector = (u32)KeypadManager_interruptHandler;
+	timVector = (u32)TimerManager_interruptHandler;
+	croVector = (u32)HardwareManager_croInterruptHandler;
+	comVector = (u32)HardwareManager_communicationInterruptHandler;
+	vipVector = (u32)VIPManager_interruptHandler;
 }
 
 /**

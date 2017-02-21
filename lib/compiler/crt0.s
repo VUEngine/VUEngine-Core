@@ -6,20 +6,20 @@
  pointers
  *************************************************/
 
-.global _key_vector
-_key_vector = 0x0500FFC0
+.global _keyVector
+_keyVector = 0x0500FFC0
 
-.global _tim_vector
-_tim_vector = 0x0500FFC4
+.global _timVector
+_timVector = 0x0500FFC4
 
-.global _cro_vector
-_cro_vector = 0x0500FFC8
+.global _croVector
+_croVector = 0x0500FFC8
 
-.global _com_vector
-_com_vector = 0x0500FFCC
+.global _comVector
+_comVector = 0x0500FFCC
 
-.global _vpu_vector
-_vpu_vector = 0x0500FFD0
+.global _vipVector
+_vipVector = 0x0500FFD0
 
 
 
@@ -194,8 +194,8 @@ __interrupt_handler_prolog:
 	st.w	r6,0x003c[sp]
 	st.w	r2,0x0040[sp]
 	st.w	r1,0x0044[sp]
-	movhi	hi(_key_vector),r0,r1
-	movea	lo(_key_vector),r1,r1
+	movhi	hi(_keyVector),r0,r1
+	movea	lo(_keyVector),r1,r1
 	stsr	sr5,r6
 	shr	    0x0E,r6
 	andi	0x003C,r6,r6
