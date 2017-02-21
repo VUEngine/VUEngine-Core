@@ -354,8 +354,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 	if(this->texture)
 	{
-		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+		this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
+		this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
 	}
 
 	if(this->param)
@@ -433,8 +433,8 @@ void BgmapSprite_render(BgmapSprite this)
 		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
 		// get sprite's size
-		int width = Texture_getCols(this->texture) << 3;
-		int height = Texture_getRows(this->texture) << 3;
+		int width = this->texture->textureDefinition->cols << 3;
+		int height = this->texture->textureDefinition->rows << 3;
 		int w = width;
 		int h = height;
 

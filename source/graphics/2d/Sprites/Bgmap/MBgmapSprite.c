@@ -404,7 +404,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 		// set the world size
 		if(!this->mBgmapSpriteDefinition->xLoop)
 		{
-			int w = (((int)Texture_getCols(this->texture))<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+			int w = (((int)this->texture->textureDefinition->cols)<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
 			worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
 
 			if(!worldPointer->w)
@@ -425,7 +425,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 		if(!this->mBgmapSpriteDefinition->yLoop)
 		{
-			int h = (((int)Texture_getRows(this->texture))<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+			int h = (((int)this->texture->textureDefinition->rows)<< 3) - 1 - (worldPointer->my - this->textureYOffset);
 			worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
 
 			if(!worldPointer->h)
@@ -501,8 +501,8 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 	for(; node; node = node->next)
 	{
 		// free the texture
-		int textureCols = Texture_getCols(__SAFE_CAST(Texture, node->data));
-		int textureRows = Texture_getRows(__SAFE_CAST(Texture, node->data));
+		int textureCols = (__SAFE_CAST(Texture, node->data))->textureDefinition->cols;
+		int textureRows = (__SAFE_CAST(Texture, node->data))->textureDefinition->rows;
 
 		if(cols < textureCols)
 		{
