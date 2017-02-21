@@ -292,6 +292,9 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
 	SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
 
+	// setup ui
+	Stage_setupUI(this);
+
 	// preload textures
 	Stage_preloadAssets(this);
 
@@ -303,9 +306,6 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 
 	// retrieve focus entity for streaming
 	Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
-
-	// setup ui
-	Stage_setupUI(this);
 
 	// set physics
 	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.friction);
