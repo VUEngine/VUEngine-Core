@@ -500,10 +500,12 @@ void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement
 /**
  * Set Sprite's render mode
  *
- * @memberof	ObjectSprite
+ * @memberof		ObjectSprite
  * @public
  *
- * @param this	Function scope
+ * @param this		Function scope
+ * @param display	Which displays to show on
+ * @param mode		WORLD layer's head mode
  */
 void ObjectSprite_setMode(ObjectSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
 {

@@ -305,7 +305,7 @@ void StageEditor_hide(StageEditor this)
  * @public
  *
  * @param this			Function scope
- * @param userInput		User input
+ * @param pressedKey	User input
  */
 void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 {

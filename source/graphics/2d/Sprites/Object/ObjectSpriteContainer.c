@@ -728,12 +728,12 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 /**
  * Set Sprite's render mode
  *
- * @memberof	ObjectSpriteContainer
+ * @memberof		ObjectSpriteContainer
  * @public
  *
- * @param this	Function scope
- *
- * @return 		Mode
+ * @param this		Function scope
+ * @param display	Which displays to show on
+ * @param mode		WORLD layer's head mode
  */
 void ObjectSpriteContainer_setMode(ObjectSpriteContainer this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
 {

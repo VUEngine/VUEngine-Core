@@ -650,10 +650,12 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
 /**
  * Set Sprite's render mode
  *
- * @memberof	BgmapSprite
+ * @memberof		BgmapSprite
  * @public
  *
- * @param this	Function scope
+ * @param this		Function scope
+ * @param display	Which displays to show on
+ * @param mode		WORLD layer's head mode
  */
 void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 {

@@ -495,7 +495,7 @@ static void Debug_lightUpGame(Debug this)
  * @public
  *
  * @param this			Function scope
- * @param userInput		User input
+ * @param pressedKey	User input
  */
 void Debug_processUserInput(Debug this, u16 pressedKey)
 {

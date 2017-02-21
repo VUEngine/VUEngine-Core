@@ -442,7 +442,7 @@ static void AnimationEditor_setupMode(AnimationEditor this)
  * @public
  *
  * @param this			Function scope
- * @param userInput		User input
+ * @param pressedKey	User input
  */
 void AnimationEditor_processUserInput(AnimationEditor this, u16 pressedKey)
 {

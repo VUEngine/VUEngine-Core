@@ -140,7 +140,7 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
  * @memberof		InverseCuboid
  * @public
  *
- * @param this		Function scope
+ * @param fist 		RightCuboid to check
  * @param second 	RightCuboid to check against
  *
  * @return			Whether it overlaps

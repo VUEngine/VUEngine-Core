@@ -614,10 +614,12 @@ static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
 /**
  * Set Sprite's render mode
  *
- * @memberof	MBgmapSprite
+ * @memberof		MBgmapSprite
  * @public
  *
- * @param this	Function scope
+ * @param this		Function scope
+ * @param display	Which displays to show on
+ * @param mode		WORLD layer's head mode
  */
 void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
 {
