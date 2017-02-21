@@ -71,6 +71,12 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __ALLOW_TORN_FRAMES
+#define __SKIP_REST_OF_FRAME	if(!VIPManager_waitForFrameStart(this->vipManager)) continue
+#else
+#define __SKIP_REST_OF_FRAME
+#endif
+
 enum StateOperations
 {
 	kSwapState = 0,
@@ -1196,21 +1202,19 @@ static void Game_update(Game this)
 		// process user's input
 		u32 suspendNonCriticalProcesses = Game_handleInput(this);
 
-		// dispatch delayed messages
-		if(!suspendNonCriticalProcesses)
-		{
-			suspendNonCriticalProcesses = Game_dispatchDelayedMessages(this);
-		}
-
-		// update game's logic
-		Game_updateLogic(this);
-
 #if __FRAME_CYCLE == 1
 		cycle = false;
 		}
 		else
 		{
 #endif
+
+		__SKIP_REST_OF_FRAME;
+
+		// process collisions
+		suspendNonCriticalProcesses |= Game_updateCollisions(this);
+
+		__SKIP_REST_OF_FRAME;
 
 		// physics' update takes place after game's logic
 		// has been done
@@ -1219,8 +1223,10 @@ static void Game_update(Game this)
 		// apply transformations
 		Game_updateTransformations(this);
 
-		// process collisions
-		suspendNonCriticalProcesses |= Game_updateCollisions(this) | !VIPManager_waitForFrameStart(this->vipManager);
+		__SKIP_REST_OF_FRAME;
+
+		// update game's logic
+		Game_updateLogic(this);
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)
@@ -1228,12 +1234,24 @@ static void Game_update(Game this)
 			streamingProcessTime = 0;
 		}
 #endif
+
+		__SKIP_REST_OF_FRAME;
+
+		// dispatch delayed messages
 		if(!suspendNonCriticalProcesses)
 		{
-			if(!ParamTableManager_defragmentProgressively(ParamTableManager_getInstance()))
-			{
-				Game_stream(this);
-			}
+			suspendNonCriticalProcesses = Game_dispatchDelayedMessages(this);
+		}
+
+		__SKIP_REST_OF_FRAME;
+
+		Game_stream(this);
+
+		__SKIP_REST_OF_FRAME;
+
+		if(!suspendNonCriticalProcesses)
+		{
+			ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
 		}
 
 #ifdef __PROFILE_GAME

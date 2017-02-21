@@ -20,17 +20,13 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __ALERT_VIP_OVERTIME
 //#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __DRAW_SHAPES
+//#define __ALLOW_TORN_FRAMES
 
-#undef __PRINT_MEMORY_POOL_STATUS
-#undef __PRINT_DETAILED_MEMORY_POOL_STATUS
+//#undef __PRINT_MEMORY_POOL_STATUS
+//#undef __PRINT_DETAILED_MEMORY_POOL_STATUS
 
 //#define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 //#define __ALERT_STACK_OVERFLOW
-
-//#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION	1
-//#undef __TIMER_FREQUENCY
-//#define __TIMER_FREQUENCY	__TIMER_20US
 
 
 // do not delete the following macros!
