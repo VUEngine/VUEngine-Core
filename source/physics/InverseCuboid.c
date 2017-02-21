@@ -140,10 +140,10 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
  * @memberof		InverseCuboid
  * @public
  *
- * @param fist 		RightCuboid to check
+ * @param first		RightCuboid to check
  * @param second 	RightCuboid to check against
  *
- * @return			Whether it overlaps
+ * @return			Whether they overlap or not
  */
 bool InverseCuboid_overlapsWithRightCuboids(RightCuboid* first, RightCuboid* second)
 {

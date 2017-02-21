@@ -136,10 +136,11 @@ void Object_destructor(Object this)
  * Prevents the modification or deletion of the event list while
  * the object is firing an event
  *
- * @memberof	Object
+ * @memberof			Object
  * @private
  *
- * @param this	Function scope
+ * @param this			Function scope
+ * @param messsage		Message to show in case of error
  */
 static void Object_checkIfFiringEvent(Object this, const char* message)
 {
