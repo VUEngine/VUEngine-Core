@@ -71,7 +71,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#ifdef __ALLOW_TORN_FRAMES
+#ifndef __FORCE_VIP_SYNC
 #define __SKIP_REST_OF_FRAME	if(!VIPManager_waitForFrameStart(this->vipManager)) continue
 #else
 #define __SKIP_REST_OF_FRAME
@@ -1141,7 +1141,7 @@ static void Game_update(Game this)
 		}
 #endif
 
-#ifndef __ALLOW_TORN_FRAMES
+#ifdef __FORCE_VIP_SYNC
 		VIPManager_resetGameFrameStarted(this->vipManager);
 #endif
 
@@ -1250,17 +1250,15 @@ static void Game_update(Game this)
 		}
 #endif
 
+		// dispatch delayed messages
+		suspendNonCriticalProcesses |= Game_dispatchDelayedMessages(this);
+
 		__SKIP_REST_OF_FRAME;
 
-		// dispatch delayed messages
 		if(!suspendNonCriticalProcesses)
 		{
-			suspendNonCriticalProcesses = Game_dispatchDelayedMessages(this);
+			Game_stream(this);
 		}
-
-		__SKIP_REST_OF_FRAME;
-
-		Game_stream(this);
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)

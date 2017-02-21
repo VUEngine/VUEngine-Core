@@ -63,9 +63,6 @@
 // Alert VIP's overtime
 #define __ALERT_VIP_OVERTIME
 
-// Alert transformation - VIP unsync warning
-#define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
-
 
 //---------------------------------------------------------------------------------------------------------
 //											DEBUGGING TOOLS
@@ -127,10 +124,11 @@
 //											FRAME RATE CONTROL
 //---------------------------------------------------------------------------------------------------------
 
-/* Disable VIP's __XPEND interrupt, and thus rendering
- * while transformation operations have not finished
+/* If defined, when the VIP's GAMESTART interrupt is fired before
+ * the current game frame is done, the engine skips to the next
+ * game frame.
  */
-#undef __FORCE_VIP_SYNC
+#define __FORCE_VIP_SYNC
 
 // Timer resolution
 #define __TIMER_RESOLUTION						5
@@ -198,7 +196,7 @@
 	__BLOCK_DEFINITION(68, 70)																			\
 	__BLOCK_DEFINITION(32, 12)																			\
 	__BLOCK_DEFINITION(28, 180)																			\
-	__BLOCK_DEFINITION(24, 90)																			\
+	__BLOCK_DEFINITION(24, 128)																			\
 	__BLOCK_DEFINITION(20, 700)																			\
 	__BLOCK_DEFINITION(16, 500)																			\
 

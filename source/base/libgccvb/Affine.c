@@ -140,7 +140,7 @@ fix19_13 Affine_applyAll(u32 param, fix19_13 paramTableRow, fix19_13 x, fix19_13
 	AffineEntry* affine = (AffineEntry*)(param & 0xFFFFFFF0);
 
 	int i = 0 <= paramTableRow? paramTableRow: 0;
-	int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(__ABS(scale->y))));
+	int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(__ABS(scale->y)))) + 1;
 	int counter = SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager_getInstance());
 
 	for(;counter && i <= lastRow; i++, counter--)
