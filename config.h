@@ -63,7 +63,7 @@
 // Alert VIP's overtime
 #define __ALERT_VIP_OVERTIME
 
-// Alert transformation - VIP unsync warning
+// Alert transformation - VIP async warning
 #define __ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP
 
 
