@@ -1200,6 +1200,11 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 		// increase game frame total time
 		Game_checkFrameRate(this, gameFrameDuration);
+#else
+#ifdef __PRINT_MEMORY_POOL_STATUS
+		// increase game frame total time
+		Game_checkFrameRate(this, gameFrameDuration);
+#endif
 #endif
 #endif
 
@@ -1214,6 +1219,7 @@ static void Game_update(Game this)
 		if(cycle)
 		{
 #endif
+
 		// this is the moment to check if the game's state
 		// needs to be changed
 		Game_checkForNewState(this);
@@ -1228,6 +1234,17 @@ static void Game_update(Game this)
 		{
 #endif
 
+		if(!suspendNonCriticalProcesses)
+		{
+			// dispatch delayed messages
+			Game_dispatchDelayedMessages(this);
+		}
+
+		// update game's logic
+		Game_updateLogic(this);
+
+		__SKIP_REST_OF_FRAME;
+
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
@@ -1236,29 +1253,15 @@ static void Game_update(Game this)
 		Game_updateTransformations(this);
 
 		// process collisions
-		suspendNonCriticalProcesses |= Game_updateCollisions(this);
-
-		__SKIP_REST_OF_FRAME;
-
-		// update game's logic
-		Game_updateLogic(this);
+		Game_updateCollisions(this);
 
 #ifdef __PROFILE_GAME
-		if(updateProfiling)
-		{
-			streamingProcessTime = 0;
-		}
+		streamingProcessTime = 0;
 #endif
-
-		// dispatch delayed messages
-		suspendNonCriticalProcesses |= Game_dispatchDelayedMessages(this);
 
 		__SKIP_REST_OF_FRAME;
 
-		if(!suspendNonCriticalProcesses)
-		{
-			Game_stream(this);
-		}
+		Game_stream(this);
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)

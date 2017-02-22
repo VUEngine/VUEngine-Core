@@ -128,10 +128,10 @@
  * the current game frame is done, the engine skips to the next
  * game frame.
  */
-#define __FORCE_VIP_SYNC
+#undef __FORCE_VIP_SYNC
 
 // Timer resolution
-#define __TIMER_RESOLUTION						5
+#define __TIMER_RESOLUTION						1
 
 // Options are __TIMER_20US and __TIMER_100US
 #define __TIMER_FREQUENCY						__TIMER_20US
@@ -317,6 +317,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __GRAVITY								13000
+
+/* 2's power to divide to the gravity when applied to objects
+ * that were at rest before. Initial applied gravity = gravity >> __APPLIED_GRAVITY_FACTOR
+ */
+#define __APPLIED_GRAVITY_FACTOR				3
 
 // Number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY			10
