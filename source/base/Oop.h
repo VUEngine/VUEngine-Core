@@ -183,7 +183,7 @@
 		{																								\
 			/* use a temporal pointer to avoid illegal cast between pointers to data and functions */	\
 			void (*(*tempPointer))() = (void (*(*))())&ClassVTable ## _vTable.MethodName;				\
-			*(tempPointer) = (void (*)())&ClassName ## _ ## MethodName;								 \
+			*(tempPointer) = (void (*)())&ClassName ## _ ## MethodName;									\
 		}
 
 // configure class's vtable
@@ -272,7 +272,7 @@
 		extern struct ClassName ## _vTable ClassName ## _vTable											\
 
 // declare a class
-#define __CLASS(ClassName)																					\
+#define __CLASS(ClassName)																				\
 																										\
 		/* declare a const pointer */																	\
 		typedef struct ClassName ## _str* ClassName;													\
@@ -336,7 +336,7 @@
 		/* class' vtable's definition */																\
 		struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;		\
 																										\
-		static void (* const _baseDestructor)(Object) =									 				\
+		static void (* const _baseDestructor)(Object) =													\
 		/* class' base's destructor */																	\
 			(void (*)(Object))&BaseClassName ## _destructor;											\
 																										\
@@ -344,7 +344,7 @@
 		__GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
 																										\
 		/* define class's getBaseClass method */														\
-		ObjectBaseClassPointer ClassName ## _getBaseClass(Object this __attribute__ ((unused)))		 \
+		ObjectBaseClassPointer ClassName ## _getBaseClass(Object this __attribute__ ((unused)))			\
 		{																								\
 			return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;								\
 		}																								\
@@ -365,7 +365,7 @@
 		__VIRTUAL_CALL(Object, getClassName, (Object)object)
 
 // retrieves object's class' name
-#define __GET_CLASS_NAME_UNSAFE(object)																 \
+#define __GET_CLASS_NAME_UNSAFE(object)																	\
 																										\
 		__VIRTUAL_CALL(Object, getClassName, (Object)object)
 
@@ -382,7 +382,7 @@
 #define __SINGLETON(ClassName, ...)																		\
 																										\
 		/* declare the static instance */																\
-		static ClassName ## _str _instance ## ClassName __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;	 \
+		static ClassName ## _str _instance ## ClassName __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		/* a flag to know when to allow construction */													\
 		static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\

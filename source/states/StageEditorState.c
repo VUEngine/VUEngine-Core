@@ -29,7 +29,7 @@
 #include <Game.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>
-#include <KeypadManager.h>
+#include <KeyPadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -38,10 +38,10 @@
 
 static void StageEditorState_destructor(StageEditorState this);
 static void StageEditorState_constructor(StageEditorState this);
-static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void StageEditorState_onUserInput(StageEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)));
+static void StageEditorState_enter(StageEditorState this, void* owner);
+static void StageEditorState_execute(StageEditorState this, void* owner);
+static void StageEditorState_exit(StageEditorState this, void* owner);
+static void StageEditorState_onUserInput(StageEditorState this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------

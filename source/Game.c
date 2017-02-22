@@ -48,7 +48,7 @@
 #include <StateMachine.h>
 #include <Screen.h>
 #include <ScreenMovementManager.h>
-#include <KeypadManager.h>
+#include <KeyPadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
