@@ -1260,24 +1260,70 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 
 	VirtualNode node = this->sprites->head;
 
-	// move each child to a temporary list
-	for(; node ; node = node->next)
+	if(updatePosition && updateRotation && updateScale)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
-
-		if(updatePosition)
+		for(; node ; node = node->next)
 		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+			// update sprite's 2D position
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+
+			// update sprite's 2D rotation
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+
+			// calculate the scale
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+
+			// calculate sprite's parallax
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+		}
+	}
+	else if(updatePosition && updateRotation)
+	{
+		for(; node ; node = node->next)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+			// update sprite's 2D position
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+
+			// update sprite's 2D rotation
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+		}
+	}
+	else if(updatePosition && updateScale)
+	{
+		for(; node ; node = node->next)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+			// update sprite's 2D position
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+
+			// calculate the scale
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+
+			// calculate sprite's parallax
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+		}
+	}
+	else if(updatePosition)
+	{
+		for(; node ; node = node->next)
+		{
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
 			// update sprite's 2D position
 			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
 		}
-
-		if(updateRotation)
+	}
+	else if(updateScale)
+	{
+		for(; node ; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
-		}
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		if(updateScale)
-		{
 			// calculate the scale
 			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
 
