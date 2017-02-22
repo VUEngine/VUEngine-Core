@@ -1034,12 +1034,10 @@ static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* accelerat
 
 	fix19_13 bounceCoeficient = __1I_FIX19_13 - totalElasticity;
 	fix19_13 velocityDelta = FIX19_13_MULT(*acceleration, elapsedTime);
-	*velocity += velocityDelta;
 	*velocity = FIX19_13_MULT(-*velocity, bounceCoeficient);
+	*acceleration = 0;
 
-//	*acceleration >>= 1;
-
-	return ((velocityDelta) < __ABS(*velocity));
+	return (__ABS(velocityDelta) < __ABS(*velocity));
 }
 
 // take a hit
