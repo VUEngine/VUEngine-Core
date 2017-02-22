@@ -321,7 +321,7 @@
 /* 2's power to divide to the gravity when applied to objects
  * that were at rest before. Initial applied gravity = gravity >> __APPLIED_GRAVITY_FACTOR
  */
-#define __APPLIED_GRAVITY_FACTOR				3
+#define __APPLIED_GRAVITY_FACTOR				2
 
 // Number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY			10
