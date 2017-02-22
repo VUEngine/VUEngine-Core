@@ -1243,8 +1243,6 @@ static void Game_update(Game this)
 		// update game's logic
 		Game_updateLogic(this);
 
-		__SKIP_REST_OF_FRAME;
-
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
