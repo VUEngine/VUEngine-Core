@@ -91,7 +91,7 @@ void Game_reset(Game this);
 void Game_resetProfiling(Game this);
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
 void Game_setOptical(Game this, Optical optical);
-void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x, int y);
+void Game_showLastGameFrameProfiling(Game this, int x, int y);
 void Game_start(Game this, GameState state);
 void Game_unpause(Game this, GameState pauseState);
 void Game_wait(Game this, u32 milliSeconds);

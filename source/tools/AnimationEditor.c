@@ -36,7 +36,7 @@
 #include <Texture.h>
 #include <AnimationController.h>
 #include <BgmapTextureManager.h>
-#include <KeypadManager.h>
+#include <KeyPadManager.h>
 #include <Printing.h>
 
 

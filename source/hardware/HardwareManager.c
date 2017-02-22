@@ -26,7 +26,7 @@
 
 #include <HardwareManager.h>
 #include <Game.h>
-#include <KeypadManager.h>
+#include <KeyPadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>

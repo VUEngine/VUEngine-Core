@@ -29,7 +29,7 @@
 #include <Game.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>
-#include <KeypadManager.h>
+#include <KeyPadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -38,10 +38,10 @@
 
 static void AnimationEditorState_destructor(AnimationEditorState this);
 static void AnimationEditorState_constructor(AnimationEditorState this);
-static void AnimationEditorState_enter(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void AnimationEditorState_execute(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void AnimationEditorState_onUserInput(AnimationEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)));
+static void AnimationEditorState_enter(AnimationEditorState this, void* owner);
+static void AnimationEditorState_execute(AnimationEditorState this, void* owner);
+static void AnimationEditorState_exit(AnimationEditorState this, void* owner);
+static void AnimationEditorState_onUserInput(AnimationEditorState this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------

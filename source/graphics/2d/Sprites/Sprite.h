@@ -274,8 +274,8 @@ void Sprite_setTransparent(Sprite this, bool value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
 void Sprite_setDirection(Sprite this, int axis, int direction);
-void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)));
-void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)));
+void Sprite_position(Sprite this, const VBVec3D* position);
+void Sprite_calculateParallax(Sprite this, fix19_13 z);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);

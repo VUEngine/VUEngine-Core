@@ -246,8 +246,8 @@ static void Debug_hardwareRegistersPage(Debug this, int increment, int x, int y)
 static void Debug_sramPage(Debug this, int increment, int x, int y);
 
 // sub pages
-static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
-static void Debug_recyclableBgmapTextureManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
+static void Debug_streamingShowStatus(Debug this, int increment, int x, int y);
+static void Debug_recyclableBgmapTextureManagerShowStatus(Debug this, int increment, int x, int y);
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_texturesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_objectsShowStatus(Debug this, int increment, int x, int y);

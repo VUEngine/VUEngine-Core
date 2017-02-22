@@ -28,7 +28,7 @@
 #include <Debug.h>
 #include <Game.h>
 #include <Telegram.h>
-#include <KeypadManager.h>
+#include <KeyPadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,10 +37,10 @@
 
 static void DebugState_destructor(DebugState this);
 static void DebugState_constructor(DebugState this);
-static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)));
-static void DebugState_onUserInput(DebugState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)));
+static void DebugState_enter(DebugState this, void* owner);
+static void DebugState_execute(DebugState this, void* owner);
+static void DebugState_exit(DebugState this, void* owner);
+static void DebugState_onUserInput(DebugState this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
