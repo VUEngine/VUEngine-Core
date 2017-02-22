@@ -673,15 +673,6 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
 		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
-
-		if(!(axisOfCollision & Body_isMoving(this->body)))
-		{
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
-		}
-		else
-		{
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
-		}
 	}
 }
 

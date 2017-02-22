@@ -740,14 +740,10 @@ void Body_stopMovement(Body this, int axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
-	if(!Body_isMoving(this))
-	{
-		return;
-	}
-
+	int axisOfMovement = Body_isMoving(this);
 	int axisOfStopping = 0;
 
-	if(__XAXIS & axis)
+	if((axisOfMovement & __XAXIS) && (axis & __XAXIS))
 	{
 		// not moving anymore
 		this->velocity.x = 0;
@@ -756,7 +752,7 @@ void Body_stopMovement(Body this, int axis)
 		axisOfStopping |= __XAXIS;
 	}
 
-	if(__YAXIS & axis)
+	if((axisOfMovement & __YAXIS) && (axis & __YAXIS))
 	{
 		// not moving anymore
 		this->velocity.y = 0;
@@ -765,7 +761,7 @@ void Body_stopMovement(Body this, int axis)
 		axisOfStopping |= __YAXIS;
 	}
 
-	if(__ZAXIS & axis)
+	if((axisOfMovement & __ZAXIS) && (axis & __ZAXIS))
 	{
 		// not moving anymore
 		this->velocity.z = 0;
@@ -774,9 +770,13 @@ void Body_stopMovement(Body this, int axis)
 		axisOfStopping |= __ZAXIS;
 	}
 
-	if(!Body_isMoving(this))
+	if(axisOfStopping)
 	{
-		Body_sleep(this);
+		if(!Body_isMoving(this))
+		{
+			Body_sleep(this);
+		}
+
 		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axisOfStopping);
 	}
 }
@@ -949,9 +949,9 @@ int Body_isMoving(Body this)
 
 	int result = 0;
 
-	result |= ((int)FIX19_13TOI(this->velocity.x) || this->acceleration.x) ? __XAXIS : 0;
-	result |= ((int)FIX19_13TOI(this->velocity.y) || this->acceleration.y) ? __YAXIS : 0;
-	result |= ((int)FIX19_13TOI(this->velocity.z) || this->acceleration.z) ? __ZAXIS : 0;
+	result |= ((int)FIX19_13TOI(this->velocity.x) | this->acceleration.x) ? __XAXIS : 0;
+	result |= ((int)FIX19_13TOI(this->velocity.y) | this->acceleration.y) ? __YAXIS : 0;
+	result |= ((int)FIX19_13TOI(this->velocity.z) | this->acceleration.z) ? __ZAXIS : 0;
 
 	return this->awake && this->active ? result : 0;
 }
@@ -963,12 +963,15 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 
 	int axisOnWhichStopped = 0;
 	int axisOnWhichBounced = 0;
+	fix19_13 velocity;
 
 	if((__XAXIS & axis))
 	{
-		if((__XAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.x, &this->acceleration.x, otherBodyElasticity))
+		velocity = this->velocity.x;
+		if((__XAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &velocity, &this->acceleration.x, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __XAXIS;
+			this->velocity.x = velocity;
 		}
 		else
 		{
@@ -978,9 +981,11 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 
 	if((__YAXIS & axis))
 	{
-		if((__YAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.y, &this->acceleration.y, otherBodyElasticity))
+		velocity = this->velocity.y;
+		if((__YAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &velocity, &this->acceleration.y, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __YAXIS;
+			this->velocity.y = velocity;
 		}
 		else
 		{
@@ -990,9 +995,11 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 
 	if((__ZAXIS & axis))
 	{
-		if((__ZAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &this->velocity.z, &this->acceleration.z, otherBodyElasticity))
+		velocity = this->velocity.z;
+		if((__ZAXIS & axisAllowedForBouncing) && Body_bounceOnAxis(this, &velocity, &this->acceleration.z, otherBodyElasticity))
 		{
 			axisOnWhichBounced |= __ZAXIS;
+			this->velocity.z = velocity;
 		}
 		else
 		{
