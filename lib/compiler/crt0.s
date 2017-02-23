@@ -133,13 +133,13 @@ end_init_sram_bss:
     ldsr    r1, chcw
 
 /* setup sp, fp, gp, and tp */
-	movhi	hi(__stack),r0,sp
-	movea	lo(__stack),sp,sp
+	movhi	hi(__stack), r0,sp
+	movea	lo(__stack), sp,sp
 
 	movhi	hi(__gp), r0, gp
 	movea   lo(__gp), gp, gp
 
-	movhi	hi(__tp),r0,tp
+	movhi	hi(__tp), r0,tp
 	movea   lo(__tp), tp, tp
 
 /* long call setup classes */
