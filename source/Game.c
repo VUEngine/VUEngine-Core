@@ -1268,7 +1268,7 @@ static void Game_update(Game this)
 		__CHECK_IF_CAN_WRITE_DRAM
 
 		// process user's input
-		u32 suspendNonCriticalProcesses = Game_handleInput(this);
+		u32 skipNonCriticalProcesses = Game_handleInput(this);
 
 #if __FRAME_CYCLE == 1
 		cycle = false;
@@ -1296,7 +1296,7 @@ static void Game_update(Game this)
 		__CHECK_IF_CAN_WRITE_DRAM
 
 		// process collisions
-		suspendNonCriticalProcesses |= Game_updateCollisions(this);
+		skipNonCriticalProcesses |= Game_updateCollisions(this);
 
 		__CHECK_IF_CAN_WRITE_DRAM
 
@@ -1306,15 +1306,15 @@ static void Game_update(Game this)
 
 		__CHECK_IF_CAN_WRITE_DRAM
 
-		if(!suspendNonCriticalProcesses)
+		if(!skipNonCriticalProcesses)
 		{
 			// dispatch delayed messages
-			suspendNonCriticalProcesses = Game_dispatchDelayedMessages(this);
+			skipNonCriticalProcesses = Game_dispatchDelayedMessages(this);
 		}
 
 		__CHECK_IF_CAN_WRITE_DRAM
 
-		if(!suspendNonCriticalProcesses)
+		if(!skipNonCriticalProcesses)
 		{
 			Game_stream(this);
 		}

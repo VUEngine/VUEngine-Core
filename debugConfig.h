@@ -27,8 +27,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __FORCE_VIP_SYNC
 
 
-#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						1
+//#undef __TIMER_RESOLUTION
+//#define __TIMER_RESOLUTION						1
 
 
 // do not delete the following macros!
