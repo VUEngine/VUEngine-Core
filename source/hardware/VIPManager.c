@@ -80,6 +80,7 @@ typedef struct PostProcessingEffectRegistry
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
 		u16 gameFrameStarted;																			\
+		u16 drawingEnded;																			\
 
 /**
  * @class	VIPManager
@@ -145,6 +146,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;
 	this->gameFrameStarted = false;
+	this->drawingEnded = false;
 
 	_vipManager = this;
 	_paramTableManager = ParamTableManager_getInstance();
@@ -249,6 +251,13 @@ u32 __attribute__ ((noinline)) VIPManager_waitForFrameStart(VIPManager this)
 	return !this->gameFrameStarted;
 }
 
+u32 __attribute__ ((noinline)) VIPManager_drawingEnded(VIPManager this)
+{
+	ASSERT(this, "VIPManager::waitForGameFrame: null this");
+
+	return this->drawingEnded;
+}
+
 /**
  * VIP's interrupt handler
  *
@@ -301,7 +310,7 @@ void VIPManager_interruptHandler(void)
 				}
 #endif
 				_vipManager->gameFrameStarted = true;
-				VIPManager_enableInterrupt(_vipManager, __XPEND);
+				VIPManager_enableInterrupt(_vipManager, __XPEND | __GAMESTART);
 				break;
 
 			case __XPEND:
@@ -329,7 +338,8 @@ void VIPManager_interruptHandler(void)
 				}
 #endif
 
-				VIPManager_writeDRAM(_vipManager);
+				_vipManager->drawingEnded = true;
+				VIPManager_disableDrawing(_vipManager);
 				VIPManager_enableInterrupt(_vipManager, __GAMESTART);
 				break;
 
@@ -391,7 +401,7 @@ u32 VIPManager_writeDRAM(VIPManager this)
 	ASSERT(this, "VIPManager::writeDRAM: null this");
 
 	// don't allow drawing while renderings
-	VIPManager_disableDrawing(this);
+	//VIPManager_disableDrawing(this);
 
 #ifdef __PROFILE_GAME
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
@@ -424,8 +434,10 @@ u32 VIPManager_writeDRAM(VIPManager this)
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}
 
+	this->drawingEnded = false;
 	// enable drawing
 	VIPManager_enableDrawing(this);
+	VIPManager_enableInterrupt(_vipManager, __XPEND | __GAMESTART);
 
 #ifdef __PROFILE_GAME
 	return TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
