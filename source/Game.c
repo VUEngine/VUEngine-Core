@@ -79,12 +79,6 @@
 			Game_render(this);																			\
 		}
 
-#ifndef __FORCE_VIP_SYNC
-#define __SKIP_REST_OF_FRAME	if(!VIPManager_waitForFrameStart(this->vipManager)) continue
-#else
-#define __SKIP_REST_OF_FRAME
-#endif
-
 #ifdef __PROFILE_GAME
 #ifndef __REGISTER_LAST_PROCESS_NAME
 #define __REGISTER_LAST_PROCESS_NAME
@@ -248,7 +242,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y)
 
 void SpriteManager_sortLayersProgressively(SpriteManager this);
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
-u32 VIPManager_writeDRAM(VIPManager this);
+void VIPManager_writeDRAM(VIPManager this);
 
 #ifdef __PROFILE_GAME
 
@@ -1322,7 +1316,6 @@ static void Game_update(Game this)
 
 		__CHECK_IF_CAN_WRITE_DRAM
 
-		//__SKIP_REST_OF_FRAME;
 		if(!suspendNonCriticalProcesses)
 		{
 			Game_stream(this);

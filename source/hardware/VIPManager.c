@@ -109,7 +109,6 @@ static ParamTableManager _paramTableManager;
 static CharSetManager _charSetManager;
 static PolyhedronManager _polyhedronManager;
 static SpriteManager _spriteManager;
-u32 VIPManager_writeDRAM(VIPManager this);
 
 static void VIPManager_constructor(VIPManager this);
 
@@ -396,16 +395,9 @@ void VIPManager_resetGameFrameStarted(VIPManager this)
  *
  * @return			The time in milliseconds that it took to process the interrupt (only if profiling is enabled)
  */
-u32 VIPManager_writeDRAM(VIPManager this)
+void VIPManager_writeDRAM(VIPManager this)
 {
 	ASSERT(this, "VIPManager::writeDRAM: null this");
-
-	// don't allow drawing while renderings
-	//VIPManager_disableDrawing(this);
-
-#ifdef __PROFILE_GAME
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
-#endif
 
 	// write newly created chars
 	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
@@ -438,12 +430,6 @@ u32 VIPManager_writeDRAM(VIPManager this)
 	// enable drawing
 	VIPManager_enableDrawing(this);
 	VIPManager_enableInterrupt(_vipManager, __XPEND | __GAMESTART);
-
-#ifdef __PROFILE_GAME
-	return TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
-#else
-	return 0;
-#endif
 }
 
 /**
