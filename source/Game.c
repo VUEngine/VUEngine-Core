@@ -1210,8 +1210,6 @@ static void Game_update(Game this)
 
 		TimerManager_resetMilliseconds(this->timerManager);
 
-//		gameFrameDuration = gameFrameDuration < __GAME_FRAME_DURATION? __GAME_FRAME_DURATION : gameFrameDuration;
-
 		// update the clocks
 		ClockManager_update(this->clockManager, gameFrameDuration);
 
