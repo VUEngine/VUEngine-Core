@@ -487,7 +487,7 @@ void Actor_stopAllMovement(Actor this, u32 stopShape)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
-	Actor_stopMovement(this, __XAXIS | __YAXIS | __ZAXIS, stopShape)
+	Actor_stopMovement(this, __XAXIS | __YAXIS | __ZAXIS, stopShape);
 }
 
 // stop movement completely
