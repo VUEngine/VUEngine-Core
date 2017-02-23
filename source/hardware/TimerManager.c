@@ -83,7 +83,7 @@ __CLASS_DEFINITION(TimerManager, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void TimerManager_constructor(TimerManager this);
-
+static void TimerManager_enableInterrupt(TimerManager this, bool flag);
 
 // use static globals instead of class' members to avoid dereferencing
 static TimerManager _timerManager;
@@ -160,10 +160,36 @@ void TimerManager_initialize(TimerManager this)
 	TimerManager_setTime(this, __TIMER_RESOLUTION_FUNCTION(__TIMER_RESOLUTION));
 	TimerManager_clearStat(this);
 	TimerManager_enable(this, true);
+	TimerManager_enableInterrupt(this, true);
 }
 
 /**
  * Enable / disable interrupt
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param flag		Bool to enable or disable
+ */
+static void TimerManager_enableInterrupt(TimerManager this, bool flag)
+{
+	ASSERT(this, "TimerManager::enable: null this");
+
+	if(flag)
+	{
+		this->tcrValue |= __TIMER_INT;
+	}
+	else
+	{
+		this->tcrValue &= ~__TIMER_INT;
+	}
+
+	_hardwareRegisters[__TCR] = this->tcrValue;
+}
+
+/**
+ * Enable / disable timer
  *
  * @memberof		TimerManager
  * @public
@@ -196,7 +222,9 @@ void TimerManager_enable(TimerManager this, bool flag)
 void TimerManager_interruptHandler(void)
 {
 	//disable interrupts
-	TimerManager_enable(_timerManager, false);
+	TimerManager_enableInterrupt(_timerManager, false);
+	TimerManager_clearStat(_timerManager);
+
 
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
@@ -218,7 +246,7 @@ void TimerManager_interruptHandler(void)
 	}
 
 	// enable interrupts
-	TimerManager_enable(_timerManager, true);
+	TimerManager_enableInterrupt(_timerManager, true);
 }
 
 /**
