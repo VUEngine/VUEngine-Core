@@ -134,7 +134,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 			TimerManager_repeatMethodCall(
 				TimerManager_getInstance(),
 				defaultBrightness.darkRed,
-				delay * defaultBrightness.darkRed,
+				(delay * defaultBrightness.darkRed) >> __FRAME_CYCLE,
 				__SAFE_CAST(Object, this),
 				(void (*)(Object, u32))&ScreenEffectManager_FXFadeIn
 			);
@@ -147,7 +147,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 			TimerManager_repeatMethodCall(
 				TimerManager_getInstance(),
 				defaultBrightness.darkRed,
-				delay * defaultBrightness.darkRed,
+				(delay * defaultBrightness.darkRed) >> __FRAME_CYCLE,
 				__SAFE_CAST(Object, this),
 				(void (*)(Object, u32))&ScreenEffectManager_FXFadeOut
 			);
@@ -174,7 +174,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialD
 	}
 
 	// set effect parameters
-	this->fxFadeDelay = 0 >= delayBetweenSteps ? 1 : (u8)delayBetweenSteps;
+	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (u8)(delayBetweenSteps >> __FRAME_CYCLE);
 
 	// set callback
 	if(callback != NULL && callbackScope != NULL)
