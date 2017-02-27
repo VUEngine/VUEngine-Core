@@ -271,7 +271,7 @@ void VIPManager_interruptHandler(void)
 	// disable interrupts
 	VIPManager_disableInterrupts(_vipManager);
 
-	static u16 interruptTable[] =
+	const u16 interruptTable[] =
 	{
 		__GAMESTART,
 		__XPEND,
@@ -318,7 +318,7 @@ void VIPManager_interruptHandler(void)
 				Game_setProcessDuringDRAMWritingName(Game_getInstance());
 #endif
 
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT1
+#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 				{
 					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
 
