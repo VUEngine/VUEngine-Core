@@ -162,7 +162,7 @@ void CollisionManager_unregisterShape(CollisionManager this, Shape shape)
 	{
 		// deactivate the shape,
 		// will be removed in the next update
-		Shape_setActive(shape, false);
+		CollisionManager_shapeBecameInactive(this, shape);
 
 		// place in the removed shapes list
 		VirtualList_pushFront(this->removedShapes, (BYTE*)shape);
