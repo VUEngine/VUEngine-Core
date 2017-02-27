@@ -399,6 +399,9 @@ void VIPManager_writeDRAM(VIPManager this)
 {
 	ASSERT(this, "VIPManager::writeDRAM: null this");
 
+	// register the frame buffer in use by the VPU's drawing process
+	VIPManager_registerCurrentDrawingFrameBufferSet(this);
+
 	// write newly created chars
 	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
 	{
@@ -427,9 +430,10 @@ void VIPManager_writeDRAM(VIPManager this)
 	}
 
 	this->drawingEnded = false;
+
 	// enable drawing
-	VIPManager_enableDrawing(this);
 	VIPManager_enableInterrupt(_vipManager, __XPEND | __GAMESTART);
+	VIPManager_enableDrawing(this);
 }
 
 /**

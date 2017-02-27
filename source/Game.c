@@ -1213,9 +1213,6 @@ static void Game_update(Game this)
 		// update the clocks
 		ClockManager_update(this->clockManager, gameFrameDuration);
 
-		// register the frame buffer in use by the VPU's drawing process
-		VIPManager_registerCurrentDrawingFrameBufferSet(this->vipManager);
-
 #ifdef __PROFILE_GAME
 		if(updateProfiling)
 		{
@@ -1304,18 +1301,18 @@ static void Game_update(Game this)
 		streamingProcessTime = 0;
 #endif
 
-		__CHECK_IF_CAN_WRITE_DRAM
-
 		if(!skipNonCriticalProcesses)
 		{
+			__CHECK_IF_CAN_WRITE_DRAM
+
 			// dispatch delayed messages
 			skipNonCriticalProcesses = Game_dispatchDelayedMessages(this);
 		}
 
-		__CHECK_IF_CAN_WRITE_DRAM
-
 		if(!skipNonCriticalProcesses)
 		{
+			__CHECK_IF_CAN_WRITE_DRAM
+
 			Game_stream(this);
 		}
 
