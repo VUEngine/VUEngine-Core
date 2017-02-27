@@ -86,12 +86,6 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// set the palette
 	this->palette = textureDefinition->palette;
 	this->written = false;
-
-	// I will fire events, so save some time when preloaded by already creating the event list
-	if(!this->events)
-	{
-		this->events = __NEW(VirtualList);
-	}
 }
 
 /**

@@ -81,12 +81,6 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
 	// set the offset
 	this->offset = offset;
 	this->usageCount = 1;
-
-	// I will fire events, so save some time when preloaded by already creating the event list
-	if(!this->events)
-	{
-		this->events = __NEW(VirtualList);
-	}
 }
 
 /**

@@ -254,6 +254,12 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 				break;
 			}
 		}
+
+		if(!this->events->head)
+		{
+			__DELETE(this->events);
+			this->events = NULL;
+		}
 	}
 }
 
@@ -301,7 +307,7 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 
 		__DELETE(eventsToRemove);
 
-		if(!VirtualList_getSize(this->events))
+		if(!this->events->head)
 		{
 			__DELETE(this->events);
 			this->events = NULL;
@@ -351,7 +357,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 
 		__DELETE(eventsToRemove);
 
-		if(!VirtualList_getSize(this->events))
+		if(!this->events->head)
 		{
 			__DELETE(this->events);
 			this->events = NULL;
