@@ -50,7 +50,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 static void Container_applyEnvironmentToPosition(Container this, const Transformation* environmentTransform);
 static void Container_applyEnvironmentToRotation(Container this, const Transformation* environmentTransform);
 static void Container_applyEnvironmentToScale(Container this, const Transformation* environmentTransform);
-static void Container_processRemovedChildrenProgressively(Container this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -288,68 +287,6 @@ void Container_processRemovedChildren(Container this)
 	this->removedChildren = NULL;
 }
 
-// process removed children
-static void Container_processRemovedChildrenProgressively(Container this)
-{
-	ASSERT(this, "Container::processRemovedChildrenProgressively: null this");
-
-	if(!this->removedChildren)
-	{
-		return;
-	}
-
-	ASSERT(this->children, "Container::processRemovedChildrenProgressively: null children list");
-
-	VirtualList removedChildrenToNotDelete = __NEW(VirtualList);
-	VirtualNode node = this->removedChildren->head;
-
-	// remove each child
-	for(; node ; node = node->next)
-	{
-		Container child = __SAFE_CAST(Container, node->data);
-		VirtualList_removeElement(this->children, child);
-
-		if(!child->deleteMe)
-		{
-			VirtualList_pushBack(removedChildrenToNotDelete, child);
-		}
-	}
-
-	node = removedChildrenToNotDelete->head;
-
-	// remove each child
-	for(; node ; node = node->next)
-	{
-		VirtualList_removeElement(this->removedChildren, node->data);
-	}
-
-	__DELETE(removedChildrenToNotDelete);
-
-	Container child = (Container)VirtualList_front(this->removedChildren);
-
-	VirtualList_popFront(this->removedChildren);
-
-	if(__IS_OBJECT_ALIVE(child))
-	{
-		if(this == child->parent)
-		{
-			child->parent = NULL;
-		}
-
-		if(child->deleteMe)
-		{
-			__DELETE(child);
-		}
-	}
-
-	if(!this->removedChildren->head)
-	{
-		__DELETE(this->removedChildren);
-
-		this->removedChildren = NULL;
-	}
-}
-
 // update each Container's child
 void Container_update(Container this, u32 elapsedTime)
 {
@@ -359,7 +296,7 @@ void Container_update(Container this, u32 elapsedTime)
 	if(this->children)
 	{
 		// first remove children
-		Container_processRemovedChildrenProgressively(this);
+		Container_processRemovedChildren(this);
 
 		VirtualNode node = this->children->head;
 
@@ -824,7 +761,7 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 	if(this->children)
 	{
 		// first remove children
-		Container_processRemovedChildrenProgressively(this);
+		Container_processRemovedChildren(this);
 
 		VirtualNode node = this->children->head;
 
@@ -928,7 +865,7 @@ static Container Container_findChildByName(Container this, VirtualList children,
 	VirtualNode node = children->head;
 
 	// first remove children
-	Container_processRemovedChildrenProgressively(this);
+	Container_processRemovedChildren(this);
 
 	// look through all children
 	for(; node ; node = node->next)
