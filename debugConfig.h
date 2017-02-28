@@ -42,16 +42,19 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 // show streaming's profiling during game
 #ifdef __SHOW_STREAMING_PROFILING
 #define __PROFILE_STREAMING
+#define __DIMM_FOR_PROFILING
 #endif
 
 // show sprites's profiling during game
 #ifdef __SHOW_SPRITES_PROFILING
 #define __PROFILE_GAME
+#define __DIMM_FOR_PROFILING
 #endif
 
 // enable game profiling when checking the VIP interrupt
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 #define __PROFILE_GAME
+#define __DIMM_FOR_PROFILING
 #endif
 
 #ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
