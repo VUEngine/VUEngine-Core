@@ -161,7 +161,7 @@ static void Stage_constructor(Stage this)
 	this->stageDefinition = NULL;
 	this->focusInGameEntity = NULL;
 	this->streamingHeadNode = NULL;
-	this->previousFocusEntityDistance = 0;
+	this->screenPreviousDistance = 0;
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
 	this->streamingCycleCounter = 0;
@@ -768,30 +768,19 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 {
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
 
-	VBVec3D focusInGameEntityPosition = Screen_getPosition(Screen_getInstance());
+	int xScreenPosition = FIX19_13TOI(_screenPosition->x) + (__SCREEN_WIDTH >> 1);
+	int yScreenPosition = FIX19_13TOI(_screenPosition->y) + (__SCREEN_HEIGHT >> 1);
+	int zScreenPosition = FIX19_13TOI(_screenPosition->z) + (__SCREEN_DEPTH >> 1);
 
-	if(!this->focusInGameEntity)
-	{
-		Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
-	}
-	else
-	{
-		focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
-	}
-
-	focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
-	focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
-	focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
-
-	long focusInGameEntityDistance = ((long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
-									(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
-									(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z);
+	long screenDistance = ((long)xScreenPosition * (long)xScreenPosition +
+							(long)yScreenPosition * (long)yScreenPosition +
+							(long)zScreenPosition * (long)zScreenPosition);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
 
-	if(this->previousFocusEntityDistance != focusInGameEntityDistance)
+	if(this->screenPreviousDistance != screenDistance)
 	{
-		advancing = this->previousFocusEntityDistance < focusInGameEntityDistance;
+		advancing = this->screenPreviousDistance < screenDistance;
 	}
 
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
@@ -817,7 +806,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 
 				if(!this->streamingHeadNode)
 				{
-					if(focusInGameEntityDistance < stageEntityDescription->distance)
+					if(screenDistance < stageEntityDescription->distance)
 					{
 						this->streamingHeadNode = node;
 					}
@@ -849,7 +838,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 
 				if(!this->streamingHeadNode)
 				{
-					if(focusInGameEntityDistance > stageEntityDescription->distance)
+					if(screenDistance > stageEntityDescription->distance)
 					{
 						this->streamingHeadNode = node;
 					}
@@ -866,7 +855,7 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 		}
 	}
 
-	this->previousFocusEntityDistance = focusInGameEntityDistance;
+	this->screenPreviousDistance = screenDistance;
 
 #ifdef __PROFILE_STREAMING
 		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
@@ -1125,7 +1114,7 @@ static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
 		focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
 		focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
 
-		this->previousFocusEntityDistance = (long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
+		this->screenPreviousDistance = (long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
 											(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
 											(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z;
 	}

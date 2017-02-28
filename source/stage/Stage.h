@@ -80,8 +80,8 @@
         UiContainer uiContainer;																		\
         /* focus entity: needed for streaming */														\
         InGameEntity focusInGameEntity;																	\
-        /* focus entity: previous distance. Used for the streaming */									\
-        long previousFocusEntityDistance;																\
+        /* screen's previous distance. Used for the streaming */										\
+        long screenPreviousDistance;																	\
         /* next entity's id */																			\
         s16 nextEntityId;																				\
 

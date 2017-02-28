@@ -1308,7 +1308,7 @@ static void Game_update(Game this)
 		if(!skipNonCriticalProcesses)
 		{
 			// dispatch delayed messages
-			skipNonCriticalProcesses = Game_dispatchDelayedMessages(this);
+			skipNonCriticalProcesses |= Game_dispatchDelayedMessages(this);
 			__CHECK_IF_CAN_WRITE_DRAM
 		}
 
