@@ -818,7 +818,10 @@ static u32 Game_handleInput(Game this)
 	Game_checkLowBattery(this, userInput.holdKey);
 #endif
 
-	Object_fireEvent(__SAFE_CAST(Object, this), kEventUserInput);
+	if(userInput.pressedKey | userInput.releasedKey)
+	{
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventUserInput);
+	}
 
 #ifdef __PROFILE_GAME
 	if(updateProfiling)
@@ -1232,10 +1235,19 @@ static void Game_update(Game this)
 		}
 #endif
 
+		// physics' update takes place after game's logic
+		// has been done
+		Game_updatePhysics(this);
+
+		// apply transformations
+		Game_updateTransformations(this);
+
+		// process collisions
+		u32 skipNonCriticalProcesses = Game_updateCollisions(this);
+
 		// the engine's game logic must be free of racing
 		// conditions against the VIP
 		Game_updateVisuals(this);
-
 		__CHECK_IF_CAN_WRITE_DRAM
 
 #ifdef __PRINT_FRAMERATE
@@ -1249,6 +1261,11 @@ static void Game_update(Game this)
 #ifdef __PRINT_MEMORY_POOL_STATUS
 		// increase game frame total time
 		Game_checkFrameRate(this, gameFrameDuration);
+#else
+#ifdef __SHOW_STREAMING_PROFILING
+		// increase game frame total time
+		Game_checkFrameRate(this, gameFrameDuration);
+#endif
 #endif
 #endif
 #endif
@@ -1262,10 +1279,9 @@ static void Game_update(Game this)
 		// needs to be changed
 		Game_checkForNewState(this);
 
-		__CHECK_IF_CAN_WRITE_DRAM
-
 		// process user's input
-		u32 skipNonCriticalProcesses = Game_handleInput(this);
+		skipNonCriticalProcesses |= Game_handleInput(this);
+		__CHECK_IF_CAN_WRITE_DRAM
 
 #if __FRAME_CYCLE == 1
 		cycle = false;
@@ -1274,27 +1290,8 @@ static void Game_update(Game this)
 		{
 #endif
 
-		__CHECK_IF_CAN_WRITE_DRAM
-
 		// update game's logic
 		Game_updateLogic(this);
-
-		__CHECK_IF_CAN_WRITE_DRAM
-
-		// physics' update takes place after game's logic
-		// has been done
-		Game_updatePhysics(this);
-
-		__CHECK_IF_CAN_WRITE_DRAM
-
-		// apply transformations
-		Game_updateTransformations(this);
-
-		__CHECK_IF_CAN_WRITE_DRAM
-
-		// process collisions
-		skipNonCriticalProcesses |= Game_updateCollisions(this);
-
 		__CHECK_IF_CAN_WRITE_DRAM
 
 #ifdef __PROFILE_GAME
@@ -1303,16 +1300,13 @@ static void Game_update(Game this)
 
 		if(!skipNonCriticalProcesses)
 		{
-			__CHECK_IF_CAN_WRITE_DRAM
-
 			// dispatch delayed messages
 			skipNonCriticalProcesses = Game_dispatchDelayedMessages(this);
+			__CHECK_IF_CAN_WRITE_DRAM
 		}
 
 		if(!skipNonCriticalProcesses)
 		{
-			__CHECK_IF_CAN_WRITE_DRAM
-
 			Game_stream(this);
 		}
 
