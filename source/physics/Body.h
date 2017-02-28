@@ -150,8 +150,8 @@ __CLASS_NEW_DECLARE(Body, SpatialObject owner, fix19_13 mass);
 void Body_constructor(Body this, SpatialObject owner, fix19_13 mass);
 void Body_destructor(Body this);
 
-void Body_addForce(Body this, const Force* force);
-void Body_applyForce(Body this, const Force* force, int clearAxis);
+void Body_addForce(Body this, const Force* force, bool informAboutAwakening);
+void Body_applyForce(Body this, const Force* force, int clearAxis, bool informAboutAwakening);
 void Body_applyGravity(Body this, const Acceleration* gravity);
 void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 Force Body_calculateFrictionForce(Body this);

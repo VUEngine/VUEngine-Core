@@ -85,7 +85,7 @@ void Body_setCurrentGravity(const Acceleration* currentGravity)
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Body_awake(Body this, int axisStartedMovement);
+static void Body_awake(Body this, int axisOfAwakening, bool informAboutAwakening);
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 appliedForce, fix19_13 frictionForce);
 static void Body_setMovementType(Body this, int movementType, int axis);
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, fix19_13 otherBodyElasticity);
@@ -283,20 +283,7 @@ void Body_moveAccelerated(Body this, int axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
-	if(__XAXIS & axis)
-	{
-		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __XAXIS);
-	}
-
-	if(__YAXIS & axis)
-	{
-		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __YAXIS);
-	}
-
-	if(__ZAXIS & axis)
-	{
-		Body_setMovementType(this, __ACCELERATED_MOVEMENT, __ZAXIS);
-	}
+	Body_setMovementType(this, __ACCELERATED_MOVEMENT, axis);
 }
 
 // set movement type to uniform
@@ -304,25 +291,30 @@ void Body_moveUniformly(Body this, Velocity velocity)
 {
 	ASSERT(this, "Body::moveUniformly: null this");
 
+	int axisOfUniformMovement = 0;
+
 	if(velocity.x)
 	{
-		Body_setMovementType(this, __UNIFORM_MOVEMENT, __XAXIS);
-		Body_awake(this, __XAXIS);
+		axisOfUniformMovement |= __XAXIS;
 		this->velocity.x = velocity.x;
 	}
 
 	if(velocity.y)
 	{
-		Body_setMovementType(this, __UNIFORM_MOVEMENT, __YAXIS);
-		Body_awake(this, __YAXIS);
+		axisOfUniformMovement |= __YAXIS;
 		this->velocity.y = velocity.y;
 	}
 
 	if(velocity.z)
 	{
-		Body_setMovementType(this, __UNIFORM_MOVEMENT, __ZAXIS);
-		Body_awake(this, __ZAXIS);
+		axisOfUniformMovement |= __YAXIS;
 		this->velocity.z = velocity.z;
+	}
+
+	if(axisOfUniformMovement)
+	{
+		Body_setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
+		Body_awake(this, axisOfUniformMovement, false);
 	}
 }
 
@@ -337,7 +329,7 @@ void Body_clearForce(Body this)
 }
 
 // apply force
-void Body_applyForce(Body this, const Force* force, int clearAxis)
+void Body_applyForce(Body this, const Force* force, int clearAxis, bool informAboutAwakening)
 {
 	ASSERT(this, "Body::applyForce: null this");
 
@@ -376,29 +368,27 @@ void Body_applyForce(Body this, const Force* force, int clearAxis)
 		this->acceleration.z += this->appliedForce.z;
 	}
 
-	int axisStartedMovement = 0;
+	int axisAppliedForce = 0;
 
 	if(this->appliedForce.x)
 	{
-		axisStartedMovement |= __XAXIS;
-		Body_moveAccelerated(this, __XAXIS);
+		axisAppliedForce |= __XAXIS;
 	}
 
 	if(this->appliedForce.y)
 	{
-		axisStartedMovement |= __YAXIS;
-		Body_moveAccelerated(this, __YAXIS);
+		axisAppliedForce |= __YAXIS;
 	}
 
 	if(this->appliedForce.z)
 	{
-		axisStartedMovement |= __ZAXIS;
-		Body_moveAccelerated(this, __ZAXIS);
+		axisAppliedForce |= __ZAXIS;
 	}
 
-	if(axisStartedMovement)
+	if(axisAppliedForce)
 	{
-		Body_awake(this, axisStartedMovement);
+		Body_setMovementType(this, __ACCELERATED_MOVEMENT, axisAppliedForce);
+		Body_awake(this, axisAppliedForce, informAboutAwakening);
 	}
 }
 
@@ -415,38 +405,36 @@ void Body_applyGravity(Body this, const Acceleration* gravity)
 		{
 			this->acceleration.x = gravity->x;
 			axisStartedMovement |= __XAXIS;
-			Body_moveAccelerated(this, __XAXIS);
 		}
 
 		if(gravity->y)
 		{
 			this->acceleration.y = gravity->y;
 			axisStartedMovement |= __YAXIS;
-			Body_moveAccelerated(this, __YAXIS);
 		}
 
 		if(gravity->z)
 		{
 			this->acceleration.z = gravity->z;
 			axisStartedMovement |= __ZAXIS;
-			Body_moveAccelerated(this, __YAXIS);
 		}
 
 		if(axisStartedMovement)
 		{
-			Body_awake(this, axisStartedMovement);
+			Body_setMovementType(this, __ACCELERATED_MOVEMENT, axisStartedMovement);
+			Body_awake(this, axisStartedMovement, true);
 		}
 	}
 }
 
 
 // add force
-void Body_addForce(Body this, const Force* force)
+void Body_addForce(Body this, const Force* force, bool informAboutAwakening)
 {
 	ASSERT(this, "Body::addForce: null this");
 	ASSERT(force, "Body::addForce: null force");
 
-	Body_applyForce(this, force, ~Body_isMoving(this));
+	Body_applyForce(this, force, ~Body_isMoving(this), informAboutAwakening);
 }
 
 // update movement
@@ -896,7 +884,7 @@ bool Body_isAwake(Body this)
 }
 
 // awake body
-static void Body_awake(Body this, int axisStartedMovement)
+static void Body_awake(Body this, int axisOfAwakening, bool informAboutAwakening)
 {
 	ASSERT(this, "Body::awake: null this");
 
@@ -909,24 +897,24 @@ static void Body_awake(Body this, int axisStartedMovement)
 		PhysicalWorld_bodyAwake(Game_getPhysicalWorld(Game_getInstance()), this);
 	}
 
-	if(!this->velocity.x && (__XAXIS & axisStartedMovement))
+	if(!this->velocity.x && (__XAXIS & axisOfAwakening))
 	{
-		dispatchMessage |= (__XAXIS & axisStartedMovement);
+		dispatchMessage |= (__XAXIS & axisOfAwakening);
 	}
 
-	if(!this->velocity.y && (__YAXIS & axisStartedMovement))
+	if(!this->velocity.y && (__YAXIS & axisOfAwakening))
 	{
-		dispatchMessage |= (__YAXIS & axisStartedMovement);
+		dispatchMessage |= (__YAXIS & axisOfAwakening);
 	}
 
-	if(!this->velocity.z && (__ZAXIS & axisStartedMovement))
+	if(!this->velocity.z && (__ZAXIS & axisOfAwakening))
 	{
-		dispatchMessage |= (__ZAXIS & axisStartedMovement);
+		dispatchMessage |= (__ZAXIS & axisOfAwakening);
 	}
 
-	if(dispatchMessage)
+	if(dispatchMessage && informAboutAwakening)
 	{
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStartedMoving, &axisStartedMovement);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStartedMoving, &axisOfAwakening);
 	}
 }
 

@@ -519,7 +519,7 @@ void Actor_stopMovement(Actor this, int axis, u32 stopShape)
 	}
 }
 
-void Actor_addForce(Actor this, const Force* force)
+void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening)
 {
 	ASSERT(this, "Actor::Force: null this");
 	ASSERT(this->body, "Actor::Force: null body");
@@ -540,7 +540,7 @@ void Actor_addForce(Actor this, const Force* force)
 		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
 	};
 
-	Body_addForce(this->body, &effectiveForceToApply);
+	Body_addForce(this->body, &effectiveForceToApply, informAboutBodyAwakening);
 
 	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
 	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
@@ -551,7 +551,6 @@ void Actor_addForce(Actor this, const Force* force)
 		Shape_setActive(this->shape, true);
 		CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 	}
-
 }
 
 void Actor_moveUniformly(Actor this, Velocity* velocity)

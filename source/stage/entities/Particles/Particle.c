@@ -254,7 +254,7 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 	}
 	else
 	{
-		Body_addForce(this->body, force);
+		Body_addForce(this->body, force, false);
 	}
 }
 

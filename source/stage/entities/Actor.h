@@ -135,7 +135,7 @@ void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject)
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 fix19_13 Actor_getFriction(Actor this);
-void Actor_addForce(Actor this, const Force* force);
+void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening);
 void Actor_moveUniformly(Actor this, Velocity* velocity);
 void Actor_stopAllMovement(Actor this, u32 stopShape);
 void Actor_stopMovement(Actor this, int axis, u32 stopShape);
