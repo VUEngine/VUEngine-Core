@@ -113,6 +113,7 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
+static void Stage_processRemovedEntities(Stage this, int defer);
 static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static void Stage_loadInRangeEntities(Stage this, int defer);
 
@@ -126,6 +127,7 @@ static const StreamingPhase _streamingPhases[] =
 {
 	&Stage_unloadOutOfRangeEntities,
 	&Stage_loadInRangeEntities,
+	&Stage_processRemovedEntities
 };
 
 #ifdef __PROFILE_STREAMING
@@ -863,6 +865,15 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 }
 
+static void Stage_processRemovedEntities(Stage this, int defer __attribute__ ((unused)))
+{
+	ASSERT(this, "Stage::processRemovedEntities: null this");
+
+	// first remove children
+	Container_processRemovedChildren(__SAFE_CAST(Container, this));
+}
+
+
 void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
@@ -931,7 +942,23 @@ void Stage_update(Stage this, u32 elapsedTime)
 	// set now to control the streaming
 	this->hasRemovedChildren = this->removedChildren && VirtualList_getSize(this->removedChildren);
 
-	Container_update(__SAFE_CAST(Container, this), elapsedTime);
+	// if I have children
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node ; node = node->next)
+		{
+			Container child = __SAFE_CAST(Container, node->data);
+
+			// only update valid children
+			if(child->parent == __SAFE_CAST(Container, this))
+			{
+				__VIRTUAL_CALL(Container, update, child, elapsedTime);
+			}
+		}
+	}
 
 	if(this->uiContainer)
 	{
