@@ -211,6 +211,12 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 		Object_checkIfFiringEvent(this, "addEventListener");
 
 		Object_removeEventListener(this, listener, method, eventCode);
+
+		// the event list can be deleted when removed previous listeners
+		if(NULL == this->events)
+		{
+			this->events = __NEW(VirtualList);
+		}
 	}
 
 	Event* event = __NEW_BASIC(Event);
