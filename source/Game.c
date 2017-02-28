@@ -676,6 +676,10 @@ static void Game_render(Game this)
 
 	VIPManager_writeDRAM(this->vipManager);
 
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = "";
+#endif
+
 #ifdef __PROFILE_GAME
 	if(updateProfiling)
 	{
@@ -1236,20 +1240,22 @@ static void Game_update(Game this)
 			}
 		}
 #endif
+		// the engine's game logic must be free of racing
+		// conditions against the VIP
+		Game_updateVisuals(this);
+		__CHECK_IF_CAN_WRITE_DRAM
 
 		// physics' update takes place after game's logic
 		// has been done
 		Game_updatePhysics(this);
+		__CHECK_IF_CAN_WRITE_DRAM
 
 		// apply transformations
 		Game_updateTransformations(this);
+		__CHECK_IF_CAN_WRITE_DRAM
 
 		// process collisions
 		u32 skipNonCriticalProcesses = Game_updateCollisions(this);
-
-		// the engine's game logic must be free of racing
-		// conditions against the VIP
-		Game_updateVisuals(this);
 		__CHECK_IF_CAN_WRITE_DRAM
 
 #ifdef __PRINT_FRAMERATE
@@ -1297,9 +1303,8 @@ static void Game_update(Game this)
 		__CHECK_IF_CAN_WRITE_DRAM
 
 #ifdef __PROFILE_GAME
-		streamingProcessTime = 0;
+		dispatchDelayedMessageProcessTime = 0;
 #endif
-
 		if(!skipNonCriticalProcesses)
 		{
 			// dispatch delayed messages
@@ -1307,6 +1312,9 @@ static void Game_update(Game this)
 			__CHECK_IF_CAN_WRITE_DRAM
 		}
 
+#ifdef __PROFILE_GAME
+		streamingProcessTime = 0;
+#endif
 		if(!skipNonCriticalProcesses)
 		{
 			Game_stream(this);
@@ -1765,7 +1773,7 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 }
 
 #ifdef __PROFILE_GAME
-void Game_setProcessDuringDRAMWritingName(Game this __attribute__ ((unused)))
+void Game_saveProcessDuringDRAMWritingDoneName(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::setProcessDuringDRAMWritingName: this null");
 
@@ -1812,48 +1820,67 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 
 	Printing_text(printing, "                              total highest", x, ++y, NULL);
 
-	Printing_text(printing, "Rendering:", x, ++y, NULL);
+	int processNumber = 1;
+	Printing_text(printing, "  Rendering:", x, ++y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, renderingTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, renderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Updating visuals:", x, y, NULL);
+	Printing_text(printing, "  Updating visuals:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, updateVisualsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, updateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Handling input:", x, y, NULL);
+	Printing_text(printing, "  Handling input:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, handleInputTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, handleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Processing messages:", x, y, NULL);
+	Printing_text(printing, "  Processing messages:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, dispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Updating logic:", x, y, NULL);
+	Printing_text(printing, "  Updating logic:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, updateLogicTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, updateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Streaming:", x, y, NULL);
+	Printing_text(printing, "  Streaming:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, streamingTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, streamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Updating physics:", x, y, NULL);
+	Printing_text(printing, "  Updating physics:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, updatePhysicsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, updatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Transforming:", x, y, NULL);
+	Printing_text(printing, "  Transforming:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, updateTransformationsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, updateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Processing collisions:", x, y, NULL);
+	Printing_text(printing, "  Processing collisions:", x, y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, processNumber, x, y, NULL);
+	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
 	Printing_int(printing, processCollisionsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, processCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 

@@ -97,7 +97,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 #ifdef __PROFILE_GAME
-void Game_setProcessDuringDRAMWritingName(Game this);
+void Game_saveProcessDuringDRAMWritingDoneName(Game this);
 #endif
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
@@ -315,7 +315,7 @@ void VIPManager_interruptHandler(void)
 			case __XPEND:
 
 #ifdef __PROFILE_GAME
-				Game_setProcessDuringDRAMWritingName(Game_getInstance());
+				Game_saveProcessDuringDRAMWritingDoneName(Game_getInstance());
 #endif
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
@@ -432,7 +432,7 @@ void VIPManager_writeDRAM(VIPManager this)
 	this->drawingEnded = false;
 
 	// enable drawing
-	VIPManager_enableInterrupt(_vipManager, __XPEND | __GAMESTART);
+	VIPManager_enableInterrupt(_vipManager, __GAMESTART);
 	VIPManager_enableDrawing(this);
 }
 
