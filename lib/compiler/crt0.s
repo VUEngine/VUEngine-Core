@@ -36,13 +36,23 @@ wait_for_wram_loop:
 	add		-1, r6
 	bnz		wait_for_wram_loop
 
-/* initiallize .data section */
-	movhi	hi(__data_lma), r0, r6
-	movea	lo(__data_lma), r6, r6
+/* dummy reads */
 	movhi	hi(__data_start),   r0, r7
 	movea	lo(__data_start),   r7, r7
-	movhi	hi(__data_end),   r0, r8
-	movea	lo(__data_end),   r8, r8
+	movea	0x0008, 			r0, r8
+dummy_read_cycle:
+	ld.b	0[r7], r9
+	add	    1,     r7
+	cmp	    r8,    r7
+	blt	    dummy_read_cycle
+
+/* initiallize .data section */
+	movhi	hi(__data_lma), 	r0, r6
+	movea	lo(__data_lma), 	r6, r6
+	movhi	hi(__data_start),   r0, r7
+	movea	lo(__data_start),   r7, r7
+	movhi	hi(__data_end),		r0, r8
+	movea	lo(__data_end),		r8, r8
 	jr	    end_init_data
 
 top_init_data:
@@ -53,7 +63,6 @@ top_init_data:
 end_init_data:
 	cmp	    r8,    r7
 	blt	    top_init_data
-
 
 /* initiallize .dram_data section */
 	movhi	hi(__dram_data_start), r0, r7
