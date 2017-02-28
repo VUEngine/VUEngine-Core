@@ -65,7 +65,7 @@ extern Optical* _optical;
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this);
 
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this);
-static void ObjectSpriteContainer_sort(ObjectSpriteContainer this);
+static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -411,13 +411,13 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
  *
  * @param this		Function scope
  */
-static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
+static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::sort: null this");
 
 	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node) : this->objectSprites->tail;
 
-	for(; this->node; this->node = VirtualNode_getPrevious(this->node))
+	for(; this->node; )
 	{
 		this->previousNode = VirtualNode_getPrevious(this->node);
 
@@ -457,6 +457,9 @@ static void ObjectSpriteContainer_sort(ObjectSpriteContainer this)
 				}
 			}
 		}
+
+		this->node = VirtualNode_getPrevious(this->node);
+		break;
 	}
 }
 
@@ -491,7 +494,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	}
 	else
 	{
-		ObjectSpriteContainer_sort(this);
+		ObjectSpriteContainer_sortProgressively(this);
 	}
 
 	VirtualNode node = this->objectSprites->head;
