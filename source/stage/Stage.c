@@ -962,7 +962,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	if(this->uiContainer)
 	{
 		// static to avoid call to _memcpy
-		const Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
+		static Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 		{
 				// local position
 				{0, 0, 0},
