@@ -962,7 +962,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 	if(this->uiContainer)
 	{
 		// static to avoid call to _memcpy
-		static Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
+		const Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 		{
 				// local position
 				{0, 0, 0},
@@ -979,7 +979,6 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 		};
 
 		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
-
 
 		__VIRTUAL_CALL(Container, transform, this->uiContainer, &uiEnvironmentTransform);
 	}

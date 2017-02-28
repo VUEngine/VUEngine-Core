@@ -382,7 +382,7 @@ void GameState_transform(GameState this)
 	ASSERT(this->stage, "GameState::transform: null stage");
 
 	// static to avoid call to memcpy
-	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
+	const Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 	{
 		// local position
 		{0, 0, 0},
@@ -416,7 +416,7 @@ static void GameState_initialTransform(GameState this)
 	ASSERT(this->stage, "GameState::transform: null stage");
 
 	// static to avoid call to memcpy
-	static Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
+	const Transformation environmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
 	{
 		// local position
 		{0, 0, 0},
