@@ -106,27 +106,6 @@ bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this __at
 	return true;
 }
 
-bool CollisionsContainerEntity_updateSpritePosition(CollisionsContainerEntity this __attribute__ ((unused)))
-{
-	ASSERT(this, "CollisionsContainerEntity::updateSpritePosition: null this");
-
-	return false;
-}
-
-bool CollisionsContainerEntity_updateSpriteRotation(CollisionsContainerEntity this __attribute__ ((unused)))
-{
-	ASSERT(this, "CollisionsContainerEntity::updateSpriteRotation: null this");
-
-	return false;
-}
-
-bool CollisionsContainerEntity_updateSpriteScale(CollisionsContainerEntity this __attribute__ ((unused)))
-{
-	ASSERT(this, "CollisionsContainerEntity::updateSpriteScale: null this");
-
-	return false;
-}
-
 bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::handlePropagatedMessage: null this");

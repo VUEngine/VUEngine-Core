@@ -1381,9 +1381,13 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	ASSERT(this, "Entity::transform: null this");
 
 	this->updateSprites = 0;
-	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this) ? __UPDATE_SPRITE_POSITION : 0;
-	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteRotation, this) ? __UPDATE_SPRITE_ROTATION : 0;
-	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpriteScale, this) ? __UPDATE_SPRITE_SCALE : 0;
+
+	if(this->sprites)
+	{
+		this->updateSprites |= Entity_updateSpritePosition(this) ? __UPDATE_SPRITE_POSITION : 0;
+		this->updateSprites |= Entity_updateSpriteScale(this) ? __UPDATE_SPRITE_SCALE : 0;
+		this->updateSprites |= Entity_updateSpriteRotation(this) ? __UPDATE_SPRITE_ROTATION : 0;
+	}
 
 	// call base class's transform method
 	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
@@ -1704,12 +1708,13 @@ bool Entity_updateSpritePosition(Entity this)
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
 	return (
-		__INVALIDATE_POSITION & this->invalidateGlobalTransformation ||
 		(
 			_screenDisplacement->x |
 			_screenDisplacement->y |
 			_screenDisplacement->z
 		)
+		||
+		__INVALIDATE_POSITION & this->invalidateGlobalTransformation
 	);
 }
 

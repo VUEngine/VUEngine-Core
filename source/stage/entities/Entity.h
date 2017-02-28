@@ -52,9 +52,6 @@
 		Container_METHODS(ClassName)																	\
 		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);											\
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
-		__VIRTUAL_DEC(ClassName, bool, updateSpritePosition);											\
-		__VIRTUAL_DEC(ClassName, bool, updateSpriteScale);												\
-		__VIRTUAL_DEC(ClassName, bool, updateSpriteRotation);											\
 		__VIRTUAL_DEC(ClassName, void, initialize, u32);												\
 		__VIRTUAL_DEC(ClassName, void, ready, u32);														\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
@@ -68,9 +65,6 @@
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);												\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);													\
-		__VIRTUAL_SET(ClassName, Entity, updateSpritePosition);											\
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteScale);											\
-		__VIRTUAL_SET(ClassName, Entity, updateSpriteRotation);											\
 		__VIRTUAL_SET(ClassName, Entity, getPosition);													\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);														\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);													\

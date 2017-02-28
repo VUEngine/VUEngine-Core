@@ -444,7 +444,7 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 
 	ParticleSystem_processExpiredParticles(this);
 
-	this->updateSprites |= __VIRTUAL_CALL(Entity, updateSpritePosition, this) ? __UPDATE_SPRITE_POSITION : 0;
+	this->updateSprites |= Entity_updateSpritePosition(__SAFE_CAST(Entity, this)) ? __UPDATE_SPRITE_POSITION : 0;
 }
 
 /**

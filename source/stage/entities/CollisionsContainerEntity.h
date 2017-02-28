@@ -43,13 +43,10 @@
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, transform);									\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateVisualRepresentation);				\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handleMessage);								\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpritePosition);						\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpriteRotation);						\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateSpriteScale);							\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, ready);										\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handlePropagatedMessage);					\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, passMessage);								\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, isVisible);								\
+		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, isVisible);									\
 
 #define CollisionsContainerEntity_ATTRIBUTES															\
 		/* it is derived from */																		\
@@ -79,9 +76,6 @@ void CollisionsContainerEntity_update(CollisionsContainerEntity this, u32 elapse
 void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform);
 void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this);
 bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this, Telegram telegram);
-bool CollisionsContainerEntity_updateSpritePosition(CollisionsContainerEntity this);
-bool CollisionsContainerEntity_updateSpriteRotation(CollisionsContainerEntity this);
-bool CollisionsContainerEntity_updateSpriteScale(CollisionsContainerEntity this);
 bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this, int message);
 int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 bool CollisionsContainerEntity_isVisible(CollisionsContainerEntity this, int pad, bool recursive);

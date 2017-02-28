@@ -239,6 +239,18 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	if(this->body)
 	{
 		Actor_syncWithBody(this);
+
+		int bodyMovement = Body_isMoving(this->body);
+
+		if(bodyMovement)
+		{
+			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+		}
+
+		if(__ZAXIS & bodyMovement)
+		{
+			this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+		}
 	}
 
 	// call base
@@ -631,35 +643,6 @@ const VBVec3D* Actor_getPosition(Actor this)
 	ASSERT(this, "Actor::getPosition: null this");
 
 	return this->body ? Body_getPosition(this->body) : Entity_getPosition(__SAFE_CAST(Entity, this));
-}
-
-// check if necessary to update sprite's position
-bool Actor_updateSpritePosition(Actor this)
-{
-	ASSERT(this, "Actor::updateSpritePosition: null this");
-
-	return (
-		this->invalidateGlobalTransformation ||
-		Actor_isMoving(this) ||
-		(
-			_screenDisplacement->x |
-			_screenDisplacement->y |
-			_screenDisplacement->z
-		)
-	);
-}
-
-// check if necessary to update sprite's scale
-bool Actor_updateSpriteScale(Actor this)
-{
-	ASSERT(this, "Actor::updateSpriteScale: null this");
-
-	if(this->body && Body_isAwake(this->body) && Body_getVelocity(this->body).z)
-	{
-		return true;
-	}
-
-	return Entity_updateSpriteScale(__SAFE_CAST(Entity, this));
 }
 
 int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))

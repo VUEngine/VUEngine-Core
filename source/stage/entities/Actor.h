@@ -56,8 +56,6 @@
 		__VIRTUAL_SET(ClassName, Actor, moves);															\
 		__VIRTUAL_SET(ClassName, Actor, isMoving);														\
 		__VIRTUAL_SET(ClassName, Actor, getMovementState);												\
-		__VIRTUAL_SET(ClassName, Actor, updateSpritePosition);											\
-		__VIRTUAL_SET(ClassName, Actor, updateSpriteScale);									\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);													\
 		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);										\
@@ -132,8 +130,6 @@ int Actor_getMovementState(Actor this);
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
-bool Actor_updateSpritePosition(Actor this);
-bool Actor_updateSpriteScale(Actor this);
 int Actor_getAxisAllowedForBouncing(Actor this);
 void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject);
 void Actor_takeHitFrom(Actor this, Actor other);
