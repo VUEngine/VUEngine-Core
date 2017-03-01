@@ -76,6 +76,7 @@
  */
 __CLASS_DEFINITION(Stage, Container);
 __CLASS_FRIEND_DEFINITION(Container);
+__CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -727,7 +728,7 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		Entity entity = __SAFE_CAST(Entity, node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!__VIRTUAL_CALL(Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(entity->parent == __SAFE_CAST(Container, this) && !__VIRTUAL_CALL(Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity_getInternalId(entity);
 
@@ -973,7 +974,24 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Stage::transform: null this");
 
-	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
+	// if I have children
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node; node = node->next)
+		{
+			Container child = __SAFE_CAST(Container, node->data);
+
+			if(child->parent == this)
+			{
+				child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
+
+				__VIRTUAL_CALL(Container, transform, child, &this->transform);
+			}
+		}
+	}
 
 	if(this->uiContainer)
 	{
@@ -997,6 +1015,28 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
 
 		__VIRTUAL_CALL(Container, transform, this->uiContainer, &uiEnvironmentTransform);
+	}
+}
+
+void Stage_updateVisualRepresentation(Stage this)
+{
+	ASSERT(this, "Stage::updateVisualRepresentation: null this");
+
+	// if I have children
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node; node = node->next)
+		{
+			Container child = __SAFE_CAST(Container, node->data);
+
+			if(child->parent == this)
+			{
+				__VIRTUAL_CALL(Container, updateVisualRepresentation, child);
+			}
+		}
 	}
 }
 

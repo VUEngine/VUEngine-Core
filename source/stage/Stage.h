@@ -50,6 +50,7 @@
 		Container_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Stage, update);														\
 		__VIRTUAL_SET(ClassName, Stage, transform);														\
+		__VIRTUAL_SET(ClassName, Stage, updateVisualRepresentation);									\
 		__VIRTUAL_SET(ClassName, Stage, suspend);														\
 		__VIRTUAL_SET(ClassName, Stage, resume);														\
 		__VIRTUAL_SET(ClassName, Stage, removeChild);													\
@@ -220,6 +221,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 void Stage_removeChild(Stage this, Container child);
 void Stage_update(Stage this, u32 elapsedTime);
 void Stage_transform(Stage this, const Transformation* environmentTransform);
+void Stage_updateVisualRepresentation(Stage this);
 void Stage_stream(Stage this);
 void Stage_streamAll(Stage this);
 UiContainer Stage_getUiContainer(Stage this);

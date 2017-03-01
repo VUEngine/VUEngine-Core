@@ -492,6 +492,8 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	// if I have children
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -533,6 +535,8 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	// if I have children
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -557,6 +561,8 @@ void Container_updateVisualRepresentation(Container this)
 	// if I have children
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -576,10 +582,12 @@ const VBVec3D* Container_getGlobalPosition(Container this)
 }
 
 // invalidate global position
-static void Container_propagateinvalidateGlobalTransformation(Container this)
+static void Container_propagateInvalidateGlobalTransformation(Container this)
 {
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -590,7 +598,7 @@ static void Container_propagateinvalidateGlobalTransformation(Container this)
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
 			// make sure children recalculates its global position
-			Container_propagateinvalidateGlobalTransformation(child);
+			Container_propagateInvalidateGlobalTransformation(child);
 		}
 	}
 }
@@ -615,7 +623,7 @@ void Container_setLocalPosition(Container this, const VBVec3D* position)
 
 	if(this->invalidateGlobalTransformation)
 	{
-		Container_propagateinvalidateGlobalTransformation(this);
+		Container_propagateInvalidateGlobalTransformation(this);
 	}
 }
 
@@ -661,6 +669,8 @@ void Container_invalidateGlobalTransformation(Container this)
 
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -681,6 +691,8 @@ void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 
 	if(this->children && axisToInvalidate)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -701,6 +713,8 @@ void Container_invalidateGlobalRotation(Container this, u8 axisToInvalidate)
 
 	if(this->children && axisToInvalidate)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -721,6 +735,8 @@ void Container_invalidateGlobalScale(Container this, u8 axisToInvalidate)
 
 	if(this->children && axisToInvalidate)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -940,6 +956,8 @@ void Container_resume(Container this)
 
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
@@ -962,6 +980,8 @@ void Container_show(Container this)
 
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
@@ -983,6 +1003,8 @@ void Container_hide(Container this)
 
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
