@@ -1125,30 +1125,6 @@ static void Entity_setupShape(Entity this)
 }
 
 /**
- * Initialize from definition
- *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
- * @param recursive
- */
-void Entity_initialize(Entity this, u32 recursive)
-{
-	ASSERT(this, "Entity::initialize: null this");
-
-	if(recursive && this->children)
-	{
-		VirtualNode node = this->children->head;
-
-		for(; node; node = node->next)
-		{
-			__VIRTUAL_CALL(Entity, initialize, __SAFE_CAST(Entity, node->data), recursive);
-		}
-	}
-}
-
-/**
  * Entity is initialized
  *
  * @memberof		Entity
