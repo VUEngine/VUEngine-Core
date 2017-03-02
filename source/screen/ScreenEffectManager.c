@@ -291,6 +291,20 @@ void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unuse
 		_vipRegisters[__BRTB] + 2,
 		_vipRegisters[__BRTC] + 1
 	);
+
+#ifdef __DIMM_FOR_PROFILING
+
+		_vipRegisters[__GPLT0] = 0x50;
+		_vipRegisters[__GPLT1] = 0x50;
+		_vipRegisters[__GPLT2] = 0x54;
+		_vipRegisters[__GPLT3] = 0x54;
+		_vipRegisters[__JPLT0] = 0x54;
+		_vipRegisters[__JPLT1] = 0x54;
+		_vipRegisters[__JPLT2] = 0x54;
+		_vipRegisters[__JPLT3] = 0x54;
+
+		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
+#endif
 }
 
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
@@ -367,6 +381,20 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
 	{
 		// fire effect ended event
 		Object_fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeComplete);
+
+#ifdef __DIMM_FOR_PROFILING
+
+		_vipRegisters[__GPLT0] = 0x50;
+		_vipRegisters[__GPLT1] = 0x50;
+		_vipRegisters[__GPLT2] = 0x54;
+		_vipRegisters[__GPLT3] = 0x54;
+		_vipRegisters[__JPLT0] = 0x54;
+		_vipRegisters[__JPLT1] = 0x54;
+		_vipRegisters[__JPLT2] = 0x54;
+		_vipRegisters[__JPLT3] = 0x54;
+
+		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
+#endif
 
 		// remove callback event listener
 		if(this->fxFadeCallbackScope)
