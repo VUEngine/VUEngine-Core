@@ -38,10 +38,11 @@
 		RecyclableImage_METHODS(ClassName)																\
 
 #define ManagedStaticImage_SET_VTABLE(ClassName)													\
-		RecyclableImage_SET_VTABLE(ClassName)															\
+		RecyclableImage_SET_VTABLE(ClassName)														\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, initialTransform);								\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, transform);									\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, updateVisualRepresentation);					\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, releaseGraphics);								\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, update);										\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, passMessage);									\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, ready);										\
@@ -50,7 +51,7 @@
 
 __CLASS(ManagedStaticImage);
 
-#define ManagedStaticImage_ATTRIBUTES																\
+#define ManagedStaticImage_ATTRIBUTES																	\
 		/* it is derived from */																		\
 		RecyclableImage_ATTRIBUTES																		\
 		/* sprites' list */																				\
@@ -70,6 +71,7 @@ void ManagedStaticImage_destructor(ManagedStaticImage this);
 void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation* environmentTransform, u32 recursive);
 void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform);
 void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this);
+void ManagedStaticImage_releaseGraphics(ManagedStaticImage this);
 void ManagedStaticImage_update(ManagedStaticImage this, u32 elapsedTime);
 int ManagedStaticImage_passMessage(ManagedStaticImage this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 void ManagedStaticImage_ready(ManagedStaticImage this, u32 recursive);

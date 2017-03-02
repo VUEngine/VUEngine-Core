@@ -248,6 +248,19 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 	this->updateSprites = 0;
 }
 
+void ManagedEntity_releaseGraphics(ManagedEntity this)
+{
+	ASSERT(this, "ManagedEntity::releaseGraphics: null this");
+
+	if(this->managedSprites)
+	{
+		__DELETE(this->managedSprites);
+		this->managedSprites = NULL;
+	}
+
+	Entity_releaseGraphics(__SAFE_CAST(Entity, this));
+}
+
 int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
 	ASSERT(this, "ManagedEntity::passMessage: null this");

@@ -251,6 +251,19 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 	this->updateSprites = 0;
 }
 
+void ManagedStaticImage_releaseGraphics(ManagedStaticImage this)
+{
+	ASSERT(this, "ManagedStaticImage::releaseGraphics: null this");
+
+	if(this->managedSprites)
+	{
+		__DELETE(this->managedSprites);
+		this->managedSprites = NULL;
+	}
+
+	RecyclableImage_releaseGraphics(__SAFE_CAST(RecyclableImage, this));
+}
+
 // execute logic
 void ManagedStaticImage_update(ManagedStaticImage this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
