@@ -89,14 +89,8 @@ void Container_constructor(Container this, const char* const name)
 	this->deleteMe = false;
 	this->hidden = false;
 
-	if(name)
-	{
-		Container_setName(this, name);
-	}
-	else
-	{
-		this->name = NULL;
-	}
+	this->name = NULL;
+	Container_setName(this, name);
 }
 
 // class's destructor
