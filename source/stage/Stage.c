@@ -114,7 +114,6 @@ static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
 static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
 static void Stage_loadInitialEntities(Stage this);
-static void Stage_processRemovedEntities(Stage this, int defer);
 static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static void Stage_loadInRangeEntities(Stage this, int defer);
 static bool Stage_processRemovedChildrenProgressively(Stage this);
@@ -716,6 +715,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		return;
 	}
 
+#ifdef __PROFILE_STREAMING
+	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
+#endif
+
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->children->head;
 
@@ -768,6 +771,10 @@ static void Stage_unloadOutOfRangeEntities(Stage this, int defer)
 static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
+
+#ifdef __PROFILE_STREAMING
+	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
+#endif
 
 	int xScreenPosition = FIX19_13TOI(_screenPosition->x) + (__SCREEN_WIDTH >> 1);
 	int yScreenPosition = FIX19_13TOI(_screenPosition->y) + (__SCREEN_HEIGHT >> 1);
@@ -874,6 +881,10 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 		return false;
 	}
 
+#ifdef __PROFILE_STREAMING
+	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
+#endif
+
 	Container child = __SAFE_CAST(Container, VirtualList_front(this->removedChildren));
 
 	VirtualList_popFront(this->removedChildren);
@@ -885,26 +896,21 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 		{
 			__DELETE(child);
 
+#ifdef __PROFILE_STREAMING
+			u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+			processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
+#endif
 			return true;
 		}
 	}
-
-	return false;
-}
-
-static void Stage_processRemovedEntities(Stage this, int defer __attribute__ ((unused)))
-{
-	ASSERT(this, "Stage::processRemovedEntities: null this");
-
-	// first remove children
-	Stage_processRemovedChildrenProgressively(this);
 
 #ifdef __PROFILE_STREAMING
 	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 	processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
 #endif
-}
 
+	return false;
+}
 
 void Stage_stream(Stage this)
 {
@@ -914,16 +920,8 @@ void Stage_stream(Stage this)
 	EntityFactory_showStatus(this->entityFactory, 25, 3);
 #endif
 
-#ifdef __PROFILE_STREAMING
-	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
-#endif
-
 	if(Stage_processRemovedChildrenProgressively(this))
 	{
-#ifdef __PROFILE_STREAMING
-		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
-		processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
-#endif
 		return;
 	}
 
@@ -957,10 +955,6 @@ void Stage_stream(Stage this)
 	{
 		this->streamingPhase = 0;
 	}
-
-#ifdef __PROFILE_STREAMING
-	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
-#endif
 
 	_streamingPhases[this->streamingPhase](this, true);
 }
