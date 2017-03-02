@@ -57,34 +57,34 @@
 		__VIRTUAL_SET(ClassName, Stage, handlePropagatedMessage);										\
 
 #define Stage_ATTRIBUTES																				\
-        /* super's attributes */																		\
-        Container_ATTRIBUTES																			\
-        /* world's definition pointer */																\
-        StageDefinition* stageDefinition;																\
-        /* entity factory */																            \
-        EntityFactory entityFactory;                                                                    \
-        /* particle remover */																            \
-        ParticleRemover particleRemover;                                                                \
-        /* the stage entities */ 																		\
-        VirtualList stageEntities;																		\
-        /* the pivot node for streaming */ 																\
-        VirtualNode streamingHeadNode;																	\
-        /* the stage entities to test for streaming */ 													\
-        VirtualList loadedStageEntities;																\
-        /* counter to control the streaming phses */													\
-        int streamingCycleCounter;																		\
-        /* index for method to execute */													            \
-        int streamingPhase;                                                                             \
-        /* flag to control streaming */ 															    \
-        u32 hasRemovedChildren;                                                                         \
-        /* the ui container */ 																			\
-        UiContainer uiContainer;																		\
-        /* focus entity: needed for streaming */														\
-        InGameEntity focusInGameEntity;																	\
-        /* screen's previous distance. Used for the streaming */										\
-        long screenPreviousDistance;																	\
-        /* next entity's id */																			\
-        s16 nextEntityId;																				\
+		/* super's attributes */																		\
+		Container_ATTRIBUTES																			\
+		/* world's definition pointer */																\
+		StageDefinition* stageDefinition;																\
+		/* entity factory */																			\
+		EntityFactory entityFactory;																	\
+		/* particle remover */																			\
+		ParticleRemover particleRemover;																\
+		/* the stage entities */ 																		\
+		VirtualList stageEntities;																		\
+		/* the pivot node for streaming */ 																\
+		VirtualNode streamingHeadNode;																	\
+		/* the stage entities to test for streaming */ 													\
+		VirtualList loadedStageEntities;																\
+		/* counter to control the streaming phses */													\
+		int streamingCycleCounter;																		\
+		/* index for method to execute */																\
+		int streamingPhase;																				\
+		/* flag to control streaming */ 																\
+		u32 hasRemovedChildren;																			\
+		/* the ui container */ 																			\
+		UiContainer uiContainer;																		\
+		/* focus entity: needed for streaming */														\
+		InGameEntity focusInGameEntity;																	\
+		/* screen's previous distance. Used for the streaming */										\
+		long screenPreviousDistance;																	\
+		/* next entity's id */																			\
+		s16 nextEntityId;																				\
 
 __CLASS(Stage);
 
@@ -122,7 +122,7 @@ typedef struct StageDefinition
 	// streaming
 	struct Streaming
 	{
-	    u16 minimumSpareMilliSecondsToAllowStreaming;
+		u16 minimumSpareMilliSecondsToAllowStreaming;
 		u16 loadPadding;
 		u16 unloadPadding;
 		u16 streamingAmplitude;
@@ -142,14 +142,14 @@ typedef struct StageDefinition
 		// maximum number of rows to compute on each call to the affine functions
 		int maximumAffineRowsToComputePerCall;
 
-        // color config
-        ColorConfig colorConfig;
+		// color config
+		ColorConfig colorConfig;
 
 		// palettes' config
 		PaletteConfig paletteConfig;
 
-	    // bgmap segments configuration
-	    // number of segments reserved for the param tables
+		// bgmap segments configuration
+		// number of segments reserved for the param tables
 		int paramTableSegments;
 
 		// obj segments' sizes (__spt0 to __spt3)

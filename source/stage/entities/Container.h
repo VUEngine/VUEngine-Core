@@ -70,6 +70,8 @@
 #define Container_METHODS(ClassName)																	\
 		SpatialObject_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, update, u32);													\
+		__VIRTUAL_DEC(ClassName, void, setupGraphics);													\
+		__VIRTUAL_DEC(ClassName, void, releaseGraphics);												\
 		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*);								\
 		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
 		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
@@ -89,6 +91,8 @@
 #define Container_SET_VTABLE(ClassName)																	\
 		SpatialObject_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, Container, update);													\
+		__VIRTUAL_SET(ClassName, Container, setupGraphics);												\
+		__VIRTUAL_SET(ClassName, Container, releaseGraphics);											\
 		__VIRTUAL_SET(ClassName, Container, transform);													\
 		__VIRTUAL_SET(ClassName, Container, updateVisualRepresentation);								\
 		__VIRTUAL_SET(ClassName, Container, initialTransform);											\
@@ -174,6 +178,8 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 int Container_onPropagatedMessage(Container this, va_list args);
 void Container_processRemovedChildren(Container this);
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...);
+void Container_setupGraphics(Container this);
+void Container_releaseGraphics(Container this);
 void Container_removeChild(Container this, Container child);
 void Container_resume(Container this);
 void Container_setLocalPosition(Container this, const VBVec3D* position);

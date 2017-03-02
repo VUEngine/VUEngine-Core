@@ -155,9 +155,6 @@ void BgmapSprite_destructor(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::destructor: null this");
 	ASSERT(__SAFE_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
-	// make sure I'm hidden
-	__VIRTUAL_CALL(Sprite, hide, this);
-
 	if(this->worldLayer)
 	{
 		// remove from sprite manager before I become invalid

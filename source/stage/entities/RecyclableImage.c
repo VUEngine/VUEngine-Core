@@ -123,6 +123,15 @@ void RecyclableImage_resume(RecyclableImage this)
 	Entity_resume(__SAFE_CAST(Entity, this));
 }
 
+void RecyclableImage_releaseGraphics(RecyclableImage this)
+{
+	ASSERT(this, "RecyclableImage::releaseGraphics: null this");
+
+	RecyclableImage_releaseTextures(this);
+
+	Entity_releaseGraphics(__SAFE_CAST(Entity, this));
+}
+
 static void RecyclableImage_registerTextures(RecyclableImage this)
 {
 	ASSERT(this, "RecyclableImage::registerTextures: null this");
@@ -160,13 +169,7 @@ static void RecyclableImage_releaseTextures(RecyclableImage this)
 		for(; node; node = node->next)
 		{
 			Texture texture = Sprite_getTexture(__SAFE_CAST(Sprite, node->data));
-			__DELETE(node->data);
 			RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager_getInstance(), texture);
 		}
-
-		// delete the sprites
-		__DELETE(this->sprites);
-
-		this->sprites = NULL;
 	}
 }

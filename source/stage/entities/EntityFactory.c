@@ -56,6 +56,7 @@ typedef struct PositionedEntityDescription
 	Container parent;
 	Entity entity;
 	EventListener callback;
+	int spriteDefinitionIndex;
 	s16 id;
 	u16 transformed;
 } PositionedEntityDescription;
@@ -219,6 +220,7 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
 	positionedEntityDescription->callback = callback;
 	positionedEntityDescription->id = id;
 	positionedEntityDescription->transformed = false;
+	positionedEntityDescription->spriteDefinitionIndex = 0;
 
 	VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -286,7 +288,10 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 
 		if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
 		{
-			__VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
+			if(Entity_addSprite(positionedEntityDescription->entity, positionedEntityDescription->spriteDefinitionIndex++))
+			{
+				return __ENTITY_PENDING_PROCESSING;
+			}
 
 			VirtualList_pushBack(this->entitiesToTransform, positionedEntityDescription);
 			VirtualList_removeElement(this->entitiesToInitialize, positionedEntityDescription);
@@ -524,21 +529,24 @@ void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x
 	Printing_text(Printing_getInstance(), "Factory's status", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "", x, y++, NULL);
 
+	Printing_text(Printing_getInstance(), "Phase: ", x, y, NULL);
+	Printing_int(Printing_getInstance(), this->streamingPhase, x + xDisplacement, y++, NULL);
+
 	Printing_text(Printing_getInstance(), "Entities pending...", x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Instantiation:			", x, y, NULL);
+	Printing_text(Printing_getInstance(), "1 Instantiation:			", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInstantiate), x + xDisplacement, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Initialization:			", x, y, NULL);
+	Printing_text(Printing_getInstance(), "2 Initialization:			", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToInitialize), x + xDisplacement, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Transformation:			", x, y, NULL);
+	Printing_text(Printing_getInstance(), "3 Transformation:			", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToTransform), x + xDisplacement, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Make ready:			", x, y, NULL);
+	Printing_text(Printing_getInstance(), "4 Make ready:			", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->entitiesToMakeReady), x + xDisplacement, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Call listeners:			", x, y, NULL);
+	Printing_text(Printing_getInstance(), "5 Call listeners:			", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->spawnedEntities), x + xDisplacement, y++, NULL);
 }
 #endif

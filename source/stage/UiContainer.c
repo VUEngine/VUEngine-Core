@@ -97,8 +97,8 @@ void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 
 		if(entity)
 		{
-			// must initialize after adding the children
-			__VIRTUAL_CALL(Entity, initialize, entity, true);
+			// setup graphics
+			__VIRTUAL_CALL(Container, setupGraphics, entity);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));

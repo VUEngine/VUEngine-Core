@@ -124,9 +124,6 @@ void ObjectSprite_destructor(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::destructor: null this");
 
-	// make sure I'm hidden
-	__VIRTUAL_CALL(Sprite, hide, this);
-
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
 	if(this->objectSpriteContainer)

@@ -117,6 +117,7 @@ static void Stage_loadInitialEntities(Stage this);
 static void Stage_processRemovedEntities(Stage this, int defer);
 static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static void Stage_loadInRangeEntities(Stage this, int defer);
+static bool Stage_processRemovedChildrenProgressively(Stage this);
 
 #ifdef __PROFILE_STREAMING
 void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y);
@@ -127,17 +128,18 @@ typedef void (*StreamingPhase)(Stage, int);
 static const StreamingPhase _streamingPhases[] =
 {
 	&Stage_unloadOutOfRangeEntities,
-	&Stage_loadInRangeEntities,
-	&Stage_processRemovedEntities
+	&Stage_loadInRangeEntities
 };
 
 #ifdef __PROFILE_STREAMING
 static u32 unloadOutOfRangeEntitiesHighestTime = 0;
 static u32 loadInRangeEntitiesHighestTime = 0;
+static u32 processRemovedEntitiesHighestTime = 0;
 static u32 entityFactoryHighestTime = 0;
 static u32 timeBeforeProcess = 0;
 #endif
 
+bool reset = false;
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -168,7 +170,6 @@ static void Stage_constructor(Stage this)
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
 	this->streamingCycleCounter = 0;
-	this->hasRemovedChildren = false;
 }
 
 // class's destructor
@@ -383,8 +384,8 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 
 		if(entity)
 		{
-			// must initialize after adding the children
-			__VIRTUAL_CALL(Entity, initialize, entity, true);
+			// must add graphics
+			__VIRTUAL_CALL(Container, setupGraphics, entity);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
@@ -445,9 +446,6 @@ void Stage_removeChild(Stage this, Container child)
 		return;
 	}
 
-	// hide until effectively deleted
-	__VIRTUAL_CALL(Container, hide, child);
-
 	Container_removeChild(__SAFE_CAST(Container, this), child);
 
 	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
@@ -489,10 +487,10 @@ static void Stage_unloadChild(Stage this, Container child)
 		return;
 	}
 
-	__VIRTUAL_CALL(Container, hide, child);
 
 	child->deleteMe = true;
 	Container_removeChild(__SAFE_CAST(Container, this), child);
+	__VIRTUAL_CALL(Container, releaseGraphics, child);
 
 	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
 
@@ -866,18 +864,68 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 }
 
+// process removed children
+static bool Stage_processRemovedChildrenProgressively(Stage this)
+{
+	ASSERT(this, "Stage::processRemovedChildrenProgressively: null this");
+
+	if(!this->removedChildren || !this->removedChildren->head)
+	{
+		return false;
+	}
+
+	Container child = __SAFE_CAST(Container, VirtualList_front(this->removedChildren));
+
+	VirtualList_popFront(this->removedChildren);
+	VirtualList_removeElement(this->children, child);
+
+	if(__IS_OBJECT_ALIVE(child))
+	{
+		if(child->deleteMe)
+		{
+			__DELETE(child);
+
+			return true;
+		}
+	}
+
+	return false;
+}
+
 static void Stage_processRemovedEntities(Stage this, int defer __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::processRemovedEntities: null this");
 
 	// first remove children
-	Container_processRemovedChildren(__SAFE_CAST(Container, this));
+	Stage_processRemovedChildrenProgressively(this);
+
+#ifdef __PROFILE_STREAMING
+	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
+#endif
 }
 
 
 void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
+
+#ifdef __PROFILE_STREAMING
+	EntityFactory_showStatus(this->entityFactory, 25, 3);
+#endif
+
+#ifdef __PROFILE_STREAMING
+	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
+#endif
+
+	if(Stage_processRemovedChildrenProgressively(this))
+	{
+#ifdef __PROFILE_STREAMING
+		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+		processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
+#endif
+		return;
+	}
 
 	// TODO: fix me
 	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
@@ -887,20 +935,16 @@ void Stage_stream(Stage this)
 		return;
 	}
 
-	u32 alreadyStreamingIn = false;
-
-	if(!this->hasRemovedChildren)
-	{
 #ifdef __PROFILE_STREAMING
-		timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
+	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
-		alreadyStreamingIn = EntityFactory_prepareEntities(this->entityFactory);
+
+	bool alreadyStreamingIn = EntityFactory_prepareEntities(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
-		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
-		entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
+	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
 #endif
-	}
 
 	if(alreadyStreamingIn)
 	{
@@ -940,9 +984,6 @@ void Stage_update(Stage this, u32 elapsedTime)
 {
 	ASSERT(this, "Stage::update: null this");
 
-	// set now to control the streaming
-	this->hasRemovedChildren = this->removedChildren && VirtualList_getSize(this->removedChildren);
-
 	// if I have children
 	if(this->children)
 	{
@@ -970,7 +1011,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 }
 
 // transform state
-void Stage_transform(Stage this, const Transformation* environmentTransform)
+void Stage_transform(Stage this, const Transformation* environmentTransform __attribute__ ((unused)))
 {
 	ASSERT(this, "Stage::transform: null this");
 
@@ -984,7 +1025,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			if(child->parent == this)
+			if(child->parent == __SAFE_CAST(Container, this))
 			{
 				child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
@@ -1032,7 +1073,7 @@ void Stage_updateVisualRepresentation(Stage this)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
 
-			if(child->parent == this)
+			if(child->parent == __SAFE_CAST(Container, this))
 			{
 				__VIRTUAL_CALL(Container, updateVisualRepresentation, child);
 			}
@@ -1214,29 +1255,32 @@ void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, in
 	int xDisplacement = 18;
 	y++;
 
-	Printing_text(Printing_getInstance(), "Regist. entities: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Regist. entities:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->stageEntities), x + xDisplacement, y++, NULL);
-	Printing_text(Printing_getInstance(), "Loaded entities: ", x, y, NULL);
+	Printing_text(Printing_getInstance(), "Loaded entities:       ", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->loadedStageEntities), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
+
+	xDisplacement = 12;
+
 	Printing_text(Printing_getInstance(), "Process duration (ms):", x, ++y, NULL);
 
-	Printing_text(Printing_getInstance(), "Unload:			   ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Unload:           ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
 
-	Printing_text(Printing_getInstance(), "Load:				 ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Load:             ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), loadInRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
 
-	Printing_text(Printing_getInstance(), "Factory:			  ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Removing:         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), processRemovedEntitiesHighestTime, x + xDisplacement, y, NULL);
+
+	Printing_text(Printing_getInstance(), "Factory:          ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), entityFactoryHighestTime, x + xDisplacement, y++, NULL);
 
 	unloadOutOfRangeEntitiesHighestTime = 0;
 	loadInRangeEntitiesHighestTime = 0;
+	processRemovedEntitiesHighestTime = 0;
 	entityFactoryHighestTime = 0;
-
-	++y;
-	EntityFactory_showStatus(this->entityFactory, x + 24, originalY);
-
 #endif
 }

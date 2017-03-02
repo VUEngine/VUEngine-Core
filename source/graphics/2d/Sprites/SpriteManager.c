@@ -67,6 +67,12 @@ typedef struct SpritesList
 	 */																									\
 	VirtualList sprites;																				\
 	/**
+	 * @var VirtualList	spritesToDispose
+	 * @brief 			list of sprites to delete
+	 * @memberof		SpriteManager
+	 */																									\
+	VirtualList spritesToDispose;																				\
+	/**
 	 * @var VirtualNode	node
 	 * @brief 			sorting nodes
 	 * @memberof		SpriteManager
@@ -90,12 +96,6 @@ typedef struct SpritesList
 	 * @memberof		SpriteManager
 	 */																									\
 	u8 freeLayer;																						\
-	/**
-	 * @var u8			recoveringLayers
-	 * @brief 			flag to stop sorting while recovering layers
-	 * @memberof		SpriteManager
-	 */																									\
-	u8 recoveringLayers;																				\
 	/**
 	 * @var s8			cyclesToWaitForTextureWriting
 	 * @brief 			number of cycles that the texture writing is idle
@@ -145,6 +145,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_selectTextureToWrite(SpriteManager this);
+static bool SpriteManager_disposeSprites(SpriteManager this);
 
 #ifdef __PROFILE_GAME
 int _totalPixelsToDraw = 0;
@@ -182,8 +183,8 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->nextNode = NULL;
 
 	this->sprites = NULL;
+	this->spritesToDispose = NULL;
 
-	this->recoveringLayers = false;
 	this->textureToWrite = NULL;
 	this->cyclesToWaitForTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
@@ -212,6 +213,14 @@ void SpriteManager_destructor(SpriteManager this)
 		this->sprites = NULL;
 	}
 
+	if(this->spritesToDispose)
+	{
+		while(SpriteManager_disposeSprites(this));
+
+		__DELETE(this->spritesToDispose);
+		this->spritesToDispose = NULL;
+	}
+
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
@@ -237,7 +246,17 @@ void SpriteManager_reset(SpriteManager this)
 		this->sprites = NULL;
 	}
 
+	if(this->spritesToDispose)
+	{
+		while(SpriteManager_disposeSprites(this));
+
+		__DELETE(this->spritesToDispose);
+		this->spritesToDispose = NULL;
+	}
+
 	this->sprites = __NEW(VirtualList);
+	this->spritesToDispose = __NEW(VirtualList);
+
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
 	this->node = NULL;
@@ -248,6 +267,54 @@ void SpriteManager_reset(SpriteManager this)
 	this->waitToWrite = 0;
 
 	SpriteManager_renderLastLayer(this);
+}
+
+/**
+ * Delete disposable sprites
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param sprite	Sprite to dispose
+ */
+void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite)
+{
+	ASSERT(this, "SpriteManager::disposeSprite: null this");
+	ASSERT(__IS_OBJECT_ALIVE(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
+
+	if(sprite && !VirtualList_find(this->spritesToDispose, sprite))
+	{
+		VirtualList_pushBack(this->spritesToDispose, sprite);
+	}
+}
+
+/**
+ * Delete disposable sprites
+ *
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		True if there were a sprite to delete
+ */
+static bool SpriteManager_disposeSprites(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::disposeSprites: null this");
+
+	if(this->spritesToDispose->head)
+	{
+		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->spritesToDispose));
+
+		__DELETE(sprite);
+
+		VirtualList_popFront(this->spritesToDispose);
+
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -315,11 +382,6 @@ void SpriteManager_sortLayers(SpriteManager this)
 void SpriteManager_sortLayersProgressively(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
-
-	if(this->recoveringLayers)
-	{
-		return;
-	}
 
 	this->node = this->node ? this->nextNode ? this->node : this->node->next: this->sprites->head;
 
@@ -433,31 +495,21 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 
 		for(; node; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-
 			// search for the next sprite with the closest layer to the freed layer
-			if(spriteLayer < sprite->worldLayer)
+			if(spriteLayer < (__SAFE_CAST(Sprite, node->data))->worldLayer)
 			{
 				node = node->previous;
 				break;
 			}
 		}
 
-		// block sorting
-		this->recoveringLayers = true;
-
 		for(; node; node = node->previous)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
-
-			ASSERT(spriteLayer-- == sprite->worldLayer + 1, "SpriteManager::relinquishWorldLayer: wrong layers");
+			ASSERT(spriteLayer-- == (__SAFE_CAST(Sprite, node->data))->worldLayer + 1, "SpriteManager::relinquishWorldLayer: wrong layers");
 
 			// move the sprite to the freed layer
-			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
+			(__SAFE_CAST(Sprite, node->data))->worldLayer += 1;
 		}
-
-		// allow sorting
-		this->recoveringLayers = false;
 
 		// sorting needs to restart
 		this->node = NULL;
@@ -611,8 +663,11 @@ void SpriteManager_render(SpriteManager this)
 	// write textures
 	SpriteManager_writeSelectedTexture(this);
 
-	// z sorting
-	SpriteManager_sortLayersProgressively(this);
+	if(!SpriteManager_disposeSprites(this))
+	{
+		// z sorting
+		SpriteManager_sortLayersProgressively(this);
+	}
 
 	VirtualNode node = this->sprites->head;
 

@@ -176,6 +176,7 @@ void Container_deleteMyself(Container this)
 	{
 		this->deleteMe = true;
 		__VIRTUAL_CALL(Container, removeChild, this->parent, this);
+		__VIRTUAL_CALL(Container, releaseGraphics, this);
 	}
 	else
 	{
@@ -252,6 +253,46 @@ void Container_removeChild(Container this, Container child)
 
 	// set no parent
 	child->parent = NULL;
+}
+
+void Container_setupGraphics(Container this __attribute__ ((unused)))
+{
+	ASSERT(this, "Container::setupGraphics: null this");
+
+	// if I have children
+	if(this->children)
+	{
+		// first remove children
+		Container_processRemovedChildren(this);
+
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node ; node = node->next)
+		{
+			__VIRTUAL_CALL(Container, setupGraphics, node->data);
+		}
+	}
+}
+
+void Container_releaseGraphics(Container this __attribute__ ((unused)))
+{
+	ASSERT(this, "Container::releaseGraphics: null this");
+
+	// if I have children
+	if(this->children)
+	{
+		// first remove children
+		Container_processRemovedChildren(this);
+
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node ; node = node->next)
+		{
+			__VIRTUAL_CALL(Container, releaseGraphics, node->data);
+		}
+	}
 }
 
 // process removed children

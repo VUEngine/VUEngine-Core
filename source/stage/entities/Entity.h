@@ -52,7 +52,6 @@
 		Container_METHODS(ClassName)																	\
 		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);											\
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
-		__VIRTUAL_DEC(ClassName, void, initialize, u32);												\
 		__VIRTUAL_DEC(ClassName, void, ready, u32);														\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
 
@@ -60,6 +59,8 @@
 		Container_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Entity, transform);													\
+		__VIRTUAL_SET(ClassName, Entity, setupGraphics);												\
+		__VIRTUAL_SET(ClassName, Entity, releaseGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, updateVisualRepresentation);									\
 		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);												\
@@ -74,7 +75,6 @@
 		__VIRTUAL_SET(ClassName, Entity, suspend);														\
 		__VIRTUAL_SET(ClassName, Entity, resume);														\
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);												\
-		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
@@ -150,7 +150,7 @@ void Entity_destructor(Entity this);
 
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions);
-void Entity_addSprite(Entity this, const SpriteDefinition* spriteDefinition);
+bool Entity_addSprite(Entity this, int spriteDefinitionIndex);
 Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo);
 u32 Entity_areAllChildrenInstantiated(Entity this);
 u32 Entity_areAllChildrenInitialized(Entity this);
@@ -174,7 +174,6 @@ SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 int Entity_getWidth(Entity this);
 bool Entity_handleMessage(Entity this, Telegram telegram);
 void Entity_hide(Entity this);
-void Entity_initialize(Entity this, u32 recursive);
 void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive);
 Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo);
 bool Entity_isVisible(Entity this, int pad, bool recursive);
@@ -182,6 +181,8 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 void Entity_ready(Entity this, u32 recursive);
 void Entity_resume(Entity this);
+void Entity_setupGraphics(Entity this);
+void Entity_releaseGraphics(Entity this);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
 void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition);
