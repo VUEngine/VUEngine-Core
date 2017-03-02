@@ -286,6 +286,8 @@ void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite)
 	if(sprite && !VirtualList_find(this->spritesToDispose, sprite))
 	{
 		VirtualList_pushBack(this->spritesToDispose, sprite);
+
+		Sprite_hide(sprite);
 	}
 }
 
