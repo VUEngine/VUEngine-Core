@@ -69,29 +69,16 @@ void Container_constructor(Container this, const char* const name)
 	__CONSTRUCT_BASE(SpatialObject);
 
 	// set position
-	this->transform.localPosition.x = 0;
-	this->transform.localPosition.y = 0;
-	this->transform.localPosition.z = 0;
-
-	this->transform.globalPosition.x = 0;
-	this->transform.globalPosition.y = 0;
-	this->transform.globalPosition.z = 0;
+	this->transform.localPosition = (VBVec3D){0, 0, 0};
+	this->transform.globalPosition = (VBVec3D){0, 0, 0};
 
 	// set rotation
-	this->transform.localRotation.x = 0;
-	this->transform.localRotation.y = 0;
-	this->transform.localRotation.z = 0;
-
-	this->transform.globalRotation.x = 0;
-	this->transform.globalRotation.y = 0;
-	this->transform.globalRotation.z = 0;
+	this->transform.localRotation = (Rotation){0, 0, 0};
+	this->transform.globalRotation = (Rotation){0, 0, 0};
 
 	// set scale
-	this->transform.localScale.x = __1I_FIX7_9;
-	this->transform.localScale.y = __1I_FIX7_9;
-
-	this->transform.globalScale.x = __1I_FIX7_9;
-	this->transform.globalScale.y = __1I_FIX7_9;
+	this->transform.localScale = (Scale){__1I_FIX7_9, __1I_FIX7_9};
+	this->transform.globalScale = (Scale){__1I_FIX7_9, __1I_FIX7_9};
 
 	// force global position calculation on the next transform cycle
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
@@ -102,8 +89,14 @@ void Container_constructor(Container this, const char* const name)
 	this->deleteMe = false;
 	this->hidden = false;
 
-	this->name = NULL;
-	Container_setName(this, name);
+	if(name)
+	{
+		Container_setName(this, name);
+	}
+	else
+	{
+		this->name = NULL;
+	}
 }
 
 // class's destructor

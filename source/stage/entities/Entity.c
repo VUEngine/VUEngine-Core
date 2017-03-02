@@ -115,9 +115,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 
 	// initialize to 0 for the engine to know that
 	// size must be set
-	this->size.x = 0;
-	this->size.y = 0;
-	this->size.z = 0;
+	this->size = (Size){0, 0, 0};
 
 	this->updateSprites = 0;
 }
@@ -1226,8 +1224,6 @@ bool Entity_addSprite(Entity this, int spriteDefinitionIndex)
 	{
 		return false;
 	}
-
-__PRINT_IN_GAME_TIME(24, 1);
 
 	// call the appropriate allocator to support inheritance
 	Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
