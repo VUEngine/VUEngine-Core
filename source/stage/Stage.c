@@ -549,7 +549,7 @@ static void Stage_preloadAssets(Stage this)
 				if(this->stageDefinition->assets.stageTextureEntryDefinitions[i].isManaged)
 				{
 					texture = RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition);
-					VirtualList_pushBack(managedTextures, texture );
+					VirtualList_pushBack(managedTextures, texture);
 				}
 				else
 				{
@@ -916,7 +916,7 @@ void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
 
-#ifdef __PROFILE_STREAMING
+#ifdef __SHOW_STREAMING_PROFILING
 	EntityFactory_showStatus(this->entityFactory, 25, 3);
 #endif
 
