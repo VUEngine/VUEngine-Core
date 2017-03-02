@@ -47,7 +47,7 @@
 		/* super's attributes */																		\
 		Entity_ATTRIBUTES																				\
 		/* ROM definition */																			\
-		RecyclableImageDefinition* RecyclableImageDefinition;											\
+		RecyclableImageDefinition* recyclableImageDefinition;											\
 
 __CLASS(RecyclableImage);
 
@@ -67,11 +67,11 @@ typedef const EntityDefinition RecyclableImageROMDef;
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(RecyclableImage, RecyclableImageDefinition* RecyclableImageDefinition, s16 id, s16 internalId, const char* const name);
+__CLASS_NEW_DECLARE(RecyclableImage, RecyclableImageDefinition* recyclableImageDefinition, s16 id, s16 internalId, const char* const name);
 
-void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition* RecyclableImageDefinition, s16 id, s16 internalId, const char* const name);
+void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition, s16 id, s16 internalId, const char* const name);
 void RecyclableImage_destructor(RecyclableImage this);
-void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* RecyclableImageDefinition);
+void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition);
 void RecyclableImage_suspend(RecyclableImage this);
 void RecyclableImage_resume(RecyclableImage this);
 void RecyclableImage_releaseGraphics(RecyclableImage this);

@@ -62,20 +62,20 @@ static void RecyclableImage_releaseTextures(RecyclableImage this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(RecyclableImage, RecyclableImageDefinition* RecyclableImageDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(RecyclableImage, RecyclableImageDefinition, id, internalId, name);
+__CLASS_NEW_DEFINITION(RecyclableImage, RecyclableImageDefinition* recyclableImageDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(RecyclableImage, recyclableImageDefinition, id, internalId, name);
 
 // class's constructor
-void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition* RecyclableImageDefinition, s16 id, s16 internalId, const char* const name)
+void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "RecyclableImage::constructor: null this");
-	ASSERT(RecyclableImageDefinition, "RecyclableImage::constructor: null definition");
-	ASSERT(RecyclableImageDefinition->spritesDefinitions[0], "RecyclableImage::constructor: null sprite definition");
+	ASSERT(recyclableImageDefinition, "RecyclableImage::constructor: null definition");
+	ASSERT(recyclableImageDefinition->spritesDefinitions[0], "RecyclableImage::constructor: null sprite definition");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, (EntityDefinition*)RecyclableImageDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(Entity, (EntityDefinition*)recyclableImageDefinition, id, internalId, name);
 
-	this->RecyclableImageDefinition = RecyclableImageDefinition;
+	this->recyclableImageDefinition = recyclableImageDefinition;
 
 	RecyclableImage_registerTextures(this);
 }
@@ -93,15 +93,15 @@ void RecyclableImage_destructor(RecyclableImage this)
 }
 
 // set definition
-void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* RecyclableImageDefinition)
+void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition)
 {
 	ASSERT(this, "RecyclableImage::setDefinition: null this");
-	ASSERT(RecyclableImageDefinition, "RecyclableImage::setDefinition: null definition");
+	ASSERT(recyclableImageDefinition, "RecyclableImage::setDefinition: null definition");
 
 	// save definition
-	this->RecyclableImageDefinition = RecyclableImageDefinition;
+	this->recyclableImageDefinition = recyclableImageDefinition;
 
-	Entity_setDefinition(__SAFE_CAST(Entity, this), (EntityDefinition*)RecyclableImageDefinition);
+	Entity_setDefinition(__SAFE_CAST(Entity, this), (EntityDefinition*)recyclableImageDefinition);
 }
 
 void RecyclableImage_suspend(RecyclableImage this)
@@ -136,23 +136,23 @@ static void RecyclableImage_registerTextures(RecyclableImage this)
 {
 	ASSERT(this, "RecyclableImage::registerTextures: null this");
 
-	if(this->RecyclableImageDefinition->spritesDefinitions[0])
+	if(this->recyclableImageDefinition->spritesDefinitions[0])
 	{
 		int i = 0;
 
-		for(; this->RecyclableImageDefinition->spritesDefinitions[i]; i++)
+		for(; this->recyclableImageDefinition->spritesDefinitions[i]; i++)
 		{
-			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->RecyclableImageDefinition->spritesDefinitions[i]->allocator))
+			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->recyclableImageDefinition->spritesDefinitions[i]->allocator))
 			{
-				RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->RecyclableImageDefinition->spritesDefinitions[i]->textureDefinition);
+				RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->recyclableImageDefinition->spritesDefinitions[i]->textureDefinition);
 			}
-			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->RecyclableImageDefinition->spritesDefinitions[i]->allocator))
+			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->recyclableImageDefinition->spritesDefinitions[i]->allocator))
 			{
 				int j = 0;
 
-				for(; ((MBgmapSpriteDefinition*)this->RecyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
+				for(; ((MBgmapSpriteDefinition*)this->recyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
 				{
-					RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), ((MBgmapSpriteDefinition*)this->RecyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]);
+					RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), ((MBgmapSpriteDefinition*)this->recyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]);
 				}
 			}
 		}
