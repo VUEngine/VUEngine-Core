@@ -69,6 +69,7 @@ void SpriteManager_writeTextures(SpriteManager this);
 void SpriteManager_render(SpriteManager this);
 void SpriteManager_renderLastLayer(SpriteManager this);
 void SpriteManager_reset(SpriteManager this);
+void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
 void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);
 void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
