@@ -521,8 +521,8 @@ void Actor_stopMovement(Actor this, int axis, u32 stopShape)
 
 void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening)
 {
-	ASSERT(this, "Actor::Force: null this");
-	ASSERT(this->body, "Actor::Force: null body");
+	ASSERT(this, "Actor::addForce: null this");
+	ASSERT(this->body, "Actor::addForce: null body");
 
 	Acceleration acceleration =
 	{
