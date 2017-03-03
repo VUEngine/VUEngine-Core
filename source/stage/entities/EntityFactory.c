@@ -58,7 +58,8 @@ typedef struct PositionedEntityDescription
 	EventListener callback;
 	int spriteDefinitionIndex;
 	s16 id;
-	u16 transformed;
+	bool transformed;
+	bool initialized;
 } PositionedEntityDescription;
 
 
@@ -219,8 +220,10 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
 	positionedEntityDescription->entity = NULL;
 	positionedEntityDescription->callback = callback;
 	positionedEntityDescription->id = id;
+	positionedEntityDescription->initialized = false;
 	positionedEntityDescription->transformed = false;
 	positionedEntityDescription->spriteDefinitionIndex = 0;
+
 
 	VirtualList_pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -288,6 +291,16 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 
 		if(Entity_areAllChildrenInitialized(positionedEntityDescription->entity))
 		{
+			if(!positionedEntityDescription->initialized)
+			{
+				positionedEntityDescription->initialized = true;
+
+				// call ready method
+				__VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
+
+				return __ENTITY_PENDING_PROCESSING;
+			}
+
 			if(Entity_addSprite(positionedEntityDescription->entity, positionedEntityDescription->spriteDefinitionIndex++))
 			{
 				return __ENTITY_PENDING_PROCESSING;

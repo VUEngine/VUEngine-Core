@@ -43,6 +43,7 @@
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, transform);									\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateVisualRepresentation);				\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handleMessage);								\
+		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, initialize);										\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, ready);										\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handlePropagatedMessage);					\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, passMessage);								\
@@ -71,7 +72,8 @@ __CLASS_NEW_DECLARE(CollisionsContainerEntity, CollisionsContainerEntityDefiniti
 
 void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name);
 void CollisionsContainerEntity_destructor(CollisionsContainerEntity this);
-void CollisionsContainerEntity_ready(CollisionsContainerEntity this, u32 recursive);
+void CollisionsContainerEntity_initialize(CollisionsContainerEntity this, bool recursive);
+void CollisionsContainerEntity_ready(CollisionsContainerEntity this, bool recursive);
 void CollisionsContainerEntity_update(CollisionsContainerEntity this, u32 elapsedTime);
 void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform);
 void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this);

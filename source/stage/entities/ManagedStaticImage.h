@@ -74,7 +74,7 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this);
 void ManagedStaticImage_releaseGraphics(ManagedStaticImage this);
 void ManagedStaticImage_update(ManagedStaticImage this, u32 elapsedTime);
 int ManagedStaticImage_passMessage(ManagedStaticImage this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
-void ManagedStaticImage_ready(ManagedStaticImage this, u32 recursive);
+void ManagedStaticImage_ready(ManagedStaticImage this, bool recursive);
 void ManagedStaticImage_suspend(ManagedStaticImage this);
 void ManagedStaticImage_resume(ManagedStaticImage this);
 

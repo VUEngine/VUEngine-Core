@@ -82,7 +82,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this);
 void ManagedEntity_releaseGraphics(ManagedEntity this);
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
-void ManagedEntity_ready(ManagedEntity this, u32 recursive);
+void ManagedEntity_ready(ManagedEntity this, bool recursive);
 void ManagedEntity_suspend(ManagedEntity this);
 void ManagedEntity_resume(ManagedEntity this);
 

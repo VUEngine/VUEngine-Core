@@ -153,7 +153,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
-void ManagedEntity_ready(ManagedEntity this, u32 recursive)
+void ManagedEntity_ready(ManagedEntity this, bool recursive)
 {
 	ASSERT(this, "ManagedEntity::ready: null this");
 

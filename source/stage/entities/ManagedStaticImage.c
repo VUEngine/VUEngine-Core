@@ -148,7 +148,7 @@ void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 }
 
-void ManagedStaticImage_ready(ManagedStaticImage this, u32 recursive)
+void ManagedStaticImage_ready(ManagedStaticImage this, bool recursive)
 {
 	ASSERT(this, "ManagedStaticImage::ready: null this");
 

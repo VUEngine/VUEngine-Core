@@ -79,7 +79,12 @@ void CollisionsContainerEntity_destructor(CollisionsContainerEntity this)
 	__DESTROY_BASE;
 }
 
-void CollisionsContainerEntity_ready(CollisionsContainerEntity this __attribute__ ((unused)), u32 recursive __attribute__ ((unused)))
+void CollisionsContainerEntity_initialize(CollisionsContainerEntity this __attribute__ ((unused)), bool recursive __attribute__ ((unused)))
+{
+	ASSERT(this, "CollisionsContainerEntity::initialize: null this");
+}
+
+void CollisionsContainerEntity_ready(CollisionsContainerEntity this __attribute__ ((unused)), bool recursive __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::ready: null this");
 }

@@ -39,8 +39,10 @@
 
 #define RecyclableImage_SET_VTABLE(ClassName)															\
 		Entity_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, RecyclableImage, initialize);											\
 		__VIRTUAL_SET(ClassName, RecyclableImage, suspend);												\
 		__VIRTUAL_SET(ClassName, RecyclableImage, resume);												\
+		__VIRTUAL_SET(ClassName, RecyclableImage, setupGraphics);										\
 		__VIRTUAL_SET(ClassName, RecyclableImage, releaseGraphics);										\
 
 #define RecyclableImage_ATTRIBUTES																		\
@@ -74,6 +76,8 @@ void RecyclableImage_destructor(RecyclableImage this);
 void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition);
 void RecyclableImage_suspend(RecyclableImage this);
 void RecyclableImage_resume(RecyclableImage this);
+void RecyclableImage_initialize(RecyclableImage this, bool recursive);
+void RecyclableImage_setupGraphics(RecyclableImage this);
 void RecyclableImage_releaseGraphics(RecyclableImage this);
 
 #endif

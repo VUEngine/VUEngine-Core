@@ -113,7 +113,7 @@ void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, AnimatedInGam
 }
 
 // ready method
-void AnimatedInGameEntity_ready(AnimatedInGameEntity this, u32 recursive)
+void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive)
 {
 	ASSERT(this, "AnimatedInGameEntity::ready: null this");
 	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::ready: null animatedInGameEntityDefinition");

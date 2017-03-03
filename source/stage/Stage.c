@@ -117,6 +117,7 @@ static void Stage_loadInitialEntities(Stage this);
 static void Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static void Stage_loadInRangeEntities(Stage this, int defer);
 static bool Stage_processRemovedChildrenProgressively(Stage this);
+static bool Stage_updateEntityFactory(Stage this);
 
 #ifdef __PROFILE_STREAMING
 void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y);
@@ -912,6 +913,25 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 	return false;
 }
 
+//
+static bool Stage_updateEntityFactory(Stage this)
+{
+	ASSERT(this, "Stage::updateEntityFactory: null this");
+
+#ifdef __PROFILE_STREAMING
+	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
+#endif
+
+	bool preparingEntities = EntityFactory_prepareEntities(this->entityFactory);
+
+#ifdef __PROFILE_STREAMING
+	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
+#endif
+
+	return preparingEntities;
+}
+
 void Stage_stream(Stage this)
 {
 	ASSERT(this, "Stage::stream: null this");
@@ -925,26 +945,15 @@ void Stage_stream(Stage this)
 		return;
 	}
 
-	// TODO: fix me
-	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
-	// inhibit the streaming to kick in
-	if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
+	if(Stage_updateEntityFactory(this))
 	{
 		return;
 	}
 
-#ifdef __PROFILE_STREAMING
-	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
-#endif
-
-	bool alreadyStreamingIn = EntityFactory_prepareEntities(this->entityFactory);
-
-#ifdef __PROFILE_STREAMING
-	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
-	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
-#endif
-
-	if(alreadyStreamingIn)
+	// TODO: fix me
+	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
+	// inhibit the streaming to kick in
+	if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
 	{
 		return;
 	}

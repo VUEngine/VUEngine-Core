@@ -52,7 +52,8 @@
 		Container_METHODS(ClassName)																	\
 		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);											\
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
-		__VIRTUAL_DEC(ClassName, void, ready, u32);														\
+		__VIRTUAL_DEC(ClassName, void, initialize, bool);														\
+		__VIRTUAL_DEC(ClassName, void, ready, bool);														\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
 
 #define Entity_SET_VTABLE(ClassName)																	\
@@ -75,6 +76,7 @@
 		__VIRTUAL_SET(ClassName, Entity, suspend);														\
 		__VIRTUAL_SET(ClassName, Entity, resume);														\
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);												\
+		__VIRTUAL_SET(ClassName, Entity, initialize);														\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
@@ -179,7 +181,8 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id
 bool Entity_isVisible(Entity this, int pad, bool recursive);
 Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
-void Entity_ready(Entity this, u32 recursive);
+void Entity_initialize(Entity this, bool recursive);
+void Entity_ready(Entity this, bool recursive);
 void Entity_resume(Entity this);
 void Entity_setupGraphics(Entity this);
 void Entity_releaseGraphics(Entity this);

@@ -33,6 +33,7 @@
 #include <RecyclableBgmapTextureManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,8 +77,6 @@ void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition
 	__CONSTRUCT_BASE(Entity, (EntityDefinition*)recyclableImageDefinition, id, internalId, name);
 
 	this->recyclableImageDefinition = recyclableImageDefinition;
-
-	RecyclableImage_registerTextures(this);
 }
 
 // class's destructor
@@ -123,6 +122,24 @@ void RecyclableImage_resume(RecyclableImage this)
 	Entity_resume(__SAFE_CAST(Entity, this));
 }
 
+void RecyclableImage_initialize(RecyclableImage this, bool recursive)
+{
+	ASSERT(this, "RecyclableImage::initialize: null this");
+
+	RecyclableImage_registerTextures(this);
+
+	Entity_initialize(__SAFE_CAST(Entity, this), recursive);
+}
+
+void RecyclableImage_setupGraphics(RecyclableImage this)
+{
+	ASSERT(this, "RecyclableImage::setupGraphics: null this");
+
+	RecyclableImage_registerTextures(this);
+
+	Entity_setupGraphics(__SAFE_CAST(Entity, this));
+}
+
 void RecyclableImage_releaseGraphics(RecyclableImage this)
 {
 	ASSERT(this, "RecyclableImage::releaseGraphics: null this");
@@ -161,7 +178,8 @@ static void RecyclableImage_registerTextures(RecyclableImage this)
 
 static void RecyclableImage_releaseTextures(RecyclableImage this)
 {
-	// speed up my destruction by deleting my sprites
+	ASSERT(this, "RecyclableImage::releaseTextures: null this");
+
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;

@@ -1131,7 +1131,7 @@ static void Entity_setupShape(Entity this)
  * @param this		Function scope
  * @param recursive
  */
-void Entity_ready(Entity this, u32 recursive)
+void Entity_initialize(Entity this, bool recursive)
 {
 	ASSERT(this, "Entity::initialize: null this");
 
@@ -1142,7 +1142,32 @@ void Entity_ready(Entity this, u32 recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			__VIRTUAL_CALL(Entity, ready, __SAFE_CAST(Entity, childNode->data), recursive);
+			__VIRTUAL_CALL(Entity, initialize, childNode->data, recursive);
+		}
+	}
+}
+
+/**
+ * Entity is ready
+ *
+ * @memberof		Entity
+ * @public
+ *
+ * @param this		Function scope
+ * @param recursive
+ */
+void Entity_ready(Entity this, bool recursive)
+{
+	ASSERT(this, "Entity::ready: null this");
+
+	if(recursive && this->children)
+	{
+		// call ready method on children
+		VirtualNode childNode = this->children->head;
+
+		for(; childNode; childNode = childNode->next)
+		{
+			__VIRTUAL_CALL(Entity, ready, childNode->data, recursive);
 		}
 	}
 }
