@@ -27,6 +27,7 @@
 #include <RecyclableBgmapTextureManager.h>
 #include <BgmapTextureManager.h>
 #include <Printing.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

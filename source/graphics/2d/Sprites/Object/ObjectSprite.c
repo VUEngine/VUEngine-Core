@@ -30,7 +30,7 @@
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Screen.h>
-#include <debugUtilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
