@@ -33,7 +33,6 @@
 #include <RecyclableBgmapTextureManager.h>
 #include <BgmapSprite.h>
 #include <MBgmapSprite.h>
-#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -153,24 +152,21 @@ static void RecyclableImage_registerTextures(RecyclableImage this)
 {
 	ASSERT(this, "RecyclableImage::registerTextures: null this");
 
-	if(this->recyclableImageDefinition->spritesDefinitions[0])
+	int i = 0;
+
+	for(; this->recyclableImageDefinition->spritesDefinitions[i]; i++)
 	{
-		int i = 0;
-
-		for(; this->recyclableImageDefinition->spritesDefinitions[i]; i++)
+		if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->recyclableImageDefinition->spritesDefinitions[i]->allocator))
 		{
-			if(__TYPE(BgmapSprite) == __ALLOCATOR_TYPE(this->recyclableImageDefinition->spritesDefinitions[i]->allocator))
-			{
-				RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->recyclableImageDefinition->spritesDefinitions[i]->textureDefinition);
-			}
-			else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->recyclableImageDefinition->spritesDefinitions[i]->allocator))
-			{
-				int j = 0;
+			RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->recyclableImageDefinition->spritesDefinitions[i]->textureDefinition);
+		}
+		else if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(this->recyclableImageDefinition->spritesDefinitions[i]->allocator))
+		{
+			int j = 0;
 
-				for(; ((MBgmapSpriteDefinition*)this->recyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
-				{
-					RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), ((MBgmapSpriteDefinition*)this->recyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]);
-				}
+			for(; ((MBgmapSpriteDefinition*)this->recyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]; j++)
+			{
+				RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), ((MBgmapSpriteDefinition*)this->recyclableImageDefinition->spritesDefinitions[i])->textureDefinitions[j]);
 			}
 		}
 	}
