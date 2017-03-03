@@ -221,10 +221,9 @@ void TimerManager_enable(TimerManager this, bool flag)
  */
 void TimerManager_interruptHandler(void)
 {
-	//disable interrupts
-	TimerManager_enableInterrupt(_timerManager, false);
+	//disable
+	TimerManager_enable(_timerManager, false);
 	TimerManager_clearStat(_timerManager);
-
 
 #ifdef __ALERT_STACK_OVERFLOW
 	HardwareManager_checkStackStatus(HardwareManager_getInstance());
@@ -245,8 +244,8 @@ void TimerManager_interruptHandler(void)
 		SoundManager_playSounds(_soundManager);
 	}
 
-	// enable interrupts
-	TimerManager_enableInterrupt(_timerManager, true);
+	// enable
+	TimerManager_enable(_timerManager, true);
 }
 
 /**

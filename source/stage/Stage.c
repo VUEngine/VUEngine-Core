@@ -159,6 +159,7 @@ static void Stage_constructor(Stage this)
 
 	this->entityFactory = __NEW(EntityFactory);
 	this->particleRemover = __NEW(ParticleRemover);
+	this->children = __NEW(VirtualList);
 
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
@@ -987,22 +988,18 @@ void Stage_update(Stage this, u32 elapsedTime)
 {
 	ASSERT(this, "Stage::update: null this");
 
-	// if I have children
-	if(this->children)
+	VirtualNode node = this->children->head;
+
+	for(; node ; node = node->next)
 	{
-		VirtualNode node = this->children->head;
+		Container child = __SAFE_CAST(Container, node->data);
 
-		// update each child
-		for(; node ; node = node->next)
+		if(child->parent != __SAFE_CAST(Container, this))
 		{
-			Container child = __SAFE_CAST(Container, node->data);
-
-			// only update valid children
-			if(child->parent == __SAFE_CAST(Container, this))
-			{
-				__VIRTUAL_CALL(Container, update, child, elapsedTime);
-			}
+			continue;
 		}
+
+		__VIRTUAL_CALL(Container, update, child, elapsedTime);
 	}
 
 	if(this->uiContainer)
@@ -1018,23 +1015,18 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 {
 	ASSERT(this, "Stage::transform: null this");
 
-	// if I have children
-	if(this->children)
+	VirtualNode node = this->children->head;
+
+	for(; node; node = node->next)
 	{
-		VirtualNode node = this->children->head;
+		Container child = __SAFE_CAST(Container, node->data);
 
-		// update each child
-		for(; node; node = node->next)
+		if(child->parent != __SAFE_CAST(Container, this))
 		{
-			Container child = __SAFE_CAST(Container, node->data);
-
-			if(child->parent == __SAFE_CAST(Container, this))
-			{
-				child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-
-				__VIRTUAL_CALL(Container, transform, child, &this->transform);
-			}
+			continue;
 		}
+
+		__VIRTUAL_CALL(Container, transform, child, &this->transform);
 	}
 
 	if(this->uiContainer)
@@ -1066,21 +1058,18 @@ void Stage_updateVisualRepresentation(Stage this)
 {
 	ASSERT(this, "Stage::updateVisualRepresentation: null this");
 
-	// if I have children
-	if(this->children)
+	VirtualNode node = this->children->head;
+
+	for(; node; node = node->next)
 	{
-		VirtualNode node = this->children->head;
+		Container child = __SAFE_CAST(Container, node->data);
 
-		// update each child
-		for(; node; node = node->next)
+		if(child->parent != __SAFE_CAST(Container, this))
 		{
-			Container child = __SAFE_CAST(Container, node->data);
-
-			if(child->parent == __SAFE_CAST(Container, this))
-			{
-				__VIRTUAL_CALL(Container, updateVisualRepresentation, child);
-			}
+			continue;
 		}
+
+		__VIRTUAL_CALL(Container, updateVisualRepresentation, child);
 	}
 }
 

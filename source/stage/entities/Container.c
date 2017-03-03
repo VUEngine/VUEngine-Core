@@ -520,8 +520,6 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	// if I have children
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -563,8 +561,6 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	// if I have children
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -589,8 +585,6 @@ void Container_updateVisualRepresentation(Container this)
 	// if I have children
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -614,8 +608,6 @@ static void Container_propagateInvalidateGlobalTransformation(Container this)
 {
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -697,8 +689,6 @@ void Container_invalidateGlobalTransformation(Container this)
 
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -719,8 +709,6 @@ void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 
 	if(this->children && axisToInvalidate)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -741,8 +729,6 @@ void Container_invalidateGlobalRotation(Container this, u8 axisToInvalidate)
 
 	if(this->children && axisToInvalidate)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -763,8 +749,6 @@ void Container_invalidateGlobalScale(Container this, u8 axisToInvalidate)
 
 	if(this->children && axisToInvalidate)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -804,9 +788,6 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 	// propagate if I have children
 	if(this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -1008,8 +989,6 @@ void Container_show(Container this)
 
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
@@ -1031,8 +1010,6 @@ void Container_hide(Container this)
 
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)

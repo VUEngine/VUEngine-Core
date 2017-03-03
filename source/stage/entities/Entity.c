@@ -1288,6 +1288,46 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 
 	VirtualNode node = this->sprites->head;
 
+	for(; node ; node = node->next)
+	{
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+		if(updatePosition)
+		{
+			// update sprite's 2D position
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+		}
+
+		if(updateRotation)
+		{
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+		}
+
+		if(updateScale)
+		{
+			// calculate the scale
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+
+			// calculate sprite's parallax
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+		}
+	}
+}
+
+/*
+static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
+{
+	ASSERT(this, "Entity::transform: null this");
+
+	if(!this->sprites)
+	{
+		return;
+	}
+
+	updatePosition |= updateRotation;
+
+	VirtualNode node = this->sprites->head;
+
 	if(updatePosition && updateRotation && updateScale)
 	{
 		for(; node ; node = node->next)
@@ -1360,6 +1400,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 		}
 	}
 }
+*/
 
 /**
  * Initial transformation
@@ -1413,8 +1454,8 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	if(this->sprites)
 	{
 		this->updateSprites |= Entity_updateSpritePosition(this) ? __UPDATE_SPRITE_POSITION : 0;
+		//this->updateSprites |= Entity_updateSpriteRotation(this) ? __UPDATE_SPRITE_ROTATION : 0;
 		this->updateSprites |= Entity_updateSpriteScale(this) ? __UPDATE_SPRITE_SCALE : 0;
-		this->updateSprites |= Entity_updateSpriteRotation(this) ? __UPDATE_SPRITE_ROTATION : 0;
 	}
 
 	// call base class's transform method
@@ -1777,7 +1818,7 @@ bool Entity_updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
-	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & (__ZAXIS | __INVALIDATE_SCALE)));
+	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & __INVALIDATE_SCALE));
 }
 
 /**
