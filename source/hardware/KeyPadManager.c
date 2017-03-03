@@ -39,6 +39,7 @@
 		Object_ATTRIBUTES																				\
 		/*  */																							\
 		UserInput userInput;																			\
+		UserInput userInputToRegister;																	\
 		/*  */																							\
 		bool enabled;																					\
 
@@ -90,6 +91,9 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 
 	KeypadManager_flush(this);
 	this->enabled = false;
+
+	this->userInput = (UserInput){0, 0, 0, 0, 0};
+	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
@@ -215,9 +219,9 @@ UserInput KeypadManager_read(KeypadManager this)
 	// enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
-	this->userInput.pressedKey = this->userInput.allKeys & ~this->userInput.previousKey;
-	this->userInput.releasedKey = this->userInput.previousKey & ~this->userInput.allKeys;
-	this->userInput.holdKey = this->userInput.allKeys & this->userInput.previousKey;
+	this->userInput.pressedKey = (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey;
+	this->userInput.releasedKey = (this->userInput.previousKey & ~this->userInput.allKeys) & this->userInputToRegister.releasedKey;
+	this->userInput.holdKey = (this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
 
 	return this->userInput;
@@ -252,11 +256,7 @@ void KeypadManager_flush(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::flush: null this");
 
-	this->userInput.allKeys = 0;
-	this->userInput.pressedKey = 0;
-	this->userInput.releasedKey = 0;
-	this->userInput.holdKey = 0;
-	this->userInput.previousKey = 0;
+	this->userInput = (UserInput){0, 0, 0, 0, 0};
 }
 
 /**
@@ -319,6 +319,24 @@ u16 KeypadManager_getPreviousKey(KeypadManager this)
 }
 
 /**
+ * Set the user input to register
+ *
+ * @memberof				KeypadManager
+ * @public
+ *
+ * @param this				Function scope
+ * @param inputToRegister	Flag
+ */
+void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister)
+{
+	ASSERT(this, "KeypadManager::registerInput: null this");
+
+	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
+	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
+	this->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;
+}
+
+/**
  * Interrupt handler
  *
  * @memberof	KeypadManager
@@ -330,3 +348,4 @@ void KeypadManager_interruptHandler(void)
 	// broadcast keypad event
 	Printing_text(Printing_getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
+

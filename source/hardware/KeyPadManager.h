@@ -66,6 +66,11 @@
 #define	K_RPAD	0xC0C0		// Right d-pad only
 
 
+#define __KEY_PRESSED		0x0001
+#define __KEY_RELEASED		0x0010
+#define __KEY_HOLD			0x0100
+
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -112,6 +117,7 @@ u16 KeypadManager_getPressedKey(KeypadManager this);
 u16 KeypadManager_getPreviousKey(KeypadManager this);
 u16 KeypadManager_getReleasedKey(KeypadManager this);
 int KeypadManager_isEnabled(KeypadManager this);
+void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister);
 
 
 #endif
