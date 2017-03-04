@@ -175,9 +175,17 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
-	VirtualNode node = VirtualList_find(this->shapes, __VIRTUAL_CALL(SpatialObject, getShape, owner));
+	VirtualNode node = this->shapes->head;
 
-	return node ? __SAFE_CAST(Shape, node->data) : NULL;
+	for(; node; node = node->next)
+	{
+		if(owner == (__SAFE_CAST(Shape, node->data))->owner)
+		{
+			return __SAFE_CAST(Shape, node->data);
+		}
+	}
+
+	return NULL;
 }
 
 // process removed shapes
