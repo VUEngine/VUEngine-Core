@@ -167,32 +167,34 @@ void ParticleRemover_update(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::update: null this");
 
+	if(!this->particlesLists->head)
+	{
+		return;
+	}
+
 	if(0 > this->removalDelayCycles)
 	{
 		ParticleRemover_reset(this);
 	}
 	else if(0 >= --this->remainingRemoveDelayCycles)
 	{
-		if(this->particlesLists->head)
+		VirtualList particlesList = VirtualList_front(this->particlesLists);
+
+		if(particlesList->head)
 		{
-			VirtualList particlesList = VirtualList_front(this->particlesLists);
+			__DELETE(VirtualList_front(particlesList));
+			VirtualList_popFront(particlesList);
 
-			if(particlesList->head)
-			{
-				__DELETE(VirtualList_front(particlesList));
-				VirtualList_popFront(particlesList);
-
-				if(!VirtualList_getSize(particlesList))
-				{
-					__DELETE(particlesList);
-					VirtualList_popFront(this->particlesLists);
-				}
-			}
-			else
+			if(!VirtualList_getSize(particlesList))
 			{
 				__DELETE(particlesList);
 				VirtualList_popFront(this->particlesLists);
 			}
+		}
+		else
+		{
+			__DELETE(particlesList);
+			VirtualList_popFront(this->particlesLists);
 		}
 
 		this->remainingRemoveDelayCycles = this->removalDelayCycles;
