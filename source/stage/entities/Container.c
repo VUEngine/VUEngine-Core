@@ -705,7 +705,7 @@ void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 {
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
 
-	this->invalidateGlobalTransformation = (__XAXIS & axisToInvalidate ? __XAXIS: 0) | (__YAXIS & axisToInvalidate ? __YAXIS: 0) | (__ZAXIS & axisToInvalidate ? __ZAXIS: 0);
+	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
 	if(this->children && axisToInvalidate)
 	{
@@ -725,7 +725,7 @@ void Container_invalidateGlobalRotation(Container this, u8 axisToInvalidate)
 {
 	ASSERT(this, "Container::invalidateGlobalRotation: null this");
 
-	this->invalidateGlobalTransformation = ((__XAXIS & axisToInvalidate ? __XAXIS: 0) | (__YAXIS & axisToInvalidate ? __YAXIS: 0) | (__ZAXIS & axisToInvalidate ? __ZAXIS: 0)) << 3;
+	this->invalidateGlobalTransformation |= __INVALIDATE_ROTATION;
 
 	if(this->children && axisToInvalidate)
 	{
@@ -745,7 +745,7 @@ void Container_invalidateGlobalScale(Container this, u8 axisToInvalidate)
 {
 	ASSERT(this, "Container::invalidateGlobalScale: null this");
 
-	this->invalidateGlobalTransformation = ((__XAXIS & axisToInvalidate ? __XAXIS: 0) | (__YAXIS & axisToInvalidate ? __YAXIS: 0) | (__ZAXIS & axisToInvalidate ? __ZAXIS: 0)) << 6;
+	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 
 	if(this->children && axisToInvalidate)
 	{

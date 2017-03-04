@@ -1454,7 +1454,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	if(this->sprites)
 	{
 		this->updateSprites |= Entity_updateSpritePosition(this) ? __UPDATE_SPRITE_POSITION : 0;
-		//this->updateSprites |= Entity_updateSpriteRotation(this) ? __UPDATE_SPRITE_ROTATION : 0;
+		this->updateSprites |= Entity_updateSpriteRotation(this) ? __UPDATE_SPRITE_ROTATION : 0;
 		this->updateSprites |= Entity_updateSpriteScale(this) ? __UPDATE_SPRITE_SCALE : 0;
 	}
 
