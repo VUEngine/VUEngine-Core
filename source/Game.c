@@ -1215,7 +1215,7 @@ static void Game_update(Game this)
 
 		u32 gameFrameDuration = TimerManager_getMillisecondsElapsed(this->timerManager);
 
-//		gameFrameDuration = gameFrameDuration < __GAME_FRAME_DURATION? __GAME_FRAME_DURATION : gameFrameDuration;
+		//gameFrameDuration = gameFrameDuration < __GAME_FRAME_DURATION? __GAME_FRAME_DURATION : gameFrameDuration;
 
 		while(gameFrameDuration < __GAME_FRAME_DURATION - 1)
 		{
@@ -1248,7 +1248,6 @@ static void Game_update(Game this)
 
 		// process user's input
 		bool skipNonCriticalProcesses = Game_handleInput(this);
-		//__CHECK_IF_CAN_WRITE_DRAM
 
 		// physics' update takes place after game's logic
 		// has been done
@@ -1318,11 +1317,9 @@ static void Game_update(Game this)
 #ifdef __PROFILE_GAME
 		streamingProcessTime = 0;
 #endif
-		//if(!skipNonCriticalProcesses)
-		{
-			Game_stream(this);
-			__CHECK_IF_CAN_WRITE_DRAM
-		}
+
+		Game_stream(this);
+		__CHECK_IF_CAN_WRITE_DRAM
 
 #ifdef __PROFILE_GAME
 		if(updateProfiling)
