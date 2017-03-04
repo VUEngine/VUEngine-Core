@@ -603,26 +603,6 @@ const VBVec3D* Container_getGlobalPosition(Container this)
 	return &this->transform.globalPosition;
 }
 
-// invalidate global position
-static void Container_propagateInvalidateGlobalTransformation(Container this)
-{
-	if(this->children)
-	{
-		VirtualNode node = this->children->head;
-
-		// update each child
-		for(; node; node = node->next)
-		{
-			Container child = __SAFE_CAST(Container, node->data);
-
-			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
-
-			// make sure children recalculates its global position
-			Container_propagateInvalidateGlobalTransformation(child);
-		}
-	}
-}
-
 // retrieve local position
 const VBVec3D* Container_getLocalPosition(Container this)
 {
@@ -637,14 +617,21 @@ void Container_setLocalPosition(Container this, const VBVec3D* position)
 	ASSERT(this, "Container::setLocalPosition: null this");
 
 	// force global position calculation on the next transform cycle
-	this->invalidateGlobalTransformation |= (this->transform.localPosition.x != position->x ? __XAXIS: 0) | (this->transform.localPosition.y != position->y ? __YAXIS: 0) | (this->transform.localPosition.z != position->z ? __ZAXIS: 0);
+	if(this->transform.localPosition.z != position->z)
+	{
+		Container_invalidateGlobalPosition(this);
+		Container_invalidateGlobalScale(this);
+	}
+	else if(this->transform.localPosition.x != position->x)
+	{
+		Container_invalidateGlobalPosition(this);
+	}
+	else if(this->transform.localPosition.y != position->y)
+	{
+		Container_invalidateGlobalPosition(this);
+	}
 
 	this->transform.localPosition = *position;
-
-	if(this->invalidateGlobalTransformation)
-	{
-		Container_propagateInvalidateGlobalTransformation(this);
-	}
 }
 
 const Rotation* Container_getLocalRotation(Container this)
@@ -661,7 +648,7 @@ void Container_setLocalRotation(Container this, const Rotation* rotation)
 
 	this->transform.localRotation = *rotation;
 
-	Container_invalidateGlobalRotation(this, __XAXIS | __YAXIS | __ZAXIS);
+	Container_invalidateGlobalRotation(this);
 }
 
 const Scale* Container_getLocalScale(Container this)
@@ -678,7 +665,7 @@ void Container_setLocalScale(Container this, const Scale* scale)
 
 	this->transform.localScale = *scale;
 
-	Container_invalidateGlobalScale(this, __XAXIS | __YAXIS | __ZAXIS);
+	Container_invalidateGlobalScale(this);
 }
 
 void Container_invalidateGlobalTransformation(Container this)
@@ -701,13 +688,13 @@ void Container_invalidateGlobalTransformation(Container this)
 }
 
 // invalidate global position
-void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
+void Container_invalidateGlobalPosition(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
-	if(this->children && axisToInvalidate)
+	if(this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -715,19 +702,19 @@ void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate)
 		for(; node; node = node->next)
 		{
 			// make sure children recalculates its global position
-			Container_invalidateGlobalPosition(__SAFE_CAST(Container, node->data), axisToInvalidate);
+			Container_invalidateGlobalPosition(__SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
 // invalidate global rotation
-void Container_invalidateGlobalRotation(Container this, u8 axisToInvalidate)
+void Container_invalidateGlobalRotation(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalRotation: null this");
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_ROTATION;
 
-	if(this->children && axisToInvalidate)
+	if(this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -735,19 +722,19 @@ void Container_invalidateGlobalRotation(Container this, u8 axisToInvalidate)
 		for(; node; node = node->next)
 		{
 			// make sure children recalculates its global position
-			Container_invalidateGlobalRotation(__SAFE_CAST(Container, node->data), axisToInvalidate);
+			Container_invalidateGlobalRotation(__SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
 // invalidate global scale
-void Container_invalidateGlobalScale(Container this, u8 axisToInvalidate)
+void Container_invalidateGlobalScale(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalScale: null this");
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 
-	if(this->children && axisToInvalidate)
+	if(this->children)
 	{
 		VirtualNode node = this->children->head;
 
@@ -755,7 +742,7 @@ void Container_invalidateGlobalScale(Container this, u8 axisToInvalidate)
 		for(; node; node = node->next)
 		{
 			// make sure children recalculates its global position
-			Container_invalidateGlobalScale(__SAFE_CAST(Container, node->data), axisToInvalidate);
+			Container_invalidateGlobalScale(__SAFE_CAST(Container, node->data));
 		}
 	}
 }

@@ -145,8 +145,6 @@ extern Optical* _optical;
 extern UserObject _userObjects[];
 extern const VBVec3D* _screenDisplacement;
 
-void Container_invalidateGlobalPosition(Container this, u8 axisToInvalidate);
-
 static void StageEditor_constructor(StageEditor this);
 static void StageEditor_setupMode(StageEditor this);
 static void StageEditor_releaseShape(StageEditor this);
@@ -881,7 +879,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		localPosition.z += translation.z;
 
 		__VIRTUAL_CALL(Container, setLocalPosition, container, &localPosition);
-		Container_invalidateGlobalPosition(container, __XAXIS | __YAXIS | __ZAXIS);
+		Container_invalidateGlobalPosition(container);
 
 		// this hack forces the Entity to recalculate its sprites' value.
 		// must hack this global, otherwise will need another variable which most likely will only
