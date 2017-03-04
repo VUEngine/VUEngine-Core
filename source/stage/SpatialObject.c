@@ -145,7 +145,7 @@ Gap SpatialObject_getGap(SpatialObject this __attribute__ ((unused)))
 	return gap;
 }
 
-void SpatialObject_calculateGap(SpatialObject this)
+void SpatialObject_calculateGap(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::calculateGap: null this");
 }
@@ -191,7 +191,7 @@ Velocity SpatialObject_getVelocity(SpatialObject this __attribute__ ((unused)))
 	return (Velocity){0, 0, 0};
 }
 
-bool SpatialObject_isAffectedByRelativity(SpatialObject this)
+bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::isAffectedByRelativity: null this");
 
