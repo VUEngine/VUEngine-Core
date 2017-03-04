@@ -158,6 +158,7 @@ u32 Entity_areAllChildrenInstantiated(Entity this);
 u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
+void Entity_setShapePosition(Entity this);
 VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
 int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
 u32 Entity_getAxisForFlipping(Entity this);

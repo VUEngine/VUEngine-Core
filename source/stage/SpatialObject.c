@@ -145,6 +145,11 @@ Gap SpatialObject_getGap(SpatialObject this __attribute__ ((unused)))
 	return gap;
 }
 
+void SpatialObject_calculateGap(SpatialObject this)
+{
+	ASSERT(this, "SpatialObject::calculateGap: null this");
+}
+
 const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getPosition: null this");
@@ -183,7 +188,12 @@ Velocity SpatialObject_getVelocity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getVelocity: null this");
 
-	static Velocity velocity = {0, 0, 0};
-	return velocity;
+	return (Velocity){0, 0, 0};
 }
 
+bool SpatialObject_isAffectedByRelativity(SpatialObject this)
+{
+	ASSERT(this, "SpatialObject::isAffectedByRelativity: null this");
+
+	return false;
+}

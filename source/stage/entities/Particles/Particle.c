@@ -198,7 +198,7 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 	{
 		const VBVec3D* position = Body_getPosition(this->body);
 
-		ASSERT(this->objectSprite, "Particle::transform: null objectSprite");
+		ASSERT(this->objectSprite, "Particle::updateVisualRepresentation: null objectSprite");
 
 		if(__ZAXIS & Body_isMoving(this->body))
 		{

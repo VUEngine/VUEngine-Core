@@ -48,6 +48,7 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, isMoving);												\
 		__VIRTUAL_SET(ClassName, InGameEntity, getMovementState);										\
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);													\
+		__VIRTUAL_SET(ClassName, InGameEntity, calculateGap);											\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);											\
 
 #define InGameEntity_ATTRIBUTES																			\
@@ -104,7 +105,7 @@ void InGameEntity_destructor(InGameEntity this);
 void InGameEntity_setDefinition(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition);
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
 Gap InGameEntity_getGap(InGameEntity this);
-void InGameEntity_setGap(InGameEntity this);
+void InGameEntity_calculateGap(InGameEntity this);
 u32 InGameEntity_getInGameType(InGameEntity this);
 bool InGameEntity_moves(InGameEntity this);
 int InGameEntity_isMoving(InGameEntity this);

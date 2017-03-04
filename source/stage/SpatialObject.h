@@ -45,11 +45,13 @@
 		__VIRTUAL_DEC(ClassName, int, getHeight);														\
 		__VIRTUAL_DEC(ClassName, int, getDepth);														\
 		__VIRTUAL_DEC(ClassName, Gap, getGap);															\
+		__VIRTUAL_DEC(ClassName, void, calculateGap);													\
 		__VIRTUAL_DEC(ClassName, const VBVec3D*, getPosition);											\
 		__VIRTUAL_DEC(ClassName, void, setPosition, const VBVec3D* position);							\
 		__VIRTUAL_DEC(ClassName, fix19_13, getElasticity);												\
 		__VIRTUAL_DEC(ClassName, fix19_13, getFriction);												\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
+		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
 
 // define the virtual methods
 #define SpatialObject_SET_VTABLE(ClassName)																\
@@ -62,11 +64,13 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, getHeight);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, getGap);												\
+		__VIRTUAL_SET(ClassName, SpatialObject, calculateGap);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getPosition);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, setPosition);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getElasticity);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getVelocity);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, isAffectedByRelativity);								\
 
 
 #define SpatialObject_ATTRIBUTES																		\
@@ -90,11 +94,13 @@ int SpatialObject_getWidth(SpatialObject this);
 int SpatialObject_getHeight(SpatialObject this);
 int SpatialObject_getDepth(SpatialObject this);
 Gap SpatialObject_getGap(SpatialObject this);
+void SpatialObject_calculateGap(SpatialObject this);
 const VBVec3D* SpatialObject_getPosition(SpatialObject this);
 void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position);
 fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
+bool SpatialObject_isAffectedByRelativity(SpatialObject this);
 
 
 #endif

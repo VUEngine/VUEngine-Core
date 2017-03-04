@@ -1026,7 +1026,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 			continue;
 		}
 
-		__VIRTUAL_CALL(Container, transform, child, &this->transform);
+		__VIRTUAL_CALL(Container, transform, child, NULL);
 	}
 
 	if(this->uiContainer)

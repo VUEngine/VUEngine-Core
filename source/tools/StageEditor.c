@@ -501,13 +501,14 @@ static void StageEditor_positionShape(StageEditor this)
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-	__VIRTUAL_CALL(Shape, setup, this->shape);
+	Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, entity);
+	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity), gap);
 
 	Shape_setReady(this->shape, false);
 
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
-		__VIRTUAL_CALL(Shape, position, this->shape);
+		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false, gap);
 	}
 
 	if(this->shape)

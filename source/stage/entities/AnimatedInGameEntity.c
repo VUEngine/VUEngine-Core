@@ -129,6 +129,8 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 {
 	ASSERT(this, "AnimatedInGameEntity::transform: null this");
 
+	bool directionChanged = false;
+
 	// set sprite direction
 	if(this->direction.x != this->previousDirection.x)
 	{
@@ -137,8 +139,9 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 
 		// save current direction
 		this->previousDirection.x = this->direction.x;
-	}
 
+		directionChanged = true;
+	}
 
 	if(this->direction.y != this->previousDirection.y)
 	{
@@ -147,9 +150,16 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 
 		// save current direction
 		this->previousDirection.y = this->direction.y;
+
+		directionChanged = true;
 	}
 
 	this->previousDirection.z = this->direction.z;
+
+	if(directionChanged)
+	{
+		InGameEntity_calculateGap(__SAFE_CAST(InGameEntity, this));
+	}
 
 	// call base
 	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
@@ -162,18 +172,6 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 
 	// call base
 	Container_update(__SAFE_CAST(Container, this), elapsedTime);
-
-	// if direction changed
-	if(this->direction.x != this->previousDirection.x ||
-		this->direction.y != this->previousDirection.y ||
-		this->direction.z != this->previousDirection.z
-	)
-	{
-		ASSERT(this->sprites, "AnimatedInGameEntity::update: null sprites");
-
-		// calculate gap again
-		InGameEntity_setGap(__SAFE_CAST(InGameEntity, this));
-	}
 
 	if(elapsedTime)
 	{

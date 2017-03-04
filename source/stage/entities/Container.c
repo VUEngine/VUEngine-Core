@@ -471,29 +471,50 @@ inline static void Container_applyEnvironmentToPosition(Container this, const Tr
 {
 	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
 
-	// propagate position
-	this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
-	this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
-	this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
+	if(environmentTransform)
+	{
+		// propagate position
+		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
+		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
+		this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
+
+		return;
+	}
+
+	this->transform.globalPosition = this->transform.localPosition;
 }
 
 inline static void Container_applyEnvironmentToRotation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToRotation: null this");
 
-	// propagate rotation
-	this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-	this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
-	this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
+	if(environmentTransform)
+	{
+		// propagate rotation
+		this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
+		this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
+		this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
+
+		return;
+	}
+
+	this->transform.globalRotation = this->transform.localRotation;
 }
 
 inline static void Container_applyEnvironmentToScale(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToScale: null this");
 
-	// propagate scale
-	this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
-	this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+	if(environmentTransform)
+	{
+		// propagate scale
+		this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
+		this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+
+		return;
+	}
+
+	this->transform.globalScale = this->transform.localScale;
 }
 
 // initial transform but don't call the virtual method

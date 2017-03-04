@@ -1093,6 +1093,26 @@ u32 Entity_areAllChildrenReady(Entity this)
 }
 
 /**
+ * Set shape's position
+ *
+ * @memberof		Entity
+ * @private
+ *
+ * @param this		Function scope
+ */
+void Entity_setShapePosition(Entity this)
+{
+	ASSERT(this, "Entity::setShapePosition: null this");
+
+	if(this->shape && Shape_moves(this->shape))
+	{
+		// setup shape
+		Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, this);
+		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
+		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(this), isAffectedByRelativity, gap);
+	}
+}
+/**
  * Setup shape
  *
  * @memberof	Entity
@@ -1107,11 +1127,14 @@ static void Entity_setupShape(Entity this)
 	if(this->shape)
 	{
 		// setup shape
-		__VIRTUAL_CALL(Shape, setup, this->shape);
+		__VIRTUAL_CALL(SpatialObject, calculateGap, this);
+		Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, this);
+		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(this), Entity_getWidth(this), Entity_getHeight(this), Entity_getDepth(this), gap);
 
 		if(__VIRTUAL_CALL(Entity, moves, this))
 		{
-			__VIRTUAL_CALL(Shape, position, this->shape);
+			bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
+			__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(this), isAffectedByRelativity, gap);
 		}
 
 		Shape_setActive(this->shape, true);
@@ -1453,18 +1476,15 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 
 	if(this->sprites)
 	{
-		this->updateSprites |= Entity_updateSpritePosition(this) ? __UPDATE_SPRITE_POSITION : 0;
-		this->updateSprites |= Entity_updateSpriteRotation(this) ? __UPDATE_SPRITE_ROTATION : 0;
-		this->updateSprites |= Entity_updateSpriteScale(this) ? __UPDATE_SPRITE_SCALE : 0;
+		this->updateSprites |= Entity_updateSpritePosition(this);
+		this->updateSprites |= Entity_updateSpriteRotation(this);
+		this->updateSprites |= Entity_updateSpriteScale(this);
 	}
 
 	// call base class's transform method
 	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
 
-	if(this->shape && __VIRTUAL_CALL(Entity, moves, this))
-	{
-		__VIRTUAL_CALL(Shape, position, this->shape);
-	}
+	Entity_setShapePosition(this);
 }
 
 /**
@@ -1783,8 +1803,8 @@ bool Entity_updateSpritePosition(Entity this)
 			_screenDisplacement->z
 		)
 		||
-		__INVALIDATE_POSITION & this->invalidateGlobalTransformation
-	);
+		(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
+	) ? __UPDATE_SPRITE_POSITION : 0;
 }
 
 /**
@@ -1801,7 +1821,7 @@ bool Entity_updateSpriteRotation(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteRotation: null this");
 
-	return this->invalidateGlobalTransformation & __INVALIDATE_ROTATION;
+	return this->invalidateGlobalTransformation & __INVALIDATE_ROTATION ? __UPDATE_SPRITE_ROTATION : 0;
 }
 
 /**
@@ -1818,7 +1838,7 @@ bool Entity_updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
-	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & __INVALIDATE_SCALE));
+	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & __INVALIDATE_SCALE))? __UPDATE_SPRITE_SCALE : 0;
 }
 
 /**
