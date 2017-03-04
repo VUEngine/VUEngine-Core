@@ -87,9 +87,9 @@ RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this);
 RightCuboid Cuboid_getRightCuboid(Cuboid this);
 void Cuboid_hide(Cuboid this);
 int Cuboid_overlaps(Cuboid this, Shape shape);
-void Cuboid_position(Cuboid this);
+void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, Gap gap);
 void Cuboid_print(Cuboid this, int x, int y);
-void Cuboid_setup(Cuboid this);
+void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, int width, int height, int depth, Gap gap);
 void Cuboid_show(Cuboid this);
 int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement);
 

@@ -158,14 +158,14 @@ bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
 	return Cuboid_overlapsWithInverseRightCuboid(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
-void Cuboid_setup(Cuboid this)
+void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, int width, int height, int depth, Gap gap)
 {
 	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13((int)__VIRTUAL_CALL(SpatialObject, getWidth, this->owner) >> 1);
-	this->rightCuboid.y1 = ITOFIX19_13((int)__VIRTUAL_CALL(SpatialObject, getHeight, this->owner) >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13((int)__VIRTUAL_CALL(SpatialObject, getDepth, this->owner) >> 0);
+	this->rightCuboid.x1 = ITOFIX19_13(width) >> 1;
+	this->rightCuboid.y1 = ITOFIX19_13(height) >> 1;
+	this->rightCuboid.z1 = ITOFIX19_13(depth) >> 0;
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
@@ -175,14 +175,11 @@ void Cuboid_setup(Cuboid this)
 	if(!this->moves)
 	{
 		// position the shape to avoid in real time calculation
-		const VBVec3D* ownerPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
-		Gap ownerGap = __VIRTUAL_CALL(SpatialObject, getGap, this->owner);
-
 		// calculate gap on each side of the rightCuboid
-		this->rightCuboid.x0 += ownerPosition->x + ITOFIX19_13(ownerGap.left);
-		this->rightCuboid.x1 += ownerPosition->x - ITOFIX19_13(ownerGap.right);
-		this->rightCuboid.y0 += ownerPosition->y + ITOFIX19_13(ownerGap.up);
-		this->rightCuboid.y1 += ownerPosition->y - ITOFIX19_13(ownerGap.down);
+		this->rightCuboid.x0 += ownerPosition->x + ITOFIX19_13(gap.left);
+		this->rightCuboid.x1 += ownerPosition->x - ITOFIX19_13(gap.right);
+		this->rightCuboid.y0 += ownerPosition->y + ITOFIX19_13(gap.up);
+		this->rightCuboid.y1 += ownerPosition->y - ITOFIX19_13(gap.down);
 		this->rightCuboid.z0 += ownerPosition->z;
 		this->rightCuboid.z1 += ownerPosition->z;
 	}
@@ -194,15 +191,9 @@ void Cuboid_setup(Cuboid this)
 }
 
 // prepare the shape to be checked
-void Cuboid_position(Cuboid this)
+void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, Gap gap)
 {
 	ASSERT(this, "Cuboid::position: null this");
-
-	Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, this->owner);
-
-	// get owner's position
-	const VBVec3D* myOwnerPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
-	Velocity velocity = __VIRTUAL_CALL(SpatialObject, getVelocity, this->owner);
 
 	// calculate positioned rightCuboid
 	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + ITOFIX19_13(gap.left);
@@ -212,20 +203,24 @@ void Cuboid_position(Cuboid this)
 	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
 	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
 
-	VBVec3D lorentzFactor =
+	if(isAffectedByRelativity)
 	{
-		FIX19_13_DIV(velocity.x, __LIGHT_SPEED),
-		FIX19_13_DIV(velocity.y, __LIGHT_SPEED),
-		FIX19_13_DIV(velocity.z, __LIGHT_SPEED)
-	};
+		Velocity velocity = __VIRTUAL_CALL(SpatialObject, getVelocity, this->owner);
 
-	this->positionedRightCuboid.x0 -= 0 > velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
-	this->positionedRightCuboid.y0 -= 0 > velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
-	this->positionedRightCuboid.z0 -= 0 > velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
+		VBVec3D lorentzFactor =
+		{
+			FIX19_13_MULT(velocity.x, FIX19_13_DIV(velocity.x, __LIGHT_SPEED)),
+			FIX19_13_MULT(velocity.y, FIX19_13_DIV(velocity.y, __LIGHT_SPEED)),
+			FIX19_13_MULT(velocity.z, FIX19_13_DIV(velocity.z, __LIGHT_SPEED)),
+		};
 
-	this->positionedRightCuboid.x1 += 0 < velocity.x? FIX19_13_MULT(velocity.x, lorentzFactor.x) : 0;
-	this->positionedRightCuboid.y1 += 0 < velocity.y? FIX19_13_MULT(velocity.y, lorentzFactor.y) : 0;
-	this->positionedRightCuboid.z1 += 0 < velocity.z? FIX19_13_MULT(velocity.z, lorentzFactor.z) : 0;
+		this->positionedRightCuboid.x1 += lorentzFactor.x;
+		this->positionedRightCuboid.x0 -= lorentzFactor.x;
+		this->positionedRightCuboid.y1 += lorentzFactor.y;
+		this->positionedRightCuboid.y0 -= lorentzFactor.y;
+		this->positionedRightCuboid.z1 += lorentzFactor.z;
+		this->positionedRightCuboid.z0 -= lorentzFactor.z;
+	}
 
 	// not checked yet
 	this->checked = false;
