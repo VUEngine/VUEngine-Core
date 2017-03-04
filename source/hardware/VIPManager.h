@@ -287,6 +287,7 @@ void VIPManager_disableInterrupts(VIPManager this);
 void VIPManager_resetGameFrameStarted(VIPManager this);
 void VIPManager_displayOn(VIPManager this);
 void VIPManager_displayOff(VIPManager this);
+u32 VIPManager_drawingEnded(VIPManager this);
 void VIPManager_setupPalettes(VIPManager this, PaletteConfig* paletteConfig);
 void VIPManager_upBrightness(VIPManager this);
 void VIPManager_lowerBrightness(VIPManager this);

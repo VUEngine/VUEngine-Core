@@ -50,7 +50,6 @@
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, isVisible);									\
 
 #define CollisionsContainerEntity_ATTRIBUTES															\
-		/* it is derived from */																		\
 		Entity_ATTRIBUTES																				\
 
 __CLASS(CollisionsContainerEntity);
@@ -81,5 +80,6 @@ bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this, Tel
 bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this, int message);
 int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 bool CollisionsContainerEntity_isVisible(CollisionsContainerEntity this, int pad, bool recursive);
+
 
 #endif
