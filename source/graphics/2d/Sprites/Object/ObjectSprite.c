@@ -335,7 +335,7 @@ void ObjectSprite_render(ObjectSprite this)
 	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p)) & __OBJECT_CHAR_HIDE_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000)) & __OBJECT_CHAR_HIDE_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)

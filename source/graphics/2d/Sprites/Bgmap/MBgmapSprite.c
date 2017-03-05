@@ -389,12 +389,21 @@ void MBgmapSprite_render(MBgmapSprite this)
 		worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 		// get coordinates
-		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+		int gx = worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+		int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
 		// get sprite's size
-		worldPointer->gx = gx > __SCREEN_WIDTH? __SCREEN_WIDTH : gx < 0? 0: gx;
-		worldPointer->gy = gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT : gy < 0? 0: gy;
+		if(0 > gx)
+		{
+			worldPointer->gx = 0;
+		}
+
+		if(0 > gy)
+		{
+			worldPointer->gy = 0;
+		}
+
+//		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
 		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
 		worldPointer->mx = this->drawSpec.textureSource.mx;
@@ -405,9 +414,13 @@ void MBgmapSprite_render(MBgmapSprite this)
 		if(!this->mBgmapSpriteDefinition->xLoop)
 		{
 			int w = (((int)this->texture->textureDefinition->cols)<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
-			worldPointer->w = w + worldPointer->gx > __SCREEN_WIDTH? __SCREEN_WIDTH - worldPointer->gx: 0 > w? 0: w;
 
-			if(!worldPointer->w)
+			if(w + worldPointer->gx >= __SCREEN_WIDTH)
+			{
+				w = __SCREEN_WIDTH - worldPointer->gx;
+			}
+
+			if(0 > w)
 			{
 				worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
@@ -416,6 +429,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 #endif
 				return;
 			}
+
+			worldPointer->w = w;
 		}
 		else
 		{
@@ -426,9 +441,13 @@ void MBgmapSprite_render(MBgmapSprite this)
 		if(!this->mBgmapSpriteDefinition->yLoop)
 		{
 			int h = (((int)this->texture->textureDefinition->rows)<< 3) - 1 - (worldPointer->my - this->textureYOffset);
-			worldPointer->h = h + worldPointer->gy > __SCREEN_HEIGHT? __SCREEN_HEIGHT - worldPointer->gy: 0 > h? 0: h;
 
-			if(!worldPointer->h)
+			if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+			{
+				h = __SCREEN_HEIGHT - worldPointer->gy;
+			}
+
+			if(0 > h)
 			{
 				worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
@@ -437,6 +456,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 #endif
 				return;
 			}
+
+			worldPointer->h = h;
 		}
 		else
 		{

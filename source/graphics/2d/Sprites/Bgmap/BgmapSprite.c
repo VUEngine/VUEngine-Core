@@ -426,35 +426,44 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 		// get coordinates
-		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+		int gx = worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+		int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
 		// get sprite's size
 		int width = this->texture->textureDefinition->cols << 3;
 		int height = this->texture->textureDefinition->rows << 3;
-		int w = width;
-		int h = height;
+		int w = width - __WORLD_SIZE_DISPLACEMENT;
+		int h = height - __WORLD_SIZE_DISPLACEMENT;
 
-		// cap coordinates to screen space
-		worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
-		worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
-		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
-
-		// clip texture's source to screen space
-		int mxDisplacement = 0 > gx ? -gx : 0;
-		int myDisplacement = 0 > gy ? -gy : 0;
-
-		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
+		worldPointer->mx = this->drawSpec.textureSource.mx;
+		worldPointer->my = this->drawSpec.textureSource.my;
 		worldPointer->mp = this->drawSpec.textureSource.mp;
 
-		// clip sprite's size to screen space
-		// reduce by 1 since 0 means 1 in the vb
-		w = w - __WORLD_SIZE_DISPLACEMENT - mxDisplacement;
-		h = h - __WORLD_SIZE_DISPLACEMENT - myDisplacement;
+		// cap coordinates to screen space
+		if(0 > gx)
+		{
+			worldPointer->gx = 0;
+			worldPointer->mx -= gx;
+			w += gx;
+		}
 
-		w = w + worldPointer->gx >= __SCREEN_WIDTH ? __SCREEN_WIDTH - worldPointer->gx : w;
-		h = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy : h;
+		int myDisplacement = 0;
+
+		if(0 > gy)
+		{
+			worldPointer->gy = 0;
+			worldPointer->my -= gy;
+			h += gy;
+			myDisplacement = -gy;
+		}
+
+		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
+//		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
+
+		if(w + worldPointer->gx >= __SCREEN_WIDTH)
+		{
+			w = __SCREEN_WIDTH - worldPointer->gx;
+		}
 
 		if (0 > w)
 		{
@@ -464,6 +473,11 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->h = 0;
 #endif
 			return;
+		}
+
+		if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+		{
+			h = __SCREEN_HEIGHT - worldPointer->gy;
 		}
 
 		if (0 > h)
