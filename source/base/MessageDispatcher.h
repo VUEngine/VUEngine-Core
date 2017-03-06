@@ -56,8 +56,11 @@ MessageDispatcher MessageDispatcher_getInstance();
 
 bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
 u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
-void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);
 void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock);
+void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);
+void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message);
+void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender);
+void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver);
 
 
 #endif

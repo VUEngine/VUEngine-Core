@@ -370,3 +370,94 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
 		}
 	}
 }
+
+/**
+ * Discarded delayed messages sent to an object
+ *
+ * @memberof		MessageDispatcher
+ * @private
+ *
+ * @param this		Function scope
+ * @param sender	the object that the message was originally sent to
+ * @param message	the actual message code
+ */
+void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message)
+{
+	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
+
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+		Telegram telegram = delayedMessage->telegram;
+
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getMessage(telegram) == message && Telegram_getReceiver(telegram) == receiver && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		{
+			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+			{
+				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			}
+		}
+	}
+}
+
+/**
+ * Discarded all delayed messages sent by an object
+ *
+ * @memberof		MessageDispatcher
+ * @private
+ *
+ * @param this		Function scope
+ * @param sender	the object that originally sent the message
+ */
+void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender)
+{
+	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesFromSender: null this");
+
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+		Telegram telegram = delayedMessage->telegram;
+
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		{
+			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+			{
+				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			}
+		}
+	}
+}
+
+/**
+ * Discarded all delayed messages sent to an object
+ *
+ * @memberof		MessageDispatcher
+ * @private
+ *
+ * @param this		Function scope
+ * @param sender	the object that the message was originally sent to
+ */
+void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver)
+{
+	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesForReceiver: null this");
+
+	VirtualNode node = this->delayedMessages->head;
+
+	for(; node; node = node->next)
+	{
+		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
+		Telegram telegram = delayedMessage->telegram;
+
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getReceiver(telegram) == receiver && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		{
+			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+			{
+				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			}
+		}
+	}
+}
