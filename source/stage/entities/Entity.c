@@ -68,8 +68,6 @@ u32 EntityFactory_transformEntities(EntityFactory this);
 u32 EntityFactory_makeReadyEntities(EntityFactory this);
 u32 EntityFactory_callLoadedEntities(EntityFactory this);
 
-static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
-static void Entity_releaseSprites(Entity this, bool deleteThem);
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation);
 static void Entity_setupShape(Entity this);
 
@@ -267,11 +265,11 @@ void Entity_releaseGraphics(Entity this)
  * Release sprites
  *
  * @memberof	Entity
- * @private
+ * @public
  *
  * @param this	Function scope
  */
-static void Entity_releaseSprites(Entity this, bool deleteThem)
+void Entity_releaseSprites(Entity this, bool deleteThem)
 {
 	ASSERT(this, "Entity::releaseSprites: null this");
 
@@ -1218,7 +1216,7 @@ void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo _
  * @param this					Function scope
  * @param spritesDefinitions
  */
-static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions)
+void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions)
 {
 	ASSERT(this, "Entity::addSprites: null this");
 
@@ -1257,7 +1255,7 @@ static void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefin
  *
  * @return							True if a sprite was created
  */
-bool Entity_addSprite(Entity this, int spriteDefinitionIndex)
+bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionIndex)
 {
 	ASSERT(this, "Entity::addSprite: null this");
 

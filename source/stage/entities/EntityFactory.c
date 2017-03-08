@@ -301,7 +301,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 				return __ENTITY_PENDING_PROCESSING;
 			}
 
-			if(Entity_addSprite(positionedEntityDescription->entity, positionedEntityDescription->spriteDefinitionIndex++))
+			if(Entity_addSpriteFromDefinitionAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteDefinitionIndex++))
 			{
 				return __ENTITY_PENDING_PROCESSING;
 			}
