@@ -151,7 +151,7 @@
 #define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)
 
 // Define to dispatch the delayed messages every other game frame cycle
-#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 
 
 //---------------------------------------------------------------------------------------------------------
