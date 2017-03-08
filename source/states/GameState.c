@@ -220,6 +220,9 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 	// save the screen position for resume reconfiguration
 	this->screenPosition = Screen_getPosition(Screen_getInstance());
 
+	// make sure shapes are not drawn while suspended
+	CollisionManager_hideShapes(this->collisionManager);
+
 	if(this->stage)
 	{
 		__VIRTUAL_CALL(Container, suspend, this->stage);
