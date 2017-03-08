@@ -387,6 +387,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 		{
 			// must add graphics
 			__VIRTUAL_CALL(Container, setupGraphics, entity);
+			__VIRTUAL_CALL(Entity, initialize, entity, true);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
@@ -831,7 +832,15 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 				{
 					stageEntityDescription->internalId = this->nextEntityId++;
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-					EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+
+					if(defer)
+					{
+						EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+					}
+					else
+					{
+						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false);
+					}
 				}
 			}
 		}
@@ -863,7 +872,15 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 				{
 					stageEntityDescription->internalId = this->nextEntityId++;
 					VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
-					EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+
+					if(defer)
+					{
+						EntityFactory_spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+					}
+					else
+					{
+						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false);
+					}
 				}
 			}
 		}
@@ -981,6 +998,7 @@ void Stage_streamAll(Stage this)
 	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 
 	Stage_unloadOutOfRangeEntities(this, false);
+	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 	Stage_loadInRangeEntities(this, false);
 	EntityFactory_prepareAllEntities(this->entityFactory);
 	SpriteManager_sortLayers(SpriteManager_getInstance());
@@ -1155,6 +1173,8 @@ void Stage_resume(Stage this)
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
 
 	Container_resume(__SAFE_CAST(Container, this));
+
+	Stage_streamAll(this);
 
 	// apply transformations
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
