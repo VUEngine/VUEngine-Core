@@ -38,10 +38,10 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __UPDATE_SPRITE_TRANSFORMATION		0x07
 #define __UPDATE_SPRITE_POSITION			0x01
 #define __UPDATE_SPRITE_SCALE				0x02
 #define __UPDATE_SPRITE_ROTATION			0x04
+#define __UPDATE_SPRITE_TRANSFORMATION		0x07
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,8 +52,8 @@
 		Container_METHODS(ClassName)																	\
 		__VIRTUAL_DEC(ClassName, bool, isVisible, int, bool);											\
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
-		__VIRTUAL_DEC(ClassName, void, initialize, bool);														\
-		__VIRTUAL_DEC(ClassName, void, ready, bool);														\
+		__VIRTUAL_DEC(ClassName, void, initialize, bool);												\
+		__VIRTUAL_DEC(ClassName, void, ready, bool);													\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
 
 #define Entity_SET_VTABLE(ClassName)																	\
@@ -76,7 +76,7 @@
 		__VIRTUAL_SET(ClassName, Entity, suspend);														\
 		__VIRTUAL_SET(ClassName, Entity, resume);														\
 		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);												\
-		__VIRTUAL_SET(ClassName, Entity, initialize);														\
+		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\

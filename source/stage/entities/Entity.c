@@ -71,6 +71,7 @@ u32 EntityFactory_callLoadedEntities(EntityFactory this);
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation);
 static void Entity_setupShape(Entity this);
 
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -1211,7 +1212,7 @@ void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo _
  * Add sprites
  *
  * @memberof					Entity
- * @public
+ * @private
  *
  * @param this					Function scope
  * @param spritesDefinitions

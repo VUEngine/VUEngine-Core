@@ -262,7 +262,7 @@ void Container_setupGraphics(Container this __attribute__ ((unused)))
 	}
 }
 
-void Container_releaseGraphics(Container this __attribute__ ((unused)))
+void Container_releaseGraphics(Container this)
 {
 	ASSERT(this, "Container::releaseGraphics: null this");
 
