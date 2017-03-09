@@ -43,6 +43,7 @@
 #include <VIPManager.h>
 #include <RecyclableBgmapTextureManager.h>
 #include <ParticleRemover.h>
+#include <MessageDispatcher.h>
 #include <debugConfig.h>
 #ifdef __PROFILE_STREAMING
 #include <TimerManager.h>
