@@ -127,20 +127,25 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
 	// disable vip interrupts
-	VIPManager_disableInterrupts(VIPManager_getInstance());
+	_vipRegisters[__INTENB]= 0;
+	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 
 	// disable timer
-	TimerManager_enable(TimerManager_getInstance(), false);
+	_hardwareRegisters[__TCR] &= ~(__TIMER_ENB | __TIMER_INT);
 
 	// turn on the display
-	HardwareManager_displayOn(HardwareManager_getInstance());
+	_vipRegisters[__REST] = 0;
+	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
+	_vipRegisters[__FRMCYC] = 0;
+	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 
 	// make sure the brightness is ok
-	HardwareManager_upBrightness(HardwareManager_getInstance());
+	_vipRegisters[__BRTA] = 32;
+	_vipRegisters[__BRTB] = 64;
+	_vipRegisters[__BRTC] = 32;
 
 	// make sure there are fonts to show the exception
-	extern FontDefinition* const __FONTS[];
-	Printing_loadFonts(Printing_getInstance(), (FontDefinition**)__FONTS);
+	Printing_setDebugMode(Printing_getInstance());
 
 	//print error message to screen
 	if(0 < y)
@@ -195,7 +200,17 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 #endif
 
 	// error display message
-	Printing_render(Printing_getInstance(), SpriteManager_getFreeLayer(SpriteManager_getInstance()));
+	int textLayer = __EXCEPTIONS_WORLD;
+	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | __EXCEPTIONS_BGMAP;
+	_worldAttributesBaseAddress[textLayer].mx = 0;
+	_worldAttributesBaseAddress[textLayer].mp = 0;
+	_worldAttributesBaseAddress[textLayer].my = 0;
+	_worldAttributesBaseAddress[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
+	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
+	_worldAttributesBaseAddress[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
+	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH;
+	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT;
+	_worldAttributesBaseAddress[textLayer - 1].head = __WORLD_END;
 
 	// dimm game
 	_vipRegisters[__GPLT0] = 0xE4;

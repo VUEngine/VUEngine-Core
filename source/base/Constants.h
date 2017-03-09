@@ -35,6 +35,10 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
+// used for exceptions
+#define __EXCEPTIONS_BGMAP		0
+#define __EXCEPTIONS_WORLD		31
+
 // use for faster rounding on fix* values
 #define __1I_FIX7_9 		0x00000200
 #define __1I_FIX19_13		0x00002000

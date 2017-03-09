@@ -210,6 +210,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	if(0 > pool)
 	{
+		Printing_setDebugMode(Printing_getInstance());
 		Printing_clear(Printing_getInstance());
 		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
 		Printing_int(Printing_getInstance(), numberOfBytes, 44, 12, NULL);
@@ -227,6 +228,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	if(i >= numberOfOjects)
 	{
+		Printing_setDebugMode(Printing_getInstance());
 		Printing_clear(Printing_getInstance());
 	//	MemoryPool_printDetailedUsage(this, 1, 8);
 		Printing_text(Printing_getInstance(), "Pool's size: ", 20, 12, NULL);

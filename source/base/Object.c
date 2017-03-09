@@ -148,6 +148,7 @@ static void Object_checkIfFiringEvent(Object this, const char* message)
 
 	if(&_firingEventMarker == VirtualList_front(this->events))
 	{
+		Printing_setDebugMode(Printing_getInstance());
 		Printing_text(Printing_getInstance(), "Object's class:" , 1, 15, NULL);
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 17, 15, NULL);
 		Printing_text(Printing_getInstance(), "During:" , 1, 16, NULL);
@@ -450,6 +451,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 
 	if(!__IS_OBJECT_ALIVE(this))
 	{
+		Printing_setDebugMode(Printing_getInstance());
 		Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
 		Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
 		NM_ASSERT(false, "Object::getCast: deleted this");

@@ -258,7 +258,7 @@ void Printing_setDebugMode(Printing this)
  */
 void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unused)))
 {
-	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode? __EXCEPTIONS_BGMAP : BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	VIPManager_clearBgmapSegment(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
@@ -328,7 +328,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 	u32 startColumn = x;
 	u32 charOffsetX = 0;
 	u32 charOffsetY = 0;
-	u32 printingBgmap = BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
 	FontData* fontData = Printing_getFontByName(this, font);
 
