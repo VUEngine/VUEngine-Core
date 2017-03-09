@@ -219,9 +219,9 @@ UserInput KeypadManager_read(KeypadManager this)
 	// enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
-	this->userInput.pressedKey = (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey;
-	this->userInput.releasedKey = (this->userInput.previousKey & ~this->userInput.allKeys) & this->userInputToRegister.releasedKey;
-	this->userInput.holdKey = (this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.holdKey;
+	this->userInput.pressedKey 	= (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey;
+	this->userInput.releasedKey = (~this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.releasedKey;
+	this->userInput.holdKey 	= (this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
 
 	return this->userInput;
