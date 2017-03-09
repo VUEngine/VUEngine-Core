@@ -180,9 +180,6 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 		}
 	}
 
-//	Printing_text(Printing_getInstance(), "Future col", 30, 0, NULL);
-//	Printing_hex(Printing_getInstance(), axisOfCollision, 30, 1, 4, NULL);
-
 	return axisOfCollision;
 }
 
