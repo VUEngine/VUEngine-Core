@@ -39,6 +39,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern FontROMDef* const __FONTS[];
+extern FontROMDef VUENGINE_FONT;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -47,6 +48,17 @@ extern FontROMDef* const __FONTS[];
 
 // horizontal tab size in chars
 #define TAB_SIZE	4
+
+// fontdata for debug output
+#define VUENGINE_DEBUG_FONT_SIZE	160
+FontROMData VUENGINE_DEBUG_FONT_DATA =
+{
+	// font definition
+	(FontDefinition*)&VUENGINE_FONT,
+
+	// offset of font in char memory
+	__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE,
+};
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -68,6 +80,7 @@ __CLASS_DEFINITION(Printing, Object);
 
 static void Printing_constructor(Printing this);
 static void Printing_out(Printing this, u8 x, u8 y, const char* string, const char* font);
+void Printing_loadDebugFont(Printing this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -95,9 +108,11 @@ __SINGLETON(Printing);
  */
 static void __attribute__ ((noinline)) Printing_constructor(Printing this)
 {
-	this->fonts = __NEW(VirtualList);
-
 	__CONSTRUCT_BASE(Object);
+
+	// initialize members
+	this->fonts = __NEW(VirtualList);
+	this->mode = __PRINTING_MODE_DEFAULT;
 }
 
 /**
@@ -181,7 +196,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
 		// instance and initialize a new fontdata instance
 		FontData* fontData = __NEW_BASIC(FontData);
 		fontData->fontDefinition = __FONTS[i];
-		fontData->charSet = NULL;
+		fontData->offset = 0;
 
 		// preload charset for font if in list of fonts to preload
 		if(fontDefinitions)
@@ -192,8 +207,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
 				// preload charset and save charset reference, if font was found
 				if(__FONTS[i]->charSetDefinition == fontDefinitions[j]->charSetDefinition)
 				{
-					CharSet charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinitions[j]->charSetDefinition);
-					fontData->charSet = charSet;
+					fontData->offset = CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinitions[j]->charSetDefinition));
 				}
 			}
 		}
@@ -201,6 +215,37 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
 		// add fontdata to internal list
 		VirtualList_pushBack(this->fonts, fontData);
 	}
+}
+
+/**
+ * Load engine's default font to end of char memory directly (for debug purposes)
+ *
+ * @memberof	Printing
+ * @private
+ *
+ * @param this	Function scope
+ */
+void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute__ ((unused)))
+{
+	Mem_copy(
+		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_DATA.offset << 4)),
+		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontDefinition->charSetDefinition->charDefinition),
+		VUENGINE_DEBUG_FONT_SIZE << 4
+	);
+}
+
+/**
+ * Set mode to debug to bypass loading fonts through CharSets
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Printing_setDebugMode(Printing this)
+{
+	Printing_loadDebugFont(this);
+	this->mode = __PRINTING_MODE_DEBUG;
 }
 
 /**
@@ -231,25 +276,34 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
  */
 FontData* Printing_getFontByName(Printing this, const char* font)
 {
-	// set first defined font as default
-	FontData* result = VirtualList_front(this->fonts);
+	FontData* result = NULL;
 
-	// iterate over registered fonts to find definition of font to use
-	VirtualNode node = VirtualList_begin(this->fonts);
-	for(; node; node = VirtualNode_getNext(node))
+	if(this->mode == __PRINTING_MODE_DEBUG)
 	{
-		FontData* fontData = VirtualNode_getData(node);
-		if(!strcmp(fontData->fontDefinition->name, font))
-		{
-			result = fontData;
-			break;
-		}
+		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
 	}
-
-	// if font's charset has not been preloaded, load it now
-	if(result && !result->charSet)
+	else
 	{
-		result->charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition);
+		// set first defined font as default
+		result = VirtualList_front(this->fonts);
+
+		// iterate over registered fonts to find definition of font to use
+		VirtualNode node = VirtualList_begin(this->fonts);
+		for(; node; node = VirtualNode_getNext(node))
+		{
+			FontData* fontData = VirtualNode_getData(node);
+			if(!strcmp(fontData->fontDefinition->name, font))
+			{
+				result = fontData;
+				break;
+			}
+		}
+
+		// if font's charset has not been preloaded, load it now
+		if(result && !result->offset)
+		{
+			result->offset = CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition));
+		}
 	}
 
 	return result;
@@ -325,7 +379,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
 								(
 									// font offset
-									CharSet_getOffset(fontData->charSet) +
+									fontData->offset +
 
 									// top left char of letter
 									((u8)(string[i] - fontData->fontDefinition->offset) * fontData->fontDefinition->fontSize.x) +

@@ -112,8 +112,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->centerDisplacement = NULL;
 	this->entityFactory = NULL;
 
-	// initialize to 0 for the engine to know that
-	// size must be set
+	// initialize to 0 for the engine to know that size must be set
 	this->size = (Size){0, 0, 0};
 
 	this->updateSprites = 0;

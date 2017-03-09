@@ -35,14 +35,12 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct FontSize
-{
-	u8 x;
-	u8 y;
-} FontSize;
-
 // max length of a font's name
-#define __MAX_FONT_NAME_LENGTH	16
+#define __MAX_FONT_NAME_LENGTH		16
+
+// printing modes
+#define __PRINTING_MODE_DEFAULT		0
+#define __PRINTING_MODE_DEBUG		1
 
 // default font special chars
 #define __CHAR_BATTERY				"\x01\x02"
@@ -119,6 +117,18 @@ __CLASS(Printing);
 		 * @memberof		Printing
 		 */																								\
 		VirtualList fonts;																				\
+		/*
+		 * @var u8			mode
+		 * @brief			Printing mode (Default or Debug)
+		 * @memberof		Printing
+		 */																								\
+		u8 mode;																						\
+
+typedef struct FontSize
+{
+	u8 x;
+	u8 y;
+} FontSize;
 
 /**
  * A font
@@ -149,7 +159,7 @@ typedef struct FontDefinition
 typedef const FontDefinition FontROMDef;
 
 /**
- * A FontDefinition plus a reference to its charset
+ * A FontDefinition plus a the offset of its charset in memory
  *
  * @memberof 	Printing
  */
@@ -158,10 +168,17 @@ typedef struct FontData
 	/// Font definition
 	const struct FontDefinition* fontDefinition;
 
-	/// A pointer to the font's charset in char memory
-	CharSet charSet;
+	/// Offset of font in char memory
+	u32 offset;
 
 } FontData;
+
+/**
+ * A FontData that is stored in ROM
+ *
+ * @memberof 	Printing
+ */
+typedef const FontData FontROMData;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -178,9 +195,11 @@ FontData* Printing_getFontByName(Printing this, const char* font);
 Size Printing_getTextSize(Printing this, const char* string, const char* font);
 void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
 void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
+void Printing_loadDebugFont(Printing this);
 void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
 void Printing_render(Printing this, int textLayer);
 void Printing_reset(Printing this);
+void Printing_setDebugMode(Printing this);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
 
 
