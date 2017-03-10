@@ -41,7 +41,6 @@ static void StageEditorState_constructor(StageEditorState this);
 static void StageEditorState_enter(StageEditorState this, void* owner);
 static void StageEditorState_execute(StageEditorState this, void* owner);
 static void StageEditorState_exit(StageEditorState this, void* owner);
-static void StageEditorState_onUserInput(StageEditorState this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -114,7 +113,6 @@ static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	StageEditor_show(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	Object_addEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)StageEditorState_onUserInput, kEventUserInput);
 }
 
 /**
@@ -142,9 +140,9 @@ static void StageEditorState_execute(StageEditorState this __attribute__ ((unuse
  */
 static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	Object_removeEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)StageEditorState_onUserInput, kEventUserInput);
 	StageEditor_hide(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	__CALL_BASE_METHOD(GameState, exit, this, owner);
 }
 
 /**
@@ -154,9 +152,9 @@ static void StageEditorState_exit(StageEditorState this __attribute__ ((unused))
  * @private
  *
  * @param this			Function scope
- * @param eventFirer	KeypadManager
+ * @param userInput		User input
  */
-static void StageEditorState_onUserInput(StageEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)))
+void StageEditorState_processUserInput(StageEditorState this __attribute__ ((unused)), UserInput userInput)
 {
-	StageEditor_processUserInput(StageEditor_getInstance(), KeypadManager_getUserInput(KeypadManager_getInstance()).pressedKey);
+	StageEditor_processUserInput(StageEditor_getInstance(), userInput.pressedKey);
 }

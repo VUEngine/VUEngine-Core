@@ -44,6 +44,7 @@
 	__VIRTUAL_SET(ClassName, AnimationEditorState, enter);												\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, execute);											\
 	__VIRTUAL_SET(ClassName, AnimationEditorState, exit);												\
+	__VIRTUAL_SET(ClassName, AnimationEditorState, processUserInput);									\
 
 __CLASS(AnimationEditorState);
 
@@ -53,6 +54,7 @@ __CLASS(AnimationEditorState);
 //---------------------------------------------------------------------------------------------------------
 
 AnimationEditorState AnimationEditorState_getInstance(void);
+void AnimationEditorState_processUserInput(AnimationEditorState this, UserInput userInput);
 
 
 #endif

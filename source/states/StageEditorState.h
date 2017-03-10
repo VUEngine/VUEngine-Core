@@ -44,6 +44,7 @@
 	__VIRTUAL_SET(ClassName, StageEditorState, enter);													\
 	__VIRTUAL_SET(ClassName, StageEditorState, execute);												\
 	__VIRTUAL_SET(ClassName, StageEditorState, exit);													\
+	__VIRTUAL_SET(ClassName, StageEditorState, processUserInput);										\
 
 __CLASS(StageEditorState);
 
@@ -53,6 +54,6 @@ __CLASS(StageEditorState);
 //---------------------------------------------------------------------------------------------------------
 
 StageEditorState StageEditorState_getInstance(void);
-
+void StageEditorState_processUserInput(StageEditorState this, UserInput userInput);
 
 #endif

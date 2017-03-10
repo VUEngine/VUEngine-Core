@@ -41,7 +41,6 @@ static void AnimationEditorState_constructor(AnimationEditorState this);
 static void AnimationEditorState_enter(AnimationEditorState this, void* owner);
 static void AnimationEditorState_execute(AnimationEditorState this, void* owner);
 static void AnimationEditorState_exit(AnimationEditorState this, void* owner);
-static void AnimationEditorState_onUserInput(AnimationEditorState this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -114,7 +113,6 @@ static void AnimationEditorState_enter(AnimationEditorState this __attribute__ (
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	AnimationEditor_show(AnimationEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	Object_addEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)AnimationEditorState_onUserInput, kEventUserInput);
 }
 
 /**
@@ -142,9 +140,9 @@ static void AnimationEditorState_execute(AnimationEditorState this __attribute__
  */
 static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	Object_removeEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)AnimationEditorState_onUserInput, kEventUserInput);
 	AnimationEditor_hide(AnimationEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	__CALL_BASE_METHOD(GameState, exit, this, owner);
 }
 
 /**
@@ -154,9 +152,9 @@ static void AnimationEditorState_exit(AnimationEditorState this __attribute__ ((
  * @private
  *
  * @param this			Function scope
- * @param eventFirer	KeypadManager
+ * @param userInput		User input
  */
-static void AnimationEditorState_onUserInput(AnimationEditorState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)))
+void AnimationEditorState_processUserInput(AnimationEditorState this __attribute__ ((unused)), UserInput userInput)
 {
-	AnimationEditor_processUserInput(AnimationEditor_getInstance(), KeypadManager_getUserInput(KeypadManager_getInstance()).pressedKey);
+	AnimationEditor_processUserInput(AnimationEditor_getInstance(), userInput.pressedKey);
 }

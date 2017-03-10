@@ -40,7 +40,6 @@ static void DebugState_constructor(DebugState this);
 static void DebugState_enter(DebugState this, void* owner);
 static void DebugState_execute(DebugState this, void* owner);
 static void DebugState_exit(DebugState this, void* owner);
-static void DebugState_onUserInput(DebugState this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -113,7 +112,6 @@ static void DebugState_enter(DebugState this __attribute__ ((unused)), void* own
 {
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	Object_addEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)DebugState_onUserInput, kEventUserInput);
 }
 
 /**
@@ -141,9 +139,9 @@ static void DebugState_execute(DebugState this __attribute__ ((unused)), void* o
  */
 static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	Object_removeEventListener(__SAFE_CAST(Object, Game_getInstance()), __SAFE_CAST(Object, this), (EventListener)DebugState_onUserInput, kEventUserInput);
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	__CALL_BASE_METHOD(GameState, exit, this, owner);
 }
 
 /**
@@ -153,9 +151,9 @@ static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owne
  * @private
  *
  * @param this			Function scope
- * @param eventFirer	KeypadManager
+ * @param userInput		User input
  */
-static void DebugState_onUserInput(DebugState this __attribute__ ((unused)), Object eventFirer __attribute__ ((unused)))
+void DebugState_processUserInput(DebugState this __attribute__ ((unused)), UserInput userInput)
 {
-	Debug_processUserInput(Debug_getInstance(), KeypadManager_getUserInput(KeypadManager_getInstance()).pressedKey);
+	Debug_processUserInput(Debug_getInstance(), userInput.pressedKey);
 }

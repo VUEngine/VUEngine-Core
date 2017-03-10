@@ -322,6 +322,20 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 }
 
 /**
+ * Process user input
+ *
+ * @memberof			GameState
+ * @public
+ *
+ * @param this			Function scope
+ * @param userInput		User input
+ */
+void GameState_processUserInput(GameState this, UserInput userInput)
+{
+	ASSERT(this, "GameState::processUserInput: null this");
+}
+
+/**
  * Method called when the Game's StateMachine receives a message to be processed
  *
  * @memberof			GameState

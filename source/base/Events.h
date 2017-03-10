@@ -51,8 +51,6 @@ enum Events
 	kEventEffectFadeStart,
 	kEventEffectFadeStop,
 
-	kEventUserInput,
-
 	// do not remove me
 	kLastEngineEvent
 };

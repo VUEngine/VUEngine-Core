@@ -44,6 +44,7 @@
 	__VIRTUAL_SET(ClassName, DebugState, enter);														\
 	__VIRTUAL_SET(ClassName, DebugState, execute);														\
 	__VIRTUAL_SET(ClassName, DebugState, exit);															\
+	__VIRTUAL_SET(ClassName, DebugState, processUserInput);												\
 
 __CLASS(DebugState);
 
@@ -53,6 +54,7 @@ __CLASS(DebugState);
 //---------------------------------------------------------------------------------------------------------
 
 DebugState DebugState_getInstance(void);
+void DebugState_processUserInput(DebugState this, UserInput userInput);
 
 
 #endif

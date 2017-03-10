@@ -33,6 +33,7 @@
 #include <Clock.h>
 #include <PhysicalWorld.h>
 #include <CollisionManager.h>
+#include <KeyPadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -42,6 +43,7 @@
 // declare the virtual methods
 #define GameState_METHODS(ClassName)																	\
 		State_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, processUserInput, UserInput userInput);							\
 		__VIRTUAL_DEC(ClassName, void, transform);														\
 
 // declare the virtual methods which are redefined
@@ -52,6 +54,7 @@
 		__VIRTUAL_SET(ClassName, GameState, exit);														\
 		__VIRTUAL_SET(ClassName, GameState, suspend);													\
 		__VIRTUAL_SET(ClassName, GameState, resume);													\
+		__VIRTUAL_SET(ClassName, GameState, processUserInput);											\
 		__VIRTUAL_SET(ClassName, GameState, processMessage);											\
 		__VIRTUAL_SET(ClassName, GameState, transform);													\
 
@@ -136,6 +139,7 @@ void GameState_pauseAnimations(GameState this, bool pause);
 void GameState_pauseClocks(GameState this);
 void GameState_pauseMessagingClock(GameState this, bool pause);
 u32 GameState_processCollisions(GameState this);
+void GameState_processUserInput(GameState this, UserInput userInput);
 bool GameState_processMessage(GameState this, void* owner, Telegram telegram);
 void GameState_pausePhysics(GameState this, bool pause);
 int GameState_propagateMessage(GameState this, int message);

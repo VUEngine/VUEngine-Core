@@ -820,7 +820,7 @@ static u32 Game_handleInput(Game this)
 
 	if(userInput.pressedKey | userInput.releasedKey | (userInput.holdKey & ~K_PWR))
 	{
-		Object_fireEvent(__SAFE_CAST(Object, this), kEventUserInput);
+		__VIRTUAL_CALL(GameState, processUserInput, Game_getCurrentState(this), userInput);
 	}
 
 #ifdef __PROFILE_GAME
