@@ -34,11 +34,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define PolyhedronManager_METHODS(ClassName)												\
-	Object_METHODS(ClassName)																			\
+#define PolyhedronManager_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
 
-#define PolyhedronManager_SET_VTABLE(ClassName)												\
-	Object_SET_VTABLE(ClassName)																		\
+#define PolyhedronManager_SET_VTABLE(ClassName)															\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(PolyhedronManager);
 

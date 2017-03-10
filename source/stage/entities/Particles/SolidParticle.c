@@ -127,7 +127,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
-	u32 expired = Particle_update(__SAFE_CAST(Particle, this), timeElapsed, behavior);
+	u32 expired = __CALL_BASE_METHOD(Particle, update, this, timeElapsed, behavior);
 
 	if(0 <= this->lifeSpan)
 	{
@@ -379,7 +379,8 @@ void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
 
-	Particle_setPosition(__SAFE_CAST(Particle, this), position);
+	__CALL_BASE_METHOD(Particle, setPosition, this, position);
+
 	CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __XAXIS | __YAXIS | __ZAXIS);
 
 	this->position = *position;

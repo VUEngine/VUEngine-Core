@@ -135,7 +135,7 @@ void BgmapTexture_write(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
-	Texture_write(__SAFE_CAST(Texture, this));
+	__CALL_BASE_METHOD(Texture, write, this);
 
 	if(!this->charSet)
 	{

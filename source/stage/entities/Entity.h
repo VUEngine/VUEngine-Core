@@ -55,6 +55,7 @@
 		__VIRTUAL_DEC(ClassName, void, initialize, bool);												\
 		__VIRTUAL_DEC(ClassName, void, ready, bool);													\
 		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
+		__VIRTUAL_DEC(ClassName, void, setDefinition, void* entityDefinition);							\
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\
@@ -63,7 +64,6 @@
 		__VIRTUAL_SET(ClassName, Entity, setupGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, releaseGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, updateVisualRepresentation);									\
-		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);												\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);													\
@@ -80,6 +80,7 @@
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
+		__VIRTUAL_SET(ClassName, Entity, setDefinition);															\
 
 #define Entity_ATTRIBUTES																				\
 		Container_ATTRIBUTES																			\
@@ -191,9 +192,8 @@ void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions)
 void Entity_releaseSprites(Entity this, bool deleteThem);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
-void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition);
+void Entity_setDefinition(Entity this, void* entityDefinition);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
-void Entity_setLocalPosition(Entity this, const VBVec3D* position);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
 void Entity_show(Entity this);
 void Entity_suspend(Entity this);

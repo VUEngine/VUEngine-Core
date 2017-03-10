@@ -497,7 +497,7 @@ void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "MBgmapSprite::resize: null this");
 
-	BgmapSprite_resize(__SAFE_CAST(BgmapSprite, this), scale, z);
+	__CALL_BASE_METHOD(BgmapSprite, resize, this, scale, z);
 
 	MBgmapSprite_calculateSize(this);
 }

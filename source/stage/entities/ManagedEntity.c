@@ -134,7 +134,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 {
 	ASSERT(this, "ManagedEntity::initialTransform: null this");
 
-	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform, recursive);
+	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
@@ -157,7 +157,7 @@ void ManagedEntity_ready(ManagedEntity this, bool recursive)
 {
 	ASSERT(this, "ManagedEntity::ready: null this");
 
-	Entity_ready(__SAFE_CAST(Entity, this), recursive);
+	__CALL_BASE_METHOD(Entity, ready, this, recursive);
 
 	if(!VirtualList_getSize(this->managedSprites))
 	{
@@ -175,7 +175,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 //	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
-		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
+		__CALL_BASE_METHOD(Entity, transform, this, environmentTransform);
 
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
@@ -212,7 +212,7 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 	{
 		if(this->updateSprites & __UPDATE_SPRITE_SCALE)
 		{
-			Entity_updateVisualRepresentation(__SAFE_CAST(Entity, this));
+			__CALL_BASE_METHOD(Entity, updateVisualRepresentation, this);
 		}
 
 		// save new global position
@@ -258,7 +258,7 @@ void ManagedEntity_releaseGraphics(ManagedEntity this)
 		this->managedSprites = NULL;
 	}
 
-	Entity_releaseGraphics(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, releaseGraphics, this);
 }
 
 int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
@@ -272,7 +272,7 @@ void ManagedEntity_resume(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::resume: null this");
 
-	Entity_resume(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, resume, this);
 
 	ManagedEntity_registerSprites(this, __SAFE_CAST(Entity, this));
 }
@@ -281,7 +281,7 @@ void ManagedEntity_suspend(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::suspend: null this");
 
-	Entity_suspend(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, suspend, this);
 
 	VirtualList_clear(this->managedSprites);
 }

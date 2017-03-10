@@ -44,6 +44,7 @@
 		__VIRTUAL_SET(ClassName, RecyclableImage, resume);												\
 		__VIRTUAL_SET(ClassName, RecyclableImage, setupGraphics);										\
 		__VIRTUAL_SET(ClassName, RecyclableImage, releaseGraphics);										\
+		__VIRTUAL_SET(ClassName, RecyclableImage, setDefinition);										\
 
 #define RecyclableImage_ATTRIBUTES																		\
 		/* super's attributes */																		\
@@ -73,7 +74,7 @@ __CLASS_NEW_DECLARE(RecyclableImage, RecyclableImageDefinition* recyclableImageD
 
 void RecyclableImage_constructor(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition, s16 id, s16 internalId, const char* const name);
 void RecyclableImage_destructor(RecyclableImage this);
-void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition);
+void RecyclableImage_setDefinition(RecyclableImage this, void* recyclableImageDefinition);
 void RecyclableImage_suspend(RecyclableImage this);
 void RecyclableImage_resume(RecyclableImage this);
 void RecyclableImage_initialize(RecyclableImage this, bool recursive);

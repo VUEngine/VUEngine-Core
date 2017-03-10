@@ -122,7 +122,7 @@ void Actor_destructor(Actor this)
 }
 
 // set definition
-void Actor_setDefinition(Actor this, ActorDefinition* actorDefinition)
+void Actor_setDefinition(Actor this, void* actorDefinition)
 {
 	ASSERT(this, "Actor::setDefinition: null this");
 	ASSERT(actorDefinition, "Actor::setDefinition: null definition");
@@ -130,7 +130,7 @@ void Actor_setDefinition(Actor this, ActorDefinition* actorDefinition)
 	// save definition
 	this->actorDefinition = actorDefinition;
 
-	AnimatedInGameEntity_setDefinition(__SAFE_CAST(AnimatedInGameEntity, this), &actorDefinition->animatedInGameEntityDefinition);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, setDefinition, this, &((ActorDefinition*)actorDefinition)->animatedInGameEntityDefinition);
 }
 
 //set class's local position
@@ -139,7 +139,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	VBVec3D displacement = this->transform.localPosition;
-	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, setLocalPosition, this, position);
 
 	displacement.x -= this->transform.localPosition.x;
 	displacement.y -= this->transform.localPosition.y;
@@ -218,7 +218,7 @@ void Actor_syncWithBody(Actor this)
 		}
 	}
 
-	Entity_setLocalPosition(__SAFE_CAST(Entity, this), &localPosition);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, setLocalPosition, this, &localPosition);
 }
 
 // updates the animation attributes
@@ -254,14 +254,14 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	}
 
 	// call base
-	AnimatedInGameEntity_transform(__SAFE_CAST(AnimatedInGameEntity, this), environmentTransform);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, transform, this, environmentTransform);
 }
 
 void Actor_resume(Actor this)
 {
 	ASSERT(this, "Actor::resume: null this");
 
-	AnimatedInGameEntity_resume(__SAFE_CAST(AnimatedInGameEntity, this));
+	__CALL_BASE_METHOD(AnimatedInGameEntity, resume, this);
 
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __YAXIS, this->direction.y);
@@ -276,7 +276,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	AnimatedInGameEntity_update(__SAFE_CAST(AnimatedInGameEntity, this), elapsedTime);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, update, this, elapsedTime);
 
 	if(this->stateMachine)
 	{
@@ -598,7 +598,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::changeEnvironment: null this");
 
-	Container_changeEnvironment(__SAFE_CAST(Container, this), environmentTransform);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, changeEnvironment, this, environmentTransform);
 
 	if(this->body)
 	{
@@ -638,7 +638,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	return this->body ? Body_getPosition(this->body) : Entity_getPosition(__SAFE_CAST(Entity, this));
+	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedInGameEntity, getPosition, this);
 }
 
 int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
@@ -762,7 +762,7 @@ Velocity Actor_getVelocity(Actor this)
 {
 	ASSERT(this, "Actor::getVelocity: null this");
 
-	return this->body ? Body_getVelocity(this->body) : SpatialObject_getVelocity(__SAFE_CAST(SpatialObject, this));
+	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedInGameEntity, getVelocity, this);
 }
 
 void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), VirtualList collidingSpatialObjects __attribute__ ((unused)))

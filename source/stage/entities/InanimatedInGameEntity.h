@@ -41,6 +41,7 @@
 		InGameEntity_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getElasticity);								\
 		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, getFriction);									\
+		__VIRTUAL_SET(ClassName, InanimatedInGameEntity, setDefinition);								\
 
 #define InanimatedInGameEntity_ATTRIBUTES																\
 		/* super's attributes */																		\
@@ -83,7 +84,7 @@ __CLASS_NEW_DECLARE(InanimatedInGameEntity, InanimatedInGameEntityDefinition* in
 
 void InanimatedInGameEntity_constructor(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name);
 void InanimatedInGameEntity_destructor(InanimatedInGameEntity this);
-void InanimatedInGameEntity_setDefinition(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition);
+void InanimatedInGameEntity_setDefinition(InanimatedInGameEntity this, void* inanimatedInGameEntityDefinition);
 fix19_13 InanimatedInGameEntity_getElasticity(InanimatedInGameEntity this);
 fix19_13 InanimatedInGameEntity_getFriction(InanimatedInGameEntity this);
 

@@ -113,7 +113,7 @@ void ObjectTexture_write(ObjectTexture this)
 		return;
 	}
 
-	Texture_write(__SAFE_CAST(Texture, this));
+	__CALL_BASE_METHOD(Texture, write, this);
 
 	if(!this->charSet)
 	{

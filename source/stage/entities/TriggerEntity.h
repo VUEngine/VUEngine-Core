@@ -40,6 +40,7 @@
 #define TriggerEntity_SET_VTABLE(ClassName)																\
 		InGameEntity_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, TriggerEntity, moves);													\
+		__VIRTUAL_SET(ClassName, TriggerEntity, setDefinition);											\
 
 #define TriggerEntity_ATTRIBUTES																		\
 		/* super's attributes */																		\
@@ -79,7 +80,7 @@ __CLASS_NEW_DECLARE(TriggerEntity, TriggerEntityDefinition* triggerEntityDefinit
 
 void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition, s16 id, s16 internalId, const char* const name);
 void TriggerEntity_destructor(TriggerEntity this);
-void TriggerEntity_setDefinition(TriggerEntity this, TriggerEntityDefinition* triggerEntityDefinition);
+void TriggerEntity_setDefinition(TriggerEntity this, void* triggerEntityDefinition);
 bool TriggerEntity_moves(TriggerEntity this);
 void TriggerEntity_transform(TriggerEntity this, const Transformation* environmentTransform);
 

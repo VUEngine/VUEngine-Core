@@ -67,6 +67,7 @@ typedef const AnimatedInGameEntityDefinition AnimatedInGameEntityROMDef;
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, update);											\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, transform);										\
 		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, resume);											\
+		__VIRTUAL_SET(ClassName, AnimatedInGameEntity, setDefinition);									\
 
 #define AnimatedInGameEntity_ATTRIBUTES																	\
 		/* super's attributes */																		\
@@ -91,7 +92,7 @@ __CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animat
 
 void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name);
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
-void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition);
+void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, void* animatedInGameEntityDefinition);
 void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive);
 void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);
 void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime);

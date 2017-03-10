@@ -87,7 +87,7 @@ void InGameEntity_destructor(InGameEntity this)
 }
 
 // set definition
-void InGameEntity_setDefinition(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition)
+void InGameEntity_setDefinition(InGameEntity this, void* inGameEntityDefinition)
 {
 	ASSERT(this, "InGameEntity::setDefinition: null this");
 	ASSERT(inGameEntityDefinition, "InGameEntity::setDefinition: null definition");
@@ -95,7 +95,7 @@ void InGameEntity_setDefinition(InGameEntity this, InGameEntityDefinition* inGam
 	// save definition
 	this->inGameEntityDefinition = inGameEntityDefinition;
 
-	Entity_setDefinition(__SAFE_CAST(Entity, this), &inGameEntityDefinition->entityDefinition);
+	__CALL_BASE_METHOD(Entity, setDefinition, this, &((InGameEntityDefinition*)inGameEntityDefinition)->entityDefinition);
 }
 
 // retrieve gap

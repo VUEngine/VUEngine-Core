@@ -44,9 +44,11 @@
 
 // declare the virtual methods
 #define AnimationController_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
-#define AnimationController_SET_VTABLE(CsName)															\
+#define AnimationController_SET_VTABLE(ClassName)														\
+		Object_SET_VTABLE(ClassName)																	\
 
 #define AnimationController_ATTRIBUTES																	\
 		Object_ATTRIBUTES																				\

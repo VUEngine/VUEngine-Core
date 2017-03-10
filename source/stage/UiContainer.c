@@ -122,7 +122,7 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 
 	Screen_prepareForUITransform(screen);
 
-	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
+	__CALL_BASE_METHOD(Container, transform, this, environmentTransform);
 
 	Screen_doneUITransform(screen);
 }
@@ -154,7 +154,7 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 		Screen_setPosition(screen, tempScreenPosition);
 	}
 
-	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform, recursive);
+	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
 	__VIRTUAL_CALL(Container, updateVisualRepresentation, this);
 

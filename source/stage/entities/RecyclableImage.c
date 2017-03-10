@@ -91,7 +91,7 @@ void RecyclableImage_destructor(RecyclableImage this)
 }
 
 // set definition
-void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefinition* recyclableImageDefinition)
+void RecyclableImage_setDefinition(RecyclableImage this, void* recyclableImageDefinition)
 {
 	ASSERT(this, "RecyclableImage::setDefinition: null this");
 	ASSERT(recyclableImageDefinition, "RecyclableImage::setDefinition: null definition");
@@ -99,7 +99,7 @@ void RecyclableImage_setDefinition(RecyclableImage this, RecyclableImageDefiniti
 	// save definition
 	this->recyclableImageDefinition = recyclableImageDefinition;
 
-	Entity_setDefinition(__SAFE_CAST(Entity, this), (EntityDefinition*)recyclableImageDefinition);
+	__CALL_BASE_METHOD(Entity, setDefinition, this, (EntityDefinition*)recyclableImageDefinition);
 }
 
 void RecyclableImage_suspend(RecyclableImage this)
@@ -108,7 +108,7 @@ void RecyclableImage_suspend(RecyclableImage this)
 
 	RecyclableImage_releaseTextures(this);
 
-	Entity_suspend(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, suspend, this);
 }
 
 void RecyclableImage_resume(RecyclableImage this)
@@ -118,7 +118,7 @@ void RecyclableImage_resume(RecyclableImage this)
 	// first register with the manager so it handles the texture loading process
 	RecyclableImage_registerTextures(this);
 
-	Entity_resume(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, resume, this);
 }
 
 void RecyclableImage_initialize(RecyclableImage this, bool recursive)
@@ -127,7 +127,7 @@ void RecyclableImage_initialize(RecyclableImage this, bool recursive)
 
 	RecyclableImage_registerTextures(this);
 
-	Entity_initialize(__SAFE_CAST(Entity, this), recursive);
+	__CALL_BASE_METHOD(Entity, initialize, this, recursive);
 }
 
 void RecyclableImage_setupGraphics(RecyclableImage this)
@@ -136,7 +136,7 @@ void RecyclableImage_setupGraphics(RecyclableImage this)
 
 	RecyclableImage_registerTextures(this);
 
-	Entity_setupGraphics(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, setupGraphics, this);
 }
 
 void RecyclableImage_releaseGraphics(RecyclableImage this)
@@ -145,7 +145,7 @@ void RecyclableImage_releaseGraphics(RecyclableImage this)
 
 	RecyclableImage_releaseTextures(this);
 
-	Entity_releaseGraphics(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(Entity, releaseGraphics, this);
 }
 
 static void RecyclableImage_registerTextures(RecyclableImage this)

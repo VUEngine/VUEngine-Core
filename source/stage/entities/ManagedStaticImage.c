@@ -129,7 +129,7 @@ void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation
 {
 	ASSERT(this, "ManagedStaticImage::initialTransform: null this");
 
-	Entity_initialTransform(__SAFE_CAST(Entity, this), environmentTransform, recursive);
+	__CALL_BASE_METHOD(RecyclableImage, initialTransform, this, environmentTransform, recursive);
 
 	// save new global position
 	VBVec3D position3D = this->transform.globalPosition;
@@ -152,7 +152,7 @@ void ManagedStaticImage_ready(ManagedStaticImage this, bool recursive)
 {
 	ASSERT(this, "ManagedStaticImage::ready: null this");
 
-	Entity_ready(__SAFE_CAST(Entity, this), recursive);
+	__CALL_BASE_METHOD(RecyclableImage, ready, this, recursive);
 
 	if(!VirtualList_getSize(this->managedSprites))
 	{
@@ -170,7 +170,8 @@ void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation*
 //	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
-		Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
+		__CALL_BASE_METHOD(RecyclableImage, transform, this, environmentTransform);
+
 		this->invalidateGlobalTransformation = 0;
 
 		// save the 2d position
@@ -215,7 +216,7 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 	{
 		if(this->updateSprites & __UPDATE_SPRITE_SCALE)
 		{
-			Entity_updateVisualRepresentation(__SAFE_CAST(Entity, this));
+			__CALL_BASE_METHOD(RecyclableImage, updateVisualRepresentation, this);
 		}
 
 		// save new global position
@@ -261,7 +262,7 @@ void ManagedStaticImage_releaseGraphics(ManagedStaticImage this)
 		this->managedSprites = NULL;
 	}
 
-	RecyclableImage_releaseGraphics(__SAFE_CAST(RecyclableImage, this));
+	__CALL_BASE_METHOD(RecyclableImage, releaseGraphics, this);
 }
 
 // execute logic
@@ -281,7 +282,7 @@ void ManagedStaticImage_resume(ManagedStaticImage this)
 {
 	ASSERT(this, "ManagedStaticImage::resume: null this");
 
-	RecyclableImage_resume(__SAFE_CAST(RecyclableImage, this));
+	__CALL_BASE_METHOD(RecyclableImage, resume, this);
 
 	ManagedStaticImage_registerSprites(this, __SAFE_CAST(Entity, this));
 }
@@ -290,7 +291,7 @@ void ManagedStaticImage_suspend(ManagedStaticImage this)
 {
 	ASSERT(this, "ManagedStaticImage::suspend: null this");
 
-	RecyclableImage_suspend(__SAFE_CAST(RecyclableImage, this));
+	__CALL_BASE_METHOD(RecyclableImage, suspend, this);
 
 	VirtualList_clear(this->managedSprites);
 }

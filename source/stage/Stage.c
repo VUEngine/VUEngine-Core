@@ -449,7 +449,7 @@ void Stage_removeChild(Stage this, Container child)
 		return;
 	}
 
-	Container_removeChild(__SAFE_CAST(Container, this), child);
+	__CALL_BASE_METHOD(Container, removeChild, this, child);
 
 	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
 
@@ -1113,7 +1113,7 @@ void Stage_suspend(Stage this)
 	// the stage entity registries
 	EntityFactory_prepareAllEntities(this->entityFactory);
 
-	Container_suspend(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, suspend, this);
 
 	if(this->uiContainer)
 	{
@@ -1173,7 +1173,7 @@ void Stage_resume(Stage this)
 	// load background music
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
 
-	Container_resume(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, resume, this);
 
 	Stage_streamAll(this);
 

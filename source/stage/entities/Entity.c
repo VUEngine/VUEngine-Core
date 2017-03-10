@@ -235,7 +235,7 @@ Entity Entity_getChildById(Entity this, s16 id)
  * @param this				Function scope
  * @param entityDefinition
  */
-void Entity_setDefinition(Entity this, EntityDefinition* entityDefinition)
+void Entity_setDefinition(Entity this, void* entityDefinition)
 {
 	ASSERT(this, "Entity::setDefinition: null this");
 
@@ -247,7 +247,7 @@ void Entity_setupGraphics(Entity this)
 {
 	ASSERT(this, "Entity::setupGraphics: null this");
 
-	Container_setupGraphics(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, setupGraphics, this);
 
 	Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 }
@@ -256,7 +256,7 @@ void Entity_releaseGraphics(Entity this)
 {
 	ASSERT(this, "Entity::releaseGraphics: null this");
 
-	Container_releaseGraphics(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, releaseGraphics, this);
 
 	Entity_releaseSprites(this, false);
 }
@@ -1438,7 +1438,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// call base class's transform method
-	Container_initialTransform(__SAFE_CAST(Container, this), environmentTransform, recursive);
+	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 
@@ -1480,7 +1480,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform)
 	}
 
 	// call base class's transform method
-	Container_transform(__SAFE_CAST(Container, this), environmentTransform);
+	__CALL_BASE_METHOD(Container, transform, this, environmentTransform);
 
 	Entity_setShapePosition(this);
 }
@@ -1497,27 +1497,11 @@ void Entity_updateVisualRepresentation(Entity this)
 {
 	ASSERT(this, "Entity::updateVisualRepresentation: null this");
 
-	Container_updateVisualRepresentation(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, updateVisualRepresentation, this);
 
 	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_POSITION, this->updateSprites & __UPDATE_SPRITE_SCALE, this->updateSprites & __UPDATE_SPRITE_ROTATION);
 
 	this->updateSprites = 0;
-}
-
-/**
- * Set local position
- *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
- * @param position
- */
-void Entity_setLocalPosition(Entity this, const VBVec3D* position)
-{
-	ASSERT(this, "Entity::setLocalPosition: null this");
-
-	Container_setLocalPosition(__SAFE_CAST(Container, this), position);
 }
 
 /**
@@ -1903,7 +1887,7 @@ void Entity_show(Entity this)
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 	Entity_updateVisualRepresentation(this);
 
-	Container_show(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, show, this);
 
 	if(this->sprites)
 	{
@@ -1940,7 +1924,7 @@ void Entity_hide(Entity this)
 	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
 	Entity_updateVisualRepresentation(this);
 
-	Container_hide(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, hide, this);
 
 	if(this->sprites)
 	{
@@ -1966,7 +1950,7 @@ void Entity_suspend(Entity this)
 {
 	ASSERT(this, "Entity::suspend: null this");
 
-	Container_suspend(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, suspend, this);
 
 	Entity_releaseSprites(this, true);
 }
@@ -1983,7 +1967,7 @@ void Entity_resume(Entity this)
 {
 	ASSERT(this, "Entity::resume: null this");
 
-	Container_resume(__SAFE_CAST(Container, this));
+	__CALL_BASE_METHOD(Container, resume, this);
 
 	// initialize sprites
 	if(this->entityDefinition)

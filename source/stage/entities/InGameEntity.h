@@ -50,6 +50,7 @@ struct Shape_str;
 		__VIRTUAL_SET(ClassName, InGameEntity, getGap);													\
 		__VIRTUAL_SET(ClassName, InGameEntity, calculateGap);											\
 		__VIRTUAL_SET(ClassName, InGameEntity, getInGameType);											\
+		__VIRTUAL_SET(ClassName, InGameEntity, setDefinition);											\
 
 #define InGameEntity_ATTRIBUTES																			\
 		/* it is derived from */																		\
@@ -102,7 +103,7 @@ __CLASS_NEW_DECLARE(InGameEntity, InGameEntityDefinition* inGameEntityDefinition
 
 void InGameEntity_constructor(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition, s16 id, s16 internalId, const char* const name);
 void InGameEntity_destructor(InGameEntity this);
-void InGameEntity_setDefinition(InGameEntity this, InGameEntityDefinition* inGameEntityDefinition);
+void InGameEntity_setDefinition(InGameEntity this, void* inGameEntityDefinition);
 void InGameEntity_setCollisionGap(InGameEntity this, int upGap, int downGap, int leftGap, int rightGap);
 Gap InGameEntity_getGap(InGameEntity this);
 void InGameEntity_calculateGap(InGameEntity this);

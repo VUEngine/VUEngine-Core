@@ -36,10 +36,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define RecyclableBgmapTextureManager_METHODS(ClassName)												\
-	Object_METHODS(ClassName)																			\
+		Object_METHODS(ClassName)																		\
 
 #define RecyclableBgmapTextureManager_SET_VTABLE(ClassName)												\
-	Object_SET_VTABLE(ClassName)																		\
+		Object_SET_VTABLE(ClassName)																	\
 
 __CLASS(RecyclableBgmapTextureManager);
 

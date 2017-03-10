@@ -139,12 +139,19 @@
 
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
 #define __VIRTUAL_CALL(ClassName, MethodName, object, ...)												\
-		/* release implementation */																	\
+																										\
 		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))							\
-			(																							\
-				__SAFE_CAST(ClassName, object), ##__VA_ARGS__											\
-			)																							\
+		(																								\
+			__SAFE_CAST(ClassName, object), ##__VA_ARGS__												\
+		)
 
+// call the base's method
+#define __CALL_BASE_METHOD(BaseClassName, MethodName, object, ...)										\
+																										\
+		BaseClassName ## _vTable.MethodName																\
+		(																								\
+			__SAFE_CAST(BaseClassName, object), ##__VA_ARGS__											\
+		)
 
 #ifdef __DEBUG
 #define __SAFE_CAST(ClassName, object)																	\

@@ -84,7 +84,7 @@ void InanimatedInGameEntity_destructor(InanimatedInGameEntity this)
 }
 
 // set definition
-void InanimatedInGameEntity_setDefinition(InanimatedInGameEntity this, InanimatedInGameEntityDefinition* inanimatedInGameEntityDefinition)
+void InanimatedInGameEntity_setDefinition(InanimatedInGameEntity this, void* inanimatedInGameEntityDefinition)
 {
 	ASSERT(this, "InanimatedInGameEntity::setDefinition: null this");
 	ASSERT(inanimatedInGameEntityDefinition, "InanimatedInGameEntity::setDefinition: null definition");
@@ -92,7 +92,7 @@ void InanimatedInGameEntity_setDefinition(InanimatedInGameEntity this, Inanimate
 	// save definition
 	this->inanimatedInGameEntityDefinition = inanimatedInGameEntityDefinition;
 
-	InGameEntity_setDefinition(__SAFE_CAST(InGameEntity, this), &inanimatedInGameEntityDefinition->inGameEntityDefinition);
+	__CALL_BASE_METHOD(InGameEntity, setDefinition, this, &((InanimatedInGameEntityDefinition*)inanimatedInGameEntityDefinition)->inGameEntityDefinition);
 }
 
 // get elasticity

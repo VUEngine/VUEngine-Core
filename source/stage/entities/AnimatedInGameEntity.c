@@ -101,7 +101,7 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 }
 
 // set definition
-void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition)
+void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, void* animatedInGameEntityDefinition)
 {
 	ASSERT(this, "AnimatedInGameEntity::setDefinition: null this");
 	ASSERT(animatedInGameEntityDefinition, "AnimatedInGameEntity::setDefinition: null definition");
@@ -109,7 +109,7 @@ void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, AnimatedInGam
 	// save definition
 	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;
 
-	InGameEntity_setDefinition(__SAFE_CAST(InGameEntity, this), &animatedInGameEntityDefinition->inGameEntityDefinition);
+	__CALL_BASE_METHOD(InGameEntity, setDefinition, this, &((AnimatedInGameEntityDefinition*)animatedInGameEntityDefinition)->inGameEntityDefinition);
 }
 
 // ready method
@@ -118,7 +118,7 @@ void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive)
 	ASSERT(this, "AnimatedInGameEntity::ready: null this");
 	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::ready: null animatedInGameEntityDefinition");
 
-	Entity_ready(__SAFE_CAST(Entity, this), recursive);
+	__CALL_BASE_METHOD(InGameEntity, ready, this, recursive);
 
 	AnimatedInGameEntity_playAnimation(this, this->animatedInGameEntityDefinition->initialAnimation);
 }
@@ -162,7 +162,7 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 	}
 
 	// call base
-	Entity_transform(__SAFE_CAST(Entity, this), environmentTransform);
+	__CALL_BASE_METHOD(InGameEntity, transform, this, environmentTransform);
 }
 
 // execute character's logic
@@ -171,7 +171,7 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 	ASSERT(this, "AnimatedInGameEntity::update: null this");
 
 	// call base
-	Container_update(__SAFE_CAST(Container, this), elapsedTime);
+	__CALL_BASE_METHOD(InGameEntity, update, this, elapsedTime);
 
 	if(elapsedTime)
 	{
@@ -279,7 +279,7 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::resume: null this");
 
-	Entity_resume(__SAFE_CAST(Entity, this));
+	__CALL_BASE_METHOD(InGameEntity, resume, this);
 
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
 

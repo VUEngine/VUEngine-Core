@@ -68,6 +68,8 @@
 		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
+		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
+		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -111,7 +113,7 @@ __CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id, s16 i
 
 void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
 void Actor_destructor(Actor this);
-void Actor_setDefinition(Actor this, ActorDefinition* actorDefinition);
+void Actor_setDefinition(Actor this, void* actorDefinition);
 void Actor_setLocalPosition(Actor this, const VBVec3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform);
 void Actor_resume(Actor this);
