@@ -330,7 +330,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
  * @param this			Function scope
  * @param userInput		User input
  */
-void GameState_processUserInput(GameState this, UserInput userInput)
+void GameState_processUserInput(GameState this __attribute__ ((unused)), UserInput userInput __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::processUserInput: null this");
 }
