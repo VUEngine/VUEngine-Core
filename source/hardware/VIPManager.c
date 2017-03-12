@@ -309,7 +309,8 @@ void VIPManager_interruptHandler(void)
 				}
 #endif
 				_vipManager->gameFrameStarted = true;
-				VIPManager_enableInterrupt(_vipManager, __XPEND | __GAMESTART);
+				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
+				VIPManager_enableInterrupt(_vipManager, __XPEND);
 				break;
 
 			case __XPEND:
@@ -398,9 +399,6 @@ void VIPManager_resetGameFrameStarted(VIPManager this)
 void VIPManager_writeDRAM(VIPManager this)
 {
 	ASSERT(this, "VIPManager::writeDRAM: null this");
-
-	// register the frame buffer in use by the VPU's drawing process
-	VIPManager_registerCurrentDrawingFrameBufferSet(this);
 
 	// write newly created chars
 	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
