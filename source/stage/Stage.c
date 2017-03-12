@@ -1178,14 +1178,13 @@ void Stage_resume(Stage this)
 	Stage_streamAll(this);
 
 	// apply transformations
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform, true);
+	__VIRTUAL_CALL(Container, initialTransform, this, NULL, true);
 
 	if(this->uiContainer)
 	{
 		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->uiContainer));
 
-		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &environmentTransform, true);
+		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, NULL, true);
 	}
 
 	this->entityFactory = __NEW(EntityFactory);
