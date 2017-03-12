@@ -240,18 +240,18 @@ void SpriteManager_reset(SpriteManager this)
 	// must reset the ObjectSpriteContainerManager before the SpriteManager!
 	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
 
-	if(this->sprites)
-	{
-		__DELETE(this->sprites);
-		this->sprites = NULL;
-	}
-
 	if(this->spritesToDispose)
 	{
 		while(SpriteManager_disposeSprites(this));
 
 		__DELETE(this->spritesToDispose);
 		this->spritesToDispose = NULL;
+	}
+
+	if(this->sprites)
+	{
+		__DELETE(this->sprites);
+		this->sprites = NULL;
 	}
 
 	this->sprites = __NEW(VirtualList);
