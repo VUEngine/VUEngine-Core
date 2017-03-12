@@ -313,6 +313,8 @@ static bool SpriteManager_disposeSprites(SpriteManager this)
 
 		VirtualList_popFront(this->spritesToDispose);
 
+		this->textureToWrite = NULL;
+
 		return true;
 	}
 
