@@ -228,8 +228,15 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 
 			VirtualList_removeElement(this->delayedMessages, delayedMessage);
 
-			__DELETE_BASIC(delayedMessage);
-			__DELETE(telegram);
+			if(__IS_BASIC_OBJECT_ALIVE(delayedMessage))
+			{
+				__DELETE_BASIC(delayedMessage);
+			}
+
+			if(__IS_OBJECT_ALIVE(telegram))
+			{
+				__DELETE(telegram);
+			}
 		}
 
 		VirtualList_clear(this->delayedMessagesToDiscard);
@@ -361,12 +368,9 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
 		{
-			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
-			{
-				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
-			}
+			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}
 	}
 }
