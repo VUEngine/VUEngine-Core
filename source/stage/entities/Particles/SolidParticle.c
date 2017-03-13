@@ -77,7 +77,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_registerShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
+	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
 	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this), (Gap){0, 0, 0, 0});
 
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
@@ -96,7 +96,7 @@ void SolidParticle_destructor(SolidParticle this)
 	ASSERT(this, "SolidParticle::destructor: null this");
 
 	// unregister the shape for collision detection
-	CollisionManager_unregisterShape(Game_getCollisionManager(Game_getInstance()), this->shape);
+	CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), this->shape);
 
 	this->shape = NULL;
 

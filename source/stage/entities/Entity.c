@@ -133,7 +133,7 @@ void Entity_destructor(Entity this)
 	// better to do it here than forget in other classes unregister the shape for collision detection
 	if(this->shape)
 	{
-		CollisionManager_unregisterShape(Game_getCollisionManager(Game_getInstance()), this->shape);
+		CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), this->shape);
 
 		this->shape = NULL;
 	}

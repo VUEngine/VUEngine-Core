@@ -183,9 +183,9 @@ void PhysicalWorld_destructor(PhysicalWorld this)
  *
  * @return				Registered Body
  */
-Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass)
+Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass)
 {
-	ASSERT(this, "PhysicalWorld::registerBody: null this");
+	ASSERT(this, "PhysicalWorld::createBody: null this");
 
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
@@ -199,7 +199,7 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator,
 	{
 		Body body = bodyAllocator(owner, mass);
 		VirtualList_pushFront(this->bodies, body);
-		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::registerBody: bad class body");
+		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
 		// return created shape
 		return __SAFE_CAST(Body, VirtualList_front(this->bodies));
@@ -217,13 +217,12 @@ Body PhysicalWorld_registerBody(PhysicalWorld this, BodyAllocator bodyAllocator,
  * @param this	Function scope
  * @param owner
  */
-void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
+void PhysicalWorld_destroyBody(PhysicalWorld this, SpatialObject owner)
 {
-	ASSERT(this, "PhysicalWorld::unregisterBody: null this");
+	ASSERT(this, "PhysicalWorld::destroyBody: null this");
 
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
-/*
 #ifdef __DEBUG
 	if(!body)
 	{
@@ -231,9 +230,9 @@ void PhysicalWorld_unregisterBody(PhysicalWorld this, SpatialObject owner)
 		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(owner), 1, 15, NULL);
 	}
 
-	ASSERT(body, "PhysicalWorld::unregisterBody: body not found");
+	ASSERT(body, "PhysicalWorld::destroyBody: body not found");
 #endif
-*/
+
 	if(body)
 	{
 		// deactivate the shape, will be removed in the next update
@@ -272,7 +271,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
-		if(owner == body->owner)
+		if(owner == body->owner && !VirtualList_find(this->removedBodies, body))
 		{
 			return body;
 		}

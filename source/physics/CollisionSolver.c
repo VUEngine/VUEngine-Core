@@ -173,6 +173,7 @@ int CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 		)
 		{
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
+
 			for(; node; node = node->next)
 			{
 				axisOfCollision |= __VIRTUAL_CALL(Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, node->data), displacement);

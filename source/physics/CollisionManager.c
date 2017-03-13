@@ -117,11 +117,10 @@ void CollisionManager_destructor(CollisionManager this)
 	__DESTROY_BASE;
 }
 
-
 // register a shape
-Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner, int shapeType)
+Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, int shapeType)
 {
-	ASSERT(this, "CollisionManager::registerShape: null this");
+	ASSERT(this, "CollisionManager::createShape: null this");
 
 	// if the entity is already registered
 	Shape shape = CollisionManager_getShape(this, owner);
@@ -154,9 +153,9 @@ Shape CollisionManager_registerShape(CollisionManager this, SpatialObject owner,
 }
 
 // remove a shape
-void CollisionManager_unregisterShape(CollisionManager this, Shape shape)
+void CollisionManager_destroyShape(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::unregisterShape: null this");
+	ASSERT(this, "CollisionManager::destroyShape: null this");
 
 	if(shape)
 	{
@@ -179,9 +178,11 @@ Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
 
 	for(; node; node = node->next)
 	{
-		if(owner == (__SAFE_CAST(Shape, node->data))->owner)
+		Shape shape = __SAFE_CAST(Shape, node->data);
+
+		if(owner == shape->owner && !VirtualList_find(this->removedShapes, shape))
 		{
-			return __SAFE_CAST(Shape, node->data);
+			return shape;
 		}
 	}
 

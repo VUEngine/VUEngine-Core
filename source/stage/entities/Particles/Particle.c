@@ -81,7 +81,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
-	this->body = PhysicalWorld_registerBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), mass);
+	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), mass);
 	Body_setAxisSubjectToGravity(this->body, particleDefinition->axisSubjectToGravity);
 
 	this->objectSprite = NULL;
@@ -104,7 +104,7 @@ void Particle_destructor(Particle this)
 	if(this->body)
 	{
 		// remove a body
-		PhysicalWorld_unregisterBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this));
+		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this));
 		this->body = NULL;
 	}
 
