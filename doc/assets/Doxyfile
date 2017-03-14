@@ -2059,12 +2059,12 @@ INCLUDE_FILE_PATTERNS  =
 # recursively expanded use the := operator instead of the = operator.
 # This tag requires that the tag ENABLE_PREPROCESSING is set to YES.
 
-PREDEFINED             = __attribute__(x)= 				\
+PREDEFINED             = __attribute__(x)= 								\
 						__3D_ENGINE										\
 						__ALERT_STACK_OVERFLOW							\
 						__ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP	\
 						__ALERT_VIP_OVERTIME							\
-						__ANIMATION_EDITOR								\
+						__ANIMATION_INSPECTOR							\
 						__DEBUG											\
 						__DEBUG_TOOLS									\
 						__PRINT_DETAILED_MEMORY_POOL_STATUS				\
