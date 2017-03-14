@@ -940,9 +940,7 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	this->animatedSprite->writeAnimationFrame = true;
 	SpriteManager_writeTextures(SpriteManager_getInstance());
 	SpriteManager_sortLayers(SpriteManager_getInstance());
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
 	SpriteManager_render(SpriteManager_getInstance());
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 }
 
 /**
