@@ -102,8 +102,8 @@ bool Game_isInDebugMode(Game this);
 #ifdef __STAGE_EDITOR
 bool Game_isInStageEditor(Game this);
 #endif
-#ifdef __ANIMATION_EDITOR
-bool Game_isInAnimationEditor(Game this);
+#ifdef __ANIMATION_INSPECTOR
+bool Game_isInAnimationInspector(Game this);
 #endif
 
 

@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ANIMATION_EDITOR_H_
-#define ANIMATION_EDITOR_H_
+#ifndef ANIMATION_INSPECTOR_H_
+#define ANIMATION_INSPECTOR_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,21 +37,21 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationEditor_METHODS(ClassName)																			\
+#define AnimationInspector_METHODS(ClassName)																			\
 		Object_METHODS(ClassName)																					\
 
 
 // declare the virtual methods which are redefined
-#define AnimationEditor_SET_VTABLE(ClassName)															\
+#define AnimationInspector_SET_VTABLE(ClassName)															\
 		Object_SET_VTABLE(ClassName)																	\
 
-// declare a AnimationEditor
-__CLASS(AnimationEditor);
+// declare a AnimationInspector
+__CLASS(AnimationInspector);
 
 /**
  * For animation
  *
- * @memberof	AnimationEditor
+ * @memberof	AnimationInspector
  */
 typedef struct UserAnimatedInGameEntity
 {
@@ -67,13 +67,13 @@ typedef struct UserAnimatedInGameEntity
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-AnimationEditor AnimationEditor_getInstance();
+AnimationInspector AnimationInspector_getInstance();
 
-void AnimationEditor_destructor(AnimationEditor this);
-void AnimationEditor_update(AnimationEditor this);
-void AnimationEditor_show(AnimationEditor this, GameState gameState);
-void AnimationEditor_hide(AnimationEditor this);
-void AnimationEditor_processUserInput(AnimationEditor this, u16 pressedKey);
+void AnimationInspector_destructor(AnimationInspector this);
+void AnimationInspector_update(AnimationInspector this);
+void AnimationInspector_show(AnimationInspector this, GameState gameState);
+void AnimationInspector_hide(AnimationInspector this);
+void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey);
 
 
 #endif

@@ -157,14 +157,14 @@ void CollisionManager_destroyShape(CollisionManager this, Shape shape)
 {
 	ASSERT(this, "CollisionManager::destroyShape: null this");
 
-	if(shape)
+	if(shape && !VirtualList_find(this->removedShapes, shape))
 	{
 		// deactivate the shape,
 		// will be removed in the next update
 		CollisionManager_shapeBecameInactive(this, shape);
 
 		// place in the removed shapes list
-		VirtualList_pushFront(this->removedShapes, (BYTE*)shape);
+		VirtualList_pushFront(this->removedShapes, shape);
 	}
 }
 

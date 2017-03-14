@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ANIMATION_EDITOR_STATE_H_
-#define ANIMATION_EDITOR_STATE_H_
+#ifndef ANIMATION_INSPECTOR_STATE_H_
+#define ANIMATION_INSPECTOR_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,26 +35,26 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationEditorState_METHODS(ClassName)															\
+#define AnimationInspectorState_METHODS(ClassName)															\
 	GameState_METHODS(ClassName)																		\
 
 // declare the virtual methods which are redefined
-#define AnimationEditorState_SET_VTABLE(ClassName)														\
+#define AnimationInspectorState_SET_VTABLE(ClassName)														\
 	GameState_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, enter);												\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, execute);											\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, exit);												\
-	__VIRTUAL_SET(ClassName, AnimationEditorState, processUserInput);									\
+	__VIRTUAL_SET(ClassName, AnimationInspectorState, enter);												\
+	__VIRTUAL_SET(ClassName, AnimationInspectorState, execute);											\
+	__VIRTUAL_SET(ClassName, AnimationInspectorState, exit);												\
+	__VIRTUAL_SET(ClassName, AnimationInspectorState, processUserInput);									\
 
-__CLASS(AnimationEditorState);
+__CLASS(AnimationInspectorState);
 
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-AnimationEditorState AnimationEditorState_getInstance(void);
-void AnimationEditorState_processUserInput(AnimationEditorState this, UserInput userInput);
+AnimationInspectorState AnimationInspectorState_getInstance(void);
+void AnimationInspectorState_processUserInput(AnimationInspectorState this, UserInput userInput);
 
 
 #endif

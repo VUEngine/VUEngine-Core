@@ -63,8 +63,8 @@
 #ifdef __STAGE_EDITOR
 #include <StageEditorState.h>
 #endif
-#ifdef __ANIMATION_EDITOR
-#include <AnimationEditorState.h>
+#ifdef __ANIMATION_INSPECTOR
+#include <AnimationInspectorState.h>
 #endif
 
 
@@ -389,8 +389,8 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	StageEditorState_getInstance();
 #endif
 
-#ifdef __ANIMATION_EDITOR
-	AnimationEditorState_getInstance();
+#ifdef __ANIMATION_INSPECTOR
+	AnimationInspectorState_getInstance();
 #endif
 
 	// to make debugging easier
@@ -763,13 +763,13 @@ static u32 Game_handleInput(Game this)
 	}
 #endif
 
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 
 	// check code to access special feature
 	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RR))
 	{
 
-		if(Game_isInAnimationEditor(this))
+		if(Game_isInAnimationInspector(this))
 		{
 			this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 			StateMachine_popState(this->stateMachine);
@@ -784,7 +784,7 @@ static u32 Game_handleInput(Game this)
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, AnimationEditorState_getInstance());
+			this->nextState = __SAFE_CAST(GameState, AnimationInspectorState_getInstance());
 			StateMachine_pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -807,7 +807,7 @@ static u32 Game_handleInput(Game this)
 	}
 #endif
 
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
 		return true;
@@ -889,7 +889,7 @@ inline static void Game_updateLogic(Game this)
 	if(!Game_isInSpecialMode(this))
 	{
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	if(!Game_isInSpecialMode(this))
 	{
 #endif
@@ -901,7 +901,7 @@ inline static void Game_updateLogic(Game this)
 #ifdef __STAGE_EDITOR
 	}
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	}
 #endif
 
@@ -1454,12 +1454,12 @@ bool Game_isInStageEditor(Game this)
 }
 #endif
 
-#ifdef __ANIMATION_EDITOR
-bool Game_isInAnimationEditor(Game this)
+#ifdef __ANIMATION_INSPECTOR
+bool Game_isInAnimationInspector(Game this)
 {
-	ASSERT(this, "Game::isInAnimationEditor: null this");
+	ASSERT(this, "Game::isInAnimationInspector: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationEditorState_getInstance();
+	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationInspectorState_getInstance();
 }
 #endif
 
@@ -1476,8 +1476,8 @@ bool Game_isInSpecialMode(Game this __attribute__ ((unused)))
 #ifdef __STAGE_EDITOR
 	isInSpecialMode |= Game_isInStageEditor(this);
 #endif
-#ifdef __ANIMATION_EDITOR
-	isInSpecialMode |= Game_isInAnimationEditor(this);
+#ifdef __ANIMATION_INSPECTOR
+	isInSpecialMode |= Game_isInAnimationInspector(this);
 #endif
 
 	return isInSpecialMode;
@@ -1495,8 +1495,8 @@ bool Game_isEnteringSpecialMode(Game this __attribute__ ((unused)))
 #ifdef __STAGE_EDITOR
 	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState_getInstance()) == this->nextState;
 #endif
-#ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
+#ifdef __ANIMATION_INSPECTOR
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState_getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -1514,8 +1514,8 @@ bool Game_isExitingSpecialMode(Game this __attribute__ ((unused)))
 #ifdef __STAGE_EDITOR
 	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState_getInstance()) == this->nextState;
 #endif
-#ifdef __ANIMATION_EDITOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationEditorState_getInstance()) == this->nextState;
+#ifdef __ANIMATION_INSPECTOR
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState_getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -1549,12 +1549,22 @@ PhysicalWorld Game_getPhysicalWorld(Game this)
 {
 	ASSERT(this, "Game::PhysicalWorld: null this");
 
+	if(Game_isInSpecialMode(this))
+	{
+		return GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine)));
+	}
+
 	return GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
 
 CollisionManager Game_getCollisionManager(Game this)
 {
 	ASSERT(this, "Game::getCollisionManager: null this");
+
+	if(Game_isInSpecialMode(this))
+	{
+		return GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine)));
+	}
 
 	return GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }

@@ -174,7 +174,7 @@ void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving)
 #ifdef __STAGE_EDITOR
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 

@@ -118,11 +118,12 @@
 __CLASS_DEFINITION(StageEditor, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(Sprite);
 
 /**
  * The different modes of the StageEditor
  *
- * @memberof	AnimationEditor
+ * @memberof	AnimationInspector
  */
 enum Modes
 {
@@ -918,6 +919,8 @@ static void StageEditor_removePreviousSprite(StageEditor this)
 		__DELETE(this->userObjectSprite);
 		this->userObjectSprite = NULL;
 	}
+
+	SpriteManager_sortLayers(SpriteManager_getInstance());
 }
 
 /**
@@ -937,16 +940,26 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 	if(spriteDefinition)
 	{
 		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
-		ASSERT(this->userObjectSprite, "AnimationEditor::createSprite: null animatedSprite");
-		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationEditor::createSprite: null texture");
+		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
+		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
 		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
 		spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 		spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
-		__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->userObjectSprite), &spritePosition);
-		__VIRTUAL_CALL(Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->userObjectSprite));
-		__VIRTUAL_CALL(Sprite, render, __SAFE_CAST(Sprite, this->userObjectSprite));
+		Rotation spriteRotation = {0, 0, 0};
+		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9};
+		__VIRTUAL_CALL(Sprite, setPosition, this->userObjectSprite, &spritePosition);
+		__VIRTUAL_CALL(Sprite, rotate, this->userObjectSprite, &spriteRotation);
+		__VIRTUAL_CALL(Sprite, resize, this->userObjectSprite, spriteScale, spritePosition.z);
+		__VIRTUAL_CALL(Sprite, calculateParallax, this->userObjectSprite, spritePosition.z);
+
+		this->userObjectSprite->writeAnimationFrame = true;
+		SpriteManager_writeTextures(SpriteManager_getInstance());
+		SpriteManager_sortLayers(SpriteManager_getInstance());
+		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+		SpriteManager_render(SpriteManager_getInstance());
+		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 	}
 }
 
@@ -1008,6 +1021,11 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 		StageEditor_setupMode(this);
 
 		StageEditor_removePreviousSprite(this);
+		SpriteManager_sortLayers(SpriteManager_getInstance());
+		SpriteManager_writeTextures(SpriteManager_getInstance());
+		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+		SpriteManager_render(SpriteManager_getInstance());
+		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
 	}
 }
 

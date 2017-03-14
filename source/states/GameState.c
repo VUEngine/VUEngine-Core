@@ -212,7 +212,7 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	if(!Game_isEnteringSpecialMode(Game_getInstance()))
 	{
 #endif
@@ -234,7 +234,7 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 #ifdef __STAGE_EDITOR
 	}
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	}
 #endif
 }
@@ -261,7 +261,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	if(!Game_isExitingSpecialMode(Game_getInstance()))
 	{
 #endif
@@ -313,7 +313,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 #ifdef __STAGE_EDITOR
 	}
 #endif
-#ifdef __ANIMATION_EDITOR
+#ifdef __ANIMATION_INSPECTOR
 	}
 #endif
 

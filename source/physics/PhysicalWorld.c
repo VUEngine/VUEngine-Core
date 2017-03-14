@@ -233,7 +233,7 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, SpatialObject owner)
 	ASSERT(body, "PhysicalWorld::destroyBody: body not found");
 #endif
 
-	if(body)
+	if(body && !VirtualList_find(this->removedBodies, body))
 	{
 		// deactivate the shape, will be removed in the next update
 		Body_setActive(body, false);

@@ -84,7 +84,7 @@
 // Tools
 #define __DEBUG_TOOLS
 #define __STAGE_EDITOR
-#define __ANIMATION_EDITOR
+#define __ANIMATION_INSPECTOR
 
 #endif
 

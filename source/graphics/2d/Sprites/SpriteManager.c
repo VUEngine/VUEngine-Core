@@ -497,12 +497,20 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 
 		VirtualNode node = this->sprites->head;
 
-		for(; node; node = node->next)
+		for(; node;)
 		{
 			// search for the next sprite with the closest layer to the freed layer
 			if(spriteLayer < (__SAFE_CAST(Sprite, node->data))->worldLayer)
 			{
 				node = node->previous;
+				break;
+			}
+
+			node = node->next;
+
+			if(!node)
+			{
+				node = this->sprites->tail;
 				break;
 			}
 		}
