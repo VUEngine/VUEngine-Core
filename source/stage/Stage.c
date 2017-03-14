@@ -394,8 +394,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform, true);
+			__VIRTUAL_CALL(Container, initialTransform, entity, NULL, true);
 
 			__VIRTUAL_CALL(Entity, ready, entity, true);
 		}
@@ -1275,6 +1274,8 @@ void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, in
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->stageEntities), x + xDisplacement, y++, NULL);
 	Printing_text(Printing_getInstance(), "Loaded entities:       ", x, y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->loadedStageEntities), x + xDisplacement, y++, NULL);
+	Printing_text(Printing_getInstance(), "Children entities:       ", x, y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
 
