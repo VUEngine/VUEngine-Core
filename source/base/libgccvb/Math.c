@@ -91,7 +91,7 @@ int Math_multiply(int a, int b)
 	return (0 < b) ? a + Math_multiply(a, b - 1) : 0;
 }
 
-int Math_doPower(int sum, int base, int power)
+static int Math_doPower(int sum, int base, int power)
 {
 	return (1 < power) ? Math_doPower(Math_multiply(sum, base), base, power - 1) : sum;
 }

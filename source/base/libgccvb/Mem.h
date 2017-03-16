@@ -34,9 +34,9 @@
 //											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-void Mem_copy(u8* dest, const u8* src, u32 num);
-void Mem_clear(u16* dest,  u32 num);
-void Mem_add(u8* dest, const u8* src, u32 num, u32 offset);
+void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes);
+void Mem_clear(BYTE* dest, u32 numberOfBytes);
+void Mem_add(BYTE* destination, const BYTE* source, u32 numberOfBytes, u32 offset);
 
 
 #endif
