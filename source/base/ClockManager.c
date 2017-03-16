@@ -137,7 +137,7 @@ void ClockManager_register(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::register: null this");
 
-	if(!VirtualList_find(this->clocks, clock)
+	if(!VirtualList_find(this->clocks, clock))
 	{
 		VirtualList_pushFront(this->clocks, clock);
 	}
