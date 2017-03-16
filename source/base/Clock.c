@@ -148,26 +148,28 @@ void Clock_update(Clock this, u32 millisecondsElapsed)
 	ASSERT(this, "Clock::update: null this");
 
 	// increase count
-	if(!this->paused)
+	if(this->paused)
 	{
-		this->milliSeconds += millisecondsElapsed;
+		return;
+	}
 
-		u32 currentSecond = Clock_getSeconds(this);
+	this->milliSeconds += millisecondsElapsed;
 
-		if(currentSecond != this->previousSecond)
+	u32 currentSecond = Clock_getSeconds(this);
+
+	if(currentSecond != this->previousSecond)
+	{
+		this->previousSecond = currentSecond;
+
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventSecondChanged);
+
+		u32 currentMinute = Clock_getMinutes(this);
+
+		if(currentMinute != this->previousMinute)
 		{
-			this->previousSecond = currentSecond;
+			this->previousMinute = currentMinute;
 
-			Object_fireEvent(__SAFE_CAST(Object, this), kEventSecondChanged);
-
-			u32 currentMinute = Clock_getMinutes(this);
-
-			if(currentMinute != this->previousMinute)
-			{
-				this->previousMinute = currentMinute;
-
-				Object_fireEvent(__SAFE_CAST(Object, this), kEventMinuteChanged);
-			}
+			Object_fireEvent(__SAFE_CAST(Object, this), kEventMinuteChanged);
 		}
 	}
 }

@@ -1296,6 +1296,7 @@ bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionInde
  * @param updateScale
  * @param updateRotation
  */
+ /*
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
 {
 	ASSERT(this, "Entity::transform: null this");
@@ -1334,8 +1335,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 		}
 	}
 }
-
-/*
+*/
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
 {
 	ASSERT(this, "Entity::transform: null this");
@@ -1421,7 +1421,6 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 		}
 	}
 }
-*/
 
 /**
  * Initial transformation
