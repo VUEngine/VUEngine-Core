@@ -1218,7 +1218,7 @@ static void Game_update(Game this)
 		u32 gameFrameDuration = TimerManager_getMillisecondsElapsed(this->timerManager);
 
 		gameFrameDuration = gameFrameDuration < __GAME_FRAME_DURATION? __GAME_FRAME_DURATION : gameFrameDuration;
-		gameFrameDuration = __GAME_FRAME_DURATION;
+
 		TimerManager_resetMilliseconds(this->timerManager);
 
 		// update the clocks
