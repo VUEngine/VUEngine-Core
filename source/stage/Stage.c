@@ -328,12 +328,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	ParticleRemover_setRemovalDelayCycles(this->particleRemover, stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, initialTransform, this, &environmentTransform, true);
+	__VIRTUAL_CALL(Container, initialTransform, this, NULL, true);
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &environmentTransform, true);
+		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, NULL, true);
 	}
 }
 
@@ -369,8 +368,7 @@ static void Stage_setupUI(Stage this)
 		if(this->uiContainer)
 		{
 			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &environmentTransform, true);
+			__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, NULL, true);
 		}
 	}
 }
@@ -488,7 +486,6 @@ static void Stage_unloadChild(Stage this, Container child)
 	{
 		return;
 	}
-
 
 	child->deleteMe = true;
 	Container_removeChild(__SAFE_CAST(Container, this), child);
@@ -1053,26 +1050,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 
 	if(this->uiContainer)
 	{
-		// static to avoid call to _memcpy
-		static Transformation uiEnvironmentTransform __INITIALIZED_DATA_SECTION_ATTRIBUTE =
-		{
-				// local position
-				{0, 0, 0},
-				// global position
-				{0, 0, 0},
-				// local rotation
-				{0, 0, 0},
-				// global rotation
-				{0, 0, 0},
-				// local scale
-				{__1I_FIX7_9, __1I_FIX7_9},
-				// global scale
-				{__1I_FIX7_9, __1I_FIX7_9}
-		};
-
-		uiEnvironmentTransform.globalPosition = (VBVec3D){_screenPosition->x, _screenPosition->y, _screenPosition->z};
-
-		__VIRTUAL_CALL(Container, transform, this->uiContainer, &uiEnvironmentTransform);
+		__VIRTUAL_CALL(Container, transform, this->uiContainer, NULL);
 	}
 }
 

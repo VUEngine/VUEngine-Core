@@ -415,24 +415,7 @@ static void GameState_initialTransform(GameState this)
 	ASSERT(this, "GameState::initialTransform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
 
-	// static to avoid call to memcpy
-	const Transformation environmentTransform =
-	{
-		// local position
-		{0, 0, 0},
-		// global position
-		{0, 0, 0},
-		// local rotation
-		{0, 0, 0},
-		// global rotation
-		{0, 0, 0},
-		// local scale
-		{__1I_FIX7_9, __1I_FIX7_9},
-		// global scale
-		{__1I_FIX7_9, __1I_FIX7_9},
-	};
-
-	__VIRTUAL_CALL(Container, initialTransform, this->stage, &environmentTransform, true);
+	__VIRTUAL_CALL(Container, initialTransform, this->stage, NULL, true);
 }
 
 
