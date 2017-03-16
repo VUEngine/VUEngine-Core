@@ -553,10 +553,10 @@ void VIPManager_clearScreen(VIPManager this __attribute__ ((unused)))
 	}
 
 	// clear every char segment
-	Mem_clear ((u16*) __CHAR_SEGMENT_0_BASE_ADDRESS, 8192);
-	Mem_clear ((u16*) __CHAR_SEGMENT_1_BASE_ADDRESS, 8192);
-	Mem_clear ((u16*) __CHAR_SEGMENT_2_BASE_ADDRESS, 8192);
-	Mem_clear ((u16*) __CHAR_SEGMENT_3_BASE_ADDRESS, 8192);
+	Mem_clear ((BYTE*) __CHAR_SEGMENT_0_BASE_ADDRESS, 8192);
+	Mem_clear ((BYTE*) __CHAR_SEGMENT_1_BASE_ADDRESS, 8192);
+	Mem_clear ((BYTE*) __CHAR_SEGMENT_2_BASE_ADDRESS, 8192);
+	Mem_clear ((BYTE*) __CHAR_SEGMENT_3_BASE_ADDRESS, 8192);
 }
 
 /**
@@ -573,7 +573,7 @@ void VIPManager_clearBgmapSegment(VIPManager this __attribute__ ((unused)), int 
 {
 	ASSERT(this, "VIPManager::clearBgmap: null this");
 
-	Mem_clear((u16*)__BGMAP_SEGMENT(segment), size);
+	Mem_clear((BYTE*)__BGMAP_SEGMENT(segment), size);
 }
 
 /**
