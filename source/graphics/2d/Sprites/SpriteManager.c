@@ -681,15 +681,14 @@ void SpriteManager_render(SpriteManager this)
 		SpriteManager_sortLayersProgressively(this);
 	}
 
-	VirtualNode node = this->sprites->head;
-
-
 #ifdef __PROFILE_GAME
 	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
 		_totalPixelsToDraw = __SCREEN_WIDTH * __SCREEN_HEIGHT;
 	}
 #endif
+
+	VirtualNode node = this->sprites->head;
 
 	if(!node)
 	{
@@ -705,7 +704,7 @@ void SpriteManager_render(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		// first update
-		if(!sprite->hidden && ((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent))
+		if(sprite->animationController || sprite->transparent)
 		{
 			Sprite_update(__SAFE_CAST(Sprite, sprite));
 		}

@@ -370,99 +370,101 @@ void MBgmapSprite_render(MBgmapSprite this)
 	ASSERT(this, "MBgmapSprite::render: null this");
 
 	// if render flag is set
-	if(this->texture && this->worldLayer)
+	if(!this->texture || !this->worldLayer)
 	{
-		static WorldAttributes* worldPointer = NULL;
-		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+		return;
+	}
 
-		// TODO: check if required, causes that the sprite is turned off
-		// when changing the texture definition
+	static WorldAttributes* worldPointer = NULL;
+	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+
+	// TODO: check if required, causes that the sprite is turned off
+	// when changing the texture definition
 /*
-		if(!this->texture->written)
-		{
-			worldPointer->head = 0x0000;
-			return;
-		}
+	if(!this->texture->written)
+	{
+		worldPointer->head = 0x0000;
+		return;
+	}
 */
 
-		// set the head
-		worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
+	// set the head
+	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
-		// get coordinates
-		int gx = worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-		int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	// get coordinates
+	int gx = worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+	int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
-		// get sprite's size
-		if(0 > gx)
-		{
-			worldPointer->gx = 0;
-		}
+	// get sprite's size
+	if(0 > gx)
+	{
+		worldPointer->gx = 0;
+	}
 
-		if(0 > gy)
-		{
-			worldPointer->gy = 0;
-		}
+	if(0 > gy)
+	{
+		worldPointer->gy = 0;
+	}
 
 //		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
-		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
+	worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
-		worldPointer->mx = this->drawSpec.textureSource.mx;
-		worldPointer->my = this->drawSpec.textureSource.my;
-		worldPointer->mp = this->drawSpec.textureSource.mp;
+	worldPointer->mx = this->drawSpec.textureSource.mx;
+	worldPointer->my = this->drawSpec.textureSource.my;
+	worldPointer->mp = this->drawSpec.textureSource.mp;
 
-		// set the world size
-		if(!this->mBgmapSpriteDefinition->xLoop)
+	// set the world size
+	if(!this->mBgmapSpriteDefinition->xLoop)
+	{
+		int w = (((int)this->texture->textureDefinition->cols)<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+
+		if(w + worldPointer->gx >= __SCREEN_WIDTH)
 		{
-			int w = (((int)this->texture->textureDefinition->cols)<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+			w = __SCREEN_WIDTH - worldPointer->gx;
+		}
 
-			if(w + worldPointer->gx >= __SCREEN_WIDTH)
-			{
-				w = __SCREEN_WIDTH - worldPointer->gx;
-			}
-
-			if(0 > w)
-			{
-				worldPointer->head = __WORLD_OFF;
+		if(0 >= w)
+		{
+			worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
-				worldPointer->w = 0;
-				worldPointer->h = 0;
+			worldPointer->w = 0;
+			worldPointer->h = 0;
 #endif
-				return;
-			}
-
-			worldPointer->w = w;
-		}
-		else
-		{
-			worldPointer->gx -= (this->drawSpec.position.parallax);
-			worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
+			return;
 		}
 
-		if(!this->mBgmapSpriteDefinition->yLoop)
+		worldPointer->w = w;
+	}
+	else
+	{
+		worldPointer->gx -= (this->drawSpec.position.parallax);
+		worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
+	}
+
+	if(!this->mBgmapSpriteDefinition->yLoop)
+	{
+		int h = (((int)this->texture->textureDefinition->rows)<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+
+		if(h + worldPointer->gy >= __SCREEN_HEIGHT)
 		{
-			int h = (((int)this->texture->textureDefinition->rows)<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+			h = __SCREEN_HEIGHT - worldPointer->gy;
+		}
 
-			if(h + worldPointer->gy >= __SCREEN_HEIGHT)
-			{
-				h = __SCREEN_HEIGHT - worldPointer->gy;
-			}
-
-			if(0 > h)
-			{
-				worldPointer->head = __WORLD_OFF;
+		if(0 >= h)
+		{
+			worldPointer->head = __WORLD_OFF;
 #ifdef __PROFILE_GAME
-				worldPointer->w = 0;
-				worldPointer->h = 0;
+			worldPointer->w = 0;
+			worldPointer->h = 0;
 #endif
-				return;
-			}
+			return;
+		}
 
-			worldPointer->h = h;
-		}
-		else
-		{
-			worldPointer->h = __SCREEN_HEIGHT;
-		}
+		worldPointer->h = h;
+	}
+	else
+	{
+		worldPointer->h = __SCREEN_HEIGHT;
 	}
 }
 
