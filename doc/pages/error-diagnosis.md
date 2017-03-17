@@ -15,9 +15,9 @@ The engine provides two kinds of ASSERT macros, which check a given statement an
 
 Only inserted when compiling under debug. It is used at the start of most of the engine's methods to check that the "this" pointer is not NULL. Since the MemoryPool writes a 0 in the first byte of a deleted pointer, this helps to assure that any memory slot within the MemoryPool's pools has a 0 when it has been deleted.
 
-Another good use case for this would be to check an object's class name against the expected class as shown below.
+Another good use case for this would be to check an object's class against the expected class as shown below.
 
-	ASSERT(!strcmp(__GET_CLASS_NAME(someObject), SomeClass_getClassName()), "Wrong object class");
+	ASSERT(__GET_CAST(ClassName, someObject), "ClassName::methodName: Wrong object class");
 
 ### NM_ASSERT
 
@@ -41,7 +41,7 @@ One of the most difficult, and common source of hard to diagnose bugs, are unini
 MemoryPool size
 -----------------
 
-Whenever crashes appear more or less randomly with alternating exceptions, the cause will be, most likely, a stack overflow. Try to reduce the memory pool size to leave a bit more room for the stack. Since the safe minimum for the stack is about 2KB, your memory pool configuration should not exceed 62KB (depending on how deep the stack can grow because of nested function calls, this limit could be lower; this is specially the case when compiling under debug mode). 
+Whenever crashes appear more or less randomly with alternating exceptions, the cause will be, most likely, a stack overflow. Try to reduce the memory pool size to leave a bit more room for the stack. Since the safe minimum for the stack is about 2KB, your memory pool configuration should not exceed 62KB (depending on how deep the stack can grow because of nested function calls, this limit could be lower; this is specially the case when compiling under debug mode).
 
 
 Cast everything
@@ -49,7 +49,7 @@ Cast everything
 
 Because the engine implements class inheritance by accumulation of attributes' definitions within macros, it is necessary to cast every pointer of any given class to its base class in order to avoid compiler warnings when calling the base class' methods. This exposes the program to hard to identify errors. In order to mitigate this danger, cast every pointer before passing it to the base class' method by following this pattern:
 
-	BaseClass_method(__GET_CAST(BaseClass, object), ...);
+	BaseClass_method(__SAFE_CAST(BaseClass, object), ...);
 
 When compiling for release, the macro is replaced by a simple C type cast; while for debug, the Object_getCast method will be called, returning NULL if the object does not inherit from the given BaseClass, raising an exception in the method (which must check that the "this" pointer isn't NULL).
 

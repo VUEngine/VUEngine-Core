@@ -41,3 +41,17 @@ The removal of listeners is the responsibility of the client code. To remove a l
 	Object_removeAllEventListeners(triggerObject, eventCode);
 
 Beware: During the processing of an event it is illegal to modify the firer's event list by adding or removing event listeners to it, or by deleting the firer. If any of that happens, the engine will trigger an exception.
+
+
+Message propagation
+------
+
+The Container implements a passMessage method that allows the propagation of a message to all its descendants. For example, to propagate a message through all the descendants of a Stage use the following call:
+
+	Container_propagateMessage(stage, Container_onPropagatedMessage, message);
+ 
+Then, to react to the message, override the following method in your class:
+
+	bool Container_handlePropagatedMessage(Container this, int message);
+
+The when a handlePropagatedMessage returns true, message propagation stops.

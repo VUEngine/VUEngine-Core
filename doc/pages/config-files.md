@@ -15,7 +15,7 @@ For a description of the configuration parameters check the config.h file.
 Compilation options
 -------------------
 
-The engine supports various options for its compilation. Among these are:
+The engine supports various options for its compilation. These options are provided by each game in a file called config.make. Among these are:
 
 - The compilation type:
 	- Debug: adds lots of runtime assertions. Enables debugging tools too. It is recommended to use the sram sections for the memory pools when debugging in order to avoid stack overflows (SRAM as WRAM only works on emulators).

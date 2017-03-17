@@ -50,11 +50,14 @@ The StageDefinition struct has an special attribute that controls the behavior o
 
 	struct Streaming
 	{
-	    u16 loadPadding;
-	    u16 unloadPadding;
-	    u16 streamingAmplitude;
-	    u16 particleRemovalDelayCycles;
+		u16 minimumSpareMilliSecondsToAllowStreaming;
+		u16 loadPadding;
+		u16 unloadPadding;
+		u16 streamingAmplitude;
+		u16 particleRemovalDelayCycles;
 	} streaming;
+
+The minimumSpareMilliSecondsToAllowStreaming attribute is used to skip the streaming processes during long-to-process game frames to help reduce frame rate drops or frame pacing issues.
 
 The loadPadding attribute is added to the game's virtual screen's size (the Virtual Boy's screen's size plus depth: 384x224xZ) to calculate the threshold for entities to be loaded according to the position given in the PositionEntity entry. 
 
