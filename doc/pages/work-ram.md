@@ -44,7 +44,9 @@ Please note that the __BLOCK_DEFINITONs have to be sorted by size in descending 
 Maximum size
 ------------
 
-The required memory for the VUEngine showing an empty stage without any objects or preloaded textures is about 12 KB of the Virtual Boy's 64 KB of WRAM. Therefore, the absolute maximum amount of WRAM that can be allocated to the MemoryPool before overflowing the stack, is about **62 KB**. However, the more the game's stages are populated, the more memory will be required for the stack and lower the MemoryPool's maximum size.
+Under the best possible scenario, that is, when the class virtual tables are allocated in DRAM, the required memory by the VUEngine to show an empty stage without any entities or preloaded textures is about 4 KB of the Virtual Boy's 64 KB of WRAM. 
+
+A minimum of 2 KB are needed for the program’s stack. Therefore, the absolute maximum amount of WRAM that can be reserved for the MemoryPool before overflowing the stack is about **62 KB**. However, the more the game's stages are populated, the more memory will be required by the stack and lower the MemoryPool's maximum size.
 
 
 Practical application
