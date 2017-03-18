@@ -19,14 +19,14 @@ The following example shows a very basic definition of available memory pools an
 
 	#define 	__MEMORY_POOLS		3
 
-	#define 	__MEMORY_POOL_ARRAYS					\
+	#define 	__MEMORY_POOL_ARRAYS						\
 			__BLOCK_DEFINITION(256, 32)					\
 			__BLOCK_DEFINITION(128, 64)					\
 			__BLOCK_DEFINITION(64, 64)					\
 
-	#define 	__SET_MEMORY_POOL_ARRAYS				\
-			__SET_MEMORY_POOL_ARRAY(256)				\
-			__SET_MEMORY_POOL_ARRAY(128)				\
+	#define 	__SET_MEMORY_POOL_ARRAYS					\
+			__SET_MEMORY_POOL_ARRAY(256)					\
+			__SET_MEMORY_POOL_ARRAY(128)					\
 			__SET_MEMORY_POOL_ARRAY(64)					\
 
 This configuration will create 3 pools; one that holds up to 64 objects with sizes of 0 up to 64 bytes, another that holds up to 64 objects of sizes between 68 and 128 bytes, and finally, one that holds up to 32 objects of sizes between 132 and 256 bytes.
@@ -62,6 +62,6 @@ During the development of your game, you will want to constantly refine your Mem
 Determining object sizes
 ------------------------
 
-The most convenient way of finding out the exact memory footprints of your game's objects is to use the engine's debug tools. Slate 2 of the Debug System (accessed with LT+RT+RU) shows detailed information about the individual pools' usage, the MemoryPool's total size and usage as well as the required sizes of all of the VUEngine's as well as user defined classes.
+The most convenient way of finding out the exact memory footprints of your game's objects is to use the engine's debug tools. Slate 2 of the Debug System (accessed with LT+RT+RU) shows detailed information about the individual pools' usage, the MemoryPool's total size and usage as well as the memory requirements (in Bytes) of all of the VUEngine's as well as user defined classes.
 
-For a programmatic approach, you can use `sizeof(ObjectClass)` if you know an Object's class, otherwise `__VIRTUAL_CALL(int, Object, getObjectSize, objectPointer)` has to be be used.
+For a programmatic approach, you can use `sizeof(ObjectClass)` if you know the object's class.
