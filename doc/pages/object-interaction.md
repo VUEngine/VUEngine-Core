@@ -54,4 +54,4 @@ Then, to react to the message, override the following method in your class:
 
 	bool Container_handlePropagatedMessage(Container this, int message);
 
-The when a handlePropagatedMessage returns true, message propagation stops.
+Message propagation stops when handlePropagatedMessage returns true.
