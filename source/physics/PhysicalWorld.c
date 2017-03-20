@@ -215,23 +215,13 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
  * @public
  *
  * @param this	Function scope
- * @param owner
+ * @param body
  */
-void PhysicalWorld_destroyBody(PhysicalWorld this, SpatialObject owner)
+void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::destroyBody: null this");
-
-	// if the entity is already registered
-	Body body = PhysicalWorld_getBody(this, owner);
-#ifdef __DEBUG
-	if(!body)
-	{
-		Printing_setDebugMode(Printing_getInstance());
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(owner), 1, 15, NULL);
-	}
-
-	ASSERT(body, "PhysicalWorld::destroyBody: body not found");
-#endif
+	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
+	ASSERT(!VirtualList_find(this->removedBodies, body), "PhysicalWorld::destroyBody: body already being destroyed");
 
 	if(body && !VirtualList_find(this->removedBodies, body))
 	{
@@ -239,7 +229,7 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, SpatialObject owner)
 		Body_setActive(body, false);
 
 		// place in the removed bodies list
-		VirtualList_pushFront(this->removedBodies, (BYTE*)body);
+		VirtualList_pushFront(this->removedBodies, body);
 	}
 }
 
@@ -271,7 +261,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
-		if(owner == body->owner && !VirtualList_find(this->removedBodies, body))
+		if(owner == body->owner)
 		{
 			return body;
 		}
@@ -306,6 +296,7 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 			VirtualList_removeElement(this->activeBodies, body);
 
 			// delete it
+			ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::processRemovedBodies: deleting dead body");
 			__DELETE(body);
 		}
 

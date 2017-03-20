@@ -99,7 +99,7 @@ void Actor_destructor(Actor this)
 	if(this->body)
 	{
 		// remove a body
-		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), __SAFE_CAST(SpatialObject, this));
+		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
 		this->body = NULL;
 	}
 
