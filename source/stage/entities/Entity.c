@@ -243,6 +243,14 @@ void Entity_setDefinition(Entity this, void* entityDefinition)
 	this->entityDefinition = entityDefinition;
 }
 
+/**
+ * Add sprites
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_setupGraphics(Entity this)
 {
 	ASSERT(this, "Entity::setupGraphics: null this");
@@ -252,6 +260,14 @@ void Entity_setupGraphics(Entity this)
 	Entity_addSprites(this, this->entityDefinition->spritesDefinitions);
 }
 
+/**
+ * Release sprites
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Entity_releaseGraphics(Entity this)
 {
 	ASSERT(this, "Entity::releaseGraphics: null this");
@@ -264,10 +280,11 @@ void Entity_releaseGraphics(Entity this)
 /**
  * Release sprites
  *
- * @memberof	Entity
+ * @memberof			Entity
  * @public
  *
- * @param this	Function scope
+ * @param this			Function scope
+ * @param deleteThem	True deleted Sprites immediately, false defers sprite disposal to not impact performance.
  */
 void Entity_releaseSprites(Entity this, bool deleteThem)
 {
@@ -1211,7 +1228,7 @@ void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo _
  * Add sprites
  *
  * @memberof					Entity
- * @private
+ * @public
  *
  * @param this					Function scope
  * @param spritesDefinitions
