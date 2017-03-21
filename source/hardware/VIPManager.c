@@ -573,7 +573,7 @@ void VIPManager_clearBgmapSegment(VIPManager this __attribute__ ((unused)), int 
 {
 	ASSERT(this, "VIPManager::clearBgmap: null this");
 
-	Mem_clear((BYTE*)__BGMAP_SEGMENT(segment), size);
+	Mem_clear((BYTE*)__BGMAP_SEGMENT(segment), size * 2);
 }
 
 /**
