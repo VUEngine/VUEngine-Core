@@ -1350,7 +1350,7 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 		(
 			(u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6) + 2) << 1),
 			(u8*)this->charMemoryMap,
-			32,
+			32 * 2,
 			(i << 5)
 		);
 	}
