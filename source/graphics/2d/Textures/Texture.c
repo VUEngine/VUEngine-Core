@@ -80,6 +80,8 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
 	// set id
 	this->id = id;
 
+	this->mapDisplacement = 0;
+
 	// save the bgmap definition's address
 	this->textureDefinition = textureDefinition;
 	this->charSet = NULL;
@@ -617,3 +619,18 @@ bool Texture_isWritten(Texture this)
 	return this->written;
 }
 
+/**
+ * Set displacement to add to the offset within the BGMAP memory
+ *
+ * @memberof								Texture
+ * @public
+ *
+ * @param this								Function scope
+ * @param mapDefinitionDisplacement			Displacement
+ */
+void Texture_setMapDisplacement(Texture this, u32 mapDisplacement)
+{
+	ASSERT(this, "Texture::setMapDisplacement: null this");
+
+	this->mapDisplacement = mapDisplacement;
+}

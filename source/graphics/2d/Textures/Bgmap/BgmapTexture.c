@@ -84,7 +84,6 @@ static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* 
 	this->segment = -1;
 	this->usageCount = 1;
 	this->remainingRowsToBeWritten = 0;
-	this->mapDefinitionDisplacement = 0;
 }
 
 /**
@@ -259,7 +258,7 @@ static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
-				(const u8*)(this->textureDefinition->mapDefinition + this->mapDefinitionDisplacement + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
+				(const u8*)(this->textureDefinition->mapDefinition + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols << 1,
 				(palette) | (charLocation));
 	}
@@ -518,18 +517,3 @@ bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
 	return 0 >= --this->usageCount;
 }
 
-/**
- * Set displacement to add to the offset within the BGMAP memory
- *
- * @memberof								BgmapTexture
- * @public
- *
- * @param this								Function scope
- * @param mapDefinitionDisplacement		Displacement
- */
-void BgmapTexture_setMapDefinitionDisplacement(BgmapTexture this, u32 mapDefinitionDisplacement)
-{
-	ASSERT(this, "BgmapTexture::setCharDefinitionDisplacement: null this");
-
-	this->mapDefinitionDisplacement = mapDefinitionDisplacement;
-}

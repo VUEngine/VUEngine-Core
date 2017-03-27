@@ -137,7 +137,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 				BgmapTexture bgmapTexture = __SAFE_CAST(BgmapTexture, this->texture);
 
 				// move map definition to the next frame
-				BgmapTexture_setMapDefinitionDisplacement(bgmapTexture, Texture_getCols(this->texture) * Texture_getRows(this->texture) *
+				Texture_setMapDisplacement(this->texture, Texture_getCols(this->texture) * Texture_getRows(this->texture) *
 						((int)AnimationController_getActualFrameIndex(this->animationController) << 1));
 
 				CharSet_write(charSet);

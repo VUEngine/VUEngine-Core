@@ -160,36 +160,3 @@ void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 		this->written = false;
 	}
 }
-
-/**
- * Set to zero the BGMAP displacement relative to the Texture's definition
- *
- * @memberof				ObjectTexture
- * @public
- *
- * @param this				Function scope
- */
-void ObjectTexture_resetMapDisplacement(ObjectTexture this)
-{
-	ASSERT(this, "ObjectTexture::resetMapDisplacement: null this");
-
-	this->mapDisplacement = 0;
-}
-
-/**
- * Add a displacement to be applied to the Texture's BGMAP definition
- *
- * @memberof				ObjectTexture
- * @public
- *
- * @param this				Function scope
- * @param frame				Function scope
- */
-void ObjectTexture_addMapDisplacement(ObjectTexture this, int frame)
-{
-	ASSERT(this, "ObjectTexture::addMapDisplacement: null this");
-	ASSERT(0 <= frame, "ObjectTexture::addMapDisplacement: negative frame");
-
-	this->mapDisplacement = (this->textureDefinition->cols * this->textureDefinition->rows) * frame << 1;
-}
-

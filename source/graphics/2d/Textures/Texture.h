@@ -53,6 +53,8 @@
 		CharSet charSet;																				\
 		/* pointer to ROM definition */																	\
 		TextureDefinition* textureDefinition;															\
+		/* array definition of the map */																\
+		u32 mapDisplacement;																			\
 		/* texture's id */																				\
 		u16 id;																							\
 		/* color palette */																				\
@@ -124,6 +126,7 @@ u16 Texture_getId(Texture this);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
 void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
 bool Texture_isWritten(Texture this);
+void Texture_setMapDisplacement(Texture this, u32 mapDisplacement);
 
 
 #endif
