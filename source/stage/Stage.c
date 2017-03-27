@@ -526,7 +526,8 @@ static void Stage_preloadAssets(Stage this)
 
 		for(; this->stageDefinition->assets.charSets[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSets[i]->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSets[i]->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.charSets[i]->allocationType)
 			{
 				CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->assets.charSets[i]);
 			}
@@ -546,7 +547,8 @@ static void Stage_preloadAssets(Stage this)
 
 		for(; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
 			{
 				Texture texture = NULL;
 

@@ -126,6 +126,25 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 	// write according to the allocation type
 	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture, true)))
 	{
+		case __ANIMATED_SINGLE_OPTIMIZED:
+			{
+				CharSet charSet = Texture_getCharSet(this->texture, true);
+
+				// move charset definition to the next frame chars
+				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
+						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
+
+				BgmapTexture bgmapTexture = __SAFE_CAST(BgmapTexture, this->texture);
+
+				// move map definition to the next frame
+				BgmapTexture_setMapDefinitionDisplacement(bgmapTexture, Texture_getCols(this->texture) * Texture_getRows(this->texture) *
+						((int)AnimationController_getActualFrameIndex(this->animationController) << 1));
+
+				CharSet_write(charSet);
+				BgmapTexture_rewrite(bgmapTexture);
+			}
+			break;
+
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:

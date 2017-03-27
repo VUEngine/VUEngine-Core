@@ -34,20 +34,23 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// definition of a charset of an unanimated character or background
+// definition of a CharSet for unanimated sprites
 #define __NOT_ANIMATED						0x01
 
-// definition of a charset of an animated character or background
+// definition of a CharSet for animated sprites
 #define __ANIMATED_SINGLE					0x02
 
-// one char set is shared by all sprites
-#define __ANIMATED_SHARED					0x03
+// definition of a CharSet for animated sprites
+#define __ANIMATED_SINGLE_OPTIMIZED			0x03
 
-// a coordinator syncs all sprites
-#define __ANIMATED_SHARED_COORDINATED		0x04
+// definition of a CharSet for animated sprites with one char set is shared by all
+#define __ANIMATED_SHARED					0x04
 
-// definition of a charset of an animated character of which all frames are written to memory and shared
-#define __ANIMATED_MULTI					0x05
+// definition of a CharSet for animated sprites with a coordinator that syncs them
+#define __ANIMATED_SHARED_COORDINATED		0x05
+
+// definition of a charset for animated sprites whose all frames are written to memory and shared
+#define __ANIMATED_MULTI					0x06
 
 // char memory room to add
 #define __CHAR_ROOM							1

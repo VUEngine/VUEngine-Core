@@ -47,6 +47,8 @@
 #define BgmapTexture_ATTRIBUTES																			\
 		/* super's attributes */																		\
 		Texture_ATTRIBUTES																				\
+		/* array definition of the map */																\
+		u32 mapDefinitionDisplacement;																	\
 		/* segment */																					\
 		s8 segment;																						\
 		/* how many textures are using me */															\
@@ -82,6 +84,7 @@ s8 BgmapTexture_getSegment(BgmapTexture this);
 void BgmapTexture_setSegment(BgmapTexture this, s8 segment);
 void BgmapTexture_increaseUsageCount(BgmapTexture this);
 bool BgmapTexture_decreaseUsageCount(BgmapTexture this);
+void BgmapTexture_setMapDefinitionDisplacement(BgmapTexture this, u32 mapDefinitionDisplacement);
 
 
 #endif

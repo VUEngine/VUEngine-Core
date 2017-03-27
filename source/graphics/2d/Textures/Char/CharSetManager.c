@@ -196,10 +196,10 @@ CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSe
 	switch(charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
+		case __ANIMATED_SINGLE_OPTIMIZED:
 
 			// ask for allocation
 			charSet = CharSetManager_allocateCharSet(CharSetManager_getInstance(), charSetDefinition);
-
 			break;
 
 		case __ANIMATED_SHARED:

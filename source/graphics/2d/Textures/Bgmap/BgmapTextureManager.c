@@ -375,6 +375,7 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 		switch(textureDefinition->charSetDefinition->allocationType)
 		{
 			case __ANIMATED_SINGLE:
+			case __ANIMATED_SINGLE_OPTIMIZED:
 
 				__DELETE(bgmapTexture);
 				this->bgmapTextures[i] = NULL;
@@ -486,6 +487,7 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
 	switch(bgmapTextureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
+		case __ANIMATED_SINGLE_OPTIMIZED:
 
 			// load a new texture
 			bgmapTexture = BgmapTextureManager_allocateTexture(this, bgmapTextureDefinition);
