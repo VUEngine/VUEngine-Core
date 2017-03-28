@@ -312,6 +312,7 @@ u32 Texture_getTotalCols(Texture this)
 	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
+		case __ANIMATED_SINGLE_OPTIMIZED:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 
@@ -331,6 +332,11 @@ u32 Texture_getTotalCols(Texture this)
 
 			// just return the cols
 			return this->textureDefinition->cols;
+			break;
+
+		default:
+
+			NM_ASSERT(false, "Texture::getTotalRows: animation scheme not handled");
 			break;
 	}
 
@@ -355,6 +361,7 @@ u32 Texture_getTotalRows(Texture this)
 	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
 		case __ANIMATED_SINGLE:
+		case __ANIMATED_SINGLE_OPTIMIZED:
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 
@@ -374,6 +381,11 @@ u32 Texture_getTotalRows(Texture this)
 
 			// just return the cols
 			return this->textureDefinition->rows;
+			break;
+
+		default:
+
+			NM_ASSERT(false, "Texture::getTotalRows: animation scheme not handled");
 			break;
 	}
 
