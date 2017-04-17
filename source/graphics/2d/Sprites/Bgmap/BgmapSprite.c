@@ -70,7 +70,7 @@ extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
-
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -140,6 +140,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 
 	// set WORLD layer's head according to map's render mode
 	BgmapSprite_setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
+	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect ? bgmapSpriteDefinition->applyParamTableEffect : BgmapSprite_doApplyAffineTransformations;
 }
 
 /**
@@ -522,7 +523,7 @@ void BgmapSprite_render(BgmapSprite this)
 			// this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
 			// apply affine transformation
-			__VIRTUAL_CALL(BgmapSprite, doApplyAffineTransformations, this);
+			this->applyParamTableEffect(this);
 
 			if(0 >= this->paramTableRow)
 			{
@@ -530,9 +531,10 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 		}
 	}
-	else if(__WORLD_HBIAS & this->head)
+	else if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		__VIRTUAL_CALL(BgmapSprite, doApplyHbiasTransformations, this);
+			// apply hbias effects
+			this->applyParamTableEffect(this);
 	}
 }
 
@@ -805,11 +807,11 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
  * Start affine calculations
  *
  * @memberof			BgmapSprite
- * @public
+ * @private
  *
  * @param this			Function scope
  */
-void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
+static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
@@ -836,19 +838,6 @@ void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 }
 
 /**
- * Start h-bias calculations
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param this			Function scope
- */
-void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this __attribute__ ((unused)))
-{
-	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
-}
-
-/**
  * Trigger affine calculations
  *
  * @memberof			BgmapSprite
@@ -872,10 +861,10 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
  *
  * @param this			Function scope
  */
-void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
+void BgmapSprite_applyHbiasEffects(BgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
-	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
+	ASSERT(this, "BgmapSprite::applyHbiasEffects: null this");
+	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");
 
 	this->paramTableRow = 0;
 }

@@ -283,7 +283,7 @@ void AnimationInspector_update(AnimationInspector this)
 		Sprite_updateAnimation(this->animatedSprite);
 		Sprite_update(this->animatedSprite);
 		__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
-		__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this->animatedSprite);
+		__VIRTUAL_CALL(Sprite, applyHbiasEffects, this->animatedSprite);
 	}
 }
 

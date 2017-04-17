@@ -61,7 +61,7 @@
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, void, setDirection, int axis, int direction);							\
 		__VIRTUAL_DEC(ClassName, void, applyAffineTransformations);										\
-		__VIRTUAL_DEC(ClassName, void, applyHbiasTransformations);										\
+		__VIRTUAL_DEC(ClassName, void, applyHbiasEffects);												\
 		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix19_13 z);									\
 		__VIRTUAL_DEC(ClassName, void, writeAnimation);													\
 		__VIRTUAL_DEC(ClassName, void, show);															\
@@ -74,7 +74,7 @@
 		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Sprite, getScale);														\
 		__VIRTUAL_SET(ClassName, Sprite, applyAffineTransformations);									\
-		__VIRTUAL_SET(ClassName, Sprite, applyHbiasTransformations);									\
+		__VIRTUAL_SET(ClassName, Sprite, applyHbiasEffects);											\
 		__VIRTUAL_SET(ClassName, Sprite, resize);														\
 		__VIRTUAL_SET(ClassName, Sprite, writeAnimation);												\
 		__VIRTUAL_SET(ClassName, Sprite, show);															\
@@ -305,7 +305,7 @@ void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE
 
 // affine & hbias fx
 void Sprite_applyAffineTransformations(Sprite this);
-void Sprite_applyHbiasTransformations(Sprite this);
+void Sprite_applyHbiasEffects(Sprite this);
 
 
 #endif

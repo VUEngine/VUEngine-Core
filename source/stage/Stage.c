@@ -216,7 +216,7 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-inline static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
+static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
