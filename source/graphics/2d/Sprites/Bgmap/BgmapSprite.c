@@ -139,8 +139,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->paramTableRow = -1;
 
 	// set WORLD layer's head according to map's render mode
+	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect;
 	BgmapSprite_setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
-	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect ? bgmapSpriteDefinition->applyParamTableEffect : BgmapSprite_doApplyAffineTransformations;
 }
 
 /**
@@ -533,8 +533,8 @@ void BgmapSprite_render(BgmapSprite this)
 	}
 	else if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-			// apply hbias effects
-			this->applyParamTableEffect(this);
+		// apply hbias effects
+		this->applyParamTableEffect(this);
 	}
 }
 
@@ -691,7 +691,6 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 
 			// set map head
 			this->head = display | __WORLD_BGMAP;
-
 			break;
 
 		case __WORLD_AFFINE:
@@ -702,6 +701,7 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 			// allocate param table space
 			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
 
+			this->applyParamTableEffect = this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite_doApplyAffineTransformations;
 			break;
 
 		case __WORLD_HBIAS:
@@ -711,7 +711,6 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 
 			// allocate param table space
 			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-
 			break;
 	}
 }
