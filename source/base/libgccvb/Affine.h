@@ -37,7 +37,7 @@
 //											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix19_13 Affine_applyAll(u32 param, fix19_13 paramTableRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation);
+s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation);
 
 
 #endif

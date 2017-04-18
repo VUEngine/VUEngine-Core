@@ -70,7 +70,7 @@ extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
+static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -523,7 +523,7 @@ void BgmapSprite_render(BgmapSprite this)
 			// this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
 			// apply affine transformation
-			this->applyParamTableEffect(this);
+			this->paramTableRow = this->applyParamTableEffect(this);
 
 			if(0 >= this->paramTableRow)
 			{
@@ -536,7 +536,7 @@ void BgmapSprite_render(BgmapSprite this)
 		if(0 <= this->paramTableRow)
 		{
 			// apply hbias effects
-			this->applyParamTableEffect(this);
+			this->paramTableRow = this->applyParamTableEffect(this);
 
 			if(0 >= this->paramTableRow)
 			{
@@ -807,7 +807,7 @@ void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
  *
  * @return				Next param table row to calculate
  */
-fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
+s16 BgmapSprite_getParamTableRow(BgmapSprite this)
 {
 	return this->paramTableRow;
 }
@@ -824,15 +824,16 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
  * @private
  *
  * @param this			Function scope
+ * @return 				last computed row
  */
-static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
+static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if(this->param)
 	{
-		this->paramTableRow = Affine_applyAll(
+		return Affine_applyAll(
 			this->param,
 			this->paramTableRow,
 			// geometrically accurate, but kills the CPU
@@ -849,6 +850,8 @@ static void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 			&this->drawSpec.rotation
 		);
 	}
+
+	return this->paramTableRow;
 }
 
 /**
