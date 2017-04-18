@@ -499,7 +499,7 @@ void BgmapSprite_render(BgmapSprite this)
 	// set the world size according to the zoom
 	if(__WORLD_AFFINE & this->head)
 	{
-		// set param table's souce
+		// set param table's source
 		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		// un-cap x coordinate in affine mode
@@ -533,6 +533,9 @@ void BgmapSprite_render(BgmapSprite this)
 	}
 	else if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
+		// set param table's source
+		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+
 		if(0 <= this->paramTableRow)
 		{
 			// apply hbias effects
