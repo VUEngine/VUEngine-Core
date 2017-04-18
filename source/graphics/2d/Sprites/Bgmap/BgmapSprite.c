@@ -513,7 +513,7 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
 		worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
 
-		 if(0 <= this->paramTableRow)
+		if(0 <= this->paramTableRow)
 		{
 
 			// provide a little bit of performance gain by only calculation transform equations
@@ -533,8 +533,16 @@ void BgmapSprite_render(BgmapSprite this)
 	}
 	else if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		// apply hbias effects
-		this->applyParamTableEffect(this);
+		if(0 <= this->paramTableRow)
+		{
+			// apply hbias effects
+			this->applyParamTableEffect(this);
+
+			if(0 >= this->paramTableRow)
+			{
+				this->paramTableRow = -1;
+			}
+		}
 	}
 }
 
@@ -763,7 +771,14 @@ void BgmapSprite_invalidateParamTable(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
 
-	BgmapSprite_applyAffineTransformations(this);
+	if(__WORLD_AFFINE & this->head)
+	{
+		BgmapSprite_applyAffineTransformations(this);
+	}
+	else if(__WORLD_HBIAS & this->head)
+	{
+		BgmapSprite_applyHbiasEffects(this);
+	}
 }
 
 /**
