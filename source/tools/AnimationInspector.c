@@ -335,7 +335,7 @@ void AnimationInspector_show(AnimationInspector this, GameState gameState)
 
 	// make sure all textures are written right now
 	SpriteManager_writeTextures(SpriteManager_getInstance());
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 }
 
 /**
@@ -381,7 +381,7 @@ void AnimationInspector_hide(AnimationInspector this)
 	// make sure all textures are written right now
 	SpriteManager_writeTextures(SpriteManager_getInstance());
 	SpriteManager_recoverLayers(SpriteManager_getInstance());
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
+	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
 }
 
 /**
