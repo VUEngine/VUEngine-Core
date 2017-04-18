@@ -123,6 +123,12 @@ __CLASS(Printing);
 		 * @memberof		Printing
 		 */																								\
 		u8 mode;																						\
+		/*
+		 * @var u8			palette
+		 * @brief			Palette to use for printing
+		 * @memberof		Printing
+		 */																								\
+		u8 palette;																						\
 
 typedef struct FontSize
 {
@@ -200,6 +206,7 @@ void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
 void Printing_render(Printing this, int textLayer);
 void Printing_reset(Printing this);
 void Printing_setDebugMode(Printing this);
+void Printing_setPalette(Printing this, u8 palette);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
 
 

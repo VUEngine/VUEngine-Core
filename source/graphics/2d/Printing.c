@@ -113,6 +113,7 @@ static void __attribute__ ((noinline)) Printing_constructor(Printing this)
 	// initialize members
 	this->fonts = __NEW(VirtualList);
 	this->mode = __PRINTING_MODE_DEFAULT;
+	this->palette = __PRINTING_PALETTE;
 }
 
 /**
@@ -246,6 +247,22 @@ void Printing_setDebugMode(Printing this)
 {
 	Printing_loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
+}
+
+/**
+ * Set palette
+ *
+ * @memberof	Printing
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Printing_setPalette(Printing this, u8 palette)
+{
+	if(palette < 4)
+	{
+		this->palette = palette;
+	}
 }
 
 /**
@@ -390,7 +407,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 									// respective char of letter in multi-char fonts
 									charOffsetX + (charOffsetY << 5)
 								)
-								| (__PRINTING_PALETTE << 14);
+								| (this->palette << 14);
 						}
 					}
 				}
