@@ -460,7 +460,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
 	ASSERT(this, "Sprite::onTextureRewritten: null this");
 
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this);
-	__VIRTUAL_CALL(Sprite, applyHbiasTransformations, this);
+	__VIRTUAL_CALL(Sprite, applyHbiasEffects, this);
 }
 
 /**
@@ -1008,14 +1008,14 @@ void Sprite_applyAffineTransformations(Sprite this __attribute__ ((unused)))
 }
 
 /**
- * Apply HBias transformations to Sprite
+ * Apply HBias effects to Sprite
  *
  * @memberof	Sprite
  * @public
  *
  * @param this	Function scope
  */
-void Sprite_applyHbiasTransformations(Sprite this __attribute__ ((unused)))
+void Sprite_applyHbiasEffects(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::applyHbiasTransformations: null this");
+	ASSERT(this, "Sprite::applyHbiasEffects: null this");
 }

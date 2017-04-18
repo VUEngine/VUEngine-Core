@@ -109,17 +109,17 @@ typedef struct SpritesList
 	 */																									\
 	s8 texturesMaximumRowsToWrite;																		\
 	/**
-	 * @var s8			maximumAffineRowsToComputePerCall
+	 * @var s8			maximumParamTableRowsToComputePerCall
 	 * @brief 			number of rows to write in affine transformations
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 maximumAffineRowsToComputePerCall;																\
+	s8 maximumParamTableRowsToComputePerCall;																\
 	/**
-	 * @var s8			deferAffineTransformations
+	 * @var s8			deferParamTableEffects
 	 * @brief 			flag to control texture's writing deferring
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 deferAffineTransformations;																		\
+	s8 deferParamTableEffects;																		\
 	/**
 	 * @var s8			waitToWrite
 	 * @brief 			delay before writing again
@@ -188,8 +188,8 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->textureToWrite = NULL;
 	this->cyclesToWaitForTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
-	this->maximumAffineRowsToComputePerCall = -1;
-	this->deferAffineTransformations = false;
+	this->maximumParamTableRowsToComputePerCall = -1;
+	this->deferParamTableEffects = false;
 	this->waitToWrite = 0;
 
 	SpriteManager_reset(this);
@@ -909,17 +909,17 @@ void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 textures
  * @public
  *
  * @param this							Function scope
- * @param deferAffineTransformations	Flag
+ * @param deferParamTableEffects	Flag
  */
-void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffineTransformations)
+void SpriteManager_deferParamTableEffects(SpriteManager this, bool deferParamTableEffects)
 {
-	ASSERT(this, "SpriteManager::deferAffineTransformations: null this");
+	ASSERT(this, "SpriteManager::deferParamTableEffects: null this");
 
-	this->deferAffineTransformations = deferAffineTransformations;
+	this->deferParamTableEffects = deferParamTableEffects;
 }
 
 /**
- * Retrieve the maximum number of affine transformation rows to compute per render cycle
+ * Retrieve the maximum number of rows to compute per render cycle
  *
  * @memberof		SpriteManager
  * @public
@@ -928,27 +928,27 @@ void SpriteManager_deferAffineTransformations(SpriteManager this, bool deferAffi
  *
  * @return			Number of affine transformation rows to compute
  */
-int SpriteManager_getMaximumAffineRowsToComputePerCall(SpriteManager this)
+int SpriteManager_getMaximumParamTableRowsToComputePerCall(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::getMaximumAffineRowsPerCall: null this");
 
-	return this->deferAffineTransformations ? this->maximumAffineRowsToComputePerCall : -1;
+	return this->deferParamTableEffects ? this->maximumParamTableRowsToComputePerCall : -1;
 }
 
 /**
  * Set the maximum number of affine transformation rows to compute per render cycle
  *
- * @memberof									SpriteManager
+ * @memberof										SpriteManager
  * @public
  *
- * @param this									Function scope
- * @param maximumAffineRowsToComputePerCall		Number of affine transformation rows to compute per render cycle
+ * @param this										Function scope
+ * @param maximumParamTableRowsToComputePerCall		Number of affine transformation rows to compute per render cycle
  */
-void SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall)
+void SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager this, int maximumParamTableRowsToComputePerCall)
 {
 	ASSERT(this, "SpriteManager::setMaximumAffineRowsToComputePerCall: null this");
 
-	this->maximumAffineRowsToComputePerCall = maximumAffineRowsToComputePerCall;
+	this->maximumParamTableRowsToComputePerCall = maximumParamTableRowsToComputePerCall;
 }
 
 /**

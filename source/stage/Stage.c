@@ -216,7 +216,7 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-inline static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
+static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
@@ -296,7 +296,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	// setup SpriteManager's configuration
 	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
-	SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
+	SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
 
 	// setup ui
 	Stage_setupUI(this);
@@ -1138,7 +1138,7 @@ void Stage_resume(Stage this)
 	// setup SpriteManager's configuration
 	SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager_getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
-	SpriteManager_setMaximumAffineRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
+	SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
 
 	// reload textures
 	Stage_preloadAssets(this);

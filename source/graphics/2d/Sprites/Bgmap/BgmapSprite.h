@@ -53,8 +53,6 @@
 // declare the virtual methods
 #define BgmapSprite_METHODS(ClassName)																	\
 		Sprite_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, doApplyAffineTransformations);									\
-		__VIRTUAL_DEC(ClassName, void, doApplyHbiasTransformations);									\
 
 // declare the virtual methods which are redefined
 #define BgmapSprite_SET_VTABLE(ClassName)																\
@@ -67,9 +65,7 @@
 		__VIRTUAL_SET(ClassName, BgmapSprite, getScale);												\
 		__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);											\
 		__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);								\
-		__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasTransformations);								\
-		__VIRTUAL_SET(ClassName, BgmapSprite, doApplyAffineTransformations);							\
-		__VIRTUAL_SET(ClassName, BgmapSprite, doApplyHbiasTransformations);								\
+		__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasEffects);										\
 		__VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
 		__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);										\
 		__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
@@ -90,13 +86,17 @@
 		 */																								\
 		u32 param;																						\
 		/**
-		 * @var fix19_13 	paramTableRow
+		 * @var u16 	paramTableRow
 		 * @brief			param table offset
 		 * @memberof		BgmapSprite
 		 */																								\
-		fix19_13 paramTableRow;																			\
-		/* h-bias max amplitude */																		\
-		/* int hbiasAmplitude; */																		\
+		s16 paramTableRow;																			\
+		/**
+		 * @var void(*)(BgmapSprite) 	paramTableEffect
+		 * @brief						pointer to function that implements the param table based effects
+		 * @memberof					BgmapSprite
+		 */																								\
+		s16 (*applyParamTableEffect)(BgmapSprite);
 
 // declare a BgmapSprite, which holds a texture and a drawing specification
 __CLASS(BgmapSprite);
@@ -113,6 +113,9 @@ typedef struct BgmapSpriteDefinition
 
 	// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
+
+	// pointer to affine / hbias manipulation function
+	s16 (*applyParamTableEffect)(BgmapSprite);
 
 	// flag to indicate in which display to show the bg texture
 	u16 display;
@@ -143,7 +146,7 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
 void BgmapSprite_invalidateParamTable(BgmapSprite this);
 void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec);
-fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this);
+s16 BgmapSprite_getParamTableRow(BgmapSprite this);
 u32 BgmapSprite_getParam(BgmapSprite this);
 void BgmapSprite_setParam(BgmapSprite this, u32 param);
 void BgmapSprite_render(BgmapSprite this);
@@ -156,9 +159,7 @@ void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetP
 
 // affine & hbias fx
 void BgmapSprite_applyAffineTransformations(BgmapSprite this);
-void BgmapSprite_applyHbiasTransformations(BgmapSprite this);
-void BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
-void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this);
+void BgmapSprite_applyHbiasEffects(BgmapSprite this);
 
 
 #endif

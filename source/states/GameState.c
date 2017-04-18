@@ -275,7 +275,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 		Game_reset(Game_getInstance());
 
 		// must make sure that all textures are completely written
-		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 
 		// update the stage
 		__VIRTUAL_CALL(Container, resume, this->stage);
@@ -306,7 +306,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	SpriteManager_render(SpriteManager_getInstance());
 
 	// defer rendering again
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
+	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
 #ifdef __DEBUG_TOOLS
 	}
 #endif
@@ -508,7 +508,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
 
 	// must make sure that all textures are completely written
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 
 	// load world entities
 	Stage_load(this->stage, stageDefinition, positionedEntitiesToIgnore, overrideScreenPosition);
@@ -532,7 +532,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	SpriteManager_render(SpriteManager_getInstance());
 
 	// defer rendering again
-	SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
+	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
 }
 
 /**

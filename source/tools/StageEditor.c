@@ -957,9 +957,9 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		this->userObjectSprite->writeAnimationFrame = true;
 		SpriteManager_writeTextures(SpriteManager_getInstance());
 		SpriteManager_sortLayers(SpriteManager_getInstance());
-		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 		SpriteManager_render(SpriteManager_getInstance());
-		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
+		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
 	}
 }
 
@@ -1023,9 +1023,9 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 		StageEditor_removePreviousSprite(this);
 		SpriteManager_sortLayers(SpriteManager_getInstance());
 		SpriteManager_writeTextures(SpriteManager_getInstance());
-		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), false);
+		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 		SpriteManager_render(SpriteManager_getInstance());
-		SpriteManager_deferAffineTransformations(SpriteManager_getInstance(), true);
+		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
 	}
 }
 

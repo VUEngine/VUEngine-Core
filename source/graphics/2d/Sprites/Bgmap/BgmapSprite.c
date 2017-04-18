@@ -70,7 +70,7 @@ extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
-
+static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -139,6 +139,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->paramTableRow = -1;
 
 	// set WORLD layer's head according to map's render mode
+	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect;
 	BgmapSprite_setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
 }
 
@@ -498,7 +499,7 @@ void BgmapSprite_render(BgmapSprite this)
 	// set the world size according to the zoom
 	if(__WORLD_AFFINE & this->head)
 	{
-		// set param table's souce
+		// set param table's source
 		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		// un-cap x coordinate in affine mode
@@ -512,7 +513,7 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
 		worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
 
-		 if(0 <= this->paramTableRow)
+		if(0 <= this->paramTableRow)
 		{
 
 			// provide a little bit of performance gain by only calculation transform equations
@@ -522,7 +523,7 @@ void BgmapSprite_render(BgmapSprite this)
 			// this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
 
 			// apply affine transformation
-			__VIRTUAL_CALL(BgmapSprite, doApplyAffineTransformations, this);
+			this->paramTableRow = this->applyParamTableEffect(this);
 
 			if(0 >= this->paramTableRow)
 			{
@@ -530,9 +531,21 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 		}
 	}
-	else if(__WORLD_HBIAS & this->head)
+	else if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		__VIRTUAL_CALL(BgmapSprite, doApplyHbiasTransformations, this);
+		// set param table's source
+		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+
+		if(0 <= this->paramTableRow)
+		{
+			// apply hbias effects
+			this->paramTableRow = this->applyParamTableEffect(this);
+
+			if(0 >= this->paramTableRow)
+			{
+				this->paramTableRow = -1;
+			}
+		}
 	}
 }
 
@@ -689,7 +702,6 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 
 			// set map head
 			this->head = display | __WORLD_BGMAP;
-
 			break;
 
 		case __WORLD_AFFINE:
@@ -700,6 +712,7 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 			// allocate param table space
 			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
 
+			this->applyParamTableEffect = this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite_doApplyAffineTransformations;
 			break;
 
 		case __WORLD_HBIAS:
@@ -709,7 +722,6 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 
 			// allocate param table space
 			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-
 			break;
 	}
 }
@@ -762,7 +774,14 @@ void BgmapSprite_invalidateParamTable(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
 
-	BgmapSprite_applyAffineTransformations(this);
+	if(__WORLD_AFFINE & this->head)
+	{
+		BgmapSprite_applyAffineTransformations(this);
+	}
+	else if(__WORLD_HBIAS & this->head)
+	{
+		BgmapSprite_applyHbiasEffects(this);
+	}
 }
 
 /**
@@ -791,7 +810,7 @@ void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
  *
  * @return				Next param table row to calculate
  */
-fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
+s16 BgmapSprite_getParamTableRow(BgmapSprite this)
 {
 	return this->paramTableRow;
 }
@@ -805,18 +824,19 @@ fix19_13 BgmapSprite_getParamTableRow(BgmapSprite this)
  * Start affine calculations
  *
  * @memberof			BgmapSprite
- * @public
+ * @private
  *
  * @param this			Function scope
+ * @return 				last computed row
  */
-void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
+static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if(this->param)
 	{
-		this->paramTableRow = Affine_applyAll(
+		return Affine_applyAll(
 			this->param,
 			this->paramTableRow,
 			// geometrically accurate, but kills the CPU
@@ -833,19 +853,8 @@ void BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 			&this->drawSpec.rotation
 		);
 	}
-}
 
-/**
- * Start h-bias calculations
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param this			Function scope
- */
-void BgmapSprite_doApplyHbiasTransformations(BgmapSprite this __attribute__ ((unused)))
-{
-	ASSERT(this, "BgmapSprite::doApplyHbiasTransformations: null this");
+	return this->paramTableRow;
 }
 
 /**
@@ -872,10 +881,10 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
  *
  * @param this			Function scope
  */
-void BgmapSprite_applyHbiasTransformations(BgmapSprite this)
+void BgmapSprite_applyHbiasEffects(BgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
-	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
+	ASSERT(this, "BgmapSprite::applyHbiasEffects: null this");
+	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");
 
 	this->paramTableRow = 0;
 }
