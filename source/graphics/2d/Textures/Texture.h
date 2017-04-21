@@ -85,7 +85,7 @@ typedef struct TextureDefinition
 	// y size, 1 row represents 8 pixels
 	u32 rows;
 
-	// padding for affine transformations
+	// padding for affine/hbias transformations (cols, rows)
 	TexturePadding padding;
 
 	// number of frames

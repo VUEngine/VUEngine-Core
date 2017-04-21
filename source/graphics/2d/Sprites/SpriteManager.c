@@ -71,7 +71,7 @@ typedef struct SpritesList
 	 * @brief 			list of sprites to delete
 	 * @memberof		SpriteManager
 	 */																									\
-	VirtualList spritesToDispose;																				\
+	VirtualList spritesToDispose;																		\
 	/**
 	 * @var VirtualNode	node
 	 * @brief 			sorting nodes
@@ -113,13 +113,13 @@ typedef struct SpritesList
 	 * @brief 			number of rows to write in affine transformations
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 maximumParamTableRowsToComputePerCall;																\
+	s8 maximumParamTableRowsToComputePerCall;															\
 	/**
 	 * @var s8			deferParamTableEffects
 	 * @brief 			flag to control texture's writing deferring
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 deferParamTableEffects;																		\
+	s8 deferParamTableEffects;																			\
 	/**
 	 * @var s8			waitToWrite
 	 * @brief 			delay before writing again

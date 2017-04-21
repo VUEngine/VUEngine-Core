@@ -69,28 +69,28 @@
 		__VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
 		__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);										\
 		__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
-		__VIRTUAL_SET(ClassName, BgmapSprite, setMode);														\
+		__VIRTUAL_SET(ClassName, BgmapSprite, setMode);													\
 
 #define BgmapSprite_ATTRIBUTES																			\
 		Sprite_ATTRIBUTES																				\
 		/**
-		 * @var DrawSpec 	drawSpec
-		 * @brief			3d world position
-		 * @memberof		BgmapSprite
+		 * @var DrawSpec 				drawSpec
+		 * @brief						3d world position
+		 * @memberof					BgmapSprite
 		 */																								\
 		DrawSpec drawSpec;																				\
 		/**
-		 * @var u32 		param
-		 * @brief			param table offset
-		 * @memberof		BgmapSprite
+		 * @var u32 					param
+		 * @brief						param table offset
+		 * @memberof					BgmapSprite
 		 */																								\
 		u32 param;																						\
 		/**
-		 * @var u16 	paramTableRow
-		 * @brief			param table offset
-		 * @memberof		BgmapSprite
+		 * @var s16 					paramTableRow
+		 * @brief						param table offset
+		 * @memberof					BgmapSprite
 		 */																								\
-		s16 paramTableRow;																			\
+		s16 paramTableRow;																				\
 		/**
 		 * @var void(*)(BgmapSprite) 	paramTableEffect
 		 * @brief						pointer to function that implements the param table based effects
@@ -114,7 +114,7 @@ typedef struct BgmapSpriteDefinition
 	// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
 
-	// pointer to affine / hbias manipulation function
+	// pointer to affine/hbias manipulation function
 	s16 (*applyParamTableEffect)(BgmapSprite);
 
 	// flag to indicate in which display to show the bg texture

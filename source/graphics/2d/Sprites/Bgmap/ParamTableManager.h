@@ -39,6 +39,73 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												DECLARATIONS
+//---------------------------------------------------------------------------------------------------------
+
+/**
+ * An Affine Entry
+ *
+ * @memberof Affine
+ */
+typedef struct AffineEntry
+{
+	fix13_3	pb_y;		// *y+Dx /= 8.0
+	s16		parallax;
+	fix13_3	pd_y;		// *y+Dy /= 8.0
+	fix7_9	pa;			// /=512.0
+	fix7_9	pc;			// /=512.0
+	u16 	spacer[3];		//unknown
+} AffineEntry;
+
+/**
+ * A Fixed Affine Matrix
+ *
+ * @memberof Affine
+ */
+typedef struct FixedAffineMatrix
+{
+	fix7_9 	pa;
+	fix13_3 pb;
+	fix7_9 	pc;
+	fix13_3 pd;
+	fix13_3 dx;
+	fix13_3 dy;
+	s16		parallax;
+} FixedAffineMatrix;
+
+/**
+ * Affine Info
+ *
+ * @memberof Affine
+ */
+typedef struct AffineInfo
+{
+	fix19_13 	x;
+	fix19_13 	y;
+	fix13_3 	mx;
+	fix13_3 	my;
+	fix13_3 	halfWidth;
+	fix13_3 	halfHeight;
+	Rotation* 	rotation;
+	Scale* 		scale;
+	u32 		param;
+	s16			parallax;
+} AffineInfo;
+
+
+/**
+ * An Hbias Entry
+ *
+ * @memberof Hbias
+ */
+typedef struct HbiasEntry
+{
+	s16 offsetLeft;
+	s16 offsetRight;
+} HbiasEntry;
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 

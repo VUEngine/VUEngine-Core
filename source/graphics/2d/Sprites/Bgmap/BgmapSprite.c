@@ -320,7 +320,7 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 	if(this->param)
 	{
-		this->paramTableRow = -1 == this->paramTableRow? 0: this->paramTableRow;
+		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 	}
 }
 
@@ -520,7 +520,7 @@ void BgmapSprite_render(BgmapSprite this)
 			// for the visible rows, but causes that some sprites not be rendered completely when the
 			// screen moves vertically
 			// int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
-			// this->paramTableRow = this->paramTableRow? this->paramTableRow : myDisplacement;
+			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 
 			// apply affine transformation
 			this->paramTableRow = this->applyParamTableEffect(this);
