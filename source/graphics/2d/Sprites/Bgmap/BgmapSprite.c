@@ -525,7 +525,7 @@ void BgmapSprite_render(BgmapSprite this)
 			// apply affine transformation
 			this->paramTableRow = this->applyParamTableEffect(this);
 
-			if(0 >= this->paramTableRow)
+			if(0 > this->paramTableRow)
 			{
 				this->paramTableRow = -1;
 			}
@@ -541,7 +541,7 @@ void BgmapSprite_render(BgmapSprite this)
 			// apply hbias effects
 			this->paramTableRow = this->applyParamTableEffect(this);
 
-			if(0 >= this->paramTableRow)
+			if(0 > this->paramTableRow)
 			{
 				this->paramTableRow = -1;
 			}
