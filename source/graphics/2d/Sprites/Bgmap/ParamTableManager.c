@@ -366,26 +366,26 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 void ParamTableManager_free(ParamTableManager this, BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::free: null this");
-	ASSERT(VirtualList_find(this->bgmapSprites, bgmapSprite), "ParamTableManager::free: sprite not found");
 
-	VirtualList_removeElement(this->bgmapSprites, bgmapSprite);
-
-	if(this->previouslyMovedBgmapSprite == bgmapSprite)
+	if(VirtualList_removeElement(this->bgmapSprites, bgmapSprite))
 	{
-		this->previouslyMovedBgmapSprite = NULL;
-	}
+		if(this->previouslyMovedBgmapSprite == bgmapSprite)
+		{
+			this->previouslyMovedBgmapSprite = NULL;
+		}
 
-	// accounted for
-	if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite_getParam(bgmapSprite))
-	{
-		// but increase the space recovered
+		// accounted for
+		if(this->paramTableFreeData.param && this->paramTableFreeData.param <= BgmapSprite_getParam(bgmapSprite))
+		{
+			// but increase the space recovered
+			this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
+
+			return;
+		}
+
+		this->paramTableFreeData.param = BgmapSprite_getParam(bgmapSprite);
 		this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
-
-		return;
 	}
-
-	this->paramTableFreeData.param = BgmapSprite_getParam(bgmapSprite);
-	this->paramTableFreeData.recoveredSize += ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 }
 
 /**
