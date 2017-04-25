@@ -299,27 +299,33 @@ FontData* Printing_getFontByName(Printing this, const char* font)
 	{
 		result = (FontData*)&VUENGINE_DEBUG_FONT_DATA;
 	}
-	else
+	else if(this->fonts)
 	{
 		// set first defined font as default
 		result = VirtualList_front(this->fonts);
 
-		// iterate over registered fonts to find definition of font to use
-		VirtualNode node = VirtualList_begin(this->fonts);
-		for(; node; node = VirtualNode_getNext(node))
+		if(result)
 		{
-			FontData* fontData = VirtualNode_getData(node);
-			if(!strcmp(fontData->fontDefinition->name, font))
+			if(font)
 			{
-				result = fontData;
-				break;
+				// iterate over registered fonts to find definition of font to use
+				VirtualNode node = VirtualList_begin(this->fonts);
+				for(; node; node = VirtualNode_getNext(node))
+				{
+					FontData* fontData = VirtualNode_getData(node);
+					if(!strcmp(fontData->fontDefinition->name, font))
+					{
+						result = fontData;
+						break;
+					}
+				}
 			}
-		}
 
-		// if font's charset has not been preloaded, load it now
-		if(result && !result->offset)
-		{
-			result->offset = CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition));
+			// if font's charset has not been preloaded, load it now
+			if(!result->offset)
+			{
+				result->offset = CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition));
+			}
 		}
 	}
 
