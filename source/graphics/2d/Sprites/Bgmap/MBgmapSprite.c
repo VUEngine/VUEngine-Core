@@ -401,9 +401,12 @@ void MBgmapSprite_render(MBgmapSprite this)
 		worldPointer->gx = 0;
 	}
 
+	int myDisplacement = 0;
+
 	if(0 > gy)
 	{
 		worldPointer->gy = 0;
+		myDisplacement = -gy;
 	}
 
 //		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
@@ -466,6 +469,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 	{
 		worldPointer->h = __SCREEN_HEIGHT;
 	}
+
+	BgmapSprite_processHbiasEffects(__SAFE_CAST(BgmapSprite, this));
 }
 
 /**

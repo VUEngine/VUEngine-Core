@@ -497,10 +497,30 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->h = h;
 
 	// set the world size according to the zoom
-	if(__WORLD_AFFINE & this->head)
+	BgmapSprite_processAffineEffects(this, gx, width, myDisplacement);
+	BgmapSprite_processHbiasEffects(this);
+}
+
+void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int myDisplacement)
+{
+	ASSERT(this, "BgmapSprite::processAffineEffects: null this");
+
+	if((__WORLD_AFFINE & this->head) && this->applyParamTableEffect)
 	{
-		// set param table's source
-		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+		if(!this->param)
+		{
+			// allocate param table space
+			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+    	}
+
+		static WorldAttributes* worldPointer = NULL;
+    	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+
+		// provide a little bit of performance gain by only calculation transform equations
+		// for the visible rows, but causes that some sprites not be rendered completely when the
+		// screen moves vertically
+		// int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
+		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 
 		// un-cap x coordinate in affine mode
 		if(0 > gx)
@@ -513,15 +533,10 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
 		worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
 
+		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+
 		if(0 <= this->paramTableRow)
 		{
-
-			// provide a little bit of performance gain by only calculation transform equations
-			// for the visible rows, but causes that some sprites not be rendered completely when the
-			// screen moves vertically
-			// int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
-			// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
-
 			// apply affine transformation
 			this->paramTableRow = this->applyParamTableEffect(this);
 
@@ -531,10 +546,24 @@ void BgmapSprite_render(BgmapSprite this)
 			}
 		}
 	}
-	else if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
+
+}
+
+void BgmapSprite_processHbiasEffects(BgmapSprite this)
+{
+	ASSERT(this, "BgmapSprite::processHbiasEffects: null this");
+
+	if((__WORLD_HBIAS & this->head) && this->applyParamTableEffect)
 	{
-		// set param table's source
-		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
+		if(!this->param)
+		{
+			// allocate param table space
+			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+    	}
+
+		static WorldAttributes* worldPointer = NULL;
+    	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+		worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
 		{
@@ -709,9 +738,6 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 			// set map head
 			this->head = display | __WORLD_AFFINE;
 
-			// allocate param table space
-			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
-
 			this->applyParamTableEffect = this->applyParamTableEffect ? this->applyParamTableEffect : BgmapSprite_doApplyAffineTransformations;
 			break;
 
@@ -719,9 +745,6 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 
 			// set map head
 			this->head = display | __WORLD_HBIAS | __WORLD_OVR;
-
-			// allocate param table space
-			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
 			break;
 	}
 }

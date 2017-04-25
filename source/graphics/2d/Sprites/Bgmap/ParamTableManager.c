@@ -273,10 +273,34 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
 	ASSERT(this, "ParamTableManager::allocate: null this");
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
-	// calculate necessary space to allocate
-	// size = sprite's rows * 8 pixels each on * 16 bytes needed by each row = sprite's rows * 2 ^ 7
-	// add one row as padding to make sure not ovewriting take place
-	return (((int)Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bgmapSprite))) + __PARAM_TABLE_PADDING) << 7) * __MAXIMUM_SCALE;
+	u16 spriteHead = Sprite_getHead(__SAFE_CAST(Sprite, bgmapSprite));
+	u32 textureRows = Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bgmapSprite))) + __PARAM_TABLE_PADDING;
+	int size = 0;
+
+	if(__WORLD_AFFINE & spriteHead)
+	{
+		if(64 < textureRows)
+		{
+			textureRows = 64;
+		}
+
+		// calculate necessary space to allocate
+		// size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
+		// add one row as padding to make sure not ovewriting take place
+		size = ((int)textureRows << 7) * __MAXIMUM_SCALE;
+	}
+	else if(__WORLD_HBIAS & spriteHead)
+	{
+		if(28 < textureRows)
+		{
+			textureRows = 28;
+		}
+
+		// size = sprite's rows * 8 pixels each one * 4 bytes needed by each row = sprite's rows * 2 ^ 5
+		size = (int)textureRows << 5;
+	}
+
+	return size;
 }
 
 /**
@@ -298,6 +322,11 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 	//calculate necessary space to allocate
 	int size = ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 
+	if(0 == size)
+	{
+		return 0;
+	}
+
 	u32 paramAddress = 0;
 
 	//if there is space in the param table, allocate
@@ -309,7 +338,7 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 		//record sprite
 		VirtualList_pushBack(this->bgmapSprites, bgmapSprite);
 
-		//update the param bytes ocupied
+		//update the param bytes occupied
 		this->size -= size;
 		this->used += size;
 	}

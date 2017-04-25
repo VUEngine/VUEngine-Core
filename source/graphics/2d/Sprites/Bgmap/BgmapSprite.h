@@ -160,6 +160,8 @@ void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetP
 // affine & hbias fx
 void BgmapSprite_applyAffineTransformations(BgmapSprite this);
 void BgmapSprite_applyHbiasEffects(BgmapSprite this);
+void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int myDisplacement);
+void BgmapSprite_processHbiasEffects(BgmapSprite this);
 
 
 #endif
