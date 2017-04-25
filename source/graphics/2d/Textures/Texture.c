@@ -233,7 +233,6 @@ void Texture_rewrite(Texture this)
 	__VIRTUAL_CALL(Texture, write, this);
 }
 
-// write map in hbias mode
 /**
  * Write to DRAM in h-bias mode
  *
