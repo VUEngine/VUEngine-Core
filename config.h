@@ -392,7 +392,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // When defined, the engine's default low battery indicator is used
-#define __LOW_BATTERY_INDICATOR
+#undef __LOW_BATTERY_INDICATOR
 
 // Position of low battery indicator
 #define __LOW_BATTERY_INDICATOR_POS_X			45
