@@ -365,9 +365,9 @@ u32 Sprite_getWorldHead(Sprite this)
  *
  * @return
  */
-s16 Sprite_getWorldX(Sprite this)
+s16 Sprite_getWorldGX(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldX: null this");
+	ASSERT(this, "Sprite::getWorldGX: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gx;
@@ -383,12 +383,84 @@ s16 Sprite_getWorldX(Sprite this)
  *
  * @return
  */
-s16 Sprite_getWorldY(Sprite this)
+s16 Sprite_getWorldGY(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldY: null this");
+	ASSERT(this, "Sprite::getWorldGY: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gy;
+}
+
+/**
+ * Get sprites's layer's gp
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
+s16 Sprite_getWorldGP(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldGP: null this");
+
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	return worldPointer->gp;
+}
+
+/**
+ * Get sprites's layer's mx
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
+s16 Sprite_getWorldMX(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldMX: null this");
+
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	return worldPointer->mx;
+}
+
+/**
+ * Get sprites's layer's my
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
+s16 Sprite_getWorldMY(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldMY: null this");
+
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	return worldPointer->my;
+}
+
+/**
+ * Get sprites's layer's mp
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return
+ */
+s16 Sprite_getWorldMP(Sprite this)
+{
+	ASSERT(this, "Sprite::getWorldMP: null this");
+
+	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+	return worldPointer->mp;
 }
 
 /**
@@ -923,9 +995,14 @@ void Sprite_print(Sprite this, int x, int y)
 	Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
 	Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
-	Printing_text(Printing_getInstance(), "WORLD (x, y):                         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), Sprite_getWorldX(this), x + 14, y, NULL);
-	Printing_int(Printing_getInstance(), Sprite_getWorldY(this), x + 24, y, NULL);
+	Printing_text(Printing_getInstance(), "G (x, y, p):                         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldGX(this), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldGY(this), x + 24, y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldGP(this), x + 34, y, NULL);
+	Printing_text(Printing_getInstance(), "M (x, y, p):                         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldMX(this), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldMY(this), x + 24, y, NULL);
+	Printing_int(Printing_getInstance(), Sprite_getWorldMP(this), x + 34, y, NULL);
 	Printing_text(Printing_getInstance(), "Size (w, h):                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldWidth(this), x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldHeight(this), x + 24, y, NULL);
