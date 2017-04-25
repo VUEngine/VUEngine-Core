@@ -273,8 +273,10 @@ void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet)
 static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSetManager::allocateCharSet: null this");
-	ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
-	ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
+	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
+	NM_ASSERT(charSetDefinition, "CharSetManager::allocateCharSet: null charSetDefinition");
+	NM_ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
+	NM_ASSERT(charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in definition");
 
 	u16 offset = 1;
 
@@ -295,6 +297,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 			case __ANIMATED_SINGLE:
 			case __ANIMATED_SHARED:
 			case __ANIMATED_SHARED_COORDINATED:
+			case __ANIMATED_SINGLE_OPTIMIZED:
 
 				break;
 
