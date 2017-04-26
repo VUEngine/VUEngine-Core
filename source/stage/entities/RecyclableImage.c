@@ -28,7 +28,6 @@
 #include <RecyclableImage.h>
 #include <Optics.h>
 #include <Shape.h>
-#include <Prototypes.h>
 #include <Game.h>
 #include <RecyclableBgmapTextureManager.h>
 #include <BgmapSprite.h>

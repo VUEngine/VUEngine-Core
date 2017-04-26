@@ -33,7 +33,6 @@
 #include <PhysicalWorld.h>
 #include <Body.h>
 #include <Cuboid.h>
-#include <Prototypes.h>
 #include <Game.h>
 #include <debugUtilities.h>
 

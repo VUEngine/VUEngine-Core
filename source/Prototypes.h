@@ -29,6 +29,7 @@
 
 #include <Entity.h>
 #include <Shape.h>
+#include <AnimationController.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -39,6 +40,7 @@
 
 // must forward declare
 Shape Entity_getShape(Entity this);
+AnimationController Sprite_getAnimationController(Sprite this);
 
 
 #endif

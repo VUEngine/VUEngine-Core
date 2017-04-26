@@ -50,7 +50,6 @@ __CLASS_FRIEND_DEFINITION(Texture);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-AnimationController Sprite_getAnimationController(Sprite this);
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 
 

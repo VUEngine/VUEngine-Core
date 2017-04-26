@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ManagedEntity.h>
-#include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <MBgmapSprite.h>

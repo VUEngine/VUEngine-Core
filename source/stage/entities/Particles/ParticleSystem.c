@@ -27,7 +27,6 @@
 #include <ParticleSystem.h>
 #include <Game.h>
 #include <ParticleRemover.h>
-#include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>

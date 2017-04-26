@@ -29,7 +29,6 @@
 #include <Game.h>
 #include <InGameEntity.h>
 #include <InanimatedInGameEntity.h>
-#include <Prototypes.h>
 #include <Optics.h>
 #include <Shape.h>
 #include <CollisionManager.h>

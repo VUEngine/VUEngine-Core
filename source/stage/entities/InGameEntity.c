@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <InGameEntity.h>
-#include <Prototypes.h>
 #ifdef __DEBUG
 #include <DirectDraw.h>
 #endif

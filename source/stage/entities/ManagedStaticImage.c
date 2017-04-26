@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ManagedStaticImage.h>
-#include <Prototypes.h>
 #include <Optics.h>
 #include <debugUtilities.h>
 
