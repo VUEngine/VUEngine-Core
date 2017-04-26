@@ -533,7 +533,7 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
 		worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
 
-		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1);
+		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
 		{
@@ -563,7 +563,7 @@ void BgmapSprite_processHbiasEffects(BgmapSprite this)
 
 		static WorldAttributes* worldPointer = NULL;
     	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
-		worldPointer->param = (u16)(((this->param) - 0x20000) >> 1);
+		worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
 		{

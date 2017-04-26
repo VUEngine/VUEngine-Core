@@ -320,7 +320,7 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
-	u32 size = (ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite) + 16) & 0xFFFFFFF0;
+	u32 size = ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 
 	if(0 == size)
 	{
@@ -333,7 +333,7 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 	if(this->paramTableBase + this->used + size < (__PARAM_TABLE_END))
 	{
 		//set sprite param
-		paramAddress = (this->paramTableBase + this->used + 16) & 0xFFFFFFF0;
+		paramAddress = this->paramTableBase + this->used;
 
 		//record sprite
 		VirtualList_pushBack(this->bgmapSprites, bgmapSprite);
