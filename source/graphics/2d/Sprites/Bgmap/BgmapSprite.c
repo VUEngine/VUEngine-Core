@@ -136,7 +136,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->displacement = bgmapSpriteDefinition->spriteDefinition.displacement;
 
 	this->param = 0;
-	this->paramTableRow = -1;
+	this->paramTableRow = 0;
 
 	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect;
