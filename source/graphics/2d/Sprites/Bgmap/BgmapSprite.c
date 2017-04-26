@@ -744,7 +744,7 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 		case __WORLD_HBIAS:
 
 			// set map head
-			this->head = display | __WORLD_HBIAS | __WORLD_OVR;
+			this->head = display | __WORLD_HBIAS;
 			break;
 	}
 }
