@@ -57,7 +57,7 @@ typedef struct ParamTableFreeData
 		 * @brief 					total size of param table
 		 * @memberof				ParamTableManager
 		 */																								\
-		int size;																						\
+		u32 size;																						\
 		/**
 		 * @var u32 				used
 		 * @brief 					number of used bytes
@@ -110,7 +110,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 void ParamTableManager_constructor(ParamTableManager this);
-static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bgmapSprite);
+static u32 ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this, BgmapSprite bgmapSprite);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -268,14 +268,14 @@ u32 ParamTableManager_getParamTableBase(ParamTableManager this)
  *
  * @return				Param table's size for the Sprite
  */
-static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bgmapSprite)
+static u32 ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bgmapSprite)
 {
 	ASSERT(this, "ParamTableManager::allocate: null this");
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	u16 spriteHead = Sprite_getHead(__SAFE_CAST(Sprite, bgmapSprite));
 	u32 textureRows = Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, bgmapSprite))) + __PARAM_TABLE_PADDING;
-	int size = 0;
+	u32 size = 0;
 
 	if(__WORLD_AFFINE & spriteHead)
 	{
@@ -287,7 +287,7 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
 		// calculate necessary space to allocate
 		// size = sprite's rows * 8 pixels each one * 16 bytes needed by each row = sprite's rows * 2 ^ 7
 		// add one row as padding to make sure not ovewriting take place
-		size = ((int)textureRows << 7) * __MAXIMUM_SCALE;
+		size = (textureRows << 7) * __MAXIMUM_SCALE;
 	}
 	else if(__WORLD_HBIAS & spriteHead)
 	{
@@ -297,7 +297,7 @@ static int ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
 		}
 
 		// size = sprite's rows * 8 pixels each one * 4 bytes needed by each row = sprite's rows * 2 ^ 5
-		size = (int)textureRows << 5;
+		size = textureRows << 5;
 	}
 
 	return size;
@@ -320,7 +320,7 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
-	int size = ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
+	u32 size = ParamTableManager_calculateSpriteParamTableSize(this, bgmapSprite);
 
 	if(0 == size)
 	{

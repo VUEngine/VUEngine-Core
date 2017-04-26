@@ -136,7 +136,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 	this->displacement = bgmapSpriteDefinition->spriteDefinition.displacement;
 
 	this->param = 0;
-	this->paramTableRow = -1;
+	this->paramTableRow = 0;
 
 	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect;
@@ -744,7 +744,7 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 		case __WORLD_HBIAS:
 
 			// set map head
-			this->head = display | __WORLD_HBIAS | __WORLD_OVR;
+			this->head = display | __WORLD_HBIAS;
 			break;
 	}
 }

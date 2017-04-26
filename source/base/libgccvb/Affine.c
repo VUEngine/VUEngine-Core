@@ -83,7 +83,7 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 
 	fixedAffineMatrix.parallax = 0;
 
-	AffineEntry* affine = (AffineEntry*)(param & 0xFFFFFFF0);
+	AffineEntry* affine = (AffineEntry*)param;
 
 	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
 	int lastRow = FIX19_13TOI(FIX19_13_MULT((halfHeight << 1), FIX7_9TOFIX19_13(__ABS(scale->y)))) + 1;
