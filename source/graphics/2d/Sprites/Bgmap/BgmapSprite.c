@@ -354,6 +354,12 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	{
 		this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
 		this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
+
+		if(__WORLD_AFFINE & this->head)
+		{
+			this->halfWidth = FIX19_13_MULT(this->halfWidth, FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)));
+			this->halfHeight = FIX19_13_MULT(this->halfHeight, FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)));
+		}
 	}
 
 	if(this->param)
@@ -433,8 +439,8 @@ void BgmapSprite_render(BgmapSprite this)
 	int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
 	// get sprite's size
-	int width = this->texture->textureDefinition->cols << 3;
-	int height = this->texture->textureDefinition->rows << 3;
+	int width = FIX19_13TOI(this->halfWidth) << 1;
+	int height = FIX19_13TOI(this->halfHeight) << 1;
 	int w = width - __WORLD_SIZE_DISPLACEMENT;
 	int h = height - __WORLD_SIZE_DISPLACEMENT;
 
@@ -530,8 +536,8 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		}
 
 		// apply scaling and add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-		worldPointer->w = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->w), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))) + 1;
-		worldPointer->h = FIX19_13TOI(FIX19_13_MULT(ITOFIX19_13(worldPointer->h), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)))) + 1;
+		worldPointer->w += 1;
+		worldPointer->h += 1;
 
 		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 

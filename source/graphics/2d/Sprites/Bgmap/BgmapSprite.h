@@ -124,6 +124,7 @@ typedef struct BgmapSpriteDefinition
 
 typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
 
+typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
