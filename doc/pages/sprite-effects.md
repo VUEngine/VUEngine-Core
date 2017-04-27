@@ -37,10 +37,3 @@ method, and then assign the returned param value to all the Sprites that you wan
 All this can be done in the Entity's ready method. 
 Make sure that the paramTableRow attribute is -1 for all Sprites but one, otherwise all them will call the 
 effect function.
-
-
-Remarks
--------
-
-- Looping of Hbias MBgmapSprites does not work upwards, only downwards. Analogically, it should only be 
-  possible to loop to the right, but not to the left, but that is currently untested.
