@@ -336,6 +336,20 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	}
 }
 
+void Stage_loadPostProcessingEffects(Stage this)
+{
+	ASSERT(this, "Stage::loadPostProcessingEffects: null this");
+
+	if(this->stageDefinition->postProcessingEffects)
+	{
+		int i = 0;
+		for(; this->stageDefinition->postProcessingEffects[i]; i++)
+		{
+			Game_addPostProcessingEffect(Game_getInstance(), this->stageDefinition->postProcessingEffects[i], NULL);
+		}
+	}
+}
+
 // retrieve size
 Size Stage_getSize(Stage this)
 {

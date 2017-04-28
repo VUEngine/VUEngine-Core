@@ -533,6 +533,8 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// defer rendering again
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
+
+	Stage_loadPostProcessingEffects(this->stage);
 }
 
 /**

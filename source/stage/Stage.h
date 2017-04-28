@@ -35,6 +35,7 @@
 #include <UiContainer.h>
 #include <ObjectSpriteContainerManager.h>
 #include <ParticleRemover.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -173,7 +174,6 @@ typedef struct StageDefinition
 
 	} physics;
 
-
 	struct Assets
 	{
 		// fonts for preloading
@@ -200,6 +200,9 @@ typedef struct StageDefinition
 
 	} entities;
 
+	// post processing effects
+	PostProcessingEffect* postProcessingEffects;
+
 } StageDefinition;
 
 typedef const StageDefinition StageROMDef;
@@ -214,6 +217,7 @@ __CLASS_NEW_DECLARE(Stage);
 void Stage_destructor(Stage this);
 void Stage_setupPalettes(Stage this);
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
+void Stage_loadPostProcessingEffects(Stage this);
 Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);
 void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
