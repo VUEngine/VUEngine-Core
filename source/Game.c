@@ -1126,7 +1126,7 @@ inline static void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 #ifdef __PRINT_FRAMERATE
 		if(!Game_isInSpecialMode(this))
 		{
-			FrameRate_print(frameRate, 0, 0);
+			FrameRate_print(frameRate, 21, 27);
 		}
 #endif
 

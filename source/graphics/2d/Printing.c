@@ -114,6 +114,8 @@ static void __attribute__ ((noinline)) Printing_constructor(Printing this)
 	this->fonts = __NEW(VirtualList);
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
+	this->gx = __PRINTING_BGMAP_X_OFFSET;
+	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 }
 
 /**
@@ -146,14 +148,14 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
 	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
 	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
-	_worldAttributesBaseAddress[textLayer].mx = 0;
+	_worldAttributesBaseAddress[textLayer].mx = this->gx;
 	_worldAttributesBaseAddress[textLayer].mp = 0;
-	_worldAttributesBaseAddress[textLayer].my = 0;
-	_worldAttributesBaseAddress[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
+	_worldAttributesBaseAddress[textLayer].my = this->gy;
+	_worldAttributesBaseAddress[textLayer].gx = this->gx;
 	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
-	_worldAttributesBaseAddress[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
-	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH;
-	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT;
+	_worldAttributesBaseAddress[textLayer].gy = this->gy;
+	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH - this->gx;
+	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT - this->gy;
 }
 
 /**
@@ -174,6 +176,9 @@ void Printing_reset(Printing this)
 	}
 
 	VirtualList_clear(this->fonts);
+
+	this->gx = __PRINTING_BGMAP_X_OFFSET;
+	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 }
 
 /**
@@ -555,6 +560,53 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
 {
 	Printing_out(this, x, y, string, font);
 }
+
+/**
+ * Set the coordinates of the WORLD used for printing
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ * @param gx		WORLD x coordinate
+ * @param gy		WORLD y coordinate
+ */
+void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
+{
+	this->gx = 0 < gx && gx < __SCREEN_WIDTH ? gx : 0;
+	this->gy = 0 < gy && gy < __SCREEN_HEIGHT ? gy : 0;
+}
+
+/**
+ * Reset the coordinates of the WORLD used for printing
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ */
+void Printing_resetWorldCoordinates(Printing this)
+{
+	this->gx = __PRINTING_BGMAP_X_OFFSET;
+	this->gy = __PRINTING_BGMAP_Y_OFFSET;
+}
+
+
+/**
+ * Retrieve the pixels used by the WORLD for printing
+ *
+ * @memberof		Printing
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			number of pixels
+ */
+int Printing_getPixelCount(Printing this)
+{
+	return (__SCREEN_WIDTH - this->gx) * (__SCREEN_HEIGHT - this->gy);
+}
+
 
 /**
  * Get the size of a (block of) text so you can for example center it on screen

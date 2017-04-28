@@ -684,7 +684,7 @@ void SpriteManager_render(SpriteManager this)
 #ifdef __PROFILE_GAME
 	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
-		_totalPixelsToDraw = __SCREEN_WIDTH * __SCREEN_HEIGHT;
+		_totalPixelsToDraw = Printing_getPixelCount(Printing_getInstance());
 	}
 #endif
 

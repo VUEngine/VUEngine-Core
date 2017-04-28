@@ -118,6 +118,18 @@ __CLASS(Printing);
 		 */																								\
 		VirtualList fonts;																				\
 		/*
+		 * @var u16			gx
+		 * @brief			x coordinate for printing WORLD
+		 * @memberof		Printing
+		 */																								\
+		u16 gx;																						\
+		/*
+		 * @var u16			gy
+		 * @brief			y coordinate for printing WORLD
+		 * @memberof		Printing
+		 */																								\
+		u16 gy;																						\
+		/*
 		 * @var u8			mode
 		 * @brief			Printing mode (Default or Debug)
 		 * @memberof		Printing
@@ -207,6 +219,9 @@ void Printing_render(Printing this, int textLayer);
 void Printing_reset(Printing this);
 void Printing_setDebugMode(Printing this);
 void Printing_setPalette(Printing this, u8 palette);
+void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy);
+void Printing_resetWorldCoordinates(Printing this);
+int Printing_getPixelCount(Printing this);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
 
 
