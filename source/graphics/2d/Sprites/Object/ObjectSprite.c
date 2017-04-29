@@ -349,7 +349,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
-			if(_cameraFrustum->x0 - 4 > outputX || outputX > _cameraFrustum->x1 - 4)
+			if((unsigned)(outputX - _cameraFrustum->x0 - 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0 - 4))
 			{
 				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;
@@ -357,7 +357,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 			int outputY = y + (i << 3) * yDirection;
 
-			if(_cameraFrustum->y0 - 4 > outputY || outputY > _cameraFrustum->y1 - 4)
+			if((unsigned)(outputY - _cameraFrustum->y0 - 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 - 4))
 			{
 				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;
