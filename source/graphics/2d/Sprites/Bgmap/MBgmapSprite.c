@@ -65,6 +65,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // globals
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
+extern const CameraFrustum* _cameraFrustum;
 
 static void MBgmapSprite_releaseTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTextures(MBgmapSprite this);
@@ -269,11 +270,12 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	{
 		this->drawSpec.textureSource.mx = this->textureXOffset;
 		this->drawSpec.position.x = position->x;
-
+/*
 		if(0 > position->x + this->displacement.x)
 		{
 			this->drawSpec.textureSource.mx -= FIX19_13TOI(position->x + this->displacement.x + __0_5F_FIX19_13);
 		}
+*/
 	}
 
 	if(this->mBgmapSpriteDefinition->yLoop)
@@ -285,11 +287,12 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	{
 		this->drawSpec.textureSource.my = this->textureYOffset;
 		this->drawSpec.position.y = position->y;
-
+/*
 		if(0 > position->y + this->displacement.y)
 		{
 			this->drawSpec.textureSource.my -= FIX19_13TOI(position->y + this->displacement.y + __0_5F_FIX19_13);
 		}
+*/
 	}
 
 	fix19_13 previousZPosition = this->drawSpec.position.z;
@@ -330,11 +333,12 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	{
 		this->drawSpec.textureSource.mx = this->textureXOffset;
 		this->drawSpec.position.x += displacement->x;
-
+/*
 		if(0 > this->drawSpec.position.x + this->displacement.x)
 		{
 			this->drawSpec.textureSource.mx -= FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
 		}
+*/
 	}
 
 	if(this->mBgmapSpriteDefinition->yLoop)
@@ -346,11 +350,12 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	{
 		this->drawSpec.textureSource.my = this->textureYOffset;
 		this->drawSpec.position.y += displacement->y;
-
+/*
 		if(0 > this->drawSpec.position.y + this->displacement.y)
 		{
 			this->drawSpec.textureSource.my -= FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 		}
+*/
 	}
 
 	this->drawSpec.position.z += displacement->z;
@@ -395,32 +400,35 @@ void MBgmapSprite_render(MBgmapSprite this)
 	int gx = worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
 	int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 
-	// get sprite's size
-	if(0 > gx)
+	int mxDisplacement = 0;
+	if(_cameraFrustum->x0 > gx)
 	{
-		worldPointer->gx = 0;
+		worldPointer->gx = _cameraFrustum->x0;
+		mxDisplacement = _cameraFrustum->x0 - gx;
 	}
 
-	if(0 > gy)
+	int myDisplacement = 0;
+	if(_cameraFrustum->y0 > gy)
 	{
-		worldPointer->gy = 0;
+		worldPointer->gy = _cameraFrustum->y0;
+		myDisplacement = _cameraFrustum->y0 - gy;
 	}
 
 //		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
 	worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
-	worldPointer->mx = this->drawSpec.textureSource.mx;
-	worldPointer->my = this->drawSpec.textureSource.my;
+	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
+	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// set the world size
 	if(!this->mBgmapSpriteDefinition->xLoop)
 	{
-		int w = (((int)this->texture->textureDefinition->cols)<< 3) - 1 - (worldPointer->mx - this->textureXOffset);
+    	int w = (FIX19_13TOI(this->halfWidth) << 1) - mxDisplacement;
 
-		if(w + worldPointer->gx >= __SCREEN_WIDTH)
+		if(w + worldPointer->gx >= _cameraFrustum->x1)
 		{
-			w = __SCREEN_WIDTH - worldPointer->gx;
+			w = _cameraFrustum->x1 - worldPointer->gx;
 		}
 
 		if(0 >= w)
@@ -437,17 +445,17 @@ void MBgmapSprite_render(MBgmapSprite this)
 	}
 	else
 	{
-		worldPointer->gx -= (this->drawSpec.position.parallax);
-		worldPointer->w = __SCREEN_WIDTH + (this->drawSpec.position.parallax << 1);
+		worldPointer->gx -= (this->drawSpec.position.parallax) >> 1;
+		worldPointer->w = _cameraFrustum->x1 - mxDisplacement + (this->drawSpec.position.parallax);
 	}
 
 	if(!this->mBgmapSpriteDefinition->yLoop)
 	{
-		int h = (((int)this->texture->textureDefinition->rows)<< 3) - 1 - (worldPointer->my - this->textureYOffset);
+    	int h = (FIX19_13TOI(this->halfHeight) << 1) - myDisplacement;
 
-		if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+		if(h + worldPointer->gy >= _cameraFrustum->y1)
 		{
-			h = __SCREEN_HEIGHT - worldPointer->gy;
+			h = _cameraFrustum->y1 - worldPointer->gy;
 		}
 
 		if(0 >= h)
@@ -464,7 +472,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	}
 	else
 	{
-		worldPointer->h = __SCREEN_HEIGHT;
+		worldPointer->h = _cameraFrustum->y1 - myDisplacement;
 	}
 
 	BgmapSprite_processHbiasEffects(__SAFE_CAST(BgmapSprite, this));

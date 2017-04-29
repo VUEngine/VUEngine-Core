@@ -76,10 +76,20 @@
 		VBVec3D lastDisplacement;																		\
 		/* stage's size in pixels */																	\
 		Size stageSize;																					\
+		/* camera frustum */																			\
+		CameraFrustum cameraFrustum;																	\
 
 // declare a Screen
 __CLASS(Screen);
 
+typedef struct CameraFrustum
+{
+	u16 x0;
+	u16 y0;
+	u16 x1;
+	u16 y1;
+
+}CameraFrustum;
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
@@ -110,6 +120,8 @@ void Screen_setStageSize(Screen this, Size size);
 void Screen_forceDisplacement(Screen this, int flag);
 void Screen_startEffect(Screen this, int effect, ...);
 void Screen_stopEffect(Screen this, int effect);
-
+void Screen_resetCameraFrustum(Screen this);
+void Screen_setCameraFrustum(Screen this, CameraFrustum cameraFrustum);
+CameraFrustum Screen_getCameraFrustum(Screen this);
 
 #endif

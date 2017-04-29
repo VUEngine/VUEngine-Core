@@ -68,6 +68,7 @@ __CLASS_FRIEND_DEFINITION(BgmapTexture);
 extern const VBVec3D* _screenPosition;
 extern const VBVec3D* _screenDisplacement;
 extern const Optical* _optical;
+extern const CameraFrustum* _cameraFrustum;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
@@ -449,29 +450,29 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to screen space
-	if(0 > gx)
+	if(_cameraFrustum->x0 > gx)
 	{
-		worldPointer->gx = 0;
-		worldPointer->mx -= gx;
-		w += gx;
+		worldPointer->gx = _cameraFrustum->x0;
+		worldPointer->mx += (_cameraFrustum->x0 - gx);
+		w -= (_cameraFrustum->x0 - gx);
 	}
 
 	int myDisplacement = 0;
 
-	if(0 > gy)
+	if(_cameraFrustum->y0 > gy)
 	{
-		worldPointer->gy = 0;
-		worldPointer->my -= gy;
-		h += gy;
-		myDisplacement = -gy;
+		worldPointer->gy = _cameraFrustum->y0;
+		worldPointer->my += (_cameraFrustum->y0 - gy);
+		h -= (_cameraFrustum->y0 - gy);
+		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
 	worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 //		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
 
-	if(w + worldPointer->gx >= __SCREEN_WIDTH)
+	if(w + worldPointer->gx >= _cameraFrustum->x1)
 	{
-		w = __SCREEN_WIDTH - worldPointer->gx;
+		w = _cameraFrustum->x1 - worldPointer->gx;
 	}
 
 	if (0 >= w)
@@ -483,10 +484,19 @@ void BgmapSprite_render(BgmapSprite this)
 #endif
 		return;
 	}
-
-	if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+/*
+	if(_cameraFrustum->y0 > h + gy)
 	{
-		h = __SCREEN_HEIGHT - worldPointer->gy;
+		worldPointer->head = __WORLD_OFF;
+#ifdef __PROFILE_GAME
+		worldPointer->w = 0;
+		worldPointer->h = 0;
+#endif
+	}
+*/
+	if(h + worldPointer->gy >= _cameraFrustum->y1)
+	{
+		h = _cameraFrustum->y1 - worldPointer->gy;
 	}
 
 	if (0 >= h)
@@ -525,11 +535,11 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		// provide a little bit of performance gain by only calculation transform equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
 		// screen moves vertically
-		// int lastRow = height + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: height;
+		// int lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
 		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 
 		// un-cap x coordinate in affine mode
-		if(0 > gx)
+		if(_cameraFrustum->x0 > gx)
 		{
 			worldPointer->gx = gx;
 			worldPointer->w = width;
@@ -615,8 +625,8 @@ void BgmapSprite_render(BgmapSprite this)
 		int mxDisplacement = 0 > gx ? -gx : 0;
 		int myDisplacement = 0 > gy ? -gy : 0;
 
-		worldPointer->gx = gx > __SCREEN_WIDTH ? __SCREEN_WIDTH : 0 > gx ? 0: gx;
-		worldPointer->gy = gy > __SCREEN_HEIGHT ? __SCREEN_HEIGHT : 0 > gy ? 0: gy;
+		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
+		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
 		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
 
 		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
@@ -630,18 +640,18 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer->w = 0;
 		worldPointer->h = 0;
 
-		if(w + worldPointer->gx >= __SCREEN_WIDTH)
+		if(w + worldPointer->gx >= _cameraFrustum->x1)
 		{
-			worldPointer->w = __SCREEN_WIDTH - worldPointer->gx;
+			worldPointer->w = _cameraFrustum->x1 - worldPointer->gx;
 		}
 		else if (0 <= w)
 		{
 			worldPointer->w = w;
 		}
 
-		if(h + worldPointer->gy >= __SCREEN_HEIGHT)
+		if(h + worldPointer->gy >= _cameraFrustum->y1)
 		{
-			worldPointer->h = __SCREEN_HEIGHT - worldPointer->gy;
+			worldPointer->h = _cameraFrustum->y1 - worldPointer->gy;
 		}
 		else if (0 <= h)
 		{
@@ -670,7 +680,7 @@ void BgmapSprite_render(BgmapSprite this)
 			 if(0 <= this->paramTableRow)
 			{
 				h = Texture_getRows(this->texture)<< 3;
-				int lastRow = h + worldPointer->gy >= __SCREEN_HEIGHT ? __SCREEN_HEIGHT - worldPointer->gy + myDisplacement: h;
+				int lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;
 
 				BgmapSprite_doApplyAffineTransformations(this, lastRow);
 

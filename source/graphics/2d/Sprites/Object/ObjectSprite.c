@@ -62,6 +62,7 @@ __CLASS_FRIEND_DEFINITION(Texture);
 // globals
 extern const VBVec3D* _screenPosition;
 extern Optical* _optical;
+extern const CameraFrustum* _cameraFrustum;
 
 static void ObjectSprite_checkForContainer(ObjectSprite this);
 
@@ -348,7 +349,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
-			if((unsigned)(outputX + 8) > __SCREEN_WIDTH + 8)
+			if(_cameraFrustum->x0 - 4 > outputX || outputX > _cameraFrustum->x1 - 4)
 			{
 				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;
@@ -356,7 +357,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 			int outputY = y + (i << 3) * yDirection;
 
-			if((unsigned)(outputY + 8) > __SCREEN_HEIGHT + 8)
+			if(_cameraFrustum->y0 - 4 > outputY || outputY > _cameraFrustum->y1 - 4)
 			{
 				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;

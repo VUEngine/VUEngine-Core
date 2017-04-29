@@ -650,6 +650,7 @@ void Game_reset(Game this)
 	RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 	Printing_reset(Printing_getInstance());
+	Screen_resetCameraFrustum(Screen_getInstance());
 
 	// TODO
 	//SoundManager_getInstance();

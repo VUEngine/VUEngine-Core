@@ -57,6 +57,7 @@ static void Screen_constructor(Screen this);
 const Optical* _optical = NULL;
 const VBVec3D* _screenPosition = NULL;
 const VBVec3D* _screenDisplacement = NULL;
+const CameraFrustum* _cameraFrustum = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -99,6 +100,11 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 	this->lastDisplacement.y = 0;
 	this->lastDisplacement.z = 0;
 
+	this->cameraFrustum.x0 = 0;
+	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+
 	// accounts for the physical (real) space between the eyes and
 	// the VB's screens, whose virtual representation is the Screen instance
 	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
@@ -119,6 +125,7 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 	_optical = &this->optical;
 	_screenPosition = &this->position;
 	_screenDisplacement = &this->lastDisplacement;
+	_cameraFrustum = &this->cameraFrustum;
 }
 
 // class's destructor
@@ -408,4 +415,58 @@ void Screen_stopEffect(Screen this, int effect)
 	ASSERT(this, "Screen::stopEffect: null this");
 
 	__VIRTUAL_CALL(ScreenEffectManager, stopEffect, this->screenEffectManager, effect);
+}
+
+void Screen_resetCameraFrustum(Screen this)
+{
+	ASSERT(this, "Screen::stopEffect: null this");
+
+	this->cameraFrustum.x0 = 0;
+	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+}
+
+void Screen_setCameraFrustum(Screen this, CameraFrustum cameraFrustum)
+{
+	ASSERT(this, "Screen::setCameraFrustum: null this");
+
+	this->cameraFrustum = cameraFrustum;
+
+	if(this->cameraFrustum.x0 > this->cameraFrustum.x1)
+	{
+		this->cameraFrustum.x0 = this->cameraFrustum.x1 - 1;
+	}
+
+	if(this->cameraFrustum.y0 > this->cameraFrustum.y1)
+	{
+		this->cameraFrustum.y0 = this->cameraFrustum.y1 - 1;
+	}
+
+	if(0 > this->cameraFrustum.x0)
+	{
+		this->cameraFrustum.x0 = 0;
+	}
+
+	if(this->cameraFrustum.x1 > __SCREEN_WIDTH)
+	{
+		this->cameraFrustum.x1 = __SCREEN_WIDTH;
+	}
+
+	if(0 > this->cameraFrustum.y0)
+	{
+		this->cameraFrustum.y0 = 0;
+	}
+
+	if(this->cameraFrustum.y1 > __SCREEN_HEIGHT)
+	{
+		this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	}
+}
+
+CameraFrustum Screen_getCameraFrustum(Screen this)
+{
+	ASSERT(this, "Screen::getCameraFrustum: null this");
+
+	return this->cameraFrustum;
 }
