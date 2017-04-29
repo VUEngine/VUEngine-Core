@@ -101,9 +101,6 @@ void GameState_destructor(GameState this)
 	__DELETE(this->updateClock);
 	__DELETE(this->physicsClock);
 
-	__DELETE(this->physicalWorld);
-	__DELETE(this->collisionManager);
-
 	// destroy the stage
 	if(this->stage)
 	{
@@ -112,6 +109,10 @@ void GameState_destructor(GameState this)
 
 		this->stage = NULL;
 	}
+
+	// must delete these after deleting the stage
+	__DELETE(this->physicalWorld);
+	__DELETE(this->collisionManager);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
