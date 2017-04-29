@@ -439,6 +439,8 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
+	PhysicalWorld_processRemovedBodies(this);
+
 	VirtualNode node = this->bodies->head;
 
 	for(; node; node = node->next)

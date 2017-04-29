@@ -160,6 +160,7 @@ void StateMachine_swapState(StateMachine this, State newState)
 	}
 
 	this->currentState = newState;
+	this->previousState = NULL;
 
 	// push new state in the top of the stack
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);

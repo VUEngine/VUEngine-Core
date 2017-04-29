@@ -179,6 +179,9 @@ void Stage_destructor(Stage this)
 {
 	ASSERT(this, "Stage::destructor: null this");
 
+	__DELETE(this->particleRemover);
+	this->particleRemover = NULL;
+
 	__DELETE(this->entityFactory);
 
 	if(this->uiContainer)
@@ -206,9 +209,6 @@ void Stage_destructor(Stage this)
 		__DELETE(this->loadedStageEntities);
 		this->loadedStageEntities = NULL;
 	}
-
-	__DELETE(this->particleRemover);
-	this->particleRemover = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor

@@ -114,6 +114,9 @@ void GameState_destructor(GameState this)
 	__DELETE(this->physicalWorld);
 	__DELETE(this->collisionManager);
 
+	this->physicalWorld = NULL;
+	this->collisionManager = NULL;
+
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
