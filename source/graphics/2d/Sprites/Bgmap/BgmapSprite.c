@@ -157,6 +157,9 @@ void BgmapSprite_destructor(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::destructor: null this");
 	ASSERT(__SAFE_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
+	// force stop rendering
+	this->head = __WORLD_OFF;
+
 	if(this->worldLayer)
 	{
 		// remove from sprite manager before I become invalid
@@ -450,11 +453,13 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to screen space
+//	int mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
 	{
 		worldPointer->gx = _cameraFrustum->x0;
 		worldPointer->mx += (_cameraFrustum->x0 - gx);
 		w -= (_cameraFrustum->x0 - gx);
+//		mxDisplacement = (_cameraFrustum->x0 - gx);
 	}
 
 	int myDisplacement = 0;
