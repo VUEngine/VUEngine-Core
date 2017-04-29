@@ -445,8 +445,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 	}
 	else
 	{
-		worldPointer->gx -= (this->drawSpec.position.parallax) >> 1;
-		worldPointer->w = _cameraFrustum->x1 - mxDisplacement + (this->drawSpec.position.parallax);
+//		worldPointer->gx -= (this->drawSpec.position.parallax) >> 1;
+		worldPointer->w = _cameraFrustum->x1 - mxDisplacement;
 	}
 
 	if(!this->mBgmapSpriteDefinition->yLoop)
