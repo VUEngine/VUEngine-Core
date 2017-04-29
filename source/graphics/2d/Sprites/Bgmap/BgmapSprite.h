@@ -30,7 +30,7 @@
 #include <Sprite.h>
 #include <AnimationController.h>
 #include <MiscStructs.h>
-#include <Texture.h>
+#include <BgmapTexture.h>
 
 
 //---------------------------------------------------------------------------------------------------------

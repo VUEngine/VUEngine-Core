@@ -63,6 +63,7 @@ __CLASS(BgmapAnimatedSprite);
 
 __CLASS_NEW_DECLARE(BgmapAnimatedSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 
+void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this);
 void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this);
 

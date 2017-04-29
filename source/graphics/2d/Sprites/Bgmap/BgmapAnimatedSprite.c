@@ -49,8 +49,6 @@ __CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
 
 extern int strcmp(const char *, const char *);
 
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -70,7 +68,7 @@ __CLASS_NEW_END(BgmapAnimatedSprite, bgmapSpriteDefinition, owner);
  * @param bgmapSpriteDefinition		Sprite definition
  * @param owner						Owner
  */
-static void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
