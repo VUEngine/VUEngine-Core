@@ -321,6 +321,9 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	}
 #endif
 
+	// load post processing effects
+	Stage_loadPostProcessingEffects(this->stage);
+
 	// unpause clock
 	Clock_pause(this->messagingClock, false);
 }
@@ -538,6 +541,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// defer rendering again
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
 
+	// load post processing effects
 	Stage_loadPostProcessingEffects(this->stage);
 }
 
