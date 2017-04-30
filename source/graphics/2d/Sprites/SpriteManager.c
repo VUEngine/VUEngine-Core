@@ -734,12 +734,12 @@ void SpriteManager_render(SpriteManager this)
 	// configure printing layer and shutdown unused layers
 	SpriteManager_renderLastLayer(this);
 
-//#ifdef __SHOW_SPRITES_PROFILING
+#ifdef __SHOW_SPRITES_PROFILING
 	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
-		SpriteManager_print(this, 1, 24, true);
+		SpriteManager_print(this, 1, 15, true);
 	}
-//#endif
+#endif
 }
 
 /**
