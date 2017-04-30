@@ -681,13 +681,6 @@ void SpriteManager_render(SpriteManager this)
 		SpriteManager_sortLayersProgressively(this);
 	}
 
-#ifdef __PROFILE_GAME
-	if(!Game_isInSpecialMode(Game_getInstance()))
-	{
-		_totalPixelsToDraw = Printing_getPixelCount(Printing_getInstance());
-	}
-#endif
-
 	VirtualNode node = this->sprites->head;
 
 	if(!node)
@@ -712,12 +705,6 @@ void SpriteManager_render(SpriteManager this)
 		if(sprite->hidden || !sprite->visible)
 		{
 			_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
-#ifdef __PROFILE_GAME
-			if(!Game_isInSpecialMode(Game_getInstance()) && (!sprite->hidden && sprite->transparent))
-			{
-				_totalPixelsToDraw += Sprite_getWorldWidth(sprite) * Sprite_getWorldHeight(sprite);
-			}
-#endif
 		}
 		else
 		{
@@ -726,15 +713,20 @@ void SpriteManager_render(SpriteManager this)
 	}
 
 #ifdef __PROFILE_GAME
-	node = this->sprites->head;
-
-	for(; node; node = node->next)
+	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		_totalPixelsToDraw = _worldAttributesBaseAddress[this->freeLayer].w * _worldAttributesBaseAddress[this->freeLayer].h;
 
-		if(!Game_isInSpecialMode(Game_getInstance()))
+		VirtualNode node = this->sprites->head;
+
+		for(; node; node = node->next)
 		{
-			_totalPixelsToDraw += Sprite_getWorldWidth(sprite) * Sprite_getWorldHeight(sprite);
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+			if(__WORLD_OFF != _worldAttributesBaseAddress[sprite->worldLayer].head)
+			{
+				_totalPixelsToDraw += _worldAttributesBaseAddress[sprite->worldLayer].w * _worldAttributesBaseAddress[sprite->worldLayer].h;
+			}
 		}
 	}
 #endif
