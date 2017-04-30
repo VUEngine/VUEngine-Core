@@ -722,24 +722,32 @@ void SpriteManager_render(SpriteManager this)
 		else
 		{
 			__VIRTUAL_CALL(Sprite, render, sprite);
-#ifdef __PROFILE_GAME
-			if(!Game_isInSpecialMode(Game_getInstance()))
-			{
-				_totalPixelsToDraw += Sprite_getWorldWidth(sprite) * Sprite_getWorldHeight(sprite);
-			}
-#endif
 		}
 	}
+
+#ifdef __PROFILE_GAME
+	node = this->sprites->head;
+
+	for(; node; node = node->next)
+	{
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+
+		if(!Game_isInSpecialMode(Game_getInstance()))
+		{
+			_totalPixelsToDraw += Sprite_getWorldWidth(sprite) * Sprite_getWorldHeight(sprite);
+		}
+	}
+#endif
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager_renderLastLayer(this);
 
-#ifdef __SHOW_SPRITES_PROFILING
+//#ifdef __SHOW_SPRITES_PROFILING
 	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
-		SpriteManager_print(this, 1, 15, true);
+		SpriteManager_print(this, 1, 24, true);
 	}
-#endif
+//#endif
 }
 
 /**
