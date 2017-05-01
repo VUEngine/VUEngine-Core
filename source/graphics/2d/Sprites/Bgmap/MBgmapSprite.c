@@ -445,7 +445,15 @@ void MBgmapSprite_render(MBgmapSprite this)
 	}
 	else
 	{
-		worldPointer->w = _cameraFrustum->x1 - mxDisplacement;
+		if(!_cameraFrustum->x0 && __SCREEN_WIDTH == _cameraFrustum->x1)
+		{
+			worldPointer->gx = worldPointer->gx - worldPointer->gp;
+        	worldPointer->w = _cameraFrustum->x1 + (worldPointer->gp << 1) - _cameraFrustum->x0;
+		}
+		else
+		{
+			worldPointer->w = _cameraFrustum->x1 - mxDisplacement;
+		}
 	}
 
 	if(!this->mBgmapSpriteDefinition->yLoop)
