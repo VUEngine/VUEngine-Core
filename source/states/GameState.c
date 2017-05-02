@@ -29,6 +29,8 @@
 #include <Screen.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
+#include <Printing.h>
+#include <VIPManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -134,6 +136,10 @@ void GameState_destructor(GameState this)
 void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::enter: null this");
+
+	VIPManager_removePostProcessingEffects(VIPManager_getInstance());
+	Printing_resetWorldCoordinates(Printing_getInstance());
+	Screen_resetCameraFrustum(Screen_getInstance());
 
 	GameState_pauseClocks(this);
 

@@ -111,6 +111,7 @@ static void AnimationInspectorState_destructor(AnimationInspectorState this)
  */
 static void AnimationInspectorState_enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	__CALL_BASE_METHOD(GameState, enter, this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	AnimationInspector_show(AnimationInspector_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
