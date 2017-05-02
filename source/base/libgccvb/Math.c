@@ -44,7 +44,6 @@ extern float sqrtf (float);
 float Math_squareRoot(float number)
 {
     // Doom's code causes a warning because of breaking of aliansing rules
-    /*
     long i;
     float x, y;
     const float f = 1.5F;
@@ -58,9 +57,6 @@ float Math_squareRoot(float number)
     y  = y * ( f - ( x * y * y ) );
 
     return number * y;
-    */
-
-    return sqrtf(number);
 }
 
 int Math_powerFast(int base, int power)
