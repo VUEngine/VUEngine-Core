@@ -174,8 +174,6 @@ __CLASS_DEFINITION(SoundManager, Object);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern const VBVec3D* _screenPosition;
-extern const Optical* _optical;
 
 static void SoundManager_constructor(SoundManager this);
 static void SoundManager_continuePlayingBGM(SoundManager this);

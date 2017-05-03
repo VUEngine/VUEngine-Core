@@ -26,6 +26,7 @@
 
 #include <StageEditor.h>
 #include <Game.h>
+#include <Screen.h>
 #include <Optics.h>
 #include <Entity.h>
 #include <CollisionManager.h>
@@ -142,9 +143,7 @@ enum Modes
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern Optical* _optical;
 extern UserObject _userObjects[];
-extern const VBVec3D* _screenDisplacement;
 
 static void StageEditor_constructor(StageEditor this);
 static void StageEditor_setupMode(StageEditor this);
@@ -699,51 +698,55 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
  */
 static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 {
+	Optical optical = *_optical;
+
 	if(pressedKey & K_LL)
 	{
-		_optical->horizontalViewPointCenter -= __HVPC_STEP;
+		optical.horizontalViewPointCenter -= __HVPC_STEP;
 	}
 	else if(pressedKey & K_LR)
 	{
-		_optical->horizontalViewPointCenter += __HVPC_STEP;
+		optical.horizontalViewPointCenter += __HVPC_STEP;
 	}
 	else if(pressedKey & K_LU)
 	{
-		_optical->verticalViewPointCenter -= __VERTICAL_VIEW_POINT_CENTER_STEP;
+		optical.verticalViewPointCenter -= __VERTICAL_VIEW_POINT_CENTER_STEP;
 	}
 	else if(pressedKey & K_LD)
 	{
-		_optical->verticalViewPointCenter += __VERTICAL_VIEW_POINT_CENTER_STEP;
+		optical.verticalViewPointCenter += __VERTICAL_VIEW_POINT_CENTER_STEP;
 	}
 	else if(pressedKey & K_RL)
 	{
-		_optical->distanceEyeScreen -= __DISTANCE_EYE_SCREEN_STEP;
+		optical.distanceEyeScreen -= __DISTANCE_EYE_SCREEN_STEP;
 	}
 	else if(pressedKey & K_RR)
 	{
-		_optical->distanceEyeScreen += __DISTANCE_EYE_SCREEN_STEP;
+		optical.distanceEyeScreen += __DISTANCE_EYE_SCREEN_STEP;
 	}
 	else if(pressedKey & K_RU)
 	{
-		_optical->maximumViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.maximumViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
 	}
 	else if(pressedKey & K_RD)
 	{
-		_optical->maximumViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.maximumViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
 
-		if(0 >= _optical->maximumViewDistancePower)
+		if(0 >= optical.maximumViewDistancePower)
 		{
-			_optical->maximumViewDistancePower = 1;
+			optical.maximumViewDistancePower = 1;
 		}
 	}
 	else if(pressedKey & K_LT)
 	{
-		_optical->baseDistance -= __BASE_DISTACE_STEP;
+		optical.baseDistance -= __BASE_DISTACE_STEP;
 	}
 	else if(pressedKey & K_RT)
 	{
-		_optical->baseDistance += __BASE_DISTACE_STEP;
+		optical.baseDistance += __BASE_DISTACE_STEP;
 	}
+
+	Screen_setOptical(Screen_getInstance(), optical);
 
 	// this hack forces the Entity to recalculate its sprites' value.
 	// must hack this global, otherwise will need another variable which most likely will only

@@ -101,8 +101,6 @@ typedef struct StageEntityDescription
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-extern const Optical* _optical;
 Shape SpatialObject_getShape(SpatialObject this);
 BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 

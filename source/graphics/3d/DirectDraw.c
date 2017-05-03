@@ -59,7 +59,6 @@ __CLASS_DEFINITION(DirectDraw, Object);
 static void DirectDraw_constructor(DirectDraw this);
 
 extern u32* _currentDrawingFrameBufferSet;
-extern const CameraFrustum* _cameraFrustum;
 
 
 //---------------------------------------------------------------------------------------------------------

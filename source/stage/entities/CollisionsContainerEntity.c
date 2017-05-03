@@ -46,9 +46,6 @@ __CLASS_DEFINITION(CollisionsContainerEntity, Entity);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-extern const VBVec3D* _screenDisplacement;
-extern const Optical* _optical;
 
 
 //---------------------------------------------------------------------------------------------------------

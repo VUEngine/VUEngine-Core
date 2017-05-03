@@ -36,9 +36,10 @@
 // these improve performance in the real machine
 #undef __OPTICS_NORMALIZE
 #define __OPTICS_NORMALIZE(Vector)																		\
-	Vector.x -= (_screenPosition->x);																	\
-	Vector.y -= (_screenPosition->y);																	\
-	Vector.z -= (_screenPosition->z);
+		extern const VBVec3D* _screenPosition;															\
+		Vector.x -= (_screenPosition->x);																\
+		Vector.y -= (_screenPosition->y);																\
+		Vector.z -= (_screenPosition->z);
 
 #undef __OPTICS_PROJECT_TO_2D
 #define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)														\
@@ -59,8 +60,16 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												3D HELPER FUNCTIONS
+//												EXTERNALS
 //---------------------------------------------------------------------------------------------------------
+
+extern const Optical* _optical;
+
+
+//---------------------------------------------------------------------------------------------------------
+//											3D HELPER FUNCTIONS
+//---------------------------------------------------------------------------------------------------------
+
 
 extern int Optics_calculateParallax(fix19_13 x, fix19_13 z);
 

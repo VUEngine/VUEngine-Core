@@ -95,6 +95,12 @@ typedef struct CameraFrustum
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
+extern const VBVec3D* _screenPosition;
+extern const VBVec3D* _screenDisplacement;
+extern const CameraFrustum* _cameraFrustum;
+extern const Optical* _optical;
+
+
 Screen Screen_getInstance();
 
 void Screen_destructor(Screen this);

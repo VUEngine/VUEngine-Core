@@ -26,6 +26,7 @@
 
 #include <string.h>
 #include <Entity.h>
+#include <Screen.h>
 #include <Game.h>
 #include <InGameEntity.h>
 #include <InanimatedInGameEntity.h>
@@ -57,9 +58,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-extern const VBVec3D* _screenDisplacement;
-extern const Optical* _optical;
 
 u32 EntityFactory_instantiateEntities(EntityFactory this);
 u32 EntityFactory_initializeEntities(EntityFactory this);

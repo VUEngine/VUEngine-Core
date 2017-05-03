@@ -60,9 +60,6 @@ __CLASS_FRIEND_DEFINITION(Texture);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern const VBVec3D* _screenPosition;
-extern Optical* _optical;
-extern const CameraFrustum* _cameraFrustum;
 
 static void ObjectSprite_checkForContainer(ObjectSprite this);
 

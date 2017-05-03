@@ -63,10 +63,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern const VBVec3D* _screenPosition;
-extern Optical* _optical;
-extern const CameraFrustum* _cameraFrustum;
-
 static void MBgmapSprite_releaseTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTextures(MBgmapSprite this);
 static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);

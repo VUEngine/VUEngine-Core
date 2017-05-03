@@ -161,7 +161,6 @@ enum AnimationProperties
 //---------------------------------------------------------------------------------------------------------
 
 extern UserAnimatedInGameEntity _userAnimatedInGameEntities[];
-extern const VBVec3D* _screenPosition;
 
 AnimationController Sprite_getAnimationController(Sprite this);
 

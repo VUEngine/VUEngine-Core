@@ -58,8 +58,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern const VBVec3D* _screenPosition;
-extern Optical* _optical;
 
 // external
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this);

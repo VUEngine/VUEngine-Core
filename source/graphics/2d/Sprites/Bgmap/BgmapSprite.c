@@ -65,10 +65,6 @@ __CLASS_FRIEND_DEFINITION(BgmapTexture);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-extern const VBVec3D* _screenDisplacement;
-extern const Optical* _optical;
-extern const CameraFrustum* _cameraFrustum;
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this);

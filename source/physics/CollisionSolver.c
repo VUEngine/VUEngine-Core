@@ -56,7 +56,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenDisplacement;
 
 static void CollisionSolver_onCollidingSpatialObjectDestroyed(CollisionSolver this, Object eventFirer);
 

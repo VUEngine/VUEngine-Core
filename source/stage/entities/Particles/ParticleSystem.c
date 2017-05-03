@@ -52,9 +52,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-extern const VBVec3D* _screenDisplacement;
-extern const Optical* _optical;
 
 static Particle ParticleSystem_recycleParticle(ParticleSystem this);
 static Particle ParticleSystem_spawnParticle(ParticleSystem this);

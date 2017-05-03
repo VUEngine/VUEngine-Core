@@ -51,8 +51,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-extern const VBVec3D* _screenPosition;
-extern const Optical* _optical;
 
 static void Polyhedron_constructor(Polyhedron this);
 

@@ -28,6 +28,7 @@
 #include <Optics.h>
 #include <Shape.h>
 #include <MBgmapSprite.h>
+#include <Screen.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,9 +51,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenPosition;
-extern const VBVec3D* _screenDisplacement;
-extern const Optical* _optical;
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 

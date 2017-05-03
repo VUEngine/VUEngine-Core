@@ -54,7 +54,6 @@ __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-extern const VBVec3D* _screenDisplacement;
 
 void Actor_checkIfMustBounce(Actor this, int axisOfCollision);
 static void Actor_resolveCollisions(Actor this, VirtualList collidingEntities);
