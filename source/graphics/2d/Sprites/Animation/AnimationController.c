@@ -500,6 +500,10 @@ void AnimationController_nextFrame(AnimationController this)
 		this->previousFrame = this->actualFrame;
 		this->actualFrame = 0;
 	}
+	else
+	{
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+	}
 }
 
 /**
@@ -527,6 +531,10 @@ void AnimationController_previousFrame(AnimationController this)
 	{
 		this->previousFrame = this->actualFrame;
 		this->actualFrame = (this->animationFunction->numberOfFrames - 1);
+	}
+	else
+	{
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
 	}
 }
 
