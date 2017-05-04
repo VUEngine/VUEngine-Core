@@ -134,7 +134,7 @@ void AnimationController_destructor(AnimationController this)
  */
 s8 AnimationController_getActualFrameIndex(AnimationController this)
 {
-	ASSERT(this, "AnimationController::getActualAnimationController: null this");
+	ASSERT(this, "AnimationController::getActualFrameIndex: null this");
 
 	return this->animationFunction ? this->animationFunction->frames[this->actualFrame] : 0;
 }
@@ -151,7 +151,7 @@ s8 AnimationController_getActualFrameIndex(AnimationController this)
  */
 s8 AnimationController_getActualFrame(AnimationController this)
 {
-	ASSERT(this, "AnimationController::getActualAnimationController: null this");
+	ASSERT(this, "AnimationController::getActualFrame: null this");
 
 	return this->actualFrame;
 }
@@ -168,7 +168,7 @@ s8 AnimationController_getActualFrame(AnimationController this)
  */
 s8 AnimationController_getPreviousFrame(AnimationController this)
 {
-	ASSERT(this, "AnimationController::getPreviousAnimationController: null this");
+	ASSERT(this, "AnimationController::getPreviousFrame: null this");
 
 	return this->previousFrame;
 }
@@ -184,7 +184,7 @@ s8 AnimationController_getPreviousFrame(AnimationController this)
  */
 void AnimationController_setActualFrame(AnimationController this, s8 actualFrame)
 {
-	ASSERT(this, "AnimationController::setActualAnimationController: null this");
+	ASSERT(this, "AnimationController::setActualFrame: null this");
 
 	this->actualFrame = actualFrame;
 }
@@ -192,12 +192,12 @@ void AnimationController_setActualFrame(AnimationController this, s8 actualFrame
 /**
  * Retrieve the number of cycles that each frame of animation is shown
  *
- * @memberof		AnimationController
+ * @memberof	AnimationController
  * @private
  *
- * @param this		Function scope
+ * @param this	Function scope
  *
- * @return			Frame duration in game cycles
+ * @return		Frame duration in game cycles
  */
 s8 AnimationController_getFrameDuration(AnimationController this)
 {
@@ -209,11 +209,11 @@ s8 AnimationController_getFrameDuration(AnimationController this)
 /**
  * Set the number of cycles that each frame of animation is shown
  *
- * @memberof				AnimationController
+ * @memberof			AnimationController
  * @private
  *
- * @param this				Function scope
- * @param frameDuration		Number of cycles that each frame of animation is shown
+ * @param this			Function scope
+ * @param frameDuration	Number of cycles that each frame of animation is shown
  */
 void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration)
 {
@@ -225,16 +225,16 @@ void AnimationController_setFrameDuration(AnimationController this, u8 frameDura
 /**
  * Retrieve the frame duration decrement per cycle
  *
- * @memberof		AnimationController
+ * @memberof	AnimationController
  * @private
  *
- * @param this		Function scope
+ * @param this	Function scope
  *
- * @return			Frame cycle decrement
+ * @return		Frame cycle decrement
  */
-u8 AnimationController_geframeCycleDecrement(AnimationController this)
+u8 AnimationController_getFrameCycleDecrement(AnimationController this)
 {
-	ASSERT(this, "AnimationController::geframeCycleDecrement: null this");
+	ASSERT(this, "AnimationController::getFrameCycleDecrement: null this");
 
 	return this->frameCycleDecrement;
 }
@@ -242,11 +242,11 @@ u8 AnimationController_geframeCycleDecrement(AnimationController this)
 /**
  * Set the frame duration decrement per cycle
  *
- * @memberof						AnimationController
+ * @memberof					AnimationController
  * @private
  *
- * @param this						Function scope
- * @param frameCycleDecrement		Decrement value for the frame cycle on each game cycle
+ * @param this					Function scope
+ * @param frameCycleDecrement	Decrement value for the frame cycle on each game cycle
  */
 void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement)
 {
@@ -258,12 +258,12 @@ void AnimationController_setFrameCycleDecrement(AnimationController this, u8 fra
 /**
  * Update the animation
  *
- * @memberof		AnimationController
+ * @memberof	AnimationController
  * @private
  *
- * @param this		Function scope
+ * @param this	Function scope
  *
- * @return			True if the animation frame changed
+ * @return		True if the animation frame changed
  */
 bool AnimationController_updateAnimation(AnimationController this)
 {
@@ -368,8 +368,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// reset frame to play
 	this->actualFrame = 0;
 
-	// set frame delay to 1 to force the writing of the first
-	// animation frame in the next update
+	// set frame delay to 1 to force the writing of the first animation frame in the next update
 	this->frameDuration = 1;
 
 	// it's playing now
@@ -390,7 +389,7 @@ const AnimationFunction* AnimationController_getPlayingAnimationFunction(Animati
 {
 	ASSERT(this, "AnimationController::getPlayingAnimationFunction: null this");
 
-	return this->playing? this->animationFunction: NULL;
+	return this->playing ? this->animationFunction : NULL;
 }
 
 /**
@@ -445,8 +444,7 @@ bool AnimationController_play(AnimationController this, const AnimationDescripti
 			// reset frame to play
 			this->actualFrame = 0;
 
-			// set frame delay to 1 to force the writing of the first
-			// animation frame in the next update
+			// set frame delay to 1 to force the writing of the first animation frame in the next update
 			this->frameDuration = 1;
 
 			// it's playing now
@@ -462,9 +460,10 @@ bool AnimationController_play(AnimationController this, const AnimationDescripti
 /**
  * Stop the currently playing animation
  *
- * @memberof					AnimationController
+ * @memberof	AnimationController
  * @private
  *
+ * @param this	Function scope
  */
 void AnimationController_stop(AnimationController this)
 {
@@ -473,6 +472,62 @@ void AnimationController_stop(AnimationController this)
 	this->animationFunction = NULL;
 	this->playing = false;
 	this->actualFrame = 0;
+}
+
+/**
+ * Skip to next frame
+ *
+ * @memberof	AnimationController
+ * @public
+ *
+ * @param this	Function scope
+ */
+void AnimationController_nextFrame(AnimationController this)
+{
+	ASSERT(this, "AnimationController::nextFrame: null this");
+
+	if(!this->animationFunction)
+	{
+		return;
+	}
+
+	if(this->actualFrame < (this->animationFunction->numberOfFrames - 1))
+	{
+		this->previousFrame = this->actualFrame++;
+	}
+	else if(this->animationFunction->loop)
+	{
+		this->previousFrame = this->actualFrame;
+		this->actualFrame = 0;
+	}
+}
+
+/**
+ * Rewind to previous frame
+ *
+ * @memberof	AnimationController
+ * @public
+ *
+ * @param this	Function scope
+ */
+void AnimationController_previousFrame(AnimationController this)
+{
+	ASSERT(this, "AnimationController::previousFrame: null this");
+
+	if(!this->animationFunction)
+	{
+		return;
+	}
+
+	if(this->actualFrame > 0)
+	{
+		this->previousFrame = this->actualFrame--;
+	}
+	else if(this->animationFunction->loop)
+	{
+		this->previousFrame = this->actualFrame;
+		this->actualFrame = (this->animationFunction->numberOfFrames - 1);
+	}
 }
 
 /**

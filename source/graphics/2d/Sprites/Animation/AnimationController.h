@@ -118,30 +118,31 @@ __CLASS_NEW_DECLARE(AnimationController, Object owner, Sprite sprite, const Char
 
 void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
 void AnimationController_destructor(AnimationController this);
-void AnimationController_writeAnimation(AnimationController this);
-s8 AnimationController_getActualFrameIndex(AnimationController this);
-s8 AnimationController_getActualFrame(AnimationController this);
-s8 AnimationController_getPreviousFrame(AnimationController this);
-void AnimationController_setActualFrame(AnimationController this, s8 actualFrame);
-s8 AnimationController_getFrameDuration(AnimationController this);
-void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration);
-u8 AnimationController_geFrameCycleDecrement(AnimationController this);
-void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement);
-bool AnimationController_updateAnimation(AnimationController this);
-void AnimationController_fx(AnimationController this);
-bool AnimationController_update(AnimationController this, Clock clock);
-u8 AnimationController_getRows(AnimationController this);
-u8 AnimationController_getCols(AnimationController this);
-int AnimationController_getMapType(AnimationController this);
-void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction);
-const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
-bool AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
-void AnimationController_stop(AnimationController this);
-bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName);
-bool AnimationController_isPlaying(AnimationController this);
-void AnimationController_write(AnimationController this);
-void AnimationController_pause(AnimationController this, bool pause);
 
+s8 AnimationController_getActualFrame(AnimationController this);
+s8 AnimationController_getActualFrameIndex(AnimationController this);
+u8 AnimationController_getCols(AnimationController this);
+u8 AnimationController_getFrameCycleDecrement(AnimationController this);
+s8 AnimationController_getFrameDuration(AnimationController this);
+int AnimationController_getMapType(AnimationController this);
+const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
+s8 AnimationController_getPreviousFrame(AnimationController this);
+u8 AnimationController_getRows(AnimationController this);
+bool AnimationController_isPlaying(AnimationController this);
+bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName);
+void AnimationController_nextFrame(AnimationController this);
+void AnimationController_pause(AnimationController this, bool pause);
+bool AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
+void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction);
+void AnimationController_previousFrame(AnimationController this);
+void AnimationController_setActualFrame(AnimationController this, s8 actualFrame);
+void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement);
+void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration);
+void AnimationController_stop(AnimationController this);
+bool AnimationController_update(AnimationController this, Clock clock);
+bool AnimationController_updateAnimation(AnimationController this);
+void AnimationController_write(AnimationController this);
+void AnimationController_writeAnimation(AnimationController this);
 
 
 #endif

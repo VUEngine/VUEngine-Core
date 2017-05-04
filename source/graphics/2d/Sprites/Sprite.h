@@ -255,6 +255,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 void Sprite_destructor(Sprite this);
 
 // general
+void Sprite_calculateParallax(Sprite this, fix19_13 z);
 u16 Sprite_getHead(Sprite this);
 u16 Sprite_getMode(Sprite this);
 Scale Sprite_getScale(Sprite this);
@@ -279,7 +280,6 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
 void Sprite_setDirection(Sprite this, int axis, int direction);
 void Sprite_position(Sprite this, const VBVec3D* position);
-void Sprite_calculateParallax(Sprite this, fix19_13 z);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);
@@ -287,10 +287,16 @@ VBVecWorld Sprite_getDisplacement(Sprite this);
 s8 Sprite_getFrameDuration(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 int Sprite_getHalfWidth(Sprite this);
+bool Sprite_isAffine(Sprite this);
+bool Sprite_isHBias(Sprite this);
+bool Sprite_isObject(Sprite this);
 bool Sprite_isPlaying(Sprite this);
 bool Sprite_isPlayingFunction(Sprite this, char* functionName);
+void Sprite_nextFrame(Sprite this);
 void Sprite_pause(Sprite this, bool pause);
 void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName);
+void Sprite_previousFrame(Sprite this);
+void Sprite_print(Sprite this, int x, int y);
 void Sprite_rotate(Sprite this, const Rotation* rotation);
 void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 void Sprite_setFrameCycleDecrement(Sprite this, u8 frameDelayDelta);
@@ -298,10 +304,6 @@ void Sprite_setFrameDuration(Sprite this, u8 frameDuration);
 void Sprite_update(Sprite this);
 void Sprite_updateAnimation(Sprite this);
 void Sprite_writeAnimation(Sprite this);
-bool Sprite_isAffine(Sprite this);
-bool Sprite_isHBias(Sprite this);
-bool Sprite_isObject(Sprite this);
-void Sprite_print(Sprite this, int x, int y);
 
 // direct draw
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);

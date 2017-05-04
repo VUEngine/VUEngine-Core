@@ -233,6 +233,40 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 	}
 }
 
+// skip to next frame
+void AnimatedInGameEntity_nextFrame(AnimatedInGameEntity this)
+{
+	ASSERT(this, "AnimatedInGameEntity::nextFrame: null this");
+
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+		// do on each sprite
+		for(; node ; node = node->next)
+		{
+			Sprite_nextFrame(__SAFE_CAST(Sprite, node->data));
+		}
+	}
+}
+
+// rewind to previous frame
+void AnimatedInGameEntity_previousFrame(AnimatedInGameEntity this)
+{
+	ASSERT(this, "AnimatedInGameEntity::previousFrame: null this");
+
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+		// do on each sprite
+		for(; node ; node = node->next)
+		{
+			Sprite_previousFrame(__SAFE_CAST(Sprite, node->data));
+		}
+	}
+}
+
 // is playing an animation
 bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
 {

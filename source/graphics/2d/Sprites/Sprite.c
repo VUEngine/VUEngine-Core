@@ -81,7 +81,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->displacement = (VBVecWorld){0, 0, 0, 0};
 	this->hidden = false;
 	this->visible = true;
-	this->transparent = spriteDefinition? spriteDefinition->transparent : false;
+	this->transparent = spriteDefinition ? spriteDefinition->transparent : false;
 	this->writeAnimationFrame = false;
 }
 
@@ -836,8 +836,45 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame)
 
 	if(this->animationController)
 	{
-		// first animate the frame
 		AnimationController_setActualFrame(this->animationController, actualFrame);
+	}
+}
+
+/**
+ * Skip to next frame
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Sprite_nextFrame(Sprite this)
+{
+	ASSERT(this, "Sprite::nextFrame: null this");
+
+	if(this->animationController)
+	{
+		AnimationController_nextFrame(this->animationController);
+		__VIRTUAL_CALL(Sprite, writeAnimation, this);
+	}
+}
+
+/**
+ * Rewind to previous frame
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Sprite_previousFrame(Sprite this)
+{
+	ASSERT(this, "Sprite::previousFrame: null this");
+
+	if(this->animationController)
+	{
+		AnimationController_previousFrame(this->animationController);
+		__VIRTUAL_CALL(Sprite, writeAnimation, this);
 	}
 }
 
@@ -857,7 +894,6 @@ s8 Sprite_getFrameDuration(Sprite this)
 
 	if(this->animationController)
 	{
-		// first animate the frame
 		return AnimationController_getFrameDuration(this->animationController);
 	}
 
@@ -879,7 +915,6 @@ void Sprite_setFrameDuration(Sprite this, u8 frameDuration)
 
 	if(this->animationController)
 	{
-		// first animate the frame
 		AnimationController_setFrameDuration(this->animationController, frameDuration);
 	}
 }
