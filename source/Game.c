@@ -1687,11 +1687,19 @@ void Game_enableKeypad(Game this)
 	KeypadManager_enable(this->keypadManager);
 }
 
-void Game_addPostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
-{
-	ASSERT(this, "Game::addPostProcessingEffect: null this");
 
-	VIPManager_addPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+void Game_pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+{
+	ASSERT(this, "Game::pushFrontPostProcessingEffect: null this");
+
+	VIPManager_pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+}
+
+void Game_pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+{
+	ASSERT(this, "Game::pushBackPostProcessingEffect: null this");
+
+	VIPManager_pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
 void Game_removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)

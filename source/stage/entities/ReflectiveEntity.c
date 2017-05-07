@@ -103,7 +103,7 @@ void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
 	__CALL_BASE_METHOD(InGameEntity, ready, this, recursive);
 
 	// add post processing effect to make key emit rhombuses
-	Game_addPostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
 void ReflectiveEntity_suspend(ReflectiveEntity this)
@@ -123,7 +123,7 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 	__CALL_BASE_METHOD(InGameEntity, resume, this);
 
 	// add post processing effect to make key emit rhombuses
-	Game_addPostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
 static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
@@ -135,14 +135,17 @@ static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialOb
 
 	ReflectiveEntity this = __SAFE_CAST(ReflectiveEntity, spatialObject);
 
+	__VIRTUAL_CALL(ReflectiveEntity, applyReflection, this, (ReflectiveEntityDefinition*)this->entityDefinition);
+}
+
+void ReflectiveEntity_applyReflection(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition)
+{
 	VBVec3D position3D = this->transform.globalPosition;
 	__OPTICS_NORMALIZE(position3D);
 
 	VBVec2D position2D;
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
-
-	ReflectiveEntityDefinition* mirrorDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
 
 	ReflectiveEntity_applyReflection(this, currentDrawingFrameBufferSet,
 								FIX19_13TOI(position2D.x + mirrorDefinition->sourceDisplacement.x),

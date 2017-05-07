@@ -36,10 +36,14 @@
 
 #define ReflectiveEntity_METHODS(ClassName)																\
 		InGameEntity_METHODS(ClassName)																	\
+		__VIRTUAL_DEC(ClassName, void, applyReflection, ReflectiveEntityDefinition* mirrorDefinition);	\
 
 #define ReflectiveEntity_SET_VTABLE(ClassName)															\
 		InGameEntity_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, ready);												\
+		__VIRTUAL_SET(ClassName, ReflectiveEntity, suspend);											\
+		__VIRTUAL_SET(ClassName, ReflectiveEntity, resume);												\
+		__VIRTUAL_SET(ClassName, ReflectiveEntity, applyReflection);									\
 
 __CLASS(ReflectiveEntity);
 
@@ -112,6 +116,9 @@ __CLASS_NEW_DECLARE(ReflectiveEntity, ReflectiveEntityDefinition* mirrorDefiniti
 void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name);
 void ReflectiveEntity_destructor(ReflectiveEntity this);
 void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive);
+void ReflectiveEntity_suspend(ReflectiveEntity this);
+void ReflectiveEntity_resume(ReflectiveEntity this);
+void ReflectiveEntity_applyReflection(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition);
 void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 xSourceEnd,
 								s16 ySourceStart, s16 ySourceEnd,

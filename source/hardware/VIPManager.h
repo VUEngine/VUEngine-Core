@@ -298,7 +298,8 @@ void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnT
 void VIPManager_useInternalColumnTable(VIPManager this, bool internal);
 void VIPManager_setupBrightnessRepeat(VIPManager this, BrightnessRepeatDefinition* brightnessRepeat);
 void VIPManager_setBackgroundColor(VIPManager this, u8 color);
-void VIPManager_addPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+void VIPManager_pushFrontPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+void VIPManager_pushBackPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 void VIPManager_removePostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 void VIPManager_removePostProcessingEffects(VIPManager this);
 void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this);

@@ -353,13 +353,13 @@ void VIPManager_interruptHandler(void)
 					{
 						messageDelay = __TARGET_FPS;
 						static u32 count = 0;
-						Printing_text(Printing_getInstance(), "VIP Overtime! (   )", 0, 2, NULL);
-						Printing_int(Printing_getInstance(), ++count, 15, 2, NULL);
+						Printing_text(Printing_getInstance(), "VIP Overtime! (   )", 0, 26, NULL);
+						Printing_int(Printing_getInstance(), ++count, 15, 26, NULL);
 					}
 
 					if(0 == --messageDelay)
 					{
-						Printing_text(Printing_getInstance(), "                   ", 0, 2, NULL);
+						Printing_text(Printing_getInstance(), "                   ", 0, 26, NULL);
 						messageDelay = -1;
 					}
 				}
@@ -420,9 +420,9 @@ void VIPManager_writeDRAM(VIPManager this)
 	PolyhedronManager_drawPolyhedrons(_polyhedronManager);
 
 	// check if the current frame buffer set is valid
-	VirtualNode node = this->postProcessingEffects->head;
+	VirtualNode node = this->postProcessingEffects->tail;
 
-	for(; node; node = node->next)
+	for(; node; node = node->previous)
 	{
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}
@@ -691,7 +691,7 @@ void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 
 }
 
 /**
- * Register a post-processing effect
+ * Check if a post-processing effect is already registered
  *
  * @memberof							VIPManager
  * @public
@@ -699,8 +699,10 @@ void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 
  * @param this							Function scope
  * @param postProcessingEffect			Post-processing effect function
  * @param spatialObject					Post-processing effect function's scope
+ *
+ * @return								Whether the effect and object are already registered
  */
-void VIPManager_addPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+static bool VIPManager_isPostProcessingEffectRegistered(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	ASSERT(this, "VIPManager::addPostProcessingEffect: null this");
 
@@ -712,8 +714,56 @@ void VIPManager_addPostProcessingEffect(VIPManager this, PostProcessingEffect po
 
 		if(postProcessingEffectRegistry->postProcessingEffect == postProcessingEffect && postProcessingEffectRegistry->spatialObject == spatialObject)
 		{
-			return;
+			return true;
 		}
+	}
+
+	return false;
+}
+
+/**
+ * Register a post-processing effect with a higher priority
+ *
+ * @memberof							VIPManager
+ * @public
+ *
+ * @param this							Function scope
+ * @param postProcessingEffect			Post-processing effect function
+ * @param spatialObject					Post-processing effect function's scope
+ */
+void VIPManager_pushFrontPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+{
+	ASSERT(this, "VIPManager::pushFrontPostProcessingEffect: null this");
+
+	if(VIPManager_isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
+	{
+		return;
+	}
+
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);
+	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
+	postProcessingEffectRegistry->spatialObject = spatialObject;
+
+	VirtualList_pushFront(this->postProcessingEffects, postProcessingEffectRegistry);
+}
+
+/**
+ * Register a post-processing effect with lower priority
+ *
+ * @memberof							VIPManager
+ * @public
+ *
+ * @param this							Function scope
+ * @param postProcessingEffect			Post-processing effect function
+ * @param spatialObject					Post-processing effect function's scope
+ */
+void VIPManager_pushBackPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+{
+	ASSERT(this, "VIPManager::pushBackPostProcessingEffect: null this");
+
+	if(VIPManager_isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
+	{
+		return;
 	}
 
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);

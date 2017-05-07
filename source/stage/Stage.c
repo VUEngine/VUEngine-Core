@@ -343,7 +343,7 @@ void Stage_loadPostProcessingEffects(Stage this)
 		int i = 0;
 		for(; this->stageDefinition->postProcessingEffects[i]; i++)
 		{
-			Game_addPostProcessingEffect(Game_getInstance(), this->stageDefinition->postProcessingEffects[i], NULL);
+			Game_pushFrontProcessingEffect(Game_getInstance(), this->stageDefinition->postProcessingEffects[i], NULL);
 		}
 	}
 }

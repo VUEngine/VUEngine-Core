@@ -59,7 +59,8 @@ __CLASS(Game);
 Game Game_getInstance();
 void Game_destructor(Game this);
 
-void Game_addPostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+void Game_pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+void Game_pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 void Game_addState(Game this, GameState state);
 void Game_changeState(Game this, GameState state);
 void Game_cleanAndChangeState(Game this, GameState state);
