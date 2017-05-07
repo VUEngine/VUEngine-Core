@@ -19,7 +19,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
 //#define __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-#define __ALERT_VIP_OVERTIME
+//#define __ALERT_VIP_OVERTIME
 //#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __DRAW_SHAPES
 //#define __REGISTER_LAST_PROCESS_NAME
@@ -29,7 +29,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __FORCE_VIP_SYNC
 
 //#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						5
+//#define __TIMER_RESOLUTION						5
 //#undef __TIMER_FREQUENCY
 //#define __TIMER_FREQUENCY						__TIMER_100US
 

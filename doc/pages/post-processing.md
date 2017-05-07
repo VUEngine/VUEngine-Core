@@ -9,7 +9,7 @@ Usage
 
 To apply a post-processing effect register it using the following call:
 
-	Game_addPostProcessingEffect(Game_getInstance(), postProcessingEffectFunctionPointer, spatialObject);
+	Game_pushBackProcessingEffect(Game_getInstance(), postProcessingEffectFunctionPointer, spatialObject);
 
 To remove a previously registered post-processing effect use the following code:
 	
