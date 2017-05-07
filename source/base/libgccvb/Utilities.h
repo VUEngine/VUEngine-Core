@@ -54,6 +54,7 @@ const char* Utilities_toLowercase(const char* string);
 int Utilities_equalSign(int a, int b);
 int Utilities_getDigitCount(int value);
 int Utilities_intLength(int value);
+u32 Utilities_reverse(u32 x, int bits);
 
 
 #endif
