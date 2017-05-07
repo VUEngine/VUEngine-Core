@@ -128,6 +128,8 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 
 static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
 {
+	ASSERT(spatialObject, "ReflectiveEntity::reflect: null this");
+
 	if(!__IS_OBJECT_ALIVE(spatialObject))
 	{
 		return;
@@ -135,11 +137,15 @@ static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialOb
 
 	ReflectiveEntity this = __SAFE_CAST(ReflectiveEntity, spatialObject);
 
-	__VIRTUAL_CALL(ReflectiveEntity, applyReflection, this, (ReflectiveEntityDefinition*)this->entityDefinition);
+	__VIRTUAL_CALL(ReflectiveEntity, applyReflection, this, currentDrawingFrameBufferSet);
 }
 
-void ReflectiveEntity_applyReflection(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition)
+void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet)
 {
+	ASSERT(this, "ReflectiveEntity::applyReflection: null this");
+
+	ReflectiveEntityDefinition* mirrorDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
+
 	VBVec3D position3D = this->transform.globalPosition;
 	__OPTICS_NORMALIZE(position3D);
 
@@ -147,7 +153,7 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, ReflectiveEntityDef
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-	ReflectiveEntity_applyReflection(this, currentDrawingFrameBufferSet,
+	ReflectiveEntity_drawReflection(this, currentDrawingFrameBufferSet,
 								FIX19_13TOI(position2D.x + mirrorDefinition->sourceDisplacement.x),
 								mirrorDefinition->width,
 								FIX19_13TOI(position2D.y + mirrorDefinition->sourceDisplacement.y),
@@ -185,7 +191,7 @@ inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceVal
 	}
 }
 
-void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
+void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 width,
 								s16 ySourceStart, s16 height,
 								s16 xOutputStart, s16 yOutputStart,
@@ -193,8 +199,10 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
 								const u8 waveLut[], int numberOfWaveLutEntries,
-								bool flattenTop, bool flattenBottom)
+								bool flattenTop __attribute__ ((unused)), bool flattenBottom)
 {
+	ASSERT(this, "ReflectiveEntity::drawReflection: null this");
+
 	CACHE_DISABLE;
 	CACHE_ENABLE;
 
