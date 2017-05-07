@@ -92,18 +92,21 @@ __CLASS_NEW_DECLARE(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animat
 
 void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name);
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
-void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, void* animatedInGameEntityDefinition);
-void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive);
-void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);
-void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime);
+
+AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this);
+bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName);
+bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);
+void AnimatedInGameEntity_nextFrame(AnimatedInGameEntity this);
 void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause);
 void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName);
-bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);
-bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName);
-int AnimatedInGameEntity_updateSpritePosition(AnimatedInGameEntity this);
-AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this);
-void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
+void AnimatedInGameEntity_previousFrame(AnimatedInGameEntity this);
+void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive);
 void AnimatedInGameEntity_resume(AnimatedInGameEntity this);
+void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
+void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, void* animatedInGameEntityDefinition);
+void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);
+void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime);
+int AnimatedInGameEntity_updateSpritePosition(AnimatedInGameEntity this);
 
 
 #endif
