@@ -346,7 +346,7 @@ void ObjectSprite_render(ObjectSprite this)
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
-			if((unsigned)(outputX - _cameraFrustum->x0 - 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0 - 4))
+			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
 				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;
