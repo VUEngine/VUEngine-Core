@@ -109,7 +109,7 @@ void InGameEntity_calculateGap(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::setGap: null this");
 
-	if(this->sprites)
+	if(this->sprites && this->sprites->head)
 	{
 		// retrieve transforming mode
 		int bgmapMode = Sprite_getMode(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));

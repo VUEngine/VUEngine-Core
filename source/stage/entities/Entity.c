@@ -1692,7 +1692,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	int y = 0;
 	int z = 0;
 
-	if(this->sprites)
+	if(this->sprites && this->sprites->head)
 	{
 		VirtualNode spriteNode = this->sprites->head;
 
