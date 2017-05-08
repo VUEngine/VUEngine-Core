@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <InGameEntity.h>
+#include <InanimatedInGameEntity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,11 +35,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ReflectiveEntity_METHODS(ClassName)																\
-		InGameEntity_METHODS(ClassName)																	\
+		InanimatedInGameEntity_METHODS(ClassName)														\
 		__VIRTUAL_DEC(ClassName, void, applyReflection, u32 currentDrawingFrameBufferSet);				\
 
 #define ReflectiveEntity_SET_VTABLE(ClassName)															\
-		InGameEntity_SET_VTABLE(ClassName)																\
+		InanimatedInGameEntity_SET_VTABLE(ClassName)													\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, ready);												\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, suspend);											\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, resume);												\
@@ -49,13 +49,13 @@ __CLASS(ReflectiveEntity);
 
 #define ReflectiveEntity_ATTRIBUTES																		\
 		/* it is derived from */																		\
-		InGameEntity_ATTRIBUTES																			\
+		InanimatedInGameEntity_ATTRIBUTES																			\
 		fix19_13 waveLutIndex;																			\
 		fix19_13 waveLutIndexIncrement;																	\
 
 typedef struct ReflectiveEntityDefinition
 {
-	InGameEntityDefinition inGameEntityDefinition;
+	InanimatedInGameEntityDefinition inGameEntityDefinition;
 
 	// the starting point from where start to reflect data
 	// relative to my position
@@ -101,6 +101,12 @@ typedef struct ReflectiveEntityDefinition
 	bool flattenTop;
 	bool flattenBottom;
 
+	// border masks: top, bottom, left, right
+	u32 topBorder;
+	u32 bottomBorder;
+	u32 leftBorder;
+	u32 rightBorder;
+
 } ReflectiveEntityDefinition;
 
 // defines a Scrolling background in ROM memory
@@ -126,7 +132,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								u32 reflectionMask, u32 backgroundMask,
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
-								const u8 waveLut[], int numberOfWaveLutEntries,
-								bool flattenTop, bool flattenBottom);
+								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
+								bool flattenTop, bool flattenBottom,
+								u32 topBorder, u32 bottomBorder, u32 leftBorder, u32 rightBorder);
 
 #endif

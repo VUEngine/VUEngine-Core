@@ -52,7 +52,7 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(ReflectiveEntity, InGameEntity);
+__CLASS_DEFINITION(ReflectiveEntity, InanimatedInGameEntity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinit
 	ASSERT(this, "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(InGameEntity, &mirrorDefinition->inGameEntityDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(InanimatedInGameEntity, &mirrorDefinition->inGameEntityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
 	this->waveLutIndexIncrement = FIX19_13_MULT(mirrorDefinition->waveLutThrottleFactor, FIX19_13_DIV(ITOFIX19_13(mirrorDefinition->numberOfWaveLutEntries), ITOFIX19_13(mirrorDefinition->width)));
@@ -100,7 +100,7 @@ void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
 	ASSERT(this, "ReflectiveEntity::ready: null this");
 
 	// call base
-	__CALL_BASE_METHOD(InGameEntity, ready, this, recursive);
+	__CALL_BASE_METHOD(InanimatedInGameEntity, ready, this, recursive);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -110,7 +110,7 @@ void ReflectiveEntity_suspend(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::suspend: null this");
 
-	__CALL_BASE_METHOD(InGameEntity, suspend, this);
+	__CALL_BASE_METHOD(InanimatedInGameEntity, suspend, this);
 
 	// remove post processing effect
 	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -120,7 +120,7 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::resume: null this");
 
-	__CALL_BASE_METHOD(InGameEntity, resume, this);
+	__CALL_BASE_METHOD(InanimatedInGameEntity, resume, this);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -152,14 +152,32 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 	VBVec2D position2D;
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+/*
+	static fix19_13 index = 0;
+
+	const s16 displ[] =
+	{
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+		9, 8, 7, 6, 5, 4, 3, 2, 1, 0, -1,
+		-2, -3, -4, -5, -6, -7, -8, -9, -10,
+		-9, -8, -7, -6, -5, -4, -3, -2, -1,
+	};
+
+	index += this->waveLutIndexIncrement;
+
+	if(FIX19_13TOI(index) >= sizeof(displ) / sizeof(s16))
+	{
+		index = 0;
+	}
+*/
 
 	ReflectiveEntity_drawReflection(this, currentDrawingFrameBufferSet,
 								FIX19_13TOI(position2D.x + mirrorDefinition->sourceDisplacement.x),
-								mirrorDefinition->width,
 								FIX19_13TOI(position2D.y + mirrorDefinition->sourceDisplacement.y),
-								mirrorDefinition->height,
 								FIX19_13TOI(position2D.x + mirrorDefinition->outputDisplacement.x),
 								FIX19_13TOI(position2D.y + mirrorDefinition->outputDisplacement.y),
+								mirrorDefinition->width,
+								mirrorDefinition->height,
 								mirrorDefinition->reflectionMask,
 								mirrorDefinition->backgroundMask,
 								mirrorDefinition->axisForReversing,
@@ -168,7 +186,10 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 								mirrorDefinition->parallaxDisplacement,
 								mirrorDefinition->waveLut,
 								mirrorDefinition->numberOfWaveLutEntries,
-								mirrorDefinition->flattenTop, mirrorDefinition->flattenBottom);
+								mirrorDefinition->waveLutThrottleFactor,
+								mirrorDefinition->flattenTop, mirrorDefinition->flattenBottom,
+								mirrorDefinition->topBorder, mirrorDefinition->bottomBorder,
+								mirrorDefinition->leftBorder, mirrorDefinition->rightBorder);
 }
 
 inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 reflectionMask)
@@ -192,21 +213,19 @@ inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceVal
 }
 
 void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
-								s16 xSourceStart, s16 width,
-								s16 ySourceStart, s16 height,
+								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
+								s16 width, s16 height,
 								u32 reflectionMask, u32 backgroundMask,
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
-								const u8 waveLut[], int numberOfWaveLutEntries,
-								bool flattenTop __attribute__ ((unused)), bool flattenBottom)
+								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
+								bool flattenTop __attribute__ ((unused)), bool flattenBottom,
+								u32 topBorderMask, u32 bottomBorderMask, u32 leftBorderMask, u32 rightBorderMask)
 {
 	ASSERT(this, "ReflectiveEntity::drawReflection: null this");
 
-	CACHE_DISABLE;
-	CACHE_ENABLE;
-
-	fix19_13 fixedNumberOfWaveLutEntries = ITOFIX19_13(numberOfWaveLutEntries);
+	fix19_13 fixedNumberOfWaveLutEntries = FIX19_13_MULT(waveLutThrottleFactor, ITOFIX19_13(numberOfWaveLutEntries));
 
 	u32 transparentMask = transparent ? 0xFFFFFFFF : 0;
 
@@ -247,8 +266,17 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		xSourceEnd = _cameraFrustum->x1 - 1;
 	}
 
-	ySourceStart = (ySourceStart < _cameraFrustum->y0) ? _cameraFrustum->y0 : ySourceStart;
-	ySourceEnd = (ySourceEnd > _cameraFrustum->y1) ? _cameraFrustum->y1 : ySourceEnd;
+	if(ySourceStart < _cameraFrustum->y0)
+	{
+		yOutputStart += _cameraFrustum->y0 - ySourceStart;
+		ySourceStart = _cameraFrustum->y0;
+	}
+
+	if(ySourceEnd > _cameraFrustum->y1)
+	{
+		yOutputEnd -= ySourceEnd - _cameraFrustum->y1;
+		ySourceEnd = _cameraFrustum->y1;
+	}
 
 	// must clamp the output too, but moving the wave lut index accordingly
 	if(xOutputStart < _cameraFrustum->x0)
@@ -278,7 +306,20 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	this->waveLutIndex += FIX19_13_MULT(this->waveLutIndexIncrement, ITOFIX19_13(xTotalClamping));
 
-	yOutputStart = (yOutputStart < _cameraFrustum->y0) ? _cameraFrustum->y0 : yOutputStart;
+	// must clamp the output too, but moving the wave lut index accordingly
+	if(yOutputStart < _cameraFrustum->y0)
+	{
+		if(__YAXIS & axisForReversing)
+		{
+			ySourceEnd -= ((_cameraFrustum->y0 - yOutputStart) - Y_STEP_SIZE);
+		}
+		else
+		{
+			ySourceStart += (_cameraFrustum->y0 - yOutputStart);
+		}
+
+		yOutputStart = _cameraFrustum->y0;
+	}
 
 	if(yOutputEnd > _cameraFrustum->y1)
 	{
@@ -302,47 +343,67 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		xOutputIncrement = -1;
 	}
 
-
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(10),ITOFIX19_13(yOutputStart / Y_STEP_SIZE * Y_STEP_SIZE - 1),0,0},
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(yOutputStart / Y_STEP_SIZE * Y_STEP_SIZE - 1),0,0},
+		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13((1+yOutputStart / Y_STEP_SIZE) * Y_STEP_SIZE - 1),0,0},
+		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13((1+yOutputStart / Y_STEP_SIZE) * Y_STEP_SIZE - 1),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(10),ITOFIX19_13(yOutputEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13(yOutputEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
 		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(yOutputEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
+		__COLOR_MEDIUM_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13((yOutputEnd / Y_STEP_SIZE -1)* Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13((yOutputEnd / Y_STEP_SIZE -1)* Y_STEP_SIZE),0,0},
+		__COLOR_MEDIUM_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(10),ITOFIX19_13(yOutputStart-1),0,0},
+		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(yOutputStart-1),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(150),ITOFIX19_13(yOutputStart-1),0,0},
-		(VBVec2D) {ITOFIX19_13(250),ITOFIX19_13(yOutputStart-1),0,0},
+		(VBVec2D) {ITOFIX19_13(10),ITOFIX19_13(yOutputEnd),0,0},
+		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(yOutputEnd),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(150),ITOFIX19_13(yOutputEnd),0,0},
-		(VBVec2D) {ITOFIX19_13(250),ITOFIX19_13(yOutputEnd),0,0},
+		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13(ySourceStart / Y_STEP_SIZE * Y_STEP_SIZE - 1),0,0},
+		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceStart / Y_STEP_SIZE * Y_STEP_SIZE - 1),0,0},
+		__COLOR_MEDIUM_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13(ySourceEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
+		__COLOR_MEDIUM_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceStart-1),0,0},
+		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(ySourceStart-1),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(150),ITOFIX19_13(ySourceStart-1),0,0},
-		(VBVec2D) {ITOFIX19_13(250),ITOFIX19_13(ySourceStart-1),0,0},
-		__COLOR_BRIGHT_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(150),ITOFIX19_13(ySourceEnd),0,0},
-		(VBVec2D) {ITOFIX19_13(250),ITOFIX19_13(ySourceEnd),0,0},
+		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceEnd),0,0},
+		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(ySourceEnd),0,0},
 		__COLOR_BRIGHT_RED
 	);
 */
@@ -367,7 +428,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	if(__YAXIS & axisForReversing)
 	{
-		s16 temp = ySourceEnd;
+		s16 temp = ySourceEnd - Y_STEP_SIZE;
 		ySourceEnd = ySourceStart;
 		ySourceStart = temp;
 		ySourceIncrement = -1;
@@ -375,29 +436,34 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	u32 appliedBackgroundMask = transparentMask & backgroundMask;
 
-    int ySourceLimit = ySourceEnd >> Y_STEP_SIZE_2_EXP;
     int ySourceStartHelper = ySourceStart >> Y_STEP_SIZE_2_EXP;
 
 	int xSourceDistance = abs(xSourceEnd - xSourceStart);
 	int xOutputDistance = abs(xOutput - xOutputLimit);
 	int xTotal = xOutputDistance > xSourceDistance ? xSourceDistance : xOutputDistance;
 
-	for(;xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
+	CACHE_DISABLE;
+	CACHE_ENABLE;
+
+	for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
 	{
 		int leftColumn = xOutput;
 		int rightColumn = xOutput;
 
-		leftColumn -= parallaxDisplacement;
-		rightColumn += parallaxDisplacement;
-
-		if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+		if(parallaxDisplacement)
 		{
-			continue;
-		}
+			leftColumn -= parallaxDisplacement;
+			rightColumn += parallaxDisplacement;
 
-		if((unsigned)(rightColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
-		{
-			continue;
+			if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+			{
+				continue;
+			}
+
+			if((unsigned)(rightColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+			{
+				continue;
+			}
 		}
 
 		this->waveLutIndex += waveLutIndexIncrement;
@@ -411,9 +477,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
         int ySource = ySourceStartHelper;
         int yOutput = (yOutputStart + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
-
-		POINTER_TYPE remainderLeftValue = 0;
-		POINTER_TYPE remainderRightValue = 0;
 
 		int pixelShift = (MODULO((yOutputStart + waveLutPixelDisplacement), Y_STEP_SIZE) - MODULO(ySourceStart, Y_STEP_SIZE)) << 1;
 
@@ -431,75 +494,94 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 			}
 		}
 
-		u32 effectiveBackgroundMask = 0xFFFFFFFF << (MODULO((yOutputStart + waveLutPixelDisplacement), Y_STEP_SIZE) << 1);
+		u32 effectiveContentMaskDisplacement = (MODULO((yOutputStart + (flattenTop? 0 : waveLutPixelDisplacement)), Y_STEP_SIZE) << 1);
+		u32 effectiveContentMask = 0xFFFFFFFF << effectiveContentMaskDisplacement;
+		u32 effectiveBackgroundMask = ~effectiveContentMask;
+		effectiveContentMask &= ~(topBorderMask << effectiveContentMaskDisplacement);
 
 		POINTER_TYPE* columnSourcePointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (xSource << Y_SHIFT) + ySource;
 		POINTER_TYPE* columnSourcePointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (xSource << Y_SHIFT) + ySource;
 		POINTER_TYPE* columnOutputPointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (leftColumn << Y_SHIFT) + yOutput;
 		POINTER_TYPE* columnOutputPointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (rightColumn << Y_SHIFT) + yOutput;
 
-		POINTER_TYPE sourcePreviousValueLeft = *columnSourcePointerLeft;
-		POINTER_TYPE sourceNextValueLeft = sourcePreviousValueLeft;
-
 		int columnSourcePointerLeftIncrement = ySourceIncrement;
 		int columnSourcePointerRightIncrement = ySourceIncrement;
+
+		POINTER_TYPE sourceCurrentValueLeft = *columnSourcePointerLeft;
+		columnSourcePointerLeft += columnSourcePointerLeftIncrement;
+		POINTER_TYPE sourceNextValueLeft = *columnSourcePointerLeft;
+
+		// point to the left data in case that no parallax
+		// info needs to be preserved to save readings
+		// to the right buffers
+		if(!reflectParallax)
+		{
+			columnSourcePointerRight = &sourceCurrentValueLeft;
+			columnSourcePointerRightIncrement = 0;
+		}
+
+		POINTER_TYPE sourceCurrentValueRight = *columnSourcePointerRight;
+		columnSourcePointerRight += columnSourcePointerRightIncrement;
 
 		if(!reflectParallax)
 		{
 			columnSourcePointerRight = &sourceNextValueLeft;
-			columnSourcePointerRightIncrement = 0;
 		}
 
-		POINTER_TYPE sourcePreviousValueRight = *columnSourcePointerRight;
-		POINTER_TYPE sourceNextValueRight = sourcePreviousValueRight;
+		POINTER_TYPE sourceNextValueRight = *columnSourcePointerRight;
 
 		POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
 		POINTER_TYPE outputValueRight = *columnOutputPointerRight;
 
 		if(__YAXIS & axisForReversing)
 		{
-			sourcePreviousValueLeft = Utilities_reverse(sourcePreviousValueLeft, BITS_PER_STEP);
-			sourcePreviousValueRight = Utilities_reverse(sourcePreviousValueRight, BITS_PER_STEP);
+			sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
+			sourceCurrentValueRight = Utilities_reverse(sourceCurrentValueRight, BITS_PER_STEP);
+			sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
+			sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
 		}
 
-		int yOutputRemainder = 0;
+		waveLutPixelDisplacement =  flattenBottom ? 0 : waveLutPixelDisplacement;
 
-		waveLutPixelDisplacement = flattenBottom? 0 : waveLutPixelDisplacement;
-		yOutputRemainder = MODULO((yOutputEnd - waveLutPixelDisplacement), Y_STEP_SIZE) << 1;
+		int yOutputRemainder = MODULO((yOutputEnd + waveLutPixelDisplacement), Y_STEP_SIZE) << 1;
 
-		ReflectiveEntity_shiftPixels(pixelShift, &sourcePreviousValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
-		ReflectiveEntity_shiftPixels(pixelShift, &sourcePreviousValueRight, sourceNextValueRight, &remainderRightValue, reflectionMask);
+		POINTER_TYPE remainderLeftValue = 0;
+		POINTER_TYPE remainderRightValue = 0;
 
-		if(effectiveBackgroundMask)
+		int yOutputLimit = (yOutputEnd + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
+
+		for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
 		{
-			sourcePreviousValueLeft |= appliedBackgroundMask & outputValueLeft;
-			sourcePreviousValueRight |= appliedBackgroundMask & outputValueRight;
-			sourcePreviousValueLeft &= effectiveBackgroundMask;
-			sourcePreviousValueRight &= effectiveBackgroundMask;
-			sourcePreviousValueLeft |= (outputValueLeft & ~effectiveBackgroundMask);
-			sourcePreviousValueRight |= (outputValueRight & ~effectiveBackgroundMask);
-		}
+			ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
+			ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, reflectionMask);
 
-		POINTER_TYPE sourceValueLeft = sourcePreviousValueLeft;
-		POINTER_TYPE sourceValueRight = sourcePreviousValueRight;
+			sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
+			sourceCurrentValueRight |= appliedBackgroundMask & outputValueRight;
+			sourceCurrentValueLeft &= effectiveContentMask;
+			sourceCurrentValueRight &= effectiveContentMask;
+			sourceCurrentValueLeft |= (outputValueLeft & effectiveBackgroundMask);
+			sourceCurrentValueRight |= (outputValueRight & effectiveBackgroundMask);
 
-		s16 yOutputLimit = (yOutputEnd - waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
+			effectiveContentMask = 0xFFFFFFFF;
+			effectiveBackgroundMask = 0;
 
-		int yCounter = 0;
-		int ySourceDistance = abs(ySource - ySourceLimit);
-		int yOutputDistance = abs(yOutput - yOutputLimit);
-		int yTotal = yOutputDistance > ySourceDistance ? ySourceDistance : yOutputDistance;
+			*columnOutputPointerLeft = sourceCurrentValueLeft;
+			*columnOutputPointerRight = sourceCurrentValueRight;
 
-		for(; yTotal--; yCounter++, yOutput++, ySource += ySourceIncrement)
-		{
+			columnOutputPointerLeft++;
+			columnOutputPointerRight++;
+
+			if(transparent)
+			{
+				outputValueLeft = *columnOutputPointerLeft;
+				outputValueRight = *columnOutputPointerRight;
+			}
+
+			sourceCurrentValueLeft = sourceNextValueLeft;
+			sourceCurrentValueRight = sourceNextValueRight;
+
 			columnSourcePointerLeft += columnSourcePointerLeftIncrement;
 			columnSourcePointerRight += columnSourcePointerRightIncrement;
-
-			sourceValueLeft |= appliedBackgroundMask & outputValueLeft;
-			sourceValueRight |= appliedBackgroundMask & outputValueRight;
-
-			*columnOutputPointerLeft = sourceValueLeft;
-			*columnOutputPointerRight = sourceValueRight;
 
 			sourceNextValueLeft = *columnSourcePointerLeft;
 			sourceNextValueRight = *columnSourcePointerRight;
@@ -509,28 +591,13 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
 				sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
 			}
-
-			sourcePreviousValueLeft = sourceNextValueLeft;
-			sourcePreviousValueRight = sourceNextValueRight;
-			columnOutputPointerLeft++;
-			columnOutputPointerRight++;
-
-			sourceValueLeft = sourcePreviousValueLeft;
-			sourceValueRight = sourcePreviousValueRight;
-
-			ReflectiveEntity_shiftPixels(pixelShift, &sourceValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
-			ReflectiveEntity_shiftPixels(pixelShift, &sourceValueRight, sourceNextValueRight, &remainderRightValue, reflectionMask);
-
-			if(transparent)
-			{
-				outputValueLeft = *columnOutputPointerLeft;
-				outputValueRight = *columnOutputPointerRight;
-			}
 		}
 
 		if(yOutputRemainder)
 		{
-			effectiveBackgroundMask = 0xFFFFFFFF >> (BITS_PER_STEP - yOutputRemainder);
+			u32 maskDisplacement = (BITS_PER_STEP - yOutputRemainder);
+			effectiveContentMask = 0xFFFFFFFF >> maskDisplacement;
+			effectiveContentMask &= ~(bottomBorderMask >> maskDisplacement);
 
 			if(!transparent)
 			{
@@ -538,8 +605,11 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				outputValueRight = *columnOutputPointerRight;
 			}
 
-			remainderLeftValue |= (sourcePreviousValueLeft << pixelShift);
-			remainderRightValue |= (sourcePreviousValueRight << pixelShift);
+			if(0 <= pixelShift)
+			{
+				remainderLeftValue |= (sourceCurrentValueLeft << pixelShift);
+				remainderRightValue |= (sourceCurrentValueRight << pixelShift);
+			}
 
 			remainderLeftValue &= reflectionMask;
 			remainderRightValue &= reflectionMask;
@@ -547,8 +617,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 			remainderLeftValue |= appliedBackgroundMask & outputValueLeft;
 			remainderRightValue |= appliedBackgroundMask & outputValueRight;
 
-			*columnOutputPointerLeft = (outputValueLeft & ~effectiveBackgroundMask) | (remainderLeftValue & effectiveBackgroundMask);
-			*columnOutputPointerRight = (outputValueRight & ~effectiveBackgroundMask) | (remainderRightValue & effectiveBackgroundMask);
+			*columnOutputPointerLeft = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
+			*columnOutputPointerRight = (outputValueRight & ~effectiveContentMask) | (remainderRightValue & effectiveContentMask);
 		}
 	}
 }
