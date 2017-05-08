@@ -1166,8 +1166,6 @@ void Stage_resume(Stage this)
 
 	__CALL_BASE_METHOD(Container, resume, this);
 
-	Stage_streamAll(this);
-
 	// apply transformations
 	__VIRTUAL_CALL(Container, initialTransform, this, NULL, true);
 
