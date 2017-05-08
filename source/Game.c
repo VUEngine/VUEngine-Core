@@ -338,6 +338,9 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 {
 	ASSERT(this, "Game::constructor: null this");
 
+	// check memory map before anything else
+	HardwareManager_checkMemoryMap();
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
