@@ -442,183 +442,318 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	int xOutputDistance = abs(xOutput - xOutputLimit);
 	int xTotal = xOutputDistance > xSourceDistance ? xSourceDistance : xOutputDistance;
 
-	CACHE_DISABLE;
-	CACHE_ENABLE;
-
-	for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
+	if(reflectParallax)
 	{
-		int leftColumn = xOutput;
-		int rightColumn = xOutput;
+		CACHE_DISABLE;
+		CACHE_ENABLE;
 
-		if(parallaxDisplacement)
+		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
 		{
-			leftColumn -= parallaxDisplacement;
-			rightColumn += parallaxDisplacement;
+			int leftColumn = xOutput;
+			int rightColumn = xOutput;
 
-			if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+			if(parallaxDisplacement)
 			{
-				continue;
+				leftColumn -= parallaxDisplacement;
+				rightColumn += parallaxDisplacement;
+
+				if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+				{
+					continue;
+				}
+
+				if((unsigned)(rightColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+				{
+					continue;
+				}
 			}
 
-			if((unsigned)(rightColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+			this->waveLutIndex += waveLutIndexIncrement;
+
+			if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
 			{
-				continue;
-			}
-		}
-
-		this->waveLutIndex += waveLutIndexIncrement;
-
-		if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
-		{
-			this->waveLutIndex = 0;
-		}
-
-		int waveLutPixelDisplacement = waveLut[FIX19_13TOI(this->waveLutIndex)];
-
-        int ySource = ySourceStartHelper;
-        int yOutput = (yOutputStart + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
-
-		int pixelShift = (MODULO((yOutputStart + waveLutPixelDisplacement), Y_STEP_SIZE) - MODULO(ySourceStart, Y_STEP_SIZE)) << 1;
-
-		reflectionMask = reflectionMaskSave;
-
-		if(transparent && waveLutPixelDisplacement)
-		{
-			if(0 < pixelShift)
-			{
-				reflectionMask <<= pixelShift % waveLutPixelDisplacement;
-			}
-			else
-			{
-				reflectionMask >>= -pixelShift % waveLutPixelDisplacement;
-			}
-		}
-
-		u32 effectiveContentMaskDisplacement = (MODULO((yOutputStart + (flattenTop? 0 : waveLutPixelDisplacement)), Y_STEP_SIZE) << 1);
-		u32 effectiveContentMask = 0xFFFFFFFF << effectiveContentMaskDisplacement;
-		u32 effectiveBackgroundMask = ~effectiveContentMask;
-		effectiveContentMask &= ~(topBorderMask << effectiveContentMaskDisplacement);
-
-		POINTER_TYPE* columnSourcePointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (xSource << Y_SHIFT) + ySource;
-		POINTER_TYPE* columnSourcePointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (xSource << Y_SHIFT) + ySource;
-		POINTER_TYPE* columnOutputPointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (leftColumn << Y_SHIFT) + yOutput;
-		POINTER_TYPE* columnOutputPointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (rightColumn << Y_SHIFT) + yOutput;
-
-		int columnSourcePointerLeftIncrement = ySourceIncrement;
-		int columnSourcePointerRightIncrement = ySourceIncrement;
-
-		POINTER_TYPE sourceCurrentValueLeft = *columnSourcePointerLeft;
-		columnSourcePointerLeft += columnSourcePointerLeftIncrement;
-		POINTER_TYPE sourceNextValueLeft = *columnSourcePointerLeft;
-
-		// point to the left data in case that no parallax
-		// info needs to be preserved to save readings
-		// to the right buffers
-		if(!reflectParallax)
-		{
-			columnSourcePointerRight = &sourceCurrentValueLeft;
-			columnSourcePointerRightIncrement = 0;
-		}
-
-		POINTER_TYPE sourceCurrentValueRight = *columnSourcePointerRight;
-		columnSourcePointerRight += columnSourcePointerRightIncrement;
-
-		if(!reflectParallax)
-		{
-			columnSourcePointerRight = &sourceNextValueLeft;
-		}
-
-		POINTER_TYPE sourceNextValueRight = *columnSourcePointerRight;
-
-		POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
-		POINTER_TYPE outputValueRight = *columnOutputPointerRight;
-
-		if(__YAXIS & axisForReversing)
-		{
-			sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
-			sourceCurrentValueRight = Utilities_reverse(sourceCurrentValueRight, BITS_PER_STEP);
-			sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
-			sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
-		}
-
-		waveLutPixelDisplacement =  flattenBottom ? 0 : waveLutPixelDisplacement;
-
-		int yOutputRemainder = MODULO((yOutputEnd + waveLutPixelDisplacement), Y_STEP_SIZE) << 1;
-
-		POINTER_TYPE remainderLeftValue = 0;
-		POINTER_TYPE remainderRightValue = 0;
-
-		int yOutputLimit = (yOutputEnd + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
-
-		for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
-		{
-			ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
-			ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, reflectionMask);
-
-			sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
-			sourceCurrentValueRight |= appliedBackgroundMask & outputValueRight;
-			sourceCurrentValueLeft &= effectiveContentMask;
-			sourceCurrentValueRight &= effectiveContentMask;
-			sourceCurrentValueLeft |= (outputValueLeft & effectiveBackgroundMask);
-			sourceCurrentValueRight |= (outputValueRight & effectiveBackgroundMask);
-
-			effectiveContentMask = 0xFFFFFFFF;
-			effectiveBackgroundMask = 0;
-
-			*columnOutputPointerLeft = sourceCurrentValueLeft;
-			*columnOutputPointerRight = sourceCurrentValueRight;
-
-			columnOutputPointerLeft++;
-			columnOutputPointerRight++;
-
-			if(transparent)
-			{
-				outputValueLeft = *columnOutputPointerLeft;
-				outputValueRight = *columnOutputPointerRight;
+				this->waveLutIndex = 0;
 			}
 
-			sourceCurrentValueLeft = sourceNextValueLeft;
-			sourceCurrentValueRight = sourceNextValueRight;
+			int waveLutPixelDisplacement = waveLut[FIX19_13TOI(this->waveLutIndex)];
 
+			int ySource = ySourceStartHelper;
+			int yOutput = (yOutputStart + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
+
+			int pixelShift = (MODULO((yOutputStart + waveLutPixelDisplacement), Y_STEP_SIZE) - MODULO(ySourceStart, Y_STEP_SIZE)) << 1;
+
+			reflectionMask = reflectionMaskSave;
+
+			if(transparent && waveLutPixelDisplacement)
+			{
+				if(0 < pixelShift)
+				{
+					reflectionMask <<= pixelShift % waveLutPixelDisplacement;
+				}
+				else
+				{
+					reflectionMask >>= -pixelShift % waveLutPixelDisplacement;
+				}
+			}
+
+			u32 effectiveContentMaskDisplacement = (MODULO((yOutputStart + (flattenTop? 0 : waveLutPixelDisplacement)), Y_STEP_SIZE) << 1);
+			u32 effectiveContentMask = 0xFFFFFFFF << effectiveContentMaskDisplacement;
+			u32 effectiveBackgroundMask = ~effectiveContentMask;
+			effectiveContentMask &= ~(topBorderMask << effectiveContentMaskDisplacement);
+
+			POINTER_TYPE* columnSourcePointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (xSource << Y_SHIFT) + ySource;
+			POINTER_TYPE* columnSourcePointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (xSource << Y_SHIFT) + ySource;
+			POINTER_TYPE* columnOutputPointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (leftColumn << Y_SHIFT) + yOutput;
+			POINTER_TYPE* columnOutputPointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (rightColumn << Y_SHIFT) + yOutput;
+
+			int columnSourcePointerLeftIncrement = ySourceIncrement;
+			int columnSourcePointerRightIncrement = ySourceIncrement;
+
+			POINTER_TYPE sourceCurrentValueLeft = *columnSourcePointerLeft;
 			columnSourcePointerLeft += columnSourcePointerLeftIncrement;
+			POINTER_TYPE sourceNextValueLeft = *columnSourcePointerLeft;
+
+			POINTER_TYPE sourceCurrentValueRight = *columnSourcePointerRight;
 			columnSourcePointerRight += columnSourcePointerRightIncrement;
 
-			sourceNextValueLeft = *columnSourcePointerLeft;
-			sourceNextValueRight = *columnSourcePointerRight;
+			POINTER_TYPE sourceNextValueRight = *columnSourcePointerRight;
+
+			POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
+			POINTER_TYPE outputValueRight = *columnOutputPointerRight;
 
 			if(__YAXIS & axisForReversing)
 			{
+				sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
+				sourceCurrentValueRight = Utilities_reverse(sourceCurrentValueRight, BITS_PER_STEP);
 				sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
 				sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
 			}
+
+			waveLutPixelDisplacement =  flattenBottom ? 0 : waveLutPixelDisplacement;
+
+			int yOutputRemainder = MODULO((yOutputEnd + waveLutPixelDisplacement), Y_STEP_SIZE) << 1;
+
+			POINTER_TYPE remainderLeftValue = 0;
+			POINTER_TYPE remainderRightValue = 0;
+
+			int yOutputLimit = (yOutputEnd + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
+
+			for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
+			{
+				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
+				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, reflectionMask);
+
+				sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
+				sourceCurrentValueRight |= appliedBackgroundMask & outputValueRight;
+				sourceCurrentValueLeft &= effectiveContentMask;
+				sourceCurrentValueRight &= effectiveContentMask;
+				sourceCurrentValueLeft |= (outputValueLeft & effectiveBackgroundMask);
+				sourceCurrentValueRight |= (outputValueRight & effectiveBackgroundMask);
+
+				effectiveContentMask = 0xFFFFFFFF;
+				effectiveBackgroundMask = 0;
+
+				*columnOutputPointerLeft = sourceCurrentValueLeft;
+				*columnOutputPointerRight = sourceCurrentValueRight;
+
+				columnOutputPointerLeft++;
+				columnOutputPointerRight++;
+
+				if(transparent)
+				{
+					outputValueLeft = *columnOutputPointerLeft;
+					outputValueRight = *columnOutputPointerRight;
+				}
+
+				sourceCurrentValueLeft = sourceNextValueLeft;
+				sourceCurrentValueRight = sourceNextValueRight;
+
+				columnSourcePointerLeft += columnSourcePointerLeftIncrement;
+				columnSourcePointerRight += columnSourcePointerRightIncrement;
+
+				sourceNextValueLeft = *columnSourcePointerLeft;
+				sourceNextValueRight = *columnSourcePointerRight;
+
+				if(__YAXIS & axisForReversing)
+				{
+					sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
+					sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
+				}
+			}
+
+			if(yOutputRemainder)
+			{
+				u32 maskDisplacement = (BITS_PER_STEP - yOutputRemainder);
+				effectiveContentMask = 0xFFFFFFFF >> maskDisplacement;
+				effectiveContentMask &= ~(bottomBorderMask >> maskDisplacement);
+
+				if(!transparent)
+				{
+					outputValueLeft = *columnOutputPointerLeft;
+					outputValueRight = *columnOutputPointerRight;
+				}
+
+				if(0 <= pixelShift)
+				{
+					remainderLeftValue |= (sourceCurrentValueLeft << pixelShift);
+					remainderRightValue |= (sourceCurrentValueRight << pixelShift);
+				}
+
+				remainderLeftValue &= reflectionMask;
+				remainderRightValue &= reflectionMask;
+
+				remainderLeftValue |= appliedBackgroundMask & outputValueLeft;
+				remainderRightValue |= appliedBackgroundMask & outputValueRight;
+
+				*columnOutputPointerLeft = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
+				*columnOutputPointerRight = (outputValueRight & ~effectiveContentMask) | (remainderRightValue & effectiveContentMask);
+			}
 		}
+	}
+	else
+	{
+		CACHE_DISABLE;
+		CACHE_ENABLE;
 
-		if(yOutputRemainder)
+		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
 		{
-			u32 maskDisplacement = (BITS_PER_STEP - yOutputRemainder);
-			effectiveContentMask = 0xFFFFFFFF >> maskDisplacement;
-			effectiveContentMask &= ~(bottomBorderMask >> maskDisplacement);
+			int leftColumn = xOutput;
+			int rightColumn = xOutput;
 
-			if(!transparent)
+			if(parallaxDisplacement)
 			{
-				outputValueLeft = *columnOutputPointerLeft;
-				outputValueRight = *columnOutputPointerRight;
+				leftColumn -= parallaxDisplacement;
+				rightColumn += parallaxDisplacement;
+
+				if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+				{
+					continue;
+				}
+
+				if((unsigned)(rightColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+				{
+					continue;
+				}
 			}
 
-			if(0 <= pixelShift)
+			this->waveLutIndex += waveLutIndexIncrement;
+
+			if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
 			{
-				remainderLeftValue |= (sourceCurrentValueLeft << pixelShift);
-				remainderRightValue |= (sourceCurrentValueRight << pixelShift);
+				this->waveLutIndex = 0;
 			}
 
-			remainderLeftValue &= reflectionMask;
-			remainderRightValue &= reflectionMask;
+			int waveLutPixelDisplacement = waveLut[FIX19_13TOI(this->waveLutIndex)];
 
-			remainderLeftValue |= appliedBackgroundMask & outputValueLeft;
-			remainderRightValue |= appliedBackgroundMask & outputValueRight;
+			int ySource = ySourceStartHelper;
+			int yOutput = (yOutputStart + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
 
-			*columnOutputPointerLeft = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
-			*columnOutputPointerRight = (outputValueRight & ~effectiveContentMask) | (remainderRightValue & effectiveContentMask);
+			int pixelShift = (MODULO((yOutputStart + waveLutPixelDisplacement), Y_STEP_SIZE) - MODULO(ySourceStart, Y_STEP_SIZE)) << 1;
+
+			reflectionMask = reflectionMaskSave;
+
+			if(transparent && waveLutPixelDisplacement)
+			{
+				if(0 < pixelShift)
+				{
+					reflectionMask <<= pixelShift % waveLutPixelDisplacement;
+				}
+				else
+				{
+					reflectionMask >>= -pixelShift % waveLutPixelDisplacement;
+				}
+			}
+
+			u32 effectiveContentMaskDisplacement = (MODULO((yOutputStart + (flattenTop? 0 : waveLutPixelDisplacement)), Y_STEP_SIZE) << 1);
+			u32 effectiveContentMask = 0xFFFFFFFF << effectiveContentMaskDisplacement;
+			u32 effectiveBackgroundMask = ~effectiveContentMask;
+			effectiveContentMask &= ~(topBorderMask << effectiveContentMaskDisplacement);
+
+			POINTER_TYPE* columnSourcePointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (xSource << Y_SHIFT) + ySource;
+			POINTER_TYPE* columnOutputPointerLeft = (POINTER_TYPE*) (currentDrawingFrameBufferSet) + (leftColumn << Y_SHIFT) + yOutput;
+			POINTER_TYPE* columnOutputPointerRight = (POINTER_TYPE*) (currentDrawingFrameBufferSet | 0x00010000) + (rightColumn << Y_SHIFT) + yOutput;
+
+			int columnSourcePointerLeftIncrement = ySourceIncrement;
+
+			POINTER_TYPE sourceCurrentValueLeft = *columnSourcePointerLeft;
+			columnSourcePointerLeft += columnSourcePointerLeftIncrement;
+			POINTER_TYPE sourceNextValueLeft = *columnSourcePointerLeft;
+
+			POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
+			POINTER_TYPE outputValueRight = *columnOutputPointerRight;
+
+			if(__YAXIS & axisForReversing)
+			{
+				sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
+				sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
+			}
+
+			waveLutPixelDisplacement =  flattenBottom ? 0 : waveLutPixelDisplacement;
+
+			int yOutputRemainder = MODULO((yOutputEnd + waveLutPixelDisplacement), Y_STEP_SIZE) << 1;
+
+			POINTER_TYPE remainderLeftValue = 0;
+
+			int yOutputLimit = (yOutputEnd + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
+
+			for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
+			{
+				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
+
+				sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
+				sourceCurrentValueLeft &= effectiveContentMask;
+				sourceCurrentValueLeft |= (outputValueLeft & effectiveBackgroundMask);
+
+				effectiveContentMask = 0xFFFFFFFF;
+				effectiveBackgroundMask = 0;
+
+				*columnOutputPointerLeft = sourceCurrentValueLeft;
+				*columnOutputPointerRight = sourceCurrentValueLeft;
+
+				columnOutputPointerLeft++;
+				columnOutputPointerRight++;
+
+				if(transparent)
+				{
+					outputValueLeft = *columnOutputPointerLeft;
+				}
+
+				sourceCurrentValueLeft = sourceNextValueLeft;
+
+				columnSourcePointerLeft += columnSourcePointerLeftIncrement;
+
+				sourceNextValueLeft = *columnSourcePointerLeft;
+
+				if(__YAXIS & axisForReversing)
+				{
+					sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
+				}
+			}
+
+			if(yOutputRemainder)
+			{
+				u32 maskDisplacement = (BITS_PER_STEP - yOutputRemainder);
+				effectiveContentMask = 0xFFFFFFFF >> maskDisplacement;
+				effectiveContentMask &= ~(bottomBorderMask >> maskDisplacement);
+
+				if(!transparent)
+				{
+					outputValueLeft = *columnOutputPointerLeft;
+					outputValueRight = *columnOutputPointerRight;
+				}
+
+				if(0 <= pixelShift)
+				{
+					remainderLeftValue |= (sourceCurrentValueLeft << pixelShift);
+				}
+
+				remainderLeftValue &= reflectionMask;
+
+				remainderLeftValue |= appliedBackgroundMask & outputValueLeft;
+
+				*columnOutputPointerLeft = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
+				*columnOutputPointerRight = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
+			}
 		}
 	}
 }
