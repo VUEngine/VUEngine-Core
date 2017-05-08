@@ -239,6 +239,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this);
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
 void VIPManager_writeDRAM(VIPManager this);
 u32 VIPManager_drawingEnded(VIPManager this);
+void HardwareManager_checkMemoryMap();
 
 
 #ifdef __PROFILE_GAME
