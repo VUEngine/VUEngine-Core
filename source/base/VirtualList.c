@@ -136,6 +136,10 @@ void VirtualList_clear(VirtualList this)
 				this->head = this->head->next;
 			}
 		}
+
+		ASSERT(!this->head, "VirtualList::clear: head is not NULL");
+
+		this->tail = NULL;
 	}
 }
 
