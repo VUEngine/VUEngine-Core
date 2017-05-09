@@ -31,6 +31,22 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											CLASS' MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define POINTER_TYPE			u32
+#define Y_SHIFT					4
+// sizeof(POINTER_TYPE) << 2
+#define Y_STEP_SIZE				16
+#define Y_STEP_SIZE_2_EXP		4
+// sizeof(POINTER_TYPE) << 3
+#define BITS_PER_STEP 			32
+
+#define MODULO(n, m)			(n & (m - 1))
+
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -44,6 +60,7 @@
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, suspend);											\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, resume);												\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, applyReflection);									\
+		__VIRTUAL_SET(ClassName, ReflectiveEntity, transform);											\
 
 __CLASS(ReflectiveEntity);
 
@@ -52,6 +69,8 @@ __CLASS(ReflectiveEntity);
 		InanimatedInGameEntity_ATTRIBUTES																			\
 		fix19_13 waveLutIndex;																			\
 		fix19_13 waveLutIndexIncrement;																	\
+		Point position2D;																				\
+		Point nextFramePosition2D;																		\
 
 typedef struct ReflectiveEntityDefinition
 {
@@ -59,11 +78,11 @@ typedef struct ReflectiveEntityDefinition
 
 	// the starting point from where start to reflect data
 	// relative to my position
-	VBVec2D sourceDisplacement;
+	Point sourceDisplacement;
 
 	// the starting point from where start to draw data
 	// relative to my position
-	VBVec2D outputDisplacement;
+	Point outputDisplacement;
 
 	// width and height of the reflection
 	u16 width;
@@ -124,6 +143,7 @@ void ReflectiveEntity_destructor(ReflectiveEntity this);
 void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive);
 void ReflectiveEntity_suspend(ReflectiveEntity this);
 void ReflectiveEntity_resume(ReflectiveEntity this);
+void ReflectiveEntity_transform(ReflectiveEntity this, const Transformation* environmentTransform);
 void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet);
 void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 xSourceEnd,
@@ -135,5 +155,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
 								bool flattenTop, bool flattenBottom,
 								u32 topBorder, u32 bottomBorder, u32 leftBorder, u32 rightBorder);
+void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 reflectionMask);
 
 #endif

@@ -33,22 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS' MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define POINTER_TYPE			u32
-#define Y_SHIFT					4
-// sizeof(POINTER_TYPE) << 2
-#define Y_STEP_SIZE				16
-#define Y_STEP_SIZE_2_EXP		4
-// sizeof(POINTER_TYPE) << 3
-#define BITS_PER_STEP 			32
-
-#define MODULO(n, m)			(n & (m - 1))
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -67,19 +51,20 @@ static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialOb
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ReflectiveEntity, ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ReflectiveEntity, mirrorDefinition, id, internalId, name);
+__CLASS_NEW_DEFINITION(ReflectiveEntity, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ReflectiveEntity, reflectiveEntityDefinition, id, internalId, name);
 
 // class's constructor
-void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name)
+void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(InanimatedInGameEntity, &mirrorDefinition->inGameEntityDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(InanimatedInGameEntity, &reflectiveEntityDefinition->inGameEntityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
-	this->waveLutIndexIncrement = FIX19_13_MULT(mirrorDefinition->waveLutThrottleFactor, FIX19_13_DIV(ITOFIX19_13(mirrorDefinition->numberOfWaveLutEntries), ITOFIX19_13(mirrorDefinition->width)));
+	this->waveLutIndexIncrement = FIX19_13_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, FIX19_13_DIV(ITOFIX19_13(reflectiveEntityDefinition->numberOfWaveLutEntries), ITOFIX19_13(reflectiveEntityDefinition->width)));
+	this->nextFramePosition2D = this->position2D = (Point){_cameraFrustum->x1 + 1, _cameraFrustum->y1 + 1};
 }
 
 // class's destructor
@@ -126,6 +111,21 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
+void ReflectiveEntity_transform(ReflectiveEntity this, const Transformation* environmentTransform)
+{
+	ASSERT(this, "ReflectiveEntity::transform: null this");
+
+	VBVec3D position3D = this->transform.globalPosition;
+	__OPTICS_NORMALIZE(position3D);
+
+	VBVec2D position2D;
+	// project position to 2D space
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+	this->position2D = this->nextFramePosition2D;
+	this->nextFramePosition2D.x = FIX19_13TOI(position2D.x);
+	this->nextFramePosition2D.y = FIX19_13TOI(position2D.y);
+}
 static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
 {
 	ASSERT(spatialObject, "ReflectiveEntity::reflect: null this");
@@ -144,14 +144,8 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 {
 	ASSERT(this, "ReflectiveEntity::applyReflection: null this");
 
-	ReflectiveEntityDefinition* mirrorDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
+	ReflectiveEntityDefinition* reflectiveEntityDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
 
-	VBVec3D position3D = this->transform.globalPosition;
-	__OPTICS_NORMALIZE(position3D);
-
-	VBVec2D position2D;
-	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 /*
 	static fix19_13 index = 0;
 
@@ -172,24 +166,24 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 */
 
 	ReflectiveEntity_drawReflection(this, currentDrawingFrameBufferSet,
-								FIX19_13TOI(position2D.x + mirrorDefinition->sourceDisplacement.x),
-								FIX19_13TOI(position2D.y + mirrorDefinition->sourceDisplacement.y),
-								FIX19_13TOI(position2D.x + mirrorDefinition->outputDisplacement.x),
-								FIX19_13TOI(position2D.y + mirrorDefinition->outputDisplacement.y),
-								mirrorDefinition->width,
-								mirrorDefinition->height,
-								mirrorDefinition->reflectionMask,
-								mirrorDefinition->backgroundMask,
-								mirrorDefinition->axisForReversing,
-								mirrorDefinition->transparent,
-								mirrorDefinition->reflectParallax,
-								mirrorDefinition->parallaxDisplacement,
-								mirrorDefinition->waveLut,
-								mirrorDefinition->numberOfWaveLutEntries,
-								mirrorDefinition->waveLutThrottleFactor,
-								mirrorDefinition->flattenTop, mirrorDefinition->flattenBottom,
-								mirrorDefinition->topBorder, mirrorDefinition->bottomBorder,
-								mirrorDefinition->leftBorder, mirrorDefinition->rightBorder);
+								this->position2D.x + reflectiveEntityDefinition->sourceDisplacement.x,
+								this->position2D.y + reflectiveEntityDefinition->sourceDisplacement.y,
+								this->position2D.x + reflectiveEntityDefinition->outputDisplacement.x,
+								this->position2D.y + reflectiveEntityDefinition->outputDisplacement.y,
+								reflectiveEntityDefinition->width,
+								reflectiveEntityDefinition->height,
+								reflectiveEntityDefinition->reflectionMask,
+								reflectiveEntityDefinition->backgroundMask,
+								reflectiveEntityDefinition->axisForReversing,
+								reflectiveEntityDefinition->transparent,
+								reflectiveEntityDefinition->reflectParallax,
+								reflectiveEntityDefinition->parallaxDisplacement,
+								reflectiveEntityDefinition->waveLut,
+								reflectiveEntityDefinition->numberOfWaveLutEntries,
+								reflectiveEntityDefinition->waveLutThrottleFactor,
+								reflectiveEntityDefinition->flattenTop, reflectiveEntityDefinition->flattenBottom,
+								reflectiveEntityDefinition->topBorder, reflectiveEntityDefinition->bottomBorder,
+								reflectiveEntityDefinition->leftBorder, reflectiveEntityDefinition->rightBorder);
 }
 
 inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 reflectionMask)
@@ -221,7 +215,10 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								s16 parallaxDisplacement,
 								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
 								bool flattenTop __attribute__ ((unused)), bool flattenBottom,
-								u32 topBorderMask, u32 bottomBorderMask, u32 leftBorderMask, u32 rightBorderMask)
+								u32 topBorderMask,
+								u32 bottomBorderMask,
+								u32 leftBorderMask __attribute__ ((unused)),
+								u32 rightBorderMask __attribute__ ((unused)))
 {
 	ASSERT(this, "ReflectiveEntity::drawReflection: null this");
 
@@ -680,7 +677,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 			POINTER_TYPE sourceNextValueLeft = *columnSourcePointerLeft;
 
 			POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
-			POINTER_TYPE outputValueRight = *columnOutputPointerRight;
 
 			if(__YAXIS & axisForReversing)
 			{
@@ -739,7 +735,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				if(!transparent)
 				{
 					outputValueLeft = *columnOutputPointerLeft;
-					outputValueRight = *columnOutputPointerRight;
 				}
 
 				if(0 <= pixelShift)
