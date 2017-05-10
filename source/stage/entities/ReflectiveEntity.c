@@ -111,7 +111,7 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity_transform(ReflectiveEntity this, const Transformation* environmentTransform)
+void ReflectiveEntity_transform(ReflectiveEntity this, const Transformation* environmentTransform __attribute__ ((unused)))
 {
 	ASSERT(this, "ReflectiveEntity::transform: null this");
 
@@ -222,10 +222,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 {
 	ASSERT(this, "ReflectiveEntity::drawReflection: null this");
 
-	fix19_13 fixedNumberOfWaveLutEntries = FIX19_13_MULT(waveLutThrottleFactor, ITOFIX19_13(numberOfWaveLutEntries));
-
-	u32 transparentMask = transparent ? 0xFFFFFFFF : 0;
-
     s16 xSourceEnd = xSourceStart + width;
     s16 ySourceEnd = ySourceStart + height;
 	s16 xOutputEnd = xOutputStart + width;
@@ -243,14 +239,17 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		return;
 	}
 
+	fix19_13 fixedNumberOfWaveLutEntries = FIX19_13_MULT(waveLutThrottleFactor, ITOFIX19_13(numberOfWaveLutEntries));
+
+	u32 transparentMask = transparent ? 0xFFFFFFFF : 0;
+
 	int xClamping = 0;
-	int xTotalClamping = 0;
+	int xOutputStartSave = xOutputStart;
 
 	// clamp values to not write out of the screen
 	if(xSourceStart < _cameraFrustum->x0)
 	{
 		xClamping = _cameraFrustum->x0 - xSourceStart;
-		xTotalClamping += xClamping;
 		xOutputStart += xClamping;
 		xSourceStart = _cameraFrustum->x0;
 	}
@@ -258,7 +257,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	if(xSourceEnd > _cameraFrustum->x1 - 1)
 	{
 		xClamping = xSourceEnd - _cameraFrustum->x1 + 1;
-		xTotalClamping += xClamping;
 		xOutputEnd -= xClamping;
 		xSourceEnd = _cameraFrustum->x1 - 1;
 	}
@@ -279,7 +277,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	if(xOutputStart < _cameraFrustum->x0)
 	{
 		xClamping = _cameraFrustum->x0 - xOutputStart;
-		xTotalClamping += xClamping;
 		xSourceStart += xClamping;
 		xOutputStart = _cameraFrustum->x0;
 	}
@@ -287,7 +284,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	if(xOutputEnd > _cameraFrustum->x1)
 	{
 		xClamping = xOutputEnd - _cameraFrustum->x1 + 1;
-		xTotalClamping += xClamping;
 
 		if(__XAXIS & axisForReversing)
 		{
@@ -300,8 +296,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 		xOutputEnd = _cameraFrustum->x1 - 1;
 	}
-
-	this->waveLutIndex += FIX19_13_MULT(this->waveLutIndexIncrement, ITOFIX19_13(xTotalClamping));
 
 	// must clamp the output too, but moving the wave lut index accordingly
 	if(yOutputStart < _cameraFrustum->y0)
@@ -439,12 +433,25 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	int xOutputDistance = abs(xOutput - xOutputLimit);
 	int xTotal = xOutputDistance > xSourceDistance ? xSourceDistance : xOutputDistance;
 
+	this->waveLutIndex += waveLutIndexIncrement;
+
+	if(0 > this->waveLutIndex)
+	{
+		this->waveLutIndex = fixedNumberOfWaveLutEntries - this->waveLutIndex;
+	}
+	else if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
+	{
+		this->waveLutIndex = 0;
+	}
+
+	int xCounter = xOutputStart - xOutputStartSave;
+
 	if(reflectParallax)
 	{
 		CACHE_DISABLE;
 		CACHE_ENABLE;
 
-		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
+		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement, xCounter++)
 		{
 			this->waveLutIndex += waveLutIndexIncrement;
 
@@ -472,7 +479,9 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				}
 			}
 
-			int waveLutPixelDisplacement = waveLut[FIX19_13TOI(this->waveLutIndex)];
+			int xRelativeCoordinate = (xCounter % width) + FIX19_13TOI(this->waveLutIndex);
+			int xIndex = (numberOfWaveLutEntries * xRelativeCoordinate) / width;
+			int waveLutPixelDisplacement = waveLut[xIndex];
 
 			int ySource = ySourceStartHelper;
 			int yOutput = (yOutputStart + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
@@ -612,7 +621,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		CACHE_DISABLE;
 		CACHE_ENABLE;
 
-		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
+		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement, xCounter++)
 		{
 			int leftColumn = xOutput;
 			int rightColumn = xOutput;
@@ -633,14 +642,9 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				}
 			}
 
-			this->waveLutIndex += waveLutIndexIncrement;
-
-			if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
-			{
-				this->waveLutIndex = 0;
-			}
-
-			int waveLutPixelDisplacement = waveLut[FIX19_13TOI(this->waveLutIndex)];
+			int xRelativeCoordinate = (xCounter % width) + FIX19_13TOI(this->waveLutIndex);
+			int xIndex = (numberOfWaveLutEntries * xRelativeCoordinate) / width;
+			int waveLutPixelDisplacement = waveLut[xIndex];
 
 			int ySource = ySourceStartHelper;
 			int yOutput = (yOutputStart + waveLutPixelDisplacement) >> Y_STEP_SIZE_2_EXP;
