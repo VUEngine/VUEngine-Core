@@ -34,11 +34,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -125,6 +120,7 @@ u8 AnimationController_getCols(AnimationController this);
 u8 AnimationController_getFrameCycleDecrement(AnimationController this);
 s8 AnimationController_getFrameDuration(AnimationController this);
 int AnimationController_getMapType(AnimationController this);
+int AnimationController_getNumberOfFrames(AnimationController this);
 const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
 s8 AnimationController_getPreviousFrame(AnimationController this);
 u8 AnimationController_getRows(AnimationController this);

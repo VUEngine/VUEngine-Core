@@ -593,3 +593,23 @@ void AnimationController_pause(AnimationController this, bool pause)
 		this->actualFrame = 0;
 	}
 }
+
+/**
+ * Get the total number of frames of the current animation
+ *
+ * @memberof	AnimationController
+ * @private
+ *
+ * @param this	Function scope
+ */
+int AnimationController_getNumberOfFrames(AnimationController this)
+{
+	ASSERT(this, "AnimationController::getNumberOfFrames: null this");
+
+	if(this->animationFunction)
+	{
+		return this->animationFunction->numberOfFrames;
+	}
+
+	return -1;
+}

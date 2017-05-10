@@ -94,6 +94,8 @@ void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameE
 void AnimatedInGameEntity_destructor(AnimatedInGameEntity this);
 
 AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this);
+s8 AnimatedInGameEntity_getActualFrame(AnimatedInGameEntity this);
+int AnimatedInGameEntity_getNumberOfFrames(AnimatedInGameEntity this);
 bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName);
 bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this);
 void AnimatedInGameEntity_nextFrame(AnimatedInGameEntity this);
