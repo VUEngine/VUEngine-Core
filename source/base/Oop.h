@@ -214,7 +214,7 @@
 			else																						\
 			{																							\
 				NM_ASSERT(false, ClassName ## vTable not properly set. 									\
-				Delete the GAME/source/setupClasses.c file);											\
+				Delete the GAME/lib/compiler/setupClasses.c file);											\
 			}																							\
 																										\
 			/* check that no method is null */															\
