@@ -154,6 +154,20 @@ bool Shape_moves(Shape this)
 }
 
 /**
+ * Set flag
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ * @param 		flag
+ */
+void Shape_setMovesFlag(Shape this, bool moves)
+{
+	this->moves = moves;
+}
+
+/**
  * Has been checked
  *
  * @memberof	Shape
