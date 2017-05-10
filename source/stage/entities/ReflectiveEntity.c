@@ -446,6 +446,13 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement)
 		{
+			this->waveLutIndex += waveLutIndexIncrement;
+
+			if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
+			{
+				this->waveLutIndex = 0;
+			}
+
 			int leftColumn = xOutput;
 			int rightColumn = xOutput;
 
@@ -463,13 +470,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				{
 					continue;
 				}
-			}
-
-			this->waveLutIndex += waveLutIndexIncrement;
-
-			if(this->waveLutIndex >= fixedNumberOfWaveLutEntries)
-			{
-				this->waveLutIndex = 0;
 			}
 
 			int waveLutPixelDisplacement = waveLut[FIX19_13TOI(this->waveLutIndex)];
