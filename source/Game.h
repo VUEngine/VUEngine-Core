@@ -97,6 +97,10 @@ void Game_start(Game this, GameState state);
 void Game_unpause(Game this, GameState pauseState);
 void Game_wait(Game this, u32 milliSeconds);
 
+#ifdef __REGISTER_LAST_PROCESS_NAME
+void Game_setLastProcessName(Game this, char* processName);
+#endif
+
 #ifdef __DEBUG_TOOLS
 bool Game_isInDebugMode(Game this);
 #endif

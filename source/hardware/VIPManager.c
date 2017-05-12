@@ -80,7 +80,7 @@ typedef struct PostProcessingEffectRegistry
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
 		u16 gameFrameStarted;																			\
-		u16 drawingEnded;																			\
+		u16 drawingEnded;																				\
 
 /**
  * @class	VIPManager
@@ -105,13 +105,15 @@ bool Game_isGameFrameDone(Game this);
 #endif
 
 static VIPManager _vipManager;
+static TimerManager _timerManager;
 static ParamTableManager _paramTableManager;
 static CharSetManager _charSetManager;
 static PolyhedronManager _polyhedronManager;
 static SpriteManager _spriteManager;
+static HardwareManager _hardwareManager;
 
 static void VIPManager_constructor(VIPManager this);
-
+static void VIPManager_writeDRAM(VIPManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -148,10 +150,12 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	this->drawingEnded = false;
 
 	_vipManager = this;
+	_timerManager = TimerManager_getInstance();
 	_paramTableManager = ParamTableManager_getInstance();
 	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
 	_polyhedronManager = PolyhedronManager_getInstance();
+	_hardwareManager = HardwareManager_getInstance();
 
 	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
 }
@@ -309,8 +313,10 @@ void VIPManager_interruptHandler(void)
 				}
 #endif
 				_vipManager->gameFrameStarted = true;
+				_vipManager->drawingEnded = false;
 				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
 				VIPManager_enableInterrupt(_vipManager, __XPEND);
+				return;
 				break;
 
 			case __XPEND:
@@ -338,9 +344,43 @@ void VIPManager_interruptHandler(void)
 				}
 #endif
 
-				_vipManager->drawingEnded = true;
 				VIPManager_disableDrawing(_vipManager);
-				VIPManager_enableInterrupt(_vipManager, __GAMESTART);
+
+				// enable multiplexed interrupts
+				{
+					u32 psw;
+
+					asm(" \n\
+						stsr	psw,%0  \n\
+						"
+					: "=r" (psw) // Output
+					);
+
+					psw &= 0xFFF0BFFF;
+
+					asm(" \n\
+						ldsr	%0,psw  \n\
+						cli				\n\
+						"
+						: // Output
+						: "r" (psw) // Input
+						: // Clobber
+					);
+
+					VIPManager_writeDRAM(_vipManager);
+					VIPManager_enableDrawing(_vipManager);
+
+					asm(" \n\
+						sei				\n\
+						"
+						: // Output
+						: // Input
+						: // Clobber
+					);
+
+					VIPManager_enableInterrupt(_vipManager, __GAMESTART);
+				}
+				return;
 				break;
 
 #ifdef __ALERT_VIP_OVERTIME
@@ -396,24 +436,16 @@ void VIPManager_resetGameFrameStarted(VIPManager this)
  *
  * @return			The time in milliseconds that it took to process the interrupt (only if profiling is enabled)
  */
-void VIPManager_writeDRAM(VIPManager this)
+static void VIPManager_writeDRAM(VIPManager this)
 {
 	ASSERT(this, "VIPManager::writeDRAM: null this");
 
-	// write newly created chars
-	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
-	{
-		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
-	}
+#ifdef __PROFILE_GAME
+	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(_timerManager);
+#endif
 
-	// write to DRAM
-	SpriteManager_render(_spriteManager);
-
-#ifdef __DEBUG_TOOLS
-	if(Game_isInDebugMode(Game_getInstance()))
-	{
-		Debug_render(Debug_getInstance());
-	}
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	Game_setLastProcessName(Game_getInstance(), "rendering");
 #endif
 
 	// draw 3d objects
@@ -427,11 +459,42 @@ void VIPManager_writeDRAM(VIPManager this)
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}
 
-	this->drawingEnded = false;
+	// write newly created chars
+	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
+	{
+		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
+	}
 
-	// enable drawing
-	VIPManager_enableInterrupt(_vipManager, __GAMESTART);
-	VIPManager_enableDrawing(this);
+	// write to DRAM
+	SpriteManager_render(_spriteManager);
+
+	this->drawingEnded = true;
+
+#ifdef __DEBUG_TOOLS
+	if(Game_isInDebugMode(Game_getInstance()))
+	{
+		Debug_render(Debug_getInstance());
+	}
+#endif
+
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	Game_setLastProcessName(Game_getInstance(), "");
+#endif
+
+#ifdef __PROFILE_GAME
+	extern u16 _renderingProcessTime;
+	extern u16 _renderingHighestTime;
+	extern u16 _renderingTotalTime;
+	extern bool _updateProfiling;
+
+	if(_updateProfiling)
+	{
+		_renderingProcessTime = TimerManager_getMillisecondsElapsed(_timerManager) - timeBeforeProcess;
+		_renderingHighestTime = _renderingProcessTime > _renderingHighestTime ? _renderingProcessTime : _renderingHighestTime;
+		_renderingTotalTime += _renderingProcessTime;
+	}
+#endif
 }
 
 /**

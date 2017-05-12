@@ -135,9 +135,12 @@ end_init_sram_bss:
 	cmp     r7, r6
 	blt     top_init_sram_bss
 
+/* clean psw */
+	ldsr	r0, psw
 /* disable-clear-enable cache GCC 4.7 */
-	ldsr	r0, sr5
     ldsr    r0, chcw
+    mov     1, r1
+    ldsr    r1, chcw
     mov     2, r1
     ldsr    r1, chcw
 
@@ -184,7 +187,7 @@ __interrupt_handler:
 	.global	__interrupt_handler_prolog
 
 __interrupt_handler_prolog:
-	addi	-0x0048,sp,sp
+	addi	-0x0050,sp,sp
 	st.w	lp,0x0000[sp]
 	st.w	r30,0x0004[sp]
 	st.w	r19,0x0008[sp]
@@ -203,6 +206,10 @@ __interrupt_handler_prolog:
 	st.w	r6,0x003c[sp]
 	st.w	r2,0x0040[sp]
 	st.w	r1,0x0044[sp]
+	stsr	eipc,r1
+	st.w	r1,0x0048[sp]
+	stsr	eipsw,r1
+	st.w	r1,0x004c[sp]
 	movhi	hi(_keyVector),r0,r1
 	movea	lo(_keyVector),r1,r1
 	stsr	sr5,r6
@@ -233,8 +240,12 @@ __interrupt_handler_epilogue:
 	ld.w	0x0038[sp],r7
 	ld.w	0x003c[sp],r6
 	ld.w	0x0040[sp],r2
+	ld.w	0x0048[sp],r1
+	ldsr	r1,eipc
+	ld.w	0x004c[sp],r1
+	ldsr	r1,eipsw
 	ld.w	0x0044[sp],r1
-	addi	0x0048,sp,sp
+	addi	0x0050,sp,sp
 	reti
 
 	.section ".vbvectors","ax"
