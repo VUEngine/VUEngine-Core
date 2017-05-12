@@ -250,6 +250,7 @@ void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute
  */
 void Printing_setDebugMode(Printing this)
 {
+	Printing_resetWorldCoordinates(this);
 	Printing_loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
 }
