@@ -345,7 +345,7 @@ void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister)
  */
 void KeypadManager_interruptHandler(void)
 {
-	// broadcast keypad event
+	Printing_resetWorldCoordinates(Printing_getInstance());
 	Printing_text(Printing_getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 

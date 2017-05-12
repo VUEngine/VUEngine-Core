@@ -197,6 +197,7 @@ void HardwareManager_checkMemoryMap()
  */
 void HardwareManager_croInterruptHandler(void)
 {
+	Printing_resetWorldCoordinates(Printing_getInstance());
 	Printing_text(Printing_getInstance(), "EXP cron", 48 - 13, 0, NULL);
 }
 
@@ -208,6 +209,7 @@ void HardwareManager_croInterruptHandler(void)
  */
 void HardwareManager_communicationInterruptHandler(void)
 {
+	Printing_resetWorldCoordinates(Printing_getInstance());
 	Printing_text(Printing_getInstance(), "COM interrupt", 48 - 13, 0, NULL);
 }
 

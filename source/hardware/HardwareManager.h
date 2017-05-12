@@ -53,6 +53,7 @@ static u8* const _hardwareRegisters =			(u8*)0x02000000;
 // cache management
 #define CACHE_ENABLE	asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 #define CACHE_DISABLE	asm("ldsr r0,sr24")
+#define CACHE_CLEAR		asm("mov 1,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 
 
 //---------------------------------------------------------------------------------------------------------
