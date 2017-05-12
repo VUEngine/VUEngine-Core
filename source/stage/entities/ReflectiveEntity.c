@@ -448,9 +448,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	if(reflectParallax)
 	{
-		CACHE_DISABLE;
-		CACHE_ENABLE;
-
 		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement, xCounter++)
 		{
 			this->waveLutIndex += waveLutIndexIncrement;
@@ -618,9 +615,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	}
 	else
 	{
-		CACHE_DISABLE;
-		CACHE_ENABLE;
-
 		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement, xCounter++)
 		{
 			int leftColumn = xOutput;
