@@ -443,19 +443,9 @@ void Screen_setCameraFrustum(Screen this, CameraFrustum cameraFrustum)
 		this->cameraFrustum.y0 = this->cameraFrustum.y1 - 1;
 	}
 
-	if(0 > this->cameraFrustum.x0)
-	{
-		this->cameraFrustum.x0 = 0;
-	}
-
 	if(this->cameraFrustum.x1 > __SCREEN_WIDTH)
 	{
 		this->cameraFrustum.x1 = __SCREEN_WIDTH;
-	}
-
-	if(0 > this->cameraFrustum.y0)
-	{
-		this->cameraFrustum.y0 = 0;
 	}
 
 	if(this->cameraFrustum.y1 > __SCREEN_HEIGHT)
