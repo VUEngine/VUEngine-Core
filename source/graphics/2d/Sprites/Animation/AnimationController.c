@@ -270,7 +270,7 @@ bool AnimationController_updateAnimation(AnimationController this)
 	ASSERT(this, "AnimationController::updateAnimation: null this");
 
 	// first check for a valid animation function
-	if(!this->playing || !this->animationFunction)
+	if(!this->playing | !this->animationFunction)
 	{
 		return false;
 	}

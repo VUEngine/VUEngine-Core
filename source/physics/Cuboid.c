@@ -126,9 +126,9 @@ static bool Cuboid_overlapsWithRightCuboid(RightCuboid* first, RightCuboid* seco
 	ASSERT(second, "Cuboid::overlapsWithRightCuboids: null second");
 
 	// test for collision
-	return !(first->x0 > second->x1 || first->x1 < second->x0 ||
-			 first->y0 > second->y1 || first->y1 < second->y0 ||
-			 first->z0 > second->z1 || first->z1 < second->z0);
+	return !((first->x0 > second->x1) | (first->x1 < second->x0) |
+			 (first->y0 > second->y1) | (first->y1 < second->y0) |
+			 (first->z0 > second->z1) | (first->z1 < second->z0));
 }
 
 // check if overlaps with other rect
@@ -138,9 +138,9 @@ static bool Cuboid_overlapsWithInverseRightCuboid(RightCuboid* first, RightCuboi
 	ASSERT(second, "Cuboid::overlapsWithRightCuboids: null second");
 
 	// test for collision
-	return (first->x0 < second->x0 || first->x1 > second->x1 ||
-			 first->y0 < second->y0 || first->y1 > second->y1 ||
-			 first->z0 < second->z0 || first->z1 > second->z1);
+	return ((first->x0 < second->x0) | (first->x1 > second->x1) |
+			 (first->y0 < second->y0) | (first->y1 > second->y1) |
+			 (first->z0 < second->z0) | (first->z1 > second->z1));
 }
 
 // check if overlaps with other rect

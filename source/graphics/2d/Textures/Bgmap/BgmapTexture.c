@@ -210,7 +210,7 @@ static void BgmapTexture_writeAnimatedSingle(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
@@ -247,7 +247,7 @@ static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
@@ -284,7 +284,7 @@ static void BgmapTexture_writeAnimatedShared(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
@@ -324,7 +324,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
@@ -367,7 +367,7 @@ static void BgmapTexture_writeNotAnimated(BgmapTexture this)
 	int xOffset = (int)BgmapTextureManager_getXOffset(BgmapTextureManager_getInstance(), this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(BgmapTextureManager_getInstance(), this->id);
 
-	if(0 > xOffset || 0 > yOffset)
+	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}

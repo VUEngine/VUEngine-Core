@@ -1077,6 +1077,7 @@ void Game_checkFrameRate(Game this, u32 gameFrameDuration)
 
 		if(!Game_isInSpecialMode(Game_getInstance()))
 		{
+			Printing_resetWorldCoordinates(Printing_getInstance());
 			Stage_showStreamingProfiling(Game_getStage(this), 1, 1);
 		}
 #endif

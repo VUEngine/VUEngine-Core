@@ -371,7 +371,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	ASSERT(this, "MBgmapSprite::render: null this");
 
 	// if render flag is set
-	if(!this->texture || !this->worldLayer)
+	if(!this->texture | !this->worldLayer)
 	{
 		return;
 	}

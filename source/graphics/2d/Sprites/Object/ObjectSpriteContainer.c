@@ -271,7 +271,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 	this->node = this->previousNode = NULL;
 
 	// if was the last node
-	if(!this->objectSpriteNodeToDefragment || !this->objectSprites->head)
+	if(!this->objectSpriteNodeToDefragment | !this->objectSprites->head)
 	{
 		// just update the measures
 		this->objectSpriteNodeToDefragment = NULL;

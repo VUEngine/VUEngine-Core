@@ -473,11 +473,15 @@ inline static void Container_applyEnvironmentToPosition(Container this, const Tr
 
 	if(environmentTransform)
 	{
-		// propagate position
-		this->transform.globalPosition.x = environmentTransform->globalPosition.x + this->transform.localPosition.x;
-		this->transform.globalPosition.y = environmentTransform->globalPosition.y + this->transform.localPosition.y;
-		this->transform.globalPosition.z = environmentTransform->globalPosition.z + this->transform.localPosition.z;
+		VBVec3D globalPosition = environmentTransform->globalPosition;
+		VBVec3D localPosition = this->transform.localPosition;
 
+		// propagate position
+		globalPosition.x += localPosition.x;
+		globalPosition.y += localPosition.y;
+		globalPosition.z += localPosition.z;
+
+		this->transform.globalPosition = globalPosition;
 		return;
 	}
 
@@ -490,11 +494,15 @@ inline static void Container_applyEnvironmentToRotation(Container this, const Tr
 
 	if(environmentTransform)
 	{
-		// propagate rotation
-		this->transform.globalRotation.x = environmentTransform->globalRotation.x + this->transform.localRotation.x;
-		this->transform.globalRotation.y = environmentTransform->globalRotation.y + this->transform.localRotation.y;
-		this->transform.globalRotation.z = environmentTransform->globalRotation.z + this->transform.localRotation.z;
+		Rotation globalRotation = environmentTransform->globalRotation;
+		Rotation localRotation = this->transform.localRotation;
 
+		// propagate position
+		globalRotation.x += localRotation.x;
+		globalRotation.y += localRotation.y;
+		globalRotation.z += localRotation.z;
+
+		this->transform.globalRotation = globalRotation;
 		return;
 	}
 
@@ -507,10 +515,14 @@ inline static void Container_applyEnvironmentToScale(Container this, const Trans
 
 	if(environmentTransform)
 	{
-		// propagate scale
-		this->transform.globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, this->transform.localScale.x);
-		this->transform.globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, this->transform.localScale.y);
+		Scale globalScale = environmentTransform->globalScale;
+		Scale localScale = this->transform.localScale;
 
+		// propagate scale
+		globalScale.x = FIX7_9_MULT(globalScale.x, localScale.x);
+		globalScale.y = FIX7_9_MULT(globalScale.y, localScale.y);
+
+		this->transform.globalScale = globalScale;
 		return;
 	}
 

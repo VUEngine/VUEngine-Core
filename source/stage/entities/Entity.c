@@ -404,32 +404,32 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
 
-	if(0 == rightCuboid->x0 || x + left < rightCuboid->x0)
+	if((0 == rightCuboid->x0) | (x + left < rightCuboid->x0))
 	{
 		rightCuboid->x0 = x + left;
 	}
 
-	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
+	if((0 == rightCuboid->x1) | (right + x > rightCuboid->x1))
 	{
 		rightCuboid->x1 = right + x;
 	}
 
-	if(0 == rightCuboid->y0 || y + top < rightCuboid->y0)
+	if((0 == rightCuboid->y0) | (y + top < rightCuboid->y0))
 	{
 		rightCuboid->y0 = y + top;
 	}
 
-	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
+	if((0 == rightCuboid->y1) | (bottom + y > rightCuboid->y1))
 	{
 		rightCuboid->y1 = bottom + y;
 	}
 
-	if(0 == rightCuboid->z0 || z + front < rightCuboid->z0)
+	if((0 == rightCuboid->z0) | (z + front < rightCuboid->z0))
 	{
 		rightCuboid->z0 = z + front;
 	}
 
-	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
+	if((0 == rightCuboid->z1) | (back + z > rightCuboid->z1))
 	{
 		rightCuboid->z1 = back + z;
 	}
@@ -468,7 +468,7 @@ void Entity_calculateSize(Entity this)
 		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) >> 1) - this->transform.localPosition.z
 	};
 
-	if(centerDisplacement.x || centerDisplacement.y || centerDisplacement.z)
+	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
 	{
 		if(this->centerDisplacement)
 		{
@@ -648,32 +648,32 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	int y = FIX19_13TOI(globalPosition3D.y);
 	int z = FIX19_13TOI(globalPosition3D.z);
 
-	if(0 == rightCuboid->x0 || x + left < rightCuboid->x0)
+	if((0 == rightCuboid->x0) | (x + left < rightCuboid->x0))
 	{
 		rightCuboid->x0 = x + left;
 	}
 
-	if(0 == rightCuboid->x1 || right + x > rightCuboid->x1)
+	if((0 == rightCuboid->x1) | (right + x > rightCuboid->x1))
 	{
 		rightCuboid->x1 = right + x;
 	}
 
-	if(0 == rightCuboid->y0 || y + top < rightCuboid->y0)
+	if((0 == rightCuboid->y0) | (y + top < rightCuboid->y0))
 	{
 		rightCuboid->y0 = y + top;
 	}
 
-	if(0 == rightCuboid->y1 || bottom + y > rightCuboid->y1)
+	if((0 == rightCuboid->y1) | (bottom + y > rightCuboid->y1))
 	{
 		rightCuboid->y1 = bottom + y;
 	}
 
-	if(0 == rightCuboid->z0 || z + front < rightCuboid->z0)
+	if((0 == rightCuboid->z0) | (z + front < rightCuboid->z0))
 	{
 		rightCuboid->z0 = z + front;
 	}
 
-	if(0 == rightCuboid->z1 || back + z > rightCuboid->z1)
+	if((0 == rightCuboid->z1) | (back + z > rightCuboid->z1))
 	{
 		rightCuboid->z1 = back + z;
 	}
@@ -1833,7 +1833,7 @@ bool Entity_updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
-	return (_screenDisplacement->z || (this->invalidateGlobalTransformation & __INVALIDATE_SCALE))? __UPDATE_SPRITE_SCALE : 0;
+	return (_screenDisplacement->z | (this->invalidateGlobalTransformation & __INVALIDATE_SCALE))? __UPDATE_SPRITE_SCALE : 0;
 }
 
 /**

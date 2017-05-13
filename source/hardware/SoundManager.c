@@ -296,85 +296,91 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playBGM: null this");
 
+	// only if bgm loaded
+	if(!this->bgm)
+	{
+		return;
+	}
+
 	int channel = 0;
 
 	int note = 0;
 
 	int i;
 
-	// only if bgm loaded
-	if(this->bgm != NULL)
+	// check if note's length has been played
+	if(this->noteWait[0] > this->bgm[0][1])
 	{
-		// check if note's length has been played
-		if(this->noteWait[0] > this->bgm[0][1])
+		// move to the next note
+		this->actualNote[0]++;
+
+		// initialize this->noteWait[0]
+		this->noteWait[0] = 0;
+
+		// if note is greater than song's length
+		if(this->actualNote[0] >= this->bgm[0][0])
 		{
-			// move to the next note
-			this->actualNote[0]++;
-
-			// initialize this->noteWait[0]
-			this->noteWait[0] = 0;
-
-			// if note is greater than song's length
-			if(this->actualNote[0] >= this->bgm[0][0])
-			{
-				// rewind song
-				this->actualNote[0] = 0;
-			}
+			// rewind song
+			this->actualNote[0] = 0;
 		}
-
-		// if note has changed
-		if(!this->noteWait[0])
-		{
-			for(channel = 0, i = 0; channel < 2; channel++)
-			{
-				// stop sound on the current channel
-				/* There is a bug which makes the sound of
-				 * SND_REGS 0 to not stop if not explicitly
-				 * done.
-				 */
-
-				SND_REGS[channel].SxINT = 0x00;
-
-				// grab note
-				for(; i < 2 && !this->bgm[this->actualNote[0] + 3][i]; i++);
-
-				if(i<2)
-				{
-					note = this->bgm[this->actualNote[0] + 3][i];
-				}
-
-				// if note is not off
-				if(note != 0)
-				{
-					// set note's output level
-					SND_REGS[channel].SxLRV = this->bgm[0][2];
-
-					// set note's frequency
-					SND_REGS[channel].SxFQL = (note & 0xFF);
-					SND_REGS[channel].SxFQH = (note >> 8);
-
-					// set note's envelope
-					SND_REGS[channel].SxEV0 = this->bgm[0][3];
-
-					// set note's envelope mode
-					SND_REGS[channel].SxEV1 = this->bgm[0][4];
-
-					// set waveform source
-					SND_REGS[channel].SxRAM = this->bgm[0][5];
-
-					// output note
-					SND_REGS[channel].SxINT = 0x80;
-				}
-
-				// not sure about this
-				if(channel == 4)
-				{
-					SND_REGS[channel].S5SWP = this->bgm[0][5];
-				}
-			}
-		}
-		this->noteWait[0]++;
 	}
+
+	// if note has changed
+	if(this->noteWait[0])
+	{
+		this->noteWait[0]++;
+		return;
+	}
+
+	for(channel = 0, i = 0; channel < 2; channel++)
+	{
+		// stop sound on the current channel
+		/* There is a bug which makes the sound of
+		 * SND_REGS 0 to not stop if not explicitly
+		 * done.
+		 */
+
+		SND_REGS[channel].SxINT = 0x00;
+
+		// grab note
+		for(; i < 2 && !this->bgm[this->actualNote[0] + 3][i]; i++);
+
+		if(i < 2)
+		{
+			note = this->bgm[this->actualNote[0] + 3][i];
+		}
+
+		// if note is not off
+		if(note != 0)
+		{
+			// set note's output level
+			SND_REGS[channel].SxLRV = this->bgm[0][2];
+
+			// set note's frequency
+			SND_REGS[channel].SxFQL = (note & 0xFF);
+			SND_REGS[channel].SxFQH = (note >> 8);
+
+			// set note's envelope
+			SND_REGS[channel].SxEV0 = this->bgm[0][3];
+
+			// set note's envelope mode
+			SND_REGS[channel].SxEV1 = this->bgm[0][4];
+
+			// set waveform source
+			SND_REGS[channel].SxRAM = this->bgm[0][5];
+
+			// output note
+			SND_REGS[channel].SxINT = 0x80;
+		}
+
+		// not sure about this
+		if(channel == 4)
+		{
+			SND_REGS[channel].S5SWP = this->bgm[0][5];
+		}
+	}
+
+	this->noteWait[0]++;
 }
 
 /**

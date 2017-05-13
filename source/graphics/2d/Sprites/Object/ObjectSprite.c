@@ -304,7 +304,7 @@ void ObjectSprite_render(ObjectSprite this)
 		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
 
-	if(this->hidden || !this->visible)
+	if(this->hidden | !this->visible)
 	{
 		if(0 <= this->objectIndex)
 		{
@@ -338,7 +338,6 @@ void ObjectSprite_render(ObjectSprite this)
 
 	for(; i < rows; i++)
 	{
-
 		int outputY = y + (i << 3) * yDirection;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 - 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 - 4))
