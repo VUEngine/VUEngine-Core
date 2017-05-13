@@ -205,42 +205,44 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::updateVisualRepresentation: null this");
 
-	if(this->updateSprites)
+	if(!this->updateSprites)
 	{
-		if(this->updateSprites & __UPDATE_SPRITE_SCALE)
-		{
-			__CALL_BASE_METHOD(Entity, updateVisualRepresentation, this);
-		}
-
-		// save new global position
-		VBVec3D position3D = this->transform.globalPosition;
-		VBVec2D position2D;
-		position2D.parallax = 0;
-
-		// normalize the position to screen coordinates
-		__OPTICS_NORMALIZE(position3D);
-
-		// project position to 2D space
-		__OPTICS_PROJECT_TO_2D(position3D, position2D);
-
-		VirtualNode spriteNode = this->managedSprites->head;
-
-		VBVec2D displacement;
-
-		displacement.x = position2D.x - this->previous2DPosition.x;
-		displacement.y = position2D.y - this->previous2DPosition.y;
-		displacement.z = 0;
-		displacement.parallax = 0;
-
-		for(; spriteNode; spriteNode = spriteNode->next)
-		{
-			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
-
-			__VIRTUAL_CALL(Sprite, addDisplacement, sprite, &displacement);
-		}
-
-		this->previous2DPosition = position2D;
+		return;
 	}
+
+	if(this->updateSprites & __UPDATE_SPRITE_SCALE)
+	{
+		__CALL_BASE_METHOD(Entity, updateVisualRepresentation, this);
+	}
+
+	// save new global position
+	VBVec3D position3D = this->transform.globalPosition;
+	VBVec2D position2D;
+	position2D.parallax = 0;
+
+	// normalize the position to screen coordinates
+	__OPTICS_NORMALIZE(position3D);
+
+	// project position to 2D space
+	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+
+	VirtualNode spriteNode = this->managedSprites->head;
+
+	VBVec2D displacement;
+
+	displacement.x = position2D.x - this->previous2DPosition.x;
+	displacement.y = position2D.y - this->previous2DPosition.y;
+	displacement.z = 0;
+	displacement.parallax = 0;
+
+	for(; spriteNode; spriteNode = spriteNode->next)
+	{
+		Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+
+		__VIRTUAL_CALL(Sprite, addDisplacement, sprite, &displacement);
+	}
+
+	this->previous2DPosition = position2D;
 
 	this->updateSprites = 0;
 }

@@ -194,21 +194,23 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 {
 	ASSERT(this, "Particle::updateVisualRepresentation: null this");
 
-	if(updateSpritePosition || Body_isAwake(this->body))
+	if(!(updateSpritePosition | Body_isAwake(this->body)))
 	{
-		const VBVec3D* position = Body_getPosition(this->body);
-
-		ASSERT(this->objectSprite, "Particle::updateVisualRepresentation: null objectSprite");
-
-		if(__Z_AXIS & Body_isMoving(this->body))
-		{
-			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
-		}
-
-		// update sprite's 2D position
-		__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
+		return;
 	}
+
+	const VBVec3D* position = Body_getPosition(this->body);
+
+	ASSERT(this->objectSprite, "Particle::updateVisualRepresentation: null objectSprite");
+
+	if(__Z_AXIS & Body_isMoving(this->body))
+	{
+		// calculate sprite's parallax
+		__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
+	}
+
+	// update sprite's 2D position
+	__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
 }
 
 /**

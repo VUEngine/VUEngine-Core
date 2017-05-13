@@ -338,6 +338,22 @@ void ObjectSprite_render(ObjectSprite this)
 
 	for(; i < rows; i++)
 	{
+
+		int outputY = y + (i << 3) * yDirection;
+
+		if((unsigned)(outputY - _cameraFrustum->y0 - 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 - 4))
+		{
+			int j = 0;
+			for(; j < cols; j++)
+			{
+				s32 objectIndex = this->objectIndex + i * cols + j;
+
+				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+			}
+
+			continue;
+		}
+
 		int j = 0;
 		for(; j < cols; j++)
 		{
@@ -347,14 +363,6 @@ void ObjectSprite_render(ObjectSprite this)
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
-			{
-				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-				continue;
-			}
-
-			int outputY = y + (i << 3) * yDirection;
-
-			if((unsigned)(outputY - _cameraFrustum->y0 - 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 - 4))
 			{
 				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;
