@@ -48,9 +48,9 @@
 #define NULL 		(void *)0x00000000
 
 // axis definitions
-#define __XAXIS 	0x01
-#define __YAXIS 	0x02
-#define __ZAXIS 	0x04
+#define __X_AXIS 	0x01
+#define __Y_AXIS 	0x02
+#define __Z_AXIS 	0x04
 
 // direction
 #define __LEFT		((int)-1)

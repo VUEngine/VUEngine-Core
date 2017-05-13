@@ -96,7 +96,7 @@ void CollisionSolver_destructor(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::destructor: null this");
 
-	CollisionSolver_resetCollisionStatusOnAxis(this, __XAXIS | __YAXIS | __ZAXIS);
+	CollisionSolver_resetCollisionStatusOnAxis(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
 
 	__DELETE(this->lastCollidingSpatialObject[kXAxis]);
 	__DELETE(this->lastCollidingSpatialObject[kYAxis]);
@@ -115,9 +115,9 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, int moveme
 	int i = 0;
 	for(; i < kLastAxis; i++)
 	{
-		if((kXAxis == i && (__XAXIS & movementAxis)) ||
-			(kYAxis == i && (__YAXIS & movementAxis)) ||
-			(kZAxis == i && (__ZAXIS & movementAxis))
+		if((kXAxis == i && (__X_AXIS & movementAxis)) ||
+			(kYAxis == i && (__Y_AXIS & movementAxis)) ||
+			(kZAxis == i && (__Z_AXIS & movementAxis))
 		)
 		{
 			VirtualNode node = this->lastCollidingSpatialObject[i]->head;
@@ -200,9 +200,9 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 
 	int alignThreshold = __ALIGN_PADDING;
 
-	if(__XAXIS & axisOfCollision)
+	if(__X_AXIS & axisOfCollision)
 	{
-		CollisionSolver_alignTo(this, collidingSpatialObject, __XAXIS, alignThreshold);
+		CollisionSolver_alignTo(this, collidingSpatialObject, __X_AXIS, alignThreshold);
 
 		if(registerObject)
 		{
@@ -210,18 +210,18 @@ void CollisionSolver_alignToCollidingSpatialObject(CollisionSolver this, Spatial
 		}
 	}
 
-	if(__YAXIS & axisOfCollision)
+	if(__Y_AXIS & axisOfCollision)
 	{
-		CollisionSolver_alignTo(this, collidingSpatialObject, __YAXIS, alignThreshold);
+		CollisionSolver_alignTo(this, collidingSpatialObject, __Y_AXIS, alignThreshold);
 		if(registerObject)
 		{
 			VirtualList_pushBack(this->lastCollidingSpatialObject[kYAxis], collidingSpatialObject);
 		}
 	}
 
-	if(__ZAXIS & axisOfCollision)
+	if(__Z_AXIS & axisOfCollision)
 	{
-		CollisionSolver_alignTo(this, collidingSpatialObject, __ZAXIS, alignThreshold);
+		CollisionSolver_alignTo(this, collidingSpatialObject, __Z_AXIS, alignThreshold);
 		if(registerObject)
 		{
 			VirtualList_pushBack(this->lastCollidingSpatialObject[kZAxis], collidingSpatialObject);
@@ -276,7 +276,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 
 		if(axisOfCollision)
 		{
-			if(__XAXIS & axisOfCollision)
+			if(__X_AXIS & axisOfCollision)
 			{
 				if(collidingSpatialObjectsToAlignTo[kXAxis])
 				{
@@ -307,7 +307,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 				}
 			}
 
-			if(__YAXIS & axisOfCollision)
+			if(__Y_AXIS & axisOfCollision)
 			{
 				if(collidingSpatialObjectsToAlignTo[kYAxis])
 				{
@@ -338,7 +338,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 				}
 			}
 
-			if(__ZAXIS & axisOfCollision)
+			if(__Z_AXIS & axisOfCollision)
 			{
 				if(collidingSpatialObjectsToAlignTo[kZAxis])
 				{
@@ -377,17 +377,17 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 
 	if(collidingSpatialObjectsToAlignTo[kXAxis])
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kXAxis], __XAXIS, registerObjects);
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kXAxis], __X_AXIS, registerObjects);
 	}
 
 	if(collidingSpatialObjectsToAlignTo[kYAxis])
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kYAxis], __YAXIS, registerObjects);
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kYAxis], __Y_AXIS, registerObjects);
 	}
 
 	if(collidingSpatialObjectsToAlignTo[kZAxis])
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kZAxis], __ZAXIS, registerObjects);
+		CollisionSolver_alignToCollidingSpatialObject(this, collidingSpatialObjectsToAlignTo[kZAxis], __Z_AXIS, registerObjects);
 	}
 
 	node = processedCollidingSpatialObjects->head;
@@ -434,7 +434,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 	// select the axis to affect
 	switch(axis)
 	{
-		case __XAXIS:
+		case __X_AXIS:
 
 			myPositionAxisToCheck = &this->ownerPositionToCheck->x;
 			myPositionAxis = &myOwnerPosition.x;
@@ -449,7 +449,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			myHighGap = myOwnerGap.right;
 			break;
 
-		case __YAXIS:
+		case __Y_AXIS:
 
 			myPositionAxisToCheck = &this->ownerPositionToCheck->y;
 			myPositionAxis = &myOwnerPosition.y;
@@ -464,7 +464,7 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			myHighGap = myOwnerGap.down;
 			break;
 
-		case __ZAXIS:
+		case __Z_AXIS:
 
 			myPositionAxisToCheck = &this->ownerPositionToCheck->z;
 			myPositionAxis = &myOwnerPosition.z;
@@ -580,24 +580,24 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 fix19_13 CollisionSolver_getCollidingSpatialObjectsTotalElasticity(CollisionSolver this, int axis)
 {
 	ASSERT(this, "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: null this");
-	ASSERT(!((__XAXIS & axis) && (__YAXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, y");
-	ASSERT(!((__XAXIS & axis) && (__ZAXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, z");
-	ASSERT(!((__YAXIS & axis) && (__ZAXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis y, z");
+	ASSERT(!((__X_AXIS & axis) && (__Y_AXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, y");
+	ASSERT(!((__X_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, z");
+	ASSERT(!((__Y_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis y, z");
 
 	fix19_13 totalElasticity = 0;
 	int collidingSpatialObjectListIndex = -1;
 
-	if(__XAXIS & axis)
+	if(__X_AXIS & axis)
 	{
 		collidingSpatialObjectListIndex = kXAxis;
 	}
 
-	if(__YAXIS & axis)
+	if(__Y_AXIS & axis)
 	{
 		collidingSpatialObjectListIndex = kYAxis;
 	}
 
-	if(__ZAXIS & axis)
+	if(__Z_AXIS & axis)
 	{
 		collidingSpatialObjectListIndex = kZAxis;
 	}

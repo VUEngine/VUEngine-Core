@@ -381,7 +381,7 @@ void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 
-	CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __XAXIS | __YAXIS | __ZAXIS);
+	CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __X_AXIS | __Y_AXIS | __Z_AXIS);
 
 	this->position = *position;
 }

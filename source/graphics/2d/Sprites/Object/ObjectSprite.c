@@ -156,7 +156,7 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 
 	switch(axis)
 	{
-		case __XAXIS:
+		case __X_AXIS:
 
 			if(__LEFT == direction)
 			{
@@ -168,7 +168,7 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 			}
 			break;
 
-		case __YAXIS:
+		case __Y_AXIS:
 
 			if(__UP == direction)
 			{

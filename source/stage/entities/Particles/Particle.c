@@ -200,7 +200,7 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 
 		ASSERT(this->objectSprite, "Particle::updateVisualRepresentation: null objectSprite");
 
-		if(__ZAXIS & Body_isMoving(this->body))
+		if(__Z_AXIS & Body_isMoving(this->body))
 		{
 			// calculate sprite's parallax
 			__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);

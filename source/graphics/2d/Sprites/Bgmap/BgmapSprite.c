@@ -217,12 +217,12 @@ void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
 
 	switch(axis)
 	{
-		case __XAXIS:
+		case __X_AXIS:
 
 			this->drawSpec.scale.x = FIX7_9_MULT(__ABS(this->drawSpec.scale.x), ITOFIX7_9(direction));
 			break;
 
-		case __YAXIS:
+		case __Y_AXIS:
 
 			this->drawSpec.scale.y = FIX7_9_MULT(__ABS(this->drawSpec.scale.y), ITOFIX7_9(direction));
 			break;

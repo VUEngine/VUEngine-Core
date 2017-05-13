@@ -300,17 +300,17 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 		if(!displacementIncrement.x)
 		{
-			axisToIgnore |= __XAXIS;
+			axisToIgnore |= __X_AXIS;
 		}
 
 		if(!displacementIncrement.y)
 		{
-			axisToIgnore |= __YAXIS;
+			axisToIgnore |= __Y_AXIS;
 		}
 
 		if(!displacementIncrement.z)
 		{
-			axisToIgnore |= __ZAXIS;
+			axisToIgnore |= __Z_AXIS;
 		}
 
 		// check for a collision on a single axis at a time
@@ -318,14 +318,14 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		{
 			axisOfCollision = 0;
 
-			if(!(__XAXIS & axisToIgnore))
+			if(!(__X_AXIS & axisToIgnore))
 			{
 				positionedRightCuboid.x0 += displacement.x;
 				positionedRightCuboid.x1 += displacement.x;
 
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 				{
-					axisOfCollision |= __XAXIS;
+					axisOfCollision |= __X_AXIS;
 					break;
 				}
 
@@ -337,7 +337,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
 			}
 
-			if(!(__YAXIS & axisToIgnore))
+			if(!(__Y_AXIS & axisToIgnore))
 			{
 				positionedRightCuboid.y0 += displacement.y;
 				positionedRightCuboid.y1 += displacement.y;
@@ -345,7 +345,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				// test for collision
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 				{
-					axisOfCollision |= __YAXIS;
+					axisOfCollision |= __Y_AXIS;
 					break;
 				}
 
@@ -357,7 +357,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
 			}
 
-			if(!(__ZAXIS & axisToIgnore))
+			if(!(__Z_AXIS & axisToIgnore))
 			{
 				positionedRightCuboid.z0 += displacement.z;
 				positionedRightCuboid.z1 += displacement.z;
@@ -365,7 +365,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				// test for collision
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 				{
-					axisOfCollision |= __ZAXIS;
+					axisOfCollision |= __Z_AXIS;
 					break;
 				}
 
@@ -383,7 +383,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 
 	// if not axis of collision was found
-	if((passes >= __MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__XAXIS | __YAXIS | __ZAXIS) == axisToIgnore)
+	if((passes >= __MAX_NUMBER_OF_PASSES && !axisOfCollision) || (__X_AXIS | __Y_AXIS | __Z_AXIS) == axisToIgnore)
 	{
 		axisToIgnore = 0;
 		passes = 0;
@@ -408,7 +408,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 				{
-					axisOfCollision |= __XAXIS;
+					axisOfCollision |= __X_AXIS;
 					break;
 				}
 
@@ -425,7 +425,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				// test for collision
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 				{
-					axisOfCollision |= __YAXIS;
+					axisOfCollision |= __Y_AXIS;
 					break;
 				}
 
@@ -442,7 +442,7 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				// test for collision
 				if(overlapsFunction(&positionedRightCuboid, &otherRightCuboid))
 				{
-					axisOfCollision |= __ZAXIS;
+					axisOfCollision |= __Z_AXIS;
 					break;
 				}
 
@@ -500,7 +500,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 		// test for collision
 		if(Cuboid_overlapsWithRightCuboid(&positionedRightCuboid, &otherRightCuboid))
 		{
-			axisOfPossibleCollision |= __XAXIS;
+			axisOfPossibleCollision |= __X_AXIS;
 		}
 	}
 
@@ -512,7 +512,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 		// test for collision
 		if(Cuboid_overlapsWithRightCuboid(&positionedRightCuboid, &otherRightCuboid))
 		{
-			axisOfPossibleCollision |= __YAXIS;
+			axisOfPossibleCollision |= __Y_AXIS;
 		}
 	}
 
@@ -524,7 +524,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 		// test for collision
 		if(Cuboid_overlapsWithRightCuboid(&positionedRightCuboid, &otherRightCuboid))
 		{
-			axisOfPossibleCollision |= __ZAXIS;
+			axisOfPossibleCollision |= __Z_AXIS;
 		}
 	}
 

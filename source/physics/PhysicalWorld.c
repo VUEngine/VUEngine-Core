@@ -340,7 +340,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			{
 				int movingState = Body_isMoving(body);
 
-				gravitySensibleAxis &= ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+				gravitySensibleAxis &= ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
 				if(gravitySensibleAxis)
 				{
@@ -349,9 +349,9 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 					// when moving from one shape over another
 					Acceleration gravity =
 					{
-						gravitySensibleAxis & __XAXIS ? this->gravity.x >> __APPLIED_GRAVITY_FACTOR : 0,
-						gravitySensibleAxis & __YAXIS ? this->gravity.y >> __APPLIED_GRAVITY_FACTOR : 0,
-						gravitySensibleAxis & __ZAXIS ? this->gravity.z >> __APPLIED_GRAVITY_FACTOR : 0
+						gravitySensibleAxis & __X_AXIS ? this->gravity.x >> __APPLIED_GRAVITY_FACTOR : 0,
+						gravitySensibleAxis & __Y_AXIS ? this->gravity.y >> __APPLIED_GRAVITY_FACTOR : 0,
+						gravitySensibleAxis & __Z_AXIS ? this->gravity.z >> __APPLIED_GRAVITY_FACTOR : 0
 					};
 
 					if(gravity.x || gravity.y || gravity.z)

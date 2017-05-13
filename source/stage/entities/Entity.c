@@ -2010,7 +2010,7 @@ void Entity_resume(Entity this)
  */
 int Entity_canMoveOverAxis(Entity this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
 {
-	return __XAXIS | __YAXIS | __ZAXIS;
+	return __X_AXIS | __Y_AXIS | __Z_AXIS;
 }
 
 /**
@@ -2025,5 +2025,5 @@ int Entity_canMoveOverAxis(Entity this __attribute__ ((unused)), const Accelerat
  */
 u32 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
 {
-	return __XAXIS | __YAXIS;
+	return __X_AXIS | __Y_AXIS;
 }

@@ -152,7 +152,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
-	this->invalidateGlobalTransformation = (displacement.x ? __XAXIS: 0) | (displacement.y ? __YAXIS: 0) | (displacement.y ? __ZAXIS: 0);
+	this->invalidateGlobalTransformation = (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 }
 
 void Actor_syncWithBody(Actor this)
@@ -245,7 +245,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 		}
 
-		if(__ZAXIS & bodyMovement)
+		if(__Z_AXIS & bodyMovement)
 		{
 			this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 		}
@@ -261,8 +261,8 @@ void Actor_resume(Actor this)
 
 	__CALL_BASE_METHOD(AnimatedInGameEntity, resume, this);
 
-	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __XAXIS, this->direction.x);
-	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __YAXIS, this->direction.y);
+	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __X_AXIS, this->direction.x);
+	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __Y_AXIS, this->direction.y);
 
 	Actor_syncWithBody(this);
 }
@@ -319,17 +319,17 @@ void Actor_moveOppositeDirection(Actor this, int axis)
 
 	switch(axis)
 	{
-		case __XAXIS:
+		case __X_AXIS:
 
 			this->direction.x *= -1;
 			break;
 
-		case __YAXIS:
+		case __Y_AXIS:
 
 			this->direction.y *= -1;
 			break;
 
-		case __ZAXIS:
+		case __Z_AXIS:
 
 			this->direction.z *= -1;
 			break;
@@ -343,17 +343,17 @@ int Actor_changedDirection(Actor this, int axis)
 
 	switch(axis)
 	{
-		case __XAXIS:
+		case __X_AXIS:
 
 			return this->direction.x != this->previousDirection.x;
 			break;
 
-		case __YAXIS:
+		case __Y_AXIS:
 
 			return this->direction.y != this->previousDirection.y;
 			break;
 
-		case __ZAXIS:
+		case __Z_AXIS:
 
 			return this->direction.z != this->previousDirection.z;
 			break;
@@ -370,7 +370,7 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 	// save current direction
 	this->previousDirection = this->direction;
 
-	if((__XAXIS & axis))
+	if((__X_AXIS & axis))
 	{
 		if(__RIGHT == this->direction.x)
 		{
@@ -382,7 +382,7 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 		}
 	}
 
-	if((__YAXIS & axis))
+	if((__Y_AXIS & axis))
 	{
 		if(__NEAR == this->direction.y)
 		{
@@ -394,7 +394,7 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 		}
 	}
 
-	if((__ZAXIS & axis))
+	if((__Z_AXIS & axis))
 	{
 		if(__RIGHT == this->direction.z)
 		{
@@ -427,7 +427,7 @@ int Actor_getAxisFreeForMovement(Actor this)
 
 	int movingState = Body_isMoving(this->body);
 
-	return ((__XAXIS & ~(__XAXIS & movingState) )| (__YAXIS & ~(__YAXIS & movingState)) | (__ZAXIS & ~(__ZAXIS & movingState)));
+	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 }
 
 // process a telegram
@@ -497,7 +497,7 @@ void Actor_stopAllMovement(Actor this, u32 stopShape)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
-	Actor_stopMovement(this, __XAXIS | __YAXIS | __ZAXIS, stopShape);
+	Actor_stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS, stopShape);
 }
 
 // stop movement completely
@@ -533,9 +533,9 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 
 	Force effectiveForceToApply =
 	{
-		velocity.x || (force->x && (__XAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->x : 0,
-		velocity.y || (force->y && (__YAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->y : 0,
-		velocity.z || (force->z && (__ZAXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
+		velocity.x || (force->x && (__X_AXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->x : 0,
+		velocity.y || (force->y && (__Y_AXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->y : 0,
+		velocity.z || (force->z && (__Z_AXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
 	};
 
 	Body_addForce(this->body, &effectiveForceToApply, informAboutBodyAwakening);
@@ -643,7 +643,7 @@ int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getAxisAllowedForBouncing: null this");
 
-	return __XAXIS | __YAXIS | __ZAXIS;
+	return __X_AXIS | __Y_AXIS | __Z_AXIS;
 }
 
 // start bouncing after collision with another inGameEntity

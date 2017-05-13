@@ -285,7 +285,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	{
 		xClamping = xOutputEnd - _cameraFrustum->x1 + 1;
 
-		if(__XAXIS & axisForReversing)
+		if(__X_AXIS & axisForReversing)
 		{
 			xOutputStart += xClamping;
 		}
@@ -300,7 +300,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	// must clamp the output too, but moving the wave lut index accordingly
 	if(yOutputStart < _cameraFrustum->y0)
 	{
-		if(__YAXIS & axisForReversing)
+		if(__Y_AXIS & axisForReversing)
 		{
 			ySourceEnd -= ((_cameraFrustum->y0 - yOutputStart) - Y_STEP_SIZE);
 		}
@@ -314,7 +314,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	if(yOutputEnd > _cameraFrustum->y1)
 	{
-		if(__YAXIS & axisForReversing)
+		if(__Y_AXIS & axisForReversing)
 		{
 			ySourceStart += (yOutputEnd - _cameraFrustum->y1);
 		}
@@ -327,7 +327,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	int xOutputLimit = xOutputEnd;
 	int xOutputIncrement = 1;
 
-	if(__XAXIS & axisForReversing)
+	if(__X_AXIS & axisForReversing)
 	{
 		xOutput = xOutputEnd;
 		xOutputLimit = xOutputStart;
@@ -417,7 +417,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	int ySourceIncrement = 1;
 
-	if(__YAXIS & axisForReversing)
+	if(__Y_AXIS & axisForReversing)
 	{
 		s16 temp = ySourceEnd - Y_STEP_SIZE;
 		ySourceEnd = ySourceStart;
@@ -524,7 +524,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 			POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
 			POINTER_TYPE outputValueRight = *columnOutputPointerRight;
 
-			if(__YAXIS & axisForReversing)
+			if(__Y_AXIS & axisForReversing)
 			{
 				sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
 				sourceCurrentValueRight = Utilities_reverse(sourceCurrentValueRight, BITS_PER_STEP);
@@ -577,7 +577,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				sourceNextValueLeft = *columnSourcePointerLeft;
 				sourceNextValueRight = *columnSourcePointerRight;
 
-				if(__YAXIS & axisForReversing)
+				if(__Y_AXIS & axisForReversing)
 				{
 					sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
 					sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
@@ -676,7 +676,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			POINTER_TYPE outputValueLeft = *columnOutputPointerLeft;
 
-			if(__YAXIS & axisForReversing)
+			if(__Y_AXIS & axisForReversing)
 			{
 				sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
 				sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
@@ -718,7 +718,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 				sourceNextValueLeft = *columnSourcePointerLeft;
 
-				if(__YAXIS & axisForReversing)
+				if(__Y_AXIS & axisForReversing)
 				{
 					sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
 				}
