@@ -111,9 +111,9 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity_transform(ReflectiveEntity this, const Transformation* environmentTransform __attribute__ ((unused)))
+void ReflectiveEntity_updateVisualRepresentation(ReflectiveEntity this)
 {
-	ASSERT(this, "ReflectiveEntity::transform: null this");
+	ASSERT(this, "ReflectiveEntity::updateVisualRepresentation: null this");
 
 	VBVec3D position3D = this->transform.globalPosition;
 	__OPTICS_NORMALIZE(position3D);
@@ -126,6 +126,7 @@ void ReflectiveEntity_transform(ReflectiveEntity this, const Transformation* env
 	this->nextFramePosition2D.x = FIX19_13TOI(position2D.x);
 	this->nextFramePosition2D.y = FIX19_13TOI(position2D.y);
 }
+
 static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
 {
 	ASSERT(spatialObject, "ReflectiveEntity::reflect: null this");
