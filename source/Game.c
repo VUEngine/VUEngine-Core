@@ -898,12 +898,6 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 	this->lastProcessName = "visuals update";
 #endif
 
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "focus screen";
-#endif
-	// position the screen
-	Screen_focus(this->screen, true);
-
 	// apply transformations to visuals
 	GameState_updateVisuals(this->currentState);
 
@@ -950,6 +944,12 @@ inline static void Game_updateTransformations(Game this)
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "transformation";
 #endif
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = "focus screen";
+#endif
+	// position the screen
+	Screen_focus(this->screen, true);
 
 	// apply world transformations
 	GameState_transform(this->currentState);
@@ -1146,7 +1146,6 @@ static void Game_update(Game this)
 			processDuringDRAMWritingWithHighestProcessingTimeName = processDuringDRAMWritingName;
 		}
 #endif
-
 		// update each subsystem
 		// wait to sync with the game start to render
 		// this wait actually controls the frame rate
@@ -1154,6 +1153,11 @@ static void Game_update(Game this)
 		{
 			while(VIPManager_waitForFrameStart(this->vipManager));
 		}
+
+		// must update the graphical entities while the VIP
+		// is drawing to avoid race conditions with the rendering
+		// process
+		Game_updateVisuals(this);
 
 		VIPManager_resetGameFrameStarted(this->vipManager);
 
@@ -1202,10 +1206,6 @@ static void Game_update(Game this)
 		}
 #endif
 
-		// the engine's game logic must be free of racing
-		// conditions against the VIP
-		Game_updateVisuals(this);
-
 		// process user's input
 		bool skipNonCriticalProcesses = Game_handleInput(this);
 
@@ -1251,10 +1251,7 @@ static void Game_update(Game this)
 		_streamingProcessTime = 0;
 #endif
 
-		if(!skipNonCriticalProcesses)
-		{
-			Game_stream(this);
-		}
+		Game_stream(this);
 
 #ifdef __PROFILE_GAME
 		if(_updateProfiling)
