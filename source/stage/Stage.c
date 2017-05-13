@@ -986,7 +986,11 @@ void Stage_stream(Stage this)
 	// TODO: fix me
 	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
 	// inhibit the streaming to kick in
-	if(this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
+	bool vipDrawingEnded = VIPManager_drawingEnded(VIPManager_getInstance());
+
+	int minimumSpareMilliSecondsToAllowStreaming = (this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming) << (vipDrawingEnded ? 0 : 1);
+
+	if(minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
 	{
 		return;
 	}
