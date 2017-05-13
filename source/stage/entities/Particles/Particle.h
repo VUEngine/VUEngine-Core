@@ -120,7 +120,7 @@ typedef struct ParticleDefinition
 	/// particle's mass delta
 	fix19_13 massDelta;
 
-	/// axis subject to gravity
+	/// axis subject to gravity (bitwise or of __XAXIS, __YAXIS, __ZAXIS)
 	u8 axisSubjectToGravity;
 
 	/// function pointer to control particle's behavior
