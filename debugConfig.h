@@ -29,7 +29,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __FORCE_VIP_SYNC
 
 //#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION						5
+//#define __TIMER_RESOLUTION						1
 //#undef __TIMER_FREQUENCY
 //#define __TIMER_FREQUENCY						__TIMER_100US
 
@@ -56,6 +56,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #define __PROFILE_GAME
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
+#undef __PROFILE_STREAMING
+#define __PROFILE_STREAMING
 #endif
 
 // show sprites's profiling during game
