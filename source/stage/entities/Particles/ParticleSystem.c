@@ -51,8 +51,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
-
 static Particle ParticleSystem_recycleParticle(ParticleSystem this);
 static Particle ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
@@ -99,10 +97,10 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	this->particleCount = 0;
 	this->paused = !this->particleSystemDefinition->autoStart;
 
-	// set size from definition if there are not no sprites to be added
-	this->size.x += FIX19_13TOI(__ABS(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
-	this->size.y += FIX19_13TOI(__ABS(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
-	this->size.z += FIX19_13TOI(__ABS(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
+	// set size from definition
+	this->size.x += FIX19_13TOI(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
+	this->size.y += FIX19_13TOI(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
+	this->size.z += FIX19_13TOI(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
@@ -335,9 +333,9 @@ static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem thi
 		0, 0, 0
 	};
 
-	position.x = this->transform.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpanPosition.x + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpanPosition.x - this->particleSystemDefinition->minimumRelativeSpanPosition.x));
-	position.y = this->transform.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpanPosition.y + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpanPosition.y - this->particleSystemDefinition->minimumRelativeSpanPosition.y));
-	position.z = this->transform.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpanPosition.z + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpanPosition.z - this->particleSystemDefinition->minimumRelativeSpanPosition.z));
+	position.x = this->transform.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpawnPosition.x + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
+	position.y = this->transform.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpawnPosition.y + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
+	position.z = this->transform.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpawnPosition.z + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
 
 	return &position;
 }
