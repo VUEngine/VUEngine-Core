@@ -195,7 +195,6 @@ void TimerManager_enable(TimerManager this, bool flag)
 void TimerManager_interruptHandler(void)
 {
 	//disable
-	TimerManager_enableInterrupt(_timerManager, false);
 	TimerManager_enable(_timerManager, false);
 	TimerManager_clearStat(_timerManager);
 
@@ -220,7 +219,6 @@ void TimerManager_interruptHandler(void)
 
 	// enable
 	TimerManager_enable(_timerManager, true);
-	TimerManager_enableInterrupt(_timerManager, true);
 }
 
 /**
