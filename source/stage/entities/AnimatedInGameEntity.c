@@ -319,3 +319,35 @@ void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
 	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
 }
 
+s8 AnimatedInGameEntity_getActualFrame(AnimatedInGameEntity this)
+{
+	ASSERT(this, "AnimatedInGameEntity::getActualFrame: null this");
+
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+		for(; node ; node = node->next)
+		{
+			return Sprite_getActualFrame(node->data);
+		}
+	}
+
+	return -1;
+}
+
+int AnimatedInGameEntity_getNumberOfFrames(AnimatedInGameEntity this)
+{
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+		for(; node ; node = node->next)
+		{
+			AnimationController animationController = Sprite_getAnimationController(node->data);
+			return AnimationController_getNumberOfFrames(animationController);
+		}
+	}
+
+	return -1;
+}

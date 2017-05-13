@@ -771,7 +771,6 @@ bool Sprite_isPlayingFunction(Sprite this, char* functionName)
 
 	if(this->animationController)
 	{
-		// first animate the frame
 		return AnimationController_isPlayingFunction(this->animationController, functionName);
 	}
 
@@ -793,7 +792,6 @@ void Sprite_setFrameCycleDecrement(Sprite this, u8 frameCycleDecrement)
 
 	if(this->animationController)
 	{
-		// first animate the frame
 		AnimationController_setFrameCycleDecrement(this->animationController, frameCycleDecrement);
 	}
 }
@@ -814,7 +812,6 @@ s8 Sprite_getActualFrame(Sprite this)
 
 	if(this->animationController)
 	{
-		// first animate the frame
 		return AnimationController_getActualFrame(this->animationController);
 	}
 
