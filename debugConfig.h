@@ -10,7 +10,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 
 // define / undefine as you see fit
 //#undef __LOW_BATTERY_INDICATOR
-//#define __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
@@ -32,7 +32,27 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __TIMER_RESOLUTION						5
 //#undef __TIMER_FREQUENCY
 //#define __TIMER_FREQUENCY						__TIMER_100US
-
+/*
+#undef __MEMORY_POOL_ARRAYS
+#define __MEMORY_POOL_ARRAYS																			\
+	__BLOCK_DEFINITION(192, 1)																			\
+	__BLOCK_DEFINITION(164, 8)																			\
+	__BLOCK_DEFINITION(144, 10)																			\
+	__BLOCK_DEFINITION(136, 30)																			\
+	__BLOCK_DEFINITION(124, 40)																			\
+	__BLOCK_DEFINITION(108, 30)																			\
+	__BLOCK_DEFINITION(100, 20)																			\
+	__BLOCK_DEFINITION(92, 20)																			\
+	__BLOCK_DEFINITION(88, 25)																			\
+	__BLOCK_DEFINITION(80, 30)																			\
+	__BLOCK_DEFINITION(76, 20)																			\
+	__BLOCK_DEFINITION(68, 70)																			\
+	__BLOCK_DEFINITION(32, 14)																			\
+	__BLOCK_DEFINITION(28, 210)																			\
+	__BLOCK_DEFINITION(24, 80)																			\
+	__BLOCK_DEFINITION(20, 680)																			\
+	__BLOCK_DEFINITION(16, 430)																			\
+*/
 
 // do not delete the following macros!
 
@@ -79,6 +99,30 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #ifdef __ALERT_STACK_OVERFLOW
 #undef __PRINT_FRAMERATE
 #define __PRINT_FRAMERATE
+#endif
+
+#ifdef __PRINT_FRAMERATE
+#ifndef __PRINT_PROFILING_INFO
+#define __PRINT_PROFILING_INFO
+#endif
+#else
+#ifdef __PROFILE_GAME
+#ifndef __PRINT_PROFILING_INFO
+#define __PRINT_PROFILING_INFO
+#endif
+#else
+#ifdef __PRINT_MEMORY_POOL_STATUS
+#ifndef __PRINT_PROFILING_INFO
+#define __PRINT_PROFILING_INFO
+#endif
+#else
+#ifdef __SHOW_STREAMING_PROFILING
+#ifndef __PRINT_PROFILING_INFO
+#define __PRINT_PROFILING_INFO
+#endif
+#endif
+#endif
+#endif
 #endif
 
 #endif

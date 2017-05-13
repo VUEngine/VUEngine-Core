@@ -898,6 +898,12 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 	this->lastProcessName = "visuals update";
 #endif
 
+#ifdef __REGISTER_LAST_PROCESS_NAME
+	this->lastProcessName = "focus screen";
+#endif
+	// position the screen
+	Screen_focus(this->screen, true);
+
 	// apply transformations to visuals
 	GameState_updateVisuals(this->currentState);
 
@@ -940,12 +946,6 @@ inline static void Game_updateTransformations(Game this)
 #ifdef __PROFILE_GAME
 	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "focus screen";
-#endif
-	// position the screen
-	Screen_focus(this->screen, true);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "transformation";
