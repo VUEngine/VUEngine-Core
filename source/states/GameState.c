@@ -411,8 +411,10 @@ void GameState_transform(GameState this)
 	ASSERT(this, "GameState::transform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
 
+	extern Transformation neutralEnvironmentTransformation;
+
 	// then transform loaded entities
-	__VIRTUAL_CALL(Container, transform, this->stage, NULL);
+	__VIRTUAL_CALL(Container, transform, this->stage, &neutralEnvironmentTransformation);
 }
 
 /**
@@ -428,7 +430,9 @@ static void GameState_initialTransform(GameState this)
 	ASSERT(this, "GameState::initialTransform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
 
-	__VIRTUAL_CALL(Container, initialTransform, this->stage, NULL, true);
+	extern Transformation neutralEnvironmentTransformation;
+
+	__VIRTUAL_CALL(Container, initialTransform, this->stage, &neutralEnvironmentTransformation, true);
 }
 
 

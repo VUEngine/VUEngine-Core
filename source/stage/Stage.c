@@ -95,6 +95,28 @@ typedef struct StageEntityDescription
 
 } StageEntityDescription;
 
+const Transformation neutralEnvironmentTransformation =
+{
+	// spatial local position
+	{0, 0, 0},
+
+	// spatial global position
+	{0, 0, 0},
+
+	// local rotation
+	{0, 0, 0},
+
+	// global rotation
+	{0, 0, 0},
+
+	// scale
+	{ITOFIX7_9(1), ITOFIX7_9(1)},
+
+	// scale
+	{ITOFIX7_9(1), ITOFIX7_9(1)},
+
+};
+
 
 //---------------------------------------------------------------------------------------------------------
 // 												PROTOTYPES
@@ -326,11 +348,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	ParticleRemover_setRemovalDelayCycles(this->particleRemover, stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
-	__VIRTUAL_CALL(Container, initialTransform, this, NULL, true);
+	__VIRTUAL_CALL(Container, initialTransform, this, &neutralEnvironmentTransformation, true);
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, NULL, true);
+		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 }
 
@@ -380,7 +402,7 @@ static void Stage_setupUI(Stage this)
 		if(this->uiContainer)
 		{
 			// apply transformations
-			__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, NULL, true);
+			__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &neutralEnvironmentTransformation, true);
 		}
 	}
 }
@@ -404,7 +426,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
-			__VIRTUAL_CALL(Container, initialTransform, entity, NULL, true);
+			__VIRTUAL_CALL(Container, initialTransform, entity, &neutralEnvironmentTransformation, true);
 
 			__VIRTUAL_CALL(Entity, ready, entity, true);
 		}
@@ -1063,12 +1085,12 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 			continue;
 		}
 
-		__VIRTUAL_CALL(Container, transform, child, NULL);
+		__VIRTUAL_CALL(Container, transform, child, environmentTransform);
 	}
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, transform, this->uiContainer, NULL);
+		__VIRTUAL_CALL(Container, transform, this->uiContainer, environmentTransform);
 	}
 }
 
@@ -1171,13 +1193,13 @@ void Stage_resume(Stage this)
 	__CALL_BASE_METHOD(Container, resume, this);
 
 	// apply transformations
-	__VIRTUAL_CALL(Container, initialTransform, this, NULL, true);
+	__VIRTUAL_CALL(Container, initialTransform, this, &neutralEnvironmentTransformation, true);
 
 	if(this->uiContainer)
 	{
 		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->uiContainer));
 
-		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, NULL, true);
+		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 
 	this->entityFactory = __NEW(EntityFactory);

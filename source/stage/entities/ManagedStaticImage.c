@@ -190,8 +190,8 @@ void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation*
 		return;
 	}
 
-	if((__INVALIDATE_POSITION & this->invalidateGlobalTransformation) ||
-		this->children)
+	if((__INVALIDATE_POSITION & this->invalidateGlobalTransformation) |
+		(u32)this->children)
 	{
 		// call base class's transform method
 		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);

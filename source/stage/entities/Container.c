@@ -471,62 +471,44 @@ inline static void Container_applyEnvironmentToPosition(Container this, const Tr
 {
 	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
 
-	if(environmentTransform)
-	{
-		VBVec3D globalPosition = environmentTransform->globalPosition;
-		VBVec3D localPosition = this->transform.localPosition;
+	VBVec3D globalPosition = environmentTransform->globalPosition;
+	VBVec3D localPosition = this->transform.localPosition;
 
-		// propagate position
-		globalPosition.x += localPosition.x;
-		globalPosition.y += localPosition.y;
-		globalPosition.z += localPosition.z;
+	// propagate position
+	globalPosition.x += localPosition.x;
+	globalPosition.y += localPosition.y;
+	globalPosition.z += localPosition.z;
 
-		this->transform.globalPosition = globalPosition;
-		return;
-	}
-
-	this->transform.globalPosition = this->transform.localPosition;
+	this->transform.globalPosition = globalPosition;
 }
 
 inline static void Container_applyEnvironmentToRotation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToRotation: null this");
 
-	if(environmentTransform)
-	{
-		Rotation globalRotation = environmentTransform->globalRotation;
-		Rotation localRotation = this->transform.localRotation;
+	Rotation globalRotation = environmentTransform->globalRotation;
+	Rotation localRotation = this->transform.localRotation;
 
-		// propagate position
-		globalRotation.x += localRotation.x;
-		globalRotation.y += localRotation.y;
-		globalRotation.z += localRotation.z;
+	// propagate position
+	globalRotation.x += localRotation.x;
+	globalRotation.y += localRotation.y;
+	globalRotation.z += localRotation.z;
 
-		this->transform.globalRotation = globalRotation;
-		return;
-	}
-
-	this->transform.globalRotation = this->transform.localRotation;
+	this->transform.globalRotation = globalRotation;
 }
 
 inline static void Container_applyEnvironmentToScale(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToScale: null this");
 
-	if(environmentTransform)
-	{
-		Scale globalScale = environmentTransform->globalScale;
-		Scale localScale = this->transform.localScale;
+	Scale globalScale = environmentTransform->globalScale;
+	Scale localScale = this->transform.localScale;
 
-		// propagate scale
-		globalScale.x = FIX7_9_MULT(globalScale.x, localScale.x);
-		globalScale.y = FIX7_9_MULT(globalScale.y, localScale.y);
+	// propagate scale
+	globalScale.x = FIX7_9_MULT(globalScale.x, localScale.x);
+	globalScale.y = FIX7_9_MULT(globalScale.y, localScale.y);
 
-		this->transform.globalScale = globalScale;
-		return;
-	}
-
-	this->transform.globalScale = this->transform.localScale;
+	this->transform.globalScale = globalScale;
 }
 
 // initial transform but don't call the virtual method
@@ -574,6 +556,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 void Container_transform(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transform: null this");
+	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
 	// apply environment transform
 	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
@@ -908,7 +891,7 @@ static Container Container_findChildByName(Container this, VirtualList children,
 
 	if(this->deleteMe)
 	{
-		return;
+		return NULL;
 	}
 
 	Container child, grandChild;
