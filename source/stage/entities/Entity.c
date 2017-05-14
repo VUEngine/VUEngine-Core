@@ -1708,6 +1708,26 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			z = FIX19_13TOI(spritePosition.z);
 
 			// check x visibility
+			if((x + (int)this->size.x < -pad) | (x > __SCREEN_WIDTH + pad))
+			{
+				continue;
+			}
+
+			// check y visibility
+			if((y + (int)this->size.y < -pad) | (y > __SCREEN_HEIGHT + pad))
+			{
+				continue;
+			}
+
+			// check z visibility
+			if((z + (int)this->size.z < -pad) | (z > __SCREEN_DEPTH + pad))
+			{
+				continue;
+			}
+
+			return true;
+
+			/*
 			if(x + (int)this->size.x >= -pad && x <= __SCREEN_WIDTH + pad)
 			{
 				// check y visibility
@@ -1720,6 +1740,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 					}
 				}
 			}
+			*/
 		}
 	}
 	else
@@ -1747,6 +1768,26 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		y = FIX19_13TOI(position2D.y);
 		z = FIX19_13TOI(position2D.z);
 
+		// check x visibility
+		if((x + halfWidth <= -pad) | (x - halfWidth >= __SCREEN_WIDTH + pad))
+		{
+			return false;
+		}
+
+		// check y visibility
+		if((y + halfHeight <= -pad) | (y - halfHeight >= __SCREEN_HEIGHT + pad))
+		{
+			return false;
+		}
+
+		// check z visibility
+		if((z + halfDepth <= -pad) | (z - halfDepth >= __SCREEN_DEPTH + pad))
+		{
+			return false;
+		}
+
+		return true;
+/*
 		if(x + halfWidth > -pad && x - halfWidth < __SCREEN_WIDTH + pad)
 		{
 			// check y visibility
@@ -1759,6 +1800,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 				}
 			}
 		}
+		*/
 	}
 
 	if(recursive && this->children)

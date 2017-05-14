@@ -219,17 +219,19 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 {
 	ASSERT(this, "AnimatedInGameEntity::playAnimation: null this");
 
-	if(this->sprites && animationName)
+	if(!this->sprites | !animationName)
 	{
-		this->currentAnimationName = animationName;
+		return;
+	}
 
-		VirtualNode node = this->sprites->head;
+	this->currentAnimationName = animationName;
 
-		// play animation on each sprite
-		for(; node ; node = node->next)
-		{
-			Sprite_play(__SAFE_CAST(Sprite, node->data), this->animationDescription, animationName);
-		}
+	VirtualNode node = this->sprites->head;
+
+	// play animation on each sprite
+	for(; node ; node = node->next)
+	{
+		Sprite_play(__SAFE_CAST(Sprite, node->data), this->animationDescription, animationName);
 	}
 }
 
@@ -238,15 +240,17 @@ void AnimatedInGameEntity_nextFrame(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::nextFrame: null this");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+		return;
+	}
 
-		// do on each sprite
-		for(; node ; node = node->next)
-		{
-			Sprite_nextFrame(__SAFE_CAST(Sprite, node->data));
-		}
+	VirtualNode node = this->sprites->head;
+
+	// do on each sprite
+	for(; node ; node = node->next)
+	{
+		Sprite_nextFrame(__SAFE_CAST(Sprite, node->data));
 	}
 }
 
@@ -255,15 +259,17 @@ void AnimatedInGameEntity_previousFrame(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::previousFrame: null this");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+		return;
+	}
 
-		// do on each sprite
-		for(; node ; node = node->next)
-		{
-			Sprite_previousFrame(__SAFE_CAST(Sprite, node->data));
-		}
+	VirtualNode node = this->sprites->head;
+
+	// do on each sprite
+	for(; node ; node = node->next)
+	{
+		Sprite_previousFrame(__SAFE_CAST(Sprite, node->data));
 	}
 }
 
@@ -281,14 +287,14 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 {
 	ASSERT(this, "AnimatedInGameEntity::isAnimationLoaded: null this");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head));
-
-		return Sprite_isPlayingFunction(__SAFE_CAST(Sprite, sprite), functionName);
+		return false;
 	}
 
-	return false;
+	Sprite sprite = __SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head));
+
+	return Sprite_isPlayingFunction(__SAFE_CAST(Sprite, sprite), functionName);
 }
 
 // get animation definition
@@ -323,14 +329,16 @@ s8 AnimatedInGameEntity_getActualFrame(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::getActualFrame: null this");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+		return -1;
+	}
 
-		for(; node ; node = node->next)
-		{
-			return Sprite_getActualFrame(node->data);
-		}
+	VirtualNode node = this->sprites->head;
+
+	for(; node ; node = node->next)
+	{
+		return Sprite_getActualFrame(node->data);
 	}
 
 	return -1;
@@ -340,13 +348,15 @@ int AnimatedInGameEntity_getNumberOfFrames(AnimatedInGameEntity this)
 {
 	if(this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+		return -1;
+	}
 
-		for(; node ; node = node->next)
-		{
-			AnimationController animationController = Sprite_getAnimationController(node->data);
-			return AnimationController_getNumberOfFrames(animationController);
-		}
+	VirtualNode node = this->sprites->head;
+
+	for(; node ; node = node->next)
+	{
+		AnimationController animationController = Sprite_getAnimationController(node->data);
+		return AnimationController_getNumberOfFrames(animationController);
 	}
 
 	return -1;

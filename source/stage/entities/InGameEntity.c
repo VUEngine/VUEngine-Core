@@ -109,37 +109,39 @@ void InGameEntity_calculateGap(InGameEntity this)
 {
 	ASSERT(this, "InGameEntity::setGap: null this");
 
-	if(this->sprites && this->sprites->head)
+	if(!this->sprites | !this->sprites->head)
 	{
-		// retrieve transforming mode
-		int bgmapMode = Sprite_getMode(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
+		return;
+	}
 
-		if(__WORLD_AFFINE == bgmapMode)
+	// retrieve transforming mode
+	int bgmapMode = Sprite_getMode(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
+
+	if(__WORLD_AFFINE == bgmapMode)
+	{
+		// load original gap
+		this->gap = this->inGameEntityDefinition->gap;
+
+		// if facing to the left, swap left / right gap
+		if(__LEFT == this->direction.x && __WORLD_AFFINE == bgmapMode)
 		{
-			// load original gap
-			this->gap = this->inGameEntityDefinition->gap;
-
-			// if facing to the left, swap left / right gap
-			if(__LEFT == this->direction.x && __WORLD_AFFINE == bgmapMode)
-			{
-				this->gap.left 	= this->inGameEntityDefinition->gap.right;
-				this->gap.right = this->inGameEntityDefinition->gap.left;
-			}
+			this->gap.left 	= this->inGameEntityDefinition->gap.right;
+			this->gap.right = this->inGameEntityDefinition->gap.left;
 		}
-		else
-		{
-			// retrieve the sprite's scale
-			Scale scale = this->transform.globalScale;
+	}
+	else
+	{
+		// retrieve the sprite's scale
+		Scale scale = this->transform.globalScale;
 
-			ASSERT(scale.x, "InGameEntity::setGap: 0 scale x");
-			ASSERT(scale.y, "InGameEntity::setGap: 0 scale y");
+		ASSERT(scale.x, "InGameEntity::setGap: 0 scale x");
+		ASSERT(scale.y, "InGameEntity::setGap: 0 scale y");
 
-			// must scale the gap
-			this->gap.left 	= FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), __ABS(scale.x)));
-			this->gap.right = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), __ABS(scale.x)));
-			this->gap.up 	= FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), __ABS(scale.y)));
-			this->gap.down 	= FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), __ABS(scale.y)));
-		}
+		// must scale the gap
+		this->gap.left 	= FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.left), __ABS(scale.x)));
+		this->gap.right = FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.right), __ABS(scale.x)));
+		this->gap.up 	= FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.up), __ABS(scale.y)));
+		this->gap.down 	= FIX7_9TOI(FIX7_9_DIV(ITOFIX7_9(this->gap.down), __ABS(scale.y)));
 	}
 }
 
