@@ -237,75 +237,75 @@ bool _updateProfiling = false;
 
 static char* processDuringDRAMWritingName = NULL;
 
-static u16 _gameFrameRealDuration = 0;
-static u16 _gameFrameDurationAverage = 0;
-static u16 _gameFrameEffectiveDuration = 0;
-static u16 _gameFrameEffectiveDurationAverage = 0;
-static u16 _gameFrameHighestEffectiveDuration = 0;
-static u16 _tornGameFrameCount = 0;
+static s16 _gameFrameRealDuration = 0;
+static s16 _gameFrameDurationAverage = 0;
+static s16 _gameFrameEffectiveDuration = 0;
+static s16 _gameFrameEffectiveDurationAverage = 0;
+static s16 _gameFrameHighestEffectiveDuration = 0;
+static s16 _tornGameFrameCount = 0;
 
-u16 _renderingTotalTime = 0;
-static u16 _updateVisualsTotalTime = 0;
-static u16 _updateLogicTotalTime = 0;
-static u16 _updatePhysicsTotalTime = 0;
-static u16 _updateTransformationsTotalTime = 0;
-static u16 _streamingTotalTime = 0;
-static u16 _handleInputTotalTime = 0;
-static u16 _dispatchDelayedMessageTotalTime = 0;
+s16 _renderingTotalTime = 0;
+static s16 _updateVisualsTotalTime = 0;
+static s16 _updateLogicTotalTime = 0;
+static s16 _updatePhysicsTotalTime = 0;
+static s16 _updateTransformationsTotalTime = 0;
+static s16 _streamingTotalTime = 0;
+static s16 _handleInputTotalTime = 0;
+static s16 _dispatchDelayedMessageTotalTime = 0;
 
-u16 _renderingHighestTime = 0;
-static u16 _updateVisualsHighestTime = 0;
-static u16 _updateLogicHighestTime = 0;
-static u16 _streamingHighestTime = 0;
-static u16 _updatePhysicsHighestTime = 0;
-static u16 _updateTransformationsHighestTime = 0;
-static u16 _handleInputHighestTime = 0;
-static u16 _dispatchDelayedMessageHighestTime = 0;
-static u16 _processCollisionsTotalTime = 0;
-static u16 _processCollisionsHighestTime = 0;
+s16 _renderingHighestTime = 0;
+static s16 _updateVisualsHighestTime = 0;
+static s16 _updateLogicHighestTime = 0;
+static s16 _streamingHighestTime = 0;
+static s16 _updatePhysicsHighestTime = 0;
+static s16 _updateTransformationsHighestTime = 0;
+static s16 _handleInputHighestTime = 0;
+static s16 _dispatchDelayedMessageHighestTime = 0;
+static s16 _processCollisionsTotalTime = 0;
+static s16 _processCollisionsHighestTime = 0;
 
-u16 _renderingProcessTimeHelper = 0;
-u16 _renderingProcessTime = 0;
-static u16 _updateVisualsProcessTime = 0;
-static u16 _updateLogicProcessTime = 0;
-static u16 _streamingProcessTime = 0;
-static u16 _updatePhysicsProcessTime = 0;
-static u16 _updateTransformationsProcessTime = 0;
-static u16 _handleInputProcessTime = 0;
-static u16 _dispatchDelayedMessageProcessTime = 0;
-static u16 _processCollisionsProcessTime = 0;
+s16 _renderingProcessTimeHelper = 0;
+s16 _renderingProcessTime = 0;
+static s16 _updateVisualsProcessTime = 0;
+static s16 _updateLogicProcessTime = 0;
+static s16 _streamingProcessTime = 0;
+static s16 _updatePhysicsProcessTime = 0;
+static s16 _updateTransformationsProcessTime = 0;
+static s16 _handleInputProcessTime = 0;
+static s16 _dispatchDelayedMessageProcessTime = 0;
+static s16 _processCollisionsProcessTime = 0;
 
-static u16 _gameFrameHighestTime = 0;
+static s16 _gameFrameHighestTime = 0;
 
-static u16 _previousGameFrameRealDuration = 0;
-static u16 _previousGameFrameDurationAverage = 0;
-static u16 _previousGameFrameEffectiveDuration = 0;
-static u16 _previousGameFrameEffectiveDurationAverage = 0;
-static u16 _previousGameFrameHighestEffectiveDuration = 0;
-static u16 _previousTornGameFrameCount = 0;
+static s16 _previousGameFrameRealDuration = 0;
+static s16 _previousGameFrameDurationAverage = 0;
+static s16 _previousGameFrameEffectiveDuration = 0;
+static s16 _previousGameFrameEffectiveDurationAverage = 0;
+static s16 _previousGameFrameHighestEffectiveDuration = 0;
+static s16 _previousTornGameFrameCount = 0;
 
-static u16 _previousRenderingTotalTime = 0;
-static u16 _previousUpdateVisualsTotalTime = 0;
-static u16 _previousUpdateLogicTotalTime = 0;
-static u16 _previousUpdatePhysicsTotalTime = 0;
-static u16 _previousUpdateTransformationsTotalTime = 0;
-static u16 _previousStreamingTotalTime = 0;
-static u16 _previousHandleInputTotalTime = 0;
-static u16 _previousDispatchDelayedMessageTotalTime = 0;
+static s16 _previousRenderingTotalTime = 0;
+static s16 _previousUpdateVisualsTotalTime = 0;
+static s16 _previousUpdateLogicTotalTime = 0;
+static s16 _previousUpdatePhysicsTotalTime = 0;
+static s16 _previousUpdateTransformationsTotalTime = 0;
+static s16 _previousStreamingTotalTime = 0;
+static s16 _previousHandleInputTotalTime = 0;
+static s16 _previousDispatchDelayedMessageTotalTime = 0;
 
-static u16 _previousRenderingHighestTime = 0;
-static u16 _previousUpdateVisualsHighestTime = 0;
-static u16 _previousUpdateLogicHighestTime = 0;
-static u16 _previousStreamingHighestTime = 0;
-static u16 _previousUpdatePhysicsHighestTime = 0;
-static u16 _previousUpdateTransformationsHighestTime = 0;
-static u16 _previousHandleInputHighestTime = 0;
-static u16 _previousDispatchDelayedMessageHighestTime = 0;
-static u16 _previousProcessCollisionsTotalTime = 0;
-static u16 _previousProcessCollisionsHighestTime = 0;
+static s16 _previousRenderingHighestTime = 0;
+static s16 _previousUpdateVisualsHighestTime = 0;
+static s16 _previousUpdateLogicHighestTime = 0;
+static s16 _previousStreamingHighestTime = 0;
+static s16 _previousUpdatePhysicsHighestTime = 0;
+static s16 _previousUpdateTransformationsHighestTime = 0;
+static s16 _previousHandleInputHighestTime = 0;
+static s16 _previousDispatchDelayedMessageHighestTime = 0;
+static s16 _previousProcessCollisionsTotalTime = 0;
+static s16 _previousProcessCollisionsHighestTime = 0;
 
-static u16 _previousGameFrameHighestTime = 0;
-static u16 _previousGameFrameTotalTime = 0;
+static s16 _previousGameFrameHighestTime = 0;
+static s16 _previousGameFrameTotalTime = 0;
 
 #endif
 
@@ -661,7 +661,7 @@ static u32 Game_handleInput(Game this)
 
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -792,7 +792,7 @@ static u32 Game_handleInput(Game this)
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_handleInputProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_handleInputProcessTime =  -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_handleInputHighestTime = _handleInputProcessTime > _handleInputHighestTime ? _handleInputProcessTime : _handleInputHighestTime;
 		_handleInputTotalTime += _handleInputProcessTime;
 	}
@@ -805,7 +805,7 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -824,7 +824,7 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
 
 		if(_updateProfiling)
 		{
-			_dispatchDelayedMessageProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+			_dispatchDelayedMessageProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 			_dispatchDelayedMessageHighestTime = _dispatchDelayedMessageProcessTime > _dispatchDelayedMessageHighestTime ? _dispatchDelayedMessageProcessTime : _dispatchDelayedMessageHighestTime;
 			_dispatchDelayedMessageTotalTime += _dispatchDelayedMessageProcessTime;
 		}
@@ -846,7 +846,7 @@ inline static void Game_updateLogic(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __DEBUG_TOOLS
@@ -883,7 +883,7 @@ inline static void Game_updateLogic(Game this)
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updateLogicProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_updateLogicProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateLogicHighestTime = _updateLogicProcessTime > _updateLogicHighestTime ? _updateLogicProcessTime : _updateLogicHighestTime;
 		_updateLogicTotalTime += _updateLogicProcessTime;
 	}
@@ -895,7 +895,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -908,7 +908,7 @@ inline static void Game_updateVisuals(Game this __attribute__ ((unused)))
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updateVisualsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_updateVisualsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateVisualsHighestTime = _updateVisualsProcessTime > _updateVisualsHighestTime ? _updateVisualsProcessTime : _updateVisualsHighestTime;
 		_updateVisualsTotalTime += _updateVisualsProcessTime;
 	}
@@ -920,7 +920,7 @@ inline static void Game_updatePhysics(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -933,7 +933,7 @@ inline static void Game_updatePhysics(Game this)
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updatePhysicsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_updatePhysicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updatePhysicsHighestTime = _updatePhysicsProcessTime > _updatePhysicsHighestTime ? _updatePhysicsProcessTime : _updatePhysicsHighestTime;
 		_updatePhysicsTotalTime += _updatePhysicsProcessTime;
 	}
@@ -944,7 +944,7 @@ inline static void Game_updateTransformations(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -963,7 +963,7 @@ inline static void Game_updateTransformations(Game this)
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updateTransformationsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_updateTransformationsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateTransformationsHighestTime = _updateTransformationsProcessTime > _updateTransformationsHighestTime ? _updateTransformationsProcessTime : _updateTransformationsHighestTime;
 		_updateTransformationsTotalTime += _updateTransformationsProcessTime;
 	}
@@ -974,7 +974,7 @@ inline static u32 Game_updateCollisions(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 	// process the collisions after the transformations have taken place
@@ -988,7 +988,7 @@ inline static u32 Game_updateCollisions(Game this)
 
 	if(_updateProfiling)
 	{
-		_processCollisionsProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_processCollisionsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_processCollisionsHighestTime = _processCollisionsProcessTime > _processCollisionsHighestTime ? _processCollisionsProcessTime : _processCollisionsHighestTime;
 		_processCollisionsTotalTime += _processCollisionsProcessTime;
 	}
@@ -1003,7 +1003,7 @@ inline static void Game_stream(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1015,7 +1015,7 @@ inline static void Game_stream(Game this)
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_streamingProcessTime = TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess - _renderingProcessTimeHelper;
+		_streamingProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_streamingHighestTime = _streamingProcessTime > _streamingHighestTime ? _streamingProcessTime :  _streamingHighestTime;
 		_streamingTotalTime += _streamingProcessTime;
 	}
@@ -1138,7 +1138,7 @@ static void Game_update(Game this)
 	bool cycle = true;
 #endif
 
-	u32 gameFrameDuration = 0;
+	s32 gameFrameDuration = 0;
 
 	while(true)
 	{
@@ -1147,7 +1147,7 @@ static void Game_update(Game this)
 #endif
 
 #ifdef __PROFILE_GAME
-		u32 gameFrameTotalTime = TimerManager_getMillisecondsElapsed(this->timerManager);
+		s32 gameFrameTotalTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 
 		if(_gameFrameHighestTime < gameFrameTotalTime)
 		{

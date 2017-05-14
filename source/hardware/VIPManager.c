@@ -441,7 +441,7 @@ static void VIPManager_writeDRAM(VIPManager this)
 	ASSERT(this, "VIPManager::writeDRAM: null this");
 
 #ifdef __PROFILE_GAME
-	u32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(_timerManager);
+	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(_timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -483,10 +483,10 @@ static void VIPManager_writeDRAM(VIPManager this)
 #endif
 
 #ifdef __PROFILE_GAME
-	extern u16 _renderingProcessTimeHelper;
-	extern u16 _renderingProcessTime;
-	extern u16 _renderingHighestTime;
-	extern u16 _renderingTotalTime;
+	extern s16 _renderingProcessTimeHelper;
+	extern s16 _renderingProcessTime;
+	extern s16 _renderingHighestTime;
+	extern s16 _renderingTotalTime;
 	extern bool _updateProfiling;
 
 	if(_updateProfiling)
