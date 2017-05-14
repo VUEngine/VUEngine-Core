@@ -119,7 +119,7 @@ typedef struct ParticleSystemDefinition
 	/// whether to delete or reuse expired particles
 	u8 recycleParticles;
 
-	/// minimun generation delay in milliseconds
+	/// minimum generation delay in milliseconds
 	u16 minimumSpawnDelay;
 
 	/// generation delay delta in milliseconds
@@ -137,14 +137,11 @@ typedef struct ParticleSystemDefinition
 	/// particle's definition
 	ParticleDefinition* particleDefinition;
 
-	/// minimum random distance from the center of the system for spanw
-	VBVec3D minimumSpanDistance;
-
 	/// minimum relative spawn position
-	VBVec3D minimumRelativeSpanPosition;
+	VBVec3D minimumRelativeSpawnPosition;
 
 	/// maximum relative spawn position
-	VBVec3D maximumRelativeSpanPosition;
+	VBVec3D maximumRelativeSpawnPosition;
 
 	/// minimum force to apply (use int values in the definition to avoid overflow)
 	VBVec3D minimumForce;

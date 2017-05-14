@@ -120,13 +120,13 @@ typedef struct ParticleDefinition
 	/// particle's mass delta
 	fix19_13 massDelta;
 
-	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS)
+	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
 	u8 axisSubjectToGravity;
 
 	/// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);
 
-	/// animation's name to play if sprite is animated
+	/// name of animation to play if sprite is animated
 	AnimationDescription* animationDescription;
 
 	/// animation to play automatically
