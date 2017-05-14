@@ -906,6 +906,11 @@ static Container Container_findChildByName(Container this, VirtualList children,
 {
 	ASSERT(this, "Container::findChildByName: null this");
 
+	if(this->deleteMe)
+	{
+		return;
+	}
+
 	Container child, grandChild;
 	VirtualNode node = children->head;
 
@@ -941,7 +946,7 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 
 	Container foundChild = NULL;
 
-	if(childName && this->children)
+	if(!this->deleteMe && childName && this->children)
 	{
 		// search through direct children
 		foundChild = Container_findChildByName(this, this->children, childName, false);
