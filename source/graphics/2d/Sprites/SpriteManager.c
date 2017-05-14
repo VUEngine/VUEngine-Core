@@ -126,6 +126,13 @@ typedef struct SpritesList
 	 * @memberof		SpriteManager
 	 */																									\
 	s8 waitToWrite;																						\
+	/**
+	 * @var bool		lockSpritesLists
+	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
+	 * @memberof		SpriteManager
+	 */																									\
+	bool lockSpritesLists;																						\
+
 
 /**
  * @class 	SpriteManager
@@ -191,6 +198,7 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
 	this->waitToWrite = 0;
+	this->lockSpritesLists = false;
 
 	SpriteManager_reset(this);
 }
@@ -285,9 +293,11 @@ void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite)
 
 	if(sprite && !VirtualList_find(this->spritesToDispose, sprite))
 	{
+		this->lockSpritesLists = true;
 		VirtualList_pushBack(this->spritesToDispose, sprite);
 
 		Sprite_hide(sprite);
+		this->lockSpritesLists = false;
 	}
 }
 
@@ -305,7 +315,7 @@ static bool SpriteManager_disposeSprites(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::disposeSprites: null this");
 
-	if(this->spritesToDispose->head)
+	if(!this->lockSpritesLists && this->spritesToDispose->head)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->spritesToDispose));
 
@@ -447,6 +457,7 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 
 	if(!alreadyLoadedSpriteNode)
 	{
+		this->lockSpritesLists = true;
 #endif
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
@@ -472,6 +483,8 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 #endif
 
 	Sprite_setWorldLayer(sprite, layer);
+
+	this->lockSpritesLists = false;
 }
 
 /**
@@ -489,6 +502,8 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::relinquishWorldLayer: removing no sprite");
 
 	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::relinquishWorldLayer: sprite not found");
+
+	this->lockSpritesLists = true;
 
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
@@ -531,6 +546,8 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 	{
 		ASSERT(false, "SpriteManager::relinquishWorldLayer: sprite not registered");
 	}
+
+	this->lockSpritesLists = false;
 }
 
 /**
