@@ -483,6 +483,7 @@ static void VIPManager_writeDRAM(VIPManager this)
 #endif
 
 #ifdef __PROFILE_GAME
+	extern u16 _renderingProcessTimeHelper;
 	extern u16 _renderingProcessTime;
 	extern u16 _renderingHighestTime;
 	extern u16 _renderingTotalTime;
@@ -490,7 +491,7 @@ static void VIPManager_writeDRAM(VIPManager this)
 
 	if(_updateProfiling)
 	{
-		_renderingProcessTime = TimerManager_getMillisecondsElapsed(_timerManager) - timeBeforeProcess;
+		_renderingProcessTimeHelper = _renderingProcessTime = TimerManager_getMillisecondsElapsed(_timerManager) - timeBeforeProcess;
 		_renderingHighestTime = _renderingProcessTime > _renderingHighestTime ? _renderingProcessTime : _renderingHighestTime;
 		_renderingTotalTime += _renderingProcessTime;
 	}

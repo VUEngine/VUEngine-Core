@@ -900,8 +900,8 @@ static void Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	this->screenPreviousDistance = screenDistance;
 
 #ifdef __PROFILE_STREAMING
-		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
-		loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
+	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
 #endif
 }
 

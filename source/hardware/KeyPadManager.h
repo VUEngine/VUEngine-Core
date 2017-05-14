@@ -94,6 +94,7 @@ typedef struct UserInput
 	u16 releasedKey;
 	u16 holdKey;
 	u16 previousKey;
+	u16 powerFlag;
 } UserInput;
 
 

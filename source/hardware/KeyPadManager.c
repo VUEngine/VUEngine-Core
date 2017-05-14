@@ -92,8 +92,8 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 	KeypadManager_flush(this);
 	this->enabled = false;
 
-	this->userInput = (UserInput){0, 0, 0, 0, 0};
-	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+	this->userInput = (UserInput){0, 0, 0, 0, 0, 0};
+	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
@@ -214,13 +214,15 @@ UserInput KeypadManager_read(KeypadManager this)
 	while(*_readingStatus & __S_STAT);
 
 	// now read the key
-	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]) & 0x0000FFFD;
+	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
 
 	// enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
-	this->userInput.pressedKey 	= (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey & 0x0000FFFC;
-	this->userInput.releasedKey = (~this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.releasedKey & 0x0000FFFC;
+	this->userInput.powerFlag 	= this->userInput.allKeys & 0x0001;
+	this->userInput.allKeys 	&= 0xFFFC;
+	this->userInput.pressedKey 	= (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey;
+	this->userInput.releasedKey = (~this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.releasedKey;
 	this->userInput.holdKey 	= (this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
 
@@ -256,7 +258,7 @@ void KeypadManager_flush(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::flush: null this");
 
-	this->userInput = (UserInput){0, 0, 0, 0, 0};
+	this->userInput = (UserInput){0, 0, 0, 0, 0, 0};
 }
 
 /**
