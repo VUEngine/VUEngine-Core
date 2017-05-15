@@ -38,11 +38,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __UPDATE_SPRITE_POSITION			0x01
-#define __UPDATE_SPRITE_SCALE				0x02
-#define __UPDATE_SPRITE_ROTATION			0x04
-#define __UPDATE_SPRITE_TRANSFORMATION		0x07
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -133,11 +128,11 @@
 		 */ 																							\
 		s16 internalId;																					\
 		/**
-		 * @var bool				updateSprites
+		 * @var bool				invalidateSprites
 		 * @brief					Flag to update sprites' attributes
 		 * @memberof				Entity
 		 */ 																							\
-		bool updateSprites;																				\
+		bool invalidateSprites;																				\
 
 __CLASS(Entity);
 
@@ -197,7 +192,7 @@ void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
 void Entity_show(Entity this);
 void Entity_suspend(Entity this);
-void Entity_transform(Entity this, const Transformation* environmentTransform);
+void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteRotation(Entity this);
 bool Entity_updateSpriteScale(Entity this);

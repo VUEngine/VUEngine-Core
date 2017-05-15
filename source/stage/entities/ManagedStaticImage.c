@@ -142,7 +142,7 @@ void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation
 
 	this->previous2DPosition = position2D;
 
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 }
 
 void ManagedStaticImage_ready(ManagedStaticImage this, bool recursive)
@@ -158,16 +158,16 @@ void ManagedStaticImage_ready(ManagedStaticImage this, bool recursive)
 }
 
 // transform class
-void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform)
+void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "ManagedStaticImage::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
 //	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
-	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
+	if((__INVALIDATE_SCALE & invalidateTransformationFlag) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
-		__CALL_BASE_METHOD(RecyclableImage, transform, this, environmentTransform);
+		__CALL_BASE_METHOD(RecyclableImage, transform, this, environmentTransform, invalidateTransformationFlag);
 
 		this->invalidateGlobalTransformation = 0;
 
@@ -185,7 +185,7 @@ void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation*
 
 		this->previous2DPosition = position2D;
 
-		this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+		this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 		return;
 	}
@@ -200,7 +200,7 @@ void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation*
 	// apply environment transform
 	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
-	this->updateSprites |= __UPDATE_SPRITE_POSITION;
+	this->invalidateSprites |= __INVALIDATE_POSITION;
 
 	this->invalidateGlobalTransformation = 0;
 }
@@ -209,12 +209,12 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 {
 	ASSERT(this, "ManagedStaticImage::updateVisualRepresentation: null this");
 
-	if(!this->updateSprites)
+	if(!this->invalidateSprites)
 	{
 		return;
 	}
 
-	if(this->updateSprites & __UPDATE_SPRITE_SCALE)
+	if(this->invalidateSprites & __INVALIDATE_SCALE)
 	{
 		__CALL_BASE_METHOD(RecyclableImage, updateVisualRepresentation, this);
 	}
@@ -248,7 +248,7 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 
 	this->previous2DPosition = position2D;
 
-	this->updateSprites = 0;
+	this->invalidateSprites = 0;
 }
 
 void ManagedStaticImage_releaseGraphics(ManagedStaticImage this)

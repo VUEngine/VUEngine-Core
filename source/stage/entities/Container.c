@@ -553,7 +553,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 }
 
 // initial transform
-void Container_transform(Container this, const Transformation* environmentTransform)
+void Container_transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Container::transform: null this");
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
@@ -586,7 +586,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
-			__VIRTUAL_CALL(Container, transform, child, &this->transform);
+			__VIRTUAL_CALL(Container, transform, child, &this->transform, invalidateTransformationFlag);
 		}
 	}
 

@@ -78,7 +78,7 @@ __CLASS_NEW_DECLARE(ManagedEntity, ManagedEntityDefinition* managedEntityDefinit
 void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name);
 void ManagedEntity_destructor(ManagedEntity this);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive);
-void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform);
+void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this);
 void ManagedEntity_releaseGraphics(ManagedEntity this);
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);

@@ -72,7 +72,7 @@
 		__VIRTUAL_DEC(ClassName, void, update, u32);													\
 		__VIRTUAL_DEC(ClassName, void, setupGraphics);													\
 		__VIRTUAL_DEC(ClassName, void, releaseGraphics);												\
-		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*);								\
+		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*, u8);							\
 		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
 		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
 		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
@@ -188,7 +188,7 @@ void Container_setLocalScale(Container this, const Scale* scale);
 void Container_setName(Container this, const char* const name);
 void Container_show(Container this);
 void Container_suspend(Container this);
-void Container_transform(Container this, const Transformation* environmentTransform);
+void Container_transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform);
 void Container_update(Container this, u32 elapsedTime);
 void Container_updateVisualRepresentation(Container this);

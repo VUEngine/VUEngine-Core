@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,6 +53,7 @@
 		__VIRTUAL_DEC(ClassName, fix19_13, getFriction);												\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
+		__VIRTUAL_DEC(ClassName, bool, processCollision, VirtualList collidingSpatialObjects);			\
 
 // define the virtual methods
 #define SpatialObject_SET_VTABLE(ClassName)																\
@@ -71,6 +73,7 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, getFriction);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getVelocity);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, isAffectedByRelativity);								\
+		__VIRTUAL_SET(ClassName, SpatialObject, processCollision);										\
 
 
 #define SpatialObject_ATTRIBUTES																		\
@@ -101,6 +104,7 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
+bool SpatialObject_processCollision(SpatialObject this, VirtualList collidingSpatialObjects);
 
 
 #endif

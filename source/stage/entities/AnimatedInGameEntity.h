@@ -106,7 +106,7 @@ void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive);
 void AnimatedInGameEntity_resume(AnimatedInGameEntity this);
 void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription);
 void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, void* animatedInGameEntityDefinition);
-void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform);
+void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime);
 int AnimatedInGameEntity_updateSpritePosition(AnimatedInGameEntity this);
 

@@ -86,12 +86,6 @@ void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unus
 
 		if(focusInGameEntityParent)
 		{
-			// transform focus entity
-			Transformation environmentTransform = Container_getEnvironmentTransform(focusInGameEntityParent);
-
-			// apply transformations
-			__VIRTUAL_CALL(Container, transform, screen->focusInGameEntity, &environmentTransform);
-
 			// get focusInGameEntity is moving
 			if(__VIRTUAL_CALL(InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
 			{

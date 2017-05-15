@@ -75,7 +75,7 @@ __CLASS_NEW_DECLARE(UiContainer, UiContainerDefinition* uiContainerDefinition);
 
 void UiContainer_destructor(UiContainer this);
 void UiContainer_addEntities(UiContainer this, PositionedEntity* entities);
-void UiContainer_transform(UiContainer this, const Transformation* environmentTransform);
+void UiContainer_transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive);
 
 

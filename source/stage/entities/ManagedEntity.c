@@ -147,7 +147,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 	this->previous2DPosition = position2D;
 
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 }
 
 void ManagedEntity_ready(ManagedEntity this, bool recursive)
@@ -163,16 +163,16 @@ void ManagedEntity_ready(ManagedEntity this, bool recursive)
 }
 
 // transform class
-void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform)
+void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
 //	if(!Entity_isVisible(__SAFE_CAST(Entity, this), 0, false) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
-	if(Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
+	if((__INVALIDATE_SCALE & invalidateTransformationFlag) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
-		__CALL_BASE_METHOD(Entity, transform, this, environmentTransform);
+		__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
 
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
@@ -188,14 +188,12 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 		this->previous2DPosition = position2D;
 
-		this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+		this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 		return;
 	}
 
-	this->updateSprites = (_screenDisplacement->x | _screenDisplacement->y | _screenDisplacement->z) | (__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-		? __UPDATE_SPRITE_POSITION
-		: 0;
+	this->invalidateSprites = invalidateTransformationFlag | (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
 
 	// call base class's transform method
 	Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
@@ -205,12 +203,12 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 {
 	ASSERT(this, "ManagedEntity::updateVisualRepresentation: null this");
 
-	if(!this->updateSprites)
+	if(!this->invalidateSprites)
 	{
 		return;
 	}
 
-	if(this->updateSprites & __UPDATE_SPRITE_SCALE)
+	if(this->invalidateSprites & __INVALIDATE_SCALE)
 	{
 		__CALL_BASE_METHOD(Entity, updateVisualRepresentation, this);
 	}
@@ -244,7 +242,7 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 
 	this->previous2DPosition = position2D;
 
-	this->updateSprites = 0;
+	this->invalidateSprites = 0;
 }
 
 void ManagedEntity_releaseGraphics(ManagedEntity this)

@@ -270,17 +270,20 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 }
 
 /**
- * Resolve collisions against other entities
+ * Process collisions
  *
- * @memberof						SolidParticle
- * @private
+ * @memberof							SolidParticle
+ * @public
  *
- * @param this						Function scope
- * @param collidingSpatialObjects
+ * @param this							Function scope
+ * @param collidingSpatialObjects		List with colliding spatial objects
+ *
+ * @return								True if successfully processed, false otherwise
  */
-static void SolidParticle_resolveCollision(SolidParticle this, VirtualList collidingSpatialObjects)
+bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects)
 {
-	ASSERT(this, "SolidParticle::resolveCollision: null this");
+	ASSERT(this, "SolidParticle::SolidParticle: null this");
+
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
 	ASSERT(collidingSpatialObjects, "SolidParticle::resolveCollision: collidingSpatialObjects");
 
@@ -316,7 +319,11 @@ static void SolidParticle_resolveCollision(SolidParticle this, VirtualList colli
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
 
 		SolidParticle_updateSurroundingFriction(this);
+
+		return true;
 	}
+
+	return false;
 }
 
 /**
@@ -336,12 +343,6 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 	switch(Telegram_getMessage(telegram))
 	{
-		case kCollision:
-
-			SolidParticle_resolveCollision(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
-			return true;
-			break;
-
 		case kBodyStartedMoving:
 
 			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);

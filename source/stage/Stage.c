@@ -1070,7 +1070,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 }
 
 // transform state
-void Stage_transform(Stage this, const Transformation* environmentTransform __attribute__ ((unused)))
+void Stage_transform(Stage this, const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Stage::transform: null this");
 
@@ -1085,12 +1085,12 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 			continue;
 		}
 
-		__VIRTUAL_CALL(Container, transform, child, environmentTransform);
+		__VIRTUAL_CALL(Container, transform, child, environmentTransform, invalidateTransformationFlag);
 	}
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, transform, this->uiContainer, environmentTransform);
+		__VIRTUAL_CALL(Container, transform, this->uiContainer, environmentTransform, invalidateTransformationFlag);
 	}
 }
 

@@ -82,7 +82,7 @@ void TriggerEntity_constructor(TriggerEntity this, TriggerEntityDefinition* trig
 void TriggerEntity_destructor(TriggerEntity this);
 void TriggerEntity_setDefinition(TriggerEntity this, void* triggerEntityDefinition);
 bool TriggerEntity_moves(TriggerEntity this);
-void TriggerEntity_transform(TriggerEntity this, const Transformation* environmentTransform);
+void TriggerEntity_transform(TriggerEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 
 
 #endif

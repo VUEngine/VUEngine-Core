@@ -56,8 +56,6 @@ __CLASS_DEFINITION(Actor, AnimatedInGameEntity);
 // global
 
 void Actor_checkIfMustBounce(Actor this, int axisOfCollision);
-static void Actor_resolveCollisions(Actor this, VirtualList collidingEntities);
-static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -221,7 +219,7 @@ void Actor_syncWithBody(Actor this)
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void Actor_transform(Actor this, const Transformation* environmentTransform)
+void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Actor::transform: null this");
 
@@ -252,7 +250,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform)
 	}
 
 	// call base
-	__CALL_BASE_METHOD(AnimatedInGameEntity, transform, this, environmentTransform);
+	__CALL_BASE_METHOD(AnimatedInGameEntity, transform, this, environmentTransform, invalidateTransformationFlag);
 }
 
 void Actor_resume(Actor this)
@@ -430,6 +428,35 @@ int Actor_getAxisFreeForMovement(Actor this)
 	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 }
 
+bool Actor_processCollision(Actor this, VirtualList collidingSpatialObjects)
+{
+	ASSERT(this, "Actor::processCollision: null this");
+	ASSERT(this->body, "Actor::processCollision: null body");
+	ASSERT(collidingSpatialObjects, "Actor::processCollision: collidingSpatialObjects");
+
+	bool returnValue = false;
+
+	if(this->collisionSolver && collidingSpatialObjects && VirtualList_getSize(collidingSpatialObjects))
+	{
+		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
+
+		if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
+		{
+			int axisOfAlignment = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, bodyLastDisplacement, true);
+
+			Actor_checkIfMustBounce(this, axisOfAlignment);
+
+			__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
+
+			returnValue = true;
+		}
+
+		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collidingSpatialObjects);
+	}
+
+	return returnValue;
+}
+
 // process a telegram
 bool Actor_handleMessage(Actor this, Telegram telegram)
 {
@@ -444,18 +471,6 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 		{
 			switch(message)
 			{
-				case kCollision:
-
-					Actor_resolveCollisions(this, __SAFE_CAST(VirtualList, Telegram_getExtraInfo(telegram)));
-					return true;
-					break;
-
-				case kCollisionWithYou:
-
-					Actor_resolveCollisionsAgainstMe(this, __SAFE_CAST(SpatialObject, Telegram_getSender(telegram)), (VBVec3D*)Telegram_getExtraInfo(telegram));
-					return true;
-					break;
-
 				case kBodyStartedMoving:
 
 					ASSERT(this->shape, "Actor::handleMessage: null shape");
@@ -626,7 +641,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 	}
 
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 	Entity_setShapePosition(__SAFE_CAST(Entity, this));
 }
@@ -670,60 +685,6 @@ void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject)
 	if(axisOfCollision)
 	{
 		CollisionSolver_alignToCollidingSpatialObject(this->collisionSolver, spatialObject, axisOfCollision, registerObject);
-	}
-}
-
-// resolve collision against other entities
-static void Actor_resolveCollisions(Actor this, VirtualList collidingSpatialObjects)
-{
-	ASSERT(this, "Actor::resolveCollision: null this");
-	ASSERT(this->body, "Actor::resolveCollision: null body");
-	ASSERT(collidingSpatialObjects, "Actor::resolveCollision: collidingSpatialObjects");
-
-	if(this->collisionSolver)
-	{
-		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
-
-		if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
-		{
-			int axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, bodyLastDisplacement, true);
-
-			Actor_checkIfMustBounce(this, axisOfAllignement);
-
-			__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
-		}
-	}
-
-	__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collidingSpatialObjects);
-}
-
-// resolve collision against me entities
-static void Actor_resolveCollisionsAgainstMe(Actor this, SpatialObject collidingSpatialObject, VBVec3D* collidingSpatialObjectLastDisplacement)
-{
-	ASSERT(this, "Actor::resolveCollisionAgainstMe: null this");
-	ASSERT(this->body, "Actor::resolveCollisionAgainstMe: null body");
-	ASSERT(collidingSpatialObject, "Actor::resolveCollisionAgainstMe: collidingSpatialObject");
-
-	if(this->collisionSolver)
-	{
-		// TODO: must retrieve the scale of the other object
-		VirtualList collidingSpatialObjects = __NEW(VirtualList);
-		VirtualList_pushBack(collidingSpatialObjects, collidingSpatialObject);
-
-		VBVec3D fakeLastDisplacement =
-		{
-			-collidingSpatialObjectLastDisplacement->x,
-			-collidingSpatialObjectLastDisplacement->y,
-			-collidingSpatialObjectLastDisplacement->z,
-		};
-
-		// invent the colliding object's displacement to simulate that it was me
-		int axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, fakeLastDisplacement, true);
-		__DELETE(collidingSpatialObjects);
-
-		Actor_checkIfMustBounce(this, axisOfCollision);
-
-		__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 	}
 }
 

@@ -70,6 +70,7 @@
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
 		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
+		__VIRTUAL_SET(ClassName, Actor, processCollision);												\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -115,7 +116,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 void Actor_destructor(Actor this);
 void Actor_setDefinition(Actor this, void* actorDefinition);
 void Actor_setLocalPosition(Actor this, const VBVec3D* position);
-void Actor_transform(Actor this, const Transformation* environmentTransform);
+void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Actor_resume(Actor this);
 void Actor_update(Actor this, u32 elapsedTime);
 void Actor_moveOppositeDirection(Actor this, int axis);
@@ -124,6 +125,7 @@ void Actor_changeDirectionOnAxis(Actor this, int axis);
 bool Actor_isInsideGame(Actor this);
 int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
 int Actor_getAxisFreeForMovement(Actor this);
+bool Actor_processCollision(Actor this, VirtualList collidingSpatialObjects);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);

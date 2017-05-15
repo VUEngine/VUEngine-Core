@@ -91,7 +91,7 @@ void CollisionsContainerEntity_update(CollisionsContainerEntity this __attribute
 	ASSERT(this, "CollisionsContainerEntity::update: null this");
 }
 
-void CollisionsContainerEntity_transform(CollisionsContainerEntity this __attribute__ ((unused)), const Transformation* environmentTransform __attribute__ ((unused)))
+void CollisionsContainerEntity_transform(CollisionsContainerEntity this __attribute__ ((unused)), const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionsContainerEntity::transform: null this");
 }

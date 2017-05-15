@@ -112,7 +112,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	// initialize to 0 for the engine to know that size must be set
 	this->size = (Size){0, 0, 0};
 
-	this->updateSprites = 0;
+	this->invalidateSprites = 0;
 }
 
 /**
@@ -1453,7 +1453,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 	// call base class's transform method
 	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 	if(this->hidden)
 	{
@@ -1479,21 +1479,19 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
  * @param this					Function scope
  * @param environmentTransform
  */
-void Entity_transform(Entity this, const Transformation* environmentTransform)
+void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	this->updateSprites = 0;
+	this->invalidateSprites = 0;
 
 	if(this->sprites)
 	{
-		this->updateSprites |= Entity_updateSpritePosition(this);
-		this->updateSprites |= Entity_updateSpriteRotation(this);
-		this->updateSprites |= Entity_updateSpriteScale(this);
+		this->invalidateSprites = invalidateTransformationFlag | Entity_updateSpritePosition(this) | Entity_updateSpriteRotation(this) | Entity_updateSpriteScale(this);
 	}
 
 	// call base class's transform method
-	__CALL_BASE_METHOD(Container, transform, this, environmentTransform);
+	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 
 	Entity_setShapePosition(this);
 }
@@ -1512,9 +1510,9 @@ void Entity_updateVisualRepresentation(Entity this)
 
 	__CALL_BASE_METHOD(Container, updateVisualRepresentation, this);
 
-	Entity_updateSprites(this, this->updateSprites & __UPDATE_SPRITE_POSITION, this->updateSprites & __UPDATE_SPRITE_SCALE, this->updateSprites & __UPDATE_SPRITE_ROTATION);
+	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION);
 
-	this->updateSprites = 0;
+	this->invalidateSprites = 0;
 }
 
 /**
@@ -1833,15 +1831,7 @@ bool Entity_updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
-	return (
-		(
-			_screenDisplacement->x |
-			_screenDisplacement->y |
-			_screenDisplacement->z
-		)
-		||
-		(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
-	) ? __UPDATE_SPRITE_POSITION : 0;
+	return __INVALIDATE_POSITION & this->invalidateGlobalTransformation;
 }
 
 /**
@@ -1858,7 +1848,7 @@ bool Entity_updateSpriteRotation(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteRotation: null this");
 
-	return this->invalidateGlobalTransformation & __INVALIDATE_ROTATION ? __UPDATE_SPRITE_ROTATION : 0;
+	return __INVALIDATE_ROTATION & this->invalidateGlobalTransformation;
 }
 
 /**
@@ -1875,7 +1865,7 @@ bool Entity_updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
-	return (_screenDisplacement->z | (this->invalidateGlobalTransformation & __INVALIDATE_SCALE))? __UPDATE_SPRITE_SCALE : 0;
+	return __INVALIDATE_SCALE & this->invalidateGlobalTransformation;
 }
 
 /**
@@ -1936,10 +1926,10 @@ void Entity_show(Entity this)
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, transform, this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// and update the visual representation
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity_updateVisualRepresentation(this);
 
 	__CALL_BASE_METHOD(Container, show, this);
@@ -1973,10 +1963,10 @@ void Entity_hide(Entity this)
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, transform, this, &environmentTransform);
+	__VIRTUAL_CALL(Container, transform, this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// and update the visual representation
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity_updateVisualRepresentation(this);
 
 	__CALL_BASE_METHOD(Container, hide, this);
@@ -2036,7 +2026,7 @@ void Entity_resume(Entity this)
 	}
 
 	// force update sprites on next game's cycle
-	this->updateSprites = __UPDATE_SPRITE_TRANSFORMATION;
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 }
 
 /**

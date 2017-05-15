@@ -197,3 +197,10 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unu
 
 	return false;
 }
+
+bool SpatialObject_processCollision(SpatialObject this, VirtualList collidingSpatialObjects)
+{
+	ASSERT(this, "SpatialObject::processCollision: null this");
+
+	return false;
+}

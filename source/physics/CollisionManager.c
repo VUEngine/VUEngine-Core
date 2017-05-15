@@ -265,7 +265,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 		if(shape->checkForCollisions)
 		{
-			VirtualList collidingObjects = NULL;
+			VirtualList collidingSpatialObjects = NULL;
 
 			// the result thrown by the collision algorithm
 			int collisionResult = kNoCollision;
@@ -290,26 +290,26 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 					if(collisionResult)
 					{
-						if(!collidingObjects)
+						if(!collidingSpatialObjects)
 						{
-							collidingObjects = __NEW(VirtualList);
+							collidingSpatialObjects = __NEW(VirtualList);
 						}
 
 						// add object to list
-						VirtualList_pushFront(collidingObjects, shapeToCheck->owner);
+						VirtualList_pushFront(collidingSpatialObjects, shapeToCheck->owner);
 					}
 				}
 			}
 
-			if(collidingObjects)
+			if(collidingSpatialObjects)
 			{
 				// inform the owner about the collision
-				returnValue |= MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, shape), __SAFE_CAST(Object, shape->owner), kCollision, (void*)collidingObjects);
+				returnValue |= __VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, collidingSpatialObjects);
 
-				__DELETE(collidingObjects);
+				__DELETE(collidingSpatialObjects);
 			}
 
-			collidingObjects = NULL;
+			collidingSpatialObjects = NULL;
 		}
 	}
 

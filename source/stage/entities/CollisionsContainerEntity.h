@@ -74,7 +74,7 @@ void CollisionsContainerEntity_destructor(CollisionsContainerEntity this);
 void CollisionsContainerEntity_initialize(CollisionsContainerEntity this, bool recursive);
 void CollisionsContainerEntity_ready(CollisionsContainerEntity this, bool recursive);
 void CollisionsContainerEntity_update(CollisionsContainerEntity this, u32 elapsedTime);
-void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform);
+void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this);
 bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this, Telegram telegram);
 bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this, int message);

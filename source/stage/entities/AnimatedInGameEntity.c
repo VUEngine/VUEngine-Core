@@ -124,7 +124,7 @@ void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive)
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform)
+void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "AnimatedInGameEntity::transform: null this");
 
@@ -161,7 +161,7 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 	}
 
 	// call base
-	__CALL_BASE_METHOD(InGameEntity, transform, this, environmentTransform);
+	__CALL_BASE_METHOD(InGameEntity, transform, this, environmentTransform, invalidateTransformationFlag);
 }
 
 // execute character's logic

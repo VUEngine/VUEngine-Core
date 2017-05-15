@@ -57,6 +57,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getShape);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
 
@@ -157,6 +158,7 @@ int SolidParticle_getDepth(SolidParticle this);
 int SolidParticle_getHeight(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
 int SolidParticle_getWidth(SolidParticle this);
+ bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));

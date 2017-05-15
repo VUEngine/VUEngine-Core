@@ -431,15 +431,15 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
  * @param this					Function scope
  * @param environmentTransform
  */
-void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform)
+void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "ParticleSystem::transform: null this");
 
-	__CALL_BASE_METHOD(Entity, transform, this, environmentTransform);
+	__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
 
 	ParticleSystem_processExpiredParticles(this);
 
-	this->updateSprites |= Entity_updateSpritePosition(__SAFE_CAST(Entity, this)) ? __UPDATE_SPRITE_POSITION : 0;
+	this->invalidateSprites |= invalidateTransformationFlag | Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
 }
 
 /**
@@ -454,14 +454,14 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 
 	VirtualNode node = this->particles->head;
 
-	bool updateSprites = this->updateSprites ? true : false;
+	bool updateSprites = this->invalidateSprites ? true : false;
 
 	for(; node; node = node->next)
 	{
 		__VIRTUAL_CALL(Particle, updateVisualRepresentation, node->data, updateSprites);
 	}
 
-	this->updateSprites = 0;
+	this->invalidateSprites = 0;
 }
 
 /**

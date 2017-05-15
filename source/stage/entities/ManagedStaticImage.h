@@ -69,7 +69,7 @@ __CLASS_NEW_DECLARE(ManagedStaticImage, RecyclableImageDefinition* definition, s
 void ManagedStaticImage_constructor(ManagedStaticImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
 void ManagedStaticImage_destructor(ManagedStaticImage this);
 void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation* environmentTransform, u32 recursive);
-void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform);
+void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this);
 void ManagedStaticImage_releaseGraphics(ManagedStaticImage this);
 void ManagedStaticImage_update(ManagedStaticImage this, u32 elapsedTime);

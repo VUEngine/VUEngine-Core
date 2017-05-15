@@ -113,7 +113,7 @@ void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 }
 
 // transform
-void UiContainer_transform(UiContainer this, const Transformation* environmentTransform)
+void UiContainer_transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "UiContainer::transform: null this");
 
@@ -122,7 +122,7 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 
 	Screen_prepareForUITransform(screen);
 
-	__CALL_BASE_METHOD(Container, transform, this, environmentTransform);
+	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 
 	Screen_doneUITransform(screen);
 }

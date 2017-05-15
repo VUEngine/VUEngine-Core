@@ -413,8 +413,11 @@ void GameState_transform(GameState this)
 
 	extern Transformation neutralEnvironmentTransformation;
 
+	u8 invalidateTransformationFlag = (_screenDisplacement->x | _screenDisplacement->y | _screenDisplacement->z) ? __INVALIDATE_POSITION : 0;
+	invalidateTransformationFlag |= _screenDisplacement->z ? __INVALIDATE_SCALE : 0;
+
 	// then transform loaded entities
-	__VIRTUAL_CALL(Container, transform, this->stage, &neutralEnvironmentTransformation);
+	__VIRTUAL_CALL(Container, transform, this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
 }
 
 /**

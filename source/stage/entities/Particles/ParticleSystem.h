@@ -179,7 +179,7 @@ void ParticleSystem_show(ParticleSystem this);
 void ParticleSystem_spawnAllParticles(ParticleSystem this);
 void ParticleSystem_start(ParticleSystem this);
 void ParticleSystem_suspend(ParticleSystem this);
-void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform);
+void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void ParticleSystem_update(ParticleSystem this, u32 elapsedTime);
 void ParticleSystem_updateVisualRepresentation(ParticleSystem this);
 
