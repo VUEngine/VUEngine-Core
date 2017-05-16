@@ -784,7 +784,7 @@ static u32 Game_handleInput(Game this)
 	Game_checkLowBattery(this, userInput.powerFlag);
 #endif
 
-	if(userInput.pressedKey | userInput.releasedKey)
+	if(userInput.pressedKey | userInput.releasedKey | userInput.holdKey)
 	{
 		__VIRTUAL_CALL(GameState, processUserInput, Game_getCurrentState(this), userInput);
 	}
