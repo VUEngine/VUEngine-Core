@@ -1491,7 +1491,10 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 	}
 
 	// call base class's transform method
-	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+	if((u32)this->children | this->invalidateGlobalTransformation)
+	{
+		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+	}
 
 	Entity_setShapePosition(this);
 }
