@@ -295,10 +295,12 @@ void VIPManager_interruptHandler(void)
 
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 				{
-					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
+					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS / 2;
 
-					if(/*!Game_isGameFrameDone(Game_getInstance()) &&*/ 0 >= messageDelay)
+					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
 					{
+						Printing_resetWorldCoordinates(Printing_getInstance());
+
 						messageDelay = __TARGET_FPS;
 						Printing_text(Printing_getInstance(), "VIP GCLK:                  ", 0, 0, NULL);
 						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 11, 0, NULL);
@@ -387,7 +389,7 @@ void VIPManager_interruptHandler(void)
 			case __TIMEERR:
 
 				{
-					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
+					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS / 2;
 
 					if(0 >= messageDelay)
 					{
