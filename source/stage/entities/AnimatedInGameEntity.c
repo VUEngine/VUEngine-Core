@@ -172,10 +172,12 @@ void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
 	// call base
 	__CALL_BASE_METHOD(InGameEntity, update, this, elapsedTime);
 
-	if(elapsedTime)
+	if(!elapsedTime)
 	{
-		AnimatedInGameEntity_animate(this);
+		return;
 	}
+
+	AnimatedInGameEntity_animate(this);
 }
 
 // update animations
@@ -183,16 +185,18 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 {
 	ASSERT(this, "AnimatedInGameEntity::animate: null this");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+		return;
+	}
 
-		// move each child to a temporary list
-		for(; node ; node = node->next)
-		{
-			// first animate the frame
-			Sprite_updateAnimation(__SAFE_CAST(Sprite, node->data));
-		}
+	VirtualNode node = this->sprites->head;
+
+	// move each child to a temporary list
+	for(; node ; node = node->next)
+	{
+		// first animate the frame
+		Sprite_updateAnimation(__SAFE_CAST(Sprite, node->data));
 	}
 }
 
@@ -202,15 +206,17 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 	ASSERT(this, "AnimatedInGameEntity::pauseAnimation: null this");
 	ASSERT(this->sprites, "AnimatedInGameEntity::pauseAnimation: null sprites");
 
-	if(this->sprites)
+	if(!this->sprites)
 	{
-		VirtualNode node = this->sprites->head;
+		return;
+	}
 
-		// play animation on each sprite
-		for(; node ; node = node->next)
-		{
-			Sprite_pause(__SAFE_CAST(Sprite, node->data), pause);
-		}
+	VirtualNode node = this->sprites->head;
+
+	// play animation on each sprite
+	for(; node ; node = node->next)
+	{
+		Sprite_pause(__SAFE_CAST(Sprite, node->data), pause);
 	}
 }
 
