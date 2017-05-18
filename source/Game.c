@@ -1169,13 +1169,6 @@ static void Game_update(Game this)
 
 		VIPManager_resetGameFrameStarted(this->vipManager);
 
-#ifndef __SHOW_GAME_PROFILING
-#ifdef __REGISTER_LAST_PROCESS_NAME
-		Printing_text(Printing_getInstance(), "                    ", 1, 1, NULL);
-		Printing_text(Printing_getInstance(), this->lastProcessName, 1, 1, NULL);
-#endif
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = "start frame";
 #endif
