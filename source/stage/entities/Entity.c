@@ -1511,7 +1511,10 @@ void Entity_updateVisualRepresentation(Entity this)
 {
 	ASSERT(this, "Entity::updateVisualRepresentation: null this");
 
-	__CALL_BASE_METHOD(Container, updateVisualRepresentation, this);
+	if(this->children)
+	{
+		__CALL_BASE_METHOD(Container, updateVisualRepresentation, this);
+	}
 
 	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION);
 
