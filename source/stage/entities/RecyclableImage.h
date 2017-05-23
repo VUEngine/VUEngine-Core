@@ -59,11 +59,9 @@ __CLASS(RecyclableImage);
 //											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines a Scrolling background
 typedef EntityDefinition RecyclableImageDefinition;
 
-// defines a Scrolling background in ROM memory
-typedef const EntityDefinition RecyclableImageROMDef;
+typedef const RecyclableImageDefinition RecyclableImageROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------
