@@ -626,10 +626,7 @@ void Sprite_update(Sprite this)
 		}
 	}
 
-	if(this->transparent)
-	{
-		this->visible = !this->visible;
-	}
+	this->visible = !this->transparent | !this->visible;
 }
 
 /**
