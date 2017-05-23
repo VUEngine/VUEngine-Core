@@ -437,7 +437,7 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 					ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList_back(this->objectSprites));
 					s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
 
-					ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
+//					ObjectSprite_setObjectIndex(previousSprite, nextFreeObjectIndex);
 					ObjectSprite_setObjectIndex(sprite, previousObjectIndex);
 					ObjectSprite_setObjectIndex(previousSprite, previousObjectIndex + sprite->totalObjects);
 
@@ -499,14 +499,25 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 
 	for(; node; node = node->next)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		ObjectSprite sprite = __SAFE_CAST(ObjectSprite, node->data);
 
 		if(!sprite->hidden && ((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent))
 		{
-			Sprite_update(sprite);
+			Sprite_update(__SAFE_CAST(Sprite, sprite));
 		}
 
-		ObjectSprite_render(__SAFE_CAST(ObjectSprite, sprite));
+		if((sprite->hidden | !sprite->visible) && 0 <= sprite->objectIndex)
+		{
+			int i = 0;
+			for(; i < sprite->totalObjects; i++)
+			{
+				_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+			}
+		}
+		else
+		{
+			__VIRTUAL_CALL(Sprite, render, sprite);
+		}
 	}
 }
 

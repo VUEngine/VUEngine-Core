@@ -235,7 +235,12 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	this->invalidateSprites = invalidateTransformationFlag | (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
 
 	// call base class's transform method
-	Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
+	if((__INVALIDATE_POSITION & this->invalidateGlobalTransformation) |
+		(u32)this->children)
+	{
+		// call base class's transform method
+		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
+	}
 }
 
 void ManagedEntity_updateVisualRepresentation(ManagedEntity this)

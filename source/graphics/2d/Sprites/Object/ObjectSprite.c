@@ -297,26 +297,7 @@ void ObjectSprite_render(ObjectSprite this)
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 //	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
-	if(0 > this->objectIndex)
-	{
-		this->objectSpriteContainer = ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager_getInstance(), this->totalObjects, this->position.z);
-		ObjectSprite_setObjectIndex(this, ObjectSpriteContainer_addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
-		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
-	}
-
-	if(this->hidden | !this->visible)
-	{
-		if(0 <= this->objectIndex)
-		{
-			int i = 0;
-			for(; i < this->totalObjects; i++)
-			{
-				_objectAttributesBaseAddress[((this->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
-			}
-		}
-
-		return;
-	}
+	//ObjectSprite_checkForContainer(this);
 
 	if(!this->texture->written)
 	{
@@ -329,8 +310,16 @@ void ObjectSprite_render(ObjectSprite this)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+//	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+//	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+
+#undef __FLIP_X_DISPLACEMENT
+#undef __FLIP_Y_DISPLACEMENT
+#define __FLIP_X_DISPLACEMENT	0
+#define __FLIP_Y_DISPLACEMENT	0
+
+	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) -  __FLIP_X_DISPLACEMENT;
+	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - __FLIP_Y_DISPLACEMENT;
 
 	int i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000)) & __OBJECT_CHAR_HIDE_MASK);
@@ -339,38 +328,41 @@ void ObjectSprite_render(ObjectSprite this)
 	for(; i < rows; i++)
 	{
 		int outputY = y + (i << 3) * yDirection;
+		int jDisplacement = i * cols;
 
 		if((unsigned)(outputY - _cameraFrustum->y0 - 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0 - 4))
 		{
 			int j = 0;
 			for(; j < cols; j++)
 			{
-				s32 objectIndex = this->objectIndex + i * cols + j;
+				s32 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
 
-				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[objectIndex + 1] &= __OBJECT_CHAR_HIDE_MASK;
 			}
 
 			continue;
 		}
 
 		int j = 0;
+
 		for(; j < cols; j++)
 		{
-			s32 objectIndex = this->objectIndex + i * cols + j;
+			s32 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
+
 			int outputX = x + (j << 3) * xDirection;
 
 			// add 8 to the calculation to avoid char's cut off when scrolling hide the object if outside
 			// screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				_objectAttributesBaseAddress[(objectIndex << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[objectIndex + 1] &= __OBJECT_CHAR_HIDE_MASK;
 				continue;
 			}
 
-			_objectAttributesBaseAddress[(objectIndex << 2)] = outputX;
-			_objectAttributesBaseAddress[(objectIndex << 2) + 1] = secondWordValue;
-			_objectAttributesBaseAddress[(objectIndex << 2) + 2] = outputY;
-			_objectAttributesBaseAddress[(objectIndex << 2) + 3] |= fourthWordValue;
+			_objectAttributesBaseAddress[objectIndex] = outputX;
+			_objectAttributesBaseAddress[objectIndex + 1] = secondWordValue;
+			_objectAttributesBaseAddress[objectIndex + 2] = outputY;
+			_objectAttributesBaseAddress[objectIndex + 3] |= fourthWordValue;
 		}
 	}
 }
