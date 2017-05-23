@@ -53,7 +53,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 // global
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
-
+static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -124,6 +124,45 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 			}
 		}
 	}
+}
+
+static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child)
+{
+	ASSERT(this, "ManagedEntity::unregisterSprites: null this");
+	ASSERT(child, "ManagedEntity::unregisterSprites: null child");
+
+	if(child)
+	{
+		if(child->sprites)
+		{
+			VirtualNode spriteNode = child->sprites->head;
+
+			for(; spriteNode; spriteNode = spriteNode->next)
+			{
+				Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+				VirtualList_removeElement(this->managedSprites, sprite);
+			}
+		}
+
+		if(child->children)
+		{
+			VirtualNode childNode = child->children->head;
+
+			for(; childNode; childNode = childNode->next)
+			{
+				ManagedEntity_unregisterSprites(this, __SAFE_CAST(Entity, childNode->data));
+			}
+		}
+	}
+}
+
+void ManagedEntity_removeChild(ManagedEntity this, Container child)
+{
+	ASSERT(this, "ManagedEntity::removeChild: null this");
+
+	ManagedEntity_unregisterSprites(this, __SAFE_CAST(Entity, child));
+
+	__CALL_BASE_METHOD(Entity, removeChild, this, child);
 }
 
 // transform class
