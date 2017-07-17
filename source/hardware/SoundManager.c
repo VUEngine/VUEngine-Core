@@ -285,7 +285,7 @@ void SoundManager_playSounds(SoundManager this)
 }
 
 /**
- * Update background musig playback
+ * Update background music playback
  *
  * @memberof	SoundManager
  * @private
@@ -453,7 +453,7 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
  */
 static void SoundManager_continuePlayingFxSounds(SoundManager this)
 {
-	ASSERT(this, "SoundManager::playFxSounds: null this");
+	ASSERT(this, "SoundManager::continuePlayingFxSounds: null this");
 
 	int note = 0;
 	int fxS = 0;
@@ -553,7 +553,8 @@ void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
 }
 
 /**
- * Start playback of fx sound. If all fx channels are in use, it is not guaranteed that the sound will be played
+ * Start playback of fx sound.
+ * If all fx channels are in use, it is not guaranteed that the sound will be played.
  *
  * @memberof		SoundManager
  * @public
