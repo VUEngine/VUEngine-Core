@@ -849,7 +849,7 @@ void Sprite_nextFrame(Sprite this)
 	if(this->animationController)
 	{
 		AnimationController_nextFrame(this->animationController);
-		__VIRTUAL_CALL(Sprite, writeAnimation, this);
+		this->writeAnimationFrame = true;
 	}
 }
 
@@ -868,7 +868,7 @@ void Sprite_previousFrame(Sprite this)
 	if(this->animationController)
 	{
 		AnimationController_previousFrame(this->animationController);
-		__VIRTUAL_CALL(Sprite, writeAnimation, this);
+		this->writeAnimationFrame = true;
 	}
 }
 
