@@ -79,8 +79,11 @@ typedef struct PostProcessingEffectRegistry
 		/* post processing effects */																	\
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
-		u16 gameFrameStarted;																			\
+		u16 frameStarted;																				\
+		u16 gameStarted;																				\
+		u16 renderingStarted;																				\
 		u16 drawingEnded;																				\
+		u16 updatingVisuals;																			\
 
 /**
  * @class	VIPManager
@@ -97,11 +100,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 #ifdef __PROFILE_GAME
-void Game_saveProcessDuringDRAMWritingDoneName(Game this);
-#endif
-
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-bool Game_isGameFrameDone(Game this);
+void Game_saveProcessNameDuringGAMESTART(Game this);
+void Game_saveProcessNameDuringXPEND(Game this);
 #endif
 
 static VIPManager _vipManager;
@@ -113,7 +113,10 @@ static SpriteManager _spriteManager;
 static HardwareManager _hardwareManager;
 
 static void VIPManager_constructor(VIPManager this);
-static void VIPManager_writeDRAM(VIPManager this);
+static void VIPManager_processFrameBuffers(VIPManager this);
+void Game_run(Game this);
+void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -146,8 +149,11 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;
-	this->gameFrameStarted = false;
+	this->gameStarted = false;
+	this->frameStarted = false;
+	this->renderingStarted = false;
 	this->drawingEnded = false;
+	this->updatingVisuals = false;
 
 	_vipManager = this;
 	_timerManager = TimerManager_getInstance();
@@ -247,19 +253,46 @@ void VIPManager_disableInterrupts(VIPManager this __attribute__ ((unused)))
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 }
 
-u32 __attribute__ ((noinline)) VIPManager_waitForFrameStart(VIPManager this)
-{
-	ASSERT(this, "VIPManager::waitForGameFrame: null this");
-
-	return !this->gameFrameStarted;
-}
-
 u32 __attribute__ ((noinline)) VIPManager_drawingEnded(VIPManager this)
 {
 	ASSERT(this, "VIPManager::waitForGameFrame: null this");
 
 	return this->drawingEnded;
 }
+
+inline void VIPManager_enableMultiplexedInterrupts()
+{
+	u32 psw;
+
+	asm(" \n\
+		stsr	psw,%0  \n\
+		"
+		: "=r" (psw) // Output
+	);
+
+	psw &= 0xFFF0BFFF;
+
+	asm(" \n\
+		ldsr	%0,psw  \n\
+		cli				\n\
+		"
+		: // Output
+		: "r" (psw) // Input
+		: // Clobber
+	);
+}
+
+inline void VIPManager_disableMultiplexedInterrupts()
+{
+	asm(" \n\
+		sei				\n\
+		"
+		: // Output
+		: // Input
+		: // Clobber
+	);
+}
+
 
 /**
  * VIP's interrupt handler
@@ -273,10 +306,14 @@ void VIPManager_interruptHandler(void)
 	u16 interrupt = _vipRegisters[__INTPND];
 
 	// disable interrupts
+	VIPManager_disableMultiplexedInterrupts();
 	VIPManager_disableInterrupts(_vipManager);
+
+	Printing_hex(Printing_getInstance(), interrupt, 16, 26, 4, NULL);
 
 	const u16 interruptTable[] =
 	{
+		__FRAMESTART,
 		__GAMESTART,
 		__XPEND,
 #ifdef __ALERT_VIP_OVERTIME
@@ -292,97 +329,114 @@ void VIPManager_interruptHandler(void)
 		switch(interrupt & interruptTable[i])
 		{
 			case __GAMESTART:
-
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
-				{
-					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS / 2;
-
-					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
-					{
-						Printing_resetWorldCoordinates(Printing_getInstance());
-
-						messageDelay = __TARGET_FPS;
-						Printing_text(Printing_getInstance(), "VIP GCLK:                  ", 0, 0, NULL);
-						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 11, 0, NULL);
-
-					}
-
-					if(0 == --messageDelay)
-					{
-						Printing_text(Printing_getInstance(), "                                                ", 0, 0, NULL);
-						messageDelay = -1;
-					}
-				}
+#ifdef __PROFILE_GAME
+				Game_saveProcessNameDuringGAMESTART(Game_getInstance());
 #endif
-				_vipManager->gameFrameStarted = true;
+
+				if(_vipManager->frameStarted || _vipManager->gameStarted)
+				{
+#ifdef __PROFILE_GAME
+					extern u16 _tornGameFrameCount;
+					_tornGameFrameCount++;
+#endif
+					break;
+				}
+
+				TimerManager_resetMilliseconds(_timerManager);
+				_vipManager->gameStarted = true;
 				_vipManager->drawingEnded = false;
-				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
-				VIPManager_enableInterrupt(_vipManager, __XPEND);
-				return;
+				_vipManager->updatingVisuals = true;
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+				VIPManager_enableMultiplexedInterrupts();
+				Game_updateVisuals(Game_getInstance());
+
+				if(_vipManager->drawingEnded)
+				{
+					VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+					VIPManager_enableMultiplexedInterrupts();
+					SpriteManager_render(_spriteManager);
+				}
+
+				VIPManager_disableMultiplexedInterrupts();
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+				_vipManager->updatingVisuals = false;
+				_vipManager->gameStarted = false;
 				break;
 
 			case __XPEND:
 
 #ifdef __PROFILE_GAME
-				Game_saveProcessDuringDRAMWritingDoneName(Game_getInstance());
+				Game_saveProcessNameDuringXPEND(Game_getInstance());
 #endif
 
-#ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+				if(_vipManager->renderingStarted)
 				{
-					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS;
-
-					if(!Game_isGameFrameDone(Game_getInstance()) && 0 >= messageDelay)
-					{
-						messageDelay = __TARGET_FPS;
-						Printing_text(Printing_getInstance(), "VIP XPEND:                  ", 0, 1, NULL);
-						Printing_text(Printing_getInstance(), Game_getLastProcessName(Game_getInstance()), 11, 1, NULL);
-					}
-
-					if(0 == --messageDelay)
-					{
-						Printing_text(Printing_getInstance(), "                                                ", 0, 1, NULL);
-						messageDelay = -1;
-					}
-				}
+#ifdef __PROFILE_GAME
+					extern u16 _tornGameFrameCount;
+					_tornGameFrameCount++;
 #endif
+					break;
+				}
 
+				_vipManager->renderingStarted = true;
 				VIPManager_disableDrawing(_vipManager);
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART);
+				VIPManager_enableMultiplexedInterrupts();
+				VIPManager_processFrameBuffers(_vipManager);
 
-				// enable multiplexed interrupts
+				if(!_vipManager->updatingVisuals)
 				{
-					u32 psw;
-
-					asm(" \n\
-						stsr	psw,%0  \n\
-						"
-					: "=r" (psw) // Output
-					);
-
-					psw &= 0xFFF0BFFF;
-
-					asm(" \n\
-						ldsr	%0,psw  \n\
-						cli				\n\
-						"
-						: // Output
-						: "r" (psw) // Input
-						: // Clobber
-					);
-
-					VIPManager_writeDRAM(_vipManager);
-					VIPManager_enableDrawing(_vipManager);
-
-					asm(" \n\
-						sei				\n\
-						"
-						: // Output
-						: // Input
-						: // Clobber
-					);
-
-					VIPManager_enableInterrupt(_vipManager, __GAMESTART);
+					VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART);
+					VIPManager_enableMultiplexedInterrupts();
+					SpriteManager_render(_spriteManager);
 				}
-				return;
+
+				VIPManager_disableMultiplexedInterrupts();
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+				VIPManager_enableDrawing(_vipManager);
+				_vipManager->renderingStarted = false;
+				_vipManager->drawingEnded = true;
+				break;
+
+			case __FRAMESTART:
+
+				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
+				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
+				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+
+#ifdef __PROFILE_GAME
+				Game_resetCurrentFrameProfiling(Game_getInstance(), TimerManager_getMillisecondsElapsed(_timerManager));
+#endif
+
+				if(_vipManager->frameStarted || _vipManager->gameStarted)
+				{
+
+#ifdef __PROFILE_GAME
+					extern u16 _tornGameFrameCount;
+					_tornGameFrameCount++;
+#endif
+					return;
+				}
+
+				_vipManager->frameStarted = true;
+
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+				VIPManager_enableMultiplexedInterrupts();
+
+				Game_stream(Game_getInstance());
+
+#if 0 != __FRAME_CYCLE
+				if(!(interrupt & __GAMESTART))
+#endif
+				{
+					VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+					VIPManager_enableMultiplexedInterrupts();
+					Game_run(Game_getInstance());
+				}
+
+				VIPManager_disableMultiplexedInterrupts();
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+				_vipManager->frameStarted = false;
 				break;
 
 #ifdef __ALERT_VIP_OVERTIME
@@ -406,7 +460,6 @@ void VIPManager_interruptHandler(void)
 					}
 				}
 
-				VIPManager_enableInterrupt(_vipManager, __GAMESTART);
 				break;
 #endif
 		}
@@ -414,22 +467,7 @@ void VIPManager_interruptHandler(void)
 }
 
 /**
- * Reset flag that indicates if the GAME_FRAME_STARTED interrupt has been triggered
- *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
- */
-void VIPManager_resetGameFrameStarted(VIPManager this)
-{
-	ASSERT(this, "VIPManager::resetGameFrameStarted: null this");
-
-	this->gameFrameStarted = false;
-}
-
-/**
- * Start DRAM writing operations
+ * Start frame buffer writing operations
  *
  * @memberof		VIPManager
  * @public
@@ -438,9 +476,9 @@ void VIPManager_resetGameFrameStarted(VIPManager this)
  *
  * @return			The time in milliseconds that it took to process the interrupt (only if profiling is enabled)
  */
-static void VIPManager_writeDRAM(VIPManager this)
+static void VIPManager_processFrameBuffers(VIPManager this)
 {
-	ASSERT(this, "VIPManager::writeDRAM: null this");
+	ASSERT(this, "VIPManager::processFrameBuffers: null this");
 
 #ifdef __PROFILE_GAME
 	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(_timerManager);
@@ -461,16 +499,10 @@ static void VIPManager_writeDRAM(VIPManager this)
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}
 
-	// write newly created chars
 	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
 	{
 		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
 	}
-
-	// write to DRAM
-	SpriteManager_render(_spriteManager);
-
-	this->drawingEnded = true;
 
 #ifdef __DEBUG_TOOLS
 	if(Game_isInDebugMode(Game_getInstance()))
@@ -514,7 +546,7 @@ void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
-	_vipRegisters[__FRMCYC] = 0;
+	_vipRegisters[__FRMCYC] = __FRAME_CYCLE;
 
 	VIPManager_enableDrawing(this);
 }

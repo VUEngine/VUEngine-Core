@@ -391,11 +391,11 @@ int GameState_propagateMessage(GameState this, int message)
  *
  * @param this		Function scope
  */
-void GameState_stream(GameState this)
+bool GameState_stream(GameState this)
 {
 	ASSERT(this, "GameState::stream: null this");
 
-	Stage_stream(this->stage);
+	return Stage_stream(this->stage);
 }
 
 /**

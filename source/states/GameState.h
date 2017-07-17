@@ -150,7 +150,7 @@ void GameState_startClocks(GameState this);
 void GameState_startDispatchingDelayedMessages(GameState this);
 void GameState_startPhysics(GameState this);
 void GameState_stopClocks(GameState this);
-void GameState_stream(GameState this);
+bool GameState_stream(GameState this);
 void GameState_suspend(GameState this, void* owner);
 void GameState_transform(GameState this);
 void GameState_updatePhysics(GameState this);
