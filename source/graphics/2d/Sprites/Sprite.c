@@ -616,7 +616,7 @@ void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
 
-	if(this->animationController && this->texture->written)
+	if(this->animationController && this->texture)
 	{
 		// first animate the frame
 		if(this->writeAnimationFrame)

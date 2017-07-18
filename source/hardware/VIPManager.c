@@ -461,12 +461,6 @@ static void VIPManager_writeDRAM(VIPManager this)
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}
 
-	// write newly created chars
-	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
-	{
-		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
-	}
-
 	// write to DRAM
 	SpriteManager_render(_spriteManager);
 

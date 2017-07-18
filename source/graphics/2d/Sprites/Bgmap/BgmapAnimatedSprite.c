@@ -119,15 +119,20 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
 
-	ASSERT(Texture_getCharSet(this->texture, true), "BgmapAnimatedSprite::writeAnimation: null charset");
+	CharSet charSet = Texture_getCharSet(this->texture, true);
+
+	ASSERT(charSet, "BgmapAnimatedSprite::writeAnimation: null charset");
+
+	if(!charSet)
+	{
+		return;
+	}
 
 	// write according to the allocation type
-	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture, true)))
+	switch(CharSet_getAllocationType(charSet))
 	{
 		case __ANIMATED_SINGLE_OPTIMIZED:
 			{
-				CharSet charSet = Texture_getCharSet(this->texture, true);
-
 				// move charset definition to the next frame chars
 				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
 						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
@@ -147,8 +152,6 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 			{
-				CharSet charSet = Texture_getCharSet(this->texture, true);
-
 				// move charset definition to the next frame chars
 				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
 						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
