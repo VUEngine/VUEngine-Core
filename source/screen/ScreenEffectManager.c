@@ -177,10 +177,17 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialD
 	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (u8)(delayBetweenSteps >> __FRAME_CYCLE);
 
 	// set callback
-	if(callback != NULL && callbackScope != NULL)
+	if(callback != NULL)
 	{
-		this->fxFadeCallbackScope = callbackScope;
-		Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, kEventEffectFadeComplete);
+		if(callbackScope != NULL)
+		{
+			this->fxFadeCallbackScope = callbackScope;
+			Object_addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, kEventEffectFadeComplete);
+		}
+		else
+		{
+			NM_ASSERT(false, "ScreenEffectManager::FXFadeAsyncStart: null callbackScope");
+		}
 	}
 
 	// start effect

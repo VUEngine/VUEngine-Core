@@ -689,14 +689,23 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	// write textures
-	SpriteManager_writeSelectedTexture(this);
-
+	// must dispose sprites before doing anything else in
+	// order to try to make room in DRAM to new sprites
+	// as soon as possible
 	if(!SpriteManager_disposeSprites(this))
 	{
 		// z sorting
 		SpriteManager_sortLayersProgressively(this);
 	}
+
+	// write newly created chars
+	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
+	{
+		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
+	}
+
+	// write textures
+	SpriteManager_writeSelectedTexture(this);
 
 	VirtualNode node = this->sprites->head;
 

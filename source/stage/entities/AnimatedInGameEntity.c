@@ -352,7 +352,7 @@ s8 AnimatedInGameEntity_getActualFrame(AnimatedInGameEntity this)
 
 int AnimatedInGameEntity_getNumberOfFrames(AnimatedInGameEntity this)
 {
-	if(this->sprites)
+	if(!this->sprites)
 	{
 		return -1;
 	}
