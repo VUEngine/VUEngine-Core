@@ -435,8 +435,10 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = worldPointer->gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-	int gy = worldPointer->gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+	int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	worldPointer->gx = gx;
+	worldPointer->gy = gy;
 
 	// get sprite's size
 	int width = FIX19_13TOI(this->halfWidth) << 1;
