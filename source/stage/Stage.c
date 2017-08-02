@@ -141,6 +141,7 @@ static bool Stage_processRemovedChildrenProgressively(Stage this);
 static bool Stage_updateEntityFactory(Stage this);
 
 #ifdef __PROFILE_STREAMING
+extern s16 _renderingProcessTimeHelper;
 void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y);
 #endif
 
@@ -756,6 +757,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 	}
 
 #ifdef __PROFILE_STREAMING
+	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
@@ -794,7 +796,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 			if(defer)
 			{
 #ifdef __PROFILE_STREAMING
-				u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+				u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 				unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
 				return true;
@@ -803,10 +805,9 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 	}
 
 #ifdef __PROFILE_STREAMING
-		u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+		u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 		unloadOutOfRangeEntitiesHighestTime = processTime > unloadOutOfRangeEntitiesHighestTime ? processTime : unloadOutOfRangeEntitiesHighestTime;
 #endif
-
 
 	return true;
 }
@@ -816,6 +817,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
 
 #ifdef __PROFILE_STREAMING
+	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
@@ -930,7 +932,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	this->screenPreviousDistance = screenDistance;
 
 #ifdef __PROFILE_STREAMING
-	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 	loadInRangeEntitiesHighestTime = processTime > loadInRangeEntitiesHighestTime ? processTime : loadInRangeEntitiesHighestTime;
 #endif
 
@@ -948,6 +950,7 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 	}
 
 #ifdef __PROFILE_STREAMING
+	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
@@ -963,7 +966,7 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 			__DELETE(child);
 
 #ifdef __PROFILE_STREAMING
-			u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+			u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 			processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
 #endif
 			return true;
@@ -971,7 +974,7 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 	}
 
 #ifdef __PROFILE_STREAMING
-	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 	processRemovedEntitiesHighestTime = processTime > processRemovedEntitiesHighestTime ? processTime : processRemovedEntitiesHighestTime;
 #endif
 
@@ -984,13 +987,14 @@ static bool Stage_updateEntityFactory(Stage this)
 	ASSERT(this, "Stage::updateEntityFactory: null this");
 
 #ifdef __PROFILE_STREAMING
+	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager_getMillisecondsElapsed(TimerManager_getInstance());
 #endif
 
 	bool preparingEntities = EntityFactory_prepareEntities(this->entityFactory);
 
 #ifdef __PROFILE_STREAMING
-	u32 processTime = TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
+	u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
 	entityFactoryHighestTime = processTime > entityFactoryHighestTime ? processTime : entityFactoryHighestTime;
 #endif
 
@@ -1013,14 +1017,14 @@ bool Stage_stream(Stage this)
 	// TODO: fix me
 	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
 	// inhibit the streaming to kick in
-	/*bool vipDrawingEnded = VIPManager_drawingEnded(VIPManager_getInstance());
+	bool vipDrawingEnded = VIPManager_drawingEnded(VIPManager_getInstance());
 
 	int minimumSpareMilliSecondsToAllowStreaming = (this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming) << (vipDrawingEnded ? 0 : 1);
 
 	if(minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
 	{
 		return true;
-	}*/
+	}
 
 	if(Stage_updateEntityFactory(this))
 	{
