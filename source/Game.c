@@ -201,11 +201,11 @@ static void Game_initialize(Game this);
 static void Game_setNextState(Game this, GameState state);
 static u32 Game_handleInput(Game this);
 inline static u32 Game_dispatchDelayedMessages(Game this);
-void Game_updateVisuals(Game this);
 inline static void Game_updateLogic(Game this);
 inline static void Game_updatePhysics(Game this);
 inline static void Game_updateTransformations(Game this);
 inline static u32 Game_updateCollisions(Game this);
+void Game_updateVisuals(Game this);
 bool Game_stream(Game this);
 inline static void Game_checkForNewState(Game this);
 void Game_checkFrameRate(Game thi);
@@ -438,10 +438,6 @@ void Game_start(Game this, GameState state)
 		// set state
 		Game_setNextState(this, state);
 
-		// start game's cycle
-		VIPManager_enableInterrupt(this->vipManager, __FRAMESTART | __GAMESTART | __XPEND);
-		VIPManager_enableDrawing(this->vipManager);
-
 		while(true);
 	}
 	else
@@ -566,9 +562,6 @@ static void Game_setNextState(Game this, GameState state)
 	// enable hardware pad read
 	//HardwareManager_enableKeypad(HardwareManager_getInstance());
 
-	// disable rendering
-	HardwareManager_enableRendering(HardwareManager_getInstance());
-
 	// if automatic pause function is in place
 	if(this->automaticPauseState)
 	{
@@ -591,6 +584,9 @@ static void Game_setNextState(Game this, GameState state)
 
 	// reset profiling
 	Game_resetProfiling(this);
+
+	// disable rendering
+	HardwareManager_enableRendering(HardwareManager_getInstance());
 }
 
 // disable interrupts
@@ -1165,11 +1161,13 @@ void Game_run(Game this)
 	Game_updateLogic(this);
 
 	// stream
-/*	if(!skipNonCriticalProcesses)
+#if 0 == __FRAME_CYCLE
+	if(!skipNonCriticalProcesses)
 	{
 		skipNonCriticalProcesses |= Game_stream(this);
 	}
-*/
+#endif
+
 	// dispatch delayed messages
 	if(!skipNonCriticalProcesses)
 	{
@@ -1180,7 +1178,7 @@ void Game_run(Game this)
 	if(_updateProfiling)
 	{
 		static u32 cycleCount = 0;
-		u32 gameFrameDuration = _renderingProcessTime +
+		s16 gameFrameDuration = _renderingProcessTime +
 							_updateVisualsProcessTime +
 							_updateLogicProcessTime +
 							_streamingProcessTime +
@@ -1190,7 +1188,7 @@ void Game_run(Game this)
 							_dispatchDelayedMessageProcessTime +
 							_processCollisionsProcessTime;
 
-		static u32 totalGameFrameRealDuration = 0;
+		static s16 totalGameFrameRealDuration = 0;
 		totalGameFrameRealDuration += gameFrameDuration;
 
 		_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;

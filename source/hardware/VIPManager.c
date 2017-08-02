@@ -27,10 +27,9 @@
 #include <VIPManager.h>
 #include <HardwareManager.h>
 #include <TimerManager.h>
+#include <ClockManager.h>
 #include <Game.h>
 #include <FrameRate.h>
-#include <ParamTableManager.h>
-#include <CharSetManager.h>
 #include <SpriteManager.h>
 #include <PolyhedronManager.h>
 #include <Mem.h>
@@ -106,8 +105,6 @@ void Game_saveProcessNameDuringXPEND(Game this);
 
 static VIPManager _vipManager;
 static TimerManager _timerManager;
-static ParamTableManager _paramTableManager;
-static CharSetManager _charSetManager;
 static PolyhedronManager _polyhedronManager;
 static SpriteManager _spriteManager;
 static HardwareManager _hardwareManager;
@@ -116,6 +113,8 @@ static void VIPManager_constructor(VIPManager this);
 static void VIPManager_processFrameBuffers(VIPManager this);
 void Game_run(Game this);
 void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration);
+void Game_updateVisuals(Game this);
+bool Game_stream(Game this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -157,8 +156,6 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 
 	_vipManager = this;
 	_timerManager = TimerManager_getInstance();
-	_paramTableManager = ParamTableManager_getInstance();
-	_charSetManager = CharSetManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
 	_polyhedronManager = PolyhedronManager_getInstance();
 	_hardwareManager = HardwareManager_getInstance();
@@ -305,16 +302,24 @@ void VIPManager_interruptHandler(void)
 	// save the interrupt event
 	u16 interrupt = _vipRegisters[__INTPND];
 
+#ifdef __PROFILE_GAME
+	if((_vipManager->frameStarted && (interrupt & __FRAMESTART))
+		|| (_vipManager->gameStarted && (interrupt & __GAMESTART))
+		|| (_vipManager->renderingStarted && (interrupt & (__GAMESTART | __FRAMESTART | __XPEND))))
+	{
+		extern u16 _tornGameFrameCount;
+		_tornGameFrameCount++;
+	}
+#endif
+
 	// disable interrupts
 	VIPManager_disableMultiplexedInterrupts();
 	VIPManager_disableInterrupts(_vipManager);
 
-	Printing_hex(Printing_getInstance(), interrupt, 16, 26, 4, NULL);
-
 	const u16 interruptTable[] =
 	{
-		__FRAMESTART,
 		__GAMESTART,
+		__FRAMESTART,
 		__XPEND,
 #ifdef __ALERT_VIP_OVERTIME
 		__TIMEERR
@@ -328,6 +333,42 @@ void VIPManager_interruptHandler(void)
 	{
 		switch(interrupt & interruptTable[i])
 		{
+			case __FRAMESTART:
+
+				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
+				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
+				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+
+#ifdef __PROFILE_GAME
+				Game_resetCurrentFrameProfiling(Game_getInstance(), TimerManager_getMillisecondsElapsed(_timerManager));
+#endif
+
+				if(_vipManager->frameStarted || _vipManager->gameStarted)
+				{
+					break;
+				}
+
+				_vipManager->frameStarted = true;
+
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+				VIPManager_enableMultiplexedInterrupts();
+
+#if 0 != __FRAME_CYCLE
+				Game_stream(Game_getInstance());
+#endif
+
+#if 0 != __FRAME_CYCLE
+				if(!(interrupt & __GAMESTART))
+#endif
+				{
+					VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+					VIPManager_enableMultiplexedInterrupts();
+					Game_run(Game_getInstance());
+				}
+
+				_vipManager->frameStarted = false;
+				break;
+
 			case __GAMESTART:
 #ifdef __PROFILE_GAME
 				Game_saveProcessNameDuringGAMESTART(Game_getInstance());
@@ -335,10 +376,6 @@ void VIPManager_interruptHandler(void)
 
 				if(_vipManager->frameStarted || _vipManager->gameStarted)
 				{
-#ifdef __PROFILE_GAME
-					extern u16 _tornGameFrameCount;
-					_tornGameFrameCount++;
-#endif
 					break;
 				}
 
@@ -350,15 +387,13 @@ void VIPManager_interruptHandler(void)
 				VIPManager_enableMultiplexedInterrupts();
 				Game_updateVisuals(Game_getInstance());
 
-				if(_vipManager->drawingEnded)
+				if(!(interrupt & __XPEND) && _vipManager->drawingEnded)
 				{
 					VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
 					VIPManager_enableMultiplexedInterrupts();
 					SpriteManager_render(_spriteManager);
 				}
 
-				VIPManager_disableMultiplexedInterrupts();
-				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
 				_vipManager->updatingVisuals = false;
 				_vipManager->gameStarted = false;
 				break;
@@ -371,10 +406,6 @@ void VIPManager_interruptHandler(void)
 
 				if(_vipManager->renderingStarted)
 				{
-#ifdef __PROFILE_GAME
-					extern u16 _tornGameFrameCount;
-					_tornGameFrameCount++;
-#endif
 					break;
 				}
 
@@ -391,52 +422,9 @@ void VIPManager_interruptHandler(void)
 					SpriteManager_render(_spriteManager);
 				}
 
-				VIPManager_disableMultiplexedInterrupts();
-				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
 				VIPManager_enableDrawing(_vipManager);
 				_vipManager->renderingStarted = false;
 				_vipManager->drawingEnded = true;
-				break;
-
-			case __FRAMESTART:
-
-				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
-				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
-				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
-
-#ifdef __PROFILE_GAME
-				Game_resetCurrentFrameProfiling(Game_getInstance(), TimerManager_getMillisecondsElapsed(_timerManager));
-#endif
-
-				if(_vipManager->frameStarted || _vipManager->gameStarted)
-				{
-
-#ifdef __PROFILE_GAME
-					extern u16 _tornGameFrameCount;
-					_tornGameFrameCount++;
-#endif
-					return;
-				}
-
-				_vipManager->frameStarted = true;
-
-				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
-				VIPManager_enableMultiplexedInterrupts();
-
-				Game_stream(Game_getInstance());
-
-#if 0 != __FRAME_CYCLE
-				if(!(interrupt & __GAMESTART))
-#endif
-				{
-					VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
-					VIPManager_enableMultiplexedInterrupts();
-					Game_run(Game_getInstance());
-				}
-
-				VIPManager_disableMultiplexedInterrupts();
-				VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
-				_vipManager->frameStarted = false;
 				break;
 
 #ifdef __ALERT_VIP_OVERTIME
@@ -464,6 +452,9 @@ void VIPManager_interruptHandler(void)
 #endif
 		}
 	}
+
+	VIPManager_disableMultiplexedInterrupts();
+	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
 }
 
 /**
@@ -499,18 +490,12 @@ static void VIPManager_processFrameBuffers(VIPManager this)
 		((PostProcessingEffectRegistry*)node->data)->postProcessingEffect(this->currentDrawingFrameBufferSet, ((PostProcessingEffectRegistry*)node->data)->spatialObject);
 	}
 
-	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
-	{
-		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
-	}
-
 #ifdef __DEBUG_TOOLS
 	if(Game_isInDebugMode(Game_getInstance()))
 	{
 		Debug_render(Debug_getInstance());
 	}
 #endif
-
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	Game_setLastProcessName(Game_getInstance(), "");

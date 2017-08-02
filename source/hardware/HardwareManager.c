@@ -432,6 +432,7 @@ void HardwareManager_disableRendering(HardwareManager this)
 
 	// disable interrupt
 	VIPManager_disableInterrupts(this->vipManager);
+	VIPManager_disableDrawing(this->vipManager);
 }
 
 /**
@@ -448,8 +449,8 @@ void HardwareManager_enableRendering(HardwareManager this)
 
 	// turn on display
 	VIPManager_displayOn(this->vipManager);
+	VIPManager_enableInterrupt(this->vipManager, __FRAMESTART | __GAMESTART | __XPEND);
 	VIPManager_enableDrawing(this->vipManager);
-	VIPManager_enableInterrupt(VIPManager_getInstance(), __GAMESTART);
 }
 
 /**
