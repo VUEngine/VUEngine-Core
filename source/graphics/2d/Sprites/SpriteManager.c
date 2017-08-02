@@ -28,8 +28,9 @@
 #include <SpriteManager.h>
 #include <Game.h>
 #include <ObjectSpriteContainerManager.h>
-#include <CharSetManager.h>
 #include <VIPManager.h>
+#include <ParamTableManager.h>
+#include <CharSetManager.h>
 #include <Screen.h>
 #include <Printing.h>
 #include <debugConfig.h>
