@@ -227,7 +227,6 @@ void HardwareManager_checkMemoryMap();
 u32 VIPManager_frameStarted(VIPManager this);
 u32 VIPManager_gameStarted(VIPManager this);
 void VIPManager_resetFrameStarted(VIPManager this);
-void VIPManager_resetGameStarted(VIPManager this);
 
 #ifdef __PROFILE_GAME
 
@@ -467,13 +466,11 @@ void Game_start(Game this, GameState state)
 			}
 #endif
 
-			while(!VIPManager_gameStarted(this->vipManager));
-			VIPManager_resetGameStarted(this->vipManager);
-			TimerManager_resetMilliseconds(this->timerManager);
-			Game_updateVisuals(this);
 
 			while(!VIPManager_frameStarted(this->vipManager));
 			VIPManager_resetFrameStarted(this->vipManager);
+			TimerManager_resetMilliseconds(this->timerManager);
+			Game_updateVisuals(this);
 
 			Game_run(this);
 

@@ -79,10 +79,7 @@ typedef struct PostProcessingEffectRegistry
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
 		u16 frameStarted;																				\
-		u16 gameStarted;																				\
-		u16 renderingStarted;																				\
 		u16 drawingEnded;																				\
-		u16 updatingVisuals;																			\
 
 /**
  * @class	VIPManager
@@ -149,11 +146,8 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;
-	this->gameStarted = false;
 	this->frameStarted = false;
-	this->renderingStarted = false;
 	this->drawingEnded = false;
-	this->updatingVisuals = false;
 
 	_vipManager = this;
 	_timerManager = TimerManager_getInstance();
@@ -265,25 +259,11 @@ u32 __attribute__ ((noinline)) VIPManager_frameStarted(VIPManager this)
 	return this->frameStarted;
 }
 
-u32 __attribute__ ((noinline)) VIPManager_gameStarted(VIPManager this)
-{
-	ASSERT(this, "VIPManager::gameStarted: null this");
-
-	return this->gameStarted;
-}
-
 void __attribute__ ((noinline)) VIPManager_resetFrameStarted(VIPManager this)
 {
 	ASSERT(this, "VIPManager::resetFrameStarted: null this");
 
 	this->frameStarted = false;
-}
-
-void __attribute__ ((noinline)) VIPManager_resetGameStarted(VIPManager this)
-{
-	ASSERT(this, "VIPManager::resetGameStarted: null this");
-
-	this->gameStarted = false;
 }
 
 inline void VIPManager_enableMultiplexedInterrupts()
@@ -337,7 +317,6 @@ void VIPManager_interruptHandler(void)
 
 	const u16 interruptTable[] =
 	{
-		__GAMESTART,
 		__FRAMESTART,
 		__XPEND,
 #ifdef __ALERT_VIP_OVERTIME
@@ -363,14 +342,6 @@ void VIPManager_interruptHandler(void)
 #endif
 
 				_vipManager->frameStarted = true;
-				break;
-
-			case __GAMESTART:
-#ifdef __PROFILE_GAME
-				Game_saveProcessNameDuringGAMESTART(Game_getInstance());
-#endif
-				_vipManager->gameStarted = true;
-				_vipManager->drawingEnded = false;
 				break;
 
 			case __XPEND:
@@ -428,7 +399,7 @@ void VIPManager_interruptHandler(void)
 	}
 
 	VIPManager_disableMultiplexedInterrupts();
-	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __GAMESTART | __XPEND);
+	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
 }
 
 /**
@@ -506,8 +477,6 @@ void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = __FRAME_CYCLE;
-
-	VIPManager_enableDrawing(this);
 }
 
 /**
