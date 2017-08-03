@@ -518,63 +518,43 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::updateSurroundingFriction: null this");
 
-	Force friction =
+	Force totalFriction =
 	{
 		0, 0, 0
 	};
 
-	if(this->sensibleToFriction.x)
+	// get friction in x axis
+	VirtualNode node = this->lastCollidingSpatialObject[kXAxis]->head;
+	for(; node; node = node->next)
 	{
-		// get friction in y axis
-		VirtualNode node = this->lastCollidingSpatialObject[kYAxis]->head;
-		for(; node; node = node->next)
-		{
-			friction.x += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
-		}
-
-		// get friction in z axis
-		node = this->lastCollidingSpatialObject[kZAxis]->head;
-		for(; node; node = node->next)
-		{
-			friction.x += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
-		}
+		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+		totalFriction.y += friction;
+		totalFriction.z += friction;
 	}
 
-	if(this->sensibleToFriction.y)
+	// get friction in y axis
+	node = this->lastCollidingSpatialObject[kYAxis]->head;
+	for(; node; node = node->next)
 	{
-		// get friction in x axis
-		VirtualNode node = this->lastCollidingSpatialObject[kXAxis]->head;
-		for(; node; node = node->next)
-		{
-			friction.y += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
-		}
-
-		// get friction in z axis
-		node = this->lastCollidingSpatialObject[kZAxis]->head;
-		for(; node; node = node->next)
-		{
-			friction.y += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
-		}
+		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+		totalFriction.x += friction;
+		totalFriction.z += friction;
 	}
 
-	if(this->sensibleToFriction.z)
+	// get friction in z axis
+	node = this->lastCollidingSpatialObject[kZAxis]->head;
+	for(; node; node = node->next)
 	{
-		// get friction in x axis
-		VirtualNode node = this->lastCollidingSpatialObject[kXAxis]->head;
-		for(; node; node = node->next)
-		{
-			friction.z += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
-		}
-
-		// get friction in y axis
-		node = this->lastCollidingSpatialObject[kYAxis]->head;
-		for(; node; node = node->next)
-		{
-			friction.z += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
-		}
+		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+		totalFriction.y += friction;
+		totalFriction.x += friction;
 	}
 
-	return friction;
+	totalFriction.x *= this->sensibleToFriction.x;
+	totalFriction.y *= this->sensibleToFriction.y;
+	totalFriction.z *= this->sensibleToFriction.z;
+
+	return totalFriction;
 }
 
 fix19_13 CollisionSolver_getCollidingSpatialObjectsTotalElasticity(CollisionSolver this, int axis)

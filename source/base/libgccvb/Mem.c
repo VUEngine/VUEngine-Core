@@ -34,7 +34,7 @@
 // Copy a block of data from one area in memory to another.
 void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
 {
-/*
+
 	asm("          \n\t"      \
 		"mov r29,r1\n\t"      \
 		"mov %0,r26\n\t"      \
@@ -48,7 +48,7 @@ void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
 		: "r" (((u32)destination & 0x3) << 2), "r" (((u32)source & 0x3) << 2), "r" (numberOfBytes << 3), "r" ((u32)destination & ~0x3), "r" ((u32)source & ~0x3) // input
 		: "r1", "r26", "r27", "r28", "r29", "r30" // trashed
 		);
-*/
+/*
 
 	u32 numberOfWORDS = numberOfBytes >> 2;
 
@@ -70,6 +70,7 @@ void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
 		: "r" (destinationWORD), "r" (sourceWORD), "r" (finalSourceWORD)
 		: "r10" // regs used
 	);
+	*/
 }
 
 void Mem_clear(BYTE* destination, u32 numberOfBytes)
