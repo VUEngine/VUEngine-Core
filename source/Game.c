@@ -208,6 +208,7 @@ inline static u32 Game_updateCollisions(Game this);
 void Game_updateVisuals(Game this);
 bool Game_stream(Game this);
 inline static void Game_checkForNewState(Game this);
+inline static void Game_run(Game this);
 void Game_checkFrameRate(Game thi);
 static void Game_autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
@@ -216,13 +217,17 @@ static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
 
 #ifdef __SHOW_GAME_PROFILING
-static void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y);
+void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y);
 #endif
 
 void SpriteManager_sortLayersProgressively(SpriteManager this);
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
 void HardwareManager_checkMemoryMap();
 
+u32 VIPManager_frameStarted(VIPManager this);
+u32 VIPManager_gameStarted(VIPManager this);
+void VIPManager_resetFrameStarted(VIPManager this);
+void VIPManager_resetGameStarted(VIPManager this);
 
 #ifdef __PROFILE_GAME
 
@@ -438,7 +443,71 @@ void Game_start(Game this, GameState state)
 		// set state
 		Game_setNextState(this, state);
 
-		while(true);
+		while(true)
+		{
+#ifdef __PRINT_PROFILING_INFO
+			Game_checkFrameRate(this);
+#endif
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+			this->lastProcessName = "start frame";
+#endif
+
+#ifdef __PROFILE_GAME
+			if(_updateProfiling)
+			{
+				static u32 cycleCount = 0;
+				static u32 totalGameFrameDuration = 0;
+				u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
+				totalGameFrameDuration += elapsedTime;
+
+				_gameFrameEffectiveDuration = elapsedTime;
+				_gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
+				_gameFrameHighestEffectiveDuration = elapsedTime > _gameFrameHighestEffectiveDuration ? elapsedTime : _gameFrameHighestEffectiveDuration;
+			}
+#endif
+
+			while(!VIPManager_gameStarted(this->vipManager));
+			VIPManager_resetGameStarted(this->vipManager);
+			TimerManager_resetMilliseconds(this->timerManager);
+			Game_updateVisuals(this);
+
+			while(!VIPManager_frameStarted(this->vipManager));
+			VIPManager_resetFrameStarted(this->vipManager);
+
+			Game_run(this);
+
+#ifdef __PROFILE_GAME
+			if(_updateProfiling)
+			{
+				static u32 cycleCount = 0;
+				s16 gameFrameDuration = _renderingProcessTime +
+									_updateVisualsProcessTime +
+									_updateLogicProcessTime +
+									_streamingProcessTime +
+									_updatePhysicsProcessTime +
+									_updateTransformationsProcessTime +
+									_handleInputProcessTime +
+									_dispatchDelayedMessageProcessTime +
+									_processCollisionsProcessTime;
+
+				static s16 totalGameFrameRealDuration = 0;
+				totalGameFrameRealDuration += gameFrameDuration;
+
+				_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;
+				_gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
+			}
+#endif
+
+#ifdef __PROFILE_GAME
+			_updateProfiling = !Game_isInSpecialMode(this);
+#endif
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+			this->lastProcessName = "frame done";
+#endif
+
+		}
 	}
 	else
 	{
@@ -1116,30 +1185,8 @@ void Game_checkFrameRate(Game this)
 	TimerManager_enable(this->timerManager, true);
 }
 
-void Game_run(Game this)
+inline static void Game_run(Game this)
 {
-#ifdef __PRINT_PROFILING_INFO
-	Game_checkFrameRate(this);
-#endif
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "start frame";
-#endif
-
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		static u32 cycleCount = 0;
-		static u32 totalGameFrameDuration = 0;
-		u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
-		totalGameFrameDuration += elapsedTime;
-
-		_gameFrameEffectiveDuration = elapsedTime;
-		_gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
-		_gameFrameHighestEffectiveDuration = elapsedTime > _gameFrameHighestEffectiveDuration ? elapsedTime : _gameFrameHighestEffectiveDuration;
-	}
-#endif
-
 	// process user"s input
 	bool skipNonCriticalProcesses = Game_handleInput(this);
 
@@ -1153,6 +1200,15 @@ void Game_run(Game this)
 	// process collisions
 	skipNonCriticalProcesses |= Game_updateCollisions(this);
 
+	// skip the rest of the cycle if already late
+	if(VIPManager_frameStarted(this->vipManager))
+	{
+#ifdef __PROFILE_GAME
+		_tornGameFrameCount++;
+#endif
+		return;
+	}
+
 	// this is the moment to check if the game"s state
 	// needs to be changed
 	Game_checkForNewState(this);
@@ -1160,50 +1216,35 @@ void Game_run(Game this)
 	// update game"s logic
 	Game_updateLogic(this);
 
+	// skip the rest of the cycle if already late
+	if(VIPManager_frameStarted(this->vipManager))
+	{
+#ifdef __PROFILE_GAME
+		_tornGameFrameCount++;
+#endif
+		return;
+	}
+
 	// stream
-#if 0 == __FRAME_CYCLE
 	if(!skipNonCriticalProcesses)
 	{
 		skipNonCriticalProcesses |= Game_stream(this);
 	}
+
+	// skip the rest of the cycle if already late
+	if(VIPManager_frameStarted(this->vipManager))
+	{
+#ifdef __PROFILE_GAME
+		_tornGameFrameCount++;
 #endif
+		return;
+	}
 
 	// dispatch delayed messages
 	if(!skipNonCriticalProcesses)
 	{
 		Game_dispatchDelayedMessages(this);
 	}
-
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		static u32 cycleCount = 0;
-		s16 gameFrameDuration = _renderingProcessTime +
-							_updateVisualsProcessTime +
-							_updateLogicProcessTime +
-							_streamingProcessTime +
-							_updatePhysicsProcessTime +
-							_updateTransformationsProcessTime +
-							_handleInputProcessTime +
-							_dispatchDelayedMessageProcessTime +
-							_processCollisionsProcessTime;
-
-		static s16 totalGameFrameRealDuration = 0;
-		totalGameFrameRealDuration += gameFrameDuration;
-
-		_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;
-		_gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
-	}
-#endif
-
-#ifdef __PROFILE_GAME
-	_updateProfiling = !Game_isInSpecialMode(this);
-#endif
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "frame done";
-#endif
-
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1583,7 +1624,7 @@ void Game_saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
 }
 #endif
 #ifdef __SHOW_GAME_PROFILING
-static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
@@ -1718,7 +1759,7 @@ static void Game_showProfiling(Game this __attribute__ ((unused)), int x __attri
 #ifdef __PROFILE_GAME
 void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
-	ASSERT(this, "Game::showProfiling: this null");
+	ASSERT(this, "Game::showCurrentGameFrameProfiling: this null");
 
 	int xDisplacement = 32;
 
@@ -1836,7 +1877,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 
 void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
-	ASSERT(this, "Game::showProfiling: this null");
+	ASSERT(this, "Game::showLastGameFrameProfiling: this null");
 
 #ifdef __PROFILE_GAME
 

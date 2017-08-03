@@ -10,11 +10,11 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 
 // define / undefine as you see fit
 //#undef __LOW_BATTERY_INDICATOR
-#define __PRINT_FRAMERATE
+//#define __PRINT_FRAMERATE
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
-#define __SHOW_GAME_DETAILED_PROFILING
+//#define __SHOW_GAME_DETAILED_PROFILING
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
@@ -35,7 +35,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #undef __FRAME_CYCLE
 #define __FRAME_CYCLE 							0
 #undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						1
+#define __TIMER_RESOLUTION						4
 //#undef __TIMER_FREQUENCY
 //#define __TIMER_FREQUENCY						__TIMER_100US
 
