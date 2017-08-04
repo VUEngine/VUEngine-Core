@@ -312,7 +312,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 	}
 
 	// if there isn't enough memory thrown an exception
-	NM_ASSERT(false, "CharSetManager::allocateCharSet: char mem depleted");
+	NM_ASSERT(false, "CharSetManager::allocateCharSet: CHAR mem depleted");
 
 	return NULL;
 }
@@ -414,7 +414,8 @@ static bool CharSetManager_defragmentProgressively(CharSetManager this)
 				//Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet_getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet_getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
 
 				CharSet_setOffset(charSet, this->freedOffset);
-				//write to char memory
+
+				//write to CHAR memory
 				CharSet_rewrite(charSet);
 				this->freedOffset += CharSet_getNumberOfChars(charSet) + __CHAR_ROOM;
 
