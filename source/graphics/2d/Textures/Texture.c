@@ -180,11 +180,8 @@ void Texture_releaseCharSet(Texture this)
 
 	if(this->charSet)
 	{
-		if(this->charSet)
-		{
-			Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-			Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
-		}
+		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
+		Object_removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 
 		CharSetManager_releaseCharSet(CharSetManager_getInstance(), this->charSet);
 
