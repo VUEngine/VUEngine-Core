@@ -431,7 +431,6 @@ void Game_start(Game this, GameState state)
 	SRAMManager_getInstance();
 
 	// initialize VPU and turn off the brightness
-	HardwareManager_displayOn(HardwareManager_getInstance());
 	HardwareManager_lowerBrightness(HardwareManager_getInstance());
 
 	if(!StateMachine_getCurrentState(this->stateMachine))
@@ -551,6 +550,7 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(state, "Game::setState: setting NULL state");
 
 	// disable rendering
+	HardwareManager_displayOff(HardwareManager_getInstance());
 	HardwareManager_disableRendering(HardwareManager_getInstance());
 
 	// set waveform data
@@ -651,6 +651,7 @@ static void Game_setNextState(Game this, GameState state)
 	Game_resetProfiling(this);
 
 	// disable rendering
+	HardwareManager_displayOn(HardwareManager_getInstance());
 	HardwareManager_enableRendering(HardwareManager_getInstance());
 }
 
