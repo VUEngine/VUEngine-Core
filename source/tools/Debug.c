@@ -203,6 +203,12 @@
 		 * @memberof		Debug
 		 */																								\
 		BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];												\
+		/**
+		 * @var bool 		showBgmapSegment
+		 * @brief			flag to force displaying of BGMAP memory
+		 * @memberof		Debug
+		 */																								\
+		bool showBgmapSegment;
 
 /**
  * @class	Debug
@@ -225,6 +231,7 @@ extern ClassSizeData _userClassesSizeData[];
 static void Debug_constructor(Debug this);
 static void Debug_showCollisionShapes(Debug this);
 static void Debug_showDebugBgmap(Debug this);
+static void Debug_showBgmapSegment(Debug this);
 static void Debug_setupPages(Debug this);
 static void Debug_showPage(Debug this, int increment);
 static void Debug_showSubPage(Debug this, int increment);
@@ -329,6 +336,8 @@ static void __attribute__ ((noinline)) Debug_constructor(Debug this)
 	this->mapDisplacement.x = 0;
 	this->mapDisplacement.y = 0;
 
+	this->showBgmapSegment = false;
+
 	Debug_setupPages(this);
 }
 
@@ -382,6 +391,11 @@ void Debug_update(Debug this)
 	if(this->update)
 	{
 		((void (*)(Debug))this->update)(this);
+	}
+
+	if(this->showBgmapSegment)
+	{
+		Debug_showBgmapSegment(this);
 	}
 }
 
@@ -1401,6 +1415,19 @@ static void Debug_showDebugBgmap(Debug this)
 
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
+	this->showBgmapSegment = true;
+}
+
+/**
+ * Force display BGMAP memory's status
+ *
+ * @memberof			Debug
+ * @private
+ *
+ * @param this			Function scope
+ */
+static void Debug_showBgmapSegment(Debug this)
+{
 	// write the head
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = this->mapDisplacement.x;
@@ -1432,6 +1459,8 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 	{
 		this->bgmapSegment = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
 	}
+
+	this->showBgmapSegment = false;
 
 	if(-1 == this->bgmapSegment)
 	{
