@@ -466,12 +466,11 @@ void Game_start(Game this, GameState state)
 			}
 #endif
 
-
 			while(!VIPManager_frameStarted(this->vipManager));
 			VIPManager_resetFrameStarted(this->vipManager);
+
 			TimerManager_resetMilliseconds(this->timerManager);
 			Game_updateVisuals(this);
-
 			Game_run(this);
 
 #ifdef __PROFILE_GAME

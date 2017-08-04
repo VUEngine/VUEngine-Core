@@ -85,7 +85,7 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 
 	// initialize frame head
 	this->frameDuration = 0;
-	this->frameCycleDecrement = 1 << __FRAME_CYCLE;
+	this->frameCycleDecrement = 1;
 
 	// initialize animation function
 	this->animationFunction = NULL;
@@ -252,7 +252,7 @@ void AnimationController_setFrameCycleDecrement(AnimationController this, u8 fra
 {
 	ASSERT(this, "AnimationController::setFrameCycleDecrement: null this");
 
-	this->frameCycleDecrement = frameCycleDecrement << __FRAME_CYCLE;
+	this->frameCycleDecrement = frameCycleDecrement;
 }
 
 /**
