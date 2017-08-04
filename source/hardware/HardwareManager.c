@@ -90,7 +90,7 @@ int _sp = 0;
 void TimerManager_interruptHandler(void);
 void KeypadManager_interruptHandler(void);
 void VIPManager_interruptHandler(void);
-
+void VIPManager_resetFrameStarted(VIPManager this);
 static void HardwareManager_constructor(HardwareManager this);
 
 
