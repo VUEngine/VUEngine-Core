@@ -461,7 +461,7 @@ void Game_start(Game this, GameState state)
 
 				_gameFrameEffectiveDuration = elapsedTime;
 				_gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
-				_gameFrameHighestEffectiveDuration = elapsedTime > _gameFrameHighestEffectiveDuration ? elapsedTime : _gameFrameHighestEffectiveDuration;
+				_gameFrameHighestEffectiveDuration = (s16)elapsedTime > _gameFrameHighestEffectiveDuration ? (s16)elapsedTime : _gameFrameHighestEffectiveDuration;
 			}
 #endif
 
@@ -1800,10 +1800,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement, y++, NULL);
 	}
 
-	int xDisplacement2 = 7;
-
 	Printing_text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
-
 	Printing_text(printing, "                              total highest", x, ++y, NULL);
 
 	int processNumber = 1;
