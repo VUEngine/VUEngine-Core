@@ -34,43 +34,49 @@
 // Copy a block of data from one area in memory to another.
 void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
 {
+	if(50 > numberOfBytes)
+	{
+		asm("          \n\t"      \
+			"mov r29,r1\n\t"      \
+			"mov %0,r26\n\t"      \
+			"mov %1,r27\n\t"      \
+			"mov %2,r28\n\t"      \
+			"mov %3,r29\n\t"      \
+			"mov %4,r30\n\t"      \
+			".hword 0x7C0B\n\t"   \
+			"mov r1,r29"
+			: // output
+			: "r" (((u32)destination & 0x3) << 2), "r" (((u32)source & 0x3) << 2), "r" (numberOfBytes << 3), "r" ((u32)destination & ~0x3), "r" ((u32)source & ~0x3) // input
+			: "r1", "r26", "r27", "r28", "r29", "r30" // trashed
+			);
+	}
+	else
+	{
+		u32 numberOfWORDS = numberOfBytes >> 2;
 
-	asm("          \n\t"      \
-		"mov r29,r1\n\t"      \
-		"mov %0,r26\n\t"      \
-		"mov %1,r27\n\t"      \
-		"mov %2,r28\n\t"      \
-		"mov %3,r29\n\t"      \
-		"mov %4,r30\n\t"      \
-		".hword 0x7C0B\n\t"   \
-		"mov r1,r29"
-		: // output
-		: "r" (((u32)destination & 0x3) << 2), "r" (((u32)source & 0x3) << 2), "r" (numberOfBytes << 3), "r" ((u32)destination & ~0x3), "r" ((u32)source & ~0x3) // input
-		: "r1", "r26", "r27", "r28", "r29", "r30" // trashed
+		WORD* destinationWORD = (WORD*) destination;
+		WORD* sourceWORD = (WORD*) source;
+		WORD* finalSourceWORD = sourceWORD + numberOfWORDS;
+
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+
+		asm("				\n\t"      \
+			"jr end%=		\n\t"      \
+			"loop%=:		\n\t"      \
+			"ld.w 0[%1],r10	\n\t"      \
+			"st.w r10,0[%0] \n\t"      \
+			"add 4,%0		\n\t"      \
+			"add 4,%1		\n\t"      \
+			"end%=:			\n\t"      \
+			"cmp %1,%2		\n\t"      \
+			"bgt loop%=		\n\t"
+			: // No Output
+			: "r" (destinationWORD), "r" (sourceWORD), "r" (finalSourceWORD)
+			: "r10" // regs used
 		);
-/*
-
-	u32 numberOfWORDS = numberOfBytes >> 2;
-
-	WORD* destinationWORD = (WORD*) destination;
-	WORD* sourceWORD = (WORD*) source;
-	WORD* finalSourceWORD = sourceWORD + numberOfWORDS;
-
-    asm("				\n\t"      \
-		"jr end%=		\n\t"      \
-		"loop%=:		\n\t"      \
-		"ld.w 0[%1],r10	\n\t"      \
-		"st.w r10,0[%0] \n\t"      \
-		"add 4,%0		\n\t"      \
-		"add 4,%1		\n\t"      \
-		"end%=:			\n\t"      \
-		"cmp %1,%2		\n\t"      \
-		"bgt loop%=		\n\t"
-		: // No Output
-		: "r" (destinationWORD), "r" (sourceWORD), "r" (finalSourceWORD)
-		: "r10" // regs used
-	);
-	*/
+	}
 }
 
 void Mem_clear(BYTE* destination, u32 numberOfBytes)
@@ -90,6 +96,10 @@ void Mem_add(BYTE* destination, const BYTE* source, u32 numberOfBytes, u32 offse
 	HWORD* destinationHWORD = (HWORD*) destination;
 	HWORD* sourceHWORD = (HWORD*) source;
 	HWORD* finalSourceHWORD = sourceHWORD + numberOfHWORDS;
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 
     asm("					\n\t"      \
 		"jr end%=			\n\t"      \
