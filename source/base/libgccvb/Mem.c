@@ -97,10 +97,6 @@ void Mem_add(BYTE* destination, const BYTE* source, u32 numberOfBytes, u32 offse
 	HWORD* sourceHWORD = (HWORD*) source;
 	HWORD* finalSourceHWORD = sourceHWORD + numberOfHWORDS;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
     asm("					\n\t"      \
 		"jr end%=			\n\t"      \
 		"loop%=:			\n\t"      \
