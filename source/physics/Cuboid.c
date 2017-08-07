@@ -313,6 +313,10 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 			axisToIgnore |= __Z_AXIS;
 		}
 
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+
 		// check for a collision on a single axis at a time
 		do
 		{
@@ -395,6 +399,10 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
 		positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
 		positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
+
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
 
 		// test for collision carrying the displacement across all axixes
 		do
