@@ -355,12 +355,14 @@ void VIPManager_interruptHandler(void)
 
 				// to allow timer interrupts
 				VIPManager_enableMultiplexedInterrupts();
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
 
 				// write to the frame buffers
 				VIPManager_processFrameBuffers(_vipManager);
 
 				// to allow timer interrupts
 				VIPManager_enableMultiplexedInterrupts();
+				VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
 
 				// write to DRAM
 				SpriteManager_render(_spriteManager);

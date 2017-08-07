@@ -476,7 +476,7 @@ void Game_start(Game this, GameState state)
 			if(_updateProfiling)
 			{
 				static u32 cycleCount = 0;
-				s16 gameFrameDuration = _renderingProcessTime +
+				s32 gameFrameDuration = _renderingProcessTime +
 									_updateVisualsProcessTime +
 									_updateLogicProcessTime +
 									_streamingProcessTime +
@@ -486,11 +486,17 @@ void Game_start(Game this, GameState state)
 									_dispatchDelayedMessageProcessTime +
 									_processCollisionsProcessTime;
 
-				static s16 totalGameFrameRealDuration = 0;
+				static s32 totalGameFrameRealDuration = 0;
 				totalGameFrameRealDuration += gameFrameDuration;
 
 				_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;
 				_gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
+
+				if(cycleCount >= (0x000000001 < (sizeof(u32) * 7)))
+				{
+					totalGameFrameRealDuration = 0;
+					cycleCount = 0;
+				}
 			}
 #endif
 
@@ -1222,11 +1228,8 @@ inline static void Game_run(Game this)
 		return;
 	}
 
-	// stream
-	if(!skipNonCriticalProcesses)
-	{
-		skipNonCriticalProcesses |= Game_stream(this);
-	}
+	// dispatch delayed messages
+	Game_dispatchDelayedMessages(this);
 
 	// skip the rest of the cycle if already late
 	if(VIPManager_frameStarted(this->vipManager))
@@ -1237,10 +1240,10 @@ inline static void Game_run(Game this)
 		return;
 	}
 
-	// dispatch delayed messages
+	// stream
 	if(!skipNonCriticalProcesses)
 	{
-		Game_dispatchDelayedMessages(this);
+		Game_stream(this);
 	}
 }
 
