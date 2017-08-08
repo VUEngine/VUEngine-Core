@@ -61,5 +61,5 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 	leftEyeGx = x - FIX19_13_DIV(FIX19_13_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
 	rightEyeGx = x + FIX19_13_DIV(FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
-	return FIX19_13TOI(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
+	return FIX19_13TOI(rightEyeGx - leftEyeGx) >> __PARALLAX_CORRECTION_FACTOR;
 }

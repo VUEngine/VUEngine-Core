@@ -117,7 +117,8 @@
 #define __VERTICAL_VIEW_POINT_CENTER			__SCREEN_HEIGHT / 2
 
 // Parallax values are divide by this factor to control their strength
-#define __PARALLAX_CORRECTION_FACTOR			16
+// powers of 2
+#define __PARALLAX_CORRECTION_FACTOR			4
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -131,7 +132,7 @@
 #undef __FORCE_VIP_SYNC
 
 // Timer resolution
-#define __TIMER_RESOLUTION						1
+#define __TIMER_RESOLUTION						4
 
 // Options are __TIMER_20US and __TIMER_100US
 #define __TIMER_FREQUENCY						__TIMER_20US
@@ -189,17 +190,16 @@
 	__BLOCK_DEFINITION(124, 40)																			\
 	__BLOCK_DEFINITION(108, 40)																			\
 	__BLOCK_DEFINITION(100, 20)																			\
-	__BLOCK_DEFINITION(92, 12)																			\
-	__BLOCK_DEFINITION(88, 30)																			\
-	__BLOCK_DEFINITION(80, 35)																			\
+	__BLOCK_DEFINITION(92, 20)																			\
+	__BLOCK_DEFINITION(88, 25)																			\
+	__BLOCK_DEFINITION(80, 40)																			\
 	__BLOCK_DEFINITION(76, 20)																			\
 	__BLOCK_DEFINITION(68, 70)																			\
 	__BLOCK_DEFINITION(32, 14)																			\
 	__BLOCK_DEFINITION(28, 210)																			\
 	__BLOCK_DEFINITION(24, 80)																			\
 	__BLOCK_DEFINITION(20, 700)																			\
-	__BLOCK_DEFINITION(16, 500)																			\
-
+	__BLOCK_DEFINITION(16, 480)																			\
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
@@ -392,7 +392,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // When defined, the engine's default low battery indicator is used
-#undef __LOW_BATTERY_INDICATOR
+#define __LOW_BATTERY_INDICATOR
 
 // Position of low battery indicator
 #define __LOW_BATTERY_INDICATOR_POS_X			45
