@@ -255,6 +255,9 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 	if(this->invalidateSprites & __INVALIDATE_SCALE)
 	{
 		__CALL_BASE_METHOD(Entity, updateVisualRepresentation, this);
+
+		this->invalidateSprites = false;
+		return;
 	}
 
 	// save new global position
@@ -286,7 +289,7 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 
 	this->previous2DPosition = position2D;
 
-	this->invalidateSprites = 0;
+	this->invalidateSprites = false;
 }
 
 void ManagedEntity_releaseGraphics(ManagedEntity this)

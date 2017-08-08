@@ -258,6 +258,9 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 	if(this->invalidateSprites & __INVALIDATE_SCALE)
 	{
 		__CALL_BASE_METHOD(RecyclableImage, updateVisualRepresentation, this);
+
+		this->invalidateSprites = false;
+		return;
 	}
 
 	// save new global position
@@ -289,7 +292,7 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 
 	this->previous2DPosition = position2D;
 
-	this->invalidateSprites = 0;
+	this->invalidateSprites = false;
 }
 
 void ManagedStaticImage_releaseGraphics(ManagedStaticImage this)
