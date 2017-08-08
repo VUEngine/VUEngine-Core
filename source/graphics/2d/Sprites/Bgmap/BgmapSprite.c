@@ -316,10 +316,9 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
 
-	this->drawSpec.rotation = *rotation;
-
 	if(this->param)
 	{
+		this->drawSpec.rotation = *rotation;
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 	}
 }
@@ -338,32 +337,26 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::resize: null this");
 
-	z -= _screenPosition->z;
-
-	fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
-
-	ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE) : ratio;
-
-	this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
-	this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
-
-	ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
-	ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
-
-	if(this->texture)
-	{
-		this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
-		this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
-
-		if(__WORLD_AFFINE & this->head)
-		{
-			this->halfWidth = FIX19_13_MULT(this->halfWidth, FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)));
-			this->halfHeight = FIX19_13_MULT(this->halfHeight, FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)));
-		}
-	}
-
 	if(this->param)
 	{
+		z -= _screenPosition->z;
+
+		fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
+
+		ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE) : ratio;
+
+		this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
+		this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
+
+		ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
+		ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
+
+		if(this->texture)
+		{
+			this->halfWidth = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->cols << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)));
+			this->halfHeight = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->rows << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)));
+		}
+
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 	}
 }
