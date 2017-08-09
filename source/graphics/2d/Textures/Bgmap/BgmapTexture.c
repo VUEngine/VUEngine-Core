@@ -296,6 +296,7 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 	u32 colorInformation = (int)CharSet_getOffset(this->charSet) | (this->palette << 14);
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
+	int mapDisplacement = this->mapDisplacement >> 1;
 
 	CACHE_DISABLE;
 	CACHE_CLEAR;
@@ -305,11 +306,38 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		BgmapTexture_writeToDRAM ((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-				(const HWORD*)this->textureDefinition->mapDefinition + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
+				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
 				this->textureDefinition->cols,
 				colorInformation);
 	}
 }
+/*
+static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
+{
+	ASSERT(this, "BgmapTexture::writeAnimatedSingleOptimized: null this");
+
+	int bgmapSegment = this->segment;
+	int palette = this->palette << 14;
+
+	int charLocation = (int)CharSet_getOffset(this->charSet);
+
+	if((0 > xOffset) | (0 > yOffset))
+	{
+		return;
+	}
+
+	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
+
+	//put the map into memory calculating the number of char for each reference
+	for(; counter && this->remainingRowsToBeWritten--; counter--)
+	{
+		Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
+				(const u8*)(this->textureDefinition->mapDefinition + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
+				this->textureDefinition->cols << 1,
+				(palette) | (charLocation));
+	}
+}
+*/
 
 /**
  * Retrieve the number of rows pending writing
