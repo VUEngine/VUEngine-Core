@@ -33,6 +33,7 @@
 #include <CharSetManager.h>
 #include <Screen.h>
 #include <Printing.h>
+#include <TimerManager.h>
 #include <debugConfig.h>
 
 
@@ -647,9 +648,11 @@ void SpriteManager_writeTextures(SpriteManager this)
  *
  * @param this		Function scope
  */
-static void SpriteManager_writeSelectedTexture(SpriteManager this)
+static bool SpriteManager_writeSelectedTexture(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::writeSelectedTexture: null this");
+
+	bool textureWritten = false;
 
 	if(!this->waitToWrite)
 	{
@@ -661,6 +664,7 @@ static void SpriteManager_writeSelectedTexture(SpriteManager this)
 
 				this->textureToWrite = !this->textureToWrite->written && this->textureToWrite->textureDefinition? this->textureToWrite : NULL;
 				this->waitToWrite = this->cyclesToWaitForTextureWriting;
+				textureWritten = true;
 			}
 			else
 			{
@@ -676,6 +680,8 @@ static void SpriteManager_writeSelectedTexture(SpriteManager this)
 	{
 		this->waitToWrite--;
 	}
+
+	return textureWritten;
 }
 
 /**
@@ -686,6 +692,7 @@ static void SpriteManager_writeSelectedTexture(SpriteManager this)
  *
  * @param this		Function scope
  */
+
 void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
@@ -697,16 +704,18 @@ void SpriteManager_render(SpriteManager this)
 	{
 		// z sorting
 		SpriteManager_sortLayersProgressively(this);
-	}
 
-	// write newly created chars
-	if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
-	{
-		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
+		// write newly created chars
+		if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
+		{
+			// write textures
+			if(!SpriteManager_writeSelectedTexture(this))
+			{
+				// write textures
+				ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
+			}
+		}
 	}
-
-	// write textures
-	SpriteManager_writeSelectedTexture(this);
 
 	VirtualNode node = this->sprites->head;
 
