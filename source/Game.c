@@ -571,10 +571,6 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
-	// disable rendering
-	HardwareManager_displayOff(HardwareManager_getInstance());
-	HardwareManager_disableRendering(HardwareManager_getInstance());
-
 	// set waveform data
 	SoundManager_setWaveForm(SoundManager_getInstance());
 
@@ -701,11 +697,12 @@ void Game_reset(Game this)
 	MemoryPool_cleanUp(MemoryPool_getInstance());
 #endif
 
-	// setup the display
+	// disable rendering
+	HardwareManager_lowerBrightness(HardwareManager_getInstance());
+	HardwareManager_displayOff(HardwareManager_getInstance());
+	HardwareManager_disableRendering(HardwareManager_getInstance());
 	HardwareManager_clearScreen(HardwareManager_getInstance());
 	HardwareManager_setupColumnTable(HardwareManager_getInstance(), NULL);
-	HardwareManager_displayOn(HardwareManager_getInstance());
-	HardwareManager_lowerBrightness(HardwareManager_getInstance());
 	VIPManager_removePostProcessingEffects(this->vipManager);
 
 	// reset managers
