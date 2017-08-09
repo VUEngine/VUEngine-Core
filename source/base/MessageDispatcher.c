@@ -199,7 +199,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	delayMessage->clock = Game_getMessagingClock(Game_getInstance());
 	delayMessage->timeOfArrival = Clock_getTime(delayMessage->clock) + delay;
 
-	VirtualList_pushFront(this->delayedMessages, delayMessage);
+	VirtualList_pushBack(this->delayedMessages, delayMessage);
 }
 
 /**
