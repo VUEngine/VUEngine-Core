@@ -401,6 +401,10 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 	this->node = this->node ? this->nextNode ? this->node : this->node->next: this->sprites->head;
 
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
 	for(; this->node; this->node = this->node->next)
 	{
 		this->nextNode = this->node->next;
@@ -702,15 +706,15 @@ void SpriteManager_render(SpriteManager this)
 	// as soon as possible
 	if(!SpriteManager_disposeSprites(this))
 	{
-		// z sorting
-		SpriteManager_sortLayersProgressively(this);
-
 		// write newly created chars
 		if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
 		{
 			// write textures
 			if(!SpriteManager_writeSelectedTexture(this))
 			{
+				// z sorting
+				SpriteManager_sortLayersProgressively(this);
+
 				// write textures
 				ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
 			}
@@ -727,6 +731,10 @@ void SpriteManager_render(SpriteManager this)
 	{
 		this->freeLayer = (__SAFE_CAST(Sprite, node->data))->worldLayer - 1;
 	}
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
 
 	for(; node; node = node->next)
 	{
@@ -748,7 +756,7 @@ void SpriteManager_render(SpriteManager this)
 		}
 	}
 
-#ifdef __PROFILE_GAME
+#ifdef __SHOW_SPRITES_PROFILING
 	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
 		_totalPixelsToDraw = _worldAttributesBaseAddress[this->freeLayer].w * _worldAttributesBaseAddress[this->freeLayer].h;
