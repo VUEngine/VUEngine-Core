@@ -379,7 +379,7 @@ void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duratio
 
 		for(; i < callTimes; i++)
 		{
-			TimerManager_wait(this, __TIMER_RESOLUTION * duration / callTimes);
+			TimerManager_wait(this, duration / callTimes);
 			method(object, i);
 		}
 
