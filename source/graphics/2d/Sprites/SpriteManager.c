@@ -667,7 +667,7 @@ static bool SpriteManager_writeSelectedTexture(SpriteManager this)
 			{
 				__VIRTUAL_CALL(Texture, write, this->textureToWrite);
 
-				this->textureToWrite = !this->textureToWrite->written && this->textureToWrite->textureDefinition? this->textureToWrite : NULL;
+				this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
 				this->waitToWrite = this->cyclesToWaitForTextureWriting;
 				textureWritten = true;
 			}
