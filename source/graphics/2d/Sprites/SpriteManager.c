@@ -704,21 +704,18 @@ void SpriteManager_render(SpriteManager this)
 	// must dispose sprites before doing anything else in
 	// order to try to make room in DRAM to new sprites
 	// as soon as possible
-	if(!SpriteManager_disposeSprites(this))
-	{
-		// write newly created chars
-		if(!CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance()))
-		{
-			// write textures
-			if(!SpriteManager_writeSelectedTexture(this))
-			{
-				// z sorting
-				SpriteManager_sortLayersProgressively(this);
 
-				// write textures
-				ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
-			}
-		}
+	bool skipNonCriticalProcesses = SpriteManager_disposeSprites(this);
+	skipNonCriticalProcesses |= CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance());
+
+	// write textures
+	if(!skipNonCriticalProcesses && !SpriteManager_writeSelectedTexture(this))
+	{
+		// z sorting
+		SpriteManager_sortLayersProgressively(this);
+
+		// write textures
+		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
 	}
 
 	VirtualNode node = this->sprites->head;
