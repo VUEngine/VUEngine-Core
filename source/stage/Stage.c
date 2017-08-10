@@ -1014,19 +1014,6 @@ bool Stage_stream(Stage this)
 		return true;
 	}
 
-	// TODO: fix me
-	// this check makes that big minimumSpareMilliSecondsToAllowStreaming values
-	// inhibit the streaming to kick in
-/*
-	bool vipDrawingEnded = VIPManager_drawingEnded(VIPManager_getInstance());
-
-	int minimumSpareMilliSecondsToAllowStreaming = (this->stageDefinition->streaming.minimumSpareMilliSecondsToAllowStreaming) << (vipDrawingEnded ? 0 : 1);
-
-	if(minimumSpareMilliSecondsToAllowStreaming + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) > __GAME_FRAME_DURATION)
-	{
-		return true;
-	}
-*/
 	if(Stage_updateEntityFactory(this))
 	{
 		return false;
