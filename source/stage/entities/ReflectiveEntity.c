@@ -414,6 +414,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		waveLutIndexIncrement = 0;
 		this->waveLutIndex = 0;
 		waveLut = dummyWaveLut;
+		numberOfWaveLutEntries = 1;
 	}
 
 	int ySourceIncrement = 1;
