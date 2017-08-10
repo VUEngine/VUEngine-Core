@@ -349,9 +349,9 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 		{
 			positionedEntityDescription->transformed = true;
 
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
+			Transformation* environmentTransform = Container_getTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
 
-			__VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, &environmentTransform, false);
+			__VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, environmentTransform, false);
 		}
 
 		if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))

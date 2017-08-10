@@ -609,6 +609,14 @@ void Container_updateVisualRepresentation(Container this)
 	}
 }
 
+// retrieve transformation
+Transformation* Container_getTransform(Container this)
+{
+	ASSERT(this, "Container::getTransform: null this");
+
+	return &this->transform;
+}
+
 // retrieve global position
 const VBVec3D* Container_getGlobalPosition(Container this)
 {
