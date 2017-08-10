@@ -285,7 +285,6 @@ void VIPManager_enableInterrupt(VIPManager this, u16 interruptCode);
 void VIPManager_disableInterrupts(VIPManager this);
 void VIPManager_displayOn(VIPManager this);
 void VIPManager_displayOff(VIPManager this);
-bool VIPManager_drawingEnded(VIPManager this);
 void VIPManager_setupPalettes(VIPManager this, PaletteConfig* paletteConfig);
 void VIPManager_upBrightness(VIPManager this);
 void VIPManager_lowerBrightness(VIPManager this);

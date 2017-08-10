@@ -183,12 +183,6 @@ enum StateOperations
 		 * @memberof			Game
 		 */																								\
 		bool isShowingLowBatteryIndicator;																\
-		/**
-		 * @var bool			isShowingLowBatteryIndicator
-		 * @brief				synchronizing images flag
-		 * @memberof			Game
-		 */																								\
-		bool updatingVisuals;																			\
 
 
 /**
@@ -231,6 +225,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this);
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
 void HardwareManager_checkMemoryMap();
 
+void VIPManager_enableDRAMWriting(VIPManager this, bool enableDRAMWriting);
 bool VIPManager_isRenderingPending(VIPManager this);
 bool VIPManager_frameStarted(VIPManager this);
 bool VIPManager_gameStarted(VIPManager this);
@@ -362,7 +357,6 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->automaticPauseState = NULL;
 	this->lastAutoPauseCheckTime = 0;
 	this->isShowingLowBatteryIndicator = false;
-	this->updatingVisuals = false;
 
 	// make sure all managers are initialized now
 	this->screen = Screen_getInstance();
@@ -571,6 +565,8 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
+	VIPManager_enableDRAMWriting(this->vipManager, false);
+
 	switch(this->nextStateOperation)
 	{
 		case kCleanAndSwapState:
@@ -658,6 +654,8 @@ static void Game_setNextState(Game this, GameState state)
 
 	// save current state
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+
+	VIPManager_enableDRAMWriting(this->vipManager, true);
 }
 
 // disable interrupts
@@ -952,14 +950,6 @@ inline static void Game_updateLogic(Game this)
 #endif
 }
 
-//
-bool Game_isUpdatingVisuals(Game this)
-{
-	ASSERT(this, "Game::updateVisuals: null this");
-
-	return this->updatingVisuals;
-}
-
 // update game's rendering subsystem
 void Game_updateVisuals(Game this __attribute__ ((unused)))
 {
@@ -972,12 +962,12 @@ void Game_updateVisuals(Game this __attribute__ ((unused)))
 	this->lastProcessName = "visuals update";
 #endif
 
-	this->updatingVisuals = true;
+	VIPManager_enableDRAMWriting(this->vipManager, false);
 
 	// apply transformations to visuals
 	GameState_updateVisuals(this->currentState);
 
-	this->updatingVisuals = false;
+	VIPManager_enableDRAMWriting(this->vipManager, true);
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)

@@ -102,5 +102,54 @@ void HardwareManager_checkStackStatus(HardwareManager this);
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 #endif
 
+/**
+ * Enable multiplexed interrupts
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ * @param this					Function scope
+ */
+inline void HardwareManager_enableMultiplexedInterrupts()
+{
+	u32 psw;
+
+	asm(" \n\
+		stsr	psw,%0  \n\
+		"
+		: "=r" (psw) // Output
+	);
+
+	psw &= 0xFFF0BFFF;
+
+	asm(" \n\
+		ldsr	%0,psw  \n\
+		cli				\n\
+		"
+		: // Output
+		: "r" (psw) // Input
+		: // Clobber
+	);
+}
+
+/**
+ * Disable multiplexed interrupts
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ * @param this					Function scope
+ */
+inline void HardwareManager_disableMultiplexedInterrupts()
+{
+	asm(" \n\
+		sei				\n\
+		"
+		: // Output
+		: // Input
+		: // Clobber
+	);
+}
+
 
 #endif

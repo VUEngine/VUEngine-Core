@@ -81,6 +81,7 @@ typedef struct PostProcessingEffectRegistry
 		bool frameStarted;																				\
 		bool drawingEnded;																				\
 		bool renderingCompleted;																		\
+		bool allowDRAMWriting;																		\
 
 
 /**
@@ -102,7 +103,6 @@ void Game_saveProcessNameDuringFRAMESTART(Game this);
 void Game_saveProcessNameDuringXPEND(Game this);
 void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)));
 void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
-bool Game_isUpdatingVisuals(Game this);
 #endif
 
 static VIPManager _vipManager;
@@ -153,6 +153,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	this->frameStarted = false;
 	this->drawingEnded = false;
 	this->renderingCompleted = false;
+	this->allowDRAMWriting = false;
 
 	_vipManager = this;
 	_timerManager = TimerManager_getInstance();
@@ -250,6 +251,32 @@ void VIPManager_disableInterrupts(VIPManager this __attribute__ ((unused)))
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 }
 
+/**
+ * Enable / disable DRAM writing
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ * @param this					Function scope
+ * @param allowDRAMWriting		Flag's value
+ */
+void VIPManager_enableDRAMWriting(VIPManager this, bool enableDRAMWriting)
+{
+	ASSERT(this, "VIPManager::enableDRAMWriting: null this");
+
+	this->allowDRAMWriting = enableDRAMWriting;
+}
+
+/**
+ * Check if rendering is pending
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ * @param this					Function scope
+ *
+ * @return						True if XPEND already happened but DRAM writing didn't take place
+ */
 bool __attribute__ ((noinline)) VIPManager_isRenderingPending(VIPManager this)
 {
 	ASSERT(this, "VIPManager::isRenderingPending: null this");
@@ -257,13 +284,16 @@ bool __attribute__ ((noinline)) VIPManager_isRenderingPending(VIPManager this)
 	return this->drawingEnded && !this->renderingCompleted;
 }
 
-bool __attribute__ ((noinline)) VIPManager_drawingEnded(VIPManager this)
-{
-	ASSERT(this, "VIPManager::waitForGameFrame: null this");
-
-	return this->drawingEnded;
-}
-
+/**
+ * Check if FRAMESTART already happened
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ * @param this					Function scope
+ *
+ * @return						True if FRAMESTART already happened
+ */
 bool __attribute__ ((noinline)) VIPManager_frameStarted(VIPManager this)
 {
 	ASSERT(this, "VIPManager::frameStarted: null this");
@@ -271,6 +301,14 @@ bool __attribute__ ((noinline)) VIPManager_frameStarted(VIPManager this)
 	return this->frameStarted;
 }
 
+/**
+ * Reset frame started flag
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ * @param this					Function scope
+ */
 void __attribute__ ((noinline)) VIPManager_resetFrameStarted(VIPManager this)
 {
 	ASSERT(this, "VIPManager::resetFrameStarted: null this");
@@ -278,41 +316,8 @@ void __attribute__ ((noinline)) VIPManager_resetFrameStarted(VIPManager this)
 	this->frameStarted = false;
 	this->drawingEnded = false;
 	this->renderingCompleted = false;
+	this->allowDRAMWriting = false;
 }
-
-inline void VIPManager_enableMultiplexedInterrupts()
-{
-	u32 psw;
-
-	asm(" \n\
-		stsr	psw,%0  \n\
-		"
-		: "=r" (psw) // Output
-	);
-
-	psw &= 0xFFF0BFFF;
-
-	asm(" \n\
-		ldsr	%0,psw  \n\
-		cli				\n\
-		"
-		: // Output
-		: "r" (psw) // Input
-		: // Clobber
-	);
-}
-
-inline void VIPManager_disableMultiplexedInterrupts()
-{
-	asm(" \n\
-		sei				\n\
-		"
-		: // Output
-		: // Input
-		: // Clobber
-	);
-}
-
 
 /**
  * VIP's interrupt handler
@@ -326,7 +331,7 @@ void VIPManager_interruptHandler(void)
 	u16 interrupt = _vipRegisters[__INTPND];
 
 	// disable interrupts
-	VIPManager_disableMultiplexedInterrupts();
+	HardwareManager_disableMultiplexedInterrupts();
 	VIPManager_disableInterrupts(_vipManager);
 
 	const u16 interruptTable[] =
@@ -373,7 +378,7 @@ void VIPManager_interruptHandler(void)
 					VIPManager_disableDrawing(_vipManager);
 
 					// to allow timer interrupts
-					VIPManager_enableMultiplexedInterrupts();
+					HardwareManager_enableMultiplexedInterrupts();
 					VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
 
 					// write to the frame buffers
@@ -381,10 +386,10 @@ void VIPManager_interruptHandler(void)
 
 					_vipManager->renderingCompleted = false;
 
-					if(!Game_isUpdatingVisuals(Game_getInstance()))
+					if(_vipManager->allowDRAMWriting)
 					{
 						// to allow timer interrupts
-						VIPManager_enableMultiplexedInterrupts();
+						HardwareManager_enableMultiplexedInterrupts();
 						VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
 
 						// write to DRAM
@@ -448,7 +453,7 @@ void VIPManager_interruptHandler(void)
 		}
 	}
 
-	VIPManager_disableMultiplexedInterrupts();
+	HardwareManager_disableMultiplexedInterrupts();
 	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
 }
 
