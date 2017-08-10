@@ -153,9 +153,6 @@ void BgmapSprite_destructor(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::destructor: null this");
 	ASSERT(__SAFE_CAST(BgmapSprite, this), "BgmapSprite::destructor: null cast");
 
-	// force stop rendering
-	this->head = __WORLD_OFF;
-
 	if(this->worldLayer)
 	{
 		// remove from sprite manager before I become invalid
@@ -177,6 +174,10 @@ void BgmapSprite_destructor(BgmapSprite this)
 		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, this->texture));
 		this->texture = NULL;
 	}
+
+	// force stop rendering
+	this->head = __WORLD_OFF;
+
 
 	// destroy the super object
 	// must always be called at the end of the destructor

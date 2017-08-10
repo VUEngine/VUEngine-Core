@@ -423,7 +423,7 @@ bool ParamTableManager_defragmentProgressively(ParamTableManager this)
 					break;
 				}
 
-				if(this->previouslyMovedBgmapSprite && this->previouslyMovedBgmapSprite && 0 < BgmapSprite_getParamTableRow(this->previouslyMovedBgmapSprite))
+				if(__IS_OBJECT_ALIVE(this->previouslyMovedBgmapSprite) && 0 < BgmapSprite_getParamTableRow(this->previouslyMovedBgmapSprite))
 				{
 					break;
 				}
