@@ -571,9 +571,6 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
-	// set waveform data
-	SoundManager_setWaveForm(SoundManager_getInstance());
-
 	switch(this->nextStateOperation)
 	{
 		case kCleanAndSwapState:
@@ -661,16 +658,6 @@ static void Game_setNextState(Game this, GameState state)
 
 	// save current state
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-
-	// reset timer
-	TimerManager_resetMilliseconds(this->timerManager);
-
-	// reset profiling
-	Game_resetProfiling(this);
-
-	// disable rendering
-	HardwareManager_displayOn(HardwareManager_getInstance());
-	HardwareManager_enableRendering(HardwareManager_getInstance());
 }
 
 // disable interrupts
@@ -716,9 +703,15 @@ void Game_reset(Game this)
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 	Printing_reset(Printing_getInstance());
 	Screen_resetCameraFrustum(Screen_getInstance());
+	SoundManager_setWaveForm(SoundManager_getInstance());
+	TimerManager_resetMilliseconds(this->timerManager);
 
-	// TODO
-	//SoundManager_getInstance();
+	// reset profiling
+	Game_resetProfiling(this);
+
+	// turn on VIP
+	HardwareManager_displayOn(HardwareManager_getInstance());
+	HardwareManager_enableRendering(HardwareManager_getInstance());
 }
 
 // process input data according to the actual game status
