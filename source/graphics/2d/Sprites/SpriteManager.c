@@ -79,13 +79,13 @@ typedef struct SpritesList
 	 * @brief 			sorting nodes
 	 * @memberof		SpriteManager
 	 */																									\
-	VirtualNode node;																					\
+	VirtualNode zSortingFirstNode;																		\
 	/**
 	 * @var VirtualNode	nextNode
 	 * @brief
 	 * @memberof		SpriteManager
 	 */																									\
-	VirtualNode nextNode;																				\
+	VirtualNode zSortingSecondNode;																		\
 	/**
 	 * @var Texture		textureToWrite
 	 * @brief 			texture writing
@@ -188,8 +188,8 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
-	this->node = NULL;
-	this->nextNode = NULL;
+	this->zSortingFirstNode = NULL;
+	this->zSortingSecondNode = NULL;
 
 	this->sprites = NULL;
 	this->spritesToDispose = NULL;
@@ -269,8 +269,8 @@ void SpriteManager_reset(SpriteManager this)
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
-	this->node = NULL;
-	this->nextNode = NULL;
+	this->zSortingFirstNode = NULL;
+	this->zSortingSecondNode = NULL;
 	this->textureToWrite = NULL;
 	this->cyclesToWaitForTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
@@ -399,28 +399,28 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
 
-	this->node = this->node ? this->nextNode ? this->node : this->node->next: this->sprites->head;
+	this->zSortingFirstNode = this->zSortingFirstNode ? this->zSortingSecondNode ? this->zSortingFirstNode : this->zSortingFirstNode->next: this->sprites->head;
 
 	CACHE_DISABLE;
 	CACHE_CLEAR;
 	CACHE_ENABLE;
 
-	for(; this->node; this->node = this->node->next)
+	for(; this->zSortingFirstNode; this->zSortingFirstNode = this->zSortingFirstNode->next)
 	{
-		this->nextNode = this->node->next;
+		this->zSortingSecondNode = this->zSortingFirstNode->next;
 
-		if(this->nextNode)
+		if(this->zSortingSecondNode)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, this->node->data);
-			Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
+			Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
+			Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
 			VBVec2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 			VBVec2D nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 			// check if z positions are swapped
 			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, this->node->data);
-				Sprite nextSprite = __SAFE_CAST(Sprite, this->nextNode->data);
+				Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
+				Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
 
 				// get each entity's layer
 				u8 worldLayer1 = sprite->worldLayer;
@@ -431,10 +431,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 				Sprite_setWorldLayer(sprite, worldLayer2);
 
 				// swap nodes' data
-				VirtualNode_swapData(this->node, this->nextNode);
+				VirtualNode_swapData(this->zSortingFirstNode, this->zSortingSecondNode);
 
-				this->node = this->nextNode;
-				return;
+				this->zSortingFirstNode = this->zSortingSecondNode;
 			}
 		}
 	}
@@ -481,8 +480,8 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 		// add to the front: last element corresponds to the 31 WORLD
 		VirtualList_pushFront(this->sprites, sprite);
 
-		this->node = NULL;
-		this->nextNode = NULL;
+		this->zSortingFirstNode = NULL;
+		this->zSortingSecondNode = NULL;
 
 #ifdef __DEBUG
 	}
@@ -545,8 +544,8 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 		}
 
 		// sorting needs to restart
-		this->node = NULL;
-		this->nextNode = NULL;
+		this->zSortingFirstNode = NULL;
+		this->zSortingSecondNode = NULL;
 	}
 	else
 	{
@@ -711,11 +710,12 @@ void SpriteManager_render(SpriteManager this)
 	// write textures
 	if(!skipNonCriticalProcesses && !SpriteManager_writeSelectedTexture(this))
 	{
-		// z sorting
-		SpriteManager_sortLayersProgressively(this);
-
-		// write textures
-		ParamTableManager_defragmentProgressively(ParamTableManager_getInstance());
+		// defragment param table
+		if(!ParamTableManager_defragmentProgressively(ParamTableManager_getInstance()))
+		{
+			// z sorting
+        	SpriteManager_sortLayersProgressively(this);
+		}
 	}
 
 	VirtualNode node = this->sprites->head;
