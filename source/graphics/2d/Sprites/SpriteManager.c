@@ -325,7 +325,7 @@ static bool SpriteManager_disposeSprites(SpriteManager this)
 
 		VirtualList_popFront(this->spritesToDispose);
 
-		this->textureToWrite = NULL;
+		this->textureToWrite = __IS_OBJECT_ALIVE(this->textureToWrite)? this->textureToWrite : NULL;
 
 		return true;
 	}
@@ -661,7 +661,9 @@ static bool SpriteManager_writeSelectedTexture(SpriteManager this)
 	{
 		if(this->textureToWrite)
 		{
-			if(__IS_OBJECT_ALIVE(this->textureToWrite))
+			// texture definition may be NULL if the rendering kicks in
+			// during the texture's setup
+			if(__IS_OBJECT_ALIVE(this->textureToWrite) && this->textureToWrite->textureDefinition)
 			{
 				__VIRTUAL_CALL(Texture, write, this->textureToWrite);
 

@@ -146,6 +146,12 @@ void BgmapTexture_write(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
+	if(!this->charSet)
+	{
+		// make sure to force full writing if no char set
+		this->remainingRowsToBeWritten = this->textureDefinition->rows;
+	}
+
 	__CALL_BASE_METHOD(Texture, write, this);
 
 	if(!this->charSet)
