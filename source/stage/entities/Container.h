@@ -159,6 +159,7 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
 Transformation Container_getEnvironmentTransform(Container this);
+Transformation* Container_getTransform(Container this);
 const VBVec3D* Container_getGlobalPosition(Container this);
 s16 Container_getId(Container this);
 const VBVec3D* Container_getLocalPosition(Container this);
