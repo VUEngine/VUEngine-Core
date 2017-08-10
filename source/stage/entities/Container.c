@@ -359,14 +359,12 @@ Transformation Container_getEnvironmentTransform(Container this)
 				{__1I_FIX7_9, __1I_FIX7_9}
 		};
 
-		Container_concatenateTransform(&environmentTransform, &this->transform);
-
 		return environmentTransform;
 	}
 
 	Transformation transformation = Container_getEnvironmentTransform(this->parent);
 
-	Container_concatenateTransform(&transformation, &this->transform);
+	Container_concatenateTransform(&transformation, &this->parent->transform);
 
 	return transformation;
 
