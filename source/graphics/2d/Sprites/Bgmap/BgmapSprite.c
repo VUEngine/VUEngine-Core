@@ -337,7 +337,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 {
 	ASSERT(this, "BgmapSprite::resize: null this");
 
-	if(this->param)
+	if(__WORLD_AFFINE & this->head)
 	{
 		z -= _screenPosition->z;
 
@@ -357,7 +357,10 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 			this->halfHeight = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->rows << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)));
 		}
 
-		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
+		if(this->param)
+    	{
+			this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
+		}
 	}
 }
 
