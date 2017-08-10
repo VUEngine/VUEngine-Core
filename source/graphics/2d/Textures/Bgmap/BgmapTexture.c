@@ -195,7 +195,7 @@ void BgmapTexture_write(BgmapTexture this)
  */
 static void BgmapTexture_writeToDRAM(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
 {
-	HWORD* finalSource = source + numberOfHWORDS;
+	const HWORD* finalSource = source + numberOfHWORDS;
 
     asm("					\n\t"      \
 		"jr end%=			\n\t"      \
@@ -305,6 +305,7 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
+
 		BgmapTexture_writeToDRAM ((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
 				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
 				this->textureDefinition->cols,
