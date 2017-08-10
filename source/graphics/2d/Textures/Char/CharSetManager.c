@@ -144,6 +144,8 @@ void CharSetManager_reset(CharSetManager this)
 		VirtualList_clear(this->charSets);
 	}
 
+	VirtualList_clear(this->charSetsPendingWriting);
+
 	this->freedOffset = 1;
 }
 
