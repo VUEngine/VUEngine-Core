@@ -54,6 +54,7 @@ The engine provides the following features for the programmer to take advantage 
   - Automatic WORLD layer assignment based on the objects' z position
   - Texture preloading
   - Scaling/rotation effects
+  - Transparencies
   - Automatic projection/parallax/scale calculations and rendering
   - Customizable perspective/deep effects on real time
   - Automatic memory allocation for param tables (used in affine and h-bias modes)
