@@ -450,7 +450,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	if(reflectParallax)
 	{
-		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement, xCounter++)
+		for(; xTotal--; xOutput += xOutputIncrement, xSource++, xCounter++)
 		{
 			this->waveLutIndex += waveLutIndexIncrement;
 
@@ -480,6 +480,12 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			int xRelativeCoordinate = (xCounter % width) + FIX19_13TOI(this->waveLutIndex);
 			int xIndex = (numberOfWaveLutEntries * xRelativeCoordinate) / width;
+
+			if(xIndex >= numberOfWaveLutEntries)
+			{
+				xIndex = xIndex % numberOfWaveLutEntries;
+			}
+
 			int waveLutPixelDisplacement = waveLut[xIndex];
 
 			int ySource = ySourceStartHelper;
@@ -617,7 +623,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 	}
 	else
 	{
-		for(; xTotal--; xOutput += xOutputIncrement, xSource +=xOutputIncrement, xCounter++)
+		for(; xTotal--; xOutput += xOutputIncrement, xSource++, xCounter++)
 		{
 			int leftColumn = xOutput;
 			int rightColumn = xOutput;
@@ -640,6 +646,12 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			int xRelativeCoordinate = (xCounter % width) + FIX19_13TOI(this->waveLutIndex);
 			int xIndex = (numberOfWaveLutEntries * xRelativeCoordinate) / width;
+
+			if(xIndex >= numberOfWaveLutEntries)
+			{
+				xIndex = xIndex % numberOfWaveLutEntries;
+			}
+
 			int waveLutPixelDisplacement = waveLut[xIndex];
 
 			int ySource = ySourceStartHelper;
