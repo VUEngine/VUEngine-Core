@@ -34,13 +34,14 @@
 //											CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define POINTER_TYPE			u32
-#define Y_SHIFT					4
+#define POINTER_TYPE			u16
+// sizeof(u32) + (sizeof(u32) / sizeof(POINTER_TYPE) / 2)
+#define Y_SHIFT					5
 // sizeof(POINTER_TYPE) << 2
-#define Y_STEP_SIZE				16
-#define Y_STEP_SIZE_2_EXP		4
+#define Y_STEP_SIZE				8
+#define Y_STEP_SIZE_2_EXP		3
 // sizeof(POINTER_TYPE) << 3
-#define BITS_PER_STEP 			32
+#define BITS_PER_STEP 			16
 
 #define MODULO(n, m)			(n & (m - 1))
 
@@ -87,6 +88,9 @@ typedef struct ReflectiveEntityDefinition
 	// width and height of the reflection
 	u16 width;
 	u16 height;
+
+	// mask to apply to the whole reflection
+	u32 overallMask;
 
 	// mask to apply to the mirrored image
 	u32 reflectionMask;
@@ -146,15 +150,18 @@ void ReflectiveEntity_resume(ReflectiveEntity this);
 void ReflectiveEntity_updateVisualRepresentation(ReflectiveEntity this);
 void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet);
 void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
-								s16 xSourceStart, s16 xSourceEnd,
-								s16 ySourceStart, s16 ySourceEnd,
+								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
-								u32 reflectionMask, u32 backgroundMask,
+								s16 width, s16 height,
+								u32 overallMask, u32 reflectionMask, u32 backgroundMask,
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
 								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
-								bool flattenTop, bool flattenBottom,
-								u32 topBorder, u32 bottomBorder, u32 leftBorder, u32 rightBorder);
-void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 reflectionMask);
+								bool flattenTop __attribute__ ((unused)), bool flattenBottom,
+								u32 topBorderMask,
+								u32 bottomBorderMask,
+								u32 leftBorderMask __attribute__ ((unused)),
+								u32 rightBorderMask __attribute__ ((unused)));
+void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask);
 
 #endif

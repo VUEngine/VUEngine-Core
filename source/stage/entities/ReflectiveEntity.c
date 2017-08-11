@@ -173,6 +173,7 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 								this->position2D.y + reflectiveEntityDefinition->outputDisplacement.y,
 								reflectiveEntityDefinition->width,
 								reflectiveEntityDefinition->height,
+								reflectiveEntityDefinition->overallMask,
 								reflectiveEntityDefinition->reflectionMask,
 								reflectiveEntityDefinition->backgroundMask,
 								reflectiveEntityDefinition->axisForReversing,
@@ -187,10 +188,13 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 								reflectiveEntityDefinition->leftBorder, reflectiveEntityDefinition->rightBorder);
 }
 
-inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 reflectionMask)
+inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask)
 {
 	*sourceValue &= reflectionMask;
 	*remainderValue &= reflectionMask;
+
+	*sourceValue |= overallMask;
+	*remainderValue |= overallMask;
 
 	if(0 < pixelShift)
 	{
@@ -211,7 +215,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
 								s16 width, s16 height,
-								u32 reflectionMask, u32 backgroundMask,
+								u32 overallMask, u32 reflectionMask, u32 backgroundMask,
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
 								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
@@ -227,7 +231,17 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
     s16 ySourceEnd = ySourceStart + height;
 	s16 xOutputEnd = xOutputStart + width;
 	s16 yOutputEnd = yOutputStart + height;
+/*
+    s16 xSourceStartTemp = xSourceStart;
+    s16 ySourceStartTemp = ySourceStart;
+	s16 xOutputStartTemp = xOutputStart;
+	s16 yOutputStartTemp = yOutputStart;
 
+    s16 xSourceEndTemp = xSourceEnd;
+    s16 ySourceEndTemp = ySourceEnd;
+	s16 xOutputEndTemp = xOutputEnd;
+	s16 yOutputEndTemp = yOutputEnd;
+*/
 	// check if source and destination are not out of bounds
 	if((xSourceStart > _cameraFrustum->x1) | (ySourceStart > _cameraFrustum->y1)
 		|
@@ -335,71 +349,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		xOutputIncrement = -1;
 	}
 
-/*
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13((1+yOutputStart / Y_STEP_SIZE) * Y_STEP_SIZE - 1),0,0},
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13((1+yOutputStart / Y_STEP_SIZE) * Y_STEP_SIZE - 1),0,0},
-		__COLOR_BRIGHT_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13(yOutputEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(yOutputEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
-		__COLOR_MEDIUM_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13((yOutputEnd / Y_STEP_SIZE -1)* Y_STEP_SIZE),0,0},
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13((yOutputEnd / Y_STEP_SIZE -1)* Y_STEP_SIZE),0,0},
-		__COLOR_MEDIUM_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(10),ITOFIX19_13(yOutputStart-1),0,0},
-		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(yOutputStart-1),0,0},
-		__COLOR_BRIGHT_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(10),ITOFIX19_13(yOutputEnd),0,0},
-		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(yOutputEnd),0,0},
-		__COLOR_BRIGHT_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13(ySourceStart / Y_STEP_SIZE * Y_STEP_SIZE - 1),0,0},
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceStart / Y_STEP_SIZE * Y_STEP_SIZE - 1),0,0},
-		__COLOR_MEDIUM_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(1),ITOFIX19_13(ySourceEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceEnd / Y_STEP_SIZE * Y_STEP_SIZE),0,0},
-		__COLOR_MEDIUM_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceStart-1),0,0},
-		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(ySourceStart-1),0,0},
-		__COLOR_BRIGHT_RED
-	);
-
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
-		(VBVec2D) {ITOFIX19_13(50),ITOFIX19_13(ySourceEnd),0,0},
-		(VBVec2D) {ITOFIX19_13(100),ITOFIX19_13(ySourceEnd),0,0},
-		__COLOR_BRIGHT_RED
-	);
-*/
-
 	u32 reflectionMaskSave = reflectionMask;
 
 	u8 dummyWaveLut[] =
@@ -448,6 +397,10 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	int xCounter = xOutputStart - xOutputStartSave;
 
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
 	if(reflectParallax)
 	{
 		for(; xTotal--; xOutput += xOutputIncrement, xSource++, xCounter++)
@@ -464,7 +417,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			if(parallaxDisplacement)
 			{
-				leftColumn -= parallaxDisplacement;
+//				leftColumn -= parallaxDisplacement;
 				rightColumn += parallaxDisplacement;
 
 				if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
@@ -551,8 +504,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
 			{
-				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
-				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, reflectionMask);
+				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, overallMask, reflectionMask);
+				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, overallMask, reflectionMask);
 
 				sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
 				sourceCurrentValueRight |= appliedBackgroundMask & outputValueRight;
@@ -595,7 +548,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 			if(yOutputRemainder)
 			{
 				u32 maskDisplacement = (BITS_PER_STEP - yOutputRemainder);
-				effectiveContentMask = 0xFFFFFFFF >> maskDisplacement;
+				effectiveContentMask = 0xFFFFFFFF << maskDisplacement;
 				effectiveContentMask &= ~(bottomBorderMask >> maskDisplacement);
 
 				if(!transparent)
@@ -616,8 +569,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				remainderLeftValue |= appliedBackgroundMask & outputValueLeft;
 				remainderRightValue |= appliedBackgroundMask & outputValueRight;
 
-				*columnOutputPointerLeft = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
-				*columnOutputPointerRight = (outputValueRight & ~effectiveContentMask) | (remainderRightValue & effectiveContentMask);
+				*columnOutputPointerLeft = (outputValueLeft & effectiveContentMask) | (remainderLeftValue & ~effectiveContentMask);
+				*columnOutputPointerRight = (outputValueLeft & effectiveContentMask) | (remainderLeftValue & ~effectiveContentMask);
 			}
 		}
 	}
@@ -630,7 +583,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			if(parallaxDisplacement)
 			{
-				leftColumn -= parallaxDisplacement;
+//				leftColumn -= parallaxDisplacement;
 				rightColumn += parallaxDisplacement;
 
 				if((unsigned)(leftColumn - _cameraFrustum->x0) >= (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
@@ -706,7 +659,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
 			{
-				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, reflectionMask);
+				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, overallMask, reflectionMask);
 
 				sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
 				sourceCurrentValueLeft &= effectiveContentMask;
@@ -741,7 +694,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 			if(yOutputRemainder)
 			{
 				u32 maskDisplacement = (BITS_PER_STEP - yOutputRemainder);
-				effectiveContentMask = 0xFFFFFFFF >> maskDisplacement;
+				effectiveContentMask = 0xFFFFFFFF << maskDisplacement;
 				effectiveContentMask &= ~(bottomBorderMask >> maskDisplacement);
 
 				if(!transparent)
@@ -755,13 +708,70 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				}
 
 				remainderLeftValue &= reflectionMask;
-
 				remainderLeftValue |= appliedBackgroundMask & outputValueLeft;
 
-				*columnOutputPointerLeft = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
-				*columnOutputPointerRight = (outputValueLeft & ~effectiveContentMask) | (remainderLeftValue & effectiveContentMask);
+				*columnOutputPointerLeft = (outputValueLeft & effectiveContentMask) | (remainderLeftValue & ~effectiveContentMask);
+				*columnOutputPointerRight = (outputValueLeft & effectiveContentMask) | (remainderLeftValue & ~effectiveContentMask);
 			}
 		}
 	}
+/*
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xOutputStartTemp),ITOFIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(xOutputEndTemp),ITOFIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		__COLOR_BRIGHT_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xOutputStartTemp),ITOFIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(xOutputEndTemp),ITOFIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		__COLOR_BRIGHT_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xSourceStartTemp),ITOFIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(xSourceEndTemp),ITOFIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		__COLOR_DARK_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xSourceStartTemp),ITOFIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(VBVec2D) {ITOFIX19_13(xSourceEndTemp),ITOFIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		__COLOR_DARK_RED
+	);
+*/
+/*
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xOutputStartTemp),ITOFIX19_13(yOutputStartTemp),0,0},
+		(VBVec2D) {ITOFIX19_13(xOutputEndTemp),ITOFIX19_13(yOutputStartTemp),0,0},
+		__COLOR_BRIGHT_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xOutputStartTemp),ITOFIX19_13(yOutputEndTemp),0,0},
+		(VBVec2D) {ITOFIX19_13(xOutputEndTemp),ITOFIX19_13(yOutputEndTemp),0,0},
+		__COLOR_BRIGHT_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xSourceStartTemp),ITOFIX19_13(ySourceStartTemp),0,0},
+		(VBVec2D) {ITOFIX19_13(xSourceEndTemp),ITOFIX19_13(ySourceStartTemp),0,0},
+		__COLOR_DARK_RED
+	);
+
+	DirectDraw_drawLine(
+		DirectDraw_getInstance(),
+		(VBVec2D) {ITOFIX19_13(xSourceStartTemp),ITOFIX19_13(ySourceEndTemp),0,0},
+		(VBVec2D) {ITOFIX19_13(xSourceEndTemp),ITOFIX19_13(ySourceEndTemp),0,0},
+		__COLOR_DARK_RED
+	);
+*/
 }
 
