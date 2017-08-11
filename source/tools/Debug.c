@@ -203,12 +203,6 @@
 		 * @memberof		Debug
 		 */																								\
 		BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];												\
-		/**
-		 * @var bool 		showBgmapSegment
-		 * @brief			flag to force displaying of BGMAP memory
-		 * @memberof		Debug
-		 */																								\
-		bool showBgmapSegment;
 
 /**
  * @class	Debug
@@ -336,8 +330,6 @@ static void __attribute__ ((noinline)) Debug_constructor(Debug this)
 	this->mapDisplacement.x = 0;
 	this->mapDisplacement.y = 0;
 
-	this->showBgmapSegment = false;
-
 	Debug_setupPages(this);
 }
 
@@ -392,11 +384,6 @@ void Debug_update(Debug this)
 	{
 		((void (*)(Debug))this->update)(this);
 	}
-
-	if(this->showBgmapSegment)
-	{
-		Debug_showBgmapSegment(this);
-	}
 }
 
 /**
@@ -411,7 +398,7 @@ void Debug_render(Debug this)
 {
 	if(this->currentPage->data == &Debug_texturesPage && 0 <= this->bgmapSegment)
 	{
-		Debug_showDebugBgmap(this);
+		Debug_showBgmapSegment(this);
 	}
 }
 
@@ -1414,8 +1401,7 @@ static void Debug_showDebugBgmap(Debug this)
 	}
 
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
-
-	this->showBgmapSegment = true;
+	Debug_showBgmapSegment(this);
 }
 
 /**
@@ -1459,8 +1445,6 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 	{
 		this->bgmapSegment = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
 	}
-
-	this->showBgmapSegment = false;
 
 	if(-1 == this->bgmapSegment)
 	{
