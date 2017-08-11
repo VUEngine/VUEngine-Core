@@ -131,7 +131,7 @@ const char* Utilities_toLowercase(const char* string)
 }
 
 /*
- * When run at startup gets a random number based on the changing __CTA
+ * Taken from Shokwav's N64 demo
  */
 long Utilities_randomSeed()
 {
