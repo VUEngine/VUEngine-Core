@@ -24,6 +24,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <stdio.h>
+#include <Mem.h>
 #include <HardwareManager.h>
 
 
@@ -31,10 +33,49 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// Copy a block of data from one area in memory to another.
-void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
+// redefine memcpy
+void *memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
-/*
+	BYTE* finalSource = (BYTE*)source + numberOfBytes;
+
+	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < numberOfBytes)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
+
+	asm("				\n\t"      \
+		"jr end%=		\n\t"      \
+		"loop%=:		\n\t"      \
+		"ld.b 0[%1],r10	\n\t"      \
+		"st.b r10,0[%0] \n\t"      \
+		"add 1,%0		\n\t"      \
+		"add 1,%1		\n\t"      \
+		"end%=:			\n\t"      \
+		"cmp %1,%2		\n\t"      \
+		"bgt loop%=		\n\t"
+		: // No Output
+		: "r" (destination), "r" (source), "r" (finalSource)
+		: "r10" // regs used
+	);
+
+	return destination;
+}
+
+void Mem_clear(BYTE* destination, u32 numberOfBYTES)
+{
+	u32 i;
+
+	for(i = 0; i < numberOfBYTES; i++)
+	{
+		*destination++ = 0;
+	}
+}
+
+// Copy a block of data from one area in memory to another.
+void Mem_copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
+{
 	asm("          \n\t"      \
 		"mov r29,r1\n\t"      \
 		"mov %0,r26\n\t"      \
@@ -45,19 +86,52 @@ void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
 		".hword 0x7C0B\n\t"   \
 		"mov r1,r29"
 		: // output
-		: "r" (((u32)destination & 0x3) << 2), "r" (((u32)source & 0x3) << 2), "r" (numberOfBytes << 3), "r" ((u32)destination & ~0x3), "r" ((u32)source & ~0x3) // input
+		: "r" (((u32)destination & 0x3) << 2), "r" (((u32)source & 0x3) << 2), "r" (numberOfBYTES << 3), "r" ((u32)destination & ~0x3), "r" ((u32)source & ~0x3) // input
 		: "r1", "r26", "r27", "r28", "r29", "r30" // trashed
 		);
+/*
+	const BYTE* finalSource = source + numberOfBYTES;
+
+	asm("				\n\t"      \
+		"jr end%=		\n\t"      \
+		"loop%=:		\n\t"      \
+		"ld.b 0[%1],r10	\n\t"      \
+		"st.b r10,0[%0] \n\t"      \
+		"add 1,%0		\n\t"      \
+		"add 1,%1		\n\t"      \
+		"end%=:			\n\t"      \
+		"cmp %1,%2		\n\t"      \
+		"bgt loop%=		\n\t"
+		: // No Output
+		: "r" (destination), "r" (source), "r" (finalSource)
+		: "r10" // regs used
+	);
 */
-	u32 numberOfWORDS = numberOfBytes >> 2;
+}
 
-	WORD* destinationWORD = (WORD*) destination;
-	WORD* sourceWORD = (WORD*) source;
-	WORD* finalSourceWORD = sourceWORD + numberOfWORDS;
+void Mem_copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
+{
+	const HWORD* finalSource = source + numberOfHWORDS;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
+	asm("				\n\t"      \
+		"jr end%=		\n\t"      \
+		"loop%=:		\n\t"      \
+		"ld.h 0[%1],r10	\n\t"      \
+		"st.h r10,0[%0] \n\t"      \
+		"add 2,%0		\n\t"      \
+		"add 2,%1		\n\t"      \
+		"end%=:			\n\t"      \
+		"cmp %1,%2		\n\t"      \
+		"bgt loop%=		\n\t"
+		: // No Output
+		: "r" (destination), "r" (source), "r" (finalSource)
+		: "r10" // regs used
+	);
+}
+
+void Mem_copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
+{
+	const WORD* finalSource = source + numberOfWORDS;
 
 	asm("				\n\t"      \
 		"jr end%=		\n\t"      \
@@ -70,28 +144,35 @@ void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes)
 		"cmp %1,%2		\n\t"      \
 		"bgt loop%=		\n\t"
 		: // No Output
-		: "r" (destinationWORD), "r" (sourceWORD), "r" (finalSourceWORD)
+		: "r" (destination), "r" (source), "r" (finalSource)
 		: "r10" // regs used
 	);
 }
 
-void Mem_clear(BYTE* destination, u32 numberOfBytes)
+void Mem_addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
 {
-	u32 i;
+	const BYTE* finalSource = source + numberOfBYTES;
 
-	for(i = 0; i < numberOfBytes; i++)
-	{
-		*destination++ = 0;
-	}
+    asm("					\n\t"      \
+		"jr end%=			\n\t"      \
+		"loop%=:			\n\t"      \
+		"ld.b 0[%1],r10		\n\t"      \
+		"add %3,r10			\n\t"      \
+		"st.b r10,0[%0]		\n\t"      \
+		"add 1,%0			\n\t"      \
+		"add 1,%1			\n\t"      \
+		"end%=:				\n\t"      \
+		"cmp %1,%2			\n\t"      \
+		"bgt loop%=			\n\t"      \
+    : // No Output
+    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
+	: "r10" // regs used
+    );
 }
 
-void Mem_add(BYTE* destination, const BYTE* source, u32 numberOfBytes, u32 offset)
+void Mem_addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
 {
-	u32 numberOfHWORDS = numberOfBytes >> 1;
-
-	HWORD* destinationHWORD = (HWORD*) destination;
-	HWORD* sourceHWORD = (HWORD*) source;
-	HWORD* finalSourceHWORD = sourceHWORD + numberOfHWORDS;
+	const HWORD* finalSource = source + numberOfHWORDS;
 
     asm("					\n\t"      \
 		"jr end%=			\n\t"      \
@@ -105,7 +186,8 @@ void Mem_add(BYTE* destination, const BYTE* source, u32 numberOfBytes, u32 offse
 		"cmp %1,%2			\n\t"      \
 		"bgt loop%=			\n\t"      \
     : // No Output
-    : "r" (destinationHWORD), "r" (sourceHWORD), "r" (finalSourceHWORD), "r" (offset)
+    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
 	: "r10" // regs used
     );
 }
+

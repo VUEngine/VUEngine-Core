@@ -31,12 +31,22 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
+//											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-void Mem_copy(BYTE* destination, const BYTE* source, u32 numberOfBytes);
-void Mem_clear(BYTE* dest, u32 numberOfBytes);
-void Mem_add(BYTE* destination, const BYTE* source, u32 numberOfBytes, u32 offset);
+#define __NUMBER_OF_COPIES_TO_ENABLE_CACHE		10
+
+
+//---------------------------------------------------------------------------------------------------------
+//											FUNCTIONS
+//---------------------------------------------------------------------------------------------------------
+
+void Mem_clear(BYTE* destination, u32 numberOfBYTES);
+void Mem_copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES);
+void Mem_copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
+void Mem_copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
+void Mem_addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
+void Mem_addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
 
 
 #endif

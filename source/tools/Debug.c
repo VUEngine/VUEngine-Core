@@ -117,6 +117,7 @@
 #define DISPLACEMENT_STEP_Y				512 - 224
 
 #define __CHARS_PER_SEGMENT_TO_SHOW		512
+#define __CHARS_PER_ROW_TO_SHOW			32
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -197,12 +198,6 @@
 		 * @memberof		Debug
 		 */																								\
 		void (*update)(void *);																			\
-		/**
-		 * @var BYTE 		charMemoryMap[__CHARS_PER_SEGMENT_TO_SHO	]
-		 * @brief			temporary array to hold char data
-		 * @memberof		Debug
-		 */																								\
-		BYTE charMemoryMap[__CHARS_PER_SEGMENT_TO_SHOW];												\
 
 /**
  * @class	Debug
@@ -1326,33 +1321,35 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
 {
 	SpriteManager_showLayer(SpriteManager_getInstance(), 0);
 
-	int i = 0, j = 0;
+	int i = 0;
 	int yOffset = y + 3;
 
 	// print box
 	Printing_text(Printing_getInstance(), "\x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04", 1, yOffset-1, NULL);
 	Printing_text(Printing_getInstance(), "\x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06", 1, yOffset+16, NULL);
 
-	for(i = 0; i < __CHARS_PER_SEGMENT_TO_SHOW >> 5 && i < __SCREEN_HEIGHT / 8; i++)
+	for(i = 0; i < __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW && i < __SCREEN_HEIGHT / 8; i++)
 	{
 		Printing_text(Printing_getInstance(), "\x07                                \x07", 1, yOffset+i, NULL);
 	}
 
-	for(i = 0, j = this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW; i <  __CHARS_PER_SEGMENT_TO_SHOW; i+= 2, j++)
+	const HWORD charMemoryMap[] =
 	{
-		this->charMemoryMap[i] = (BYTE)(j & 0xFF);
-		this->charMemoryMap[i + 1] = (BYTE)((j & 0xFF00) >> 8);
-	}
+		0,	1,	2,	3,	4,	5,	6,	7,
+		8,	9,	10,	11,	12,	13,	14,	15,
+		16,	17,	18,	19,	20,	21,	22,	23,
+		24,	25,	26,	27,	28,	29,	30,	31
+	};
 
 	// put the map into memory calculating the number of char for each reference
-	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW >> 5; i++)
+	for(i = 0; i <  __CHARS_PER_SEGMENT_TO_SHOW / __CHARS_PER_ROW_TO_SHOW; i++)
 	{
-		Mem_add
+		Mem_addHWORD
 		(
-			(u8*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset << 6) + (i << 6) + 2) << 1),
-			(u8*)this->charMemoryMap,
-			32 * 2,
-			(i << 5)
+			(HWORD*)__BGMAP_SEGMENT(BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance())) + (((yOffset + i) * (64)) + 2),
+			(HWORD*)charMemoryMap,
+			__CHARS_PER_ROW_TO_SHOW,
+			this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + i * __CHARS_PER_ROW_TO_SHOW
 		);
 	}
 }

@@ -233,7 +233,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
  */
 void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute__ ((unused)))
 {
-	Mem_copy(
+	Mem_copyBYTE(
 		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_DATA.offset << 4)),
 		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontDefinition->charSetDefinition->charDefinition),
 		VUENGINE_DEBUG_FONT_SIZE << 4

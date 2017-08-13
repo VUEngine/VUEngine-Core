@@ -192,35 +192,6 @@ void BgmapTexture_write(BgmapTexture this)
 }
 
 /**
- * Write to DRAM
- *
- * @memberof			BgmapTexture
- * @private
- *
- * @param this			Function scope
- */
-static void BgmapTexture_writeToDRAM(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
-{
-	const HWORD* finalSource = source + numberOfHWORDS;
-
-    asm("					\n\t"      \
-		"jr end%=			\n\t"      \
-		"loop%=:			\n\t"      \
-		"ld.h 0[%1],r10		\n\t"      \
-		"add %3,r10			\n\t"      \
-		"st.h r10,0[%0]		\n\t"      \
-		"add 2,%0			\n\t"      \
-		"add 2,%1			\n\t"      \
-		"end%=:				\n\t"      \
-		"cmp %1,%2			\n\t"      \
-		"bgt loop%=			\n\t"      \
-    : // No Output
-    : "r" (destination), "r" (source), "r" (finalSource), "r" (offset)
-	: "r10" // regs used
-    );
-}
-
-/**
  * Write __ANIMATED_MULTI Texture to DRAM
  *
  * @memberof			BgmapTexture
@@ -241,19 +212,23 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 	}
 
 	int bgmapSegment = this->segment;
+	int offsetDisplacement = xOffset + (yOffset << 6);
 	int palette = this->palette << 14;
 
 	// determine the number of frames the map had
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
 	int charLocation = (int)CharSet_getOffset(this->charSet);
 	int frames = CharSet_getNumberOfChars(this->charSet) / area;
-	u32 bytesPerRow = this->textureDefinition->cols << 1;
+	int mapDisplacement = this->mapDisplacement >> 1;
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
+	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < this->textureDefinition->cols * counter)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
 
 	// put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -263,17 +238,11 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 		// specifying the char displacement inside the char mem
 		for(; j <= frames; j++)
 		{
-			// FIXME: should use BgmapTexture_writeToDRAM
-			Mem_add((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (this->remainingRowsToBeWritten << 6)) << 1),
-					(const u8*)(this->textureDefinition->mapDefinition + (this->remainingRowsToBeWritten * bytesPerRow)),
-					bytesPerRow,
-					(palette) | (charLocation + area * (j - 1)));
-/*
-			BgmapTexture_writeToDRAM ((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (xOffset + (this->textureDefinition->cols * (j - 1)) + (yOffset << 6) + (this->remainingRowsToBeWritten << 6)),
-					(const HWORD*)this->textureDefinition->mapDefinition + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
-					this->textureDefinition->cols,
-					(palette) | (charLocation + area * (j - 1)));
-*/		}
+			Mem_addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureDefinition->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
+				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
+				this->textureDefinition->cols,
+				(palette) | (charLocation + area * (j - 1)));
+		}
 	}
 }
 
@@ -304,20 +273,23 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
 	int mapDisplacement = this->mapDisplacement >> 1;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
+	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < this->textureDefinition->cols * counter)
+	{
+		CACHE_DISABLE;
+		CACHE_CLEAR;
+		CACHE_ENABLE;
+	}
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-
-		BgmapTexture_writeToDRAM ((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
+		Mem_addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
 				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
 				this->textureDefinition->cols,
 				colorInformation);
 	}
 }
+
 /*
 static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
 {

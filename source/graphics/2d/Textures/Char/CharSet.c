@@ -248,10 +248,10 @@ void CharSet_write(CharSet this)
 {
 	ASSERT(this, "CharSet::write: null this");
 
-	Mem_copy(
-		(u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4),
-		(u8*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
-		(u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 4
+	Mem_copyWORD(
+		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
+		(WORD*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
+		(u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 2
 	);
 }
 
@@ -306,7 +306,7 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 
 	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
-		Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(1 << 4));
+		Mem_copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 3));
 	}
 }
 
@@ -339,11 +339,11 @@ void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE
 			0x00, 0x00,
 		};
 
-		Mem_copy(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
+		Mem_copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
 
 		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-		Mem_copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+		Mem_copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}
 }
