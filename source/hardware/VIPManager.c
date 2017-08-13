@@ -79,9 +79,10 @@ typedef struct PostProcessingEffectRegistry
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
 		bool frameStarted;																				\
+		bool drawingStarted;																			\
 		bool drawingEnded;																				\
 		bool renderingCompleted;																		\
-		bool allowDRAMWriting;																		\
+		bool allowDRAMWriting;																			\
 
 
 /**
@@ -151,6 +152,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;
 	this->frameStarted = false;
+	this->drawingStarted = false;
 	this->drawingEnded = false;
 	this->renderingCompleted = false;
 	this->allowDRAMWriting = false;
@@ -314,6 +316,7 @@ void __attribute__ ((noinline)) VIPManager_resetFrameStarted(VIPManager this)
 	ASSERT(this, "VIPManager::resetFrameStarted: null this");
 
 	this->frameStarted = false;
+	this->drawingStarted = false;
 	this->drawingEnded = false;
 	this->renderingCompleted = false;
 	this->allowDRAMWriting = false;
@@ -331,8 +334,8 @@ void VIPManager_interruptHandler(void)
 	u16 interrupt = _vipRegisters[__INTPND];
 
 	// disable interrupts
-	HardwareManager_disableMultiplexedInterrupts();
 	VIPManager_disableInterrupts(_vipManager);
+	HardwareManager_disableMultiplexedInterrupts();
 
 	const u16 interruptTable[] =
 	{
@@ -358,12 +361,28 @@ void VIPManager_interruptHandler(void)
 
 				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
 				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
-				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+
+				if(_vipManager->drawingStarted)
+				{
+					Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION << 1);
+				}
+				else
+				{
+					Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+				}
 
 				_vipManager->frameStarted = true;
 				break;
 
 			case __XPEND:
+
+				if(_vipManager->drawingStarted)
+				{
+					break;
+				}
+
+				_vipManager->drawingStarted = true;
+				_vipManager->renderingCompleted = false;
 
 #ifdef __PROFILE_GAME
 				Game_saveProcessNameDuringXPEND(Game_getInstance());
@@ -384,8 +403,6 @@ void VIPManager_interruptHandler(void)
 					// write to the frame buffers
 					VIPManager_processFrameBuffers(_vipManager);
 
-					_vipManager->renderingCompleted = false;
-
 					if(_vipManager->allowDRAMWriting)
 					{
 						// to allow timer interrupts
@@ -402,6 +419,7 @@ void VIPManager_interruptHandler(void)
 
 					// flag completions
 					_vipManager->drawingEnded = true;
+					_vipManager->drawingStarted = false;
 
 #ifdef __DEBUG_TOOLS
 					if(Game_isInDebugMode(Game_getInstance()))
@@ -453,8 +471,15 @@ void VIPManager_interruptHandler(void)
 		}
 	}
 
-	HardwareManager_disableMultiplexedInterrupts();
-	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
+	if(_vipManager->drawingStarted)
+	{
+		VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
+	}
+	else
+	{
+		HardwareManager_disableMultiplexedInterrupts();
+		VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
+	}
 }
 
 /**

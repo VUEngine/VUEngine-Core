@@ -451,10 +451,6 @@ void Game_start(Game this, GameState state)
 
 		while(true)
 		{
-#ifdef __PRINT_PROFILING_INFO
-			Game_checkFrameRate(this);
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "start frame";
 #endif
@@ -482,6 +478,11 @@ void Game_start(Game this, GameState state)
 
 			Game_run(this);
 
+#ifdef __PRINT_PROFILING_INFO
+			// increase the fps counter
+			FrameRate_increaseFps(FrameRate_getInstance());
+#endif
+
 #ifdef __PROFILE_GAME
 			if(_updateProfiling)
 			{
@@ -507,6 +508,20 @@ void Game_start(Game this, GameState state)
 					totalGameFrameRealDuration = 0;
 					cycleCount = 0;
 				}
+
+				// skip the rest of the cycle if already late
+				if(VIPManager_frameStarted(this->vipManager))
+				{
+					_tornGameFrameCount++;
+				}
+			}
+#endif
+
+#ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
+			// skip the rest of the cycle if already late
+			if(VIPManager_frameStarted(this->vipManager))
+			{
+				Game_showCurrentGameFrameProfiling(this, 1, 0);
 			}
 #endif
 
@@ -1126,6 +1141,10 @@ inline static void Game_checkForNewState(Game this)
 void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration)
 {
 	this->gameFrameTotalTime += gameFrameDuration;
+
+#ifdef __PRINT_PROFILING_INFO
+	Game_checkFrameRate(this);
+#endif
 }
 
 void Game_checkFrameRate(Game this)
@@ -1137,11 +1156,6 @@ void Game_checkFrameRate(Game this)
 
 	// this method "doesn't" exist
 	TimerManager_enable(this->timerManager, false);
-
-	FrameRate frameRate = FrameRate_getInstance();
-
-	// increase the fps counter
-	FrameRate_increaseFps(frameRate);
 
 	if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
 	{
@@ -1177,7 +1191,7 @@ void Game_checkFrameRate(Game this)
 #ifdef __PRINT_FRAMERATE
 		if(!Game_isInSpecialMode(this))
 		{
-			FrameRate_print(frameRate, 21, 27);
+			FrameRate_print(FrameRate_getInstance(), 21, 27);
 		}
 #endif
 
@@ -1199,7 +1213,7 @@ void Game_checkFrameRate(Game this)
 		}
 #endif
 		//reset frame rate counters
-		FrameRate_reset(frameRate);
+		FrameRate_reset(FrameRate_getInstance());
 	}
 
 	// enable timer
@@ -1238,23 +1252,8 @@ inline static void Game_run(Game this)
 	{
 		// dispatch delayed messages
 		Game_dispatchDelayedMessages(this);
-	}
 
-	// skip the rest of the cycle if already late
-	if(VIPManager_frameStarted(this->vipManager))
-	{
-#ifdef __PROFILE_GAME
-		_tornGameFrameCount++;
-#endif
-#ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
-		Game_showCurrentGameFrameProfiling(this, 1, 0);
-#endif
-		return;
-	}
-
-	// stream
-	if(!skipNonCriticalProcesses)
-	{
+		// stream
 		Game_stream(this);
 	}
 }
