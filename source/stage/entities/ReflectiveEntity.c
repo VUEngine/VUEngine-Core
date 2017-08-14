@@ -111,9 +111,9 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity_updateVisualRepresentation(ReflectiveEntity this)
+void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 {
-	ASSERT(this, "ReflectiveEntity::updateVisualRepresentation: null this");
+	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
 
 	VBVec3D position3D = this->transform.globalPosition;
 	__OPTICS_NORMALIZE(position3D);

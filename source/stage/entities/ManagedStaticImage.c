@@ -246,9 +246,9 @@ void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation*
 	this->invalidateGlobalTransformation = 0;
 }
 
-void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
+void ManagedStaticImage_synchronizeGraphics(ManagedStaticImage this)
 {
-	ASSERT(this, "ManagedStaticImage::updateVisualRepresentation: null this");
+	ASSERT(this, "ManagedStaticImage::synchronizeGraphics: null this");
 
 	if(!this->invalidateSprites)
 	{
@@ -257,7 +257,7 @@ void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this)
 
 	if(this->invalidateSprites & __INVALIDATE_SCALE)
 	{
-		__CALL_BASE_METHOD(RecyclableImage, updateVisualRepresentation, this);
+		__CALL_BASE_METHOD(RecyclableImage, synchronizeGraphics, this);
 
 		this->invalidateSprites = false;
 		return;

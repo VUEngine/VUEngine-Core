@@ -42,7 +42,7 @@
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, removeChild);										\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, initialTransform);									\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, transform);										\
-		__VIRTUAL_SET(ClassName, ManagedStaticImage, updateVisualRepresentation);						\
+		__VIRTUAL_SET(ClassName, ManagedStaticImage, synchronizeGraphics);								\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, releaseGraphics);									\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, update);											\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, passMessage);										\
@@ -80,7 +80,7 @@ void ManagedStaticImage_destructor(ManagedStaticImage this);
 void ManagedStaticImage_removeChild(ManagedStaticImage this, Container child);
 void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation* environmentTransform, u32 recursive);
 void ManagedStaticImage_transform(ManagedStaticImage this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void ManagedStaticImage_updateVisualRepresentation(ManagedStaticImage this);
+void ManagedStaticImage_synchronizeGraphics(ManagedStaticImage this);
 void ManagedStaticImage_releaseGraphics(ManagedStaticImage this);
 void ManagedStaticImage_update(ManagedStaticImage this, u32 elapsedTime);
 int ManagedStaticImage_passMessage(ManagedStaticImage this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);

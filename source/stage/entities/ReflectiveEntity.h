@@ -61,7 +61,7 @@
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, suspend);											\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, resume);												\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, applyReflection);									\
-		__VIRTUAL_SET(ClassName, ReflectiveEntity, updateVisualRepresentation);							\
+		__VIRTUAL_SET(ClassName, ReflectiveEntity, synchronizeGraphics);								\
 
 __CLASS(ReflectiveEntity);
 
@@ -147,7 +147,7 @@ void ReflectiveEntity_destructor(ReflectiveEntity this);
 void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive);
 void ReflectiveEntity_suspend(ReflectiveEntity this);
 void ReflectiveEntity_resume(ReflectiveEntity this);
-void ReflectiveEntity_updateVisualRepresentation(ReflectiveEntity this);
+void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this);
 void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet);
 void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 ySourceStart,

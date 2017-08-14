@@ -154,7 +154,7 @@ bool GameState_stream(GameState this);
 void GameState_suspend(GameState this, void* owner);
 void GameState_transform(GameState this);
 void GameState_updatePhysics(GameState this);
-void GameState_updateVisuals(GameState this);
+void GameState_synchronizeGraphics(GameState this);
 
 
 #endif

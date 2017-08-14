@@ -41,9 +41,9 @@
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, update);									\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, transform);									\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, updateVisualRepresentation);				\
+		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, synchronizeGraphics);						\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handleMessage);								\
-		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, initialize);										\
+		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, initialize);								\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, ready);										\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, handlePropagatedMessage);					\
 		__VIRTUAL_SET(ClassName, CollisionsContainerEntity, passMessage);								\
@@ -75,7 +75,7 @@ void CollisionsContainerEntity_initialize(CollisionsContainerEntity this, bool r
 void CollisionsContainerEntity_ready(CollisionsContainerEntity this, bool recursive);
 void CollisionsContainerEntity_update(CollisionsContainerEntity this, u32 elapsedTime);
 void CollisionsContainerEntity_transform(CollisionsContainerEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this);
+void CollisionsContainerEntity_synchronizeGraphics(CollisionsContainerEntity this);
 bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this, Telegram telegram);
 bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this, int message);
 int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);

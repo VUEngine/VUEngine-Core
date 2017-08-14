@@ -40,7 +40,7 @@
 #define Particle_METHODS(ClassName)																		\
 		SpatialObject_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, u32, update, int elapsedTime, void (* behavior)(Particle particle));	\
-		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation, bool updateSpritePosition);			\
+		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics, bool updateSpritePosition);					\
 		__VIRTUAL_DEC(ClassName, void, resume);															\
 		__VIRTUAL_DEC(ClassName, void, suspend);														\
 
@@ -49,7 +49,7 @@
 #define Particle_SET_VTABLE(ClassName)																	\
 		SpatialObject_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, Particle, update);														\
-		__VIRTUAL_SET(ClassName, Particle, updateVisualRepresentation);									\
+		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Particle, moves);														\
 		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);											\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
@@ -167,7 +167,7 @@ void Particle_show(Particle this);
 void Particle_suspend(Particle this);
 void Particle_transform(Particle this);
 u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
-void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition);
+void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition);
 
 
 #endif

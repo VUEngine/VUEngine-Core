@@ -43,7 +43,7 @@
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ParticleSystem, update);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, transform);											\
-		__VIRTUAL_SET(ClassName, ParticleSystem, updateVisualRepresentation);							\
+		__VIRTUAL_SET(ClassName, ParticleSystem, synchronizeGraphics);									\
 		__VIRTUAL_SET(ClassName, ParticleSystem, resume);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
 		__VIRTUAL_SET(ClassName, ParticleSystem, hide);													\
@@ -181,7 +181,7 @@ void ParticleSystem_start(ParticleSystem this);
 void ParticleSystem_suspend(ParticleSystem this);
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void ParticleSystem_update(ParticleSystem this, u32 elapsedTime);
-void ParticleSystem_updateVisualRepresentation(ParticleSystem this);
+void ParticleSystem_synchronizeGraphics(ParticleSystem this);
 
 
 #endif

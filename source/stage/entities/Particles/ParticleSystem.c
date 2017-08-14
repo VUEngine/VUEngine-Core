@@ -448,9 +448,9 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
  *
  * @param this	Function scope
  */
-void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
+void ParticleSystem_synchronizeGraphics(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::updateVisualRepresentation: null this");
+	ASSERT(this, "ParticleSystem::synchronizeGraphics: null this");
 
 	VirtualNode node = this->particles->head;
 
@@ -458,7 +458,7 @@ void ParticleSystem_updateVisualRepresentation(ParticleSystem this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Particle, updateVisualRepresentation, node->data, updateSprites);
+		__VIRTUAL_CALL(Particle, synchronizeGraphics, node->data, updateSprites);
 	}
 
 	this->invalidateSprites = 0;

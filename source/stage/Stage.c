@@ -1096,9 +1096,9 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 	}
 }
 
-void Stage_updateVisualRepresentation(Stage this)
+void Stage_synchronizeGraphics(Stage this)
 {
-	ASSERT(this, "Stage::updateVisualRepresentation: null this");
+	ASSERT(this, "Stage::synchronizeGraphics: null this");
 
 	VirtualNode node = this->children->head;
 
@@ -1111,7 +1111,7 @@ void Stage_updateVisualRepresentation(Stage this)
 			continue;
 		}
 
-		__VIRTUAL_CALL(Container, updateVisualRepresentation, child);
+		__VIRTUAL_CALL(Container, synchronizeGraphics, child);
 	}
 }
 

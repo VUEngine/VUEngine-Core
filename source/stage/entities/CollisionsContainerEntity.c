@@ -96,9 +96,9 @@ void CollisionsContainerEntity_transform(CollisionsContainerEntity this __attrib
 	ASSERT(this, "CollisionsContainerEntity::transform: null this");
 }
 
-void CollisionsContainerEntity_updateVisualRepresentation(CollisionsContainerEntity this __attribute__ ((unused)))
+void CollisionsContainerEntity_synchronizeGraphics(CollisionsContainerEntity this __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::updateVisualRepresentation: null this");
+	ASSERT(this, "CollisionsContainerEntity::synchronizeGraphics: null this");
 }
 
 bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))

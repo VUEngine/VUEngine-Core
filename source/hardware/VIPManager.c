@@ -116,7 +116,7 @@ static void VIPManager_constructor(VIPManager this);
 static void VIPManager_processFrameBuffers(VIPManager this);
 void Game_run(Game this);
 void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration);
-void Game_updateVisuals(Game this);
+void Game_synchronizeGraphics(Game this);
 bool Game_stream(Game this);
 
 

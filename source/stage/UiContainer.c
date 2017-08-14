@@ -156,7 +156,7 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 
 	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
-	__VIRTUAL_CALL(Container, updateVisualRepresentation, this);
+	__VIRTUAL_CALL(Container, synchronizeGraphics, this);
 
 	if(screen)
 	{

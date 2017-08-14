@@ -190,9 +190,9 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
  * @param this					Function scope
  * @param updateSpritePosition
  */
-void Particle_updateVisualRepresentation(Particle this, bool updateSpritePosition)
+void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 {
-	ASSERT(this, "Particle::updateVisualRepresentation: null this");
+	ASSERT(this, "Particle::synchronizeGraphics: null this");
 
 	if(!(updateSpritePosition | Body_isAwake(this->body)))
 	{
@@ -201,7 +201,7 @@ void Particle_updateVisualRepresentation(Particle this, bool updateSpritePositio
 
 	const VBVec3D* position = Body_getPosition(this->body);
 
-	ASSERT(this->objectSprite, "Particle::updateVisualRepresentation: null objectSprite");
+	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
 	if(__Z_AXIS & Body_isMoving(this->body))
 	{

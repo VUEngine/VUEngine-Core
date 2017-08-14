@@ -58,7 +58,7 @@
 		__VIRTUAL_SET(ClassName, Entity, transform);													\
 		__VIRTUAL_SET(ClassName, Entity, setupGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, releaseGraphics);												\
-		__VIRTUAL_SET(ClassName, Entity, updateVisualRepresentation);									\
+		__VIRTUAL_SET(ClassName, Entity, synchronizeGraphics);											\
 		__VIRTUAL_SET(ClassName, Entity, handleMessage);												\
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);													\
@@ -196,7 +196,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteRotation(Entity this);
 bool Entity_updateSpriteScale(Entity this);
-void Entity_updateVisualRepresentation(Entity this);
+void Entity_synchronizeGraphics(Entity this);
 
 
 #endif

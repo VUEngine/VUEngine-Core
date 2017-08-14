@@ -243,9 +243,9 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	}
 }
 
-void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
+void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 {
-	ASSERT(this, "ManagedEntity::updateVisualRepresentation: null this");
+	ASSERT(this, "ManagedEntity::synchronizeGraphics: null this");
 
 	if(!this->invalidateSprites)
 	{
@@ -254,7 +254,7 @@ void ManagedEntity_updateVisualRepresentation(ManagedEntity this)
 
 	if(this->invalidateSprites & __INVALIDATE_SCALE)
 	{
-		__CALL_BASE_METHOD(Entity, updateVisualRepresentation, this);
+		__CALL_BASE_METHOD(Entity, synchronizeGraphics, this);
 
 		this->invalidateSprites = false;
 		return;

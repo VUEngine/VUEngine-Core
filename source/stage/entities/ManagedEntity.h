@@ -44,7 +44,7 @@
 		__VIRTUAL_SET(ClassName, ManagedEntity, removeChild);											\
 		__VIRTUAL_SET(ClassName, ManagedEntity, initialTransform);										\
 		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
-		__VIRTUAL_SET(ClassName, ManagedEntity, updateVisualRepresentation);							\
+		__VIRTUAL_SET(ClassName, ManagedEntity, synchronizeGraphics);									\
 		__VIRTUAL_SET(ClassName, ManagedEntity, releaseGraphics);										\
 		__VIRTUAL_SET(ClassName, ManagedEntity, passMessage);											\
 		__VIRTUAL_SET(ClassName, ManagedEntity, ready);													\
@@ -81,7 +81,7 @@ void ManagedEntity_destructor(ManagedEntity this);
 void ManagedEntity_removeChild(ManagedEntity this, Container child);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive);
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void ManagedEntity_updateVisualRepresentation(ManagedEntity this);
+void ManagedEntity_synchronizeGraphics(ManagedEntity this);
 void ManagedEntity_releaseGraphics(ManagedEntity this);
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 void ManagedEntity_ready(ManagedEntity this, bool recursive);

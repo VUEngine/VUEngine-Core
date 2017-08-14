@@ -73,7 +73,7 @@
 		__VIRTUAL_DEC(ClassName, void, setupGraphics);													\
 		__VIRTUAL_DEC(ClassName, void, releaseGraphics);												\
 		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*, u8);							\
-		__VIRTUAL_DEC(ClassName, void, updateVisualRepresentation);										\
+		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics);											\
 		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
 		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
 		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
@@ -94,7 +94,7 @@
 		__VIRTUAL_SET(ClassName, Container, setupGraphics);												\
 		__VIRTUAL_SET(ClassName, Container, releaseGraphics);											\
 		__VIRTUAL_SET(ClassName, Container, transform);													\
-		__VIRTUAL_SET(ClassName, Container, updateVisualRepresentation);								\
+		__VIRTUAL_SET(ClassName, Container, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Container, initialTransform);											\
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);											\
 		__VIRTUAL_SET(ClassName, Container, handlePropagatedMessage);									\
@@ -192,7 +192,7 @@ void Container_suspend(Container this);
 void Container_transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform);
 void Container_update(Container this, u32 elapsedTime);
-void Container_updateVisualRepresentation(Container this);
+void Container_synchronizeGraphics(Container this);
 
 
 #endif

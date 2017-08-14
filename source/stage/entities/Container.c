@@ -592,9 +592,9 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	this->invalidateGlobalTransformation = 0;
 }
 
-void Container_updateVisualRepresentation(Container this)
+void Container_synchronizeGraphics(Container this)
 {
-	ASSERT(this, "Container::updateVisualRepresentation: null this");
+	ASSERT(this, "Container::synchronizeGraphics: null this");
 
 	// if I have children
 	if(this->children)
@@ -604,7 +604,7 @@ void Container_updateVisualRepresentation(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Container, updateVisualRepresentation, __SAFE_CAST(Container, node->data));
+			__VIRTUAL_CALL(Container, synchronizeGraphics, __SAFE_CAST(Container, node->data));
 		}
 	}
 }

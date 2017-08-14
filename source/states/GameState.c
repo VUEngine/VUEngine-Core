@@ -304,7 +304,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	CharSetManager_defragment(CharSetManager_getInstance());
 
 	// set up visual representation
-	GameState_updateVisuals(this);
+	GameState_synchronizeGraphics(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());
@@ -447,13 +447,13 @@ static void GameState_initialTransform(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_updateVisuals(GameState this)
+void GameState_synchronizeGraphics(GameState this)
 {
-	ASSERT(this, "GameState::updateVisuals: null this");
-	ASSERT(this->stage, "GameState::updateVisuals: null stage");
+	ASSERT(this, "GameState::synchronizeGraphics: null this");
+	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transform loaded entities
-	__VIRTUAL_CALL(Container, updateVisualRepresentation, this->stage);
+	__VIRTUAL_CALL(Container, synchronizeGraphics, this->stage);
 }
 
 /**
@@ -540,7 +540,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	GameState_initialTransform(this);
 
 	// set up visual representation
-	GameState_updateVisuals(this);
+	GameState_synchronizeGraphics(this);
 
 	// sort all sprites' layers
 	SpriteManager_sortLayers(SpriteManager_getInstance());

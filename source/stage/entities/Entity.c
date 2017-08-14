@@ -1507,13 +1507,13 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
  *
  * @param this	Function scope
  */
-void Entity_updateVisualRepresentation(Entity this)
+void Entity_synchronizeGraphics(Entity this)
 {
-	ASSERT(this, "Entity::updateVisualRepresentation: null this");
+	ASSERT(this, "Entity::synchronizeGraphics: null this");
 
 	if(this->children)
 	{
-		__CALL_BASE_METHOD(Container, updateVisualRepresentation, this);
+		__CALL_BASE_METHOD(Container, synchronizeGraphics, this);
 	}
 
 	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION);
@@ -1936,7 +1936,7 @@ void Entity_show(Entity this)
 
 	// and update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
-	Entity_updateVisualRepresentation(this);
+	Entity_synchronizeGraphics(this);
 
 	__CALL_BASE_METHOD(Container, show, this);
 
@@ -1973,7 +1973,7 @@ void Entity_hide(Entity this)
 
 	// and update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
-	Entity_updateVisualRepresentation(this);
+	Entity_synchronizeGraphics(this);
 
 	__CALL_BASE_METHOD(Container, hide, this);
 
