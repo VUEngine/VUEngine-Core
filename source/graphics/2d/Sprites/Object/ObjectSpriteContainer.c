@@ -232,7 +232,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
 		int i = 0;
 		for(; i < objectSprite->totalObjects; i++)
 		{
-			_objectAttributesBaseAddress[((objectSprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+			_objectAttributesBaseAddress[((objectSprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
 		}
 	}
 
@@ -444,7 +444,7 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 					int i = 0;
 					for(; i < sprite->totalObjects; i++)
 					{
-						_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
 					}
 
 					// swap array entries
@@ -511,7 +511,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 			int i = 0;
 			for(; i < sprite->totalObjects; i++)
 			{
-				_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
 		}
 		else

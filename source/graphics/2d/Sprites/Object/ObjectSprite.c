@@ -337,7 +337,7 @@ void ObjectSprite_render(ObjectSprite this)
 			{
 				s32 objectIndex = (this->objectIndex + jDisplacement + j) << 2;
 
-				_objectAttributesBaseAddress[objectIndex + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
 
 			continue;
@@ -355,7 +355,7 @@ void ObjectSprite_render(ObjectSprite this)
 			// screen's bounds
 			if((unsigned)(outputX - _cameraFrustum->x0 + 4) > (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				_objectAttributesBaseAddress[objectIndex + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[objectIndex + 1] = __OBJECT_CHAR_HIDE_MASK;
 				continue;
 			}
 
@@ -429,7 +429,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 			int j = previousObjectIndex;
 			for(; j < previousObjectIndex + this->totalObjects; j++)
 			{
-				_objectAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+				_objectAttributesBaseAddress[(j << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
 			}
 
 			if(!this->hidden)
@@ -443,7 +443,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 					int j = previousObjectIndex + this->totalObjects - 1;
 					for(; j >= this->objectIndex + this->totalObjects && counter < this->totalObjects; j--, counter++)
 					{
-						_objectAttributesBaseAddress[(j << 2) + 1] &= __OBJECT_CHAR_HIDE_MASK;
+						_objectAttributesBaseAddress[(j << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
 					}
 				}
 				else
