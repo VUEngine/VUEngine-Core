@@ -36,9 +36,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #undef __FRAME_CYCLE
 #define __FRAME_CYCLE 							0
 #undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						10
-//#undef __TIMER_FREQUENCY
-//#define __TIMER_FREQUENCY						__TIMER_100US
+#define __TIMER_RESOLUTION						1
 
 
 // do not delete the following macros!
