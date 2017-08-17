@@ -117,8 +117,7 @@
 #define __VERTICAL_VIEW_POINT_CENTER			__SCREEN_HEIGHT / 2
 
 // Parallax values are divide by this factor to control their strength
-// powers of 2
-#define __PARALLAX_CORRECTION_FACTOR			4
+#define __PARALLAX_CORRECTION_FACTOR			16
 
 
 //---------------------------------------------------------------------------------------------------------
