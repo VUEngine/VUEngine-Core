@@ -78,11 +78,9 @@ typedef struct PostProcessingEffectRegistry
 		/* post processing effects */																	\
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
-		bool frameStarted;																				\
-		bool drawingStarted;																			\
 		bool drawingEnded;																				\
 		bool renderingCompleted;																		\
-		bool allowDRAMWriting;																			\
+		bool allowDRAMAccess;																			\
 
 
 /**
@@ -99,6 +97,9 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration);
+void Game_frameStarted(Game this);
+
 #ifdef __PROFILE_GAME
 void Game_saveProcessNameDuringFRAMESTART(Game this);
 void Game_saveProcessNameDuringXPEND(Game this);
@@ -114,10 +115,7 @@ static HardwareManager _hardwareManager;
 
 static void VIPManager_constructor(VIPManager this);
 static void VIPManager_processFrameBuffers(VIPManager this);
-void Game_run(Game this);
-void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration);
-void Game_synchronizeGraphics(Game this);
-bool Game_stream(Game this);
+static void VIPManager_processInterrupt(VIPManager this, u16 interrupt);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -151,11 +149,9 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;
-	this->frameStarted = false;
-	this->drawingStarted = false;
 	this->drawingEnded = false;
 	this->renderingCompleted = false;
-	this->allowDRAMWriting = false;
+	this->allowDRAMAccess = false;
 
 	_vipManager = this;
 	_timerManager = TimerManager_getInstance();
@@ -196,7 +192,7 @@ void VIPManager_enableDrawing(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::enableDrawing: null this");
 
-//	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 }
 
@@ -230,11 +226,7 @@ void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)), u16 in
 	ASSERT(this, "VIPManager::enableInterrupt: null this");
 
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
-#ifdef __ALERT_VIP_OVERTIME
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
-#else
-	_vipRegisters[__INTENB]= interruptCode;
-#endif
 }
 
 /**
@@ -260,13 +252,13 @@ void VIPManager_disableInterrupts(VIPManager this __attribute__ ((unused)))
  * @public
  *
  * @param this					Function scope
- * @param allowDRAMWriting		Flag's value
+ * @param allowDRAMAccess		Flag's value
  */
-void VIPManager_enableDRAMWriting(VIPManager this, bool enableDRAMWriting)
+void VIPManager_allowDRAMAccess(VIPManager this, bool allowDRAMAccess)
 {
-	ASSERT(this, "VIPManager::enableDRAMWriting: null this");
+	ASSERT(this, "VIPManager::allowDRAMAccess: null this");
 
-	this->allowDRAMWriting = enableDRAMWriting;
+	this->allowDRAMAccess = allowDRAMAccess;
 }
 
 /**
@@ -287,47 +279,12 @@ bool __attribute__ ((noinline)) VIPManager_isRenderingPending(VIPManager this)
 }
 
 /**
- * Check if FRAMESTART already happened
- *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
- *
- * @return						True if FRAMESTART already happened
- */
-bool __attribute__ ((noinline)) VIPManager_frameStarted(VIPManager this)
-{
-	ASSERT(this, "VIPManager::frameStarted: null this");
-
-	return this->frameStarted;
-}
-
-/**
- * Reset frame started flag
- *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
- */
-void __attribute__ ((noinline)) VIPManager_resetFrameStarted(VIPManager this)
-{
-	ASSERT(this, "VIPManager::resetFrameStarted: null this");
-
-	this->frameStarted = false;
-	this->drawingStarted = false;
-	this->drawingEnded = false;
-	this->renderingCompleted = false;
-	this->allowDRAMWriting = false;
-}
-
-/**
  * VIP's interrupt handler
  *
  * @memberof		VIPManager
  * @public
  */
+
 void VIPManager_interruptHandler(void)
 {
 	// save the interrupt event
@@ -335,15 +292,27 @@ void VIPManager_interruptHandler(void)
 
 	// disable interrupts
 	VIPManager_disableInterrupts(_vipManager);
-	HardwareManager_disableMultiplexedInterrupts();
 
+	// handle the interrupt
+	VIPManager_processInterrupt(_vipManager, interrupt);
+
+	// enable interrupts
+	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
+}
+/**
+ * Process interrupt method
+ *
+ * @memberof		VIPManager
+ * @public
+ */
+
+inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
+{
 	const u16 interruptTable[] =
 	{
 		__FRAMESTART,
 		__XPEND,
-#ifdef __ALERT_VIP_OVERTIME
 		__TIMEERR
-#endif
 	};
 
 	int i = 0;
@@ -359,30 +328,16 @@ void VIPManager_interruptHandler(void)
 				Game_saveProcessNameDuringFRAMESTART(Game_getInstance());
 #endif
 
-				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
-				VIPManager_registerCurrentDrawingFrameBufferSet(_vipManager);
-
-				if(_vipManager->drawingStarted)
-				{
-					Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION << 1);
-				}
-				else
-				{
-					Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
-				}
-
-				_vipManager->frameStarted = true;
+				VIPManager_registerCurrentDrawingFrameBufferSet(this);
+				Game_frameStarted(Game_getInstance());
+				this->drawingEnded = false;
+				this->renderingCompleted = false;
+				this->allowDRAMAccess = true;
 				break;
 
 			case __XPEND:
 
-				if(_vipManager->drawingStarted)
-				{
-					break;
-				}
-
-				_vipManager->drawingStarted = true;
-				_vipManager->renderingCompleted = false;
+				this->renderingCompleted = false;
 
 #ifdef __PROFILE_GAME
 				Game_saveProcessNameDuringXPEND(Game_getInstance());
@@ -394,32 +349,29 @@ void VIPManager_interruptHandler(void)
 #endif
 
 					// prevent VIP's drawing operations
-					VIPManager_disableDrawing(_vipManager);
+					VIPManager_disableDrawing(this);
 
 					// to allow timer interrupts
 					HardwareManager_enableMultiplexedInterrupts();
-					VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
+					VIPManager_enableInterrupt(this, __FRAMESTART);
 
 					// write to the frame buffers
-					VIPManager_processFrameBuffers(_vipManager);
+					VIPManager_processFrameBuffers(this);
 
-					if(_vipManager->allowDRAMWriting)
+					if(this->allowDRAMAccess)
 					{
-						// to allow timer interrupts
-						HardwareManager_enableMultiplexedInterrupts();
-						VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
-
 						// write to DRAM
 						SpriteManager_render(_spriteManager);
-						_vipManager->renderingCompleted = true;
+						this->renderingCompleted = true;
 					}
 
 					// allow VIP's drawing operations
-					VIPManager_enableDrawing(_vipManager);
+					VIPManager_enableDrawing(this);
 
 					// flag completions
-					_vipManager->drawingEnded = true;
-					_vipManager->drawingStarted = false;
+					this->drawingEnded = true;
+
+					HardwareManager_disableMultiplexedInterrupts();
 
 #ifdef __DEBUG_TOOLS
 					if(Game_isInDebugMode(Game_getInstance()))
@@ -445,9 +397,11 @@ void VIPManager_interruptHandler(void)
 #endif
 				break;
 
-#ifdef __ALERT_VIP_OVERTIME
 			case __TIMEERR:
 
+				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+
+#ifdef __ALERT_VIP_OVERTIME
 				{
 					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS / 2;
 
@@ -465,20 +419,9 @@ void VIPManager_interruptHandler(void)
 						messageDelay = -1;
 					}
 				}
-
-				break;
 #endif
+				break;
 		}
-	}
-
-	if(_vipManager->drawingStarted)
-	{
-		VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
-	}
-	else
-	{
-		HardwareManager_disableMultiplexedInterrupts();
-		VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
 	}
 }
 
@@ -813,7 +756,7 @@ void VIPManager_pushFrontPostProcessingEffect(VIPManager this, PostProcessingEff
 
 	if(VIPManager_isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
 	{
-		return;
+//		return;
 	}
 
 	PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);

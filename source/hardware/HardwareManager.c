@@ -90,7 +90,6 @@ int _sp = 0;
 void TimerManager_interruptHandler(void);
 void KeypadManager_interruptHandler(void);
 void VIPManager_interruptHandler(void);
-void VIPManager_resetFrameStarted(VIPManager this);
 static void HardwareManager_constructor(HardwareManager this);
 
 
@@ -130,6 +129,10 @@ static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManag
 	this->timerManager = TimerManager_getInstance();
 	this->vipManager = VIPManager_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
+
+	//setup timer interrupts
+	HardwareManager_setInterruptVectors(this);
+	HardwareManager_setInterruptLevel(this, 0);
 }
 
 /**
@@ -451,7 +454,6 @@ void HardwareManager_enableRendering(HardwareManager this)
 	VIPManager_displayOn(this->vipManager);
 	VIPManager_enableInterrupt(this->vipManager, __FRAMESTART | __XPEND);
 	VIPManager_enableDrawing(this->vipManager);
-	VIPManager_resetFrameStarted(this->vipManager);
 }
 
 /**

@@ -183,7 +183,12 @@ enum StateOperations
 		 * @memberof			Game
 		 */																								\
 		bool isShowingLowBatteryIndicator;																\
-
+		/**
+		 * @var bool			frameStarted
+		 * @brief				frame started flag
+		 * @memberof			Game
+		 */																								\
+		volatile bool frameStarted;																		\
 
 /**
  * @class	Game
@@ -225,11 +230,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this);
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
 void HardwareManager_checkMemoryMap();
 
-void VIPManager_enableDRAMWriting(VIPManager this, bool enableDRAMWriting);
+void VIPManager_allowDRAMAccess(VIPManager this, bool allowDRAMAccess);
 bool VIPManager_isRenderingPending(VIPManager this);
-bool VIPManager_frameStarted(VIPManager this);
-bool VIPManager_gameStarted(VIPManager this);
-void VIPManager_resetFrameStarted(VIPManager this);
 
 #ifdef __PROFILE_GAME
 void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
@@ -250,6 +252,7 @@ static s16 _gameFrameEffectiveDurationAverage = 0;
 static s16 _gameFrameHighestEffectiveDuration = 0;
 s16 _tornGameFrameCount = 0;
 
+static s16 _waitForFrameStartTotalTime = 0;
 s16 _renderingTotalTime = 0;
 static s16 _synchronizeGraphicsTotalTime = 0;
 static s16 _updateLogicTotalTime = 0;
@@ -288,6 +291,7 @@ static s16 _previousGameFrameEffectiveDurationAverage = 0;
 static s16 _previousGameFrameHighestEffectiveDuration = 0;
 static s16 _previousTornGameFrameCount = 0;
 
+static s16 _previousWaitForFrameStartTotalTime = 0;
 static s16 _previousRenderingTotalTime = 0;
 static s16 _previousUpdateVisualsTotalTime = 0;
 static s16 _previousUpdateLogicTotalTime = 0;
@@ -357,6 +361,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->automaticPauseState = NULL;
 	this->lastAutoPauseCheckTime = 0;
 	this->isShowingLowBatteryIndicator = false;
+	this->frameStarted = false;
 
 	// make sure all managers are initialized now
 	this->screen = Screen_getInstance();
@@ -455,12 +460,16 @@ void Game_start(Game this, GameState state)
 			this->lastProcessName = "end frame";
 #endif
 
+			while(!this->frameStarted);
+			this->frameStarted = false;
+
 #ifdef __PROFILE_GAME
+			u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
+
 			if(_updateProfiling)
 			{
 				static u32 cycleCount = 0;
 				static u32 totalGameFrameDuration = 0;
-				u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 				totalGameFrameDuration += elapsedTime;
 
 				_gameFrameEffectiveDuration = elapsedTime;
@@ -469,29 +478,31 @@ void Game_start(Game this, GameState state)
 			}
 #endif
 
-			while(!VIPManager_frameStarted(this->vipManager));
+#ifdef __PRINT_PROFILING_INFO
+			Game_checkFrameRate(this);
+#endif
+
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "start frame";
 #endif
 
-			VIPManager_resetFrameStarted(this->vipManager);
-
 #ifdef __PROFILE_GAME
+			_waitForFrameStartTotalTime += TimerManager_getMillisecondsElapsed(this->timerManager) - elapsedTime;
 			Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
 #endif
 
 			Game_run(this);
 
-#ifdef __PRINT_PROFILING_INFO
 			// increase the fps counter
 			FrameRate_increaseFps(FrameRate_getInstance());
-#endif
 
 #ifdef __PROFILE_GAME
+
 			if(_updateProfiling)
 			{
 				static u32 cycleCount = 0;
-				s32 gameFrameDuration = _renderingProcessTime +
+				s32 gameFrameDuration = _waitForFrameStartTotalTime +
+									_renderingProcessTime +
 									_synchronizeGraphicsProcessTime +
 									_updateLogicProcessTime +
 									_streamingProcessTime +
@@ -514,7 +525,7 @@ void Game_start(Game this, GameState state)
 				}
 
 				// skip the rest of the cycle if already late
-				if(VIPManager_frameStarted(this->vipManager))
+				if(this->frameStarted)
 				{
 					_tornGameFrameCount++;
 				}
@@ -523,7 +534,7 @@ void Game_start(Game this, GameState state)
 
 #ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 			// skip the rest of the cycle if already late
-			if(VIPManager_frameStarted(this->vipManager))
+			if(this->frameStarted)
 			{
 				Game_showCurrentGameFrameProfiling(this, 1, 0);
 			}
@@ -579,7 +590,7 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
-	VIPManager_enableDRAMWriting(this->vipManager, false);
+	VIPManager_allowDRAMAccess(this->vipManager, false);
 
 	switch(this->nextStateOperation)
 	{
@@ -669,7 +680,7 @@ static void Game_setNextState(Game this, GameState state)
 	// save current state
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 
-	VIPManager_enableDRAMWriting(this->vipManager, true);
+	VIPManager_allowDRAMAccess(this->vipManager, true);
 }
 
 // disable interrupts
@@ -976,21 +987,10 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 	this->lastProcessName = "synchronizing graphics";
 #endif
 
-	VIPManager_enableDRAMWriting(this->vipManager, false);
+	VIPManager_allowDRAMAccess(this->vipManager, false);
 
 	// apply transformations to graphics
 	GameState_synchronizeGraphics(this->currentState);
-
-	VIPManager_enableDRAMWriting(this->vipManager, true);
-
-#ifdef __PROFILE_GAME
-	if(_updateProfiling)
-	{
-		_synchronizeGraphicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
-		_synchronizeGraphicsTotalTime += _synchronizeGraphicsProcessTime;
-	}
-
-#endif
 
 	if(VIPManager_isRenderingPending(this->vipManager))
 	{
@@ -1000,6 +1000,17 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 
 		SpriteManager_render(SpriteManager_getInstance());
 	}
+
+	VIPManager_allowDRAMAccess(this->vipManager, true);
+
+#ifdef __PROFILE_GAME
+	if(_updateProfiling)
+	{
+		_synchronizeGraphicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_synchronizeGraphicsTotalTime += _synchronizeGraphicsProcessTime;
+	}
+
+#endif
 }
 
 // update game's physics subsystem
@@ -1140,10 +1151,6 @@ inline static void Game_checkForNewState(Game this)
 void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration)
 {
 	this->gameFrameTotalTime += gameFrameDuration;
-
-#ifdef __PRINT_PROFILING_INFO
-	Game_checkFrameRate(this);
-#endif
 }
 
 void Game_checkFrameRate(Game this)
@@ -1217,6 +1224,15 @@ void Game_checkFrameRate(Game this)
 
 	// enable timer
 	TimerManager_enable(this->timerManager, true);
+}
+
+void Game_frameStarted(Game this)
+{
+	ClockManager_update(this->clockManager, __GAME_FRAME_DURATION);
+
+	Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+
+	this->frameStarted = true;
 }
 
 inline static void Game_run(Game this)
@@ -1674,13 +1690,13 @@ void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ 
 	if(_processNameDuringFRAMESTART)
 	{
 		Printing_text(printing, "Process during FRAMESTART:", x, y, NULL);
-		Printing_text(printing, _processNameDuringFRAMESTART, x + xDisplacement, y++, NULL);
+		Printing_text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
 	}
 	Printing_text(printing, "                                                ", x, y, NULL);
 	if(_processNameDuringXPEND)
 	{
 		Printing_text(printing, "Process during XPEND:", x, y, NULL);
-		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement, y++, NULL);
+		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
 	}
 
 	int xDisplacement2 = 7;
@@ -1760,7 +1776,7 @@ void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ 
 	Printing_text(printing, "Last second processing (ms)", x, ++y, NULL);
 	Printing_text(printing, "Real processing time:", x, ++y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _renderingTotalTime + _synchronizeGraphicsTotalTime + _processUserInputTotalTime + _dispatchDelayedMessageTotalTime + _updateLogicTotalTime + _streamingTotalTime + _updatePhysicsTotalTime + _updateTransformationsTotalTime + _processCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, _waitForFrameStartTotalTime + _renderingTotalTime + _synchronizeGraphicsTotalTime + _processUserInputTotalTime + _dispatchDelayedMessageTotalTime + _updateLogicTotalTime + _streamingTotalTime + _updatePhysicsTotalTime + _updateTransformationsTotalTime + _processCollisionsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, _renderingHighestTime + _synchronizeGraphicsHighestTime + _updateLogicHighestTime + _streamingHighestTime + _updatePhysicsHighestTime + _updateTransformationsHighestTime + _processUserInputHighestTime + _dispatchDelayedMessageHighestTime + _processCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
 	Printing_text(printing, "Effective processing time:", x, ++y, NULL);
@@ -1790,7 +1806,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 
 	if(_processNameDuringFRAMESTART)
 	{
-		Printing_text(printing, _processNameDuringFRAMESTART, x + xDisplacement, y++, NULL);
+		Printing_text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
 	}
 	else
 	{
@@ -1803,7 +1819,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 
 	if(_processNameDuringXPEND)
 	{
-		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement, y++, NULL);
+		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
 	}
 	else
 	{
@@ -1982,7 +1998,7 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x _
 	Printing_text(printing, "Last second processing (ms)", x, ++y, NULL);
 	Printing_text(printing, "Real processing time:", x, ++y, NULL);
 	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing_int(printing, _previousWaitForFrameStartTotalTime + _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
 	Printing_int(printing, _previousRenderingHighestTime + _previousUpdateVisualsHighestTime + _previousHandleInputHighestTime + _previousDispatchDelayedMessageHighestTime + _previousUpdateLogicHighestTime + _previousStreamingHighestTime + _previousUpdatePhysicsHighestTime + _previousUpdateTransformationsHighestTime + _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
 	Printing_text(printing, "Effective processing time:", x, ++y, NULL);
@@ -2039,6 +2055,7 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	_previousGameFrameEffectiveDurationAverage = _gameFrameEffectiveDurationAverage;
 	_previousTornGameFrameCount = _tornGameFrameCount;
 
+	_previousWaitForFrameStartTotalTime = _waitForFrameStartTotalTime;
 	_previousRenderingTotalTime = _renderingTotalTime;
 	_previousUpdateVisualsTotalTime = _synchronizeGraphicsTotalTime;
 	_previousUpdateLogicTotalTime = _updateLogicTotalTime;
@@ -2065,6 +2082,7 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	_gameFrameEffectiveDurationAverage = 0;
 	_tornGameFrameCount = 0;
 
+	_waitForFrameStartTotalTime = 0;
 	_renderingTotalTime = 0;
 	_synchronizeGraphicsTotalTime = 0;
 	_updateLogicTotalTime = 0;
