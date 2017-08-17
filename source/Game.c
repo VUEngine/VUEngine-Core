@@ -463,6 +463,9 @@ void Game_start(Game this, GameState state)
 			while(!this->frameStarted);
 			this->frameStarted = false;
 
+			// allow the VIPManager to modify the DRAM
+			VIPManager_allowDRAMAccess(this->vipManager, true);
+
 #ifdef __PROFILE_GAME
 			u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 
@@ -590,6 +593,8 @@ static void Game_setNextState(Game this, GameState state)
 	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
+	// prevent the VIPManager to modify the DRAM
+	// during the next state's setup
 	VIPManager_allowDRAMAccess(this->vipManager, false);
 
 	switch(this->nextStateOperation)
@@ -680,6 +685,7 @@ static void Game_setNextState(Game this, GameState state)
 	// save current state
 	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 
+	// allow the VIPManager to modify the DRAM
 	VIPManager_allowDRAMAccess(this->vipManager, true);
 }
 
@@ -987,6 +993,9 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 	this->lastProcessName = "synchronizing graphics";
 #endif
 
+	// prevent the VIPManager to modify the DRAM
+	// during the synchronization of the entities'
+	// positions with their sprites
 	VIPManager_allowDRAMAccess(this->vipManager, false);
 
 	// apply transformations to graphics
@@ -1001,6 +1010,7 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 		SpriteManager_render(SpriteManager_getInstance());
 	}
 
+	// allow the VIPManager to modify the DRAM
 	VIPManager_allowDRAMAccess(this->vipManager, true);
 
 #ifdef __PROFILE_GAME
