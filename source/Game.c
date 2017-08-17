@@ -1216,10 +1216,12 @@ void Game_checkFrameRate(Game this)
 #ifdef __PRINT_MEMORY_POOL_STATUS
 		if(!Game_isInSpecialMode(this))
 		{
+			Printing_resetWorldCoordinates(Printing_getInstance());
+
 #ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
 			MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 30, 1);
 #else
-			MemoryPool_printResumedUsage(MemoryPool_getInstance(), 40, 1);
+			MemoryPool_printResumedUsage(MemoryPool_getInstance(), 35, 1);
 #endif
 		}
 #endif
@@ -1227,6 +1229,7 @@ void Game_checkFrameRate(Game this)
 #ifdef __ALERT_STACK_OVERFLOW
 		if(!Game_isInSpecialMode(this))
 		{
+			Printing_resetWorldCoordinates(Printing_getInstance());
 			HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
 		}
 #endif

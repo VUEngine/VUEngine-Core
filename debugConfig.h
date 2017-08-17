@@ -26,7 +26,6 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __ALERT_STACK_OVERFLOW
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __PRINT_DETAILED_MEMORY_POOL_STATUS
-//#define __FORCE_VIP_SYNC
 
 
 // do not delete the following macros!
@@ -79,8 +78,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #endif
 
 #ifdef __ALERT_STACK_OVERFLOW
-#undef __PRINT_FRAMERATE
-#define __PRINT_FRAMERATE
+#undef __PRINT_PROFILING_INFO
+#define __PRINT_PROFILING_INFO
 #endif
 
 #ifdef __PRINT_FRAMERATE
