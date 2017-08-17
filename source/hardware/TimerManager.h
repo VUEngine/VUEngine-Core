@@ -34,27 +34,14 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// use with 20us timer (range = 0 to 1300)
-#define __TIME_US(n)		(((n)*50)-1)
-
 // use with 100us timer (range = 0 to 6500, and 0 to 6.5)
 #define __TIME_MS(n)		(((n)*10)-1)
-#define __TIME_SEC(n)		(((n)*10000)-1)
 
 #define __TIMER_ENB			0x01
 #define __TIMER_ZSTAT		0x02
 #define __TIMER_ZCLR		0x04
 #define __TIMER_INT			0x08
-#define __TIMER_20US		0x10
 #define __TIMER_100US		0x00
-
-#if __TIMER_FREQUENCY == __TIMER_20US
-#define __TIMER_RESOLUTION_FUNCTION __TIME_US
-#else
-#if __TIMER_FREQUENCY == __TIMER_100US
-#define __TIMER_RESOLUTION_FUNCTION __TIME_MS
-#endif
-#endif
 
 
 //---------------------------------------------------------------------------------------------------------

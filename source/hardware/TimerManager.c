@@ -24,11 +24,11 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <debugConfig.h>
 #include <TimerManager.h>
 #include <HardwareManager.h>
 #include <ClockManager.h>
 #include <SoundManager.h>
-#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -126,11 +126,8 @@ void TimerManager_initialize(TimerManager this)
 {
 	ASSERT(this, "TimerManager::initialize: null this");
 
-	//setup timer interrupts
-	HardwareManager_setInterruptLevel(HardwareManager_getInstance(), 0);
-	//setup timer
-	TimerManager_setFrequency(this, __TIMER_FREQUENCY);
-	TimerManager_setTime(this, __TIMER_RESOLUTION_FUNCTION(__TIMER_RESOLUTION));
+	TimerManager_setFrequency(this, __TIMER_100US);
+	TimerManager_setTime(this, __TIME_MS(__TIMER_RESOLUTION));
 	TimerManager_clearStat(this);
 	TimerManager_enable(this, true);
 	TimerManager_enableInterrupt(this, true);
@@ -287,14 +284,7 @@ void TimerManager_setFrequency(TimerManager this, int frequency)
 {
 	ASSERT(this, "TimerManager::setFrequency: null this");
 
-	if(frequency)
-	{
-		this->tcrValue |= __TIMER_20US;
-	}
-	else
-	{
-		this->tcrValue &= ~__TIMER_20US;
-	}
+	this->tcrValue = (this->tcrValue & 0x0F) | frequency;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
