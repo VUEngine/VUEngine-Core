@@ -187,6 +187,14 @@ typedef struct Point
 
 } Point;
 
+// define a 2d point in screen space
+typedef struct Pixel
+{
+	u16 x;
+	u16 y;
+
+} Pixel;
+
 // scaling factor
 typedef struct Scale
 {

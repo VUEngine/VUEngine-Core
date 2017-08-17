@@ -158,18 +158,18 @@ bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
 	return Cuboid_overlapsWithInverseRightCuboid(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
-void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, int width, int height, int depth, Gap gap)
+void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 height, u16 depth, Gap gap)
 {
 	ASSERT(this, "Cuboid::setup: null this");
 
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13(width) >> 1;
-	this->rightCuboid.y1 = ITOFIX19_13(height) >> 1;
-	this->rightCuboid.z1 = ITOFIX19_13(depth) >> 0;
+	this->rightCuboid.x1 = ITOFIX19_13(width >> 1);
+	this->rightCuboid.y1 = ITOFIX19_13(height >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13(depth >> 1);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
-	this->rightCuboid.z0 = 0;//-this->rightCuboid.z1;
+	this->rightCuboid.z0 = -this->rightCuboid.z1;
 
 	// if owner does not move
 	if(!this->moves)

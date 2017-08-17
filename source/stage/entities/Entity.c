@@ -463,9 +463,9 @@ void Entity_calculateSize(Entity this)
 
 	VBVec3D centerDisplacement =
 	{
-		(ITOFIX19_13(rightCuboid.x1 + rightCuboid.x0) >> 1) - this->transform.localPosition.x,
-		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) >> 1) - this->transform.localPosition.y,
-		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) >> 1) - this->transform.localPosition.z
+		(ITOFIX19_13(rightCuboid.x1 + rightCuboid.x0) / 2) - this->transform.localPosition.x,
+		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) / 2) - this->transform.localPosition.y,
+		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) / 2) - this->transform.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
@@ -1600,7 +1600,7 @@ bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegra
  *
  * @return		Entity's width
  */
-int Entity_getWidth(Entity this)
+u16 Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
@@ -1610,7 +1610,7 @@ int Entity_getWidth(Entity this)
 	}
 
 	// must calculate based on the scale because not affine container must be enlarged
-	return (int)this->size.x;
+	return this->size.x;
 }
 
 /**
@@ -1623,7 +1623,7 @@ int Entity_getWidth(Entity this)
  *
  * @return		Entity's height
  */
-int Entity_getHeight(Entity this)
+u16 Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
@@ -1645,7 +1645,7 @@ int Entity_getHeight(Entity this)
  *
  * @return		Entity's depth
  */
-int Entity_getDepth(Entity this)
+u16 Entity_getDepth(Entity this)
 {
 	ASSERT(this, "Entity::getDepth: null this");
 
@@ -1764,9 +1764,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		VBVec2D position2D;
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-		int halfWidth = (int)this->size.x >> 1;
-		int halfHeight = (int)this->size.y >> 1;
-		int halfDepth = (int)this->size.z >> 1;
+		int halfWidth = (int)(this->size.x >> 1);
+		int halfHeight = (int)(this->size.y >> 1);
+		int halfDepth = (int)(this->size.z >> 1);
 
 		x = FIX19_13TOI(position2D.x);
 		y = FIX19_13TOI(position2D.y);

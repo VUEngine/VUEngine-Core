@@ -35,6 +35,34 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
+// Screen half width in pixels
+#define __HALF_SCREEN_WIDTH						(__SCREEN_WIDTH >> 1)
+
+// Screen half height in pixels
+#define __HALF_SCREEN_HEIGHT					(__SCREEN_HEIGHT >> 1)
+
+// Screen half depth in pixels
+#define __HALF_SCREEN_DEPTH						(__SCREEN_DEPTH >> 1)
+
+// Screen width in chars
+#define __SCREEN_WIDTH_IN_CHARS					(__SCREEN_WIDTH >> 3)
+
+// Screen height in chars
+#define __SCREEN_HEIGHT_IN_CHARS				(__SCREEN_HEIGHT >> 3)
+
+// Screen depth in chars
+#define __SCREEN_DEPTH_IN_CHARS					(__SCREEN_DEPTH >> 3)
+
+// Screen half width in chars
+#define __HALF_SCREEN_WIDTH_IN_CHARS			(__SCREEN_WIDTH >> 4)
+
+// Screen half height in chars
+#define __HALF_SCREEN_HEIGHT_IN_CHARS			(__SCREEN_HEIGHT >> 4)
+
+// Screen half depth in chars
+#define __HALF_SCREEN_DEPTH_IN_CHARS			(__SCREEN_DEPTH >> 4)
+
+
 // used for exceptions
 #define __EXCEPTIONS_BGMAP		0
 #define __EXCEPTIONS_WORLD		31

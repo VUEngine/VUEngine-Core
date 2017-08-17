@@ -321,11 +321,11 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE newPixelColor)
+void CharSet_putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "CharSet::putPixel: null this");
 
-	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && (unsigned)charSetPixel->x < 8 && (unsigned)charSetPixel->y < 8)
+	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
 		static BYTE auxChar[] =
 		{

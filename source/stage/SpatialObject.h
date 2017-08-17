@@ -42,9 +42,9 @@
 		__VIRTUAL_DEC(ClassName, int, getShapeType);													\
 		__VIRTUAL_DEC(ClassName, bool, moves);															\
 		__VIRTUAL_DEC(ClassName, int, canMoveOverAxis, const Acceleration* acceleration);				\
-		__VIRTUAL_DEC(ClassName, int, getWidth);														\
-		__VIRTUAL_DEC(ClassName, int, getHeight);														\
-		__VIRTUAL_DEC(ClassName, int, getDepth);														\
+		__VIRTUAL_DEC(ClassName, u16, getWidth);														\
+		__VIRTUAL_DEC(ClassName, u16, getHeight);														\
+		__VIRTUAL_DEC(ClassName, u16, getDepth);														\
 		__VIRTUAL_DEC(ClassName, Gap, getGap);															\
 		__VIRTUAL_DEC(ClassName, void, calculateGap);													\
 		__VIRTUAL_DEC(ClassName, const VBVec3D*, getPosition);											\
@@ -93,9 +93,9 @@ void SpatialObject_destructor(SpatialObject this);
 int SpatialObject_getShapeType(SpatialObject this);
 bool SpatialObject_moves(SpatialObject this);
 int SpatialObject_canMoveOverAxis(SpatialObject this, const Acceleration* acceleration);
-int SpatialObject_getWidth(SpatialObject this);
-int SpatialObject_getHeight(SpatialObject this);
-int SpatialObject_getDepth(SpatialObject this);
+u16 SpatialObject_getWidth(SpatialObject this);
+u16 SpatialObject_getHeight(SpatialObject this);
+u16 SpatialObject_getDepth(SpatialObject this);
 Gap SpatialObject_getGap(SpatialObject this);
 void SpatialObject_calculateGap(SpatialObject this);
 const VBVec3D* SpatialObject_getPosition(SpatialObject this);

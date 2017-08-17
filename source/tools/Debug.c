@@ -1802,5 +1802,5 @@ static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)
 	}
 
 	// mark scroll bar position
-	Printing_text(Printing_getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages >> 4)), NULL);
+	Printing_text(Printing_getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
 }

@@ -128,7 +128,7 @@ void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* f
 	this->totalOptions = 0;
 	this->mark = __CHAR_SELECTOR;
 	this->font = font;
-	this->columnWidth = (__SCREEN_WIDTH >> 3) / this->cols;
+	this->columnWidth = (__SCREEN_WIDTH_IN_CHARS) / this->cols;
 }
 
 /**
@@ -216,7 +216,7 @@ void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width)
 	// add space for selection mark, consider font width
 	width = ((width + 1) * fontData->fontDefinition->fontSize.x);
 
-	if((0 < width) && (width <= (__SCREEN_WIDTH >> 3)))
+	if((0 < width) && (width <= (__SCREEN_WIDTH_IN_CHARS)))
 	{
 		this->columnWidth = width;
 	}
@@ -484,8 +484,8 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 	{
 		FontData* fontData = Printing_getFontByName(Printing_getInstance(), this->font);
 
-		this->x = (x < (__SCREEN_WIDTH >> 3)) ? x : 0;
-		this->y = (y < (__SCREEN_HEIGHT >> 3)) ? y : 0;
+		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
+		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
 
 		ASSERT(this->currentPage, "printOptions: currentPage");
 		VirtualNode node = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
@@ -523,7 +523,7 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 			}
 
 			y += fontData->fontDefinition->fontSize.y;
-			if((y >= (this->rows * fontData->fontDefinition->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT >> 3)))
+			if((y >= (this->rows * fontData->fontDefinition->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_CHARS)))
 			{
 				y = this->y;
 				x += this->columnWidth;

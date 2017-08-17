@@ -304,7 +304,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
 
 	int channel = 0;
 
-	int note = 0;
+	u32 note = 0;
 
 	int i;
 

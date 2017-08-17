@@ -342,7 +342,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	{
 		z -= _screenPosition->z;
 
-		fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z >> _optical->maximumViewDistancePower));
+		fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z / (1 << _optical->maximumViewDistancePower)));
 
 		ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE) : ratio;
 
@@ -549,6 +549,8 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		worldPointer->w += 1;
 		worldPointer->h += 1;
 
+		ASSERT(0 <= ((this->param + (myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
+
 		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)
@@ -579,6 +581,9 @@ void BgmapSprite_processHbiasEffects(BgmapSprite this)
 
 		static WorldAttributes* worldPointer = NULL;
     	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
+
+ 		ASSERT(0 <= ((this->param) - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
+
 		worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
 
 		if(0 <= this->paramTableRow)

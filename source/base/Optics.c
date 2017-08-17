@@ -53,10 +53,12 @@ inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
 
 	fix19_13 leftEyeGx, rightEyeGx;
 
-	// set map position and parallax
-	leftEyePoint = _optical->horizontalViewPointCenter - (_optical->baseDistance >> 1);
+	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
-	rightEyePoint = _optical->horizontalViewPointCenter + (_optical->baseDistance >> 1);
+	// set map position and parallax
+	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance >> 1);
+
+	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance >> 1);
 
 	leftEyeGx = x - FIX19_13_DIV(FIX19_13_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
 	rightEyeGx = x + FIX19_13_DIV(FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));

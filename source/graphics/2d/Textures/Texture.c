@@ -368,8 +368,7 @@ u32 Texture_getTotalRows(Texture this)
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				int totalCols = Texture_getTotalCols(this);
-				return this->textureDefinition->rows + this->textureDefinition->rows * ((int)(totalCols >> 6));
+				return this->textureDefinition->rows + this->textureDefinition->rows * (Texture_getTotalCols(this) >> 6);
 			}
 			break;
 
@@ -598,7 +597,7 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
+void Texture_putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "Texture::putPixel: null this");
 

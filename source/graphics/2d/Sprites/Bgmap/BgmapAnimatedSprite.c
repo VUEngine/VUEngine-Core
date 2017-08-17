@@ -163,7 +163,7 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 
 		case __ANIMATED_MULTI:
 			{
-				int totalColumns = 64 - (this->originalTextureSource.mx >> 3);
+				int totalColumns = 64 - (this->originalTextureSource.mx / 8);
 				int frameColumn = Texture_getCols(this->texture) * AnimationController_getActualFrameIndex(this->animationController);
 				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);

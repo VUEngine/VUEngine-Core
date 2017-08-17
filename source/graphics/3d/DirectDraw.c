@@ -118,7 +118,7 @@ void DirectDraw_destructor(DirectDraw this)
  * @param y			Screen y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
-void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y, int color)
+void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
 {
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
@@ -147,7 +147,7 @@ void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, 
  * @param x			Screen x coordinate
  * @param y			Screen y coordinate
  */
-void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, int x, int y)
+void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y)
 {
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
@@ -220,19 +220,21 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 		{
 			if((unsigned)(fromPoint.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				DirectDraw_drawBlackPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y);
+				DirectDraw_drawBlackPixel(this, leftBuffer, (u16)(fromPoint.x - parallax), (u16)fromPoint.y);
 			}
 			if((unsigned)(fromPoint.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				DirectDraw_drawBlackPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y);
+				DirectDraw_drawBlackPixel(this, rightBuffer, (u16)(fromPoint.x + parallax), (u16)fromPoint.y);
 			}
 		}
 
 		if(dx > dy)
 		{
-			int fraction = dy - (dx >> 1);
+			int halfDx = dx / 2;
 
-			int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dx >> 1)) : 0;
+			int fraction = dy - halfDx;
+
+			int parallaxStep = halfDx ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDx)) : 0;
 
 			while(fromPoint.x != toPoint.x)
 			{
@@ -251,20 +253,22 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				{
 					if((unsigned)(fromPoint.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawBlackPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y);
+						DirectDraw_drawBlackPixel(this, leftBuffer, (u16)(fromPoint.x - parallax), (u16)fromPoint.y);
 					}
 					if((unsigned)(fromPoint.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawBlackPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y);
+						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)(fromPoint.x + parallax), (u16)fromPoint.y);
 					}
 				}
 			}
 		}
 		else
 		{
-			int fraction = dx - (dy >> 1);
+			int halfDy = dy / 2;
 
-			int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dy >> 1)) : 0;
+			int fraction = dx - halfDy;
+
+			int parallaxStep = halfDy ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDy)) : 0;
 
 			while(fromPoint.y != toPoint.y)
 			{
@@ -283,11 +287,11 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				{
 					if((unsigned)(fromPoint.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawBlackPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y);
+						DirectDraw_drawBlackPixel(this, leftBuffer, (u16)(fromPoint.x - parallax), (u16)fromPoint.y);
 					}
 					if((unsigned)(fromPoint.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawBlackPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y);
+						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)(fromPoint.x + parallax), (u16)fromPoint.y);
 					}
 				}
 			}
@@ -300,19 +304,21 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 		{
 			if((unsigned)(fromPoint.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				DirectDraw_drawPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y, color);
+				DirectDraw_drawPixel(this, leftBuffer, (u16)(fromPoint.x - parallax), (u16)fromPoint.y, color);
 			}
 			if((unsigned)(fromPoint.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 			{
-				DirectDraw_drawPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y, color);
+				DirectDraw_drawPixel(this, rightBuffer, (u16)(fromPoint.x + parallax), (u16)fromPoint.y, color);
 			}
 		}
 
 		if(dx > dy)
 		{
-			int fraction = dy - (dx >> 1);
+			int halfDx = dx / 2;
 
-			int parallaxStep = (dx >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dx >> 1)) : 0;
+			int fraction = dy - halfDx;
+
+			int parallaxStep = halfDx ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDx)) : 0;
 
 			while(fromPoint.x != toPoint.x)
 			{
@@ -331,20 +337,22 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				{
 					if((unsigned)(fromPoint.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y, color);
+						DirectDraw_drawPixel(this, leftBuffer, (u16)(fromPoint.x - parallax), (u16)fromPoint.y, color);
 					}
 					if((unsigned)(fromPoint.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y, color);
+						DirectDraw_drawPixel(this, rightBuffer, (u16)(fromPoint.x + parallax), (u16)fromPoint.y, color);
 					}
 				}
 			}
 		}
 		else
 		{
-			int fraction = dx - (dy >> 1);
+			int halfDy = dy / 2;
 
-			int parallaxStep = (dy >> 1) ? ((toPoint.parallax - fromPoint.parallax) / __ABS(dy >> 1)) : 0;
+			int fraction = dx - halfDy;
+
+			int parallaxStep = halfDy ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDy)) : 0;
 
 			while(fromPoint.y != toPoint.y)
 			{
@@ -363,11 +371,11 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				{
 					if((unsigned)(fromPoint.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawPixel(this, leftBuffer, fromPoint.x - parallax, fromPoint.y, color);
+						DirectDraw_drawPixel(this, leftBuffer, (u16)(fromPoint.x - parallax), (u16)fromPoint.y, color);
 					}
 					if((unsigned)(fromPoint.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
 					{
-						DirectDraw_drawPixel(this, rightBuffer, fromPoint.x + parallax, fromPoint.y, color);
+						DirectDraw_drawPixel(this, rightBuffer, (u16)(fromPoint.x + parallax), (u16)fromPoint.y, color);
 					}
 				}
 			}

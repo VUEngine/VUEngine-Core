@@ -822,9 +822,9 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 
 	bool loadedEntities = false;
-	int xScreenPosition = FIX19_13TOI(_screenPosition->x) + (__SCREEN_WIDTH >> 1);
-	int yScreenPosition = FIX19_13TOI(_screenPosition->y) + (__SCREEN_HEIGHT >> 1);
-	int zScreenPosition = FIX19_13TOI(_screenPosition->z) + (__SCREEN_DEPTH >> 1);
+	int xScreenPosition = FIX19_13TOI(_screenPosition->x) + (__HALF_SCREEN_WIDTH);
+	int yScreenPosition = FIX19_13TOI(_screenPosition->y) + (__HALF_SCREEN_HEIGHT);
+	int zScreenPosition = FIX19_13TOI(_screenPosition->z) + (__HALF_SCREEN_DEPTH);
 
 	long screenDistance = ((long)xScreenPosition * (long)xScreenPosition +
 							(long)yScreenPosition * (long)yScreenPosition +
@@ -840,7 +840,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
 
 	int counter = 0;
-	int amplitude = this->stageDefinition->streaming.streamingAmplitude;
+	u16 amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
 	this->streamingHeadNode = NULL;
 

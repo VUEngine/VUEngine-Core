@@ -369,7 +369,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 	u16* const bgmapSpaceBaseAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// print text
-	while(string[i] && x < (__SCREEN_WIDTH >> 3))
+	while(string[i] && x < (__SCREEN_WIDTH_IN_CHARS))
 	{
 		// do not allow printing outside of the visible area, since that would corrupt the param table
 		if(y >= 28)

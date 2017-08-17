@@ -127,7 +127,7 @@ void CharSet_write(CharSet this);
 void CharSet_rewrite(CharSet this);
 void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement);
 void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar);
-void CharSet_putPixel(CharSet this, u32 charToReplace, Point* charSetPixel, BYTE newPixelColor);
+void CharSet_putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
 
 
 #endif

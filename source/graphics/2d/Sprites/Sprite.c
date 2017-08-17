@@ -1084,7 +1084,7 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor)
+void Sprite_putPixel(Sprite this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "Sprite::putPixel: null this");
 

@@ -307,7 +307,7 @@ void Sprite_writeAnimation(Sprite this);
 
 // direct draw
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar);
-void Sprite_putPixel(Sprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
+void Sprite_putPixel(Sprite this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 
 // affine & hbias fx
 void Sprite_applyAffineTransformations(Sprite this);

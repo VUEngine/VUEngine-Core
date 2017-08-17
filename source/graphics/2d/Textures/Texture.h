@@ -124,7 +124,7 @@ u32 Texture_getRows(Texture this);
 u32 Texture_getCols(Texture this);
 u16 Texture_getId(Texture this);
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
-void Texture_putPixel(Texture this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
+void Texture_putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 bool Texture_isWritten(Texture this);
 void Texture_setMapDisplacement(Texture this, u32 mapDisplacement);
 

@@ -908,8 +908,8 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 
 	VBVec3D position = *_screenPosition;
 
-	position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
-	position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
+	position.x += ITOFIX19_13(__HALF_SCREEN_WIDTH);
+	position.y += ITOFIX19_13(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
 	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[OptionsSelector_getSelectedOption(this->spriteSelector)];
@@ -921,8 +921,8 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationInspector::createSprite: null texture");
 
 	VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->animatedSprite));
-	spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
-	spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	spritePosition.x = ITOFIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	spritePosition.y = ITOFIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 
 	__VIRTUAL_CALL(Sprite, setPosition, __SAFE_CAST(Sprite, this->animatedSprite), &spritePosition);
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, __SAFE_CAST(Sprite, this->animatedSprite));
@@ -957,7 +957,7 @@ static void AnimationInspector_createSpriteSelector(AnimationInspector this)
 		__DELETE(this->spriteSelector);
 	}
 
-	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH >> 3) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL);
+	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL);
 
 	VirtualList spriteIndexes = __NEW(VirtualList);
 

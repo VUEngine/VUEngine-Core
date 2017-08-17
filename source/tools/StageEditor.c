@@ -947,8 +947,8 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
 		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
-		spritePosition.x = ITOFIX19_13((__SCREEN_WIDTH >> 1) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
-		spritePosition.y = ITOFIX19_13((__SCREEN_HEIGHT >> 1) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.x = ITOFIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.y = ITOFIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9};
@@ -998,8 +998,8 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 
 		VBVec3D position = Screen_getPosition(Screen_getInstance());
 
-		position.x += ITOFIX19_13(__SCREEN_WIDTH >> 1);
-		position.y += ITOFIX19_13(__SCREEN_HEIGHT >> 1);
+		position.x += ITOFIX19_13(__HALF_SCREEN_WIDTH);
+		position.y += ITOFIX19_13(__HALF_SCREEN_HEIGHT);
 		position.z += ITOFIX19_13(0);
 
 		PositionedEntity DUMMY_ENTITY =

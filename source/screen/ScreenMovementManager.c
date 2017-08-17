@@ -95,9 +95,9 @@ void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unus
 				// get focusInGameEntity's position
 				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusInGameEntity));
 
-				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__SCREEN_WIDTH >> 1);
-				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__SCREEN_HEIGHT >> 1);
-				screen->position.z += screen->focusEntityPositionDisplacement.z - ITOFIX19_13(__SCREEN_DEPTH >> 1);
+				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__HALF_SCREEN_WIDTH);
+				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__HALF_SCREEN_HEIGHT);
+				screen->position.z += screen->focusEntityPositionDisplacement.z - ITOFIX19_13(__HALF_SCREEN_DEPTH);
 
 				if(0 > screen->position.x)
 				{

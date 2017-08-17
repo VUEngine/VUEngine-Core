@@ -219,7 +219,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
 	int charLocation = (int)CharSet_getOffset(this->charSet);
 	int frames = CharSet_getNumberOfChars(this->charSet) / area;
-	int mapDisplacement = this->mapDisplacement >> 1;
+	u32 mapDisplacement = this->mapDisplacement >> 1;
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
 
@@ -271,7 +271,7 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 	u32 colorInformation = (int)CharSet_getOffset(this->charSet) | (this->palette << 14);
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
-	int mapDisplacement = this->mapDisplacement >> 1;
+	u32 mapDisplacement = this->mapDisplacement >> 1;
 
 	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < this->textureDefinition->cols * counter)
 	{

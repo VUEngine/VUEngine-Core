@@ -1045,7 +1045,7 @@ void SpriteManager_print(SpriteManager this, int x, int y, bool resumed)
 		Printing_text(Printing_getInstance(), spriteClassName, auxX + 4, auxY, NULL);
 		Printing_hex(Printing_getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + 14, auxY, 4, NULL);
 
-		if((__SCREEN_HEIGHT >> 3) - 2 <= ++auxY)
+		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
 		{
 			auxY = y + 2;
 			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 10;

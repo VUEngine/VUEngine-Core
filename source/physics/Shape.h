@@ -38,7 +38,7 @@
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, int, overlaps, Shape shape);											\
-		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* ownerPosition, int width, int height, int depth, Gap gap);								\
+		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* ownerPosition, u16 width, u16 height, u16 depth, Gap gap);								\
 		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, Gap gap);								\
 		__VIRTUAL_DEC(ClassName, int, getAxisOfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);	\
 		__VIRTUAL_DEC(ClassName, int, testIfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement);									\

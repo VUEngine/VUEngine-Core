@@ -167,8 +167,8 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 		Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
 		Printing_text(Printing_getInstance(), " Message:                                       " , x, ++y, NULL);
 
-		int stringMaxLenght = (__SCREEN_WIDTH >> 3) - 2;
-		int rowsAvailable  = (__SCREEN_HEIGHT >> 3) - y;
+		int stringMaxLenght = (__SCREEN_WIDTH_IN_CHARS) - 2;
+		int rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
 		int stringLength = strnlen(message, stringMaxLenght * rowsAvailable) + 1;
 		int lines = stringLength / stringMaxLenght + (stringLength % stringMaxLenght ? 1 : 0);
 		int line = 0;
@@ -189,14 +189,14 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 			Printing_text(Printing_getInstance(), detail, x + 1, ++y, NULL);
 		}
 
-		if(y < (__SCREEN_HEIGHT >> 3) - 1)
+		if(y < (__SCREEN_HEIGHT_IN_CHARS) - 1)
 		{
 			Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
 		}
 	}
 
 #ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
+	HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 #endif
 
 	// error display message

@@ -281,10 +281,10 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 				if(collidingSpatialObjectsToAlignTo[kXAxis])
 				{
 					const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
-					int collidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1;
+					int collidingSpatialObjectPositionHalfWidth = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1);
 
 					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kXAxis]);
-					int selectedCollidingSpatialObjectPositionHalfWidth = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObjectsToAlignTo[kXAxis]) >> 1;
+					int selectedCollidingSpatialObjectPositionHalfWidth = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObjectsToAlignTo[kXAxis]) >> 1);
 
 					if(0 < displacement.x)
 					{
@@ -312,10 +312,10 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 				if(collidingSpatialObjectsToAlignTo[kYAxis])
 				{
 					const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
-					int collidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1;
+					int collidingSpatialObjectPositionHalfHeight = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1);
 
 					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kYAxis]);
-					int selectedCollidingSpatialObjectPositionHalfHeight = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObjectsToAlignTo[kYAxis]) >> 1;
+					int selectedCollidingSpatialObjectPositionHalfHeight = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObjectsToAlignTo[kYAxis]) >> 1);
 
 					if(0 < displacement.y)
 					{
@@ -343,10 +343,10 @@ int CollisionSolver_resolveCollision(CollisionSolver this, VirtualList colliding
 				if(collidingSpatialObjectsToAlignTo[kZAxis])
 				{
 					const VBVec3D* collidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObject);
-					int collidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1;
+					int collidingSpatialObjectPositionHalfDepth = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1);
 
 					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingSpatialObjectsToAlignTo[kZAxis]);
-					int selectedCollidingSpatialObjectPositionHalfDepth = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObjectsToAlignTo[kZAxis]) >> 1;
+					int selectedCollidingSpatialObjectPositionHalfDepth = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObjectsToAlignTo[kZAxis]) >> 1);
 
 					if(0 < displacement.z)
 					{
@@ -440,8 +440,8 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			myPositionAxis = &myOwnerPosition.x;
 			otherPositionAxis = &otherPosition->x;
 
-			myHalfSize = __VIRTUAL_CALL(SpatialObject, getWidth, this->owner) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1;
+			myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, this->owner) >> 1);
+			otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, collidingSpatialObject) >> 1);
 
 			otherLowGap = otherGap.left;
 			otherHighGap = otherGap.right;
@@ -455,8 +455,8 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			myPositionAxis = &myOwnerPosition.y;
 			otherPositionAxis = &otherPosition->y;
 
-			myHalfSize = __VIRTUAL_CALL(SpatialObject, getHeight, this->owner) >> 1;
-			otherHalfSize = __VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1;
+			myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, this->owner) >> 1);
+			otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, collidingSpatialObject) >> 1);
 
 			otherLowGap = otherGap.up;
 			otherHighGap = otherGap.down;
@@ -473,13 +473,13 @@ void CollisionSolver_alignTo(CollisionSolver this, SpatialObject collidingSpatia
 			// TODO: must make depth work as the width and high
 			if(this->ownerPositionToCheck->z < otherPosition->z)
 			{
-				myHalfSize = __VIRTUAL_CALL(SpatialObject, getDepth, this->owner);
-				otherHalfSize = 0;
+				myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, this->owner) >> 1);
+				otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1);
 			}
 			else
 			{
-				myHalfSize = 0;
-				otherHalfSize = __VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject);
+				myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, this->owner) >> 1);
+				otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingSpatialObject) >> 1);
 			}
 
 			myLowGap = 0;

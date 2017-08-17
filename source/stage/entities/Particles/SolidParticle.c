@@ -171,7 +171,7 @@ Shape SolidParticle_getShape(SolidParticle this)
  *
  * @return		Width
  */
-int SolidParticle_getWidth(SolidParticle this)
+u16 SolidParticle_getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
 
@@ -188,7 +188,7 @@ int SolidParticle_getWidth(SolidParticle this)
  *
  * @return		Height
  */
-int SolidParticle_getHeight(SolidParticle this)
+u16 SolidParticle_getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
 
@@ -205,7 +205,7 @@ int SolidParticle_getHeight(SolidParticle this)
  *
  * @return		Depth
  */
-int SolidParticle_getDepth(SolidParticle this)
+u16 SolidParticle_getDepth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getDepth: null this");
 

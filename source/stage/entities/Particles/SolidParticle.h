@@ -154,11 +154,11 @@ __CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* solidParticleD
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void SolidParticle_destructor(SolidParticle this);
 
-int SolidParticle_getDepth(SolidParticle this);
-int SolidParticle_getHeight(SolidParticle this);
+u16 SolidParticle_getWidth(SolidParticle this);
+u16 SolidParticle_getHeight(SolidParticle this);
+u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
-int SolidParticle_getWidth(SolidParticle this);
- bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects);
+bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));

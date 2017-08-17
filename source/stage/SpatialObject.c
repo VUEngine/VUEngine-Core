@@ -112,21 +112,21 @@ int SpatialObject_canMoveOverAxis(SpatialObject this __attribute__ ((unused)), c
 	return false;
 }
 
-int SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
+u16 SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getWidth: null this");
 
 	return 0;
 }
 
-int SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
+u16 SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getHeight: null this");
 
 	return 0;
 }
 
-int SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
+u16 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getDepth: null this");
 

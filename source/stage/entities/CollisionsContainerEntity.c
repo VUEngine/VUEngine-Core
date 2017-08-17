@@ -158,9 +158,9 @@ bool CollisionsContainerEntity_isVisible(CollisionsContainerEntity this, int pad
 	VBVec2D position2D;
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
-	int halfWidth = (int)this->size.x >> 1;
-	int halfHeight = (int)this->size.y >> 1;
-	int halfDepth = (int)this->size.z >> 1;
+	int halfWidth = (int)(this->size.x >> 1);
+	int halfHeight = (int)(this->size.y >> 1);
+	int halfDepth = (int)(this->size.z >> 1);
 
 	x = FIX19_13TOI(position2D.x);
 	y = FIX19_13TOI(position2D.y);

@@ -668,9 +668,9 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 
 	if(resumed)
 	{
-		if((__SCREEN_WIDTH >> 3) < x + Utilities_intLength(room) + 13)
+		if((__SCREEN_WIDTH_IN_CHARS) < x + Utilities_intLength(room) + 13)
 		{
-			x = (__SCREEN_WIDTH >> 3) - Utilities_intLength(room) - 13;
+			x = (__SCREEN_WIDTH_IN_CHARS) - Utilities_intLength(room) - 13;
 		}
 
 		Printing_text(Printing_getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
@@ -678,9 +678,9 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 	}
 	else
 	{
-		if((__SCREEN_WIDTH >> 3) - 1 < Utilities_intLength(room) + 10)
+		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities_intLength(room) + 10)
 		{
-			x = (__SCREEN_WIDTH >> 3) - 1 - Utilities_intLength(room) - 10;
+			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities_intLength(room) - 10;
 		}
 
 		Printing_text(Printing_getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);

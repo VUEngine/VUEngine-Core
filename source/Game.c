@@ -1203,7 +1203,7 @@ void Game_checkFrameRate(Game this)
 		this->gameFrameTotalTime = 0;
 
 #ifdef __DEBUG
-		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT >> 3) - 1, NULL);
+		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
 #endif
 
 #ifdef __PRINT_FRAMERATE
@@ -1230,7 +1230,7 @@ void Game_checkFrameRate(Game this)
 		if(!Game_isInSpecialMode(this))
 		{
 			Printing_resetWorldCoordinates(Printing_getInstance());
-			HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH >> 3) - 10, 0, true);
+			HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 		}
 #endif
 		//reset frame rate counters
