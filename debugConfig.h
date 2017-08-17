@@ -19,7 +19,6 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
-//#define __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
 //#define __ALERT_VIP_OVERTIME
 //#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __DRAW_SHAPES
@@ -28,15 +27,6 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __PRINT_DETAILED_MEMORY_POOL_STATUS
 //#define __FORCE_VIP_SYNC
-
-
-#undef __GAME_FRAME_DURATION
-#define __GAME_FRAME_DURATION					__MILLISECONDS_IN_SECOND / 50
-
-#undef __FRAME_CYCLE
-#define __FRAME_CYCLE 							0
-#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						1
 
 
 // do not delete the following macros!

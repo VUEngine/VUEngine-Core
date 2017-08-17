@@ -97,14 +97,12 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+void Game_currentFrameEnded(Game this);
 void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration);
-void Game_frameStarted(Game this);
 
 #ifdef __PROFILE_GAME
 void Game_saveProcessNameDuringFRAMESTART(Game this);
 void Game_saveProcessNameDuringXPEND(Game this);
-void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)));
-void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
 #endif
 
 static VIPManager _vipManager;
@@ -329,7 +327,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 #endif
 
 				VIPManager_registerCurrentDrawingFrameBufferSet(this);
-				Game_frameStarted(Game_getInstance());
+				Game_currentFrameEnded(Game_getInstance());
 				this->drawingEnded = false;
 				this->renderingCompleted = false;
 				break;

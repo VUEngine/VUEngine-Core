@@ -184,11 +184,11 @@ enum StateOperations
 		 */																								\
 		bool isShowingLowBatteryIndicator;																\
 		/**
-		 * @var bool			frameStarted
-		 * @brief				frame started flag
+		 * @var bool			currentFrameEnded
+		 * @brief				frame ended flag
 		 * @memberof			Game
 		 */																								\
-		volatile bool frameStarted;																		\
+		volatile bool currentFrameEnded;																\
 
 /**
  * @class	Game
@@ -361,7 +361,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->automaticPauseState = NULL;
 	this->lastAutoPauseCheckTime = 0;
 	this->isShowingLowBatteryIndicator = false;
-	this->frameStarted = false;
+	this->currentFrameEnded = false;
 
 	// make sure all managers are initialized now
 	this->screen = Screen_getInstance();
@@ -460,8 +460,8 @@ void Game_start(Game this, GameState state)
 			this->lastProcessName = "end frame";
 #endif
 
-			while(!this->frameStarted);
-			this->frameStarted = false;
+			while(!this->currentFrameEnded);
+			this->currentFrameEnded = false;
 
 			// allow the VIPManager to modify the DRAM
 			VIPManager_allowDRAMAccess(this->vipManager, true);
@@ -494,6 +494,7 @@ void Game_start(Game this, GameState state)
 			Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
 #endif
 
+			// execute game frame
 			Game_run(this);
 
 			// increase the fps counter
@@ -528,7 +529,7 @@ void Game_start(Game this, GameState state)
 				}
 
 				// skip the rest of the cycle if already late
-				if(this->frameStarted)
+				if(this->currentFrameEnded)
 				{
 					_tornGameFrameCount++;
 				}
@@ -537,7 +538,7 @@ void Game_start(Game this, GameState state)
 
 #ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 			// skip the rest of the cycle if already late
-			if(this->frameStarted)
+			if(this->currentFrameEnded)
 			{
 				Game_showCurrentGameFrameProfiling(this, 1, 0);
 			}
@@ -1180,6 +1181,7 @@ void Game_checkFrameRate(Game this)
 		{
 			Game_showProfiling(this, 1, 0);
 			Game_resetProfiling(this);
+			FrameRate_print(FrameRate_getInstance(), 29, 0);
 		}
 #else
 #ifdef __PROFILE_GAME
@@ -1236,13 +1238,16 @@ void Game_checkFrameRate(Game this)
 	TimerManager_enable(this->timerManager, true);
 }
 
-void Game_frameStarted(Game this)
+void Game_currentFrameEnded(Game this)
 {
+	// make clocks to move forward
 	ClockManager_update(this->clockManager, __GAME_FRAME_DURATION);
 
+	// increase current game frame's duration
 	Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
 
-	this->frameStarted = true;
+	// raise flag to allow the next frame to start
+	this->currentFrameEnded = true;
 }
 
 inline static void Game_run(Game this)
