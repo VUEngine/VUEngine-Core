@@ -1632,7 +1632,7 @@ u16 Entity_getHeight(Entity this)
 		Entity_calculateSize(this);
 	}
 
-	return (int)this->size.y;
+	return this->size.y;
 }
 
 /**
@@ -1655,7 +1655,7 @@ u16 Entity_getDepth(Entity this)
 	}
 
 	// must calculate based on the scale because not affine object must be enlarged
-	return (int)this->size.z;
+	return this->size.z;
 }
 
 /**
