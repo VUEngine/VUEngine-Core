@@ -29,6 +29,7 @@
 #include <Utilities.h>
 #include <Types.h>
 #include <Printing.h>
+#include <HardwareManager.h>
 #include <debugConfig.h>
 
 
@@ -199,6 +200,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::allocate: null this");
 
+	int lp = HardwareManager_getLinkPointer(HardwareManager_getInstance());
+
 	int i = 0;
 	int numberOfOjects = 0;
 	int pool = __MEMORY_POOLS - 1;
@@ -214,6 +217,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 		Printing_clear(Printing_getInstance());
 		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
 		Printing_int(Printing_getInstance(), numberOfBytes, 44, 12, NULL);
+		Printing_text(Printing_getInstance(), "Caller address: ", 20, 15, NULL);
+		Printing_hex(Printing_getInstance(), lp, 36, 15, 8, NULL);
 
 		NM_ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
 	}
@@ -235,6 +240,9 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 		Printing_int(Printing_getInstance(), blockSize, 44, 12, NULL);
 		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 13, NULL);
 		Printing_int(Printing_getInstance(), numberOfBytes, 44, 13, NULL);
+		Printing_text(Printing_getInstance(), "Caller address: ", 20, 15, NULL);
+
+		Printing_hex(Printing_getInstance(), lp, 36, 15, 8, NULL);
 
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}

@@ -316,52 +316,6 @@ inline int HardwareManager_getPSW(HardwareManager this __attribute__ ((unused)))
 }
 
 /**
- * Retrieve the Stack Pointer's value
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
- * @return		 	Stack Pointer's value
- */
-int HardwareManager_getStackPointer(HardwareManager this __attribute__ ((unused)))
-{
-	ASSERT(this, "HardwareManager::getStackPointer: null this");
-
-	int sp;
-	asm(" \
-		mov		sp,%0  \
-		"
-	: "=r" (sp) // Output
-	);
-	return sp;
-}
-
-/**
- * Retrieve the Link Pointer's value
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
- * @return		 	Link Pointer's value
- */
-int HardwareManager_getLinkPointer(HardwareManager this __attribute__ ((unused)))
-{
-	ASSERT(this, "HardwareManager::getLinkPointer: null this");
-
-	int lp;
-	asm(" \
-		mov		lp,%0  \
-		"
-	: "=r" (lp) // Output
-	);
-	return lp;
-}
-
-/**
  * Initialize the timer
  *
  * @memberof		HardwareManager
