@@ -69,6 +69,7 @@ void SpriteManager_writeTextures(SpriteManager this);
 void SpriteManager_render(SpriteManager this);
 void SpriteManager_renderLastLayer(SpriteManager this);
 void SpriteManager_reset(SpriteManager this);
+void SpriteManager_disposeSprites(SpriteManager this);
 void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
 void SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);

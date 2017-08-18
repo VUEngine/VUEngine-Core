@@ -154,7 +154,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_selectTextureToWrite(SpriteManager this);
-static bool SpriteManager_disposeSprites(SpriteManager this);
+static bool SpriteManager_disposeSpritesProgressively(SpriteManager this);
 
 #ifdef __PROFILE_GAME
 int _totalPixelsToDraw = 0;
@@ -225,7 +225,7 @@ void SpriteManager_destructor(SpriteManager this)
 
 	if(this->spritesToDispose)
 	{
-		while(SpriteManager_disposeSprites(this));
+		while(SpriteManager_disposeSpritesProgressively(this));
 
 		__DELETE(this->spritesToDispose);
 		this->spritesToDispose = NULL;
@@ -252,7 +252,7 @@ void SpriteManager_reset(SpriteManager this)
 
 	if(this->spritesToDispose)
 	{
-		while(SpriteManager_disposeSprites(this));
+		while(SpriteManager_disposeSpritesProgressively(this));
 
 		__DELETE(this->spritesToDispose);
 		this->spritesToDispose = NULL;
@@ -304,6 +304,36 @@ void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite)
 }
 
 /**
+ * Delete disposable sprites progressively
+ *
+ * @memberof	SpriteManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		True if there were a sprite to delete
+ */
+static bool SpriteManager_disposeSpritesProgressively(SpriteManager this)
+{
+	ASSERT(this, "SpriteManager::disposeSprites: null this");
+
+	if(!this->lockSpritesLists && this->spritesToDispose->head)
+	{
+		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->spritesToDispose));
+
+		VirtualList_popFront(this->spritesToDispose);
+
+		__DELETE(sprite);
+
+		this->textureToWrite = __IS_OBJECT_ALIVE(this->textureToWrite)? this->textureToWrite : NULL;
+
+		return true;
+	}
+
+	return false;
+}
+
+/**
  * Delete disposable sprites
  *
  * @memberof	SpriteManager
@@ -313,24 +343,15 @@ void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite)
  *
  * @return 		True if there were a sprite to delete
  */
-static bool SpriteManager_disposeSprites(SpriteManager this)
+void SpriteManager_disposeSprites(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::disposeSprites: null this");
 
-	if(!this->lockSpritesLists && this->spritesToDispose->head)
+	if(this->spritesToDispose)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->spritesToDispose));
-
-		__DELETE(sprite);
-
-		VirtualList_popFront(this->spritesToDispose);
-
-		this->textureToWrite = __IS_OBJECT_ALIVE(this->textureToWrite)? this->textureToWrite : NULL;
-
-		return true;
+		this->lockSpritesLists = false;
+		while(SpriteManager_disposeSpritesProgressively(this));
 	}
-
-	return false;
 }
 
 /**
@@ -513,6 +534,8 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 	// check if exists
 	if(VirtualList_removeElement(this->sprites, sprite))
 	{
+		VirtualList_removeElement(this->sprites, this->spritesToDispose);
+
 		u8 spriteLayer = sprite->worldLayer;
 
 		VirtualNode node = this->sprites->head;
@@ -706,7 +729,7 @@ void SpriteManager_render(SpriteManager this)
 	// order to try to make room in DRAM to new sprites
 	// as soon as possible
 
-	bool skipNonCriticalProcesses = SpriteManager_disposeSprites(this);
+	bool skipNonCriticalProcesses = SpriteManager_disposeSpritesProgressively(this);
 	skipNonCriticalProcesses |= CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance());
 
 	// write textures

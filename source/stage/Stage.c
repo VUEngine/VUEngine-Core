@@ -409,13 +409,13 @@ static void Stage_setupUI(Stage this)
 }
 
 // add entity to the stage
-Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)))
+Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
 	if(positionedEntity)
 	{
-		Entity entity = Entity_loadEntity(positionedEntity, this->nextEntityId++);
+		Entity entity = Entity_loadEntity(positionedEntity, internalId);
 
 		if(entity)
 		{
@@ -730,7 +730,8 @@ static void Stage_loadInitialEntities(Stage this)
 			// if entity in load range
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
-				Entity entity = Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false);
+				stageEntityDescription->internalId = this->nextEntityId;
+				Entity entity = Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
 				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
@@ -790,6 +791,8 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 				}
 			}
 
+			ASSERT(auxNode, "Stage::unloadOutOfRangeEntities: unloading entity with unknown id");
+
 			// unload it
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 
@@ -831,16 +834,23 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 							(long)zScreenPosition * (long)zScreenPosition);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
+	u16 amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
 	if(this->screenPreviousDistance != screenDistance)
 	{
 		advancing = this->screenPreviousDistance < screenDistance;
 	}
 
+	if(!defer)
+	{
+		this->streamingHeadNode = this->stageEntities->head;
+		advancing = true;
+		amplitude = 10000;
+	}
+
 	VirtualNode node = this->streamingHeadNode ? this->streamingHeadNode : advancing? this->stageEntities->head : this->stageEntities->tail;
 
 	int counter = 0;
-	u16 amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
 	this->streamingHeadNode = NULL;
 
@@ -848,7 +858,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	{
 		for(; node && counter < amplitude >> 1; node = node->previous, counter++);
 
-		node = node ? node : this->stageEntities->head;
+		node = this->stageEntities->head;
 
 		for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next)
 		{
@@ -880,7 +890,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					}
 					else
 					{
-						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false);
+						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					}
 				}
 			}
@@ -922,7 +932,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					}
 					else
 					{
-						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false);
+						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					}
 				}
 			}
@@ -1038,8 +1048,10 @@ void Stage_streamAll(Stage this)
 
 	Stage_unloadOutOfRangeEntities(this, false);
 	Container_processRemovedChildren(__SAFE_CAST(Container, this));
+	SpriteManager_disposeSprites(SpriteManager_getInstance());
 	Stage_loadInRangeEntities(this, false);
 	EntityFactory_prepareAllEntities(this->entityFactory);
+	SpriteManager_writeTextures(SpriteManager_getInstance());
 	SpriteManager_sortLayers(SpriteManager_getInstance());
 }
 
