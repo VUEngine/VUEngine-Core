@@ -82,9 +82,6 @@ HardwareManager HardwareManager_getInstance();
 void HardwareManager_destructor(HardwareManager this);
 void HardwareManager_setInterruptVectors(HardwareManager this);
 void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
-int HardwareManager_getPSW(HardwareManager this);
-int HardwareManager_getStackPointer(HardwareManager this);
-int HardwareManager_getLinkPointer(HardwareManager this);
 void HardwareManager_initializeTimer(HardwareManager this);
 void HardwareManager_clearScreen(HardwareManager this);
 void HardwareManager_displayOn(HardwareManager this);
@@ -114,17 +111,17 @@ inline void HardwareManager_enableMultiplexedInterrupts()
 {
 	u32 psw;
 
-	asm(" \n\
-		stsr	psw,%0  \n\
+	asm("			\n\
+		stsr psw,%0	\n\
 		"
 		: "=r" (psw) // Output
 	);
 
 	psw &= 0xFFF0BFFF;
 
-	asm(" \n\
-		ldsr	%0,psw  \n\
-		cli				\n\
+	asm(" 			\n\
+		ldsr %0,psw	\n\
+		cli			\n\
 		"
 		: // Output
 		: "r" (psw) // Input
@@ -142,15 +139,14 @@ inline void HardwareManager_enableMultiplexedInterrupts()
  */
 inline void HardwareManager_disableMultiplexedInterrupts()
 {
-	asm(" \n\
-		sei				\n\
+	asm(" 			\n\
+		sei			\n\
 		"
 		: // Output
 		: // Input
 		: // Clobber
 	);
 }
-
 
 /**
  * Retrieve the Stack Pointer's value
@@ -167,11 +163,13 @@ inline int HardwareManager_getStackPointer(HardwareManager this __attribute__ ((
 	ASSERT(this, "HardwareManager::getStackPointer: null this");
 
 	int sp;
-	asm(" \
-		mov		sp,%0  \
+
+	asm(" 			\n\
+		mov sp,%0	\n\
 		"
 	: "=r" (sp) // Output
 	);
+
 	return sp;
 }
 
@@ -190,12 +188,38 @@ inline int HardwareManager_getLinkPointer(HardwareManager this __attribute__ ((u
 	ASSERT(this, "HardwareManager::getLinkPointer: null this");
 
 	int lp;
-	asm(" \
-		mov		lp,%0  \
+
+	asm(" 			\n\
+		mov lp,%0	\n\
 		"
 	: "=r" (lp) // Output
 	);
+
 	return lp;
 }
+
+/**
+ * Retrieve PSW
+ *
+ * @memberof		HardwareManager
+ * @public
+ *
+ * @param this		Function scope
+ * @return		 	PSW
+ */
+inline int HardwareManager_getPSW(HardwareManager this __attribute__ ((unused)))
+{
+	ASSERT(this, "HardwareManager::getPSW: null this");
+
+	int psw;
+
+	asm("			\n\
+		stsr psw,%0	\n\
+		"
+	: "=r" (psw) // Output
+	);
+	return psw;
+}
+
 
 #endif

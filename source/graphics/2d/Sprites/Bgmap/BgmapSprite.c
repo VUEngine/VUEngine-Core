@@ -549,7 +549,7 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		worldPointer->w += 1;
 		worldPointer->h += 1;
 
-		ASSERT(0 <= ((this->param + (myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
+		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
 
 		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;
 
@@ -582,7 +582,7 @@ void BgmapSprite_processHbiasEffects(BgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
     	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
- 		ASSERT(0 <= ((this->param) - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
+ 		ASSERT(0 <= ((signed)this->param - 0x20000), "BgmapSprite::processAffineEffects: right shift on negative operand");
 
 		worldPointer->param = (u16)(((this->param) - 0x20000) >> 1) & 0xFFF0;
 

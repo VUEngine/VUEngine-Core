@@ -294,28 +294,6 @@ int HardwareManager_getInterruptLevel(HardwareManager this __attribute__ ((unuse
 }
 
 /**
- * Retrieve PSW
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- * @return		 	PSW
- */
-inline int HardwareManager_getPSW(HardwareManager this __attribute__ ((unused)))
-{
-	ASSERT(this, "HardwareManager::getPSW: null this");
-
-	int psw;
-	asm(" \n\
-		stsr	psw,%0  \n\
-		"
-	: "=r" (psw) // Output
-	);
-	return psw;
-}
-
-/**
  * Initialize the timer
  *
  * @memberof		HardwareManager

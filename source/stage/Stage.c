@@ -139,6 +139,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static bool Stage_loadInRangeEntities(Stage this, int defer);
 static bool Stage_processRemovedChildrenProgressively(Stage this);
 static bool Stage_updateEntityFactory(Stage this);
+static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId);
 
 #ifdef __PROFILE_STREAMING
 extern s16 _renderingProcessTimeHelper;
@@ -409,7 +410,15 @@ static void Stage_setupUI(Stage this)
 }
 
 // add entity to the stage
-Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId)
+Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent)
+{
+	ASSERT(this, "Stage::addEntity: null this");
+
+	return Stage_doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId);
+}
+
+// add entity to the stage
+static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId)
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
@@ -731,7 +740,7 @@ static void Stage_loadInitialEntities(Stage this)
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
 				stageEntityDescription->internalId = this->nextEntityId;
-				Entity entity = Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+				Entity entity = Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
 				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
@@ -890,7 +899,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					}
 					else
 					{
-						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					}
 				}
 			}
@@ -932,7 +941,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					}
 					else
 					{
-						Stage_addChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 					}
 				}
 			}
