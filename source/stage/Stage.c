@@ -414,7 +414,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
-	return Stage_doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId);
+	return Stage_doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
 
 // add entity to the stage
@@ -739,7 +739,7 @@ static void Stage_loadInitialEntities(Stage this)
 			// if entity in load range
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightCuboid))
 			{
-				stageEntityDescription->internalId = this->nextEntityId;
+				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
@@ -800,7 +800,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 				}
 			}
 
-			ASSERT(auxNode, "Stage::unloadOutOfRangeEntities: unloading entity with unknown id");
+			NM_ASSERT(auxNode, "Stage::unloadOutOfRangeEntities: unloading entity with unknown id");
 
 			// unload it
 			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
