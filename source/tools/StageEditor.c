@@ -215,7 +215,11 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 		VirtualList_pushBack(userObjects, option);
 	}
 
-	OptionsSelector_setOptions(this->userObjectsSelector, userObjects);
+	if(VirtualList_getSize(userObjects))
+	{
+		OptionsSelector_setOptions(this->userObjectsSelector, userObjects);
+	}
+
 	__DELETE(userObjects);
 
 	this->translationStepSize = 8;
