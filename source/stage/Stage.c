@@ -867,7 +867,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 	{
 		for(; node && counter < amplitude >> 1; node = node->previous, counter++);
 
-		node = this->stageEntities->head;
+		node = node ? node : this->stageEntities->head;
 
 		for(counter = 0; node && (!this->streamingHeadNode || counter < amplitude); node = node->next)
 		{
