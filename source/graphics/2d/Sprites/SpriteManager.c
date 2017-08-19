@@ -87,11 +87,11 @@ typedef struct SpritesList
 	 */																									\
 	VirtualNode zSortingSecondNode;																		\
 	/**
-	 * @var Texture		textureToWrite
-	 * @brief 			texture writing
+	 * @var Sprite		spritePendingTextureWriting
+	 * @brief 			sprite's texture writing
 	 * @memberof		SpriteManager
 	 */																									\
-	Texture textureToWrite;																				\
+	Sprite spritePendingTextureWriting;																	\
 	/**
 	 * @var u8			freeLayer
 	 * @brief 			next world layer
@@ -99,11 +99,11 @@ typedef struct SpritesList
 	 */																									\
 	u8 freeLayer;																						\
 	/**
-	 * @var s8			cyclesToWaitForTextureWriting
+	 * @var s8			cyclesToWaitForSpriteTextureWriting
 	 * @brief 			number of cycles that the texture writing is idle
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 cyclesToWaitForTextureWriting;																	\
+	s8 cyclesToWaitForSpriteTextureWriting;																	\
 	/**
 	 * @var s8			texturesMaximumRowsToWrite
 	 * @brief 			number of rows to write in texture's writing
@@ -123,17 +123,17 @@ typedef struct SpritesList
 	 */																									\
 	s8 deferParamTableEffects;																			\
 	/**
-	 * @var s8			waitToWrite
+	 * @var s8			waitToWriteSpriteTextures
 	 * @brief 			delay before writing again
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 waitToWrite;																						\
+	s8 waitToWriteSpriteTextures;																		\
 	/**
 	 * @var bool		lockSpritesLists
 	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
 	 * @memberof		SpriteManager
 	 */																									\
-	bool lockSpritesLists;																						\
+	bool lockSpritesLists;																				\
 
 
 /**
@@ -153,7 +153,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 static void SpriteManager_constructor(SpriteManager this);
-static void SpriteManager_selectTextureToWrite(SpriteManager this);
+static void SpriteManager_selectSpritePendingTextureWriting(SpriteManager this);
 static bool SpriteManager_disposeSpritesProgressively(SpriteManager this);
 
 #ifdef __PROFILE_GAME
@@ -194,12 +194,12 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->sprites = NULL;
 	this->spritesToDispose = NULL;
 
-	this->textureToWrite = NULL;
-	this->cyclesToWaitForTextureWriting = 0;
+	this->spritePendingTextureWriting = NULL;
+	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
 	this->maximumParamTableRowsToComputePerCall = -1;
 	this->deferParamTableEffects = false;
-	this->waitToWrite = 0;
+	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
 
 	SpriteManager_reset(this);
@@ -271,10 +271,10 @@ void SpriteManager_reset(SpriteManager this)
 
 	this->zSortingFirstNode = NULL;
 	this->zSortingSecondNode = NULL;
-	this->textureToWrite = NULL;
-	this->cyclesToWaitForTextureWriting = 0;
+	this->spritePendingTextureWriting = NULL;
+	this->cyclesToWaitForSpriteTextureWriting = 0;
 	this->texturesMaximumRowsToWrite = -1;
-	this->waitToWrite = 0;
+	this->waitToWriteSpriteTextures = 0;
 
 	SpriteManager_renderLastLayer(this);
 }
@@ -325,7 +325,7 @@ static bool SpriteManager_disposeSpritesProgressively(SpriteManager this)
 
 		__DELETE(sprite);
 
-		this->textureToWrite = __IS_OBJECT_ALIVE(this->textureToWrite)? this->textureToWrite : NULL;
+		this->spritePendingTextureWriting = __IS_OBJECT_ALIVE(this->spritePendingTextureWriting)? this->spritePendingTextureWriting : NULL;
 
 		return true;
 	}
@@ -604,29 +604,29 @@ void SpriteManager_renderLastLayer(SpriteManager this)
 }
 
 /**
- * Select the texture to write
+ * Select the sprite to write
  *
  * @memberof		SpriteManager
  * @public
  *
  * @param this		Function scope
  */
-static void SpriteManager_selectTextureToWrite(SpriteManager this)
+static void SpriteManager_selectSpritePendingTextureWriting(SpriteManager this)
 {
-	ASSERT(this, "SpriteManager::selectTextureToWrite: null this");
+	ASSERT(this, "SpriteManager::selectSpritePendingTextureWriting: null this");
 
 	VirtualNode node = this->sprites->head;
 
 	for(; node; node = node->next)
 	{
-		Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
+		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		if(__IS_OBJECT_ALIVE(texture) && !texture->written && texture->textureDefinition)
+		if(__IS_OBJECT_ALIVE(sprite) && !__VIRTUAL_CALL(Sprite, areTexturesWritten, sprite))
 		{
-			__VIRTUAL_CALL(Texture, write, texture);
+			bool areTexturesWritten = __VIRTUAL_CALL(Sprite, writeTextures, sprite);
 
-			this->waitToWrite = this->cyclesToWaitForTextureWriting;
-			this->textureToWrite = !texture->written? texture : NULL;
+			this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
+			this->spritePendingTextureWriting = !areTexturesWritten ? sprite : NULL;
 			break;
 		}
 	}
@@ -655,12 +655,7 @@ void SpriteManager_writeTextures(SpriteManager this)
 
 	for(; node; node = node->next)
 	{
-		Texture texture = (__SAFE_CAST(Sprite, node->data))->texture;
-
-		if(__IS_OBJECT_ALIVE(texture) && !texture->written && texture->textureDefinition)
-		{
-			__VIRTUAL_CALL(Texture, write, texture);
-		}
+		__VIRTUAL_CALL(Sprite, writeTextures, node->data);
 	}
 
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
@@ -674,39 +669,35 @@ void SpriteManager_writeTextures(SpriteManager this)
  *
  * @param this		Function scope
  */
-static bool SpriteManager_writeSelectedTexture(SpriteManager this)
+static bool SpriteManager_writeSelectedSprite(SpriteManager this)
 {
-	ASSERT(this, "SpriteManager::writeSelectedTexture: null this");
+	ASSERT(this, "SpriteManager::writeSelectedSprite: null this");
 
 	bool textureWritten = false;
 
-	if(!this->waitToWrite)
+	if(!this->waitToWriteSpriteTextures)
 	{
-		if(this->textureToWrite)
+		if(this->spritePendingTextureWriting)
 		{
-			// texture definition may be NULL if the rendering kicks in
-			// during the texture's setup
-			if(__IS_OBJECT_ALIVE(this->textureToWrite) && this->textureToWrite->textureDefinition)
+			if(__IS_OBJECT_ALIVE(this->spritePendingTextureWriting) && !__VIRTUAL_CALL(Sprite, areTexturesWritten, this->spritePendingTextureWriting))
 			{
-				__VIRTUAL_CALL(Texture, write, this->textureToWrite);
-
-				this->textureToWrite = !this->textureToWrite->written? this->textureToWrite : NULL;
-				this->waitToWrite = this->cyclesToWaitForTextureWriting;
+				this->spritePendingTextureWriting = __VIRTUAL_CALL(Sprite, writeTextures, this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
+				this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
 				textureWritten = true;
 			}
 			else
 			{
-				this->textureToWrite = NULL;
+				this->spritePendingTextureWriting = NULL;
 			}
 		}
 		else
 		{
-			SpriteManager_selectTextureToWrite(this);
+			SpriteManager_selectSpritePendingTextureWriting(this);
 		}
 	}
 	else
 	{
-		this->waitToWrite--;
+		this->waitToWriteSpriteTextures--;
 	}
 
 	return textureWritten;
@@ -733,7 +724,7 @@ void SpriteManager_render(SpriteManager this)
 	skipNonCriticalProcesses |= CharSetManager_writeCharSetsProgressively(CharSetManager_getInstance());
 
 	// write textures
-	if(!skipNonCriticalProcesses && !SpriteManager_writeSelectedTexture(this))
+	if(!skipNonCriticalProcesses && !SpriteManager_writeSelectedSprite(this))
 	{
 		// defragment param table
 		if(!ParamTableManager_defragmentProgressively(ParamTableManager_getInstance()))
@@ -943,13 +934,13 @@ s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this)
  * @public
  *
  * @param this								Function scope
- * @param cyclesToWaitForTextureWriting		Number of idle cycles
+ * @param cyclesToWaitForSpriteTextureWriting		Number of idle cycles
  */
-void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting)
+void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForSpriteTextureWriting)
 {
 	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
 
-	this->cyclesToWaitForTextureWriting = cyclesToWaitForTextureWriting;
+	this->cyclesToWaitForSpriteTextureWriting = cyclesToWaitForSpriteTextureWriting;
 }
 
 /**

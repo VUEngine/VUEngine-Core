@@ -71,6 +71,7 @@
 		__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
 		__VIRTUAL_SET(ClassName, BgmapSprite, setMode);													\
 
+
 #define BgmapSprite_ATTRIBUTES																			\
 		Sprite_ATTRIBUTES																				\
 		/**

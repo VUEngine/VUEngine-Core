@@ -751,3 +751,37 @@ void ObjectSpriteContainer_setMode(ObjectSpriteContainer this __attribute__ ((un
 {
 	ASSERT(this, "ObjectSpriteContainer::setMode: null this");
 }
+
+/**
+ * Write textures
+ *
+ * @memberof		ObjectSpriteContainer
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			true it all textures are written
+ */
+bool ObjectSpriteContainer_writeTextures(ObjectSpriteContainer this __attribute__ ((unused)))
+{
+	ASSERT(this, "ObjectSpriteContainer::writeTextures: null this");
+
+	return true;
+}
+
+/**
+ * Check if all textures are written
+ *
+ * @memberof		ObjectSpriteContainer
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			true it all textures are written
+ */
+bool ObjectSpriteContainer_areTexturesWritten(ObjectSpriteContainer this __attribute__ ((unused)))
+{
+	ASSERT(this, "ObjectSpriteContainer::areTexturesWritten: null this");
+
+	return true;
+}

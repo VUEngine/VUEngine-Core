@@ -786,10 +786,11 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 			s16 internalId = Entity_getInternalId(entity);
 
 			VirtualNode auxNode = this->loadedStageEntities->head;
+			StageEntityDescription* stageEntityDescription = NULL;
 
 			for(; auxNode; auxNode = auxNode->next)
 			{
-				StageEntityDescription* stageEntityDescription = (StageEntityDescription*)auxNode->data;
+				stageEntityDescription = (StageEntityDescription*)auxNode->data;
 
 				if(stageEntityDescription->internalId == internalId)
 				{
@@ -800,12 +801,28 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 				}
 			}
 
-			NM_ASSERT(auxNode, "Stage::unloadOutOfRangeEntities: unloading entity with unknown id");
+			bool unloaded = false;
 
-			// unload it
-			Stage_unloadChild(this, __SAFE_CAST(Container, entity));
+			if(stageEntityDescription)
+			{
+				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
+				{
+					// unload it
+					Stage_unloadChild(this, __SAFE_CAST(Container, entity));
 
-			if(defer)
+					unloaded = true;
+				}
+			}
+			else
+			{
+				// unload it
+				Stage_unloadChild(this, __SAFE_CAST(Container, entity));
+
+				unloaded = true;
+			}
+
+
+			if(unloaded && defer)
 			{
 #ifdef __PROFILE_STREAMING
 				u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;

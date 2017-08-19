@@ -559,3 +559,63 @@ void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 displa
 {
 	ASSERT(this, "MBgmapSprite::setMode: null this");
 }
+
+/**
+ * Write textures
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			true it all textures are written
+ */
+bool MBgmapSprite_writeTextures(MBgmapSprite this)
+{
+	ASSERT(this, "MBgmapSprite::writeTextures: null this");
+	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
+
+	VirtualNode node = this->textures->head;
+
+	for(; node; node = node->next)
+	{
+		Texture texture = __SAFE_CAST(Texture, node->data);
+
+		if(!texture->written)
+		{
+			__VIRTUAL_CALL(Texture, write, texture);
+			break;
+		}
+	}
+
+	return !node;
+}
+
+/**
+ * Check if all textures are written
+ *
+ * @memberof		MBgmapSprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			true it all textures are written
+ */
+bool MBgmapSprite_areTexturesWritten(MBgmapSprite this)
+{
+	ASSERT(this, "MBgmapSprite::areTexturesWritten: null this");
+	ASSERT(this->this->textures, "MBgmapSprite::areTexturesWritten: null texture");
+
+	VirtualNode node = this->textures->head;
+
+	for(; node; node = node->next)
+	{
+		if(!(__SAFE_CAST(Texture, node->data))->written)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+

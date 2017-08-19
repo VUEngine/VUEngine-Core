@@ -54,7 +54,9 @@
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setMode);														\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setMode);										\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, writeTextures);									\
+		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, areTexturesWritten);							\
 
 #define ObjectSpriteContainer_ATTRIBUTES																\
 		Sprite_ATTRIBUTES																				\
@@ -148,5 +150,8 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setMode(ObjectSpriteContainer this, u16 display, u16 mode);
+bool ObjectSpriteContainer_writeTextures(ObjectSpriteContainer this);
+bool ObjectSpriteContainer_areTexturesWritten(ObjectSpriteContainer this);
+
 
 #endif

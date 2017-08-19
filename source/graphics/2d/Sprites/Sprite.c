@@ -303,6 +303,50 @@ u8 Sprite_getWorldLayer(Sprite this)
 }
 
 /**
+ * Write textures
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			true it all textures are written
+ */
+bool Sprite_writeTextures(Sprite this __attribute__ ((unused)))
+{
+	ASSERT(this, "Sprite::writeTextures: null this");
+
+	if(!this->texture)
+	{
+		return true;
+	}
+
+	if(!this->texture->written)
+	{
+		__VIRTUAL_CALL(Texture, write, this->texture);
+	}
+
+	return this->texture->written;
+}
+
+/**
+ * Check if all textures are written
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			true it all textures are written
+ */
+bool Sprite_areTexturesWritten(Sprite this __attribute__ ((unused)))
+{
+	ASSERT(this, "Sprite::areTexturesWritten: null this");
+
+	return !this->texture ? true : this->texture->written;
+}
+
+/**
  * Get sprite's render head
  *
  * @memberof	Sprite

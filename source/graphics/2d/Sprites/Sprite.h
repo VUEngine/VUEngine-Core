@@ -67,7 +67,9 @@
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
-		__VIRTUAL_DEC(ClassName, void, setMode, u16 display, u16 mode);													\
+		__VIRTUAL_DEC(ClassName, void, setMode, u16 display, u16 mode);									\
+		__VIRTUAL_DEC(ClassName, bool, writeTextures);													\
+		__VIRTUAL_DEC(ClassName, bool, areTexturesWritten);												\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)																	\
@@ -84,6 +86,8 @@
 		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
 		__VIRTUAL_SET(ClassName, Sprite, position);														\
 		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
+		__VIRTUAL_SET(ClassName, Sprite, writeTextures);												\
+		__VIRTUAL_SET(ClassName, Sprite, areTexturesWritten);											\
 
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
@@ -263,6 +267,8 @@ Texture Sprite_getTexture(Sprite this);
 u32 Sprite_getWorldHead(Sprite this);
 u16 Sprite_getWorldHeight(Sprite this);
 u8 Sprite_getWorldLayer(Sprite this);
+bool Sprite_writeTextures(Sprite this);
+bool Sprite_areTexturesWritten(Sprite this);
 u16 Sprite_getWorldWidth(Sprite this);
 s16 Sprite_getWorldGX(Sprite this);
 s16 Sprite_getWorldGY(Sprite this);
