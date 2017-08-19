@@ -139,7 +139,10 @@ long Utilities_randomSeed()
 
 	static u32 seed = 7; /* Seed value */
 
-	seed |= Clock_getTime(_gameClock);
+	if(!seed)
+	{
+		seed = 7;
+	}
 
 	seed ^= seed << 13;
 	seed ^= seed >> 17;
