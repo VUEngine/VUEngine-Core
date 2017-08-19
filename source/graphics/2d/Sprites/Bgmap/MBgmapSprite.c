@@ -99,18 +99,6 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 	this->textures = NULL;
 	MBgmapSprite_loadTextures(this);
 	MBgmapSprite_calculateSize(this);
-
-	// TODO: check if this is really needed
-/*
-	// assume looping
-	this->size.x = 0;
-	this->size.y = 0;
-
-	this->sizeMultiplier.x = 1;
-	this->sizeMultiplier.y = 1;
-
-	MBgmapSprite_calculateSize(this);
-*/
 }
 
 /**
@@ -390,7 +378,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 */
 
 	// set the head
-	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
+	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
 	// get coordinates
 	int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
@@ -556,98 +544,6 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 	this->halfWidth = ITOFIX19_13(cols << 2);
 	this->halfHeight = ITOFIX19_13(rows << 2);
 }
-
-/*
-// calculate total sprite's size
-static void MBgmapSprite_calculateSize(MBgmapSprite this)
-{
-	ASSERT(this, "MBgmapSprite::calculateSize: null this");
-
-	MBgmapSprite_calculateSizeMultiplier(this);
-
-	Texture texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
-
-	if(!this->mBgmapSpriteDefinition->xLoop)
-	{
-		this->size.x = this->sizeMultiplier.x << 9;
-	}
-
-	if(!this->mBgmapSpriteDefinition->yLoop)
-	{
-		this->size.y = ((texture ? Texture_getRows(texture) : 64) << 3) * this->sizeMultiplier.x;
-	}
-}
-
-
-// calculate the size multiplier
-static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this)
-{
-	ASSERT(this, "MBgmapSprite::calculateSizeMultiplier: null this");
-
-	switch(this->mBgmapSpriteDefinition->scValue)
-	{
-		case __WORLD_1x1:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 1;
-			break;
-
-		case __WORLD_1x2:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 2;
-			break;
-
-		case __WORLD_1x4:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 4;
-			break;
-
-		case __WORLD_1x8:
-
-			this->sizeMultiplier.x = 1;
-			this->sizeMultiplier.y = 8;
-			break;
-
-		case __WORLD_2x1:
-
-			this->sizeMultiplier.x = 2;
-			this->sizeMultiplier.y = 1;
-			break;
-
-		case __WORLD_2x2:
-
-			this->sizeMultiplier.x = 2;
-			this->sizeMultiplier.y = 2;
-			break;
-
-		case __WORLD_2x4:
-
-			this->sizeMultiplier.x = 2;
-			this->sizeMultiplier.y = 4;
-			break;
-
-		case __WORLD_4x1:
-
-			this->sizeMultiplier.x = 4;
-			this->sizeMultiplier.y = 1;
-			break;
-
-		case __WORLD_4x2:
-
-			this->sizeMultiplier.x = 4;
-			this->sizeMultiplier.y = 2;
-			break;
-
-		case __WORLD_8x1:
-
-			this->sizeMultiplier.x = 8;
-			this->sizeMultiplier.y = 1;
-			break;
-	}
-}
-*/
 
 /**
  * Set Sprite's render mode
