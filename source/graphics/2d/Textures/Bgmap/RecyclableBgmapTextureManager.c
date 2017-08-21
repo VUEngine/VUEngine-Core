@@ -237,9 +237,6 @@ void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager t
 
 	VirtualNode node = this->textureRegistries->head;
 
-	Printing_text(Printing_getInstance(), "   ", 1, 25, NULL);
-	Printing_int(Printing_getInstance(), BgmapTexture_getUsageCount(__SAFE_CAST(BgmapTexture, texture)), 1, 25, NULL);
-
 	for(; node; node = node->next)
 	{
 		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
