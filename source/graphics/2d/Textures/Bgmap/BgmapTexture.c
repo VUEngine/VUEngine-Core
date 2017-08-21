@@ -412,7 +412,7 @@ s8 BgmapTexture_getSegment(BgmapTexture this)
  *
  * @return				Texture's count usage
  */
-u8 BgmapTexture_getUsageCount(BgmapTexture this)
+s8 BgmapTexture_getUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getUsageCount: null this");
 
@@ -448,6 +448,11 @@ bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::decreaseUsageCoung: null this");
 
-	return 0 >= --this->usageCount;
+	if(0 > --this->usageCount)
+	{
+		this->usageCount = 0;
+	}
+
+	return 0 == this->usageCount;
 }
 

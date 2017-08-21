@@ -154,6 +154,7 @@ Texture RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureMana
 
 		if(Texture_getTextureDefinition(textureRegistry->texture) == textureDefinition)
 		{
+			BgmapTexture_increaseUsageCount(__SAFE_CAST(BgmapTexture, textureRegistry->texture));
 			selectedTextureRegistry = textureRegistry;
 			break;
 		}
@@ -193,9 +194,13 @@ Texture RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureMana
 	{
 		// free texture found, so replace it
 		selectedTextureRegistry->free = false;
-		Texture_setDefinition(selectedTextureRegistry->texture, textureDefinition);
-		Texture_setPalette(selectedTextureRegistry->texture, textureDefinition->palette);
-		__VIRTUAL_CALL(Texture, rewrite, selectedTextureRegistry->texture);
+
+		if(0 >= BgmapTexture_getUsageCount(__SAFE_CAST(BgmapTexture, selectedTextureRegistry->texture)))
+		{
+			Texture_setDefinition(selectedTextureRegistry->texture, textureDefinition);
+			Texture_setPalette(selectedTextureRegistry->texture, textureDefinition->palette);
+			__VIRTUAL_CALL(Texture, rewrite, selectedTextureRegistry->texture);
+		}
 	}
 	else
 	{
@@ -228,13 +233,18 @@ void RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager t
 	ASSERT(this, "RecyclableBgmapTextureManager::removeTexture: null this");
 	ASSERT(texture, "RecyclableBgmapTextureManager::removeTexture: null texture");
 
+	BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), texture);
+
 	VirtualNode node = this->textureRegistries->head;
+
+	Printing_text(Printing_getInstance(), "   ", 1, 25, NULL);
+	Printing_int(Printing_getInstance(), BgmapTexture_getUsageCount(__SAFE_CAST(BgmapTexture, texture)), 1, 25, NULL);
 
 	for(; node; node = node->next)
 	{
 		TextureRegistry* textureRegistry = (TextureRegistry*)node->data;
 
-		if(texture == textureRegistry->texture)
+		if(texture == textureRegistry->texture && 0 >= BgmapTexture_getUsageCount(__SAFE_CAST(BgmapTexture, textureRegistry->texture)))
 		{
 			textureRegistry->free = true;
 			break;
