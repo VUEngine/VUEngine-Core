@@ -366,7 +366,7 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
 	ASSERT(this, "BgmapTextureManager::free: null this");
 
 	// if no one is using the texture anymore
-	if(__IS_OBJECT_ALIVE(bgmapTexture() && BgmapTexture_decreaseUsageCount(bgmapTexture))
+	if(__IS_OBJECT_ALIVE(bgmapTexture) && BgmapTexture_decreaseUsageCount(bgmapTexture))
 	{
 		int i = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
 
