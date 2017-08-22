@@ -604,7 +604,7 @@ bool MBgmapSprite_writeTextures(MBgmapSprite this)
 bool MBgmapSprite_areTexturesWritten(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::areTexturesWritten: null this");
-	ASSERT(this->this->textures, "MBgmapSprite::areTexturesWritten: null texture");
+	ASSERT(this->textures, "MBgmapSprite::areTexturesWritten: null texture");
 
 	VirtualNode node = this->textures->head;
 
