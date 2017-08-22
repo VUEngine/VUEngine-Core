@@ -62,7 +62,7 @@ ManagedEntity
 `Container` that manages the sprites of all its children. It helps to reduce the performance overhead of translating lots of sprites, and helps to workaround rounding problems when projecting 3D coordinates into 2D caused by the low resolution of the Virtual Boy's displays.
 
 
-RecyclableImage
+RecyclableImage (MOVE TO Texture documentation)
 ---------------
 
 Used to display the level's backgrounds. These allow for the textures used as backgrounds to be recycled, allowing better usage of CHAR and BGMAP.

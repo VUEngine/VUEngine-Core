@@ -109,7 +109,7 @@ void BgmapTexture_destructor(BgmapTexture this)
 	ASSERT(this, "BgmapTexture::destructor: null this");
 
 	// make sure that I'm not destroyed again
-	this->usageCount = -1;
+	this->usageCount = 0;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -412,7 +412,7 @@ s8 BgmapTexture_getSegment(BgmapTexture this)
  *
  * @return				Texture's count usage
  */
-s8 BgmapTexture_getUsageCount(BgmapTexture this)
+u8 BgmapTexture_getUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getUsageCount: null this");
 
@@ -448,9 +448,9 @@ bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::decreaseUsageCoung: null this");
 
-	if(0 > --this->usageCount)
+	if(this->usageCount)
 	{
-		this->usageCount = 0;
+		this->usageCount--;
 	}
 
 	return 0 == this->usageCount;

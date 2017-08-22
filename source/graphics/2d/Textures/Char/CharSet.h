@@ -78,7 +78,7 @@
 		/* memory displacement */																		\
 		u16 offset;																						\
 		/* how many textures are using me */															\
-		u16 usageCount;																					\
+		u8 usageCount;																					\
 
 __CLASS(CharSet);
 

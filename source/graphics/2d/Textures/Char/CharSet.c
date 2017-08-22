@@ -98,7 +98,7 @@ void CharSet_destructor(CharSet this)
 	Object_fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
 
 	// make sure that I'm not destroyed again
-	this->usageCount = 0xFF;
+	this->usageCount = 00;
 
 	// free processor memory
 	// must always be called at the end of the destructor
@@ -127,12 +127,36 @@ void CharSet_increaseUsageCount(CharSet this)
  * @public
  *
  * @param this							Function scope
+ *
+ * @return								True if usage count is zero
  */
 bool CharSet_decreaseUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::getAllocationType: null this");
 
-	return 0 == --this->usageCount;
+	if(this->usageCount)
+	{
+		this->usageCount--;
+	}
+
+	return 0 == this->usageCount;
+}
+
+/**
+ * Get usage count
+ *
+ * @memberof							CharSet
+ * @public
+ *
+ * @param this							Function scope
+ *
+ * @return								Usage count
+ */
+u8 CharSet_getUsageCount(CharSet this)
+{
+	ASSERT(this, "CharSet::getUsageCount: null this");
+
+	return this->usageCount;
 }
 
 /**

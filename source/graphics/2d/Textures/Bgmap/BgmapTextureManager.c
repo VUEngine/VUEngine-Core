@@ -45,13 +45,11 @@
 		/* current y offset to set the next bgmap */													\
 		s8 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];							\
 		/* 12 segments, 28 maps, 2 indexes (x,y) and bgmap segment */ 									\
-		s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][2];						\
+		s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][4];						\
 		/* next free bgmap used for text printing */													\
 		s16 freeBgmapSegment;																			\
 		/* the textures allocated */																	\
 		BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];			\
-		/* number of available bgmap segments */														\
-		s16 availableBgmapSegments;																		\
 		/* number of available bgmap segments */														\
 		s16 availableBgmapSegmentsForTextures;															\
 		/* segment for printing */																		\
@@ -68,6 +66,8 @@ enum OffsetIndex
 {
 	kXOffset = 0,
 	kYOffset,
+	kCols,
+	kRows,
 	kBgmapSegment
 };
 
@@ -141,9 +141,7 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 	ASSERT(this, "BgmapTextureManager::reset: null this");
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
-	this->availableBgmapSegments = (u32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
-
-	this->availableBgmapSegmentsForTextures = this->availableBgmapSegments;
+	this->availableBgmapSegmentsForTextures = (u32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
 	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
@@ -172,6 +170,8 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
 	{
 		this->offset[i][kXOffset] = -1;
 		this->offset[i][kYOffset] = -1;
+		this->offset[i][kCols] = 0;
+		this->offset[i][kRows] = 0;
 
 		if(this->bgmapTextures[i])
 		{
@@ -211,9 +211,6 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 	u16 colsPad = textureDefinition->padding.cols;
 	u16 rowsPad = textureDefinition->padding.rows;
 
-	cols += cols + colsPad < 64 ? 1 : 0;
-	rows += rows + rowsPad < 64 ? 1 : 0;
-
 	int area = (cols + colsPad) * (rows + rowsPad);
 
 	// if texture already defined, don't allocate
@@ -251,6 +248,8 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 								// register bgmap definition
 								this->offset[id][kXOffset] = this->xOffset[i][j] + (colsPad >> 1);
 								this->offset[id][kYOffset] = this->yOffset[i][j] + (rowsPad >> 1);
+								this->offset[id][kCols] = cols;
+								this->offset[id][kRows] = rows;
 
 								BgmapTexture_setSegment(bgmapTexture, i);
 
@@ -266,7 +265,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 								else
 								{
 									// there must be at least 2 columns free
-									if(this->xOffset[i][j] >= 62)
+									if(this->xOffset[i][j] >= 64)
 									{
 										// TODO: this was commented, don't know why
 										// this->yOffset[i][j+1] = this->yOffset[i][j] + rows ;
@@ -408,6 +407,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	ASSERT(this, "BgmapTextureManager::findTexture: null this");
 
 	int i = 0;
+	TextureDefinition* textureDefinition = (TextureDefinition*)bgmapTextureDefinition;
 
 	// try to find a texture with the same bgmap definition
 	for(; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
@@ -415,11 +415,11 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 		if(this->bgmapTextures[i])
 		{
 			CharSet charSet = Texture_getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]), false);
-			TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i]));
+			TextureDefinition* allocatedTextureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i]));
 
-			if(textureDefinition == (TextureDefinition*)bgmapTextureDefinition &&
-				(!charSet || textureDefinition->charSetDefinition->allocationType == bgmapTextureDefinition->charSetDefinition->allocationType) &&
-				(textureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && textureDefinition->padding.rows == bgmapTextureDefinition->padding.rows)
+			if(allocatedTextureDefinition == (TextureDefinition*)textureDefinition &&
+				(!charSet || allocatedTextureDefinition->charSetDefinition->allocationType == bgmapTextureDefinition->charSetDefinition->allocationType) &&
+				(allocatedTextureDefinition->padding.cols == bgmapTextureDefinition->padding.cols && allocatedTextureDefinition->padding.rows == bgmapTextureDefinition->padding.rows)
 			)
 			{
 				// return if found
@@ -428,7 +428,60 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 		}
 	}
 
-	return NULL;
+	if(!textureDefinition->recyclable)
+	{
+		return NULL;
+	}
+
+	BgmapTexture selectedBgmapTexture = NULL;
+	TextureDefinition* selectedTextureDefinition = NULL;
+
+	// try to find a texture with the same bgmap definition
+	for(i = 0; i < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; i++)
+	{
+		BgmapTexture bgmapTexture = this->bgmapTextures[i];
+
+		if(bgmapTexture && !BgmapTexture_getUsageCount(bgmapTexture))
+		{
+			u16 id = Texture_getId(__SAFE_CAST(Texture, bgmapTexture));
+			u16 cols = this->offset[id][kCols];
+			u16 rows = this->offset[id][kRows];
+
+			TextureDefinition* allocatedTextureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
+
+			if(allocatedTextureDefinition->recyclable &&
+				textureDefinition->cols <= cols &&
+				textureDefinition->rows <= rows
+			)
+			{
+				if(!selectedBgmapTexture)
+				{
+					selectedBgmapTexture = bgmapTexture;
+					selectedTextureDefinition = allocatedTextureDefinition;
+				}
+				else if(textureDefinition->cols == cols && textureDefinition->rows == rows)
+				{
+					selectedBgmapTexture = bgmapTexture;
+					selectedTextureDefinition = allocatedTextureDefinition;
+					break;
+				}
+				else if(cols <= selectedTextureDefinition->cols && rows <= selectedTextureDefinition->rows)
+				{
+					selectedBgmapTexture = bgmapTexture;
+					selectedTextureDefinition = allocatedTextureDefinition;
+				}
+			}
+		}
+	}
+
+	if(selectedBgmapTexture)
+	{
+		Texture_setDefinition(__SAFE_CAST(Texture, selectedBgmapTexture), textureDefinition);
+		Texture_setPalette(__SAFE_CAST(Texture, selectedBgmapTexture), textureDefinition->palette);
+		__VIRTUAL_CALL(Texture, rewrite, selectedBgmapTexture);
+	}
+
+	return selectedBgmapTexture;
 }
 
 /**
@@ -563,23 +616,6 @@ s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 }
 
 /**
- * Retrieve the number of non used BGMAP segments
- *
- * @memberof		BgmapTextureManager
- * @private
- *
- * @param this		Function scope
- *
- * @return 			Number of non used BGMAP segments
- */
-s16 BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager this)
-{
-	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegments: null this");
-
-	return this->availableBgmapSegments;
-}
-
-/**
  * Retrieve the number of non used BGMAP segments for texture allocation
  *
  * @memberof		BgmapTextureManager
@@ -627,11 +663,7 @@ void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager thi
 
 	u32 paramTableBase = ParamTableManager_getParamTableBase(ParamTableManager_getInstance());
 
-	this->printingBgmapSegment = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
-
-	for(; (paramTableBase % __BGMAP_SEGMENT_SIZE || paramTableBase + __BGMAP_SEGMENT_SIZE > __PARAM_TABLE_END) && paramTableBase > __BGMAP_SPACE_BASE_ADDRESS; paramTableBase--);
-
-	this->availableBgmapSegmentsForTextures = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
+	this->availableBgmapSegmentsForTextures = this->printingBgmapSegment = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
 
 	if(this->availableBgmapSegmentsForTextures > __MAX_NUMBER_OF_BGMAPS_SEGMENTS)
 	{
@@ -653,14 +685,72 @@ void BgmapTextureManager_print(BgmapTextureManager this, int x, int y)
 {
 	ASSERT(this, "BgmapTextureManager::print: null this");
 
+	int index = 0;
 	int textureCount = 0;
-	for(;this->bgmapTextures[textureCount] && textureCount < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; textureCount++);
+	for(;index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)
+	{
+		if(this->bgmapTextures[index])
+		{
+			textureCount++;
+		}
+	}
 
 	Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Segments for textures: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), BgmapTextureManager_getAvailableBgmapSegments(this), x + 23, y, NULL);
+	Printing_int(Printing_getInstance(), BgmapTextureManager_getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
 	Printing_text(Printing_getInstance(), "Textures' count: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), textureCount, x + 23, y, NULL);
 	Printing_text(Printing_getInstance(), "Printing segment: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(this), x + 23, y, NULL);
+
+	y++;
+	y++;
+	Printing_text(Printing_getInstance(), "Recyclable textures", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Total: ", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Free: ", x, y++, NULL);
+
+	y++;
+	Printing_text(Printing_getInstance(), "ROM      Refs", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Address  ", x, y++, NULL);
+
+	int i = 0;
+	int j = 0;
+	int recyclableTextures = 0;
+	int freeEntries = 0;
+
+	// try to find a texture with the same bgmap definition
+	for(index = 0; index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)
+	{
+		BgmapTexture bgmapTexture = this->bgmapTextures[index];
+
+		if(bgmapTexture)
+		{
+			TextureDefinition* allocatedTextureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
+
+			if(allocatedTextureDefinition->recyclable)
+			{
+				recyclableTextures++;
+				freeEntries += !BgmapTexture_getUsageCount(bgmapTexture)? 1 : 0;
+
+//				Printing_text(Printing_getInstance(), BgmapTexture_getUsageCount(bgmapTexture)? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
+				Printing_hex(Printing_getInstance(), (int)Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + j, y + i, 8, NULL);
+				Printing_int(Printing_getInstance(), BgmapTexture_getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
+
+				if(++i + y > __SCREEN_HEIGHT / 8)
+				{
+					i = 0;
+					j += 14;
+
+					if(j + x > __SCREEN_WIDTH / 8)
+					{
+						i = 0;
+						j = 0;
+					}
+				}
+			}
+		}
+	}
+
+	Printing_int(Printing_getInstance(), recyclableTextures, x + 9, y - 5, NULL);
+	Printing_int(Printing_getInstance(), freeEntries, x + 9, y - 4, NULL);
 }

@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <RecyclableImage.h>
+#include <StaticImage.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,10 +35,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ManagedStaticImage_METHODS(ClassName)															\
-		RecyclableImage_METHODS(ClassName)																\
+		StaticImage_METHODS(ClassName)																	\
 
 #define ManagedStaticImage_SET_VTABLE(ClassName)														\
-		RecyclableImage_SET_VTABLE(ClassName)															\
+		StaticImage_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, removeChild);										\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, initialTransform);									\
 		__VIRTUAL_SET(ClassName, ManagedStaticImage, transform);										\
@@ -54,7 +54,7 @@ __CLASS(ManagedStaticImage);
 
 #define ManagedStaticImage_ATTRIBUTES																	\
 		/* it is derived from */																		\
-		RecyclableImage_ATTRIBUTES																		\
+		StaticImage_ATTRIBUTES																			\
 		/* sprites' list */																				\
 		VirtualList managedSprites;																		\
 		/* previous 2d projected position */															\
@@ -65,7 +65,7 @@ __CLASS(ManagedStaticImage);
 //											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef RecyclableImageDefinition ManagedStaticImageDefinition;
+typedef StaticImageDefinition ManagedStaticImageDefinition;
 
 typedef const ManagedStaticImageDefinition ManagedStaticImageROMDef;
 
@@ -73,9 +73,9 @@ typedef const ManagedStaticImageDefinition ManagedStaticImageROMDef;
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedStaticImage, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
+__CLASS_NEW_DECLARE(ManagedStaticImage, StaticImageDefinition* definition, s16 id, s16 internalId, const char* const name);
 
-void ManagedStaticImage_constructor(ManagedStaticImage this, RecyclableImageDefinition* definition, s16 id, s16 internalId, const char* const name);
+void ManagedStaticImage_constructor(ManagedStaticImage this, StaticImageDefinition* definition, s16 id, s16 internalId, const char* const name);
 void ManagedStaticImage_destructor(ManagedStaticImage this);
 void ManagedStaticImage_removeChild(ManagedStaticImage this, Container child);
 void ManagedStaticImage_initialTransform(ManagedStaticImage this, Transformation* environmentTransform, u32 recursive);

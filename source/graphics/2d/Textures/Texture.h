@@ -94,6 +94,9 @@ typedef struct TextureDefinition
 	// palette index to use
 	u32 palette;
 
+	// recyclable
+	bool recyclable;
+
 } TextureDefinition;
 
 typedef const TextureDefinition TextureROMDef;

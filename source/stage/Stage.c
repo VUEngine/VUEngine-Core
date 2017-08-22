@@ -38,10 +38,9 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <CharSetManager.h>
-#include <Texture.h>
+#include <BgmapTexture.h>
 #include <ParamTableManager.h>
 #include <VIPManager.h>
-#include <RecyclableBgmapTextureManager.h>
 #include <ParticleRemover.h>
 #include <MessageDispatcher.h>
 #include <debugConfig.h>
@@ -564,16 +563,16 @@ static void Stage_preloadAssets(Stage this)
 	Printing_loadFonts(Printing_getInstance(), this->stageDefinition->assets.fontDefinitions);
 
 	// charsets
-	if(this->stageDefinition->assets.charSets)
+	if(this->stageDefinition->assets.charSetDefinitions)
 	{
 		int i = 0;
 
-		for(; this->stageDefinition->assets.charSets[i]; i++)
+		for(; this->stageDefinition->assets.charSetDefinitions[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSets[i]->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.charSets[i]->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSetDefinitions[i]->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.charSetDefinitions[i]->allocationType)
 			{
-				CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->assets.charSets[i]);
+				CharSetManager_getCharSet(CharSetManager_getInstance(), this->stageDefinition->assets.charSetDefinitions[i]);
 			}
 			else
 			{
@@ -583,32 +582,26 @@ static void Stage_preloadAssets(Stage this)
 	}
 
 	// textures
-	if(this->stageDefinition->assets.stageTextureEntryDefinitions)
+	if(this->stageDefinition->assets.textureDefinitions)
 	{
-		VirtualList managedTextures = __NEW(VirtualList);
-
+		VirtualList recyclableTextures = __NEW(VirtualList);
 		int i = 0;
 
-		for(; this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition; i++)
+		for(; this->stageDefinition->assets.textureDefinitions[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition->charSetDefinition->allocationType)
+			if(__ANIMATED_SINGLE != this->stageDefinition->assets.textureDefinitions[i]->charSetDefinition->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.textureDefinitions[i]->charSetDefinition->allocationType)
 			{
-				Texture texture = NULL;
+				BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->assets.textureDefinitions[i]);
 
-				if(this->stageDefinition->assets.stageTextureEntryDefinitions[i].isManaged)
+				if(bgmapTexture)
 				{
-					texture = RecyclableBgmapTextureManager_registerTexture(RecyclableBgmapTextureManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition);
-					VirtualList_pushBack(managedTextures, texture);
-				}
-				else
-				{
-					texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), this->stageDefinition->assets.stageTextureEntryDefinitions[i].textureDefinition));
-				}
+					__VIRTUAL_CALL(Texture, write, bgmapTexture);
 
-				if(texture)
-				{
-					__VIRTUAL_CALL(Texture, write, texture);
+					if(this->stageDefinition->assets.textureDefinitions[i]->recyclable)
+					{
+						VirtualList_pushBack(recyclableTextures, bgmapTexture);
+					}
 				}
 			}
 			else
@@ -617,14 +610,12 @@ static void Stage_preloadAssets(Stage this)
 			}
 		}
 
-		VirtualNode node = managedTextures->head;
+		VirtualNode node = VirtualList_begin(recyclableTextures);
 
-		for(; node; node = node->next)
+		for(;node; node = node->next)
 		{
-			RecyclableBgmapTextureManager_removeTexture(RecyclableBgmapTextureManager_getInstance(), __SAFE_CAST(Texture, node->data));
+			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
-
-		__DELETE(managedTextures);
 	}
 
 	ParamTableManager_calculateParamTableBase(ParamTableManager_getInstance(), this->stageDefinition->rendering.paramTableSegments);

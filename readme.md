@@ -77,7 +77,6 @@ Features:
   - InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
   - Actor: animated in game entity which coordinates a physical body with a collision shape
   - StaticImage: handy entity to display non interactive images
-  - RecyclableImage: useful to optimize BGMAP memory usage
 
 
 LICENSE

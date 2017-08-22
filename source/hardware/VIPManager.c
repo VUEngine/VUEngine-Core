@@ -560,10 +560,10 @@ void VIPManager_lowerBrightness(VIPManager this)
 void VIPManager_clearScreen(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "VIPManager::clearScreen: null this");
-	u16* bgmapStartAddress = (u16*)__BGMAP_SPACE_BASE_ADDRESS;
+	u8* bgmapStartAddress = (u8*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// clear every bgmap segment
-	for(bgmapStartAddress = 0; bgmapStartAddress < (u16*)__PARAM_TABLE_END; bgmapStartAddress++)
+	for(bgmapStartAddress = 0; bgmapStartAddress < (u8*)__PARAM_TABLE_END; bgmapStartAddress++)
 	{
 		*bgmapStartAddress = 0;
 	}

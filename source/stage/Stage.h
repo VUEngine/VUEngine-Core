@@ -94,18 +94,6 @@ __CLASS(Stage);
 //											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct StageTextureEntryDefinition
-{
-	TextureDefinition* textureDefinition;
-
-	// is a managed texture
-	bool isManaged;
-
-} StageTextureEntryDefinition;
-
-typedef const StageTextureEntryDefinition StageTextureEntryROMDef;
-
-
 // defines a game world in ROM memory
 typedef struct StageDefinition
 {
@@ -179,10 +167,10 @@ typedef struct StageDefinition
 		FontDefinition** fontDefinitions;
 
 		// char sets for preloading
-		CharSetDefinition** charSets;
+		CharSetDefinition** charSetDefinitions;
 
 		// textures for preloading
-		StageTextureEntryDefinition* stageTextureEntryDefinitions;
+		TextureDefinition** textureDefinitions;
 
 		// pointer to the background music
 		const u16 (*bgm)[];

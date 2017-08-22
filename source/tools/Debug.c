@@ -38,7 +38,6 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <RecyclableBgmapTextureManager.h>
 #include <VIPManager.h>
 #include <PhysicalWorld.h>
 #include <DirectDraw.h>
@@ -82,7 +81,6 @@
 #include <Actor.h>
 #include <StaticImage.h>
 #include <ManagedEntity.h>
-#include <RecyclableImage.h>
 #include <ManagedStaticImage.h>
 #include <Particle.h>
 #include <ParticleBody.h>

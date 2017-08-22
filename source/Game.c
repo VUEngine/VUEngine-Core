@@ -44,7 +44,6 @@
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
-#include <RecyclableBgmapTextureManager.h>
 #include <AnimationCoordinatorFactory.h>
 #include <StateMachine.h>
 #include <Screen.h>
@@ -729,7 +728,6 @@ void Game_reset(Game this)
 	CharSetManager_reset(CharSetManager_getInstance());
 	ParamTableManager_reset(ParamTableManager_getInstance());
 	SpriteManager_reset(SpriteManager_getInstance());
-	RecyclableBgmapTextureManager_reset(RecyclableBgmapTextureManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 	Printing_reset(Printing_getInstance());
 	Screen_resetCameraFrustum(Screen_getInstance());
