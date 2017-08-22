@@ -43,7 +43,10 @@
 #define __UPDATE_SIZE	0x04
 #define __UPDATE_M		0x08
 
-#define __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1	1
+#define __G_DISPLACEMENT_BECAUSE_WH_0_EQUALS_1		1
+#define __WORLD_SIZE_DISPLACEMENT					1
+#define __GX_LIMIT									511
+#define __GY_LIMIT									223
 
 
 //---------------------------------------------------------------------------------------------------------

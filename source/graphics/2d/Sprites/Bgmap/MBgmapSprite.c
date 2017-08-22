@@ -427,18 +427,18 @@ void MBgmapSprite_render(MBgmapSprite this)
 			return;
 		}
 
-		worldPointer->w = w;
+		worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
 	}
 	else
 	{
 		if(!_cameraFrustum->x0 && __SCREEN_WIDTH == _cameraFrustum->x1)
 		{
 			worldPointer->gx = worldPointer->gx - worldPointer->gp;
-        	worldPointer->w = _cameraFrustum->x1 + (worldPointer->gp << 1) - _cameraFrustum->x0;
+        	worldPointer->w = _cameraFrustum->x1 + (worldPointer->gp << 1) - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
 		}
 		else
 		{
-			worldPointer->w = _cameraFrustum->x1 - mxDisplacement;
+			worldPointer->w = _cameraFrustum->x1 - mxDisplacement - __WORLD_SIZE_DISPLACEMENT;
 		}
 	}
 
@@ -461,11 +461,11 @@ void MBgmapSprite_render(MBgmapSprite this)
 			return;
 		}
 
-		worldPointer->h = h;
+		worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 	}
 	else
 	{
-		worldPointer->h = _cameraFrustum->y1 - myDisplacement;
+		worldPointer->h = _cameraFrustum->y1 - myDisplacement - __WORLD_SIZE_DISPLACEMENT;
 	}
 
 	BgmapSprite_processHbiasEffects(__SAFE_CAST(BgmapSprite, this));

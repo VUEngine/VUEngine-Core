@@ -37,15 +37,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											 CLASS' MACROS
-//---------------------------------------------------------------------------------------------------------
-
-#define __WORLD_SIZE_DISPLACEMENT			1
-#define __GX_LIMIT							511
-#define __GY_LIMIT							223
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -440,8 +431,8 @@ void BgmapSprite_render(BgmapSprite this)
 	// get sprite's size
 	int width = FIX19_13TOI(this->halfWidth) << 1;
 	int height = FIX19_13TOI(this->halfHeight) << 1;
-	int w = width - __WORLD_SIZE_DISPLACEMENT;
-	int h = height - __WORLD_SIZE_DISPLACEMENT;
+	int w = width;
+	int h = height;
 
 	worldPointer->mx = this->drawSpec.textureSource.mx;
 	worldPointer->my = this->drawSpec.textureSource.my;
@@ -509,8 +500,8 @@ void BgmapSprite_render(BgmapSprite this)
 		return;
 	}
 
-	worldPointer->w = w;
-	worldPointer->h = h;
+	worldPointer->w = w - __WORLD_SIZE_DISPLACEMENT;
+	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	// set the world size according to the zoom
 	BgmapSprite_processAffineEffects(this, gx, width, myDisplacement);
