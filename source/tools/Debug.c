@@ -243,7 +243,6 @@ static void Debug_sramPage(Debug this, int increment, int x, int y);
 
 // sub pages
 static void Debug_streamingShowStatus(Debug this, int increment, int x, int y);
-static void Debug_recyclableBgmapTextureManagerShowStatus(Debug this, int increment, int x, int y);
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_texturesShowStatus(Debug this, int increment, int x, int y);
 static void Debug_objectsShowStatus(Debug this, int increment, int x, int y);
@@ -900,7 +899,6 @@ static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)),
 		{&CollisionManager_getObjectSize, 				"CollisionManager"},
 		{&HardwareManager_getObjectSize, 				"HardwareManager"},
 		{&KeypadManager_getObjectSize, 					"KeypadManager"},
-		{&RecyclableBgmapTextureManager_getObjectSize, 	"Recy.BgmapText.Man."},
 		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
 		{&ScreenEffectManager_getObjectSize, 			"ScreenEff.Manager"},
 		{&ScreenMovementManager_getObjectSize, 			"ScreenMov.Manager"},
@@ -1041,7 +1039,6 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&InGameEntity_getObjectSize,					"InGameEntity"},
 		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
 		{&ManagedStaticImage_getObjectSize,				"ManagedStaticImage"},
-		{&RecyclableImage_getObjectSize,				"RecyclableImage"},
 	};
 
 	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -1196,7 +1193,6 @@ static void Debug_streamingPage(Debug this, int increment __attribute__ ((unused
 	Debug_removeSubPages(this);
 
 	VirtualList_pushBack(this->subPages, &Debug_streamingShowStatus);
-	VirtualList_pushBack(this->subPages, &Debug_recyclableBgmapTextureManagerShowStatus);
 	this->currentSubPage = this->subPages->head;
 
 	Debug_showSubPage(this, 0);
@@ -1216,23 +1212,6 @@ static void Debug_streamingPage(Debug this, int increment __attribute__ ((unused
 static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Stage_showStreamingProfiling(GameState_getStage(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))), x, y);
-}
-
-/**
- * Show RecyclabeBgmapTexturesManger's status
- *
- * @memberof			Debug
- * @private
- *
- * @param this			Function scope
- * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
- */
-static void Debug_recyclableBgmapTextureManagerShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
-{
-	Printing_text(Printing_getInstance(), "STREAMING'S STATUS", x, y++, NULL);
-	RecyclableBgmapTextureManager_print(RecyclableBgmapTextureManager_getInstance(), x, ++y);
 }
 
 /**
@@ -1440,7 +1419,7 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 
 	if(-1 > this->bgmapSegment)
 	{
-		this->bgmapSegment = BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) - 1;
+		this->bgmapSegment = BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager_getInstance()) - 1;
 	}
 
 	if(-1 == this->bgmapSegment)
@@ -1448,10 +1427,10 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 		SpriteManager_recoverLayers(SpriteManager_getInstance());
 		BgmapTextureManager_print(BgmapTextureManager_getInstance(), x, y);
 
-		ParamTableManager_print(ParamTableManager_getInstance(), x, y + 7);
+		ParamTableManager_print(ParamTableManager_getInstance(), x + 26, y);
 		Debug_dimmGame(this);
 	}
-	else if(BgmapTextureManager_getAvailableBgmapSegments(BgmapTextureManager_getInstance()) > this->bgmapSegment)
+	else if(BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager_getInstance()) > this->bgmapSegment)
 	{
 		Printing_text(Printing_getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
 		Printing_text(Printing_getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
