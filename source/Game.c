@@ -1190,7 +1190,7 @@ void Game_checkFrameRate(Game this)
 #endif
 #ifdef __SHOW_STREAMING_PROFILING
 
-		if(!Game_isInSpecialMode(Game_getInstance()))
+		if(!Game_isInSpecialMode(this))
 		{
 			Printing_resetWorldCoordinates(Printing_getInstance());
 			Stage_showStreamingProfiling(Game_getStage(this), 1, 1);
@@ -1468,6 +1468,11 @@ StateMachine Game_getStateMachine(Game this)
 Stage Game_getStage(Game this)
 {
 	ASSERT(this, "Game::getStage: null this");
+
+	if(Game_isInSpecialMode(this))
+	{
+		return GameState_getStage(__SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine)));
+	}
 
 	return GameState_getStage(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
