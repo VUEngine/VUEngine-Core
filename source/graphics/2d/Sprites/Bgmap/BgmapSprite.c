@@ -345,8 +345,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 		if(this->texture)
 		{
-			this->halfWidth = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->cols << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)));
-			this->halfHeight = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->rows << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y)));
+			this->halfWidth = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->cols << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))  + __0_5F_FIX19_13;
+			this->halfHeight = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->rows << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y))) + __0_5F_FIX19_13;
 		}
 
 		if(this->param)

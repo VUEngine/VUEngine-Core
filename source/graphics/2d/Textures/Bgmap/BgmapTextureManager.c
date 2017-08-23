@@ -208,8 +208,8 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 
 	TextureDefinition* textureDefinition = Texture_getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
 
-	u16 colsPad = textureDefinition->padding.cols;
-	u16 rowsPad = textureDefinition->padding.rows;
+	u16 colsPad = textureDefinition->padding.cols << 1;
+	u16 rowsPad = textureDefinition->padding.rows << 1;
 
 	int area = (cols + colsPad) * (rows + rowsPad);
 
