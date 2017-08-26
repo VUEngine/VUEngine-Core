@@ -77,8 +77,10 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this), (Gap){0, 0, 0, 0});
+	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeDefinition);
+
+	VBVec3D displacement = {0, 0, 0};
+	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this), &displacement, true);
 
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
 }
@@ -139,7 +141,9 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		}
 	}
 
-	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false, (Gap){0, 0, 0, 0});
+	VBVec3D displacement = {0, 0, 0};
+
+	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false, &displacement);
 
 	return expired;
 }
@@ -254,11 +258,11 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
 
 	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
 
 		Body_bounce(this->body, axisOfCollision, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
-		if(!(axisOfCollision & Body_isMoving(this->body)))
+		if(!(axisOfCollision & Body_getMovementOverAllAxis(this->body)))
 		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
@@ -276,45 +280,46 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
  * @public
  *
  * @param this							Function scope
- * @param collidingSpatialObjects		List with colliding spatial objects
+ * @param shape							My shape detecting the collision
+ * @param collidingShapes				List with colliding shapes
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects)
+bool SolidParticle_processCollision(SolidParticle this, Shape shape, VirtualList collidingShapes)
 {
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
-	ASSERT(collidingSpatialObjects, "SolidParticle::resolveCollision: collidingSpatialObjects");
+	ASSERT(collidingShapes, "SolidParticle::resolveCollision: collidingShapes");
 
 	if(this->collisionSolver)
 	{
 		if(this->solidParticleDefinition->ignoreParticles)
 		{
-			VirtualList collidingObjectsToRemove = __NEW(VirtualList);
+			VirtualList collidingShapesToRemove = __NEW(VirtualList);
 			VirtualNode node = NULL;
 
-			for(node = collidingSpatialObjects->head; node; node = node->next)
+			for(node = collidingShapes->head; node; node = node->next)
 			{
 				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, node->data);
 
 				if(__GET_CAST(Particle, spatialObject))
 				{
-					VirtualList_pushBack(collidingObjectsToRemove, spatialObject);
+					VirtualList_pushBack(collidingShapesToRemove, spatialObject);
 				}
 			}
 
-			for(node = collidingObjectsToRemove->head; node; node = node->next)
+			for(node = collidingShapesToRemove->head; node; node = node->next)
 			{
 				// whenever you process some objects of a collisions list remove them and leave the Actor handle
 				// the ones you don't care about, i.e.: in most cases, the ones which are solid
-				VirtualList_removeElement(collidingSpatialObjects, node->data);
+				VirtualList_removeElement(collidingShapes, node->data);
 			}
 
-			__DELETE(collidingObjectsToRemove);
+			__DELETE(collidingShapesToRemove);
 		}
 
-		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_getLastDisplacement(this->body), false);
+		u16 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, shape, collidingShapes, Body_getLastDisplacement(this->body), false);
 
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
 
@@ -352,7 +357,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 		case kBodyStopped:
 
-			if(!Body_isMoving(this->body))
+			if(!Body_getMovementOverAllAxis(this->body))
 			{
 				//CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}

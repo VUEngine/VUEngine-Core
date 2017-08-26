@@ -29,7 +29,7 @@
 
 #include <Object.h>
 #include <Telegram.h>
-#include <InGameEntity.h>
+#include <Entity.h>
 #include <ScreenMovementManager.h>
 #include <ScreenEffectManager.h>
 
@@ -70,8 +70,8 @@
 		/* screen position displacement */																\
 		VBVec3D focusEntityPositionDisplacement;														\
 		/* actor to center the screen around */															\
-		InGameEntity focusInGameEntity;																	\
-		const VBVec3D* focusInGameEntityPosition;														\
+		Entity focusEntity;																				\
+		const VBVec3D* focusEntityPosition;																\
 		/* world's screen's last displacement */														\
 		VBVec3D lastDisplacement;																		\
 		/* stage's size in pixels */																	\
@@ -109,10 +109,10 @@ void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffect
 void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving);
 Optical Screen_getOptical(Screen this);
 void Screen_setOptical(Screen this, Optical optical);
-void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity);
-void Screen_unsetFocusInGameEntity(Screen this);
-InGameEntity Screen_getFocusInGameEntity(Screen this);
-void Screen_onFocusEntityDeleted(Screen this, InGameEntity actor);
+void Screen_setFocusGameEntity(Screen this, Entity focusEntity);
+void Screen_unsetFocusEntity(Screen this);
+Entity Screen_getFocusEntity(Screen this);
+void Screen_onFocusEntityDeleted(Screen this, Entity actor);
 void Screen_capPosition(Screen this);
 void Screen_move(Screen this, VBVec3D translation, int cap);
 VBVec3D Screen_getPosition(Screen this);

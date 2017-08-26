@@ -49,7 +49,7 @@
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
 		__VIRTUAL_DEC(ClassName, void, initialize, bool);												\
 		__VIRTUAL_DEC(ClassName, void, ready, bool);													\
-		__VIRTUAL_DEC(ClassName, u32, getAxisForFlipping);												\
+		__VIRTUAL_DEC(ClassName, u16, getAxisForFlipping);												\
 		__VIRTUAL_DEC(ClassName, void, setDefinition, void* entityDefinition);							\
 
 #define Entity_SET_VTABLE(ClassName)																	\
@@ -66,16 +66,17 @@
 		__VIRTUAL_SET(ClassName, Entity, getWidth);														\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);													\
 		__VIRTUAL_SET(ClassName, Entity, getDepth);														\
-		__VIRTUAL_SET(ClassName, Entity, getGap);														\
-		__VIRTUAL_SET(ClassName, Entity, getShape);														\
+		__VIRTUAL_SET(ClassName, Entity, getShapes);													\
 		__VIRTUAL_SET(ClassName, Entity, suspend);														\
 		__VIRTUAL_SET(ClassName, Entity, resume);														\
-		__VIRTUAL_SET(ClassName, Entity, canMoveOverAxis);												\
+		__VIRTUAL_SET(ClassName, Entity, getAxisAllowedForMovement);												\
 		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
-		__VIRTUAL_SET(ClassName, Entity, setDefinition);															\
+		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
+		__VIRTUAL_SET(ClassName, Entity, getElasticity);												\
+		__VIRTUAL_SET(ClassName, Entity, getFriction);													\
 
 #define Entity_ATTRIBUTES																				\
 		Container_ATTRIBUTES																			\
@@ -92,14 +93,14 @@
 		 */ 																							\
 		VirtualList sprites;																			\
 		/**
-		 * @var Shape				shape
-		 * @brief					Shape for collision detection
+		 * @var VirtualList			shapes
+		 * @brief					Shapes for collision detection
 		 * @memberof				Entity
 		 */ 																							\
-		Shape shape;																					\
+		VirtualList shapes;																				\
 		/**
 		 * @var Size				size
-		 * @brief					Size
+		 * @brief					Used for collisions and streaming
 		 * @memberof				Entity
 		 */ 																							\
 		Size size;																						\
@@ -156,16 +157,15 @@ u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
 VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
-int Entity_canMoveOverAxis(Entity this, const Acceleration* acceleration);
-u32 Entity_getAxisForFlipping(Entity this);
+u16 Entity_getAxisAllowedForMovement(Entity this, const Acceleration* acceleration);
+u16 Entity_getAxisForFlipping(Entity this);
 Entity Entity_getChildById(Entity this, s16 id);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
-Gap Entity_getGap(Entity this);
 int Entity_getMapParallax(Entity this);
 s16 Entity_getId(Entity this);
 s16 Entity_getInternalId(Entity this);
 const VBVec3D* Entity_getPosition(Entity this);
-Shape Entity_getShape(Entity this);
+VirtualList Entity_getShapes(Entity this);
 VirtualList Entity_getSprites(Entity this);
 SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 u16 Entity_getWidth(Entity this);
@@ -181,12 +181,11 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 void Entity_ready(Entity this, bool recursive);
 void Entity_resume(Entity this);
-void Entity_setShapePosition(Entity this);
+void Entity_setShapesPosition(Entity this);
 void Entity_setupGraphics(Entity this);
 void Entity_releaseGraphics(Entity this);
 void Entity_releaseSprites(Entity this, bool deleteThem);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
-void Entity_setCollisionGap(Entity this, int upGap, int downGap, int leftGap, int rightGap);
 void Entity_setDefinition(Entity this, void* entityDefinition);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_setSpritesDirection(Entity this, int axis, int direction);
@@ -197,6 +196,12 @@ bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteRotation(Entity this);
 bool Entity_updateSpriteScale(Entity this);
 void Entity_synchronizeGraphics(Entity this);
+u32 Entity_getInGameType(Entity this);
+fix19_13 Entity_getElasticity(Entity this);
+fix19_13 Entity_getFriction(Entity this);
+void Entity_informShapesThatStartedMoving(Entity this);
+void Entity_informShapesThatStoppedMoving(Entity this);
+void Entity_activateShapes(Entity this, bool value);
 
 
 #endif

@@ -723,7 +723,7 @@ void Game_reset(Game this)
 
 	// reset managers
 	PolyhedronManager_reset(PolyhedronManager_getInstance());
-	Screen_setFocusInGameEntity(this->screen, NULL);
+	Screen_setFocusGameEntity(this->screen, NULL);
 	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
 	CharSetManager_reset(CharSetManager_getInstance());
 	ParamTableManager_reset(ParamTableManager_getInstance());

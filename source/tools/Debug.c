@@ -74,19 +74,17 @@
 #include <Container.h>
 #include <Entity.h>
 #include <CollisionsContainerEntity.h>
-#include <InGameEntity.h>
-#include <AnimatedInGameEntity.h>
+#include <Entity.h>
+#include <AnimatedEntity.h>
 #include <AnimationCoordinatorFactory.h>
-#include <InanimatedInGameEntity.h>
+#include <Entity.h>
 #include <Actor.h>
-#include <StaticImage.h>
 #include <ManagedEntity.h>
-#include <ManagedStaticImage.h>
+#include <ManagedEntity.h>
 #include <Particle.h>
 #include <ParticleBody.h>
 #include <ParticleSystem.h>
 #include <SolidParticle.h>
-#include <TriggerEntity.h>
 
 
 #include <GameState.h>
@@ -1025,18 +1023,14 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 	ClassSizeData classesSizeData[] =
 	{
 		{&Actor_getObjectSize,							"Actor"},
-		{&AnimatedInGameEntity_getObjectSize,			"Anim. InGameEntity"},
+		{&AnimatedEntity_getObjectSize,					"AnimatedEntity"},
 		{&Container_getObjectSize,						"Container"},
 		{&CollisionsContainerEntity_getObjectSize,		"CollisionsCont.Ent."},
 		{&Entity_getObjectSize,							"Entity"},
 		{&EntityFactory_getObjectSize,					"EntityFactory"},
 		{&GameState_getObjectSize,						"GameState"},
 		{&GameState_getObjectSize,						"Stage"},
-		{&StaticImage_getObjectSize,					"StaticImage"},
-		{&InanimatedInGameEntity_getObjectSize,			"Inanim. InGam. Ent."},
-		{&InGameEntity_getObjectSize,					"InGameEntity"},
 		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
-		{&ManagedStaticImage_getObjectSize,				"ManagedStaticImage"},
 	};
 
 	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -1066,7 +1060,6 @@ static void Debug_memoryStatusShowSixthPage(Debug this __attribute__ ((unused)),
 		{&SolidParticle_getObjectSize,					"SolidParticle"},
 		{&SpatialObject_getObjectSize,					"SpatialObject"},
 		{&Stage_getObjectSize,							"Stage"},
-		{&TriggerEntity_getObjectSize,					"TriggerEntity"},
 		{&UiContainer_getObjectSize,					"UiContainer"},
 	};
 

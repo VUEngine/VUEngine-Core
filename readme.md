@@ -72,11 +72,8 @@ Features:
 - Useful classes to speed up the content creation process:
 	- Container: for transformation propagation (translation/rotation/scaling)
 	- Entity: a container with a list of sprites (a "visual object")
-	- InGameEntity: interactive entities in the levels (collision detection)
-	- AnimatedInGameEntity: an entity with animated sprites.
-	- InanimatedInGameEntity: static in game entity with physical properties (friction, elasticity, etc.)
+	- AnimatedEntity: an entity with animated sprites.
 	- Actor: animated in game entity which coordinates a physical body with a collision shape
-	- StaticImage: handy entity to display non interactive images
 
 
 LICENSE

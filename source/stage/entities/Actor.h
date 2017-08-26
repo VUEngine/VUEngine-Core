@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimatedInGameEntity.h>
+#include <AnimatedEntity.h>
 #include <Body.h>
 #include <StateMachine.h>
 #include <CollisionSolver.h>
@@ -40,15 +40,15 @@
 
 // declare the virtual methods
 #define Actor_METHODS(ClassName)																		\
-		AnimatedInGameEntity_METHODS(ClassName)															\
+		AnimatedEntity_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
-		__VIRTUAL_DEC(ClassName, int, getAxisFreeForMovement);											\
+		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
 		__VIRTUAL_DEC(ClassName, void, updateSurroundingFriction);										\
 		__VIRTUAL_DEC(ClassName, int, getAxisAllowedForBouncing);										\
-		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, VirtualList collidingSpatialObjects);	\
+		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, VirtualList collidingShapes);	\
 
 #define Actor_SET_VTABLE(ClassName)																		\
-		AnimatedInGameEntity_SET_VTABLE(ClassName)														\
+		AnimatedEntity_SET_VTABLE(ClassName)															\
 		__VIRTUAL_SET(ClassName, Actor, update);														\
 		__VIRTUAL_SET(ClassName, Actor, transform);														\
 		__VIRTUAL_SET(ClassName, Actor, resume);														\
@@ -60,10 +60,9 @@
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);													\
 		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);										\
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
-		__VIRTUAL_SET(ClassName, Actor, getFriction);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, canMoveOverAxis);												\
+		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForMovement);												\
 		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);										\
 		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
@@ -75,7 +74,7 @@
 
 #define Actor_ATTRIBUTES																				\
 		/* super's attributes */																		\
-		AnimatedInGameEntity_ATTRIBUTES																	\
+		AnimatedEntity_ATTRIBUTES																		\
 		/* definition */																				\
 		const ActorDefinition* actorDefinition;															\
 		/* a state machine to handle entity's logic	*/													\
@@ -84,22 +83,15 @@
 		Body body;																						\
 		/* collision solver */																			\
 		CollisionSolver collisionSolver;																\
+		/* previous velocity */																			\
+		Velocity previousVelocity;																		\
 
 __CLASS(Actor);
 
 typedef struct ActorDefinition
 {
-	// it has an InGameEntity at the beginning
-	AnimatedInGameEntityDefinition animatedInGameEntityDefinition;
-
-	// friction for physics
-	fix19_13 friction;
-
-	// elasticity for physics
-	fix19_13 elasticity;
-
-	// animation to play automatically
-	fix19_13 mass;
+	// it has an Entity at the beginning
+	AnimatedEntityDefinition animatedEntityDefinition;
 
 } ActorDefinition;
 
@@ -119,33 +111,32 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Actor_resume(Actor this);
 void Actor_update(Actor this, u32 elapsedTime);
-void Actor_moveOppositeDirection(Actor this, int axis);
+void Actor_moveOppositeDirection(Actor this, u16 axis);
 int Actor_changedDirection(Actor this, int axis);
-void Actor_changeDirectionOnAxis(Actor this, int axis);
+void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
-int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration);
-int Actor_getAxisFreeForMovement(Actor this);
-bool Actor_processCollision(Actor this, VirtualList collidingSpatialObjects);
+u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration);
+u16 Actor_getAxisFreeForMovement(Actor this);
+bool Actor_processCollision(Actor this, Shape shape, VirtualList collidingShapes);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);
-int Actor_isMoving(Actor this);
-int Actor_getMovementState(Actor this);
+bool Actor_isMoving(Actor this);
+u16 Actor_getMovementState(Actor this);
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
 int Actor_getAxisAllowedForBouncing(Actor this);
-void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject);
+void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
-fix19_13 Actor_getFriction(Actor this);
 void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening);
 void Actor_moveUniformly(Actor this, Velocity* velocity);
-void Actor_stopAllMovement(Actor this, u32 stopShape);
-void Actor_stopMovement(Actor this, int axis, u32 stopShape);
+void Actor_stopAllMovement(Actor this);
+void Actor_stopMovement(Actor this, int axis);
 void Actor_updateSurroundingFriction(Actor this);
-void Actor_resetCollisionStatus(Actor this, int movementAxis);
+void Actor_resetCollisionStatus(Actor this, u16 movementAxis);
 Velocity Actor_getVelocity(Actor this);
-void Actor_collisionsProcessingDone(Actor this, VirtualList collidingSpatialObjects);
+void Actor_collisionsProcessingDone(Actor this, VirtualList collidingShapes);
 
 #endif

@@ -439,7 +439,18 @@ static void StageEditor_releaseShape(StageEditor this)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-		if(this->shape && this->shape != __VIRTUAL_CALL(Entity, getShape, entity))
+		VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
+		VirtualNode node = shapes->head;
+
+		for(; node; node = node->next)
+		{
+			if(this->shape == __SAFE_CAST(Shape, node->data))
+			{
+				break;
+			}
+		}
+
+		if(this->shape && !node)
 		{
 			__DELETE(this->shape);
 		}
@@ -468,23 +479,13 @@ static void StageEditor_getShape(StageEditor this)
 	}
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
 
-	this->shape = __VIRTUAL_CALL(Entity, getShape, entity);
+	this->shape = shapes ? __SAFE_CAST(Shape, VirtualList_front(shapes)) : NULL;
 
 	if(!this->shape)
 	{
-		switch(__VIRTUAL_CALL(SpatialObject, getShapeType, entity))
-		{
-			case kCircle:
-
-				//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, owner));
-				break;
-
-			case kCuboid:
-
-				this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
-				break;
-		}
+		this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
 	}
 }
 
@@ -504,15 +505,16 @@ static void StageEditor_positionShape(StageEditor this)
 	}
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	VBVec3D displacement = {0, 0, 0};
 
-	Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, entity);
-	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity), gap);
+	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity), &displacement, false);
 
 	Shape_setReady(this->shape, false);
 
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
-		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false, gap);
+		VBVec3D displacement = {0, 0, 0};
+		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false, &displacement);
 	}
 
 	if(this->shape)
@@ -942,7 +944,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 {
 	StageEditor_removePreviousSprite(this);
 
-	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spritesDefinitions[0];
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spriteDefinitions[0];
 
 	if(spriteDefinition)
 	{

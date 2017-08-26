@@ -43,11 +43,13 @@
 
 /**
  * @class	Actor
- * @extends AnimatedInGameEntity
+ * @extends AnimatedEntity
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(Actor, AnimatedInGameEntity);
+__CLASS_DEFINITION(Actor, AnimatedEntity);
 
+__CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -72,7 +74,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedInGameEntity, (AnimatedInGameEntityDefinition*)&actorDefinition->animatedInGameEntityDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(AnimatedEntity, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;
@@ -90,7 +92,7 @@ void Actor_destructor(Actor this)
 	ASSERT(this, "Actor::destructor: null this");
 
 	// inform the screen I'm being removed
-	Screen_onFocusEntityDeleted(Screen_getInstance(), __SAFE_CAST(InGameEntity, this));
+	Screen_onFocusEntityDeleted(Screen_getInstance(), __SAFE_CAST(Entity, this));
 
 	if(this->body)
 	{
@@ -126,7 +128,7 @@ void Actor_setDefinition(Actor this, void* actorDefinition)
 	// save definition
 	this->actorDefinition = actorDefinition;
 
-	__CALL_BASE_METHOD(AnimatedInGameEntity, setDefinition, this, &((ActorDefinition*)actorDefinition)->animatedInGameEntityDefinition);
+	__CALL_BASE_METHOD(AnimatedEntity, setDefinition, this, &((ActorDefinition*)actorDefinition)->animatedEntityDefinition);
 }
 
 //set class's local position
@@ -135,7 +137,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	VBVec3D displacement = this->transform.localPosition;
-	__CALL_BASE_METHOD(AnimatedInGameEntity, setLocalPosition, this, position);
+	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, position);
 
 	displacement.x -= this->transform.localPosition.x;
 	displacement.y -= this->transform.localPosition.y;
@@ -182,7 +184,7 @@ void Actor_syncWithBody(Actor this)
 	localPosition.z += bodyLastDisplacement.z;
 
 	// sync direction with velocity
-	if(Body_isMoving(this->body))
+	if(Body_getMovementOverAllAxis(this->body))
 	{
 		Velocity velocity = Body_getVelocity(this->body);
 
@@ -214,7 +216,7 @@ void Actor_syncWithBody(Actor this)
 		}
 	}
 
-	__CALL_BASE_METHOD(AnimatedInGameEntity, setLocalPosition, this, &localPosition);
+	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, &localPosition);
 }
 
 // updates the animation attributes
@@ -236,7 +238,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 	{
 		Actor_syncWithBody(this);
 
-		int bodyMovement = Body_isMoving(this->body);
+		u16 bodyMovement = Body_getMovementOverAllAxis(this->body);
 
 		if(bodyMovement)
 		{
@@ -250,14 +252,14 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 	}
 
 	// call base
-	__CALL_BASE_METHOD(AnimatedInGameEntity, transform, this, environmentTransform, invalidateTransformationFlag);
+	__CALL_BASE_METHOD(AnimatedEntity, transform, this, environmentTransform, invalidateTransformationFlag);
 }
 
 void Actor_resume(Actor this)
 {
 	ASSERT(this, "Actor::resume: null this");
 
-	__CALL_BASE_METHOD(AnimatedInGameEntity, resume, this);
+	__CALL_BASE_METHOD(AnimatedEntity, resume, this);
 
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __X_AXIS, this->direction.x);
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __Y_AXIS, this->direction.y);
@@ -272,7 +274,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	__CALL_BASE_METHOD(AnimatedInGameEntity, update, this, elapsedTime);
+	__CALL_BASE_METHOD(AnimatedEntity, update, this, elapsedTime);
 
 	if(this->stateMachine)
 	{
@@ -281,7 +283,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 }
 
 // update colliding entities
-void Actor_resetCollisionStatus(Actor this, int movementAxis)
+void Actor_resetCollisionStatus(Actor this, u16 movementAxis)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
 
@@ -297,7 +299,9 @@ void Actor_updateSurroundingFriction(Actor this)
 	ASSERT(this, "Actor::updateSurroundingFriction: null this");
 	ASSERT(this->body, "Actor::updateSurroundingFriction: null body");
 
-	Force totalFriction = {this->actorDefinition->friction, this->actorDefinition->friction, this->actorDefinition->friction};
+	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
+
+	Force totalFriction = physicalSpecification ? (Force){physicalSpecification->friction, physicalSpecification->friction, physicalSpecification->friction} : (Force){0, 0, 0};
 
 	if(this->collisionSolver)
 	{
@@ -311,7 +315,7 @@ void Actor_updateSurroundingFriction(Actor this)
 }
 
 // change direction
-void Actor_moveOppositeDirection(Actor this, int axis)
+void Actor_moveOppositeDirection(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::moveOpositeDirecion: null this");
 
@@ -361,7 +365,7 @@ int Actor_changedDirection(Actor this, int axis)
 }
 
 // change direction over axis
-void Actor_changeDirectionOnAxis(Actor this, int axis)
+void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
 
@@ -406,43 +410,52 @@ void Actor_changeDirectionOnAxis(Actor this, int axis)
 }
 
 // check if gravity must apply to this actor
-int Actor_canMoveOverAxis(Actor this, const Acceleration* acceleration)
+u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration)
 {
-	ASSERT(this, "Actor::canMoveOverAxis: null this");
+	ASSERT(this, "Actor::getAxisAllowedForMovement: null this");
 
 	if(this->collisionSolver)
 	{
-		return ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, this->shape);
+		VirtualNode node = this->shapes->head;
+
+		u16 axisFreeForMovement = __X_AXIS | __Y_AXIS | __Z_AXIS;
+
+		for(; node; node = node->next)
+		{
+			axisFreeForMovement &= ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, __SAFE_CAST(Shape, node->data));
+		}
+
+		return axisFreeForMovement;
 	}
 
 	return __VIRTUAL_CALL(Actor, getAxisFreeForMovement, this);
 }
 
 // retrieve axis free for movement
-int Actor_getAxisFreeForMovement(Actor this)
+u16 Actor_getAxisFreeForMovement(Actor this)
 {
 	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
 
-	int movingState = Body_isMoving(this->body);
+	u16 movingState = Body_getMovementOverAllAxis(this->body);
 
 	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 }
 
-bool Actor_processCollision(Actor this, VirtualList collidingSpatialObjects)
+bool Actor_processCollision(Actor this, Shape shape, VirtualList collidingShapes)
 {
 	ASSERT(this, "Actor::processCollision: null this");
 	ASSERT(this->body, "Actor::processCollision: null body");
-	ASSERT(collidingSpatialObjects, "Actor::processCollision: collidingSpatialObjects");
+	ASSERT(collidingShapes, "Actor::processCollision: collidingShapes");
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collidingSpatialObjects && VirtualList_getSize(collidingSpatialObjects))
+	if(this->collisionSolver && collidingShapes && VirtualList_getSize(collidingShapes))
 	{
 		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 
 		if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
 		{
-			int axisOfAlignment = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, bodyLastDisplacement, true);
+			int axisOfAlignment = CollisionSolver_resolveCollision(this->collisionSolver, shape, collidingShapes, bodyLastDisplacement, true);
 
 			Actor_checkIfMustBounce(this, axisOfAlignment);
 
@@ -451,7 +464,7 @@ bool Actor_processCollision(Actor this, VirtualList collidingSpatialObjects)
 			returnValue = true;
 		}
 
-		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collidingSpatialObjects);
+		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collidingShapes);
 	}
 
 	return returnValue;
@@ -474,17 +487,17 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 				case kBodyStartedMoving:
 
 					ASSERT(this->shape, "Actor::handleMessage: null shape");
-					CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+					Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 					Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 					return true;
 					break;
 
 				case kBodyStopped:
 
-					if(!Body_isMoving(this->body))
+					if(!Body_getMovementOverAllAxis(this->body))
 					{
 						ASSERT(this->shape, "Actor::handleMessage: null shape");
-						CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+						Entity_informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
 					}
 					break;
 
@@ -508,27 +521,21 @@ StateMachine Actor_getStateMachine(Actor this)
 }
 
 // stop movement completely
-void Actor_stopAllMovement(Actor this, u32 stopShape)
+void Actor_stopAllMovement(Actor this)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
-	Actor_stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS, stopShape);
+	Actor_stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
 }
 
 // stop movement completely
-void Actor_stopMovement(Actor this, int axis, u32 stopShape)
+void Actor_stopMovement(Actor this, int axis)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
 	if(this->body)
 	{
 		Body_stopMovement(this->body, axis);
-	}
-
-	if(stopShape && this->shape)
-	{
-		// unregister the shape for collision detections
-		CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 	}
 }
 
@@ -548,21 +555,20 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 
 	Force effectiveForceToApply =
 	{
-		velocity.x || (force->x && (__X_AXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->x : 0,
-		velocity.y || (force->y && (__Y_AXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->y : 0,
-		velocity.z || (force->z && (__Z_AXIS & Actor_canMoveOverAxis(this, &acceleration))) ? force->z : 0
+		velocity.x || (force->x && (__X_AXIS & Actor_getAxisAllowedForMovement(this, &acceleration))) ? force->x : 0,
+		velocity.y || (force->y && (__Y_AXIS & Actor_getAxisAllowedForMovement(this, &acceleration))) ? force->y : 0,
+		velocity.z || (force->z && (__Z_AXIS & Actor_getAxisAllowedForMovement(this, &acceleration))) ? force->z : 0
 	};
 
 	Body_addForce(this->body, &effectiveForceToApply, informAboutBodyAwakening);
 
-	Actor_resetCollisionStatus(this, Body_isMoving(this->body));
+	Actor_resetCollisionStatus(this, Body_getMovementOverAllAxis(this->body));
 	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
-	if(this->shape)
+	if(this->shapes)
 	{
 		// register the shape for collision detections
-		Shape_setActive(this->shape, true);
-		CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+		Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 	}
 }
 
@@ -575,12 +581,7 @@ void Actor_moveUniformly(Actor this, Velocity* velocity)
 	{
 		Body_moveUniformly(this->body, *velocity);
 
-		if(this->shape)
-		{
-			// register the shape for collision detections
-			Shape_setActive(this->shape, true);
-			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-		}
+		Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 	}
 }
 
@@ -593,25 +594,25 @@ bool Actor_moves(Actor this __attribute__ ((unused)))
 }
 
 // is it moving?
-int Actor_isMoving(Actor this)
+bool Actor_isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 
-	return this->body ? Body_isMoving(this->body) : 0;
+	return this->body ? Body_getMovementOverAllAxis(this->body) : 0;
 }
 
-int Actor_getMovementState(Actor this)
+u16 Actor_getMovementState(Actor this)
 {
 	ASSERT(this, "Actor::getMovementState: null this");
 
-	return Body_isMoving(this->body);
+	return Body_getMovementOverAllAxis(this->body);
 }
 
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::changeEnvironment: null this");
 
-	__CALL_BASE_METHOD(AnimatedInGameEntity, changeEnvironment, this, environmentTransform);
+	__CALL_BASE_METHOD(AnimatedEntity, changeEnvironment, this, environmentTransform);
 
 	if(this->body)
 	{
@@ -643,7 +644,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
-	Entity_setShapePosition(__SAFE_CAST(Entity, this));
+	Entity_setShapesPosition(__SAFE_CAST(Entity, this));
 }
 
 // retrieve global position
@@ -651,7 +652,7 @@ const VBVec3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedInGameEntity, getPosition, this);
+	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getPosition, this);
 }
 
 int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
@@ -668,7 +669,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 
 	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
 
 		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
@@ -676,15 +677,15 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 	}
 }
 
-void Actor_alignTo(Actor this, SpatialObject spatialObject, bool registerObject)
+void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject)
 {
 	ASSERT(this, "Actor::alignTo: null this");
 
-	int axisOfCollision = __VIRTUAL_CALL(Shape, getAxisOfCollision, this->shape, spatialObject, Body_getLastDisplacement(this->body), *CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
+	int axisOfCollision = __VIRTUAL_CALL(Shape, getAxisOfCollision, shape, collidingShape, Body_getLastDisplacement(this->body), *CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
 
 	if(axisOfCollision)
 	{
-		CollisionSolver_alignToCollidingSpatialObject(this->collisionSolver, spatialObject, axisOfCollision, registerObject);
+		CollisionSolver_alignToCollidingShape(this->collisionSolver, shape, axisOfCollision, registerObject);
 	}
 }
 
@@ -705,15 +706,9 @@ fix19_13 Actor_getElasticity(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");
 
-	return this->body ? Body_getElasticity(this->body) : this->actorDefinition->elasticity;
-}
+	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
 
-// get friction
-fix19_13 Actor_getFriction(Actor this)
-{
-	ASSERT(this, "Actor::getElasticity: null this");
-
-	return this->actorDefinition->friction;
+	return this->body ? Body_getElasticity(this->body) : physicalSpecification ? physicalSpecification->elasticity : 0;
 }
 
 // get velocity
@@ -721,10 +716,10 @@ Velocity Actor_getVelocity(Actor this)
 {
 	ASSERT(this, "Actor::getVelocity: null this");
 
-	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedInGameEntity, getVelocity, this);
+	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getVelocity, this);
 }
 
-void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), VirtualList collidingSpatialObjects __attribute__ ((unused)))
+void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), VirtualList collidingShapes __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }

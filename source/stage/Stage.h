@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Container.h>
-#include <InGameEntity.h>
+#include <Entity.h>
 #include <Printing.h>
 #include <EntityFactory.h>
 #include <Texture.h>
@@ -81,7 +81,7 @@
 		/* the ui container */ 																			\
 		UiContainer uiContainer;																		\
 		/* focus entity: needed for streaming */														\
-		InGameEntity focusInGameEntity;																	\
+		Entity focusEntity;																	\
 		/* screen's previous distance. Used for the streaming */										\
 		long screenPreviousDistance;																	\
 		/* next entity's id */																			\

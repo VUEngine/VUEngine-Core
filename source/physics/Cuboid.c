@@ -1,5 +1,5 @@
 /* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
- * A universal game engine for the Nintendo Virtual Boy
+ * A universal 'me engine for the Nintendo Virtual Boy
  *
  * Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
  *
@@ -59,10 +59,8 @@ __CLASS_FRIEND_DEFINITION(InverseCuboid);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-Shape SpatialObject_getShape(SpatialObject this);
-
-static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*));
-static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
+static u16 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*));
+static u16 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement);
 static void Cuboid_configurePolyhedron(Cuboid this, int renew);
 static bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other);
 static bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other);
@@ -103,7 +101,7 @@ void Cuboid_destructor(Cuboid this)
 }
 
 // check if two rectangles overlap
-int Cuboid_overlaps(Cuboid this, Shape shape)
+bool Cuboid_overlaps(Cuboid this, Shape shape)
 {
 	ASSERT(this, "Cuboid::overlaps: null this");
 
@@ -158,7 +156,7 @@ bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
 	return Cuboid_overlapsWithInverseRightCuboid(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
-void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 height, u16 depth, Gap gap)
+void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 height, u16 depth, const VBVec3D* displacement, bool moves)
 {
 	ASSERT(this, "Cuboid::setup: null this");
 
@@ -172,16 +170,15 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 heig
 	this->rightCuboid.z0 = -this->rightCuboid.z1;
 
 	// if owner does not move
-	if(!this->moves)
+	if(!moves)
 	{
 		// position the shape to avoid in real time calculation
-		// calculate gap on each side of the rightCuboid
-		this->rightCuboid.x0 += ownerPosition->x + ITOFIX19_13(gap.left);
-		this->rightCuboid.x1 += ownerPosition->x - ITOFIX19_13(gap.right);
-		this->rightCuboid.y0 += ownerPosition->y + ITOFIX19_13(gap.up);
-		this->rightCuboid.y1 += ownerPosition->y - ITOFIX19_13(gap.down);
-		this->rightCuboid.z0 += ownerPosition->z;
-		this->rightCuboid.z1 += ownerPosition->z;
+		this->rightCuboid.x0 += ownerPosition->x + displacement->x;
+		this->rightCuboid.x1 += ownerPosition->x + displacement->x;
+		this->rightCuboid.y0 += ownerPosition->y + displacement->y;
+		this->rightCuboid.y1 += ownerPosition->y + displacement->y;
+		this->rightCuboid.z0 += ownerPosition->z + displacement->z;
+		this->rightCuboid.z1 += ownerPosition->z + displacement->z;
 	}
 
 	this->positionedRightCuboid = this->rightCuboid;
@@ -191,17 +188,17 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 heig
 }
 
 // prepare the shape to be checked
-void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, Gap gap)
+void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, const VBVec3D* displacement)
 {
 	ASSERT(this, "Cuboid::position: null this");
 
 	// calculate positioned rightCuboid
-	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + ITOFIX19_13(gap.left);
-	this->positionedRightCuboid.y0 = this->rightCuboid.y0 + myOwnerPosition->y + ITOFIX19_13(gap.up);
-	this->positionedRightCuboid.z0 = this->rightCuboid.z0 + myOwnerPosition->z;
-	this->positionedRightCuboid.x1 = this->rightCuboid.x1 + myOwnerPosition->x - ITOFIX19_13(gap.right);
-	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y - ITOFIX19_13(gap.down);
-	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z;
+	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + displacement->x;
+	this->positionedRightCuboid.y0 = this->rightCuboid.y0 + myOwnerPosition->y + displacement->y;
+	this->positionedRightCuboid.z0 = this->rightCuboid.z0 + myOwnerPosition->z + displacement->z;
+	this->positionedRightCuboid.x1 = this->rightCuboid.x1 + myOwnerPosition->x + displacement->x;
+	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y + displacement->y;
+	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z + displacement->z;
 
 	if(isAffectedByRelativity)
 	{
@@ -243,31 +240,27 @@ RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this)
 }
 
 // determine axis of collision
-int Cuboid_getAxisOfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition)
+u16 Cuboid_getAxisOfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
 	ASSERT(collidingSpatialObject, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
 
-	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
-
-	if(__IS_INSTANCE_OF(Cuboid, shape))
+	if(__IS_INSTANCE_OF(Cuboid, collidingShape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithRightCuboid);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, collidingShape), displacement, previousPosition, &Cuboid_overlapsWithRightCuboid);
 	}
-	else if(__IS_INSTANCE_OF(InverseCuboid, shape))
+	else if(__IS_INSTANCE_OF(InverseCuboid, collidingShape))
 	{
-		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement, previousPosition, &Cuboid_overlapsWithInverseRightCuboid);
+		return Cuboid_getAxisOfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, collidingShape), displacement, previousPosition, &Cuboid_overlapsWithInverseRightCuboid);
 	}
 
 	return 0;
 }
 
 // determine axis of collision
-static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*))
+static u16 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*))
 {
 	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
-
-	Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, this->owner);
 
 	VBVec3D displacementIncrement = displacement;
 
@@ -277,17 +270,17 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 	// setup a cuboid representing the previous position
 	RightCuboid positionedRightCuboid =
 	{
-		this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left),
-		this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up),
-		this->rightCuboid.z0 + previousPosition.z - displacement.z,
+		this->rightCuboid.x0 + previousPosition.x,
+		this->rightCuboid.y0 + previousPosition.y,
+		this->rightCuboid.z0 + previousPosition.z,
 
-		this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right),
-		this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down),
-		this->rightCuboid.z1 + previousPosition.z - displacement.z,
+		this->rightCuboid.x1 + previousPosition.x,
+		this->rightCuboid.y1 + previousPosition.y,
+		this->rightCuboid.z1 + previousPosition.z,
 	};
 
-	int axisOfCollision = 0;
-	int axisToIgnore = 0;
+	u16 axisOfCollision = 0;
+	u16 axisToIgnore = 0;
 	int passes = 0;
 
 	displacement.x = 0;
@@ -333,8 +326,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				positionedRightCuboid.x1 -= displacement.x;
 
 				displacement.x += displacementIncrement.x;
-				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
-				positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
+				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x;
+				positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x;
 			}
 
 			if(!(__Y_AXIS & axisToIgnore))
@@ -353,8 +346,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				positionedRightCuboid.y1 -= displacement.y;
 
 				displacement.y += displacementIncrement.y;
-				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
-				positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
+				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y;
+				positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y;
 			}
 
 			if(!(__Z_AXIS & axisToIgnore))
@@ -389,12 +382,12 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 		passes = 0;
 		displacement = displacementIncrement;
 
-		positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
-		positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
-		positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z - displacement.z;
-		positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
-		positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
-		positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z - displacement.z;
+		positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x;
+		positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y;
+		positionedRightCuboid.z0 = this->rightCuboid.z0 + previousPosition.z;
+		positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x;
+		positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y;
+		positionedRightCuboid.z1 = this->rightCuboid.z1 + previousPosition.z;
 
 		// test for collision carrying the displacement across all axixes
 		do
@@ -413,8 +406,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				}
 
 				displacement.x += displacementIncrement.x;
-				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x + ITOFIX19_13(gap.left);
-				positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x - ITOFIX19_13(gap.right);
+				positionedRightCuboid.x0 = this->rightCuboid.x0 + previousPosition.x;
+				positionedRightCuboid.x1 = this->rightCuboid.x1 + previousPosition.x;
 			}
 
 			if(displacementIncrement.y)
@@ -430,8 +423,8 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 				}
 
 				displacement.y += displacementIncrement.y;
-				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y + ITOFIX19_13(gap.up);
-				positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y - ITOFIX19_13(gap.down);
+				positionedRightCuboid.y0 = this->rightCuboid.y0 + previousPosition.y;
+				positionedRightCuboid.y1 = this->rightCuboid.y1 + previousPosition.y;
 			}
 
 			if(displacementIncrement.z)
@@ -458,15 +451,13 @@ static int Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 }
 
 // test if collision with the entity give the displacement
-int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VBVec3D displacement)
+bool Cuboid_testIfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollision: null this");
 
-	Shape shape = __VIRTUAL_CALL(SpatialObject, getShape, collidingSpatialObject);
-
-	if(__IS_INSTANCE_OF(Cuboid, shape))
+	if(__IS_INSTANCE_OF(Cuboid, collidingShape))
 	{
-		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, shape), displacement);
+		return Cuboid_testIfCollisionWithCuboid(this, __SAFE_CAST(Cuboid, collidingShape), displacement);
 	}
 	// TODO: implement
 	/*
@@ -480,7 +471,7 @@ int Cuboid_testIfCollision(Cuboid this, SpatialObject collidingSpatialObject, VB
 }
 
 // test if collision with the entity give the displacement
-static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
+static u16 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
 {
 	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
 
@@ -490,7 +481,7 @@ static int Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 	// get colliding entity's rightcuboid
 	RightCuboid otherRightCuboid = cuboid->positionedRightCuboid;
 
-	int axisOfPossibleCollision = 0;
+	u16 axisOfPossibleCollision = 0;
 
 	if(displacement.x)
 	{
@@ -567,7 +558,7 @@ void Cuboid_show(Cuboid this)
 {
 	ASSERT(this, "Cuboid::draw: null this");
 
-	Cuboid_configurePolyhedron(this, this->moves || !this->ready);
+	Cuboid_configurePolyhedron(this, !this->ready);
 
 	// draw the Polyhedron
 	Polyhedron_show(this->polyhedron);

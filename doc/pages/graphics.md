@@ -226,7 +226,7 @@ Used for static images like backgrounds, logos, etc.
 
 In order to play a specific animation, call the following method:
 
-    AnimatedInGameEntity_playAnimation(__SAFE_CAST(AnimatedInGameEntity, this), "Blink");
+    AnimatedEntity_playAnimation(__SAFE_CAST(AnimatedEntity, this), "Blink");
 
 Or directly:
 

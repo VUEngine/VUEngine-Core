@@ -525,7 +525,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	// make sure no entity is set as focus for the screen
-	Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+	Screen_setFocusGameEntity(Screen_getInstance(), NULL);
 
 	// must make sure that all textures are completely written
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);

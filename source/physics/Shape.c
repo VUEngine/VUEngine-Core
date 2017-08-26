@@ -64,9 +64,6 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	// set the owner
 	this->owner = owner;
 
-	// do I move?
-	this->moves = __VIRTUAL_CALL(SpatialObject, moves, owner);
-
 	// not checked yet
 	this->checked = false;
 
@@ -134,37 +131,6 @@ void Shape_setActive(Shape this, bool active)
 	{
 		CollisionManager_shapeBecameInactive(Game_getCollisionManager(Game_getInstance()), this);
 	}
-}
-
-/**
- * Do I move?
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
- *
- * @return		Owning SpatialObject
- */
-bool Shape_moves(Shape this)
-{
-	ASSERT(this, "Shape::moves: null this");
-
-	return this->moves;
-}
-
-/**
- * Set flag
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
- * @param 		flag
- */
-void Shape_setMovesFlag(Shape this, bool moves)
-{
-	this->moves = moves;
 }
 
 /**

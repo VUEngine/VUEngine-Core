@@ -26,9 +26,7 @@
 
 #include <ManagedEntity.h>
 #include <Optics.h>
-#include <Shape.h>
-#include <MBgmapSprite.h>
-#include <Screen.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -41,35 +39,34 @@
  * @ingroup stage-entities
  */
 __CLASS_DEFINITION(ManagedEntity, Entity);
-__CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
-
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id, internalId, name);
+__CLASS_NEW_DEFINITION(ManagedEntity, EntityDefinition* definition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ManagedEntity, definition, id, internalId, name);
 
 // class's constructor
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name)
+void ManagedEntity_constructor(ManagedEntity this, EntityDefinition* definition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "ManagedEntity::constructor: null this");
 
-	// construct base Entity
-	__CONSTRUCT_BASE(Entity, (EntityDefinition*)managedEntityDefinition, id, internalId, name);
+	// construct base
+	__CONSTRUCT_BASE(Entity, definition, id, internalId, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);
@@ -91,7 +88,7 @@ void ManagedEntity_destructor(ManagedEntity this)
 		this->managedSprites = NULL;
 	}
 
-	// destroy the super Entity
+	// delete the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
@@ -213,6 +210,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	{
 		__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
 
+		this->invalidateGlobalTransformation = 0;
+
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
 		VBVec2D position2D;
@@ -232,15 +231,19 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 
-	this->invalidateSprites = invalidateTransformationFlag | (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
-
-	// call base class's transform method
 	if((__INVALIDATE_POSITION & this->invalidateGlobalTransformation) |
 		(u32)this->children)
 	{
 		// call base class's transform method
 		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 	}
+
+	// apply environment transform
+	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
+
+	this->invalidateSprites |= __INVALIDATE_POSITION;
+
+	this->invalidateGlobalTransformation = 0;
 }
 
 void ManagedEntity_synchronizeGraphics(ManagedEntity this)
@@ -303,6 +306,12 @@ void ManagedEntity_releaseGraphics(ManagedEntity this)
 	}
 
 	__CALL_BASE_METHOD(Entity, releaseGraphics, this);
+}
+
+// execute logic
+void ManagedEntity_update(ManagedEntity this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
+{
+	ASSERT(this, "ManagedEntity::update: null this");
 }
 
 int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))

@@ -79,21 +79,21 @@ void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unus
 
 	Screen screen = Screen_getInstance();
 
-	// if focusInGameEntity is defined
-	if(screen && screen->focusInGameEntity)
+	// if focusEntity is defined
+	if(screen && screen->focusEntity)
 	{
-		Container focusInGameEntityParent = Container_getParent(__SAFE_CAST(Container, screen->focusInGameEntity));
+		Container focusEntityParent = Container_getParent(__SAFE_CAST(Container, screen->focusEntity));
 
-		if(focusInGameEntityParent)
+		if(focusEntityParent)
 		{
-			// get focusInGameEntity is moving
-			if(__VIRTUAL_CALL(InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+			// get focusEntity is moving
+			if(__VIRTUAL_CALL(SpatialObject, isMoving, screen->focusEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				screen->lastDisplacement = screen->position;
 
-				// get focusInGameEntity's position
-				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusInGameEntity));
+				// get focusEntity's position
+				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusEntity));
 
 				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__HALF_SCREEN_WIDTH);
 				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__HALF_SCREEN_HEIGHT);

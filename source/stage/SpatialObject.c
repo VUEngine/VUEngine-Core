@@ -34,7 +34,6 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-Shape SpatialObject_getShape(SpatialObject this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,20 +80,6 @@ void SpatialObject_destructor(SpatialObject this)
 	__DESTROY_BASE;
 }
 
-Shape SpatialObject_getShape(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::getShape: null this");
-
-	return NULL;
-}
-
-int SpatialObject_getShapeType(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::getShapeType: null this");
-
-	return kCuboid;
-}
-
 // does it move?
 bool SpatialObject_moves(SpatialObject this __attribute__ ((unused)))
 {
@@ -104,10 +89,18 @@ bool SpatialObject_moves(SpatialObject this __attribute__ ((unused)))
 	return false;
 }
 
-// defaults to true
-int SpatialObject_canMoveOverAxis(SpatialObject this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
+bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::canMoveOverAxis: null this");
+	ASSERT(this, "SpatialObject::isMoving: null this");
+
+	return false;
+}
+
+
+// defaults to true
+u16 SpatialObject_getAxisAllowedForMovement(SpatialObject this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::getAxisAllowedForMovement: null this");
 
 	return false;
 }
@@ -131,23 +124,6 @@ u16 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
 	ASSERT(this, "SpatialObject::getDepth: null this");
 
 	return 0;
-}
-
-Gap SpatialObject_getGap(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::getGap: null this");
-
-	Gap gap =
-	{
-			0, 0, 0, 0
-	};
-
-	return gap;
-}
-
-void SpatialObject_calculateGap(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::calculateGap: null this");
 }
 
 const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
@@ -198,9 +174,34 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unu
 	return false;
 }
 
-bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), VirtualList collidingSpatialObjects __attribute__ ((unused)))
+bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), VirtualList collidingShapes __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::processCollision: null this");
 
 	return false;
+}
+
+
+u16 SpatialObject_getMovementState(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::getMovementState: null this");
+
+	return 0;
+}
+
+/**
+ * Retrieve shapes list
+ *
+ * @memberof	SpatialObject
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		SpatialObject's Shape list
+ */
+VirtualList SpatialObject_getShapes(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::getShapes: null this");
+
+	return NULL;
 }

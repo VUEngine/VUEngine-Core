@@ -203,7 +203,7 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
-	if(__Z_AXIS & Body_isMoving(this->body))
+	if(__Z_AXIS & Body_getMovementOverAllAxis(this->body))
 	{
 		// calculate sprite's parallax
 		__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
@@ -403,9 +403,9 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
+u16 Particle_getAxisAllowedForMovement(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
 {
-	ASSERT(this, "Particle::canMoveOverAxis: null this");
+	ASSERT(this, "Particle::getAxisAllowedForMovement: null this");
 
 	return (int)Body_getAxisSubjectToGravity(this->body);
 }

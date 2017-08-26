@@ -28,8 +28,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Entity.h>
-#include <Sprite.h>
-#include <Telegram.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -46,10 +44,13 @@
 		__VIRTUAL_SET(ClassName, ManagedEntity, transform);												\
 		__VIRTUAL_SET(ClassName, ManagedEntity, synchronizeGraphics);									\
 		__VIRTUAL_SET(ClassName, ManagedEntity, releaseGraphics);										\
+		__VIRTUAL_SET(ClassName, ManagedEntity, update);												\
 		__VIRTUAL_SET(ClassName, ManagedEntity, passMessage);											\
 		__VIRTUAL_SET(ClassName, ManagedEntity, ready);													\
 		__VIRTUAL_SET(ClassName, ManagedEntity, suspend);												\
 		__VIRTUAL_SET(ClassName, ManagedEntity, resume);												\
+
+__CLASS(ManagedEntity);
 
 #define ManagedEntity_ATTRIBUTES																		\
 		/* it is derived from */																		\
@@ -59,33 +60,33 @@
 		/* previous 2d projected position */															\
 		VBVec2D previous2DPosition;																		\
 
-__CLASS(ManagedEntity);
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 typedef EntityDefinition ManagedEntityDefinition;
-typedef const ManagedEntityDefinition ManagedEntityROMDef;
 
+typedef const ManagedEntityDefinition ManagedEntityROMDef;
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name);
+__CLASS_NEW_DECLARE(ManagedEntity, EntityDefinition* definition, s16 id, s16 internalId, const char* const name);
 
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name);
+void ManagedEntity_constructor(ManagedEntity this, EntityDefinition* definition, s16 id, s16 internalId, const char* const name);
 void ManagedEntity_destructor(ManagedEntity this);
 void ManagedEntity_removeChild(ManagedEntity this, Container child);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive);
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void ManagedEntity_synchronizeGraphics(ManagedEntity this);
 void ManagedEntity_releaseGraphics(ManagedEntity this);
+void ManagedEntity_update(ManagedEntity this, u32 elapsedTime);
 int ManagedEntity_passMessage(ManagedEntity this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 void ManagedEntity_ready(ManagedEntity this, bool recursive);
 void ManagedEntity_suspend(ManagedEntity this);
 void ManagedEntity_resume(ManagedEntity this);
+
 
 #endif

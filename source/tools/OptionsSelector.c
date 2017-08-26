@@ -59,10 +59,10 @@
 #include <Cuboid.h>
 #include <Shape.h>
 #include <Actor.h>
-#include <InanimatedInGameEntity.h>
+#include <Entity.h>
 #include <Container.h>
 #include <Entity.h>
-#include <InGameEntity.h>
+#include <Entity.h>
 #include <GameState.h>
 #include <Stage.h>
 

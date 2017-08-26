@@ -93,8 +93,8 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 	this->focusEntityPositionDisplacement.z = 0;
 
 	// clear focus actor pointer
-	this->focusInGameEntity = NULL;
-	this->focusInGameEntityPosition = NULL;
+	this->focusEntity = NULL;
+	this->focusEntityPosition = NULL;
 
 	this->lastDisplacement.x = 0;
 	this->lastDisplacement.y = 0;
@@ -189,16 +189,16 @@ void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving)
 }
 
 // set the focus entity
-void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
+void Screen_setFocusGameEntity(Screen this, Entity focusEntity)
 {
-	ASSERT(this, "Screen::setFocusInGameEntity: null this");
+	ASSERT(this, "Screen::setFocusEntity: null this");
 
-	this->focusInGameEntity = focusInGameEntity;
-	this->focusInGameEntityPosition = NULL;
+	this->focusEntity = focusEntity;
+	this->focusEntityPosition = NULL;
 
-	if(focusInGameEntity)
+	if(focusEntity)
 	{
-		this->focusInGameEntityPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this->focusInGameEntity);
+		this->focusEntityPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this->focusEntity);
 
 		// focus now
 		Screen_focus(this, false);
@@ -206,11 +206,11 @@ void Screen_setFocusInGameEntity(Screen this, InGameEntity focusInGameEntity)
 }
 
 // unset the focus entity
-void Screen_unsetFocusInGameEntity(Screen this)
+void Screen_unsetFocusEntity(Screen this)
 {
-	ASSERT(this, "Screen::unsetFocusInGameEntity: null this");
+	ASSERT(this, "Screen::unsetFocusEntity: null this");
 
-	this->focusInGameEntity = NULL;
+	this->focusEntity = NULL;
 
 	this->lastDisplacement.x = 0;
 	this->lastDisplacement.y = 0;
@@ -218,21 +218,21 @@ void Screen_unsetFocusInGameEntity(Screen this)
 }
 
 // retrieve focus entity
-InGameEntity Screen_getFocusInGameEntity(Screen this)
+Entity Screen_getFocusEntity(Screen this)
 {
-	ASSERT(this, "Screen::getFocusInGameEntity: null this");
+	ASSERT(this, "Screen::getFocusEntity: null this");
 
-	return this->focusInGameEntity;
+	return this->focusEntity;
 }
 
 // an actor has been deleted
-void Screen_onFocusEntityDeleted(Screen this, InGameEntity actor)
+void Screen_onFocusEntityDeleted(Screen this, Entity actor)
 {
 	ASSERT(this, "Screen::focusEntityDeleted: null this");
 
-	if(this->focusInGameEntity == actor)
+	if(this->focusEntity == actor)
 	{
-		Screen_unsetFocusInGameEntity(this);
+		Screen_unsetFocusEntity(this);
 	}
 }
 

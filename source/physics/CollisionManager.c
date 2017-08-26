@@ -70,7 +70,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-Shape SpatialObject_getShape(SpatialObject this);
 static void CollisionManager_processInactiveShapes(CollisionManager this);
 
 //---------------------------------------------------------------------------------------------------------
@@ -118,38 +117,26 @@ void CollisionManager_destructor(CollisionManager this)
 }
 
 // register a shape
-Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, int shapeType)
+Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition)
 {
 	ASSERT(this, "CollisionManager::createShape: null this");
 
 	// if the entity is already registered
-	Shape shape = CollisionManager_getShape(this, owner);
+	Shape shape = CollisionManager_findShape(this, owner);
 
 	if(shape)
 	{
 		return shape;
 	}
 
-	switch(shapeType)
-	{
-		case kCircle:
+	// otherwise create the shape
+	shape = ((Shape (*)(SpatialObject)) shapeDefinition->allocator)(owner);
 
-			//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, owner));
-			break;
-
-		case kCuboid:
-
-			VirtualList_pushFront(this->shapes, (void*)__NEW(Cuboid, owner));
-			break;
-
-		case kInverseCuboid:
-
-			VirtualList_pushFront(this->shapes, (void*)__NEW(InverseCuboid, owner));
-			break;
-	}
+	// register it
+	VirtualList_pushFront(this->shapes, shape);
 
 	// return created shape
-	return __SAFE_CAST(Shape, VirtualList_front(this->shapes));
+	return shape;
 }
 
 // remove a shape
@@ -169,7 +156,7 @@ void CollisionManager_destroyShape(CollisionManager this, Shape shape)
 }
 
 // find a shape given an owner
-Shape CollisionManager_getShape(CollisionManager this, SpatialObject owner)
+Shape CollisionManager_findShape(CollisionManager this, SpatialObject owner)
 {
 	ASSERT(this, "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
@@ -265,7 +252,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 		if(shape->checkForCollisions)
 		{
-			VirtualList collidingSpatialObjects = NULL;
+			VirtualList collidingShapes = NULL;
 
 			// the result thrown by the collision algorithm
 			int collisionResult = kNoCollision;
@@ -290,26 +277,26 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 					if(collisionResult)
 					{
-						if(!collidingSpatialObjects)
+						if(!collidingShapes)
 						{
-							collidingSpatialObjects = __NEW(VirtualList);
+							collidingShapes = __NEW(VirtualList);
 						}
 
 						// add object to list
-						VirtualList_pushFront(collidingSpatialObjects, shapeToCheck->owner);
+						VirtualList_pushFront(collidingShapes, shapeToCheck);
 					}
 				}
 			}
 
-			if(collidingSpatialObjects)
+			if(collidingShapes)
 			{
 				// inform the owner about the collision
-				returnValue |= __VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, collidingSpatialObjects);
+				returnValue |= __VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, shape, collidingShapes);
 
-				__DELETE(collidingSpatialObjects);
+				__DELETE(collidingShapes);
 			}
 
-			collidingSpatialObjects = NULL;
+			collidingShapes = NULL;
 		}
 	}
 
@@ -469,7 +456,7 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 			NM_ASSERT(VirtualList_getSize(this->activeShapes), "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
 
 			// check if shapes overlap
-			if(__VIRTUAL_CALL(Shape, testIfCollision, shape, __SAFE_CAST(SpatialObject, shapeToCheck->owner), displacement))
+			if(__VIRTUAL_CALL(Shape, testIfCollision, shape, shapeToCheck, displacement))
 			{
 				collidingObject = shapeToCheck->owner;
 				break;

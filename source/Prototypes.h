@@ -39,7 +39,6 @@
 // since there is no way to forward declare typedefs in C...
 
 // must forward declare
-Shape Entity_getShape(Entity this);
 AnimationController Sprite_getAnimationController(Sprite this);
 
 

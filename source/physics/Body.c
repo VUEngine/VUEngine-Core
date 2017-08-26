@@ -329,7 +329,7 @@ void Body_clearForce(Body this)
 }
 
 // apply force
-void Body_applyForce(Body this, const Force* force, int clearAxis, bool informAboutAwakening)
+void Body_applyForce(Body this, const Force* force, u16 clearAxis, bool informAboutAwakening)
 {
 	ASSERT(this, "Body::applyForce: null this");
 
@@ -434,7 +434,7 @@ void Body_addForce(Body this, const Force* force, bool informAboutAwakening)
 	ASSERT(this, "Body::addForce: null this");
 	ASSERT(force, "Body::addForce: null force");
 
-	Body_applyForce(this, force, ~Body_isMoving(this), informAboutAwakening);
+	Body_applyForce(this, force, ~Body_getMovementOverAllAxis(this), informAboutAwakening);
 }
 
 // update movement
@@ -728,8 +728,8 @@ void Body_stopMovement(Body this, int axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
-	int axisOfMovement = Body_isMoving(this);
-	int axisOfStopping = 0;
+	u16 axisOfMovement = Body_getMovementOverAllAxis(this);
+	u16 axisOfStopping = 0;
 
 	if((axisOfMovement & __X_AXIS) && (axis & __X_AXIS))
 	{
@@ -760,7 +760,7 @@ void Body_stopMovement(Body this, int axis)
 
 	if(axisOfStopping)
 	{
-		if(!Body_isMoving(this))
+		if(!Body_getMovementOverAllAxis(this))
 		{
 			Body_sleep(this);
 		}
@@ -931,11 +931,11 @@ void Body_sleep(Body this)
 }
 
 // is it moving?
-int Body_isMoving(Body this)
+u16 Body_getMovementOverAllAxis(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
-	int result = 0;
+	u16 result = 0;
 
 	result |= ((int)FIX19_13TOI(this->velocity.x) | this->acceleration.x) ? __X_AXIS : 0;
 	result |= ((int)FIX19_13TOI(this->velocity.y) | this->acceleration.y) ? __Y_AXIS : 0;

@@ -203,16 +203,6 @@ typedef struct Scale
 
 } Scale;
 
-// collision detection gap space
-typedef struct Gap
-{
-	s8 up;
-	s8 down;
-	s8 left;
-	s8 right;
-
-} Gap;
-
 // used to represent a screen position with parallax info
 typedef struct VBVec2D
 {

@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <AnimatedInGameEntity.h>
+#include <AnimatedEntity.h>
 #include <GameState.h>
 
 
@@ -53,14 +53,14 @@ __CLASS(AnimationInspector);
  *
  * @memberof	AnimationInspector
  */
-typedef struct UserAnimatedInGameEntity
+typedef struct UserAnimatedEntity
 {
 	/// definition
-	const AnimatedInGameEntityDefinition* animatedInGameEntityDefinition;
+	const AnimatedEntityDefinition* animatedEntityDefinition;
 	/// name
 	const char* name;
 
-} UserAnimatedInGameEntity;
+} UserAnimatedEntity;
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -36,7 +36,7 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(ReflectiveEntity, InanimatedInGameEntity);
+__CLASS_DEFINITION(ReflectiveEntity, Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinit
 	ASSERT(this, "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(InanimatedInGameEntity, &reflectiveEntityDefinition->inGameEntityDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(Entity, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
 	this->waveLutIndexIncrement = FIX19_13_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, FIX19_13_DIV(ITOFIX19_13(reflectiveEntityDefinition->numberOfWaveLutEntries), ITOFIX19_13(reflectiveEntityDefinition->width)));
@@ -85,7 +85,7 @@ void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
 	ASSERT(this, "ReflectiveEntity::ready: null this");
 
 	// call base
-	__CALL_BASE_METHOD(InanimatedInGameEntity, ready, this, recursive);
+	__CALL_BASE_METHOD(Entity, ready, this, recursive);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -95,7 +95,7 @@ void ReflectiveEntity_suspend(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::suspend: null this");
 
-	__CALL_BASE_METHOD(InanimatedInGameEntity, suspend, this);
+	__CALL_BASE_METHOD(Entity, suspend, this);
 
 	// remove post processing effect
 	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -105,7 +105,7 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::resume: null this");
 
-	__CALL_BASE_METHOD(InanimatedInGameEntity, resume, this);
+	__CALL_BASE_METHOD(Entity, resume, this);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));

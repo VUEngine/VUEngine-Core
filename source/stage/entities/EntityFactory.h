@@ -30,6 +30,8 @@
 #include <Object.h>
 #include <Sprite.h>
 #include <Container.h>
+#include <Shape.h>
+#include <Body.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,8 +85,20 @@ typedef struct EntityDefinition
 	// the class allocator
 	AllocatorPointer allocator;
 
-	// the sprite
-	const SpriteDefinition** spritesDefinitions;
+	// the sprites list
+	const SpriteDefinition** spriteDefinitions;
+
+	// shapes to register
+	const ShapeDefinition* shapeDefinitions;
+
+	// if 0, width and height will be inferred from the first sprite's texture's size
+	Size size;
+
+	// gameworld's character's type
+	u32 inGameType;
+
+	// physical specification
+	PhysicalSpecification* physicalSpecification;
 
 } EntityDefinition;
 

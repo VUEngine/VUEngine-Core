@@ -38,10 +38,10 @@
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, int, overlaps, Shape shape);											\
-		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* ownerPosition, u16 width, u16 height, u16 depth, Gap gap);								\
-		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, Gap gap);								\
-		__VIRTUAL_DEC(ClassName, int, getAxisOfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement, VBVec3D previousPosition);	\
-		__VIRTUAL_DEC(ClassName, int, testIfCollision, SpatialObject collidingSpatialObject, VBVec3D displacement);									\
+		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D*, u16 width, u16 height, u16 depth, const VBVec3D* displacement, bool moves);		\
+		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, const VBVec3D* displacement);		\
+		__VIRTUAL_DEC(ClassName, u16, getAxisOfCollision, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition);				\
+		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);											\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
@@ -57,12 +57,6 @@
 		 * @memberof			Shape
 		 */																								\
 		SpatialObject owner;																			\
-		/**
-		 * @var u8 				moves
-		 * @brief				flag to know if the shapes below to an entity which moves
-		 * @memberof			Shape
-		 */																								\
-		u8 moves;																						\
 		/**
 		 * @var u8 				checked
 		 * @brief				whether it has been checked for collision in current update
@@ -97,6 +91,25 @@ enum ShapeTypes
 	kInverseCuboid,
 };
 
+// defines a shape
+typedef struct ShapeDefinition
+{
+	// the class allocator
+	AllocatorPointer allocator;
+
+	// size
+	Size size;
+
+	/// displacement modifier
+	VBVec3D displacement;
+
+	// if true this shape checks for collisions against other shapes
+	bool checkForCollisions;
+
+} ShapeDefinition;
+
+typedef const ShapeDefinition ShapeROMDef;
+
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
@@ -112,7 +125,6 @@ bool Shape_isActive(Shape this);
 bool Shape_isChecked(Shape this);
 void Shape_setChecked(Shape this, bool checked);
 bool Shape_isReady(Shape this);
-bool Shape_moves(Shape this);
 void Shape_setMovesFlag(Shape this, bool moves);
 void Shape_print(Shape this, int x, int y);
 void Shape_setActive(Shape this, bool active);
