@@ -107,6 +107,8 @@ __SINGLETON(BgmapTextureManager);
  */
 static void __attribute__ ((noinline)) BgmapTextureManager_constructor(BgmapTextureManager this)
 {
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	BgmapTextureManager_reset(this);
@@ -122,7 +124,7 @@ static void __attribute__ ((noinline)) BgmapTextureManager_constructor(BgmapText
  */
 void BgmapTextureManager_destructor(BgmapTextureManager this)
 {
-	ASSERT(this, "BgmapTextureManager::destructor: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -138,7 +140,7 @@ void BgmapTextureManager_destructor(BgmapTextureManager this)
  */
 void BgmapTextureManager_reset(BgmapTextureManager this)
 {
-	ASSERT(this, "BgmapTextureManager::reset: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::reset: null this");
 	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
 	this->availableBgmapSegmentsForTextures = (u32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
@@ -197,7 +199,7 @@ void BgmapTextureManager_reset(BgmapTextureManager this)
  */
 static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::doAllocate: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::doAllocate: null this");
 
 	int i = 0;
 	int j = 0;
@@ -322,7 +324,7 @@ static int BgmapTextureManager_doAllocate(BgmapTextureManager this, BgmapTexture
 /*
 void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::allocateText: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::allocateText: null this");
 
 	//int xDisplacement = 0;
 	int yDisplacement = 0;
@@ -362,7 +364,7 @@ void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgm
  */
 void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::free: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::free: null this");
 
 	// if no one is using the texture anymore
 	if(__IS_OBJECT_ALIVE(bgmapTexture) && BgmapTexture_decreaseUsageCount(bgmapTexture))
@@ -404,7 +406,7 @@ void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture b
  */
 static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::findTexture: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::findTexture: null this");
 
 	int i = 0;
 	TextureDefinition* textureDefinition = (TextureDefinition*)bgmapTextureDefinition;
@@ -497,7 +499,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
  */
 static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::allocateTexture: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::allocateTexture: null this");
 
 	int i = 0;
 
@@ -532,7 +534,7 @@ static BgmapTexture BgmapTextureManager_allocateTexture(BgmapTextureManager this
  */
 BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::getTexture: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::getTexture: null this");
 
 	BgmapTexture bgmapTexture = NULL;
 
@@ -592,7 +594,7 @@ BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextu
  */
 s16 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
 {
-	ASSERT(this, "BgmapTextureManager::getXOffset: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::getXOffset: null this");
 
 	return this->offset[id][kXOffset];
 }
@@ -610,7 +612,7 @@ s16 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id)
  */
 s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
 {
-	ASSERT(this, "BgmapTextureManager::getYOffset: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::getYOffset: null this");
 
 	return this->offset[id][kYOffset];
 }
@@ -627,7 +629,7 @@ s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id)
  */
 s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this)
 {
-	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegmentsForTextures: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::getAvailableBgmapSegmentsForTextures: null this");
 
 	return this->availableBgmapSegmentsForTextures;
 }
@@ -644,7 +646,7 @@ s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager
  */
 s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
 {
-	ASSERT(this, "BgmapTextureManager::getPrintingBgmapSegment: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::getPrintingBgmapSegment: null this");
 
 	return this->printingBgmapSegment;
 }
@@ -659,7 +661,7 @@ s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this)
  */
 void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this)
 {
-	ASSERT(this, "BgmapTextureManager::calculateAvailableBgmapSegments: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::calculateAvailableBgmapSegments: null this");
 
 	u32 paramTableBase = ParamTableManager_getParamTableBase(ParamTableManager_getInstance());
 
@@ -683,7 +685,7 @@ void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager thi
  */
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y)
 {
-	ASSERT(this, "BgmapTextureManager::print: null this");
+	ASSERT(__SAFE_CAST(BgmapTextureManager, this), "BgmapTextureManager::print: null this");
 
 	int index = 0;
 	int textureCount = 0;

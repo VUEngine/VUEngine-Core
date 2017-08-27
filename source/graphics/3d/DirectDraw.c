@@ -86,6 +86,8 @@ __SINGLETON(DirectDraw);
  */
 static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
 {
+	ASSERT(__SAFE_CAST(DirectDraw, this), "DirectDraw::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 }
 
@@ -99,6 +101,8 @@ static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
  */
 void DirectDraw_destructor(DirectDraw this)
 {
+	ASSERT(__SAFE_CAST(DirectDraw, this), "DirectDraw::destructor: null this");
+
 	// allow a new construct
 	__SINGLETON_DESTROY;
 }
@@ -120,6 +124,8 @@ void DirectDraw_destructor(DirectDraw this)
  */
 void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
 {
+	ASSERT(__SAFE_CAST(DirectDraw, this), "DirectDraw::drawPixel: null this");
+
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
@@ -149,6 +155,8 @@ void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, 
  */
 void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y)
 {
+	ASSERT(__SAFE_CAST(DirectDraw, this), "DirectDraw::drawBlackPixel: null this");
+
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
@@ -174,6 +182,8 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
  */
 void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int color)
 {
+	ASSERT(__SAFE_CAST(DirectDraw, this), "DirectDraw::drawLine: null this");
+
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 

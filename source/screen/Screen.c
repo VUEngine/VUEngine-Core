@@ -70,7 +70,7 @@ __SINGLETON(Screen);
 // class's constructor
 static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 {
-	ASSERT(this, "Screen::constructor: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -131,7 +131,7 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 // class's destructor
 void Screen_destructor(Screen this)
 {
-	ASSERT(this, "Screen::destructor: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::destructor: null this");
 
 	// destroy base
 	__SINGLETON_DESTROY;
@@ -140,7 +140,7 @@ void Screen_destructor(Screen this)
 // set the movement manager
 void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMovementManager)
 {
-	ASSERT(this, "Screen::setScreenMovementManager: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setScreenMovementManager: null this");
 
 	if(this->screenMovementManager != screenMovementManager)
 	{
@@ -156,7 +156,7 @@ void Screen_setScreenMovementManager(Screen this, ScreenMovementManager screenMo
 // set the effect manager
 void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffectManager)
 {
-	ASSERT(this, "Screen::setScreenEffectManager: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setScreenEffectManager: null this");
 
 	if(this->screenEffectManager != screenEffectManager)
 	{
@@ -172,7 +172,7 @@ void Screen_setScreenEffectManager(Screen this, ScreenEffectManager screenEffect
 // center world's screen in function of focus actor's position
 void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving)
 {
-	ASSERT(this, "Screen::focus: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::focus: null this");
 	ASSERT(this->screenMovementManager, "Screen::focus: null screenMovementManager");
 
 #ifdef __DEBUG_TOOLS
@@ -191,7 +191,7 @@ void Screen_focus(Screen this, u32 checkIfFocusEntityIsMoving)
 // set the focus entity
 void Screen_setFocusGameEntity(Screen this, Entity focusEntity)
 {
-	ASSERT(this, "Screen::setFocusEntity: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setFocusEntity: null this");
 
 	this->focusEntity = focusEntity;
 	this->focusEntityPosition = NULL;
@@ -208,7 +208,7 @@ void Screen_setFocusGameEntity(Screen this, Entity focusEntity)
 // unset the focus entity
 void Screen_unsetFocusEntity(Screen this)
 {
-	ASSERT(this, "Screen::unsetFocusEntity: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::unsetFocusEntity: null this");
 
 	this->focusEntity = NULL;
 
@@ -220,7 +220,7 @@ void Screen_unsetFocusEntity(Screen this)
 // retrieve focus entity
 Entity Screen_getFocusEntity(Screen this)
 {
-	ASSERT(this, "Screen::getFocusEntity: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::getFocusEntity: null this");
 
 	return this->focusEntity;
 }
@@ -228,7 +228,7 @@ Entity Screen_getFocusEntity(Screen this)
 // an actor has been deleted
 void Screen_onFocusEntityDeleted(Screen this, Entity actor)
 {
-	ASSERT(this, "Screen::focusEntityDeleted: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::focusEntityDeleted: null this");
 
 	if(this->focusEntity == actor)
 	{
@@ -240,7 +240,7 @@ void Screen_onFocusEntityDeleted(Screen this, Entity actor)
 // translate screen
 void Screen_move(Screen this, VBVec3D translation, int cap)
 {
-	ASSERT(this, "Screen::move: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::move: null this");
 
 	this->lastDisplacement = translation;
 
@@ -257,7 +257,7 @@ void Screen_move(Screen this, VBVec3D translation, int cap)
 // translate screen
 void Screen_capPosition(Screen this)
 {
-	ASSERT(this, "Screen::capPosition: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::capPosition: null this");
 
 	if(this->position.x < 0)
 	{
@@ -293,7 +293,7 @@ void Screen_capPosition(Screen this)
 // get screen's position
 VBVec3D Screen_getPosition(Screen this)
 {
-	ASSERT(this, "Screen::getPosition: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::getPosition: null this");
 
 	return this->position;
 }
@@ -301,7 +301,7 @@ VBVec3D Screen_getPosition(Screen this)
 // set screen's position
 void Screen_setPosition(Screen this, VBVec3D position)
 {
-	ASSERT(this, "Screen::setPosition: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setPosition: null this");
 
 	this->position = position;
 
@@ -315,7 +315,7 @@ void Screen_setPosition(Screen this, VBVec3D position)
 // set screen's position for UI transformation
 void Screen_prepareForUITransform(Screen this)
 {
-	ASSERT(this, "Screen::prepareForUITransform: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::prepareForUITransform: null this");
 
 	this->positionBackup = this->position;
 
@@ -327,7 +327,7 @@ void Screen_prepareForUITransform(Screen this)
 // set screen's position after UI transformation
 void Screen_doneUITransform(Screen this)
 {
-	ASSERT(this, "Screen::doneUITransform: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::doneUITransform: null this");
 
 	this->position = this->positionBackup;
 
@@ -339,7 +339,7 @@ void Screen_doneUITransform(Screen this)
 // retrieve optical config structure
 Optical Screen_getOptical(Screen this)
 {
-	ASSERT(this, "Screen::getOptical: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::getOptical: null this");
 
 	return this->optical;
 }
@@ -347,7 +347,7 @@ Optical Screen_getOptical(Screen this)
 // set optical config structure
 void Screen_setOptical(Screen this, Optical optical)
 {
-	ASSERT(this, "Screen::setOptical: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setOptical: null this");
 
 	this->optical = optical;
 }
@@ -355,7 +355,7 @@ void Screen_setOptical(Screen this, Optical optical)
 // set screen's position displacement
 void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement)
 {
-	ASSERT(this, "Screen::setPosition: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setPosition: null this");
 
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
 
@@ -369,7 +369,7 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 // retrieve last displacement
 VBVec3D Screen_getLastDisplacement(Screen this)
 {
-	ASSERT(this, "Screen::getLastDisplacement: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::getLastDisplacement: null this");
 
 	return this->lastDisplacement;
 }
@@ -377,7 +377,7 @@ VBVec3D Screen_getLastDisplacement(Screen this)
 // get current stage's size
 Size Screen_getStageSize(Screen this)
 {
-	ASSERT(this, "Screen::getStageSize: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::getStageSize: null this");
 
 	return this->stageSize;
 }
@@ -385,7 +385,7 @@ Size Screen_getStageSize(Screen this)
 // set current stage's size
 void Screen_setStageSize(Screen this, Size size)
 {
-	ASSERT(this, "Screen::setStageSize: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setStageSize: null this");
 
 	this->stageSize = size;
 }
@@ -393,7 +393,7 @@ void Screen_setStageSize(Screen this, Size size)
 // force values as if screen is moving
 void Screen_forceDisplacement(Screen this, int flag)
 {
-	ASSERT(this, "Screen::forceDisplacement: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::forceDisplacement: null this");
 
 	this->lastDisplacement.x = flag ? __1I_FIX19_13 : 0;
 	this->lastDisplacement.y = flag ? __1I_FIX19_13 : 0;
@@ -402,7 +402,7 @@ void Screen_forceDisplacement(Screen this, int flag)
 
 void Screen_startEffect(Screen this, int effect, ...)
 {
-	ASSERT(this, "Screen::startEffect: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::startEffect: null this");
 
 	va_list args;
 	va_start(args, effect);
@@ -412,14 +412,14 @@ void Screen_startEffect(Screen this, int effect, ...)
 
 void Screen_stopEffect(Screen this, int effect)
 {
-	ASSERT(this, "Screen::stopEffect: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::stopEffect: null this");
 
 	__VIRTUAL_CALL(ScreenEffectManager, stopEffect, this->screenEffectManager, effect);
 }
 
 void Screen_resetCameraFrustum(Screen this)
 {
-	ASSERT(this, "Screen::stopEffect: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::stopEffect: null this");
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
@@ -429,7 +429,7 @@ void Screen_resetCameraFrustum(Screen this)
 
 void Screen_setCameraFrustum(Screen this, CameraFrustum cameraFrustum)
 {
-	ASSERT(this, "Screen::setCameraFrustum: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::setCameraFrustum: null this");
 
 	this->cameraFrustum = cameraFrustum;
 
@@ -456,7 +456,7 @@ void Screen_setCameraFrustum(Screen this, CameraFrustum cameraFrustum)
 
 CameraFrustum Screen_getCameraFrustum(Screen this)
 {
-	ASSERT(this, "Screen::getCameraFrustum: null this");
+	ASSERT(__SAFE_CAST(Screen, this), "Screen::getCameraFrustum: null this");
 
 	return this->cameraFrustum;
 }

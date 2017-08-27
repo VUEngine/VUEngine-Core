@@ -99,7 +99,7 @@ __CLASS_NEW_END(EntityFactory);
 // class's constructor
 static void EntityFactory_constructor(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::constructor: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -116,7 +116,7 @@ static void EntityFactory_constructor(EntityFactory this)
 // class's destructor
 void EntityFactory_destructor(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::destructor: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::destructor: null this");
 
 	VirtualNode node = this->entitiesToInstantiate->head;
 
@@ -206,7 +206,7 @@ void EntityFactory_destructor(EntityFactory this)
 
 void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id)
 {
-	ASSERT(this, "EntityFactory::spawnEntity: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::spawnEntity: null this");
 
 	if(!positionedEntity || !parent)
 	{
@@ -230,7 +230,7 @@ void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedE
 
 u32 EntityFactory_instantiateEntities(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::spawnEntities: null spawnEntities");
 
 	if(!this->entitiesToInstantiate->head)
 	{
@@ -276,7 +276,7 @@ u32 EntityFactory_instantiateEntities(EntityFactory this)
 // initialize loaded entities
 u32 EntityFactory_initializeEntities(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::initializeEntities: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::initializeEntities: null this");
 
 	if(!this->entitiesToInitialize->head)
 	{
@@ -332,7 +332,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 // transform spawned entities
 u32 EntityFactory_transformEntities(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::transformEntities: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::transformEntities: null this");
 
 	if(!this->entitiesToTransform->head)
 	{
@@ -381,7 +381,7 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 
 u32 EntityFactory_makeReadyEntities(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::makeReadyEntities: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::makeReadyEntities: null this");
 
 	if(!this->entitiesToMakeReady->head)
 	{
@@ -424,7 +424,7 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 
 u32 EntityFactory_cleanUp(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::cleanUp: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::cleanUp: null this");
 
 	if(!this->spawnedEntities->head)
 	{
@@ -458,7 +458,7 @@ u32 EntityFactory_cleanUp(EntityFactory this)
 
 u32 EntityFactory_prepareEntities(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::prepareEntities: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::prepareEntities: null this");
 
 	EntityFactory_cleanUp(this);
 
@@ -495,7 +495,7 @@ u32 EntityFactory_prepareEntities(EntityFactory this)
 
 u32 EntityFactory_hasEntitiesPending(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::hasEntitiesPending: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::hasEntitiesPending: null this");
 
 	return VirtualList_getSize(this->entitiesToInstantiate) ||
 			VirtualList_getSize(this->entitiesToInitialize) ||
@@ -510,7 +510,7 @@ int EntityFactory_getPhase(EntityFactory this)
 
 void EntityFactory_prepareAllEntities(EntityFactory this)
 {
-	ASSERT(this, "EntityFactory::prepareAllEntities: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::prepareAllEntities: null this");
 
 	while(this->entitiesToInstantiate->head)
 	{
@@ -536,7 +536,7 @@ void EntityFactory_prepareAllEntities(EntityFactory this)
 #ifdef __PROFILE_STREAMING
 void EntityFactory_showStatus(EntityFactory this __attribute__ ((unused)), int x, int y)
 {
-	ASSERT(this, "EntityFactory::showStreamingProfiling: null this");
+	ASSERT(__SAFE_CAST(EntityFactory, this), "EntityFactory::showStreamingProfiling: null this");
 	int xDisplacement = 18;
 
 	Printing_text(Printing_getInstance(), "Factory's status", x, y++, NULL);

@@ -66,7 +66,7 @@ __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSp
  */
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
-	ASSERT(this, "SolidParticle::constructor: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::constructor: null this");
 
 	// construct base Container
 	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
@@ -96,7 +96,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
  */
 void SolidParticle_destructor(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::destructor: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::destructor: null this");
 
 	// unregister the shape for collision detection
 	CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), this->shape);
@@ -128,7 +128,7 @@ void SolidParticle_destructor(SolidParticle this)
  */
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
 {
-	ASSERT(this, "SolidParticle::update: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::update: null this");
 
 	u32 expired = __CALL_BASE_METHOD(Particle, update, this, timeElapsed, behavior);
 
@@ -159,7 +159,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
  */
 Shape SolidParticle_getShape(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getShape: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getShape: null this");
 
 	return this->shape;
 }
@@ -176,7 +176,7 @@ Shape SolidParticle_getShape(SolidParticle this)
  */
 u16 SolidParticle_getWidth(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getWidth: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getWidth: null this");
 
 	return this->solidParticleDefinition->width;
 }
@@ -193,7 +193,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
  */
 u16 SolidParticle_getHeight(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getHeight: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getHeight: null this");
 
 	return this->solidParticleDefinition->height;
 }
@@ -210,7 +210,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
  */
 u16 SolidParticle_getDepth(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getDepth: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getDepth: null this");
 
 	// must calculate based on the scale because not affine object must be enlarged
 	return this->solidParticleDefinition->depth;
@@ -226,7 +226,7 @@ u16 SolidParticle_getDepth(SolidParticle this)
  */
 static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::updateSurroundingFriction: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::updateSurroundingFriction: null this");
 	ASSERT(this->body, "SolidParticle::updateSurroundingFriction: null body");
 
 	Force totalFriction = {0, 0, 0};
@@ -253,7 +253,7 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
  */
 static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollision)
 {
-	ASSERT(this, "SolidParticle::bounce: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::bounce: null this");
 
 	if(axisOfCollision)
 	{
@@ -286,7 +286,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
  */
 bool SolidParticle_processCollision(SolidParticle this, Shape shape, VirtualList collidingShapes)
 {
-	ASSERT(this, "SolidParticle::SolidParticle: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
 	ASSERT(collidingShapes, "SolidParticle::resolveCollision: collidingShapes");
@@ -343,7 +343,7 @@ bool SolidParticle_processCollision(SolidParticle this, Shape shape, VirtualList
  */
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 {
-	ASSERT(this, "SolidParticle::handleMessage: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::handleMessage: null this");
 
 	switch(Telegram_getMessage(telegram))
 	{
@@ -382,7 +382,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
  */
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 {
-	ASSERT(this, "SolidParticle::position: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::position: null this");
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 

@@ -82,7 +82,7 @@ __CLASS_NEW_END(CollisionManager);
 // class's constructor
 void CollisionManager_constructor(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::constructor: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -99,7 +99,7 @@ void CollisionManager_constructor(CollisionManager this)
 // class's destructor
 void CollisionManager_destructor(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::destructor: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::destructor: null this");
 	ASSERT(this->shapes, "CollisionManager::destructor: null shapes");
 
 	CollisionManager_reset(this);
@@ -119,7 +119,7 @@ void CollisionManager_destructor(CollisionManager this)
 // register a shape
 Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition)
 {
-	ASSERT(this, "CollisionManager::createShape: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::createShape: null this");
 
 	// if the entity is already registered
 	Shape shape = CollisionManager_findShape(this, owner);
@@ -142,7 +142,7 @@ Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, c
 // remove a shape
 void CollisionManager_destroyShape(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::destroyShape: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::destroyShape: null this");
 
 	if(shape && !VirtualList_find(this->removedShapes, shape))
 	{
@@ -158,7 +158,7 @@ void CollisionManager_destroyShape(CollisionManager this, Shape shape)
 // find a shape given an owner
 Shape CollisionManager_findShape(CollisionManager this, SpatialObject owner)
 {
-	ASSERT(this, "CollisionManager::getShape: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::getShape: null this");
 	ASSERT(this->shapes, "CollisionManager::getShape: null shapes");
 
 	VirtualNode node = this->shapes->head;
@@ -179,7 +179,7 @@ Shape CollisionManager_findShape(CollisionManager this, SpatialObject owner)
 // process removed shapes
 void CollisionManager_processRemovedShapes(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::processRemovedShapes: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::processRemovedShapes: null this");
 	ASSERT(this->shapes, "CollisionManager::processRemovedShapes: null shapes");
 
 	VirtualNode node = this->removedShapes->head;
@@ -205,7 +205,7 @@ void CollisionManager_processRemovedShapes(CollisionManager this)
 // process inactive shapes
 static void CollisionManager_processInactiveShapes(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::processInactiveShapes: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::processInactiveShapes: null this");
 	ASSERT(this->inactiveShapes, "CollisionManager::processInactiveShapes: null inactiveShapes");
 
 	VirtualNode node = this->inactiveShapes->head;
@@ -226,7 +226,7 @@ static void CollisionManager_processInactiveShapes(CollisionManager this)
 // calculate collisions
 u32 CollisionManager_update(CollisionManager this, Clock clock)
 {
-	ASSERT(this, "CollisionManager::update: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::update: null this");
 
 	if(clock->paused)
 	{
@@ -308,7 +308,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 // unregister all shapes
 void CollisionManager_reset(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::reset: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::reset: null this");
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
 	CollisionManager_processRemovedShapes(this);
@@ -332,7 +332,7 @@ void CollisionManager_reset(CollisionManager this)
 // inform of a change in the shape
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeStartedMoving: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::shapeStartedMoving: null this");
 	ASSERT(shape, "CollisionManager::shapeStartedMoving: null shape");
 
 	CollisionManager_shapeBecameActive(this, shape);
@@ -346,7 +346,7 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 // inform of a change in the shape
 void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeStoppedMoving: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::shapeStoppedMoving: null this");
 	ASSERT(shape, "CollisionManager::shapeStoppedMoving: null shape");
 
 	VirtualList_removeElement(this->movingShapes, shape);
@@ -358,7 +358,7 @@ void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
 // inform of a change in the shape
 void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeBecameActive: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::shapeBecameActive: null this");
 
 	ASSERT(shape, "CollisionManager::shapeBecameActive: null shape");
 
@@ -374,7 +374,7 @@ void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape)
 // inform of a change in the shape
 void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeChangedState: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::shapeChangedState: null this");
 
 	ASSERT(shape, "CollisionManager::shapeChangedState: null shape");
 
@@ -391,7 +391,7 @@ void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape)
 // draw shapes
 void CollisionManager_showShapes(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::drawShapes: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::drawShapes: null this");
 
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
@@ -406,7 +406,7 @@ void CollisionManager_showShapes(CollisionManager this)
 // free memory by deleting direct draw Polyhedrons
 void CollisionManager_hideShapes(CollisionManager this)
 {
-	ASSERT(this, "CollisionManager::drawShapes: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::drawShapes: null this");
 //	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
 
 	// comparing against the other shapes
@@ -422,7 +422,7 @@ void CollisionManager_hideShapes(CollisionManager this)
 // check if gravity must apply to this actor
 SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this, const Shape shape, VBVec3D direction)
 {
-	ASSERT(this, "CollisionManager::searchNextShapeOfCollision: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::searchNextShapeOfCollision: null this");
 
 	VBVec3D displacement =
 	{
@@ -477,7 +477,7 @@ SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this
 // print status
 void CollisionManager_print(CollisionManager this, int x, int y)
 {
-	ASSERT(this, "CollisionManager::print: null this");
+	ASSERT(__SAFE_CAST(CollisionManager, this), "CollisionManager::print: null this");
 
 	Printing_text(Printing_getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Registered shapes: ", x, ++y, NULL);

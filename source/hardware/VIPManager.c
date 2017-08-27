@@ -141,7 +141,7 @@ __SINGLETON(VIPManager);
  */
 static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 {
-	ASSERT(this, "VIPManager::constructor: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -170,7 +170,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
  */
 void VIPManager_destructor(VIPManager this)
 {
-	ASSERT(this, "VIPManager::destructor: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::destructor: null this");
 
 	__DELETE(this->postProcessingEffects);
 
@@ -188,7 +188,7 @@ void VIPManager_destructor(VIPManager this)
  */
 void VIPManager_enableDrawing(VIPManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "VIPManager::enableDrawing: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::enableDrawing: null this");
 
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
@@ -204,7 +204,7 @@ void VIPManager_enableDrawing(VIPManager this __attribute__ ((unused)))
  */
 void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "VIPManager::disableDrawing: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::disableDrawing: null this");
 
 	_vipRegisters[__XPCTRL] |= __XPRST;
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
@@ -221,7 +221,7 @@ void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
  */
 void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)), u16 interruptCode)
 {
-	ASSERT(this, "VIPManager::enableInterrupt: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::enableInterrupt: null this");
 
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
@@ -237,7 +237,7 @@ void VIPManager_enableInterrupt(VIPManager this __attribute__ ((unused)), u16 in
  */
 void VIPManager_disableInterrupts(VIPManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "VIPManager::disableInterrupt: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::disableInterrupt: null this");
 
 	_vipRegisters[__INTENB]= 0;
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
@@ -254,7 +254,7 @@ void VIPManager_disableInterrupts(VIPManager this __attribute__ ((unused)))
  */
 void VIPManager_allowDRAMAccess(VIPManager this, bool allowDRAMAccess)
 {
-	ASSERT(this, "VIPManager::allowDRAMAccess: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::allowDRAMAccess: null this");
 
 	this->allowDRAMAccess = allowDRAMAccess;
 }
@@ -271,7 +271,7 @@ void VIPManager_allowDRAMAccess(VIPManager this, bool allowDRAMAccess)
  */
 bool __attribute__ ((noinline)) VIPManager_isRenderingPending(VIPManager this)
 {
-	ASSERT(this, "VIPManager::isRenderingPending: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::isRenderingPending: null this");
 
 	return this->drawingEnded && !this->renderingCompleted;
 }
@@ -434,7 +434,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
  */
 static void VIPManager_processFrameBuffers(VIPManager this)
 {
-	ASSERT(this, "VIPManager::processFrameBuffers: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::processFrameBuffers: null this");
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	Game_setLastProcessName(Game_getInstance(), "rendering");
@@ -462,7 +462,7 @@ static void VIPManager_processFrameBuffers(VIPManager this)
  */
 void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "VIPManager::displayOn: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::displayOn: null this");
 
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
@@ -479,7 +479,7 @@ void VIPManager_displayOn(VIPManager this __attribute__ ((unused)))
  */
 void VIPManager_displayOff(VIPManager this)
 {
-	ASSERT(this, "VIPManager::displayOff: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::displayOff: null this");
 
 	_vipRegisters[__REST] = 0;
 	_vipRegisters[__XPCTRL] = 0;
@@ -500,7 +500,7 @@ void VIPManager_displayOff(VIPManager this)
  */
 void VIPManager_setupPalettes(VIPManager this __attribute__ ((unused)), PaletteConfig* paletteConfig)
 {
-	ASSERT(this, "VIPManager::setupPalettes: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::setupPalettes: null this");
 
 	_vipRegisters[__GPLT0] = paletteConfig->bgmap.gplt0;
 	_vipRegisters[__GPLT1] = paletteConfig->bgmap.gplt1;
@@ -523,7 +523,7 @@ void VIPManager_setupPalettes(VIPManager this __attribute__ ((unused)), PaletteC
  */
 void VIPManager_upBrightness(VIPManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "VIPManager::upBrightness: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::upBrightness: null this");
 
 	_vipRegisters[__BRTA] = 32;
 	_vipRegisters[__BRTB] = 64;
@@ -540,7 +540,7 @@ void VIPManager_upBrightness(VIPManager this __attribute__ ((unused)))
  */
 void VIPManager_lowerBrightness(VIPManager this)
 {
-	ASSERT(this, "VIPManager::displayHide: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::displayHide: null this");
 
 	_vipRegisters[__BRTA] = 0;
 	_vipRegisters[__BRTB] = 0;
@@ -559,7 +559,7 @@ void VIPManager_lowerBrightness(VIPManager this)
  */
 void VIPManager_clearScreen(VIPManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "VIPManager::clearScreen: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::clearScreen: null this");
 	u8* bgmapStartAddress = (u8*)__BGMAP_SPACE_BASE_ADDRESS;
 
 	// clear every bgmap segment
@@ -587,7 +587,7 @@ void VIPManager_clearScreen(VIPManager this __attribute__ ((unused)))
  */
 void VIPManager_clearBgmapSegment(VIPManager this __attribute__ ((unused)), int segment, int size)
 {
-	ASSERT(this, "VIPManager::clearBgmap: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::clearBgmap: null this");
 
 	Mem_clear((BYTE*)__BGMAP_SEGMENT(segment), size * 2);
 }
@@ -603,7 +603,7 @@ void VIPManager_clearBgmapSegment(VIPManager this __attribute__ ((unused)), int 
  */
 void VIPManager_setupColumnTable(VIPManager this __attribute__ ((unused)), ColumnTableDefinition* columnTableDefinition)
 {
-	ASSERT(this, "VIPManager::setupColumnTable: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::setupColumnTable: null this");
 
 	int i, value;
 
@@ -636,7 +636,7 @@ void VIPManager_setupColumnTable(VIPManager this __attribute__ ((unused)), Colum
  */
 void VIPManager_useInternalColumnTable(VIPManager this __attribute__ ((unused)), bool useInternal)
 {
-	ASSERT(this, "VIPManager::useInternalColumnTable: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::useInternalColumnTable: null this");
 
 	// TODO: why does this not work?
 	if(useInternal)
@@ -662,7 +662,7 @@ void VIPManager_useInternalColumnTable(VIPManager this __attribute__ ((unused)),
  */
 void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), BrightnessRepeatDefinition* brightnessRepeatDefinition)
 {
-	ASSERT(this, "VIPManager::setupBrightnessRepeat: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::setupBrightnessRepeat: null this");
 
 	int i, leftCta, rightCta, value;
 
@@ -699,7 +699,7 @@ void VIPManager_setupBrightnessRepeat(VIPManager this __attribute__ ((unused)), 
  */
 void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 color)
 {
-	ASSERT(this, "VIPManager::setBackgroundColor: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::setBackgroundColor: null this");
 
 	_vipRegisters[__BACKGROUND_COLOR] = (color <= __COLOR_BRIGHT_RED)
 		? color
@@ -720,7 +720,7 @@ void VIPManager_setBackgroundColor(VIPManager this __attribute__ ((unused)), u8 
  */
 static bool VIPManager_isPostProcessingEffectRegistered(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "VIPManager::addPostProcessingEffect: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::addPostProcessingEffect: null this");
 
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -749,7 +749,7 @@ static bool VIPManager_isPostProcessingEffectRegistered(VIPManager this, PostPro
  */
 void VIPManager_pushFrontPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "VIPManager::pushFrontPostProcessingEffect: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::pushFrontPostProcessingEffect: null this");
 
 	if(VIPManager_isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
 	{
@@ -775,7 +775,7 @@ void VIPManager_pushFrontPostProcessingEffect(VIPManager this, PostProcessingEff
  */
 void VIPManager_pushBackPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "VIPManager::pushBackPostProcessingEffect: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::pushBackPostProcessingEffect: null this");
 
 	if(VIPManager_isPostProcessingEffectRegistered(this, postProcessingEffect, spatialObject))
 	{
@@ -801,7 +801,7 @@ void VIPManager_pushBackPostProcessingEffect(VIPManager this, PostProcessingEffe
  */
 void VIPManager_removePostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "VIPManager::removePostProcessingEffect: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::removePostProcessingEffect: null this");
 
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -829,7 +829,7 @@ void VIPManager_removePostProcessingEffect(VIPManager this, PostProcessingEffect
  */
 void VIPManager_removePostProcessingEffects(VIPManager this)
 {
-	ASSERT(this, "VIPManager::removePostProcessingEffects: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::removePostProcessingEffects: null this");
 
 	VirtualNode node = this->postProcessingEffects->head;
 
@@ -851,7 +851,7 @@ void VIPManager_removePostProcessingEffects(VIPManager this)
  */
 void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this)
 {
-	ASSERT(this, "VIPManager::registerCurrentDrawingframeBufferSet: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::registerCurrentDrawingframeBufferSet: null this");
 
 	u32 currentDrawingFrameBufferSet = _vipRegisters[__XPSTTS] & 0x000C;
 
@@ -879,7 +879,7 @@ void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this)
  */
 u32 VIPManager_getCurrentDrawingframeBufferSet(VIPManager this)
 {
-	ASSERT(this, "VIPManager::getCurrentDrawingframeBufferSet: null this");
+	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::getCurrentDrawingframeBufferSet: null this");
 
 	return this->currentDrawingFrameBufferSet;
 }

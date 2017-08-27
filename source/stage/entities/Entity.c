@@ -90,7 +90,7 @@ __CLASS_NEW_END(Entity, entityDefinition, id, internalId, name);
  */
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "Entity::constructor: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::constructor: null this");
 
 	// construct base Container
 	__CONSTRUCT_BASE(Container, name);
@@ -124,7 +124,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
  */
 void Entity_destructor(Entity this)
 {
-	ASSERT(this, "Entity::destructor: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::destructor: null this");
 
 	if(this->shapes)
 	{
@@ -168,7 +168,7 @@ void Entity_destructor(Entity this)
  */
 s16 Entity_getInternalId(Entity this)
 {
-	ASSERT(this, "Entity::getInternalId: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getInternalId: null this");
 
 	return this->internalId;
 }
@@ -185,7 +185,7 @@ s16 Entity_getInternalId(Entity this)
  */
 s16 Entity_getId(Entity this)
 {
-	ASSERT(this, "Entity::getId: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getId: null this");
 
 	return this->id;
 }
@@ -203,7 +203,7 @@ s16 Entity_getId(Entity this)
  */
 Entity Entity_getChildById(Entity this, s16 id)
 {
-	ASSERT(this, "Entity::getChildById: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getChildById: null this");
 
 	if(this->children)
 	{
@@ -238,7 +238,7 @@ Entity Entity_getChildById(Entity this, s16 id)
  */
 void Entity_setDefinition(Entity this, void* entityDefinition)
 {
-	ASSERT(this, "Entity::setDefinition: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setDefinition: null this");
 
 	// save definition
 	this->entityDefinition = entityDefinition;
@@ -254,7 +254,7 @@ void Entity_setDefinition(Entity this, void* entityDefinition)
  */
 void Entity_setupGraphics(Entity this)
 {
-	ASSERT(this, "Entity::setupGraphics: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setupGraphics: null this");
 
 	__CALL_BASE_METHOD(Container, setupGraphics, this);
 
@@ -271,7 +271,7 @@ void Entity_setupGraphics(Entity this)
  */
 void Entity_releaseGraphics(Entity this)
 {
-	ASSERT(this, "Entity::releaseGraphics: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::releaseGraphics: null this");
 
 	__CALL_BASE_METHOD(Container, releaseGraphics, this);
 
@@ -289,7 +289,7 @@ void Entity_releaseGraphics(Entity this)
  */
 void Entity_releaseSprites(Entity this, bool deleteThem)
 {
-	ASSERT(this, "Entity::releaseSprites: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::releaseSprites: null this");
 
 	if(this->sprites)
 	{
@@ -329,7 +329,7 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
  */
 static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid, VBVec3D environmentPosition)
 {
-	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::calculateSizeFromChildren: null this");
 
 	VBVec3D globalPosition3D = environmentPosition;
 
@@ -459,7 +459,7 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
  */
 void Entity_calculateSize(Entity this)
 {
-	ASSERT(this, "Entity::calculateSize: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::calculateSize: null this");
 
 	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
 
@@ -818,7 +818,7 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id
  */
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions)
 {
-	ASSERT(this, "Entity::loadChildren: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::loadChildren: null this");
 
 	if(!childrenDefinitions)
 	{
@@ -884,7 +884,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
  */
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
 {
-	ASSERT(this, "Entity::addChildEntitiesDeferred: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::addChildEntitiesDeferred: null this");
 	ASSERT(childrenDefinitions, "Entity::addChildEntitiesDeferred: null childrenDefinitions");
 
 	if(!childrenDefinitions)
@@ -963,7 +963,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
  */
 Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo)
 {
-	ASSERT(this, "Entity::addChildEntity: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::addChildEntity: null this");
 	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
 
 	if(!entityDefinition)
@@ -1018,7 +1018,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
  */
 u32 Entity_areAllChildrenInstantiated(Entity this)
 {
-	ASSERT(this, "Entity::areAllChildrenInstantiated: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::areAllChildrenInstantiated: null this");
 
 	if(this->entityFactory)
 	{
@@ -1040,7 +1040,7 @@ u32 Entity_areAllChildrenInstantiated(Entity this)
  */
 u32 Entity_areAllChildrenInitialized(Entity this)
 {
-	ASSERT(this, "Entity::areAllChildrenInitialized: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::areAllChildrenInitialized: null this");
 
 	if(this->entityFactory)
 	{
@@ -1062,7 +1062,7 @@ u32 Entity_areAllChildrenInitialized(Entity this)
  */
 u32 Entity_areAllChildrenTransformed(Entity this)
 {
-	ASSERT(this, "Entity::areAllChildrenTransformed: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::areAllChildrenTransformed: null this");
 
 	if(this->entityFactory)
 	{
@@ -1084,7 +1084,7 @@ u32 Entity_areAllChildrenTransformed(Entity this)
  */
 u32 Entity_areAllChildrenReady(Entity this)
 {
-	ASSERT(this, "Entity::areAllChildrenReady: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::areAllChildrenReady: null this");
 
 	if(this->entityFactory)
 	{
@@ -1117,7 +1117,7 @@ u32 Entity_areAllChildrenReady(Entity this)
  */
 void Entity_setShapesPosition(Entity this)
 {
-	ASSERT(this, "Entity::setShapePosition: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setShapePosition: null this");
 
 	if(this->shapes && __VIRTUAL_CALL(SpatialObject, moves, this))
 	{
@@ -1148,7 +1148,7 @@ void Entity_setShapesPosition(Entity this)
  */
 static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions)
 {
-	ASSERT(this, "Entity::addShapes: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::addShapes: null this");
 
 	if(!shapeDefinitions)
 	{
@@ -1202,7 +1202,7 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
  */
 void Entity_initialize(Entity this, bool recursive)
 {
-	ASSERT(this, "Entity::initialize: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::initialize: null this");
 
 	if(recursive && this->children)
 	{
@@ -1227,7 +1227,7 @@ void Entity_initialize(Entity this, bool recursive)
  */
 void Entity_ready(Entity this, bool recursive)
 {
-	ASSERT(this, "Entity::ready: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::ready: null this");
 
 	if(recursive && this->children)
 	{
@@ -1252,7 +1252,7 @@ void Entity_ready(Entity this, bool recursive)
  */
 void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
 {
-	ASSERT(this, "Entity::setExtraInfo: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setExtraInfo: null this");
 }
 
 /**
@@ -1266,7 +1266,7 @@ void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo _
  */
 void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
 {
-	ASSERT(this, "Entity::addSprites: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::addSprites: null this");
 
 	if(!spriteDefinitions)
 	{
@@ -1305,7 +1305,7 @@ void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
  */
 bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionIndex)
 {
-	ASSERT(this, "Entity::addSprite: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::addSprite: null this");
 
 	if(!this->entityDefinition->spriteDefinitions)
 	{
@@ -1347,7 +1347,7 @@ bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionInde
  /*
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
 {
-	ASSERT(this, "Entity::transform: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::transform: null this");
 
 	if(!this->sprites)
 	{
@@ -1386,7 +1386,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 */
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
 {
-	ASSERT(this, "Entity::transform: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::transform: null this");
 
 	if(!this->sprites)
 	{
@@ -1482,7 +1482,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
  */
 void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "Entity::initialTransform: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::initialTransform: null this");
 
 	// call base class's transform method
 	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
@@ -1515,7 +1515,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
  */
 void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "Entity::transform: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::transform: null this");
 
 	this->invalidateSprites = 0;
 
@@ -1543,7 +1543,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
  */
 void Entity_synchronizeGraphics(Entity this)
 {
-	ASSERT(this, "Entity::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::synchronizeGraphics: null this");
 
 	if(this->children)
 	{
@@ -1567,7 +1567,7 @@ void Entity_synchronizeGraphics(Entity this)
  */
 EntityDefinition* Entity_getEntityDefinition(Entity this)
 {
-	ASSERT(this, "Entity::getEntityDefinition: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getEntityDefinition: null this");
 
 	return this->entityDefinition;
 }
@@ -1584,7 +1584,7 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
  */
 const VBVec3D* Entity_getPosition(Entity this)
 {
-	ASSERT(this, "Entity::getPosition: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getPosition: null this");
 
 	return &this->transform.globalPosition;
 }
@@ -1601,7 +1601,7 @@ const VBVec3D* Entity_getPosition(Entity this)
  */
 VirtualList Entity_getSprites(Entity this)
 {
-	ASSERT(this, "Entity::getSprites: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getSprites: null this");
 
 	return this->sprites;
 }
@@ -1619,7 +1619,7 @@ VirtualList Entity_getSprites(Entity this)
  */
 bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "Entity::handleMessage: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::handleMessage: null this");
 
 	return false;
 }
@@ -1636,7 +1636,7 @@ bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegra
  */
 u16 Entity_getWidth(Entity this)
 {
-	ASSERT(this, "Entity::getWidth: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getWidth: null this");
 
 	if(!this->size.x)
 	{
@@ -1659,7 +1659,7 @@ u16 Entity_getWidth(Entity this)
  */
 u16 Entity_getHeight(Entity this)
 {
-	ASSERT(this, "Entity::getHeight: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getHeight: null this");
 
 	if(!this->size.y)
 	{
@@ -1681,7 +1681,7 @@ u16 Entity_getHeight(Entity this)
  */
 u16 Entity_getDepth(Entity this)
 {
-	ASSERT(this, "Entity::getDepth: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getDepth: null this");
 
 	if(!this->size.z)
 	{
@@ -1706,7 +1706,7 @@ u16 Entity_getDepth(Entity this)
  */
 bool Entity_isVisible(Entity this, int pad, bool recursive)
 {
-	ASSERT(this, "Entity::isVisible: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::isVisible: null this");
 
 	int x = 0;
 	int y = 0;
@@ -1851,7 +1851,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
  */
 bool Entity_updateSpritePosition(Entity this)
 {
-	ASSERT(this, "Entity::updateSpritePosition: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::updateSpritePosition: null this");
 
 	return __INVALIDATE_POSITION & this->invalidateGlobalTransformation;
 }
@@ -1868,7 +1868,7 @@ bool Entity_updateSpritePosition(Entity this)
  */
 bool Entity_updateSpriteRotation(Entity this)
 {
-	ASSERT(this, "Entity::updateSpriteRotation: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::updateSpriteRotation: null this");
 
 	return __INVALIDATE_ROTATION & this->invalidateGlobalTransformation;
 }
@@ -1885,7 +1885,7 @@ bool Entity_updateSpriteRotation(Entity this)
  */
 bool Entity_updateSpriteScale(Entity this)
 {
-	ASSERT(this, "Entity::updateSpriteScale: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::updateSpriteScale: null this");
 
 	return __INVALIDATE_SCALE & this->invalidateGlobalTransformation;
 }
@@ -1902,7 +1902,7 @@ bool Entity_updateSpriteScale(Entity this)
  */
 void Entity_setSpritesDirection(Entity this, int axis, int direction)
 {
-	ASSERT(this, "Entity::setSpritesDirection: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setSpritesDirection: null this");
 
 	u32 axisForFlipping = __VIRTUAL_CALL(Entity, getAxisForFlipping, this);
 
@@ -1929,7 +1929,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction)
  */
 VirtualList Entity_getShapes(Entity this)
 {
-	ASSERT(this, "Entity::getShapes: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getShapes: null this");
 
 	return this->shapes;
 }
@@ -1944,7 +1944,7 @@ VirtualList Entity_getShapes(Entity this)
  */
 void Entity_show(Entity this)
 {
-	ASSERT(this, "Entity::show: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::show: null this");
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
@@ -1981,7 +1981,7 @@ void Entity_show(Entity this)
  */
 void Entity_hide(Entity this)
 {
-	ASSERT(this, "Entity::hide: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::hide: null this");
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
@@ -2015,7 +2015,7 @@ void Entity_hide(Entity this)
  */
 void Entity_suspend(Entity this)
 {
-	ASSERT(this, "Entity::suspend: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::suspend: null this");
 
 	__CALL_BASE_METHOD(Container, suspend, this);
 
@@ -2032,7 +2032,7 @@ void Entity_suspend(Entity this)
  */
 void Entity_resume(Entity this)
 {
-	ASSERT(this, "Entity::resume: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::resume: null this");
 
 	__CALL_BASE_METHOD(Container, resume, this);
 
@@ -2095,7 +2095,7 @@ u16 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
  */
 u32 Entity_getInGameType(Entity this)
 {
-	ASSERT(this, "Entity::getInGameType: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getInGameType: null this");
 
 	return this->entityDefinition->inGameType;
 }
@@ -2112,7 +2112,7 @@ u32 Entity_getInGameType(Entity this)
  */
 fix19_13 Entity_getElasticity(Entity this)
 {
-	ASSERT(this, "Entity::getElasticity: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getElasticity: null this");
 
 	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->elasticity : 0;
 }
@@ -2129,7 +2129,7 @@ fix19_13 Entity_getElasticity(Entity this)
  */
 fix19_13 Entity_getFriction(Entity this)
 {
-	ASSERT(this, "Entity::getFriction: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::getFriction: null this");
 
 	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->friction : 0;
 }
@@ -2144,7 +2144,7 @@ fix19_13 Entity_getFriction(Entity this)
  */
 void Entity_informShapesThatStartedMoving(Entity this)
 {
-	ASSERT(this, "Entity::informShapesThatStartedMoving: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::informShapesThatStartedMoving: null this");
 
 	if(this->shapes)
 	{
@@ -2168,7 +2168,7 @@ void Entity_informShapesThatStartedMoving(Entity this)
  */
 void Entity_informShapesThatStoppedMoving(Entity this)
 {
-	ASSERT(this, "Entity::informShapesThatStoppedMoving: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::informShapesThatStoppedMoving: null this");
 
 	if(this->shapes)
 	{
@@ -2193,7 +2193,7 @@ void Entity_informShapesThatStoppedMoving(Entity this)
  */
 void Entity_activateShapes(Entity this, bool value)
 {
-	ASSERT(this, "Entity::activateShapes: null this");
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::activateShapes: null this");
 
 	if(this->shapes)
 	{

@@ -83,7 +83,7 @@ __SINGLETON(AnimationCoordinatorFactory);
  */
 static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this)
 {
-	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
+	ASSERT(__SAFE_CAST(AnimationCoordinatorFactory, this), "AnimationCoordinatorFactory::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -100,7 +100,7 @@ static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(A
  */
 void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
 {
-	ASSERT(this, "AnimationCoordinatorFactory::destructor: null this");
+	ASSERT(__SAFE_CAST(AnimationCoordinatorFactory, this), "AnimationCoordinatorFactory::destructor: null this");
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
 
 	AnimationCoordinatorFactory_reset(this);
@@ -121,7 +121,7 @@ void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
  */
 void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 {
-	ASSERT(this, "AnimationCoordinatorFactory::reset: null this");
+	ASSERT(__SAFE_CAST(AnimationCoordinatorFactory, this), "AnimationCoordinatorFactory::reset: null this");
 
 	VirtualNode node = this->animationCoordinators->head;
 
@@ -148,7 +148,7 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
  */
 AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");
+	ASSERT(__SAFE_CAST(AnimationCoordinatorFactory, this), "AnimationCoordinatorFactory::getCoordinator: null this");
 	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
 	ASSERT(charSetDefinition, "AnimationCoordinatorFactory::getCoordinator: null charSetDefinition");
 
@@ -181,7 +181,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				}
 				else
 				{
-					NM_ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: invalid sprite type");
+					NM_ASSERT(__SAFE_CAST(AnimationCoordinatorFactory, this), "AnimationCoordinatorFactory::getCoordinator: invalid sprite type");
 				}
 
 				// create a new coordinator

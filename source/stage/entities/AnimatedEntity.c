@@ -72,7 +72,7 @@ __CLASS_NEW_END(AnimatedEntity, animatedEntityDefinition, id, internalId, name);
 // class's constructor
 void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "AnimatedEntity::constructor: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Entity, &animatedEntityDefinition->entityDefinition, id, internalId, name);
@@ -93,7 +93,7 @@ void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* a
 // class's destructor
 void AnimatedEntity_destructor(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::destructor: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -103,7 +103,7 @@ void AnimatedEntity_destructor(AnimatedEntity this)
 // set definition
 void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefinition)
 {
-	ASSERT(this, "AnimatedEntity::setDefinition: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::setDefinition: null this");
 	ASSERT(animatedEntityDefinition, "AnimatedEntity::setDefinition: null definition");
 
 	// save definition
@@ -115,7 +115,7 @@ void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefin
 // ready method
 void AnimatedEntity_ready(AnimatedEntity this, bool recursive)
 {
-	ASSERT(this, "AnimatedEntity::ready: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::ready: null this");
 	ASSERT(this->animatedEntityDefinition, "AnimatedEntity::ready: null animatedEntityDefinition");
 
 	__CALL_BASE_METHOD(Entity, ready, this, recursive);
@@ -127,7 +127,7 @@ void AnimatedEntity_ready(AnimatedEntity this, bool recursive)
 // graphically refresh of characters that are visible
 void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "AnimatedEntity::transform: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::transform: null this");
 
 	bool directionChanged = false;
 
@@ -168,7 +168,7 @@ void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environ
 // execute character's logic
 void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime)
 {
-	ASSERT(this, "AnimatedEntity::update: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::update: null this");
 
 	// call base
 	__CALL_BASE_METHOD(Entity, update, this, elapsedTime);
@@ -184,7 +184,7 @@ void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime)
 // update animations
 static void AnimatedEntity_animate(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::animate: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::animate: null this");
 
 	if(!this->sprites)
 	{
@@ -204,7 +204,7 @@ static void AnimatedEntity_animate(AnimatedEntity this)
 // pause animation
 void AnimatedEntity_pauseAnimation(AnimatedEntity this, int pause)
 {
-	ASSERT(this, "AnimatedEntity::pauseAnimation: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::pauseAnimation: null this");
 	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
 	if(!this->sprites)
@@ -224,7 +224,7 @@ void AnimatedEntity_pauseAnimation(AnimatedEntity this, int pause)
 // play an animation
 void AnimatedEntity_playAnimation(AnimatedEntity this, char* animationName)
 {
-	ASSERT(this, "AnimatedEntity::playAnimation: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::playAnimation: null this");
 
 	if(!this->sprites | !animationName)
 	{
@@ -245,7 +245,7 @@ void AnimatedEntity_playAnimation(AnimatedEntity this, char* animationName)
 // skip to next frame
 void AnimatedEntity_nextFrame(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::nextFrame: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::nextFrame: null this");
 
 	if(!this->sprites)
 	{
@@ -264,7 +264,7 @@ void AnimatedEntity_nextFrame(AnimatedEntity this)
 // rewind to previous frame
 void AnimatedEntity_previousFrame(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::previousFrame: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::previousFrame: null this");
 
 	if(!this->sprites)
 	{
@@ -283,7 +283,7 @@ void AnimatedEntity_previousFrame(AnimatedEntity this)
 // is playing an animation
 bool AnimatedEntity_isPlayingAnimation(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::isPlayingAnimation: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedEntity::isPlayingAnimation: null sprites");
 
 	return Sprite_isPlaying(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
@@ -292,7 +292,7 @@ bool AnimatedEntity_isPlayingAnimation(AnimatedEntity this)
 // is animation selected
 bool AnimatedEntity_isAnimationLoaded(AnimatedEntity this, char* functionName)
 {
-	ASSERT(this, "AnimatedEntity::isAnimationLoaded: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::isAnimationLoaded: null this");
 
 	if(!this->sprites)
 	{
@@ -307,7 +307,7 @@ bool AnimatedEntity_isAnimationLoaded(AnimatedEntity this, char* functionName)
 // get animation definition
 AnimationDescription* AnimatedEntity_getAnimationDescription(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::getAnimationDescription: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::getAnimationDescription: null this");
 
 	return this->animationDescription;
 }
@@ -315,7 +315,7 @@ AnimationDescription* AnimatedEntity_getAnimationDescription(AnimatedEntity this
 // set animation description
 void AnimatedEntity_setAnimationDescription(AnimatedEntity this, AnimationDescription* animationDescription)
 {
-	ASSERT(this, "AnimatedEntity::setAnimationDescription: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::setAnimationDescription: null this");
 
 	this->animationDescription = animationDescription;
 }
@@ -323,7 +323,7 @@ void AnimatedEntity_setAnimationDescription(AnimatedEntity this, AnimationDescri
 // resume method
 void AnimatedEntity_resume(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::resume: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::resume: null this");
 
 	__CALL_BASE_METHOD(Entity, resume, this);
 
@@ -334,7 +334,7 @@ void AnimatedEntity_resume(AnimatedEntity this)
 
 s8 AnimatedEntity_getActualFrame(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::getActualFrame: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::getActualFrame: null this");
 
 	if(!this->sprites)
 	{
@@ -372,7 +372,7 @@ int AnimatedEntity_getNumberOfFrames(AnimatedEntity this)
 // set direction
 void AnimatedEntity_setDirection(AnimatedEntity this, Direction direction)
 {
-	ASSERT(this, "AnimatedEntity::setDirection: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::setDirection: null this");
 
 	this->direction = direction;
 }
@@ -380,7 +380,7 @@ void AnimatedEntity_setDirection(AnimatedEntity this, Direction direction)
 // get direction
 Direction AnimatedEntity_getDirection(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedEntity::getDirection: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::getDirection: null this");
 
 	// TODO: must be recursive to account for parenting
 	return this->direction;

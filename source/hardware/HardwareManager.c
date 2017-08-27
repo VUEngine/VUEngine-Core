@@ -118,7 +118,7 @@ __SINGLETON(HardwareManager);
  */
 static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::constructor: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -145,7 +145,7 @@ static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManag
  */
 void HardwareManager_destructor(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::destructor: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -244,7 +244,7 @@ void HardwareManager_setInterruptVectors(HardwareManager this __attribute__ ((un
  */
 void HardwareManager_setInterruptLevel(HardwareManager this __attribute__ ((unused)), u8 level)
 {
-	ASSERT(this, "HardwareManager::setInterruptLevel: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::setInterruptLevel: null this");
 
 	asm(" \n\
 		stsr	sr5,r6 \n\
@@ -275,7 +275,7 @@ void HardwareManager_setInterruptLevel(HardwareManager this __attribute__ ((unus
  */
 int HardwareManager_getInterruptLevel(HardwareManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::geInterruptLevel: null this");
 
 	int level;
 
@@ -303,7 +303,7 @@ int HardwareManager_getInterruptLevel(HardwareManager this __attribute__ ((unuse
  */
 void HardwareManager_initializeTimer(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::initializeTimer: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::initializeTimer: null this");
 
 	TimerManager_initialize(this->timerManager);
 }
@@ -318,7 +318,7 @@ void HardwareManager_initializeTimer(HardwareManager this)
  */
 void HardwareManager_clearScreen(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::clearScreen: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::clearScreen: null this");
 
 	VIPManager_clearScreen(this->vipManager);
 }
@@ -333,7 +333,7 @@ void HardwareManager_clearScreen(HardwareManager this)
  */
 void HardwareManager_displayOn(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::displayOn: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::displayOn: null this");
 
 	VIPManager_displayOn(this->vipManager);
 }
@@ -348,7 +348,7 @@ void HardwareManager_displayOn(HardwareManager this)
  */
 void HardwareManager_displayOff(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::displayOff: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::displayOff: null this");
 
 	VIPManager_displayOff(this->vipManager);
 }
@@ -363,7 +363,7 @@ void HardwareManager_displayOff(HardwareManager this)
  */
 void HardwareManager_disableRendering(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::disableRendering: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::disableRendering: null this");
 
 	// disable interrupt
 	VIPManager_disableInterrupts(this->vipManager);
@@ -380,7 +380,7 @@ void HardwareManager_disableRendering(HardwareManager this)
  */
 void HardwareManager_enableRendering(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::enableRendering: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::enableRendering: null this");
 
 	// turn on display
 	VIPManager_displayOn(this->vipManager);
@@ -398,7 +398,7 @@ void HardwareManager_enableRendering(HardwareManager this)
  */
 void HardwareManager_upBrightness(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::upBrightness: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::upBrightness: null this");
 
 	VIPManager_upBrightness(this->vipManager);
 }
@@ -413,7 +413,7 @@ void HardwareManager_upBrightness(HardwareManager this)
  */
 void HardwareManager_lowerBrightness(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::lowerBrightness: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::lowerBrightness: null this");
 
 	VIPManager_lowerBrightness(this->vipManager);
 }
@@ -429,7 +429,7 @@ void HardwareManager_lowerBrightness(HardwareManager this)
  */
 void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition)
 {
-	ASSERT(this, "HardwareManager::setupColumnTable: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::setupColumnTable: null this");
 
 	VIPManager_setupColumnTable(this->vipManager, columnTableDefinition);
 }
@@ -444,7 +444,7 @@ void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinitio
  */
 void HardwareManager_enableKeypad(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::enableKeypad: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::enableKeypad: null this");
 
 	KeypadManager_enable(this->keypadManager);
 }
@@ -459,7 +459,7 @@ void HardwareManager_enableKeypad(HardwareManager this)
  */
 void HardwareManager_disableKeypad(HardwareManager this)
 {
-	ASSERT(this, "HardwareManager::disableKeypad: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::disableKeypad: null this");
 
 	KeypadManager_disable(this->keypadManager);
 }
@@ -476,7 +476,7 @@ void HardwareManager_disableKeypad(HardwareManager this)
  */
 void HardwareManager_print(HardwareManager this, int x, int y)
 {
-	ASSERT(this, "HardwareManager::print: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::print: null this");
 
 	Printing_text(Printing_getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
@@ -566,7 +566,7 @@ void HardwareManager_print(HardwareManager this, int x, int y)
  */
 void HardwareManager_checkStackStatus(HardwareManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "HardwareManager::checkStackStatus: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::checkStackStatus: null this");
 
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
@@ -591,7 +591,7 @@ void HardwareManager_checkStackStatus(HardwareManager this __attribute__ ((unuse
  */
 void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unused)), int x, int y, bool resumed)
 {
-	ASSERT(this, "HardwareManager::print: null this");
+	ASSERT(__SAFE_CAST(HardwareManager, this), "HardwareManager::print: null this");
 
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));

@@ -57,7 +57,7 @@ __SINGLETON(ScreenMovementManager);
 // class's constructor
 void __attribute__ ((noinline)) ScreenMovementManager_constructor(ScreenMovementManager this)
 {
-	ASSERT(this, "ScreenMovementManager::constructor: null this");
+	ASSERT(__SAFE_CAST(ScreenMovementManager, this), "ScreenMovementManager::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -66,7 +66,7 @@ void __attribute__ ((noinline)) ScreenMovementManager_constructor(ScreenMovement
 // class's destructor
 void ScreenMovementManager_destructor(ScreenMovementManager this)
 {
-	ASSERT(this, "ScreenMovementManager::destructor: null this");
+	ASSERT(__SAFE_CAST(ScreenMovementManager, this), "ScreenMovementManager::destructor: null this");
 
 	// destroy base
 	__SINGLETON_DESTROY;
@@ -75,7 +75,7 @@ void ScreenMovementManager_destructor(ScreenMovementManager this)
 // center world's screen in function of focus actor's position
 void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unused)), u32 checkIfFocusEntityIsMoving)
 {
-	ASSERT(this, "ScreenMovementManager::update: null this");
+	ASSERT(__SAFE_CAST(ScreenMovementManager, this), "ScreenMovementManager::update: null this");
 
 	Screen screen = Screen_getInstance();
 

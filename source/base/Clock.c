@@ -68,7 +68,7 @@ __CLASS_NEW_END(Clock);
  */
 static void Clock_constructor(Clock this)
 {
-	ASSERT(this, "Clock::constructor: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -95,7 +95,7 @@ static void Clock_constructor(Clock this)
  */
 void Clock_destructor(Clock this)
 {
-	ASSERT(this, "Clock::destructor: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::destructor: null this");
 
 	// unregister the clock
 	ClockManager_unregister(ClockManager_getInstance(), this);
@@ -118,7 +118,7 @@ void Clock_destructor(Clock this)
  */
 void Clock_print(Clock this, int col, int row, const char* font)
 {
-	ASSERT(this, "Clock::print: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::print: null this");
 
 	char output[] = "00:00";
 	char* minutes = Utilities_itoa(Clock_getMinutes(this), 10, 2);
@@ -145,7 +145,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
  */
 void Clock_update(Clock this, u32 millisecondsElapsed)
 {
-	ASSERT(this, "Clock::update: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::update: null this");
 
 	// increase count
 	if(this->paused)
@@ -184,7 +184,7 @@ void Clock_update(Clock this, u32 millisecondsElapsed)
  */
 void Clock_reset(Clock this)
 {
-	ASSERT(this, "Clock::reset: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::reset: null this");
 
 	this->milliSeconds = 0;
 	this->previousSecond = 0;
@@ -203,7 +203,7 @@ void Clock_reset(Clock this)
  */
 u32 Clock_getMilliSeconds(Clock this)
 {
-	ASSERT(this, "Clock::getMilliSeconds: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::getMilliSeconds: null this");
 
 	return this->milliSeconds;
 }
@@ -220,7 +220,7 @@ u32 Clock_getMilliSeconds(Clock this)
  */
 u32 Clock_getSeconds(Clock this)
 {
-	ASSERT(this, "Clock::getSeconds: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::getSeconds: null this");
 
 	return (u32)(this->milliSeconds / __MILLISECONDS_IN_SECOND);
 }
@@ -237,7 +237,7 @@ u32 Clock_getSeconds(Clock this)
  */
 u32 Clock_getMinutes(Clock this)
 {
-	ASSERT(this, "Clock::getMinutes: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::getMinutes: null this");
 
 	return (u32)(this->milliSeconds / (__MILLISECONDS_IN_SECOND * 60));
 }
@@ -254,7 +254,7 @@ u32 Clock_getMinutes(Clock this)
  */
 u32 Clock_getTime(Clock this)
 {
-	ASSERT(this, "Clock::getTime: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::getTime: null this");
 
 	return this->milliSeconds;
 }
@@ -271,7 +271,7 @@ u32 Clock_getTime(Clock this)
  */
 int Clock_getTimeInCurrentSecond(Clock this)
 {
-	ASSERT(this, "Clock::getTimeInCurrentSecond: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::getTimeInCurrentSecond: null this");
 
 	return __MILLISECONDS_IN_SECOND * (this->milliSeconds * 0.001f - F_FLOOR(this->milliSeconds * 0.001f));
 }
@@ -287,7 +287,7 @@ int Clock_getTimeInCurrentSecond(Clock this)
  */
 void Clock_setTimeInSeconds(Clock this, float totalSeconds)
 {
-	ASSERT(this, "Clock::setTimeInSeconds: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::setTimeInSeconds: null this");
 
 	this->milliSeconds = totalSeconds * __MILLISECONDS_IN_SECOND;
 }
@@ -303,7 +303,7 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
  */
 void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
 {
-	ASSERT(this, "Clock::setTimeInSeconds: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::setTimeInSeconds: null this");
 
 	this->milliSeconds = milliSeconds;
 }
@@ -318,7 +318,7 @@ void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
  */
 void Clock_start(Clock this)
 {
-	ASSERT(this, "Clock::start: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::start: null this");
 	Clock_reset(this);
 
 	this->paused = false;
@@ -334,7 +334,7 @@ void Clock_start(Clock this)
  */
 void Clock_stop(Clock this)
 {
-	ASSERT(this, "Clock::stop: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::stop: null this");
 
 	Clock_reset(this);
 	this->paused = true;
@@ -351,7 +351,7 @@ void Clock_stop(Clock this)
  */
 void Clock_pause(Clock this, bool paused)
 {
-	ASSERT(this, "Clock::pause: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::pause: null this");
 
 	this->paused = paused;
 }
@@ -368,7 +368,7 @@ void Clock_pause(Clock this, bool paused)
  */
 bool Clock_isPaused(Clock this)
 {
-	ASSERT(this, "Clock::isPaused: null this");
+	ASSERT(__SAFE_CAST(Clock, this), "Clock::isPaused: null this");
 
 	return this->paused;
 }

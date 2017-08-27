@@ -112,7 +112,7 @@ __CLASS_NEW_END(OptionsSelector, cols, rows, font);
  */
 void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* font)
 {
-	ASSERT(this, "OptionsSelector::constructor: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -141,7 +141,7 @@ void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* f
  */
 void OptionsSelector_destructor(OptionsSelector this)
 {
-	ASSERT(this, "OptionsSelector::destructor: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::destructor: null this");
 
 	OptionsSelector_flushPages(this);
 
@@ -160,7 +160,7 @@ void OptionsSelector_destructor(OptionsSelector this)
  */
 static void OptionsSelector_flushPages(OptionsSelector this)
 {
-	ASSERT(this, "OptionsSelector::flushPages: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::flushPages: null this");
 
 	if(this->pages)
 	{
@@ -248,7 +248,7 @@ u8 OptionsSelector_getWidth(OptionsSelector this)
  */
 void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
 {
-	ASSERT(this, "OptionsSelector::setOptions: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::setOptions: null this");
 	ASSERT(options, "OptionsSelector::setOptions: null options");
 
 	OptionsSelector_flushPages(this);
@@ -302,7 +302,7 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
  */
 void OptionsSelector_selectNext(OptionsSelector this)
 {
-	ASSERT(this, "OptionsSelector::selectNext: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::selectNext: null this");
 
 	if(this->currentOption)
 	{
@@ -361,7 +361,7 @@ void OptionsSelector_selectNext(OptionsSelector this)
  */
 void OptionsSelector_selectPrevious(OptionsSelector this)
 {
-	ASSERT(this, "OptionsSelector::selectPrevious: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::selectPrevious: null this");
 
 	if(this->currentOption)
 	{
@@ -478,7 +478,7 @@ int OptionsSelector_getSelectedOption(OptionsSelector this)
  */
 void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 {
-	ASSERT(this, "OptionsSelector::printOptions: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::printOptions: null this");
 
 	if(this->currentPage && 0 < VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage))))
 	{
@@ -545,7 +545,7 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
  */
 static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
 {
-	ASSERT(this, "OptionsSelector::printSelectorMark: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::printSelectorMark: null this");
 
 	if(this->currentPage)
 	{
@@ -579,7 +579,7 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
  */
 void OptionsSelector_doCurrentSelectionCallback(OptionsSelector this)
 {
-	ASSERT(this, "OptionsSelector::doCurrentSelectionCallback: null this");
+	ASSERT(__SAFE_CAST(OptionsSelector, this), "OptionsSelector::doCurrentSelectionCallback: null this");
 
 	Option* option = VirtualNode_getData(this->currentOption);
 

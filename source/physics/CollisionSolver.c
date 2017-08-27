@@ -72,7 +72,7 @@ __CLASS_NEW_END(CollisionSolver, owner, ownerPositionToCheck, ownerPositionToWri
 // must always pass the global position
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner, const VBVec3D* ownerPositionToCheck, const VBVec3D* ownerPositionToWrite)
 {
-	ASSERT(this, "CollisionSolver::constructor: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::constructor: null this");
 	ASSERT(owner, "CollisionSolver::constructor: null owner");
 
 	// construct base object
@@ -94,7 +94,7 @@ void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner, cons
 // class's destructor
 void CollisionSolver_destructor(CollisionSolver this)
 {
-	ASSERT(this, "CollisionSolver::destructor: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::destructor: null this");
 
 	CollisionSolver_resetCollisionStatusOnAxis(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
 
@@ -110,7 +110,7 @@ void CollisionSolver_destructor(CollisionSolver this)
 // update colliding entities
 void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 movementAxis)
 {
-	ASSERT(this, "CollisionSolver::updateCollisionStatus: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::updateCollisionStatus: null this");
 
 	int i = 0;
 	for(; i < kLastAxis; i++)
@@ -134,7 +134,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 moveme
 // retrieve previous position
 const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this)
 {
-	ASSERT(this, "CollisionSolver::getOwnerPreviousPosition: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::getOwnerPreviousPosition: null this");
 
 	return &this->ownerPreviousPosition;
 }
@@ -142,7 +142,7 @@ const VBVec3D* CollisionSolver_getOwnerPreviousPosition(CollisionSolver this)
 // retrieve previous position
 void CollisionSolver_setOwnerPreviousPosition(CollisionSolver this, VBVec3D position)
 {
-	ASSERT(this, "CollisionSolver::setOwnerPreviousPosition: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::setOwnerPreviousPosition: null this");
 
 	this->ownerPreviousPosition = position;
 }
@@ -151,7 +151,7 @@ void CollisionSolver_setOwnerPreviousPosition(CollisionSolver this, VBVec3D posi
 // check if gravity must apply to this actor
 u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape)
 {
-	ASSERT(this, "CollisionSolver::getAxisOfFutureCollision: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::getAxisOfFutureCollision: null this");
 
 	u16 axisOfCollision = 0;
 	int collisionCheckDistance = 5;
@@ -186,7 +186,7 @@ u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 // process event
 static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Object eventFirer)
 {
-	ASSERT(this, "CollisionSolver::collidingShapeDestroyed: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::collidingShapeDestroyed: null this");
 
 	VirtualList_removeElement(this->lastCollidingShape[kXAxis], eventFirer);
 	VirtualList_removeElement(this->lastCollidingShape[kYAxis], eventFirer);
@@ -196,7 +196,7 @@ static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Obje
 // align to colliding spatialObject
 void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape shape, Shape collidingShape, u16 axisOfCollision, bool registerObject, const VBVec3D* displacement)
 {
-	ASSERT(this, "CollisionSolver::alignToCollidingShape: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::alignToCollidingShape: null this");
 
 	int alignThreshold = __ALIGN_PADDING;
 
@@ -236,7 +236,7 @@ void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape shape, Sh
 // get axis of collision
 u16 CollisionSolver_getAxisOfCollision(CollisionSolver this, Shape shape, Shape collidingShape, VBVec3D displacement)
 {
-	ASSERT(this, "CollisionSolver::getAxisOfCollision: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::getAxisOfCollision: null this");
 	ASSERT(collidingShape, "CollisionSolver::getAxisOfCollision: collidingEntities");
 
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
@@ -252,7 +252,7 @@ u16 CollisionSolver_getAxisOfCollision(CollisionSolver this, Shape shape, Shape 
 // resolve collision against other entities
 int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualList collidingShapes, VBVec3D displacement, bool registerObjects)
 {
-	ASSERT(this, "CollisionSolver::resolveCollision: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::resolveCollision: null this");
 	ASSERT(__SAFE_CAST(Shape, shape), "CollisionSolver::resolveCollision: null shape");
 	ASSERT(collidingShapes, "CollisionSolver::resolveCollision: null collidingEntities");
 
@@ -388,7 +388,7 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 // align character to other spatialObject on collision
 void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingShape, u16 axis, const VBVec3D* displacement, int pad)
 {
-	ASSERT(this, "CollisionSolver::alignTo: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::alignTo: null this");
 
 	// retrieve the colliding spatialObject's position and gap
 	VBVec3D myOwnerPosition = *this->ownerPositionToWrite;
@@ -446,7 +446,7 @@ void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingS
 // retrieve friction of colliding objects
 Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 {
-	ASSERT(this, "CollisionSolver::updateSurroundingFriction: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::updateSurroundingFriction: null this");
 
 	Force totalFriction =
 	{
@@ -489,7 +489,7 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 
 fix19_13 CollisionSolver_getCollidingTotalElasticity(CollisionSolver this, u16 axis)
 {
-	ASSERT(this, "CollisionSolver::getCollidingTotalElasticity: null this");
+	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::getCollidingTotalElasticity: null this");
 	ASSERT(!((__X_AXIS & axis) && (__Y_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis x, y");
 	ASSERT(!((__X_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis x, z");
 	ASSERT(!((__Y_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis y, z");

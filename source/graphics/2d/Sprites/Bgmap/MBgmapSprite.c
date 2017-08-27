@@ -91,6 +91,8 @@ __CLASS_NEW_END(MBgmapSprite, mBgmapSpriteDefinition, owner);
  */
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 {
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::constructor: null this");
+
 	__CONSTRUCT_BASE(BgmapSprite, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
 
 	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
@@ -111,7 +113,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
  */
 void MBgmapSprite_destructor(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::destructor: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::destructor: null this");
 
 	MBgmapSprite_releaseTextures(this);
 
@@ -130,7 +132,7 @@ void MBgmapSprite_destructor(MBgmapSprite this)
  */
 static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::releaseTextures: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::releaseTextures: null this");
 
 	if(this->textures)
 	{
@@ -158,7 +160,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
  */
 static void MBgmapSprite_loadTextures(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::loadTextures: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::loadTextures: null this");
 
 	if(this->mBgmapSpriteDefinition)
 	{
@@ -191,7 +193,7 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
  */
 static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "MBgmapSprite::loadTexture: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::loadTexture: null this");
 
 	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
 
@@ -214,7 +216,7 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
  */
 void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
 {
-	ASSERT(this, "MBgmapSprite::position: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::position: null this");
 
 	VBVec3D position3D = *position;
 
@@ -243,7 +245,7 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
  */
 void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 {
-	ASSERT(this, "MBgmapSprite::setPosition: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::setPosition: null this");
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -306,7 +308,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
  */
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)
 {
-	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::addDisplacement: null this");
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -356,7 +358,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
  */
 void MBgmapSprite_render(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::render: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::render: null this");
 
 	// if render flag is set
 	if(!this->texture | !this->worldLayer)
@@ -483,7 +485,7 @@ void MBgmapSprite_render(MBgmapSprite this)
  */
 VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
 {
-	ASSERT(this, "BgmapSprite::getPosition: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "BgmapSprite::getPosition: null this");
 
 	return this->drawSpec.position;
 }
@@ -500,7 +502,7 @@ VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
  */
 void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
 {
-	ASSERT(this, "MBgmapSprite::resize: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::resize: null this");
 
 	__CALL_BASE_METHOD(BgmapSprite, resize, this, scale, z);
 
@@ -517,7 +519,7 @@ void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
  */
 static void MBgmapSprite_calculateSize(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::calculateSize: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::calculateSize: null this");
 
 	VirtualNode node = this->textures->head;
 
@@ -557,7 +559,7 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
  */
 void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
 {
-	ASSERT(this, "MBgmapSprite::setMode: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::setMode: null this");
 }
 
 /**
@@ -572,7 +574,7 @@ void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 displa
  */
 bool MBgmapSprite_writeTextures(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::writeTextures: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::writeTextures: null this");
 	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
 
 	VirtualNode node = this->textures->head;
@@ -603,7 +605,7 @@ bool MBgmapSprite_writeTextures(MBgmapSprite this)
  */
 bool MBgmapSprite_areTexturesWritten(MBgmapSprite this)
 {
-	ASSERT(this, "MBgmapSprite::areTexturesWritten: null this");
+	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::areTexturesWritten: null this");
 	ASSERT(this->textures, "MBgmapSprite::areTexturesWritten: null texture");
 
 	VirtualNode node = this->textures->head;

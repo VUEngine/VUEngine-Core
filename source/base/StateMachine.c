@@ -75,6 +75,8 @@ __CLASS_NEW_END(StateMachine, owner);
  */
 void StateMachine_constructor(StateMachine this, void* owner)
 {
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
@@ -95,7 +97,7 @@ void StateMachine_constructor(StateMachine this, void* owner)
  */
 void StateMachine_destructor(StateMachine this)
 {
-	ASSERT(this, "StateMachine::destructor: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::destructor: null this");
 	ASSERT(this->stateStack, "StateMachine::destructor: null stateStack");
 
 	// delete the stack
@@ -124,7 +126,7 @@ void StateMachine_destructor(StateMachine this)
  */
 void StateMachine_update(StateMachine this)
 {
-	ASSERT(this, "StateMachine::update: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::update: null this");
 
 	if(this->currentState)
 	{
@@ -143,7 +145,7 @@ void StateMachine_update(StateMachine this)
  */
 void StateMachine_swapState(StateMachine this, State newState)
 {
-	ASSERT(this, "StateMachine::swapState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::swapState: null this");
 	ASSERT(newState, "StateMachine::swapState: null newState");
 
 	// update the stack
@@ -182,7 +184,7 @@ void StateMachine_swapState(StateMachine this, State newState)
  */
 u32 StateMachine_pushState(StateMachine this, State newState)
 {
-	ASSERT(this, "StateMachine::pushState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::pushState: null this");
 
 	if(!newState)
 	{
@@ -223,7 +225,7 @@ u32 StateMachine_pushState(StateMachine this, State newState)
  */
 u32 StateMachine_popState(StateMachine this)
 {
-	ASSERT(this, "StateMachine::popState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::popState: null this");
 
 	// return in case the stack is empty
 	if(StateMachine_getStackSize(this) == 0)
@@ -265,7 +267,7 @@ u32 StateMachine_popState(StateMachine this)
  */
 void StateMachine_returnToPreviousState(StateMachine this)
 {
-	ASSERT(this, "StateMachine::returnToPreviousState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::returnToPreviousState: null this");
 
 	if(this->previousState)
 	{
@@ -291,7 +293,7 @@ void StateMachine_returnToPreviousState(StateMachine this)
  */
 void StateMachine_changeToGlobal(StateMachine this, State globalState)
 {
-	ASSERT(this, "StateMachine::changeToGlobal: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::changeToGlobal: null this");
 
 	if(!globalState)
 	{
@@ -320,7 +322,7 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
  */
 bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 {
-	ASSERT(this, "StateMachine::handleMessage: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::handleMessage: null this");
 
 	if(this->currentState )
 	{
@@ -343,7 +345,7 @@ bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
  */
 bool StateMachine_isInState(StateMachine this, const State state)
 {
-	ASSERT(this, "StateMachine::isInState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::isInState: null this");
 
 	return (this->currentState == state) ? true : false;
 }
@@ -359,7 +361,7 @@ bool StateMachine_isInState(StateMachine this, const State state)
  */
 void StateMachine_setOwner(StateMachine this, void* owner)
 {
-	ASSERT(this, "StateMachine::setOwner: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::setOwner: null this");
 
 	this->owner = owner;
 }
@@ -376,7 +378,7 @@ void StateMachine_setOwner(StateMachine this, void* owner)
  */
 State StateMachine_getCurrentState(StateMachine this)
 {
-	ASSERT(this, "StateMachine::getCurrentState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::getCurrentState: null this");
 
 	return this->currentState;
 }
@@ -393,7 +395,7 @@ State StateMachine_getCurrentState(StateMachine this)
  */
 State StateMachine_getPreviousState(StateMachine this)
 {
-	ASSERT(this, "StateMachine::getPreviousState: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::getPreviousState: null this");
 
 	VirtualNode node = this->stateStack->head;
 
@@ -419,7 +421,7 @@ State StateMachine_getPreviousState(StateMachine this)
  */
 int StateMachine_getStackSize(StateMachine this)
 {
-	ASSERT(this, "StateMachine::getStackSize: null this");
+	ASSERT(__SAFE_CAST(StateMachine, this), "StateMachine::getStackSize: null this");
 
 	return VirtualList_getSize(this->stateStack);
 }

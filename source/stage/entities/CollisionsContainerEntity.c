@@ -60,7 +60,7 @@ __CLASS_NEW_END(CollisionsContainerEntity, collisionsContainerEntityDefinition, 
 // class's constructor
 void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, CollisionsContainerEntityDefinition* collisionsContainerEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "CollisionsContainerEntity::constructor: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::constructor: null this");
 
 	// construct base Container
 	__CONSTRUCT_BASE(Entity, collisionsContainerEntityDefinition, id, internalId, name);
@@ -69,7 +69,7 @@ void CollisionsContainerEntity_constructor(CollisionsContainerEntity this, Colli
 // class's destructor
 void CollisionsContainerEntity_destructor(CollisionsContainerEntity this)
 {
-	ASSERT(this, "CollisionsContainerEntity::destructor: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::destructor: null this");
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -78,46 +78,46 @@ void CollisionsContainerEntity_destructor(CollisionsContainerEntity this)
 
 void CollisionsContainerEntity_initialize(CollisionsContainerEntity this __attribute__ ((unused)), bool recursive __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::initialize: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::initialize: null this");
 }
 
 void CollisionsContainerEntity_ready(CollisionsContainerEntity this __attribute__ ((unused)), bool recursive __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::ready: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::ready: null this");
 }
 
 void CollisionsContainerEntity_update(CollisionsContainerEntity this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::update: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::update: null this");
 }
 
 void CollisionsContainerEntity_transform(CollisionsContainerEntity this __attribute__ ((unused)), const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::transform: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::transform: null this");
 }
 
 void CollisionsContainerEntity_synchronizeGraphics(CollisionsContainerEntity this __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::synchronizeGraphics: null this");
 }
 
 bool CollisionsContainerEntity_handleMessage(CollisionsContainerEntity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::handleMessage: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::handleMessage: null this");
 
 	return true;
 }
 
 bool CollisionsContainerEntity_handlePropagatedMessage(CollisionsContainerEntity this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::handlePropagatedMessage: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::handlePropagatedMessage: null this");
 
 	return false;
 }
 
 int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::passMessage: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::passMessage: null this");
 
 	return false;
 }
@@ -137,7 +137,7 @@ int CollisionsContainerEntity_passMessage(CollisionsContainerEntity this __attri
  */
 bool CollisionsContainerEntity_isVisible(CollisionsContainerEntity this, int pad, bool recursive __attribute__ ((unused)))
 {
-	ASSERT(this, "CollisionsContainerEntity::isVisible: null this");
+	ASSERT(__SAFE_CAST(CollisionsContainerEntity, this), "CollisionsContainerEntity::isVisible: null this");
 
 	int x = 0;
 	int y = 0;

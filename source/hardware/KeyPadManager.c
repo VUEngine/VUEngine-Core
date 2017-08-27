@@ -85,7 +85,7 @@ __SINGLETON(KeypadManager);
  */
 static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::constructor: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -108,7 +108,7 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
  */
 void KeypadManager_destructor(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::destructor: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -124,7 +124,7 @@ void KeypadManager_destructor(KeypadManager this)
  */
 void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "KeypadManager::enable: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::enable: null this");
 
 	KeypadManager_flush(this);
 
@@ -143,7 +143,7 @@ void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
  */
 void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "KeypadManager::disable: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::disable: null this");
 
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 }
@@ -158,7 +158,7 @@ void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
  */
 void KeypadManager_enable(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::enable: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::enable: null this");
 
 	this->enabled = true;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
@@ -176,7 +176,7 @@ void KeypadManager_enable(KeypadManager this)
  */
 void KeypadManager_disable(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::disable: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::disable: null this");
 
 	this->enabled = false;
 }
@@ -193,7 +193,7 @@ void KeypadManager_disable(KeypadManager this)
  */
 int KeypadManager_isEnabled(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::disable: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::disable: null this");
 
 	return this->enabled;
 }
@@ -208,7 +208,7 @@ int KeypadManager_isEnabled(KeypadManager this)
  */
 UserInput KeypadManager_read(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::read: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::read: null this");
 
 	// wait keypad to stabilize
 	while(*_readingStatus & __S_STAT);
@@ -241,7 +241,7 @@ UserInput KeypadManager_read(KeypadManager this)
  */
 UserInput KeypadManager_getUserInput(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::getUserInput: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::getUserInput: null this");
 
 	return this->userInput;
 }
@@ -256,7 +256,7 @@ UserInput KeypadManager_getUserInput(KeypadManager this)
  */
 void KeypadManager_flush(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::flush: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::flush: null this");
 
 	this->userInput = (UserInput){0, 0, 0, 0, 0, 0};
 }
@@ -273,7 +273,7 @@ void KeypadManager_flush(KeypadManager this)
  */
 u16 KeypadManager_getPressedKey(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::getPressedKey: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::getPressedKey: null this");
 
 	return this->userInput.pressedKey;
 }
@@ -290,7 +290,7 @@ u16 KeypadManager_getPressedKey(KeypadManager this)
  */
 u16 KeypadManager_getReleasedKey(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::read: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::read: null this");
 
 	return this->userInput.releasedKey;
 }
@@ -298,7 +298,7 @@ u16 KeypadManager_getReleasedKey(KeypadManager this)
 // get hold key
 u16 KeypadManager_getHoldKey(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::getHoldKey: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::getHoldKey: null this");
 
 	return this->userInput.holdKey;
 }
@@ -315,7 +315,7 @@ u16 KeypadManager_getHoldKey(KeypadManager this)
  */
 u16 KeypadManager_getPreviousKey(KeypadManager this)
 {
-	ASSERT(this, "KeypadManager::getPreviousKey: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::getPreviousKey: null this");
 
 	return this->userInput.previousKey;
 }
@@ -331,7 +331,7 @@ u16 KeypadManager_getPreviousKey(KeypadManager this)
  */
 void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister)
 {
-	ASSERT(this, "KeypadManager::registerInput: null this");
+	ASSERT(__SAFE_CAST(KeypadManager, this), "KeypadManager::registerInput: null this");
 
 	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;

@@ -209,7 +209,7 @@ __SINGLETON(AnimationInspector);
  */
 static void __attribute__ ((noinline)) AnimationInspector_constructor(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::constructor: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -234,7 +234,7 @@ static void __attribute__ ((noinline)) AnimationInspector_constructor(AnimationI
  */
 void AnimationInspector_destructor(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::destructor: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::destructor: null this");
 
 	if(this->animatedEntitySelector)
 	{
@@ -275,7 +275,7 @@ void AnimationInspector_destructor(AnimationInspector this)
  */
 void AnimationInspector_update(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::update: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::update: null this");
 
 	if(this->gameState && this->animatedSprite)
 	{
@@ -297,7 +297,7 @@ void AnimationInspector_update(AnimationInspector this)
  */
 void AnimationInspector_show(AnimationInspector this, GameState gameState)
 {
-	ASSERT(this, "AnimationInspector::start: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::start: null this");
 	ASSERT(gameState, "AnimationInspector::start: null gameState");
 
 	this->gameState = gameState;
@@ -347,7 +347,7 @@ void AnimationInspector_show(AnimationInspector this, GameState gameState)
  */
 void AnimationInspector_hide(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::stop: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::stop: null this");
 
 	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
@@ -446,7 +446,7 @@ static void AnimationInspector_setupMode(AnimationInspector this)
  */
 void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey)
 {
-	ASSERT(this, "AnimationInspector::processUserInput: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::processUserInput: null this");
 
 	if(!this->gameState)
 	{

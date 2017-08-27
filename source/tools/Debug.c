@@ -298,7 +298,7 @@ __SINGLETON(Debug);
  */
 static void __attribute__ ((noinline)) Debug_constructor(Debug this)
 {
-	ASSERT(this, "Debug::constructor: null this");
+	ASSERT(__SAFE_CAST(Debug, this), "Debug::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -333,7 +333,7 @@ static void __attribute__ ((noinline)) Debug_constructor(Debug this)
  */
 void Debug_destructor(Debug this)
 {
-	ASSERT(this, "Debug::destructor: null this");
+	ASSERT(__SAFE_CAST(Debug, this), "Debug::destructor: null this");
 
 	__DELETE(this->pages);
 	__DELETE(this->subPages);
@@ -490,7 +490,7 @@ static void Debug_lightUpGame(Debug this)
  */
 void Debug_processUserInput(Debug this __attribute__ ((unused)), u16 pressedKey)
 {
-	ASSERT(this, "Debug::processUserInput: null this");
+	ASSERT(__SAFE_CAST(Debug, this), "Debug::processUserInput: null this");
 
 	if(pressedKey & K_LL)
 	{

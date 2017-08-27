@@ -82,6 +82,8 @@ __SINGLETON(FrameRate);
  */
 static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
 {
+	ASSERT(__SAFE_CAST(FrameRate, this), "FrameRate::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	this->fps = 0;
@@ -97,7 +99,7 @@ static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
  */
 void FrameRate_destructor(FrameRate this)
 {
-	ASSERT(this, "FrameRate::destructor: null this");
+	ASSERT(__SAFE_CAST(FrameRate, this), "FrameRate::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -113,7 +115,7 @@ void FrameRate_destructor(FrameRate this)
  */
 void FrameRate_reset(FrameRate this)
 {
-	ASSERT(this, "FrameRate::reset: null this");
+	ASSERT(__SAFE_CAST(FrameRate, this), "FrameRate::reset: null this");
 
 	this->fps = 0;
 }
@@ -128,7 +130,7 @@ void FrameRate_reset(FrameRate this)
  */
 u16 FrameRate_getFps(FrameRate this)
 {
-	ASSERT(this, "FrameRate::getFps: null this");
+	ASSERT(__SAFE_CAST(FrameRate, this), "FrameRate::getFps: null this");
 
 	return this->fps;
 }
@@ -143,7 +145,7 @@ u16 FrameRate_getFps(FrameRate this)
  */
 void FrameRate_increaseFps(FrameRate this)
 {
-	ASSERT(this, "FrameRate::increaseFps: null this");
+	ASSERT(__SAFE_CAST(FrameRate, this), "FrameRate::increaseFps: null this");
 
 	this->fps++;
 }
@@ -160,7 +162,7 @@ void FrameRate_increaseFps(FrameRate this)
  */
 void FrameRate_print(FrameRate this, int col, int row)
 {
-	ASSERT(this, "FrameRate::print: null this");
+	ASSERT(__SAFE_CAST(FrameRate, this), "FrameRate::print: null this");
 
 	Printing printing = Printing_getInstance();
 	Printing_text(printing, "FPS      ", col, row, NULL);

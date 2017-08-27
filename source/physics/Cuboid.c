@@ -81,7 +81,7 @@ __CLASS_NEW_END(Cuboid, owner);
 // class's constructor
 void Cuboid_constructor(Cuboid this, SpatialObject owner)
 {
-	ASSERT(this, "Cuboid::constructor: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::constructor: null this");
 
 	__CONSTRUCT_BASE(Shape, owner);
 
@@ -91,7 +91,7 @@ void Cuboid_constructor(Cuboid this, SpatialObject owner)
 // class's destructor
 void Cuboid_destructor(Cuboid this)
 {
-	ASSERT(this, "Cuboid::destructor: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::destructor: null this");
 
 	Cuboid_hide(this);
 
@@ -103,7 +103,7 @@ void Cuboid_destructor(Cuboid this)
 // check if two rectangles overlap
 bool Cuboid_overlaps(Cuboid this, Shape shape)
 {
-	ASSERT(this, "Cuboid::overlaps: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::overlaps: null this");
 
 	if(__IS_INSTANCE_OF(Cuboid, shape))
 	{
@@ -144,21 +144,21 @@ static bool Cuboid_overlapsWithInverseRightCuboid(RightCuboid* first, RightCuboi
 // check if overlaps with other rect
 bool Cuboid_overlapsCuboid(Cuboid this, Cuboid other)
 {
-	ASSERT(this, "Cuboid::overlapsCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::overlapsCuboid: null this");
 
 	return Cuboid_overlapsWithRightCuboid(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
 bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
 {
-	ASSERT(this, "Cuboid::overlapsInverseCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::overlapsInverseCuboid: null this");
 
 	return Cuboid_overlapsWithInverseRightCuboid(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
 void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, const VBVec3D* displacement, bool moves)
 {
-	ASSERT(this, "Cuboid::setup: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::setup: null this");
 
 	this->displacement = *displacement;
 
@@ -192,7 +192,7 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, c
 // prepare the shape to be checked
 void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity)
 {
-	ASSERT(this, "Cuboid::position: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::position: null this");
 
 	// calculate positioned rightCuboid
 	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + this->displacement.x;
@@ -228,7 +228,7 @@ void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffecte
 // retrieve rightCuboid
 RightCuboid Cuboid_getRightCuboid(Cuboid this)
 {
-	ASSERT(this, "Cuboid::getRightCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getRightCuboid: null this");
 
 	return this->rightCuboid;
 }
@@ -236,7 +236,7 @@ RightCuboid Cuboid_getRightCuboid(Cuboid this)
 // retrieve rightCuboid
 RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this)
 {
-	ASSERT(this, "Cuboid::getPositionedRightCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getPositionedRightCuboid: null this");
 
 	return this->positionedRightCuboid;
 }
@@ -244,7 +244,7 @@ RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this)
 // determine axis of collision
 u16 Cuboid_getAxisOfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition)
 {
-	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getAxisOfCollision: null this");
 	ASSERT(collidingShape, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
 
 	if(__IS_INSTANCE_OF(Cuboid, collidingShape))
@@ -262,7 +262,7 @@ u16 Cuboid_getAxisOfCollision(Cuboid this, Shape collidingShape, VBVec3D displac
 // determine axis of collision
 static u16 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement, VBVec3D previousPosition, bool (*overlapsFunction) (RightCuboid*, RightCuboid*))
 {
-	ASSERT(this, "Cuboid::getAxisOfCollisionWithCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getAxisOfCollisionWithCuboid: null this");
 
 	VBVec3D displacementIncrement = displacement;
 
@@ -455,7 +455,7 @@ static u16 Cuboid_getAxisOfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec
 // test if collision with the entity give the displacement
 bool Cuboid_testIfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement)
 {
-	ASSERT(this, "Cuboid::testIfCollision: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::testIfCollision: null this");
 
 	if(__IS_INSTANCE_OF(Cuboid, collidingShape))
 	{
@@ -474,7 +474,7 @@ bool Cuboid_testIfCollision(Cuboid this, Shape collidingShape, VBVec3D displacem
 
 VBVec3D Cuboid_getPosition(Cuboid this)
 {
-	ASSERT(this, "Cuboid::getPosition: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getPosition: null this");
 
 	VBVec3D position =
 	{
@@ -488,7 +488,7 @@ VBVec3D Cuboid_getPosition(Cuboid this)
 
 RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this)
 {
-	ASSERT(this, "Cuboid::getSurroundingRightCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getSurroundingRightCuboid: null this");
 
 	return this->rightCuboid;
 }
@@ -497,7 +497,7 @@ RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this)
 // test if collision with the entity give the displacement
 static u16 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
 {
-	ASSERT(this, "Cuboid::testIfCollisionWithCuboid: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::testIfCollisionWithCuboid: null this");
 
 	// setup a cuboid representing the previous position
 	RightCuboid positionedRightCuboid = this->positionedRightCuboid;
@@ -549,7 +549,7 @@ static u16 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D 
 // configure Polyhedron
 static void Cuboid_configurePolyhedron(Cuboid this, int renew)
 {
-	ASSERT(this, "Cuboid::draw: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::draw: null this");
 
 	if(renew)
 	{
@@ -580,7 +580,7 @@ static void Cuboid_configurePolyhedron(Cuboid this, int renew)
 // show me
 void Cuboid_show(Cuboid this)
 {
-	ASSERT(this, "Cuboid::draw: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::draw: null this");
 
 	Cuboid_configurePolyhedron(this, __VIRTUAL_CALL(SpatialObject, moves, this->owner) || !this->ready);
 
@@ -603,7 +603,7 @@ void Cuboid_hide(Cuboid this)
 // print debug data
 void Cuboid_print(Cuboid this, int x, int y)
 {
-	ASSERT(this, "Cuboid::print: null this");
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::print: null this");
 
 	RightCuboid rightCuboid = this->positionedRightCuboid;
 

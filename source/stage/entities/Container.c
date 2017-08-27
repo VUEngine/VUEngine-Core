@@ -63,7 +63,7 @@ __CLASS_NEW_END(Container, name);
 // class's constructor
 void Container_constructor(Container this, const char* const name)
 {
-	ASSERT(this, "Container::constructor: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(SpatialObject);
@@ -96,7 +96,7 @@ void Container_constructor(Container this, const char* const name)
 // class's destructor
 void Container_destructor(Container this)
 {
-	ASSERT(this, "Container::destructor: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::destructor: null this");
 
 	// first remove any children removed
 	Container_processRemovedChildren(this);
@@ -175,7 +175,7 @@ void Container_deleteMyself(Container this)
 // add a child Container
 void Container_addChild(Container this, Container child)
 {
-	ASSERT(this, "Container::addChild: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::addChild: null this");
 
 	// check if child is valid
 	if(!child)
@@ -220,7 +220,7 @@ void Container_addChild(Container this, Container child)
 // remove child Container
 void Container_removeChild(Container this, Container child)
 {
-	ASSERT(this, "Container::removeChild: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::removeChild: null this");
 
 	// check if child is valid and if I'm its parent
 	if(!(child && this == child->parent && this->children))
@@ -244,7 +244,7 @@ void Container_removeChild(Container this, Container child)
 
 void Container_setupGraphics(Container this __attribute__ ((unused)))
 {
-	ASSERT(this, "Container::setupGraphics: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::setupGraphics: null this");
 
 	// if I have children
 	if(this->children)
@@ -264,7 +264,7 @@ void Container_setupGraphics(Container this __attribute__ ((unused)))
 
 void Container_releaseGraphics(Container this)
 {
-	ASSERT(this, "Container::releaseGraphics: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::releaseGraphics: null this");
 
 	// if I have children
 	if(this->children)
@@ -285,7 +285,7 @@ void Container_releaseGraphics(Container this)
 // process removed children
 void Container_processRemovedChildren(Container this)
 {
-	ASSERT(this, "Container::processRemovedChildren: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::processRemovedChildren: null this");
 
 	if(!this->removedChildren)
 	{
@@ -318,7 +318,7 @@ void Container_processRemovedChildren(Container this)
 // update each Container's child
 void Container_update(Container this, u32 elapsedTime)
 {
-	ASSERT(this, "Container::update: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::update: null this");
 
 	// if I have children
 	if(this->children)
@@ -339,7 +339,7 @@ void Container_update(Container this, u32 elapsedTime)
 // retrieve environment transformation
 Transformation Container_getEnvironmentTransform(Container this)
 {
-	ASSERT(this, "Container::getEnvironmentTransform: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getEnvironmentTransform: null this");
 
 	if(!this->parent)
 	{
@@ -394,7 +394,7 @@ void Container_concatenateTransform(Transformation* environmentTransform, Transf
 // change environment
 void Container_changeEnvironment(Container this, Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::changeEnvironment: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::changeEnvironment: null this");
 
 	VBVec3D localPosition =
 	{
@@ -427,7 +427,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 // initial transform
 void Container_initialTransform(Container this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "Container::initialTransform: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::initialTransform: null this");
 
 	// concatenate transform
 	Container_applyEnvironmentToPosition(this, environmentTransform);
@@ -458,7 +458,7 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 
 void Container_applyEnvironmentToTransformation(Container this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::applyEnvironmentToTranformation: null this");
 
 	Container_applyEnvironmentToPosition(this, environmentTransform);
 	Container_applyEnvironmentToRotation(this, environmentTransform);
@@ -467,7 +467,7 @@ void Container_applyEnvironmentToTransformation(Container this, const Transforma
 
 inline static void Container_applyEnvironmentToPosition(Container this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::applyEnvironmentToTranformation: null this");
 
 	VBVec3D globalPosition = environmentTransform->globalPosition;
 	VBVec3D localPosition = this->transform.localPosition;
@@ -482,7 +482,7 @@ inline static void Container_applyEnvironmentToPosition(Container this, const Tr
 
 inline static void Container_applyEnvironmentToRotation(Container this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToRotation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::applyEnvironmentToRotation: null this");
 
 	Rotation globalRotation = environmentTransform->globalRotation;
 	Rotation localRotation = this->transform.localRotation;
@@ -497,7 +497,7 @@ inline static void Container_applyEnvironmentToRotation(Container this, const Tr
 
 inline static void Container_applyEnvironmentToScale(Container this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToScale: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::applyEnvironmentToScale: null this");
 
 	Scale globalScale = environmentTransform->globalScale;
 	Scale localScale = this->transform.localScale;
@@ -512,7 +512,7 @@ inline static void Container_applyEnvironmentToScale(Container this, const Trans
 // initial transform but don't call the virtual method
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::transform: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::transform: null this");
 
 	// apply environment transform
 	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
@@ -553,7 +553,7 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 // initial transform
 void Container_transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "Container::transform: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::transform: null this");
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
 	// apply environment transform
@@ -594,7 +594,7 @@ void Container_transform(Container this, const Transformation* environmentTransf
 
 void Container_synchronizeGraphics(Container this)
 {
-	ASSERT(this, "Container::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::synchronizeGraphics: null this");
 
 	// if I have children
 	if(this->children)
@@ -612,7 +612,7 @@ void Container_synchronizeGraphics(Container this)
 // retrieve transformation
 Transformation* Container_getTransform(Container this)
 {
-	ASSERT(this, "Container::getTransform: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getTransform: null this");
 
 	return &this->transform;
 }
@@ -620,7 +620,7 @@ Transformation* Container_getTransform(Container this)
 // retrieve global position
 const VBVec3D* Container_getGlobalPosition(Container this)
 {
-	ASSERT(this, "Container::getGlobalPosition: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getGlobalPosition: null this");
 
 	return &this->transform.globalPosition;
 }
@@ -628,7 +628,7 @@ const VBVec3D* Container_getGlobalPosition(Container this)
 // retrieve local position
 const VBVec3D* Container_getLocalPosition(Container this)
 {
-	ASSERT(this, "Container::getLocalPosition: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getLocalPosition: null this");
 
 	return &this->transform.localPosition;
 }
@@ -636,7 +636,7 @@ const VBVec3D* Container_getLocalPosition(Container this)
 //set class's local position
 void Container_setLocalPosition(Container this, const VBVec3D* position)
 {
-	ASSERT(this, "Container::setLocalPosition: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::setLocalPosition: null this");
 
 	// force global position calculation on the next transform cycle
 	if(this->transform.localPosition.z != position->z)
@@ -658,7 +658,7 @@ void Container_setLocalPosition(Container this, const VBVec3D* position)
 
 const Rotation* Container_getLocalRotation(Container this)
 {
-	ASSERT(this, "Container::getLocalRotation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getLocalRotation: null this");
 
 	return &this->transform.localRotation;
 }
@@ -666,7 +666,7 @@ const Rotation* Container_getLocalRotation(Container this)
 //set class's local position
 void Container_setLocalRotation(Container this, const Rotation* rotation)
 {
-	ASSERT(this, "Container::setLocalRotation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::setLocalRotation: null this");
 
 	this->transform.localRotation = *rotation;
 
@@ -675,7 +675,7 @@ void Container_setLocalRotation(Container this, const Rotation* rotation)
 
 const Scale* Container_getLocalScale(Container this)
 {
-	ASSERT(this, "Container::getLocalScale: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getLocalScale: null this");
 
 	return &this->transform.localScale;
 }
@@ -683,7 +683,7 @@ const Scale* Container_getLocalScale(Container this)
 //set class's local position
 void Container_setLocalScale(Container this, const Scale* scale)
 {
-	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::invalidateGlobalTransformation: null this");
 
 	this->transform.localScale = *scale;
 
@@ -692,7 +692,7 @@ void Container_setLocalScale(Container this, const Scale* scale)
 
 void Container_invalidateGlobalTransformation(Container this)
 {
-	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::invalidateGlobalTransformation: null this");
 
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 
@@ -712,7 +712,7 @@ void Container_invalidateGlobalTransformation(Container this)
 // invalidate global position
 void Container_invalidateGlobalPosition(Container this)
 {
-	ASSERT(this, "Container::invalidateGlobalPosition: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::invalidateGlobalPosition: null this");
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
@@ -732,7 +732,7 @@ void Container_invalidateGlobalPosition(Container this)
 // invalidate global rotation
 void Container_invalidateGlobalRotation(Container this)
 {
-	ASSERT(this, "Container::invalidateGlobalRotation: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::invalidateGlobalRotation: null this");
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_ROTATION;
 
@@ -752,7 +752,7 @@ void Container_invalidateGlobalRotation(Container this)
 // invalidate global scale
 void Container_invalidateGlobalScale(Container this)
 {
-	ASSERT(this, "Container::invalidateGlobalScale: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::invalidateGlobalScale: null this");
 
 	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 
@@ -772,7 +772,7 @@ void Container_invalidateGlobalScale(Container this)
 // propagate a message to the children wrapper
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...)
 {
-	ASSERT(this, "Container::propagateMessage: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::propagateMessage: null this");
 	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
 
 	va_list args;
@@ -786,7 +786,7 @@ int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(C
 // pass message to children recursively
 int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
-	ASSERT(this, "Container::passMessage: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::passMessage: null this");
 
 	// if message is valid
 	if(!propagatedMessageHandler)
@@ -817,7 +817,7 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 // process user input
 int Container_onPropagatedMessage(Container this, va_list args)
 {
-	ASSERT(this, "Container::onPropagatedMessage: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::onPropagatedMessage: null this");
 
 	int message = va_arg(args, int);
 	return __VIRTUAL_CALL(Container, handlePropagatedMessage, this, message);
@@ -826,7 +826,7 @@ int Container_onPropagatedMessage(Container this, va_list args)
 // process message
 bool Container_handlePropagatedMessage(Container this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
-	ASSERT(this, "Container::handlePropagatedMessage: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::handlePropagatedMessage: null this");
 
 	return false;
 }
@@ -834,7 +834,7 @@ bool Container_handlePropagatedMessage(Container this __attribute__ ((unused)), 
 // retrieve parent
 Container Container_getParent(Container this)
 {
-	ASSERT(this, "Container::getParent: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getParent: null this");
 
 	return this->parent;
 }
@@ -842,7 +842,7 @@ Container Container_getParent(Container this)
 // retrieve child count
 int Container_getChildCount(Container this)
 {
-	ASSERT(this, "Container::getChildCount: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getChildCount: null this");
 
 	return this->children ? VirtualList_getSize(this->children) : 0;
 }
@@ -850,7 +850,7 @@ int Container_getChildCount(Container this)
 // retrieve children
 VirtualList Container_getChildren(Container this)
 {
-	ASSERT(this, "Container::getChildren: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getChildren: null this");
 
 	return this->children;
 }
@@ -858,7 +858,7 @@ VirtualList Container_getChildren(Container this)
 // set name
 void Container_setName(Container this, const char* const name)
 {
-	ASSERT(this, "Container::setName: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::setName: null this");
 
 	if(this->name)
 	{
@@ -885,7 +885,7 @@ void Container_setName(Container this, const char* const name)
 // get name
 char* Container_getName(Container this)
 {
-	ASSERT(this, "Container::getName: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getName: null this");
 
 	return this->name;
 }
@@ -893,7 +893,7 @@ char* Container_getName(Container this)
 // find child by name in given list
 static Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
 {
-	ASSERT(this, "Container::findChildByName: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::findChildByName: null this");
 
 	if(this->deleteMe)
 	{
@@ -931,7 +931,7 @@ static Container Container_findChildByName(Container this, VirtualList children,
 // get child by name
 Container Container_getChildByName(Container this, char* childName, bool recursive)
 {
-	ASSERT(this, "Container::getChildByName: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::getChildByName: null this");
 
 	Container foundChild = NULL;
 
@@ -955,7 +955,7 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 // suspend for pause
 void Container_suspend(Container this)
 {
-	ASSERT(this, "Container::suspend: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::suspend: null this");
 
 	if(this->children)
 	{
@@ -975,7 +975,7 @@ void Container_suspend(Container this)
 // resume after pause
 void Container_resume(Container this)
 {
-	ASSERT(this, "Container::resume: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::resume: null this");
 
 	if(this->children)
 	{
@@ -997,7 +997,7 @@ void Container_resume(Container this)
 
 void Container_show(Container this)
 {
-	ASSERT(this, "Container::show: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::show: null this");
 
 	this->hidden = false;
 
@@ -1018,7 +1018,7 @@ void Container_show(Container this)
 
 void Container_hide(Container this)
 {
-	ASSERT(this, "Container::hide: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::hide: null this");
 
 	this->hidden = true;
 
@@ -1037,7 +1037,7 @@ void Container_hide(Container this)
 
 bool Container_isHidden(Container this)
 {
-	ASSERT(this, "Container::isHidden: null this");
+	ASSERT(__SAFE_CAST(Container, this), "Container::isHidden: null this");
 
 	return this->hidden;
 }

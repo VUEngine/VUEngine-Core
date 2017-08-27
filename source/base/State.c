@@ -54,6 +54,8 @@ __CLASS_DEFINITION(State, Object);
  */
 void State_constructor(State this)
 {
+	ASSERT(__SAFE_CAST(State, this), "State::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 }
@@ -68,7 +70,7 @@ void State_constructor(State this)
  */
 void State_destructor(State this)
 {
-	ASSERT(this, "State::destructor: null this");
+	ASSERT(__SAFE_CAST(State, this), "State::destructor: null this");
 
 	// free processor's memory
 	// must always be called at the end of the destructor
@@ -86,7 +88,7 @@ void State_destructor(State this)
  */
 void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "State::enter: null this");
+	ASSERT(__SAFE_CAST(State, this), "State::enter: null this");
 }
 
 /**
@@ -100,7 +102,7 @@ void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ 
  */
 void State_execute(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "State::execute: null this");
+	ASSERT(__SAFE_CAST(State, this), "State::execute: null this");
 }
 
 /**
@@ -114,7 +116,7 @@ void State_execute(State this __attribute__ ((unused)), void* owner __attribute_
  */
 void State_exit(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "State::exit: null this");
+	ASSERT(__SAFE_CAST(State, this), "State::exit: null this");
 }
 
 /**
@@ -128,7 +130,7 @@ void State_exit(State this __attribute__ ((unused)), void* owner __attribute__ (
  */
 void State_suspend(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "State::suspend: null this");
+	ASSERT(__SAFE_CAST(State, this), "State::suspend: null this");
 }
 
 /**
@@ -142,5 +144,5 @@ void State_suspend(State this __attribute__ ((unused)), void* owner __attribute_
  */
 void State_resume(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "State::resume: null this");
+	ASSERT(__SAFE_CAST(State, this), "State::resume: null this");
 }
