@@ -123,7 +123,7 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 moveme
 			VirtualNode node = this->lastCollidingShape[i]->head;
 			for(; node; node = node->next)
 			{
-				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventSpatialObjectDeleted);
+				Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
 			}
 
 			VirtualList_clear(this->lastCollidingShape[i]);
@@ -194,7 +194,7 @@ static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Obje
 }
 
 // align to colliding spatialObject
-void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape collidingShape, u16 axisOfCollision, bool registerObject)
+void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape shape, Shape collidingShape, u16 axisOfCollision, bool registerObject, const VBVec3D* displacement)
 {
 	ASSERT(this, "CollisionSolver::alignToCollidingShape: null this");
 
@@ -202,7 +202,7 @@ void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape colliding
 
 	if(__X_AXIS & axisOfCollision)
 	{
-		CollisionSolver_alignTo(this, collidingShape, __X_AXIS, alignThreshold);
+		CollisionSolver_alignTo(this, shape, collidingShape, __X_AXIS, displacement, alignThreshold);
 
 		if(registerObject)
 		{
@@ -212,7 +212,8 @@ void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape colliding
 
 	if(__Y_AXIS & axisOfCollision)
 	{
-		CollisionSolver_alignTo(this, collidingShape, __Y_AXIS, alignThreshold);
+		CollisionSolver_alignTo(this, shape, collidingShape, __Y_AXIS, displacement, alignThreshold);
+
 		if(registerObject)
 		{
 			VirtualList_pushBack(this->lastCollidingShape[kYAxis], collidingShape);
@@ -221,14 +222,15 @@ void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape colliding
 
 	if(__Z_AXIS & axisOfCollision)
 	{
-		CollisionSolver_alignTo(this, collidingShape, __Z_AXIS, alignThreshold);
+		CollisionSolver_alignTo(this, shape, collidingShape, __Z_AXIS, displacement, alignThreshold);
+
 		if(registerObject)
 		{
 			VirtualList_pushBack(this->lastCollidingShape[kZAxis], collidingShape);
 		}
 	}
 
-	Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventSpatialObjectDeleted);
+	Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
 }
 
 // get axis of collision
@@ -251,22 +253,19 @@ u16 CollisionSolver_getAxisOfCollision(CollisionSolver this, Shape shape, Shape 
 int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualList collidingShapes, VBVec3D displacement, bool registerObjects)
 {
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
-	ASSERT(collidingShapes, "CollisionSolver::resolveCollision: collidingEntities");
+	ASSERT(__SAFE_CAST(Shape, shape), "CollisionSolver::resolveCollision: null shape");
+	ASSERT(collidingShapes, "CollisionSolver::resolveCollision: null collidingEntities");
 
 	int axisOfCollision = 0;
 
 	VirtualNode node = collidingShapes->head;
 
-	static VirtualList processedCollidingSpatialObjects = NULL;
-
-	if(!processedCollidingSpatialObjects)
-	{
-		processedCollidingSpatialObjects = __NEW(VirtualList);
-	}
+	VirtualList processedCollidingShapes = __NEW(VirtualList);
 
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
 
 	Shape collidingShapesToAlignTo[kLastAxis] = {NULL, NULL, NULL};
+	RightCuboid shapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, shape);
 
 	for(; node; node = node->next)
 	{
@@ -276,26 +275,22 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 
 		if(axisOfCollision)
 		{
+			RightCuboid collidingShapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShape);
+
 			if(__X_AXIS & axisOfCollision)
 			{
 				if(collidingShapesToAlignTo[kXAxis])
 				{
-					const VBVec3D* collidingShapePosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShape);
-					int collidingShapePositionHalfWidth = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, collidingShape) >> 1);
-
-					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShapesToAlignTo[kXAxis]);
-					int selectedCollidingSpatialObjectPositionHalfWidth = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, collidingShapesToAlignTo[kXAxis]) >> 1);
-
 					if(0 < displacement.x)
 					{
-						if(collidingShapePosition->x - collidingShapePositionHalfWidth < selectedCollidingSpatialObjectPosition->x - selectedCollidingSpatialObjectPositionHalfWidth)
+						if(shapeRightCuboid.x0 < collidingShapeRightCuboid.x0)
 						{
 							collidingShapesToAlignTo[kXAxis] = collidingShape;
 						}
 					}
 					else
 					{
-						if(collidingShapePosition->x + collidingShapePositionHalfWidth > selectedCollidingSpatialObjectPosition->x + selectedCollidingSpatialObjectPositionHalfWidth)
+						if(shapeRightCuboid.x1 > collidingShapeRightCuboid.x1)
 						{
 							collidingShapesToAlignTo[kXAxis] = collidingShape;
 						}
@@ -311,22 +306,16 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 			{
 				if(collidingShapesToAlignTo[kYAxis])
 				{
-					const VBVec3D* collidingShapePosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShape);
-					int collidingShapePositionHalfHeight = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, collidingShape) >> 1);
-
-					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShapesToAlignTo[kYAxis]);
-					int selectedCollidingSpatialObjectPositionHalfHeight = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, collidingShapesToAlignTo[kYAxis]) >> 1);
-
 					if(0 < displacement.y)
 					{
-						if(collidingShapePosition->y - collidingShapePositionHalfHeight < selectedCollidingSpatialObjectPosition->y - selectedCollidingSpatialObjectPositionHalfHeight)
+						if(shapeRightCuboid.y0 < collidingShapeRightCuboid.y0)
 						{
 							collidingShapesToAlignTo[kYAxis] = collidingShape;
 						}
 					}
 					else
 					{
-						if(collidingShapePosition->y + collidingShapePositionHalfHeight > selectedCollidingSpatialObjectPosition->y + selectedCollidingSpatialObjectPositionHalfHeight)
+						if(shapeRightCuboid.y1 > collidingShapeRightCuboid.y1)
 						{
 							collidingShapesToAlignTo[kYAxis] = collidingShape;
 						}
@@ -342,22 +331,16 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 			{
 				if(collidingShapesToAlignTo[kZAxis])
 				{
-					const VBVec3D* collidingShapePosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShape);
-					int collidingShapePositionHalfDepth = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingShape) >> 1);
-
-					const VBVec3D* selectedCollidingSpatialObjectPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShapesToAlignTo[kZAxis]);
-					int selectedCollidingSpatialObjectPositionHalfDepth = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingShapesToAlignTo[kZAxis]) >> 1);
-
 					if(0 < displacement.z)
 					{
-						if(collidingShapePosition->z - collidingShapePositionHalfDepth < selectedCollidingSpatialObjectPosition->z - selectedCollidingSpatialObjectPositionHalfDepth)
+						if(shapeRightCuboid.z0 < collidingShapeRightCuboid.z0)
 						{
 							collidingShapesToAlignTo[kZAxis] = collidingShape;
 						}
 					}
 					else
 					{
-						if(collidingShapePosition->z + collidingShapePositionHalfDepth > selectedCollidingSpatialObjectPosition->z + selectedCollidingSpatialObjectPositionHalfDepth)
+						if(shapeRightCuboid.z1 > collidingShapeRightCuboid.z1)
 						{
 							collidingShapesToAlignTo[kZAxis] = collidingShape;
 						}
@@ -371,116 +354,87 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 		}
 		else
 		{
-			VirtualList_pushBack(processedCollidingSpatialObjects, collidingShape);
+			VirtualList_pushBack(processedCollidingShapes, collidingShape);
 		}
 	}
 
 	if(collidingShapesToAlignTo[kXAxis])
 	{
-		CollisionSolver_alignToCollidingShape(this, collidingShapesToAlignTo[kXAxis], __X_AXIS, registerObjects);
+		CollisionSolver_alignToCollidingShape(this, shape, collidingShapesToAlignTo[kXAxis], __X_AXIS, registerObjects, &displacement);
 	}
 
 	if(collidingShapesToAlignTo[kYAxis])
 	{
-		CollisionSolver_alignToCollidingShape(this, collidingShapesToAlignTo[kYAxis], __Y_AXIS, registerObjects);
+		CollisionSolver_alignToCollidingShape(this, shape, collidingShapesToAlignTo[kYAxis], __Y_AXIS, registerObjects, &displacement);
 	}
 
 	if(collidingShapesToAlignTo[kZAxis])
 	{
-		CollisionSolver_alignToCollidingShape(this, collidingShapesToAlignTo[kZAxis], __Z_AXIS, registerObjects);
+		CollisionSolver_alignToCollidingShape(this, shape, collidingShapesToAlignTo[kZAxis], __Z_AXIS, registerObjects, &displacement);
 	}
 
-	node = processedCollidingSpatialObjects->head;
+	node = processedCollidingShapes->head;
 
 	for(; node; node = node->next)
 	{
 		VirtualList_removeElement(collidingShapes, node->data);
 	}
 
-	VirtualList_clear(processedCollidingSpatialObjects);
+	__DELETE(processedCollidingShapes);
 
 	return axisOfCollision;
 }
 
 // align character to other spatialObject on collision
-void CollisionSolver_alignTo(CollisionSolver this, Shape collidingShape, u16 axis, int pad)
+void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingShape, u16 axis, const VBVec3D* displacement, int pad)
 {
 	ASSERT(this, "CollisionSolver::alignTo: null this");
 
 	// retrieve the colliding spatialObject's position and gap
 	VBVec3D myOwnerPosition = *this->ownerPositionToWrite;
-	const VBVec3D* otherPosition = __VIRTUAL_CALL(SpatialObject, getPosition, collidingShape);
 
-	// pointers to the dimensions to affect
-	const fix19_13* myPositionAxisToCheck = NULL;
-	fix19_13* myPositionAxis = NULL;
-	const fix19_13* otherPositionAxis = NULL;
-
-	// used to the width, height or depth
-	int myHalfSize = 0;
-	int otherHalfSize = 0;
+	VBVec3D shapeDisplacement = Shape_getDisplacement(shape);
+	RightCuboid shapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, shape);
+	RightCuboid collidingShapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShape);
 
 	// select the axis to affect
 	switch(axis)
 	{
 		case __X_AXIS:
 
-			myPositionAxisToCheck = &this->ownerPositionToCheck->x;
-			myPositionAxis = &myOwnerPosition.x;
-			otherPositionAxis = &otherPosition->x;
-
-			myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, this->owner) >> 1);
-			otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getWidth, collidingShape) >> 1);
+			if(0 < displacement->x)
+			{
+				myOwnerPosition.x = collidingShapeRightCuboid.x0 - ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) + shapeDisplacement.x;
+			}
+			else
+			{
+				myOwnerPosition.x = collidingShapeRightCuboid.x1 + ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) + shapeDisplacement.x;
+			}
 			break;
 
 		case __Y_AXIS:
 
-			myPositionAxisToCheck = &this->ownerPositionToCheck->y;
-			myPositionAxis = &myOwnerPosition.y;
-			otherPositionAxis = &otherPosition->y;
-
-			myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, this->owner) >> 1);
-			otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getHeight, collidingShape) >> 1);
+			if(0 < displacement->y)
+			{
+				myOwnerPosition.y = collidingShapeRightCuboid.y0 - ((shapeRightCuboid.y1 - shapeRightCuboid.y0) >> 1) + shapeDisplacement.y;
+			}
+			else
+			{
+				myOwnerPosition.y = collidingShapeRightCuboid.y1 + ((shapeRightCuboid.y1 - shapeRightCuboid.x0) >> 1) + shapeDisplacement.y;
+			}
 			break;
 
 		case __Z_AXIS:
 
-			myPositionAxisToCheck = &this->ownerPositionToCheck->z;
-			myPositionAxis = &myOwnerPosition.z;
-			otherPositionAxis = &otherPosition->z;
-
-			// TODO: must make depth work as the width and high
-			if(this->ownerPositionToCheck->z < otherPosition->z)
+			if(0 < displacement->z)
 			{
-				myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, this->owner) >> 1);
-				otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingShape) >> 1);
+				myOwnerPosition.z = collidingShapeRightCuboid.z0 - ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) + shapeDisplacement.z;
 			}
 			else
 			{
-				myHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, this->owner) >> 1);
-				otherHalfSize = (int)(__VIRTUAL_CALL(SpatialObject, getDepth, collidingShape) >> 1);
+				myOwnerPosition.z = collidingShapeRightCuboid.z1 + ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) + shapeDisplacement.z;
 			}
-
 			break;
-	}
-
-	// decide to which side of the spatialObject align myself
-	if(*myPositionAxisToCheck > *otherPositionAxis)
-	{
-		// pad -= (FIX19_13TOI(*myPositionAxis) > (screenSize >> 1) ? 1 : 0);
-		// align right / below / behind
-		*myPositionAxis = *otherPositionAxis +
-							ITOFIX19_13(otherHalfSize
-							+ myHalfSize
-							+ pad);
-	}
-	else
-	{
-		// align left / over / in front
-		*myPositionAxis = *otherPositionAxis -
-							ITOFIX19_13(otherHalfSize
-							+ myHalfSize
-							+ pad);
 	}
 
 	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &myOwnerPosition);
@@ -503,7 +457,7 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 	VirtualNode node = this->lastCollidingShape[kXAxis]->head;
 	for(; node; node = node->next)
 	{
-		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, Shape_getOwner(__SAFE_CAST(Shape, node->data))));
 		totalFriction.y += friction;
 		totalFriction.z += friction;
 	}
@@ -512,7 +466,7 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 	node = this->lastCollidingShape[kYAxis]->head;
 	for(; node; node = node->next)
 	{
-		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, Shape_getOwner(__SAFE_CAST(Shape, node->data))));
 		totalFriction.x += friction;
 		totalFriction.z += friction;
 	}
@@ -521,7 +475,7 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 	node = this->lastCollidingShape[kZAxis]->head;
 	for(; node; node = node->next)
 	{
-		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, node->data));
+		fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, Shape_getOwner(__SAFE_CAST(Shape, node->data))));
 		totalFriction.y += friction;
 		totalFriction.x += friction;
 	}
@@ -535,10 +489,10 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 
 fix19_13 CollisionSolver_getCollidingTotalElasticity(CollisionSolver this, u16 axis)
 {
-	ASSERT(this, "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: null this");
-	ASSERT(!((__X_AXIS & axis) && (__Y_AXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, y");
-	ASSERT(!((__X_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis x, z");
-	ASSERT(!((__Y_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingSpatialObjectsTotalElasticity: more than one axis y, z");
+	ASSERT(this, "CollisionSolver::getCollidingTotalElasticity: null this");
+	ASSERT(!((__X_AXIS & axis) && (__Y_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis x, y");
+	ASSERT(!((__X_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis x, z");
+	ASSERT(!((__Y_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis y, z");
 
 	fix19_13 totalElasticity = 0;
 	int collidingShapesListIndex = -1;

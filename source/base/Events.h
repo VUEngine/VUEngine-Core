@@ -37,6 +37,7 @@ enum Events
 	kEventContainerDeleted,
 	kEventEntityLoaded,
 	kStageChildStreamedOut,
+	kEventShapeDeleted,
 
 	kEventSecondChanged,
 	kEventMinuteChanged,

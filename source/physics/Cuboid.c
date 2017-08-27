@@ -156,14 +156,16 @@ bool Cuboid_overlapsInverseCuboid(Cuboid this, InverseCuboid other)
 	return Cuboid_overlapsWithInverseRightCuboid(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }
 
-void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 height, u16 depth, const VBVec3D* displacement, bool moves)
+void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, const VBVec3D* displacement, bool moves)
 {
 	ASSERT(this, "Cuboid::setup: null this");
 
+	this->displacement = *displacement;
+
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13(width >> 1);
-	this->rightCuboid.y1 = ITOFIX19_13(height >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13(depth >> 1);
+	this->rightCuboid.x1 = ITOFIX19_13(size->x >> 1);
+	this->rightCuboid.y1 = ITOFIX19_13(size->y >> 1);
+	this->rightCuboid.z1 = ITOFIX19_13(size->z >> 1);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
@@ -188,17 +190,17 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, u16 width, u16 heig
 }
 
 // prepare the shape to be checked
-void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, const VBVec3D* displacement)
+void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity)
 {
 	ASSERT(this, "Cuboid::position: null this");
 
 	// calculate positioned rightCuboid
-	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + displacement->x;
-	this->positionedRightCuboid.y0 = this->rightCuboid.y0 + myOwnerPosition->y + displacement->y;
-	this->positionedRightCuboid.z0 = this->rightCuboid.z0 + myOwnerPosition->z + displacement->z;
-	this->positionedRightCuboid.x1 = this->rightCuboid.x1 + myOwnerPosition->x + displacement->x;
-	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y + displacement->y;
-	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z + displacement->z;
+	this->positionedRightCuboid.x0 = this->rightCuboid.x0 + myOwnerPosition->x + this->displacement.x;
+	this->positionedRightCuboid.y0 = this->rightCuboid.y0 + myOwnerPosition->y + this->displacement.y;
+	this->positionedRightCuboid.z0 = this->rightCuboid.z0 + myOwnerPosition->z + this->displacement.z;
+	this->positionedRightCuboid.x1 = this->rightCuboid.x1 + myOwnerPosition->x + this->displacement.x;
+	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y + this->displacement.y;
+	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z + this->displacement.z;
 
 	if(isAffectedByRelativity)
 	{
@@ -243,7 +245,7 @@ RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this)
 u16 Cuboid_getAxisOfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition)
 {
 	ASSERT(this, "Cuboid::getAxisOfCollision: null this");
-	ASSERT(collidingSpatialObject, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
+	ASSERT(collidingShape, "Cuboid::getAxisOfCollision: null collidingSpatialObject");
 
 	if(__IS_INSTANCE_OF(Cuboid, collidingShape))
 	{
@@ -470,6 +472,28 @@ bool Cuboid_testIfCollision(Cuboid this, Shape collidingShape, VBVec3D displacem
 	return false;
 }
 
+VBVec3D Cuboid_getPosition(Cuboid this)
+{
+	ASSERT(this, "Cuboid::getPosition: null this");
+
+	VBVec3D position =
+	{
+		(this->rightCuboid.x1 - this->rightCuboid.x0) >> 1,
+		(this->rightCuboid.y1 - this->rightCuboid.y0) >> 1,
+		(this->rightCuboid.z1 - this->rightCuboid.z0) >> 1,
+	};
+
+	return position;
+}
+
+RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this)
+{
+	ASSERT(this, "Cuboid::getSurroundingRightCuboid: null this");
+
+	return this->rightCuboid;
+}
+
+
 // test if collision with the entity give the displacement
 static u16 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
 {
@@ -558,7 +582,7 @@ void Cuboid_show(Cuboid this)
 {
 	ASSERT(this, "Cuboid::draw: null this");
 
-	Cuboid_configurePolyhedron(this, !this->ready);
+	Cuboid_configurePolyhedron(this, __VIRTUAL_CALL(SpatialObject, moves, this->owner) || !this->ready);
 
 	// draw the Polyhedron
 	Polyhedron_show(this->polyhedron);

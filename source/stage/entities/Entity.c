@@ -1126,14 +1126,15 @@ void Entity_setShapesPosition(Entity this)
 		const VBVec3D* myPosition = Entity_getPosition(this);
 
 		VirtualNode node = this->shapes->head;
-		int i = 0;
 
-		for(; node && this->entityDefinition->shapeDefinitions[i].allocator; node = node->next, i++)
+		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Shape, position, node->data, myPosition, isAffectedByRelativity, &this->entityDefinition->shapeDefinitions[i].displacement);
-		}
+			__VIRTUAL_CALL(Shape, position, node->data, myPosition, isAffectedByRelativity);
 
-		NM_ASSERT(!node && this->entityDefinition->shapeDefinitions[i].allocator, "Entity::setShapePosition: shapes lists are out of sync");
+#ifdef __DRAW_SHAPES
+			__VIRTUAL_CALL(Shape, show, node->data);
+#endif
+		}
 	}
 }
 /**
@@ -1162,9 +1163,6 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 	}
 
 	const VBVec3D* myPosition = Entity_getPosition(this);
-	u16 width = Entity_getWidth(this);
-	u16 height = Entity_getHeight(this);
-	u16 depth = Entity_getDepth(this);
 	bool moves = __VIRTUAL_CALL(SpatialObject, moves, this);
 	bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
 
@@ -1174,20 +1172,20 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 		Shape shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinitions[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
 
-		__VIRTUAL_CALL(Shape, setup, shape, myPosition, shapeDefinitions[i].size.x, shapeDefinitions[i].size.y, shapeDefinitions[i].size.z, &shapeDefinitions[i].displacement, moves);
+		__VIRTUAL_CALL(Shape, setup, shape, myPosition, &shapeDefinitions[i].size, &shapeDefinitions[i].displacement, moves);
 
 		if(moves)
 		{
-			__VIRTUAL_CALL(Shape, position, shape, myPosition, isAffectedByRelativity, &shapeDefinitions[i].displacement);
+			__VIRTUAL_CALL(Shape, position, shape, myPosition, isAffectedByRelativity);
 		}
 
 		Shape_setActive(shape, true);
 
 		Shape_setCheckForCollisions(shape, shapeDefinitions[i].checkForCollisions);
 
-//#ifdef __DRAW_SHAPES
+#ifdef __DRAW_SHAPES
 		__VIRTUAL_CALL(Shape, show, shape);
-//#endif
+#endif
 
 		VirtualList_pushBack(this->shapes, shape);
 	}

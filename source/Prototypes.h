@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
+/*#include <Entity.h>
 #include <Shape.h>
 #include <AnimationController.h>
 
@@ -40,6 +40,6 @@
 
 // must forward declare
 AnimationController Sprite_getAnimationController(Sprite this);
-
+*/
 
 #endif

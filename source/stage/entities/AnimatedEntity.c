@@ -57,6 +57,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 static void AnimatedEntity_animate(AnimatedEntity this);
 
+AnimationController Sprite_getAnimationController(Sprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS

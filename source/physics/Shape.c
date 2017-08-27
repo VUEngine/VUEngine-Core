@@ -73,6 +73,9 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	// set flag
 	this->checkForCollisions = false;
 
+	// set displacement
+	this->displacement = (VBVec3D){0, 0, 0};
+
 	Shape_setActive(this, false);
 }
 
@@ -87,6 +90,11 @@ void Shape_constructor(Shape this, SpatialObject owner)
 void Shape_destructor(Shape this)
 {
 	ASSERT(this, "Shape::destructor: null this");
+
+	if(this->events)
+	{
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeDeleted);
+	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -108,6 +116,40 @@ SpatialObject Shape_getOwner(Shape this)
 	ASSERT(this, "Shape::getOwner: null this");
 
 	return this->owner;
+}
+
+/**
+ * Set displacement with respect to owner's position
+ *
+ * @memberof					Shape
+ * @public
+ *
+ * @param this					Function scope
+ *
+ * @param displacement			Displacement
+ */
+void Shape_setDisplacement(Shape this, VBVec3D displacement)
+{
+	ASSERT(this, "Shape::setDisplacement: null this");
+
+	this->displacement = displacement;
+}
+
+/**
+ * Retrieve displacement with respect to owner's position
+ *
+ * @memberof			Shape
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Displacement
+ */
+VBVec3D Shape_getDisplacement(Shape this)
+{
+	ASSERT(this, "Shape::setDisplacement: null this");
+
+	return this->displacement;
 }
 
 /**

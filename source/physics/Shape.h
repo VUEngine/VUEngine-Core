@@ -38,10 +38,12 @@
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, int, overlaps, Shape shape);											\
-		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D*, u16 width, u16 height, u16 depth, const VBVec3D* displacement, bool moves);		\
-		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity, const VBVec3D* displacement);		\
-		__VIRTUAL_DEC(ClassName, u16, getAxisOfCollision, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition);				\
-		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);											\
+		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D*, const Size* size, const VBVec3D* displacement, bool moves);			\
+		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity);						\
+		__VIRTUAL_DEC(ClassName, u16, getAxisOfCollision, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition);	\
+		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);								\
+		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
+		__VIRTUAL_DEC(ClassName, RightCuboid, getSurroundingRightCuboid);								\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
@@ -57,6 +59,12 @@
 		 * @memberof			Shape
 		 */																								\
 		SpatialObject owner;																			\
+		/**
+		 * @var VBVec3D 		displacement
+		 * @brief				Displacement vector
+		 * @memberof			Shape
+		 */																								\
+		VBVec3D displacement;																			\
 		/**
 		 * @var u8 				checked
 		 * @brief				whether it has been checked for collision in current update
@@ -120,6 +128,8 @@ void Shape_destructor(Shape this);
 
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
+void Shape_setDisplacement(Shape this, VBVec3D displacement);
+VBVec3D Shape_getDisplacement(Shape this);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isChecked(Shape this);

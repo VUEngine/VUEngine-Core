@@ -506,15 +506,15 @@ static void StageEditor_positionShape(StageEditor this)
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 	VBVec3D displacement = {0, 0, 0};
+	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
 
-	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity), &displacement, false);
+	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), &size, &displacement, false);
 
 	Shape_setReady(this->shape, false);
 
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
-		VBVec3D displacement = {0, 0, 0};
-		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false, &displacement);
+		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false);
 	}
 
 	if(this->shape)

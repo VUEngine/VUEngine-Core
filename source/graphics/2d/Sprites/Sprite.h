@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <VIPManager.h>
 #include <MiscStructs.h>
 #include <Texture.h>
 #include <Clock.h>

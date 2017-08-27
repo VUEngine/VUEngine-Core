@@ -486,7 +486,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 			{
 				case kBodyStartedMoving:
 
-					ASSERT(this->shape, "Actor::handleMessage: null shape");
+					ASSERT(this->shapes, "Actor::handleMessage: null shapes");
 					Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 					Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 					return true;
@@ -496,7 +496,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 					if(!Body_getMovementOverAllAxis(this->body))
 					{
-						ASSERT(this->shape, "Actor::handleMessage: null shape");
+						ASSERT(this->shapes, "Actor::handleMessage: null shapes");
 						Entity_informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
 					}
 					break;
@@ -677,7 +677,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 	}
 }
 
-void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject)
+void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject, VBVec3D displacement)
 {
 	ASSERT(this, "Actor::alignTo: null this");
 
@@ -685,7 +685,7 @@ void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerO
 
 	if(axisOfCollision)
 	{
-		CollisionSolver_alignToCollidingShape(this->collisionSolver, shape, axisOfCollision, registerObject);
+		CollisionSolver_alignToCollidingShape(this->collisionSolver, shape, collidingShape, axisOfCollision, registerObject, &displacement);
 	}
 }
 

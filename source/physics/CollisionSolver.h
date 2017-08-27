@@ -108,8 +108,8 @@ __CLASS_NEW_DECLARE(CollisionSolver, SpatialObject owner, const VBVec3D* ownerPo
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner, const VBVec3D* ownerPositionToCheck, const VBVec3D* ownerPositionToWrite);
 void CollisionSolver_destructor(CollisionSolver this);
 
-void CollisionSolver_alignTo(CollisionSolver this, Shape shape, u16 axis, int pad);
-void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape collidingShape, u16 axisOfCollision, bool registerObject);
+void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingShape, u16 axis, const VBVec3D* displacement, int pad);
+void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape shape, Shape collidingShape, u16 axisOfCollision, bool registerObject, const VBVec3D* displacement);
 u16 CollisionSolver_getAxisOfCollision(CollisionSolver this, Shape shape, Shape collidingShape, VBVec3D displacement);
 u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
 fix19_13 CollisionSolver_getCollidingTotalElasticity(CollisionSolver this, u16 axis);

@@ -80,7 +80,8 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeDefinition);
 
 	VBVec3D displacement = {0, 0, 0};
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this), &displacement, true);
+	Size size = {SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this)};
+	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &size, &displacement, true);
 
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
 }
@@ -141,9 +142,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		}
 	}
 
-	VBVec3D displacement = {0, 0, 0};
-
-	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false, &displacement);
+	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false);
 
 	return expired;
 }

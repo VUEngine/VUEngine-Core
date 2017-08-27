@@ -127,7 +127,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
 int Actor_getAxisAllowedForBouncing(Actor this);
-void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject);
+void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject, VBVec3D displacement);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening);
