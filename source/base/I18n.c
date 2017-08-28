@@ -81,7 +81,7 @@ __SINGLETON(I18n);
  */
 static void __attribute__ ((noinline)) I18n_constructor(I18n this)
 {
-	ASSERT(this, "I18n::constructor: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -98,7 +98,7 @@ static void __attribute__ ((noinline)) I18n_constructor(I18n this)
  */
 void I18n_destructor(I18n this)
 {
-	ASSERT(this, "I18n::destructor: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -117,7 +117,7 @@ void I18n_destructor(I18n this)
  */
 const char* I18n_getText(I18n this, int string)
 {
-	ASSERT(this, "I18n::getText: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::getText: null this");
 
 	return 0 <= string ? __LANGUAGES[this->activeLanguage]->language[string] : NULL;
 }
@@ -133,7 +133,7 @@ const char* I18n_getText(I18n this, int string)
  */
 void I18n_setActiveLanguage(I18n this, u8 languageId)
 {
-	ASSERT(this, "I18n::setActiveLanguage: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::setActiveLanguage: null this");
 
 	this->activeLanguage = languageId;
 }
@@ -150,7 +150,7 @@ void I18n_setActiveLanguage(I18n this, u8 languageId)
  */
 LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
 {
-	ASSERT(this, "I18n::getLanguages: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::getLanguages: null this");
 
 	return (LangDefinition *)__LANGUAGES;
 }
@@ -167,7 +167,7 @@ LangDefinition * I18n_getLanguages(I18n this __attribute__ ((unused)))
  */
 u8 I18n_getActiveLanguage(I18n this)
 {
-	ASSERT(this, "I18n::getActiveLanguage: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::getActiveLanguage: null this");
 
 	return this->activeLanguage;
 }
@@ -184,7 +184,7 @@ u8 I18n_getActiveLanguage(I18n this)
  */
 char* I18n_getActiveLanguageName(I18n this)
 {
-	ASSERT(this, "I18n::getActiveLanguageName: null this");
+	ASSERT(__SAFE_CAST(I18n, this), "I18n::getActiveLanguageName: null this");
 
 	return (char*)__LANGUAGES[this->activeLanguage]->name;
 }

@@ -132,6 +132,21 @@
 __CLASS(Body);
 
 
+// defines a body
+typedef struct PhysicalSpecification
+{
+	// mass
+	fix19_13 mass;
+	// friction
+	fix19_13 friction;
+	// elasticity
+	fix19_13 elasticity;
+
+} PhysicalSpecification;
+
+typedef const PhysicalSpecification PhysicalSpecificationROMDef;
+
+
 //---------------------------------------------------------------------------------------------------------
 //										CLASS' STATIC METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -151,7 +166,7 @@ void Body_constructor(Body this, SpatialObject owner, fix19_13 mass);
 void Body_destructor(Body this);
 
 void Body_addForce(Body this, const Force* force, bool informAboutAwakening);
-void Body_applyForce(Body this, const Force* force, int clearAxis, bool informAboutAwakening);
+void Body_applyForce(Body this, const Force* force, u16 clearAxis, bool informAboutAwakening);
 void Body_applyGravity(Body this, const Acceleration* gravity);
 void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 Force Body_calculateFrictionForce(Body this);
@@ -170,7 +185,7 @@ const VBVec3D* Body_getPosition(Body this);
 Velocity Body_getVelocity(Body this);
 bool Body_isActive(Body this);
 bool Body_isAwake(Body body);
-int Body_isMoving(Body this);
+u16 Body_getMovementOverAllAxis(Body this);
 void Body_moveAccelerated(Body this, int axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);

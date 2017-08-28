@@ -73,7 +73,7 @@ __CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
  */
 void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
-	ASSERT(this, "Particle::constructor: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::constructor: null this");
 
 	// construct base Container
 	__CONSTRUCT_BASE(SpatialObject);
@@ -129,7 +129,7 @@ void Particle_destructor(Particle this)
  */
 static void Particle_addSprite(Particle this)
 {
-	ASSERT(this, "Particle::addSprite: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::addSprite: null this");
 	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator");
 
 	// call the appropriate allocator to support inheritance
@@ -157,7 +157,7 @@ static void Particle_addSprite(Particle this)
  */
 u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle))
 {
-	ASSERT(this, "Particle::update: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::update: null this");
 
 	if(0 <= this->lifeSpan)
 	{
@@ -192,7 +192,7 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
  */
 void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 {
-	ASSERT(this, "Particle::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::synchronizeGraphics: null this");
 
 	if(!(updateSpritePosition | Body_isAwake(this->body)))
 	{
@@ -203,7 +203,7 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
-	if(__Z_AXIS & Body_isMoving(this->body))
+	if(__Z_AXIS & Body_getMovementOverAllAxis(this->body))
 	{
 		// calculate sprite's parallax
 		__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
@@ -225,7 +225,7 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
  */
 void Particle_addForce(Particle this, const Force* force, u32 movementType)
 {
-	ASSERT(this, "Particle::addForce: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::addForce: null this");
 
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
@@ -271,7 +271,7 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
  */
 void Particle_setLifeSpan(Particle this, int lifeSpan)
 {
-	ASSERT(this, "Particle::setLifeSpan: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::setLifeSpan: null this");
 
 	this->lifeSpan = lifeSpan;
 }
@@ -287,7 +287,7 @@ void Particle_setLifeSpan(Particle this, int lifeSpan)
  */
 void Particle_setMass(Particle this, fix19_13 mass)
 {
-	ASSERT(this, "Particle::setMass: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::setMass: null this");
 
 	Body_setMass(this->body, mass);
 }
@@ -303,7 +303,7 @@ void Particle_setMass(Particle this, fix19_13 mass)
  */
 void Particle_setPosition(Particle this, const VBVec3D* position)
 {
-	ASSERT(this, "Particle::setPosition: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::setPosition: null this");
 	ASSERT(this->body, "Particle::setPosition: null body");
 
 	Body_setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
@@ -327,7 +327,7 @@ void Particle_setPosition(Particle this, const VBVec3D* position)
  */
 const VBVec3D* Particle_getPosition(Particle this)
 {
-	ASSERT(this, "Particle::getPosition: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::getPosition: null this");
 	ASSERT(this->body, "Particle::getPosition: null body");
 
 	return Body_getPosition(this->body);
@@ -343,7 +343,7 @@ const VBVec3D* Particle_getPosition(Particle this)
  */
 void Particle_show(Particle this)
 {
-	ASSERT(this, "Particle::show: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::show: null this");
 	ASSERT(this->objectSprite, "Particle::show: null objectSprite");
 
 	Sprite_show(__SAFE_CAST(Sprite, this->objectSprite));
@@ -366,7 +366,7 @@ void Particle_show(Particle this)
  */
 void Particle_hide(Particle this)
 {
-	ASSERT(this, "Particle::hide: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::hide: null this");
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
 
 	Sprite_hide(__SAFE_CAST(Sprite, this->objectSprite));
@@ -386,7 +386,7 @@ void Particle_hide(Particle this)
  */
 bool Particle_moves(Particle this __attribute__ ((unused)))
 {
-	ASSERT(this, "Particle::moves: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::moves: null this");
 
 	// not necessarily
 	return true;
@@ -403,9 +403,9 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
+u16 Particle_getAxisAllowedForMovement(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
 {
-	ASSERT(this, "Particle::canMoveOverAxis: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::getAxisAllowedForMovement: null this");
 
 	return (int)Body_getAxisSubjectToGravity(this->body);
 }
@@ -420,7 +420,7 @@ int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration __a
  */
 void Particle_resume(Particle this)
 {
-	ASSERT(this, "Particle::resume: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::resume: null this");
 
 	Particle_addSprite(this);
 
@@ -437,7 +437,7 @@ void Particle_resume(Particle this)
  */
 void Particle_suspend(Particle this)
 {
-	ASSERT(this, "Particle::suspend: null this");
+	ASSERT(__SAFE_CAST(Particle, this), "Particle::suspend: null this");
 
 	__DELETE(this->objectSprite);
 

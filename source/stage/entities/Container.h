@@ -134,9 +134,6 @@ __CLASS(Container);
 //										MISC
 //---------------------------------------------------------------------------------------------------------
 
-// needed because of interdependency between Shape's and SpatialObject's headers
-Shape SpatialObject_getShape(SpatialObject this);
-
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE

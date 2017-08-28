@@ -74,7 +74,7 @@ __CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
  */
 static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
-	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
+	ASSERT(__SAFE_CAST(ObjectAnimatedSprite, this), "ObjectAnimatedSprite::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(ObjectSprite, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
@@ -92,7 +92,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
  */
 void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 {
-	ASSERT(this, "ObjectAnimatedSprite::destructor: null this");
+	ASSERT(__SAFE_CAST(ObjectAnimatedSprite, this), "ObjectAnimatedSprite::destructor: null this");
 
 	if(this->animationController)
 	{
@@ -115,7 +115,7 @@ void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
  */
 void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 {
-	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
+	ASSERT(__SAFE_CAST(ObjectAnimatedSprite, this), "ObjectAnimatedSprite::writeAnimation: null this");
 
 	if(0 > this->objectIndex)
 	{

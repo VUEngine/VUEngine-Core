@@ -78,6 +78,8 @@ __CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
  */
 static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
 {
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::constructor: null this");
+
 	// construct base object
 	__CONSTRUCT_BASE(Texture, (TextureDefinition*)bgmapTextureDefinition, id);
 
@@ -106,7 +108,7 @@ static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* 
  */
 void BgmapTexture_destructor(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::destructor: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::destructor: null this");
 
 	// make sure that I'm not destroyed again
 	this->usageCount = 0;
@@ -126,7 +128,7 @@ void BgmapTexture_destructor(BgmapTexture this)
  */
 void BgmapTexture_rewrite(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::write: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::write: null this");
 
 	this->written = false;
 	this->remainingRowsToBeWritten = this->textureDefinition->rows;
@@ -144,7 +146,7 @@ void BgmapTexture_rewrite(BgmapTexture this)
  */
 void BgmapTexture_write(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::write: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::write: null this");
 
 	if(!this->charSet)
 	{
@@ -201,7 +203,7 @@ void BgmapTexture_write(BgmapTexture this)
  */
 static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::writeAnimatedShared: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::writeAnimatedShared: null this");
 
 	int xOffset = (int)BgmapTextureManager_getXOffset(_bgmapTextureManager, this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(_bgmapTextureManager, this->id);
@@ -256,7 +258,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
  */
 static void BgmapTexture_doWrite(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::doWrite: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::doWrite: null this");
 
 	int xOffset = (int)BgmapTextureManager_getXOffset(_bgmapTextureManager, this->id);
 	int yOffset = (int)BgmapTextureManager_getYOffset(_bgmapTextureManager, this->id);
@@ -293,7 +295,7 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 /*
 static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::writeAnimatedSingleOptimized: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::writeAnimatedSingleOptimized: null this");
 
 	int bgmapSegment = this->segment;
 	int palette = this->palette << 14;
@@ -330,7 +332,7 @@ static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
  */
 s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::getRemainingRowsToBeWritten: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::getRemainingRowsToBeWritten: null this");
 
 	return this->remainingRowsToBeWritten;
 }
@@ -347,7 +349,7 @@ s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this)
  */
 s16 BgmapTexture_getXOffset(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::getXOffset: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::getXOffset: null this");
 
 	return BgmapTextureManager_getXOffset(_bgmapTextureManager, this->id);
 }
@@ -364,7 +366,7 @@ s16 BgmapTexture_getXOffset(BgmapTexture this)
  */
 s16 BgmapTexture_getYOffset(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::getYOffset: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::getYOffset: null this");
 
 	return BgmapTextureManager_getYOffset(_bgmapTextureManager, this->id);
 }
@@ -380,7 +382,7 @@ s16 BgmapTexture_getYOffset(BgmapTexture this)
  */
 void BgmapTexture_setSegment(BgmapTexture this, s8 segment)
 {
-	ASSERT(this, "BgmapTexture::setSegment: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::setSegment: null this");
 
 	this->segment = segment;
 }
@@ -397,7 +399,7 @@ void BgmapTexture_setSegment(BgmapTexture this, s8 segment)
  */
 s8 BgmapTexture_getSegment(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::getSegment: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::getSegment: null this");
 
 	return this->segment;
 }
@@ -414,7 +416,7 @@ s8 BgmapTexture_getSegment(BgmapTexture this)
  */
 u8 BgmapTexture_getUsageCount(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::getUsageCount: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::getUsageCount: null this");
 
 	return this->usageCount;
 }
@@ -429,7 +431,7 @@ u8 BgmapTexture_getUsageCount(BgmapTexture this)
  */
 void BgmapTexture_increaseUsageCount(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::increaseUsageCoung: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::increaseUsageCoung: null this");
 
 	this->usageCount++;
 }
@@ -446,7 +448,7 @@ void BgmapTexture_increaseUsageCount(BgmapTexture this)
  */
 bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
 {
-	ASSERT(this, "BgmapTexture::decreaseUsageCoung: null this");
+	ASSERT(__SAFE_CAST(BgmapTexture, this), "BgmapTexture::decreaseUsageCoung: null this");
 
 	if(this->usageCount)
 	{

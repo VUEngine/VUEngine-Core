@@ -52,11 +52,9 @@ Shape SpatialObject_getShape(SpatialObject this);
 #define SolidParticle_SET_VTABLE(ClassName)																\
 		Particle_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, SolidParticle, update);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, getShape);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getWidth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, getShape);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
@@ -111,8 +109,8 @@ typedef struct SolidParticleDefinition
 	/// the class type
 	ParticleDefinition particleDefinition;
 
-	/// shape's type
-	int shapeType;
+	/// shape definition
+	const ShapeDefinition* shapeDefinition;
 
 	/// object's size over the x axis
 	u16 width;
@@ -158,7 +156,7 @@ u16 SolidParticle_getWidth(SolidParticle this);
 u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
-bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects);
+bool SolidParticle_processCollision(SolidParticle this, Shape shape, VirtualList collidingShapes);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));

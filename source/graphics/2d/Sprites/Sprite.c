@@ -69,6 +69,8 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
  */
 void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __attribute__ ((unused)), Object owner __attribute__ ((unused)))
 {
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::destructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	// clear values
@@ -95,7 +97,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
  */
 void Sprite_destructor(Sprite this)
 {
-	ASSERT(this, "Sprite::destructor: null this");
 	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::destructor: null cast");
 
 	// destroy the super object
@@ -115,7 +116,7 @@ void Sprite_destructor(Sprite this)
  */
 Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::getScale: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getScale: null this");
 
 	Scale scale =
 	{
@@ -139,7 +140,7 @@ Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
  */
 void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::resize: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::resize: null this");
 
 	this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
 	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
@@ -157,7 +158,7 @@ void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z
  */
 Texture Sprite_getTexture(Sprite this)
 {
-	ASSERT(this, "Sprite::getTexture: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getTexture: null this");
 
 	return this->texture;
 }
@@ -172,7 +173,7 @@ Texture Sprite_getTexture(Sprite this)
  */
 void Sprite_show(Sprite this)
 {
-	ASSERT(this, "Sprite::show: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::show: null this");
 
 	this->hidden = false;
 }
@@ -187,7 +188,7 @@ void Sprite_show(Sprite this)
  */
 void Sprite_hide(Sprite this)
 {
-	ASSERT(this, "Sprite::hide: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::hide: null this");
 
 	this->hidden = true;
 }
@@ -204,7 +205,7 @@ void Sprite_hide(Sprite this)
  */
 bool Sprite_isHidden(Sprite this)
 {
-	ASSERT(this, "Sprite::isHidden: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isHidden: null this");
 
 	return this->hidden;
 }
@@ -221,7 +222,7 @@ bool Sprite_isHidden(Sprite this)
  */
 void Sprite_setDirection(Sprite this __attribute__ ((unused)), int axis __attribute__ ((unused)), int direction __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::setDirection: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::setDirection: null this");
 }
 
 /**
@@ -235,7 +236,7 @@ void Sprite_setDirection(Sprite this __attribute__ ((unused)), int axis __attrib
  */
 void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::position: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::position: null this");
 }
 
 /**
@@ -249,7 +250,7 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* positi
  */
 void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::calculateParallax: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::calculateParallax: null this");
 }
 
 /**
@@ -264,7 +265,7 @@ void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z _
  */
 AnimationController Sprite_getAnimationController(Sprite this)
 {
-	ASSERT(this, "Sprite::getAnimationController: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getAnimationController: null this");
 
 	return this->animationController;
 }
@@ -280,7 +281,7 @@ AnimationController Sprite_getAnimationController(Sprite this)
  */
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 {
-	ASSERT(this, "Sprite::setWorldLayer: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::setWorldLayer: null this");
 
 	this->worldLayer = worldLayer;
 }
@@ -297,7 +298,7 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
  */
 u8 Sprite_getWorldLayer(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldLayer: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldLayer: null this");
 
 	return this->worldLayer;
 }
@@ -314,7 +315,7 @@ u8 Sprite_getWorldLayer(Sprite this)
  */
 bool Sprite_writeTextures(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::writeTextures: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::writeTextures: null this");
 
 	if(!this->texture)
 	{
@@ -341,7 +342,7 @@ bool Sprite_writeTextures(Sprite this __attribute__ ((unused)))
  */
 bool Sprite_areTexturesWritten(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::areTexturesWritten: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::areTexturesWritten: null this");
 
 	return !this->texture ? true : this->texture->written;
 }
@@ -358,7 +359,7 @@ bool Sprite_areTexturesWritten(Sprite this __attribute__ ((unused)))
  */
 u16 Sprite_getHead(Sprite this)
 {
-	ASSERT(this, "Sprite::getHead: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getHead: null this");
 
 	return this->head;
 }
@@ -375,7 +376,7 @@ u16 Sprite_getHead(Sprite this)
  */
 u16 Sprite_getMode(Sprite this)
 {
-	ASSERT(this, "Sprite::getMode: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getMode: null this");
 
 	return this->head & 0x3000;
 }
@@ -392,7 +393,7 @@ u16 Sprite_getMode(Sprite this)
  */
 u32 Sprite_getWorldHead(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldHead: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldHead: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->head;
@@ -410,7 +411,7 @@ u32 Sprite_getWorldHead(Sprite this)
  */
 s16 Sprite_getWorldGX(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldGX: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldGX: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gx;
@@ -428,7 +429,7 @@ s16 Sprite_getWorldGX(Sprite this)
  */
 s16 Sprite_getWorldGY(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldGY: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldGY: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gy;
@@ -446,7 +447,7 @@ s16 Sprite_getWorldGY(Sprite this)
  */
 s16 Sprite_getWorldGP(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldGP: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldGP: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gp;
@@ -464,7 +465,7 @@ s16 Sprite_getWorldGP(Sprite this)
  */
 s16 Sprite_getWorldMX(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldMX: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldMX: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->mx;
@@ -482,7 +483,7 @@ s16 Sprite_getWorldMX(Sprite this)
  */
 s16 Sprite_getWorldMY(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldMY: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldMY: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->my;
@@ -500,7 +501,7 @@ s16 Sprite_getWorldMY(Sprite this)
  */
 s16 Sprite_getWorldMP(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldMP: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldMP: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->mp;
@@ -518,7 +519,7 @@ s16 Sprite_getWorldMP(Sprite this)
  */
 u16 Sprite_getWorldWidth(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldWidth: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldWidth: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->w;
@@ -536,7 +537,7 @@ u16 Sprite_getWorldWidth(Sprite this)
  */
 u16 Sprite_getWorldHeight(Sprite this)
 {
-	ASSERT(this, "Sprite::getWorldHeight: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getWorldHeight: null this");
 
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->h;
@@ -552,7 +553,7 @@ u16 Sprite_getWorldHeight(Sprite this)
  */
 void Sprite_rewrite(Sprite this)
 {
-	ASSERT(this, "Sprite::rewrite: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::rewrite: null this");
 
 	if(this->texture)
 	{
@@ -572,7 +573,7 @@ void Sprite_rewrite(Sprite this)
  */
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::onTextureRewritten: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::onTextureRewritten: null this");
 
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this);
 	__VIRTUAL_CALL(Sprite, applyHbiasEffects, this);
@@ -590,7 +591,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
  */
 VBVecWorld Sprite_getDisplacement(Sprite this)
 {
-	ASSERT(this, "Sprite::getDisplacement: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getDisplacement: null this");
 
 	return this->displacement;
 }
@@ -606,7 +607,7 @@ VBVecWorld Sprite_getDisplacement(Sprite this)
  */
 void Sprite_rotate(Sprite this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::rotate: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::rotate: null this");
 }
 
 /**
@@ -621,7 +622,7 @@ void Sprite_rotate(Sprite this __attribute__ ((unused)), const Rotation* rotatio
  */
 int Sprite_getHalfWidth(Sprite this)
 {
-	ASSERT(this, "Sprite::getHalfWidth: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getHalfWidth: null this");
 
 	return FIX19_13TOI(this->halfWidth);
 }
@@ -638,7 +639,7 @@ int Sprite_getHalfWidth(Sprite this)
  */
 int Sprite_getHalfHeight(Sprite this)
 {
-	ASSERT(this, "Sprite::getHalfHeight: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getHalfHeight: null this");
 
 	return FIX19_13TOI(this->halfHeight);
 }
@@ -658,7 +659,7 @@ int Sprite_getHalfHeight(Sprite this)
  */
 void Sprite_update(Sprite this)
 {
-	ASSERT(this, "Sprite::update: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::update: null this");
 
 	if(this->animationController && this->texture)
 	{
@@ -685,7 +686,7 @@ void Sprite_update(Sprite this)
  */
 bool Sprite_isTransparent(Sprite this)
 {
-	ASSERT(this, "Sprite::isTransparent: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isTransparent: null this");
 
 	return this->transparent;
 }
@@ -701,7 +702,7 @@ bool Sprite_isTransparent(Sprite this)
  */
 void Sprite_setTransparent(Sprite this, bool value)
 {
-	ASSERT(this, "Sprite::setTransparent: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::setTransparent: null this");
 
 	this->transparent = value;
 
@@ -721,7 +722,7 @@ void Sprite_setTransparent(Sprite this, bool value)
  */
 void Sprite_updateAnimation(Sprite this)
 {
-	ASSERT(this, "Sprite::updateAnimation: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::updateAnimation: null this");
 
 	if(this->animationController)
 	{
@@ -741,7 +742,7 @@ void Sprite_updateAnimation(Sprite this)
  */
 void Sprite_pause(Sprite this, bool pause)
 {
-	ASSERT(this, "Sprite::pause: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::pause: null this");
 
 	if(this->animationController)
 	{
@@ -762,7 +763,7 @@ void Sprite_pause(Sprite this, bool pause)
  */
 void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* functionName)
 {
-	ASSERT(this, "Sprite::play: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::play: null this");
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
 
@@ -784,7 +785,7 @@ void Sprite_play(Sprite this, AnimationDescription* animationDescription, char* 
  */
 bool Sprite_isPlaying(Sprite this)
 {
-	ASSERT(this, "Sprite::isPlaying: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isPlaying: null this");
 
 	if(this->animationController)
 	{
@@ -808,7 +809,7 @@ bool Sprite_isPlaying(Sprite this)
  */
 bool Sprite_isPlayingFunction(Sprite this, char* functionName)
 {
-	ASSERT(this, "Sprite::isPlayingFunction: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isPlayingFunction: null this");
 
 	if(this->animationController)
 	{
@@ -829,7 +830,7 @@ bool Sprite_isPlayingFunction(Sprite this, char* functionName)
  */
 void Sprite_setFrameCycleDecrement(Sprite this, u8 frameCycleDecrement)
 {
-	ASSERT(this, "Sprite::setFrameCycleDecrement: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::setFrameCycleDecrement: null this");
 
 	if(this->animationController)
 	{
@@ -849,7 +850,7 @@ void Sprite_setFrameCycleDecrement(Sprite this, u8 frameCycleDecrement)
  */
 s8 Sprite_getActualFrame(Sprite this)
 {
-	ASSERT(this, "Sprite::getActualFrame: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getActualFrame: null this");
 
 	if(this->animationController)
 	{
@@ -870,7 +871,7 @@ s8 Sprite_getActualFrame(Sprite this)
  */
 void Sprite_setActualFrame(Sprite this, s8 actualFrame)
 {
-	ASSERT(this, "Sprite::setActualFrame: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::setActualFrame: null this");
 
 	if(this->animationController)
 	{
@@ -888,7 +889,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame)
  */
 void Sprite_nextFrame(Sprite this)
 {
-	ASSERT(this, "Sprite::nextFrame: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::nextFrame: null this");
 
 	if(this->animationController)
 	{
@@ -907,7 +908,7 @@ void Sprite_nextFrame(Sprite this)
  */
 void Sprite_previousFrame(Sprite this)
 {
-	ASSERT(this, "Sprite::previousFrame: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::previousFrame: null this");
 
 	if(this->animationController)
 	{
@@ -928,7 +929,7 @@ void Sprite_previousFrame(Sprite this)
  */
 s8 Sprite_getFrameDuration(Sprite this)
 {
-	ASSERT(this, "Sprite::getFrameDuration: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::getFrameDuration: null this");
 
 	if(this->animationController)
 	{
@@ -949,7 +950,7 @@ s8 Sprite_getFrameDuration(Sprite this)
  */
 void Sprite_setFrameDuration(Sprite this, u8 frameDuration)
 {
-	ASSERT(this, "Sprite::setFrameDuration: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::setFrameDuration: null this");
 
 	if(this->animationController)
 	{
@@ -967,7 +968,7 @@ void Sprite_setFrameDuration(Sprite this, u8 frameDuration)
  */
 void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::writeAnimation: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::writeAnimation: null this");
 }
 
 /**
@@ -982,7 +983,7 @@ void Sprite_writeAnimation(Sprite this __attribute__ ((unused)))
  */
 bool Sprite_isAffine(Sprite this)
 {
-	ASSERT(this, "Sprite::isAffine: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isAffine: null this");
 
 	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
 }
@@ -999,7 +1000,7 @@ bool Sprite_isAffine(Sprite this)
  */
 bool Sprite_isHBias(Sprite this)
 {
-	ASSERT(this, "Sprite::isHBias: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isHBias: null this");
 
 	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
 }
@@ -1016,7 +1017,7 @@ bool Sprite_isHBias(Sprite this)
  */
 bool Sprite_isObject(Sprite this)
 {
-	ASSERT(this, "Sprite::isObject: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::isObject: null this");
 
 	return __WORLD_OBJECT == (this->head & __WORLD_OBJECT);
 }
@@ -1033,7 +1034,7 @@ bool Sprite_isObject(Sprite this)
  */
 void Sprite_print(Sprite this, int x, int y)
 {
-	ASSERT(this, "Sprite::print: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::print: null this");
 
 	Printing_text(Printing_getInstance(), "Layer: ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->worldLayer, x + 14, y, NULL);
@@ -1109,7 +1110,7 @@ void Sprite_print(Sprite this, int x, int y)
  */
 void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
 {
-	ASSERT(this, "Sprite::putChar: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::putChar: null this");
 
 	if(this->texture && newChar && texturePixel)
 	{
@@ -1130,7 +1131,7 @@ void Sprite_putChar(Sprite this, Point* texturePixel, BYTE* newChar)
  */
 void Sprite_putPixel(Sprite this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "Sprite::putPixel: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::putPixel: null this");
 
 	if(this->texture)
 	{
@@ -1153,7 +1154,7 @@ void Sprite_putPixel(Sprite this, Point* texturePixel, Pixel* charSetPixel, BYTE
  */
 void Sprite_applyAffineTransformations(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::applyAffineTransformations: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::applyAffineTransformations: null this");
 }
 
 /**
@@ -1166,5 +1167,5 @@ void Sprite_applyAffineTransformations(Sprite this __attribute__ ((unused)))
  */
 void Sprite_applyHbiasEffects(Sprite this __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::applyHbiasEffects: null this");
+	ASSERT(__SAFE_CAST(Sprite, this), "Sprite::applyHbiasEffects: null this");
 }

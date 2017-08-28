@@ -91,6 +91,8 @@ __SINGLETON(ClockManager);
  */
 static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager this)
 {
+	ASSERT(__SAFE_CAST(ClockManager, this), "ClockManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	// create the clock list
@@ -107,7 +109,7 @@ static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager thi
  */
 void ClockManager_destructor(ClockManager this)
 {
-	ASSERT(this, "ClockManager::destructor: null this");
+	ASSERT(__SAFE_CAST(ClockManager, this), "ClockManager::destructor: null this");
 
 	VirtualNode node = this->clocks->head;
 
@@ -135,7 +137,7 @@ void ClockManager_destructor(ClockManager this)
  */
 void ClockManager_register(ClockManager this, Clock clock)
 {
-	ASSERT(this, "ClockManager::register: null this");
+	ASSERT(__SAFE_CAST(ClockManager, this), "ClockManager::register: null this");
 
 	if(!VirtualList_find(this->clocks, clock))
 	{
@@ -154,7 +156,7 @@ void ClockManager_register(ClockManager this, Clock clock)
  */
 void ClockManager_unregister(ClockManager this, Clock clock)
 {
-	ASSERT(this, "ClockManager::unregister: null this");
+	ASSERT(__SAFE_CAST(ClockManager, this), "ClockManager::unregister: null this");
 
 	VirtualList_removeElement(this->clocks, clock);
 }
@@ -170,7 +172,7 @@ void ClockManager_unregister(ClockManager this, Clock clock)
  */
 void ClockManager_update(ClockManager this, u32 millisecondsElapsed)
 {
-	ASSERT(this, "ClockManager::update: null this");
+	ASSERT(__SAFE_CAST(ClockManager, this), "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
 	VirtualNode node = this->clocks->head;
@@ -192,7 +194,7 @@ void ClockManager_update(ClockManager this, u32 millisecondsElapsed)
  */
 void ClockManager_reset(ClockManager this)
 {
-	ASSERT(this, "ClockManager::reset: null this");
+	ASSERT(__SAFE_CAST(ClockManager, this), "ClockManager::reset: null this");
 	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
 
 	VirtualNode node = this->clocks->head;

@@ -36,7 +36,7 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(ReflectiveEntity, InanimatedInGameEntity);
+__CLASS_DEFINITION(ReflectiveEntity, Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,10 +57,10 @@ __CLASS_NEW_END(ReflectiveEntity, reflectiveEntityDefinition, id, internalId, na
 // class's constructor
 void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ReflectiveEntity::constructor: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(InanimatedInGameEntity, &reflectiveEntityDefinition->inGameEntityDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(Entity, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
 	this->waveLutIndexIncrement = FIX19_13_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, FIX19_13_DIV(ITOFIX19_13(reflectiveEntityDefinition->numberOfWaveLutEntries), ITOFIX19_13(reflectiveEntityDefinition->width)));
@@ -70,7 +70,7 @@ void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinit
 // class's destructor
 void ReflectiveEntity_destructor(ReflectiveEntity this)
 {
-	ASSERT(this, "ReflectiveEntity::destructor: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::destructor: null this");
 
 	// remove post processing effect
 	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -82,10 +82,10 @@ void ReflectiveEntity_destructor(ReflectiveEntity this)
 
 void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
 {
-	ASSERT(this, "ReflectiveEntity::ready: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::ready: null this");
 
 	// call base
-	__CALL_BASE_METHOD(InanimatedInGameEntity, ready, this, recursive);
+	__CALL_BASE_METHOD(Entity, ready, this, recursive);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -93,9 +93,9 @@ void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
 
 void ReflectiveEntity_suspend(ReflectiveEntity this)
 {
-	ASSERT(this, "ReflectiveEntity::suspend: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::suspend: null this");
 
-	__CALL_BASE_METHOD(InanimatedInGameEntity, suspend, this);
+	__CALL_BASE_METHOD(Entity, suspend, this);
 
 	// remove post processing effect
 	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -103,9 +103,9 @@ void ReflectiveEntity_suspend(ReflectiveEntity this)
 
 void ReflectiveEntity_resume(ReflectiveEntity this)
 {
-	ASSERT(this, "ReflectiveEntity::resume: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::resume: null this");
 
-	__CALL_BASE_METHOD(InanimatedInGameEntity, resume, this);
+	__CALL_BASE_METHOD(Entity, resume, this);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -113,7 +113,7 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 
 void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 {
-	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::synchronizeGraphics: null this");
 
 	VBVec3D position3D = this->transform.globalPosition;
 	__OPTICS_NORMALIZE(position3D);
@@ -143,7 +143,7 @@ static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialOb
 
 void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet)
 {
-	ASSERT(this, "ReflectiveEntity::applyReflection: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::applyReflection: null this");
 
 	ReflectiveEntityDefinition* reflectiveEntityDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
 
@@ -225,7 +225,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								u32 leftBorderMask __attribute__ ((unused)),
 								u32 rightBorderMask __attribute__ ((unused)))
 {
-	ASSERT(this, "ReflectiveEntity::drawReflection: null this");
+	ASSERT(__SAFE_CAST(ReflectiveEntity, this), "ReflectiveEntity::drawReflection: null this");
 
     s16 xSourceEnd = xSourceStart + width;
     s16 ySourceEnd = ySourceStart + height;

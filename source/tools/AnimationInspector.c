@@ -83,11 +83,11 @@
 		 */																								\
 		AnimationFunction animationFunction;															\
 		/**
-		 * @var OptionsSelector 		animatedInGameEntitySelector
+		 * @var OptionsSelector 		animatedEntitySelector
 		 * @brief						animated in game entity selector
 		 * @memberof					AnimationInspector
 		 */																								\
-		OptionsSelector animatedInGameEntitySelector;													\
+		OptionsSelector animatedEntitySelector;													\
 		/**
 		 * @var OptionsSelector 		spriteSelector
 		 * @brief						animated sprite selector
@@ -160,17 +160,17 @@ enum AnimationProperties
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern UserAnimatedInGameEntity _userAnimatedInGameEntities[];
+extern UserAnimatedEntity _userAnimatedEntities[];
 
 AnimationController Sprite_getAnimationController(Sprite this);
 
 static void AnimationInspector_constructor(AnimationInspector this);
 static void AnimationInspector_setupMode(AnimationInspector this);
-static void AnimationInspector_printUserAnimatedInGameEntities(AnimationInspector this);
+static void AnimationInspector_printUserAnimatedEntities(AnimationInspector this);
 static void AnimationInspector_printSprites(AnimationInspector this);
-static void AnimationInspector_printAnimatedInGameEntityAnimations(AnimationInspector this);
+static void AnimationInspector_printAnimatedEntityAnimations(AnimationInspector this);
 static void AnimationInspector_printAnimationConfig(AnimationInspector this);
-static void AnimationInspector_selectAnimatedInGameEntity(AnimationInspector this, u32 pressedKey);
+static void AnimationInspector_selectAnimatedEntity(AnimationInspector this, u32 pressedKey);
 static void AnimationInspector_selectSprite(AnimationInspector this, u32 pressedKey);
 static void AnimationInspector_removePreviousSprite(AnimationInspector this);
 static void AnimationInspector_selectAnimation(AnimationInspector this, u32 pressedKey);
@@ -209,13 +209,13 @@ __SINGLETON(AnimationInspector);
  */
 static void __attribute__ ((noinline)) AnimationInspector_constructor(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::constructor: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
 	this->animatedSprite = NULL;
 	this->gameState = NULL;
-	this->animatedInGameEntitySelector = NULL;
+	this->animatedEntitySelector = NULL;
 	this->spriteSelector = NULL;
 	this->animationsSelector = NULL;
 	this->animationEditionSelector = NULL;
@@ -234,14 +234,14 @@ static void __attribute__ ((noinline)) AnimationInspector_constructor(AnimationI
  */
 void AnimationInspector_destructor(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::destructor: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::destructor: null this");
 
-	if(this->animatedInGameEntitySelector)
+	if(this->animatedEntitySelector)
 	{
-		__DELETE(this->animatedInGameEntitySelector);
+		__DELETE(this->animatedEntitySelector);
 	}
 
-	if(this->animatedInGameEntitySelector)
+	if(this->animatedEntitySelector)
 	{
 		__DELETE(this->spriteSelector);
 	}
@@ -275,7 +275,7 @@ void AnimationInspector_destructor(AnimationInspector this)
  */
 void AnimationInspector_update(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::update: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::update: null this");
 
 	if(this->gameState && this->animatedSprite)
 	{
@@ -297,7 +297,7 @@ void AnimationInspector_update(AnimationInspector this)
  */
 void AnimationInspector_show(AnimationInspector this, GameState gameState)
 {
-	ASSERT(this, "AnimationInspector::start: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::start: null this");
 	ASSERT(gameState, "AnimationInspector::start: null gameState");
 
 	this->gameState = gameState;
@@ -307,26 +307,26 @@ void AnimationInspector_show(AnimationInspector this, GameState gameState)
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->animatedInGameEntitySelector = __NEW(OptionsSelector, 2, 16, NULL);
+	this->animatedEntitySelector = __NEW(OptionsSelector, 2, 16, NULL);
 
-	VirtualList animatedInGameEntitiesNames = __NEW(VirtualList);
+	VirtualList animatedEntitiesNames = __NEW(VirtualList);
 
 	int i = 0;
-	for(; _userAnimatedInGameEntities[i].animatedInGameEntityDefinition; i++)
+	for(; _userAnimatedEntities[i].animatedEntityDefinition; i++)
 	{
-		ASSERT(_userAnimatedInGameEntities[i].name, "AnimationInspector::start: push null name");
+		ASSERT(_userAnimatedEntities[i].name, "AnimationInspector::start: push null name");
 
 		Option* option = __NEW_BASIC(Option);
-		option->value = (char*)(_userAnimatedInGameEntities[i].name);
+		option->value = (char*)(_userAnimatedEntities[i].name);
 		option->type = kString;
-		VirtualList_pushBack(animatedInGameEntitiesNames, option);
+		VirtualList_pushBack(animatedEntitiesNames, option);
 	}
 
-	ASSERT(animatedInGameEntitiesNames, "AnimationInspector::start: null animatedInGameEntitiesNames");
-	ASSERT(VirtualList_getSize(animatedInGameEntitiesNames), "AnimationInspector::start: empty animatedInGameEntitiesNames");
+	ASSERT(animatedEntitiesNames, "AnimationInspector::start: null animatedEntitiesNames");
+	ASSERT(VirtualList_getSize(animatedEntitiesNames), "AnimationInspector::start: empty animatedEntitiesNames");
 
-	OptionsSelector_setOptions(this->animatedInGameEntitySelector, animatedInGameEntitiesNames);
-	__DELETE(animatedInGameEntitiesNames);
+	OptionsSelector_setOptions(this->animatedEntitySelector, animatedEntitiesNames);
+	__DELETE(animatedEntitiesNames);
 
 	this->mode = kFirstMode + 1;
 	AnimationInspector_setupMode(this);
@@ -347,16 +347,16 @@ void AnimationInspector_show(AnimationInspector this, GameState gameState)
  */
 void AnimationInspector_hide(AnimationInspector this)
 {
-	ASSERT(this, "AnimationInspector::stop: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::stop: null this");
 
 	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
 
 	AnimationInspector_removePreviousSprite(this);
 
-	if(this->animatedInGameEntitySelector)
+	if(this->animatedEntitySelector)
 	{
-		__DELETE(this->animatedInGameEntitySelector);
-		this->animatedInGameEntitySelector = NULL;
+		__DELETE(this->animatedEntitySelector);
+		this->animatedEntitySelector = NULL;
 	}
 
 	if(this->animationsSelector)
@@ -403,7 +403,7 @@ static void AnimationInspector_setupMode(AnimationInspector this)
 	{
 		case kSelectActor:
 
-			AnimationInspector_printUserAnimatedInGameEntities(this);
+			AnimationInspector_printUserAnimatedEntities(this);
 			break;
 
 		case kSelectSprite:
@@ -418,7 +418,7 @@ static void AnimationInspector_setupMode(AnimationInspector this)
 
 			AnimationInspector_createAnimationsSelector(this);
 			Sprite_pause(this->animatedSprite, true);
-			AnimationInspector_printAnimatedInGameEntityAnimations(this);
+			AnimationInspector_printAnimatedEntityAnimations(this);
 			break;
 
 		case kEditAnimation:
@@ -446,7 +446,7 @@ static void AnimationInspector_setupMode(AnimationInspector this)
  */
 void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey)
 {
-	ASSERT(this, "AnimationInspector::processUserInput: null this");
+	ASSERT(__SAFE_CAST(AnimationInspector, this), "AnimationInspector::processUserInput: null this");
 
 	if(!this->gameState)
 	{
@@ -473,7 +473,7 @@ void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey
 	{
 		case kSelectActor:
 
-			AnimationInspector_selectAnimatedInGameEntity(this, pressedKey);
+			AnimationInspector_selectAnimatedEntity(this, pressedKey);
 			break;
 
 		case kSelectSprite:
@@ -494,7 +494,7 @@ void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey
 }
 
 /**
- * Select AnimatedInGameEntity to work on
+ * Select AnimatedEntity to work on
  *
  * @memberof				AnimationInspector
  * @private
@@ -502,18 +502,18 @@ void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey
  * @param this				Function scope
  * @param pressedKey		User input
  */
-static void AnimationInspector_selectAnimatedInGameEntity(AnimationInspector this, u32 pressedKey)
+static void AnimationInspector_selectAnimatedEntity(AnimationInspector this, u32 pressedKey)
 {
-	int userAnimatedInGameEntitiesCount = 0;
-	for(; _userAnimatedInGameEntities[userAnimatedInGameEntitiesCount].animatedInGameEntityDefinition; userAnimatedInGameEntitiesCount++);
+	int userAnimatedEntitiesCount = 0;
+	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntityDefinition; userAnimatedEntitiesCount++);
 
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector_selectPrevious(this->animatedInGameEntitySelector);
+		OptionsSelector_selectPrevious(this->animatedEntitySelector);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector_selectNext(this->animatedInGameEntitySelector);
+		OptionsSelector_selectNext(this->animatedEntitySelector);
 	}
 	else if(pressedKey & K_A)
 	{
@@ -534,8 +534,8 @@ static void AnimationInspector_selectAnimatedInGameEntity(AnimationInspector thi
  */
 static void AnimationInspector_selectSprite(AnimationInspector this, u32 pressedKey)
 {
-	int userAnimatedInGameEntitiesCount = 0;
-	for(; _userAnimatedInGameEntities[userAnimatedInGameEntitiesCount].animatedInGameEntityDefinition; userAnimatedInGameEntitiesCount++);
+	int userAnimatedEntitiesCount = 0;
+	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntityDefinition; userAnimatedEntitiesCount++);
 
 	if(pressedKey & K_LU)
 	{
@@ -583,7 +583,7 @@ static void AnimationInspector_removePreviousSprite(AnimationInspector this)
  */
 static void AnimationInspector_selectAnimation(AnimationInspector this, u32 pressedKey)
 {
-	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
+	this->animationDescription = _userAnimatedEntities[OptionsSelector_getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->animationDescription;
 
 	int animationsCount = 0;
 	for(; this->animationDescription->animationFunctions[animationsCount]; animationsCount++);
@@ -774,22 +774,22 @@ static void AnimationInspector_editAnimation(AnimationInspector this, u32 presse
 }
 
 /**
- * Print the list of user AnimatedInGameEntities
+ * Print the list of user AnimatedEntities
  *
  * @memberof				AnimationInspector
  * @private
  *
  * @param this				Function scope
  */
-static void AnimationInspector_printUserAnimatedInGameEntities(AnimationInspector this)
+static void AnimationInspector_printUserAnimatedEntities(AnimationInspector this)
 {
 	Printing_text(Printing_getInstance(), "ACTORS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
-	OptionsSelector_printOptions(this->animatedInGameEntitySelector, 1, 4);
+	OptionsSelector_printOptions(this->animatedEntitySelector, 1, 4);
 }
 
 /**
- * Print available sprites for the selected AnimatedInGameEntity
+ * Print available sprites for the selected AnimatedEntity
  *
  * @memberof				AnimationInspector
  * @private
@@ -804,14 +804,14 @@ static void AnimationInspector_printSprites(AnimationInspector this)
 }
 
 /**
- * Print a list of animation for the selected AnimatedInGameEntity
+ * Print a list of animation for the selected AnimatedEntity
  *
  * @memberof				AnimationInspector
  * @private
  *
  * @param this				Function scope
  */
-static void AnimationInspector_printAnimatedInGameEntityAnimations(AnimationInspector this)
+static void AnimationInspector_printAnimatedEntityAnimations(AnimationInspector this)
 {
 	Printing_text(Printing_getInstance(), "AVAILABLE ANIMATIONS", 1, 2, NULL);
 	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
@@ -877,7 +877,7 @@ static void AnimationInspector_printAnimationConfig(AnimationInspector this)
  */
 static void AnimationInspector_loadAnimationFunction(AnimationInspector this)
 {
-	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
+	this->animationDescription = _userAnimatedEntities[OptionsSelector_getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->animationDescription;
 
 	AnimationFunction* animationFunction = this->animationDescription->animationFunctions[OptionsSelector_getSelectedOption(this->animationsSelector)];
 
@@ -912,7 +912,7 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	position.y += ITOFIX19_13(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
-	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[OptionsSelector_getSelectedOption(this->spriteSelector)];
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedEntities[OptionsSelector_getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->entityDefinition.spriteDefinitions[OptionsSelector_getSelectedOption(this->spriteSelector)];
 
 	NM_ASSERT(spriteDefinition, "AnimationInspector::createSprite: null spriteDefinition");
 
@@ -962,7 +962,7 @@ static void AnimationInspector_createSpriteSelector(AnimationInspector this)
 	VirtualList spriteIndexes = __NEW(VirtualList);
 
 	int i = 0;
-	while(_userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->inGameEntityDefinition.entityDefinition.spritesDefinitions[i])
+	while(_userAnimatedEntities[OptionsSelector_getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->entityDefinition.spriteDefinitions[i])
 	{
 		Option* option = __NEW_BASIC(Option);
 		option->value = &i;
@@ -986,7 +986,7 @@ static void AnimationInspector_createSpriteSelector(AnimationInspector this)
  */
 static void AnimationInspector_createAnimationsSelector(AnimationInspector this)
 {
-	this->animationDescription = _userAnimatedInGameEntities[OptionsSelector_getSelectedOption(this->animatedInGameEntitySelector)].animatedInGameEntityDefinition->animationDescription;
+	this->animationDescription = _userAnimatedEntities[OptionsSelector_getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->animationDescription;
 
 	if(this->animationDescription)
 	{

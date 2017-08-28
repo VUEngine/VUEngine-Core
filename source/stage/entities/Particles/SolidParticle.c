@@ -66,7 +66,7 @@ __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSp
  */
 void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
-	ASSERT(this, "SolidParticle::constructor: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::constructor: null this");
 
 	// construct base Container
 	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
@@ -77,8 +77,11 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeType);
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this), (Gap){0, 0, 0, 0});
+	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeDefinition);
+
+	VBVec3D displacement = {0, 0, 0};
+	Size size = {SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this)};
+	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &size, &displacement, true);
 
 	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
 }
@@ -93,7 +96,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
  */
 void SolidParticle_destructor(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::destructor: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::destructor: null this");
 
 	// unregister the shape for collision detection
 	CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), this->shape);
@@ -125,7 +128,7 @@ void SolidParticle_destructor(SolidParticle this)
  */
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
 {
-	ASSERT(this, "SolidParticle::update: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::update: null this");
 
 	u32 expired = __CALL_BASE_METHOD(Particle, update, this, timeElapsed, behavior);
 
@@ -139,7 +142,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		}
 	}
 
-	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false, (Gap){0, 0, 0, 0});
+	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false);
 
 	return expired;
 }
@@ -156,7 +159,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
  */
 Shape SolidParticle_getShape(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getShape: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getShape: null this");
 
 	return this->shape;
 }
@@ -173,7 +176,7 @@ Shape SolidParticle_getShape(SolidParticle this)
  */
 u16 SolidParticle_getWidth(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getWidth: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getWidth: null this");
 
 	return this->solidParticleDefinition->width;
 }
@@ -190,7 +193,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
  */
 u16 SolidParticle_getHeight(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getHeight: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getHeight: null this");
 
 	return this->solidParticleDefinition->height;
 }
@@ -207,7 +210,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
  */
 u16 SolidParticle_getDepth(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::getDepth: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::getDepth: null this");
 
 	// must calculate based on the scale because not affine object must be enlarged
 	return this->solidParticleDefinition->depth;
@@ -223,7 +226,7 @@ u16 SolidParticle_getDepth(SolidParticle this)
  */
 static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 {
-	ASSERT(this, "SolidParticle::updateSurroundingFriction: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::updateSurroundingFriction: null this");
 	ASSERT(this->body, "SolidParticle::updateSurroundingFriction: null body");
 
 	Force totalFriction = {0, 0, 0};
@@ -240,7 +243,7 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 }
 
 /**
- * Start bouncing after collision with another inGameEntity
+ * Start bouncing after collision with another Entity
  *
  * @memberof				SolidParticle
  * @private
@@ -250,15 +253,15 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
  */
 static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollision)
 {
-	ASSERT(this, "SolidParticle::bounce: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::bounce: null this");
 
 	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingSpatialObjectsTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
 
 		Body_bounce(this->body, axisOfCollision, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
-		if(!(axisOfCollision & Body_isMoving(this->body)))
+		if(!(axisOfCollision & Body_getMovementOverAllAxis(this->body)))
 		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
 		}
@@ -276,45 +279,46 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
  * @public
  *
  * @param this							Function scope
- * @param collidingSpatialObjects		List with colliding spatial objects
+ * @param shape							My shape detecting the collision
+ * @param collidingShapes				List with colliding shapes
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpatialObjects)
+bool SolidParticle_processCollision(SolidParticle this, Shape shape, VirtualList collidingShapes)
 {
-	ASSERT(this, "SolidParticle::SolidParticle: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
-	ASSERT(collidingSpatialObjects, "SolidParticle::resolveCollision: collidingSpatialObjects");
+	ASSERT(collidingShapes, "SolidParticle::resolveCollision: collidingShapes");
 
 	if(this->collisionSolver)
 	{
 		if(this->solidParticleDefinition->ignoreParticles)
 		{
-			VirtualList collidingObjectsToRemove = __NEW(VirtualList);
+			VirtualList collidingShapesToRemove = __NEW(VirtualList);
 			VirtualNode node = NULL;
 
-			for(node = collidingSpatialObjects->head; node; node = node->next)
+			for(node = collidingShapes->head; node; node = node->next)
 			{
 				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, node->data);
 
 				if(__GET_CAST(Particle, spatialObject))
 				{
-					VirtualList_pushBack(collidingObjectsToRemove, spatialObject);
+					VirtualList_pushBack(collidingShapesToRemove, spatialObject);
 				}
 			}
 
-			for(node = collidingObjectsToRemove->head; node; node = node->next)
+			for(node = collidingShapesToRemove->head; node; node = node->next)
 			{
 				// whenever you process some objects of a collisions list remove them and leave the Actor handle
 				// the ones you don't care about, i.e.: in most cases, the ones which are solid
-				VirtualList_removeElement(collidingSpatialObjects, node->data);
+				VirtualList_removeElement(collidingShapes, node->data);
 			}
 
-			__DELETE(collidingObjectsToRemove);
+			__DELETE(collidingShapesToRemove);
 		}
 
-		u8 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, collidingSpatialObjects, Body_getLastDisplacement(this->body), false);
+		u16 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, shape, collidingShapes, Body_getLastDisplacement(this->body), false);
 
 		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
 
@@ -339,7 +343,7 @@ bool SolidParticle_processCollision(SolidParticle this, VirtualList collidingSpa
  */
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 {
-	ASSERT(this, "SolidParticle::handleMessage: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::handleMessage: null this");
 
 	switch(Telegram_getMessage(telegram))
 	{
@@ -352,7 +356,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 		case kBodyStopped:
 
-			if(!Body_isMoving(this->body))
+			if(!Body_getMovementOverAllAxis(this->body))
 			{
 				//CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}
@@ -378,7 +382,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
  */
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 {
-	ASSERT(this, "SolidParticle::position: null this");
+	ASSERT(__SAFE_CAST(SolidParticle, this), "SolidParticle::position: null this");
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 

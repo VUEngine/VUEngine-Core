@@ -26,9 +26,7 @@
 
 #include <ManagedEntity.h>
 #include <Optics.h>
-#include <Shape.h>
-#include <MBgmapSprite.h>
-#include <Screen.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -41,35 +39,34 @@
  * @ingroup stage-entities
  */
 __CLASS_DEFINITION(ManagedEntity, Entity);
-__CLASS_FRIEND_DEFINITION(Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(Entity);
 
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// global
-
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child);
 static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ManagedEntity, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ManagedEntity, managedEntityDefinition, id, internalId, name);
+__CLASS_NEW_DEFINITION(ManagedEntity, EntityDefinition* definition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(ManagedEntity, definition, id, internalId, name);
 
 // class's constructor
-void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* managedEntityDefinition, s16 id, s16 internalId, const char* const name)
+void ManagedEntity_constructor(ManagedEntity this, EntityDefinition* definition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ManagedEntity::constructor: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::constructor: null this");
 
-	// construct base Entity
-	__CONSTRUCT_BASE(Entity, (EntityDefinition*)managedEntityDefinition, id, internalId, name);
+	// construct base
+	__CONSTRUCT_BASE(Entity, definition, id, internalId, name);
 
 	// the sprite must be initialized in the derived class
 	this->managedSprites = __NEW(VirtualList);
@@ -83,7 +80,7 @@ void ManagedEntity_constructor(ManagedEntity this, ManagedEntityDefinition* mana
 // class's destructor
 void ManagedEntity_destructor(ManagedEntity this)
 {
-	ASSERT(this, "ManagedEntity::destructor: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::destructor: null this");
 
 	if(this->managedSprites)
 	{
@@ -91,14 +88,14 @@ void ManagedEntity_destructor(ManagedEntity this)
 		this->managedSprites = NULL;
 	}
 
-	// destroy the super Entity
+	// delete the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 {
-	ASSERT(this, "ManagedEntity::registerSprites: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::registerSprites: null this");
 	ASSERT(child, "ManagedEntity::registerSprites: null child");
 
 	if(child)
@@ -128,7 +125,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 
 static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child)
 {
-	ASSERT(this, "ManagedEntity::unregisterSprites: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::unregisterSprites: null this");
 	ASSERT(child, "ManagedEntity::unregisterSprites: null child");
 
 	if(child)
@@ -158,7 +155,7 @@ static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child)
 
 void ManagedEntity_removeChild(ManagedEntity this, Container child)
 {
-	ASSERT(this, "ManagedEntity::removeChild: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::removeChild: null this");
 
 	ManagedEntity_unregisterSprites(this, __SAFE_CAST(Entity, child));
 
@@ -168,7 +165,7 @@ void ManagedEntity_removeChild(ManagedEntity this, Container child)
 // transform class
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "ManagedEntity::initialTransform: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::initialTransform: null this");
 
 	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
@@ -191,7 +188,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 void ManagedEntity_ready(ManagedEntity this, bool recursive)
 {
-	ASSERT(this, "ManagedEntity::ready: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::ready: null this");
 
 	__CALL_BASE_METHOD(Entity, ready, this, recursive);
 
@@ -204,7 +201,7 @@ void ManagedEntity_ready(ManagedEntity this, bool recursive)
 // transform class
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "ManagedEntity::transform: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
@@ -212,6 +209,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	if((__INVALIDATE_SCALE & invalidateTransformationFlag) || Entity_updateSpriteScale(__SAFE_CAST(Entity, this)))
 	{
 		__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
+
+		this->invalidateGlobalTransformation = 0;
 
 		// save the 2d position
 		VBVec3D position3D = this->transform.globalPosition;
@@ -232,20 +231,24 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		return;
 	}
 
-	this->invalidateSprites = invalidateTransformationFlag | (__INVALIDATE_POSITION & this->invalidateGlobalTransformation);
-
-	// call base class's transform method
 	if((__INVALIDATE_POSITION & this->invalidateGlobalTransformation) |
 		(u32)this->children)
 	{
 		// call base class's transform method
 		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 	}
+
+	// apply environment transform
+	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
+
+	this->invalidateSprites |= __INVALIDATE_POSITION;
+
+	this->invalidateGlobalTransformation = 0;
 }
 
 void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 {
-	ASSERT(this, "ManagedEntity::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::synchronizeGraphics: null this");
 
 	if(!this->invalidateSprites)
 	{
@@ -294,7 +297,7 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 
 void ManagedEntity_releaseGraphics(ManagedEntity this)
 {
-	ASSERT(this, "ManagedEntity::releaseGraphics: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::releaseGraphics: null this");
 
 	if(this->managedSprites)
 	{
@@ -305,16 +308,22 @@ void ManagedEntity_releaseGraphics(ManagedEntity this)
 	__CALL_BASE_METHOD(Entity, releaseGraphics, this);
 }
 
+// execute logic
+void ManagedEntity_update(ManagedEntity this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
+{
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::update: null this");
+}
+
 int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
-	ASSERT(this, "ManagedEntity::passMessage: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::passMessage: null this");
 
 	return false;
 }
 
 void ManagedEntity_resume(ManagedEntity this)
 {
-	ASSERT(this, "ManagedEntity::resume: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::resume: null this");
 
 	__CALL_BASE_METHOD(Entity, resume, this);
 
@@ -323,7 +332,7 @@ void ManagedEntity_resume(ManagedEntity this)
 
 void ManagedEntity_suspend(ManagedEntity this)
 {
-	ASSERT(this, "ManagedEntity::suspend: null this");
+	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::suspend: null this");
 
 	__CALL_BASE_METHOD(Entity, suspend, this);
 

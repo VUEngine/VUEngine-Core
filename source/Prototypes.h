@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Entity.h>
+/*#include <Entity.h>
 #include <Shape.h>
 #include <AnimationController.h>
 
@@ -39,8 +39,7 @@
 // since there is no way to forward declare typedefs in C...
 
 // must forward declare
-Shape Entity_getShape(Entity this);
 AnimationController Sprite_getAnimationController(Sprite this);
-
+*/
 
 #endif

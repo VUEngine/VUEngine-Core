@@ -115,7 +115,7 @@ __CLASS_NEW_END(PhysicalWorld);
  */
 void PhysicalWorld_constructor(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::constructor: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -144,7 +144,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
  */
 void PhysicalWorld_destructor(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::destructor: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::destructor: null this");
 	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
 
 	// delete the bodies
@@ -185,7 +185,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
  */
 Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass)
 {
-	ASSERT(this, "PhysicalWorld::createBody: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::createBody: null this");
 
 	// if the entity is already registered
 	Body body = PhysicalWorld_getBody(this, owner);
@@ -219,7 +219,7 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
  */
 void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
 {
-	ASSERT(this, "PhysicalWorld::destroyBody: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::destroyBody: null this");
 	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 	ASSERT(!VirtualList_find(this->removedBodies, body), "PhysicalWorld::destroyBody: body already being destroyed");
 
@@ -246,7 +246,7 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
  */
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 {
-	ASSERT(this, "PhysicalWorld::getBody: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 
 	// process removed bodies
@@ -280,7 +280,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
  */
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::processRemovedBodies: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::processRemovedBodies: null this");
 	ASSERT(this->removedBodies, "PhysicalWorld::processRemovedBodies: null bodies");
 
 	VirtualNode node = this->removedBodies->head;
@@ -317,7 +317,7 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
  */
 static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::checkForGravity: null this");
 	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
 
 	VirtualNode node = !this->nextBodyToCheckForGravity ? this->bodies->head: this->nextBodyToCheckForGravity;
@@ -334,11 +334,11 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(SpatialObject, canMoveOverAxis, body->owner, &this->gravity);
+			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(SpatialObject, getAxisAllowedForMovement, body->owner, &this->gravity);
 
 			if(gravitySensibleAxis)
 			{
-				int movingState = Body_isMoving(body);
+				u16 movingState = Body_getMovementOverAllAxis(body);
 
 				gravitySensibleAxis &= ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
@@ -378,7 +378,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
  */
 void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
-	ASSERT(this, "PhysicalWorld::update: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::update: null this");
 
 	PhysicalWorld_processRemovedBodies(this);
 
@@ -436,7 +436,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
  */
 void PhysicalWorld_reset(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::reset: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
 	VirtualNode node = this->bodies->head;
@@ -470,7 +470,7 @@ void PhysicalWorld_reset(PhysicalWorld this)
  */
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
 {
-	ASSERT(this, "PhysicalWorld::isSpatialObjectRegistered: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::isSpatialObjectRegistered: null this");
 	ASSERT(this->bodies, "PhysicalWorld::isSpatialObjectRegistered: null bodies");
 
 	VirtualNode node = this->bodies->head;
@@ -505,7 +505,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
  */
 fix19_13 PhysicalWorld_getFriction(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::getFriction: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::getFriction: null this");
 
 	return this->friction;
 }
@@ -521,7 +521,7 @@ fix19_13 PhysicalWorld_getFriction(PhysicalWorld this)
  */
 void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction)
 {
-	ASSERT(this, "PhysicalWorld::setFriction: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::setFriction: null this");
 
 	this->friction = friction;
 }
@@ -537,7 +537,7 @@ void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction)
  */
 void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 {
-	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::bodyAwake: null this");
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
 	ASSERT(__SAFE_CAST(SpatialObject, body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
@@ -559,7 +559,7 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
  */
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 {
-	ASSERT(this, "PhysicalWorld::bodySleep: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::bodySleep: null this");
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
@@ -583,7 +583,7 @@ void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
  */
 const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::getGravity: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::getGravity: null this");
 
 	return (const VBVec3D*)&this->gravity;
 }
@@ -600,7 +600,7 @@ const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
  */
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::getElapsedTime: null this");
 
 	return this->elapsedTime;
 }
@@ -617,7 +617,7 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
  */
 void PhysicalWorld_print(PhysicalWorld this, int x, int y)
 {
-	ASSERT(this, "PhysicalWorld::print: null this");
+	ASSERT(__SAFE_CAST(PhysicalWorld, this), "PhysicalWorld::print: null this");
 
 	Printing_text(Printing_getInstance(), "PHYSICS' STATUS", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Registered bodies: ", x, ++y, NULL);

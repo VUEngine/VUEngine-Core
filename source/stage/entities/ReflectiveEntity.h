@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <InanimatedInGameEntity.h>
+#include <Entity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,11 +52,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define ReflectiveEntity_METHODS(ClassName)																\
-		InanimatedInGameEntity_METHODS(ClassName)														\
+		Entity_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, applyReflection, u32 currentDrawingFrameBufferSet);				\
 
 #define ReflectiveEntity_SET_VTABLE(ClassName)															\
-		InanimatedInGameEntity_SET_VTABLE(ClassName)													\
+		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, ready);												\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, suspend);											\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, resume);												\
@@ -67,7 +67,7 @@ __CLASS(ReflectiveEntity);
 
 #define ReflectiveEntity_ATTRIBUTES																		\
 		/* it is derived from */																		\
-		InanimatedInGameEntity_ATTRIBUTES																			\
+		Entity_ATTRIBUTES																		\
 		fix19_13 waveLutIndex;																			\
 		fix19_13 waveLutIndexIncrement;																	\
 		Point position2D;																				\
@@ -75,7 +75,7 @@ __CLASS(ReflectiveEntity);
 
 typedef struct ReflectiveEntityDefinition
 {
-	InanimatedInGameEntityDefinition inGameEntityDefinition;
+	EntityDefinition entityDefinition;
 
 	// the starting point from where start to reflect data
 	// relative to my position

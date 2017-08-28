@@ -71,7 +71,7 @@ __CLASS_NEW_END(ParticleBody, owner, mass);
  */
 void ParticleBody_constructor(ParticleBody this, SpatialObject owner, fix19_13 mass)
 {
-	ASSERT(this, "ParticleBody::constructor: null this");
+	ASSERT(__SAFE_CAST(ParticleBody, this), "ParticleBody::constructor: null this");
 
 	__CONSTRUCT_BASE(Body, owner, mass);
 }
@@ -86,7 +86,7 @@ void ParticleBody_constructor(ParticleBody this, SpatialObject owner, fix19_13 m
  */
 void ParticleBody_destructor(ParticleBody this)
 {
-	ASSERT(this, "ParticleBody::destructor: null this");
+	ASSERT(__SAFE_CAST(ParticleBody, this), "ParticleBody::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -103,7 +103,7 @@ void ParticleBody_destructor(ParticleBody this)
  */
 void ParticleBody_update(ParticleBody this)
 {
-	ASSERT(this, "ParticleBody::update: null this");
+	ASSERT(__SAFE_CAST(ParticleBody, this), "ParticleBody::update: null this");
 
 	if(this->active && this->awake)
 	{
@@ -142,7 +142,7 @@ void ParticleBody_update(ParticleBody this)
  */
 Force ParticleBody_calculateFrictionForce(ParticleBody this __attribute__ ((unused)))
 {
-	ASSERT(this, "ParticleBody::calculateFrictionForce: null this");
+	ASSERT(__SAFE_CAST(ParticleBody, this), "ParticleBody::calculateFrictionForce: null this");
 
 	return (Force){0, 0, 0};
 }

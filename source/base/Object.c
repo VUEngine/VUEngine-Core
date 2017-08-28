@@ -91,7 +91,7 @@ static void Object_checkIfFiringEvent(Object this, const char* message);
  */
 void Object_constructor(Object this)
 {
-	ASSERT(this, "Object::destructor: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::destructor: null this");
 
 	this->events = NULL;
 }
@@ -106,7 +106,7 @@ void Object_constructor(Object this)
  */
 void Object_destructor(Object this)
 {
-	ASSERT(this, "Object::destructor: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::destructor: null this");
 	ASSERT(__IS_OBJECT_ALIVE(this), "Object::destructor: already deleted this");
 
 	if(this->events)
@@ -144,7 +144,7 @@ void Object_destructor(Object this)
  */
 static void Object_checkIfFiringEvent(Object this, const char* message)
 {
-	ASSERT(this, "Object::checkIfFiringEvent: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::checkIfFiringEvent: null this");
 
 	if(&_firingEventMarker == VirtualList_front(this->events))
 	{
@@ -178,7 +178,7 @@ static void Object_checkIfFiringEvent(Object this, const char* message)
  */
 bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "Object::handleMessage: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::handleMessage: null this");
 
 	return false;
 }
@@ -196,7 +196,7 @@ bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram _
  */
 void Object_addEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
-	ASSERT(this, "Object::addEventListener: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::addEventListener: null this");
 
 	if(!listener || !method)
 	{
@@ -241,7 +241,7 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
  */
 void Object_removeEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
-	ASSERT(this, "Object::removeEventListener: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::removeEventListener: null this");
 
 	if(this->events)
 	{
@@ -282,7 +282,7 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
  */
 void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 {
-	ASSERT(this, "Object::removeEventListeners: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::removeEventListeners: null this");
 
 
 	if(this->events)
@@ -333,7 +333,7 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
  */
 void Object_removeAllEventListeners(Object this, u32 eventCode)
 {
-	ASSERT(this, "Object::removeEventListeners: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::removeEventListeners: null this");
 
 	if(this->events)
 	{
@@ -383,7 +383,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
  */
 void Object_fireEvent(Object this, u32 eventCode)
 {
-	ASSERT(this, "Object::fireEvent: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::fireEvent: null this");
 
 	if(this->events)
 	{
@@ -497,7 +497,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
  */
 const void* Object_getVTable(Object this)
 {
-	ASSERT(this, "Object::getVTable: null this");
+	ASSERT(__SAFE_CAST(Object, this), "Object::getVTable: null this");
 
 	return this->vTable;
 }

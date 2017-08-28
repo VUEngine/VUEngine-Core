@@ -51,7 +51,7 @@
 		__VIRTUAL_SET(ClassName, Particle, update);														\
 		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Particle, moves);														\
-		__VIRTUAL_SET(ClassName, Particle, canMoveOverAxis);											\
+		__VIRTUAL_SET(ClassName, Particle, getAxisAllowedForMovement);											\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
 		__VIRTUAL_SET(ClassName, Particle, suspend);													\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
@@ -105,7 +105,7 @@ __CLASS(Particle);
  */
 typedef struct ParticleDefinition
 {
-	/// the class allocator
+	/// class allocator
 	AllocatorPointer allocator;
 
 	/// particle's minimum life span in milliseconds
@@ -152,9 +152,8 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 void Particle_destructor(Particle this);
 
 void Particle_addForce(Particle this, const Force* force, u32 movementType);
-int Particle_canMoveOverAxis(Particle this, const Acceleration* acceleration);
+u16 Particle_getAxisAllowedForMovement(Particle this, const Acceleration* acceleration);
 u16 Particle_getDepth(Particle this);
-Gap Particle_getGap(Particle this);
 u16 Particle_getHeight(Particle this);
 const VBVec3D* Particle_getPosition(Particle this);
 void Particle_hide(Particle this);

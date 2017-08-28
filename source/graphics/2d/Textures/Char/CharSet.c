@@ -72,6 +72,8 @@ __CLASS_NEW_END(CharSet, charSetDefinition, offset);
  */
 static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
 {
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	// save definition
@@ -93,7 +95,7 @@ static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefiniti
  */
 void CharSet_destructor(CharSet this)
 {
-	ASSERT(this, "CharSet::destructor: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::destructor: null this");
 
 	Object_fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
 
@@ -115,7 +117,7 @@ void CharSet_destructor(CharSet this)
  */
 void CharSet_increaseUsageCount(CharSet this)
 {
-	ASSERT(this, "CharSet::increaseUsageCoung: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::increaseUsageCoung: null this");
 
 	this->usageCount++;
 }
@@ -132,7 +134,7 @@ void CharSet_increaseUsageCount(CharSet this)
  */
 bool CharSet_decreaseUsageCount(CharSet this)
 {
-	ASSERT(this, "CharSet::getAllocationType: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::getAllocationType: null this");
 
 	if(this->usageCount)
 	{
@@ -154,7 +156,7 @@ bool CharSet_decreaseUsageCount(CharSet this)
  */
 u8 CharSet_getUsageCount(CharSet this)
 {
-	ASSERT(this, "CharSet::getUsageCount: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::getUsageCount: null this");
 
 	return this->usageCount;
 }
@@ -171,7 +173,7 @@ u8 CharSet_getUsageCount(CharSet this)
  */
 u32 CharSet_getAllocationType(CharSet this)
 {
-	ASSERT(this, "CharSet::getAllocationType: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::getAllocationType: null this");
 
 	return this->charSetDefinition->allocationType;
 }
@@ -188,7 +190,7 @@ u32 CharSet_getAllocationType(CharSet this)
  */
 u32 CharSet_getOffset(CharSet this)
 {
-	ASSERT(this, "CharSet::getOffset: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::getOffset: null this");
 
 	return this->offset;
 }
@@ -204,7 +206,7 @@ u32 CharSet_getOffset(CharSet this)
  */
 void CharSet_setOffset(CharSet this, u16 offset)
 {
-	ASSERT(this, "CharSet::setOffset: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::setOffset: null this");
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
 	this->offset = offset;
@@ -222,7 +224,7 @@ void CharSet_setOffset(CharSet this, u16 offset)
  */
 CharSetDefinition* CharSet_getCharSetDefinition(CharSet this)
 {
-	ASSERT(this, "CharSet::getCharDefinition: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::getCharDefinition: null this");
 
 	return this->charSetDefinition;
 }
@@ -238,7 +240,7 @@ CharSetDefinition* CharSet_getCharSetDefinition(CharSet this)
  */
 void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "CharSet::setCharDefinition: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::setCharDefinition: null this");
 
 	this->charSetDefinition = charSetDefinition;
 }
@@ -255,7 +257,7 @@ void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefini
  */
 u32 CharSet_getNumberOfChars(CharSet this)
 {
-	ASSERT(this, "CharSet::getNumberOfChars: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::getNumberOfChars: null this");
 
 	return this->charSetDefinition->numberOfChars;
 }
@@ -270,7 +272,7 @@ u32 CharSet_getNumberOfChars(CharSet this)
  */
 void CharSet_write(CharSet this)
 {
-	ASSERT(this, "CharSet::write: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::write: null this");
 
 	Mem_copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
@@ -289,7 +291,7 @@ void CharSet_write(CharSet this)
  */
 void CharSet_rewrite(CharSet this)
 {
-	ASSERT(this, "CharSet::rewrite: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::rewrite: null this");
 
 	// write again
 	CharSet_write(this);
@@ -309,7 +311,7 @@ void CharSet_rewrite(CharSet this)
  */
 void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement)
 {
-	ASSERT(this, "CharSet::setCharDefinitionDisplacement: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::setCharDefinitionDisplacement: null this");
 
 	this->charDefinitionDisplacement = charDefinitionDisplacement;
 }
@@ -326,7 +328,7 @@ void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDispl
  */
 void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 {
-	ASSERT(this, "CharSet::putChar: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::putChar: null this");
 
 	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
@@ -347,7 +349,7 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
  */
 void CharSet_putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "CharSet::putPixel: null this");
+	ASSERT(__SAFE_CAST(CharSet, this), "CharSet::putPixel: null this");
 
 	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{

@@ -71,7 +71,7 @@ __CLASS_NEW_END(InverseCuboid, owner);
  */
 static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
 {
-	ASSERT(this, "InverseCuboid::constructor: null this");
+	ASSERT(__SAFE_CAST(InverseCuboid, this), "InverseCuboid::constructor: null this");
 
 	__CONSTRUCT_BASE(Shape, owner);
 }
@@ -86,7 +86,7 @@ static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
  */
  void InverseCuboid_destructor(InverseCuboid this)
 {
-	ASSERT(this, "InverseCuboid::destructor: null this");
+	ASSERT(__SAFE_CAST(InverseCuboid, this), "InverseCuboid::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -106,7 +106,7 @@ static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
  */
 int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
 {
-	ASSERT(this, "InverseCuboid::overlaps: null this");
+	ASSERT(__SAFE_CAST(InverseCuboid, this), "InverseCuboid::overlaps: null this");
 
 	if(__IS_INSTANCE_OF(InverseCuboid, shape))
 	{
@@ -129,7 +129,7 @@ int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
  */
 bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
 {
-	ASSERT(this, "Cuboid::overlapsCuboid: null this");
+	ASSERT(__SAFE_CAST(InverseCuboid, this), "Cuboid::overlapsCuboid: null this");
 
 	return InverseCuboid_overlapsWithRightCuboids(&this->positionedRightCuboid, &other->positionedRightCuboid);
 }

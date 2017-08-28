@@ -82,7 +82,7 @@ __CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, internalId, name);
  */
 void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ParticleSystem::constructor: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::constructor: null this");
 
 	// construct base
 	__CONSTRUCT_BASE(Entity, &particleSystemDefinition->entityDefinition, id, internalId, name);
@@ -120,7 +120,7 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
  */
 void ParticleSystem_destructor(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::destructor: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::destructor: null this");
 
 	ParticleSystem_processExpiredParticles(this);
 
@@ -191,7 +191,7 @@ void ParticleSystem_destructor(ParticleSystem this)
  */
 static void ParticleSystem_processExpiredParticles(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::processExpiredParticles: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::processExpiredParticles: null this");
 
 	VirtualNode node = this->expiredParticles->head;
 
@@ -231,7 +231,7 @@ static void ParticleSystem_processExpiredParticles(ParticleSystem this)
  */
 void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
 {
-	ASSERT(this, "ParticleSystem::update: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::update: null this");
 
 	// bypass Entity's method
 	Container_update(__SAFE_CAST(Container, this), elapsedTime);
@@ -289,7 +289,7 @@ void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
  */
 static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::recycleParticle: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::recycleParticle: null this");
 
 	if(this->recyclableParticles->head && (VirtualList_getSize(this->particles) + VirtualList_getSize(this->recyclableParticles) >= this->particleSystemDefinition->maximumNumberOfAliveParticles))
 	{
@@ -326,7 +326,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
  */
 static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed)
 {
-	ASSERT(this, "ParticleSystem::getParticleSpawnPosition: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::getParticleSpawnPosition: null this");
 
 	static VBVec3D position =
 	{
@@ -351,7 +351,7 @@ static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem thi
  */
 static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed)
 {
-	ASSERT(this, "ParticleSystem::getParticleSpawnForce: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::getParticleSpawnForce: null this");
 
 	static Force force =
 	{
@@ -375,7 +375,7 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
  */
 void ParticleSystem_spawnAllParticles(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::spawnAllParticles: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::spawnAllParticles: null this");
 
 	while(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 	{
@@ -402,7 +402,7 @@ void ParticleSystem_spawnAllParticles(ParticleSystem this)
  */
 static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::spawnParticle: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::spawnParticle: null this");
 
 	long seed = Utilities_randomSeed();
 
@@ -433,7 +433,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
  */
 void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "ParticleSystem::transform: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::transform: null this");
 
 	__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
 
@@ -450,7 +450,7 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
  */
 void ParticleSystem_synchronizeGraphics(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::synchronizeGraphics: null this");
 
 	VirtualNode node = this->particles->head;
 
@@ -477,7 +477,7 @@ void ParticleSystem_synchronizeGraphics(ParticleSystem this)
  */
 bool ParticleSystem_handleMessage(ParticleSystem this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "ParticleSystem::handleMessage: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::handleMessage: null this");
 
 	return false;
 }
@@ -490,7 +490,7 @@ bool ParticleSystem_handleMessage(ParticleSystem this __attribute__ ((unused)), 
  */
 void ParticleSystem_show(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::show: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::show: null this");
 
 	__CALL_BASE_METHOD(Entity, show, this);
 
@@ -510,7 +510,7 @@ void ParticleSystem_show(ParticleSystem this)
  */
 void ParticleSystem_hide(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::hide: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::hide: null this");
 
 	__CALL_BASE_METHOD(Entity, hide, this);
 
@@ -530,7 +530,7 @@ void ParticleSystem_hide(ParticleSystem this)
  */
 void ParticleSystem_resume(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::resume: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::resume: null this");
 
 	__CALL_BASE_METHOD(Entity, resume, this);
 
@@ -570,7 +570,7 @@ void ParticleSystem_resume(ParticleSystem this)
  */
 void ParticleSystem_suspend(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::suspend: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::suspend: null this");
 
 	__CALL_BASE_METHOD(Entity, suspend, this);
 
@@ -603,7 +603,7 @@ void ParticleSystem_suspend(ParticleSystem this)
  */
 static void ParticleSystem_particleExpired(ParticleSystem this, Particle particle)
 {
-	ASSERT(this, "ParticleSystem::particleExpired: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::particleExpired: null this");
 
 	VirtualList_pushBack(this->expiredParticles, particle);
 	Particle_hide(particle);
@@ -619,7 +619,7 @@ static void ParticleSystem_particleExpired(ParticleSystem this, Particle particl
  */
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::computeNextSpawnTime: null this");
 
 	return this->particleSystemDefinition->minimumSpawnDelay +
 			Utilities_random(Utilities_randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
@@ -633,7 +633,7 @@ static int ParticleSystem_computeNextSpawnTime(ParticleSystem this)
  */
 void ParticleSystem_start(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::start: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::start: null this");
 
 	this->nextSpawnTime = ParticleSystem_computeNextSpawnTime(this);
 
@@ -648,7 +648,7 @@ void ParticleSystem_start(ParticleSystem this)
  */
 void ParticleSystem_pause(ParticleSystem this)
 {
-	ASSERT(this, "ParticleSystem::pause: null this");
+	ASSERT(__SAFE_CAST(ParticleSystem, this), "ParticleSystem::pause: null this");
 
 	this->paused = true;
 }

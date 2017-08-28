@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <VIPManager.h>
 #include <MiscStructs.h>
 #include <Texture.h>
 #include <Clock.h>
@@ -173,7 +174,7 @@ __CLASS(Sprite);
  */
 typedef struct SpriteDefinition
 {
-	/// the class allocator
+	/// class allocator
 	AllocatorPointer allocator;
 
 	/// texture to use with the sprite

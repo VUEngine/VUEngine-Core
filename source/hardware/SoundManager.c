@@ -205,7 +205,7 @@ __SINGLETON(SoundManager);
  */
 static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager this)
 {
-	ASSERT(this, "SoundManager::constructor: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -240,7 +240,7 @@ static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager thi
  */
 void SoundManager_destructor(SoundManager this)
 {
-	ASSERT(this, "SoundManager::destructor: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::destructor: null this");
 
 	__SINGLETON_DESTROY;
 }
@@ -255,7 +255,7 @@ void SoundManager_destructor(SoundManager this)
  */
 void SoundManager_setWaveForm(SoundManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "SoundManager::setWaveForm: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::setWaveForm: null this");
 
 	int i;
 	for(i = 0; i < 32; i++)
@@ -278,7 +278,7 @@ void SoundManager_setWaveForm(SoundManager this __attribute__ ((unused)))
  */
 void SoundManager_playSounds(SoundManager this)
 {
-	ASSERT(this, "SoundManager::playSounds: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::playSounds: null this");
 
 	SoundManager_continuePlayingBGM(this);
 	SoundManager_continuePlayingFxSounds(this);
@@ -294,7 +294,7 @@ void SoundManager_playSounds(SoundManager this)
  */
 static void SoundManager_continuePlayingBGM(SoundManager this)
 {
-	ASSERT(this, "SoundManager::playBGM: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::playBGM: null this");
 
 	// only if bgm loaded
 	if(!this->bgm)
@@ -394,7 +394,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
  */
 static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 {
-	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::calculateSoundPosition: null this");
 
 	float zMinus = 0;
 	int output = 0x00;
@@ -453,7 +453,7 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
  */
 static void SoundManager_continuePlayingFxSounds(SoundManager this)
 {
-	ASSERT(this, "SoundManager::continuePlayingFxSounds: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::continuePlayingFxSounds: null this");
 
 	int note = 0;
 	int fxS = 0;
@@ -546,7 +546,7 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this)
  */
 void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
 {
-	ASSERT(this, "SoundManager::loadBGM: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::loadBGM: null this");
 
 	SoundManager_stopAllSound(this);
 	this->bgm = bgm;
@@ -567,7 +567,7 @@ void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
  */
 int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D	position)
 {
-	ASSERT(this, "SoundManager::loadFxSound: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::loadFxSound: null this");
 
 	int i = 0;
 
@@ -595,7 +595,7 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D	posi
 // returns true if the sound is being played
 int SoundManager_playingSound(SoundManager this, const u16* fxSound)
 {
-	ASSERT(this, "SoundManager::playingSound: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::playingSound: null this");
 
 	int i = 0;
 
@@ -621,7 +621,7 @@ int SoundManager_playingSound(SoundManager this, const u16* fxSound)
  */
 void SoundManager_stopAllSound(SoundManager this __attribute__ ((unused)))
 {
-	ASSERT(this, "SoundManager::stopAllSound: null this");
+	ASSERT(__SAFE_CAST(SoundManager, this), "SoundManager::stopAllSound: null this");
 
 	int channel = 0;
 

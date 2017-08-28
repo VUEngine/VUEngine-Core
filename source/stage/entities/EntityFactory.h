@@ -30,6 +30,8 @@
 #include <Object.h>
 #include <Sprite.h>
 #include <Container.h>
+#include <Shape.h>
+#include <Body.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,11 +82,24 @@ __CLASS(EntityFactory);
 // defines an entity in ROM memory
 typedef struct EntityDefinition
 {
-	// the class allocator
+	// class allocator
 	AllocatorPointer allocator;
 
-	// the sprite
-	const SpriteDefinition** spritesDefinitions;
+	// sprites
+	const SpriteDefinition** spriteDefinitions;
+
+	// collision shapes
+	const ShapeDefinition* shapeDefinitions;
+
+	// size
+	// if 0, width and height will be inferred from the first sprite's texture's size
+	Size size;
+
+	// gameworld's character's type
+	u32 inGameType;
+
+	// physical specification
+	PhysicalSpecification* physicalSpecification;
 
 } EntityDefinition;
 

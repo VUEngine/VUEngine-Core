@@ -138,6 +138,8 @@ __SINGLETON(ParamTableManager);
  */
 void __attribute__ ((noinline)) ParamTableManager_constructor(ParamTableManager this)
 {
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::constructor: null this");
+
 	__CONSTRUCT_BASE(Object);
 
 	this->bgmapSprites = __NEW(VirtualList);
@@ -157,7 +159,7 @@ void __attribute__ ((noinline)) ParamTableManager_constructor(ParamTableManager 
  */
 void ParamTableManager_destructor(ParamTableManager this)
 {
-	ASSERT(this, "ParamTableManager::destructor: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::destructor: null this");
 
 	ParamTableManager_reset(this);
 
@@ -181,7 +183,7 @@ void ParamTableManager_destructor(ParamTableManager this)
  */
 void ParamTableManager_reset(ParamTableManager this)
 {
-	ASSERT(this, "ParamTableManager::reset: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::reset: null this");
 
 	VirtualList_clear(this->bgmapSprites);
 
@@ -220,7 +222,7 @@ void ParamTableManager_reset(ParamTableManager this)
  */
 void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable)
 {
-	ASSERT(this, "ParamTableManager::calculateParamTableBase: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::calculateParamTableBase: null this");
 
 	if(!availableBgmapSegmentsForParamTable)
 	{
@@ -254,7 +256,7 @@ void ParamTableManager_calculateParamTableBase(ParamTableManager this, int avail
  */
 u32 ParamTableManager_getParamTableBase(ParamTableManager this)
 {
-	ASSERT(this, "ParamTableManager::getParamTableBase: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::getParamTableBase: null this");
 
 	return this->paramTableBase;
 }
@@ -272,7 +274,7 @@ u32 ParamTableManager_getParamTableBase(ParamTableManager this)
  */
 static u32 ParamTableManager_calculateSpriteParamTableSize(ParamTableManager this __attribute__ ((unused)), BgmapSprite bgmapSprite)
 {
-	ASSERT(this, "ParamTableManager::allocate: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::allocate: null this");
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	u16 spriteHead = Sprite_getHead(__SAFE_CAST(Sprite, bgmapSprite));
@@ -318,7 +320,7 @@ static u32 ParamTableManager_calculateSpriteParamTableSize(ParamTableManager thi
  */
 u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
 {
-	ASSERT(this, "ParamTableManager::allocate: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::allocate: null this");
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
 	//calculate necessary space to allocate
@@ -367,7 +369,7 @@ u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bgmapSprite)
  */
 void ParamTableManager_free(ParamTableManager this, BgmapSprite bgmapSprite)
 {
-	ASSERT(this, "ParamTableManager::free: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::free: null this");
 
 	if(VirtualList_removeElement(this->bgmapSprites, bgmapSprite))
 	{
@@ -402,7 +404,7 @@ void ParamTableManager_free(ParamTableManager this, BgmapSprite bgmapSprite)
  */
 bool ParamTableManager_defragmentProgressively(ParamTableManager this)
 {
-	ASSERT(this, "ParamTableManager::processRemoved: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::processRemoved: null this");
 
 	if(this->paramTableFreeData.param)
 	{
@@ -472,7 +474,7 @@ bool ParamTableManager_defragmentProgressively(ParamTableManager this)
  */
 void ParamTableManager_print(ParamTableManager this, int x, int y)
 {
-	ASSERT(this, "ParamTableManager::print: null this");
+	ASSERT(__SAFE_CAST(ParamTableManager, this), "ParamTableManager::print: null this");
 
 	int xDisplacement = 11;
 

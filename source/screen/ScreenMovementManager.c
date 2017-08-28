@@ -57,7 +57,7 @@ __SINGLETON(ScreenMovementManager);
 // class's constructor
 void __attribute__ ((noinline)) ScreenMovementManager_constructor(ScreenMovementManager this)
 {
-	ASSERT(this, "ScreenMovementManager::constructor: null this");
+	ASSERT(__SAFE_CAST(ScreenMovementManager, this), "ScreenMovementManager::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -66,7 +66,7 @@ void __attribute__ ((noinline)) ScreenMovementManager_constructor(ScreenMovement
 // class's destructor
 void ScreenMovementManager_destructor(ScreenMovementManager this)
 {
-	ASSERT(this, "ScreenMovementManager::destructor: null this");
+	ASSERT(__SAFE_CAST(ScreenMovementManager, this), "ScreenMovementManager::destructor: null this");
 
 	// destroy base
 	__SINGLETON_DESTROY;
@@ -75,25 +75,25 @@ void ScreenMovementManager_destructor(ScreenMovementManager this)
 // center world's screen in function of focus actor's position
 void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unused)), u32 checkIfFocusEntityIsMoving)
 {
-	ASSERT(this, "ScreenMovementManager::update: null this");
+	ASSERT(__SAFE_CAST(ScreenMovementManager, this), "ScreenMovementManager::update: null this");
 
 	Screen screen = Screen_getInstance();
 
-	// if focusInGameEntity is defined
-	if(screen && screen->focusInGameEntity)
+	// if focusEntity is defined
+	if(screen && screen->focusEntity)
 	{
-		Container focusInGameEntityParent = Container_getParent(__SAFE_CAST(Container, screen->focusInGameEntity));
+		Container focusEntityParent = Container_getParent(__SAFE_CAST(Container, screen->focusEntity));
 
-		if(focusInGameEntityParent)
+		if(focusEntityParent)
 		{
-			// get focusInGameEntity is moving
-			if(__VIRTUAL_CALL(InGameEntity, isMoving, screen->focusInGameEntity) || !checkIfFocusEntityIsMoving)
+			// get focusEntity is moving
+			if(__VIRTUAL_CALL(SpatialObject, isMoving, screen->focusEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				screen->lastDisplacement = screen->position;
 
-				// get focusInGameEntity's position
-				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusInGameEntity));
+				// get focusEntity's position
+				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusEntity));
 
 				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__HALF_SCREEN_WIDTH);
 				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__HALF_SCREEN_HEIGHT);

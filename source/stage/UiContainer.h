@@ -61,7 +61,7 @@ typedef struct UiContainerDefinition
 	// ui's entities
 	PositionedEntity* entities;
 
-	// the class allocator
+	// class allocator
 	AllocatorPointer allocator;
 
 } UiContainerDefinition;

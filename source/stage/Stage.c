@@ -122,7 +122,6 @@ const Transformation neutralEnvironmentTransformation =
 //---------------------------------------------------------------------------------------------------------
 
 // global
-Shape SpatialObject_getShape(SpatialObject this);
 BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 
 static void Stage_constructor(Stage this);
@@ -132,7 +131,7 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 static void Stage_setObjectSpritesContainers(Stage this);
 static void Stage_preloadAssets(Stage this);
 static void Stage_unloadChild(Stage this, Container child);
-static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity);
+static void Stage_setFocusEntity(Stage this, Entity focusEntity);
 static void Stage_loadInitialEntities(Stage this);
 static bool Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static bool Stage_loadInRangeEntities(Stage this, int defer);
@@ -174,7 +173,7 @@ __CLASS_NEW_END(Stage);
 // class's constructor
 static void Stage_constructor(Stage this)
 {
-	ASSERT(this, "Stage::constructor: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Container, NULL);
@@ -187,7 +186,7 @@ static void Stage_constructor(Stage this)
 	this->loadedStageEntities = NULL;
 	this->uiContainer = NULL;
 	this->stageDefinition = NULL;
-	this->focusInGameEntity = NULL;
+	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
 	this->screenPreviousDistance = 0;
 	this->nextEntityId = 0;
@@ -198,7 +197,7 @@ static void Stage_constructor(Stage this)
 // class's destructor
 void Stage_destructor(Stage this)
 {
-	ASSERT(this, "Stage::destructor: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::destructor: null this");
 
 	__DELETE(this->particleRemover);
 	this->particleRemover = NULL;
@@ -239,7 +238,7 @@ void Stage_destructor(Stage this)
 // determine if a point is visible
 static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightCuboid* smallRightCuboid)
 {
-	ASSERT(this, "Stage::isEntityInLoadRange: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::isEntityInLoadRange: null this");
 
 	VBVec2D position2D;
 
@@ -273,14 +272,14 @@ static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const Small
 
 static void Stage_setObjectSpritesContainers(Stage this)
 {
-	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::setObjectSpritesContainers: null this");
 
 	ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->rendering.objectSpritesContainersSize, this->stageDefinition->rendering.objectSpritesContainersZPosition);
 }
 
 void Stage_setupPalettes(Stage this)
 {
-	ASSERT(this, "Stage::setupPalettes: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::setupPalettes: null this");
 
 	VIPManager_setupPalettes(VIPManager_getInstance(), &this->stageDefinition->rendering.paletteConfig);
 }
@@ -289,7 +288,7 @@ void Stage_setupPalettes(Stage this)
 // load stage's entites
 void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
 {
-	ASSERT(this, "Stage::load: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::load: null this");
 
 	// set world's definition
 	this->stageDefinition = stageDefinition;
@@ -332,7 +331,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	Stage_loadInitialEntities(this);
 
 	// retrieve focus entity for streaming
-	Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
+	Stage_setFocusEntity(this, Screen_getFocusEntity(Screen_getInstance()));
 
 	// set physics
 	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.friction);
@@ -359,7 +358,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 
 void Stage_loadPostProcessingEffects(Stage this)
 {
-	ASSERT(this, "Stage::loadPostProcessingEffects: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::loadPostProcessingEffects: null this");
 
 	if(this->stageDefinition->postProcessingEffects)
 	{
@@ -374,7 +373,7 @@ void Stage_loadPostProcessingEffects(Stage this)
 // retrieve size
 Size Stage_getSize(Stage this)
 {
-	ASSERT(this, "Stage::getSize: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::getSize: null this");
 	ASSERT(this->stageDefinition, "Stage::getSize: null stageDefinition");
 
 	// set world's limits
@@ -384,7 +383,7 @@ Size Stage_getSize(Stage this)
 // setup ui
 static void Stage_setupUI(Stage this)
 {
-	ASSERT(this, "Stage::setupUI: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::setupUI: null this");
 	ASSERT(!this->uiContainer, "Stage::setupUI: UI already exists");
 
 	if(this->uiContainer)
@@ -411,7 +410,7 @@ static void Stage_setupUI(Stage this)
 // add entity to the stage
 Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent)
 {
-	ASSERT(this, "Stage::addEntity: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::addEntity: null this");
 
 	return Stage_doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
 }
@@ -419,7 +418,7 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 // add entity to the stage
 static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId)
 {
-	ASSERT(this, "Stage::addEntity: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::addEntity: null this");
 
 	if(positionedEntity)
 	{
@@ -453,7 +452,7 @@ static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const p
 
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition)
 {
-	ASSERT(this, "Stage::registerEntityId: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::registerEntityId: null this");
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -473,7 +472,7 @@ bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entity
 
 void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback)
 {
-	ASSERT(this, "Stage::spawnEntity: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::spawnEntity: null this");
 
 	EntityFactory_spawnEntity(this->entityFactory, positionedEntity, requester, callback, this->nextEntityId++);
 }
@@ -481,7 +480,7 @@ void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container
 // add entity to the stage
 void Stage_removeChild(Stage this, Container child)
 {
-	ASSERT(this, "Stage::removeEntity: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::removeEntity: null this");
 	ASSERT(child, "Stage::removeEntity: null child");
 
 	if(!child)
@@ -522,7 +521,7 @@ void Stage_removeChild(Stage this, Container child)
 // unload entity from the stage
 static void Stage_unloadChild(Stage this, Container child)
 {
-	ASSERT(this, "Stage::unloadChild: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::unloadChild: null this");
 	ASSERT(child, "Stage::unloadChild: null child");
 
 	if(!child)
@@ -557,7 +556,7 @@ static void Stage_unloadChild(Stage this, Container child)
 // preload fonts, charsets and textures
 static void Stage_preloadAssets(Stage this)
 {
-	ASSERT(this, "Stage::preloadAssets: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::preloadAssets: null this");
 
 	// fonts
 	Printing_loadFonts(Printing_getInstance(), this->stageDefinition->assets.fontDefinitions);
@@ -576,7 +575,7 @@ static void Stage_preloadAssets(Stage this)
 			}
 			else
 			{
-				ASSERT(this, "Stage::preloadAssets: preloading an animated single char set");
+				ASSERT(__SAFE_CAST(Stage, this), "Stage::preloadAssets: preloading an animated single char set");
 			}
 		}
 	}
@@ -606,7 +605,7 @@ static void Stage_preloadAssets(Stage this)
 			}
 			else
 			{
-				ASSERT(this, "Stage::preloadAssets: loading an Object texture");
+				ASSERT(__SAFE_CAST(Stage, this), "Stage::preloadAssets: loading an Object texture");
 			}
 		}
 
@@ -624,7 +623,7 @@ static void Stage_preloadAssets(Stage this)
 // register an entity in the streaming list
 static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((unused)), PositionedEntity* positionedEntity)
 {
-	ASSERT(this, "Stage::registerEntities: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::registerEntities: null this");
 	ASSERT(positionedEntity, "Stage::registerEntities: null positionedEntity");
 
 	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
@@ -641,7 +640,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 // register the stage's definition entities in the streaming list
 static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToIgnore)
 {
-	ASSERT(this, "Stage::registerEntities: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::registerEntities: null this");
 
 	if(this->stageEntities)
 	{
@@ -716,7 +715,7 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 // load all visible entities
 static void Stage_loadInitialEntities(Stage this)
 {
-	ASSERT(this, "Stage::loadInRangeEntities: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::loadInRangeEntities: null this");
 
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->stageEntities->head;
@@ -750,7 +749,7 @@ static void Stage_loadInitialEntities(Stage this)
 // unload non visible entities
 static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 {
-	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::unloadOutOfRangeEntities: null this");
 
 	if(!this->children)
 	{
@@ -834,7 +833,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 
 static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
 {
-	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::selectEntitiesInLoadRange: null this");
 
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
@@ -969,7 +968,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 // process removed children
 static bool Stage_processRemovedChildrenProgressively(Stage this)
 {
-	ASSERT(this, "Stage::processRemovedChildrenProgressively: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::processRemovedChildrenProgressively: null this");
 
 	if(!this->removedChildren || !this->removedChildren->head)
 	{
@@ -1011,7 +1010,7 @@ static bool Stage_processRemovedChildrenProgressively(Stage this)
 //
 static bool Stage_updateEntityFactory(Stage this)
 {
-	ASSERT(this, "Stage::updateEntityFactory: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::updateEntityFactory: null this");
 
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
@@ -1030,7 +1029,7 @@ static bool Stage_updateEntityFactory(Stage this)
 
 bool Stage_stream(Stage this)
 {
-	ASSERT(this, "Stage::stream: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::stream: null this");
 
 #ifdef __SHOW_STREAMING_PROFILING
 	EntityFactory_showStatus(this->entityFactory, 25, 3);
@@ -1058,7 +1057,7 @@ bool Stage_stream(Stage this)
 
 void Stage_streamAll(Stage this)
 {
-	ASSERT(this, "Stagge::streamAll: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stagge::streamAll: null this");
 
 	// must make sure there are not pending entities for removal
 	Container_processRemovedChildren(__SAFE_CAST(Container, this));
@@ -1076,7 +1075,7 @@ void Stage_streamAll(Stage this)
 // execute stage's logic
 void Stage_update(Stage this, u32 elapsedTime)
 {
-	ASSERT(this, "Stage::update: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::update: null this");
 
 	VirtualNode node = this->children->head;
 
@@ -1103,7 +1102,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 // transform state
 void Stage_transform(Stage this, const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "Stage::transform: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::transform: null this");
 
 	VirtualNode node = this->children->head;
 
@@ -1127,7 +1126,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 
 void Stage_synchronizeGraphics(Stage this)
 {
-	ASSERT(this, "Stage::synchronizeGraphics: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::synchronizeGraphics: null this");
 
 	VirtualNode node = this->children->head;
 
@@ -1147,7 +1146,7 @@ void Stage_synchronizeGraphics(Stage this)
 // retrieve ui
 UiContainer Stage_getUiContainer(Stage this)
 {
-	ASSERT(this, "Stage::getUiContainer: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::getUiContainer: null this");
 
 	return this->uiContainer;
 }
@@ -1155,7 +1154,7 @@ UiContainer Stage_getUiContainer(Stage this)
 // suspend for pause
 void Stage_suspend(Stage this)
 {
-	ASSERT(this, "Stage::suspend: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::suspend: null this");
 
 	// stream all pending entities to avoid having manually recover
 	// the stage entity registries
@@ -1169,17 +1168,17 @@ void Stage_suspend(Stage this)
 	}
 
 	// relinquish screen focus priority
-	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
+	if(this->focusEntity && Screen_getFocusEntity(Screen_getInstance()))
 	{
-		if(this->focusInGameEntity == Screen_getFocusInGameEntity(Screen_getInstance()))
+		if(this->focusEntity == Screen_getFocusEntity(Screen_getInstance()))
 		{
 			// relinquish focus entity
-			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+			Screen_setFocusGameEntity(Screen_getInstance(), NULL);
 		}
 	}
 	else
 	{
-		Stage_setFocusEntity(this, Screen_getFocusInGameEntity(Screen_getInstance()));
+		Stage_setFocusEntity(this, Screen_getFocusEntity(Screen_getInstance()));
 	}
 
 	__DELETE(this->entityFactory);
@@ -1189,7 +1188,7 @@ void Stage_suspend(Stage this)
 // resume after pause
 void Stage_resume(Stage this)
 {
-	ASSERT(this, "Stage::resume: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::resume: null this");
 
 	// set back optical values
 	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
@@ -1212,10 +1211,10 @@ void Stage_resume(Stage this)
 	// reload textures
 	Stage_preloadAssets(this);
 
-	if(this->focusInGameEntity)
+	if(this->focusEntity)
 	{
 		// recover focus entity
-		Screen_setFocusInGameEntity(Screen_getInstance(), __SAFE_CAST(InGameEntity, this->focusInGameEntity));
+		Screen_setFocusGameEntity(Screen_getInstance(), __SAFE_CAST(Entity, this->focusEntity));
 	}
 
 	// load background music
@@ -1238,7 +1237,7 @@ void Stage_resume(Stage this)
 
 bool Stage_handlePropagatedMessage(Stage this, int message)
 {
-	ASSERT(this, "Stage::handlePropagatedMessage: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::handlePropagatedMessage: null this");
 
 	if(this->uiContainer)
 	{
@@ -1251,63 +1250,63 @@ bool Stage_handlePropagatedMessage(Stage this, int message)
 
 void Stage_onFocusEntityDeleted(Stage this, Object eventFirer __attribute__ ((unused)))
 {
-	ASSERT(this, "Stage::onFocusEntityDeleted: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::onFocusEntityDeleted: null this");
 
-	this->focusInGameEntity = NULL;
+	this->focusEntity = NULL;
 
-	if(this->focusInGameEntity && Screen_getFocusInGameEntity(Screen_getInstance()))
+	if(this->focusEntity && Screen_getFocusEntity(Screen_getInstance()))
 	{
-		if(this->focusInGameEntity == Screen_getFocusInGameEntity(Screen_getInstance()))
+		if(this->focusEntity == Screen_getFocusEntity(Screen_getInstance()))
 		{
-			Screen_setFocusInGameEntity(Screen_getInstance(), NULL);
+			Screen_setFocusGameEntity(Screen_getInstance(), NULL);
 		}
 	}
 }
 
-static void Stage_setFocusEntity(Stage this, InGameEntity focusInGameEntity)
+static void Stage_setFocusEntity(Stage this, Entity focusEntity)
 {
-	ASSERT(this, "Stage::setFocusEntity: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::setFocusEntity: null this");
 
-	if(this->focusInGameEntity)
+	if(this->focusEntity)
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Object_removeEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
-	this->focusInGameEntity = focusInGameEntity;
+	this->focusEntity = focusEntity;
 
-	if(this->focusInGameEntity)
+	if(this->focusEntity)
 	{
-		Object_addEventListener(__SAFE_CAST(Object, this->focusInGameEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Object_addEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
-		VBVec3D focusInGameEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusInGameEntity));
-		focusInGameEntityPosition.x = FIX19_13TOI(focusInGameEntityPosition.x);
-		focusInGameEntityPosition.y = FIX19_13TOI(focusInGameEntityPosition.y);
-		focusInGameEntityPosition.z = FIX19_13TOI(focusInGameEntityPosition.z);
+		VBVec3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
+		focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
+		focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
+		focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);
 
-		this->screenPreviousDistance = (long)focusInGameEntityPosition.x * (long)focusInGameEntityPosition.x +
-											(long)focusInGameEntityPosition.y * (long)focusInGameEntityPosition.y +
-											(long)focusInGameEntityPosition.z * (long)focusInGameEntityPosition.z;
+		this->screenPreviousDistance = (long)focusEntityPosition.x * (long)focusEntityPosition.x +
+											(long)focusEntityPosition.y * (long)focusEntityPosition.y +
+											(long)focusEntityPosition.z * (long)focusEntityPosition.z;
 	}
 }
 
 // get stage definition
 StageDefinition* Stage_getStageDefinition(Stage this)
 {
-	ASSERT(this, "Stage::getStageDefinition: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::getStageDefinition: null this");
 
 	return this->stageDefinition;
 }
 
 ParticleRemover Stage_getParticleRemover(Stage this)
 {
-	ASSERT(this, "Stage::getParticleRemover: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::getParticleRemover: null this");
 
 	return this->particleRemover;
 }
 
 void Stage_showStreamingProfiling(Stage this __attribute__ ((unused)), int x, int y)
 {
-	ASSERT(this, "Stage::showStreamingProfiling: null this");
+	ASSERT(__SAFE_CAST(Stage, this), "Stage::showStreamingProfiling: null this");
 
 	Printing_text(Printing_getInstance(), "STREAMING'S STATUS", x, y++, NULL);
 

@@ -72,7 +72,7 @@ __CLASS_NEW_END(Texture, textureDefinition, id);
  */
 void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
 {
-	ASSERT(this, "Texture::constructor: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -100,7 +100,7 @@ void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16
  */
 void Texture_destructor(Texture this)
 {
-	ASSERT(this, "Texture::destructor: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::destructor: null this");
 
 	Texture_releaseCharSet(this);
 
@@ -119,7 +119,7 @@ void Texture_destructor(Texture this)
  */
 static void Texture_loadCharSet(Texture this)
 {
-	ASSERT(this, "Texture::getCharSet: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getCharSet: null this");
 
 	Texture_releaseCharSet(this);
 
@@ -141,7 +141,7 @@ static void Texture_loadCharSet(Texture this)
  */
 void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "Texture::setDefinition: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::setDefinition: null this");
 	ASSERT(textureDefinition, "Texture::setDefinition: null textureDefinition");
 
 	this->textureDefinition = textureDefinition;
@@ -161,7 +161,7 @@ void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition)
  */
 TextureDefinition* Texture_getDefinition(Texture this)
 {
-	ASSERT(this, "Texture::getDefinition: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getDefinition: null this");
 
 	return this->textureDefinition;
 }
@@ -176,7 +176,7 @@ TextureDefinition* Texture_getDefinition(Texture this)
  */
 void Texture_releaseCharSet(Texture this)
 {
-	ASSERT(this, "Texture::releaseCharSet: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::releaseCharSet: null this");
 
 	if(this->charSet)
 	{
@@ -201,7 +201,7 @@ void Texture_releaseCharSet(Texture this)
  */
 void Texture_write(Texture this)
 {
-	ASSERT(this, "Texture::write: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::write: null this");
 	ASSERT(this->textureDefinition, "Texture::write: null textureDefinition");
 	ASSERT(this->textureDefinition->charSetDefinition, "Texture::write: null charSetDefinition");
 
@@ -223,7 +223,7 @@ void Texture_write(Texture this)
  */
 void Texture_rewrite(Texture this)
 {
-	ASSERT(this, "Texture::rewrite: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::rewrite: null this");
 
 	this->written = false;
 
@@ -240,7 +240,7 @@ void Texture_rewrite(Texture this)
  */
 void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
 {
-	ASSERT(this, "Texture::writeHBiasMode: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::writeHBiasMode: null this");
 
 	// TODO
 	/*
@@ -268,7 +268,7 @@ void Texture_writeHBiasMode(Texture this __attribute__ ((unused)))
  */
 int Texture_getNumberOfChars(Texture this)
 {
-	ASSERT(this, "Texture::getNumberOfChars: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getNumberOfChars: null this");
 
 	return this->textureDefinition->charSetDefinition->numberOfChars;
 }
@@ -285,7 +285,7 @@ int Texture_getNumberOfChars(Texture this)
  */
 TextureDefinition* Texture_getTextureDefinition(Texture this)
 {
-	ASSERT(this, "Texture::getTextureDefinition: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getTextureDefinition: null this");
 
 	return this->textureDefinition;
 }
@@ -302,7 +302,7 @@ TextureDefinition* Texture_getTextureDefinition(Texture this)
  */
 u32 Texture_getTotalCols(Texture this)
 {
-	ASSERT(this, "Texture::getTotalCols: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getTotalCols: null this");
 
 	// determine the allocation type
 	switch(this->textureDefinition->charSetDefinition->allocationType)
@@ -351,7 +351,7 @@ u32 Texture_getTotalCols(Texture this)
  */
 u32 Texture_getTotalRows(Texture this)
 {
-	ASSERT(this, "Texture::getTotalRows: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getTotalRows: null this");
 
 	// determine the allocation type
 	switch(this->textureDefinition->charSetDefinition->allocationType)
@@ -399,7 +399,7 @@ u32 Texture_getTotalRows(Texture this)
  */
 u32 Texture_getNumberOfFrames(Texture this)
 {
-	ASSERT(this, "Texture::getNumberOfFrames: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getNumberOfFrames: null this");
 
 	return this->textureDefinition->numberOfFrames;
 }
@@ -417,7 +417,7 @@ u32 Texture_getNumberOfFrames(Texture this)
  */
 CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
 {
-	ASSERT(this, "Texture::getCharSet: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getCharSet: null this");
 
 	if(!this->charSet && loadIfNeeded)
 	{
@@ -439,7 +439,7 @@ CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded)
  */
 BYTE* Texture_getMapDefinition(Texture this)
 {
-	ASSERT(this, "Texture::getBgmapDef: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getBgmapDef: null this");
 
 	return this->textureDefinition ? this->textureDefinition->mapDefinition : NULL;
 }
@@ -455,7 +455,7 @@ BYTE* Texture_getMapDefinition(Texture this)
  */
 void Texture_setPalette(Texture this, u8 palette)
 {
-	ASSERT(this, "Texture::setPalette: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::setPalette: null this");
 
 	this->palette = palette;
 }
@@ -472,7 +472,7 @@ void Texture_setPalette(Texture this, u8 palette)
  */
 u8 Texture_getPalette(Texture this)
 {
-	ASSERT(this, "Texture::getPalette: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getPalette: null this");
 
 	return this->palette;
 }
@@ -489,7 +489,7 @@ u8 Texture_getPalette(Texture this)
  */
 u32 Texture_getRows(Texture this)
 {
-	ASSERT(this, "Texture::getRows: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getRows: null this");
 	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
 
 	return this->textureDefinition->rows;
@@ -507,7 +507,7 @@ u32 Texture_getRows(Texture this)
  */
 u32 Texture_getCols(Texture this)
 {
-	ASSERT(this, "Texture::getCols: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getCols: null this");
 
 	return this->textureDefinition->cols;
 }
@@ -524,7 +524,7 @@ u32 Texture_getCols(Texture this)
  */
 u16 Texture_getId(Texture this)
 {
-	ASSERT(this, "Texture::getId: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::getId: null this");
 
 	return this->id;
 }
@@ -540,7 +540,7 @@ u16 Texture_getId(Texture this)
  */
 static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribute__ ((unused)))
 {
-	ASSERT(this, "Texture::onCharSetRewritten: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::onCharSetRewritten: null this");
 
 	__VIRTUAL_CALL(Texture, rewrite, this);
 
@@ -559,7 +559,7 @@ static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribu
  */
 static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
 {
-	ASSERT(this, "Texture::onCharSetRewritten: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::onCharSetRewritten: null this");
 
 	this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
 }
@@ -576,7 +576,7 @@ static void Texture_onCharSetDeleted(Texture this, Object eventFirer)
  */
 void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
 {
-	ASSERT(this, "Texture::putChar: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::putChar: null this");
 
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
@@ -599,7 +599,7 @@ void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar)
  */
 void Texture_putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "Texture::putPixel: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::putPixel: null this");
 
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
@@ -621,7 +621,7 @@ void Texture_putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BY
  */
 bool Texture_isWritten(Texture this)
 {
-	ASSERT(this, "Texture::isWritten: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::isWritten: null this");
 
 	return this->written;
 }
@@ -637,7 +637,7 @@ bool Texture_isWritten(Texture this)
  */
 void Texture_setMapDisplacement(Texture this, u32 mapDisplacement)
 {
-	ASSERT(this, "Texture::setMapDisplacement: null this");
+	ASSERT(__SAFE_CAST(Texture, this), "Texture::setMapDisplacement: null this");
 
 	this->mapDisplacement = mapDisplacement;
 }

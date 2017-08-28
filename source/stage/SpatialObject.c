@@ -34,7 +34,6 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-Shape SpatialObject_getShape(SpatialObject this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +59,7 @@ __CLASS_NEW_END(SpatialObject);
 // class's constructor
 void SpatialObject_constructor(SpatialObject this)
 {
-	ASSERT(this, "SpatialObject::constructor: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -69,7 +68,7 @@ void SpatialObject_constructor(SpatialObject this)
 // class's destructor
 void SpatialObject_destructor(SpatialObject this)
 {
-	ASSERT(this, "SpatialObject::destructor: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::destructor: null this");
 
 	if(this->events)
 	{
@@ -81,78 +80,55 @@ void SpatialObject_destructor(SpatialObject this)
 	__DESTROY_BASE;
 }
 
-Shape SpatialObject_getShape(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::getShape: null this");
-
-	return NULL;
-}
-
-int SpatialObject_getShapeType(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::getShapeType: null this");
-
-	return kCuboid;
-}
-
 // does it move?
 bool SpatialObject_moves(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::moves: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::moves: null this");
 
 	// not necessarily
 	return false;
 }
 
-// defaults to true
-int SpatialObject_canMoveOverAxis(SpatialObject this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
+bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::canMoveOverAxis: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::isMoving: null this");
+
+	return false;
+}
+
+
+// defaults to true
+u16 SpatialObject_getAxisAllowedForMovement(SpatialObject this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
+{
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getAxisAllowedForMovement: null this");
 
 	return false;
 }
 
 u16 SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getWidth: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getWidth: null this");
 
 	return 0;
 }
 
 u16 SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getHeight: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getHeight: null this");
 
 	return 0;
 }
 
 u16 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getDepth: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getDepth: null this");
 
 	return 0;
 }
 
-Gap SpatialObject_getGap(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::getGap: null this");
-
-	Gap gap =
-	{
-			0, 0, 0, 0
-	};
-
-	return gap;
-}
-
-void SpatialObject_calculateGap(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::calculateGap: null this");
-}
-
 const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getPosition: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getPosition: null this");
 
 	static VBVec3D position =
 	{
@@ -164,13 +140,13 @@ const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unus
 
 void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::setPosition: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::setPosition: null this");
 }
 
 // get elasticity
 fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getElasticity: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getElasticity: null this");
 
 	return 0;
 }
@@ -178,7 +154,7 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused))
 // get friction
 fix19_13 SpatialObject_getFriction(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getFriction: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getFriction: null this");
 
 	return 0;
 }
@@ -186,21 +162,46 @@ fix19_13 SpatialObject_getFriction(SpatialObject this __attribute__ ((unused)))
 // get velocity
 Velocity SpatialObject_getVelocity(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getVelocity: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getVelocity: null this");
 
 	return (Velocity){0, 0, 0};
 }
 
 bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::isAffectedByRelativity: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::isAffectedByRelativity: null this");
 
 	return false;
 }
 
-bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), VirtualList collidingSpatialObjects __attribute__ ((unused)))
+bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), VirtualList collidingShapes __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::processCollision: null this");
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::processCollision: null this");
 
 	return false;
+}
+
+
+u16 SpatialObject_getMovementState(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getMovementState: null this");
+
+	return 0;
+}
+
+/**
+ * Retrieve shapes list
+ *
+ * @memberof	SpatialObject
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		SpatialObject's Shape list
+ */
+VirtualList SpatialObject_getShapes(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(__SAFE_CAST(SpatialObject, this), "SpatialObject::getShapes: null this");
+
+	return NULL;
 }

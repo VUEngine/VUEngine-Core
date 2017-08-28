@@ -193,7 +193,7 @@ __SINGLETON(StageEditor);
  */
 static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 {
-	ASSERT(this, "StageEditor::constructor: null this");
+	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -235,7 +235,7 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
  */
 void StageEditor_destructor(StageEditor this)
 {
-	ASSERT(this, "StageEditor::destructor: null this");
+	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::destructor: null this");
 
 	if(this->userObjectsSelector)
 	{
@@ -256,7 +256,7 @@ void StageEditor_destructor(StageEditor this)
  */
 void StageEditor_update(StageEditor this __attribute__ ((unused)))
 {
-	ASSERT(this, "StageEditor::update: null this");
+	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::update: null this");
 }
 
 /**
@@ -270,7 +270,7 @@ void StageEditor_update(StageEditor this __attribute__ ((unused)))
  */
 void StageEditor_show(StageEditor this, GameState gameState)
 {
-	ASSERT(this, "StageEditor::start: null this");
+	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::start: null this");
 	ASSERT(gameState, "StageEditor::start: gameState this");
 
 	this->gameState = gameState;
@@ -291,7 +291,7 @@ void StageEditor_show(StageEditor this, GameState gameState)
  */
 void StageEditor_hide(StageEditor this)
 {
-	ASSERT(this, "StageEditor::stop: null this");
+	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::stop: null this");
 
 	CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
@@ -311,7 +311,7 @@ void StageEditor_hide(StageEditor this)
  */
 void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 {
-	ASSERT(this, "StageEditor::handleMessage: null this");
+	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::handleMessage: null this");
 
 	if(!this->gameState)
 	{
@@ -439,7 +439,18 @@ static void StageEditor_releaseShape(StageEditor this)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-		if(this->shape && this->shape != __VIRTUAL_CALL(Entity, getShape, entity))
+		VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
+		VirtualNode node = shapes->head;
+
+		for(; node; node = node->next)
+		{
+			if(this->shape == __SAFE_CAST(Shape, node->data))
+			{
+				break;
+			}
+		}
+
+		if(this->shape && !node)
 		{
 			__DELETE(this->shape);
 		}
@@ -468,24 +479,22 @@ static void StageEditor_getShape(StageEditor this)
 	}
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
 
-	this->shape = __VIRTUAL_CALL(Entity, getShape, entity);
+	this->shape = shapes ? __SAFE_CAST(Shape, VirtualList_front(shapes)) : NULL;
 
 	if(!this->shape)
 	{
-		switch(__VIRTUAL_CALL(SpatialObject, getShapeType, entity))
-		{
-			case kCircle:
+		this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
 
-				//VirtualList_pushBack(this->shapes, (void*)__NEW(Circle, owner));
-				break;
+		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+		VBVec3D displacement = {0, 0, 0};
+		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
 
-			case kCuboid:
-
-				this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
-				break;
-		}
+		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), &size, &displacement, false);
 	}
+
+	Shape_setReady(this->shape, false);
 }
 
 /**
@@ -505,14 +514,9 @@ static void StageEditor_positionShape(StageEditor this)
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-	Gap gap = __VIRTUAL_CALL(SpatialObject, getGap, entity);
-	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity), gap);
-
-	Shape_setReady(this->shape, false);
-
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
-		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false, gap);
+		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false);
 	}
 
 	if(this->shape)
@@ -905,9 +909,6 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		SpriteManager_sortLayers(SpriteManager_getInstance());
 
 		StageEditor_printTranslationStepSize(this);
-
-		// should work
-		//__VIRTUAL_CALL(Shape, position, this->shape);
 	}
 }
 
@@ -942,7 +943,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 {
 	StageEditor_removePreviousSprite(this);
 
-	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spritesDefinitions[0];
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spriteDefinitions[0];
 
 	if(spriteDefinition)
 	{

@@ -285,14 +285,16 @@
 		/* declare virtual table for external reference */												\
 		extern struct ClassName ## _vTable ClassName ## _vTable											\
 
+// forward declare a class
+#define __FORWARD_CLASS(ClassName)																		\
+		/* declare a pointer */																			\
+		typedef struct ClassName ## _str* ClassName;													\
+
 // declare a class
 #define __CLASS(ClassName)																				\
 																										\
-		/* declare a const pointer */																	\
+		/* declare a pointer */																			\
 		typedef struct ClassName ## _str* ClassName;													\
-																										\
-		/* declare a const pointer */																	\
-		typedef struct ClassName ## _str const* Const ## ClassName;										\
 																										\
 		/* typedef for RTTI */																			\
 		typedef void* (*(*ClassName ## BaseClassPointer)(Object))(Object);								\

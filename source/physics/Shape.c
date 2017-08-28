@@ -56,16 +56,13 @@ __CLASS_DEFINITION(Shape, Object);
  */
 void Shape_constructor(Shape this, SpatialObject owner)
 {
-	ASSERT(this, "Shape::constructor: null this");
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
 	// set the owner
 	this->owner = owner;
-
-	// do I move?
-	this->moves = __VIRTUAL_CALL(SpatialObject, moves, owner);
 
 	// not checked yet
 	this->checked = false;
@@ -75,6 +72,9 @@ void Shape_constructor(Shape this, SpatialObject owner)
 
 	// set flag
 	this->checkForCollisions = false;
+
+	// set displacement
+	this->displacement = (VBVec3D){0, 0, 0};
 
 	Shape_setActive(this, false);
 }
@@ -89,7 +89,12 @@ void Shape_constructor(Shape this, SpatialObject owner)
  */
 void Shape_destructor(Shape this)
 {
-	ASSERT(this, "Shape::destructor: null this");
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::destructor: null this");
+
+	if(this->events)
+	{
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeDeleted);
+	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -108,9 +113,43 @@ void Shape_destructor(Shape this)
  */
 SpatialObject Shape_getOwner(Shape this)
 {
-	ASSERT(this, "Shape::getOwner: null this");
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::getOwner: null this");
 
 	return this->owner;
+}
+
+/**
+ * Set displacement with respect to owner's position
+ *
+ * @memberof					Shape
+ * @public
+ *
+ * @param this					Function scope
+ *
+ * @param displacement			Displacement
+ */
+void Shape_setDisplacement(Shape this, VBVec3D displacement)
+{
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::setDisplacement: null this");
+
+	this->displacement = displacement;
+}
+
+/**
+ * Retrieve displacement with respect to owner's position
+ *
+ * @memberof			Shape
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Displacement
+ */
+VBVec3D Shape_getDisplacement(Shape this)
+{
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::setDisplacement: null this");
+
+	return this->displacement;
 }
 
 /**
@@ -124,7 +163,7 @@ SpatialObject Shape_getOwner(Shape this)
  */
 void Shape_setActive(Shape this, bool active)
 {
-	ASSERT(this, "Shape::setActive: null this");
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::setActive: null this");
 
 	if(active)
 	{
@@ -134,37 +173,6 @@ void Shape_setActive(Shape this, bool active)
 	{
 		CollisionManager_shapeBecameInactive(Game_getCollisionManager(Game_getInstance()), this);
 	}
-}
-
-/**
- * Do I move?
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
- *
- * @return		Owning SpatialObject
- */
-bool Shape_moves(Shape this)
-{
-	ASSERT(this, "Shape::moves: null this");
-
-	return this->moves;
-}
-
-/**
- * Set flag
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
- * @param 		flag
- */
-void Shape_setMovesFlag(Shape this, bool moves)
-{
-	this->moves = moves;
 }
 
 /**
@@ -179,7 +187,7 @@ void Shape_setMovesFlag(Shape this, bool moves)
  */
 bool Shape_isChecked(Shape this)
 {
-	ASSERT(this, "Shape::isChecked: null this");
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::isChecked: null this");
 
 	return this->checked;
 }
@@ -195,7 +203,7 @@ bool Shape_isChecked(Shape this)
  */
 void Shape_setChecked(Shape this, bool checked)
 {
-	ASSERT(this, "Shape::checked: null this");
+	ASSERT(__SAFE_CAST(Shape, this), "Shape::checked: null this");
 
 	this->checked = checked;
 }

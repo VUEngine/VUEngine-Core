@@ -24,7 +24,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimatedInGameEntity.h>
+#include <AnimatedEntity.h>
 #include <Clock.h>
 #include <MessageDispatcher.h>
 #include <Optics.h>
@@ -42,11 +42,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * @class	AnimatedInGameEntity
- * @extends InGameEntity
+ * @class	AnimatedEntity
+ * @extends Entity
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(AnimatedInGameEntity, InGameEntity);
+__CLASS_DEFINITION(AnimatedEntity, Entity);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -55,7 +55,9 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
+static void AnimatedEntity_animate(AnimatedEntity this);
+
+AnimationController Sprite_getAnimationController(Sprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,36 +65,35 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedInGameEntity, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(AnimatedInGameEntity, animatedInGameEntityDefinition, id, internalId, name);
+__CLASS_NEW_DEFINITION(AnimatedEntity, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
+__CLASS_NEW_END(AnimatedEntity, animatedEntityDefinition, id, internalId, name);
 
-// AnimatedInGameEntity.c
+// AnimatedEntity.c
 // class's constructor
-void AnimatedInGameEntity_constructor(AnimatedInGameEntity this, AnimatedInGameEntityDefinition* animatedInGameEntityDefinition, s16 id, s16 internalId, const char* const name)
+void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "AnimatedInGameEntity::constructor: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(InGameEntity, &animatedInGameEntityDefinition->inGameEntityDefinition, id, internalId, name);
+	__CONSTRUCT_BASE(Entity, &animatedEntityDefinition->entityDefinition, id, internalId, name);
 
 	// save ROM definition
-	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;
-	this->animationDescription = animatedInGameEntityDefinition->animationDescription;
+	this->animatedEntityDefinition = animatedEntityDefinition;
+	this->animationDescription = animatedEntityDefinition->animationDescription;
 
 	//set the direction
 	this->direction.x = __RIGHT;
 	this->direction.y = __DOWN;
 	this->direction.z = __FAR;
-
 	this->previousDirection = this->direction;
 
 	this->currentAnimationName = NULL;
 }
 
 // class's destructor
-void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
+void AnimatedEntity_destructor(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::destructor: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -100,35 +101,35 @@ void AnimatedInGameEntity_destructor(AnimatedInGameEntity this)
 }
 
 // set definition
-void AnimatedInGameEntity_setDefinition(AnimatedInGameEntity this, void* animatedInGameEntityDefinition)
+void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefinition)
 {
-	ASSERT(this, "AnimatedInGameEntity::setDefinition: null this");
-	ASSERT(animatedInGameEntityDefinition, "AnimatedInGameEntity::setDefinition: null definition");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::setDefinition: null this");
+	ASSERT(animatedEntityDefinition, "AnimatedEntity::setDefinition: null definition");
 
 	// save definition
-	this->animatedInGameEntityDefinition = animatedInGameEntityDefinition;
+	this->animatedEntityDefinition = animatedEntityDefinition;
 
-	__CALL_BASE_METHOD(InGameEntity, setDefinition, this, &((AnimatedInGameEntityDefinition*)animatedInGameEntityDefinition)->inGameEntityDefinition);
+	__CALL_BASE_METHOD(Entity, setDefinition, this, &((AnimatedEntityDefinition*)animatedEntityDefinition)->entityDefinition);
 }
 
 // ready method
-void AnimatedInGameEntity_ready(AnimatedInGameEntity this, bool recursive)
+void AnimatedEntity_ready(AnimatedEntity this, bool recursive)
 {
-	ASSERT(this, "AnimatedInGameEntity::ready: null this");
-	ASSERT(this->animatedInGameEntityDefinition, "AnimatedInGameEntity::ready: null animatedInGameEntityDefinition");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::ready: null this");
+	ASSERT(this->animatedEntityDefinition, "AnimatedEntity::ready: null animatedEntityDefinition");
 
-	__CALL_BASE_METHOD(InGameEntity, ready, this, recursive);
+	__CALL_BASE_METHOD(Entity, ready, this, recursive);
 
-	AnimatedInGameEntity_playAnimation(this, this->animatedInGameEntityDefinition->initialAnimation);
+	AnimatedEntity_playAnimation(this, this->animatedEntityDefinition->initialAnimation);
 }
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "AnimatedInGameEntity::transform: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::transform: null this");
 
-	bool directionChanged = false;
+	VBVec3DFlag directionChanged = {false, false, false};
 
 	// set sprite direction
 	if(this->direction.x != this->previousDirection.x)
@@ -139,7 +140,7 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 		// save current direction
 		this->previousDirection.x = this->direction.x;
 
-		directionChanged = true;
+		directionChanged.x = true;
 	}
 
 	if(this->direction.y != this->previousDirection.y)
@@ -150,40 +151,68 @@ void AnimatedInGameEntity_transform(AnimatedInGameEntity this, const Transformat
 		// save current direction
 		this->previousDirection.y = this->direction.y;
 
-		directionChanged = true;
+		directionChanged.y = true;
 	}
 
-	this->previousDirection.z = this->direction.z;
-
-	if(directionChanged)
+	if(this->direction.z != this->previousDirection.z)
 	{
-		InGameEntity_calculateGap(__SAFE_CAST(InGameEntity, this));
+		// save current direction
+		this->previousDirection.z = this->direction.z;
+
+		directionChanged.z = true;
+	}
+
+	if(this->shapes && (directionChanged.x | directionChanged.y | directionChanged.z))
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			VBVec3D displacement = Shape_getDisplacement(__SAFE_CAST(Shape, node->data));
+
+			if(directionChanged.x)
+			{
+				displacement.x = -displacement.x;
+			}
+
+			if(directionChanged.y)
+			{
+				displacement.y = -displacement.y;
+			}
+
+			if(directionChanged.z)
+			{
+				displacement.z = -displacement.z;
+			}
+
+			Shape_setDisplacement(__SAFE_CAST(Shape, node->data), displacement);
+		}
 	}
 
 	// call base
-	__CALL_BASE_METHOD(InGameEntity, transform, this, environmentTransform, invalidateTransformationFlag);
+	__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
 }
 
 // execute character's logic
-void AnimatedInGameEntity_update(AnimatedInGameEntity this, u32 elapsedTime)
+void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime)
 {
-	ASSERT(this, "AnimatedInGameEntity::update: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::update: null this");
 
 	// call base
-	__CALL_BASE_METHOD(InGameEntity, update, this, elapsedTime);
+	__CALL_BASE_METHOD(Entity, update, this, elapsedTime);
 
 	if(!elapsedTime)
 	{
 		return;
 	}
 
-	AnimatedInGameEntity_animate(this);
+	AnimatedEntity_animate(this);
 }
 
 // update animations
-static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
+static void AnimatedEntity_animate(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::animate: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::animate: null this");
 
 	if(!this->sprites)
 	{
@@ -201,10 +230,10 @@ static void AnimatedInGameEntity_animate(AnimatedInGameEntity this)
 }
 
 // pause animation
-void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
+void AnimatedEntity_pauseAnimation(AnimatedEntity this, int pause)
 {
-	ASSERT(this, "AnimatedInGameEntity::pauseAnimation: null this");
-	ASSERT(this->sprites, "AnimatedInGameEntity::pauseAnimation: null sprites");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::pauseAnimation: null this");
+	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
 	if(!this->sprites)
 	{
@@ -221,9 +250,9 @@ void AnimatedInGameEntity_pauseAnimation(AnimatedInGameEntity this, int pause)
 }
 
 // play an animation
-void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animationName)
+void AnimatedEntity_playAnimation(AnimatedEntity this, char* animationName)
 {
-	ASSERT(this, "AnimatedInGameEntity::playAnimation: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::playAnimation: null this");
 
 	if(!this->sprites | !animationName)
 	{
@@ -242,9 +271,9 @@ void AnimatedInGameEntity_playAnimation(AnimatedInGameEntity this, char* animati
 }
 
 // skip to next frame
-void AnimatedInGameEntity_nextFrame(AnimatedInGameEntity this)
+void AnimatedEntity_nextFrame(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::nextFrame: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::nextFrame: null this");
 
 	if(!this->sprites)
 	{
@@ -261,9 +290,9 @@ void AnimatedInGameEntity_nextFrame(AnimatedInGameEntity this)
 }
 
 // rewind to previous frame
-void AnimatedInGameEntity_previousFrame(AnimatedInGameEntity this)
+void AnimatedEntity_previousFrame(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::previousFrame: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::previousFrame: null this");
 
 	if(!this->sprites)
 	{
@@ -280,18 +309,18 @@ void AnimatedInGameEntity_previousFrame(AnimatedInGameEntity this)
 }
 
 // is playing an animation
-bool AnimatedInGameEntity_isPlayingAnimation(AnimatedInGameEntity this)
+bool AnimatedEntity_isPlayingAnimation(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::isPlayingAnimation: null this");
-	ASSERT(this->sprites, "AnimatedInGameEntity::isPlayingAnimation: null sprites");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::isPlayingAnimation: null this");
+	ASSERT(this->sprites, "AnimatedEntity::isPlayingAnimation: null sprites");
 
 	return Sprite_isPlaying(__SAFE_CAST(Sprite, VirtualNode_getData(this->sprites->head)));
 }
 
 // is animation selected
-bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* functionName)
+bool AnimatedEntity_isAnimationLoaded(AnimatedEntity this, char* functionName)
 {
-	ASSERT(this, "AnimatedInGameEntity::isAnimationLoaded: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::isAnimationLoaded: null this");
 
 	if(!this->sprites)
 	{
@@ -304,36 +333,36 @@ bool AnimatedInGameEntity_isAnimationLoaded(AnimatedInGameEntity this, char* fun
 }
 
 // get animation definition
-AnimationDescription* AnimatedInGameEntity_getAnimationDescription(AnimatedInGameEntity this)
+AnimationDescription* AnimatedEntity_getAnimationDescription(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::getAnimationDescription: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::getAnimationDescription: null this");
 
 	return this->animationDescription;
 }
 
 // set animation description
-void AnimatedInGameEntity_setAnimationDescription(AnimatedInGameEntity this, AnimationDescription* animationDescription)
+void AnimatedEntity_setAnimationDescription(AnimatedEntity this, AnimationDescription* animationDescription)
 {
-	ASSERT(this, "AnimatedInGameEntity::setAnimationDescription: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::setAnimationDescription: null this");
 
 	this->animationDescription = animationDescription;
 }
 
 // resume method
-void AnimatedInGameEntity_resume(AnimatedInGameEntity this)
+void AnimatedEntity_resume(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::resume: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::resume: null this");
 
-	__CALL_BASE_METHOD(InGameEntity, resume, this);
+	__CALL_BASE_METHOD(Entity, resume, this);
 
 	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __X_AXIS, this->direction.x);
 
-	AnimatedInGameEntity_playAnimation(this, this->currentAnimationName);
+	AnimatedEntity_playAnimation(this, this->currentAnimationName);
 }
 
-s8 AnimatedInGameEntity_getActualFrame(AnimatedInGameEntity this)
+s8 AnimatedEntity_getActualFrame(AnimatedEntity this)
 {
-	ASSERT(this, "AnimatedInGameEntity::getActualFrame: null this");
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::getActualFrame: null this");
 
 	if(!this->sprites)
 	{
@@ -350,7 +379,7 @@ s8 AnimatedInGameEntity_getActualFrame(AnimatedInGameEntity this)
 	return -1;
 }
 
-int AnimatedInGameEntity_getNumberOfFrames(AnimatedInGameEntity this)
+int AnimatedEntity_getNumberOfFrames(AnimatedEntity this)
 {
 	if(!this->sprites)
 	{
@@ -366,4 +395,21 @@ int AnimatedInGameEntity_getNumberOfFrames(AnimatedInGameEntity this)
 	}
 
 	return -1;
+}
+
+// set direction
+void AnimatedEntity_setDirection(AnimatedEntity this, Direction direction)
+{
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::setDirection: null this");
+
+	this->direction = direction;
+}
+
+// get direction
+Direction AnimatedEntity_getDirection(AnimatedEntity this)
+{
+	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::getDirection: null this");
+
+	// TODO: must be recursive to account for parenting
+	return this->direction;
 }

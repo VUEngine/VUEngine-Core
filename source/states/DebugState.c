@@ -82,6 +82,8 @@ __SINGLETON(DebugState);
  */
 static void __attribute__ ((noinline)) DebugState_constructor(DebugState this)
 {
+	ASSERT(__SAFE_CAST(DebugState, this), "DebugState::constructor: null this");
+
 	__CONSTRUCT_BASE(GameState);
 }
 
@@ -95,6 +97,8 @@ static void __attribute__ ((noinline)) DebugState_constructor(DebugState this)
  */
 static void DebugState_destructor(DebugState this)
 {
+	ASSERT(__SAFE_CAST(DebugState, this), "DebugState::destructor: null this");
+
 	// destroy base
 	__SINGLETON_DESTROY;
 }
@@ -110,6 +114,8 @@ static void DebugState_destructor(DebugState this)
  */
 static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	ASSERT(__SAFE_CAST(DebugState, this), "DebugState::enter: null this");
+
 	__CALL_BASE_METHOD(GameState, enter, this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
@@ -126,6 +132,8 @@ static void DebugState_enter(DebugState this __attribute__ ((unused)), void* own
  */
 static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	ASSERT(__SAFE_CAST(DebugState, this), "DebugState::execute: null this");
+
 	Debug_update(Debug_getInstance());
 }
 
@@ -140,6 +148,8 @@ static void DebugState_execute(DebugState this __attribute__ ((unused)), void* o
  */
 static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
+	ASSERT(__SAFE_CAST(DebugState, this), "DebugState::exit: null this");
+
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	__CALL_BASE_METHOD(GameState, exit, this, owner);
@@ -156,5 +166,7 @@ static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owne
  */
 void DebugState_processUserInput(DebugState this __attribute__ ((unused)), UserInput userInput)
 {
+	ASSERT(__SAFE_CAST(DebugState, this), "DebugState::processUserInput: null this");
+
 	Debug_processUserInput(Debug_getInstance(), userInput.pressedKey);
 }

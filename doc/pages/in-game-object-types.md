@@ -20,13 +20,7 @@ EntityFactory
 Allows the deferring of the instantiation and initialization of entities to be added to the stage.
 
 
-InGameEntity
-------------
-
-Interactive entities in the levels. In general, they have a collision cuboid which Actors' cuboids test against for collisions.
-
-
-AnimatedInGameEntity
+AnimatedEntity
 --------------------
 
 An entity with animated sprites.
@@ -35,25 +29,13 @@ An entity with animated sprites.
 Actor
 -----
 
-`AnimatedInGameEntity` with a physical body and a collision solver. It coordinates the collisions and the way the body must react to them. This class is designed to handle movable entities.
+`AnimatedEntity` with a physical body and a collision solver. It coordinates the collisions and the way the body must react to them. This class is designed to handle movable entities.
 
 
 CollisionsContainerEntity
 -------------------------
 
 Just a handy `Entity` for non-visual collisions.
-
-
-InanimatedInGameEntity
-----------------------
-
-InGameEntity with physical properties but with no animation (friction, elasticity, etc.). In general, it is not supposed to move.
-
-
-StaticImage
------------
-
-A handy `Entity` for non-interactive images.
 
 
 ManagedEntity
@@ -72,7 +54,7 @@ Its purpose is to hold stage's background images and to allow for texture recycl
 Texture allocation must be planned ahead with texture preloading to work with multiple segments. Not all the textures that are used by all the MBackgrounds that compose a level should be preloaded.
 
 
-ManagedStaticImage
+ManagedEntity
 ------------------
 
 Like the `ManagedEntity`, it manages the sprites of all its children, but it is meant to hold entities that don't need to do anything in their update methods.
