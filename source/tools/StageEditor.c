@@ -909,9 +909,6 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D trans
 		SpriteManager_sortLayers(SpriteManager_getInstance());
 
 		StageEditor_printTranslationStepSize(this);
-
-		// should work
-		//__VIRTUAL_CALL(Shape, position, this->shape);
 	}
 }
 

@@ -57,7 +57,6 @@ __CLASS_NEW_DECLARE(CollisionManager);
 void CollisionManager_constructor(CollisionManager this);
 void CollisionManager_destructor(CollisionManager this);
 
-Shape CollisionManager_findShape(CollisionManager this, SpatialObject owner);
 void CollisionManager_hideShapes(CollisionManager this);
 void CollisionManager_print(CollisionManager this, int x, int y);
 void CollisionManager_processRemovedShapes(CollisionManager this);

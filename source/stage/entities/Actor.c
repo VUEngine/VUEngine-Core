@@ -662,7 +662,7 @@ int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
 	return __X_AXIS | __Y_AXIS | __Z_AXIS;
 }
 
-// start bouncing after collision with another inGameEntity
+// start bouncing after collision with another Entity
 void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 {
 	ASSERT(__SAFE_CAST(Actor, this), "Actor::bounce: null this");

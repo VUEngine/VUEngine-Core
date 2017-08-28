@@ -243,7 +243,7 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 }
 
 /**
- * Start bouncing after collision with another inGameEntity
+ * Start bouncing after collision with another Entity
  *
  * @memberof				SolidParticle
  * @private
