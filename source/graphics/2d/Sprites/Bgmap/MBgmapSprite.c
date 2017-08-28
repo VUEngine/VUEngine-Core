@@ -115,6 +115,12 @@ void MBgmapSprite_destructor(MBgmapSprite this)
 {
 	ASSERT(__SAFE_CAST(MBgmapSprite, this), "MBgmapSprite::destructor: null this");
 
+	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
+	{
+		// free param table space
+		ParamTableManager_free(ParamTableManager_getInstance(), this);
+	}
+
 	MBgmapSprite_releaseTextures(this);
 
 	// destroy the super object
@@ -164,21 +170,27 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 
 	if(this->mBgmapSpriteDefinition)
 	{
-		MBgmapSprite_releaseTextures(this);
-		this->textures = __NEW(VirtualList);
-
-		int i = 0;
-
-		for(; this->mBgmapSpriteDefinition->textureDefinitions[i]; i++)
+		if(!this->texture && !this->textures)
 		{
-			MBgmapSprite_loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
+			this->textures = __NEW(VirtualList);
+
+			int i = 0;
+
+			for(; this->mBgmapSpriteDefinition->textureDefinitions[i]; i++)
+			{
+				MBgmapSprite_loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
+			}
+
+			this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
+			ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
+
+			this->textureXOffset = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+			this->textureYOffset = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		}
-
-		this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
-		ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
-
-		this->textureXOffset = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-		this->textureYOffset = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+		else
+		{
+			NM_ASSERT(this->texture, "MBgmapSprite::loadTextures: textures already loaded");
+		}
 	}
 }
 
