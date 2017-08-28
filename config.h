@@ -102,7 +102,7 @@
 #define __SCREEN_DEPTH							384
 
 // Distance from player's eyes to the virtual screen
-#define __DISTANCE_EYE_SCREEN					__SCREEN_WIDTH
+#define __DISTANCE_EYE_SCREEN					384
 
 // Maximum view distance (depth) (power of two)
 #define __MAXIMUM_VIEW_DISTANCE_POWER			9
@@ -131,7 +131,7 @@
 #undef __FORCE_VIP_SYNC
 
 // Timer resolution
-#define __TIMER_RESOLUTION						1
+#define __TIMER_RESOLUTION						10
 
 /* __FRAME_CYCLE = 0 means __TARGET_FPS = 50
  * __FRAME_CYCLE = 1 means __TARGET_FPS = 25
@@ -184,18 +184,19 @@
 	__BLOCK_DEFINITION(144, 10)																			\
 	__BLOCK_DEFINITION(136, 30)																			\
 	__BLOCK_DEFINITION(124, 40)																			\
-	__BLOCK_DEFINITION(108, 40)																			\
-	__BLOCK_DEFINITION(100, 20)																			\
+	__BLOCK_DEFINITION(108, 45)																			\
+	__BLOCK_DEFINITION(100, 15)																			\
 	__BLOCK_DEFINITION(92, 20)																			\
 	__BLOCK_DEFINITION(88, 25)																			\
-	__BLOCK_DEFINITION(80, 40)																			\
-	__BLOCK_DEFINITION(76, 20)																			\
-	__BLOCK_DEFINITION(68, 70)																			\
+	__BLOCK_DEFINITION(80, 60)																			\
+	__BLOCK_DEFINITION(76, 15)																			\
+	__BLOCK_DEFINITION(68, 50)																			\
 	__BLOCK_DEFINITION(32, 14)																			\
 	__BLOCK_DEFINITION(28, 210)																			\
 	__BLOCK_DEFINITION(24, 80)																			\
 	__BLOCK_DEFINITION(20, 700)																			\
 	__BLOCK_DEFINITION(16, 480)																			\
+
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
