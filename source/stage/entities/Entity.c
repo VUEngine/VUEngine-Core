@@ -1110,16 +1110,17 @@ u32 Entity_areAllChildrenReady(Entity this)
 /**
  * Set shape's position
  *
- * @memberof		Entity
+ * @memberof					Entity
  * @private
  *
- * @param this		Function scope
+ * @param this					Function scope
+ * @param forcePositioning		Force shape positioning
  */
-void Entity_setShapesPosition(Entity this)
+void Entity_setShapesPosition(Entity this, bool forcePositioning)
 {
 	ASSERT(__SAFE_CAST(Entity, this), "Entity::setShapePosition: null this");
 
-	if(this->shapes && __VIRTUAL_CALL(SpatialObject, moves, this))
+	if(this->shapes && forcePositioning)
 	{
 		// setup shape
 		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
@@ -1531,7 +1532,24 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 	}
 
-	Entity_setShapesPosition(this);
+	Entity_setShapesPosition(this, __VIRTUAL_CALL(SpatialObject, moves, this));
+}
+
+/**
+ * Set local position
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Entity_setLocalPosition(Entity this, const VBVec3D* position)
+{
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setLocalPosition: null this");
+
+	__CALL_BASE_METHOD(Container, setLocalPosition, this, position);
+
+	Entity_setShapesPosition(this, true);
 }
 
 /**

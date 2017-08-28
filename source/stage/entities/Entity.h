@@ -56,6 +56,7 @@
 		Container_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Entity, transform);													\
+		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Entity, setupGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, releaseGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, synchronizeGraphics);											\
@@ -181,7 +182,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 void Entity_ready(Entity this, bool recursive);
 void Entity_resume(Entity this);
-void Entity_setShapesPosition(Entity this);
+void Entity_setShapesPosition(Entity this, bool forcePositioning);
 void Entity_setupGraphics(Entity this);
 void Entity_releaseGraphics(Entity this);
 void Entity_releaseSprites(Entity this, bool deleteThem);
@@ -192,6 +193,7 @@ void Entity_setSpritesDirection(Entity this, int axis, int direction);
 void Entity_show(Entity this);
 void Entity_suspend(Entity this);
 void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+void Entity_setLocalPosition(Entity this, const VBVec3D* position);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteRotation(Entity this);
 bool Entity_updateSpriteScale(Entity this);

@@ -644,7 +644,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
-	Entity_setShapesPosition(__SAFE_CAST(Entity, this));
+	Entity_setShapesPosition(__SAFE_CAST(Entity, this), true);
 }
 
 // retrieve global position
