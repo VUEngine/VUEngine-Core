@@ -73,7 +73,6 @@
 
 #include <Container.h>
 #include <Entity.h>
-#include <CollisionsContainerEntity.h>
 #include <Entity.h>
 #include <AnimatedEntity.h>
 #include <AnimationCoordinatorFactory.h>
@@ -1025,7 +1024,6 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&Actor_getObjectSize,							"Actor"},
 		{&AnimatedEntity_getObjectSize,					"AnimatedEntity"},
 		{&Container_getObjectSize,						"Container"},
-		{&CollisionsContainerEntity_getObjectSize,		"CollisionsCont.Ent."},
 		{&Entity_getObjectSize,							"Entity"},
 		{&EntityFactory_getObjectSize,					"EntityFactory"},
 		{&GameState_getObjectSize,						"GameState"},
