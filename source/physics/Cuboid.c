@@ -478,9 +478,9 @@ VBVec3D Cuboid_getPosition(Cuboid this)
 
 	VBVec3D position =
 	{
-		(this->rightCuboid.x1 - this->rightCuboid.x0) >> 1,
-		(this->rightCuboid.y1 - this->rightCuboid.y0) >> 1,
-		(this->rightCuboid.z1 - this->rightCuboid.z0) >> 1,
+		this->positionedRightCuboid.x0 + ((this->positionedRightCuboid.x1 - this->positionedRightCuboid.x0) >> 1),
+		this->positionedRightCuboid.y0 + ((this->positionedRightCuboid.y1 - this->positionedRightCuboid.y0) >> 1),
+		this->positionedRightCuboid.z0 + ((this->positionedRightCuboid.z1 - this->positionedRightCuboid.z0) >> 1),
 	};
 
 	return position;
@@ -490,7 +490,7 @@ RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this)
 {
 	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getSurroundingRightCuboid: null this");
 
-	return this->rightCuboid;
+	return this->positionedRightCuboid;
 }
 
 

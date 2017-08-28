@@ -198,7 +198,7 @@ void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape shape, Sh
 {
 	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::alignToCollidingShape: null this");
 
-	int alignThreshold = __ALIGN_PADDING;
+	fix19_13 alignThreshold = ITOFIX19_13(__ALIGN_PADDING);
 
 	if(__X_AXIS & axisOfCollision)
 	{
@@ -386,9 +386,11 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 }
 
 // align character to other spatialObject on collision
-void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingShape, u16 axis, const VBVec3D* displacement, int pad)
+void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingShape, u16 axis, const VBVec3D* displacement, fix19_13 pad)
 {
 	ASSERT(__SAFE_CAST(CollisionSolver, this), "CollisionSolver::alignTo: null this");
+	ASSERT(__SAFE_CAST(Shape, shape), "CollisionSolver::alignTo: null shape");
+	ASSERT(__SAFE_CAST(Shape, collidingShape), "CollisionSolver::alignTo: null collidingShape");
 
 	// retrieve the colliding spatialObject's position and gap
 	VBVec3D myOwnerPosition = *this->ownerPositionToWrite;
@@ -397,42 +399,69 @@ void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingS
 	RightCuboid shapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, shape);
 	RightCuboid collidingShapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShape);
 
+	VBVec3D shapePosition = __VIRTUAL_CALL(Shape, getPosition, shape);
+	VBVec3D collidingShapePosition = __VIRTUAL_CALL(Shape, getPosition, collidingShape);
+
 	// select the axis to affect
 	switch(axis)
 	{
 		case __X_AXIS:
 
-			if(0 < displacement->x)
+			if(shapePosition.x < collidingShapePosition.x)
 			{
-				myOwnerPosition.x = collidingShapeRightCuboid.x0 - ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) + shapeDisplacement.x;
+				myOwnerPosition.x = collidingShapeRightCuboid.x0 - ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) - shapeDisplacement.x - pad;
 			}
-			else
+			else if(shapePosition.x > collidingShapePosition.x)
 			{
-				myOwnerPosition.x = collidingShapeRightCuboid.x1 + ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) + shapeDisplacement.x;
+				myOwnerPosition.x = collidingShapeRightCuboid.x1 + ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) - shapeDisplacement.x + pad;
+			}
+			else if(0 < displacement->x)
+			{
+				myOwnerPosition.x = collidingShapeRightCuboid.x0 - ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) - shapeDisplacement.x - pad;
+			}
+			else if(0 > displacement->x)
+			{
+				myOwnerPosition.x = collidingShapeRightCuboid.x1 + ((shapeRightCuboid.x1 - shapeRightCuboid.x0) >> 1) - shapeDisplacement.x + pad;
 			}
 			break;
 
 		case __Y_AXIS:
 
-			if(0 < displacement->y)
+			if(shapePosition.y < collidingShapePosition.y)
 			{
-				myOwnerPosition.y = collidingShapeRightCuboid.y0 - ((shapeRightCuboid.y1 - shapeRightCuboid.y0) >> 1) + shapeDisplacement.y;
+				myOwnerPosition.y = collidingShapeRightCuboid.y0 - ((shapeRightCuboid.y1 - shapeRightCuboid.y0) >> 1) - shapeDisplacement.y - pad;
 			}
-			else
+			else if(shapePosition.y > collidingShapePosition.y)
 			{
-				myOwnerPosition.y = collidingShapeRightCuboid.y1 + ((shapeRightCuboid.y1 - shapeRightCuboid.x0) >> 1) + shapeDisplacement.y;
+				myOwnerPosition.y = collidingShapeRightCuboid.y1 + ((shapeRightCuboid.y1 - shapeRightCuboid.y0) >> 1) - shapeDisplacement.y + pad;
+			}
+			else if(0 < displacement->y)
+			{
+				myOwnerPosition.y = collidingShapeRightCuboid.y0 - ((shapeRightCuboid.y1 - shapeRightCuboid.y0) >> 1) - shapeDisplacement.y - pad;
+			}
+			else if(0 > displacement->y)
+			{
+				myOwnerPosition.y = collidingShapeRightCuboid.y1 + ((shapeRightCuboid.y1 - shapeRightCuboid.y0) >> 1) - shapeDisplacement.y + pad;
 			}
 			break;
 
 		case __Z_AXIS:
 
-			if(0 < displacement->z)
+			if(shapePosition.z < collidingShapePosition.z)
 			{
-				myOwnerPosition.z = collidingShapeRightCuboid.z0 - ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) + shapeDisplacement.z;
+				myOwnerPosition.z = collidingShapeRightCuboid.z0 - ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) - shapeDisplacement.z - pad;
 			}
-			else
+			else if(shapePosition.z > collidingShapePosition.z)
 			{
-				myOwnerPosition.z = collidingShapeRightCuboid.z1 + ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) + shapeDisplacement.z;
+				myOwnerPosition.z = collidingShapeRightCuboid.z1 + ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) - shapeDisplacement.z + pad;
+			}
+			else if(0 < displacement->z)
+			{
+				myOwnerPosition.z = collidingShapeRightCuboid.z0 - ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) - shapeDisplacement.z - pad;
+			}
+			else if(0 > displacement->z)
+			{
+				myOwnerPosition.z = collidingShapeRightCuboid.z1 + ((shapeRightCuboid.z1 - shapeRightCuboid.z0) >> 1) - shapeDisplacement.z + pad;
 			}
 			break;
 	}

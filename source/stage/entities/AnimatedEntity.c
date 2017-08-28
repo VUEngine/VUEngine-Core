@@ -129,7 +129,7 @@ void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environ
 {
 	ASSERT(__SAFE_CAST(AnimatedEntity, this), "AnimatedEntity::transform: null this");
 
-	bool directionChanged = false;
+	VBVec3DFlag directionChanged = {false, false, false};
 
 	// set sprite direction
 	if(this->direction.x != this->previousDirection.x)
@@ -140,7 +140,7 @@ void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environ
 		// save current direction
 		this->previousDirection.x = this->direction.x;
 
-		directionChanged = true;
+		directionChanged.x = true;
 	}
 
 	if(this->direction.y != this->previousDirection.y)
@@ -151,14 +151,42 @@ void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environ
 		// save current direction
 		this->previousDirection.y = this->direction.y;
 
-		directionChanged = true;
+		directionChanged.y = true;
 	}
 
-	this->previousDirection.z = this->direction.z;
-
-	if(directionChanged)
+	if(this->direction.z != this->previousDirection.z)
 	{
-//		Entity_calculateGap(__SAFE_CAST(Entity, this));
+		// save current direction
+		this->previousDirection.z = this->direction.z;
+
+		directionChanged.z = true;
+	}
+
+	if(this->shapes && (directionChanged.x | directionChanged.y | directionChanged.z))
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			VBVec3D displacement = Shape_getDisplacement(__SAFE_CAST(Shape, node->data));
+
+			if(directionChanged.x)
+			{
+				displacement.x = -displacement.x;
+			}
+
+			if(directionChanged.y)
+			{
+				displacement.y = -displacement.y;
+			}
+
+			if(directionChanged.z)
+			{
+				displacement.z = -displacement.z;
+			}
+
+			Shape_setDisplacement(__SAFE_CAST(Shape, node->data), displacement);
+		}
 	}
 
 	// call base

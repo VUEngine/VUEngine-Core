@@ -1137,6 +1137,7 @@ void Entity_setShapesPosition(Entity this)
 		}
 	}
 }
+
 /**
  * Setup shape
  *

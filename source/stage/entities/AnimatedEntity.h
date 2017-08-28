@@ -64,6 +64,7 @@ typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
 #define AnimatedEntity_SET_VTABLE(ClassName)															\
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, ready);												\
+		__VIRTUAL_SET(ClassName, AnimatedEntity, transform);											\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, update);												\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, resume);												\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, setDefinition);										\
@@ -109,7 +110,6 @@ void AnimatedEntity_setAnimationDescription(AnimatedEntity this, AnimationDescri
 void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefinition);
 void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime);
-int AnimatedEntity_updateSpritePosition(AnimatedEntity this);
 Direction AnimatedEntity_getDirection(AnimatedEntity this);
 void AnimatedEntity_setDirection(AnimatedEntity this, Direction direction);
 
