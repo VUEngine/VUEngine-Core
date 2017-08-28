@@ -486,7 +486,15 @@ static void StageEditor_getShape(StageEditor this)
 	if(!this->shape)
 	{
 		this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
+
+		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+		VBVec3D displacement = {0, 0, 0};
+		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
+
+		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), &size, &displacement, false);
 	}
+
+	Shape_setReady(this->shape, false);
 }
 
 /**
@@ -505,12 +513,6 @@ static void StageEditor_positionShape(StageEditor this)
 	}
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-	VBVec3D displacement = {0, 0, 0};
-	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
-
-	__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), &size, &displacement, false);
-
-	Shape_setReady(this->shape, false);
 
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{

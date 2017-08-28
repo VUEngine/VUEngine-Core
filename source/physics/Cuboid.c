@@ -171,19 +171,19 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, c
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
 	this->rightCuboid.z0 = -this->rightCuboid.z1;
 
+	this->positionedRightCuboid = this->rightCuboid;
+
 	// if owner does not move
 	if(!moves)
 	{
 		// position the shape to avoid in real time calculation
-		this->rightCuboid.x0 += ownerPosition->x + displacement->x;
-		this->rightCuboid.x1 += ownerPosition->x + displacement->x;
-		this->rightCuboid.y0 += ownerPosition->y + displacement->y;
-		this->rightCuboid.y1 += ownerPosition->y + displacement->y;
-		this->rightCuboid.z0 += ownerPosition->z + displacement->z;
-		this->rightCuboid.z1 += ownerPosition->z + displacement->z;
+		this->positionedRightCuboid.x0 += ownerPosition->x + displacement->x;
+		this->positionedRightCuboid.x1 += ownerPosition->x + displacement->x;
+		this->positionedRightCuboid.y0 += ownerPosition->y + displacement->y;
+		this->positionedRightCuboid.y1 += ownerPosition->y + displacement->y;
+		this->positionedRightCuboid.z0 += ownerPosition->z + displacement->z;
+		this->positionedRightCuboid.z1 += ownerPosition->z + displacement->z;
 	}
-
-	this->positionedRightCuboid = this->rightCuboid;
 
 	// no more setup needed
 	this->ready = true;
