@@ -103,7 +103,7 @@ enum ShapeTypes
 // defines a shape
 typedef struct ShapeDefinition
 {
-	// the class allocator
+	// class allocator
 	AllocatorPointer allocator;
 
 	// size

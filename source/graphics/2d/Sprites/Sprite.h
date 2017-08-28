@@ -174,7 +174,7 @@ __CLASS(Sprite);
  */
 typedef struct SpriteDefinition
 {
-	/// the class allocator
+	/// class allocator
 	AllocatorPointer allocator;
 
 	/// texture to use with the sprite

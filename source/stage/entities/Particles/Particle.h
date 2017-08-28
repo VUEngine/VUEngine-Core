@@ -105,7 +105,7 @@ __CLASS(Particle);
  */
 typedef struct ParticleDefinition
 {
-	/// the class allocator
+	/// class allocator
 	AllocatorPointer allocator;
 
 	/// particle's minimum life span in milliseconds

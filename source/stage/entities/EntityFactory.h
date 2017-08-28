@@ -82,15 +82,16 @@ __CLASS(EntityFactory);
 // defines an entity in ROM memory
 typedef struct EntityDefinition
 {
-	// the class allocator
+	// class allocator
 	AllocatorPointer allocator;
 
-	// the sprites list
+	// sprites
 	const SpriteDefinition** spriteDefinitions;
 
-	// shapes to register
+	// collision shapes
 	const ShapeDefinition* shapeDefinitions;
 
+	// size
 	// if 0, width and height will be inferred from the first sprite's texture's size
 	Size size;
 
