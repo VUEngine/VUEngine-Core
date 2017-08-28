@@ -202,7 +202,7 @@ void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffecte
 	this->positionedRightCuboid.y1 = this->rightCuboid.y1 + myOwnerPosition->y + this->displacement.y;
 	this->positionedRightCuboid.z1 = this->rightCuboid.z1 + myOwnerPosition->z + this->displacement.z;
 
-	if(isAffectedByRelativity)
+	if(0 && isAffectedByRelativity)
 	{
 		Velocity velocity = __VIRTUAL_CALL(SpatialObject, getVelocity, this->owner);
 
@@ -490,9 +490,15 @@ RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this)
 {
 	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getSurroundingRightCuboid: null this");
 
-	return this->positionedRightCuboid;
+	return this->rightCuboid;
 }
 
+RightCuboid Cuboid_getPositionedSurroundingRightCuboid(Cuboid this)
+{
+	ASSERT(__SAFE_CAST(Cuboid, this), "Cuboid::getPositionedSurroundingRightCuboid: null this");
+
+	return this->positionedRightCuboid;
+}
 
 // test if collision with the entity give the displacement
 static u16 Cuboid_testIfCollisionWithCuboid(Cuboid this, Cuboid cuboid, VBVec3D displacement)
@@ -570,12 +576,12 @@ static void Cuboid_configurePolyhedron(Cuboid this, int renew)
 	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z0);
 	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z0);
 
-	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
+/*	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
 	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x1, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
 	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x1, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
 	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y1, this->positionedRightCuboid.z1);
 	Polyhedron_addVertex(this->polyhedron, this->positionedRightCuboid.x0, this->positionedRightCuboid.y0, this->positionedRightCuboid.z1);
-}
+*/}
 
 // show me
 void Cuboid_show(Cuboid this)

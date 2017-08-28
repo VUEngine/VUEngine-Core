@@ -265,7 +265,6 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 	VBVec3D ownerPreviousPosition = this->ownerPreviousPosition;
 
 	Shape collidingShapesToAlignTo[kLastAxis] = {NULL, NULL, NULL};
-	RightCuboid shapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, shape);
 
 	for(; node; node = node->next)
 	{
@@ -281,16 +280,18 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 			{
 				if(collidingShapesToAlignTo[kXAxis])
 				{
+					RightCuboid collidingShapesToAlignToRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShapesToAlignTo[kXAxis]);
+
 					if(0 < displacement.x)
 					{
-						if(shapeRightCuboid.x0 < collidingShapeRightCuboid.x0)
+						if(collidingShapeRightCuboid.x0 < collidingShapesToAlignToRightCuboid.x0)
 						{
 							collidingShapesToAlignTo[kXAxis] = collidingShape;
 						}
 					}
 					else
 					{
-						if(shapeRightCuboid.x1 > collidingShapeRightCuboid.x1)
+						if(collidingShapeRightCuboid.x1 > collidingShapesToAlignToRightCuboid.x1)
 						{
 							collidingShapesToAlignTo[kXAxis] = collidingShape;
 						}
@@ -306,16 +307,18 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 			{
 				if(collidingShapesToAlignTo[kYAxis])
 				{
+					RightCuboid collidingShapesToAlignToRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShapesToAlignTo[kYAxis]);
+
 					if(0 < displacement.y)
 					{
-						if(shapeRightCuboid.y0 < collidingShapeRightCuboid.y0)
+						if(collidingShapeRightCuboid.y0 < collidingShapesToAlignToRightCuboid.y0)
 						{
 							collidingShapesToAlignTo[kYAxis] = collidingShape;
 						}
 					}
 					else
 					{
-						if(shapeRightCuboid.y1 > collidingShapeRightCuboid.y1)
+						if(collidingShapeRightCuboid.y1 > collidingShapesToAlignToRightCuboid.y1)
 						{
 							collidingShapesToAlignTo[kYAxis] = collidingShape;
 						}
@@ -331,16 +334,18 @@ int CollisionSolver_resolveCollision(CollisionSolver this, Shape shape, VirtualL
 			{
 				if(collidingShapesToAlignTo[kZAxis])
 				{
+					RightCuboid collidingShapesToAlignToRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShapesToAlignTo[kZAxis]);
+
 					if(0 < displacement.z)
 					{
-						if(shapeRightCuboid.z0 < collidingShapeRightCuboid.z0)
+						if(collidingShapeRightCuboid.z0 < collidingShapesToAlignToRightCuboid.z0)
 						{
 							collidingShapesToAlignTo[kZAxis] = collidingShape;
 						}
 					}
 					else
 					{
-						if(shapeRightCuboid.z1 > collidingShapeRightCuboid.z1)
+						if(collidingShapeRightCuboid.z1 > collidingShapesToAlignToRightCuboid.z1)
 						{
 							collidingShapesToAlignTo[kZAxis] = collidingShape;
 						}
@@ -397,7 +402,7 @@ void CollisionSolver_alignTo(CollisionSolver this, Shape shape, Shape collidingS
 
 	VBVec3D shapeDisplacement = Shape_getDisplacement(shape);
 	RightCuboid shapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, shape);
-	RightCuboid collidingShapeRightCuboid = __VIRTUAL_CALL(Shape, getSurroundingRightCuboid, collidingShape);
+	RightCuboid collidingShapeRightCuboid = __VIRTUAL_CALL(Shape, getPositionedSurroundingRightCuboid, collidingShape);
 
 	VBVec3D shapePosition = __VIRTUAL_CALL(Shape, getPosition, shape);
 	VBVec3D collidingShapePosition = __VIRTUAL_CALL(Shape, getPosition, collidingShape);

@@ -47,6 +47,7 @@
 		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);												\
 		__VIRTUAL_SET(ClassName, Cuboid, getPosition);													\
 		__VIRTUAL_SET(ClassName, Cuboid, getSurroundingRightCuboid);									\
+		__VIRTUAL_SET(ClassName, Cuboid, getPositionedSurroundingRightCuboid);							\
 		__VIRTUAL_SET(ClassName, Cuboid, hide);															\
 		__VIRTUAL_SET(ClassName, Cuboid, show);															\
 		__VIRTUAL_SET(ClassName, Cuboid, print);														\
@@ -93,6 +94,7 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, c
 bool Cuboid_testIfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement);
 VBVec3D Cuboid_getPosition(Cuboid this);
 RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this);
+RightCuboid Cuboid_getPositionedSurroundingRightCuboid(Cuboid this);
 void Cuboid_show(Cuboid this);
 void Cuboid_hide(Cuboid this);
 void Cuboid_print(Cuboid this, int x, int y);

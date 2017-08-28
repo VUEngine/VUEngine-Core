@@ -44,6 +44,7 @@
 		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);								\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
 		__VIRTUAL_DEC(ClassName, RightCuboid, getSurroundingRightCuboid);								\
+		__VIRTUAL_DEC(ClassName, RightCuboid, getPositionedSurroundingRightCuboid);						\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
