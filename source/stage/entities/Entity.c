@@ -65,8 +65,8 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this);
 u32 EntityFactory_callLoadedEntities(EntityFactory this);
 
 static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation);
-static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions);
-
+static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes);
+static void Entity_destroyShapes(Entity this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -126,18 +126,7 @@ void Entity_destructor(Entity this)
 {
 	ASSERT(__SAFE_CAST(Entity, this), "Entity::destructor: null this");
 
-	if(this->shapes)
-	{
-		VirtualNode node = this->shapes->head;
-
-		for(; node; node = node->next)
-		{
-			CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(Shape, node->data));
-		}
-
-		__DELETE(this->shapes);
-		this->shapes = NULL;
-	}
+	Entity_destroyShapes(this);
 
 	if(this->centerDisplacement)
 	{
@@ -242,6 +231,32 @@ void Entity_setDefinition(Entity this, void* entityDefinition)
 
 	// save definition
 	this->entityDefinition = entityDefinition;
+}
+
+/**
+ * Destroy shapes
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
+static void Entity_destroyShapes(Entity this)
+{
+	ASSERT(__SAFE_CAST(Entity, this), "Entity::setDefinition: null this");
+
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(Shape, node->data));
+		}
+
+		__DELETE(this->shapes);
+		this->shapes = NULL;
+	}
 }
 
 /**
@@ -1148,13 +1163,18 @@ void Entity_setShapesPosition(Entity this, bool forcePositioning)
  * @param this					Function scope
  * @param shapeDefinitions		List of shapes
  */
-static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions)
+static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
 {
 	ASSERT(__SAFE_CAST(Entity, this), "Entity::addShapes: null this");
 
 	if(!shapeDefinitions)
 	{
 		return;
+	}
+
+	if(destroyPreviousShapes)
+	{
+		Entity_destroyShapes(this);
 	}
 
 	int i = 0;
@@ -1503,7 +1523,12 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 		Entity_calculateSize(this);
 	}
 
-	Entity_addShapes(this, this->entityDefinition->shapeDefinitions);
+	// this method can be called multiple times so only add shapes
+	// if not already done
+	if(!this->shapes)
+	{
+		Entity_addShapes(this, this->entityDefinition->shapeDefinitions, false);
+	}
 }
 
 /**
