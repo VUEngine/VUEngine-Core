@@ -346,8 +346,9 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 #endif
 
 					// prevent VIP's drawing operations
+#ifndef __ALERT_VIP_OVERTIME
 					VIPManager_disableDrawing(this);
-
+#endif
 					// to allow timer interrupts
 					HardwareManager_enableMultiplexedInterrupts();
 					VIPManager_enableInterrupt(this, __FRAMESTART);
