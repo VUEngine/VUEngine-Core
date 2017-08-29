@@ -362,12 +362,18 @@
 		/* define class's getBaseClass method */														\
 		ObjectBaseClassPointer ClassName ## _getBaseClass(Object this __attribute__ ((unused)))			\
 		{																								\
+			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
+					"Wrong class definition: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "			\
+					__MAKE_STRING(BaseClassName) ")");													\
 			return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;								\
 		}																								\
 																										\
 		/* define class's getSize method */																\
 		const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))					\
 		{																								\
+			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
+					"Wrong class definition: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "			\
+					__MAKE_STRING(BaseClassName) ")");													\
 			return #ClassName;																			\
 		}																								\
 																										\
