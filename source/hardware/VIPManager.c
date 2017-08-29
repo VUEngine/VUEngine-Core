@@ -206,7 +206,6 @@ void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::disableDrawing: null this");
 
-	_vipRegisters[__XPCTRL] |= __XPRST;
 	_vipRegisters[__XPCTRL] &= ~__XPEN;
 }
 
