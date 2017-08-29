@@ -318,11 +318,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager_getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
 	SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager_getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
 
-	// setup ui
-	Stage_setupUI(this);
-
 	// preload textures
 	Stage_preloadAssets(this);
+
+	// setup ui
+	Stage_setupUI(this);
 
 	// register all the entities in the stage's definition
 	Stage_registerEntities(this, positionedEntitiesToIgnore);
