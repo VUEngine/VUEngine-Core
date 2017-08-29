@@ -786,7 +786,6 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 				{
 //					stageEntityDescription->internalId = -1;
 
-					VirtualList_removeElement(this->loadedStageEntities, stageEntityDescription);
 					break;
 				}
 			}
@@ -799,6 +798,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 				{
 					// unload it
 					Stage_unloadChild(this, __SAFE_CAST(Container, entity));
+					VirtualList_removeElement(this->loadedStageEntities, stageEntityDescription);
 
 					unloaded = true;
 				}

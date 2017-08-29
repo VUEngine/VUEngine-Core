@@ -1003,19 +1003,18 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 
 	// must add graphics
 	__VIRTUAL_CALL(Container, setupGraphics, childEntity);
-
-	// if already initialized
-	if(this->size.x && this->size.y && this->size.z)
-	{
-		Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-
-		 // apply transformations
-		__VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform, true);
-	}
+	__VIRTUAL_CALL(Entity, initialize, childEntity, true);
 
 	// create the entity and add it to the world
 	Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 
+	// apply transformations
+	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+
+	 // apply transformations
+	__VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform, true);
+
+	// make ready
 	__VIRTUAL_CALL(Entity, ready, childEntity, true);
 
 	return childEntity;
