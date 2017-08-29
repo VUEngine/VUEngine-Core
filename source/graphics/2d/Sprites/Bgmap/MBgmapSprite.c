@@ -27,6 +27,7 @@
 #include <MBgmapSprite.h>
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
+#include <ParamTableManager.h>
 #include <Optics.h>
 #include <Screen.h>
 #include <debugConfig.h>
@@ -118,7 +119,7 @@ void MBgmapSprite_destructor(MBgmapSprite this)
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
-		ParamTableManager_free(ParamTableManager_getInstance(), this);
+		ParamTableManager_free(ParamTableManager_getInstance(), __SAFE_CAST(BgmapSprite, this));
 	}
 
 	MBgmapSprite_releaseTextures(this);
