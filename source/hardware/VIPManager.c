@@ -78,6 +78,7 @@ typedef struct PostProcessingEffectRegistry
 		/* post processing effects */																	\
 		VirtualList postProcessingEffects;																\
 		u32 currentDrawingFrameBufferSet;																\
+		bool processingXPEND;																			\
 		bool drawingEnded;																				\
 		bool renderingCompleted;																		\
 		bool allowDRAMAccess;																			\
@@ -148,6 +149,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;
 	this->drawingEnded = false;
+	this->processingXPEND = false;
 	this->renderingCompleted = false;
 	this->allowDRAMAccess = false;
 
@@ -191,7 +193,7 @@ void VIPManager_enableDrawing(VIPManager this __attribute__ ((unused)))
 	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::enableDrawing: null this");
 
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
-	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
+	_vipRegisters[__XPCTRL] = (_vipRegisters[__XPSTTS] | __XPEN) & 0xFFFE;
 }
 
 /**
@@ -206,7 +208,7 @@ void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::disableDrawing: null this");
 
-	_vipRegisters[__XPCTRL] &= ~__XPEN;
+	_vipRegisters[__XPCTRL] &= ~(__XPEN | __DPRST);
 }
 
 /**
@@ -281,7 +283,6 @@ bool __attribute__ ((noinline)) VIPManager_isRenderingPending(VIPManager this)
  * @memberof		VIPManager
  * @public
  */
-
 void VIPManager_interruptHandler(void)
 {
 	// save the interrupt event
@@ -294,7 +295,14 @@ void VIPManager_interruptHandler(void)
 	VIPManager_processInterrupt(_vipManager, interrupt);
 
 	// enable interrupts
-	VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
+	if(_vipManager->processingXPEND)
+	{
+		VIPManager_enableInterrupt(_vipManager, __FRAMESTART);
+	}
+	else
+	{
+		VIPManager_enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
+	}
 }
 /**
  * Process interrupt method
@@ -302,7 +310,6 @@ void VIPManager_interruptHandler(void)
  * @memberof		VIPManager
  * @public
  */
-
 inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 {
 	const u16 interruptTable[] =
@@ -333,6 +340,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 
 			case __XPEND:
 
+				this->processingXPEND = true;
 				this->renderingCompleted = false;
 
 #ifdef __PROFILE_GAME
@@ -345,15 +353,12 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 #endif
 
 					// prevent VIP's drawing operations
-#ifndef __ALERT_VIP_OVERTIME
+//#ifndef __ALERT_VIP_OVERTIME
 					VIPManager_disableDrawing(this);
-#endif
+//#endif
 					// to allow timer interrupts
 					HardwareManager_enableMultiplexedInterrupts();
 					VIPManager_enableInterrupt(this, __FRAMESTART);
-
-					// write to the frame buffers
-					VIPManager_processFrameBuffers(this);
 
 					if(this->allowDRAMAccess)
 					{
@@ -361,6 +366,10 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 						SpriteManager_render(_spriteManager);
 						this->renderingCompleted = true;
 					}
+
+					// write to the frame buffers
+					VIPManager_processFrameBuffers(this);
+
 
 					// allow VIP's drawing operations
 					VIPManager_enableDrawing(this);
@@ -392,6 +401,8 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 					}
 				}
 #endif
+
+				this->processingXPEND = false;
 				break;
 
 			case __TIMEERR:
@@ -417,6 +428,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 					}
 				}
 #endif
+
 				break;
 		}
 	}
