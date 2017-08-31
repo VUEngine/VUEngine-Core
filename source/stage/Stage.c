@@ -615,6 +615,8 @@ static void Stage_preloadAssets(Stage this)
 		{
 			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
+
+		__DELETE(recyclableTextures);
 	}
 
 	ParamTableManager_calculateParamTableBase(ParamTableManager_getInstance(), this->stageDefinition->rendering.paramTableSegments);
