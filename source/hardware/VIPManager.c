@@ -193,7 +193,7 @@ void VIPManager_enableDrawing(VIPManager this __attribute__ ((unused)))
 	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::enableDrawing: null this");
 
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
-	_vipRegisters[__XPCTRL] = (_vipRegisters[__XPSTTS] | __XPEN) & 0xFFFE;
+	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 }
 
 /**
@@ -208,7 +208,7 @@ void VIPManager_disableDrawing(VIPManager this __attribute__ ((unused)))
 {
 	ASSERT(__SAFE_CAST(VIPManager, this), "VIPManager::disableDrawing: null this");
 
-	_vipRegisters[__XPCTRL] &= ~(__XPEN | __DPRST);
+	_vipRegisters[__XPCTRL] &= ~__XPEN;
 }
 
 /**
@@ -333,9 +333,19 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 #endif
 
 				VIPManager_registerCurrentDrawingFrameBufferSet(this);
-				Game_currentFrameEnded(Game_getInstance());
-				this->drawingEnded = false;
-				this->renderingCompleted = false;
+				// make clocks to move forward
+				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
+
+				// increase current game frame's duration
+				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
+
+				if(!_vipManager->processingXPEND)
+				{
+					Game_currentFrameEnded(Game_getInstance());
+					this->drawingEnded = false;
+					this->renderingCompleted = false;
+					VIPManager_allowDRAMAccess(this, true);
+				}
 				break;
 
 			case __XPEND:
@@ -369,7 +379,6 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 
 					// write to the frame buffers
 					VIPManager_processFrameBuffers(this);
-
 
 					// allow VIP's drawing operations
 					VIPManager_enableDrawing(this);

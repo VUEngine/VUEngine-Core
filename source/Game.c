@@ -462,9 +462,6 @@ void Game_start(Game this, GameState state)
 			while(!this->currentFrameEnded);
 			this->currentFrameEnded = false;
 
-			// allow the VIPManager to modify the DRAM
-			VIPManager_allowDRAMAccess(this->vipManager, true);
-
 #ifdef __PROFILE_GAME
 			u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
 
@@ -1241,12 +1238,6 @@ void Game_checkFrameRate(Game this)
 
 void Game_currentFrameEnded(Game this)
 {
-	// make clocks to move forward
-	ClockManager_update(this->clockManager, __GAME_FRAME_DURATION);
-
-	// increase current game frame's duration
-	Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
-
 	// raise flag to allow the next frame to start
 	this->currentFrameEnded = true;
 }
