@@ -344,7 +344,6 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 					Game_currentFrameEnded(Game_getInstance());
 					this->drawingEnded = false;
 					this->renderingCompleted = false;
-					VIPManager_allowDRAMAccess(this, true);
 				}
 				break;
 
