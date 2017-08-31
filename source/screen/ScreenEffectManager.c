@@ -70,7 +70,7 @@ __SINGLETON(ScreenEffectManager);
 // class's constructor
 void ScreenEffectManager_constructor(ScreenEffectManager this)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::constructor: null this");
+	ASSERT(this, "ScreenEffectManager::constructor: null this");
 
 	// init class variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
@@ -84,7 +84,7 @@ void ScreenEffectManager_constructor(ScreenEffectManager this)
 // class's destructor
 void ScreenEffectManager_destructor(ScreenEffectManager this)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::destructor: null this");
+	ASSERT(this, "ScreenEffectManager::destructor: null this");
 
 	// stop any effects
 	ScreenEffectManager_stopEffect(this, kFadeTo);
@@ -95,7 +95,7 @@ void ScreenEffectManager_destructor(ScreenEffectManager this)
 
 Brightness ScreenEffectManager_getDefaultBrightness(ScreenEffectManager this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::getDefaultBrightness: null this");
+	ASSERT(this, "ScreenEffectManager::getDefaultBrightness: null this");
 
 	// default brightness settings
 	Brightness brightness = (Brightness)
@@ -121,7 +121,7 @@ Brightness ScreenEffectManager_getDefaultBrightness(ScreenEffectManager this __a
 
 void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int delay)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeStart: null this");
+	ASSERT(this, "ScreenEffectManager::FXFadeStart: null this");
 
 	Brightness defaultBrightness = ScreenEffectManager_getDefaultBrightness(this);
 
@@ -158,7 +158,7 @@ void ScreenEffectManager_FXFadeStart(ScreenEffectManager this, int effect, int d
 
 void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeAsyncStart: null this");
+	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStart: null this");
 
 	// stop previous effect
 	ScreenEffectManager_stopEffect(this, kFadeTo);
@@ -201,7 +201,7 @@ void ScreenEffectManager_FXFadeAsyncStart(ScreenEffectManager this, int initialD
 
 void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeAsyncStop: null this");
+	ASSERT(this, "ScreenEffectManager::FXFadeAsyncStop: null this");
 
 	// remove event listener
 	if(this->fxFadeCallbackScope)
@@ -223,7 +223,7 @@ void ScreenEffectManager_FXFadeAsyncStop(ScreenEffectManager this)
 
 void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_list args)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::startEffect: null this");
+	ASSERT(this, "ScreenEffectManager::startEffect: null this");
 
 	switch(effect)
 	{
@@ -258,7 +258,7 @@ void ScreenEffectManager_startEffect(ScreenEffectManager this, int effect, va_li
 
 void ScreenEffectManager_stopEffect(ScreenEffectManager this, int effect)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::stopEffect: null this");
+	ASSERT(this, "ScreenEffectManager::stopEffect: null this");
 
 	switch(effect)
 	{
@@ -271,7 +271,7 @@ void ScreenEffectManager_stopEffect(ScreenEffectManager this, int effect)
 
 void ScreenEffectManager_showScreen(ScreenEffectManager this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::showScreen: null this");
+	ASSERT(this, "ScreenEffectManager::showScreen: null this");
 
 	Brightness defaultBrightness = ScreenEffectManager_getDefaultBrightness(this);
 
@@ -284,14 +284,14 @@ void ScreenEffectManager_showScreen(ScreenEffectManager this __attribute__ ((unu
 
 void ScreenEffectManager_hideScreen(ScreenEffectManager this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::hideScreen: null this");
+	ASSERT(this, "ScreenEffectManager::hideScreen: null this");
 
 	__SET_BRIGHT(0, 0, 0);
 }
 
 void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeIn: null this");
+	ASSERT(this, "ScreenEffectManager::FXFadeIn: null this");
 
 	__SET_BRIGHT(
 		_vipRegisters[__BRTA] + 1,
@@ -316,7 +316,7 @@ void ScreenEffectManager_FXFadeIn(ScreenEffectManager this __attribute__ ((unuse
 
 void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unused)), u32 callNumber __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeOut: null this");
+	ASSERT(this, "ScreenEffectManager::FXFadeOut: null this");
 
 	// decrease brightness
 	__SET_BRIGHT(
@@ -329,8 +329,8 @@ void ScreenEffectManager_FXFadeOut(ScreenEffectManager this __attribute__ ((unus
 // fade in the screen
 void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeAsync: null this");
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::FXFadeAsync: invalid this");
+	ASSERT(this, "ScreenEffectManager::FXFadeAsync: null this");
+	ASSERT(this, "ScreenEffectManager::FXFadeAsync: invalid this");
 
 	bool lightRedDone = false;
 	bool mediumRedDone = false;
@@ -418,7 +418,7 @@ void ScreenEffectManager_FXFadeAsync(ScreenEffectManager this)
 // process a telegram
 bool ScreenEffectManager_handleMessage(ScreenEffectManager this, Telegram telegram)
 {
-	ASSERT(__SAFE_CAST(ScreenEffectManager, this), "ScreenEffectManager::handleMessage: null this");
+	ASSERT(this, "ScreenEffectManager::handleMessage: null this");
 
 	switch(Telegram_getMessage(telegram))
 	{

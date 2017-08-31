@@ -83,7 +83,7 @@ __SINGLETON(AnimationInspectorState);
  */
 static void __attribute__ ((noinline)) AnimationInspectorState_constructor(AnimationInspectorState this)
 {
-	ASSERT(__SAFE_CAST(AnimationInspectorState, this), "AnimationInspectorState::constructor: null this");
+	ASSERT(this, "AnimationInspectorState::constructor: null this");
 
 	__CONSTRUCT_BASE(GameState);
 }
@@ -98,7 +98,7 @@ static void __attribute__ ((noinline)) AnimationInspectorState_constructor(Anima
  */
 static void AnimationInspectorState_destructor(AnimationInspectorState this)
 {
-	ASSERT(__SAFE_CAST(AnimationInspectorState, this), "AnimationInspectorState::destructor: null this");
+	ASSERT(this, "AnimationInspectorState::destructor: null this");
 
 	// destroy base
 	__SINGLETON_DESTROY;
@@ -115,7 +115,7 @@ static void AnimationInspectorState_destructor(AnimationInspectorState this)
  */
 static void AnimationInspectorState_enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(AnimationInspectorState, this), "AnimationInspectorState::enter: null this");
+	ASSERT(this, "AnimationInspectorState::enter: null this");
 
 	__CALL_BASE_METHOD(GameState, enter, this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
@@ -133,7 +133,7 @@ static void AnimationInspectorState_enter(AnimationInspectorState this __attribu
  */
 static void AnimationInspectorState_execute(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(AnimationInspectorState, this), "AnimationInspectorState::execute: null this");
+	ASSERT(this, "AnimationInspectorState::execute: null this");
 
 	AnimationInspector_update(AnimationInspector_getInstance());
 }
@@ -149,7 +149,7 @@ static void AnimationInspectorState_execute(AnimationInspectorState this __attri
  */
 static void AnimationInspectorState_exit(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(AnimationInspectorState, this), "AnimationInspectorState::exit: null this");
+	ASSERT(this, "AnimationInspectorState::exit: null this");
 
 	AnimationInspector_hide(AnimationInspector_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
@@ -167,7 +167,7 @@ static void AnimationInspectorState_exit(AnimationInspectorState this __attribut
  */
 void AnimationInspectorState_processUserInput(AnimationInspectorState this __attribute__ ((unused)), UserInput userInput)
 {
-	ASSERT(__SAFE_CAST(AnimationInspectorState, this), "AnimationInspectorState::processUserInput: null this");
+	ASSERT(this, "AnimationInspectorState::processUserInput: null this");
 
 	AnimationInspector_processUserInput(AnimationInspector_getInstance(), userInput.pressedKey);
 }

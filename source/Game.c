@@ -332,7 +332,7 @@ bool Game_isConstructed()
 // class's constructor
 static void __attribute__ ((noinline)) Game_constructor(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::constructor: null this");
+	ASSERT(this, "Game::constructor: null this");
 
 	// check memory map before anything else
 	HardwareManager_checkMemoryMap();
@@ -402,7 +402,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 // class's destructor
 void Game_destructor(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::destructor: null this");
+	ASSERT(this, "Game::destructor: null this");
 
 	// destroy the clocks
 	Clock_destructor(this->clock);
@@ -415,7 +415,7 @@ void Game_destructor(Game this)
 // setup engine parameters
 void Game_initialize(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::initialize: null this");
+	ASSERT(this, "Game::initialize: null this");
 
 	// setup vectorInterrupts
 	HardwareManager_setInterruptVectors(HardwareManager_getInstance());
@@ -436,7 +436,7 @@ void Game_initialize(Game this)
 // set game's initial state
 void Game_start(Game this, GameState state)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::start: null this");
+	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
 
 	// initialize SRAM
@@ -554,7 +554,7 @@ void Game_start(Game this, GameState state)
 // set game's state
 void Game_changeState(Game this, GameState state)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::changeState: null this");
+	ASSERT(this, "Game::changeState: null this");
 
 	// state changing must be done when no other process
 	// may be affecting the game's general state
@@ -565,7 +565,7 @@ void Game_changeState(Game this, GameState state)
 // set game's state after cleaning the stack
 void Game_cleanAndChangeState(Game this, GameState state)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::changeState: null this");
+	ASSERT(this, "Game::changeState: null this");
 
 	// state changing must be done when no other process
 	// may be affecting the game's general state
@@ -576,7 +576,7 @@ void Game_cleanAndChangeState(Game this, GameState state)
 // add a state to the game's state machine's stack
 void Game_addState(Game this, GameState state)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::changeState: null this");
+	ASSERT(this, "Game::changeState: null this");
 
 	// state changing must be done when no other process
 	// may be affecting the game's general state
@@ -587,7 +587,7 @@ void Game_addState(Game this, GameState state)
 // set game's state
 static void Game_setNextState(Game this, GameState state)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::setState: null this");
+	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
 	// prevent the VIPManager to modify the DRAM
@@ -689,7 +689,7 @@ static void Game_setNextState(Game this, GameState state)
 // disable interrupts
 void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::disableHardwareInterrupts: null this");
+	ASSERT(this, "Game::disableHardwareInterrupts: null this");
 
 	// disable rendering
 	HardwareManager_disableRendering(HardwareManager_getInstance());
@@ -698,13 +698,13 @@ void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
 // enable interrupts
 void Game_enableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::enableHardwareInterrupts: null this");
+	ASSERT(this, "Game::enableHardwareInterrupts: null this");
 }
 
 // erase engine's current status
 void Game_reset(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::reset: null this");
+	ASSERT(this, "Game::reset: null this");
 
 #ifdef	__MEMORY_POOL_CLEAN_UP
 	MemoryPool_cleanUp(MemoryPool_getInstance());
@@ -742,7 +742,7 @@ void Game_reset(Game this)
 // process input data according to the actual game status
 static u32 Game_processUserInput(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::processUserInput: null this");
+	ASSERT(this, "Game::processUserInput: null this");
 
 	if(!KeypadManager_isEnabled(this->keypadManager))
 	{
@@ -1128,7 +1128,7 @@ bool Game_stream(Game this)
 
 inline static void Game_checkForNewState(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::checkForNewState: null this");
+	ASSERT(this, "Game::checkForNewState: null this");
 
 	if(this->nextState)
 	{
@@ -1283,7 +1283,7 @@ inline static void Game_run(Game this)
 #ifdef __REGISTER_LAST_PROCESS_NAME
 void Game_setLastProcessName(Game this, char* processName)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::setLastProcessName: null this");
+	ASSERT(this, "Game::setLastProcessName: null this");
 	this->lastProcessName = processName;
 }
 #endif
@@ -1291,7 +1291,7 @@ void Game_setLastProcessName(Game this, char* processName)
 // process a telegram
 bool Game_handleMessage(Game this, Telegram telegram)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::handleMessage: null this");
+	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
 
 	switch(Telegram_getMessage(telegram))
@@ -1317,7 +1317,7 @@ bool Game_handleMessage(Game this, Telegram telegram)
 // retrieve time
 u32 Game_getTime(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getTime: null this");
+	ASSERT(this, "Game::getTime: null this");
 
 	return Clock_getTime(this->clock);
 }
@@ -1325,7 +1325,7 @@ u32 Game_getTime(Game this)
 // retrieve clock
 Clock Game_getClock(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getClock: null this");
+	ASSERT(this, "Game::getClock: null this");
 
 	return this->clock;
 }
@@ -1333,7 +1333,7 @@ Clock Game_getClock(Game this)
 // retrieve in game clock
 Clock Game_getMessagingClock(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getMessagingClock: null this");
+	ASSERT(this, "Game::getMessagingClock: null this");
 
 	return GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
@@ -1341,7 +1341,7 @@ Clock Game_getMessagingClock(Game this)
 // retrieve animations' clock
 Clock Game_getUpdateClock(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getUpdateClock: null this");
+	ASSERT(this, "Game::getUpdateClock: null this");
 
 	return GameState_getUpdateClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
@@ -1349,7 +1349,7 @@ Clock Game_getUpdateClock(Game this)
 // retrieve in physics' clock
 Clock Game_getPhysicsClock(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getPhysicsClock: null this");
+	ASSERT(this, "Game::getPhysicsClock: null this");
 
 	return GameState_getPhysicsClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
 }
@@ -1357,7 +1357,7 @@ Clock Game_getPhysicsClock(Game this)
 // retrieve last process' name
 char* Game_getLastProcessName(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getLastProcessName: null this");
+	ASSERT(this, "Game::getLastProcessName: null this");
 
 	return this->lastProcessName;
 }
@@ -1365,7 +1365,7 @@ char* Game_getLastProcessName(Game this)
 #ifdef __DEBUG_TOOLS
 bool Game_isInDebugMode(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::isInDebugMode: null this");
+	ASSERT(this, "Game::isInDebugMode: null this");
 
 	return StateMachine_getCurrentState(this->stateMachine) == (State)DebugState_getInstance();
 }
@@ -1374,7 +1374,7 @@ bool Game_isInDebugMode(Game this)
 #ifdef __STAGE_EDITOR
 bool Game_isInStageEditor(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::isInGameStateEditor: null this");
+	ASSERT(this, "Game::isInGameStateEditor: null this");
 
 	return StateMachine_getCurrentState(this->stateMachine) == (State)StageEditorState_getInstance();
 }
@@ -1383,7 +1383,7 @@ bool Game_isInStageEditor(Game this)
 #ifdef __ANIMATION_INSPECTOR
 bool Game_isInAnimationInspector(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::isInAnimationInspector: null this");
+	ASSERT(this, "Game::isInAnimationInspector: null this");
 
 	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationInspectorState_getInstance();
 }
@@ -1392,7 +1392,7 @@ bool Game_isInAnimationInspector(Game this)
 // whether if a special mode is active
 bool Game_isInSpecialMode(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::isInSpecialMode: null this");
+	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isInSpecialMode = false;
 
@@ -1412,7 +1412,7 @@ bool Game_isInSpecialMode(Game this __attribute__ ((unused)))
 // whether if a special mode is being started
 bool Game_isEnteringSpecialMode(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::isInSpecialMode: null this");
+	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
@@ -1431,7 +1431,7 @@ bool Game_isEnteringSpecialMode(Game this __attribute__ ((unused)))
 // whether if a special mode is being started
 bool Game_isExitingSpecialMode(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::isInSpecialMode: null this");
+	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
@@ -1450,7 +1450,7 @@ bool Game_isExitingSpecialMode(Game this __attribute__ ((unused)))
 // retrieve state machine, use with caution!!!
 StateMachine Game_getStateMachine(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getStateMachine: null this");
+	ASSERT(this, "Game::getStateMachine: null this");
 
 	return this->stateMachine;
 }
@@ -1458,7 +1458,7 @@ StateMachine Game_getStateMachine(Game this)
 // retrieve the current level's stage
 Stage Game_getStage(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getStage: null this");
+	ASSERT(this, "Game::getStage: null this");
 
 	if(Game_isInSpecialMode(this))
 	{
@@ -1471,14 +1471,14 @@ Stage Game_getStage(Game this)
 // retrieve current state
 GameState Game_getCurrentState(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getCurrentState: null this");
+	ASSERT(this, "Game::getCurrentState: null this");
 
 	return __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
 }
 
 PhysicalWorld Game_getPhysicalWorld(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::PhysicalWorld: null this");
+	ASSERT(this, "Game::PhysicalWorld: null this");
 
 	if(Game_isInSpecialMode(this))
 	{
@@ -1490,7 +1490,7 @@ PhysicalWorld Game_getPhysicalWorld(Game this)
 
 CollisionManager Game_getCollisionManager(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getCollisionManager: null this");
+	ASSERT(this, "Game::getCollisionManager: null this");
 
 	if(Game_isInSpecialMode(this))
 	{
@@ -1504,7 +1504,7 @@ CollisionManager Game_getCollisionManager(Game this)
 // low battery indicator check
 static void Game_checkLowBattery(Game this, u16 keypad)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::checkLowBatteryIndicator: null this");
+	ASSERT(this, "Game::checkLowBatteryIndicator: null this");
 
 	if(keypad & K_PWR)
 	{
@@ -1528,7 +1528,7 @@ static void Game_checkLowBattery(Game this, u16 keypad)
 // print low battery indicator
 static void Game_printLowBatteryIndicator(Game this, bool showIndicator)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::printLowBatteryIndicator: null this");
+	ASSERT(this, "Game::printLowBatteryIndicator: null this");
 
 	Printing_text(Printing_getInstance(), (showIndicator) ? __CHAR_BATTERY : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
 	MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
@@ -1538,7 +1538,7 @@ static void Game_printLowBatteryIndicator(Game this, bool showIndicator)
 // pause
 void Game_pause(Game this, GameState pauseState)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::pause: null this");
+	ASSERT(this, "Game::pause: null this");
 	ASSERT(pauseState, "Game::pause: null pauseState");
 
 	if(pauseState)
@@ -1551,7 +1551,7 @@ void Game_pause(Game this, GameState pauseState)
 // resume game
 void Game_unpause(Game this, GameState pauseState)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::unpause: null this");
+	ASSERT(this, "Game::unpause: null this");
 	ASSERT(pauseState, "Game::unpause: null pauseState");
 	ASSERT(pauseState == this->currentState, "Game::unpause: null pauseState sent is not the current one");
 
@@ -1571,14 +1571,14 @@ void Game_unpause(Game this, GameState pauseState)
 // set auto pause state
 void Game_setAutomaticPauseState(Game this, GameState automaticPauseState)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::setAutomaticPauseState: null this");
+	ASSERT(this, "Game::setAutomaticPauseState: null this");
 	this->automaticPauseState = automaticPauseState;
 }
 
 // get auto pause state
 GameState Game_getAutomaticPauseState(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::getAutomaticPauseState: null this");
+	ASSERT(this, "Game::getAutomaticPauseState: null this");
 
 	return this->automaticPauseState;
 }
@@ -1586,7 +1586,7 @@ GameState Game_getAutomaticPauseState(Game this)
 // show auto pause screen
 static void Game_autoPause(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::autoPause: null this");
+	ASSERT(this, "Game::autoPause: null this");
 
 	if(this->automaticPauseState)
 	{
@@ -1605,14 +1605,14 @@ static void Game_autoPause(Game this)
 
 void Game_disableKeypad(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::disableKeyPad: null this");
+	ASSERT(this, "Game::disableKeyPad: null this");
 
 	KeypadManager_disable(this->keypadManager);
 }
 
 void Game_enableKeypad(Game this)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::enableKeypad: null this");
+	ASSERT(this, "Game::enableKeypad: null this");
 
 	KeypadManager_enable(this->keypadManager);
 }
@@ -1620,28 +1620,28 @@ void Game_enableKeypad(Game this)
 
 void Game_pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::pushFrontPostProcessingEffect: null this");
+	ASSERT(this, "Game::pushFrontPostProcessingEffect: null this");
 
 	VIPManager_pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
 void Game_pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::pushBackPostProcessingEffect: null this");
+	ASSERT(this, "Game::pushBackPostProcessingEffect: null this");
 
 	VIPManager_pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
 void Game_removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::removePostProcessingEffect: null this");
+	ASSERT(this, "Game::removePostProcessingEffect: null this");
 
 	VIPManager_removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
 void Game_wait(Game this, u32 milliSeconds)
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::wait: this null");
+	ASSERT(this, "Game::wait: this null");
 
 	TimerManager_wait(this->timerManager, milliSeconds);
 }
@@ -1649,14 +1649,14 @@ void Game_wait(Game this, u32 milliSeconds)
 #ifdef __PROFILE_GAME
 void Game_saveProcessNameDuringFRAMESTART(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::saveProcessNameDuringFRAMESTART: this null");
+	ASSERT(this, "Game::saveProcessNameDuringFRAMESTART: this null");
 
 	_processNameDuringFRAMESTART = this->lastProcessName;
 }
 
 void Game_saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::saveProcessNameDuringXPEND: this null");
+	ASSERT(this, "Game::saveProcessNameDuringXPEND: this null");
 
 	_processNameDuringXPEND = this->lastProcessName;
 }
@@ -1665,7 +1665,7 @@ void Game_saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
 #ifdef __SHOW_GAME_PROFILING
 void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::showProfiling: this null");
+	ASSERT(this, "Game::showProfiling: this null");
 
 	_updateProfiling = false;
 
@@ -1801,7 +1801,7 @@ void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ 
 #ifdef __PROFILE_GAME
 void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::showCurrentGameFrameProfiling: this null");
+	ASSERT(this, "Game::showCurrentGameFrameProfiling: this null");
 
 	_updateProfiling = false;
 
@@ -1924,7 +1924,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 
 void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::showLastGameFrameProfiling: this null");
+	ASSERT(this, "Game::showLastGameFrameProfiling: this null");
 
 #ifdef __PROFILE_GAME
 
@@ -2022,7 +2022,7 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x _
 
 void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::showProfiling: this null");
+	ASSERT(this, "Game::showProfiling: this null");
 
 #ifdef __PROFILE_GAME
 
@@ -2054,7 +2054,7 @@ void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gam
 
 void Game_resetProfiling(Game this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Game, this), "Game::resetProfiling: this null");
+	ASSERT(this, "Game::resetProfiling: this null");
 
 #ifdef __PROFILE_GAME
 

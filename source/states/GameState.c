@@ -66,7 +66,7 @@ static void GameState_initialTransform(GameState this);
  */
 void GameState_constructor(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::constructor: null this");
+	ASSERT(this, "GameState::constructor: null this");
 
 	__CONSTRUCT_BASE(State);
 
@@ -97,7 +97,7 @@ void GameState_constructor(GameState this)
  */
 void GameState_destructor(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::destructor: null this");
+	ASSERT(this, "GameState::destructor: null this");
 
 	__DELETE(this->messagingClock);
 	__DELETE(this->updateClock);
@@ -135,7 +135,7 @@ void GameState_destructor(GameState this)
  */
 void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::enter: null this");
+	ASSERT(this, "GameState::enter: null this");
 
 	VIPManager_removePostProcessingEffects(VIPManager_getInstance());
 	Printing_resetWorldCoordinates(Printing_getInstance());
@@ -157,7 +157,7 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
  */
 void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::execute: null this");
+	ASSERT(this, "GameState::execute: null this");
 	ASSERT(this->stage, "GameState::execute: null stage");
 
 	if(!Clock_isPaused(this->messagingClock))
@@ -180,7 +180,7 @@ void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
  */
 void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::exit: null this");
+	ASSERT(this, "GameState::exit: null this");
 
 	// make sure to free the memory
 	if(this->stage)
@@ -210,7 +210,7 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
  */
 void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::suspend: null this");
+	ASSERT(this, "GameState::suspend: null this");
 
 	Clock_pause(this->messagingClock, true);
 
@@ -260,7 +260,7 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
  */
 void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::resume: null this");
+	ASSERT(this, "GameState::resume: null this");
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
 #ifdef __DEBUG_TOOLS
@@ -345,7 +345,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
  */
 void GameState_processUserInput(GameState this __attribute__ ((unused)), UserInput userInput __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::processUserInput: null this");
+	ASSERT(this, "GameState::processUserInput: null this");
 }
 
 /**
@@ -362,7 +362,7 @@ void GameState_processUserInput(GameState this __attribute__ ((unused)), UserInp
  */
 bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused)), Telegram telegram)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::handleMessage: null this");
+	ASSERT(this, "GameState::handleMessage: null this");
 
 	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, Telegram_getMessage(telegram));
 }
@@ -393,7 +393,7 @@ int GameState_propagateMessage(GameState this, int message)
  */
 bool GameState_stream(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::stream: null this");
+	ASSERT(this, "GameState::stream: null this");
 
 	return Stage_stream(this->stage);
 }
@@ -408,7 +408,7 @@ bool GameState_stream(GameState this)
  */
 void GameState_transform(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::transform: null this");
+	ASSERT(this, "GameState::transform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
 
 	extern Transformation neutralEnvironmentTransformation;
@@ -430,7 +430,7 @@ void GameState_transform(GameState this)
  */
 static void GameState_initialTransform(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::initialTransform: null this");
+	ASSERT(this, "GameState::initialTransform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
 
 	extern Transformation neutralEnvironmentTransformation;
@@ -449,7 +449,7 @@ static void GameState_initialTransform(GameState this)
  */
 void GameState_synchronizeGraphics(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::synchronizeGraphics: null this");
+	ASSERT(this, "GameState::synchronizeGraphics: null this");
 	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transform loaded entities
@@ -466,7 +466,7 @@ void GameState_synchronizeGraphics(GameState this)
  */
 void GameState_updatePhysics(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::updatePhysics: null this");
+	ASSERT(this, "GameState::updatePhysics: null this");
 
 	PhysicalWorld_update(this->physicalWorld, this->physicsClock);
 }
@@ -483,7 +483,7 @@ void GameState_updatePhysics(GameState this)
  */
 u32 GameState_processCollisions(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::processCollisions: null this");
+	ASSERT(this, "GameState::processCollisions: null this");
 
 	return CollisionManager_update(this->collisionManager, this->physicsClock);
 }
@@ -501,7 +501,7 @@ u32 GameState_processCollisions(GameState this)
  */
 void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::loadStage: null this");
+	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
 
 	// disable hardware interrupts
@@ -570,7 +570,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
  */
 Stage GameState_getStage(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::getStage: null this");
+	ASSERT(this, "GameState::getStage: null this");
 
 	return this->stage;
 }
@@ -587,7 +587,7 @@ Stage GameState_getStage(GameState this)
  */
 Clock GameState_getMessagingClock(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::getMessagingClock: null this");
+	ASSERT(this, "GameState::getMessagingClock: null this");
 
 	return this->messagingClock;
 }
@@ -604,7 +604,7 @@ Clock GameState_getMessagingClock(GameState this)
  */
 Clock GameState_getUpdateClock(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::getUpdateClock: null this");
+	ASSERT(this, "GameState::getUpdateClock: null this");
 
 	return this->updateClock;
 }
@@ -621,7 +621,7 @@ Clock GameState_getUpdateClock(GameState this)
  */
 Clock GameState_getPhysicsClock(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::getPhysicsClock: null this");
+	ASSERT(this, "GameState::getPhysicsClock: null this");
 
 	return this->physicsClock;
 }
@@ -636,7 +636,7 @@ Clock GameState_getPhysicsClock(GameState this)
  */
 void GameState_startClocks(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::startClocks: null this");
+	ASSERT(this, "GameState::startClocks: null this");
 
 	Clock_start(this->messagingClock);
 	Clock_start(this->updateClock);
@@ -655,7 +655,7 @@ void GameState_startClocks(GameState this)
  */
 void GameState_stopClocks(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::stopClocks: null this");
+	ASSERT(this, "GameState::stopClocks: null this");
 
 	Clock_stop(this->messagingClock);
 	Clock_stop(this->updateClock);
@@ -672,7 +672,7 @@ void GameState_stopClocks(GameState this)
  */
 void GameState_pauseClocks(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::pauseClocks: null this");
+	ASSERT(this, "GameState::pauseClocks: null this");
 
 	Clock_pause(this->messagingClock, true);
 	Clock_pause(this->updateClock, true);
@@ -689,7 +689,7 @@ void GameState_pauseClocks(GameState this)
  */
 void GameState_resumeClocks(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::resumeClocks: null this");
+	ASSERT(this, "GameState::resumeClocks: null this");
 
 	Clock_pause(this->messagingClock, false);
 	Clock_pause(this->updateClock, false);
@@ -706,7 +706,7 @@ void GameState_resumeClocks(GameState this)
  */
 void GameState_startDispatchingDelayedMessages(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::startInGameClock: null this");
+	ASSERT(this, "GameState::startInGameClock: null this");
 
 	Clock_start(this->messagingClock);
 }
@@ -721,7 +721,7 @@ void GameState_startDispatchingDelayedMessages(GameState this)
  */
 void GameState_startAnimations(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::startAnimations: null this");
+	ASSERT(this, "GameState::startAnimations: null this");
 
 	Clock_start(this->updateClock);
 }
@@ -736,7 +736,7 @@ void GameState_startAnimations(GameState this)
  */
 void GameState_startPhysics(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::startPhysics: null this");
+	ASSERT(this, "GameState::startPhysics: null this");
 
 	Clock_start(this->physicsClock);
 }
@@ -752,7 +752,7 @@ void GameState_startPhysics(GameState this)
  */
 void GameState_pauseMessagingClock(GameState this, bool pause)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::pauseInGameClock: null this");
+	ASSERT(this, "GameState::pauseInGameClock: null this");
 
 	Clock_pause(this->messagingClock, pause);
 }
@@ -768,7 +768,7 @@ void GameState_pauseMessagingClock(GameState this, bool pause)
  */
 void GameState_pauseAnimations(GameState this, bool pause)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::pauseAnimations: null this");
+	ASSERT(this, "GameState::pauseAnimations: null this");
 
 	Clock_pause(this->updateClock, pause);
 }
@@ -784,7 +784,7 @@ void GameState_pauseAnimations(GameState this, bool pause)
  */
 void GameState_pausePhysics(GameState this, bool pause)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::pausePhysics: null this");
+	ASSERT(this, "GameState::pausePhysics: null this");
 
 	Clock_pause(this->physicsClock, pause);
 }
@@ -801,7 +801,7 @@ void GameState_pausePhysics(GameState this, bool pause)
  */
 PhysicalWorld GameState_getPhysicalWorld(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::getPhysicalWorld: null this");
+	ASSERT(this, "GameState::getPhysicalWorld: null this");
 
 	return this->physicalWorld;
 }
@@ -818,7 +818,7 @@ PhysicalWorld GameState_getPhysicalWorld(GameState this)
  */
 CollisionManager GameState_getCollisionManager(GameState this)
 {
-	ASSERT(__SAFE_CAST(Object, this), "GameState::getCollisionManager: null this");
+	ASSERT(this, "GameState::getCollisionManager: null this");
 
 	return this->collisionManager;
 }

@@ -107,7 +107,7 @@ typedef struct DelayedMessage
  */
  static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDispatcher this)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::constructor: null this");
+	ASSERT(this, "MessageDispatcher::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -126,7 +126,7 @@ typedef struct DelayedMessage
  */
 __attribute__((unused)) void MessageDispatcher_destructor(MessageDispatcher this)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::destructor: null this");
+	ASSERT(this, "MessageDispatcher::destructor: null this");
 
 	__DELETE(this->delayedMessages);
 	__DELETE(this->delayedMessagesToDiscard);
@@ -190,7 +190,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
 		Object receiver, int message, void* extraInfo)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::dispatchDelayedMessage: null this");
+	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
 
 	// create the telegram
 	Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
@@ -214,7 +214,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
  */
 void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::processDiscardedMessages: null this");
+	ASSERT(this, "MessageDispatcher::processDiscardedMessages: null this");
 	ASSERT(this->delayedMessagesToDiscard, "MessageDispatcher::processDiscardedMessages: null delayedMessagesToDiscard");
 
 	if(this->delayedMessagesToDiscard->head)
@@ -256,7 +256,7 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
  */
 u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::dispatchDelayedMessages: null this");
+	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
 	u32 messagesDispatched = false;
@@ -326,7 +326,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
  */
 void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::discardDelayedMessagesWithClock: null this");
+	ASSERT(this, "MessageDispatcher::discardDelayedMessagesWithClock: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 
@@ -353,7 +353,7 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
  */
 void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::discardDelayedMessagesFromSender: null this");
+	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 
@@ -381,7 +381,7 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
  */
 void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::discardDelayedMessagesFromSender: null this");
+	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 
@@ -411,7 +411,7 @@ void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this,
  */
 void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::discardAllDelayedMessagesFromSender: null this");
+	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesFromSender: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 
@@ -441,7 +441,7 @@ void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher thi
  */
 void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver)
 {
-	ASSERT(__SAFE_CAST(MessageDispatcher, this), "MessageDispatcher::discardAllDelayedMessagesForReceiver: null this");
+	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesForReceiver: null this");
 
 	VirtualNode node = this->delayedMessages->head;
 

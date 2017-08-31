@@ -66,7 +66,7 @@ __CLASS_NEW_END(VirtualNode, data);
  */
 static void VirtualNode_constructor(VirtualNode this, const void* const data)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::constructor: null this");
+	ASSERT(this, "VirtualNode::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -86,7 +86,7 @@ static void VirtualNode_constructor(VirtualNode this, const void* const data)
  */
 __attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::destructor: null this");
+	ASSERT(this, "VirtualNode::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -104,7 +104,7 @@ __attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
  */
 void VirtualNode_setData(VirtualNode this, const void* const data)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::destructor: null this");
+	ASSERT(this, "VirtualNode::destructor: null this");
 
 	this->data = (void*)data;
 }
@@ -121,7 +121,7 @@ void VirtualNode_setData(VirtualNode this, const void* const data)
  */
 void* VirtualNode_getData(VirtualNode this)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::getData: null this");
+	ASSERT(this, "VirtualNode::getData: null this");
 
 	return this->data;
 }
@@ -138,7 +138,7 @@ void* VirtualNode_getData(VirtualNode this)
  */
 VirtualNode VirtualNode_getNext(VirtualNode this)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::getNext: null this");
+	ASSERT(this, "VirtualNode::getNext: null this");
 
 	return this->next;
 }
@@ -154,7 +154,7 @@ VirtualNode VirtualNode_getNext(VirtualNode this)
  */
 void VirtualNode_setNext(VirtualNode this, VirtualNode next)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::setNext: null this");
+	ASSERT(this, "VirtualNode::setNext: null this");
 
 	this->next = next;
 }
@@ -171,7 +171,7 @@ void VirtualNode_setNext(VirtualNode this, VirtualNode next)
  */
 VirtualNode VirtualNode_getPrevious(VirtualNode this)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::getPrevious: null this");
+	ASSERT(this, "VirtualNode::getPrevious: null this");
 
 	return this->previous;
 }
@@ -187,7 +187,7 @@ VirtualNode VirtualNode_getPrevious(VirtualNode this)
  */
 void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::setPrevious: null this");
+	ASSERT(this, "VirtualNode::setPrevious: null this");
 
 	this->previous = previous;
 }
@@ -203,7 +203,7 @@ void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
  */
 void VirtualNode_swapData(VirtualNode this, VirtualNode node)
 {
-	ASSERT(__SAFE_CAST(VirtualNode, this), "VirtualNode::swapData: null this");
+	ASSERT(this, "VirtualNode::swapData: null this");
 
 	// check that both nodes are valid and are not the same
 	if(!(this && node && (this != node)))

@@ -70,7 +70,7 @@ __CLASS_NEW_END(BgmapAnimatedSprite, bgmapSpriteDefinition, owner);
  */
 void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimatedSprite, this), "BgmapAnimatedSprite::constructor: null this");
+	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(BgmapSprite, bgmapSpriteDefinition, owner);
@@ -94,7 +94,7 @@ void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSprite
  */
 void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimatedSprite, this), "BgmapAnimatedSprite::destructor: null this");
+	ASSERT(this, "BgmapAnimatedSprite::destructor: null this");
 
 	if(this->animationController)
 	{
@@ -117,7 +117,7 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
  */
 void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimatedSprite, this), "BgmapAnimatedSprite::writeAnimation: null this");
+	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
 
 	CharSet charSet = Texture_getCharSet(this->texture, true);
 

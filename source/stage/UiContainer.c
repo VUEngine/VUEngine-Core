@@ -63,7 +63,7 @@ __CLASS_NEW_END(UiContainer, uiContainerDefinition);
 // class's constructor
 static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
 {
-	ASSERT(__SAFE_CAST(UiContainer, this), "UiContainer::constructor: null this");
+	ASSERT(this, "UiContainer::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Container, NULL);
@@ -75,7 +75,7 @@ static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiC
 // class's destructor
 void UiContainer_destructor(UiContainer this)
 {
-	ASSERT(__SAFE_CAST(UiContainer, this), "UiContainer::destructor: null this");
+	ASSERT(this, "UiContainer::destructor: null this");
 
 	// destroy base
 	// must always be called at the end of the destructor
@@ -85,7 +85,7 @@ void UiContainer_destructor(UiContainer this)
 // add entities
 void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 {
-	ASSERT(__SAFE_CAST(UiContainer, this), "UiContainer::addEntities: null this");
+	ASSERT(this, "UiContainer::addEntities: null this");
 	ASSERT(entities, "UiContainer::addEntities: null entities");
 
 	static int internalId = 0;
@@ -115,7 +115,7 @@ void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 // transform
 void UiContainer_transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(__SAFE_CAST(UiContainer, this), "UiContainer::transform: null this");
+	ASSERT(this, "UiContainer::transform: null this");
 
 	Screen screen = Screen_getInstance();
 	ASSERT(screen, "UiContainer::transform: null screen");
@@ -130,7 +130,7 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 // transform
 void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(__SAFE_CAST(UiContainer, this), "UiContainer::initialTransform: null this");
+	ASSERT(this, "UiContainer::initialTransform: null this");
 
 	Screen screen = Screen_getInstance();
 	ASSERT(screen, "UiContainer::initialTransform: null screen");

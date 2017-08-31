@@ -81,7 +81,7 @@ __SINGLETON(PolyhedronManager);
  */
 static void PolyhedronManager_constructor(PolyhedronManager this)
 {
-	ASSERT(__SAFE_CAST(PolyhedronManager, this), "PolyhedronManager::constructor: null this");
+	ASSERT(this, "PolyhedronManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -98,7 +98,7 @@ static void PolyhedronManager_constructor(PolyhedronManager this)
  */
 void PolyhedronManager_destructor(PolyhedronManager this)
 {
-	ASSERT(__SAFE_CAST(PolyhedronManager, this), "PolyhedronManager::destructor: null this");
+	ASSERT(this, "PolyhedronManager::destructor: null this");
 	ASSERT(this->polyhedrons, "PolyhedronManager::destructor: null polyhedrons");
 
 	VirtualNode node = this->polyhedrons->head;
@@ -127,7 +127,7 @@ void PolyhedronManager_destructor(PolyhedronManager this)
  */
 void PolyhedronManager_register(PolyhedronManager this, Polyhedron polyhedron)
 {
-	ASSERT(__SAFE_CAST(PolyhedronManager, this), "PolyhedronManager::register: null this");
+	ASSERT(this, "PolyhedronManager::register: null this");
 	ASSERT(polyhedron, "PolyhedronManager::register: null polyhedron");
 
 	if(!VirtualList_find(this->polyhedrons, polyhedron))
@@ -147,7 +147,7 @@ void PolyhedronManager_register(PolyhedronManager this, Polyhedron polyhedron)
  */
 void PolyhedronManager_remove(PolyhedronManager this, Polyhedron polyhedron)
 {
-	ASSERT(__SAFE_CAST(PolyhedronManager, this), "PolyhedronManager::remove: null this");
+	ASSERT(this, "PolyhedronManager::remove: null this");
 	ASSERT(polyhedron, "PolyhedronManager::remove: null polyhedron");
 
 	VirtualList_removeElement(this->polyhedrons, polyhedron);
@@ -163,7 +163,7 @@ void PolyhedronManager_remove(PolyhedronManager this, Polyhedron polyhedron)
  */
 void PolyhedronManager_reset(PolyhedronManager this)
 {
-	ASSERT(__SAFE_CAST(PolyhedronManager, this), "PolyhedronManager::reset: null this");
+	ASSERT(this, "PolyhedronManager::reset: null this");
 
 	VirtualList_clear(this->polyhedrons);
 }
@@ -178,7 +178,7 @@ void PolyhedronManager_reset(PolyhedronManager this)
  */
 void PolyhedronManager_drawPolyhedrons(PolyhedronManager this)
 {
-	ASSERT(__SAFE_CAST(PolyhedronManager, this), "PolyhedronManager::draw: null this");
+	ASSERT(this, "PolyhedronManager::draw: null this");
 
 	// comparing against the other shapes
 	VirtualNode node = this->polyhedrons->head;

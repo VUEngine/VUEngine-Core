@@ -71,7 +71,7 @@ __CLASS_NEW_END(Actor, actorDefinition, id, internalId, name);
 // class's constructor
 void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::constructor: null this");
+	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(AnimatedEntity, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
@@ -89,7 +89,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 // class's destructor
 void Actor_destructor(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::destructor: null this");
+	ASSERT(this, "Actor::destructor: null this");
 
 	// inform the screen I'm being removed
 	Screen_onFocusEntityDeleted(Screen_getInstance(), __SAFE_CAST(Entity, this));
@@ -122,7 +122,7 @@ void Actor_destructor(Actor this)
 // set definition
 void Actor_setDefinition(Actor this, void* actorDefinition)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::setDefinition: null this");
+	ASSERT(this, "Actor::setDefinition: null this");
 	ASSERT(actorDefinition, "Actor::setDefinition: null definition");
 
 	// save definition
@@ -134,7 +134,7 @@ void Actor_setDefinition(Actor this, void* actorDefinition)
 //set class's local position
 void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::setLocalPosition: null this");
+	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	VBVec3D displacement = this->transform.localPosition;
 	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, position);
@@ -157,7 +157,7 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 
 void Actor_syncWithBody(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::syncPositionWithBody: null this");
+	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = {0, 0, 0};
@@ -223,7 +223,7 @@ void Actor_syncWithBody(Actor this)
 // graphically refresh of characters that are visible
 void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::transform: null this");
+	ASSERT(this, "Actor::transform: null this");
 
 	// save previous position
 	if(this->collisionSolver)
@@ -257,7 +257,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 
 void Actor_resume(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::resume: null this");
+	ASSERT(this, "Actor::resume: null this");
 
 	__CALL_BASE_METHOD(AnimatedEntity, resume, this);
 
@@ -271,7 +271,7 @@ void Actor_resume(Actor this)
 // execute character's logic
 void Actor_update(Actor this, u32 elapsedTime)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::update: null this");
+	ASSERT(this, "Actor::update: null this");
 
 	// call base
 	__CALL_BASE_METHOD(AnimatedEntity, update, this, elapsedTime);
@@ -285,7 +285,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 // update colliding entities
 void Actor_resetCollisionStatus(Actor this, u16 movementAxis)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::updateCollisionStatus: null this");
+	ASSERT(this, "Actor::updateCollisionStatus: null this");
 
 	if(this->collisionSolver)
 	{
@@ -296,7 +296,7 @@ void Actor_resetCollisionStatus(Actor this, u16 movementAxis)
 // retrieve friction of colliding objects
 void Actor_updateSurroundingFriction(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::updateSurroundingFriction: null this");
+	ASSERT(this, "Actor::updateSurroundingFriction: null this");
 	ASSERT(this->body, "Actor::updateSurroundingFriction: null body");
 
 	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
@@ -317,7 +317,7 @@ void Actor_updateSurroundingFriction(Actor this)
 // change direction
 void Actor_moveOppositeDirection(Actor this, u16 axis)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::moveOpositeDirecion: null this");
+	ASSERT(this, "Actor::moveOpositeDirecion: null this");
 
 	switch(axis)
 	{
@@ -341,7 +341,7 @@ void Actor_moveOppositeDirection(Actor this, u16 axis)
 // whether changed direction in the last cycle or not
 int Actor_changedDirection(Actor this, int axis)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::changedDirection: null this");
+	ASSERT(this, "Actor::changedDirection: null this");
 
 	switch(axis)
 	{
@@ -367,7 +367,7 @@ int Actor_changedDirection(Actor this, int axis)
 // change direction over axis
 void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::changeDirectionOnAxis: null this");
+	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
 
 	// save current direction
 	this->previousDirection = this->direction;
@@ -412,7 +412,7 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 // check if gravity must apply to this actor
 u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getAxisAllowedForMovement: null this");
+	ASSERT(this, "Actor::getAxisAllowedForMovement: null this");
 
 	if(this->collisionSolver)
 	{
@@ -434,7 +434,7 @@ u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration
 // retrieve axis free for movement
 u16 Actor_getAxisFreeForMovement(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getAxisFreeForMovement: null this");
+	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
 
 	u16 movingState = Body_getMovementOverAllAxis(this->body);
 
@@ -443,7 +443,7 @@ u16 Actor_getAxisFreeForMovement(Actor this)
 
 bool Actor_processCollision(Actor this, Shape shape, VirtualList collidingShapes)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::processCollision: null this");
+	ASSERT(this, "Actor::processCollision: null this");
 	ASSERT(this->body, "Actor::processCollision: null body");
 	ASSERT(collidingShapes, "Actor::processCollision: collidingShapes");
 
@@ -473,7 +473,7 @@ bool Actor_processCollision(Actor this, Shape shape, VirtualList collidingShapes
 // process a telegram
 bool Actor_handleMessage(Actor this, Telegram telegram)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::handleMessage: null this");
+	ASSERT(this, "Actor::handleMessage: null this");
 
 	if(!this->stateMachine || !StateMachine_handleMessage(this->stateMachine, telegram))
 	{
@@ -515,7 +515,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 // retrieve state machine
 StateMachine Actor_getStateMachine(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getStateMachine: null this");
+	ASSERT(this, "Actor::getStateMachine: null this");
 
 	return this->stateMachine;
 }
@@ -523,7 +523,7 @@ StateMachine Actor_getStateMachine(Actor this)
 // stop movement completely
 void Actor_stopAllMovement(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::stopMovement: null this");
+	ASSERT(this, "Actor::stopMovement: null this");
 
 	Actor_stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
 }
@@ -531,7 +531,7 @@ void Actor_stopAllMovement(Actor this)
 // stop movement completely
 void Actor_stopMovement(Actor this, int axis)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::stopMovement: null this");
+	ASSERT(this, "Actor::stopMovement: null this");
 
 	if(this->body)
 	{
@@ -541,7 +541,7 @@ void Actor_stopMovement(Actor this, int axis)
 
 void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::addForce: null this");
+	ASSERT(this, "Actor::addForce: null this");
 	ASSERT(this->body, "Actor::addForce: null body");
 
 	Acceleration acceleration =
@@ -574,7 +574,7 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 
 void Actor_moveUniformly(Actor this, Velocity* velocity)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::moveUniformly: null this");
+	ASSERT(this, "Actor::moveUniformly: null this");
 
 	// move me with physics
 	if(this->body)
@@ -588,7 +588,7 @@ void Actor_moveUniformly(Actor this, Velocity* velocity)
 // does it move?
 bool Actor_moves(Actor this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::moves: null this");
+	ASSERT(this, "Actor::moves: null this");
 
 	return true;
 }
@@ -596,21 +596,21 @@ bool Actor_moves(Actor this __attribute__ ((unused)))
 // is it moving?
 bool Actor_isMoving(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::isMoving: null this");
+	ASSERT(this, "Actor::isMoving: null this");
 
 	return this->body ? Body_getMovementOverAllAxis(this->body) : 0;
 }
 
 u16 Actor_getMovementState(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getMovementState: null this");
+	ASSERT(this, "Actor::getMovementState: null this");
 
 	return Body_getMovementOverAllAxis(this->body);
 }
 
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::changeEnvironment: null this");
+	ASSERT(this, "Actor::changeEnvironment: null this");
 
 	__CALL_BASE_METHOD(AnimatedEntity, changeEnvironment, this, environmentTransform);
 
@@ -623,7 +623,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 // set position
 void Actor_setPosition(Actor this, const VBVec3D* position)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::setPosition: null this");
+	ASSERT(this, "Actor::setPosition: null this");
 
 	VBVec3D displacement = this->transform.globalPosition;
 	this->transform.globalPosition = *position;
@@ -650,14 +650,14 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 // retrieve global position
 const VBVec3D* Actor_getPosition(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getPosition: null this");
+	ASSERT(this, "Actor::getPosition: null this");
 
 	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getPosition, this);
 }
 
 int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getAxisAllowedForBouncing: null this");
+	ASSERT(this, "Actor::getAxisAllowedForBouncing: null this");
 
 	return __X_AXIS | __Y_AXIS | __Z_AXIS;
 }
@@ -665,7 +665,7 @@ int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
 // start bouncing after collision with another Entity
 void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::bounce: null this");
+	ASSERT(this, "Actor::bounce: null this");
 
 	if(axisOfCollision)
 	{
@@ -679,7 +679,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 
 void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject, VBVec3D displacement)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::alignTo: null this");
+	ASSERT(this, "Actor::alignTo: null this");
 
 	int axisOfCollision = __VIRTUAL_CALL(Shape, getAxisOfCollision, shape, collidingShape, Body_getLastDisplacement(this->body), *CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
 
@@ -692,7 +692,7 @@ void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerO
 // take hit
 void Actor_takeHitFrom(Actor this, Actor other)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::takeHitFrom: null this");
+	ASSERT(this, "Actor::takeHitFrom: null this");
 	ASSERT(__SAFE_CAST(Actor, other), "Actor::takeHitFrom: other is not actor");
 
 	if(other->body)
@@ -704,7 +704,7 @@ void Actor_takeHitFrom(Actor this, Actor other)
 // get elasticity
 fix19_13 Actor_getElasticity(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getElasticity: null this");
+	ASSERT(this, "Actor::getElasticity: null this");
 
 	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
 
@@ -714,13 +714,13 @@ fix19_13 Actor_getElasticity(Actor this)
 // get velocity
 Velocity Actor_getVelocity(Actor this)
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::getVelocity: null this");
+	ASSERT(this, "Actor::getVelocity: null this");
 
 	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getVelocity, this);
 }
 
 void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), VirtualList collidingShapes __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Actor, this), "Actor::collisionsProcessingDone: null this");
+	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }
 

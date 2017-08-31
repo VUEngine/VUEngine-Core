@@ -58,7 +58,7 @@ __CLASS_NEW_END(Circle, owner);
 // class's constructor
 static void Circle_constructor(Circle this, SpatialObject owner)
 {
-	ASSERT(__SAFE_CAST(Circle, this), "Circle::constructor: null this");
+	ASSERT(this, "Circle::constructor: null this");
 
 	__CONSTRUCT_BASE(Shape, owner);
 
@@ -69,7 +69,7 @@ static void Circle_constructor(Circle this, SpatialObject owner)
 // class's destructor
 void Circle_destructor(Circle this)
 {
-	ASSERT(__SAFE_CAST(Circle, this), "Circle::destructor: null this");
+	ASSERT(this, "Circle::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor

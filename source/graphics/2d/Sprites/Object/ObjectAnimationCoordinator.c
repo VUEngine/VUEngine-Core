@@ -60,7 +60,7 @@ __CLASS_NEW_END(ObjectAnimationCoordinator, charSetDefinition);
  */
 void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
-	ASSERT(__SAFE_CAST(ObjectAnimationCoordinator, this), "ObjectAnimationCoordinator::constructor: null this");
+	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
 
 	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
 }
@@ -75,7 +75,7 @@ void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, con
  */
 void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
 {
-	ASSERT(__SAFE_CAST(ObjectAnimationCoordinator, this), "ObjectAnimationCoordinator::destructor: null this");
+	ASSERT(this, "ObjectAnimationCoordinator::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -93,7 +93,7 @@ void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
  */
 void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
-	ASSERT(__SAFE_CAST(ObjectAnimationCoordinator, this), "ObjectAnimationCoordinator::addAnimationController: null this");
+	ASSERT(this, "ObjectAnimationCoordinator::addAnimationController: null this");
 	ASSERT(animationController, "ObjectAnimationCoordinator::addAnimationController: null animationController");
 	ASSERT(!VirtualList_find(this->animationControllers, animationController), "ObjectAnimationCoordinator::addAnimationController: animationController already registered");
 
@@ -116,7 +116,7 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
  */
 void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
-	ASSERT(__SAFE_CAST(ObjectAnimationCoordinator, this), "ObjectAnimationCoordinator::removeAnimationController: null this");
+	ASSERT(this, "ObjectAnimationCoordinator::removeAnimationController: null this");
 	ASSERT(this->animationControllers->head, "ObjectAnimationCoordinator::removeAnimationController: null this");
 
 	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));

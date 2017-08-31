@@ -87,7 +87,7 @@ __SINGLETON(TimerManager);
  */
 static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager this)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::constructor: null this");
+	ASSERT(this, "TimerManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -108,7 +108,7 @@ static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager thi
  */
 void TimerManager_destructor(TimerManager this)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::destructor: null this");
+	ASSERT(this, "TimerManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -124,7 +124,7 @@ void TimerManager_destructor(TimerManager this)
  */
 void TimerManager_initialize(TimerManager this)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::initialize: null this");
+	ASSERT(this, "TimerManager::initialize: null this");
 
 	TimerManager_setFrequency(this, __TIMER_100US);
 	TimerManager_setTime(this, __TIME_MS(__TIMER_RESOLUTION));
@@ -144,7 +144,7 @@ void TimerManager_initialize(TimerManager this)
  */
 static void TimerManager_enableInterrupt(TimerManager this, bool flag)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::enable: null this");
+	ASSERT(this, "TimerManager::enable: null this");
 
 	if(flag)
 	{
@@ -169,7 +169,7 @@ static void TimerManager_enableInterrupt(TimerManager this, bool flag)
  */
 void TimerManager_enable(TimerManager this, bool flag)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::enable: null this");
+	ASSERT(this, "TimerManager::enable: null this");
 
 	if(flag)
 	{
@@ -230,7 +230,7 @@ void TimerManager_interruptHandler(void)
  */
 u32 TimerManager_getMillisecondsElapsed(TimerManager this)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::getMillisecondsElapsed: null this");
+	ASSERT(this, "TimerManager::getMillisecondsElapsed: null this");
 
 	return this->milliseconds;
 }
@@ -245,7 +245,7 @@ u32 TimerManager_getMillisecondsElapsed(TimerManager this)
  */
 u32 TimerManager_resetMilliseconds(TimerManager this)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::resetMilliseconds: null this");
+	ASSERT(this, "TimerManager::resetMilliseconds: null this");
 
 	u32 milliseconds = this->milliseconds;
 
@@ -265,7 +265,7 @@ u32 TimerManager_resetMilliseconds(TimerManager this)
  */
 void TimerManager_setTime(TimerManager this __attribute__ ((unused)), u16 time)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::setTime: null this");
+	ASSERT(this, "TimerManager::setTime: null this");
 
 	_hardwareRegisters[__TLR] = (time & 0xFF);
 	_hardwareRegisters[__THR] = (time >> 8);
@@ -282,7 +282,7 @@ void TimerManager_setTime(TimerManager this __attribute__ ((unused)), u16 time)
  */
 void TimerManager_setFrequency(TimerManager this, int frequency)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::setFrequency: null this");
+	ASSERT(this, "TimerManager::setFrequency: null this");
 
 	this->tcrValue = (this->tcrValue & 0x0F) | frequency;
 
@@ -301,7 +301,7 @@ void TimerManager_setFrequency(TimerManager this, int frequency)
  */
 int TimerManager_getStat(TimerManager this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::getStat: null this");
+	ASSERT(this, "TimerManager::getStat: null this");
 
 	return (_hardwareRegisters[__TCR] & __TIMER_ZSTAT);
 }
@@ -316,7 +316,7 @@ int TimerManager_getStat(TimerManager this __attribute__ ((unused)))
  */
 void TimerManager_clearStat(TimerManager this)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "TimerManager::clearStat: null this");
+	ASSERT(this, "TimerManager::clearStat: null this");
 
 	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_ZCLR);
 }
@@ -332,7 +332,7 @@ void TimerManager_clearStat(TimerManager this)
  */
 void TimerManager_wait(TimerManager this, u32 milliSeconds)
 {
-	ASSERT(__SAFE_CAST(TimerManager, this), "ClockManager::wait: null this");
+	ASSERT(this, "ClockManager::wait: null this");
 
 	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// making the last assignment invalid

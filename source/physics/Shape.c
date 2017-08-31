@@ -56,7 +56,7 @@ __CLASS_DEFINITION(Shape, Object);
  */
 void Shape_constructor(Shape this, SpatialObject owner)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::constructor: null this");
+	ASSERT(this, "Shape::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -89,7 +89,7 @@ void Shape_constructor(Shape this, SpatialObject owner)
  */
 void Shape_destructor(Shape this)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::destructor: null this");
+	ASSERT(this, "Shape::destructor: null this");
 
 	if(this->events)
 	{
@@ -113,7 +113,7 @@ void Shape_destructor(Shape this)
  */
 SpatialObject Shape_getOwner(Shape this)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::getOwner: null this");
+	ASSERT(this, "Shape::getOwner: null this");
 
 	return this->owner;
 }
@@ -130,7 +130,7 @@ SpatialObject Shape_getOwner(Shape this)
  */
 void Shape_setDisplacement(Shape this, VBVec3D displacement)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::setDisplacement: null this");
+	ASSERT(this, "Shape::setDisplacement: null this");
 
 	this->displacement = displacement;
 }
@@ -147,7 +147,7 @@ void Shape_setDisplacement(Shape this, VBVec3D displacement)
  */
 VBVec3D Shape_getDisplacement(Shape this)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::setDisplacement: null this");
+	ASSERT(this, "Shape::setDisplacement: null this");
 
 	return this->displacement;
 }
@@ -163,7 +163,7 @@ VBVec3D Shape_getDisplacement(Shape this)
  */
 void Shape_setActive(Shape this, bool active)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::setActive: null this");
+	ASSERT(this, "Shape::setActive: null this");
 
 	if(active)
 	{
@@ -187,7 +187,7 @@ void Shape_setActive(Shape this, bool active)
  */
 bool Shape_isChecked(Shape this)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::isChecked: null this");
+	ASSERT(this, "Shape::isChecked: null this");
 
 	return this->checked;
 }
@@ -203,7 +203,7 @@ bool Shape_isChecked(Shape this)
  */
 void Shape_setChecked(Shape this, bool checked)
 {
-	ASSERT(__SAFE_CAST(Shape, this), "Shape::checked: null this");
+	ASSERT(this, "Shape::checked: null this");
 
 	this->checked = checked;
 }

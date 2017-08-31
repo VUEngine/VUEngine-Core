@@ -89,7 +89,7 @@ __CLASS_NEW_END(ParticleRemover);
  */
 static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this)
 {
-	ASSERT(__SAFE_CAST(ParticleRemover, this), "ParticleRemover::constructor: null this");
+	ASSERT(this, "ParticleRemover::constructor: null this");
 
 	// construct base
 	__CONSTRUCT_BASE(Object);
@@ -109,7 +109,7 @@ static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemov
  */
 void ParticleRemover_destructor(ParticleRemover this)
 {
-	ASSERT(__SAFE_CAST(ParticleRemover, this), "ParticleRemover::destructor: null this");
+	ASSERT(this, "ParticleRemover::destructor: null this");
 
 	ParticleRemover_reset(this);
 
@@ -130,7 +130,7 @@ void ParticleRemover_destructor(ParticleRemover this)
  */
 void ParticleRemover_reset(ParticleRemover this)
 {
-	ASSERT(__SAFE_CAST(ParticleRemover, this), "ParticleRemover::reset: null this");
+	ASSERT(this, "ParticleRemover::reset: null this");
 
 	VirtualNode node = this->particlesLists->head;
 
@@ -165,7 +165,7 @@ void ParticleRemover_reset(ParticleRemover this)
  */
 void ParticleRemover_update(ParticleRemover this)
 {
-	ASSERT(__SAFE_CAST(ParticleRemover, this), "ParticleRemover::update: null this");
+	ASSERT(this, "ParticleRemover::update: null this");
 
 	if(!this->particlesLists->head)
 	{
@@ -212,7 +212,7 @@ void ParticleRemover_update(ParticleRemover this)
  */
 void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles)
 {
-	ASSERT(__SAFE_CAST(ParticleRemover, this), "ParticleRemover::registerParticles: null this");
+	ASSERT(this, "ParticleRemover::registerParticles: null this");
 
 	if(__SAFE_CAST(VirtualList, particles))
 	{
@@ -241,7 +241,7 @@ void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles
  */
 void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles)
 {
-	ASSERT(__SAFE_CAST(ParticleRemover, this), "ParticleRemover::registerParticle: null this");
+	ASSERT(this, "ParticleRemover::registerParticle: null this");
 
 	this->removalDelayCycles = removalDelayCycles;
 }

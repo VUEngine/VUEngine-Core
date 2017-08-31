@@ -58,7 +58,7 @@ __CLASS_NEW_END(BgmapAnimationCoordinator, charSetDefinition);
  */
 void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimationCoordinator, this), "BgmapAnimationCoordinator::constructor: null this");
+	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
 
 	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
 }
@@ -73,7 +73,7 @@ void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const
  */
 void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimationCoordinator, this), "BgmapAnimationCoordinator::destructor: null this");
+	ASSERT(this, "BgmapAnimationCoordinator::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -91,7 +91,7 @@ void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
  */
 void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimationCoordinator, this), "BgmapAnimationCoordinator::addAnimationController: null this");
+	ASSERT(this, "BgmapAnimationCoordinator::addAnimationController: null this");
 	ASSERT(animationController, "BgmapAnimationCoordinator::addAnimationController: null animationController");
 	ASSERT(!VirtualList_find(this->animationControllers, animationController), "BgmapAnimationCoordinator::addAnimationController: animationController already registered");
 
@@ -125,7 +125,7 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
  */
 void BgmapAnimationCoordinator_removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
 {
-	ASSERT(__SAFE_CAST(BgmapAnimationCoordinator, this), "BgmapAnimationCoordinator::removeAnimationController: null this");
+	ASSERT(this, "BgmapAnimationCoordinator::removeAnimationController: null this");
 
 	VirtualList_removeElement(this->animationControllers, animationController);
 }

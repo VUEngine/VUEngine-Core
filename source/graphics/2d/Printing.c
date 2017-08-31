@@ -108,7 +108,7 @@ __SINGLETON(Printing);
  */
 static void __attribute__ ((noinline)) Printing_constructor(Printing this)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::constructor: null this");
+	ASSERT(this, "Printing::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -130,7 +130,7 @@ static void __attribute__ ((noinline)) Printing_constructor(Printing this)
  */
 void Printing_destructor(Printing this)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::destructor: null this");
+	ASSERT(this, "Printing::destructor: null this");
 
 	__DELETE(this->fonts);
 
@@ -149,7 +149,7 @@ void Printing_destructor(Printing this)
  */
 void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((unused)), int textLayer)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::render: null this");
+	ASSERT(this, "Printing::render: null this");
 
 	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
@@ -174,7 +174,7 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
  */
 void Printing_reset(Printing this)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::destructor: null this");
+	ASSERT(this, "Printing::destructor: null this");
 
 	VirtualNode node = VirtualList_begin(this->fonts);
 
@@ -200,7 +200,7 @@ void Printing_reset(Printing this)
  */
 void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition** fontDefinitions)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::loadFonts: null this");
+	ASSERT(this, "Printing::loadFonts: null this");
 
 	// empty list of registered fonts
 	Printing_reset(this);
@@ -243,7 +243,7 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
  */
 void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::destructor: null this");
+	ASSERT(this, "Printing::destructor: null this");
 
 	Mem_copyBYTE(
 		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_DATA.offset << 4)),
@@ -262,7 +262,7 @@ void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute
  */
 void Printing_setDebugMode(Printing this)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::setDebugMode: null this");
+	ASSERT(this, "Printing::setDebugMode: null this");
 
 	Printing_resetWorldCoordinates(this);
 	Printing_loadDebugFont(this);
@@ -279,7 +279,7 @@ void Printing_setDebugMode(Printing this)
  */
 void Printing_setPalette(Printing this, u8 palette)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::destructor: null this");
+	ASSERT(this, "Printing::destructor: null this");
 
 	if(palette < 4)
 	{
@@ -297,7 +297,7 @@ void Printing_setPalette(Printing this, u8 palette)
  */
 void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::clear: null this");
+	ASSERT(this, "Printing::clear: null this");
 
 	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode? __EXCEPTIONS_BGMAP : BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
 
@@ -317,7 +317,7 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
  */
 FontData* Printing_getFontByName(Printing this, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::getFontByName: null this");
+	ASSERT(this, "Printing::getFontByName: null this");
 
 	FontData* result = NULL;
 
@@ -372,7 +372,7 @@ FontData* Printing_getFontByName(Printing this, const char* font)
  */
 static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, const char* string, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::out: null this");
+	ASSERT(this, "Printing::out: null this");
 
 	u32 i = 0;
 	u32 position = 0;
@@ -474,7 +474,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
  */
 void __attribute__ ((noinline)) Printing_int(Printing this, int value, u8 x, u8 y, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::int: null this");
+	ASSERT(this, "Printing::int: null this");
 
 	if(value < 0)
 	{
@@ -504,7 +504,7 @@ void __attribute__ ((noinline)) Printing_int(Printing this, int value, u8 x, u8 
  */
 void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::destructor: null this");
+	ASSERT(this, "Printing::destructor: null this");
 
 	Printing_out(this, x,y, Utilities_itoa((int)(value), 16, length), font);
 }
@@ -523,7 +523,7 @@ void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, u8 x, u8
  */
 void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x, u8 y, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::float: null this");
+	ASSERT(this, "Printing::float: null this");
 
 	int sign = 1;
 	int i = 0;
@@ -587,7 +587,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
  */
 void __attribute__ ((noinline)) Printing_text(Printing this, const char* string, int x, int y, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::text: null this");
+	ASSERT(this, "Printing::text: null this");
 
 	Printing_out(this, x, y, string, font);
 }
@@ -604,7 +604,7 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
  */
 void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::setWorldCoordinates: null this");
+	ASSERT(this, "Printing::setWorldCoordinates: null this");
 
 	this->gx = 0 < gx && gx < __SCREEN_WIDTH ? gx : 0;
 	this->gy = 0 < gy && gy < __SCREEN_HEIGHT ? gy : 0;
@@ -620,7 +620,7 @@ void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
  */
 void Printing_resetWorldCoordinates(Printing this)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::destructor: null this");
+	ASSERT(this, "Printing::destructor: null this");
 
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
@@ -639,7 +639,7 @@ void Printing_resetWorldCoordinates(Printing this)
  */
 int Printing_getPixelCount(Printing this)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::getPixelCount: null this");
+	ASSERT(this, "Printing::getPixelCount: null this");
 
 	return (__SCREEN_WIDTH - this->gx) * (__SCREEN_HEIGHT - this->gy);
 }
@@ -657,7 +657,7 @@ int Printing_getPixelCount(Printing this)
  */
 Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
-	ASSERT(__SAFE_CAST(Printing, this), "Printing::getTextSize: null this");
+	ASSERT(this, "Printing::getTextSize: null this");
 
 	Size size = {0, 0, 0};
 	u16 i = 0, currentLineLength = 0;

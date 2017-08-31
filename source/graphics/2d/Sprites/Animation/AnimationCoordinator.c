@@ -57,7 +57,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
  */
 void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
-	ASSERT(__SAFE_CAST(AnimationCoordinator, this), "AnimationCoordinator::constructor: null this");
+	ASSERT(this, "AnimationCoordinator::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -75,7 +75,7 @@ void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDe
  */
 void AnimationCoordinator_destructor(AnimationCoordinator this)
 {
-	ASSERT(__SAFE_CAST(AnimationCoordinator, this), "AnimationCoordinator::destructor: null this");
+	ASSERT(this, "AnimationCoordinator::destructor: null this");
 	ASSERT(this->animationControllers, "AnimationCoordinator::destructor: null animationControllers");
 
 	__DELETE(this->animationControllers);
@@ -98,7 +98,7 @@ void AnimationCoordinator_destructor(AnimationCoordinator this)
  */
 const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoordinator this)
 {
-	ASSERT(__SAFE_CAST(AnimationCoordinator, this), "AnimationCoordinator::getCharSetDefinition: null this");
+	ASSERT(this, "AnimationCoordinator::getCharSetDefinition: null this");
 
 	return this->charSetDefinition;
 }
@@ -118,7 +118,7 @@ const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoor
  */
 bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
 {
-	ASSERT(__SAFE_CAST(AnimationCoordinator, this), "AnimationCoordinator::playAnimation: null this");
+	ASSERT(this, "AnimationCoordinator::playAnimation: null this");
 
 	if(this->animationControllers->head)
 	{

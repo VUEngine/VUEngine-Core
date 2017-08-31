@@ -83,7 +83,7 @@ __SINGLETON(StageEditorState);
  */
 static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorState this)
 {
-	ASSERT(__SAFE_CAST(StageEditorState, this), "StageEditorState::constructor: null this");
+	ASSERT(this, "StageEditorState::constructor: null this");
 
 	__CONSTRUCT_BASE(GameState);
 }
@@ -98,7 +98,7 @@ static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorS
  */
 static void StageEditorState_destructor(StageEditorState this)
 {
-	ASSERT(__SAFE_CAST(StageEditorState, this), "StageEditorState::destructor: null this");
+	ASSERT(this, "StageEditorState::destructor: null this");
 
 	// destroy base
 	__SINGLETON_DESTROY;
@@ -115,7 +115,7 @@ static void StageEditorState_destructor(StageEditorState this)
  */
 static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(StageEditorState, this), "StageEditorState::enter: null this");
+	ASSERT(this, "StageEditorState::enter: null this");
 
 	__CALL_BASE_METHOD(GameState, enter, this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
@@ -133,7 +133,7 @@ static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)
  */
 static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(StageEditorState, this), "StageEditorState::execute: null this");
+	ASSERT(this, "StageEditorState::execute: null this");
 
 	StageEditor_update(StageEditor_getInstance());
 }
@@ -149,7 +149,7 @@ static void StageEditorState_execute(StageEditorState this __attribute__ ((unuse
  */
 static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(StageEditorState, this), "StageEditorState::exit: null this");
+	ASSERT(this, "StageEditorState::exit: null this");
 
 	StageEditor_hide(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
@@ -167,7 +167,7 @@ static void StageEditorState_exit(StageEditorState this __attribute__ ((unused))
  */
 void StageEditorState_processUserInput(StageEditorState this __attribute__ ((unused)), UserInput userInput)
 {
-	ASSERT(__SAFE_CAST(StageEditorState, this), "StageEditorState::processUserInput: null this");
+	ASSERT(this, "StageEditorState::processUserInput: null this");
 
 	StageEditor_processUserInput(StageEditor_getInstance(), userInput.pressedKey);
 }

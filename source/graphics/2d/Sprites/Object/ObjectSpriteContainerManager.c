@@ -84,7 +84,7 @@ __SINGLETON(ObjectSpriteContainerManager);
  */
 void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::constructor: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -106,7 +106,7 @@ void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectS
  */
 void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::destructor: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::destructor: null this");
 
 	ObjectSpriteContainerManager_reset(this);
 
@@ -124,7 +124,7 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
  */
 void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::reset: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::reset: null this");
 
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
@@ -162,7 +162,7 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
  */
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
 
 	// check if there is need to build the containers
 	int i = __TOTAL_OBJECT_SEGMENTS;
@@ -214,7 +214,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
  */
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: null this");
 	ASSERT((unsigned)segment < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: invalid segment");
 
 	return (unsigned)segment < __TOTAL_OBJECT_SEGMENTS? this->objectSpriteContainers[segment]: NULL;
@@ -232,7 +232,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  */
 void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
 	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
@@ -276,7 +276,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
  */
 void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::position: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
 
 	ASSERT(spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::position: invalid spt");
 
@@ -303,7 +303,7 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
  */
 void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainerManager, this), "ObjectSpriteContainerManager::print: null this");
+	ASSERT(this, "ObjectSpriteContainerManager::print: null this");
 
 	Printing_text(Printing_getInstance(), "OBJECTS' USAGE", x, y++, NULL);
 	int totalUsedObjects = 0;

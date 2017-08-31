@@ -84,7 +84,7 @@ __CLASS_NEW_END(ObjectSprite, objectSpriteDefinition, owner);
  */
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::constructor: null this");
+	ASSERT(this, "ObjectSprite::constructor: null this");
 
 	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)objectSpriteDefinition, owner);
 
@@ -120,7 +120,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
  */
 void ObjectSprite_destructor(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::destructor: null this");
+	ASSERT(this, "ObjectSprite::destructor: null this");
 
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
@@ -152,7 +152,7 @@ void ObjectSprite_destructor(ObjectSprite this)
  */
 void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::setDirection: null this");
+	ASSERT(this, "ObjectSprite::setDirection: null this");
 
 	switch(axis)
 	{
@@ -196,7 +196,7 @@ void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
  */
 VBVec2D ObjectSprite_getPosition(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::getPosition: null this");
+	ASSERT(this, "ObjectSprite::getPosition: null this");
 
 	return this->position;
 }
@@ -212,7 +212,7 @@ VBVec2D ObjectSprite_getPosition(ObjectSprite this)
  */
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::setPosition: null this");
+	ASSERT(this, "ObjectSprite::setPosition: null this");
 
 	this->position = *position;
 
@@ -230,7 +230,7 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
  */
 void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::position: null this");
+	ASSERT(this, "ObjectSprite::position: null this");
 
 	VBVec3D position3D = *position;
 
@@ -256,7 +256,7 @@ void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
  */
 static void ObjectSprite_checkForContainer(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::checkForContainer: null this");
+	ASSERT(this, "ObjectSprite::checkForContainer: null this");
 
 	if(0 > this->objectIndex)
 	{
@@ -277,7 +277,7 @@ static void ObjectSprite_checkForContainer(ObjectSprite this)
  */
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::calculateParallax: null this");
+	ASSERT(this, "ObjectSprite::calculateParallax: null this");
 
 	this->position.z = z - _screenPosition->z;
 	this->position.parallax = Optics_calculateParallax(this->position.x, z);
@@ -293,7 +293,7 @@ void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z)
  */
 void ObjectSprite_render(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::render: null this");
+	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 //	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
@@ -378,7 +378,7 @@ void ObjectSprite_render(ObjectSprite this)
  */
 s16 ObjectSprite_getTotalObjects(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::getTotalObjects: null this");
+	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
 	return this->totalObjects;
@@ -396,7 +396,7 @@ s16 ObjectSprite_getTotalObjects(ObjectSprite this)
  */
 s16 ObjectSprite_getObjectIndex(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::getObjectIndex: null this");
+	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
 
 	return this->objectIndex;
 }
@@ -412,7 +412,7 @@ s16 ObjectSprite_getObjectIndex(ObjectSprite this)
  */
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::setObjectIndex: null this");
+	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
 	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
 
 	int previousObjectIndex = this->objectIndex;
@@ -466,7 +466,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
  */
 u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::getWorldLayer: null this");
+	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
 	return this->objectSpriteContainer ? __VIRTUAL_CALL(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)) : 0;
@@ -483,7 +483,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
  */
 void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::addDisplacement: null this");
+	ASSERT(this, "ObjectSprite::addDisplacement: null this");
 
 	this->position.x += displacement->x;
 	this->position.y += displacement->y;
@@ -503,7 +503,7 @@ void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement
  */
 void ObjectSprite_setMode(ObjectSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::setMode: null this");
+	ASSERT(this, "ObjectSprite::setMode: null this");
 }
 
 /**
@@ -516,7 +516,7 @@ void ObjectSprite_setMode(ObjectSprite this __attribute__ ((unused)), u16 displa
  */
 void ObjectSprite_invalidateObjectSpriteContainer(ObjectSprite this)
 {
-	ASSERT(__SAFE_CAST(ObjectSprite, this), "ObjectSprite::invalidateObjectSpriteContainer: null this");
+	ASSERT(this, "ObjectSprite::invalidateObjectSpriteContainer: null this");
 
 	this->objectSpriteContainer = NULL;
 }

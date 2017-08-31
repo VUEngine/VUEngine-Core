@@ -81,7 +81,7 @@ __CLASS_NEW_END(Telegram, sender, receiver, message, extraInfo);
  */
 static void Telegram_constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo)
 {
-	ASSERT(__SAFE_CAST(Telegram, this), "Telegram::constructor: null this");
+	ASSERT(this, "Telegram::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -103,7 +103,7 @@ static void Telegram_constructor(Telegram this, void* sender, void* receiver, in
  */
 void Telegram_destructor(Telegram this)
 {
-	ASSERT(__SAFE_CAST(Telegram, this), "Telegram::destructor: null this");
+	ASSERT(this, "Telegram::destructor: null this");
 
 	this->sender = NULL;
 
@@ -126,7 +126,7 @@ void Telegram_destructor(Telegram this)
  */
 void* Telegram_getSender(Telegram this)
 {
-	ASSERT(__SAFE_CAST(Telegram, this), "Telegram::getSender: null this");
+	ASSERT(this, "Telegram::getSender: null this");
 
 	return this->sender;
 }
@@ -143,7 +143,7 @@ void* Telegram_getSender(Telegram this)
  */
 void* Telegram_getReceiver(Telegram this)
 {
-	ASSERT(__SAFE_CAST(Telegram, this), "Telegram::getReceiver: null this");
+	ASSERT(this, "Telegram::getReceiver: null this");
 
 	return this->receiver;
 }
@@ -160,7 +160,7 @@ void* Telegram_getReceiver(Telegram this)
  */
 int Telegram_getMessage(Telegram this)
 {
-	ASSERT(__SAFE_CAST(Telegram, this), "Telegram::getMessage: null this");
+	ASSERT(this, "Telegram::getMessage: null this");
 
 	return this->message;
 }
@@ -177,7 +177,7 @@ int Telegram_getMessage(Telegram this)
  */
 void* Telegram_getExtraInfo(Telegram this)
 {
-	ASSERT(__SAFE_CAST(Telegram, this), "Telegram::getExtraInfo: null this");
+	ASSERT(this, "Telegram::getExtraInfo: null this");
 
 	return this->extraInfo;
 }

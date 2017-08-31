@@ -72,7 +72,7 @@ __CLASS_NEW_END(Polyhedron);
  */
 static void Polyhedron_constructor(Polyhedron this)
 {
-	ASSERT(__SAFE_CAST(Polyhedron, this), "Polyhedron::constructor: null this");
+	ASSERT(this, "Polyhedron::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
@@ -91,7 +91,7 @@ static void Polyhedron_constructor(Polyhedron this)
  */
 void Polyhedron_destructor(Polyhedron this)
 {
-	ASSERT(__SAFE_CAST(Polyhedron, this), "Polyhedron::destructor: null this");
+	ASSERT(this, "Polyhedron::destructor: null this");
 
 	Polyhedron_hide(this);
 
@@ -128,7 +128,7 @@ void Polyhedron_destructor(Polyhedron this)
  */
 void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
 {
-	ASSERT(__SAFE_CAST(Polyhedron, this), "Polyhedron::addVertex: null this");
+	ASSERT(this, "Polyhedron::addVertex: null this");
 
 	// create the vertex
 	VBVec3D* vertex = __NEW_BASIC(VBVec3D);
@@ -157,7 +157,7 @@ void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
  */
 void Polyhedron_show(Polyhedron this)
 {
-	ASSERT(__SAFE_CAST(Polyhedron, this), "Polyhedron::show: null this");
+	ASSERT(this, "Polyhedron::show: null this");
 
 	PolyhedronManager_register(PolyhedronManager_getInstance(), this);
 }
@@ -172,7 +172,7 @@ void Polyhedron_show(Polyhedron this)
  */
 void Polyhedron_hide(Polyhedron this)
 {
-	ASSERT(__SAFE_CAST(Polyhedron, this), "Polyhedron::hide: null this");
+	ASSERT(this, "Polyhedron::hide: null this");
 
 	PolyhedronManager_remove(PolyhedronManager_getInstance(), this);
 }
@@ -188,7 +188,7 @@ void Polyhedron_hide(Polyhedron this)
  */
 void Polyhedron_draw(Polyhedron this, int calculateParallax)
 {
-	ASSERT(__SAFE_CAST(Polyhedron, this), "Polyhedron::draw: null this");
+	ASSERT(this, "Polyhedron::draw: null this");
 
 	int color = __COLOR_BRIGHT_RED;
 

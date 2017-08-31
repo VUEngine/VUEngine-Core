@@ -70,7 +70,7 @@ __CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
  */
 static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
-	ASSERT(__SAFE_CAST(ObjectTexture, this), "ObjectTexture::constructor: null this");
+	ASSERT(this, "ObjectTexture::constructor: null this");
 
 	// construct base object
 	__CONSTRUCT_BASE(Texture, (TextureDefinition*)objectTextureDefinition, id);
@@ -89,7 +89,7 @@ static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinitio
  */
 void ObjectTexture_destructor(ObjectTexture this)
 {
-	ASSERT(__SAFE_CAST(ObjectTexture, this), "ObjectTexture::destructor: null this");
+	ASSERT(this, "ObjectTexture::destructor: null this");
 
 	this->objectIndex = -1;
 
@@ -108,7 +108,7 @@ void ObjectTexture_destructor(ObjectTexture this)
  */
 void ObjectTexture_write(ObjectTexture this)
 {
-	ASSERT(__SAFE_CAST(ObjectTexture, this), "ObjectTexture::write: null this");
+	ASSERT(this, "ObjectTexture::write: null this");
 
 	if(0 > this->objectIndex)
 	{
@@ -154,7 +154,7 @@ void ObjectTexture_write(ObjectTexture this)
  */
 void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
 {
-	ASSERT(__SAFE_CAST(ObjectTexture, this), "ObjectTexture::setObjectIndex: null this");
+	ASSERT(this, "ObjectTexture::setObjectIndex: null this");
 
 	if(0 <= objectIndex && objectIndex < 1024)
 	{

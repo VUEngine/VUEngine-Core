@@ -163,7 +163,7 @@ __MEMORY_POOL_SINGLETON(MemoryPool)
  */
 static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::constructor: null this");
+	ASSERT(this, "MemoryPool::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -181,7 +181,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  */
  void MemoryPool_destructor(MemoryPool this)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::destructor: null this");
+	ASSERT(this, "MemoryPool::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -200,7 +200,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  */
  BYTE* MemoryPool_allocate(MemoryPool this, int numberOfBytes)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::allocate: null this");
+	ASSERT(this, "MemoryPool::allocate: null this");
 
 	int lp = HardwareManager_getLinkPointer(HardwareManager_getInstance());
 
@@ -267,7 +267,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  */
 void MemoryPool_free(MemoryPool this, BYTE* object)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::free: null this");
+	ASSERT(this, "MemoryPool::free: null this");
 
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
@@ -330,7 +330,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
  */
 static void MemoryPool_reset(MemoryPool this)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::reset: null this");
+	ASSERT(this, "MemoryPool::reset: null this");
 
 	int pool = 0;
 	int i;
@@ -358,7 +358,7 @@ static void MemoryPool_reset(MemoryPool this)
  */
 void MemoryPool_cleanUp(MemoryPool this)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::reset: null this");
+	ASSERT(this, "MemoryPool::reset: null this");
 
 	int pool = 0;
 
@@ -392,7 +392,7 @@ void MemoryPool_cleanUp(MemoryPool this)
  */
 int MemoryPool_getPoolSize(MemoryPool this)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::reset: null this");
+	ASSERT(this, "MemoryPool::reset: null this");
 
 	int size = 0;
 	int pool = 0;
@@ -418,7 +418,7 @@ int MemoryPool_getPoolSize(MemoryPool this)
  */
 void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::printMemUsage: null this");
+	ASSERT(this, "MemoryPool::printMemUsage: null this");
 
 	int i;
 	int totalUsedBlocks = 0;
@@ -486,7 +486,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
  */
 void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 {
-	ASSERT(__SAFE_CAST(MemoryPool, this), "MemoryPool::printMemUsage: null this");
+	ASSERT(this, "MemoryPool::printMemUsage: null this");
 
 	int originalY = y;
 	int i;

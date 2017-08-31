@@ -193,7 +193,7 @@ __SINGLETON(StageEditor);
  */
 static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 {
-	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::constructor: null this");
+	ASSERT(this, "StageEditor::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -235,7 +235,7 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
  */
 void StageEditor_destructor(StageEditor this)
 {
-	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::destructor: null this");
+	ASSERT(this, "StageEditor::destructor: null this");
 
 	if(this->userObjectsSelector)
 	{
@@ -256,7 +256,7 @@ void StageEditor_destructor(StageEditor this)
  */
 void StageEditor_update(StageEditor this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::update: null this");
+	ASSERT(this, "StageEditor::update: null this");
 }
 
 /**
@@ -270,7 +270,7 @@ void StageEditor_update(StageEditor this __attribute__ ((unused)))
  */
 void StageEditor_show(StageEditor this, GameState gameState)
 {
-	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::start: null this");
+	ASSERT(this, "StageEditor::start: null this");
 	ASSERT(gameState, "StageEditor::start: gameState this");
 
 	this->gameState = gameState;
@@ -291,7 +291,7 @@ void StageEditor_show(StageEditor this, GameState gameState)
  */
 void StageEditor_hide(StageEditor this)
 {
-	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::stop: null this");
+	ASSERT(this, "StageEditor::stop: null this");
 
 	CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
@@ -311,7 +311,7 @@ void StageEditor_hide(StageEditor this)
  */
 void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 {
-	ASSERT(__SAFE_CAST(StageEditor, this), "StageEditor::handleMessage: null this");
+	ASSERT(this, "StageEditor::handleMessage: null this");
 
 	if(!this->gameState)
 	{

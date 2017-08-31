@@ -63,7 +63,7 @@ __CLASS_NEW_END(ManagedEntity, definition, id, internalId, name);
 // class's constructor
 void ManagedEntity_constructor(ManagedEntity this, EntityDefinition* definition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::constructor: null this");
+	ASSERT(this, "ManagedEntity::constructor: null this");
 
 	// construct base
 	__CONSTRUCT_BASE(Entity, definition, id, internalId, name);
@@ -80,7 +80,7 @@ void ManagedEntity_constructor(ManagedEntity this, EntityDefinition* definition,
 // class's destructor
 void ManagedEntity_destructor(ManagedEntity this)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::destructor: null this");
+	ASSERT(this, "ManagedEntity::destructor: null this");
 
 	if(this->managedSprites)
 	{
@@ -95,7 +95,7 @@ void ManagedEntity_destructor(ManagedEntity this)
 
 static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::registerSprites: null this");
+	ASSERT(this, "ManagedEntity::registerSprites: null this");
 	ASSERT(child, "ManagedEntity::registerSprites: null child");
 
 	if(child)
@@ -125,7 +125,7 @@ static void ManagedEntity_registerSprites(ManagedEntity this, Entity child)
 
 static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::unregisterSprites: null this");
+	ASSERT(this, "ManagedEntity::unregisterSprites: null this");
 	ASSERT(child, "ManagedEntity::unregisterSprites: null child");
 
 	if(child)
@@ -155,7 +155,7 @@ static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child)
 
 void ManagedEntity_removeChild(ManagedEntity this, Container child)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::removeChild: null this");
+	ASSERT(this, "ManagedEntity::removeChild: null this");
 
 	ManagedEntity_unregisterSprites(this, __SAFE_CAST(Entity, child));
 
@@ -165,7 +165,7 @@ void ManagedEntity_removeChild(ManagedEntity this, Container child)
 // transform class
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::initialTransform: null this");
+	ASSERT(this, "ManagedEntity::initialTransform: null this");
 
 	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
@@ -188,7 +188,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 void ManagedEntity_ready(ManagedEntity this, bool recursive)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::ready: null this");
+	ASSERT(this, "ManagedEntity::ready: null this");
 
 	__CALL_BASE_METHOD(Entity, ready, this, recursive);
 
@@ -201,7 +201,7 @@ void ManagedEntity_ready(ManagedEntity this, bool recursive)
 // transform class
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::transform: null this");
+	ASSERT(this, "ManagedEntity::transform: null this");
 
 	// allow normal transformation while not visible to avoid projection errors
 	// at the initial transformation
@@ -248,7 +248,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::synchronizeGraphics: null this");
+	ASSERT(this, "ManagedEntity::synchronizeGraphics: null this");
 
 	if(!this->invalidateSprites)
 	{
@@ -297,7 +297,7 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 
 void ManagedEntity_releaseGraphics(ManagedEntity this)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::releaseGraphics: null this");
+	ASSERT(this, "ManagedEntity::releaseGraphics: null this");
 
 	if(this->managedSprites)
 	{
@@ -311,19 +311,19 @@ void ManagedEntity_releaseGraphics(ManagedEntity this)
 // execute logic
 void ManagedEntity_update(ManagedEntity this __attribute__ ((unused)), u32 elapsedTime __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::update: null this");
+	ASSERT(this, "ManagedEntity::update: null this");
 }
 
 int ManagedEntity_passMessage(ManagedEntity this __attribute__ ((unused)), int (*propagatedMessageHandler)(Container this, va_list args) __attribute__ ((unused)), va_list args __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::passMessage: null this");
+	ASSERT(this, "ManagedEntity::passMessage: null this");
 
 	return false;
 }
 
 void ManagedEntity_resume(ManagedEntity this)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::resume: null this");
+	ASSERT(this, "ManagedEntity::resume: null this");
 
 	__CALL_BASE_METHOD(Entity, resume, this);
 
@@ -332,7 +332,7 @@ void ManagedEntity_resume(ManagedEntity this)
 
 void ManagedEntity_suspend(ManagedEntity this)
 {
-	ASSERT(__SAFE_CAST(ManagedEntity, this), "ManagedEntity::suspend: null this");
+	ASSERT(this, "ManagedEntity::suspend: null this");
 
 	__CALL_BASE_METHOD(Entity, suspend, this);
 

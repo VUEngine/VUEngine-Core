@@ -87,7 +87,7 @@ __CLASS_NEW_END(ObjectSpriteContainer, spt, totalObjects, firstObjectIndex);
  */
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::constructor: null this");
+	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
 	__CONSTRUCT_BASE(Sprite, NULL, NULL);
@@ -141,7 +141,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
  */
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::destructor: null this");
+	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
 	if(this->totalObjects && this->worldLayer)
@@ -178,7 +178,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
  */
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::addObjectSprite: null this");
+	ASSERT(this, "ObjectSpriteContainer::addObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
 
 	if(objectSprite)
@@ -220,7 +220,7 @@ s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSpri
  */
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::removeObjectSprite: null this");
+	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList_find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 
@@ -297,7 +297,7 @@ void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, Object
  */
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::removeObjectSprite: null this");
+	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 
 	return this->availableObjects >= numberOfObjects;
 }
@@ -314,7 +314,7 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfOb
  */
 VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::getPosition: null this");
+	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
 
 	VBVec2D position =
 	{
@@ -337,7 +337,7 @@ VBVec2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
  */
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D* position)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::setPosition: null this");
+	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
 
 	if(this->objectSprites)
 	{
@@ -365,7 +365,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const VBVec2D
  */
 static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::defragment: null this");
+	ASSERT(this, "ObjectSpriteContainer::defragment: null this");
 	ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteNodeToDefragment");
 	NM_ASSERT(__IS_OBJECT_ALIVE(VirtualNode_getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
 
@@ -411,7 +411,7 @@ static void ObjectSpriteContainer_defragment(ObjectSpriteContainer this)
  */
 static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::sort: null this");
+	ASSERT(this, "ObjectSpriteContainer::sort: null this");
 
 	this->node = this->node ? this->previousNode ? this->node : VirtualNode_getPrevious(this->node) : this->objectSprites->tail;
 
@@ -471,7 +471,7 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
  */
 void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::render: null this");
+	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
 	//if render flag is set
 	if(!this->worldLayer)
@@ -531,7 +531,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
  */
 void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::show: null this");
+	ASSERT(this, "ObjectSpriteContainer::show: null this");
 
 	VirtualNode node = this->objectSprites->head;
 
@@ -553,7 +553,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
  */
 void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::hide: null this");
+	ASSERT(this, "ObjectSpriteContainer::hide: null this");
 
 	// must check list, because the Sprite's destructor calls this method
 	if(this->objectSprites)
@@ -582,7 +582,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
  */
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::getAvailableObjects: null this");
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 
 	return this->availableObjects;
 }
@@ -599,7 +599,7 @@ int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this)
  */
 int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::getTotalUsedObjects: null this");
+	ASSERT(this, "ObjectSpriteContainer::getTotalUsedObjects: null this");
 
 	int totalUsedObjects = 0;
 	if(this->objectSprites)
@@ -627,7 +627,7 @@ int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this)
  */
 int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::getAvailableObjects: null this");
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 
 	if(this->objectSprites->head)
 	{
@@ -653,7 +653,7 @@ int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this)
  */
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::getAvailableObjects: null this");
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 
 	return this->firstObjectIndex;
 }
@@ -670,7 +670,7 @@ int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this)
  */
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::getAvailableObjects: null this");
+	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
 
 	return this->firstObjectIndex + this->totalObjects;
 }
@@ -686,7 +686,7 @@ int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
  */
 void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBVec2D* displacement)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "BgmapSprite::addDisplacement: null this");
+	ASSERT(this, "BgmapSprite::addDisplacement: null this");
 
 	if(this->objectSprites)
 	{
@@ -711,7 +711,7 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const VBV
  */
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::print: null this");
+	ASSERT(this, "ObjectSpriteContainer::print: null this");
 
 	Printing_text(Printing_getInstance(), "Segment:                ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->spt, x + 24, y, NULL);
@@ -749,7 +749,7 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
  */
 void ObjectSpriteContainer_setMode(ObjectSpriteContainer this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::setMode: null this");
+	ASSERT(this, "ObjectSpriteContainer::setMode: null this");
 }
 
 /**
@@ -764,7 +764,7 @@ void ObjectSpriteContainer_setMode(ObjectSpriteContainer this __attribute__ ((un
  */
 bool ObjectSpriteContainer_writeTextures(ObjectSpriteContainer this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::writeTextures: null this");
+	ASSERT(this, "ObjectSpriteContainer::writeTextures: null this");
 
 	return true;
 }
@@ -781,7 +781,7 @@ bool ObjectSpriteContainer_writeTextures(ObjectSpriteContainer this __attribute_
  */
 bool ObjectSpriteContainer_areTexturesWritten(ObjectSpriteContainer this __attribute__ ((unused)))
 {
-	ASSERT(__SAFE_CAST(ObjectSpriteContainer, this), "ObjectSpriteContainer::areTexturesWritten: null this");
+	ASSERT(this, "ObjectSpriteContainer::areTexturesWritten: null this");
 
 	return true;
 }

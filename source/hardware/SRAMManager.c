@@ -91,7 +91,7 @@ __SINGLETON(SRAMManager);
  */
 static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 {
-	ASSERT(__SAFE_CAST(SRAMManager, this), "SRAMManager::constructor: null this");
+	ASSERT(this, "SRAMManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
@@ -110,7 +110,7 @@ static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
  */
 void SRAMManager_destructor(SRAMManager this)
 {
-	ASSERT(__SAFE_CAST(SRAMManager, this), "SRAMManager::destructor: null this");
+	ASSERT(this, "SRAMManager::destructor: null this");
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -126,7 +126,7 @@ void SRAMManager_destructor(SRAMManager this)
  */
 static void SRAMManager_initialize(SRAMManager this)
 {
-	ASSERT(__SAFE_CAST(SRAMManager, this), "SRAMManager::initialize: null this");
+	ASSERT(this, "SRAMManager::initialize: null this");
 
 	int i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
@@ -148,7 +148,7 @@ static void SRAMManager_initialize(SRAMManager this)
  */
 void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
 {
-	ASSERT(__SAFE_CAST(SRAMManager, this), "SRAMManager::clear: null this");
+	ASSERT(this, "SRAMManager::clear: null this");
 
 	int i = startOffset;
 	for(; i < endOffset; i++)
@@ -170,7 +170,7 @@ void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
  */
 void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
 {
-	ASSERT(__SAFE_CAST(SRAMManager, this), "SRAMManager::save: null this");
+	ASSERT(this, "SRAMManager::save: null this");
 
 	int i = 0;
 
@@ -196,7 +196,7 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffs
  */
 void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)
 {
-	ASSERT(__SAFE_CAST(SRAMManager, this), "SRAMManager::read: null this");
+	ASSERT(this, "SRAMManager::read: null this");
 
 	int i = 0;
 
