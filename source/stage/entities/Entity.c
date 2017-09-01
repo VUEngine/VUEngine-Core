@@ -2249,7 +2249,8 @@ void Entity_setDirection(Entity this, Direction direction)
 	{
 		__UP == direction.y ? __HALF_ROTATION_DEGREES : __DOWN == direction.y ? 0 : this->transform.localRotation.x,
 		__LEFT == direction.x ? __HALF_ROTATION_DEGREES : __RIGHT == direction.x ? 0 : this->transform.localRotation.y,
-		__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transform.localRotation.z,
+		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transform.localRotation.z,
+		this->transform.localRotation.z,
 	};
 
 	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
