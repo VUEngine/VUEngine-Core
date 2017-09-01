@@ -37,8 +37,8 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __FLIP_X_DISPLACEMENT	6
-#define __FLIP_Y_DISPLACEMENT	6
+#define __FLIP_X_DISPLACEMENT	8
+#define __FLIP_Y_DISPLACEMENT	8
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -310,16 +310,8 @@ void ObjectSprite_render(ObjectSprite this)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-//	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-//	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
-
-#undef __FLIP_X_DISPLACEMENT
-#undef __FLIP_Y_DISPLACEMENT
-#define __FLIP_X_DISPLACEMENT	0
-#define __FLIP_Y_DISPLACEMENT	0
-
-	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) -  __FLIP_X_DISPLACEMENT;
-	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - __FLIP_Y_DISPLACEMENT;
+	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000)) & ~__OBJECT_CHAR_SHOW_MASK);
