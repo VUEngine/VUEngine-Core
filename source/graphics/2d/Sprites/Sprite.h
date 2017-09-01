@@ -60,7 +60,6 @@
 		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix19_13 z);								\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
-		__VIRTUAL_DEC(ClassName, void, setDirection, int axis, int direction);							\
 		__VIRTUAL_DEC(ClassName, void, applyAffineTransformations);										\
 		__VIRTUAL_DEC(ClassName, void, applyHbiasEffects);												\
 		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix19_13 z);									\
@@ -82,7 +81,6 @@
 		__VIRTUAL_SET(ClassName, Sprite, writeAnimation);												\
 		__VIRTUAL_SET(ClassName, Sprite, show);															\
 		__VIRTUAL_SET(ClassName, Sprite, hide);															\
-		__VIRTUAL_SET(ClassName, Sprite, setDirection);													\
 		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
 		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
 		__VIRTUAL_SET(ClassName, Sprite, position);														\
@@ -285,7 +283,6 @@ void Sprite_rewrite(Sprite this);
 void Sprite_setTransparent(Sprite this, bool value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
-void Sprite_setDirection(Sprite this, int axis, int direction);
 void Sprite_position(Sprite this, const VBVec3D* position);
 
 // animation

@@ -378,34 +378,34 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 
 			VBVecWorld spriteDisplacement = Sprite_getDisplacement(sprite);
 
-			if(left > -halfWidth + FIX19_13TOI(spriteDisplacement.x))
+			if(left > -halfWidth + __FIX19_13_TO_I(spriteDisplacement.x))
 			{
-				left = -halfWidth + FIX19_13TOI(spriteDisplacement.x);
+				left = -halfWidth + __FIX19_13_TO_I(spriteDisplacement.x);
 			}
 
-			if(right < halfWidth + FIX19_13TOI(spriteDisplacement.x))
+			if(right < halfWidth + __FIX19_13_TO_I(spriteDisplacement.x))
 			{
-				right = halfWidth + FIX19_13TOI(spriteDisplacement.x);
+				right = halfWidth + __FIX19_13_TO_I(spriteDisplacement.x);
 			}
 
-			if(top > -halfHeight + FIX19_13TOI(spriteDisplacement.y))
+			if(top > -halfHeight + __FIX19_13_TO_I(spriteDisplacement.y))
 			{
-				top = -halfHeight + FIX19_13TOI(spriteDisplacement.y);
+				top = -halfHeight + __FIX19_13_TO_I(spriteDisplacement.y);
 			}
 
-			if(bottom < halfHeight + FIX19_13TOI(spriteDisplacement.y))
+			if(bottom < halfHeight + __FIX19_13_TO_I(spriteDisplacement.y))
 			{
-				bottom = halfHeight + FIX19_13TOI(spriteDisplacement.y);
+				bottom = halfHeight + __FIX19_13_TO_I(spriteDisplacement.y);
 			}
 
-			if(front > -halfDepth + FIX19_13TOI(spriteDisplacement.z))
+			if(front > -halfDepth + __FIX19_13_TO_I(spriteDisplacement.z))
 			{
-				front = -halfDepth + FIX19_13TOI(spriteDisplacement.z);
+				front = -halfDepth + __FIX19_13_TO_I(spriteDisplacement.z);
 			}
 
-			if(back < halfDepth + FIX19_13TOI(spriteDisplacement.z))
+			if(back < halfDepth + __FIX19_13_TO_I(spriteDisplacement.z))
 			{
-				back = halfDepth + FIX19_13TOI(spriteDisplacement.z);
+				back = halfDepth + __FIX19_13_TO_I(spriteDisplacement.z);
 			}
 		}
 	}
@@ -419,9 +419,9 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 		back = this->size.z;
 	}
 
-	int x = FIX19_13TOI(globalPosition3D.x);
-	int y = FIX19_13TOI(globalPosition3D.y);
-	int z = FIX19_13TOI(globalPosition3D.z);
+	int x = __FIX19_13_TO_I(globalPosition3D.x);
+	int y = __FIX19_13_TO_I(globalPosition3D.y);
+	int z = __FIX19_13_TO_I(globalPosition3D.z);
 
 	if((0 == rightCuboid->x0) | (x + left < rightCuboid->x0))
 	{
@@ -482,9 +482,9 @@ void Entity_calculateSize(Entity this)
 
 	VBVec3D centerDisplacement =
 	{
-		(ITOFIX19_13(rightCuboid.x1 + rightCuboid.x0) / 2) - this->transform.localPosition.x,
-		(ITOFIX19_13(rightCuboid.y1 + rightCuboid.y0) / 2) - this->transform.localPosition.y,
-		(ITOFIX19_13(rightCuboid.z1 + rightCuboid.z0) / 2) - this->transform.localPosition.z
+		(__I_TO_FIX19_13(rightCuboid.x1 + rightCuboid.x0) / 2) - this->transform.localPosition.x,
+		(__I_TO_FIX19_13(rightCuboid.y1 + rightCuboid.y0) / 2) - this->transform.localPosition.y,
+		(__I_TO_FIX19_13(rightCuboid.z1 + rightCuboid.z0) / 2) - this->transform.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
@@ -564,34 +564,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 					}
 				}
 
-				if(left > -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
+				if(left > -halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
 				{
-					left = -halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
+					left = -halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
 				}
 
-				if(right < halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
+				if(right < halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
 				{
-					right = halfWidth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
+					right = halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
 				}
 
-				if(top > -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
+				if(top > -halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
 				{
-					top = -halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
+					top = -halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
 				}
 
-				if(bottom < halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
+				if(bottom < halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
 				{
-					bottom = halfHeight + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
+					bottom = halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
 				}
 
-				if(front > FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
+				if(front > __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
 				{
-					front = FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
+					front = __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
 				}
 
-				if(back < halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
+				if(back < halfDepth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
 				{
-					back = halfDepth + FIX19_13TOI(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
+					back = halfDepth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
 				}
 
 			}
@@ -602,34 +602,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 				halfHeight = spriteDefinition->textureDefinition->rows << 2;
 				halfDepth = 10;
 
-				if(left > -halfWidth + FIX19_13TOI(spriteDefinition->displacement.x))
+				if(left > -halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x))
 				{
-					left = -halfWidth + FIX19_13TOI(spriteDefinition->displacement.x);
+					left = -halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x);
 				}
 
-				if(right < halfWidth + FIX19_13TOI(spriteDefinition->displacement.x))
+				if(right < halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x))
 				{
-					right = halfWidth + FIX19_13TOI(spriteDefinition->displacement.x);
+					right = halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x);
 				}
 
-				if(top > -halfHeight + FIX19_13TOI(spriteDefinition->displacement.y))
+				if(top > -halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y))
 				{
-					top = -halfHeight + FIX19_13TOI(spriteDefinition->displacement.y);
+					top = -halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y);
 				}
 
-				if(bottom < halfHeight + FIX19_13TOI(spriteDefinition->displacement.y))
+				if(bottom < halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y))
 				{
-					bottom = halfHeight + FIX19_13TOI(spriteDefinition->displacement.y);
+					bottom = halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y);
 				}
 
-				if(front > -halfDepth + FIX19_13TOI(spriteDefinition->displacement.z))
+				if(front > -halfDepth + __FIX19_13_TO_I(spriteDefinition->displacement.z))
 				{
-					front = -halfDepth + FIX19_13TOI(spriteDefinition->displacement.z);
+					front = -halfDepth + __FIX19_13_TO_I(spriteDefinition->displacement.z);
 				}
 
-				if(back < (halfDepth << 1) + FIX19_13TOI(spriteDefinition->displacement.z))
+				if(back < (halfDepth << 1) + __FIX19_13_TO_I(spriteDefinition->displacement.z))
 				{
-					back = (halfDepth << 1) + FIX19_13TOI(spriteDefinition->displacement.z);
+					back = (halfDepth << 1) + __FIX19_13_TO_I(spriteDefinition->displacement.z);
 				}
 			}
 		}
@@ -662,9 +662,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		}
 	}
 
-	int x = FIX19_13TOI(globalPosition3D.x);
-	int y = FIX19_13TOI(globalPosition3D.y);
-	int z = FIX19_13TOI(globalPosition3D.z);
+	int x = __FIX19_13_TO_I(globalPosition3D.x);
+	int y = __FIX19_13_TO_I(globalPosition3D.y);
+	int z = __FIX19_13_TO_I(globalPosition3D.z);
 
 	if((0 == rightCuboid->x0) | (x + left < rightCuboid->x0))
 	{
@@ -723,12 +723,12 @@ SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* posit
 
 	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightCuboid);
 
-	rightCuboid.x0 = rightCuboid.x0 - FIX19_13TOI(positionedEntity->position.x);
-	rightCuboid.x1 = rightCuboid.x1 - FIX19_13TOI(positionedEntity->position.x);
-	rightCuboid.y0 = rightCuboid.y0 - FIX19_13TOI(positionedEntity->position.y);
-	rightCuboid.y1 = rightCuboid.y1 - FIX19_13TOI(positionedEntity->position.y);
-	rightCuboid.z0 = rightCuboid.z0 - FIX19_13TOI(positionedEntity->position.z);
-	rightCuboid.z1 = rightCuboid.z1 - FIX19_13TOI(positionedEntity->position.z);
+	rightCuboid.x0 = rightCuboid.x0 - __FIX19_13_TO_I(positionedEntity->position.x);
+	rightCuboid.x1 = rightCuboid.x1 - __FIX19_13_TO_I(positionedEntity->position.x);
+	rightCuboid.y0 = rightCuboid.y0 - __FIX19_13_TO_I(positionedEntity->position.y);
+	rightCuboid.y1 = rightCuboid.y1 - __FIX19_13_TO_I(positionedEntity->position.y);
+	rightCuboid.z0 = rightCuboid.z0 - __FIX19_13_TO_I(positionedEntity->position.z);
+	rightCuboid.z1 = rightCuboid.z1 - __FIX19_13_TO_I(positionedEntity->position.z);
 
 	return rightCuboid;
 }
@@ -1766,9 +1766,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 			VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 
-			x = FIX19_13TOI(spritePosition.x);
-			y = FIX19_13TOI(spritePosition.y);
-			z = FIX19_13TOI(spritePosition.z);
+			x = __FIX19_13_TO_I(spritePosition.x);
+			y = __FIX19_13_TO_I(spritePosition.y);
+			z = __FIX19_13_TO_I(spritePosition.z);
 
 			// check x visibility
 			if((x + (int)this->size.x < -pad) | (x > __SCREEN_WIDTH + pad))
@@ -1827,9 +1827,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		int halfHeight = (int)(this->size.y >> 1);
 		int halfDepth = (int)(this->size.z >> 1);
 
-		x = FIX19_13TOI(position2D.x);
-		y = FIX19_13TOI(position2D.y);
-		z = FIX19_13TOI(position2D.z);
+		x = __FIX19_13_TO_I(position2D.x);
+		y = __FIX19_13_TO_I(position2D.y);
+		z = __FIX19_13_TO_I(position2D.z);
 
 		// check x visibility
 		if((x + halfWidth <= -pad) | (x - halfWidth >= __SCREEN_WIDTH + pad))
@@ -1931,33 +1931,6 @@ bool Entity_updateSpriteScale(Entity this)
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
 	return __INVALIDATE_SCALE & this->invalidateGlobalTransformation;
-}
-
-/**
- * Set the direction
- *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
- * @param axis
- * @param direction
- */
-void Entity_setSpritesDirection(Entity this, int axis, int direction)
-{
-	ASSERT(this, "Entity::setSpritesDirection: null this");
-
-	u32 axisForFlipping = __VIRTUAL_CALL(Entity, getAxisForFlipping, this);
-
-	if(this->sprites && (axis & axisForFlipping))
-	{
-		VirtualNode node = this->sprites->head;
-
-		for(; node ; node = node->next)
-		{
-			__VIRTUAL_CALL(Sprite, setDirection, __SAFE_CAST(Sprite, node->data), axis, direction);
-		}
-	}
 }
 
 /**
@@ -2225,7 +2198,6 @@ void Entity_informShapesThatStoppedMoving(Entity this)
 	}
 }
 
-
 /**
  * Propagate active status to the shapes
  *
@@ -2247,4 +2219,102 @@ void Entity_activateShapes(Entity this, bool value)
 			Shape_setActive(__SAFE_CAST(Shape, node->data), value);
 		}
 	}
+}
+
+/**
+ * Set direction
+ *
+ * @memberof			Entity
+ * @public
+ *
+ * @param this			Function scope
+ * @param direction		Direction
+ */
+void Entity_setDirection(Entity this, Direction direction)
+{
+	ASSERT(this, "Entity::setDirection: null this");
+
+	Direction currentDirection = Entity_getDirection(this);
+
+	if(
+		currentDirection.x == direction.x &&
+		currentDirection.y == direction.y &&
+		currentDirection.z == direction.z
+	)
+	{
+		return;
+	}
+
+	Rotation rotation =
+	{
+		__UP == direction.y ? __HALF_ROTATION_DEGREES : __DOWN == direction.y ? 0 : this->transform.localRotation.x,
+		__LEFT == direction.x ? __HALF_ROTATION_DEGREES : __RIGHT == direction.x ? 0 : this->transform.localRotation.y,
+		__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transform.localRotation.z,
+	};
+
+	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
+
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			VBVec3D displacement = Shape_getDisplacement(__SAFE_CAST(Shape, node->data));
+
+			if(currentDirection.x != direction.x)
+			{
+				displacement.x = -displacement.x;
+			}
+
+			if(currentDirection.y != direction.y)
+			{
+				displacement.y = -displacement.y;
+			}
+
+			if(currentDirection.z != direction.z)
+			{
+				displacement.z = -displacement.z;
+			}
+
+			Shape_setDisplacement(__SAFE_CAST(Shape, node->data), displacement);
+		}
+	}
+}
+
+/**
+ * Get direction
+ *
+ * @memberof			Entity
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				Direction
+ */
+Direction Entity_getDirection(Entity this)
+{
+	ASSERT(this, "Entity::getDirection: null this");
+
+	Direction direction =
+	{
+		__RIGHT, __DOWN, __FAR
+	};
+
+	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transform.globalRotation.y))
+	{
+		direction.x = __LEFT;
+	}
+
+	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transform.globalRotation.x))
+	{
+		direction.y = __UP;
+	}
+
+	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transform.globalRotation.z))
+	{
+		direction.z = __NEAR;
+	}
+
+	return direction;
 }

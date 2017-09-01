@@ -54,11 +54,11 @@
 #define __SCREEN_Y_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
 
-#define __HVPC_STEP							ITOFIX19_13(8)
-#define __VERTICAL_VIEW_POINT_CENTER_STEP	ITOFIX19_13(8)
-#define __DISTANCE_EYE_SCREEN_STEP			ITOFIX19_13(8)
+#define __HVPC_STEP							__I_TO_FIX19_13(8)
+#define __VERTICAL_VIEW_POINT_CENTER_STEP	__I_TO_FIX19_13(8)
+#define __DISTANCE_EYE_SCREEN_STEP			__I_TO_FIX19_13(8)
 #define __MAXIMUM_VIEW_DISTACE_STEP			1
-#define __BASE_DISTACE_STEP					ITOFIX19_13(8)
+#define __BASE_DISTACE_STEP					__I_TO_FIX19_13(8)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -631,7 +631,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	{
 		VBVec3D translation =
 		{
-			ITOFIX19_13(-__SCREEN_X_TRANSLATION_STEP),
+			__I_TO_FIX19_13(-__SCREEN_X_TRANSLATION_STEP),
 			0,
 			0
 		};
@@ -642,7 +642,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	{
 		VBVec3D translation =
 		{
-			ITOFIX19_13(__SCREEN_X_TRANSLATION_STEP),
+			__I_TO_FIX19_13(__SCREEN_X_TRANSLATION_STEP),
 			0,
 			0
 		};
@@ -654,7 +654,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 		VBVec3D translation =
 		{
 			0,
-			ITOFIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
+			__I_TO_FIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
 			0
 		};
 
@@ -665,7 +665,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 		VBVec3D translation =
 		{
 			0,
-			ITOFIX19_13(__SCREEN_Y_TRANSLATION_STEP),
+			__I_TO_FIX19_13(__SCREEN_Y_TRANSLATION_STEP),
 			0
 		};
 
@@ -677,7 +677,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			ITOFIX19_13(__SCREEN_Z_TRANSLATION_STEP),
+			__I_TO_FIX19_13(__SCREEN_Z_TRANSLATION_STEP),
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -688,7 +688,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			ITOFIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
+			__I_TO_FIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
 		};
 
 		StageEditor_applyTranslationToScreen(this, translation);
@@ -781,7 +781,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	{
 		VBVec3D translation =
 		{
-			ITOFIX19_13(-this->translationStepSize),
+			__I_TO_FIX19_13(-this->translationStepSize),
 			0,
 			0
 		};
@@ -792,7 +792,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	{
 		VBVec3D translation =
 		{
-			ITOFIX19_13(this->translationStepSize),
+			__I_TO_FIX19_13(this->translationStepSize),
 			0,
 			0
 		};
@@ -804,7 +804,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		VBVec3D translation =
 		{
 			0,
-			ITOFIX19_13(-this->translationStepSize),
+			__I_TO_FIX19_13(-this->translationStepSize),
 			0
 		};
 
@@ -815,7 +815,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		VBVec3D translation =
 		{
 			0,
-			ITOFIX19_13(this->translationStepSize),
+			__I_TO_FIX19_13(this->translationStepSize),
 			0
 		};
 
@@ -845,7 +845,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			ITOFIX19_13(this->translationStepSize),
+			__I_TO_FIX19_13(this->translationStepSize),
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -856,7 +856,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			ITOFIX19_13(-this->translationStepSize),
+			__I_TO_FIX19_13(-this->translationStepSize),
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -952,8 +952,8 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
 		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
-		spritePosition.x = ITOFIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
-		spritePosition.y = ITOFIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.x = __I_TO_FIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.y = __I_TO_FIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9};
@@ -1003,9 +1003,9 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 
 		VBVec3D position = Screen_getPosition(Screen_getInstance());
 
-		position.x += ITOFIX19_13(__HALF_SCREEN_WIDTH);
-		position.y += ITOFIX19_13(__HALF_SCREEN_HEIGHT);
-		position.z += ITOFIX19_13(0);
+		position.x += __I_TO_FIX19_13(__HALF_SCREEN_WIDTH);
+		position.y += __I_TO_FIX19_13(__HALF_SCREEN_HEIGHT);
+		position.z += __I_TO_FIX19_13(0);
 
 		PositionedEntity DUMMY_ENTITY =
 		{
@@ -1069,9 +1069,9 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_text(Printing_getInstance(), "Name:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->x), x + 13, y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->y), x + 22, y, NULL);
-		Printing_float(Printing_getInstance(), FIX19_13TOF(globalPosition->z), x + 31, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX19_13_TO_F(globalPosition->x), x + 13, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX19_13_TO_F(globalPosition->y), x + 22, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX19_13_TO_F(globalPosition->z), x + 31, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 13, y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
@@ -1123,9 +1123,9 @@ static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unu
 	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);
 	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
 	Printing_text(Printing_getInstance(), "Position:               ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(position.x), x + 10, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(position.y), x + 15, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(position.z), x + 20, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(position.x), x + 10, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(position.y), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(position.z), x + 20, y, NULL);
 }
 
 /**
@@ -1150,15 +1150,15 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
 	Printing_text(Printing_getInstance(), "BD     \x17\x18", 38, 6, NULL);
 
 	Printing_text(Printing_getInstance(), "H. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->horizontalViewPointCenter), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->horizontalViewPointCenter), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "V. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->verticalViewPointCenter), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->verticalViewPointCenter), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Distance Eye Screen:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->distanceEyeScreen), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->distanceEyeScreen), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Maximum View Screen:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), (1 << _optical->maximumViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(_optical->baseDistance), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->baseDistance), x + 22, y, NULL);
 }
 
 /**

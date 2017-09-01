@@ -532,24 +532,24 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 
 	#define FIX19_13_FRAC(n)	((n)&0x1FFF)
 
-	int decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
+	int decimal = (int)(((float)FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 10000.f);
 
 	if(value < 0)
 	{
 		sign = -1;
 		Printing_out(this, x++, y, "-", font);
 
-		decimal = (int)(((__1I_FIX19_13 - (float)FIX19_13_FRAC(FTOFIX19_13(value))) / 8192.f) * 10000.f);
+		decimal = (int)(((__1I_FIX19_13 - (float)FIX19_13_FRAC(__F_TO_FIX19_13(value))) / 8192.f) * 10000.f);
 	}
 	else
 	{
-		decimal = (int)(((float)FIX19_13_FRAC(FTOFIX19_13(value)) / 8192.f) * 10000.f);
+		decimal = (int)(((float)FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 10000.f);
 	}
 
 	// print integral part
 	length = Utilities_intLength((int)value * sign);
 
-	Printing_out(this, x, y, Utilities_itoa(F_FLOOR(value * sign), 10, length), font);
+	Printing_out(this, x, y, Utilities_itoa(__F_FLOOR(value * sign), 10, length), font);
 
 	// print the dot
 	Printing_out(this, x + length, y, ".", font);

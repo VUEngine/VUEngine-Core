@@ -100,8 +100,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 
-		this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-		this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+		this->halfWidth = __I_TO_FIX19_13((int)Texture_getCols(this->texture) << 2);
+		this->halfHeight = __I_TO_FIX19_13((int)Texture_getRows(this->texture) << 2);
 	}
 	else
 	{
@@ -195,37 +195,6 @@ Scale BgmapSprite_getScale(BgmapSprite this)
 }
 
 /**
- * Set direction
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param this			Function scope
- * @param axis			Axis to modify
- * @param direction		Direction value
- */
-void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction)
-{
-	ASSERT(this, "BgmapSprite::setDirection: null this");
-
-	switch(axis)
-	{
-		case __X_AXIS:
-
-			this->drawSpec.scale.x = __ABS(this->drawSpec.scale.x) * direction;
-			break;
-
-		case __Y_AXIS:
-
-			this->drawSpec.scale.y = __ABS(this->drawSpec.scale.y) * direction;
-			break;
-	}
-
-	// scale the texture in the next render cycle
-	BgmapSprite_invalidateParamTable(this);
-}
-
-/**
  * Retrieve 2D position
  *
  * @memberof		BgmapSprite
@@ -312,7 +281,17 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 	if(this->param)
 	{
 		this->drawSpec.rotation = *rotation;
+
+		if(this->texture)
+		{
+			this->halfWidth = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
+			this->halfHeight = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
+		}
+
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
+
+		// scale the texture in the next render cycle
+		BgmapSprite_invalidateParamTable(this);
 	}
 }
 
@@ -334,20 +313,20 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 	{
 		z -= _screenPosition->z;
 
-		fix7_9 ratio = FIX19_13TOFIX7_9(ITOFIX19_13(1) - (z / (1 << _optical->maximumViewDistancePower)));
+		fix7_9 ratio = __FIX19_13_TO_FIX7_9(__I_TO_FIX19_13(1) - (z / (1 << _optical->maximumViewDistancePower)));
 
-		ratio = ITOFIX7_9(__MAXIMUM_SCALE) < ratio? ITOFIX7_9(__MAXIMUM_SCALE) : ratio;
+		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
-		this->drawSpec.scale.x = FIX7_9_MULT(scale.x, ratio * (this->drawSpec.scale.x < 0 ? -1 : 1));
-		this->drawSpec.scale.y = FIX7_9_MULT(scale.y, ratio * (this->drawSpec.scale.y < 0 ? -1 : 1));
+		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);
+		this->drawSpec.scale.y = __FIX7_9_MULT(scale.y, ratio);
 
 		ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
 		ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
 
 		if(this->texture)
 		{
-			this->halfWidth = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->cols << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.x)))  + __0_5F_FIX19_13;
-			this->halfHeight = FIX19_13_MULT(ITOFIX19_13((int)this->texture->textureDefinition->rows << 2), FIX7_9TOFIX19_13(__ABS(this->drawSpec.scale.y))) + __0_5F_FIX19_13;
+			this->halfWidth = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
+			this->halfHeight = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
 		}
 
 		if(this->param)
@@ -424,14 +403,14 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-	int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	int gx = __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+	int gy = __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
 	// get sprite's size
-	int width = FIX19_13TOI(this->halfWidth) << 1;
-	int height = FIX19_13TOI(this->halfHeight) << 1;
+	int width = __FIX19_13_TO_I(this->halfWidth) << 1;
+	int height = __FIX19_13_TO_I(this->halfHeight) << 1;
 	int w = width;
 	int h = height;
 
@@ -459,8 +438,8 @@ void BgmapSprite_render(BgmapSprite this)
 		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
-	worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
-//		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
+	worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I((this->displacement.z + this->displacement.p) & 0xFFFFE000);
+//		worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
 
 	if(w + worldPointer->gx >= _cameraFrustum->x1)
 	{
@@ -613,8 +592,8 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
 		// set the world screen position
-		int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x);
-		int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y);
+		int gx = __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x);
+		int gy = __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y);
 
 		int w = Texture_getCols(this->texture)<< 3;
 		int h = Texture_getRows(this->texture)<< 3;
@@ -624,7 +603,7 @@ void BgmapSprite_render(BgmapSprite this)
 
 		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
 		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
-		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z & 0xFFFFE000);
+		worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I(this->displacement.z & 0xFFFFE000);
 
 		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
@@ -671,8 +650,8 @@ void BgmapSprite_render(BgmapSprite this)
 				this->paramTableRow = 0;
 			}
 
-			worldPointer->w *= FIX7_9TOF(__ABS(this->drawSpec.scale.x));
-			worldPointer->h *= FIX7_9TOF(__ABS(this->drawSpec.scale.y));
+			worldPointer->w *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.x));
+			worldPointer->h *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.y));
 
 			 if(0 <= this->paramTableRow)
 			{
@@ -881,8 +860,8 @@ static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 			// don't do translations
 			this->halfWidth,
 			this->halfHeight,
-			ITOFIX13_3(this->drawSpec.textureSource.mx),
-			ITOFIX13_3(this->drawSpec.textureSource.my),
+			__I_TO_FIX13_3(this->drawSpec.textureSource.mx),
+			__I_TO_FIX13_3(this->drawSpec.textureSource.my),
 			this->halfWidth,
 			this->halfHeight,
 			&this->drawSpec.scale,

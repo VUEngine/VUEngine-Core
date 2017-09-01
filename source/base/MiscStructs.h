@@ -242,7 +242,7 @@ typedef struct DrawSpec
 	// bgmap's source coordinates
 	TextureSource textureSource;
 
-	// angle with respect to each axis (indexes for the SINLUT array)
+	// angle with respect to each axis (indexes for the _sinLut array)
 	Rotation rotation;
 
 	// scale

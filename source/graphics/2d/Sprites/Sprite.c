@@ -142,8 +142,8 @@ void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z
 {
 	ASSERT(this, "Sprite::resize: null this");
 
-	this->halfWidth = ITOFIX19_13((int)Texture_getCols(this->texture) << 2);
-	this->halfHeight = ITOFIX19_13((int)Texture_getRows(this->texture) << 2);
+	this->halfWidth = __I_TO_FIX19_13((int)Texture_getCols(this->texture) << 2);
+	this->halfHeight = __I_TO_FIX19_13((int)Texture_getRows(this->texture) << 2);
 }
 
 /**
@@ -208,21 +208,6 @@ bool Sprite_isHidden(Sprite this)
 	ASSERT(this, "Sprite::isHidden: null this");
 
 	return this->hidden;
-}
-
-/**
- * Set direction
- *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
- * @param axis			Axis to modify
- * @param direction		Direction value
- */
-void Sprite_setDirection(Sprite this __attribute__ ((unused)), int axis __attribute__ ((unused)), int direction __attribute__ ((unused)))
-{
-	ASSERT(this, "Sprite::setDirection: null this");
 }
 
 /**
@@ -624,7 +609,7 @@ int Sprite_getHalfWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfWidth: null this");
 
-	return FIX19_13TOI(this->halfWidth);
+	return __FIX19_13_TO_I(this->halfWidth);
 }
 
 /**
@@ -641,7 +626,7 @@ int Sprite_getHalfHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfHeight: null this");
 
-	return FIX19_13TOI(this->halfHeight);
+	return __FIX19_13_TO_I(this->halfHeight);
 }
 
 
@@ -1065,9 +1050,9 @@ void Sprite_print(Sprite this, int x, int y)
 	Printing_text(Printing_getInstance(), Sprite_isTransparent(this) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
 
 	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
-	Printing_float(Printing_getInstance(), FIX19_13TOF(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
 	Printing_text(Printing_getInstance(), "G (x, y, p):                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGX(this), x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGY(this), x + 24, y, NULL);

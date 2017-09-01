@@ -44,18 +44,18 @@
 #undef __OPTICS_PROJECT_TO_2D
 #define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)														\
 		Vector2D.x = Vector3D.x 																		\
-			+ (FIX19_13_MULT(_optical->horizontalViewPointCenter - 										\
+			+ (__FIX19_13_MULT(_optical->horizontalViewPointCenter - 										\
 					Vector3D.x, Vector3D.z) >> _optical->maximumViewDistancePower);						\
 		Vector2D.y = Vector3D.y 																		\
-			- (FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter,							\
+			- (__FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter,							\
 				Vector3D.z) >> _optical->maximumViewDistancePower);										\
 		Vector2D.z = Vector3D.z;																		\
 
 #undef __OPTICS_3D_LENGHT_SQUARED
 #define __OPTICS_3D_LENGHT_SQUARED(vector1, vector2)													\
-		FIX19_13TOI(FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +					\
-        			FIX19_13_MULT((vector1.y - vector2.y), (vector1.y - vector2.y)) +					\
-        			FIX19_13_MULT((vector1.z - vector2.z), (vector1.z - vector2.z)))					\
+		__FIX19_13_TO_I(__FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +					\
+        			__FIX19_13_MULT((vector1.y - vector2.y), (vector1.y - vector2.y)) +					\
+        			__FIX19_13_MULT((vector1.z - vector2.z), (vector1.z - vector2.z)))					\
 
 
 

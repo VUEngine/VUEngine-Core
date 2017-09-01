@@ -109,10 +109,10 @@ const Transformation neutralEnvironmentTransformation =
 	{0, 0, 0},
 
 	// scale
-	{ITOFIX7_9(1), ITOFIX7_9(1)},
+	{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
 
 	// scale
-	{ITOFIX7_9(1), ITOFIX7_9(1)},
+	{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
 
 };
 
@@ -250,19 +250,19 @@ static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const Small
 	position2D.parallax = Optics_calculateParallax(position3D.x, position3D.z);
 
 	// check x visibility
-	if(FIX19_13TOI(position2D.x) + smallRightCuboid->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || FIX19_13TOI(position2D.x) + smallRightCuboid->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)
+	if(__FIX19_13_TO_I(position2D.x) + smallRightCuboid->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || __FIX19_13_TO_I(position2D.x) + smallRightCuboid->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(FIX19_13TOI(position2D.y) + smallRightCuboid->y1 <  __LOAD_LOW_Y_LIMIT || FIX19_13TOI(position2D.y) + smallRightCuboid->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	if(__FIX19_13_TO_I(position2D.y) + smallRightCuboid->y1 <  __LOAD_LOW_Y_LIMIT || __FIX19_13_TO_I(position2D.y) + smallRightCuboid->y0 >  __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(FIX19_13TOI(position2D.z) + smallRightCuboid->z1 <  __LOAD_LOW_Z_LIMIT || FIX19_13TOI(position2D.z) + smallRightCuboid->z0 >  __LOAD_HIGHT_Z_LIMIT)
+	if(__FIX19_13_TO_I(position2D.z) + smallRightCuboid->z1 <  __LOAD_LOW_Z_LIMIT || __FIX19_13_TO_I(position2D.z) + smallRightCuboid->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
 		return false;
 	}
@@ -686,9 +686,9 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 //		VBVec3D environmentPosition3D = {0, 0, 0};
 //		SmallRightCuboid smallRightCuboid = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
-		int x = FIX19_13TOI(stageEntityDescription->positionedEntity->position.x);
-		int y = FIX19_13TOI(stageEntityDescription->positionedEntity->position.y);
-		int z = FIX19_13TOI(stageEntityDescription->positionedEntity->position.z);
+		int x = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.x);
+		int y = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.y);
+		int z = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.z);
 
 		stageEntityDescription->distance = (x * x + y * y + z * z);
 
@@ -843,9 +843,9 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 
 	bool loadedEntities = false;
-	int xScreenPosition = FIX19_13TOI(_screenPosition->x) + (__HALF_SCREEN_WIDTH);
-	int yScreenPosition = FIX19_13TOI(_screenPosition->y) + (__HALF_SCREEN_HEIGHT);
-	int zScreenPosition = FIX19_13TOI(_screenPosition->z) + (__HALF_SCREEN_DEPTH);
+	int xScreenPosition = __FIX19_13_TO_I(_screenPosition->x) + (__HALF_SCREEN_WIDTH);
+	int yScreenPosition = __FIX19_13_TO_I(_screenPosition->y) + (__HALF_SCREEN_HEIGHT);
+	int zScreenPosition = __FIX19_13_TO_I(_screenPosition->z) + (__HALF_SCREEN_DEPTH);
 
 	long screenDistance = ((long)xScreenPosition * (long)xScreenPosition +
 							(long)yScreenPosition * (long)yScreenPosition +
@@ -1281,9 +1281,9 @@ static void Stage_setFocusEntity(Stage this, Entity focusEntity)
 		Object_addEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
 		VBVec3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
-		focusEntityPosition.x = FIX19_13TOI(focusEntityPosition.x);
-		focusEntityPosition.y = FIX19_13TOI(focusEntityPosition.y);
-		focusEntityPosition.z = FIX19_13TOI(focusEntityPosition.z);
+		focusEntityPosition.x = __FIX19_13_TO_I(focusEntityPosition.x);
+		focusEntityPosition.y = __FIX19_13_TO_I(focusEntityPosition.y);
+		focusEntityPosition.z = __FIX19_13_TO_I(focusEntityPosition.z);
 
 		this->screenPreviousDistance = (long)focusEntityPosition.x * (long)focusEntityPosition.x +
 											(long)focusEntityPosition.y * (long)focusEntityPosition.y +

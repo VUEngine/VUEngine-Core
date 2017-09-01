@@ -158,9 +158,9 @@ u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 
 	VBVec3D displacement =
 	{
-		acceleration->x ? 0 < acceleration->x ? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance) : ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
-		acceleration->y ? 0 < acceleration->y ? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance) : ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
-		acceleration->z ? 0 < acceleration->z ? ITOFIX19_13(__ALIGN_PADDING + collisionCheckDistance) : ITOFIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0
+		acceleration->x ? 0 < acceleration->x ? __I_TO_FIX19_13(__ALIGN_PADDING + collisionCheckDistance) : __I_TO_FIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
+		acceleration->y ? 0 < acceleration->y ? __I_TO_FIX19_13(__ALIGN_PADDING + collisionCheckDistance) : __I_TO_FIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
+		acceleration->z ? 0 < acceleration->z ? __I_TO_FIX19_13(__ALIGN_PADDING + collisionCheckDistance) : __I_TO_FIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0
 	};
 
 	int i = 0;
@@ -198,7 +198,7 @@ void CollisionSolver_alignToCollidingShape(CollisionSolver this, Shape shape, Sh
 {
 	ASSERT(this, "CollisionSolver::alignToCollidingShape: null this");
 
-	fix19_13 alignThreshold = ITOFIX19_13(__ALIGN_PADDING);
+	fix19_13 alignThreshold = __I_TO_FIX19_13(__ALIGN_PADDING);
 
 	if(__X_AXIS & axisOfCollision)
 	{

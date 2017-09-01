@@ -326,7 +326,7 @@
 /* Used to make an approximation of Lorentz' contraction
  * to handle collisions on very fast moving shapes
  */
-#define __LIGHT_SPEED							ITOFIX19_13(50000)
+#define __LIGHT_SPEED							__I_TO_FIX19_13(50000)
 
 
 //---------------------------------------------------------------------------------------------------------

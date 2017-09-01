@@ -64,7 +64,6 @@ typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
 #define AnimatedEntity_SET_VTABLE(ClassName)															\
 		Entity_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, ready);												\
-		__VIRTUAL_SET(ClassName, AnimatedEntity, transform);											\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, update);												\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, resume);												\
 		__VIRTUAL_SET(ClassName, AnimatedEntity, setDefinition);										\
@@ -78,8 +77,6 @@ typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
 		AnimationDescription* animationDescription;														\
 		/* direction */																					\
 		Direction direction;																			\
-		/* used to know if sprite must be flipped */													\
-		Direction previousDirection;																	\
 		/* need to save for pausing */																	\
 		char* currentAnimationName;																		\
 
@@ -108,10 +105,7 @@ void AnimatedEntity_ready(AnimatedEntity this, bool recursive);
 void AnimatedEntity_resume(AnimatedEntity this);
 void AnimatedEntity_setAnimationDescription(AnimatedEntity this, AnimationDescription* animationDescription);
 void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefinition);
-void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime);
-Direction AnimatedEntity_getDirection(AnimatedEntity this);
-void AnimatedEntity_setDirection(AnimatedEntity this, Direction direction);
 
 
 #endif

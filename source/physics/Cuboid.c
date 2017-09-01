@@ -163,9 +163,9 @@ void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, c
 	this->displacement = *displacement;
 
 	// cuboid's center if placed on P(0, 0, 0)
-	this->rightCuboid.x1 = ITOFIX19_13(size->x >> 1);
-	this->rightCuboid.y1 = ITOFIX19_13(size->y >> 1);
-	this->rightCuboid.z1 = ITOFIX19_13(size->z >> 1);
+	this->rightCuboid.x1 = __I_TO_FIX19_13(size->x >> 1);
+	this->rightCuboid.y1 = __I_TO_FIX19_13(size->y >> 1);
+	this->rightCuboid.z1 = __I_TO_FIX19_13(size->z >> 1);
 
 	this->rightCuboid.x0 = -this->rightCuboid.x1;
 	this->rightCuboid.y0 = -this->rightCuboid.y1;
@@ -208,9 +208,9 @@ void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffecte
 
 		VBVec3D lorentzFactor =
 		{
-			FIX19_13_MULT(velocity.x, FIX19_13_DIV(velocity.x, __LIGHT_SPEED)),
-			FIX19_13_MULT(velocity.y, FIX19_13_DIV(velocity.y, __LIGHT_SPEED)),
-			FIX19_13_MULT(velocity.z, FIX19_13_DIV(velocity.z, __LIGHT_SPEED)),
+			__FIX19_13_MULT(velocity.x, __FIX19_13_DIV(velocity.x, __LIGHT_SPEED)),
+			__FIX19_13_MULT(velocity.y, __FIX19_13_DIV(velocity.y, __LIGHT_SPEED)),
+			__FIX19_13_MULT(velocity.z, __FIX19_13_DIV(velocity.z, __LIGHT_SPEED)),
 		};
 
 		this->positionedRightCuboid.x1 += lorentzFactor.x;
@@ -614,17 +614,17 @@ void Cuboid_print(Cuboid this, int x, int y)
 	RightCuboid rightCuboid = this->positionedRightCuboid;
 
 	Printing_text(Printing_getInstance(), "X:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.x0), x + 2, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightCuboid.x0), x + 2, y, NULL);
 	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.x1), x + 7, y++, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightCuboid.x1), x + 7, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Y:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.y0), x + 2, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightCuboid.y0), x + 2, y, NULL);
 	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.y1), x + 7, y++, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightCuboid.y1), x + 7, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Z:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.z0), x + 2, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightCuboid.z0), x + 2, y, NULL);
 	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), FIX19_13TOI(rightCuboid.z1), x + 7, y++, NULL);
+	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightCuboid.z1), x + 7, y++, NULL);
 }

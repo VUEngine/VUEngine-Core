@@ -107,19 +107,19 @@ static void __attribute__ ((noinline)) Screen_constructor(Screen this)
 
 	// accounts for the physical (real) space between the eyes and
 	// the VB's screens, whose virtual representation is the Screen instance
-	this->optical.distanceEyeScreen = ITOFIX19_13(__DISTANCE_EYE_SCREEN);
+	this->optical.distanceEyeScreen = __I_TO_FIX19_13(__DISTANCE_EYE_SCREEN);
 
 	// maximum distance from the _SC to the infinite
 	this->optical.maximumViewDistancePower = __MAXIMUM_VIEW_DISTANCE_POWER;
 
 	// distance from left to right eye (depth sensation)
-	this->optical.baseDistance = ITOFIX19_13(__BASE_FACTOR);
+	this->optical.baseDistance = __I_TO_FIX19_13(__BASE_FACTOR);
 
 	// horizontal view point center
-	this->optical.horizontalViewPointCenter = ITOFIX19_13(__HORIZONTAL_VIEW_POINT_CENTER);
+	this->optical.horizontalViewPointCenter = __I_TO_FIX19_13(__HORIZONTAL_VIEW_POINT_CENTER);
 
 	// vertical view point center
-	this->optical.verticalViewPointCenter = ITOFIX19_13(__VERTICAL_VIEW_POINT_CENTER);
+	this->optical.verticalViewPointCenter = __I_TO_FIX19_13(__VERTICAL_VIEW_POINT_CENTER);
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
@@ -264,9 +264,9 @@ void Screen_capPosition(Screen this)
 		this->position.x = 0;
 	}
 
-	if(this->position.x + ITOFIX19_13(__SCREEN_WIDTH) > ITOFIX19_13(this->stageSize.x))
+	if(this->position.x + __I_TO_FIX19_13(__SCREEN_WIDTH) > __I_TO_FIX19_13(this->stageSize.x))
 	{
-		this->position.x = ITOFIX19_13(this->stageSize.x - __SCREEN_WIDTH);
+		this->position.x = __I_TO_FIX19_13(this->stageSize.x - __SCREEN_WIDTH);
 	}
 
 	if(this->position.y < 0)
@@ -274,9 +274,9 @@ void Screen_capPosition(Screen this)
 		this->position.y = 0;
 	}
 
-	if(this->position.y + ITOFIX19_13(__SCREEN_HEIGHT) > ITOFIX19_13(this->stageSize.y))
+	if(this->position.y + __I_TO_FIX19_13(__SCREEN_HEIGHT) > __I_TO_FIX19_13(this->stageSize.y))
 	{
-		this->position.y = ITOFIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
+		this->position.y = __I_TO_FIX19_13(this->stageSize.y - __SCREEN_HEIGHT);
 	}
 
 	if(this->position.z < 0)
@@ -284,9 +284,9 @@ void Screen_capPosition(Screen this)
 		this->position.z = 0;
 	}
 
-	if(this->position.z > ITOFIX19_13(this->stageSize.z))
+	if(this->position.z > __I_TO_FIX19_13(this->stageSize.z))
 	{
-		this->position.z = ITOFIX19_13(this->stageSize.z);
+		this->position.z = __I_TO_FIX19_13(this->stageSize.z);
 	}
 }
 

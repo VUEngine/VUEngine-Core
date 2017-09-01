@@ -187,11 +187,11 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-	fromPoint.x = FIX19_13TOI(fromPoint.x);
-	fromPoint.y = FIX19_13TOI(fromPoint.y);
+	fromPoint.x = __FIX19_13_TO_I(fromPoint.x);
+	fromPoint.y = __FIX19_13_TO_I(fromPoint.y);
 
-	toPoint.x = FIX19_13TOI(toPoint.x);
-	toPoint.y = FIX19_13TOI(toPoint.y);
+	toPoint.x = __FIX19_13_TO_I(toPoint.x);
+	toPoint.y = __FIX19_13_TO_I(toPoint.y);
 
 	int dx = toPoint.x - fromPoint.x;
 	int dy = toPoint.y - fromPoint.y;

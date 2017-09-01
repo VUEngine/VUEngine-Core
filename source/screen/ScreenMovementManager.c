@@ -95,26 +95,26 @@ void ScreenMovementManager_focus(ScreenMovementManager this __attribute__ ((unus
 				// get focusEntity's position
 				screen->position = *Entity_getPosition(__SAFE_CAST(Entity, screen->focusEntity));
 
-				screen->position.x += screen->focusEntityPositionDisplacement.x - ITOFIX19_13(__HALF_SCREEN_WIDTH);
-				screen->position.y += screen->focusEntityPositionDisplacement.y - ITOFIX19_13(__HALF_SCREEN_HEIGHT);
-				screen->position.z += screen->focusEntityPositionDisplacement.z - ITOFIX19_13(__HALF_SCREEN_DEPTH);
+				screen->position.x += screen->focusEntityPositionDisplacement.x - __I_TO_FIX19_13(__HALF_SCREEN_WIDTH);
+				screen->position.y += screen->focusEntityPositionDisplacement.y - __I_TO_FIX19_13(__HALF_SCREEN_HEIGHT);
+				screen->position.z += screen->focusEntityPositionDisplacement.z - __I_TO_FIX19_13(__HALF_SCREEN_DEPTH);
 
 				if(0 > screen->position.x)
 				{
 					screen->position.x = 0;
 				}
-				else if(ITOFIX19_13(screen->stageSize.x) < screen->position.x + ITOFIX19_13(__SCREEN_WIDTH))
+				else if(__I_TO_FIX19_13(screen->stageSize.x) < screen->position.x + __I_TO_FIX19_13(__SCREEN_WIDTH))
 				{
-					screen->position.x = ITOFIX19_13(screen->stageSize.x - __SCREEN_WIDTH);
+					screen->position.x = __I_TO_FIX19_13(screen->stageSize.x - __SCREEN_WIDTH);
 				}
 
 				if(0 > screen->position.y)
 				{
 					screen->position.y = 0;
 				}
-				else if(ITOFIX19_13(screen->stageSize.y) < screen->position.y + ITOFIX19_13(__SCREEN_HEIGHT))
+				else if(__I_TO_FIX19_13(screen->stageSize.y) < screen->position.y + __I_TO_FIX19_13(__SCREEN_HEIGHT))
 				{
-					screen->position.y = ITOFIX19_13(screen->stageSize.y - __SCREEN_HEIGHT);
+					screen->position.y = __I_TO_FIX19_13(screen->stageSize.y - __SCREEN_HEIGHT);
 				}
 
 				screen->lastDisplacement.x = screen->position.x - screen->lastDisplacement.x;

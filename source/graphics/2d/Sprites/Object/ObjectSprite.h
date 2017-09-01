@@ -55,11 +55,11 @@
 		__VIRTUAL_SET(ClassName, ObjectSprite, getPosition);											\
 		__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);											\
 		__VIRTUAL_SET(ClassName, ObjectSprite, position);												\
-		__VIRTUAL_SET(ClassName, ObjectSprite, setDirection);											\
+		__VIRTUAL_SET(ClassName, ObjectSprite, rotate);													\
 		__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
 		__VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
 		__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
-		__VIRTUAL_SET(ClassName, ObjectSprite, setMode);														\
+		__VIRTUAL_SET(ClassName, ObjectSprite, setMode);												\
 
 #define ObjectSprite_ATTRIBUTES																			\
 		Sprite_ATTRIBUTES																				\
@@ -128,7 +128,7 @@ s16 ObjectSprite_getTotalObjects(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
 void ObjectSprite_position(ObjectSprite this, const VBVec3D* position3D);
 void ObjectSprite_render(ObjectSprite this);
-void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction);
+void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
 void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
 void ObjectSprite_setMode(ObjectSprite this, u16 display, u16 mode);

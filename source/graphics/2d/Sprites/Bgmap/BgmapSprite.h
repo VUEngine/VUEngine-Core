@@ -66,7 +66,6 @@
 		__VIRTUAL_SET(ClassName, BgmapSprite, position);												\
 		__VIRTUAL_SET(ClassName, BgmapSprite, rotate);													\
 		__VIRTUAL_SET(ClassName, BgmapSprite, getScale);												\
-		__VIRTUAL_SET(ClassName, BgmapSprite, setDirection);											\
 		__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);								\
 		__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasEffects);										\
 		__VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
@@ -141,7 +140,6 @@ void BgmapSprite_destructor(BgmapSprite this);
 
 // general
 Scale BgmapSprite_getScale(BgmapSprite this);
-void BgmapSprite_setDirection(BgmapSprite this, int axis, int direction);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
 VBVec2D BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position);

@@ -189,7 +189,6 @@ void Entity_releaseSprites(Entity this, bool deleteThem);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_setDefinition(Entity this, void* entityDefinition);
 void Entity_setExtraInfo(Entity this, void* extraInfo);
-void Entity_setSpritesDirection(Entity this, int axis, int direction);
 void Entity_show(Entity this);
 void Entity_suspend(Entity this);
 void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
@@ -204,6 +203,7 @@ fix19_13 Entity_getFriction(Entity this);
 void Entity_informShapesThatStartedMoving(Entity this);
 void Entity_informShapesThatStoppedMoving(Entity this);
 void Entity_activateShapes(Entity this, bool value);
-
+Direction Entity_getDirection(Entity this);
+void Entity_setDirection(Entity this, Direction direction);
 
 #endif

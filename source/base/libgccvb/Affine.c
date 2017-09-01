@@ -29,6 +29,7 @@
 #include <BgmapTextureManager.h>
 #include <SpriteManager.h>
 #include <ParamTableManager.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -44,41 +45,47 @@ extern double fabs (double);
 
 s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_3 mx, fix13_3 my, fix19_13 halfWidth, fix19_13 halfHeight, const Scale* scale, const Rotation* rotation)
 {
-	ASSERT(scale->x, "Affine::applyAll: 0 x scale");
-	ASSERT(scale->y, "Affine::applyAll: 0 y scale");
+	Scale finalScale =
+	{
+		__FIX7_9_MULT(__COS(rotation->y), scale->x),
+		__FIX7_9_MULT(__COS(rotation->x), scale->y),
+	};
 
-	fix19_13 highPrecisionPa = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->x));
-	fix19_13 highPrecisionPb = -FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->x));
-	fix19_13 highPrecisionPc = FIX19_13_DIV(FIX7_9TOFIX19_13(SIN(rotation->z)), FIX7_9TOFIX19_13(scale->y));
-	fix19_13 highPrecisionPd = FIX19_13_DIV(FIX7_9TOFIX19_13(COS(rotation->z)), FIX7_9TOFIX19_13(scale->y));
+	ASSERT(finalScale, "Affine::applyAll: 0 x scale");
+	ASSERT(finalScale, "Affine::applyAll: 0 y scale");
+
+	fix19_13 highPrecisionPa = __FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__COS(rotation->z)), __FIX7_9_TO_FIX19_13(finalScale.x));
+	fix19_13 highPrecisionPb = -__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__SIN(rotation->z)), __FIX7_9_TO_FIX19_13(finalScale.x));
+	fix19_13 highPrecisionPc = __FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__SIN(rotation->z)), __FIX7_9_TO_FIX19_13(finalScale.y));
+	fix19_13 highPrecisionPd = __FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__COS(rotation->z)), __FIX7_9_TO_FIX19_13(finalScale.y));
 
 	FixedAffineMatrix fixedAffineMatrix;
-	fixedAffineMatrix.pa = FIX19_13TOFIX7_9(highPrecisionPa);
-	fixedAffineMatrix.pc = FIX19_13TOFIX7_9(highPrecisionPc);
+	fixedAffineMatrix.pa = __FIX19_13_TO_FIX7_9(highPrecisionPa);
+	fixedAffineMatrix.pc = __FIX19_13_TO_FIX7_9(highPrecisionPc);
 
 	// bgX + bgWidth - pa * dispX - pb * dispY
 	fixedAffineMatrix.dx =
 		mx
 		+
-		FIX19_13TOFIX13_3(FIX19_13_DIV(halfWidth, FIX7_9TOFIX19_13(__ABS(scale->x))))
+		__FIX19_13_TO_FIX13_3(__FIX19_13_DIV(halfWidth, __FIX7_9_TO_FIX19_13(__ABS(finalScale.x))))
 		-
-		FIX19_13TOFIX13_3
+		__FIX19_13_TO_FIX13_3
 		(
-			FIX19_13_MULT(highPrecisionPa, x)
+			__FIX19_13_MULT(highPrecisionPa, x)
 			+
-			FIX19_13_MULT(highPrecisionPb, y)
+			__FIX19_13_MULT(highPrecisionPb, y)
 		);
 
 	// bgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 		my
 		+
-		FIX19_13TOFIX13_3(FIX19_13_DIV(halfHeight, FIX7_9TOFIX19_13(__ABS(scale->y))))
+		__FIX19_13_TO_FIX13_3(__FIX19_13_DIV(halfHeight, __FIX7_9_TO_FIX19_13(__ABS(finalScale.y))))
 		-
 		(
-			FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPc, x))
+			__FIX19_13_TO_FIX13_3(__FIX19_13_MULT(highPrecisionPc, x))
 			+
-			FIX19_13TOFIX13_3(FIX19_13_MULT(highPrecisionPd, y))
+			__FIX19_13_TO_FIX13_3(__FIX19_13_MULT(highPrecisionPd, y))
 		);
 
 	fixedAffineMatrix.parallax = 0;
@@ -86,7 +93,7 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 	AffineEntry* affine = (AffineEntry*)param;
 
 	s16 i = 0 <= paramTableRow ? paramTableRow : 0;
-	int lastRow = FIX19_13TOI(halfHeight << 1) + 1;
+	int lastRow = __FIX19_13_TO_I(halfHeight << 1) + 1;
 	int counter = SpriteManager_getMaximumParamTableRowsToComputePerCall(SpriteManager_getInstance());
 
 	CACHE_DISABLE;
@@ -95,9 +102,9 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 
 	for(;counter && i <= lastRow; i++, counter--)
 	{
-		affine[i].pb_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;
+		affine[i].pb_y = __FIX19_13_TO_FIX13_3(__FIX19_13_MULT(__I_TO_FIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 		affine[i].parallax = fixedAffineMatrix.parallax;
-		affine[i].pd_y = FIX19_13TOFIX13_3(FIX19_13_MULT(ITOFIX19_13(i), highPrecisionPd)) + fixedAffineMatrix.dy;
+		affine[i].pd_y = __FIX19_13_TO_FIX13_3(__FIX19_13_MULT(__I_TO_FIX19_13(i), highPrecisionPd)) + fixedAffineMatrix.dy;
 		affine[i].pa = fixedAffineMatrix.pa;
 		affine[i].pc = fixedAffineMatrix.pc;
 	}

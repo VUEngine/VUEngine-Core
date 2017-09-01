@@ -45,7 +45,9 @@
 		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
 		__VIRTUAL_DEC(ClassName, void, updateSurroundingFriction);										\
 		__VIRTUAL_DEC(ClassName, int, getAxisAllowedForBouncing);										\
-		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, VirtualList collidingShapes);	\
+		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, VirtualList collidingShapes);			\
+		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
+		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedEntity_SET_VTABLE(ClassName)															\
@@ -62,7 +64,7 @@
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForMovement);												\
+		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForMovement);										\
 		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);										\
 		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
@@ -70,6 +72,8 @@
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
 		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
 		__VIRTUAL_SET(ClassName, Actor, processCollision);												\
+		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
+		__VIRTUAL_SET(ClassName, Actor, syncRotationWithBody);											\
 
 
 #define Actor_ATTRIBUTES																				\
@@ -84,7 +88,7 @@
 		/* collision solver */																			\
 		CollisionSolver collisionSolver;																\
 		/* previous velocity */																			\
-		Velocity previousVelocity;																		\
+		Rotation previousRotation;																		\
 
 __CLASS(Actor);
 
@@ -111,7 +115,6 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Actor_resume(Actor this);
 void Actor_update(Actor this, u32 elapsedTime);
-void Actor_moveOppositeDirection(Actor this, u16 axis);
 int Actor_changedDirection(Actor this, int axis);
 void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
@@ -138,5 +141,7 @@ void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, u16 movementAxis);
 Velocity Actor_getVelocity(Actor this);
 void Actor_collisionsProcessingDone(Actor this, VirtualList collidingShapes);
+void Actor_syncPositionWithBody(Actor this);
+void Actor_syncRotationWithBody(Actor this);
 
 #endif

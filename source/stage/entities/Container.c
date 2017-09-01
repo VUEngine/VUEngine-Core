@@ -387,8 +387,8 @@ void Container_concatenateTransform(Transformation* environmentTransform, Transf
 	environmentTransform->globalRotation.z += transform->localRotation.z;
 
 	// propagate scale
-	environmentTransform->globalScale.x = FIX7_9_MULT(environmentTransform->globalScale.x, transform->localScale.x);
-	environmentTransform->globalScale.y = FIX7_9_MULT(environmentTransform->globalScale.y, transform->localScale.y);
+	environmentTransform->globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, transform->localScale.x);
+	environmentTransform->globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, transform->localScale.y);
 }
 
 // change environment
@@ -412,8 +412,8 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 
 	Scale localScale =
 	{
-		FIX7_9_DIV(this->transform.globalScale.x, environmentTransform->globalScale.x),
-		FIX7_9_DIV(this->transform.globalScale.y, environmentTransform->globalScale.y),
+		__FIX7_9_DIV(this->transform.globalScale.x, environmentTransform->globalScale.x),
+		__FIX7_9_DIV(this->transform.globalScale.y, environmentTransform->globalScale.y),
 	};
 
 	Container_setLocalPosition(this, &localPosition);
@@ -503,8 +503,8 @@ inline static void Container_applyEnvironmentToScale(Container this, const Trans
 	Scale localScale = this->transform.localScale;
 
 	// propagate scale
-	globalScale.x = FIX7_9_MULT(globalScale.x, localScale.x);
-	globalScale.y = FIX7_9_MULT(globalScale.y, localScale.y);
+	globalScale.x = __FIX7_9_MULT(globalScale.x, localScale.x);
+	globalScale.y = __FIX7_9_MULT(globalScale.y, localScale.y);
 
 	this->transform.globalScale = globalScale;
 }

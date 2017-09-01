@@ -273,7 +273,7 @@ int Clock_getTimeInCurrentSecond(Clock this)
 {
 	ASSERT(this, "Clock::getTimeInCurrentSecond: null this");
 
-	return __MILLISECONDS_IN_SECOND * (this->milliSeconds * 0.001f - F_FLOOR(this->milliSeconds * 0.001f));
+	return __MILLISECONDS_IN_SECOND * (this->milliSeconds * 0.001f - __F_FLOOR(this->milliSeconds * 0.001f));
 }
 
 /**

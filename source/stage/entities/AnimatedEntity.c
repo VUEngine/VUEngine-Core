@@ -81,12 +81,6 @@ void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* a
 	this->animatedEntityDefinition = animatedEntityDefinition;
 	this->animationDescription = animatedEntityDefinition->animationDescription;
 
-	//set the direction
-	this->direction.x = __RIGHT;
-	this->direction.y = __DOWN;
-	this->direction.z = __FAR;
-	this->previousDirection = this->direction;
-
 	this->currentAnimationName = NULL;
 }
 
@@ -123,42 +117,6 @@ void AnimatedEntity_ready(AnimatedEntity this, bool recursive)
 	AnimatedEntity_playAnimation(this, this->animatedEntityDefinition->initialAnimation);
 }
 
-// updates the animation attributes
-// graphically refresh of characters that are visible
-void AnimatedEntity_transform(AnimatedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
-{
-	ASSERT(this, "AnimatedEntity::transform: null this");
-
-	VBVec3DFlag directionChanged = {false, false, false};
-
-	// set sprite direction
-	if(this->direction.x != this->previousDirection.x)
-	{
-		// change sprite's direction
-		Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __X_AXIS, this->direction.x);
-
-		// save current direction
-		this->previousDirection.x = this->direction.x;
-	}
-
-	if(this->direction.y != this->previousDirection.y)
-	{
-		// change sprite's direction
-		Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __Y_AXIS, this->direction.y);
-
-		// save current direction
-		this->previousDirection.y = this->direction.y;
-	}
-
-	if(this->direction.z != this->previousDirection.z)
-	{
-		// save current direction
-		this->previousDirection.z = this->direction.z;
-	}
-
-	// call base
-	__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
-}
 
 // execute character's logic
 void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime)
@@ -322,8 +280,6 @@ void AnimatedEntity_resume(AnimatedEntity this)
 
 	__CALL_BASE_METHOD(Entity, resume, this);
 
-	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __X_AXIS, this->direction.x);
-
 	AnimatedEntity_playAnimation(this, this->currentAnimationName);
 }
 
@@ -362,21 +318,4 @@ int AnimatedEntity_getNumberOfFrames(AnimatedEntity this)
 	}
 
 	return -1;
-}
-
-// set direction
-void AnimatedEntity_setDirection(AnimatedEntity this, Direction direction)
-{
-	ASSERT(this, "AnimatedEntity::setDirection: null this");
-
-	this->direction = direction;
-}
-
-// get direction
-Direction AnimatedEntity_getDirection(AnimatedEntity this)
-{
-	ASSERT(this, "AnimatedEntity::getDirection: null this");
-
-	// TODO: must be recursive to account for parenting
-	return this->direction;
 }

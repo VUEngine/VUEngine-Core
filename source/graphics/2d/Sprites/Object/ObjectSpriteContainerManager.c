@@ -188,7 +188,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(__ABS(FIX19_13TOI(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(FIX19_13TOI(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
+				if(__ABS(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
@@ -255,7 +255,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 		{
 			VBVec2D position =
 			{
-					0, 0, z[i] + FTOFIX19_13(i * 0.1f), 0
+					0, 0, z[i] + __F_TO_FIX19_13(i * 0.1f), 0
 			};
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);

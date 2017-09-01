@@ -104,8 +104,8 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	ASSERT(objectSpriteDefinition->spriteDefinition.textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
 	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
-	this->halfWidth = ITOFIX19_13((int)this->texture->textureDefinition->cols << 2);
-	this->halfHeight = ITOFIX19_13((int)this->texture->textureDefinition->rows << 2);
+	this->halfWidth = __I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2);
+	this->halfHeight = __I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2);
 	this->totalObjects = objectSpriteDefinition->spriteDefinition.textureDefinition->cols * objectSpriteDefinition->spriteDefinition.textureDefinition->rows;
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
@@ -141,44 +141,41 @@ void ObjectSprite_destructor(ObjectSprite this)
 }
 
 /**
- * Set direction
+ * Set rotation
  *
  * @memberof			ObjectSprite
  * @public
  *
  * @param this			Function scope
- * @param axis			Axis to modify
- * @param direction		Direction value
+ * @param rotation		The rotation
  */
-void ObjectSprite_setDirection(ObjectSprite this, int axis, int direction)
+void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "ObjectSprite::setDirection: null this");
 
-	switch(axis)
+	Direction direction =
 	{
-		case __X_AXIS:
+		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) ? __LEFT : __RIGHT,
+		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) ? __UP : __DOWN,
+		__FAR,
+	};
 
-			if(__LEFT == direction)
-			{
-				this->head |= 0x2000;
-			}
-			else if(__RIGHT == direction)
-			{
-				this->head &= 0xDFFF;
-			}
-			break;
+	if(__LEFT == direction.x)
+	{
+		this->head |= 0x2000;
+	}
+	else if(__RIGHT == direction.x)
+	{
+		this->head &= 0xDFFF;
+	}
 
-		case __Y_AXIS:
-
-			if(__UP == direction)
-			{
-				this->head |= 0x1000;
-			}
-			else if(__DOWN == direction)
-			{
-				this->head &= 0xEFFF;
-			}
-			break;
+	if(__UP == direction.y)
+	{
+		this->head |= 0x1000;
+	}
+	else if(__DOWN == direction.y)
+	{
+		this->head &= 0xEFFF;
 	}
 
 	this->texture->written = false;
@@ -310,11 +307,11 @@ void ObjectSprite_render(ObjectSprite this)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = FIX19_13TOI(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-	int y = FIX19_13TOI(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+	int x = __FIX19_13_TO_I(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX19_13) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+	int y = __FIX19_13_TO_I(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX19_13) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000)) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + __FIX19_13_TO_I((this->displacement.z + this->displacement.p) & 0xFFFFE000)) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)

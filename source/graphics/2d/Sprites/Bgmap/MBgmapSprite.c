@@ -263,7 +263,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx = -FIX19_13TOI(position->x + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.mx = -__FIX19_13_TO_I(position->x + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -272,7 +272,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 /*
 		if(0 > position->x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= FIX19_13TOI(position->x + this->displacement.x + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.mx -= __FIX19_13_TO_I(position->x + this->displacement.x + __0_5F_FIX19_13);
 		}
 */
 	}
@@ -280,7 +280,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my = -FIX19_13TOI(position->y + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.my = -__FIX19_13_TO_I(position->y + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -289,7 +289,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
 /*
 		if(0 > position->y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= FIX19_13TOI(position->y + this->displacement.y + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.my -= __FIX19_13_TO_I(position->y + this->displacement.y + __0_5F_FIX19_13);
 		}
 */
 	}
@@ -326,7 +326,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx -= FIX19_13TOI(displacement->x + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.mx -= __FIX19_13_TO_I(displacement->x + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -335,7 +335,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 /*
 		if(0 > this->drawSpec.position.x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.mx -= __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
 		}
 */
 	}
@@ -343,7 +343,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my -= FIX19_13TOI(displacement->y + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.my -= __FIX19_13_TO_I(displacement->y + __0_5F_FIX19_13);
 	}
 	else
 	{
@@ -352,7 +352,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement
 /*
 		if(0 > this->drawSpec.position.y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.my -= __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 		}
 */
 	}
@@ -396,8 +396,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
 	// get coordinates
-	int gx = FIX19_13TOI(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-	int gy = FIX19_13TOI(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	int gx = __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+	int gy = __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
@@ -415,8 +415,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 		myDisplacement = _cameraFrustum->y0 - gy;
 	}
 
-//		worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
-	worldPointer->gp = this->drawSpec.position.parallax + FIX19_13TOI((this->displacement.z + this->displacement.p) & 0xFFFFE000);
+//		worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
+	worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I((this->displacement.z + this->displacement.p) & 0xFFFFE000);
 
 	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
@@ -425,7 +425,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	// set the world size
 	if(!this->mBgmapSpriteDefinition->xLoop)
 	{
-    	int w = (FIX19_13TOI(this->halfWidth) << 1) - mxDisplacement;
+    	int w = (__FIX19_13_TO_I(this->halfWidth) << 1) - mxDisplacement;
 
 		if(w + worldPointer->gx >= _cameraFrustum->x1)
 		{
@@ -459,7 +459,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 	if(!this->mBgmapSpriteDefinition->yLoop)
 	{
-    	int h = (FIX19_13TOI(this->halfHeight) << 1) - myDisplacement;
+    	int h = (__FIX19_13_TO_I(this->halfHeight) << 1) - myDisplacement;
 
 		if(h + worldPointer->gy >= _cameraFrustum->y1)
 		{
@@ -556,8 +556,8 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 		}
 	}
 
-	this->halfWidth = ITOFIX19_13(cols << 2);
-	this->halfHeight = ITOFIX19_13(rows << 2);
+	this->halfWidth = __I_TO_FIX19_13(cols << 2);
+	this->halfHeight = __I_TO_FIX19_13(rows << 2);
 }
 
 /**

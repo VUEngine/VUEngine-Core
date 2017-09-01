@@ -393,8 +393,8 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	Clock_pause(clock, true);
 
-	fix19_13 currentTime = ITOFIX19_13(Clock_getTime(clock));
-	fix19_13 elapsedTime = FIX19_13_DIV(currentTime - this->previousTime, ITOFIX19_13(__MILLISECONDS_IN_SECOND));
+	fix19_13 currentTime = __I_TO_FIX19_13(Clock_getTime(clock));
+	fix19_13 elapsedTime = __FIX19_13_DIV(currentTime - this->previousTime, __I_TO_FIX19_13(__MILLISECONDS_IN_SECOND));
 
 	Clock_pause(clock, false);
 
@@ -406,7 +406,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 		if(!elapsedTime)
 		{
-			this->previousTime = ITOFIX19_13(Clock_getTime(clock));
+			this->previousTime = __I_TO_FIX19_13(Clock_getTime(clock));
 			return;
 		}
 
@@ -423,7 +423,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		}
 	}
 
-	this->previousTime = ITOFIX19_13(Clock_getTime(clock));
+	this->previousTime = __I_TO_FIX19_13(Clock_getTime(clock));
 }
 
 /**

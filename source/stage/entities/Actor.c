@@ -84,6 +84,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 
 	this->body = NULL;
 	this->collisionSolver = NULL;
+	this->previousRotation = this->transform.localRotation;
 }
 
 // class's destructor
@@ -159,6 +160,15 @@ void Actor_syncWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
+	__VIRTUAL_CALL(Actor, syncPositionWithBody, this);
+
+	__VIRTUAL_CALL(Actor, syncRotationWithBody, this);
+}
+
+void Actor_syncPositionWithBody(Actor this)
+{
+	ASSERT(this, "Actor::syncPositionWithBody: null this");
+
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = {0, 0, 0};
 
@@ -183,40 +193,39 @@ void Actor_syncWithBody(Actor this)
 	localPosition.y += bodyLastDisplacement.y;
 	localPosition.z += bodyLastDisplacement.z;
 
-	// sync direction with velocity
+	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, &localPosition);
+}
+
+void Actor_syncRotationWithBody(Actor this)
+{
+	ASSERT(this, "Actor::syncRotationWithBody: null this");
+
 	if(Body_getMovementOverAllAxis(this->body))
 	{
 		Velocity velocity = Body_getVelocity(this->body);
 
-		if(0 < velocity.x)
+		Direction direction =
 		{
-			this->direction.x = __RIGHT;
-		}
-		else if(0 > velocity.x)
+			__RIGHT, __DOWN, __FAR
+		};
+
+		if(0 > velocity.x)
 		{
-			this->direction.x = __LEFT;
+			direction.x = __LEFT;
 		}
 
-		if(0 < velocity.y)
+		if(0 > velocity.y)
 		{
-			this->direction.y = __DOWN;
-		}
-		else if(0 > velocity.y)
-		{
-			this->direction.y = __UP;
+			direction.y = __UP;
 		}
 
-		if(0 < velocity.z)
+		if(0 > velocity.z)
 		{
-			this->direction.z = __FAR;
+			direction.z = __NEAR;
 		}
-		else if(0 > velocity.z)
-		{
-			this->direction.z = __NEAR;
-		}
+
+		Entity_setDirection(__SAFE_CAST(Entity, this), direction);
 	}
-
-	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, &localPosition);
 }
 
 // updates the animation attributes
@@ -253,6 +262,8 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 
 	// call base
 	__CALL_BASE_METHOD(AnimatedEntity, transform, this, environmentTransform, invalidateTransformationFlag);
+
+	this->previousRotation = this->transform.localRotation;
 }
 
 void Actor_resume(Actor this)
@@ -260,9 +271,6 @@ void Actor_resume(Actor this)
 	ASSERT(this, "Actor::resume: null this");
 
 	__CALL_BASE_METHOD(AnimatedEntity, resume, this);
-
-	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __X_AXIS, this->direction.x);
-	Entity_setSpritesDirection(__SAFE_CAST(Entity, this), __Y_AXIS, this->direction.y);
 
 	Actor_syncWithBody(this);
 }
@@ -314,30 +322,6 @@ void Actor_updateSurroundingFriction(Actor this)
 	Body_setFriction(this->body, totalFriction);
 }
 
-// change direction
-void Actor_moveOppositeDirection(Actor this, u16 axis)
-{
-	ASSERT(this, "Actor::moveOpositeDirecion: null this");
-
-	switch(axis)
-	{
-		case __X_AXIS:
-
-			this->direction.x *= -1;
-			break;
-
-		case __Y_AXIS:
-
-			this->direction.y *= -1;
-			break;
-
-		case __Z_AXIS:
-
-			this->direction.z *= -1;
-			break;
-	}
-}
-
 // whether changed direction in the last cycle or not
 int Actor_changedDirection(Actor this, int axis)
 {
@@ -347,17 +331,17 @@ int Actor_changedDirection(Actor this, int axis)
 	{
 		case __X_AXIS:
 
-			return this->direction.x != this->previousDirection.x;
+			return this->transform.localRotation.x != this->previousRotation.x;
 			break;
 
 		case __Y_AXIS:
 
-			return this->direction.y != this->previousDirection.y;
+			return this->transform.localRotation.y != this->previousRotation.y;
 			break;
 
 		case __Z_AXIS:
 
-			return this->direction.z != this->previousDirection.z;
+			return this->transform.localRotation.z != this->previousRotation.z;
 			break;
 	}
 
@@ -369,44 +353,48 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
 
-	// save current direction
-	this->previousDirection = this->direction;
+	// save current rotation
+	this->previousRotation = this->transform.localRotation;
+
+	Direction direction = Entity_getDirection(__SAFE_CAST(Entity, this));
 
 	if((__X_AXIS & axis))
 	{
-		if(__RIGHT == this->direction.x)
+		if(__RIGHT == direction.x)
 		{
-			this->direction.x = __LEFT;
+			direction.x = __LEFT;
 		}
 		else
 		{
-			this->direction.x = __RIGHT;
+			direction.x = __RIGHT;
 		}
 	}
 
 	if((__Y_AXIS & axis))
 	{
-		if(__NEAR == this->direction.y)
+		if(__NEAR == direction.y)
 		{
-			this->direction.y = __FAR;
+			direction.y = __FAR;
 		}
 		else
 		{
-			this->direction.x = __NEAR;
+			direction.x = __NEAR;
 		}
 	}
 
 	if((__Z_AXIS & axis))
 	{
-		if(__RIGHT == this->direction.z)
+		if(__RIGHT == direction.z)
 		{
-			this->direction.x = __LEFT;
+			direction.x = __LEFT;
 		}
 		else
 		{
-			this->direction.x = __RIGHT;
+			direction.x = __RIGHT;
 		}
 	}
+
+	Entity_setDirection(__SAFE_CAST(Entity, this), direction);
 }
 
 // check if gravity must apply to this actor
