@@ -440,23 +440,31 @@ static void StageEditor_releaseShape(StageEditor this)
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
 		VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
-		VirtualNode node = shapes->head;
 
-		for(; node; node = node->next)
+		if(shapes)
 		{
-			if(this->shape == __SAFE_CAST(Shape, node->data))
+			VirtualNode node = shapes->head;
+
+			for(; node; node = node->next)
 			{
-				break;
+				if(this->shape == __SAFE_CAST(Shape, node->data))
+				{
+					break;
+				}
 			}
-		}
 
-		if(this->shape && !node)
-		{
-			__DELETE(this->shape);
+			if(this->shape && !node)
+			{
+				__DELETE(this->shape);
+			}
+			else if(this->shape)
+			{
+				__VIRTUAL_CALL(Shape, hide, this->shape);
+			}
 		}
 		else if(this->shape)
 		{
-			__VIRTUAL_CALL(Shape, hide, this->shape);
+			__DELETE(this->shape);
 		}
 
 		this->shape = NULL;
