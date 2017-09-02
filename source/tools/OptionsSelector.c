@@ -588,3 +588,21 @@ void OptionsSelector_doCurrentSelectionCallback(OptionsSelector this)
 		option->callback(option->callbackScope);
 	}
 }
+
+
+/**
+ * Retrieve the total number of options
+ *
+ * @memberof	OptionsSelector
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		The number of options
+ */
+int OptionsSelector_getNumberOfOptions(OptionsSelector this)
+{
+	ASSERT(this, "OptionsSelector::getNumberOfOptions(: null this");
+
+	return this->totalOptions;
+}

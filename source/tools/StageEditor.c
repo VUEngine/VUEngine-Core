@@ -388,6 +388,18 @@ static void StageEditor_setupMode(StageEditor this)
 
 	switch(this->mode)
 	{
+		case kAddObjects:
+
+			if(OptionsSelector_getNumberOfOptions(this->userObjectsSelector))
+			{
+				StageEditor_releaseShape(this);
+				StageEditor_printUserObjects(this);
+				StageEditor_showSelectedUserObject(this);
+				break;
+			}
+
+			this->mode = kMoveScreen;
+
 		case kMoveScreen:
 
 			StageEditor_releaseShape(this);
@@ -414,13 +426,6 @@ static void StageEditor_setupMode(StageEditor this)
 
 			StageEditor_printEntityPosition(this);
 			StageEditor_printTranslationStepSize(this);
-			break;
-
-		case kAddObjects:
-
-			StageEditor_releaseShape(this);
-			StageEditor_printUserObjects(this);
-			StageEditor_showSelectedUserObject(this);
 			break;
 	}
 }

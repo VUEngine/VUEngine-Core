@@ -191,6 +191,7 @@ bool OptionsSelector_selectPreviousColumn(OptionsSelector this);
 bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex);
 int OptionsSelector_getSelectedOption(OptionsSelector this);
 void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y);
+int OptionsSelector_getNumberOfOptions(OptionsSelector this);
 
 
 #endif
