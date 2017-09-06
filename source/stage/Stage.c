@@ -1059,20 +1059,19 @@ bool Stage_stream(Stage this)
 
 void Stage_streamAll(Stage this)
 {
-	ASSERT(this, "Stagge::streamAll: null this");
+	ASSERT(this, "Stage::streamAll: null this");
 
 	// must make sure there are not pending entities for removal
 	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 
 	Stage_unloadOutOfRangeEntities(this, false);
-	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 	SpriteManager_disposeSprites(SpriteManager_getInstance());
+	Container_processRemovedChildren(__SAFE_CAST(Container, this));
 	Stage_loadInRangeEntities(this, false);
 	EntityFactory_prepareAllEntities(this->entityFactory);
 	SpriteManager_writeTextures(SpriteManager_getInstance());
 	SpriteManager_sortLayers(SpriteManager_getInstance());
 }
-
 
 // execute stage's logic
 void Stage_update(Stage this, u32 elapsedTime)
