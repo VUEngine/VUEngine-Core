@@ -175,13 +175,13 @@ void HardwareManager_checkMemoryMap()
 		Printing_int(Printing_getInstance(), missingSpace, 17, y, NULL);
 		Printing_text(Printing_getInstance(), "Bytes ", 17 + Utilities_intLength(missingSpace) + 1, y++, NULL);
 		Printing_text(Printing_getInstance(), "WORLD space: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (u32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 5, NULL);
+		Printing_hex(Printing_getInstance(), (u32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
 		Printing_text(Printing_getInstance(), "DRAM start: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (u32)&_dram_data_start, 17, y, 5, NULL);
+		Printing_hex(Printing_getInstance(), (u32)&_dram_data_start, 17, y, 4, NULL);
 		Printing_text(Printing_getInstance(), "DRAM end: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (u32)&_dram_bss_end, 17, y++, 5, NULL);
+		Printing_hex(Printing_getInstance(), (u32)&_dram_bss_end, 17, y++, 4, NULL);
 		Printing_text(Printing_getInstance(), "Suggested DRAM start: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), recommendedDramStart, 25, y, 5, NULL);
+		Printing_hex(Printing_getInstance(), recommendedDramStart, 25, y, 4, NULL);
 		Printing_text(Printing_getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
 		Printing_int(Printing_getInstance(), recommendedDramSize, 25, y, NULL);
 		Printing_text(Printing_getInstance(), "Bytes ", 25 + Utilities_intLength(recommendedDramSize) + 1, y++, NULL);
@@ -485,73 +485,75 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 
 	// print registries' status to know the call source
 	Printing_text(Printing_getInstance(), "PSW:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "SP:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "LP:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getLinkPointer(this), x + xDisplacement, auxY++, 5, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getLinkPointer(this), x + xDisplacement, auxY++, 4, NULL);
 
 	Printing_text(Printing_getInstance(), "_hardwareRegisters", x, ++auxY, NULL);
+	auxY++;
 	Printing_text(Printing_getInstance(), "WCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "CCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CCR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CCR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "CCSR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CCSR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CCSR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "CDTR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CDTR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CDTR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "CDRR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CDRR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CDRR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "SDLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SDLR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SDLR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "SDHR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SDHR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SDHR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "TLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__TLR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__TLR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "THR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__THR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__THR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "TCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__TCR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__TCR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "WCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "SCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SCR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SCR], x + xDisplacement, auxY, 4, NULL);
 
-	auxY = y;
-	x += 17;
+	auxY = y + 4;
+	x += 19;
 	xDisplacement = 8;
 
 	Printing_text(Printing_getInstance(), "_vipRegisters", x, ++auxY, NULL);
+	auxY++;
 	Printing_text(Printing_getInstance(), "INTPND:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__INTPND], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "INTENB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__INTENB], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__INTENB], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "INTCLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__INTCLR], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__INTCLR], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "DPSTTS:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__DPSTTS], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__DPSTTS], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "DPCTRL:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__DPCTRL], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "BRTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "BRTB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "BRTC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "REST:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__REST], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "FRMCYC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__FRMCYC], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__FRMCYC], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "CTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__CTA], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__CTA], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "XPSTTS:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__XPSTTS], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__XPSTTS], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "XPCTRL:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__XPCTRL], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__XPCTRL], x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "VER:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__VER], x + xDisplacement, auxY, 5, NULL);
+	Printing_hex(Printing_getInstance(), _vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
 
-//	Printing_hex(Printing_getInstance(), HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5, 5, NULL);
+//	Printing_hex(Printing_getInstance(), HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5, 4, NULL);
 }
 
 #ifdef __ALERT_STACK_OVERFLOW
@@ -617,9 +619,9 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 
 		Printing_text(Printing_getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
 		Printing_text(Printing_getInstance(), "Pointer:" , x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), sp, x + 10, y, 5, NULL);
+		Printing_hex(Printing_getInstance(), sp, x + 10, y, 4, NULL);
 		Printing_text(Printing_getInstance(), "Bss' end:" , x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (int)&_bss_end, x + 10, y, 5, NULL);
+		Printing_hex(Printing_getInstance(), (int)&_bss_end, x + 10, y, 4, NULL);
 		Printing_text(Printing_getInstance(), "Room:           " , x, ++y, NULL);
 		Printing_int(Printing_getInstance(), room, x + 10, y, NULL);
 	}
