@@ -661,10 +661,6 @@ static void Game_setNextState(Game this, GameState state)
 			break;
 	}
 
-	// TODO: crashes on Mednafen
-	// enable hardware pad read
-	//HardwareManager_enableKeypad(HardwareManager_getInstance());
-
 	// if automatic pause function is in place
 	if(this->automaticPauseState)
 	{
