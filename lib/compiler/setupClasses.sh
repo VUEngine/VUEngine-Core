@@ -1,25 +1,44 @@
 #!/bin/bash
 
+classesFolders=( "$@" )
 VUENGINE_HOME=$1
 GAME_HOME=$2
-OUTPUT_C_FILE=$3
+OUTPUT_C_FILE=setupClasses.c
+HEADER_FOLDERS=
 
-VUENGINE_HEADER_FILES=`find $VUENGINE_HOME/source/ -name "*.h"`
-GAME_HEADER_FILES=`find $GAME_HOME/source/  -name "*.h"`
+while [[ $# -gt 1 ]]
+do
+	key="$1"
+	case $key in
+		-o|-output)
+		OUTPUT_C_FILE="$2"
+		shift # past argument
+		;;
+		*)
+		HEADER_FOLDERS="$HEADER_FOLDERS $1"
+		;;
+	esac
+
+	shift
+done
+
+HEADER_FILES=
+
+for headerFolder in $HEADER_FOLDERS; do
+
+	HEADER_FILES="$HEADER_FILES "`find $headerFolder/source/ -name "*.h"`
+done
+
 SAVED_HEADERS_FILE=$GAME_HOME/lib/compiler/headerFiles.txt
 TEMPORAL_HEADERS_FILE=temporalHeaderFiles.txt
 
 CLASSES_FILE="classFile.txt"
 
-echo $VUENGINE_HEADER_FILES > $TEMPORAL_HEADERS_FILE
-echo $GAME_HEADER_FILES >> $TEMPORAL_HEADERS_FILE
-
-HEADER_FILES=
+echo $HEADER_FILES > $TEMPORAL_HEADERS_FILE
 
 # check for header files additions or deletions
 if [ ! -f $SAVED_HEADERS_FILE ] || [ ! -f $OUTPUT_C_FILE ] ; then
-    echo $VUENGINE_HEADER_FILES > $SAVED_HEADERS_FILE
-    echo $GAME_HEADER_FILES >> $SAVED_HEADERS_FILE
+    echo $HEADER_FILES > $SAVED_HEADERS_FILE
 	HEADER_FILES=`cat $SAVED_HEADERS_FILE`
 else
 	SAVED_HEADER_FILES=`cat $SAVED_HEADERS_FILE`
@@ -39,11 +58,13 @@ if [ -n "$HEADER_FILES" ]; then
 	rm -f $CLASSES_FILE
 	rm -f $OUTPUT_C_FILE
 	echo " " > $OUTPUT_C_FILE
+	echo " " > $CLASSES_FILE
 
 	echo "// Do not modify this file, it is auto-generated" > $OUTPUT_C_FILE
 
-	for header in $HEADER_FILES; do
-		className=`grep "__CLASS(" $header`
+	for headerFile in $HEADER_FILES; do
+		echo "headerFile = $headerFile"
+		className=`grep "__CLASS(" $headerFile`
 		className=`echo $className | sed 's/__CLASS(//' | sed 's/);//'`
 		if ! [[ "$className" =~ "define" ]]; then
 			if [ -n "$className" ]; then

@@ -37,7 +37,7 @@
 
 static void MessageDispatcher_constructor(MessageDispatcher this);
 static void MessageDispatcher_destructor(MessageDispatcher this);
-static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
+void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay, Object sender,
 	Object receiver, int message, void* extraInfo);
 
 
@@ -168,7 +168,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 	}
 	else
 	{
-		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), delay, sender, receiver, message, extraInfo);
+		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), Game_getMessagingClock(Game_getInstance()), delay, sender, receiver, message, extraInfo);
 	}
 
 	return false;
@@ -187,8 +187,8 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
  * @param message	the actual message code
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
-static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32 delay, Object sender,
-		Object receiver, int message, void* extraInfo)
+void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay,
+ 	Object sender, Object receiver, int message, void* extraInfo)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
 
@@ -198,7 +198,7 @@ static void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, u32
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
 	delayMessage->telegram = telegram;
-	delayMessage->clock = Game_getMessagingClock(Game_getInstance());
+	delayMessage->clock = clock ? clock : Game_getMessagingClock(Game_getInstance());
 	delayMessage->timeOfArrival = Clock_getTime(delayMessage->clock) + delay;
 
 	VirtualList_pushBack(this->delayedMessages, delayMessage);

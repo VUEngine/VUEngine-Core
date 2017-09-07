@@ -171,7 +171,8 @@ setupClass:
 	@echo Preprocessing classes in:
 	@echo "	"$(VUENGINE_HOME)
 	@echo "	"$(GAME_HOME)
-	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh $(VUENGINE_HOME) $(GAME_HOME) $(SETUP_CLASSES).c
+	@echo "	"$(ADDITIONAL_CLASSES_FOLDERS)
+	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh $(VUENGINE_HOME) $(GAME_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c
 	@echo Classes processing done
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
