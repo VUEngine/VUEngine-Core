@@ -25,6 +25,7 @@ do
 	shift
 done
 
+
 HEADER_FILES=
 
 for headerFolder in $HEADER_FOLDERS; do
@@ -39,14 +40,18 @@ CLASSES_FILE="classFile.txt"
 
 echo $HEADER_FILES > $TEMPORAL_HEADERS_FILE
 
-# check for header files additions or deletions
+# check if necessary files already exist
 if [ ! -f $SAVED_HEADERS_FILE ] || [ ! -f $OUTPUT_C_FILE ] ; then
+	# if no, create them
     echo $HEADER_FILES > $SAVED_HEADERS_FILE
 	HEADER_FILES=`cat $SAVED_HEADERS_FILE`
 else
 	SAVED_HEADER_FILES=`cat $SAVED_HEADERS_FILE`
 	TEMPORAL_HEADER_FILES=`cat $TEMPORAL_HEADERS_FILE`
+	# clean to not setup the classes if not needed
+	HEADER_FILES=
 
+	# check for header files additions or deletions
 	if ! [ "$SAVED_HEADER_FILES" == "$TEMPORAL_HEADER_FILES" ]; then
 		echo "Files differ"
 		HEADER_FILES=$TEMPORAL_HEADERS_FILE
@@ -58,6 +63,7 @@ fi
 # if the header files list was populated, generate the setupClass.c files
 if [ -n "$HEADER_FILES" ]; then
 
+	echo "Generating $OUTPUT_C_FILE ..."
 	rm -f $CLASSES_FILE
 	rm -f $OUTPUT_C_FILE
 	echo " " > $OUTPUT_C_FILE
