@@ -1,8 +1,6 @@
 #!/bin/bash
 
-classesFolders=( "$@" )
-VUENGINE_HOME=$1
-GAME_HOME=$2
+GAME_HOME=
 OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
 
@@ -10,6 +8,11 @@ while [[ $# -gt 1 ]]
 do
 	key="$1"
 	case $key in
+		-h|-output)
+		GAME_HOME="$2"
+		HEADER_FOLDERS="$HEADER_FOLDERS $2"
+		shift # past argument
+		;;
 		-o|-output)
 		OUTPUT_C_FILE="$2"
 		shift # past argument
@@ -63,7 +66,6 @@ if [ -n "$HEADER_FILES" ]; then
 	echo "// Do not modify this file, it is auto-generated" > $OUTPUT_C_FILE
 
 	for headerFile in $HEADER_FILES; do
-		echo "headerFile = $headerFile"
 		className=`grep "__CLASS(" $headerFile`
 		className=`echo $className | sed 's/__CLASS(//' | sed 's/);//'`
 		if ! [[ "$className" =~ "define" ]]; then

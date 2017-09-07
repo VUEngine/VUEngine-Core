@@ -172,7 +172,7 @@ setupClass:
 	@echo "	"$(VUENGINE_HOME)
 	@echo "	"$(GAME_HOME)
 	@echo "	"$(ADDITIONAL_CLASSES_FOLDERS)
-	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh $(VUENGINE_HOME) $(GAME_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c
+	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh -h $(GAME_HOME) $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c
 	@echo Classes processing done
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
