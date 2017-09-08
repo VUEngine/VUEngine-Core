@@ -235,7 +235,9 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
 	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
+#ifndef __PUBLISH
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
+#endif
 
 	// must add them from __SPT3 to __SPT0
 	// so each they start presorted in the WORLDS
@@ -259,7 +261,10 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 			};
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
+
+#ifndef __PUBLISH
 			previousZ = z[i];
+#endif
 		}
 	}
 }

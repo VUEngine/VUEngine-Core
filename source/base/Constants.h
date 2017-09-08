@@ -119,9 +119,12 @@ enum MessagesTypes
 	kLastEngineMessage
 };
 
-#define NM_ASSERT(STATEMENT, ...)																		\
+#undef NM_ASSERT
+
+#ifndef __PUBLISH
+#define NM_ASSERT(Statement, ...)																		\
 	 																									\
-	if(!(STATEMENT))																					\
+	if(!(Statement))																					\
 	{ 																									\
 		asm(" mov sp,%0  ": "=r" (_sp));																\
 		asm(" mov lp,%0  ": "=r" (_lp));																\
@@ -129,12 +132,14 @@ enum MessagesTypes
 		/* thrown exception */																			\
 		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);					\
 	}
+#else
+	#define NM_ASSERT(Statement, ...)
+#endif
 
 #undef ASSERT
 
 #ifndef __DEBUG
 	#define ASSERT(Statement, ...)
-
 #else
 #define ASSERT(Statement, Message)																		\
 	 																									\
