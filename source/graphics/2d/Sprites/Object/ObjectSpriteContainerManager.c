@@ -235,7 +235,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
 	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
-#ifndef __PUBLISH
+#ifndef __RELEASE
 	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
@@ -262,7 +262,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
 
-#ifndef __PUBLISH
+#ifndef __RELEASE
 			previousZ = z[i];
 #endif
 		}

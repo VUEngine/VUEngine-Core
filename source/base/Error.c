@@ -121,7 +121,7 @@ void Error_destructor(Error this)
  * @param message
  * @param detail
  */
-#ifndef __PUBLISH
+#ifndef __RELEASE
 int Error_triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
 {
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;

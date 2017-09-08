@@ -121,7 +121,7 @@ enum MessagesTypes
 
 #undef NM_ASSERT
 
-#ifndef __PUBLISH
+#ifndef __RELEASE
 #define NM_ASSERT(Statement, ...)																		\
 	 																									\
 	if(!(Statement))																					\

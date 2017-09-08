@@ -2,8 +2,9 @@
 
 # Default build type
 TYPE = debug
-#TYPE = publish
 #TYPE = release
+#TYPE = beta
+#TYPE = tools
 #TYPE = preprocessor
 
 # output dir
@@ -109,16 +110,16 @@ C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_F
 MACROS = __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
-ifeq ($(TYPE), publish)
-LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
-MACROS = __PUBLISH $(COMMON_MACROS)
-endif
-
 ifeq ($(TYPE), release)
 LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION)  -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
 MACROS = __RELEASE $(COMMON_MACROS)
+endif
+
+ifeq ($(TYPE), beta)
+LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION)  -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+MACROS = __BETA $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), tools)

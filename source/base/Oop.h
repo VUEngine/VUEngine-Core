@@ -201,7 +201,7 @@
 		}
 
 // configure class's vtable
-#ifndef __PUBLISH
+#ifndef __RELEASE
 #define __CHECK_VTABLE_DEFINITION(ClassName)															\
 																										\
 		/* define the static method */																	\
