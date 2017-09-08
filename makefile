@@ -111,7 +111,7 @@ endif
 ifeq ($(TYPE), release)
 LD_PARAMS = -T$(LINKER_SCRIPT) -lm
 C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION)  -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
-MACROS = $(COMMON_MACROS)
+MACROS = __RELEASE $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), tools)

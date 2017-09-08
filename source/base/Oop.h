@@ -201,6 +201,7 @@
 		}
 
 // configure class's vtable
+#ifndef __RELEASE
 #define __CHECK_VTABLE_DEFINITION(ClassName)															\
 																										\
 		/* define the static method */																	\
@@ -214,7 +215,7 @@
 			else																						\
 			{																							\
 				NM_ASSERT(false, ClassName ## vTable not properly set. 									\
-				Delete the GAME/lib/compiler/setupClasses.c file);											\
+				Delete the GAME/lib/compiler/setupClasses.c file);										\
 			}																							\
 																										\
 			/* check that no method is null */															\
@@ -224,6 +225,14 @@
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##	is abstract);		\
 			}																							\
 		}
+#else
+#define __CHECK_VTABLE_DEFINITION(ClassName)															\
+																										\
+		/* define the static method */																	\
+		void __attribute__ ((noinline)) ClassName ## _checkVTable()										\
+		{																								\
+		}
+#endif
 
 // configure class's vtable
 #define __SET_VTABLE_DEFINITION(ClassName, BaseClassName)												\
