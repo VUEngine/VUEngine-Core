@@ -160,8 +160,8 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
 	_worldAttributesBaseAddress[textLayer].gx = this->gx;
 	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
 	_worldAttributesBaseAddress[textLayer].gy = this->gy;
-	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH - this->gx;
-	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT - this->gy;
+	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH - this->gx - 1;
+	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT - this->gy - 1;
 }
 
 /**
@@ -606,8 +606,8 @@ void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
 {
 	ASSERT(this, "Printing::setWorldCoordinates: null this");
 
-	this->gx = 0 < gx && gx < __SCREEN_WIDTH ? gx : 0;
-	this->gy = 0 < gy && gy < __SCREEN_HEIGHT ? gy : 0;
+	this->gx = 0 <= gx && gx <= __SCREEN_WIDTH ? gx : 0;
+	this->gy = 0 <= gy && gy <= __SCREEN_HEIGHT ? gy : 0;
 }
 
 /**
