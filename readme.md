@@ -72,8 +72,8 @@ Features:
 - Useful classes to speed up the content creation process:
 	- Container: for transformation propagation (translation/rotation/scaling)
 	- Entity: a container with a list of sprites (a "visual object")
-	- AnimatedEntity: an entity with animated sprites.
-	- Actor: animated in game entity which coordinates a physical body with a collision shape
+	- AnimatedEntity: an entity with animated sprites
+	- Actor: animated entity that has a physical body and can resolve collisions
 
 
 LICENSE
