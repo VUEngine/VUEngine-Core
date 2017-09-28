@@ -177,9 +177,9 @@ printBuildingInfo:
 
 setupClass:
 	@echo Preprocessing classes in:
-	@echo "	"$(VUENGINE_HOME)
-	@echo "	"$(GAME_HOME)
-	@echo "	"$(ADDITIONAL_CLASSES_FOLDERS)
+	@echo "	"${VUENGINE_HOME} | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
+	@echo "	"$(GAME_HOME) | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
+	@echo "	"$(ADDITIONAL_CLASSES_FOLDERS) | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
 	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh -h $(GAME_HOME) $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c
 	@echo Classes processing done
 
@@ -192,7 +192,8 @@ $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: %.c
-	@echo Compiling $<
+	@echo -n "Compiling "
+	@echo $< | sed 's/.//1' | sed 's/./\:\//2' | sed 's/./\u&/1'
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS)  -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d

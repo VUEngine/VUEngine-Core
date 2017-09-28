@@ -63,7 +63,8 @@ fi
 # if the header files list was populated, generate the setupClass.c files
 if [ -n "$HEADER_FILES" ]; then
 
-	echo "Generating $OUTPUT_C_FILE ..."
+	echo -n "Generating "
+	echo $OUTPUT_C_FILE | sed 's/.//1' | sed 's/./\:\//2' | sed 's/./\u&/1'
 	rm -f $CLASSES_FILE
 	rm -f $OUTPUT_C_FILE
 	echo " " > $OUTPUT_C_FILE
