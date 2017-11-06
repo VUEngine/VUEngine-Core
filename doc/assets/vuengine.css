@@ -42,7 +42,7 @@
 /*
 .tabs, .tabs2, .tabs3 {
     background: #400;
-    border-bottom: 1px shape #000;
+    border-bottom: 1px solid #000;
 }
 
 .tablist {
@@ -67,7 +67,7 @@
 	border-bottom-width: 0;
 	border-left-width: 0;
 	border-right-width: 0;
-	border-top: 1px shape #000;
+	border-top: 1px solid #000;
 	padding: 5px;
 }
 
