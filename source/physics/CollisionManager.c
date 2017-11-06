@@ -25,9 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <CollisionManager.h>
-#include <Circle.h>
-#include <Cuboid.h>
-#include <InverseCuboid.h>
 #include <MessageDispatcher.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>

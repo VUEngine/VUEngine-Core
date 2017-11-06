@@ -32,7 +32,7 @@
 #include <Shape.h>
 #include <PhysicalWorld.h>
 #include <Body.h>
-#include <Cuboid.h>
+#include <Box.h>
 #include <Game.h>
 #include <debugUtilities.h>
 

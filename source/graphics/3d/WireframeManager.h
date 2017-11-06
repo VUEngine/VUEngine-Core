@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef POLYHEDRON_MANAGER_H_
-#define POLYHEDRON_MANAGER_H_
+#ifndef WIREFRAME_MANAGER_H_
+#define WIREFRAME_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -19,42 +19,43 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef POLYHEDRON_MANAGER_H_
-#define POLYHEDRON_MANAGER_H_
+#ifndef INVERSE_BOX_H_
+#define INVERSE_BOX_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Polyhedron.h>
+#include <Box.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define PolyhedronManager_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
+#define InverseBox_METHODS(ClassName)																\
+		Box_METHODS(ClassName)																		\
 
-#define PolyhedronManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
+#define InverseBox_SET_VTABLE(ClassName)																\
+		Box_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, InverseBox, overlaps);												\
 
-__CLASS(PolyhedronManager);
+#define InverseBox_ATTRIBUTES																		\
+		Box_ATTRIBUTES																				\
+
+__CLASS(InverseBox);
 
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-PolyhedronManager PolyhedronManager_getInstance();
+__CLASS_NEW_DECLARE(InverseBox, SpatialObject owner);
 
-void PolyhedronManager_destructor(PolyhedronManager this);
-void PolyhedronManager_register(PolyhedronManager this, Polyhedron polyhedron);
-void PolyhedronManager_remove(PolyhedronManager this, Polyhedron polyhedron);
-void PolyhedronManager_reset(PolyhedronManager this);
-void PolyhedronManager_drawPolyhedrons(PolyhedronManager this);
-void PolyhedronManager_print(PolyhedronManager this, int x, int y);
+void InverseBox_destructor(InverseBox this);
+
+CollisionInformation InverseBox_overlaps(InverseBox this, Shape shape);
 
 
 #endif

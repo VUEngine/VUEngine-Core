@@ -25,7 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <DirectDraw.h>
-#include <Cuboid.h>
+#include <Box.h>
 #include <Polyhedron.h>
 #include <VirtualList.h>
 #include <VIPManager.h>

@@ -65,10 +65,12 @@
 
 #include <Body.h>
 #include <CollisionSolver.h>
-#include <Circle.h>
-#include <Cuboid.h>
-#include <InverseCuboid.h>
+#include <Ball.h>
+#include <Box.h>
+#include <InverseBox.h>
 #include <Shape.h>
+#include <Wireframe.h>
+#include <Sphere.h>
 #include <Polyhedron.h>
 
 #include <Container.h>
@@ -991,14 +993,16 @@ static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused))
 
 	ClassSizeData classesSizeData[] =
 	{
+		{&PhysicalWorld_getObjectSize, 					"PhysicalWorld"},
 		{&Body_getObjectSize, 							"Body"},
 		{&CollisionSolver_getObjectSize, 				"CollisionSolver"},
-		{&Circle_getObjectSize, 						"Circle"},
-		{&Cuboid_getObjectSize,		 					"Cuboid"},
-		{&InverseCuboid_getObjectSize,		 			"InverseCuboid"},
-		{&PhysicalWorld_getObjectSize, 					"PhysicalWorld"},
-		{&Polyhedron_getObjectSize, 						"Polyhedron"},
 		{&Shape_getObjectSize, 							"Shape"},
+		{&Ball_getObjectSize, 							"Ball"},
+		{&Box_getObjectSize,		 					"Box"},
+		{&InverseBox_getObjectSize,		 				"InverseBox"},
+		{&Wireframe_getObjectSize, 						"Wireframe"},
+		{&Polyhedron_getObjectSize, 					"Polyhedron"},
+		{&Sphere_getObjectSize, 						"Sphere"},
 	};
 
 	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");

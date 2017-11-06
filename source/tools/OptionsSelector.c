@@ -55,8 +55,8 @@
 #include <Body.h>
 
 #include <Body.h>
-#include <Circle.h>
-#include <Cuboid.h>
+#include <Ball.h>
+#include <Box.h>
 #include <Shape.h>
 #include <Actor.h>
 #include <Entity.h>

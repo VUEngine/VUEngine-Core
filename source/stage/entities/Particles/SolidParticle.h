@@ -68,11 +68,11 @@ Shape SpatialObject_getShape(SpatialObject this);
 		 */																								\
 		Shape shape;																					\
 		/*
-		 * @var SolidParticleDefinition*	solidParticleDefinition
+		 * @var SolidParticleDefinition*	shapeParticleDefinition
 		 * @brief
 		 * @memberof						SolidParticle
 		 */																								\
-		const SolidParticleDefinition* solidParticleDefinition;											\
+		const SolidParticleDefinition* shapeParticleDefinition;											\
 		/*
 		 * @var VBVec3D 					previousGlobalPosition
 		 * @brief							Particle's previous position, for collision handling
@@ -147,9 +147,9 @@ typedef const SolidParticleDefinition SolidParticleROMDef;
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
+__CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
+void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
 void SolidParticle_destructor(SolidParticle this);
 
 u16 SolidParticle_getWidth(SolidParticle this);

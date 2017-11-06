@@ -36,7 +36,7 @@
 #include <Stage.h>
 #include <Shape.h>
 #include <Screen.h>
-#include <Cuboid.h>
+#include <Box.h>
 #include <OptionsSelector.h>
 #include <KeyPadManager.h>
 #include <BgmapTextureManager.h>
@@ -498,7 +498,7 @@ static void StageEditor_getShape(StageEditor this)
 
 	if(!this->shape)
 	{
-		this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
+		this->shape = __SAFE_CAST(Shape, __NEW(Box, __SAFE_CAST(SpatialObject, entity)));
 
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};

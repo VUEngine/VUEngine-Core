@@ -172,7 +172,7 @@ const Rotation* Entity_getRotation(Entity this);
 const Scale* Entity_getScale(Entity this);
 VirtualList Entity_getShapes(Entity this);
 VirtualList Entity_getSprites(Entity this);
-SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
+SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
 u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
 u16 Entity_getDepth(Entity this);

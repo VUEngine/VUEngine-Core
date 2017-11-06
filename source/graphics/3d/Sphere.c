@@ -177,21 +177,27 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	int color = __COLOR_BRIGHT_RED;
 
-	fix19_13 x = -this->radius;
-	fix19_13 radiusSquare = __FIX19_13_MULT(this->radius, this->radius);
-
 	VBVec3D normalizedCenter = this->center;
 	__OPTICS_NORMALIZE(normalizedCenter);
 
-	for(; x < this->radius; x += __I_TO_FIX19_13(1))
-	{
-		fix19_13 y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(x, x))));
+	fix19_13 radiusSquare = __FIX19_13_MULT(this->radius, this->radius);
 
-		VBVec3D point3D = {x + normalizedCenter.x, y + normalizedCenter.y, normalizedCenter.z};
+	VBVec3D point3D;
+
+	// draw on XY plane
+	point3D.x = -this->radius;
+	point3D.y = 0;
+	point3D.z = 0;
+
+	for(; point3D.x < this->radius; point3D.x += __I_TO_FIX19_13(1))
+	{
+		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
+
+		VBVec3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
 		VBVec2D point2D = {0, 0, 0, 0};
 
 		// project to 2d coordinates
-		__OPTICS_PROJECT_TO_2D(point3D, point2D);
+		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
 
 		if(calculateParallax)
 		{
@@ -200,7 +206,59 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
 
-		point2D.y = -y + normalizedCenter.y;
+		point2D.y = -point3D.y + normalizedCenter.y;
+		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+	}
+
+	// draw on YZ plane
+	point3D.x = 0;
+	point3D.y = 0;
+	point3D.z = -this->radius;
+
+	for(; point3D.z < this->radius; point3D.z += __I_TO_FIX19_13(1))
+	{
+		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
+
+		VBVec3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
+		VBVec2D point2D = {0, 0, 0, 0};
+
+		// project to 2d coordinates
+		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
+
+		if(calculateParallax)
+		{
+			point2D.parallax = Optics_calculateParallax(point3D.x, point3D.z);
+		}
+
+		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+
+		point2D.y = -point3D.y + normalizedCenter.y;
+		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+	}
+
+	// draw on XZ plane
+	point3D.x = -this->radius;
+	point3D.y = 0;
+	point3D.z = 0;
+
+	for(; point3D.x < this->radius; point3D.x += __I_TO_FIX19_13(1))
+	{
+		point3D.z = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
+
+		VBVec3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
+		VBVec2D point2D = {0, 0, 0, 0};
+
+		// project to 2d coordinates
+		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
+
+		if(calculateParallax)
+		{
+			point2D.parallax = Optics_calculateParallax(point3D.x, point3D.z);
+		}
+
+		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+
+		point2D.y = -point3D.y + normalizedCenter.y;
 		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
 	}
 }

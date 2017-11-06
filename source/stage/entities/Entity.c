@@ -339,10 +339,10 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
  * @private
  *
  * @param this					Function scope
- * @param rightCuboid
+ * @param rightBox
  * @param environmentPosition
  */
-static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* rightCuboid, VBVec3D environmentPosition)
+static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBox, VBVec3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
@@ -423,34 +423,34 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 	int y = __FIX19_13_TO_I(globalPosition3D.y);
 	int z = __FIX19_13_TO_I(globalPosition3D.z);
 
-	if((0 == rightCuboid->x0) | (x + left < rightCuboid->x0))
+	if((0 == rightBox->x0) | (x + left < rightBox->x0))
 	{
-		rightCuboid->x0 = x + left;
+		rightBox->x0 = x + left;
 	}
 
-	if((0 == rightCuboid->x1) | (right + x > rightCuboid->x1))
+	if((0 == rightBox->x1) | (right + x > rightBox->x1))
 	{
-		rightCuboid->x1 = right + x;
+		rightBox->x1 = right + x;
 	}
 
-	if((0 == rightCuboid->y0) | (y + top < rightCuboid->y0))
+	if((0 == rightBox->y0) | (y + top < rightBox->y0))
 	{
-		rightCuboid->y0 = y + top;
+		rightBox->y0 = y + top;
 	}
 
-	if((0 == rightCuboid->y1) | (bottom + y > rightCuboid->y1))
+	if((0 == rightBox->y1) | (bottom + y > rightBox->y1))
 	{
-		rightCuboid->y1 = bottom + y;
+		rightBox->y1 = bottom + y;
 	}
 
-	if((0 == rightCuboid->z0) | (z + front < rightCuboid->z0))
+	if((0 == rightBox->z0) | (z + front < rightBox->z0))
 	{
-		rightCuboid->z0 = z + front;
+		rightBox->z0 = z + front;
 	}
 
-	if((0 == rightCuboid->z1) | (back + z > rightCuboid->z1))
+	if((0 == rightBox->z1) | (back + z > rightBox->z1))
 	{
-		rightCuboid->z1 = back + z;
+		rightBox->z1 = back + z;
 	}
 
 	if(this->children)
@@ -459,7 +459,7 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightCuboid* righ
 
 		for(; childNode; childNode = childNode->next)
 		{
-			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), rightCuboid, globalPosition3D);
+			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), rightBox, globalPosition3D);
 		}
 	}
 }
@@ -476,15 +476,15 @@ void Entity_calculateSize(Entity this)
 {
 	ASSERT(this, "Entity::calculateSize: null this");
 
-	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
+	SmallRightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_calculateSizeFromChildren(this, &rightCuboid, (VBVec3D){0, 0, 0});
+	Entity_calculateSizeFromChildren(this, &rightBox, (VBVec3D){0, 0, 0});
 
 	VBVec3D centerDisplacement =
 	{
-		(__I_TO_FIX19_13(rightCuboid.x1 + rightCuboid.x0) / 2) - this->transform.localPosition.x,
-		(__I_TO_FIX19_13(rightCuboid.y1 + rightCuboid.y0) / 2) - this->transform.localPosition.y,
-		(__I_TO_FIX19_13(rightCuboid.z1 + rightCuboid.z0) / 2) - this->transform.localPosition.z
+		(__I_TO_FIX19_13(rightBox.x1 + rightBox.x0) / 2) - this->transform.localPosition.x,
+		(__I_TO_FIX19_13(rightBox.y1 + rightBox.y0) / 2) - this->transform.localPosition.y,
+		(__I_TO_FIX19_13(rightBox.z1 + rightBox.z0) / 2) - this->transform.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
@@ -498,9 +498,9 @@ void Entity_calculateSize(Entity this)
 		*this->centerDisplacement = centerDisplacement;
 	}
 
-	this->size.x = rightCuboid.x1 - rightCuboid.x0;
-	this->size.y = rightCuboid.y1 - rightCuboid.y0;
-	this->size.z = rightCuboid.z1 - rightCuboid.z0;
+	this->size.x = rightBox.x1 - rightBox.x0;
+	this->size.y = rightBox.y1 - rightBox.y0;
+	this->size.z = rightBox.z1 - rightBox.z0;
 }
 
 /**
@@ -511,9 +511,9 @@ void Entity_calculateSize(Entity this)
  *
  * @param positionedEntity
  * @param environmentPosition
- * @param rightCuboid
+ * @param rightBox
  */
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightCuboid* rightCuboid)
+static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightBox* rightBox)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
@@ -666,34 +666,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	int y = __FIX19_13_TO_I(globalPosition3D.y);
 	int z = __FIX19_13_TO_I(globalPosition3D.z);
 
-	if((0 == rightCuboid->x0) | (x + left < rightCuboid->x0))
+	if((0 == rightBox->x0) | (x + left < rightBox->x0))
 	{
-		rightCuboid->x0 = x + left;
+		rightBox->x0 = x + left;
 	}
 
-	if((0 == rightCuboid->x1) | (right + x > rightCuboid->x1))
+	if((0 == rightBox->x1) | (right + x > rightBox->x1))
 	{
-		rightCuboid->x1 = right + x;
+		rightBox->x1 = right + x;
 	}
 
-	if((0 == rightCuboid->y0) | (y + top < rightCuboid->y0))
+	if((0 == rightBox->y0) | (y + top < rightBox->y0))
 	{
-		rightCuboid->y0 = y + top;
+		rightBox->y0 = y + top;
 	}
 
-	if((0 == rightCuboid->y1) | (bottom + y > rightCuboid->y1))
+	if((0 == rightBox->y1) | (bottom + y > rightBox->y1))
 	{
-		rightCuboid->y1 = bottom + y;
+		rightBox->y1 = bottom + y;
 	}
 
-	if((0 == rightCuboid->z0) | (z + front < rightCuboid->z0))
+	if((0 == rightBox->z0) | (z + front < rightBox->z0))
 	{
-		rightCuboid->z0 = z + front;
+		rightBox->z0 = z + front;
 	}
 
-	if((0 == rightCuboid->z1) | (back + z > rightCuboid->z1))
+	if((0 == rightBox->z1) | (back + z > rightBox->z1))
 	{
-		rightCuboid->z1 = back + z;
+		rightBox->z1 = back + z;
 	}
 
 	if(positionedEntity->childrenDefinitions)
@@ -701,7 +701,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		int i = 0;
 		for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
 		{
-			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, rightCuboid);
+			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, rightBox);
 		}
 	}
 }
@@ -715,22 +715,22 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
  * @param positionedEntity
  * @param environmentPosition
  *
- * @return						SmallRightCuboid
+ * @return						SmallRightBox
  */
-SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
+SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
 {
-	SmallRightCuboid rightCuboid = {0, 0, 0, 0, 0, 0};
+	SmallRightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightCuboid);
+	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightBox);
 
-	rightCuboid.x0 = rightCuboid.x0 - __FIX19_13_TO_I(positionedEntity->position.x);
-	rightCuboid.x1 = rightCuboid.x1 - __FIX19_13_TO_I(positionedEntity->position.x);
-	rightCuboid.y0 = rightCuboid.y0 - __FIX19_13_TO_I(positionedEntity->position.y);
-	rightCuboid.y1 = rightCuboid.y1 - __FIX19_13_TO_I(positionedEntity->position.y);
-	rightCuboid.z0 = rightCuboid.z0 - __FIX19_13_TO_I(positionedEntity->position.z);
-	rightCuboid.z1 = rightCuboid.z1 - __FIX19_13_TO_I(positionedEntity->position.z);
+	rightBox.x0 = rightBox.x0 - __FIX19_13_TO_I(positionedEntity->position.x);
+	rightBox.x1 = rightBox.x1 - __FIX19_13_TO_I(positionedEntity->position.x);
+	rightBox.y0 = rightBox.y0 - __FIX19_13_TO_I(positionedEntity->position.y);
+	rightBox.y1 = rightBox.y1 - __FIX19_13_TO_I(positionedEntity->position.y);
+	rightBox.z0 = rightBox.z0 - __FIX19_13_TO_I(positionedEntity->position.z);
+	rightBox.z1 = rightBox.z1 - __FIX19_13_TO_I(positionedEntity->position.z);
 
-	return rightCuboid;
+	return rightBox;
 }
 
 /**

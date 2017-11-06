@@ -49,8 +49,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
-__CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSpan, mass);
+__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+__CLASS_NEW_END(SolidParticle, shapeParticleDefinition, spriteDefinition, lifeSpan, mass);
 
 /**
  * Class constructor
@@ -59,25 +59,25 @@ __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSp
  * @public
  *
  * @param this						Function scope
- * @param solidParticleDefinition	Definition of the SolidParticle
+ * @param shapeParticleDefinition	Definition of the SolidParticle
  * @param spriteDefinition
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
 	ASSERT(this, "SolidParticle::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
+	__CONSTRUCT_BASE(Particle, &shapeParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
-	this->solidParticleDefinition = solidParticleDefinition;
-	Body_setElasticity(this->body, solidParticleDefinition->elasticity);
-	Force totalFriction = (Force){solidParticleDefinition->friction, solidParticleDefinition->friction, solidParticleDefinition->friction};
+	this->shapeParticleDefinition = shapeParticleDefinition;
+	Body_setElasticity(this->body, shapeParticleDefinition->elasticity);
+	Force totalFriction = (Force){shapeParticleDefinition->friction, shapeParticleDefinition->friction, shapeParticleDefinition->friction};
 	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeDefinition);
+	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), shapeParticleDefinition->shapeDefinition);
 
 	Rotation rotation = {0, 0, 0};
 	Scale scale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
@@ -174,7 +174,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
 
-	return this->solidParticleDefinition->width;
+	return this->shapeParticleDefinition->width;
 }
 
 /**
@@ -191,7 +191,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
 
-	return this->solidParticleDefinition->height;
+	return this->shapeParticleDefinition->height;
 }
 
 /**
@@ -209,7 +209,7 @@ u16 SolidParticle_getDepth(SolidParticle this)
 	ASSERT(this, "SolidParticle::getDepth: null this");
 
 	// must calculate based on the scale because not affine object must be enlarged
-	return this->solidParticleDefinition->depth;
+	return this->shapeParticleDefinition->depth;
 }
 
 /**
@@ -253,7 +253,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, const CollisionI
 /*
 	fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver) : __1I_FIX19_13;
 
-	Body_bounce(this->body, collisionInformation, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
+	Body_bounce(this->body, collisionInformation, this->shapeParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
 
 	if(!(axisOfCollision & Body_getMovementOverAllAxis(this->body)))
 	{
@@ -286,7 +286,7 @@ bool SolidParticle_processCollision(SolidParticle this, const CollisionInformati
 
 	if(this->collisionSolver)
 	{
-		if(this->solidParticleDefinition->ignoreParticles)
+		if(this->shapeParticleDefinition->ignoreParticles)
 		{
 			if(__GET_CAST(Particle, Shape_getOwner(collisionInformation->collidingShape)))
 			{

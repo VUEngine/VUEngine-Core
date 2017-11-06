@@ -190,7 +190,7 @@ void CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInfor
 	if(collisionInformation->pendingSATCheck)
 	{
 		// force it
-		minimumTranslationVector = __VIRTUAL_CALL(Shape, computeMinimumTranslationVector, collisionInformation->shape, collisionInformation->collidingShape);
+		minimumTranslationVector = __VIRTUAL_CALL(Shape, getMinimumOverlappingVector, collisionInformation->shape, collisionInformation->collidingShape);
 	}
 
 	ownerPosition.x += minimumTranslationVector.x;

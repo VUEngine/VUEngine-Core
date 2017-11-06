@@ -31,6 +31,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __SHAPE_NORMALS	3
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
@@ -58,16 +65,20 @@ typedef struct CollisionInformation
 
 } CollisionInformation;
 
+typedef struct Normals
+{
+	VBVec3D vectors[__SHAPE_NORMALS];
+} Normals;
+
 
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, overlaps, Shape shape);																\
 		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
-		__VIRTUAL_DEC(ClassName, VBVec3D, computeMinimumTranslationVector, Shape collidingShape);		\
-		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);										\
+		__VIRTUAL_DEC(ClassName, VBVec3D, getMinimumOverlappingVector, Shape collidingShape);			\
+		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);	\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
-		__VIRTUAL_DEC(ClassName, RightCuboid, getSurroundingRightCuboid);								\
-		__VIRTUAL_DEC(ClassName, RightCuboid, getPositionedSurroundingRightCuboid);						\
+		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
@@ -112,9 +123,9 @@ __CLASS(Shape);
 enum ShapeTypes
 {
 	kNoShape = 0,
-	kCircle,
-	kCuboid,
-	kInverseCuboid,
+	kBall,
+	kBox,
+	kInverseBox,
 };
 
 // defines a shape
