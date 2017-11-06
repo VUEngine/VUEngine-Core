@@ -27,7 +27,7 @@
 #include <Ball.h>
 #include <Box.h>
 #include <InverseBox.h>
-#include <Math.h>
+#include <CollisionHelper.h>
 #include <Vector.h>
 #include <Optics.h>
 #include <Polyhedron.h>
@@ -62,11 +62,6 @@ __CLASS_DEFINITION(Ball, Shape);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static CollisionInformation Ball_overlapsBall(Ball this, Ball Ball);
-static CollisionInformation Ball_overlapsBox(Ball this, Box box);
-static CollisionInformation Ball_overlapsInverseBox(Ball this, InverseBox inverseBox);
-static VBVec3D Ball_getMinimumOverlappingVectorWithBall(Ball this, Ball ball);
-static VBVec3D Ball_getMinimumOverlappingVectorWithBbox(Ball this, Box box);
 static u16 Ball_testIfCollisionWithBall(Ball this, Ball Ball, VBVec3D displacement);
 static void Ball_configureWireframe(Ball this, int renew);
 
@@ -105,7 +100,7 @@ void Ball_destructor(Ball this)
 	__DESTROY_BASE;
 }
 
-void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size)
+void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
 {
 	ASSERT(this, "Ball::setup: null this");
 
@@ -133,84 +128,31 @@ CollisionInformation Ball_overlaps(Ball this, Shape shape)
 {
 	ASSERT(this, "Ball::overlaps: null this");
 
-	if(__IS_INSTANCE_OF(Ball, shape))
-	{
-		return Ball_overlapsBall(this, __SAFE_CAST(Ball, shape));
-	}
-	else if(__IS_INSTANCE_OF(Box, shape))
-	{
-		return Ball_overlapsBox(this, __SAFE_CAST(Box, shape));
-	}
-	else if(__IS_INSTANCE_OF(InverseBox, shape))
-	{
-		return Ball_overlapsInverseBox(this, __SAFE_CAST(InverseBox, shape));
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
-}
-
-// check if overlaps with other rect
-static CollisionInformation Ball_overlapsBall(Ball this, Ball Ball)
-{
-	if(false)
-	{
-
-		return (CollisionInformation){__SAFE_CAST(Shape, this), __SAFE_CAST(Shape, Ball), (VBVec3D){0, 0, 0}, false};
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
-}
-
-static CollisionInformation Ball_overlapsBox(Ball this, Box box)
-{
-	if(false)
-	{
-
-		return (CollisionInformation){__SAFE_CAST(Shape, this), __SAFE_CAST(Shape, box), (VBVec3D){0, 0, 0}, false};
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
-}
-
-static CollisionInformation Ball_overlapsInverseBox(Ball this, InverseBox inverseBox)
-{
-	if(false)
-	{
-
-		return (CollisionInformation){__SAFE_CAST(Shape, this), __SAFE_CAST(Shape, inverseBox), (VBVec3D){0, 0, 0}, false};
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
+	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
 VBVec3D Ball_getMinimumOverlappingVector(Ball this, Shape shape)
 {
 	ASSERT(this, "Ball::getMinimumOverlappingVector: null this");
 
-	if(__IS_INSTANCE_OF(Ball, shape))
-	{
-		return Ball_getMinimumOverlappingVectorWithBall(this, __SAFE_CAST(Ball, shape));
-	}
-	else if(__IS_INSTANCE_OF(Ball, shape))
-	{
-		return Ball_getMinimumOverlappingVectorWithBbox(this, __SAFE_CAST(Box, shape));
-	}
-
-	return (VBVec3D) {0, 0, 0};
+	return CollisionHelper_getMinimumOverlappingVector(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
-static VBVec3D Ball_getMinimumOverlappingVectorWithBall(Ball this, Ball ball)
+void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min, fix19_13* max)
 {
-	VBVec3D minimumTranslationVector = {0, 0, 0};
+	// project this onto the current normal
+	fix19_13 dotProduct = Vector_dotProduct(vector, center);
+//	fix19_13 dotProduct = Vector_dotProduct(center, vector);
 
-	return minimumTranslationVector;
-}
+	*min = dotProduct - radius;
+	*max = dotProduct + radius;
 
-static VBVec3D Ball_getMinimumOverlappingVectorWithBbox(Ball this, Box box)
-{
-	VBVec3D minimumTranslationVector = {0, 0, 0};
-
-	return minimumTranslationVector;
+	if(*min > *max)
+	{
+		fix19_13 aux = *min;
+		*min = *max;
+		*max = aux;
+	}
 }
 
 // test if collision with the entity give the displacement
@@ -257,7 +199,6 @@ RightBox Ball_getSurroundingRightBox(Ball this)
 		this->center.y + this->radius,
 		this->center.z + this->radius,
 	};
-
 }
 
 // configure Polyhedron

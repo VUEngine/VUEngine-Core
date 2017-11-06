@@ -30,6 +30,7 @@
 #include <Shape.h>
 #include <Polyhedron.h>
 
+
 //---------------------------------------------------------------------------------------------------------
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
@@ -98,6 +99,9 @@ void Box_destructor(Box this);
 void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 CollisionInformation Box_overlaps(Box this, Shape shape);
 VBVec3D Box_getMinimumOverlappingVector(Box this, Shape shape);
+void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
+void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
+void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max);
 bool Box_testIfCollision(Box this, Shape collidingShape, VBVec3D displacement);
 VBVec3D Box_getPosition(Box this);
 RightBox Box_getSurroundingRightBox(Box this);

@@ -27,11 +27,10 @@
 #include <Box.h>
 #include <InverseBox.h>
 #include <Ball.h>
-#include <Math.h>
+#include <CollisionHelper.h>
 #include <Vector.h>
 #include <Optics.h>
 #include <Polyhedron.h>
-#include <Math.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
 #include <Printing.h>
@@ -63,15 +62,6 @@ __CLASS_FRIEND_DEFINITION(InverseBox);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static CollisionInformation Box_overlapsBox(Box this, Box box);
-static CollisionInformation Box_overlapsInverseBox(Box this, InverseBox inverseBox);
-static CollisionInformation Box_overlapsBall(Box this, Ball ball);
-static VBVec3D Box_getMinimumOverlappingVectorWithBox(Box this, Box box);
-static VBVec3D Box_getMinimumOverlappingVectorWithInverseBox(Box this, InverseBox inverseBox);
-static VBVec3D Box_getMinimumOverlappingVectorWithBall(Box this, Ball box);
-static void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
-static void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
-static void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max);
 static u16 Box_testIfCollisionWithBox(Box this, Box box, VBVec3D displacement);
 static void Box_configureWireframe(Box this, int renew);
 
@@ -338,269 +328,17 @@ CollisionInformation Box_overlaps(Box this, Shape shape)
 {
 	ASSERT(this, "Box::overlaps: null this");
 
-	if(__IS_INSTANCE_OF(Box, shape))
-	{
-		return Box_overlapsBox(this, __SAFE_CAST(Box, shape));
-	}
-	else if(__IS_INSTANCE_OF(InverseBox, shape))
-	{
-		return Box_overlapsInverseBox(this, __SAFE_CAST(InverseBox, shape));
-	}
-	else if(__IS_INSTANCE_OF(Ball, shape))
-	{
-		return Box_overlapsBall(this, __SAFE_CAST(Ball, shape));
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
-}
-
-// check if overlaps with other rect
-CollisionInformation Box_overlapsBox(Box this, Box box)
-{
-	ASSERT(this, "Box::overlapsBox: null this");
-
-	VBVec3D intervalDistance =
-	{
-		(this->rightBox.x0 + this->rightBox.x1) >> 1 < (box->rightBox.x0 + box->rightBox.x1) >> 1 ? (box->rightBox.x0 - this->rightBox.x1) : (this->rightBox.x0 - box->rightBox.x1),
-		(this->rightBox.y0 + this->rightBox.y1) >> 1 < (box->rightBox.y0 + box->rightBox.y1) >> 1 ? (box->rightBox.y0 - this->rightBox.y1) : (this->rightBox.y0 - box->rightBox.y1),
-		(this->rightBox.z0 + this->rightBox.z1) >> 1 < (box->rightBox.z0 + box->rightBox.z1) >> 1 ? (box->rightBox.z0 - this->rightBox.z1) : (this->rightBox.z0 - box->rightBox.z1),
-	};
-
-	// test for collision
-	if(0 > intervalDistance.x && 0 > intervalDistance.y && 0 > intervalDistance.z)
-	{
-		// check if both boxs are axis aligned
-		bool isThisRotated = this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z ? true : false;
-		bool isBoxRotated = box->rotationVertexDisplacement.x | box->rotationVertexDisplacement.y | box->rotationVertexDisplacement.z ? true : false;
-		bool pendingSATCheck = isThisRotated || isBoxRotated;
-
-		VBVec3D minimumTranslationVector = {0, 0, 0};
-		fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
-
-		// if axis aligned, then SAT check is not needed
-		// and we can calculate the minimum displacement vector
-		// to resolve the collision right now
-		if(!pendingSATCheck)
-		{
-			VBVec3D thisCenter =
-			{
-				(this->rightBox.x0 + this->rightBox.x1) >> 1,
-				(this->rightBox.y0 + this->rightBox.y1) >> 1,
-				(this->rightBox.z0 + this->rightBox.z1) >> 1,
-			};
-
-			VBVec3D boxCenter =
-			{
-				(box->rightBox.x0 + box->rightBox.x1) >> 1,
-				(box->rightBox.y0 + box->rightBox.y1) >> 1,
-				(box->rightBox.z0 + box->rightBox.z1) >> 1,
-			};
-
-			VBVec3D distanceVector = Vector_get(boxCenter, thisCenter);
-
-			VBVec3D normals[__SHAPE_NORMALS] =
-			{
-				{__I_TO_FIX19_13(1), 0, 0},
-				{0, __I_TO_FIX19_13(1), 0},
-				{0, 0, __I_TO_FIX19_13(1)},
-			};
-
-			int i = 0;
-			fix19_13* component = &intervalDistance.x;
-
-			for(i = 0; i < __SHAPE_NORMALS; i++)
-			{
-				fix19_13 intervalDistance = __ABS(component[i]);
-
-				if(intervalDistance < minimumIntervalDistance)
-				{
-					minimumIntervalDistance = intervalDistance;
-					minimumTranslationVector = normals[i];
-
-					if(Vector_dotProduct(distanceVector, minimumTranslationVector) < 0)
-					{
-						minimumTranslationVector = Vector_scalarProduct(minimumTranslationVector, __I_TO_FIX19_13(-1));
-					}
-				}
-			}
-
-			minimumTranslationVector = Vector_scalarProduct(minimumTranslationVector, minimumIntervalDistance);
-		}
-
-		return (CollisionInformation){__SAFE_CAST(Shape, this), __SAFE_CAST(Shape, box), minimumTranslationVector, pendingSATCheck};
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
-}
-
-static CollisionInformation Box_overlapsInverseBox(Box this, InverseBox inverseBox)
-{
-	ASSERT(this, "Box::overlapsInverseBox: null this");
-
-	// test for collision
-	if((this->rightBox.x0 < inverseBox->rightBox.x0) | (this->rightBox.x1 > inverseBox->rightBox.x1) |
-	 (this->rightBox.y0 < inverseBox->rightBox.y0) | (this->rightBox.y1 > inverseBox->rightBox.y1) |
-	 (this->rightBox.z0 < inverseBox->rightBox.z0) | (this->rightBox.z1 > inverseBox->rightBox.z1)
-	)
-	{
-		u8 pendingSATCheck = true;
-		return (CollisionInformation){__SAFE_CAST(Shape, this), __SAFE_CAST(Shape, inverseBox), {0, 0, 0}, pendingSATCheck};
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
-}
-
-static CollisionInformation Box_overlapsBall(Box this, Ball ball)
-{
-	ASSERT(this, "Box::overlapsInverseBall: null this");
-
-	// test for collision
-	if(false)
-	{
-		return (CollisionInformation){__SAFE_CAST(Shape, this), __SAFE_CAST(Shape, ball), {0, 0, 0}, false};
-	}
-
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, __NO_AXIS};
+	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
 VBVec3D Box_getMinimumOverlappingVector(Box this, Shape shape)
 {
 	ASSERT(this, "Box::getMinimumOverlappingVector: null this");
 
-	if(__IS_INSTANCE_OF(Box, shape))
-	{
-		return Box_getMinimumOverlappingVectorWithBox(this, __SAFE_CAST(Box, shape));
-	}
-	else if(__IS_INSTANCE_OF(InverseBox, shape))
-	{
-		return Box_getMinimumOverlappingVectorWithInverseBox(this, __SAFE_CAST(InverseBox, shape));
-	}
-	else if(__IS_INSTANCE_OF(Ball, shape))
-	{
-		return Box_getMinimumOverlappingVectorWithBall(this, __SAFE_CAST(Ball, shape));
-	}
-
-	return (VBVec3D) {0, 0, 0};
+	return CollisionHelper_getMinimumOverlappingVector(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
-static VBVec3D Box_getMinimumOverlappingVectorWithBox(Box this, Box box)
-{
-	// get the vertexes of each box
-	VBVec3D vertexes[2][__BOX_VERTEXES];
-	Box_getVertexes(this, vertexes[0]);
-	Box_getVertexes(box, vertexes[1]);
-
-	// if the normals have not been computed yet do so now
-	if(!this->normals)
-	{
-		this->normals = __NEW_BASIC(Normals);
-		Box_computeNormals(this, vertexes[0]);
-	}
-
-	if(!box->normals)
-	{
-		box->normals = __NEW_BASIC(Normals);
-		Box_computeNormals(box, vertexes[1]);
-	}
-
-	VBVec3D* normals[2] =
-	{
-		this->normals->vectors,
-		box->normals->vectors,
-	};
-
-	// will need
-	VBVec3D centers[2] =
-	{
-		{
-			(this->rightBox.x0 + this->rightBox.x1) >> 1,
-			(this->rightBox.y0 + this->rightBox.y1) >> 1,
-			(this->rightBox.z0 + this->rightBox.z1) >> 1,
-		},
-		{
-			(box->rightBox.x0 + box->rightBox.x1) >> 1,
-			(box->rightBox.y0 + box->rightBox.y1) >> 1,
-			(box->rightBox.z0 + box->rightBox.z1) >> 1,
-		}
-	};
-
-	VBVec3D distanceVector = Vector_get(centers[1], centers[0]);
-
-	VBVec3D minimumTranslationVector = {0, 0, 0};
-	fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
-
-	int boxIndex = 0;
-
-	// has to project all points on all the normals of both boxs
-	for(; boxIndex < 2; boxIndex++)
-	{
-		int normalIndex = 0;
-
-		// test all 3 normals of each box
-		for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
-		{
-			VBVec3D currentNormal = normals[boxIndex][normalIndex];
-
-			fix19_13 min[2] = {0, 0};
-			fix19_13 max[2] = {0, 0};
-
-			Box_project(vertexes[0], currentNormal, &min[0], &max[0]);
-			Box_project(vertexes[1], currentNormal, &min[1], &max[1]);
-
-			fix19_13 intervalDistance = 0;
-
-			if (min[0] < min[1])
-			{
-				intervalDistance = min[1] - max[0];
-			}
-			else
-			{
-				intervalDistance = min[0] - max[1];
-			}
-
-			if(0 < intervalDistance)
-			{
-				return (VBVec3D){0, 0, 0};
-			}
-
-			intervalDistance = __ABS(intervalDistance);
-			if(intervalDistance < minimumIntervalDistance)
-			{
-				minimumIntervalDistance = intervalDistance;
-				minimumTranslationVector = currentNormal;
-
-				if(Vector_dotProduct(distanceVector, minimumTranslationVector) < 0)
-				{
-					minimumTranslationVector = Vector_scalarProduct(minimumTranslationVector, __I_TO_FIX19_13(-1));
-				}
-			}
-		}
-	}
-
-	minimumTranslationVector = Vector_scalarProduct(minimumTranslationVector, minimumIntervalDistance);
-
-	return minimumTranslationVector;
-}
-
-static VBVec3D Box_getMinimumOverlappingVectorWithInverseBox(Box this, InverseBox inverseBox)
-{
-	ASSERT(this, "Box::getMinimumOverlappingVectorWithInverseBox: null this");
-
-	VBVec3D minimumTranslationVector = {0, 0, 0};
-
-	return minimumTranslationVector;
-}
-
-static VBVec3D Box_getMinimumOverlappingVectorWithBall(Box this, Ball ball)
-{
-	ASSERT(this, "Box::getMinimumOverlappingVectorWithInverseBox: null this");
-
-	VBVec3D minimumTranslationVector = {0, 0, 0};
-
-	return minimumTranslationVector;
-}
-
-static void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES])
+void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES])
 {
 	VBVec3D leftTopNear 	= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
 	VBVec3D rightTopNear 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
@@ -659,7 +397,7 @@ static void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES])
 	vertexes[7] = rightBottomFar;
 }
 
-static void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES])
+void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES])
 {
 /*
 	// generic way
@@ -695,7 +433,7 @@ static void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES])
 	this->normals->vectors[2] = Vector_normalize(this->normals->vectors[2]);
 }
 
-static void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max)
+void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max)
 {
 	int vertexIndex = 0;
 
@@ -795,20 +533,6 @@ static void Box_configureWireframe(Box this, int renew)
 	// create a wireframe
 	this->polyhedron = __NEW(Polyhedron);
 
-	// add vertices
-/*
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-/*	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
-	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-*/
-
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{
 		if(!this->rotationVertexDisplacement.z)
@@ -855,6 +579,20 @@ static void Box_configureWireframe(Box this, int renew)
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 		}
+	}
+	else
+	{
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
+	/*	Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
+		Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+	*/
 	}
 }
 
