@@ -1128,23 +1128,51 @@ u32 Entity_areAllChildrenReady(Entity this)
  * @private
  *
  * @param this					Function scope
- * @param forcePositioning		Force shape positioning
  */
-void Entity_setShapesPosition(Entity this, bool forcePositioning)
+void Entity_transformShapes(Entity this)
 {
-	ASSERT(this, "Entity::setShapePosition: null this");
+	ASSERT(this, "Entity::transformShapes: null this");
 
-	if(this->shapes && forcePositioning)
+	if(this->shapes && this->entityDefinition->shapeDefinitions)
 	{
+		const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
+
 		// setup shape
 		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
 		const VBVec3D* myPosition = Entity_getPosition(this);
+		const Rotation* myRotation = Entity_getRotation(this);
+		const Scale* myScale = Entity_getScale(this);
 
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		int i = 0;
+
+		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
 		{
-			__VIRTUAL_CALL(Shape, position, node->data, myPosition, isAffectedByRelativity);
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			VBVec3D shapePosition =
+			{
+				myPosition->x + shapeDefinitions[i].displacement.x,
+				myPosition->y + shapeDefinitions[i].displacement.y,
+				myPosition->z + shapeDefinitions[i].displacement.z,
+			};
+
+			Rotation shapeRotation =
+			{
+				myRotation->x + shapeDefinitions[i].rotation.x,
+				myRotation->y + shapeDefinitions[i].rotation.y,
+				myRotation->z + shapeDefinitions[i].rotation.z,
+			};
+
+			Scale shapeScale =
+			{
+				__FIX7_9_MULT(myScale->x, shapeDefinitions[i].scale.x),
+				__FIX7_9_MULT(myScale->y, shapeDefinitions[i].scale.y),
+				__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
+			};
+
+			__VIRTUAL_CALL(Shape, setup, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size);
 
 #ifdef __DRAW_SHAPES
 			__VIRTUAL_CALL(Shape, show, node->data);
@@ -1184,6 +1212,8 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 	}
 
 	const VBVec3D* myPosition = Entity_getPosition(this);
+	const Rotation* myRotation = Entity_getRotation(this);
+	const Scale* myScale = Entity_getScale(this);
 	bool moves = __VIRTUAL_CALL(SpatialObject, moves, this);
 	bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
 
@@ -1193,23 +1223,14 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 		Shape shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinitions[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
 
-		__VIRTUAL_CALL(Shape, setup, shape, myPosition, &shapeDefinitions[i].size, &shapeDefinitions[i].displacement, moves);
-
-		if(moves)
-		{
-			__VIRTUAL_CALL(Shape, position, shape, myPosition, isAffectedByRelativity);
-		}
-
 		Shape_setActive(shape, true);
 
 		Shape_setCheckForCollisions(shape, shapeDefinitions[i].checkForCollisions);
 
-#ifdef __DRAW_SHAPES
-		__VIRTUAL_CALL(Shape, show, shape);
-#endif
-
 		VirtualList_pushBack(this->shapes, shape);
 	}
+
+	Entity_transformShapes(this);
 }
 
 /**
@@ -1550,13 +1571,17 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 		this->invalidateSprites = invalidateTransformationFlag | Entity_updateSpritePosition(this) | Entity_updateSpriteRotation(this) | Entity_updateSpriteScale(this);
 	}
 
-	// call base class's transform method
-	if((u32)this->children | this->invalidateGlobalTransformation)
+	if(this->invalidateGlobalTransformation)
+	{
+		Entity_transformShapes(this);
+
+		// call base class's transform method
+		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+	}
+	else if((u32)this->children)
 	{
 		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 	}
-
-	Entity_setShapesPosition(this, __VIRTUAL_CALL(SpatialObject, moves, this));
 }
 
 /**
@@ -1573,7 +1598,7 @@ void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 
 	__CALL_BASE_METHOD(Container, setLocalPosition, this, position);
 
-	Entity_setShapesPosition(this, true);
+	Entity_transformShapes(this);
 }
 
 /**
@@ -1630,6 +1655,40 @@ const VBVec3D* Entity_getPosition(Entity this)
 	ASSERT(this, "Entity::getPosition: null this");
 
 	return &this->transform.globalPosition;
+}
+
+/**
+ * Retrieve rotation
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Global rotation
+ */
+const Rotation* Entity_getRotation(Entity this)
+{
+	ASSERT(this, "Entity::getRotation: null this");
+
+	return &this->transform.globalRotation;
+}
+
+/**
+ * Retrieve scale
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Global position
+ */
+const Scale* Entity_getScale(Entity this)
+{
+	ASSERT(this, "Entity::getScale: null this");
+
+	return &this->transform.globalScale;
 }
 
 /**
@@ -2254,7 +2313,7 @@ void Entity_setDirection(Entity this, Direction direction)
 	};
 
 	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
-
+/*
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
@@ -2278,9 +2337,10 @@ void Entity_setDirection(Entity this, Direction direction)
 				displacement.z = -displacement.z;
 			}
 
-			Shape_setDisplacement(__SAFE_CAST(Shape, node->data), displacement);
+			//Shape_setDisplacement(__SAFE_CAST(Shape, node->data), displacement);
 		}
 	}
+	*/
 }
 
 /**

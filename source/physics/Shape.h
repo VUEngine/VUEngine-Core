@@ -28,20 +28,43 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-#include <SpatialObject.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+__FORWARD_CLASS(SpatialObject)
+__FORWARD_CLASS(Shape)
+
+/**
+ * Collision information
+ *
+ * @memberof Shape
+ */
+typedef struct CollisionInformation
+{
+	// shape detecting the collision
+	Shape shape;
+
+	// colliding shape
+	Shape collidingShape;
+
+	// minimum vector to solve the collision
+	VBVec3D minimumTranslationVector;
+
+	// help flag
+	bool pendingSATCheck;
+
+} CollisionInformation;
+
+
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, int, overlaps, Shape shape);											\
-		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D*, const Size* size, const VBVec3D* displacement, bool moves);			\
-		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity);						\
-		__VIRTUAL_DEC(ClassName, u16, getAxisOfCollision, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition);	\
-		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);								\
+		__VIRTUAL_DEC(ClassName, CollisionInformation, overlaps, Shape shape);																\
+		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
+		__VIRTUAL_DEC(ClassName, VBVec3D, computeMinimumTranslationVector, Shape collidingShape);		\
+		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);										\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
 		__VIRTUAL_DEC(ClassName, RightCuboid, getSurroundingRightCuboid);								\
 		__VIRTUAL_DEC(ClassName, RightCuboid, getPositionedSurroundingRightCuboid);						\
@@ -61,29 +84,23 @@
 		 */																								\
 		SpatialObject owner;																			\
 		/**
-		 * @var VBVec3D 		displacement
-		 * @brief				Displacement vector
-		 * @memberof			Shape
-		 */																								\
-		VBVec3D displacement;																			\
-		/**
 		 * @var u8 				checked
 		 * @brief				whether it has been checked for collision in current update
 		 * @memberof			Shape
 		 */																								\
-		u8 checked;																						\
+		u8 checked: 1;																					\
 		/**
 		 * @var u8 				ready
 		 * @brief				flag to know if setup is needed
 		 * @memberof			Shape
 		 */																								\
-		u8 ready;																						\
+		u8 ready: 1;																					\
 		/**
 		 * @var u8 				checkForCollisions
 		 * @brief				flag to check against other shapes
 		 * @memberof			Shape
 		 */																								\
-		u8 checkForCollisions;																			\
+		u8 checkForCollisions: 1;																		\
 
 __CLASS(Shape);
 
@@ -103,16 +120,22 @@ enum ShapeTypes
 // defines a shape
 typedef struct ShapeDefinition
 {
-	// class allocator
+	/// class allocator
 	AllocatorPointer allocator;
 
-	// size
+	/// size
 	Size size;
 
 	/// displacement modifier
 	VBVec3D displacement;
 
-	// if true this shape checks for collisions against other shapes
+	/// rotation modifier
+	Rotation rotation;
+
+	/// scale modifier
+	Scale scale;
+
+	/// if true this shape checks for collisions against other shapes
 	bool checkForCollisions;
 
 } ShapeDefinition;
@@ -129,8 +152,6 @@ void Shape_destructor(Shape this);
 
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
-void Shape_setDisplacement(Shape this, VBVec3D displacement);
-VBVec3D Shape_getDisplacement(Shape this);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isChecked(Shape this);

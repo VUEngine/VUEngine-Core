@@ -143,6 +143,39 @@ void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), cons
 	ASSERT(this, "SpatialObject::setPosition: null this");
 }
 
+const Rotation* SpatialObject_getRotation(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::getRotation: null this");
+
+	static Rotation rotation =
+	{
+		0, 0, 0
+	};
+
+	return &rotation;
+}
+
+void SpatialObject_setRotation(SpatialObject this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::setRotation: null this");
+}
+
+const Scale* SpatialObject_getScale(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::getScale: null this");
+
+	static Scale scale =
+	{
+		__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9
+	};
+
+	return &scale;
+}
+void SpatialObject_setScale(SpatialObject this __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::setScale: null this");
+}
+
 // get elasticity
 fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
 {
@@ -174,7 +207,7 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unu
 	return false;
 }
 
-bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), VirtualList collidingShapes __attribute__ ((unused)))
+bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::processCollision: null this");
 

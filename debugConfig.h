@@ -21,11 +21,12 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __DIMM_FOR_PROFILING
 //#define __ALERT_VIP_OVERTIME
 //#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
-//#define __DRAW_SHAPES
+#define __DRAW_SHAPES
 //#define __REGISTER_LAST_PROCESS_NAME
 //#define __ALERT_STACK_OVERFLOW
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __PRINT_DETAILED_MEMORY_POOL_STATUS
+#define __FORCE_PRINTING_LAYER
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10

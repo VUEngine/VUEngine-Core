@@ -501,10 +501,9 @@ static void StageEditor_getShape(StageEditor this)
 		this->shape = __SAFE_CAST(Shape, __NEW(Cuboid, __SAFE_CAST(SpatialObject, entity)));
 
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		VBVec3D displacement = {0, 0, 0};
 		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
 
-		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), &size, &displacement, false);
+		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 	}
 
 	Shape_setReady(this->shape, false);
@@ -529,7 +528,7 @@ static void StageEditor_positionShape(StageEditor this)
 
 	if(__VIRTUAL_CALL(Entity, moves, entity))
 	{
-		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false);
+//		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false);
 	}
 
 	if(this->shape)
@@ -969,7 +968,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		spritePosition.y = __I_TO_FIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
-		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9};
+		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 		__VIRTUAL_CALL(Sprite, setPosition, this->userObjectSprite, &spritePosition);
 		__VIRTUAL_CALL(Sprite, rotate, this->userObjectSprite, &spriteRotation);
 		__VIRTUAL_CALL(Sprite, resize, this->userObjectSprite, spriteScale, spritePosition.z);

@@ -170,6 +170,35 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
 }
 
 /**
+ * Draws a point between two given 2D points
+ *
+ * @memberof		DirectDraw
+ * @public
+ *
+ * @param this		Function scope
+ * @param point 	Point to draw
+ * @param color		The color to draw (0-3)
+ */
+void DirectDraw_drawPoint(DirectDraw this, VBVec2D point, int color)
+{
+	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
+	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
+
+	point.x = __FIX19_13_TO_I(point.x);
+	point.y = __FIX19_13_TO_I(point.y);
+	int parallax = point.parallax;
+
+	if((unsigned)(point.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+	{
+		DirectDraw_drawPixel(this, leftBuffer, (u16)(point.x - parallax), (u16)point.y, color);
+	}
+	if((unsigned)(point.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+	{
+		DirectDraw_drawPixel(this, rightBuffer, (u16)(point.x + parallax), (u16)point.y, color);
+	}
+}
+
+/**
  * Draws a line between two given 2D points
  *
  * @memberof		DirectDraw
@@ -244,7 +273,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dy - halfDx;
 
-			int parallaxStep = halfDx ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDx)) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDx))) : 0;
+			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.x != toPoint.x)
 			{
@@ -257,7 +287,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				fromPoint.x += stepX;
 				fraction += dy;
 
-				parallax += parallaxStep;
+				auxParallax += parallaxStep;
+				parallax = __FIX19_13_TO_I(auxParallax);
 
 				if((unsigned)(fromPoint.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 				{
@@ -278,7 +309,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dx - halfDy;
 
-			int parallaxStep = halfDy ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDy)) : 0;
+			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDy))) : 0;
+			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.y != toPoint.y)
 			{
@@ -291,7 +323,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				fromPoint.y += stepY;
 				fraction += dx;
 
-				parallax += parallaxStep;
+				auxParallax += parallaxStep;
+				parallax = __FIX19_13_TO_I(auxParallax);
 
 				if((unsigned)(fromPoint.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 				{
@@ -328,7 +361,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dy - halfDx;
 
-			int parallaxStep = halfDx ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDx)) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDx))) : 0;
+			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.x != toPoint.x)
 			{
@@ -341,7 +375,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				fromPoint.x += stepX;
 				fraction += dy;
 
-				parallax += parallaxStep;
+				auxParallax += parallaxStep;
+				parallax = __FIX19_13_TO_I(auxParallax);
 
 				if((unsigned)(fromPoint.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 				{
@@ -362,7 +397,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dx - halfDy;
 
-			int parallaxStep = halfDy ? ((toPoint.parallax - fromPoint.parallax) / __ABS(halfDy)) : 0;
+			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDy))) : 0;
+			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.y != toPoint.y)
 			{
@@ -375,7 +411,8 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 				fromPoint.y += stepY;
 				fraction += dx;
 
-				parallax += parallaxStep;
+				auxParallax += parallaxStep;
+				parallax = __FIX19_13_TO_I(auxParallax);
 
 				if((unsigned)(fromPoint.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 				{

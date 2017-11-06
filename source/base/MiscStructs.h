@@ -200,6 +200,7 @@ typedef struct Scale
 {
 	fix7_9 x;
 	fix7_9 y;
+	fix7_9 z;
 
 } Scale;
 

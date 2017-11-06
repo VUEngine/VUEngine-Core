@@ -27,22 +27,23 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <Wireframe.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Polyhedron_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
+#define Polyhedron_METHODS(ClassName)																	\
+		Wireframe_METHODS(ClassName)																	\
 
-#define Polyhedron_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
+#define Polyhedron_SET_VTABLE(ClassName)																\
+		Wireframe_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Polyhedron, draw);														\
 
-#define Polyhedron_ATTRIBUTES																				\
+#define Polyhedron_ATTRIBUTES																			\
 		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
+		Wireframe_ATTRIBUTES																				\
 		/* vertices */																					\
 		VirtualList vertices;																			\
 
@@ -57,9 +58,7 @@ __CLASS_NEW_DECLARE(Polyhedron);
 
 void Polyhedron_destructor(Polyhedron this);
 void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z);
-void Polyhedron_show(Polyhedron this);
-void Polyhedron_hide(Polyhedron this);
-void Polyhedron_draw(Polyhedron this, int calculateParallax);
+void Polyhedron_draw(Polyhedron this, bool calculateParallax);
 
 
 #endif

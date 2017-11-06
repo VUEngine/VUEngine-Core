@@ -33,6 +33,10 @@ extern float fabsf(float);
 
 #define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
 
+// usable only when m is a power of 2
+#define __MODULO(n, m)			(n & (m - 1))
+
+
 // fixed point macros
 #define fix7_9					s16
 #define fix13_3					s16
@@ -95,11 +99,11 @@ extern float fabsf(float);
 #define __FIX19_13_DIV(a,b)			(fix19_13)((((s64)(a))<<13)/((s64)(b)))
 #define __FIX15_17_DIV(a,b)			(fix15_17)((((s64)(a))<<17)/((s64)(b)))
 
-#define __COS(x) _sinLut[((x)+128)&0x1FF]
-#define __SIN(x) _sinLut[(x)&0x1FF]
+#define __COS(x) _sinLut[(128 - (x)) & 0x1FF]
+#define __SIN(x) _sinLut[(x) & 0x1FF]
 
-#define __COSF(x) __FIX7_9_TO_F(_sinLut[((x)+128)&0x1FF])
-#define __SINF(x) __FIX7_9_TO_F(_sinLut[(x)&0x1FF])
+#define __COSF(x) __FIX7_9_TO_F(__COS(x))
+#define __SINF(x) __FIX7_9_TO_F(__SIN(x))
 
 #define __SIN_LUT_ENTRIES				(sizeof(_sinLut) / sizeof(s16))
 #define __QUARTER_ROTATION_DEGREES		((signed)(__SIN_LUT_ENTRIES >> 2))
@@ -123,8 +127,8 @@ static const s16 _sinLut[] =
  473,  475,  477,  479,  482,  484,  486,  488, //13
  489,  491,  493,  495,  496,  498,  499,  500, //14
  502,  503,  504,  505,  506,  507,  508,  508, //15
- 509,  510,  510,  511,  511,  511,  511,  512, //16
- 511,  511,  511,  511,  511,  511,  510,  510, //17
+ 509,  510,  510,  511,  511,  511,  511,  511, //16
+ 512,  511,  511,  511,  511,  511,  510,  510, //17
  509,  508,  508,  507,  506,  505,  504,  503, //18
  502,  500,  499,  498,  496,  495,  493,  491, //19
  489,  488,  486,  484,  482,  479,  477,  475, //20
@@ -155,8 +159,8 @@ static const s16 _sinLut[] =
 -473, -475, -477, -479, -482, -484, -486, -488, //45
 -489, -491, -493, -495, -496, -498, -499, -500, //46
 -502, -503, -504, -505, -506, -507, -508, -508, //47
--509, -510, -510, -511, -511, -511, -511, -512, //48
--511, -511, -511, -511, -511, -511, -510, -510, //49
+-509, -510, -510, -511, -511, -511, -511, -511, //48
+-512, -511, -511, -511, -511, -511, -510, -510, //49
 -509, -508, -508, -507, -506, -505, -504, -503, //50
 -502, -500, -499, -498, -496, -495, -493, -491, //51
 -489, -488, -486, -484, -482, -479, -477, -475, //52
@@ -176,7 +180,8 @@ static const s16 _sinLut[] =
 
 float Math_squareRoot(float number);
 int Math_powerFast(int base, int power);
-
+int Math_intInfinity();
+fix19_13 Math_fix19_13Infinity();
 
 
 #endif

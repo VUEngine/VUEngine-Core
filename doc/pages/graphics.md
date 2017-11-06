@@ -246,6 +246,6 @@ It is meant to be used mainly for debugging purposes and for very light game fea
 
 This class is used to draw 3D bodies into the screen. It keeps a list of sorted vertexes.
 
-### PolyhedronManager
+### WireframeManager
 
 Each `Polyhedron` must register itself against the unique instance of this class to be draw during the VIP's end of drawing interrupt. When a registered `Polyhedron` is deleted, it must inform this manager in order for it to be unregistered.

@@ -36,7 +36,7 @@
 #include <FrameRate.h>
 #include <Clock.h>
 #include <BgmapTextureManager.h>
-#include <PolyhedronManager.h>
+#include <WireframeManager.h>
 #include <GameState.h>
 #include <Utilities.h>
 #include <MessageDispatcher.h>
@@ -715,7 +715,7 @@ void Game_reset(Game this)
 	VIPManager_removePostProcessingEffects(this->vipManager);
 
 	// reset managers
-	PolyhedronManager_reset(PolyhedronManager_getInstance());
+	WireframeManager_reset(WireframeManager_getInstance());
 	Screen_setFocusGameEntity(this->screen, NULL);
 	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
 	CharSetManager_reset(CharSetManager_getInstance());

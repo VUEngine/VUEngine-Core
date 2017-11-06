@@ -57,7 +57,7 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 
 // global
 
-void Actor_checkIfMustBounce(Actor this, int axisOfCollision);
+void Actor_checkIfMustBounce(Actor this, const CollisionInformation* collisionInformation);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -233,12 +233,6 @@ void Actor_syncRotationWithBody(Actor this)
 void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Actor::transform: null this");
-
-	// save previous position
-	if(this->collisionSolver)
-	{
-		CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->transform.globalPosition);
-	}
 
 	// apply environment transform
 	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
@@ -429,30 +423,30 @@ u16 Actor_getAxisFreeForMovement(Actor this)
 	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 }
 
-bool Actor_processCollision(Actor this, Shape shape, VirtualList collidingShapes)
+bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "Actor::processCollision: null this");
 	ASSERT(this->body, "Actor::processCollision: null body");
-	ASSERT(collidingShapes, "Actor::processCollision: collidingShapes");
+	ASSERT(collisionInformation->collidingShape, "Actor::processCollision: collidingShapes");
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collidingShapes && VirtualList_getSize(collidingShapes))
+	if(this->collisionSolver && collisionInformation->collidingShape)
 	{
+		CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
+
 		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 
 		if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
 		{
-			int axisOfAlignment = CollisionSolver_resolveCollision(this->collisionSolver, shape, collidingShapes, bodyLastDisplacement, true);
-
-			Actor_checkIfMustBounce(this, axisOfAlignment);
+			Actor_checkIfMustBounce(this, collisionInformation);
 
 			__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
 			returnValue = true;
 		}
 
-		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collidingShapes);
+		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collisionInformation);
 	}
 
 	return returnValue;
@@ -632,7 +626,7 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
-	Entity_setShapesPosition(__SAFE_CAST(Entity, this), true);
+	Entity_transformShapes(__SAFE_CAST(Entity, this));
 }
 
 // retrieve global position
@@ -651,10 +645,11 @@ int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
 }
 
 // start bouncing after collision with another Entity
-void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
+void Actor_checkIfMustBounce(Actor this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "Actor::bounce: null this");
 
+/*
 	if(axisOfCollision)
 	{
 		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
@@ -663,18 +658,7 @@ void Actor_checkIfMustBounce(Actor this, int axisOfCollision)
 
 		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 	}
-}
-
-void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject, VBVec3D displacement)
-{
-	ASSERT(this, "Actor::alignTo: null this");
-
-	int axisOfCollision = __VIRTUAL_CALL(Shape, getAxisOfCollision, shape, collidingShape, Body_getLastDisplacement(this->body), *CollisionSolver_getOwnerPreviousPosition(this->collisionSolver));
-
-	if(axisOfCollision)
-	{
-		CollisionSolver_alignToCollidingShape(this->collisionSolver, shape, collidingShape, axisOfCollision, registerObject, &displacement);
-	}
+	*/
 }
 
 // take hit
@@ -707,7 +691,7 @@ Velocity Actor_getVelocity(Actor this)
 	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getVelocity, this);
 }
 
-void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), VirtualList collidingShapes __attribute__ ((unused)))
+void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }

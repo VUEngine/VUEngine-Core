@@ -104,16 +104,19 @@ static void InverseCuboid_constructor(InverseCuboid this, SpatialObject owner)
  *
  * @return		Whether it overlaps
  */
-int InverseCuboid_overlaps(InverseCuboid this, Shape shape)
+CollisionInformation InverseCuboid_overlaps(InverseCuboid this, Shape shape)
 {
 	ASSERT(this, "InverseCuboid::overlaps: null this");
 
-	if(__IS_INSTANCE_OF(InverseCuboid, shape))
+	return (CollisionInformation){NULL, {0, 0, 0}, __NO_AXIS};
+
+/*	if(__IS_INSTANCE_OF(InverseCuboid, shape))
 	{
 		return InverseCuboid_overlapsCuboid(this, __SAFE_CAST(Cuboid, shape));
 	}
 
 	return false;
+	*/
 }
 
 /**
@@ -131,7 +134,7 @@ bool InverseCuboid_overlapsCuboid(InverseCuboid this, Cuboid other)
 {
 	ASSERT(this, "Cuboid::overlapsCuboid: null this");
 
-	return InverseCuboid_overlapsWithRightCuboids(&this->positionedRightCuboid, &other->positionedRightCuboid);
+	return InverseCuboid_overlapsWithRightCuboids(&this->rightCuboid, &other->rightCuboid);
 }
 
 /**

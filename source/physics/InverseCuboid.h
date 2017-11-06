@@ -55,7 +55,7 @@ __CLASS_NEW_DECLARE(InverseCuboid, SpatialObject owner);
 
 void InverseCuboid_destructor(InverseCuboid this);
 
-int InverseCuboid_overlaps(InverseCuboid this, Shape shape);
+CollisionInformation InverseCuboid_overlaps(InverseCuboid this, Shape shape);
 
 
 #endif

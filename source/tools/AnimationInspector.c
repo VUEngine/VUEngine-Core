@@ -929,7 +929,7 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->animatedSprite)));
 
 	Rotation spriteRotation = {0, 0, 0};
-	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9};
+	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 
 	__VIRTUAL_CALL(Sprite, setPosition, this->animatedSprite, &spritePosition);
 	__VIRTUAL_CALL(Sprite, rotate, this->animatedSprite, &spriteRotation);

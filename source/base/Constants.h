@@ -76,9 +76,11 @@
 #define NULL 		(void *)0x00000000
 
 // axis definitions
+#define __NO_AXIS 	0x00
 #define __X_AXIS 	0x01
 #define __Y_AXIS 	0x02
 #define __Z_AXIS 	0x04
+#define __ALL_AXES	(__X_AXIS | __Y_AXIS | __Z_AXIS)
 
 // direction
 #define __LEFT		((int)-1)

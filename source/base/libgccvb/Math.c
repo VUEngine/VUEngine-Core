@@ -44,6 +44,11 @@ extern float sqrtf (float);
 float Math_squareRoot(float number)
 {
     // Doom's code causes a warning because of breaking of aliansing rules
+    if(0 >= number)
+    {
+    	return 0;
+    }
+
     long i;
     float x, y;
     const float f = 1.5F;
@@ -95,4 +100,14 @@ static int Math_doPower(int sum, int base, int power)
 int Math_power(int base, int power)
 {
 	return 0 == power ? 1 : 1 == power ? base : Math_doPower(base, base, 0 > power ? -power : power);
+}
+
+int Math_intInfinity()
+{
+	return 0x3FFFFFFF;
+}
+
+fix19_13 Math_fix19_13Infinity()
+{
+	return 0x3FFFFFFF;
 }

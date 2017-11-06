@@ -28,7 +28,7 @@
 #include <DirectDraw.h>
 #include <Optics.h>
 #include <VirtualList.h>
-#include <PolyhedronManager.h>
+#include <WireframeManager.h>
 #include <debugConfig.h>
 
 
@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(Polyhedron, Object);
+__CLASS_DEFINITION(Polyhedron, Wireframe);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
@@ -75,7 +75,7 @@ static void Polyhedron_constructor(Polyhedron this)
 	ASSERT(this, "Polyhedron::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	__CONSTRUCT_BASE(Wireframe);
 
 	// don't create the list yet
 	this->vertices = NULL;
@@ -93,7 +93,7 @@ void Polyhedron_destructor(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::destructor: null this");
 
-	Polyhedron_hide(this);
+	Wireframe_hide(__SAFE_CAST(Wireframe, this));
 
 	// delete the vertices list
 	if(this->vertices)
@@ -148,45 +148,16 @@ void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
 }
 
 /**
- * Start being rendered
- *
- * @memberof	Polyhedron
- * @public
- *
- * @param this	Function scope
- */
-void Polyhedron_show(Polyhedron this)
-{
-	ASSERT(this, "Polyhedron::show: null this");
-
-	PolyhedronManager_register(PolyhedronManager_getInstance(), this);
-}
-
-/**
- * Stop being rendered
- *
- * @memberof	Polyhedron
- * @public
- *
- * @param this	Function scope
- */
-void Polyhedron_hide(Polyhedron this)
-{
-	ASSERT(this, "Polyhedron::hide: null this");
-
-	PolyhedronManager_remove(PolyhedronManager_getInstance(), this);
-}
-
-/**
  * Write to the frame buffers
  *
  * @memberof					Polyhedron
  * @public
  *
  * @param this					Function scope
+ * @param this					Function scope
  * @param calculateParallax		Tru to compute the parallax displacement for each pixel
  */
-void Polyhedron_draw(Polyhedron this, int calculateParallax)
+void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 {
 	ASSERT(this, "Polyhedron::draw: null this");
 
@@ -211,28 +182,6 @@ void Polyhedron_draw(Polyhedron this, int calculateParallax)
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
 		{
 			// normalize vertex to screen coordinates
-			fromVertex3D = *((VBVec3D*)fromNode->data);
-			toVertex3D = *((VBVec3D*)toNode->data);
-			__OPTICS_NORMALIZE(fromVertex3D);
-			__OPTICS_NORMALIZE(toVertex3D);
-
-			// project to 2d coordinates
-			__OPTICS_PROJECT_TO_2D(fromVertex3D, fromVertex2D);
-			__OPTICS_PROJECT_TO_2D(toVertex3D, toVertex2D);
-
-			// calculate parallax
-			if(calculateParallax)
-			{
-				fromVertex2D.parallax = Optics_calculateParallax(fromVertex3D.x, fromVertex3D.z);
-				toVertex2D.parallax = Optics_calculateParallax(toVertex3D.x, toVertex3D.z);
-			}
-
-			// draw the line in both buffers
-			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, color);
-		}
-
-		if(fromNode && toNode && 2 < VirtualList_getSize(this->vertices))
-		{
 			fromVertex3D = *((VBVec3D*)fromNode->data);
 			toVertex3D = *((VBVec3D*)toNode->data);
 			__OPTICS_NORMALIZE(fromVertex3D);

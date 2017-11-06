@@ -45,7 +45,7 @@
 		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
 		__VIRTUAL_DEC(ClassName, void, updateSurroundingFriction);										\
 		__VIRTUAL_DEC(ClassName, int, getAxisAllowedForBouncing);										\
-		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, VirtualList collidingShapes);			\
+		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
 
@@ -120,7 +120,7 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
 u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration);
 u16 Actor_getAxisFreeForMovement(Actor this);
-bool Actor_processCollision(Actor this, Shape shape, VirtualList collidingShapes);
+bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);
@@ -130,7 +130,6 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
 int Actor_getAxisAllowedForBouncing(Actor this);
-void Actor_alignTo(Actor this, Shape shape, Shape collidingShape, bool registerObject, VBVec3D displacement);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening);
@@ -140,7 +139,7 @@ void Actor_stopMovement(Actor this, int axis);
 void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this, u16 movementAxis);
 Velocity Actor_getVelocity(Actor this);
-void Actor_collisionsProcessingDone(Actor this, VirtualList collidingShapes);
+void Actor_collisionsProcessingDone(Actor this, const CollisionInformation* collisionInformation);
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
 

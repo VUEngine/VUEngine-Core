@@ -43,9 +43,6 @@
 // sizeof(POINTER_TYPE) << 3
 #define BITS_PER_STEP 			32
 
-#define MODULO(n, m)			(n & (m - 1))
-
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION

@@ -79,11 +79,12 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	// register a shape for collision detection
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), solidParticleDefinition->shapeDefinition);
 
-	VBVec3D displacement = {0, 0, 0};
+	Rotation rotation = {0, 0, 0};
+	Scale scale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	Size size = {SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this)};
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &size, &displacement, true);
+	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &rotation, &scale, &size);
 
-	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this), &this->position, &this->position);
+	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this));
 }
 
 /**
@@ -135,14 +136,9 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 	if(0 <= this->lifeSpan)
 	{
 		this->position = *Body_getPosition(this->body);
-
-		if(this->collisionSolver)
-		{
-			CollisionSolver_setOwnerPreviousPosition(this->collisionSolver, this->position);
-		}
 	}
 
-	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false);
+//	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false);
 
 	return expired;
 }
@@ -251,25 +247,23 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
  * @param this				Function scope
  * @param axisOfCollision
  */
-static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollision)
+static void SolidParticle_checkIfMustBounce(SolidParticle this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "SolidParticle::bounce: null this");
+/*
+	fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver) : __1I_FIX19_13;
 
-	if(axisOfCollision)
+	Body_bounce(this->body, collisionInformation, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
+
+	if(!(axisOfCollision & Body_getMovementOverAllAxis(this->body)))
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
-
-		Body_bounce(this->body, axisOfCollision, this->solidParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
-
-		if(!(axisOfCollision & Body_getMovementOverAllAxis(this->body)))
-		{
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, &axisOfCollision);
-		}
-		else
-		{
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
-		}
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, collisionInformation);
 	}
+	else
+	{
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
+	}
+	*/
 }
 
 /**
@@ -279,48 +273,30 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, u8 axisOfCollisi
  * @public
  *
  * @param this							Function scope
- * @param shape							My shape detecting the collision
- * @param collidingShapes				List with colliding shapes
+ * @param collisionInformation			Information about the collision
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_processCollision(SolidParticle this, Shape shape, VirtualList collidingShapes)
+bool SolidParticle_processCollision(SolidParticle this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
-	ASSERT(collidingShapes, "SolidParticle::resolveCollision: collidingShapes");
+	ASSERT(collisionInformation->collidingShape, "SolidParticle::resolveCollision: collidingShapes");
 
 	if(this->collisionSolver)
 	{
 		if(this->solidParticleDefinition->ignoreParticles)
 		{
-			VirtualList collidingShapesToRemove = __NEW(VirtualList);
-			VirtualNode node = NULL;
-
-			for(node = collidingShapes->head; node; node = node->next)
+			if(__GET_CAST(Particle, Shape_getOwner(collisionInformation->collidingShape)))
 			{
-				SpatialObject spatialObject = __SAFE_CAST(SpatialObject, node->data);
-
-				if(__GET_CAST(Particle, spatialObject))
-				{
-					VirtualList_pushBack(collidingShapesToRemove, spatialObject);
-				}
+				return true;
 			}
-
-			for(node = collidingShapesToRemove->head; node; node = node->next)
-			{
-				// whenever you process some objects of a collisions list remove them and leave the Actor handle
-				// the ones you don't care about, i.e.: in most cases, the ones which are solid
-				VirtualList_removeElement(collidingShapes, node->data);
-			}
-
-			__DELETE(collidingShapesToRemove);
 		}
 
-		u16 axisOfAllignement = CollisionSolver_resolveCollision(this->collisionSolver, shape, collidingShapes, Body_getLastDisplacement(this->body), false);
+		CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
 
-		SolidParticle_checkIfMustBounce(this, axisOfAllignement);
+		SolidParticle_checkIfMustBounce(this, collisionInformation);
 
 		SolidParticle_updateSurroundingFriction(this);
 

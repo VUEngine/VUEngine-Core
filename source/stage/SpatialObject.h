@@ -29,13 +29,12 @@
 
 #include <Object.h>
 #include <VirtualList.h>
+#include <Shape.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
-
-__FORWARD_CLASS(Shape)
 
 
 // declare the virtual methods
@@ -44,17 +43,21 @@ __FORWARD_CLASS(Shape)
 		__VIRTUAL_DEC(ClassName, VirtualList, getShapes);												\
 		__VIRTUAL_DEC(ClassName, bool, moves);															\
 		__VIRTUAL_DEC(ClassName, bool, isMoving);														\
-		__VIRTUAL_DEC(ClassName, u16, getAxisAllowedForMovement, const Acceleration* acceleration);				\
+		__VIRTUAL_DEC(ClassName, u16, getAxisAllowedForMovement, const Acceleration* acceleration);		\
 		__VIRTUAL_DEC(ClassName, u16, getWidth);														\
 		__VIRTUAL_DEC(ClassName, u16, getHeight);														\
 		__VIRTUAL_DEC(ClassName, u16, getDepth);														\
 		__VIRTUAL_DEC(ClassName, const VBVec3D*, getPosition);											\
 		__VIRTUAL_DEC(ClassName, void, setPosition, const VBVec3D* position);							\
+		__VIRTUAL_DEC(ClassName, const Rotation*, getRotation);											\
+		__VIRTUAL_DEC(ClassName, void, setRotation, const Rotation* rotation);							\
+		__VIRTUAL_DEC(ClassName, const Scale*, getScale);												\
+		__VIRTUAL_DEC(ClassName, void, setScale, const Scale* scale);									\
 		__VIRTUAL_DEC(ClassName, fix19_13, getElasticity);												\
 		__VIRTUAL_DEC(ClassName, fix19_13, getFriction);												\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
-		__VIRTUAL_DEC(ClassName, bool, processCollision, Shape shape, VirtualList collidingShapes);		\
+		__VIRTUAL_DEC(ClassName, bool, processCollision, const CollisionInformation* collisionInformation);	\
 		__VIRTUAL_DEC(ClassName, u16, getMovementState);												\
 
 // define the virtual methods
@@ -99,11 +102,15 @@ u16 SpatialObject_getHeight(SpatialObject this);
 u16 SpatialObject_getDepth(SpatialObject this);
 const VBVec3D* SpatialObject_getPosition(SpatialObject this);
 void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position);
+const Rotation* SpatialObject_getRotation(SpatialObject this);
+void SpatialObject_setRotation(SpatialObject this, const Rotation* rotation);
+const Scale* SpatialObject_getScale(SpatialObject this);
+void SpatialObject_setScale(SpatialObject this, const Scale* scale);
 fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
-bool SpatialObject_processCollision(SpatialObject this, Shape shape, VirtualList collidingShapes);
+bool SpatialObject_processCollision(SpatialObject this, const CollisionInformation* collisionInformation);
 u16 SpatialObject_getMovementState(SpatialObject this);
 VirtualList SpatialObject_getShapes(SpatialObject this);
 

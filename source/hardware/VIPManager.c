@@ -31,7 +31,7 @@
 #include <Game.h>
 #include <FrameRate.h>
 #include <SpriteManager.h>
-#include <PolyhedronManager.h>
+#include <WireframeManager.h>
 #include <Mem.h>
 #include <Printing.h>
 #ifdef __DEBUG_TOOLS
@@ -108,7 +108,7 @@ void Game_saveProcessNameDuringXPEND(Game this);
 
 static VIPManager _vipManager;
 static TimerManager _timerManager;
-static PolyhedronManager _polyhedronManager;
+static WireframeManager _polyhedronManager;
 static SpriteManager _spriteManager;
 static HardwareManager _hardwareManager;
 
@@ -156,7 +156,7 @@ static void __attribute__ ((noinline)) VIPManager_constructor(VIPManager this)
 	_vipManager = this;
 	_timerManager = TimerManager_getInstance();
 	_spriteManager = SpriteManager_getInstance();
-	_polyhedronManager = PolyhedronManager_getInstance();
+	_polyhedronManager = WireframeManager_getInstance();
 	_hardwareManager = HardwareManager_getInstance();
 
 	_currentDrawingFrameBufferSet = &this->currentDrawingFrameBufferSet;
@@ -461,7 +461,7 @@ static void VIPManager_processFrameBuffers(VIPManager this)
 #endif
 
 	// draw 3d objects
-	PolyhedronManager_drawPolyhedrons(_polyhedronManager);
+	WireframeManager_drawWireframes(_polyhedronManager);
 
 	// check if the current frame buffer set is valid
 	VirtualNode node = this->postProcessingEffects->tail;

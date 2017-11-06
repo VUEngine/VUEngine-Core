@@ -30,6 +30,13 @@
 #include <Shape.h>
 #include <Polyhedron.h>
 
+//---------------------------------------------------------------------------------------------------------
+//												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __CUBOID_NORMALS	3
+#define __CUBOID_VERTEXES	8
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -41,9 +48,8 @@
 #define Cuboid_SET_VTABLE(ClassName)																	\
 		Shape_SET_VTABLE(ClassName)																		\
 		__VIRTUAL_SET(ClassName, Cuboid, overlaps);														\
+		__VIRTUAL_SET(ClassName, Cuboid, computeMinimumTranslationVector);								\
 		__VIRTUAL_SET(ClassName, Cuboid, setup);														\
-		__VIRTUAL_SET(ClassName, Cuboid, position);														\
-		__VIRTUAL_SET(ClassName, Cuboid, getAxisOfCollision);											\
 		__VIRTUAL_SET(ClassName, Cuboid, testIfCollision);												\
 		__VIRTUAL_SET(ClassName, Cuboid, getPosition);													\
 		__VIRTUAL_SET(ClassName, Cuboid, getSurroundingRightCuboid);									\
@@ -55,26 +61,37 @@
 #define Cuboid_ATTRIBUTES																				\
 		Shape_ATTRIBUTES																				\
 		/**
-		 * @var RightCuboid	rightCuboid
-		 * @brief			the rectangle
+		 * @var Normals		normals
+		 * @brief			the normals of the cuboid
 		 * @memberof 		Cuboid
 		 */																								\
-		RightCuboid rightCuboid;																		\
-		/**
-		 * @var RightCuboid	positionedRightCuboid
-		 * @brief			the rightCuboid to check
-		 * @memberof 		Cuboid
-		 */																								\
-		RightCuboid positionedRightCuboid;																\
+		Normals* normals;																				\
 		/**
 		 * @var Polyhedron	polyhedron
 		 * @brief			for debugging purposes
 		 * @memberof 		Cuboid
 		 */																								\
 		Polyhedron polyhedron;																			\
+		/**
+		 * @var VBVec3D		rotationVertexDisplacement
+		 * @brief			for rotation purposes
+		 * @memberof 		Cuboid
+		 */																								\
+		VBVec3D rotationVertexDisplacement;																\
+		/**
+		 * @var RightCuboid	rightCuboid
+		 * @brief			the rectangle
+		 * @memberof 		Cuboid
+		 */																								\
+		RightCuboid rightCuboid;																		\
 
 __CLASS(Cuboid);
 
+
+typedef struct Normals
+{
+	VBVec3D vectors[__CUBOID_NORMALS];
+} Normals;
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
@@ -85,12 +102,11 @@ __CLASS_NEW_DECLARE(Cuboid, SpatialObject owner);
 void Cuboid_constructor(Cuboid this, SpatialObject owner);
 void Cuboid_destructor(Cuboid this);
 
-u16 Cuboid_getAxisOfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement, VBVec3D previousPosition);
 RightCuboid Cuboid_getPositionedRightCuboid(Cuboid this);
 RightCuboid Cuboid_getRightCuboid(Cuboid this);
-bool Cuboid_overlaps(Cuboid this, Shape shape);
-void Cuboid_position(Cuboid this, const VBVec3D* myOwnerPosition, bool isAffectedByRelativity);
-void Cuboid_setup(Cuboid this, const VBVec3D* ownerPosition, const Size* size, const VBVec3D* displacement, bool moves);
+CollisionInformation Cuboid_overlaps(Cuboid this, Shape shape);
+VBVec3D Cuboid_computeMinimumTranslationVector(Cuboid this, Shape collidingShape);
+void Cuboid_setup(Cuboid this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 bool Cuboid_testIfCollision(Cuboid this, Shape collidingShape, VBVec3D displacement);
 VBVec3D Cuboid_getPosition(Cuboid this);
 RightCuboid Cuboid_getSurroundingRightCuboid(Cuboid this);

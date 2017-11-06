@@ -32,6 +32,7 @@
 #include <HardwareManager.h>
 #include <VirtualList.h>
 #include <Printing.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -223,11 +224,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 		if(shape->checkForCollisions)
 		{
-			VirtualList collidingShapes = NULL;
-
-			// the result thrown by the collision algorithm
-			int collisionResult = kNoCollision;
-
 			// don't check the current shape again when processing other movable shapes
 			shape->checked = true;
 
@@ -244,30 +240,14 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 				if(shape != shapeToCheck && !shapeToCheck->checked)
 				{
 					// check if shapes overlap
-					collisionResult = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
+					CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
 
-					if(collisionResult)
+					if(collisionInformation.shape)
 					{
-						if(!collidingShapes)
-						{
-							collidingShapes = __NEW(VirtualList);
-						}
-
-						// add object to list
-						VirtualList_pushFront(collidingShapes, shapeToCheck);
+						__VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, &collisionInformation);
 					}
 				}
 			}
-
-			if(collidingShapes)
-			{
-				// inform the owner about the collision
-				returnValue |= __VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, shape, collidingShapes);
-
-				__DELETE(collidingShapes);
-			}
-
-			collidingShapes = NULL;
 		}
 	}
 
@@ -312,6 +292,8 @@ void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
 	{
 		VirtualList_pushBack(this->movingShapes, shape);
 	}
+
+	Shape_setChecked(shape, false);
 }
 
 // inform of a change in the shape
@@ -389,61 +371,6 @@ void CollisionManager_hideShapes(CollisionManager this)
 		__VIRTUAL_CALL(Shape, hide, node->data);
 	}
 }
-
-// check if gravity must apply to this actor
-SpatialObject CollisionManager_searchNextObjectOfCollision(CollisionManager this, const Shape shape, VBVec3D direction)
-{
-	ASSERT(this, "CollisionManager::searchNextShapeOfCollision: null this");
-
-	VBVec3D displacement =
-	{
-		direction.x ? 0 < direction.x ? __1I_FIX19_13 : __I_TO_FIX19_13(-1) : 0,
-		direction.y ? 0 < direction.y ? __1I_FIX19_13 : __I_TO_FIX19_13(-1) : 0,
-		direction.z ? 0 < direction.z ? __1I_FIX19_13 : __I_TO_FIX19_13(-1) : 0
-	};
-
-	if(0 == __ABS(direction.x) + __ABS(direction.y) + __ABS(direction.z))
-	{
-		return NULL;
-	}
-
-	SpatialObject collidingObject = NULL;
-
-	do
-	{
-		VirtualNode nodeForActiveShapes = this->activeShapes->head;
-
-		// check the shapes
-		for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
-		{
-			// load the current shape to check against
-			Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
-
-			if(shape == shapeToCheck)
-			{
-				continue;
-			}
-
-			NM_ASSERT(VirtualList_getSize(this->activeShapes), "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
-
-			// check if shapes overlap
-			if(__VIRTUAL_CALL(Shape, testIfCollision, shape, shapeToCheck, displacement))
-			{
-				collidingObject = shapeToCheck->owner;
-				break;
-			}
-		}
-
-		displacement.x += 0 < direction.x ? __1I_FIX19_13 : __I_TO_FIX19_13(-1);
-		displacement.y += 0 < direction.y ? __1I_FIX19_13 : __I_TO_FIX19_13(-1);
-		displacement.z += 0 < direction.z ? __1I_FIX19_13 : __I_TO_FIX19_13(-1);
-	}
-	while(!collidingObject && __I_TO_FIX19_13(__SCREEN_WIDTH) > __ABS(displacement.x) && __I_TO_FIX19_13(__SCREEN_HEIGHT) > __ABS(displacement.y) && __I_TO_FIX19_13(__SCREEN_WIDTH) > __ABS(displacement.z));
-
-	NM_ASSERT(collidingObject, "CollisionManager::searchNextShapeOfCollision: 0 active shapes");
-	return collidingObject;
-}
-
 
 // print status
 void CollisionManager_print(CollisionManager this, int x, int y)

@@ -64,6 +64,8 @@
 		__VIRTUAL_SET(ClassName, Entity, isVisible);													\
 		__VIRTUAL_SET(ClassName, Entity, setExtraInfo);													\
 		__VIRTUAL_SET(ClassName, Entity, getPosition);													\
+		__VIRTUAL_SET(ClassName, Entity, getRotation);													\
+		__VIRTUAL_SET(ClassName, Entity, getScale);														\
 		__VIRTUAL_SET(ClassName, Entity, getWidth);														\
 		__VIRTUAL_SET(ClassName, Entity, getHeight);													\
 		__VIRTUAL_SET(ClassName, Entity, getDepth);														\
@@ -166,6 +168,8 @@ int Entity_getMapParallax(Entity this);
 s16 Entity_getId(Entity this);
 s16 Entity_getInternalId(Entity this);
 const VBVec3D* Entity_getPosition(Entity this);
+const Rotation* Entity_getRotation(Entity this);
+const Scale* Entity_getScale(Entity this);
 VirtualList Entity_getShapes(Entity this);
 VirtualList Entity_getSprites(Entity this);
 SmallRightCuboid Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
@@ -182,7 +186,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 void Entity_ready(Entity this, bool recursive);
 void Entity_resume(Entity this);
-void Entity_setShapesPosition(Entity this, bool forcePositioning);
+void Entity_transformShapes(Entity this);
 void Entity_setupGraphics(Entity this);
 void Entity_releaseGraphics(Entity this);
 void Entity_releaseSprites(Entity this, bool deleteThem);
