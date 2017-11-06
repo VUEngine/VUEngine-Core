@@ -3,7 +3,7 @@ h1, .h1, h2, .h2, h3, .h3{
 }
 
 #navrow1, #navrow2, #navrow3, #navrow4, #navrow5{
-    border-bottom: 1px shape #EEEEEE;
+    border-bottom: 1px solid #EEEEEE;
 }
 
 .adjust-right {
@@ -11,7 +11,7 @@ margin-left: 30px !important;
 font-size: 1.15em !important;
 }
 .navbar{
- border: 0px shape #222 !important;
+ border: 0px solid #222 !important;
 }
 table{
     white-space:pre-wrap !important;
@@ -129,7 +129,7 @@ dl.el {
 }
 
 pre.fragment {
-    border: 1px shape #C4CFE5;
+    border: 1px solid #C4CFE5;
     background-color: #FBFCFD;
     padding: 4px 6px;
     margin: 4px 8px 4px 2px;
@@ -144,7 +144,7 @@ pre.fragment {
 div.fragment {
     padding: 4px 6px;
     margin: 4px 8px 4px 2px;
-    border: 1px shape #C4CFE5;
+    border: 1px solid #C4CFE5;
 }
 
 div.line {
@@ -187,8 +187,8 @@ span.lineno {
     padding-right: 4px;
     text-align: right;
     color:rgba(0,0,0,0.3);
-    border-right: 1px shape #EEE;
-    border-left: 1px shape #EEE;
+    border-right: 1px solid #EEE;
+    border-left: 1px solid #EEE;
     background-color: #FFF;
     white-space: pre;
     font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace ;
@@ -262,7 +262,7 @@ span.vhdllogic {
 
 blockquote {
     background-color: #F7F8FB;
-    border-left: 2px shape #9CAFD4;
+    border-left: 2px solid #9CAFD4;
     margin: 0 24px 0 4px;
     padding: 0 12px 0 16px;
 }
