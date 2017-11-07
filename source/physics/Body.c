@@ -85,9 +85,9 @@ void Body_setCurrentGravity(const Acceleration* currentGravity)
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Body_awake(Body this, int axisOfAwakening, bool informAboutAwakening);
+static void Body_awake(Body this, u16 axisOfAwakening, bool informAboutAwakening);
 static void Body_updateAcceleration(Body this, fix19_13 elapsedTime, fix19_13 gravity, fix19_13* acceleration, fix19_13 appliedForce, fix19_13 frictionForce);
-static void Body_setMovementType(Body this, int movementType, int axis);
+static void Body_setMovementType(Body this, int movementType, u16 axis);
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, fix19_13 otherBodyElasticity);
 int Body_updateMovement(Body this, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 appliedForce, int movementType, fix19_13 frictionForce);
 
@@ -217,7 +217,7 @@ MovementType Body_getMovementType(Body this)
 }
 
 // set movement type
-static void Body_setMovementType(Body this, int movementType, int axis)
+static void Body_setMovementType(Body this, int movementType, u16 axis)
 {
 	ASSERT(this, "Body::setMovementType: null this");
 
@@ -255,7 +255,7 @@ static void Body_setMovementType(Body this, int movementType, int axis)
 	}
 }
 
-void Body_clearAcceleration(Body this, int axis)
+void Body_clearAcceleration(Body this, u16 axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -279,7 +279,7 @@ void Body_clearAcceleration(Body this, int axis)
 }
 
 // set movement type to accelerated
-void Body_moveAccelerated(Body this, int axis)
+void Body_moveAccelerated(Body this, u16 axis)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -291,7 +291,7 @@ void Body_moveUniformly(Body this, Velocity velocity)
 {
 	ASSERT(this, "Body::moveUniformly: null this");
 
-	int axisOfUniformMovement = 0;
+	u16 axisOfUniformMovement = 0;
 
 	if(velocity.x)
 	{
@@ -368,7 +368,7 @@ void Body_applyForce(Body this, const Force* force, u16 clearAxis, bool informAb
 		this->acceleration.z += this->appliedForce.z;
 	}
 
-	int axisAppliedForce = 0;
+	u16 axisAppliedForce = 0;
 
 	if(this->appliedForce.x)
 	{
@@ -399,7 +399,7 @@ void Body_applyGravity(Body this, const Acceleration* gravity)
 
 	if(gravity)
 	{
-		int axisStartedMovement = 0;
+		u16 axisStartedMovement = 0;
 
 		if(gravity->x)
 		{
@@ -434,7 +434,7 @@ void Body_addForce(Body this, const Force* force, bool informAboutAwakening)
 	ASSERT(this, "Body::addForce: null this");
 	ASSERT(force, "Body::addForce: null force");
 
-	Body_applyForce(this, force, ~Body_getMovementOverAllAxis(this), informAboutAwakening);
+	Body_applyForce(this, force, ~Body_getMovementOnAllAxes(this), informAboutAwakening);
 }
 
 // update movement
@@ -444,8 +444,8 @@ void Body_update(Body this)
 
 	if(this->awake && this->active)
 	{
-		int axisStoppedMovement = 0;
-		int axisOfChangeOfMovement = 0;
+		u16 axisStoppedMovement = 0;
+		u16 axisOfChangeOfMovement = 0;
 
 		Force frictionForce = Body_calculateFrictionForce(this);
 
@@ -724,11 +724,11 @@ void Body_printPhysics(Body this, int x, int y)
 }
 
 // stop movement over an axis
-void Body_stopMovement(Body this, int axis)
+void Body_stopMovement(Body this, u16 axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
-	u16 axisOfMovement = Body_getMovementOverAllAxis(this);
+	u16 axisOfMovement = Body_getMovementOnAllAxes(this);
 	u16 axisOfStopping = 0;
 
 	if((axisOfMovement & __X_AXIS) && (axis & __X_AXIS))
@@ -760,7 +760,7 @@ void Body_stopMovement(Body this, int axis)
 
 	if(axisOfStopping)
 	{
-		if(!Body_getMovementOverAllAxis(this))
+		if(!Body_getMovementOnAllAxes(this))
 		{
 			Body_sleep(this);
 		}
@@ -778,7 +778,7 @@ u8 Body_getAxisSubjectToGravity(Body this)
 }
 
 // set axis subject to gravity
-void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity)
+void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity)
 {
 	ASSERT(this, "Body::setAxisSubjectToGravity: null this");
 
@@ -884,7 +884,7 @@ bool Body_isAwake(Body this)
 }
 
 // awake body
-static void Body_awake(Body this, int axisOfAwakening, bool informAboutAwakening)
+static void Body_awake(Body this, u16 axisOfAwakening, bool informAboutAwakening)
 {
 	ASSERT(this, "Body::awake: null this");
 
@@ -931,7 +931,7 @@ void Body_sleep(Body this)
 }
 
 // is it moving?
-u16 Body_getMovementOverAllAxis(Body this)
+u16 Body_getMovementOnAllAxes(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
@@ -945,12 +945,12 @@ u16 Body_getMovementOverAllAxis(Body this)
 }
 
 // bounce back
-void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity)
+void Body_bounce(Body this, u16 axis, u16 axisAllowedForBouncing, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
 
-	int axisOnWhichStopped = 0;
-	int axisOnWhichBounced = 0;
+	u16 axisOnWhichStopped = 0;
+	u16 axisOnWhichBounced = 0;
 	fix19_13 velocity;
 
 	if((__X_AXIS & axis))
@@ -1010,7 +1010,7 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounceOnAxis: null this");
-return false;
+
 	// get the elapsed time
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;

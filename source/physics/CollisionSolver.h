@@ -90,11 +90,11 @@ __CLASS_NEW_DECLARE(CollisionSolver, SpatialObject owner);
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner);
 void CollisionSolver_destructor(CollisionSolver this);
 
-u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
+u16 CollisionSolver_testForCollisions(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
 fix19_13 CollisionSolver_getSurroundingElasticity(CollisionSolver this, u16 axis);
 Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
 void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 movementAxis);
-bool CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
+u16 CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
 
 
 #endif

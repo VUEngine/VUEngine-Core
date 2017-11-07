@@ -82,7 +82,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
 	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), mass);
-	Body_setAxisSubjectToGravity(this->body, particleDefinition->axisSubjectToGravity);
+	Body_setAxisSubjectToGravity(this->body,(u16) particleDefinition->axisSubjectToGravity);
 
 	this->objectSprite = NULL;
 	Particle_addSprite(this);
@@ -203,7 +203,7 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
-	if(__Z_AXIS & Body_getMovementOverAllAxis(this->body))
+	if(__Z_AXIS & Body_getMovementOnAllAxes(this->body))
 	{
 		// calculate sprite's parallax
 		__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);

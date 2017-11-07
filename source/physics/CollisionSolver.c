@@ -128,10 +128,9 @@ void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 moveme
 	}
 }
 
-// check if gravity must apply to this actor
-u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape)
+u16 CollisionSolver_testForCollisions(CollisionSolver this, const Acceleration* acceleration, const Shape shape)
 {
-	ASSERT(this, "CollisionSolver::getAxisOfFutureCollision: null this");
+	ASSERT(this, "CollisionSolver::testForCollisions: null this");
 
 	if(!(acceleration->x | acceleration->y | acceleration->z))
 	{
@@ -160,7 +159,7 @@ u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 
 			for(; node; node = node->next)
 			{
-				axisOfCollision |= __VIRTUAL_CALL(Shape, testIfCollision, shape, __SAFE_CAST(Shape, node->data), displacement);
+				axisOfCollision |= __VIRTUAL_CALL(Shape, testForCollision, shape, __SAFE_CAST(Shape, node->data), displacement);
 			}
 		}
 	}
@@ -179,7 +178,7 @@ static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Obje
 }
 
 // resolve collision against other entities
-bool CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation)
+u16 CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation)
 {
 	__PRINT_IN_GAME_TIME(1, 0);
 
@@ -205,26 +204,31 @@ bool CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInfor
 
 	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 
+	u16 axisOfCollision = __NO_AXIS;
+
 	if(minimumTranslationVector.x)
 	{
+		axisOfCollision |= __X_AXIS;
 		VirtualList_removeElement(this->lastCollidingShape[kXAxis], collisionInformation->collidingShape);
 		VirtualList_pushBack(this->lastCollidingShape[kXAxis], collisionInformation->collidingShape);
 		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
 	}
 	else if(minimumTranslationVector.y)
 	{
+		axisOfCollision |= __Y_AXIS;
 		VirtualList_removeElement(this->lastCollidingShape[kYAxis], collisionInformation->collidingShape);
 		VirtualList_pushBack(this->lastCollidingShape[kYAxis], collisionInformation->collidingShape);
 		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
 	}
 	else if(minimumTranslationVector.z)
 	{
+		axisOfCollision |= __Z_AXIS;
 		VirtualList_removeElement(this->lastCollidingShape[kZAxis], collisionInformation->collidingShape);
 		VirtualList_pushBack(this->lastCollidingShape[kZAxis], collisionInformation->collidingShape);
 		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
 	}
 
-	return minimumTranslationVector.x | minimumTranslationVector.y | minimumTranslationVector.z;
+	return axisOfCollision;
 }
 
 // retrieve friction of colliding objects

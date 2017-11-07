@@ -50,7 +50,7 @@
 		__VIRTUAL_SET(ClassName, Box, overlaps);														\
 		__VIRTUAL_SET(ClassName, Box, getMinimumOverlappingVector);										\
 		__VIRTUAL_SET(ClassName, Box, setup);															\
-		__VIRTUAL_SET(ClassName, Box, testIfCollision);													\
+		__VIRTUAL_SET(ClassName, Box, testForCollision);													\
 		__VIRTUAL_SET(ClassName, Box, getPosition);														\
 		__VIRTUAL_SET(ClassName, Box, getSurroundingRightBox);											\
 		__VIRTUAL_SET(ClassName, Box, hide);															\
@@ -102,7 +102,7 @@ VBVec3D Box_getMinimumOverlappingVector(Box this, Shape shape);
 void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
 void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
 void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max);
-bool Box_testIfCollision(Box this, Shape collidingShape, VBVec3D displacement);
+bool Box_testForCollision(Box this, Shape collidingShape, VBVec3D displacement);
 VBVec3D Box_getPosition(Box this);
 RightBox Box_getSurroundingRightBox(Box this);
 void Box_show(Box this);

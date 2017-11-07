@@ -76,7 +76,7 @@ typedef struct Normals
 		__VIRTUAL_DEC(ClassName, CollisionInformation, overlaps, Shape shape);																\
 		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getMinimumOverlappingVector, Shape collidingShape);			\
-		__VIRTUAL_DEC(ClassName, bool, testIfCollision, Shape collidingShape, VBVec3D displacement);	\
+		__VIRTUAL_DEC(ClassName, bool, testForCollision, Shape collidingShape, VBVec3D displacement);	\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
 		__VIRTUAL_DEC(ClassName, void, hide);															\

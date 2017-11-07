@@ -111,23 +111,23 @@
 		 */																								\
 		MovementType movementType;																		\
 		/**
-		 * @var u8 				active
-		 * @brief				raise flag to make the body active
-		 * @memberof 			Body
-		 */																								\
-		u8 active;																						\
-		/**
-		 * @var u8 				awake
-		 * @brief				raise flag to update body's physics
-		 * @memberof 			Body
-		 */																								\
-		u8 awake;																						\
-		/**
 		 * @var u8 				axisSubjectToGravity
 		 * @brief				axis that is subject to gravity
 		 * @memberof 			Body
 		 */																								\
-		u8 axisSubjectToGravity;																		\
+		u16 axisSubjectToGravity;																		\
+		/**
+		 * @var bool 			active
+		 * @brief				raise flag to make the body active
+		 * @memberof 			Body
+		 */																								\
+		bool active;																						\
+		/**
+		 * @var bool			awake
+		 * @brief				raise flag to update body's physics
+		 * @memberof 			Body
+		 */																								\
+		bool awake;																						\
 
 __CLASS(Body);
 
@@ -168,9 +168,9 @@ void Body_destructor(Body this);
 void Body_addForce(Body this, const Force* force, bool informAboutAwakening);
 void Body_applyForce(Body this, const Force* force, u16 clearAxis, bool informAboutAwakening);
 void Body_applyGravity(Body this, const Acceleration* gravity);
-void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 otherBodyElasticity);
+void Body_bounce(Body this, u16 axis, u16 axisAllowedForBouncing, fix19_13 otherBodyElasticity);
 Force Body_calculateFrictionForce(Body this);
-void Body_clearAcceleration(Body this, int axis);
+void Body_clearAcceleration(Body this, u16 axis);
 void Body_clearForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
@@ -185,19 +185,19 @@ const VBVec3D* Body_getPosition(Body this);
 Velocity Body_getVelocity(Body this);
 bool Body_isActive(Body this);
 bool Body_isAwake(Body body);
-u16 Body_getMovementOverAllAxis(Body this);
-void Body_moveAccelerated(Body this, int axis);
+u16 Body_getMovementOnAllAxes(Body this);
+void Body_moveAccelerated(Body this, u16 axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);
 void Body_setActive(Body this, bool active);
-void Body_setAxisSubjectToGravity(Body this, u8 axisSubjectToGravity);
+void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 void Body_setFriction(Body this, Force friction);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
 void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller);
 void Body_sleep(Body body);
-void Body_stopMovement(Body this, int axis);
+void Body_stopMovement(Body this, u16 axis);
 void Body_takeHitFrom(Body this, Body other);
 void Body_update(Body this);
 

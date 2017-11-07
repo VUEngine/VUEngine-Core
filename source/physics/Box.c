@@ -62,8 +62,8 @@ __CLASS_FRIEND_DEFINITION(InverseBox);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static u16 Box_testIfCollisionWithBox(Box this, Box box, VBVec3D displacement);
 static void Box_configureWireframe(Box this, int renew);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -460,9 +460,9 @@ void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-bool Box_testIfCollision(Box this, Shape shape, VBVec3D displacement)
+bool Box_testForCollision(Box this, Shape shape, VBVec3D displacement)
 {
-	ASSERT(this, "Box::testIfCollision: null this");
+	ASSERT(this, "Box::testForCollision: null this");
 
 	// save position
 	RightBox rightBox = this->rightBox;

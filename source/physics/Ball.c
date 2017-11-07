@@ -154,9 +154,9 @@ void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-bool Ball_testIfCollision(Ball this, Shape shape, VBVec3D displacement)
+bool Ball_testForCollision(Ball this, Shape shape, VBVec3D displacement)
 {
-	ASSERT(this, "Ball::testIfCollision: null this");
+	ASSERT(this, "Ball::testForCollision: null this");
 
 	// save position
 	VBVec3D center = this->center;

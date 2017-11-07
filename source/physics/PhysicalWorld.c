@@ -338,7 +338,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 			if(gravitySensibleAxis)
 			{
-				u16 movingState = Body_getMovementOverAllAxis(body);
+				u16 movingState = Body_getMovementOnAllAxes(body);
 
 				gravitySensibleAxis &= ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 

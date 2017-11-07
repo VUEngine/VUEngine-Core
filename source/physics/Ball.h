@@ -49,7 +49,7 @@
 		__VIRTUAL_SET(ClassName, Ball, overlaps);														\
 		__VIRTUAL_SET(ClassName, Ball, getMinimumOverlappingVector);										\
 		__VIRTUAL_SET(ClassName, Ball, setup);															\
-		__VIRTUAL_SET(ClassName, Ball, testIfCollision);												\
+		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
 		__VIRTUAL_SET(ClassName, Ball, getPosition);													\
 		__VIRTUAL_SET(ClassName, Ball, getSurroundingRightBox);											\
 		__VIRTUAL_SET(ClassName, Ball, hide);															\
@@ -93,7 +93,7 @@ void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation, co
 CollisionInformation Ball_overlaps(Ball this, Shape shape);
 VBVec3D Ball_getMinimumOverlappingVector(Ball this, Shape shape);
 void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min, fix19_13* max);
-bool Ball_testIfCollision(Ball this, Shape collidingShape, VBVec3D displacement);
+bool Ball_testForCollision(Ball this, Shape collidingShape, VBVec3D displacement);
 VBVec3D Ball_getPosition(Ball this);
 RightBox Ball_getSurroundingRightBox(Ball this);
 void Ball_show(Ball this);

@@ -57,7 +57,7 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 
 // global
 
-void Actor_checkIfMustBounce(Actor this, const CollisionInformation* collisionInformation);
+void Actor_checkIfMustBounce(Actor this, u16 axisOfCollision);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -200,7 +200,7 @@ void Actor_syncRotationWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncRotationWithBody: null this");
 
-	if(Body_getMovementOverAllAxis(this->body))
+	if(Body_getMovementOnAllAxes(this->body))
 	{
 		Velocity velocity = Body_getVelocity(this->body);
 
@@ -241,7 +241,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 	{
 		Actor_syncWithBody(this);
 
-		u16 bodyMovement = Body_getMovementOverAllAxis(this->body);
+		u16 bodyMovement = Body_getMovementOnAllAxes(this->body);
 
 		if(bodyMovement)
 		{
@@ -317,7 +317,7 @@ void Actor_updateSurroundingFriction(Actor this)
 }
 
 // whether changed direction in the last cycle or not
-int Actor_changedDirection(Actor this, int axis)
+int Actor_changedDirection(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changedDirection: null this");
 
@@ -404,7 +404,7 @@ u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration
 
 		for(; node; node = node->next)
 		{
-			axisFreeForMovement &= ~CollisionSolver_getAxisOfFutureCollision(this->collisionSolver, acceleration, __SAFE_CAST(Shape, node->data));
+			axisFreeForMovement &= ~CollisionSolver_testForCollisions(this->collisionSolver, acceleration, __SAFE_CAST(Shape, node->data));
 		}
 
 		return axisFreeForMovement;
@@ -418,7 +418,7 @@ u16 Actor_getAxisFreeForMovement(Actor this)
 {
 	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
 
-	u16 movingState = Body_getMovementOverAllAxis(this->body);
+	u16 movingState = Body_getMovementOnAllAxes(this->body);
 
 	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 }
@@ -433,13 +433,15 @@ bool Actor_processCollision(Actor this, const CollisionInformation* collisionInf
 
 	if(this->collisionSolver && collisionInformation->collidingShape)
 	{
-		if(CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation))
+		u16 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
+
+		if(axisOfCollision)
 		{
 			VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 
 			if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
 			{
-				Actor_checkIfMustBounce(this, collisionInformation);
+				Actor_checkIfMustBounce(this, axisOfCollision);
 
 				__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
@@ -477,7 +479,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 				case kBodyStopped:
 
-					if(!Body_getMovementOverAllAxis(this->body))
+					if(!Body_getMovementOnAllAxes(this->body))
 					{
 						ASSERT(this->shapes, "Actor::handleMessage: null shapes");
 						Entity_informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
@@ -512,7 +514,7 @@ void Actor_stopAllMovement(Actor this)
 }
 
 // stop movement completely
-void Actor_stopMovement(Actor this, int axis)
+void Actor_stopMovement(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
@@ -545,7 +547,7 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 
 	Body_addForce(this->body, &effectiveForceToApply, informAboutBodyAwakening);
 
-	Actor_resetCollisionStatus(this, Body_getMovementOverAllAxis(this->body));
+	Actor_resetCollisionStatus(this, Body_getMovementOnAllAxes(this->body));
 	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
 	if(this->shapes)
@@ -581,14 +583,14 @@ bool Actor_isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 
-	return this->body ? Body_getMovementOverAllAxis(this->body) : 0;
+	return this->body ? Body_getMovementOnAllAxes(this->body) : 0;
 }
 
 u16 Actor_getMovementState(Actor this)
 {
 	ASSERT(this, "Actor::getMovementState: null this");
 
-	return Body_getMovementOverAllAxis(this->body);
+	return Body_getMovementOnAllAxes(this->body);
 }
 
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
@@ -646,17 +648,17 @@ int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
 }
 
 // start bouncing after collision with another Entity
-void Actor_checkIfMustBounce(Actor this, const CollisionInformation* collisionInformation)
+void Actor_checkIfMustBounce(Actor this, u16 axisOfCollision)
 {
 	ASSERT(this, "Actor::bounce: null this");
 
-//	if(axisOfCollision)
+	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getSurroundingElasticity(this->collisionSolver, __ALL_AXES) : __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getSurroundingElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
 
-		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
+		u16 axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
-		Body_bounce(this->body, __ALL_AXES, axisAllowedForBouncing, otherSpatialObjectsElasticity);
+		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 	}
 }
 
