@@ -34,7 +34,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __ALIGN_PADDING		1
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -134,14 +133,19 @@ u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceler
 {
 	ASSERT(this, "CollisionSolver::getAxisOfFutureCollision: null this");
 
+	if(!(acceleration->x | acceleration->y | acceleration->z))
+	{
+		return 0;
+	}
+
 	u16 axisOfCollision = 0;
-	int collisionCheckDistance = 5;
+	fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
 
 	VBVec3D displacement =
 	{
-		acceleration->x ? 0 < acceleration->x ? __I_TO_FIX19_13(__ALIGN_PADDING + collisionCheckDistance) : __I_TO_FIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
-		acceleration->y ? 0 < acceleration->y ? __I_TO_FIX19_13(__ALIGN_PADDING + collisionCheckDistance) : __I_TO_FIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0,
-		acceleration->z ? 0 < acceleration->z ? __I_TO_FIX19_13(__ALIGN_PADDING + collisionCheckDistance) : __I_TO_FIX19_13(-__ALIGN_PADDING - collisionCheckDistance) : 0
+		acceleration->x ? 0 < acceleration->x ? collisionCheckDistance : -collisionCheckDistance : 0,
+		acceleration->y ? 0 < acceleration->y ? collisionCheckDistance : -collisionCheckDistance : 0,
+		acceleration->z ? 0 < acceleration->z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
 	int i = 0;
@@ -175,10 +179,12 @@ static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Obje
 }
 
 // resolve collision against other entities
-void CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation)
+bool CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation)
 {
+	__PRINT_IN_GAME_TIME(1, 0);
+
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
-	ASSERT(__SAFE_CAST(Shape, shape), "CollisionSolver::resolveCollision: null shape");
+	ASSERT(collisionInformation->shape, "CollisionSolver::resolveCollision: null shape");
 	ASSERT(collisionInformation->collidingShape, "CollisionSolver::resolveCollision: null collidingEntities");
 
 	// retrieve the colliding spatialObject's position and gap
@@ -198,6 +204,27 @@ void CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInfor
 	ownerPosition.z += minimumTranslationVector.z;
 
 	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
+
+	if(minimumTranslationVector.x)
+	{
+		VirtualList_removeElement(this->lastCollidingShape[kXAxis], collisionInformation->collidingShape);
+		VirtualList_pushBack(this->lastCollidingShape[kXAxis], collisionInformation->collidingShape);
+		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
+	}
+	else if(minimumTranslationVector.y)
+	{
+		VirtualList_removeElement(this->lastCollidingShape[kYAxis], collisionInformation->collidingShape);
+		VirtualList_pushBack(this->lastCollidingShape[kYAxis], collisionInformation->collidingShape);
+		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
+	}
+	else if(minimumTranslationVector.z)
+	{
+		VirtualList_removeElement(this->lastCollidingShape[kZAxis], collisionInformation->collidingShape);
+		VirtualList_pushBack(this->lastCollidingShape[kZAxis], collisionInformation->collidingShape);
+		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
+	}
+
+	return minimumTranslationVector.x | minimumTranslationVector.y | minimumTranslationVector.z;
 }
 
 // retrieve friction of colliding objects
@@ -244,12 +271,9 @@ Force CollisionSolver_getSurroundingFriction(CollisionSolver this)
 	return totalFriction;
 }
 
-fix19_13 CollisionSolver_getCollidingTotalElasticity(CollisionSolver this, u16 axis)
+fix19_13 CollisionSolver_getSurroundingElasticity(CollisionSolver this, u16 axis)
 {
-	ASSERT(this, "CollisionSolver::getCollidingTotalElasticity: null this");
-	ASSERT(!((__X_AXIS & axis) && (__Y_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis x, y");
-	ASSERT(!((__X_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis x, z");
-	ASSERT(!((__Y_AXIS & axis) && (__Z_AXIS & axis)), "CollisionSolver::getCollidingTotalElasticity: more than one axis y, z");
+	ASSERT(this, "CollisionSolver::getSurroundingElasticity: null this");
 
 	fix19_13 totalElasticity = 0;
 	int collidingShapesListIndex = -1;

@@ -460,39 +460,47 @@ void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-bool Box_testIfCollision(Box this, Shape collidingShape, VBVec3D displacement)
+bool Box_testIfCollision(Box this, Shape shape, VBVec3D displacement)
 {
 	ASSERT(this, "Box::testIfCollision: null this");
 
-	if(__IS_INSTANCE_OF(Box, collidingShape))
+	// save position
+	RightBox rightBox = this->rightBox;
+
+	// add displacement
+	this->rightBox.x0 += displacement.x;
+	this->rightBox.x1 += displacement.x;
+
+	this->rightBox.y0 += displacement.y;
+	this->rightBox.y1 += displacement.y;
+
+	this->rightBox.z0 += displacement.z;
+	this->rightBox.z1 += displacement.z;
+
+	// test for collision on displaced center
+	VBVec3D minimumOverlappingVector = CollisionHelper_getMinimumOverlappingVector(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+
+	// put back myself
+	this->rightBox = rightBox;
+
+	u8 axisOfCollision = 0;
+
+	if(minimumOverlappingVector.x)
 	{
-		return Box_testIfCollisionWithBox(this, __SAFE_CAST(Box, collidingShape), displacement);
+		axisOfCollision |= __X_AXIS;
 	}
-	// TODO: implement
-//	else if(__IS_INSTANCE_OF(InverseBox, shape))
 
-	return false;
-}
+	if(minimumOverlappingVector.y)
+	{
+		axisOfCollision |= __Y_AXIS;
+	}
 
-// test if collision with the entity give the displacement
-static u16 Box_testIfCollisionWithBox(Box this, Box box, VBVec3D displacement)
-{
-	ASSERT(this, "Box::testIfCollisionWithBox: null this");
+	if(minimumOverlappingVector.z)
+	{
+		axisOfCollision |= __Z_AXIS;
+	}
 
-	// setup a box representing the previous position
-	RightBox displacedRightBox = this->rightBox;
-
-	displacedRightBox.x0 += displacement.x;
-	displacedRightBox.x1 += displacement.x;
-
-	displacedRightBox.y0 += displacement.y;
-	displacedRightBox.y1 += displacement.y;
-
-	displacedRightBox.z0 += displacement.z;
-	displacedRightBox.z1 += displacement.z;
-
-
-	return false;
+	return axisOfCollision;
 }
 
 VBVec3D Box_getPosition(Box this)

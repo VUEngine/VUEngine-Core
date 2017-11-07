@@ -91,10 +91,10 @@ void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner);
 void CollisionSolver_destructor(CollisionSolver this);
 
 u16 CollisionSolver_getAxisOfFutureCollision(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
-fix19_13 CollisionSolver_getCollidingTotalElasticity(CollisionSolver this, u16 axis);
+fix19_13 CollisionSolver_getSurroundingElasticity(CollisionSolver this, u16 axis);
 Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
 void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 movementAxis);
-void CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
+bool CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
 
 
 #endif

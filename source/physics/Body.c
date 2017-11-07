@@ -1010,7 +1010,7 @@ void Body_bounce(Body this, int axis, int axisAllowedForBouncing, fix19_13 other
 static bool Body_bounceOnAxis(Body this, fix19_13* velocity, fix19_13* acceleration, fix19_13 otherBodyElasticity)
 {
 	ASSERT(this, "Body::bounceOnAxis: null this");
-
+return false;
 	// get the elapsed time
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 	fix19_13 totalElasticity = this->elasticity + otherBodyElasticity;

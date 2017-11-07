@@ -62,7 +62,6 @@ __CLASS_DEFINITION(Ball, Shape);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static u16 Ball_testIfCollisionWithBall(Ball this, Ball Ball, VBVec3D displacement);
 static void Ball_configureWireframe(Ball this, int renew);
 
 
@@ -142,7 +141,6 @@ void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min
 {
 	// project this onto the current normal
 	fix19_13 dotProduct = Vector_dotProduct(vector, center);
-//	fix19_13 dotProduct = Vector_dotProduct(center, vector);
 
 	*min = dotProduct - radius;
 	*max = dotProduct + radius;
@@ -156,26 +154,42 @@ void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-bool Ball_testIfCollision(Ball this, Shape collidingShape, VBVec3D displacement)
+bool Ball_testIfCollision(Ball this, Shape shape, VBVec3D displacement)
 {
 	ASSERT(this, "Ball::testIfCollision: null this");
 
-	if(__IS_INSTANCE_OF(Ball, collidingShape))
+	// save position
+	VBVec3D center = this->center;
+
+	// add displacement
+	this->center.x += displacement.x;
+	this->center.y += displacement.y;
+	this->center.z += displacement.z;
+
+	// test for collision on displaced center
+	VBVec3D minimumOverlappingVector = CollisionHelper_getMinimumOverlappingVector(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+
+	// put back myself
+	this->center = center;
+
+	u8 axisOfCollision = 0;
+
+	if(minimumOverlappingVector.x)
 	{
-		return Ball_testIfCollisionWithBall(this, __SAFE_CAST(Ball, collidingShape), displacement);
+		axisOfCollision |= __X_AXIS;
 	}
-	// TODO: implement
-//	else if(__IS_INSTANCE_OF(InverseBall, shape))
 
-	return false;
-}
+	if(minimumOverlappingVector.y)
+	{
+		axisOfCollision |= __Y_AXIS;
+	}
 
-// test if collision with the entity give the displacement
-static u16 Ball_testIfCollisionWithBall(Ball this, Ball Ball, VBVec3D displacement)
-{
-	ASSERT(this, "Ball::testIfCollisionWithBall: null this");
+	if(minimumOverlappingVector.z)
+	{
+		axisOfCollision |= __Z_AXIS;
+	}
 
-	return false;
+	return axisOfCollision;
 }
 
 VBVec3D Ball_getPosition(Ball this)
@@ -228,7 +242,7 @@ void Ball_show(Ball this)
 	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron
-	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
+//	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
 }
 
 // hide wireframe

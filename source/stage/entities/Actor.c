@@ -433,17 +433,18 @@ bool Actor_processCollision(Actor this, const CollisionInformation* collisionInf
 
 	if(this->collisionSolver && collisionInformation->collidingShape)
 	{
-		CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
-
-		VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
-
-		if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
+		if(CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation))
 		{
-			Actor_checkIfMustBounce(this, collisionInformation);
+			VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 
-			__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
+			if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
+			{
+				Actor_checkIfMustBounce(this, collisionInformation);
 
-			returnValue = true;
+				__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
+
+				returnValue = true;
+			}
 		}
 
 		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collisionInformation);
@@ -649,16 +650,14 @@ void Actor_checkIfMustBounce(Actor this, const CollisionInformation* collisionIn
 {
 	ASSERT(this, "Actor::bounce: null this");
 
-/*
-	if(axisOfCollision)
+//	if(axisOfCollision)
 	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
+		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getSurroundingElasticity(this->collisionSolver, __ALL_AXES) : __1I_FIX19_13;
 
 		int axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
 
-		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
+		Body_bounce(this->body, __ALL_AXES, axisAllowedForBouncing, otherSpatialObjectsElasticity);
 	}
-	*/
 }
 
 // take hit

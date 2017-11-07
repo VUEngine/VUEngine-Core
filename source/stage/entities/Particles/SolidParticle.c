@@ -251,7 +251,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, const CollisionI
 {
 	ASSERT(this, "SolidParticle::bounce: null this");
 /*
-	fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getCollidingTotalElasticity(this->collisionSolver) : __1I_FIX19_13;
+	fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getSurroundingElasticity(this->collisionSolver) : __1I_FIX19_13;
 
 	Body_bounce(this->body, collisionInformation, this->shapeParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
 

@@ -131,53 +131,63 @@ CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attri
 	ASSERT(shapeA, "CollisionHelper::checkIfOverlap: null shapeA");
 	ASSERT(shapeB, "CollisionHelper::checkIfOverlap: null shapeA");
 
+	CollisionInformation collisionInformation = (CollisionInformation){NULL, NULL, {0, 0, 0}, false};
+
 	if(__IS_INSTANCE_OF(Box, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			return CollisionHelper_checkIfBoxOverlapsBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Box, shapeB));
+			collisionInformation = CollisionHelper_checkIfBoxOverlapsBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Box, shapeB));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			return CollisionHelper_checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(InverseBox, shapeB));
+			collisionInformation = CollisionHelper_checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(InverseBox, shapeB));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			return CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(InverseBox, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			return CollisionHelper_checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(InverseBox, shapeA));
+			collisionInformation = CollisionHelper_checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(InverseBox, shapeA));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			return CollisionHelper_checkIfInverseBoxOverlapsInverseBox(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(InverseBox, shapeB));
+			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsInverseBox(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(InverseBox, shapeB));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			return CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(Ball, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			return CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
+			collisionInformation = CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			return CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
+			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			return CollisionHelper_checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper_checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 
-	return (CollisionInformation){NULL, NULL, {0, 0, 0}, false};
+	// check if must swap shapes in the collision information struct since
+	// we swaped the calls to the checking methods to avoid code repetition
+	if(collisionInformation.shape)
+	{
+		collisionInformation.shape = shapeA;
+		collisionInformation.collidingShape = shapeB;
+	}
+
+	return collisionInformation;
 }
 
 static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB)
@@ -515,6 +525,7 @@ static VBVec3D CollisionHelper_getMinimumOverlappingVectorBetweenBoxAndBox(Colli
 			}
 
 			intervalDistance = __ABS(intervalDistance);
+
 			if(intervalDistance < minimumIntervalDistance)
 			{
 				minimumIntervalDistance = intervalDistance;
@@ -601,6 +612,7 @@ static VBVec3D CollisionHelper_getMinimumOverlappingVectorBetweenBoxAndBall(Coll
 		}
 
 		intervalDistance = __ABS(intervalDistance);
+
 		if(intervalDistance < minimumIntervalDistance)
 		{
 			minimumIntervalDistance = intervalDistance;
