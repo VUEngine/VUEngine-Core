@@ -43,7 +43,7 @@
 		__VIRTUAL_DEC(ClassName, VirtualList, getShapes);												\
 		__VIRTUAL_DEC(ClassName, bool, moves);															\
 		__VIRTUAL_DEC(ClassName, bool, isMoving);														\
-		__VIRTUAL_DEC(ClassName, u16, getAxisAllowedForMovement, const Acceleration* acceleration);		\
+		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, VBVec3D direction);								\
 		__VIRTUAL_DEC(ClassName, u16, getWidth);														\
 		__VIRTUAL_DEC(ClassName, u16, getHeight);														\
 		__VIRTUAL_DEC(ClassName, u16, getDepth);														\
@@ -57,7 +57,7 @@
 		__VIRTUAL_DEC(ClassName, fix19_13, getFriction);												\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
-		__VIRTUAL_DEC(ClassName, bool, processCollision, const CollisionInformation* collisionInformation);	\
+		__VIRTUAL_DEC(ClassName, bool, processCollision, CollisionInformation collisionInformation);	\
 		__VIRTUAL_DEC(ClassName, u16, getMovementState);												\
 
 // define the virtual methods
@@ -66,7 +66,7 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, getShapes);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, moves);													\
 		__VIRTUAL_SET(ClassName, SpatialObject, isMoving);												\
-		__VIRTUAL_SET(ClassName, SpatialObject, getAxisAllowedForMovement);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, canMoveTowards);										\
 		__VIRTUAL_SET(ClassName, SpatialObject, getWidth);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, getHeight);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);												\
@@ -96,7 +96,7 @@ void SpatialObject_constructor(SpatialObject this);
 void SpatialObject_destructor(SpatialObject this);
 bool SpatialObject_moves(SpatialObject this);
 bool SpatialObject_isMoving(SpatialObject this);
-u16 SpatialObject_getAxisAllowedForMovement(SpatialObject this, const Acceleration* acceleration);
+bool SpatialObject_canMoveTowards(SpatialObject this, VBVec3D direction);
 u16 SpatialObject_getWidth(SpatialObject this);
 u16 SpatialObject_getHeight(SpatialObject this);
 u16 SpatialObject_getDepth(SpatialObject this);
@@ -110,7 +110,7 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFriction(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
-bool SpatialObject_processCollision(SpatialObject this, const CollisionInformation* collisionInformation);
+bool SpatialObject_processCollision(SpatialObject this, CollisionInformation collisionInformation);
 u16 SpatialObject_getMovementState(SpatialObject this);
 VirtualList SpatialObject_getShapes(SpatialObject this);
 

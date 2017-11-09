@@ -49,6 +49,24 @@ __FORWARD_CLASS(Shape)
  *
  * @memberof Shape
  */
+typedef struct CollisionSolution
+{
+	// minimum vector to solve the collision
+	VBVec3D translationVector;
+
+	// collision's plane normal
+	VBVec3D collisionPlaneNormal;
+
+	// minimum vector to solve the collision
+	fix19_13 translationVectorLength;
+
+} CollisionSolution;
+
+/**
+ * Collision information
+ *
+ * @memberof Shape
+ */
 typedef struct CollisionInformation
 {
 	// shape detecting the collision
@@ -57,11 +75,11 @@ typedef struct CollisionInformation
 	// colliding shape
 	Shape collidingShape;
 
-	// minimum vector to solve the collision
-	VBVec3D minimumTranslationVector;
-
 	// help flag
-	bool pendingSATCheck;
+	bool isCollisionSolutionValid;
+
+	// information to solve the collision
+	CollisionSolution collisionSolution;
 
 } CollisionInformation;
 
@@ -75,8 +93,8 @@ typedef struct Normals
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, overlaps, Shape shape);																\
 		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
-		__VIRTUAL_DEC(ClassName, VBVec3D, getMinimumOverlappingVector, Shape collidingShape);			\
-		__VIRTUAL_DEC(ClassName, bool, testForCollision, Shape collidingShape, VBVec3D displacement);	\
+		__VIRTUAL_DEC(ClassName, CollisionSolution, getCollisionSolution, Shape collidingShape);		\
+		__VIRTUAL_DEC(ClassName, CollisionSolution, testForCollision, Shape collidingShape, VBVec3D displacement, fix19_13 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
 		__VIRTUAL_DEC(ClassName, void, hide);															\

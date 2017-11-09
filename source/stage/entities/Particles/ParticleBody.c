@@ -56,8 +56,8 @@ int Body_updateMovement(Body this, fix19_13 gravity, fix19_13* position, fix19_1
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleBody, SpatialObject owner, fix19_13 mass)
-__CLASS_NEW_END(ParticleBody, owner, mass);
+__CLASS_NEW_DEFINITION(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
+__CLASS_NEW_END(ParticleBody, owner, physicalSpecification);
 
 /**
  * Class constructor
@@ -69,11 +69,11 @@ __CLASS_NEW_END(ParticleBody, owner, mass);
  * @param owner
  * @param mass
  */
-void ParticleBody_constructor(ParticleBody this, SpatialObject owner, fix19_13 mass)
+void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
 {
 	ASSERT(this, "ParticleBody::constructor: null this");
 
-	__CONSTRUCT_BASE(Body, owner, mass);
+	__CONSTRUCT_BASE(Body, owner, physicalSpecification);
 }
 
 /**
@@ -140,9 +140,9 @@ void ParticleBody_update(ParticleBody this)
  *
  * @return		Always returns no Force (0, 0, 0)
  */
-Force ParticleBody_calculateFrictionForce(ParticleBody this __attribute__ ((unused)))
+Force ParticleBody_getTotalFriction(ParticleBody this __attribute__ ((unused)))
 {
-	ASSERT(this, "ParticleBody::calculateFrictionForce: null this");
+	ASSERT(this, "ParticleBody::getTotalFriction: null this");
 
 	return (Force){0, 0, 0};
 }

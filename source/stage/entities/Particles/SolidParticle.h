@@ -156,7 +156,7 @@ u16 SolidParticle_getWidth(SolidParticle this);
 u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
-bool SolidParticle_processCollision(SolidParticle this, const CollisionInformation* collisionInformation);
+bool SolidParticle_processCollision(SolidParticle this, CollisionInformation collisionInformation);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));

@@ -1138,10 +1138,10 @@ void Entity_transformShapes(Entity this)
 		const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
 
 		// setup shape
-		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
-		const VBVec3D* myPosition = Entity_getPosition(this);
-		const Rotation* myRotation = Entity_getRotation(this);
-		const Scale* myScale = Entity_getScale(this);
+//		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
+		const VBVec3D* myPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this);
+		const Rotation* myRotation = __VIRTUAL_CALL(SpatialObject, getRotation, this);
+		const Scale* myScale = __VIRTUAL_CALL(SpatialObject, getScale, this);
 
 		VirtualNode node = this->shapes->head;
 
@@ -1210,12 +1210,6 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 	{
 		this->shapes = __NEW(VirtualList);
 	}
-
-	const VBVec3D* myPosition = Entity_getPosition(this);
-	const Rotation* myRotation = Entity_getRotation(this);
-	const Scale* myScale = Entity_getScale(this);
-	bool moves = __VIRTUAL_CALL(SpatialObject, moves, this);
-	bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
 
 	// go through n sprites in entity's definition
 	for(; shapeDefinitions[i].allocator; i++)
@@ -2137,9 +2131,9 @@ void Entity_resume(Entity this)
  *
  * @return				Defaults to true
  */
-u16 Entity_getAxisAllowedForMovement(Entity this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
+bool Entity_canMoveTowards(Entity this __attribute__ ((unused)), VBVec3D direction __attribute__ ((unused)))
 {
-	return __X_AXIS | __Y_AXIS | __Z_AXIS;
+	return true;
 }
 
 /**

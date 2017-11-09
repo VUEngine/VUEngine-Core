@@ -44,7 +44,7 @@
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
 		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
 		__VIRTUAL_DEC(ClassName, void, updateSurroundingFriction);										\
-		__VIRTUAL_DEC(ClassName, int, getAxisAllowedForBouncing);										\
+		__VIRTUAL_DEC(ClassName, u16, getAxesForBouncing);												\
 		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
@@ -64,9 +64,9 @@
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForMovement);										\
+		__VIRTUAL_SET(ClassName, Actor, canMoveTowards);										\
 		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);										\
-		__VIRTUAL_SET(ClassName, Actor, getAxisAllowedForBouncing);										\
+		__VIRTUAL_SET(ClassName, Actor, getAxesForBouncing);										\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
@@ -118,9 +118,9 @@ void Actor_update(Actor this, u32 elapsedTime);
 int Actor_changedDirection(Actor this, u16 axis);
 void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
-u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration);
+bool Actor_canMoveTowards(Actor this, VBVec3D direction);
 u16 Actor_getAxisFreeForMovement(Actor this);
-bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation);
+bool Actor_processCollision(Actor this, CollisionInformation collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_moves(Actor this);
@@ -129,7 +129,7 @@ u16 Actor_getMovementState(Actor this);
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const VBVec3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const VBVec3D* position);
-int Actor_getAxisAllowedForBouncing(Actor this);
+u16 Actor_getAxesForBouncing(Actor this);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening);
@@ -137,7 +137,7 @@ void Actor_moveUniformly(Actor this, Velocity* velocity);
 void Actor_stopAllMovement(Actor this);
 void Actor_stopMovement(Actor this, u16 axis);
 void Actor_updateSurroundingFriction(Actor this);
-void Actor_resetCollisionStatus(Actor this, u16 movementAxis);
+void Actor_resetCollisionStatus(Actor this);
 Velocity Actor_getVelocity(Actor this);
 void Actor_collisionsProcessingDone(Actor this, const CollisionInformation* collisionInformation);
 void Actor_syncPositionWithBody(Actor this);

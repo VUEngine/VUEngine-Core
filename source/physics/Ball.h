@@ -47,7 +47,7 @@
 #define Ball_SET_VTABLE(ClassName)																		\
 		Shape_SET_VTABLE(ClassName)																		\
 		__VIRTUAL_SET(ClassName, Ball, overlaps);														\
-		__VIRTUAL_SET(ClassName, Ball, getMinimumOverlappingVector);										\
+		__VIRTUAL_SET(ClassName, Ball, getCollisionSolution);										\
 		__VIRTUAL_SET(ClassName, Ball, setup);															\
 		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
 		__VIRTUAL_SET(ClassName, Ball, getPosition);													\
@@ -91,9 +91,9 @@ void Ball_destructor(Ball this);
 
 void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 CollisionInformation Ball_overlaps(Ball this, Shape shape);
-VBVec3D Ball_getMinimumOverlappingVector(Ball this, Shape shape);
+CollisionSolution Ball_getCollisionSolution(Ball this, Shape shape);
 void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min, fix19_13* max);
-bool Ball_testForCollision(Ball this, Shape collidingShape, VBVec3D displacement);
+CollisionSolution Ball_testForCollision(Ball this, Shape collidingShape, VBVec3D displacement, fix19_13 sizeIncrement);
 VBVec3D Ball_getPosition(Ball this);
 RightBox Ball_getSurroundingRightBox(Ball this);
 void Ball_show(Ball this);

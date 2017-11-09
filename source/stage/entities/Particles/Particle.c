@@ -81,7 +81,8 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
-	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), mass);
+	PhysicalSpecification physicalSpecification = {mass, 0, 0};
+	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification);
 	Body_setAxisSubjectToGravity(this->body,(u16) particleDefinition->axisSubjectToGravity);
 
 	this->objectSprite = NULL;
@@ -403,11 +404,11 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-u16 Particle_getAxisAllowedForMovement(Particle this, const Acceleration* acceleration __attribute__ ((unused)))
+bool Particle_canMoveTowards(Particle this, VBVec3D direction __attribute__ ((unused)))
 {
-	ASSERT(this, "Particle::getAxisAllowedForMovement: null this");
+	ASSERT(this, "Particle::canMoveTowards: null this");
 
-	return (int)Body_getAxisSubjectToGravity(this->body);
+	return (bool)Body_getAxisSubjectToGravity(this->body);
 }
 
 /**

@@ -48,7 +48,7 @@
 __CLASS(PhysicalWorld);
 
 
-typedef Body (*BodyAllocator)(SpatialObject, fix19_13);
+typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
-Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass);
+Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
 void PhysicalWorld_destroyBody(PhysicalWorld this, Body body);
 void PhysicalWorld_reset(PhysicalWorld this);
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);

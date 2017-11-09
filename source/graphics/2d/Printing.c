@@ -603,18 +603,23 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
  * @param gx		WORLD x coordinate
  * @param gy		WORLD y coordinate
  */
+#ifdef __FORCE_PRINTING_LAYER
+void Printing_setWorldCoordinates(Printing this, u16 gx __attribute__ ((unused)), u16 gy __attribute__ ((unused)))
+{
+	ASSERT(this, "Printing::setWorldCoordinates: null this");
+
+	this->gx = 0;
+	this->gy = 0;
+}
+#else
 void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
 {
 	ASSERT(this, "Printing::setWorldCoordinates: null this");
 
-#ifdef __FORCE_PRINTING_LAYER
-	this->gx = 0;
-	this->gy = 0;
-#else
 	this->gx = 0 <= gx && gx <= __SCREEN_WIDTH ? gx : 0;
 	this->gy = 0 <= gy && gy <= __SCREEN_HEIGHT ? gy : 0;
-#endif
 }
+#endif
 
 /**
  * Reset the coordinates of the WORLD used for printing

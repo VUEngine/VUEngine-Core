@@ -49,6 +49,7 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 	{
 		__FIX7_9_MULT(__COS(rotation->y), scale->x),
 		__FIX7_9_MULT(__COS(rotation->x), scale->y),
+		__1I_FIX7_9,
 	};
 
 	ASSERT(finalScale.x, "Affine::applyAll: 0 x scale");

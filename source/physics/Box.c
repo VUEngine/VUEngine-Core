@@ -106,7 +106,7 @@ void Box_destructor(Box this)
 	__DESTROY_BASE;
 }
 
-void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size)
+void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
 {
 	ASSERT(this, "Box::setup: null this");
 
@@ -331,11 +331,11 @@ CollisionInformation Box_overlaps(Box this, Shape shape)
 	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
-VBVec3D Box_getMinimumOverlappingVector(Box this, Shape shape)
+CollisionSolution Box_getCollisionSolution(Box this, Shape shape)
 {
-	ASSERT(this, "Box::getMinimumOverlappingVector: null this");
+	ASSERT(this, "Box::getCollisionSolution: null this");
 
-	return CollisionHelper_getMinimumOverlappingVector(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
 void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES])
@@ -460,7 +460,7 @@ void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-bool Box_testForCollision(Box this, Shape shape, VBVec3D displacement)
+CollisionSolution Box_testForCollision(Box this, Shape shape, VBVec3D displacement, fix19_13 sizeIncrement)
 {
 	ASSERT(this, "Box::testForCollision: null this");
 
@@ -468,39 +468,22 @@ bool Box_testForCollision(Box this, Shape shape, VBVec3D displacement)
 	RightBox rightBox = this->rightBox;
 
 	// add displacement
-	this->rightBox.x0 += displacement.x;
-	this->rightBox.x1 += displacement.x;
+	this->rightBox.x0 += displacement.x - sizeIncrement;
+	this->rightBox.x1 += displacement.x + sizeIncrement;
 
-	this->rightBox.y0 += displacement.y;
-	this->rightBox.y1 += displacement.y;
+	this->rightBox.y0 += displacement.y - sizeIncrement;
+	this->rightBox.y1 += displacement.y + sizeIncrement;
 
-	this->rightBox.z0 += displacement.z;
-	this->rightBox.z1 += displacement.z;
+	this->rightBox.z0 += displacement.z - sizeIncrement;
+	this->rightBox.z1 += displacement.z + sizeIncrement;
 
 	// test for collision on displaced center
-	VBVec3D minimumOverlappingVector = CollisionHelper_getMinimumOverlappingVector(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+	CollisionSolution collisionSolution = CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 
 	// put back myself
 	this->rightBox = rightBox;
 
-	u8 axisOfCollision = 0;
-
-	if(minimumOverlappingVector.x)
-	{
-		axisOfCollision |= __X_AXIS;
-	}
-
-	if(minimumOverlappingVector.y)
-	{
-		axisOfCollision |= __Y_AXIS;
-	}
-
-	if(minimumOverlappingVector.z)
-	{
-		axisOfCollision |= __Z_AXIS;
-	}
-
-	return axisOfCollision;
+	return collisionSolution;
 }
 
 VBVec3D Box_getPosition(Box this)

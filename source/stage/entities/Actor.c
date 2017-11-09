@@ -35,6 +35,7 @@
 #include <Body.h>
 #include <Box.h>
 #include <Game.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,8 +57,6 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 //---------------------------------------------------------------------------------------------------------
 
 // global
-
-void Actor_checkIfMustBounce(Actor this, u16 axisOfCollision);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -282,17 +281,18 @@ void Actor_update(Actor this, u32 elapsedTime)
 	{
 		StateMachine_update(this->stateMachine);
 	}
-}
-
-// update colliding entities
-void Actor_resetCollisionStatus(Actor this, u16 movementAxis)
-{
-	ASSERT(this, "Actor::updateCollisionStatus: null this");
 
 	if(this->collisionSolver)
 	{
-		CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, movementAxis);
+		CollisionSolver_purgeCollidingShapesList(this->collisionSolver);
 	}
+//	Body_printPhysics(this->body, 1, 0);
+}
+
+// update colliding entities
+void Actor_resetCollisionStatus(Actor this)
+{
+	ASSERT(this, "Actor::updateCollisionStatus: null this");
 }
 
 // retrieve friction of colliding objects
@@ -303,14 +303,12 @@ void Actor_updateSurroundingFriction(Actor this)
 
 	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
 
-	Force totalFriction = physicalSpecification ? (Force){physicalSpecification->friction, physicalSpecification->friction, physicalSpecification->friction} : (Force){0, 0, 0};
+	fix19_13 totalFriction = physicalSpecification ? physicalSpecification->friction : 0;
 
 	if(this->collisionSolver)
 	{
-		Force surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
-		totalFriction.x += surroundingFriction.x;
-		totalFriction.y += surroundingFriction.y;
-		totalFriction.z += surroundingFriction.z;
+		fix19_13 surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
+		totalFriction += surroundingFriction;
 	}
 
 	Body_setFriction(this->body, totalFriction);
@@ -392,25 +390,57 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 }
 
 // check if gravity must apply to this actor
-u16 Actor_getAxisAllowedForMovement(Actor this, const Acceleration* acceleration)
+bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 {
-	ASSERT(this, "Actor::getAxisAllowedForMovement: null this");
+	ASSERT(this, "Actor::canMoveTowards: null this");
 
-	if(this->collisionSolver)
+	__PRINT_IN_GAME_TIME(1, 1);
+	Printing_int(Printing_getInstance(), CollisionSolution_hasCollidingShapes(this->collisionSolver), 10, 1, NULL);
+
+	if(this->collisionSolver && CollisionSolution_hasCollidingShapes(this->collisionSolver))
 	{
-		VirtualNode node = this->shapes->head;
+		fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
 
-		u16 axisFreeForMovement = __X_AXIS | __Y_AXIS | __Z_AXIS;
-
-		for(; node; node = node->next)
+		VBVec3D displacement =
 		{
-			axisFreeForMovement &= ~CollisionSolver_testForCollisions(this->collisionSolver, acceleration, __SAFE_CAST(Shape, node->data));
+			direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+			direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+			direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
+		};
+
+		VirtualNode shapeNode = this->shapes->head;
+
+		bool canMove = false;
+
+		for(; shapeNode; shapeNode = shapeNode->next)
+		{
+			VirtualList collisionSolutionsList = CollisionSolver_testForCollisions(this->collisionSolver, displacement, 0, __SAFE_CAST(Shape, shapeNode->data));
+
+			if(collisionSolutionsList)
+			{
+				VirtualNode collisionSolutionNode = collisionSolutionsList->head;
+
+				for(; collisionSolutionNode; collisionSolutionNode = collisionSolutionNode->next)
+				{
+					CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
+					canMove |= __I_TO_FIX19_13(1) != __ABS(Vector_dotProduct(collisionSolution->translationVector, displacement));
+
+					__DELETE_BASIC(collisionSolution);
+				}
+
+				__DELETE(collisionSolutionsList);
+			}
 		}
 
-		return axisFreeForMovement;
+		Printing_int(Printing_getInstance(), canMove, 1, 3, NULL);
+		__PRINT_IN_GAME_TIME(10, 3);
+		return canMove;
 	}
 
-	return __VIRTUAL_CALL(Actor, getAxisFreeForMovement, this);
+		Printing_int(Printing_getInstance(), true, 1, 3, NULL);
+		__PRINT_IN_GAME_TIME(20, 3);
+
+	return true;
 }
 
 // retrieve axis free for movement
@@ -423,7 +453,7 @@ u16 Actor_getAxisFreeForMovement(Actor this)
 	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 }
 
-bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation)
+bool Actor_processCollision(Actor this, CollisionInformation collisionInformation)
 {
 	ASSERT(this, "Actor::processCollision: null this");
 	ASSERT(this->body, "Actor::processCollision: null body");
@@ -431,25 +461,33 @@ bool Actor_processCollision(Actor this, const CollisionInformation* collisionInf
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collisionInformation->collidingShape)
+	if(this->collisionSolver && collisionInformation.collidingShape)
 	{
-		u16 axisOfCollision = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
-
-		if(axisOfCollision)
+		if(CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation))
 		{
 			VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
 
-			if(bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z)
+			if(collisionInformation.collisionSolution.translationVectorLength && (bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z))
 			{
-				Actor_checkIfMustBounce(this, axisOfCollision);
+				u16 axesForBouncing = __VIRTUAL_CALL(Actor, getAxesForBouncing, this);
+				fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, Shape_getOwner(collisionInformation.collidingShape));
+				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
+
+				if(axesForBouncing)
+				{
+					Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, axesForBouncing, friction, elasticity);
+				}
 
 				__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
 				returnValue = true;
 			}
+			else
+
+			Actor_stopAllMovement(this);
 		}
 
-		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collisionInformation);
+		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, &collisionInformation);
 	}
 
 	return returnValue;
@@ -473,7 +511,6 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 					ASSERT(this->shapes, "Actor::handleMessage: null shapes");
 					Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
-					Actor_resetCollisionStatus(this, *(int*)Telegram_getExtraInfo(telegram));
 					return true;
 					break;
 
@@ -529,6 +566,7 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 	ASSERT(this, "Actor::addForce: null this");
 	ASSERT(this->body, "Actor::addForce: null body");
 
+	/*
 	Acceleration acceleration =
 	{
 		force->x,
@@ -538,16 +576,18 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 
 	Velocity velocity = Body_getVelocity(this->body);
 
-	Force effectiveForceToApply =
+	Force effectiveForceToApply = *force;
 	{
-		velocity.x || (force->x && (__X_AXIS & Actor_getAxisAllowedForMovement(this, &acceleration))) ? force->x : 0,
-		velocity.y || (force->y && (__Y_AXIS & Actor_getAxisAllowedForMovement(this, &acceleration))) ? force->y : 0,
-		velocity.z || (force->z && (__Z_AXIS & Actor_getAxisAllowedForMovement(this, &acceleration))) ? force->z : 0
+		velocity.x || (force->x && (__X_AXIS & Actor_canMoveTowards(this, &acceleration))) ? force->x : 0,
+		velocity.y || (force->y && (__Y_AXIS & Actor_canMoveTowards(this, &acceleration))) ? force->y : 0,
+		velocity.z || (force->z && (__Z_AXIS & Actor_canMoveTowards(this, &acceleration))) ? force->z : 0
 	};
+	*/
+
+	Force effectiveForceToApply = *force;
 
 	Body_addForce(this->body, &effectiveForceToApply, informAboutBodyAwakening);
 
-	Actor_resetCollisionStatus(this, Body_getMovementOnAllAxes(this->body));
 	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
 	if(this->shapes)
@@ -640,26 +680,11 @@ const VBVec3D* Actor_getPosition(Actor this)
 	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getPosition, this);
 }
 
-int Actor_getAxisAllowedForBouncing(Actor this __attribute__ ((unused)))
+u16 Actor_getAxesForBouncing(Actor this __attribute__ ((unused)))
 {
-	ASSERT(this, "Actor::getAxisAllowedForBouncing: null this");
+	ASSERT(this, "Actor::getAxesForBouncing: null this");
 
 	return __X_AXIS | __Y_AXIS | __Z_AXIS;
-}
-
-// start bouncing after collision with another Entity
-void Actor_checkIfMustBounce(Actor this, u16 axisOfCollision)
-{
-	ASSERT(this, "Actor::bounce: null this");
-
-	if(axisOfCollision)
-	{
-		fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getSurroundingElasticity(this->collisionSolver, axisOfCollision) : __1I_FIX19_13;
-
-		u16 axisAllowedForBouncing = __VIRTUAL_CALL(Actor, getAxisAllowedForBouncing, this);
-
-		Body_bounce(this->body, axisOfCollision, axisAllowedForBouncing, otherSpatialObjectsElasticity);
-	}
 }
 
 // take hit

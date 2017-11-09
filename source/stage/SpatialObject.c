@@ -96,11 +96,10 @@ bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 	return false;
 }
 
-
 // defaults to true
-u16 SpatialObject_getAxisAllowedForMovement(SpatialObject this __attribute__ ((unused)), const Acceleration* acceleration __attribute__ ((unused)))
+bool SpatialObject_canMoveTowards(SpatialObject this __attribute__ ((unused)), VBVec3D direction __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getAxisAllowedForMovement: null this");
+	ASSERT(this, "SpatialObject::canMoveTowards: null this");
 
 	return false;
 }
@@ -207,7 +206,7 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unu
 	return false;
 }
 
-bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), CollisionInformation collisionInformation __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::processCollision: null this");
 

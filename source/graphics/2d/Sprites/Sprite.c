@@ -122,6 +122,7 @@ Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
 	{
 		__1I_FIX7_9,
 		__1I_FIX7_9,
+		__1I_FIX7_9,
 	};
 
 	// return the scale

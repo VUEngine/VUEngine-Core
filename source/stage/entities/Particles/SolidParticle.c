@@ -72,9 +72,6 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	__CONSTRUCT_BASE(Particle, &shapeParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
 	this->shapeParticleDefinition = shapeParticleDefinition;
-	Body_setElasticity(this->body, shapeParticleDefinition->elasticity);
-	Force totalFriction = (Force){shapeParticleDefinition->friction, shapeParticleDefinition->friction, shapeParticleDefinition->friction};
-	Body_setFriction(this->body, totalFriction);
 
 	// register a shape for collision detection
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), shapeParticleDefinition->shapeDefinition);
@@ -225,14 +222,12 @@ static void SolidParticle_updateSurroundingFriction(SolidParticle this)
 	ASSERT(this, "SolidParticle::updateSurroundingFriction: null this");
 	ASSERT(this->body, "SolidParticle::updateSurroundingFriction: null body");
 
-	Force totalFriction = {0, 0, 0};
+	fix19_13 totalFriction = 0;
 
 	if(this->collisionSolver)
 	{
-		Force surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
-		totalFriction.x += surroundingFriction.x;
-		totalFriction.y += surroundingFriction.y;
-		totalFriction.z += surroundingFriction.z;
+		fix19_13 surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
+		totalFriction += surroundingFriction;
 	}
 
 	Body_setFriction(this->body, totalFriction);
@@ -277,7 +272,7 @@ static void SolidParticle_checkIfMustBounce(SolidParticle this, const CollisionI
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_processCollision(SolidParticle this, const CollisionInformation* collisionInformation)
+bool SolidParticle_processCollision(SolidParticle this, CollisionInformation collisionInformation)
 {
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
@@ -288,15 +283,15 @@ bool SolidParticle_processCollision(SolidParticle this, const CollisionInformati
 	{
 		if(this->shapeParticleDefinition->ignoreParticles)
 		{
-			if(__GET_CAST(Particle, Shape_getOwner(collisionInformation->collidingShape)))
+			if(__GET_CAST(Particle, Shape_getOwner(collisionInformation.collidingShape)))
 			{
 				return true;
 			}
 		}
 
-		CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
+		CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation);
 
-		SolidParticle_checkIfMustBounce(this, collisionInformation);
+		SolidParticle_checkIfMustBounce(this, &collisionInformation);
 
 		SolidParticle_updateSurroundingFriction(this);
 
@@ -326,7 +321,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 		case kBodyStartedMoving:
 
 			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-			CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, *(u8*)Telegram_getExtraInfo(telegram));
+			CollisionSolver_purgeCollidingShapesList(this->collisionSolver);
 			return true;
 			break;
 
@@ -362,7 +357,7 @@ void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 
-	CollisionSolver_resetCollisionStatusOnAxis(this->collisionSolver, __X_AXIS | __Y_AXIS | __Z_AXIS);
+	CollisionSolver_purgeCollidingShapesList(this->collisionSolver);
 
 	this->position = *position;
 }

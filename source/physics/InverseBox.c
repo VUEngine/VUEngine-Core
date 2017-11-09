@@ -28,6 +28,7 @@
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <Math.h>
+#include <CollisionHelper.h>
 #include <VirtualList.h>
 
 
@@ -93,68 +94,17 @@ static void InverseBox_constructor(InverseBox this, SpatialObject owner)
 	__DESTROY_BASE;
 }
 
-/**
- * Check if two rectangles overlap
- *
- * @memberof	InverseBox
- * @public
- *
- * @param this	Function scope
- * @param shape Shape to check against
- *
- * @return		Whether it overlaps
- */
+// check if two rectangles overlap
 CollisionInformation InverseBox_overlaps(InverseBox this, Shape shape)
 {
 	ASSERT(this, "InverseBox::overlaps: null this");
 
-	return (CollisionInformation){NULL, {0, 0, 0}, __NO_AXIS};
-
-/*	if(__IS_INSTANCE_OF(InverseBox, shape))
-	{
-		return InverseBox_overlapsBox(this, __SAFE_CAST(Box, shape));
-	}
-
-	return false;
-	*/
+	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
-/**
- * Check if overlaps with other Box
- *
- * @memberof	InverseBox
- * @public
- *
- * @param this	Function scope
- * @param other Box to check against
- *
- * @return		Whether it overlaps
- */
-bool InverseBox_overlapsBox(InverseBox this, Box other)
+CollisionSolution InverseBox_getCollisionSolution(InverseBox this, Shape shape)
 {
-	ASSERT(this, "Box::overlapsBox: null this");
+	ASSERT(this, "InverseBox::getCollisionSolution: null this");
 
-	return InverseBox_overlapsWithRightBoxs(&this->rightBox, &other->rightBox);
-}
-
-/**
- * Check if overlaps with other Box
- *
- * @memberof		InverseBox
- * @public
- *
- * @param first		RightBox to check
- * @param second 	RightBox to check against
- *
- * @return			Whether they overlap or not
- */
-bool InverseBox_overlapsWithRightBoxs(RightBox* first, RightBox* second)
-{
-	ASSERT(first, "Box::overlapsWithRightBoxs: null first");
-	ASSERT(second, "Box::overlapsWithRightBoxs: null second");
-
-	// test for collision
-	return ((first->x0 < second->x0) | (first->x1 > second->x1) |
-		(first->y0 < second->y0) | (first->y1 > second->y1) |
-		(first->z0 < second->z0) | (first->z1 > second->z1));
+	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }

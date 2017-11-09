@@ -51,7 +51,7 @@
 		__VIRTUAL_SET(ClassName, Particle, update);														\
 		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Particle, moves);														\
-		__VIRTUAL_SET(ClassName, Particle, getAxisAllowedForMovement);											\
+		__VIRTUAL_SET(ClassName, Particle, canMoveTowards);											\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
 		__VIRTUAL_SET(ClassName, Particle, suspend);													\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
@@ -152,7 +152,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 void Particle_destructor(Particle this);
 
 void Particle_addForce(Particle this, const Force* force, u32 movementType);
-u16 Particle_getAxisAllowedForMovement(Particle this, const Acceleration* acceleration);
+bool Particle_canMoveTowards(Particle this, VBVec3D direction);
 u16 Particle_getDepth(Particle this);
 u16 Particle_getHeight(Particle this);
 const VBVec3D* Particle_getPosition(Particle this);

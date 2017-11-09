@@ -109,10 +109,10 @@ const Transformation neutralEnvironmentTransformation =
 	{0, 0, 0},
 
 	// scale
-	{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
 
 	// scale
-	{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
+	{__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9},
 
 };
 

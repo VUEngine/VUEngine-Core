@@ -66,11 +66,17 @@ enum Axis
 		 */																								\
 		SpatialObject owner;																			\
 		/**
-		 * @var VirtualList 	lastCollidingShape[kLastAxis]
-		 * @brief				last colliding shape lists
+		 * @var VirtualList 	collidingShapes
+		 * @brief				colliding shapes list
 		 * @memberof			CollisionSolver
 		 */																								\
-		VirtualList lastCollidingShape[kLastAxis];														\
+		VirtualList collidingShapes;																	\
+		/**
+		 * @var VirtualNode 	collidingShapePurgeNode
+		 * @brief				node to deffer the purge of collision shapes
+		 * @memberof			CollisionSolver
+		 */																								\
+		VirtualNode collidingShapePurgeNode;																	\
 		/**
 		 * @var GeneralAxisFlag	sensibleToFriction
 		 * @brief				flags to apply friction on each axis
@@ -90,11 +96,11 @@ __CLASS_NEW_DECLARE(CollisionSolver, SpatialObject owner);
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner);
 void CollisionSolver_destructor(CollisionSolver this);
 
-u16 CollisionSolver_testForCollisions(CollisionSolver this, const Acceleration* acceleration, const Shape shape);
-fix19_13 CollisionSolver_getSurroundingElasticity(CollisionSolver this, u16 axis);
-Force CollisionSolver_getSurroundingFriction(CollisionSolver this);
-void CollisionSolver_resetCollisionStatusOnAxis(CollisionSolver this, u16 movementAxis);
-u16 CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
-
+void CollisionSolver_purgeCollidingShapesList(CollisionSolver this);
+VirtualList CollisionSolver_testForCollisions(CollisionSolver this, VBVec3D displacement, fix19_13 sizeIncrement, const Shape shape);
+fix19_13 CollisionSolver_getSurroundingFriction(CollisionSolver this);
+void CollisionSolver_resetCollisionStatus(CollisionSolver this);
+bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation* collisionInformation);
+bool CollisionSolver_hasCollidingShapes(CollisionSolver this);
 
 #endif

@@ -179,11 +179,11 @@ void PhysicalWorld_destructor(PhysicalWorld this)
  * @param this			Function scope
  * @param bodyAllocator
  * @param owner
- * @param mass
+ * @param physicalSpecification
  *
  * @return				Registered Body
  */
-Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, fix19_13 mass)
+Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
 {
 	ASSERT(this, "PhysicalWorld::createBody: null this");
 
@@ -197,7 +197,7 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 
 	if(bodyAllocator)
 	{
-		Body body = bodyAllocator(owner, mass);
+		Body body = bodyAllocator(owner, physicalSpecification);
 		VirtualList_pushFront(this->bodies, body);
 		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
@@ -324,6 +324,13 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 	int counter = 0;
 
+	VBVec3D gravityDirection =
+	{
+		this->gravity.x,
+		this->gravity.y,
+		this->gravity.z,
+	};
+
 	// prepare bodies which move
 	// this will place the shape in the owner's position
 	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
@@ -334,31 +341,26 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			int gravitySensibleAxis = body->axisSubjectToGravity & __VIRTUAL_CALL(SpatialObject, getAxisAllowedForMovement, body->owner, &this->gravity);
+			u16 movingState = Body_getMovementOnAllAxes(body);
 
-			if(gravitySensibleAxis)
+			u16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+
+			if(gravitySensibleAxis && __VIRTUAL_CALL(SpatialObject, canMoveTowards, body->owner, gravityDirection))
 			{
-				u16 movingState = Body_getMovementOnAllAxes(body);
-
-				gravitySensibleAxis &= ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
-
-				if(gravitySensibleAxis)
+				// must account for the fps to avoid situations is which a collision is not detected
+				// when a body starts to fall and doesn't have enough time to detect a shape below
+				// when moving from one shape over another
+				Acceleration gravity =
 				{
-					// must account for the fps to avoid situations is which a collision is not detected
-					// when a body starts to fall and doesn't have enough time to detect a shape below
-					// when moving from one shape over another
-					Acceleration gravity =
-					{
-						gravitySensibleAxis & __X_AXIS ? this->gravity.x >> __APPLIED_GRAVITY_FACTOR : 0,
-						gravitySensibleAxis & __Y_AXIS ? this->gravity.y >> __APPLIED_GRAVITY_FACTOR : 0,
-						gravitySensibleAxis & __Z_AXIS ? this->gravity.z >> __APPLIED_GRAVITY_FACTOR : 0
-					};
+					gravitySensibleAxis & __X_AXIS ? this->gravity.x >> __APPLIED_GRAVITY_FACTOR : 0,
+					gravitySensibleAxis & __Y_AXIS ? this->gravity.y >> __APPLIED_GRAVITY_FACTOR : 0,
+					gravitySensibleAxis & __Z_AXIS ? this->gravity.z >> __APPLIED_GRAVITY_FACTOR : 0
+				};
 
-					if(gravity.x | gravity.y | gravity.z)
-					{
-						// add gravity
-						Body_applyGravity(body, &gravity);
-					}
+				if(gravity.x | gravity.y | gravity.z)
+				{
+					// add gravity
+					Body_applyGravity(body, &gravity);
 				}
 			}
 		}
