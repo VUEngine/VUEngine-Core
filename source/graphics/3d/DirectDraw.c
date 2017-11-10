@@ -188,11 +188,17 @@ void DirectDraw_drawPoint(DirectDraw this, VBVec2D point, int color)
 	point.y = __FIX19_13_TO_I(point.y);
 	int parallax = point.parallax;
 
-	if((unsigned)(point.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+	if((unsigned)(point.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
+		&&
+		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
+	)
 	{
 		DirectDraw_drawPixel(this, leftBuffer, (u16)(point.x - parallax), (u16)point.y, color);
 	}
-	if((unsigned)(point.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0))
+	if((unsigned)(point.x + parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
+		&&
+		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
+	)
 	{
 		DirectDraw_drawPixel(this, rightBuffer, (u16)(point.x + parallax), (u16)point.y, color);
 	}
