@@ -62,11 +62,11 @@
 		 */																								\
 		Acceleration gravity;																			\
 		/**
-		 * @var fix19_13		friction
-		 * @brief				friction
+		 * @var fix19_13		frictionCoefficient
+		 * @brief				frictionCoefficient
 		 * @memberof 			PhysicalWorld
 		 */																								\
-		fix19_13 friction;																				\
+		fix19_13 frictionCoefficient;																				\
 		/**
 		 * @var fix19_13		elapsedTime
 		 * @brief				elapsed time on last cycle
@@ -129,7 +129,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->gravity.y = 0;
 	this->gravity.z = 0;
 
-	this->friction = 0;
+	this->frictionCoefficient = 0;
 	this->elapsedTime = 0;
 	this->previousTime = 0;
 }
@@ -200,6 +200,9 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 		Body body = bodyAllocator(owner, physicalSpecification);
 		VirtualList_pushFront(this->bodies, body);
 		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::createBody: bad class body");
+
+		body->awake = true;
+		PhysicalWorld_bodyAwake(this, body);
 
 		// return created shape
 		return __SAFE_CAST(Body, VirtualList_front(this->bodies));
@@ -352,9 +355,9 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 				// when moving from one shape over another
 				Acceleration gravity =
 				{
-					gravitySensibleAxis & __X_AXIS ? this->gravity.x >> __APPLIED_GRAVITY_FACTOR : 0,
-					gravitySensibleAxis & __Y_AXIS ? this->gravity.y >> __APPLIED_GRAVITY_FACTOR : 0,
-					gravitySensibleAxis & __Z_AXIS ? this->gravity.z >> __APPLIED_GRAVITY_FACTOR : 0
+					gravitySensibleAxis & __X_AXIS ? this->gravity.x : 0,
+					gravitySensibleAxis & __Y_AXIS ? this->gravity.y : 0,
+					gravitySensibleAxis & __Z_AXIS ? this->gravity.z : 0
 				};
 
 				if(gravity.x | gravity.y | gravity.z)
@@ -414,8 +417,8 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 		VirtualNode node = this->activeBodies->head;
 
-		Body_setCurrentWorldFriction(this->friction);
 		Body_setCurrentElapsedTime(elapsedTime);
+		Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 		Body_setCurrentGravity(&this->gravity);
 
 		// check the bodies
@@ -496,36 +499,37 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 }
 
 /**
- * Retrieve friction
+ * Retrieve frictionCoefficient
  *
  * @memberof	PhysicalWorld
  * @public
  *
  * @param this	Function scope
  *
- * @return		PhysicalWorld's friction
+ * @return		PhysicalWorld's frictionCoefficient
  */
-fix19_13 PhysicalWorld_getFriction(PhysicalWorld this)
+fix19_13 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::getFriction: null this");
+	ASSERT(this, "PhysicalWorld::getFrictionCoefficient: null this");
 
-	return this->friction;
+	return this->frictionCoefficient;
 }
 
 /**
- * Set friction
+ * Set frictionCoefficient
  *
  * @memberof		PhysicalWorld
  * @public
  *
  * @param this		Function scope
- * @param friction
+ * @param frictionCoefficient
  */
-void PhysicalWorld_setFriction(PhysicalWorld this, fix19_13 friction)
+void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix19_13 frictionCoefficient)
 {
-	ASSERT(this, "PhysicalWorld::setFriction: null this");
+	ASSERT(this, "PhysicalWorld::setFrictionCoefficient: null this");
 
-	this->friction = friction;
+	this->frictionCoefficient = frictionCoefficient;
+	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 }
 
 /**
@@ -571,6 +575,7 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
 {
 	this->gravity = gravity;
+	Body_setCurrentGravity(&this->gravity);
 }
 
 /**

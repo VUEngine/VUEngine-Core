@@ -526,52 +526,29 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 {
 	ASSERT(this, "Printing::float: null this");
 
-	int sign = 1;
-	int i = 0;
-	int length;
-	int size = 1000;
-
 	#define FIX19_13_FRAC(n)	((n)&0x1FFF)
 
+	int integer = (int)value;
 	int decimal = (int)(((float)FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 10000.f);
+	int length = Utilities_intLength(abs(integer)) + (0 > value ? 1 : 0);
 
-	if(value < 0)
+	Printing_int(this, value, x, y, font);
+
+	Printing_text(this, ".", x + length, y, font);
+
+	if(decimal)
 	{
-		sign = -1;
-		Printing_out(this, x++, y, "-", font);
+		while(decimal > 10)
+		{
+			decimal /= 10;
+		}
 
-		decimal = (int)(((__1I_FIX19_13 - (float)FIX19_13_FRAC(__F_TO_FIX19_13(value))) / 8192.f) * 10000.f);
+		Printing_int(this, decimal, x + length + 1, y, font);
 	}
 	else
 	{
-		decimal = (int)(((float)FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 10000.f);
+		Printing_int(this, 0, x + length + 1, y, font);
 	}
-
-	// print integral part
-	length = Utilities_intLength((int)value * sign);
-
-	Printing_out(this, x, y, Utilities_itoa(__F_FLOOR(value * sign), 10, length), font);
-
-	// print the dot
-	Printing_out(this, x + length, y, ".", font);
-
-	// print the decimal part
-	for(i = 0; size; i++)
-	{
-		if(decimal < size)
-		{
-			Printing_out(this, x + length + 1 + i,y, Utilities_itoa(0, 10, 1), font);
-		}
-		else
-		{
-			i++;
-			break;
-		}
-
-		size /= 10;
-	}
-
-	Printing_out(this, x + length + i, y, Utilities_itoa(decimal, 10, 0), font);
 }
 
 /**

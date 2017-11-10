@@ -156,8 +156,8 @@ typedef struct StageDefinition
 		// physical world's gravity
 		Acceleration gravity;
 
-		// physical world's friction
-		fix19_13 friction;
+		// physical world's friction coefficient
+		fix19_13 frictionCoefficient;
 
 	} physics;
 

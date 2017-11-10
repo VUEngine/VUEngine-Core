@@ -334,7 +334,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	Stage_setFocusEntity(this, Screen_getFocusEntity(Screen_getInstance()));
 
 	// set physics
-	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.friction);
+	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.frictionCoefficient);
 	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.gravity);
 
 	// load background music
@@ -1195,7 +1195,7 @@ void Stage_resume(Stage this)
 	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
 
 	// set physics
-	PhysicalWorld_setFriction(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.friction);
+	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.frictionCoefficient);
 	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.gravity);
 
 	// set palettes

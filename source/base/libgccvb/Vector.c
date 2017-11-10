@@ -49,12 +49,16 @@ VBVec3D Vector_scalarProduct(VBVec3D vector, fix19_13 scalar)
 
 VBVec3D Vector_normalize(VBVec3D vector)
 {
-//	long magnitudeSquare = __FIX19_13_TO_I(vector.x) * __FIX19_13_TO_I(vector.x) + __FIX19_13_TO_I(vector.y) * __FIX19_13_TO_I(vector.y) + __FIX19_13_TO_I(vector.z) * __FIX19_13_TO_I(vector.z);
-//	fix19_13 magnitude = __F_TO_FIX19_13(Math_squareRoot(magnitudeSquare));
+//	long lengthSquare = __FIX19_13_TO_I(vector.x) * __FIX19_13_TO_I(vector.x) + __FIX19_13_TO_I(vector.y) * __FIX19_13_TO_I(vector.y) + __FIX19_13_TO_I(vector.z) * __FIX19_13_TO_I(vector.z);
+//	fix19_13 length = __F_TO_FIX19_13(Math_squareRoot(lengthSquare));
+	fix19_13 length = Vector_length(vector);
 
-	fix19_13 magnitudeSquare = __FIX19_13_MULT(vector.x, vector.x) + __FIX19_13_MULT(vector.y, vector.y) + __FIX19_13_MULT(vector.z, vector.z);
-	fix19_13 magnitude = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(magnitudeSquare)));
-	return (VBVec3D){__FIX19_13_DIV(vector.x, magnitude), __FIX19_13_DIV(vector.y, magnitude),__FIX19_13_DIV(vector.z, magnitude)};
+	if(length)
+	{
+		return (VBVec3D){__FIX19_13_DIV(vector.x, length), __FIX19_13_DIV(vector.y, length),__FIX19_13_DIV(vector.z, length)};
+	}
+
+	return (VBVec3D){0, 0, 0};
 }
 
 VBVec3D Vector_getPlaneNormal(VBVec3D vectorA, VBVec3D vectorB, VBVec3D vectorC)
@@ -80,3 +84,14 @@ VBVec3D Vector_getPlaneNormal(VBVec3D vectorA, VBVec3D vectorB, VBVec3D vectorC)
 		__FIX19_13_MULT(u.x, v.y) - __FIX19_13_MULT(u.y, v.x),
 	};
 }
+
+fix19_13 Vector_length(VBVec3D vector)
+{
+#define fix51_13 s64
+#define __FIX51_13_MULT(a,b)		(s64)((((s64)a)*((s64)b))>>13)
+
+	fix51_13 lengthSquare = __FIX51_13_MULT(vector.x, vector.x) + __FIX51_13_MULT(vector.y, vector.y) + __FIX51_13_MULT(vector.z, vector.z);
+
+	return __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(lengthSquare)));
+}
+

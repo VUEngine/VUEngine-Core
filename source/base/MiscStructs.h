@@ -101,32 +101,13 @@ typedef struct IntegralPosition
 } IntegralPosition;
 
 // spatial movement vector
-typedef struct Velocity
-{
-	// fps increases a lot in hardware with ints
-	fix19_13 x;
-	fix19_13 y;
-	fix19_13 z;
-
-} Velocity;
+typedef struct VBVec3D Velocity;
 
 // spatial velocity variation vector
-typedef struct Acceleration
-{
-	fix19_13 x;
-	fix19_13 y;
-	fix19_13 z;
-
-} Acceleration;
+typedef struct VBVec3D Acceleration;
 
 // spatial velocity variation vector
-typedef struct Force
-{
-	fix19_13 x;
-	fix19_13 y;
-	fix19_13 z;
-
-} Force;
+typedef struct VBVec3D Force;
 
 // movement type flag vector
 typedef struct MovementType

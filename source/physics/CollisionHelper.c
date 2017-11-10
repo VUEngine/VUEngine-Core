@@ -246,7 +246,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 
 			for(i = 0; i < __SHAPE_NORMALS; i++)
 			{
-				fix19_13 intervalDistance = __ABS(component[i]);
+				fix19_13 intervalDistance = abs(component[i]);
 
 				if(intervalDistance < minimumIntervalDistance)
 				{
@@ -333,7 +333,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 
 			for(i = 0; i < __SHAPE_NORMALS; i++)
 			{
-				fix19_13 intervalDistance = __ABS(component[i]);
+				fix19_13 intervalDistance = abs(component[i]);
 
 				if(intervalDistance < minimumIntervalDistance)
 				{
@@ -525,7 +525,7 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBox(Co
 				return collisionSolution;
 			}
 
-			intervalDistance = __ABS(intervalDistance);
+			intervalDistance = abs(intervalDistance);
 
 			if(intervalDistance < minimumIntervalDistance)
 			{
@@ -613,7 +613,7 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBall(C
 			return collisionSolution;
 		}
 
-		intervalDistance = __ABS(intervalDistance);
+		intervalDistance = abs(intervalDistance);
 
 		if(intervalDistance < minimumIntervalDistance)
 		{

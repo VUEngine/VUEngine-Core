@@ -60,6 +60,7 @@ float Math_squareRoot(float number)
     y  = * ( float * ) &i;
     y  = y * ( f - ( x * y * y ) );
     y  = y * ( f - ( x * y * y ) );
+	y  = y * ( f - ( x * y * y ) );
 
     return number * y;
 }
@@ -111,3 +112,4 @@ fix19_13 Math_fix19_13Infinity()
 {
 	return 0x3FFFFFFF;
 }
+

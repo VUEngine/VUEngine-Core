@@ -210,30 +210,6 @@ u16 SolidParticle_getDepth(SolidParticle this)
 }
 
 /**
- * Retrieve friction of colliding objects
- *
- * @memberof	SolidParticle
- * @private
- *
- * @param this	Function scope
- */
-static void SolidParticle_updateSurroundingFriction(SolidParticle this)
-{
-	ASSERT(this, "SolidParticle::updateSurroundingFriction: null this");
-	ASSERT(this->body, "SolidParticle::updateSurroundingFriction: null body");
-
-	fix19_13 totalFriction = 0;
-
-	if(this->collisionSolver)
-	{
-		fix19_13 surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
-		totalFriction += surroundingFriction;
-	}
-
-	Body_setFriction(this->body, totalFriction);
-}
-
-/**
  * Start bouncing after collision with another Entity
  *
  * @memberof				SolidParticle
@@ -292,8 +268,6 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 		CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation);
 
 		SolidParticle_checkIfMustBounce(this, &collisionInformation);
-
-		SolidParticle_updateSurroundingFriction(this);
 
 		return true;
 	}

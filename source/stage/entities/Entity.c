@@ -2196,11 +2196,11 @@ fix19_13 Entity_getElasticity(Entity this)
  *
  * @return		Friction
  */
-fix19_13 Entity_getFriction(Entity this)
+fix19_13 Entity_getFrictionCoefficient(Entity this)
 {
-	ASSERT(this, "Entity::getFriction: null this");
+	ASSERT(this, "Entity::getFrictionCoefficient: null this");
 
-	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->friction : 0;
+	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->frictionCoefficient : 0;
 }
 
 /**
@@ -2356,17 +2356,17 @@ Direction Entity_getDirection(Entity this)
 		__RIGHT, __DOWN, __FAR
 	};
 
-	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transform.globalRotation.y))
+	if((__QUARTER_ROTATION_DEGREES) < abs(this->transform.globalRotation.y))
 	{
 		direction.x = __LEFT;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transform.globalRotation.x))
+	if((__QUARTER_ROTATION_DEGREES) < abs(this->transform.globalRotation.x))
 	{
 		direction.y = __UP;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transform.globalRotation.z))
+	if((__QUARTER_ROTATION_DEGREES) < abs(this->transform.globalRotation.z))
 	{
 		direction.z = __NEAR;
 	}

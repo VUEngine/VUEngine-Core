@@ -273,7 +273,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dy - halfDx;
 
-			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDx))) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(abs(halfDx))) : 0;
 			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.x != toPoint.x)
@@ -309,7 +309,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dx - halfDy;
 
-			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDy))) : 0;
+			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(abs(halfDy))) : 0;
 			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.y != toPoint.y)
@@ -361,7 +361,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dy - halfDx;
 
-			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDx))) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(abs(halfDx))) : 0;
 			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.x != toPoint.x)
@@ -397,7 +397,7 @@ void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, in
 
 			int fraction = dx - halfDy;
 
-			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(__ABS(halfDy))) : 0;
+			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __I_TO_FIX19_13(abs(halfDy))) : 0;
 			fix19_13 auxParallax = __I_TO_FIX19_13(parallax);
 
 			while(fromPoint.y != toPoint.y)

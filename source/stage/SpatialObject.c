@@ -184,9 +184,9 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused))
 }
 
 // get friction
-fix19_13 SpatialObject_getFriction(SpatialObject this __attribute__ ((unused)))
+fix19_13 SpatialObject_getFrictionCoefficient(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getFriction: null this");
+	ASSERT(this, "SpatialObject::getFrictionCoefficient: null this");
 
 	return 0;
 }

@@ -39,6 +39,7 @@ fix19_13 Vector_dotProduct(VBVec3D vectorA, VBVec3D vectorB);
 VBVec3D Vector_scalarProduct(VBVec3D vector, fix19_13 scalar);
 VBVec3D Vector_normalize(VBVec3D vector);
 VBVec3D Vector_getPlaneNormal(VBVec3D vectorA, VBVec3D vectorB, VBVec3D vectorC);
+fix19_13 Vector_length(VBVec3D vector);
 
 
 #endif

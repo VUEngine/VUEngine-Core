@@ -284,8 +284,8 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 		if(this->texture)
 		{
-			this->halfWidth = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
-			this->halfHeight = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
+			this->halfWidth = abs(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
+			this->halfHeight = abs(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
 		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
@@ -325,8 +325,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 		if(this->texture)
 		{
-			this->halfWidth = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
-			this->halfHeight = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
+			this->halfWidth = abs(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
+			this->halfHeight = abs(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
 		}
 
 		if(this->param)
@@ -650,8 +650,8 @@ void BgmapSprite_render(BgmapSprite this)
 				this->paramTableRow = 0;
 			}
 
-			worldPointer->w *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.x));
-			worldPointer->h *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.y));
+			worldPointer->w *= __FIX7_9_TO_F(abs(this->drawSpec.scale.x));
+			worldPointer->h *= __FIX7_9_TO_F(abs(this->drawSpec.scale.y));
 
 			 if(0 <= this->paramTableRow)
 			{

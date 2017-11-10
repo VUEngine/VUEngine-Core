@@ -48,12 +48,10 @@
 #define Body_METHODS(ClassName)																			\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, update);															\
-		__VIRTUAL_DEC(ClassName, fix19_13, getTotalFriction);											\
 
 #define Body_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Body, update);															\
-		__VIRTUAL_SET(ClassName, Body, getTotalFriction);												\
 
 #define Body_ATTRIBUTES																					\
 		Object_ATTRIBUTES																				\
@@ -64,11 +62,29 @@
 		 */																								\
 		SpatialObject owner;																			\
 		/**
-		 * @var Force 			appliedForce
+		 * @var Force 			weight
 		 * @brief				direction
 		 * @memberof 			Body
 		 */																								\
-		Force appliedForce;																				\
+		Force weight;																					\
+		/**
+		 * @var Force 			externalForce
+		 * @brief				direction
+		 * @memberof 			Body
+		 */																								\
+		Force externalForce;																			\
+		/**
+		 * @var Force 			normal
+		 * @brief				friction surrounding object
+		 * @memberof 			Body
+		 */																								\
+		Force friction;																					\
+		/**
+		 * @var Force 			normal
+		 * @brief				friction surrounding object
+		 * @memberof 			Body
+		 */																								\
+		Force normal;																					\
 		/**
 		 * @var VBVec3D 		position
 		 * @brief				spatial position
@@ -82,6 +98,12 @@
 		 */																								\
 		Velocity velocity;																				\
 		/**
+		 * @var Acceleration 	gravity
+		 * @brief				gravity structure
+		 * @memberof 			Body
+		 */																								\
+		Acceleration gravity;																			\
+		/**
 		 * @var Acceleration 	acceleration
 		 * @brief				acceleration structure
 		 * @memberof 			Body
@@ -94,17 +116,23 @@
 		 */																								\
 		fix19_13 elasticity;																			\
 		/**
+		 * @var fix19_13 		frictionCoefficient
+		 * @brief				friction coefficient
+		 * @memberof 			Body
+		 */																								\
+		fix19_13 frictionCoefficient;																	\
+		/**
+		 * @var fix19_13 		frictionForceMagnitude
+		 * @brief				friction force magnitude
+		 * @memberof 			Body
+		 */																								\
+		fix19_13 frictionForceMagnitude;																\
+		/**
 		 * @var fix19_13 		mass
 		 * @brief				mass
 		 * @memberof 			Body
 		 */																								\
 		fix19_13 mass;																					\
-		/**
-		 * @var fix19_13 		friction
-		 * @brief				friction surrounding object
-		 * @memberof 			Body
-		 */																								\
-		fix19_13 friction;																					\
 		/**
 		 * @var MovementType 	movementType
 		 * @brief				movement type on each axis
@@ -138,8 +166,8 @@ typedef struct PhysicalSpecification
 {
 	// mass
 	fix19_13 mass;
-	// friction
-	fix19_13 friction;
+	// friction coefficient
+	fix19_13 frictionCoefficient;
 	// elasticity
 	fix19_13 elasticity;
 
@@ -152,7 +180,7 @@ typedef const PhysicalSpecification PhysicalSpecificationROMDef;
 //										CLASS' STATIC METHODS
 //---------------------------------------------------------------------------------------------------------
 
-void Body_setCurrentWorldFriction(fix19_13 _currentWorldFriction);
+void Body_setCurrentWorldFrictionCoefficient(fix19_13 _currentWorldFriction);
 void Body_setCurrentElapsedTime(fix19_13 currentElapsedTime);
 void Body_setCurrentGravity(const Acceleration* currentGravity);
 
@@ -166,18 +194,16 @@ __CLASS_NEW_DECLARE(Body, SpatialObject owner, const PhysicalSpecification* phys
 void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
 void Body_destructor(Body this);
 
-void Body_addForce(Body this, const Force* force, bool informAboutAwakening);
-void Body_applyForce(Body this, const Force* force, u16 clearAxis, bool informAboutAwakening);
+void Body_addForce(Body this, const Force* force);
+void Body_applyForce(Body this, const Force* force);
 void Body_applyGravity(Body this, const Acceleration* gravity);
-void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fix19_13 friction, fix19_13 elasticity);
-fix19_13 Body_getTotalFriction(Body this);
+void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fix19_13 frictionCoefficient, fix19_13 elasticity);
 void Body_clearAcceleration(Body this, u16 axis);
-void Body_clearForce(Body this);
+void Body_clearExternalForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
 u8 Body_getAxisSubjectToGravity(Body this);
 fix19_13 Body_getElasticity(Body this);
-fix19_13 Body_getFriction(Body this);
 VBVec3D Body_getLastDisplacement(Body this);
 fix19_13 Body_getMass(Body this);
 MovementType Body_getMovementType(Body this);
@@ -193,7 +219,7 @@ void Body_printPhysics(Body this, int x, int y);
 void Body_setActive(Body this, bool active);
 void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
-void Body_setFriction(Body this, fix19_13 friction);
+void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
 void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller);

@@ -96,9 +96,9 @@ __CLASS_NEW_DECLARE(CollisionSolver, SpatialObject owner);
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner);
 void CollisionSolver_destructor(CollisionSolver this);
 
-void CollisionSolver_purgeCollidingShapesList(CollisionSolver this);
+bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this);
 VirtualList CollisionSolver_testForCollisions(CollisionSolver this, VBVec3D displacement, fix19_13 sizeIncrement, const Shape shape);
-fix19_13 CollisionSolver_getSurroundingFriction(CollisionSolver this);
+fix19_13 CollisionSolver_getSurroundingFrictionCoefficient(CollisionSolver this);
 void CollisionSolver_resetCollisionStatus(CollisionSolver this);
 bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation* collisionInformation);
 bool CollisionSolver_hasCollidingShapes(CollisionSolver this);

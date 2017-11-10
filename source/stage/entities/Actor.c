@@ -170,14 +170,19 @@ void Actor_syncPositionWithBody(Actor this)
 
 	// retrieve the body's displacement
 	VBVec3D bodyLastDisplacement = {0, 0, 0};
+	VBVec3D bodyPosition = this->transform.globalPosition;
 
 	if(!Clock_isPaused(Game_getPhysicsClock(Game_getInstance())) && Body_isActive(this->body) && Body_isAwake(this->body))
 	{
-		bodyLastDisplacement = Body_getLastDisplacement(this->body);
+		bodyPosition = *Body_getPosition(this->body);
 	}
 
 	// modify the global position according to the body's displacement
 	VBVec3D globalPosition = this->transform.globalPosition;
+	bodyLastDisplacement.x = bodyPosition.x - globalPosition.x;
+	bodyLastDisplacement.y = bodyPosition.y - globalPosition.y;
+	bodyLastDisplacement.z = bodyPosition.z - globalPosition.z;
+
 	globalPosition.x += bodyLastDisplacement.x;
 	globalPosition.y += bodyLastDisplacement.y;
 	globalPosition.z += bodyLastDisplacement.z;
@@ -268,7 +273,6 @@ void Actor_resume(Actor this)
 	Actor_syncWithBody(this);
 }
 
-
 // execute character's logic
 void Actor_update(Actor this, u32 elapsedTime)
 {
@@ -282,36 +286,20 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-	if(this->collisionSolver)
+	if(this->collisionSolver && CollisionSolver_purgeCollidingShapesList(this->collisionSolver))
 	{
-		CollisionSolver_purgeCollidingShapesList(this->collisionSolver);
+		if(this->body)
+		{
+			Body_setFrictionCoefficient(this->body, CollisionSolver_getSurroundingFrictionCoefficient(this->collisionSolver));
+		}
 	}
-//	Body_printPhysics(this->body, 1, 0);
+//	Body_printPhysics(this->body, 1, 1);
 }
 
 // update colliding entities
 void Actor_resetCollisionStatus(Actor this)
 {
 	ASSERT(this, "Actor::updateCollisionStatus: null this");
-}
-
-// retrieve friction of colliding objects
-void Actor_updateSurroundingFriction(Actor this)
-{
-	ASSERT(this, "Actor::updateSurroundingFriction: null this");
-	ASSERT(this->body, "Actor::updateSurroundingFriction: null body");
-
-	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
-
-	fix19_13 totalFriction = physicalSpecification ? physicalSpecification->friction : 0;
-
-	if(this->collisionSolver)
-	{
-		fix19_13 surroundingFriction = CollisionSolver_getSurroundingFriction(this->collisionSolver);
-		totalFriction += surroundingFriction;
-	}
-
-	Body_setFriction(this->body, totalFriction);
 }
 
 // whether changed direction in the last cycle or not
@@ -394,9 +382,6 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 {
 	ASSERT(this, "Actor::canMoveTowards: null this");
 
-	__PRINT_IN_GAME_TIME(1, 1);
-	Printing_int(Printing_getInstance(), CollisionSolution_hasCollidingShapes(this->collisionSolver), 10, 1, NULL);
-
 	if(this->collisionSolver && CollisionSolution_hasCollidingShapes(this->collisionSolver))
 	{
 		fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
@@ -423,7 +408,7 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 				for(; collisionSolutionNode; collisionSolutionNode = collisionSolutionNode->next)
 				{
 					CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
-					canMove |= __I_TO_FIX19_13(1) != __ABS(Vector_dotProduct(collisionSolution->translationVector, displacement));
+					canMove |= __I_TO_FIX19_13(1) != abs(Vector_dotProduct(collisionSolution->translationVector, displacement));
 
 					__DELETE_BASIC(collisionSolution);
 				}
@@ -432,13 +417,8 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 			}
 		}
 
-		Printing_int(Printing_getInstance(), canMove, 1, 3, NULL);
-		__PRINT_IN_GAME_TIME(10, 3);
-		return canMove;
+		return false;
 	}
-
-		Printing_int(Printing_getInstance(), true, 1, 3, NULL);
-		__PRINT_IN_GAME_TIME(20, 3);
 
 	return true;
 }
@@ -470,15 +450,13 @@ bool Actor_processCollision(Actor this, CollisionInformation collisionInformatio
 			if(collisionInformation.collisionSolution.translationVectorLength && (bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z))
 			{
 				u16 axesForBouncing = __VIRTUAL_CALL(Actor, getAxesForBouncing, this);
-				fix19_13 friction = __VIRTUAL_CALL(SpatialObject, getFriction, Shape_getOwner(collisionInformation.collidingShape));
+				fix19_13 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation.collidingShape));
 				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
 
 				if(axesForBouncing)
 				{
-					Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, axesForBouncing, friction, elasticity);
+					Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, axesForBouncing, frictionCoefficient, elasticity);
 				}
-
-				__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
 
 				returnValue = true;
 			}
@@ -561,7 +539,7 @@ void Actor_stopMovement(Actor this, u16 axis)
 	}
 }
 
-void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening)
+void Actor_addForce(Actor this, const Force* force)
 {
 	ASSERT(this, "Actor::addForce: null this");
 	ASSERT(this->body, "Actor::addForce: null body");
@@ -586,9 +564,7 @@ void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakenin
 
 	Force effectiveForceToApply = *force;
 
-	Body_addForce(this->body, &effectiveForceToApply, informAboutBodyAwakening);
-
-	__VIRTUAL_CALL(Actor, updateSurroundingFriction, this);
+	Body_addForce(this->body, &effectiveForceToApply);
 
 	if(this->shapes)
 	{

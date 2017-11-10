@@ -228,7 +228,7 @@ void Ball_show(Ball this)
 	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron
-	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
+//	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
 }
 
 // hide wireframe

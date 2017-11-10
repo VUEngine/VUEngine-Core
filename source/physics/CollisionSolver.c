@@ -102,7 +102,7 @@ void CollisionSolver_destructor(CollisionSolver this)
 }
 
 // update colliding entities
-void CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
+bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::updateCollisionStatus: null this");
 
@@ -142,13 +142,12 @@ void CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 			if(!collision)
 			{
 				VirtualList_removeElement(this->collidingShapes, shapeToRemove);
+				return true;
 			}
 		}
 	}
 
-	__PRINT_IN_GAME_TIME(1, 2);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->collidingShapes), 10, 2, NULL);
-
+	return false;
 }
 
 VirtualList CollisionSolver_testForCollisions(CollisionSolver this, VBVec3D displacement, fix19_13 sizeIncrement, const Shape shape)
@@ -230,9 +229,9 @@ bool CollisionSolution_hasCollidingShapes(CollisionSolver this)
 }
 
 // retrieve friction of colliding objects
-fix19_13 CollisionSolver_getSurroundingFriction(CollisionSolver this)
+fix19_13 CollisionSolver_getSurroundingFrictionCoefficient(CollisionSolver this)
 {
-	ASSERT(this, "CollisionSolver::updateSurroundingFriction: null this");
+	ASSERT(this, "CollisionSolver::getSurroundingFrictionCoefficient: null this");
 
 	fix19_13 totalFriction = 0;
 
@@ -240,7 +239,7 @@ fix19_13 CollisionSolver_getSurroundingFriction(CollisionSolver this)
 
 	for(; node; node = node->next)
 	{
-		totalFriction += __VIRTUAL_CALL(SpatialObject, getFriction, __SAFE_CAST(SpatialObject, Shape_getOwner(__SAFE_CAST(Shape, node->data))));
+		totalFriction += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, __SAFE_CAST(SpatialObject, Shape_getOwner(__SAFE_CAST(Shape, node->data))));
 	}
 
 	return totalFriction;

@@ -43,7 +43,6 @@
 		AnimatedEntity_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
 		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
-		__VIRTUAL_DEC(ClassName, void, updateSurroundingFriction);										\
 		__VIRTUAL_DEC(ClassName, u16, getAxesForBouncing);												\
 		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
@@ -64,9 +63,8 @@
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, canMoveTowards);										\
-		__VIRTUAL_SET(ClassName, Actor, updateSurroundingFriction);										\
-		__VIRTUAL_SET(ClassName, Actor, getAxesForBouncing);										\
+		__VIRTUAL_SET(ClassName, Actor, canMoveTowards);												\
+		__VIRTUAL_SET(ClassName, Actor, getAxesForBouncing);											\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
@@ -132,11 +130,10 @@ void Actor_setPosition(Actor this, const VBVec3D* position);
 u16 Actor_getAxesForBouncing(Actor this);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
-void Actor_addForce(Actor this, const Force* force, bool informAboutBodyAwakening);
+void Actor_addForce(Actor this, const Force* force);
 void Actor_moveUniformly(Actor this, Velocity* velocity);
 void Actor_stopAllMovement(Actor this);
 void Actor_stopMovement(Actor this, u16 axis);
-void Actor_updateSurroundingFriction(Actor this);
 void Actor_resetCollisionStatus(Actor this);
 Velocity Actor_getVelocity(Actor this);
 void Actor_collisionsProcessingDone(Actor this, const CollisionInformation* collisionInformation);

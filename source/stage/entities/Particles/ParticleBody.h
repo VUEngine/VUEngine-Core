@@ -40,7 +40,6 @@
 #define ParticleBody_SET_VTABLE(ClassName)																\
 		Body_SET_VTABLE(ClassName)																		\
 		__VIRTUAL_SET(ClassName, ParticleBody, update);													\
-		__VIRTUAL_SET(ClassName, ParticleBody, getTotalFriction);										\
 
 #define ParticleBody_ATTRIBUTES																			\
 		Body_ATTRIBUTES																					\
@@ -57,7 +56,6 @@ __CLASS_NEW_DECLARE(ParticleBody, SpatialObject owner, const PhysicalSpecificati
 void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
 void ParticleBody_destructor(ParticleBody this);
 
-Force ParticleBody_getTotalFriction(ParticleBody this);
 void ParticleBody_update(ParticleBody this);
 
 

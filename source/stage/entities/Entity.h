@@ -79,7 +79,7 @@
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
 		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
 		__VIRTUAL_SET(ClassName, Entity, getElasticity);												\
-		__VIRTUAL_SET(ClassName, Entity, getFriction);													\
+		__VIRTUAL_SET(ClassName, Entity, getFrictionCoefficient);													\
 
 #define Entity_ATTRIBUTES																				\
 		Container_ATTRIBUTES																			\
@@ -203,7 +203,7 @@ bool Entity_updateSpriteScale(Entity this);
 void Entity_synchronizeGraphics(Entity this);
 u32 Entity_getInGameType(Entity this);
 fix19_13 Entity_getElasticity(Entity this);
-fix19_13 Entity_getFriction(Entity this);
+fix19_13 Entity_getFrictionCoefficient(Entity this);
 void Entity_informShapesThatStartedMoving(Entity this);
 void Entity_informShapesThatStoppedMoving(Entity this);
 void Entity_activateShapes(Entity this, bool value);
