@@ -253,7 +253,7 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
-	ASSERT(collisionInformation->collidingShape, "SolidParticle::resolveCollision: collidingShapes");
+	ASSERT(collisionInformation.collidingShape, "SolidParticle::resolveCollision: collidingShapes");
 
 	if(this->collisionSolver)
 	{

@@ -437,7 +437,7 @@ bool Actor_processCollision(Actor this, CollisionInformation collisionInformatio
 {
 	ASSERT(this, "Actor::processCollision: null this");
 	ASSERT(this->body, "Actor::processCollision: null body");
-	ASSERT(collisionInformation->collidingShape, "Actor::processCollision: collidingShapes");
+	ASSERT(collisionInformation.collidingShape, "Actor::processCollision: collidingShapes");
 
 	bool returnValue = false;
 

@@ -142,6 +142,8 @@ bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 			if(!collision)
 			{
 				VirtualList_removeElement(this->collidingShapes, shapeToRemove);
+				this->collidingShapePurgeNode = this->collidingShapes->head;
+
 				return true;
 			}
 		}
@@ -214,6 +216,8 @@ bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation
 		VirtualList_removeElement(this->collidingShapes, collisionInformation->collidingShape);
 		VirtualList_pushBack(this->collidingShapes, collisionInformation->collidingShape);
 		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
+
+		this->collidingShapePurgeNode = this->collidingShapes->head;
 
 		return true;
 	}
