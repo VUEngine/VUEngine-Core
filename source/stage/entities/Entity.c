@@ -1173,10 +1173,6 @@ void Entity_transformShapes(Entity this)
 			};
 
 			__VIRTUAL_CALL(Shape, setup, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size);
-
-#ifdef __DRAW_SHAPES
-			__VIRTUAL_CALL(Shape, show, node->data);
-#endif
 		}
 	}
 }

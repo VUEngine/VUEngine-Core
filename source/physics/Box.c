@@ -321,6 +321,8 @@ void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, cons
 
 	// no more setup needed
 	this->ready = true;
+
+	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size);
 }
 
 // check if two rectangles overlap

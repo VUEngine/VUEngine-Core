@@ -47,7 +47,7 @@
 #define Ball_SET_VTABLE(ClassName)																		\
 		Shape_SET_VTABLE(ClassName)																		\
 		__VIRTUAL_SET(ClassName, Ball, overlaps);														\
-		__VIRTUAL_SET(ClassName, Ball, getCollisionSolution);										\
+		__VIRTUAL_SET(ClassName, Ball, getCollisionSolution);											\
 		__VIRTUAL_SET(ClassName, Ball, setup);															\
 		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
 		__VIRTUAL_SET(ClassName, Ball, getPosition);													\

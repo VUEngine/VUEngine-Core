@@ -120,6 +120,8 @@ void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation __a
 
 	// no more setup needed
 	this->ready = true;
+
+	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size);
 }
 
 // check if two rectangles overlap
@@ -228,7 +230,7 @@ void Ball_show(Ball this)
 	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron
-//	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
+	//Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
 }
 
 // hide wireframe

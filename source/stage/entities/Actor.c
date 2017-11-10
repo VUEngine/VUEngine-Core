@@ -290,10 +290,12 @@ void Actor_update(Actor this, u32 elapsedTime)
 	{
 		if(this->body)
 		{
+			Body_clearNormal(this->body);
 			Body_setFrictionCoefficient(this->body, CollisionSolver_getSurroundingFrictionCoefficient(this->collisionSolver));
 		}
 	}
-//	Body_printPhysics(this->body, 1, 1);
+
+	Body_printPhysics(this->body, 1, 1);
 }
 
 // update colliding entities

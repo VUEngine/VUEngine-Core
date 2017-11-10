@@ -97,12 +97,13 @@ typedef struct Normals
 		__VIRTUAL_DEC(ClassName, CollisionSolution, testForCollision, Shape collidingShape, VBVec3D displacement, fix19_13 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
-		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, show);															\
+		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
 
 #define Shape_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Shape, setup);															\
 
 #define Shape_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
@@ -181,6 +182,7 @@ void Shape_destructor(Shape this);
 
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
+void Shape_setup(Shape this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isChecked(Shape this);
@@ -192,7 +194,6 @@ void Shape_setActive(Shape this, bool active);
 void Shape_setChecked(Shape this, bool checked);
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 void Shape_setReady(Shape this, bool ready);
-void Shape_show(Shape this);
 
 
 #endif

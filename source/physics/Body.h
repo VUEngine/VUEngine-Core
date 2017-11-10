@@ -74,7 +74,7 @@
 		 */																								\
 		Force externalForce;																			\
 		/**
-		 * @var Force 			normal
+		 * @var Force 			friction
 		 * @brief				friction surrounding object
 		 * @memberof 			Body
 		 */																								\
@@ -219,6 +219,8 @@ void Body_printPhysics(Body this, int x, int y);
 void Body_setActive(Body this, bool active);
 void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
+Force Body_getNormal(Body this);
+void Body_clearNormal(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
