@@ -393,7 +393,7 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 
 		VirtualNode shapeNode = this->shapes->head;
 
-		bool canMove = false;
+		bool canMove = true;
 
 		for(; shapeNode; shapeNode = shapeNode->next)
 		{
@@ -407,10 +407,10 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 				{
 					CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
 
-					if(!canMove)
+					if(canMove)
 					{
 //						canMove |= __I_TO_FIX19_13(1) != abs(__FIX19_13_DIV(Vector_dotProduct(collisionSolution->translationVector, displacement), __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_MULT(Vector_lengthSquared(collisionSolution->translationVector), Vector_lengthSquared(collisionSolution->displacement)))));
-						canMove |= __I_TO_FIX19_13(1) != abs(Vector_dotProduct(collisionSolution->collisionPlaneNormal, Vector_normalize(displacement)));
+						canMove &= __I_TO_FIX19_13(1) != abs(Vector_dotProduct(collisionSolution->collisionPlaneNormal, Vector_normalize(displacement)));
 					}
 
 					__DELETE_BASIC(collisionSolution);

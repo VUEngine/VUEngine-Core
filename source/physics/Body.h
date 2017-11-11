@@ -98,11 +98,11 @@
 		 */																								\
 		Velocity velocity;																				\
 		/**
-		 * @var Acceleration 	gravity
+		 * @var u16 			axes of applied gravity
 		 * @brief				gravity structure
 		 * @memberof 			Body
 		 */																								\
-		Acceleration gravity;																			\
+		u16 axesOfAppliedGravity;																		\
 		/**
 		 * @var Acceleration 	acceleration
 		 * @brief				acceleration structure
