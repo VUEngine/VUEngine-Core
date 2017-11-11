@@ -351,7 +351,6 @@ void Body_applyGravity(Body this, const Acceleration* gravity)
 	if(gravity)
 	{
 		this->gravity = *gravity;
-		this->weight = Vector_scalarProduct(this->gravity, this->mass);
 
 		u16 axesOfAppliedGravity = __NO_AXIS;
 
@@ -394,8 +393,10 @@ void Body_update(Body this)
 	if(this->active)
 	{
 		this->gravity = *_currentGravity;
-		this->weight = Vector_scalarProduct(this->gravity, this->mass);
+
 		u16 previousMovementState = Body_getMovementOnAllAxes(this);
+
+		this->weight = Vector_scalarProduct(this->gravity, this->mass);
 
 		this->friction = Vector_scalarProduct(Vector_normalize(this->velocity), -this->frictionForceMagnitude);
 
@@ -791,7 +792,6 @@ void Body_setMass(Body this, fix19_13 mass)
 	ASSERT(this, "Body::setMass: null this");
 
 	this->mass = 0 < mass ? mass : __I_TO_FIX19_13(1);
-	this->weight = Vector_scalarProduct(this->gravity, this->mass);
 }
 
 // retrieve state
@@ -916,7 +916,7 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 
 	fix19_13 totalElasticity = this->elasticity + elasticity;
 
-	fix19_13 cosAngle = abs(__FIX19_13_DIV(Vector_dotProduct(this->gravity, bouncingPlaneNormal), __FIX19_13_MULT(Vector_length(this->gravity), Vector_length(bouncingPlaneNormal))));
+	fix19_13 cosAngle = this->gravity.x | this->gravity.y | this->gravity.z ? abs(__FIX19_13_DIV(Vector_dotProduct(this->gravity, bouncingPlaneNormal), __FIX19_13_MULT(Vector_length(this->gravity), Vector_length(bouncingPlaneNormal)))) : __1I_FIX19_13;
 	fix19_13 normalForce = __FIX19_13_MULT(Vector_length(this->weight), cosAngle);
 
 	Body_setFrictionCoefficient(this, frictionCoefficient);
