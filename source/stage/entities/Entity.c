@@ -1153,10 +1153,13 @@ void Entity_transformShapes(Entity this)
 
 			VBVec3D shapePosition =
 			{
-				myPosition->x + (__RIGHT == currentDirection.x ? shapeDefinitions[i].displacement.x : -shapeDefinitions[i].displacement.x),
+				myPosition->x + shapeDefinitions[i].displacement.x,
+				myPosition->y + shapeDefinitions[i].displacement.y,
+				myPosition->y + shapeDefinitions[i].displacement.z,
+/*				myPosition->x + (__RIGHT == currentDirection.x ? shapeDefinitions[i].displacement.x : -shapeDefinitions[i].displacement.x),
 				myPosition->y + (__DOWN == currentDirection.y ? shapeDefinitions[i].displacement.y : -shapeDefinitions[i].displacement.y),
 				myPosition->z + (__FAR == currentDirection.z ? shapeDefinitions[i].displacement.z : -shapeDefinitions[i].displacement.z),
-			};
+*/			};
 
 			Rotation shapeRotation =
 			{

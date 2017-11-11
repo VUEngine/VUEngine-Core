@@ -297,13 +297,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 		}
 	}
 
-	Body_printPhysics(this->body, 1, 1);
-}
-
-// update colliding entities
-void Actor_resetCollisionStatus(Actor this)
-{
-	ASSERT(this, "Actor::updateCollisionStatus: null this");
+//	Body_printPhysics(this->body, 1, 1);
 }
 
 // whether changed direction in the last cycle or not

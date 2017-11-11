@@ -55,7 +55,7 @@ __CLASS_DEFINITION(Body, Object);
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-#define __STOP_VELOCITY_THRESHOLD		__I_TO_FIX19_13(15)
+#define __STOP_VELOCITY_THRESHOLD		__I_TO_FIX19_13(30)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -873,14 +873,6 @@ static MovementResult Body_getBouncingResult(Body this, VBVec3D previousVelocity
 	movementResult.axesOfChangeOfMovement.z = this->velocity.z != previousVelocity.z;
 
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
-/*
-	Velocity velocityDelta =
-	{
-		__FIX19_13_MULT(this->acceleration.x, elapsedTime),
-		__FIX19_13_MULT(this->acceleration.y, elapsedTime),
-		__FIX19_13_MULT(this->acceleration.z, elapsedTime),
-	};
-*/
 
 	if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x) && !(this->velocity.y | this->velocity.z))
 	{
@@ -954,21 +946,13 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 	u = Vector_scalarProduct(u, totalElasticity);
 	w = Vector_scalarProduct(w, (__I_TO_FIX19_13(1) - this->frictionCoefficient));
 
-	this->velocity.x = __X_AXIS & axesForBouncing ? w.x - u.x : 0;
-	this->velocity.y = __Y_AXIS & axesForBouncing ? w.y - u.y : 0;
-	this->velocity.z = __Z_AXIS & axesForBouncing ? w.z - u.z : 0;
+	this->velocity.x = w.x - u.x;
+	this->velocity.y = w.y - u.y;
+	this->velocity.z = w.z - u.z;
 
 	// check it must stop
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 
-/*
-	Velocity velocityDelta =
-	{
-		__FIX19_13_MULT(this->acceleration.x, elapsedTime),
-		__FIX19_13_MULT(this->acceleration.y, elapsedTime),
-		__FIX19_13_MULT(this->acceleration.z, elapsedTime),
-	};
-*/
 	MovementResult movementResult = Body_getBouncingResult(this, velocity);
 
 	// determine the type of movement on each axis
