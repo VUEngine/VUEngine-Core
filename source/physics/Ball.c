@@ -34,7 +34,6 @@
 #include <Math.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
-#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -230,7 +229,7 @@ void Ball_show(Ball this)
 	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron
-	//Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
+	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
 }
 
 // hide wireframe

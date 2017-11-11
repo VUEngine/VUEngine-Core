@@ -32,7 +32,6 @@
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
 #include <Screen.h>
-#include <Printing.h>
 #include <TimerManager.h>
 #include <debugConfig.h>
 

@@ -33,7 +33,6 @@
 #include <Polyhedron.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
-#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -535,6 +534,7 @@ static void Box_configureWireframe(Box this, int renew)
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
+
 /*
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
 			Polyhedron_addVertex(this->polyhedron, this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
@@ -575,6 +575,7 @@ static void Box_configureWireframe(Box this, int renew)
 	}
 	else
 	{
+
 		Polyhedron_addVertex(this->polyhedron, this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
 		Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
 		Polyhedron_addVertex(this->polyhedron, this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);

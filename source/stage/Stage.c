@@ -46,7 +46,6 @@
 #include <debugConfig.h>
 #ifdef __PROFILE_STREAMING
 #include <TimerManager.h>
-#include <Printing.h>
 #endif
 
 

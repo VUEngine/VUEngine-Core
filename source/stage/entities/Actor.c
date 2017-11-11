@@ -295,7 +295,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 		}
 	}
 
-	Body_printPhysics(this->body, 1, 1);
+//	Body_printPhysics(this->body, 1, 1);
 }
 
 // update colliding entities
@@ -463,8 +463,9 @@ bool Actor_processCollision(Actor this, CollisionInformation collisionInformatio
 				returnValue = true;
 			}
 			else
-
-			Actor_stopAllMovement(this);
+			{
+				Actor_stopAllMovement(this);
+			}
 		}
 
 		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, &collisionInformation);

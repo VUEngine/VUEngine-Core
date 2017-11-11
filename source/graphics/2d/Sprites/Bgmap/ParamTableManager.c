@@ -27,7 +27,6 @@
 #include <ParamTableManager.h>
 #include <BgmapTextureManager.h>
 #include <VIPManager.h>
-#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -26,7 +26,6 @@
 
 #include <ObjectSpriteContainerManager.h>
 #include <VIPManager.h>
-#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
