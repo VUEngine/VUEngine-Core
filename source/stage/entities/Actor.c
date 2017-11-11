@@ -153,6 +153,8 @@ void Actor_setLocalPosition(Actor this, const VBVec3D* position)
 	}
 
 	this->invalidateGlobalTransformation = (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
+
+	Entity_transformShapes(__SAFE_CAST(Entity, this));
 }
 
 void Actor_syncWithBody(Actor this)
@@ -295,7 +297,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 		}
 	}
 
-//	Body_printPhysics(this->body, 1, 1);
+	Body_printPhysics(this->body, 1, 1);
 }
 
 // update colliding entities
@@ -410,7 +412,12 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 				for(; collisionSolutionNode; collisionSolutionNode = collisionSolutionNode->next)
 				{
 					CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
-					canMove |= __I_TO_FIX19_13(1) != abs(Vector_dotProduct(collisionSolution->translationVector, displacement));
+
+					if(!canMove)
+					{
+//						canMove |= __I_TO_FIX19_13(1) != abs(__FIX19_13_DIV(Vector_dotProduct(collisionSolution->translationVector, displacement), __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_MULT(Vector_lengthSquared(collisionSolution->translationVector), Vector_lengthSquared(collisionSolution->displacement)))));
+						canMove |= __I_TO_FIX19_13(1) != abs(Vector_dotProduct(collisionSolution->collisionPlaneNormal, Vector_normalize(displacement)));
+					}
 
 					__DELETE_BASIC(collisionSolution);
 				}
@@ -419,7 +426,7 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 			}
 		}
 
-		return false;
+		return canMove;
 	}
 
 	return true;

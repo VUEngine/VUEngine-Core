@@ -27,6 +27,7 @@
 #include <Shape.h>
 #include <Game.h>
 #include <CollisionManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,7 +113,6 @@ void Shape_destructor(Shape this)
  */
 void Shape_setup(Shape this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
-#define __DRAW_SHAPES
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);
 #endif

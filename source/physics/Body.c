@@ -30,7 +30,6 @@
 #include <Vector.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
-#include <Printing.h>
 #include <debugConfig.h>
 
 
@@ -56,7 +55,7 @@ __CLASS_DEFINITION(Body, Object);
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-#define __STOP_VELOCITY_THRESHOLD		__I_TO_FIX19_13(20)
+#define __STOP_VELOCITY_THRESHOLD		__I_TO_FIX19_13(15)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -320,16 +319,19 @@ void Body_applyForce(Body this, const Force* force)
 
 		if(this->externalForce.x)
 		{
+			this->normal.x = 0;
 			axesOfExternalForce |= __X_AXIS;
 		}
 
 		if(this->externalForce.y)
 		{
+			this->normal.y = 0;
 			axesOfExternalForce |= __Y_AXIS;
 		}
 
 		if(this->externalForce.z)
 		{
+			this->normal.z = 0;
 			axesOfExternalForce |= __Z_AXIS;
 		}
 
@@ -440,21 +442,6 @@ void Body_update(Body this)
 				Body_stopMovement(this, movementResult.axesStoppedMovement);
 			}
 
-			if(this->velocity.x)
-			{
-				this->normal.x = 0;
-			}
-
-			if(this->velocity.y)
-			{
-				this->normal.y = 0;
-			}
-
-			if(this->velocity.z)
-			{
-				this->normal.z = 0;
-			}
-
 			//if(movementResult.axesOfChangeOfMovement)
 			{
 				//MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
@@ -492,7 +479,7 @@ static MovementResult Body_getMovementResult(Body this, VBVec3D previousVelocity
 	movementResult.axesOfChangeOfMovement.y = this->velocity.y != previousVelocity.y;
 	movementResult.axesOfChangeOfMovement.z = this->velocity.z != previousVelocity.z;
 
-	if(!this->externalForce.x && (!this->gravity.x || this->normal.x))
+	if(!this->externalForce.x && (!this->gravity.x))
 	{
 		if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x))
 //		if((__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x) || abs(this->velocity.x) < abs(previousVelocity.x)) && (0 < previousVelocity.x && 0 > this->velocity.x) || (0 > previousVelocity.x && 0 < this->velocity.x))
@@ -501,7 +488,7 @@ static MovementResult Body_getMovementResult(Body this, VBVec3D previousVelocity
 		}
 	}
 
-	if(!this->externalForce.y && (!this->gravity.y || this->normal.y))
+	if(!this->externalForce.y && (!this->gravity.y))
 	{
 		if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.y))
 //		if((__STOP_VELOCITY_THRESHOLD > abs(this->velocity.y) || abs(this->velocity.y) < abs(previousVelocity.y)) && (0 < previousVelocity.y && 0 > this->velocity.y) || (0 > previousVelocity.y && 0 < this->velocity.y))
@@ -510,7 +497,7 @@ static MovementResult Body_getMovementResult(Body this, VBVec3D previousVelocity
 		}
 	}
 
-	if(!this->externalForce.z && (!this->gravity.z || this->normal.z))
+	if(!this->externalForce.z && (!this->gravity.z))
 	{
 		if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.z))
 //		if((__STOP_VELOCITY_THRESHOLD > abs(this->velocity.z) || abs(this->velocity.z) < abs(previousVelocity.z)) && (0 < previousVelocity.z && 0 > this->velocity.z) || (0 > previousVelocity.z && 0 < this->velocity.z))
@@ -886,12 +873,14 @@ static MovementResult Body_getBouncingResult(Body this, VBVec3D previousVelocity
 	movementResult.axesOfChangeOfMovement.z = this->velocity.z != previousVelocity.z;
 
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
+/*
 	Velocity velocityDelta =
 	{
 		__FIX19_13_MULT(this->acceleration.x, elapsedTime),
 		__FIX19_13_MULT(this->acceleration.y, elapsedTime),
 		__FIX19_13_MULT(this->acceleration.z, elapsedTime),
 	};
+*/
 
 	if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x) && !(this->velocity.y | this->velocity.z))
 	{
@@ -965,19 +954,21 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 	u = Vector_scalarProduct(u, totalElasticity);
 	w = Vector_scalarProduct(w, (__I_TO_FIX19_13(1) - this->frictionCoefficient));
 
-	this->velocity.x = w.x - u.x;
-	this->velocity.y = w.y - u.y;
-	this->velocity.z = w.z - u.z;
+	this->velocity.x = __X_AXIS & axesForBouncing ? w.x - u.x : 0;
+	this->velocity.y = __Y_AXIS & axesForBouncing ? w.y - u.y : 0;
+	this->velocity.z = __Z_AXIS & axesForBouncing ? w.z - u.z : 0;
 
 	// check it must stop
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
+
+/*
 	Velocity velocityDelta =
 	{
 		__FIX19_13_MULT(this->acceleration.x, elapsedTime),
 		__FIX19_13_MULT(this->acceleration.y, elapsedTime),
 		__FIX19_13_MULT(this->acceleration.z, elapsedTime),
 	};
-
+*/
 	MovementResult movementResult = Body_getBouncingResult(this, velocity);
 
 	// determine the type of movement on each axis
@@ -990,6 +981,7 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 	{
 		Body_stopMovement(this, movementResult.axesStoppedMovement);
 	}
+
 /*
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(u.x), 1, 10, NULL);
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(u.y), 1, 11, NULL);
@@ -998,11 +990,11 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.y), 10, 11, NULL);
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.z), 10, 12, NULL);
 */
-__PRINT_IN_GAME_TIME(0,0);
-	Body_printPhysics(this, 1, 1);
+//	__PRINT_IN_GAME_TIME(0,0);
+//	Body_printPhysics(this, 1, 1);
 
-	Printing_hex(Printing_getInstance(), movementResult.axesStoppedMovement, 20, 20, 4, NULL);
-	Printing_hex(Printing_getInstance(), movementResult.axesOfBouncing, 20, 21, 4, NULL);
+//	Printing_hex(Printing_getInstance(), movementResult.axesStoppedMovement, 20, 20, 4, NULL);
+//	Printing_hex(Printing_getInstance(), movementResult.axesOfBouncing, 20, 21, 4, NULL);
 
 /*	if(movementResult.axisOnWhichBounced)
 	{

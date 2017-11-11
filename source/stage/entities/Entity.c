@@ -1144,7 +1144,7 @@ void Entity_transformShapes(Entity this)
 		const Scale* myScale = __VIRTUAL_CALL(SpatialObject, getScale, this);
 
 		VirtualNode node = this->shapes->head;
-
+		Direction currentDirection = Entity_getDirection(this);
 		int i = 0;
 
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
@@ -1153,9 +1153,9 @@ void Entity_transformShapes(Entity this)
 
 			VBVec3D shapePosition =
 			{
-				myPosition->x + shapeDefinitions[i].displacement.x,
-				myPosition->y + shapeDefinitions[i].displacement.y,
-				myPosition->z + shapeDefinitions[i].displacement.z,
+				myPosition->x + (__RIGHT == currentDirection.x ? shapeDefinitions[i].displacement.x : -shapeDefinitions[i].displacement.x),
+				myPosition->y + (__DOWN == currentDirection.y ? shapeDefinitions[i].displacement.y : -shapeDefinitions[i].displacement.y),
+				myPosition->z + (__FAR == currentDirection.z ? shapeDefinitions[i].displacement.z : -shapeDefinitions[i].displacement.z),
 			};
 
 			Rotation shapeRotation =
@@ -1587,6 +1587,23 @@ void Entity_setLocalPosition(Entity this, const VBVec3D* position)
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
 	__CALL_BASE_METHOD(Container, setLocalPosition, this, position);
+
+	Entity_transformShapes(this);
+}
+
+/**
+ * Set local rotation
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Entity_setLocalRotation(Entity this, const Rotation* rotation)
+{
+	ASSERT(this, "Entity::setLocalRotation: null this");
+
+	__CALL_BASE_METHOD(Container, setLocalRotation, this, rotation);
 
 	Entity_transformShapes(this);
 }
@@ -2303,34 +2320,6 @@ void Entity_setDirection(Entity this, Direction direction)
 	};
 
 	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
-/*
-	if(this->shapes)
-	{
-		VirtualNode node = this->shapes->head;
-
-		for(; node; node = node->next)
-		{
-			VBVec3D displacement = Shape_getDisplacement(__SAFE_CAST(Shape, node->data));
-
-			if(currentDirection.x != direction.x)
-			{
-				displacement.x = -displacement.x;
-			}
-
-			if(currentDirection.y != direction.y)
-			{
-				displacement.y = -displacement.y;
-			}
-
-			if(currentDirection.z != direction.z)
-			{
-				displacement.z = -displacement.z;
-			}
-
-			//Shape_setDisplacement(__SAFE_CAST(Shape, node->data), displacement);
-		}
-	}
-	*/
 }
 
 /**

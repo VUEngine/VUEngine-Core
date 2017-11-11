@@ -57,6 +57,7 @@
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Entity, transform);													\
 		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);												\
+		__VIRTUAL_SET(ClassName, Entity, setLocalRotation);												\
 		__VIRTUAL_SET(ClassName, Entity, setupGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, releaseGraphics);												\
 		__VIRTUAL_SET(ClassName, Entity, synchronizeGraphics);											\
@@ -197,6 +198,7 @@ void Entity_show(Entity this);
 void Entity_suspend(Entity this);
 void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Entity_setLocalPosition(Entity this, const VBVec3D* position);
+void Entity_setLocalRotation(Entity this, const Rotation* rotation);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteRotation(Entity this);
 bool Entity_updateSpriteScale(Entity this);

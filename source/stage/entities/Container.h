@@ -76,6 +76,7 @@
 		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics);											\
 		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
 		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
+		__VIRTUAL_DEC(ClassName, void, setLocalRotation, const Rotation* rotation);						\
 		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
 		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
 		__VIRTUAL_DEC(ClassName, void, removeChild, Container child);									\
@@ -97,6 +98,7 @@
 		__VIRTUAL_SET(ClassName, Container, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Container, initialTransform);											\
 		__VIRTUAL_SET(ClassName, Container, setLocalPosition);											\
+		__VIRTUAL_SET(ClassName, Container, setLocalRotation);											\
 		__VIRTUAL_SET(ClassName, Container, handlePropagatedMessage);									\
 		__VIRTUAL_SET(ClassName, Container, addChild);													\
 		__VIRTUAL_SET(ClassName, Container, changeEnvironment);											\
