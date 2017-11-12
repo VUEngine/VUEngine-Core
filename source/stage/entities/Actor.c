@@ -448,9 +448,7 @@ bool Actor_processCollision(Actor this, CollisionInformation collisionInformatio
 	{
 		if(CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation))
 		{
-			VBVec3D bodyLastDisplacement = Body_getLastDisplacement(this->body);
-
-			if(collisionInformation.collisionSolution.translationVectorLength && (bodyLastDisplacement.x | bodyLastDisplacement.y | bodyLastDisplacement.z))
+			if(collisionInformation.collisionSolution.translationVectorLength)
 			{
 				u16 axesForBouncing = __VIRTUAL_CALL(Actor, getAxesForBouncing, this);
 				fix19_13 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation.collidingShape));
