@@ -26,8 +26,10 @@
 
 #include <SolidParticle.h>
 #include <Game.h>
+#include <Ball.h>
 #include <CollisionManager.h>
 #include <MessageDispatcher.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,8 +51,8 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
-__CLASS_NEW_END(SolidParticle, shapeParticleDefinition, spriteDefinition, lifeSpan, mass);
+__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+__CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSpan, mass);
 
 /**
  * Class constructor
@@ -59,29 +61,48 @@ __CLASS_NEW_END(SolidParticle, shapeParticleDefinition, spriteDefinition, lifeSp
  * @public
  *
  * @param this						Function scope
- * @param shapeParticleDefinition	Definition of the SolidParticle
+ * @param solidParticleDefinition	Definition of the SolidParticle
  * @param spriteDefinition
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
 {
 	ASSERT(this, "SolidParticle::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(Particle, &shapeParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
+	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
-	this->shapeParticleDefinition = shapeParticleDefinition;
+	ShapeDefinition shapeDefinition =
+	{
+		// shape
+		__TYPE(Ball),
+
+		{solidParticleDefinition->radius, solidParticleDefinition->radius, solidParticleDefinition->radius},
+
+		// displacement (x, y, z)
+		{__I_TO_FIX19_13(0), __I_TO_FIX19_13(0), __I_TO_FIX19_13(0)},
+
+		// rotation (x, y, z)
+		{__I_TO_FIX19_13(0), __I_TO_FIX19_13(0), __I_TO_FIX19_13(0)},
+
+		// scale (x, y, z)
+		{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
+
+		// check for collisions against other shapes
+		true,
+	};
+
+	this->solidParticleDefinition = solidParticleDefinition;
+	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this));
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), shapeParticleDefinition->shapeDefinition);
+	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
+	CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+	Shape_setActive(this->shape, true);
+	Shape_setCheckForCollisions(this->shape, true);
 
-	Rotation rotation = {0, 0, 0};
-	Scale scale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-	Size size = {SolidParticle_getWidth(this), SolidParticle_getHeight(this), SolidParticle_getDepth(this)};
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &rotation, &scale, &size);
-
-	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this));
+	Body_setElasticity(this->body, this->solidParticleDefinition->elasticity);
 }
 
 /**
@@ -133,9 +154,20 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 	if(0 <= this->lifeSpan)
 	{
 		this->position = *Body_getPosition(this->body);
-	}
 
-//	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), false);
+		const Vector3D shapePosition = this->position;
+		const Rotation shapeRotation = {0, 0, 0};
+		const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+		const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
+
+		__VIRTUAL_CALL(Shape, setup, this->shape, &shapePosition, &shapeRotation, &shapeScale, &shapeSize);
+
+		if(CollisionSolver_purgeCollidingShapesList(this->collisionSolver))
+		{
+			Body_clearNormal(this->body);
+			Body_setFrictionCoefficient(this->body, CollisionSolver_getSurroundingFrictionCoefficient(this->collisionSolver));
+		}
+	}
 
 	return expired;
 }
@@ -171,7 +203,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
 
-	return this->shapeParticleDefinition->width;
+	return __FIX19_13_TO_I(this->solidParticleDefinition->radius);
 }
 
 /**
@@ -188,7 +220,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
 
-	return this->shapeParticleDefinition->height;
+	return __FIX19_13_TO_I(this->solidParticleDefinition->radius);
 }
 
 /**
@@ -206,35 +238,7 @@ u16 SolidParticle_getDepth(SolidParticle this)
 	ASSERT(this, "SolidParticle::getDepth: null this");
 
 	// must calculate based on the scale because not affine object must be enlarged
-	return this->shapeParticleDefinition->depth;
-}
-
-/**
- * Start bouncing after collision with another Entity
- *
- * @memberof				SolidParticle
- * @private
- *
- * @param this				Function scope
- * @param axisOfCollision
- */
-static void SolidParticle_checkIfMustBounce(SolidParticle this, const CollisionInformation* collisionInformation)
-{
-	ASSERT(this, "SolidParticle::bounce: null this");
-/*
-	fix19_13 otherSpatialObjectsElasticity = this->collisionSolver ? CollisionSolver_getSurroundingElasticity(this->collisionSolver) : __1I_FIX19_13;
-
-	Body_bounce(this->body, collisionInformation, this->shapeParticleDefinition->axisAllowedForBouncing, otherSpatialObjectsElasticity);
-
-	if(!(axisOfCollision & Body_getMovementOnAllAxes(this->body)))
-	{
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyStopped, collisionInformation);
-	}
-	else
-	{
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kBodyBounced, &axisOfCollision);
-	}
-	*/
+	return __FIX19_13_TO_I(this->solidParticleDefinition->radius);
 }
 
 /**
@@ -255,9 +259,13 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
 	ASSERT(collisionInformation.collidingShape, "SolidParticle::resolveCollision: collidingShapes");
 
-	if(this->collisionSolver)
+	ASSERT(collisionInformation.collidingShape, "Actor::processCollision: collidingShapes");
+
+	bool returnValue = false;
+
+	if(this->collisionSolver && collisionInformation.collidingShape)
 	{
-		if(this->shapeParticleDefinition->ignoreParticles)
+		if(this->solidParticleDefinition->ignoreParticles)
 		{
 			if(__GET_CAST(Particle, Shape_getOwner(collisionInformation.collidingShape)))
 			{
@@ -265,14 +273,25 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 			}
 		}
 
-		CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation);
+		if(CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation))
+		{
+			if(collisionInformation.collisionSolution.translationVectorLength)
+			{
+				fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation.collidingShape));
+				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
 
-		SolidParticle_checkIfMustBounce(this, &collisionInformation);
+				Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
 
-		return true;
+				returnValue = true;
+			}
+			else
+			{
+				Body_stopMovement(this->body, __ALL_AXES);
+			}
+		}
 	}
 
-	return false;
+	return returnValue;
 }
 
 /**
@@ -295,7 +314,6 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 		case kBodyStartedMoving:
 
 			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
-			CollisionSolver_purgeCollidingShapesList(this->collisionSolver);
 			return true;
 			break;
 
@@ -305,11 +323,6 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 			{
 				//CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}
-			break;
-
-		case kBodyBounced:
-
-			return true;
 			break;
 	}
 
@@ -331,7 +344,33 @@ void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 
-	CollisionSolver_purgeCollidingShapesList(this->collisionSolver);
-
 	this->position = *position;
+}
+
+/**
+ * Retrieve shapes list
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		SolidParticle's Shape list
+ */
+VirtualList SolidParticle_getShapes(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::getShapes: null this");
+
+	static VirtualList shapesList = NULL;
+
+	if(!shapesList)
+	{
+		shapesList = __NEW(VirtualList);
+	}
+
+	VirtualList_clear(shapesList);
+
+	VirtualList_pushBack(shapesList, this->shape);
+
+	return shapesList;
 }

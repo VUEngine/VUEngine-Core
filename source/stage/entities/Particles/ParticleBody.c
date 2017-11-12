@@ -26,6 +26,7 @@
 
 #include <ParticleBody.h>
 #include <VirtualList.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -137,7 +138,5 @@ void ParticleBody_update(ParticleBody this)
 
 		// clear gravity flags
 		Body_clearGravityFlags(__SAFE_CAST(Body, this));
-
-		//Body_printPhysics(__SAFE_CAST(Body, this), 1, 1);
 	}
 }

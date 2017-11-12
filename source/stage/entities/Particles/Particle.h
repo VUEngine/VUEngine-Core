@@ -51,7 +51,7 @@
 		__VIRTUAL_SET(ClassName, Particle, update);														\
 		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Particle, moves);														\
-		__VIRTUAL_SET(ClassName, Particle, canMoveTowards);											\
+		__VIRTUAL_SET(ClassName, Particle, canMoveTowards);												\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
 		__VIRTUAL_SET(ClassName, Particle, suspend);													\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\

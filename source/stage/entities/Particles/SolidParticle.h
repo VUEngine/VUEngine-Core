@@ -57,7 +57,8 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
-		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, setPosition);											\
+		__VIRTUAL_SET(ClassName, SolidParticle, getShapes);												\
 
 #define SolidParticle_ATTRIBUTES																		\
 		Particle_ATTRIBUTES																				\
@@ -72,13 +73,13 @@ Shape SpatialObject_getShape(SpatialObject this);
 		 * @brief
 		 * @memberof						SolidParticle
 		 */																								\
-		const SolidParticleDefinition* shapeParticleDefinition;											\
+		const SolidParticleDefinition* solidParticleDefinition;											\
 		/*
 		 * @var Vector3D 					previousGlobalPosition
 		 * @brief							Particle's previous position, for collision handling
 		 * @memberof						SolidParticle
 		 */																								\
-		Vector3D previousGlobalPosition;																	\
+		Vector3D previousGlobalPosition;																\
 		/*
 		 * @var CollisionSolver 			collisionSolver
 		 * @brief							Particle's collision solver
@@ -109,29 +110,17 @@ typedef struct SolidParticleDefinition
 	/// the class type
 	ParticleDefinition particleDefinition;
 
-	/// shape definition
-	const ShapeDefinition* shapeDefinition;
-
-	/// object's size over the x axis
-	u16 width;
-
-	/// object's size over the y axis
-	u16 height;
-
-	/// object's size over the z axis
-	u16 depth;
+	/// ball's radius
+	fix19_13 radius;
 
 	/// friction for physics
-	fix19_13 friction;
+	fix19_13 frictionCoefficient;
 
 	/// elasticity for physics
 	fix19_13 elasticity;
 
 	/// flag to ignore collisions against other particles
 	bool ignoreParticles;
-
-	/// flag to allow bouncing on each axis
-	u8 axisAllowedForBouncing;
 
 } SolidParticleDefinition;
 
@@ -160,6 +149,7 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_setPosition(SolidParticle this, const Vector3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
+VirtualList SolidParticle_getShapes(SolidParticle this);
 
 
 #endif
