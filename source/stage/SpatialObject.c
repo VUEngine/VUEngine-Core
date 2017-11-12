@@ -237,3 +237,20 @@ VirtualList SpatialObject_getShapes(SpatialObject this __attribute__ ((unused)))
 
 	return NULL;
 }
+
+/**
+ * Retrieve shapes list
+ *
+ * @memberof	SpatialObject
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		no type
+ */
+u32 SpatialObject_getInGameType(SpatialObject this __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::getInGameType: null this");
+
+	return kNoType;
+}

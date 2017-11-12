@@ -90,6 +90,11 @@ fix19_13 Vector3D_length(Vector3D vector)
 	return __F_TO_FIX19_13(Math_squareRoot(__FIX51_13_TO_F(lengthSquare)));
 }
 
+fix51_13 Vector3D_squareLength(Vector3D vector)
+{
+	return __FIX51_13_MULT(vector.x, vector.x) + __FIX51_13_MULT(vector.y, vector.y) + __FIX51_13_MULT(vector.z, vector.z);
+}
+
 fix19_13 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB)
 {
 	fix51_13 lengthSquareA = __FIX51_13_MULT(vectorA.x, vectorA.x) + __FIX51_13_MULT(vectorA.y, vectorA.y) + __FIX51_13_MULT(vectorA.z, vectorA.z);

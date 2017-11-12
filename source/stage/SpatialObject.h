@@ -54,11 +54,13 @@
 		__VIRTUAL_DEC(ClassName, const Scale*, getScale);												\
 		__VIRTUAL_DEC(ClassName, void, setScale, const Scale* scale);									\
 		__VIRTUAL_DEC(ClassName, fix19_13, getElasticity);												\
-		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionCoefficient);												\
+		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionCoefficient);										\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
 		__VIRTUAL_DEC(ClassName, bool, processCollision, CollisionInformation collisionInformation);	\
 		__VIRTUAL_DEC(ClassName, u16, getMovementState);												\
+		__VIRTUAL_DEC(ClassName, u32, getInGameType);													\
+
 
 // define the virtual methods
 #define SpatialObject_SET_VTABLE(ClassName)																\
@@ -73,11 +75,12 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, getPosition);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, setPosition);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getElasticity);											\
-		__VIRTUAL_SET(ClassName, SpatialObject, getFrictionCoefficient);											\
+		__VIRTUAL_SET(ClassName, SpatialObject, getFrictionCoefficient);								\
 		__VIRTUAL_SET(ClassName, SpatialObject, getVelocity);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, isAffectedByRelativity);								\
 		__VIRTUAL_SET(ClassName, SpatialObject, processCollision);										\
 		__VIRTUAL_SET(ClassName, SpatialObject, getMovementState);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, getInGameType);											\
 
 
 #define SpatialObject_ATTRIBUTES																		\
@@ -113,6 +116,7 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this);
 bool SpatialObject_processCollision(SpatialObject this, CollisionInformation collisionInformation);
 u16 SpatialObject_getMovementState(SpatialObject this);
 VirtualList SpatialObject_getShapes(SpatialObject this);
+u32 SpatialObject_getInGameType(SpatialObject this);
 
 
 #endif

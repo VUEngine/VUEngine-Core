@@ -57,9 +57,11 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, transform);											\
+		__VIRTUAL_SET(ClassName, SolidParticle, transform);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, setPosition);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, getShapes);												\
+		__VIRTUAL_SET(ClassName, SolidParticle, getInGameType);											\
+		__VIRTUAL_SET(ClassName, SolidParticle, getVelocity);											\
 
 #define SolidParticle_ATTRIBUTES																		\
 		Particle_ATTRIBUTES																				\
@@ -111,6 +113,9 @@ typedef struct SolidParticleDefinition
 	/// flag to ignore collisions against other particles
 	bool ignoreParticles;
 
+	/// object's in-game type
+	u32 inGameType;
+
 } SolidParticleDefinition;
 
 /**
@@ -141,6 +146,8 @@ void SolidParticle_transform(SolidParticle this);
 void SolidParticle_setPosition(SolidParticle this, const Vector3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
 VirtualList SolidParticle_getShapes(SolidParticle this);
+u32 SolidParticle_getInGameType(SolidParticle this);
+Velocity SolidParticle_getVelocity(SolidParticle this);
 
 
 #endif

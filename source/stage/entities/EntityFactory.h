@@ -82,23 +82,23 @@ __CLASS(EntityFactory);
 // defines an entity in ROM memory
 typedef struct EntityDefinition
 {
-	// class allocator
+	/// class allocator
 	AllocatorPointer allocator;
 
-	// sprites
+	/// sprites
 	const SpriteDefinition** spriteDefinitions;
 
-	// collision shapes
+	/// collision shapes
 	const ShapeDefinition* shapeDefinitions;
 
-	// size
+	/// size
 	// if 0, width and height will be inferred from the first sprite's texture's size
 	Size size;
 
-	// gameworld's character's type
+	/// object's in-game type
 	u32 inGameType;
 
-	// physical specification
+	/// physical specification
 	PhysicalSpecification* physicalSpecification;
 
 } EntityDefinition;

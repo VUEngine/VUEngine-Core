@@ -462,3 +462,38 @@ VirtualList SolidParticle_getShapes(SolidParticle this)
 
 	return shapesList;
 }
+
+/**
+ * Get in game type
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Type of entity within the game's logic
+ */
+u32 SolidParticle_getInGameType(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::getInGameType: null this");
+
+	return this->solidParticleDefinition->inGameType;
+}
+
+/**
+ * Get velocity
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Velocity vector
+ */
+Velocity SolidParticle_getVelocity(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::getVelocity: null this");
+
+	return Body_getVelocity(this->body);
+}
+

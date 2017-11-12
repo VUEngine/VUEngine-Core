@@ -40,6 +40,7 @@ Vector3D Vector3D_scalarProduct(Vector3D vector, fix19_13 scalar);
 Vector3D Vector3D_normalize(Vector3D vector);
 Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
 fix19_13 Vector3D_length(Vector3D vector);
+fix51_13 Vector3D_squareLength(Vector3D vector);
 fix19_13 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
 
 #endif

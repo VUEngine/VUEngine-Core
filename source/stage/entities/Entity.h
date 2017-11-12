@@ -81,6 +81,7 @@
 		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
 		__VIRTUAL_SET(ClassName, Entity, getElasticity);												\
 		__VIRTUAL_SET(ClassName, Entity, getFrictionCoefficient);										\
+		__VIRTUAL_SET(ClassName, Entity, getInGameType);												\
 
 #define Entity_ATTRIBUTES																				\
 		Container_ATTRIBUTES																			\
@@ -137,7 +138,7 @@
 		 * @brief					Flag to update sprites' attributes
 		 * @memberof				Entity
 		 */ 																							\
-		bool invalidateSprites;																				\
+		bool invalidateSprites;																			\
 
 __CLASS(Entity);
 
