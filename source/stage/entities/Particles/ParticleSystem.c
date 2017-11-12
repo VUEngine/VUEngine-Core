@@ -440,6 +440,14 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 	ParticleSystem_processExpiredParticles(this);
 
 	this->invalidateSprites |= invalidateTransformationFlag | Entity_updateSpritePosition(__SAFE_CAST(Entity, this));
+
+	VirtualNode node = this->particles->head;
+
+	for(; node; node = node->next)
+	{
+		__VIRTUAL_CALL(Particle, transform, node->data);
+	}
+
 }
 
 /**

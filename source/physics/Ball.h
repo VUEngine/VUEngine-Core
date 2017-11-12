@@ -75,7 +75,7 @@
 		 * @brief			the center of the ball
 		 * @memberof 		Box
 		 */																								\
-		Vector3D center;																					\
+		Vector3D center;																				\
 
 __CLASS(Ball);
 

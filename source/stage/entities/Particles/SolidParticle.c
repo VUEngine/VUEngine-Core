@@ -47,6 +47,13 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //---------------------------------------------------------------------------------------------------------
+//												PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+static void SolidParticle_transformShape(SolidParticle this);
+
+
+//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -153,14 +160,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 
 	if(0 <= this->lifeSpan)
 	{
-		this->position = *Body_getPosition(this->body);
-
-		const Vector3D shapePosition = this->position;
-		const Rotation shapeRotation = {0, 0, 0};
-		const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-		const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
-
-		__VIRTUAL_CALL(Shape, setup, this->shape, &shapePosition, &shapeRotation, &shapeScale, &shapeSize);
+		SolidParticle_transformShape(this);
 
 		if(CollisionSolver_purgeCollidingShapesList(this->collisionSolver))
 		{
@@ -170,6 +170,24 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 	}
 
 	return expired;
+}
+
+/**
+ * Transform shape
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ */
+
+static void SolidParticle_transformShape(SolidParticle this)
+{
+	const Rotation shapeRotation = {0, 0, 0};
+	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
+	const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
+
+	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
 
 /**
@@ -281,7 +299,6 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
 
 				Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
-
 				returnValue = true;
 			}
 			else
@@ -292,6 +309,61 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 	}
 
 	return returnValue;
+}
+
+/**
+ * Can move over axis?
+ *
+ * @memberof			Particle
+ * @public
+ *
+ * @param this			Function scope
+ * @param acceleration
+ *
+ * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
+ */
+bool SolidParticle_canMoveTowards(SolidParticle this, Vector3D direction)
+{
+	ASSERT(this, "Particle::canMoveTowards: null this");
+
+	if(CollisionSolution_hasCollidingShapes(this->collisionSolver))
+	{
+		fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+
+		Vector3D displacement =
+		{
+			direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+			direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+			direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
+		};
+
+		bool canMove = true;
+
+		VirtualList collisionSolutionsList = CollisionSolver_testForCollisions(this->collisionSolver, displacement, 0, this->shape);
+
+		if(collisionSolutionsList)
+		{
+			VirtualNode collisionSolutionNode = collisionSolutionsList->head;
+
+			for(; collisionSolutionNode; collisionSolutionNode = collisionSolutionNode->next)
+			{
+				CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
+
+				if(canMove)
+				{
+					canMove &= __I_TO_FIX19_13(1) != abs(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
+				}
+
+				__DELETE_BASIC(collisionSolution);
+			}
+
+			__DELETE(collisionSolutionsList);
+		}
+
+		return canMove;
+	}
+
+	return true;
 }
 
 /**
@@ -330,6 +402,22 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 }
 
 /**
+ * Transform
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ */
+void SolidParticle_transform(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::transform: null this");
+
+	SolidParticle_transformShape(this);
+}
+
+
+/**
  * Set position
  *
  * @memberof		SolidParticle
@@ -344,7 +432,7 @@ void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 
-	this->position = *position;
+	SolidParticle_transformShape(this);
 }
 
 /**

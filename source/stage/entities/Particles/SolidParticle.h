@@ -57,6 +57,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
+		__VIRTUAL_SET(ClassName, SolidParticle, transform);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, setPosition);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, getShapes);												\
 
@@ -75,23 +76,11 @@ Shape SpatialObject_getShape(SpatialObject this);
 		 */																								\
 		const SolidParticleDefinition* solidParticleDefinition;											\
 		/*
-		 * @var Vector3D 					previousGlobalPosition
-		 * @brief							Particle's previous position, for collision handling
-		 * @memberof						SolidParticle
-		 */																								\
-		Vector3D previousGlobalPosition;																\
-		/*
 		 * @var CollisionSolver 			collisionSolver
 		 * @brief							Particle's collision solver
 		 * @memberof						SolidParticle
 		 */																								\
 		CollisionSolver collisionSolver;																\
-		/*
-		 * @var Vector3D 					position
-		 * @brief							Particle's position
-		 * @memberof						SolidParticle
-		 */																								\
-		Vector3D position;																				\
 
 __CLASS(SolidParticle);
 
@@ -146,7 +135,9 @@ u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
 bool SolidParticle_processCollision(SolidParticle this, CollisionInformation collisionInformation);
+bool SolidParticle_canMoveTowards(SolidParticle this, Vector3D direction);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
+void SolidParticle_transform(SolidParticle this);
 void SolidParticle_setPosition(SolidParticle this, const Vector3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
 VirtualList SolidParticle_getShapes(SolidParticle this);

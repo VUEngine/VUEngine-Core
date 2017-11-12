@@ -412,6 +412,19 @@ bool Particle_canMoveTowards(Particle this, Vector3D direction __attribute__ ((u
 }
 
 /**
+ * Transform
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Particle_transform(Particle this __attribute__ ((unused)))
+{
+	ASSERT(this, "Particle::transform: null this");
+}
+
+/**
  * Resume
  *
  * @memberof	Particle

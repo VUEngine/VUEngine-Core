@@ -41,6 +41,7 @@
 		SpatialObject_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, u32, update, int elapsedTime, void (* behavior)(Particle particle));	\
 		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics, bool updateSpritePosition);					\
+		__VIRTUAL_DEC(ClassName, void, transform);														\
 		__VIRTUAL_DEC(ClassName, void, resume);															\
 		__VIRTUAL_DEC(ClassName, void, suspend);														\
 
@@ -52,6 +53,7 @@
 		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
 		__VIRTUAL_SET(ClassName, Particle, moves);														\
 		__VIRTUAL_SET(ClassName, Particle, canMoveTowards);												\
+		__VIRTUAL_SET(ClassName, Particle, transform);													\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
 		__VIRTUAL_SET(ClassName, Particle, suspend);													\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
@@ -158,13 +160,13 @@ u16 Particle_getHeight(Particle this);
 const Vector3D* Particle_getPosition(Particle this);
 void Particle_hide(Particle this);
 bool Particle_moves(Particle this);
+void Particle_transform(Particle this);
 void Particle_resume(Particle this);
 void Particle_setLifeSpan(Particle this, int lifeSpan);
 void Particle_setMass(Particle this, fix19_13 mass);
 void Particle_setPosition(Particle this, const Vector3D* position);
 void Particle_show(Particle this);
 void Particle_suspend(Particle this);
-void Particle_transform(Particle this);
 u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
 void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition);
 
