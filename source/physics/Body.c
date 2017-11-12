@@ -105,9 +105,10 @@ Clock _physhicsClock = NULL;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-MovementResult Body_updateMovement(Body this);
+MovementResult Body_updateMovement(Body this, Acceleration gravity);
 static void Body_awake(Body this, u16 axesOfAwakening);
 static void Body_setMovementType(Body this, int movementType, u16 axis);
+Acceleration Body_getGravity(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -141,13 +142,14 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->movementType.y = __NO_MOVEMENT;
 	this->movementType.z = __NO_MOVEMENT;
 
-	this->position 			= (Vector3D){0, 0, 0};
-	this->velocity 			= (Velocity){0, 0, 0};
-	this->acceleration 		= (Acceleration){0, 0, 0};
-	this->externalForce 	= (Force){0, 0, 0};
-	this->friction 			= (Force){0, 0, 0};
-	this->normal			= (Force){0, 0, 0};
-	this->weight 			= Vector3D_scalarProduct(*_currentGravity, this->mass);
+	this->position 				= (Vector3D){0, 0, 0};
+	this->velocity 				= (Velocity){0, 0, 0};
+	this->acceleration 			= (Acceleration){0, 0, 0};
+	this->externalForce	 		= (Force){0, 0, 0};
+	this->friction 				= (Force){0, 0, 0};
+	this->normal				= (Force){0, 0, 0};
+	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
+	this->bouncingPlaneNormal 	= (Vector3D){0, 0, 0};
 
 	if(!_physhicsClock)
 	{
@@ -340,18 +342,21 @@ void Body_applyForce(Body this, const Force* force)
 		if(this->externalForce.x)
 		{
 			this->normal.x = 0;
+			this->bouncingPlaneNormal.x = 0;
 			axesOfExternalForce |= __X_AXIS;
 		}
 
 		if(this->externalForce.y)
 		{
 			this->normal.y = 0;
+			this->bouncingPlaneNormal.y = 0;
 			axesOfExternalForce |= __Y_AXIS;
 		}
 
 		if(this->externalForce.z)
 		{
 			this->normal.z = 0;
+			this->bouncingPlaneNormal.z = 0;
 			axesOfExternalForce |= __Z_AXIS;
 		}
 
@@ -394,10 +399,11 @@ void Body_update(Body this)
 	{
 		if(this->awake)
 		{
-			this->weight = Vector3D_scalarProduct(*_currentGravity, this->mass);
+			Acceleration gravity = Body_getGravity(this);
+			this->weight = Vector3D_scalarProduct(gravity, this->mass);
 			this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -this->frictionForceMagnitude);
 
-			MovementResult movementResult = Body_updateMovement(this);
+			MovementResult movementResult = Body_updateMovement(this, gravity);
 
 			// if stopped on any axis
 			if(movementResult.axesStoppedMovement)
@@ -478,8 +484,18 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	return movementResult;
 }
 
+Acceleration Body_getGravity(Body this)
+{
+	return (Acceleration)
+	{
+		__X_AXIS & this->axisSubjectToGravity ? _currentGravity->x : 0,
+		__Y_AXIS & this->axisSubjectToGravity ? _currentGravity->y : 0,
+		__Z_AXIS & this->axisSubjectToGravity ? _currentGravity->z : 0,
+	};
+}
+
 // udpdate movement over axis
-MovementResult Body_updateMovement(Body this)
+MovementResult Body_updateMovement(Body this, Acceleration gravity)
 {
 	ASSERT(this, "Body::updateMovement: null this");
 
@@ -490,9 +506,9 @@ MovementResult Body_updateMovement(Body this)
 
 	this->acceleration = (Acceleration)
 	{
-		__UNIFORM_MOVEMENT == this->movementType.x ? 0 : _currentGravity->x + __FIX19_13_DIV(this->externalForce.x + this->normal.x + this->friction.x, this->mass),
-		__UNIFORM_MOVEMENT == this->movementType.y ? 0 : _currentGravity->y + __FIX19_13_DIV(this->externalForce.y + this->normal.y + this->friction.y, this->mass),
-		__UNIFORM_MOVEMENT == this->movementType.z ? 0 : _currentGravity->z + __FIX19_13_DIV(this->externalForce.z + this->normal.z + this->friction.z, this->mass),
+		__UNIFORM_MOVEMENT == this->movementType.x ? 0 : gravity.x + __FIX19_13_DIV(this->externalForce.x + this->normal.x + this->friction.x, this->mass),
+		__UNIFORM_MOVEMENT == this->movementType.y ? 0 : gravity.y + __FIX19_13_DIV(this->externalForce.y + this->normal.y + this->friction.y, this->mass),
+		__UNIFORM_MOVEMENT == this->movementType.z ? 0 : gravity.z + __FIX19_13_DIV(this->externalForce.z + this->normal.z + this->friction.z, this->mass),
 	};
 
 	// update the velocity
@@ -558,11 +574,13 @@ void Body_printPhysics(Body this, int x, int y)
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.y), xDisplacement + x + 10, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.z), xDisplacement + x + 10 * 2, y++, NULL);
 
+	Acceleration gravity = Body_getGravity(this);
+
 	Printing_text(Printing_getInstance(), "Gravity", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(_currentGravity->x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(_currentGravity->y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(_currentGravity->z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.z), xDisplacement + x + 10 * 2, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "External Force", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
@@ -724,6 +742,13 @@ void Body_clearNormal(Body this)
 	ASSERT(this, "Body::clearNormal: null this");
 
 	this->normal = (Force){0, 0, 0};
+	this->bouncingPlaneNormal = (Vector3D){0, 0, 0};
+}
+
+Vector3D Body_getBouncingPlaneNormal(Body this)
+{
+	ASSERT(this, "Body::getBouncingPlaneNormal: null this");
+	return this->bouncingPlaneNormal;
 }
 
 // set elasticity
@@ -889,11 +914,13 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 {
 	ASSERT(this, "Body::bounce: null this");
 	fix19_13 totalElasticity = this->elasticity + elasticity;
+	Acceleration gravity = Body_getGravity(this);
 
-	fix19_13 cosAngle = bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z | _currentGravity->x | _currentGravity->y | _currentGravity->z ? abs(__FIX19_13_DIV(Vector3D_dotProduct(*_currentGravity, bouncingPlaneNormal), Vector3D_lengthProduct(*_currentGravity, bouncingPlaneNormal))) : __1I_FIX19_13;
+	fix19_13 cosAngle = bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z | gravity.x | gravity.y | gravity.z ? abs(__FIX19_13_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX19_13;
 	fix19_13 normalForce = __FIX19_13_MULT(Vector3D_length(this->weight), cosAngle);
 
 	Body_setFrictionCoefficient(this, frictionCoefficient);
+	this->bouncingPlaneNormal = bouncingPlaneNormal;
 	this->normal = Vector3D_scalarProduct(bouncingPlaneNormal, normalForce);
 	this->frictionForceMagnitude = __FIX19_13_MULT(normalForce, this->frictionCoefficient);
 

@@ -39,6 +39,14 @@
  */
 __CLASS_DEFINITION(ParticleBody, Body);
 
+typedef struct MovementResult
+{
+	u16 axesStoppedMovement;
+	u16 axesOfAcceleratedBouncing;
+	u16 axesOfChangeOfMovement;
+
+} MovementResult;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -48,7 +56,9 @@ extern fix19_13 _currentWorldFriction;
 extern fix19_13 _currentElapsedTime;
 extern const Acceleration* _currentGravity;
 
-int Body_updateMovement(Body this, fix19_13 gravity, fix19_13* position, fix19_13* velocity, fix19_13* acceleration, fix19_13 externalForce, int movementType, fix19_13 frictionForce);
+MovementResult Body_updateMovement(Body this, Acceleration gravity);
+void Body_clearGravityFlags(Body this);
+Acceleration Body_getGravity(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -105,27 +115,29 @@ void ParticleBody_update(ParticleBody this)
 {
 	ASSERT(this, "ParticleBody::update: null this");
 
-	if(this->active && this->awake)
+	if(this->active)
 	{
-		Force frictionForce = {0, 0, 0};
-
-		// update each axis
-		if(this->velocity.x || this->acceleration.x || this->externalForce.x || ((__ACCELERATED_MOVEMENT & this->movementType.x) && _currentGravity->x && this->acceleration.x))
+		if(this->awake)
 		{
-			Body_updateMovement(__SAFE_CAST(Body, this), __X_AXIS & this->axisSubjectToGravity? _currentGravity->x: 0, &this->position.x, &this->velocity.x, &this->acceleration.x, this->externalForce.x, this->movementType.x, frictionForce.x);
-		}
+			Acceleration gravity = Body_getGravity(__SAFE_CAST(Body, this));
+			this->weight = Vector3D_scalarProduct(gravity, this->mass);
+			this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -this->frictionForceMagnitude);
 
-		if(this->velocity.y || this->acceleration.y || this->externalForce.y || ((__ACCELERATED_MOVEMENT & this->movementType.y) && _currentGravity->y && this->acceleration.y))
-		{
-			Body_updateMovement(__SAFE_CAST(Body, this), __Y_AXIS & this->axisSubjectToGravity? _currentGravity->y: 0, &this->position.y, &this->velocity.y, &this->acceleration.y, this->externalForce.y, this->movementType.y, frictionForce.y);
-		}
+			MovementResult movementResult = Body_updateMovement(__SAFE_CAST(Body, this), gravity);
 
-		if(this->velocity.z || this->acceleration.z || this->externalForce.z || ((__ACCELERATED_MOVEMENT & this->movementType.z) && _currentGravity->z && this->acceleration.z))
-		{
-			Body_updateMovement(__SAFE_CAST(Body, this), __Z_AXIS & this->axisSubjectToGravity? _currentGravity->z: 0, &this->position.z, &this->velocity.z, &this->acceleration.z, this->externalForce.z, this->movementType.z, frictionForce.z);
+			// if stopped on any axis
+			if(movementResult.axesStoppedMovement)
+			{
+				Body_stopMovement(__SAFE_CAST(Body, this), movementResult.axesStoppedMovement);
+			}
 		}
 
 		// clear any force so the next update does not get influenced
 		Body_clearExternalForce(__SAFE_CAST(Body, this));
+
+		// clear gravity flags
+		Body_clearGravityFlags(__SAFE_CAST(Body, this));
+
+		//Body_printPhysics(__SAFE_CAST(Body, this), 1, 1);
 	}
 }

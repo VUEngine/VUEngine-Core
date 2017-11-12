@@ -86,6 +86,12 @@
 		 */																								\
 		Force normal;																					\
 		/**
+		 * @var Vector3D 		bouncingPlaneNormal
+		 * @brief				normal of the bouncing plane
+		 * @memberof 			Body
+		 */																								\
+		Vector3D bouncingPlaneNormal;																	\
+		/**
 		 * @var Vector3D 		position
 		 * @brief				spatial position
 		 * @memberof 			Body
@@ -221,6 +227,7 @@ void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getNormal(Body this);
 void Body_clearNormal(Body this);
+Vector3D Body_getBouncingPlaneNormal(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
