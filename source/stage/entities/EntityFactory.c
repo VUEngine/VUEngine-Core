@@ -328,7 +328,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 	return __ENTITY_PROCESSED;
 }
 
-// transform spawned entities
+// transformation spawned entities
 u32 EntityFactory_transformEntities(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::transformEntities: null this");

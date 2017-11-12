@@ -342,15 +342,15 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
  * @param rightBox
  * @param environmentPosition
  */
-static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBox, VBVec3D environmentPosition)
+static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBox, Vector3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
-	VBVec3D globalPosition3D = environmentPosition;
+	Vector3D globalPosition3D = environmentPosition;
 
-	globalPosition3D.x += this->transform.localPosition.x;
-	globalPosition3D.y += this->transform.localPosition.y;
-	globalPosition3D.z += this->transform.localPosition.z;
+	globalPosition3D.x += this->transformation.localPosition.x;
+	globalPosition3D.y += this->transformation.localPosition.y;
+	globalPosition3D.z += this->transformation.localPosition.z;
 
 	int left = 0;
 	int right = 0;
@@ -370,13 +370,13 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBo
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-//			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+//			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			halfWidth = Sprite_getHalfWidth(sprite);
 			halfHeight = Sprite_getHalfHeight(sprite);
 			halfDepth = this->size.z >> 1;
 
-			VBVecWorld spriteDisplacement = Sprite_getDisplacement(sprite);
+			WorldVector spriteDisplacement = Sprite_getDisplacement(sprite);
 
 			if(left > -halfWidth + __FIX19_13_TO_I(spriteDisplacement.x))
 			{
@@ -478,13 +478,13 @@ void Entity_calculateSize(Entity this)
 
 	SmallRightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_calculateSizeFromChildren(this, &rightBox, (VBVec3D){0, 0, 0});
+	Entity_calculateSizeFromChildren(this, &rightBox, (Vector3D){0, 0, 0});
 
-	VBVec3D centerDisplacement =
+	Vector3D centerDisplacement =
 	{
-		(__I_TO_FIX19_13(rightBox.x1 + rightBox.x0) / 2) - this->transform.localPosition.x,
-		(__I_TO_FIX19_13(rightBox.y1 + rightBox.y0) / 2) - this->transform.localPosition.y,
-		(__I_TO_FIX19_13(rightBox.z1 + rightBox.z0) / 2) - this->transform.localPosition.z
+		(__I_TO_FIX19_13(rightBox.x1 + rightBox.x0) / 2) - this->transformation.localPosition.x,
+		(__I_TO_FIX19_13(rightBox.y1 + rightBox.y0) / 2) - this->transformation.localPosition.y,
+		(__I_TO_FIX19_13(rightBox.z1 + rightBox.z0) / 2) - this->transformation.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
@@ -494,7 +494,7 @@ void Entity_calculateSize(Entity this)
 			__DELETE_BASIC(this->centerDisplacement);
 		}
 
-		this->centerDisplacement = __NEW_BASIC(VBVec3D);
+		this->centerDisplacement = __NEW_BASIC(Vector3D);
 		*this->centerDisplacement = centerDisplacement;
 	}
 
@@ -513,12 +513,12 @@ void Entity_calculateSize(Entity this)
  * @param environmentPosition
  * @param rightBox
  */
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition, SmallRightBox* rightBox)
+static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, SmallRightBox* rightBox)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
 
-	VBVec3D globalPosition3D =
+	Vector3D globalPosition3D =
 	{
 		environmentPosition->x + positionedEntity->position.x,
 		environmentPosition->y + positionedEntity->position.y,
@@ -717,11 +717,11 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
  *
  * @return						SmallRightBox
  */
-SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition)
+SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
 {
 	SmallRightBox rightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromDefinition(positionedEntity, (VBVec3D*)environmentPosition, &rightBox);
+	Entity_getSizeFromDefinition(positionedEntity, (Vector3D*)environmentPosition, &rightBox);
 
 	rightBox.x0 = rightBox.x0 - __FIX19_13_TO_I(positionedEntity->position.x);
 	rightBox.x1 = rightBox.x1 - __FIX19_13_TO_I(positionedEntity->position.x);
@@ -745,7 +745,7 @@ SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* position
  *
  * @return						Entity's global position
  */
-VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName)
+Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
 {
 	ASSERT(childrenDefinitions, "Entity::calculateGlobalPositionFromDefinitionByName: null positionedEntity");
 
@@ -754,7 +754,7 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 		return NULL;
 	}
 
-	static VBVec3D position;
+	static Vector3D position;
 
 	int i = 0;
 	for(; childrenDefinitions[i].entityDefinition; i++)
@@ -769,12 +769,12 @@ VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positio
 
 		if(childrenDefinitions[i].childrenDefinitions)
 		{
-			VBVec3D concatenatedEnvironmentPosition = environmentPosition;
+			Vector3D concatenatedEnvironmentPosition = environmentPosition;
 			concatenatedEnvironmentPosition.x += childrenDefinitions[i].position.x;
 			concatenatedEnvironmentPosition.y += childrenDefinitions[i].position.y;
 			concatenatedEnvironmentPosition.z += childrenDefinitions[i].position.z;
 
-			VBVec3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
+			Vector3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
 
 			if(position)
 			{
@@ -976,7 +976,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
  *
  * @return					Entity
  */
-Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo)
+Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
 {
 	ASSERT(this, "Entity::addChildEntity: null this");
 	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
@@ -1139,19 +1139,19 @@ void Entity_transformShapes(Entity this)
 
 		// setup shape
 //		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
-		const VBVec3D* myPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this);
+		const Vector3D* myPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this);
 		const Rotation* myRotation = __VIRTUAL_CALL(SpatialObject, getRotation, this);
 		const Scale* myScale = __VIRTUAL_CALL(SpatialObject, getScale, this);
 
 		VirtualNode node = this->shapes->head;
-		Direction currentDirection = Entity_getDirection(this);
+//		Direction currentDirection = Entity_getDirection(this);
 		int i = 0;
 
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			VBVec3D shapePosition =
+			Vector3D shapePosition =
 			{
 				myPosition->x + shapeDefinitions[i].displacement.x,
 				myPosition->y + shapeDefinitions[i].displacement.y,
@@ -1400,21 +1400,21 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 		if(updatePosition)
 		{
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 		}
 
 		if(updateRotation)
 		{
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
 		}
 
 		if(updateScale)
 		{
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
 		}
 	}
 }
@@ -1439,16 +1439,16 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
 
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition && updateRotation)
@@ -1458,10 +1458,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transform.globalRotation);
+			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
 		}
 	}
 	else if(updatePosition && updateScale)
@@ -1471,13 +1471,13 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition)
@@ -1487,7 +1487,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transform.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 		}
 	}
 	else if(updateScale)
@@ -1497,10 +1497,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transform.globalScale, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transform.globalPosition.z);
+			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
 		}
 	}
 }
@@ -1519,7 +1519,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 
-	// call base class's transform method
+	// call base class's transformation method
 	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
@@ -1568,7 +1568,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 	{
 		Entity_transformShapes(this);
 
-		// call base class's transform method
+		// call base class's transformation method
 		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 	}
 	else if((u32)this->children)
@@ -1585,7 +1585,7 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
  *
  * @param this	Function scope
  */
-void Entity_setLocalPosition(Entity this, const VBVec3D* position)
+void Entity_setLocalPosition(Entity this, const Vector3D* position)
 {
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
@@ -1660,11 +1660,11 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
  *
  * @return		Global position
  */
-const VBVec3D* Entity_getPosition(Entity this)
+const Vector3D* Entity_getPosition(Entity this)
 {
 	ASSERT(this, "Entity::getPosition: null this");
 
-	return &this->transform.globalPosition;
+	return &this->transformation.globalPosition;
 }
 
 /**
@@ -1681,7 +1681,7 @@ const Rotation* Entity_getRotation(Entity this)
 {
 	ASSERT(this, "Entity::getRotation: null this");
 
-	return &this->transform.globalRotation;
+	return &this->transformation.globalRotation;
 }
 
 /**
@@ -1698,7 +1698,7 @@ const Scale* Entity_getScale(Entity this)
 {
 	ASSERT(this, "Entity::getScale: null this");
 
-	return &this->transform.globalScale;
+	return &this->transformation.globalScale;
 }
 
 /**
@@ -1833,7 +1833,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-			VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+			Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 
 			x = __FIX19_13_TO_I(spritePosition.x);
 			y = __FIX19_13_TO_I(spritePosition.y);
@@ -1877,7 +1877,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	}
 	else
 	{
-		VBVec3D position3D = this->transform.globalPosition;
+		Vector3D position3D = this->transformation.globalPosition;
 
 		if(this->centerDisplacement)
 		{
@@ -1889,7 +1889,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
 
-		VBVec2D position2D;
+		Vector2D position2D;
 		__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
 		int halfWidth = (int)(this->size.x >> 1);
@@ -2147,7 +2147,7 @@ void Entity_resume(Entity this)
  *
  * @return				Defaults to true
  */
-bool Entity_canMoveTowards(Entity this __attribute__ ((unused)), VBVec3D direction __attribute__ ((unused)))
+bool Entity_canMoveTowards(Entity this __attribute__ ((unused)), Vector3D direction __attribute__ ((unused)))
 {
 	return true;
 }
@@ -2316,10 +2316,10 @@ void Entity_setDirection(Entity this, Direction direction)
 
 	Rotation rotation =
 	{
-		__UP == direction.y ? __HALF_ROTATION_DEGREES : __DOWN == direction.y ? 0 : this->transform.localRotation.x,
-		__LEFT == direction.x ? __HALF_ROTATION_DEGREES : __RIGHT == direction.x ? 0 : this->transform.localRotation.y,
-		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transform.localRotation.z,
-		this->transform.localRotation.z,
+		__UP == direction.y ? __HALF_ROTATION_DEGREES : __DOWN == direction.y ? 0 : this->transformation.localRotation.x,
+		__LEFT == direction.x ? __HALF_ROTATION_DEGREES : __RIGHT == direction.x ? 0 : this->transformation.localRotation.y,
+		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transformation.localRotation.z,
+		this->transformation.localRotation.z,
 	};
 
 	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
@@ -2344,17 +2344,17 @@ Direction Entity_getDirection(Entity this)
 		__RIGHT, __DOWN, __FAR
 	};
 
-	if((__QUARTER_ROTATION_DEGREES) < abs(this->transform.globalRotation.y))
+	if((__QUARTER_ROTATION_DEGREES) < abs(this->transformation.globalRotation.y))
 	{
 		direction.x = __LEFT;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < abs(this->transform.globalRotation.x))
+	if((__QUARTER_ROTATION_DEGREES) < abs(this->transformation.globalRotation.x))
 	{
 		direction.y = __UP;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < abs(this->transform.globalRotation.z))
+	if((__QUARTER_ROTATION_DEGREES) < abs(this->transformation.globalRotation.z))
 	{
 		direction.z = __NEAR;
 	}

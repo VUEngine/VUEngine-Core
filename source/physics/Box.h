@@ -72,11 +72,11 @@
 		 */																								\
 		Polyhedron polyhedron;																			\
 		/**
-		 * @var VBVec3D		rotationVertexDisplacement
+		 * @var Vector3D		rotationVertexDisplacement
 		 * @brief			for rotation purposes
 		 * @memberof 		Box
 		 */																								\
-		VBVec3D rotationVertexDisplacement;																\
+		Vector3D rotationVertexDisplacement;																\
 		/**
 		 * @var RightBox	rightBox
 		 * @brief			the rectangle
@@ -96,14 +96,14 @@ __CLASS_NEW_DECLARE(Box, SpatialObject owner);
 void Box_constructor(Box this, SpatialObject owner);
 void Box_destructor(Box this);
 
-void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 CollisionInformation Box_overlaps(Box this, Shape shape);
 CollisionSolution Box_getCollisionSolution(Box this, Shape shape);
-void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
-void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES]);
-void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max);
-CollisionSolution Box_testForCollision(Box this, Shape collidingShape, VBVec3D displacement, fix19_13 sizeIncrement);
-VBVec3D Box_getPosition(Box this);
+void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES]);
+void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES]);
+void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix19_13* min, fix19_13* max);
+CollisionSolution Box_testForCollision(Box this, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);
+Vector3D Box_getPosition(Box this);
 RightBox Box_getSurroundingRightBox(Box this);
 void Box_show(Box this);
 void Box_hide(Box this);

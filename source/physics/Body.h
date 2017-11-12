@@ -86,11 +86,11 @@
 		 */																								\
 		Force normal;																					\
 		/**
-		 * @var VBVec3D 		position
+		 * @var Vector3D 		position
 		 * @brief				spatial position
 		 * @memberof 			Body
 		 */																								\
-		VBVec3D position;																				\
+		Vector3D position;																				\
 		/**
 		 * @var Velocity 		velocity
 		 * @brief				velocity on each instance
@@ -196,19 +196,19 @@ void Body_destructor(Body this);
 
 void Body_addForce(Body this, const Force* force);
 void Body_applyForce(Body this, const Force* force);
-void Body_applyGravity(Body this, const Acceleration* gravity);
-void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fix19_13 frictionCoefficient, fix19_13 elasticity);
+void Body_applyGravity(Body this, u16 axis);
+void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity);
 void Body_clearAcceleration(Body this, u16 axis);
 void Body_clearExternalForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
 u8 Body_getAxisSubjectToGravity(Body this);
 fix19_13 Body_getElasticity(Body this);
-VBVec3D Body_getLastDisplacement(Body this);
+Vector3D Body_getLastDisplacement(Body this);
 fix19_13 Body_getMass(Body this);
 MovementType Body_getMovementType(Body this);
 SpatialObject Body_getOwner(Body this);
-const VBVec3D* Body_getPosition(Body this);
+const Vector3D* Body_getPosition(Body this);
 Velocity Body_getVelocity(Body this);
 bool Body_isActive(Body this);
 bool Body_isAwake(Body body);
@@ -224,7 +224,7 @@ void Body_clearNormal(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
-void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller);
+void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller);
 void Body_sleep(Body body);
 void Body_stopMovement(Body this, u16 axis);
 void Body_takeHitFrom(Body this, Body other);

@@ -52,28 +52,31 @@ typedef struct Size
 
 } Size;
 
-// spatial position
-typedef struct VBVec3DReal
+// used to represent a screen position with parallax info
+typedef struct Vector2D
 {
-	// fps increases a lot in hardware with ints
-	float x;
-	float y;
-	float z;
+	fix19_13 x;
+	fix19_13 y;
 
-} VBVec3DReal;
+	// since parallax may be the same given different z positions
+	// it's needed to have this value to being able to order WORLD layers
+	fix19_13 z;
+	int parallax;
+
+} Vector2D;
 
 // spatial position
-typedef struct VBVec3D
+typedef struct Vector3D
 {
 	// fps increases a lot in hardware with ints
 	fix19_13 x;
 	fix19_13 y;
 	fix19_13 z;
 
-} VBVec3D;
+} Vector3D;
 
 // WORLD vector
-typedef struct VBVecWorld
+typedef struct WorldVector
 {
 	// fps increases a lot in hardware with ints
 	fix19_13 x;
@@ -81,33 +84,24 @@ typedef struct VBVecWorld
 	fix19_13 z;
 	fix19_13 p;
 
-} VBVecWorld;
+} WorldVector;
 
-typedef struct VBVec3DFlag
+typedef struct Vector3DFlag
 {
 	int x: 2;
 	int y: 2;
 	int z: 2;
 
-} VBVec3DFlag;
-
-typedef struct IntegralPosition
-{
-	// fps increases a lot in hardware with ints
-	int x;
-	int y;
-	int z;
-
-} IntegralPosition;
+} Vector3DFlag;
 
 // spatial movement vector
-typedef struct VBVec3D Velocity;
+typedef struct Vector3D Velocity;
 
 // spatial velocity variation vector
-typedef struct VBVec3D Acceleration;
+typedef struct Vector3D Acceleration;
 
 // spatial velocity variation vector
-typedef struct VBVec3D Force;
+typedef struct Vector3D Force;
 
 // movement type flag vector
 typedef struct MovementType
@@ -137,15 +131,6 @@ typedef struct Direction
 	s8 x;
 	s8 y;
 	s8 z;
-
-	/*
-	//angle between vector and X axis
-	Angle alpha;
-	//angle between vector and Y axis
-	Angle betha;
-	//angle between vector and Z axis
-	Angle tetha;
-	*/
 
 } Direction;
 
@@ -185,19 +170,6 @@ typedef struct Scale
 
 } Scale;
 
-// used to represent a screen position with parallax info
-typedef struct VBVec2D
-{
-	fix19_13 x;
-	fix19_13 y;
-
-	// since parallax may be the same given different z positions
-	// it's needed to have this value to being able to order WORLD layers
-	fix19_13 z;
-	int parallax;
-
-} VBVec2D;
-
 // used to represent the m coordinates of the bgmaps
 typedef struct TextureSource
 {
@@ -219,7 +191,7 @@ typedef struct TexturePadding
 typedef struct DrawSpec
 {
 	// spatial position	with parallax info
-	VBVec2D position;
+	Vector2D position;
 
 	// bgmap's source coordinates
 	TextureSource textureSource;
@@ -236,10 +208,10 @@ typedef struct DrawSpec
 typedef struct Transformation
 {
 	// spatial local position
-	VBVec3D localPosition;
+	Vector3D localPosition;
 
 	// spatial global position
-	VBVec3D globalPosition;
+	Vector3D globalPosition;
 
 	// local rotation
 	Rotation localRotation;

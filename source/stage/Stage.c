@@ -235,11 +235,11 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-static int Stage_isEntityInLoadRange(Stage this, VBVec3D position3D, const SmallRightBox* smallRightBox)
+static int Stage_isEntityInLoadRange(Stage this, Vector3D position3D, const SmallRightBox* smallRightBox)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
-	VBVec2D position2D;
+	Vector2D position2D;
 
 	__OPTICS_NORMALIZE(position3D);
 
@@ -632,7 +632,7 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 	stageEntityDescription->internalId = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
-	VBVec3D environmentPosition3D = {0, 0, 0};
+	Vector3D environmentPosition3D = {0, 0, 0};
 	stageEntityDescription->smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
 	return stageEntityDescription;
@@ -682,7 +682,7 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
-//		VBVec3D environmentPosition3D = {0, 0, 0};
+//		Vector3D environmentPosition3D = {0, 0, 0};
 //		SmallRightBox smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
 		int x = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.x);
@@ -1099,7 +1099,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 	ParticleRemover_update(this->particleRemover);
 }
 
-// transform state
+// transformation state
 void Stage_transform(Stage this, const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Stage::transform: null this");
@@ -1278,7 +1278,7 @@ static void Stage_setFocusEntity(Stage this, Entity focusEntity)
 	{
 		Object_addEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
-		VBVec3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
+		Vector3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
 		focusEntityPosition.x = __FIX19_13_TO_I(focusEntityPosition.x);
 		focusEntityPosition.y = __FIX19_13_TO_I(focusEntityPosition.y);
 		focusEntityPosition.z = __FIX19_13_TO_I(focusEntityPosition.z);

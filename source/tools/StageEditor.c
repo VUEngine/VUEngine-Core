@@ -155,8 +155,8 @@ static void StageEditor_selectNextEntity(StageEditor this);
 static void StageEditor_translateEntity(StageEditor this, u32 pressedKey);
 static void StageEditor_moveScreen(StageEditor this, u32 pressedKey);
 static void StageEditor_changeProjection(StageEditor this, u32 pressedKey);
-static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation);
-static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation);
+static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D translation);
+static void StageEditor_applyTranslationToScreen(StageEditor this, Vector3D translation);
 static void StageEditor_printEntityPosition(StageEditor this);
 static void StageEditor_printScreenPosition(StageEditor this);
 static void StageEditor_printProjectionValues(StageEditor this);
@@ -640,7 +640,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			__I_TO_FIX19_13(-__SCREEN_X_TRANSLATION_STEP),
 			0,
@@ -651,7 +651,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_LR)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			__I_TO_FIX19_13(__SCREEN_X_TRANSLATION_STEP),
 			0,
@@ -662,7 +662,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_LU)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			__I_TO_FIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
@@ -673,7 +673,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_LD)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			__I_TO_FIX19_13(__SCREEN_Y_TRANSLATION_STEP),
@@ -684,7 +684,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_RU)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			0,
@@ -695,7 +695,7 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_RD)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			0,
@@ -790,7 +790,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			__I_TO_FIX19_13(-this->translationStepSize),
 			0,
@@ -801,7 +801,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_LR)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			__I_TO_FIX19_13(this->translationStepSize),
 			0,
@@ -812,7 +812,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_LU)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			__I_TO_FIX19_13(-this->translationStepSize),
@@ -823,7 +823,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_LD)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			__I_TO_FIX19_13(this->translationStepSize),
@@ -852,7 +852,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_RU)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			0,
@@ -863,7 +863,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_RD)
 	{
-		VBVec3D translation =
+		Vector3D translation =
 		{
 			0,
 			0,
@@ -891,12 +891,12 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param translation	Translation vector
  */
-static void StageEditor_applyTranslationToEntity(StageEditor this, VBVec3D translation)
+static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D translation)
 {
 	if(this->currentEntityNode && this->shape)
 	{
 		Container container = __SAFE_CAST(Container, this->currentEntityNode->data);
-		VBVec3D localPosition = *Container_getLocalPosition(container);
+		Vector3D localPosition = *Container_getLocalPosition(container);
 
 		localPosition.x += translation.x;
 		localPosition.y += translation.y;
@@ -962,7 +962,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
-		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
+		Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
 		spritePosition.x = __I_TO_FIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 		spritePosition.y = __I_TO_FIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
@@ -1012,7 +1012,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 			return;
 		}
 
-		VBVec3D position = Screen_getPosition(Screen_getInstance());
+		Vector3D position = Screen_getPosition(Screen_getInstance());
 
 		position.x += __I_TO_FIX19_13(__HALF_SCREEN_WIDTH);
 		position.y += __I_TO_FIX19_13(__HALF_SCREEN_HEIGHT);
@@ -1070,7 +1070,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 	if(this->currentEntityNode)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		const VBVec3D* globalPosition = Container_getGlobalPosition(__SAFE_CAST(Container, entity));
+		const Vector3D* globalPosition = Container_getGlobalPosition(__SAFE_CAST(Container, entity));
 		char* entityName = Container_getName(__SAFE_CAST(Container, entity));
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
@@ -1103,7 +1103,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
  * @param this			Function scope
  * @param translation   Translation vector
  */
-static void StageEditor_applyTranslationToScreen(StageEditor this, VBVec3D translation)
+static void StageEditor_applyTranslationToScreen(StageEditor this, Vector3D translation)
 {
 	Screen_move(Screen_getInstance(), translation, true);
 	GameState_transform(this->gameState);
@@ -1127,7 +1127,7 @@ static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unu
 	int x = 1;
 	int y = 2;
 
-	VBVec3D position = Screen_getPosition(Screen_getInstance());
+	Vector3D position = Screen_getPosition(Screen_getInstance());
 
 	Printing_text(Printing_getInstance(), "MOVE SCREEN", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);

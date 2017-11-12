@@ -131,7 +131,7 @@ void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
 	ASSERT(this, "Polyhedron::addVertex: null this");
 
 	// create the vertex
-	VBVec3D* vertex = __NEW_BASIC(VBVec3D);
+	Vector3D* vertex = __NEW_BASIC(Vector3D);
 	vertex->x = x;
 	vertex->y = y;
 	vertex->z = z;
@@ -171,19 +171,19 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 		VirtualNode toNode = fromNode->next;
 
 		// 3d vertices
-		VBVec3D fromVertex3D = {0, 0, 0};
-		VBVec3D toVertex3D = {0, 0, 0};
+		Vector3D fromVertex3D = {0, 0, 0};
+		Vector3D toVertex3D = {0, 0, 0};
 
 		// 2d vertices
-		VBVec2D fromVertex2D = {0, 0, 0, 0};
-		VBVec2D toVertex2D = {0, 0, 0, 0};
+		Vector2D fromVertex2D = {0, 0, 0, 0};
+		Vector2D toVertex2D = {0, 0, 0, 0};
 
 		// draw the lines
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
 		{
 			// normalize vertex to screen coordinates
-			fromVertex3D = *((VBVec3D*)fromNode->data);
-			toVertex3D = *((VBVec3D*)toNode->data);
+			fromVertex3D = *((Vector3D*)fromNode->data);
+			toVertex3D = *((Vector3D*)toNode->data);
 			__OPTICS_NORMALIZE(fromVertex3D);
 			__OPTICS_NORMALIZE(toVertex3D);
 

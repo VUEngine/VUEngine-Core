@@ -905,7 +905,7 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 {
 	AnimationInspector_removePreviousSprite(this);
 
-	VBVec3D position = *_screenPosition;
+	Vector3D position = *_screenPosition;
 
 	position.x += __I_TO_FIX19_13(__HALF_SCREEN_WIDTH);
 	position.y += __I_TO_FIX19_13(__HALF_SCREEN_HEIGHT);
@@ -919,7 +919,7 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationInspector::createSprite: null texture");
 
-	VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->animatedSprite));
+	Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->animatedSprite));
 	spritePosition.x = __I_TO_FIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 	spritePosition.y = __I_TO_FIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 

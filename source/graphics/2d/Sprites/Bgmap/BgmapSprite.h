@@ -141,9 +141,9 @@ void BgmapSprite_destructor(BgmapSprite this);
 // general
 Scale BgmapSprite_getScale(BgmapSprite this);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
-VBVec2D BgmapSprite_getPosition(BgmapSprite this);
-void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position);
-void BgmapSprite_position(BgmapSprite this, const VBVec3D* position);
+Vector2D BgmapSprite_getPosition(BgmapSprite this);
+void BgmapSprite_setPosition(BgmapSprite this, const Vector2D* position);
+void BgmapSprite_position(BgmapSprite this, const Vector3D* position);
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation);
 void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
@@ -153,7 +153,7 @@ s16 BgmapSprite_getParamTableRow(BgmapSprite this);
 u32 BgmapSprite_getParam(BgmapSprite this);
 void BgmapSprite_setParam(BgmapSprite this, u32 param);
 void BgmapSprite_render(BgmapSprite this);
-void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement);
+void BgmapSprite_addDisplacement(BgmapSprite this, const Vector2D* displacement);
 void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode);
 
 // direct draw

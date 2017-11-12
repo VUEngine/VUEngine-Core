@@ -254,7 +254,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 
 		if(this->objectSpriteContainers[i])
 		{
-			VBVec2D position =
+			Vector2D position =
 			{
 					0, 0, z[i] + __F_TO_FIX19_13(i * 0.1f), 0
 			};
@@ -286,7 +286,7 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
 
 	if(spt < __TOTAL_OBJECT_SEGMENTS)
 	{
-		VBVec2D position =
+		Vector2D position =
 		{
 				0, 0, z, 0
 		};

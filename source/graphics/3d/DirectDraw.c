@@ -179,7 +179,7 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
  * @param point 	Point to draw
  * @param color		The color to draw (0-3)
  */
-void DirectDraw_drawPoint(DirectDraw this, VBVec2D point, int color)
+void DirectDraw_drawPoint(DirectDraw this, Vector2D point, int color)
 {
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
@@ -215,7 +215,7 @@ void DirectDraw_drawPoint(DirectDraw this, VBVec2D point, int color)
  * @param toPoint	Point 2
  * @param color		The color to draw (0-3)
  */
-void DirectDraw_drawLine(DirectDraw this, VBVec2D fromPoint, VBVec2D toPoint, int color)
+void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, int color)
 {
 	ASSERT(this, "DirectDraw::drawLine: null this");
 

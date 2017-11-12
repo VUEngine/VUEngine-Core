@@ -65,7 +65,7 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
 fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this);
 fix19_13 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this);
-const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this);
+const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
 void PhysicalWorld_processRemovedBodies(PhysicalWorld this);

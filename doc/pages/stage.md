@@ -36,7 +36,7 @@ A PositionEntity is composed of the following attributes:
 	typedef const struct PositionedEntity
 	{
 	    EntityDefinition* entityDefinition; 			// pointer to the entity definition in ROM
-	    VBVec3D position; 								// position in the world
+	    Vector3D position; 								// position in the world
 	    s16 id;											// entity's id
 	    char* name;										// name
 	    struct PositionedEntity* childrenDefinitions;	// the children

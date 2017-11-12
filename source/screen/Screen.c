@@ -55,8 +55,8 @@ static void Screen_constructor(Screen this);
 //---------------------------------------------------------------------------------------------------------
 
 const Optical* _optical = NULL;
-const VBVec3D* _screenPosition = NULL;
-const VBVec3D* _screenDisplacement = NULL;
+const Vector3D* _screenPosition = NULL;
+const Vector3D* _screenDisplacement = NULL;
 const CameraFrustum* _cameraFrustum = NULL;
 
 
@@ -238,7 +238,7 @@ void Screen_onFocusEntityDeleted(Screen this, Entity actor)
 
 
 // translate screen
-void Screen_move(Screen this, VBVec3D translation, int cap)
+void Screen_move(Screen this, Vector3D translation, int cap)
 {
 	ASSERT(this, "Screen::move: null this");
 
@@ -291,7 +291,7 @@ void Screen_capPosition(Screen this)
 }
 
 // get screen's position
-VBVec3D Screen_getPosition(Screen this)
+Vector3D Screen_getPosition(Screen this)
 {
 	ASSERT(this, "Screen::getPosition: null this");
 
@@ -299,7 +299,7 @@ VBVec3D Screen_getPosition(Screen this)
 }
 
 // set screen's position
-void Screen_setPosition(Screen this, VBVec3D position)
+void Screen_setPosition(Screen this, Vector3D position)
 {
 	ASSERT(this, "Screen::setPosition: null this");
 
@@ -353,7 +353,7 @@ void Screen_setOptical(Screen this, Optical optical)
 }
 
 // set screen's position displacement
-void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement)
+void Screen_setFocusEntityPositionDisplacement(Screen this, Vector3D focusEntityPositionDisplacement)
 {
 	ASSERT(this, "Screen::setPosition: null this");
 
@@ -367,7 +367,7 @@ void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityP
 }
 
 // retrieve last displacement
-VBVec3D Screen_getLastDisplacement(Screen this)
+Vector3D Screen_getLastDisplacement(Screen this)
 {
 	ASSERT(this, "Screen::getLastDisplacement: null this");
 

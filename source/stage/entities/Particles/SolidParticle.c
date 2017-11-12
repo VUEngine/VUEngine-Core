@@ -325,7 +325,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
  * @param this		Function scope
  * @param position	Position to move particle to
  */
-void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position)
+void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
 

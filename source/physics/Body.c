@@ -27,7 +27,7 @@
 #include <Body.h>
 #include <Game.h>
 #include <Clock.h>
-#include <Vector.h>
+#include <Vector3D.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
 #include <debugConfig.h>
@@ -94,7 +94,7 @@ typedef struct MovementResult
 {
 	u16 axesStoppedMovement;
 	u16 axesOfAcceleratedBouncing;
-	VBVec3DFlag axesOfChangeOfMovement;
+	u16 axesOfChangeOfMovement;
 
 } MovementResult;
 
@@ -141,13 +141,13 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->movementType.y = __NO_MOVEMENT;
 	this->movementType.z = __NO_MOVEMENT;
 
-	this->position 			= (VBVec3D){0, 0, 0};
+	this->position 			= (Vector3D){0, 0, 0};
 	this->velocity 			= (Velocity){0, 0, 0};
 	this->acceleration 		= (Acceleration){0, 0, 0};
 	this->externalForce 	= (Force){0, 0, 0};
 	this->friction 			= (Force){0, 0, 0};
 	this->normal			= (Force){0, 0, 0};
-	this->weight 			= Vector_scalarProduct(*_currentGravity, this->mass);
+	this->weight 			= Vector3D_scalarProduct(*_currentGravity, this->mass);
 
 	if(!_physhicsClock)
 	{
@@ -364,33 +364,15 @@ void Body_applyForce(Body this, const Force* force)
 }
 
 // apply gravity
-void Body_applyGravity(Body this, const Acceleration* gravity)
+void Body_applyGravity(Body this, u16 axis)
 {
 	ASSERT(this, "Body::applyGravity: null this");
 
-	if(gravity)
+	if(axis)
 	{
-		this->axesOfAppliedGravity = __NO_AXIS;
+		this->axesOfAppliedGravity = axis;
 
-		if(_currentGravity->x)
-		{
-			this->axesOfAppliedGravity |= __X_AXIS;
-		}
-
-		if(_currentGravity->y)
-		{
-			this->axesOfAppliedGravity |= __Y_AXIS;
-		}
-
-		if(_currentGravity->z)
-		{
-			this->axesOfAppliedGravity |= __Z_AXIS;
-		}
-
-		if(this->axesOfAppliedGravity)
-		{
-			Body_awake(this, this->axesOfAppliedGravity);
-		}
+		Body_awake(this, this->axesOfAppliedGravity);
 	}
 }
 
@@ -412,8 +394,8 @@ void Body_update(Body this)
 	{
 		if(this->awake)
 		{
-			this->weight = Vector_scalarProduct(*_currentGravity, this->mass);
-			this->friction = Vector_scalarProduct(Vector_normalize(this->velocity), -this->frictionForceMagnitude);
+			this->weight = Vector3D_scalarProduct(*_currentGravity, this->mass);
+			this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -this->frictionForceMagnitude);
 
 			MovementResult movementResult = Body_updateMovement(this);
 
@@ -422,12 +404,11 @@ void Body_update(Body this)
 			{
 				Body_stopMovement(this, movementResult.axesStoppedMovement);
 			}
-/*
+
 			if(movementResult.axesOfChangeOfMovement)
 			{
 				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
 			}
-*/
 		}
 
 		// clear any force so the next update does not get influenced
@@ -439,11 +420,11 @@ void Body_update(Body this)
 }
 
 // retrieve last displacement
-VBVec3D Body_getLastDisplacement(Body this)
+Vector3D Body_getLastDisplacement(Body this)
 {
 	ASSERT(this, "Body::getLastDisplacement: null this");
 
-	VBVec3D displacement = {0, 0, 0};
+	Vector3D displacement = {0, 0, 0};
 
 	fix19_13 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 
@@ -454,22 +435,22 @@ VBVec3D Body_getLastDisplacement(Body this)
 	return displacement;
 }
 
-static MovementResult Body_getMovementResult(Body this, VBVec3D previousVelocity)
+static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocity)
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
-	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, {__NO_AXIS, __NO_AXIS, __NO_AXIS}};
+	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS};
 
 	// xor values, if equal, result is 0
-	movementResult.axesOfChangeOfMovement.x = this->velocity.x ^ previousVelocity.x;
-	movementResult.axesOfChangeOfMovement.y = this->velocity.y ^ previousVelocity.y;
-	movementResult.axesOfChangeOfMovement.z = this->velocity.z ^ previousVelocity.z;
+	movementResult.axesOfChangeOfMovement |= this->velocity.x ^ previousVelocity.x ? __X_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= this->velocity.y ^ previousVelocity.y ? __Y_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= this->velocity.z ^ previousVelocity.z ? __Z_AXIS : __NO_AXIS;
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
 	if(!(this->axesOfAppliedGravity))
 	{
-		if(movementResult.axesOfChangeOfMovement.x && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
+		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x))
 			{
@@ -477,7 +458,7 @@ static MovementResult Body_getMovementResult(Body this, VBVec3D previousVelocity
 			}
 		}
 
-		if(movementResult.axesOfChangeOfMovement.y && (!this->externalForce.y || (0 < this->normal.y * this->velocity.y)))
+		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->normal.y * this->velocity.y)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.y))
 			{
@@ -485,7 +466,7 @@ static MovementResult Body_getMovementResult(Body this, VBVec3D previousVelocity
 			}
 		}
 
-		if(movementResult.axesOfChangeOfMovement.z && (!this->externalForce.z || (0 < this->normal.z * this->velocity.z)))
+		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->normal.z * this->velocity.z)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.z))
 			{
@@ -519,7 +500,7 @@ MovementResult Body_updateMovement(Body this)
 	this->velocity.y += __FIX19_13_MULT(this->acceleration.y, elapsedTime);
 	this->velocity.z += __FIX19_13_MULT(this->acceleration.z, elapsedTime);
 
-	VBVec3D displacement =
+	Vector3D displacement =
 	{
 		__FIX19_13_MULT(this->velocity.x, elapsedTime) + __FIX19_13_MULT(this->acceleration.x, elapsedTimeHalfSquare),
 		__FIX19_13_MULT(this->velocity.y, elapsedTime) + __FIX19_13_MULT(this->acceleration.y, elapsedTimeHalfSquare),
@@ -689,7 +670,7 @@ bool Body_isActive(Body this)
 }
 
 // retrieve position
-const VBVec3D* Body_getPosition(Body this)
+const Vector3D* Body_getPosition(Body this)
 {
 	ASSERT(this, "Body::getPosition: null this");
 
@@ -697,7 +678,7 @@ const VBVec3D* Body_getPosition(Body this)
 }
 
 // retrieve position
-void Body_setPosition(Body this, const VBVec3D* position, SpatialObject caller)
+void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller)
 {
 	ASSERT(this, "Body::setPosition: null this");
 
@@ -851,14 +832,15 @@ u16 Body_getMovementOnAllAxes(Body this)
 	return this->awake && this->active ? result : 0;
 }
 
-static MovementResult Body_getBouncingResult(Body this, VBVec3D previousVelocity)
+static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocity)
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
-	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, {__NO_AXIS, __NO_AXIS, __NO_AXIS}};
-	movementResult.axesOfChangeOfMovement.x = this->velocity.x != previousVelocity.x;
-	movementResult.axesOfChangeOfMovement.y = this->velocity.y != previousVelocity.y;
-	movementResult.axesOfChangeOfMovement.z = this->velocity.z != previousVelocity.z;
+	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS};
+
+	movementResult.axesOfChangeOfMovement |= this->velocity.x ^ previousVelocity.x ? __X_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= this->velocity.y ^ previousVelocity.y ? __Y_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= this->velocity.z ^ previousVelocity.z ? __Z_AXIS : __NO_AXIS;
 
 	// stop if minimum velocity threshold is not reached
 	// and if there is no velocity in the other components
@@ -881,19 +863,19 @@ static MovementResult Body_getBouncingResult(Body this, VBVec3D previousVelocity
 	}
 
 	// bounce accelerated if movement changed direction and the previous movement was not uniform
-	if(movementResult.axesOfChangeOfMovement.x && __UNIFORM_MOVEMENT != this->movementType.x)
+	if(__UNIFORM_MOVEMENT != this->movementType.x)
 	{
-		movementResult.axesOfAcceleratedBouncing |= __X_AXIS;
+		movementResult.axesOfAcceleratedBouncing |= __X_AXIS & movementResult.axesOfChangeOfMovement;
 	}
 
-	if(movementResult.axesOfChangeOfMovement.y && __UNIFORM_MOVEMENT != this->movementType.y)
+	if(__UNIFORM_MOVEMENT != this->movementType.y)
 	{
-		movementResult.axesOfAcceleratedBouncing |= __Y_AXIS;
+		movementResult.axesOfAcceleratedBouncing |= __Y_AXIS & movementResult.axesOfChangeOfMovement;
 	}
 
-	if(movementResult.axesOfChangeOfMovement.z && __UNIFORM_MOVEMENT != this->movementType.z)
+	if(__UNIFORM_MOVEMENT != this->movementType.z)
 	{
-		movementResult.axesOfAcceleratedBouncing |= __Z_AXIS;
+		movementResult.axesOfAcceleratedBouncing |= __Z_AXIS & movementResult.axesOfChangeOfMovement;
 	}
 
 	// don't bounce if movement stopped on that axis
@@ -903,17 +885,16 @@ static MovementResult Body_getBouncingResult(Body this, VBVec3D previousVelocity
 }
 
 // bounce back
-void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fix19_13 frictionCoefficient, fix19_13 elasticity)
+void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
-
 	fix19_13 totalElasticity = this->elasticity + elasticity;
 
-	fix19_13 cosAngle = _currentGravity->x | _currentGravity->y | _currentGravity->z ? abs(__FIX19_13_DIV(Vector_dotProduct(*_currentGravity, bouncingPlaneNormal), __FIX19_13_MULT(Vector_length(*_currentGravity), Vector_length(bouncingPlaneNormal)))) : __1I_FIX19_13;
-	fix19_13 normalForce = __FIX19_13_MULT(Vector_length(this->weight), cosAngle);
+	fix19_13 cosAngle = bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z | _currentGravity->x | _currentGravity->y | _currentGravity->z ? abs(__FIX19_13_DIV(Vector3D_dotProduct(*_currentGravity, bouncingPlaneNormal), Vector3D_lengthProduct(*_currentGravity, bouncingPlaneNormal))) : __1I_FIX19_13;
+	fix19_13 normalForce = __FIX19_13_MULT(Vector3D_length(this->weight), cosAngle);
 
 	Body_setFrictionCoefficient(this, frictionCoefficient);
-	this->normal = Vector_scalarProduct(bouncingPlaneNormal, normalForce);
+	this->normal = Vector3D_scalarProduct(bouncingPlaneNormal, normalForce);
 	this->frictionForceMagnitude = __FIX19_13_MULT(normalForce, this->frictionCoefficient);
 
 	if(__1I_FIX19_13 < totalElasticity)
@@ -925,19 +906,19 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 		totalElasticity = 0;
 	}
 
-	VBVec3D velocity = this->velocity;
+	Vector3D velocity = this->velocity;
 
 	// compute bouncing velocity vector
-	VBVec3D u = Vector_scalarProduct(bouncingPlaneNormal, Vector_dotProduct(velocity, bouncingPlaneNormal));
-	VBVec3D w =
+	Vector3D u = Vector3D_scalarProduct(bouncingPlaneNormal, Vector3D_dotProduct(velocity, bouncingPlaneNormal));
+	Vector3D w =
 	{
 		velocity.x - u.x,
 		velocity.y - u.y,
 		velocity.z - u.z,
 	};
 
-	u = Vector_scalarProduct(u, totalElasticity);
-	w = Vector_scalarProduct(w, (__I_TO_FIX19_13(1) - this->frictionCoefficient));
+	u = Vector3D_scalarProduct(u, totalElasticity);
+	w = Vector3D_scalarProduct(w, (__I_TO_FIX19_13(1) - this->frictionCoefficient));
 
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;
@@ -950,6 +931,8 @@ void Body_bounce(Body this, VBVec3D bouncingPlaneNormal, u16 axesForBouncing, fi
 	if(movementResult.axesOfAcceleratedBouncing)
 	{
 		Body_moveAccelerated(this, movementResult.axesOfAcceleratedBouncing);
+
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyBounced, &movementResult.axesOfAcceleratedBouncing);
 	}
 
 	if(movementResult.axesStoppedMovement)

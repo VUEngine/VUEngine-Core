@@ -70,11 +70,11 @@
 		 */																								\
 		ObjectSpriteContainer objectSpriteContainer;													\
 		/**
-		 * @var VBVec2D 				position
+		 * @var Vector2D 				position
 		 * @brief						positioning
 		 * @memberof					ObjectSprite
 		 */																								\
-		VBVec2D position;																				\
+		Vector2D position;																				\
 		/**
 		 * @var s16 					objectIndex
 		 * @brief						object index
@@ -120,17 +120,17 @@ __CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinitio
 void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 void ObjectSprite_destructor(ObjectSprite this);
 
-void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement);
+void ObjectSprite_addDisplacement(ObjectSprite this, const Vector2D* displacement);
 void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
 s16 ObjectSprite_getObjectIndex(ObjectSprite this);
-VBVec2D ObjectSprite_getPosition(ObjectSprite this);
+Vector2D ObjectSprite_getPosition(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
-void ObjectSprite_position(ObjectSprite this, const VBVec3D* position3D);
+void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D);
 void ObjectSprite_render(ObjectSprite this);
 void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
-void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position);
+void ObjectSprite_setPosition(ObjectSprite this, const Vector2D* position);
 void ObjectSprite_setMode(ObjectSprite this, u16 display, u16 mode);
 
 

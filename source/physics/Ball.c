@@ -28,7 +28,7 @@
 #include <Box.h>
 #include <InverseBox.h>
 #include <CollisionHelper.h>
-#include <Vector.h>
+#include <Vector3D.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <Math.h>
@@ -81,7 +81,7 @@ void Ball_constructor(Ball this, SpatialObject owner)
 
 	__CONSTRUCT_BASE(Shape, owner);
 
-	this->center = (VBVec3D){0, 0, 0};
+	this->center = (Vector3D){0, 0, 0};
 	this->radius = 0;
 	this->sphere = NULL;
 }
@@ -98,7 +98,7 @@ void Ball_destructor(Ball this)
 	__DESTROY_BASE;
 }
 
-void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
+void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
 {
 	ASSERT(this, "Ball::setup: null this");
 
@@ -138,10 +138,10 @@ CollisionSolution Ball_getCollisionSolution(Ball this, Shape shape)
 	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
-void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min, fix19_13* max)
+void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max)
 {
 	// project this onto the current normal
-	fix19_13 dotProduct = Vector_dotProduct(vector, center);
+	fix19_13 dotProduct = Vector3D_dotProduct(vector, center);
 
 	*min = dotProduct - radius;
 	*max = dotProduct + radius;
@@ -155,12 +155,12 @@ void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-CollisionSolution Ball_testForCollision(Ball this, Shape shape, VBVec3D displacement, fix19_13 sizeIncrement)
+CollisionSolution Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
 {
 	ASSERT(this, "Ball::testForCollision: null this");
 
 	// save state
-	VBVec3D center = this->center;
+	Vector3D center = this->center;
 	fix19_13 radius = this->radius;
 	this->radius += sizeIncrement;
 
@@ -179,7 +179,7 @@ CollisionSolution Ball_testForCollision(Ball this, Shape shape, VBVec3D displace
 	return collisionSolution;
 }
 
-VBVec3D Ball_getPosition(Ball this)
+Vector3D Ball_getPosition(Ball this)
 {
 	ASSERT(this, "Ball::getPosition: null this");
 
@@ -226,10 +226,10 @@ void Ball_show(Ball this)
 	ASSERT(this, "Ball::draw: null this");
 
 //	Ball_configureWireframe(this, __VIRTUAL_CALL(SpatialObject, moves, this->owner) || !this->ready);
-	Ball_configureWireframe(this, true);
+//	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron
-	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
+//	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
 }
 
 // hide wireframe

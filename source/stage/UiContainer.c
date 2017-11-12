@@ -112,7 +112,7 @@ void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 	}
 }
 
-// transform
+// transformation
 void UiContainer_transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "UiContainer::transform: null this");
@@ -127,7 +127,7 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 	Screen_doneUITransform(screen);
 }
 
-// transform
+// transformation
 void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "UiContainer::initialTransform: null this");
@@ -135,7 +135,7 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 	Screen screen = Screen_getInstance();
 	ASSERT(screen, "UiContainer::initialTransform: null screen");
 
-	VBVec3D originalScreenPosition  =
+	Vector3D originalScreenPosition  =
 	{
 		0, 0, 0
 	};
@@ -146,7 +146,7 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 		// being properly rendered
 		originalScreenPosition = Screen_getPosition(screen);
 
-		VBVec3D tempScreenPosition =
+		Vector3D tempScreenPosition =
 		{
 			0, 0, 0
 		};

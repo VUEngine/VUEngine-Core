@@ -19,44 +19,27 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DIRECT_DRAW_H_
-#define DIRECT_DRAW_H_
-
+#ifndef VECTOR_3D_H_
+#define VECTOR_3D_H_
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <Shape.h>
+#include <Types.h>
+#include <MiscStructs.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define DirectDraw_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define DirectDraw_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(DirectDraw);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-DirectDraw DirectDraw_getInstance();
-
-void DirectDraw_destructor(DirectDraw this);
-void DirectDraw_drawPoint(DirectDraw this, Vector2D point, int color);
-void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, int color);
-void DirectDraw_drawPixel(DirectDraw this, u32 buffer, u16 x, u16 y, int color);
-void DirectDraw_drawBlackPixel(DirectDraw this, u32 buffer, u16 x, u16 y);
-
+Vector3D Vector3D_get(Vector3D from, Vector3D to);
+fix19_13 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB);
+Vector3D Vector3D_scalarProduct(Vector3D vector, fix19_13 scalar);
+Vector3D Vector3D_normalize(Vector3D vector);
+Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
+fix19_13 Vector3D_length(Vector3D vector);
+fix19_13 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
 
 #endif

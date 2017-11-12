@@ -415,7 +415,7 @@ void GameState_transform(GameState this)
 	u8 invalidateTransformationFlag = (_screenDisplacement->x | _screenDisplacement->y | _screenDisplacement->z) ? __INVALIDATE_POSITION : 0;
 	invalidateTransformationFlag |= _screenDisplacement->z ? __INVALIDATE_SCALE : 0;
 
-	// then transform loaded entities
+	// then transformation loaded entities
 	__VIRTUAL_CALL(Container, transform, this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
 }
 
@@ -451,7 +451,7 @@ void GameState_synchronizeGraphics(GameState this)
 	ASSERT(this, "GameState::synchronizeGraphics: null this");
 	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
-	// then transform loaded entities
+	// then transformation loaded entities
 	__VIRTUAL_CALL(Container, synchronizeGraphics, this->stage);
 }
 
@@ -535,7 +535,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// move the screen to its previous position
 	Screen_focus(Screen_getInstance(), false);
 
-	// transform everything
+	// transformation everything
 	GameState_initialTransform(this);
 
 	// set up visual representation

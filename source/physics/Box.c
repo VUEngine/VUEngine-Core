@@ -28,7 +28,7 @@
 #include <InverseBox.h>
 #include <Ball.h>
 #include <CollisionHelper.h>
-#include <Vector.h>
+#include <Vector3D.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <HardwareManager.h>
@@ -82,7 +82,7 @@ void Box_constructor(Box this, SpatialObject owner)
 
 	this->polyhedron = NULL;
 
-	this->rotationVertexDisplacement = (VBVec3D){0, 0, 0};
+	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
 
 	this->normals = NULL;
 }
@@ -105,7 +105,7 @@ void Box_destructor(Box this)
 	__DESTROY_BASE;
 }
 
-void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
+void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
 {
 	ASSERT(this, "Box::setup: null this");
 
@@ -134,28 +134,28 @@ void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, cons
 			fix19_13 cosAngle = __FIX7_9_TO_FIX19_13(__COS(angle));
 
 			// use vectors (x1, y0, z1) and (x1, y1, z1)
-			VBVec3D topRight =
+			Vector3D topRight =
 			{
 				__FIX19_13_MULT(width, cosAngle) - __FIX19_13_MULT(-height, sinAngle),
 				__FIX19_13_MULT(width, sinAngle) + __FIX19_13_MULT(-height, cosAngle),
 				depth
 			};
 
-			VBVec3D bottomRight =
+			Vector3D bottomRight =
 			{
 				__FIX19_13_MULT(width, cosAngle) - __FIX19_13_MULT(height, sinAngle),
 				__FIX19_13_MULT(width, sinAngle) + __FIX19_13_MULT(height, cosAngle),
 				depth
 			};
 
-			VBVec3D topRightHelper =
+			Vector3D topRightHelper =
 			{
 				abs(topRight.x),
 				abs(topRight.y),
 				abs(topRight.z),
 			};
 
-			VBVec3D bottomRightHelper =
+			Vector3D bottomRightHelper =
 			{
 				abs(bottomRight.x),
 				abs(bottomRight.y),
@@ -190,28 +190,28 @@ void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, cons
 			fix19_13 cosAngle = __FIX7_9_TO_FIX19_13(__COS(0));
 
 			// use vectors (x0, y1, z0) and (x1, y1, z0)
-			VBVec3D bottomLeft =
+			Vector3D bottomLeft =
 			{
 				__FIX19_13_MULT(-width, cosAngle) + __FIX19_13_MULT(-depth, sinAngle),
 				height,
 				-__FIX19_13_MULT(-width, sinAngle) + __FIX19_13_MULT(-depth, cosAngle),
 			};
 
-			VBVec3D bottomRight =
+			Vector3D bottomRight =
 			{
 				__FIX19_13_MULT(width, cosAngle) + __FIX19_13_MULT(-depth, sinAngle),
 				height,
 				-__FIX19_13_MULT(width, sinAngle) + __FIX19_13_MULT(-depth, cosAngle),
 			};
 
-			VBVec3D bottomLeftHelper =
+			Vector3D bottomLeftHelper =
 			{
 				abs(bottomLeft.x),
 				abs(bottomLeft.y),
 				abs(bottomLeft.z),
 			};
 
-			VBVec3D bottomRightHelper =
+			Vector3D bottomRightHelper =
 			{
 				abs(bottomRight.x),
 				abs(bottomRight.y),
@@ -246,28 +246,28 @@ void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, cons
 			fix19_13 cosAngle = __FIX7_9_TO_FIX19_13(__COS(angle));
 
 			// use vectors (x1, y1, z0) and (x1, y1, z1)
-			VBVec3D bottomNear =
+			Vector3D bottomNear =
 			{
 				width,
 				__FIX19_13_MULT(height, cosAngle) - __FIX19_13_MULT(-depth, sinAngle),
 				__FIX19_13_MULT(height, sinAngle) + __FIX19_13_MULT(-depth, cosAngle),
 			};
 
-			VBVec3D bottomFar =
+			Vector3D bottomFar =
 			{
 				width,
 				__FIX19_13_MULT(height, cosAngle) - __FIX19_13_MULT(depth, sinAngle),
 				__FIX19_13_MULT(height, sinAngle) + __FIX19_13_MULT(depth, cosAngle),
 			};
 
-			VBVec3D bottomNearHelper =
+			Vector3D bottomNearHelper =
 			{
 				abs(bottomNear.x),
 				abs(bottomNear.y),
 				abs(bottomNear.z),
 			};
 
-			VBVec3D bottomFarHelper =
+			Vector3D bottomFarHelper =
 			{
 				abs(bottomFar.x),
 				abs(bottomFar.y),
@@ -294,7 +294,7 @@ void Box_setup(Box this, const VBVec3D* position, const Rotation* rotation, cons
 
 		if(this->normals)
 		{
-			VBVec3D vertexes[__BOX_VERTEXES];
+			Vector3D vertexes[__BOX_VERTEXES];
 
 			Box_getVertexes(this, vertexes);
 			Box_computeNormals(this, vertexes);
@@ -339,16 +339,16 @@ CollisionSolution Box_getCollisionSolution(Box this, Shape shape)
 	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }
 
-void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES])
+void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 {
-	VBVec3D leftTopNear 	= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
-	VBVec3D rightTopNear 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
-	VBVec3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
-	VBVec3D rightBottomNear = {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
-	VBVec3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
-	VBVec3D rightTopFar 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
-	VBVec3D leftBottomFar 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
-	VBVec3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
+	Vector3D leftTopNear 	= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
+	Vector3D rightTopNear 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
+	Vector3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
+	Vector3D rightBottomNear = {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
+	Vector3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
+	Vector3D rightTopFar 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
+	Vector3D leftBottomFar 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
+	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
 
 	if(!this->rotationVertexDisplacement.z)
 	{
@@ -398,48 +398,48 @@ void Box_getVertexes(Box this, VBVec3D vertexes[__BOX_VERTEXES])
 	vertexes[7] = rightBottomFar;
 }
 
-void Box_computeNormals(Box this, VBVec3D vertexes[__BOX_VERTEXES])
+void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
 {
 /*
 	// generic way
-	normals[0] = Vector_getPlaneNormal(vertexes[6], vertexes[4], vertexes[0]);
-	normals[1] = Vector_getPlaneNormal(vertexes[0], vertexes[4], vertexes[5]);
-	normals[2] = Vector_getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
+	normals[0] = Vector3D_getPlaneNormal(vertexes[6], vertexes[4], vertexes[0]);
+	normals[1] = Vector3D_getPlaneNormal(vertexes[0], vertexes[4], vertexes[5]);
+	normals[2] = Vector3D_getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
 */
 
 	// fast way given that the cubes are regular
-	this->normals->vectors[0] = (VBVec3D)
+	this->normals->vectors[0] = (Vector3D)
 	{
 		vertexes[1].x - vertexes[0].x,
 		vertexes[1].y - vertexes[0].y,
 		vertexes[1].z - vertexes[0].z,
 	};
 
-	this->normals->vectors[1] = (VBVec3D)
+	this->normals->vectors[1] = (Vector3D)
 	{
 		vertexes[2].x - vertexes[0].x,
 		vertexes[2].y - vertexes[0].y,
 		vertexes[2].z - vertexes[0].z,
 	};
 
-	this->normals->vectors[2] = (VBVec3D)
+	this->normals->vectors[2] = (Vector3D)
 	{
 		vertexes[4].x - vertexes[0].x,
 		vertexes[4].y - vertexes[0].y,
 		vertexes[4].z - vertexes[0].z,
 	};
 
-	this->normals->vectors[0] = Vector_normalize(this->normals->vectors[0]);
-	this->normals->vectors[1] = Vector_normalize(this->normals->vectors[1]);
-	this->normals->vectors[2] = Vector_normalize(this->normals->vectors[2]);
+	this->normals->vectors[0] = Vector3D_normalize(this->normals->vectors[0]);
+	this->normals->vectors[1] = Vector3D_normalize(this->normals->vectors[1]);
+	this->normals->vectors[2] = Vector3D_normalize(this->normals->vectors[2]);
 }
 
-void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min, fix19_13* max)
+void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix19_13* min, fix19_13* max)
 {
 	int vertexIndex = 0;
 
 	// project this onto the current normal
-	fix19_13 dotProduct = Vector_dotProduct(vector, vertexes[vertexIndex]);
+	fix19_13 dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
 
 	*min = dotProduct;
 	*max = dotProduct;
@@ -447,7 +447,7 @@ void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min
 	// project this onto the current normal
 	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
 	{
-		dotProduct = Vector_dotProduct(vector, vertexes[vertexIndex]);
+		dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
 
 		if(dotProduct < *min)
 		{
@@ -461,7 +461,7 @@ void Box_project(VBVec3D vertexes[__BOX_VERTEXES], VBVec3D vector, fix19_13* min
 }
 
 // test if collision with the entity give the displacement
-CollisionSolution Box_testForCollision(Box this, Shape shape, VBVec3D displacement, fix19_13 sizeIncrement)
+CollisionSolution Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
 {
 	ASSERT(this, "Box::testForCollision: null this");
 
@@ -487,11 +487,11 @@ CollisionSolution Box_testForCollision(Box this, Shape shape, VBVec3D displaceme
 	return collisionSolution;
 }
 
-VBVec3D Box_getPosition(Box this)
+Vector3D Box_getPosition(Box this)
 {
 	ASSERT(this, "Box::getPosition: null this");
 
-	VBVec3D position =
+	Vector3D position =
 	{
 		this->rightBox.x0 + ((this->rightBox.x1 - this->rightBox.x0) >> 1),
 		this->rightBox.y0 + ((this->rightBox.y1 - this->rightBox.y0) >> 1),

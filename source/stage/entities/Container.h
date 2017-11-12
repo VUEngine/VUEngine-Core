@@ -75,7 +75,7 @@
 		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*, u8);							\
 		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics);											\
 		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
-		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const VBVec3D* position);						\
+		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const Vector3D* position);						\
 		__VIRTUAL_DEC(ClassName, void, setLocalRotation, const Rotation* rotation);						\
 		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
 		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
@@ -113,7 +113,7 @@
 		/* super's attributes */																		\
 		SpatialObject_ATTRIBUTES																		\
 		/* 3d transformation */																			\
-		Transformation transform;																		\
+		Transformation transformation;																		\
 		/* children list */																				\
 		VirtualList children;																			\
 		/* removed children list */																		\
@@ -149,7 +149,7 @@ void Container_destructor(Container this);
 void Container_addChild(Container this, Container child);
 void Container_applyEnvironmentToTransformation(Container this, const Transformation* environmentTransform);
 void Container_changeEnvironment(Container this, Transformation* environmentTransform);
-void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transform);
+void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
 void Container_deleteMyself(Container this);
 int Container_doKeyHold(Container this, int pressedKey);
 int Container_doKeyPressed(Container this, int pressedKey);
@@ -159,9 +159,9 @@ int Container_getChildCount(Container this);
 VirtualList Container_getChildren(Container this);
 Transformation Container_getEnvironmentTransform(Container this);
 Transformation* Container_getTransform(Container this);
-const VBVec3D* Container_getGlobalPosition(Container this);
+const Vector3D* Container_getGlobalPosition(Container this);
 s16 Container_getId(Container this);
-const VBVec3D* Container_getLocalPosition(Container this);
+const Vector3D* Container_getLocalPosition(Container this);
 const Rotation* Container_getLocalRotation(Container this);
 const Scale* Container_getLocalScale(Container this);
 char* Container_getName(Container this);
@@ -182,7 +182,7 @@ void Container_setupGraphics(Container this);
 void Container_releaseGraphics(Container this);
 void Container_removeChild(Container this, Container child);
 void Container_resume(Container this);
-void Container_setLocalPosition(Container this, const VBVec3D* position);
+void Container_setLocalPosition(Container this, const Vector3D* position);
 void Container_setLocalRotation(Container this, const Rotation* rotation);
 void Container_setLocalScale(Container this, const Scale* scale);
 void Container_setName(Container this, const char* const name);

@@ -71,11 +71,11 @@
 		 */																								\
 		fix19_13 radius;																				\
 		/**
-		 * @var VBVec3D		center
+		 * @var Vector3D		center
 		 * @brief			the center of the ball
 		 * @memberof 		Box
 		 */																								\
-		VBVec3D center;																					\
+		Vector3D center;																					\
 
 __CLASS(Ball);
 
@@ -89,12 +89,12 @@ __CLASS_NEW_DECLARE(Ball, SpatialObject owner);
 void Ball_constructor(Ball this, SpatialObject owner);
 void Ball_destructor(Ball this);
 
-void Ball_setup(Ball this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 CollisionInformation Ball_overlaps(Ball this, Shape shape);
 CollisionSolution Ball_getCollisionSolution(Ball this, Shape shape);
-void Ball_project(VBVec3D center, fix19_13 radius, VBVec3D vector, fix19_13* min, fix19_13* max);
-CollisionSolution Ball_testForCollision(Ball this, Shape collidingShape, VBVec3D displacement, fix19_13 sizeIncrement);
-VBVec3D Ball_getPosition(Ball this);
+void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max);
+CollisionSolution Ball_testForCollision(Ball this, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);
+Vector3D Ball_getPosition(Ball this);
 RightBox Ball_getSurroundingRightBox(Ball this);
 void Ball_show(Ball this);
 void Ball_hide(Ball this);

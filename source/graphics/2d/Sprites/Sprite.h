@@ -53,10 +53,10 @@
 #define Sprite_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, render);															\
-		__VIRTUAL_DEC(ClassName, VBVec2D, getPosition);													\
-		__VIRTUAL_DEC(ClassName, void, setPosition, const VBVec2D* position);							\
-		__VIRTUAL_DEC(ClassName, void, addDisplacement, const VBVec2D* displacement);					\
-		__VIRTUAL_DEC(ClassName, void, position, const VBVec3D* position);								\
+		__VIRTUAL_DEC(ClassName, Vector2D, getPosition);													\
+		__VIRTUAL_DEC(ClassName, void, setPosition, const Vector2D* position);							\
+		__VIRTUAL_DEC(ClassName, void, addDisplacement, const Vector2D* displacement);					\
+		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
 		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix19_13 z);								\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
@@ -91,11 +91,11 @@
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
 		/*
-		 * @var VBVecWorld 			displacement
+		 * @var WorldVector 			displacement
 		 * @brief					Displacement modifier to achieve better control over display
 		 * @memberof				Sprite
 		 */																								\
-		VBVecWorld displacement;																		\
+		WorldVector displacement;																		\
 		/*
 		 * @var AnimationController animationController
 		 * @brief					AnimationController
@@ -182,7 +182,7 @@ typedef struct SpriteDefinition
 	bool transparent;
 
 	/// displacement modifier to achieve better control over display
-	VBVecWorld displacement;
+	WorldVector displacement;
 
 } SpriteDefinition;
 
@@ -283,11 +283,11 @@ void Sprite_rewrite(Sprite this);
 void Sprite_setTransparent(Sprite this, bool value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
-void Sprite_position(Sprite this, const VBVec3D* position);
+void Sprite_position(Sprite this, const Vector3D* position);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);
-VBVecWorld Sprite_getDisplacement(Sprite this);
+WorldVector Sprite_getDisplacement(Sprite this);
 s8 Sprite_getFrameDuration(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 int Sprite_getHalfWidth(Sprite this);

@@ -106,12 +106,12 @@ void Shape_destructor(Shape this)
  * @public
  *
  * @param this					Function scope
- * @param position				VBVec3D*
+ * @param position				Vector3D*
  * @param rotation				Rotation*
  * @param scale					Scale*
  * @param size					Size*
  */
-void Shape_setup(Shape this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);

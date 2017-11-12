@@ -383,8 +383,8 @@ void SpriteManager_sortLayers(SpriteManager this)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 				Sprite nextSprite = __SAFE_CAST(Sprite, nextNode->data);
-				VBVec2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-				VBVec2D nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
+				Vector2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+				Vector2D nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
 				if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
@@ -435,8 +435,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
 			Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
-			VBVec2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-			VBVec2D nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
+			Vector2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+			Vector2D nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 			// check if z positions are swapped
 			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
@@ -846,7 +846,7 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 		}
 
 		// force initialization
-		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+		Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
@@ -873,7 +873,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 		__VIRTUAL_CALL(Sprite, show, sprite);
 
 		// force inialization
-		VBVec2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+		Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;

@@ -117,7 +117,7 @@ bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 
 		this->collidingShapePurgeNode = this->collidingShapePurgeNode->next;
 
-		VBVec3D displacement = {0, 0, 0};
+		Vector3D displacement = {0, 0, 0};
 		fix19_13 sizeIncrement = __I_TO_FIX19_13(1);
 
 		VirtualList ownerShapes = __VIRTUAL_CALL(SpatialObject, getShapes, this->owner);
@@ -152,7 +152,7 @@ bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 	return false;
 }
 
-VirtualList CollisionSolver_testForCollisions(CollisionSolver this, VBVec3D displacement, fix19_13 sizeIncrement, const Shape shape)
+VirtualList CollisionSolver_testForCollisions(CollisionSolver this, Vector3D displacement, fix19_13 sizeIncrement, const Shape shape)
 {
 	ASSERT(this, "CollisionSolver::testForCollisions: null this");
 
@@ -196,7 +196,7 @@ bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation
 	ASSERT(collisionInformation->collidingShape, "CollisionSolver::resolveCollision: null collidingEntities");
 
 	// retrieve the colliding spatialObject's position and gap
-	VBVec3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
+	Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
 
 	// if pending SAT check
 	if(!collisionInformation->isCollisionSolutionValid)

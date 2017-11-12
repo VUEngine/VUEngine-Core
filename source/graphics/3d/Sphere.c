@@ -49,14 +49,14 @@ __CLASS_DEFINITION(Sphere, Wireframe);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-static void Sphere_constructor(Sphere this, VBVec3D center, fix19_13 radius);
+static void Sphere_constructor(Sphere this, Vector3D center, fix19_13 radius);
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(Sphere, VBVec3D center, fix19_13 radius)
+__CLASS_NEW_DEFINITION(Sphere, Vector3D center, fix19_13 radius)
 __CLASS_NEW_END(Sphere, center, radius);
 
 /**
@@ -67,7 +67,7 @@ __CLASS_NEW_END(Sphere, center, radius);
  *
  * @param this	Function scope
  */
-static void Sphere_constructor(Sphere this, VBVec3D center, fix19_13 radius)
+static void Sphere_constructor(Sphere this, Vector3D center, fix19_13 radius)
 {
 	ASSERT(this, "Sphere::constructor: null this");
 
@@ -106,7 +106,7 @@ void Sphere_destructor(Sphere this)
  * @param this					Function scope
  * @return 						Sphere's center
  */
-VBVec3D Sphere_getCenter(Sphere this)
+Vector3D Sphere_getCenter(Sphere this)
 {
 	ASSERT(this, "Sphere::getCenter: null this");
 
@@ -122,7 +122,7 @@ VBVec3D Sphere_getCenter(Sphere this)
  * @param this					Function scope
  * @param center 				New value
  */
-void Sphere_setCenter(Sphere this, VBVec3D center)
+void Sphere_setCenter(Sphere this, Vector3D center)
 {
 	ASSERT(this, "Sphere::destructor: null this");
 
@@ -177,12 +177,12 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	int color = __COLOR_BRIGHT_RED;
 
-	VBVec3D normalizedCenter = this->center;
+	Vector3D normalizedCenter = this->center;
 	__OPTICS_NORMALIZE(normalizedCenter);
 
 	fix19_13 radiusSquare = __FIX19_13_MULT(this->radius, this->radius);
 
-	VBVec3D point3D;
+	Vector3D point3D;
 
 	// draw on XY plane
 	point3D.x = -this->radius;
@@ -193,8 +193,8 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 	{
 		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
-		VBVec3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		VBVec2D point2D = {0, 0, 0, 0};
+		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
+		Vector2D point2D = {0, 0, 0, 0};
 
 		// project to 2d coordinates
 		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
@@ -209,7 +209,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point2D.y = -point3D.y + normalizedCenter.y;
 		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
 	}
-
+/*
 	// draw on YZ plane
 	point3D.x = 0;
 	point3D.y = 0;
@@ -219,8 +219,8 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 	{
 		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
-		VBVec3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		VBVec2D point2D = {0, 0, 0, 0};
+		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
+		Vector2D point2D = {0, 0, 0, 0};
 
 		// project to 2d coordinates
 		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
@@ -245,8 +245,8 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 	{
 		point3D.z = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
-		VBVec3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		VBVec2D point2D = {0, 0, 0, 0};
+		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
+		Vector2D point2D = {0, 0, 0, 0};
 
 		// project to 2d coordinates
 		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
@@ -261,4 +261,5 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point2D.y = -point3D.y + normalizedCenter.y;
 		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
 	}
+*/
 }

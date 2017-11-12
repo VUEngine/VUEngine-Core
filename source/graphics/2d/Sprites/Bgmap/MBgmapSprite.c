@@ -227,16 +227,16 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
  * @param this			Function scope
  * @param position		3D position
  */
-void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
+void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	VBVec3D position3D = *position;
+	Vector3D position3D = *position;
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
 
-	VBVec2D position2D;
+	Vector2D position2D;
 
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
@@ -256,7 +256,7 @@ void MBgmapSprite_position(MBgmapSprite this, const VBVec3D* position)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
+void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 
@@ -319,7 +319,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const VBVec2D* position)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void MBgmapSprite_addDisplacement(MBgmapSprite this, const VBVec2D* displacement)
+void MBgmapSprite_addDisplacement(MBgmapSprite this, const Vector2D* displacement)
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
 
@@ -496,7 +496,7 @@ void MBgmapSprite_render(MBgmapSprite this)
  *
  * @return			2D position
  */
-VBVec2D MBgmapSprite_getPosition(MBgmapSprite this)
+Vector2D MBgmapSprite_getPosition(MBgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 

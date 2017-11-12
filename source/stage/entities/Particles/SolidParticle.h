@@ -74,11 +74,11 @@ Shape SpatialObject_getShape(SpatialObject this);
 		 */																								\
 		const SolidParticleDefinition* shapeParticleDefinition;											\
 		/*
-		 * @var VBVec3D 					previousGlobalPosition
+		 * @var Vector3D 					previousGlobalPosition
 		 * @brief							Particle's previous position, for collision handling
 		 * @memberof						SolidParticle
 		 */																								\
-		VBVec3D previousGlobalPosition;																	\
+		Vector3D previousGlobalPosition;																	\
 		/*
 		 * @var CollisionSolver 			collisionSolver
 		 * @brief							Particle's collision solver
@@ -86,11 +86,11 @@ Shape SpatialObject_getShape(SpatialObject this);
 		 */																								\
 		CollisionSolver collisionSolver;																\
 		/*
-		 * @var VBVec3D 					position
+		 * @var Vector3D 					position
 		 * @brief							Particle's position
 		 * @memberof						SolidParticle
 		 */																								\
-		VBVec3D position;																				\
+		Vector3D position;																				\
 
 __CLASS(SolidParticle);
 
@@ -158,7 +158,7 @@ u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
 bool SolidParticle_processCollision(SolidParticle this, CollisionInformation collisionInformation);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
-void SolidParticle_setPosition(SolidParticle this, const VBVec3D* position);
+void SolidParticle_setPosition(SolidParticle this, const Vector3D* position);
 u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
 
 

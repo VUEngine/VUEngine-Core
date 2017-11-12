@@ -43,7 +43,6 @@
 		AnimatedEntity_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
 		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
-		__VIRTUAL_DEC(ClassName, u16, getAxesForBouncing);												\
 		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
@@ -64,7 +63,6 @@
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, canMoveTowards);												\
-		__VIRTUAL_SET(ClassName, Actor, getAxesForBouncing);											\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
@@ -109,14 +107,14 @@ __CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id, s16 i
 void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
 void Actor_destructor(Actor this);
 void Actor_setDefinition(Actor this, void* actorDefinition);
-void Actor_setLocalPosition(Actor this, const VBVec3D* position);
+void Actor_setLocalPosition(Actor this, const Vector3D* position);
 void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Actor_resume(Actor this);
 void Actor_update(Actor this, u32 elapsedTime);
-int Actor_changedDirection(Actor this, u16 axis);
+bool Actor_hasChangedDirection(Actor this, u16 axis);
 void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
-bool Actor_canMoveTowards(Actor this, VBVec3D direction);
+bool Actor_canMoveTowards(Actor this, Vector3D direction);
 u16 Actor_getAxisFreeForMovement(Actor this);
 bool Actor_processCollision(Actor this, CollisionInformation collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
@@ -125,9 +123,8 @@ bool Actor_moves(Actor this);
 bool Actor_isMoving(Actor this);
 u16 Actor_getMovementState(Actor this);
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
-const VBVec3D* Actor_getPosition(Actor this);
-void Actor_setPosition(Actor this, const VBVec3D* position);
-u16 Actor_getAxesForBouncing(Actor this);
+const Vector3D* Actor_getPosition(Actor this);
+void Actor_setPosition(Actor this, const Vector3D* position);
 void Actor_takeHitFrom(Actor this, Actor other);
 fix19_13 Actor_getElasticity(Actor this);
 void Actor_addForce(Actor this, const Force* force);

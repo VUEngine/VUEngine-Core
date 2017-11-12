@@ -204,7 +204,7 @@ Scale BgmapSprite_getScale(BgmapSprite this)
  *
  * @return			2D position
  */
-VBVec2D BgmapSprite_getPosition(BgmapSprite this)
+Vector2D BgmapSprite_getPosition(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 
@@ -220,7 +220,7 @@ VBVec2D BgmapSprite_getPosition(BgmapSprite this)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
+void BgmapSprite_setPosition(BgmapSprite this, const Vector2D* position)
 {
 	ASSERT(this, "BgmapSprite::setPosition: null this");
 
@@ -241,11 +241,11 @@ void BgmapSprite_setPosition(BgmapSprite this, const VBVec2D* position)
  * @param this			Function scope
  * @param position		3D position
  */
-void BgmapSprite_position(BgmapSprite this, const VBVec3D* position)
+void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "BgmapSprite::position: null this");
 
-	VBVec3D position3D = *position;
+	Vector3D position3D = *position;
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -503,7 +503,7 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		static WorldAttributes* worldPointer = NULL;
     	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
-		// provide a little bit of performance gain by only calculation transform equations
+		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
 		// screen moves vertically
 		// int lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
@@ -683,7 +683,7 @@ void BgmapSprite_render(BgmapSprite this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void BgmapSprite_addDisplacement(BgmapSprite this, const VBVec2D* displacement)
+void BgmapSprite_addDisplacement(BgmapSprite this, const Vector2D* displacement)
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
 

@@ -326,7 +326,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 	int counter = 0;
 
-	VBVec3D gravityDirection =
+	Vector3D gravityDirection =
 	{
 		this->gravity.x,
 		this->gravity.y,
@@ -352,18 +352,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 				// must account for the fps to avoid situations is which a collision is not detected
 				// when a body starts to fall and doesn't have enough time to detect a shape below
 				// when moving from one shape over another
-				Acceleration gravity =
-				{
-					gravitySensibleAxis & __X_AXIS ? this->gravity.x : 0,
-					gravitySensibleAxis & __Y_AXIS ? this->gravity.y : 0,
-					gravitySensibleAxis & __Z_AXIS ? this->gravity.z : 0
-				};
-
-				if(gravity.x | gravity.y | gravity.z)
-				{
-					// add gravity
-					Body_applyGravity(body, &gravity);
-				}
+				Body_applyGravity(body, gravitySensibleAxis);
 			}
 		}
 	}
@@ -587,11 +576,11 @@ void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
  *
  * @return		PhysicalWorld's gravity
  */
-const VBVec3D* PhysicalWorld_getGravity(PhysicalWorld this)
+const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getGravity: null this");
 
-	return (const VBVec3D*)&this->gravity;
+	return (const Vector3D*)&this->gravity;
 }
 
 /**

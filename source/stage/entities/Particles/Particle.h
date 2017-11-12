@@ -152,16 +152,16 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 void Particle_destructor(Particle this);
 
 void Particle_addForce(Particle this, const Force* force, u32 movementType);
-bool Particle_canMoveTowards(Particle this, VBVec3D direction);
+bool Particle_canMoveTowards(Particle this, Vector3D direction);
 u16 Particle_getDepth(Particle this);
 u16 Particle_getHeight(Particle this);
-const VBVec3D* Particle_getPosition(Particle this);
+const Vector3D* Particle_getPosition(Particle this);
 void Particle_hide(Particle this);
 bool Particle_moves(Particle this);
 void Particle_resume(Particle this);
 void Particle_setLifeSpan(Particle this, int lifeSpan);
 void Particle_setMass(Particle this, fix19_13 mass);
-void Particle_setPosition(Particle this, const VBVec3D* position);
+void Particle_setPosition(Particle this, const Vector3D* position);
 void Particle_show(Particle this);
 void Particle_suspend(Particle this);
 void Particle_transform(Particle this);

@@ -113,7 +113,7 @@ typedef const struct PositionedEntity
 	EntityDefinition* entityDefinition;
 
 	// position in the world
-	VBVec3D position;
+	Vector3D position;
 
 	// entity's id
 	s16 id;

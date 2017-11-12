@@ -162,7 +162,7 @@ void ManagedEntity_removeChild(ManagedEntity this, Container child)
 	__CALL_BASE_METHOD(Entity, removeChild, this, child);
 }
 
-// transform class
+// transformation class
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "ManagedEntity::initialTransform: null this");
@@ -170,8 +170,8 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
 	// save new global position
-	VBVec3D position3D = this->transform.globalPosition;
-	VBVec2D position2D;
+	Vector3D position3D = this->transformation.globalPosition;
+	Vector2D position2D;
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -198,7 +198,7 @@ void ManagedEntity_ready(ManagedEntity this, bool recursive)
 	}
 }
 
-// transform class
+// transformation class
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "ManagedEntity::transform: null this");
@@ -213,8 +213,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		this->invalidateGlobalTransformation = 0;
 
 		// save the 2d position
-		VBVec3D position3D = this->transform.globalPosition;
-		VBVec2D position2D;
+		Vector3D position3D = this->transformation.globalPosition;
+		Vector2D position2D;
 
 		// normalize the position to screen coordinates
 		__OPTICS_NORMALIZE(position3D);
@@ -234,11 +234,11 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 	if((__INVALIDATE_POSITION & this->invalidateGlobalTransformation) |
 		(u32)this->children)
 	{
-		// call base class's transform method
+		// call base class's transformation method
 		Container_transformNonVirtual(__SAFE_CAST(Container, this), environmentTransform);
 	}
 
-	// apply environment transform
+	// apply environment transformation
 	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
 	this->invalidateSprites |= __INVALIDATE_POSITION;
@@ -264,8 +264,8 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 	}
 
 	// save new global position
-	VBVec3D position3D = this->transform.globalPosition;
-	VBVec2D position2D;
+	Vector3D position3D = this->transformation.globalPosition;
+	Vector2D position2D;
 	position2D.parallax = 0;
 
 	// normalize the position to screen coordinates
@@ -276,7 +276,7 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 
 	VirtualNode spriteNode = this->managedSprites->head;
 
-	VBVec2D displacement;
+	Vector2D displacement;
 
 	displacement.x = position2D.x - this->previous2DPosition.x;
 	displacement.y = position2D.y - this->previous2DPosition.y;

@@ -138,16 +138,16 @@ typedef struct ParticleSystemDefinition
 	ParticleDefinition* particleDefinition;
 
 	/// minimum relative spawn position
-	VBVec3D minimumRelativeSpawnPosition;
+	Vector3D minimumRelativeSpawnPosition;
 
 	/// maximum relative spawn position
-	VBVec3D maximumRelativeSpawnPosition;
+	Vector3D maximumRelativeSpawnPosition;
 
 	/// minimum force to apply (use int values in the definition to avoid overflow)
-	VBVec3D minimumForce;
+	Vector3D minimumForce;
 
 	/// maximum force to apply (use int values in the definition to avoid overflow)
-	VBVec3D maximumForce;
+	Vector3D maximumForce;
 
 	/// type of movement for the particles
 	u32 movementType;

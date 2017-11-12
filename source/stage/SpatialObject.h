@@ -43,12 +43,12 @@
 		__VIRTUAL_DEC(ClassName, VirtualList, getShapes);												\
 		__VIRTUAL_DEC(ClassName, bool, moves);															\
 		__VIRTUAL_DEC(ClassName, bool, isMoving);														\
-		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, VBVec3D direction);								\
+		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, Vector3D direction);								\
 		__VIRTUAL_DEC(ClassName, u16, getWidth);														\
 		__VIRTUAL_DEC(ClassName, u16, getHeight);														\
 		__VIRTUAL_DEC(ClassName, u16, getDepth);														\
-		__VIRTUAL_DEC(ClassName, const VBVec3D*, getPosition);											\
-		__VIRTUAL_DEC(ClassName, void, setPosition, const VBVec3D* position);							\
+		__VIRTUAL_DEC(ClassName, const Vector3D*, getPosition);											\
+		__VIRTUAL_DEC(ClassName, void, setPosition, const Vector3D* position);							\
 		__VIRTUAL_DEC(ClassName, const Rotation*, getRotation);											\
 		__VIRTUAL_DEC(ClassName, void, setRotation, const Rotation* rotation);							\
 		__VIRTUAL_DEC(ClassName, const Scale*, getScale);												\
@@ -96,12 +96,12 @@ void SpatialObject_constructor(SpatialObject this);
 void SpatialObject_destructor(SpatialObject this);
 bool SpatialObject_moves(SpatialObject this);
 bool SpatialObject_isMoving(SpatialObject this);
-bool SpatialObject_canMoveTowards(SpatialObject this, VBVec3D direction);
+bool SpatialObject_canMoveTowards(SpatialObject this, Vector3D direction);
 u16 SpatialObject_getWidth(SpatialObject this);
 u16 SpatialObject_getHeight(SpatialObject this);
 u16 SpatialObject_getDepth(SpatialObject this);
-const VBVec3D* SpatialObject_getPosition(SpatialObject this);
-void SpatialObject_setPosition(SpatialObject this, const VBVec3D* position);
+const Vector3D* SpatialObject_getPosition(SpatialObject this);
+void SpatialObject_setPosition(SpatialObject this, const Vector3D* position);
 const Rotation* SpatialObject_getRotation(SpatialObject this);
 void SpatialObject_setRotation(SpatialObject this, const Rotation* rotation);
 const Scale* SpatialObject_getScale(SpatialObject this);

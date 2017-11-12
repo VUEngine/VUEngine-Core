@@ -85,11 +85,11 @@
 		 */																								\
 		int canStream;																					\
 		/**
-		 * @var VBVec3D 			screenPosition
+		 * @var Vector3D 			screenPosition
 		 * @brief					must save to allow pause
 		 * @memberof				GameState
 		 */																								\
-		VBVec3D screenPosition;																			\
+		Vector3D screenPosition;																			\
 		/**
 		 * @var Clock 				messagingClock
 		 * @brief					clock for messaging

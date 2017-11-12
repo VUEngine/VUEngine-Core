@@ -52,10 +52,10 @@ __FORWARD_CLASS(Shape)
 typedef struct CollisionSolution
 {
 	// minimum vector to solve the collision
-	VBVec3D translationVector;
+	Vector3D translationVector;
 
 	// collision's plane normal
-	VBVec3D collisionPlaneNormal;
+	Vector3D collisionPlaneNormal;
 
 	// minimum vector to solve the collision
 	fix19_13 translationVectorLength;
@@ -85,17 +85,17 @@ typedef struct CollisionInformation
 
 typedef struct Normals
 {
-	VBVec3D vectors[__SHAPE_NORMALS];
+	Vector3D vectors[__SHAPE_NORMALS];
 } Normals;
 
 
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, overlaps, Shape shape);																\
-		__VIRTUAL_DEC(ClassName, void, setup, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
+		__VIRTUAL_DEC(ClassName, void, setup, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
 		__VIRTUAL_DEC(ClassName, CollisionSolution, getCollisionSolution, Shape collidingShape);		\
-		__VIRTUAL_DEC(ClassName, CollisionSolution, testForCollision, Shape collidingShape, VBVec3D displacement, fix19_13 sizeIncrement);	\
-		__VIRTUAL_DEC(ClassName, VBVec3D, getPosition);													\
+		__VIRTUAL_DEC(ClassName, CollisionSolution, testForCollision, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);	\
+		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);													\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
@@ -157,7 +157,7 @@ typedef struct ShapeDefinition
 	Size size;
 
 	/// displacement modifier
-	VBVec3D displacement;
+	Vector3D displacement;
 
 	/// rotation modifier
 	Rotation rotation;
@@ -182,7 +182,7 @@ void Shape_destructor(Shape this);
 
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
-void Shape_setup(Shape this, const VBVec3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isChecked(Shape this);

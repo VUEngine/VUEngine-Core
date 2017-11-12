@@ -104,7 +104,7 @@ typedef struct StageDefinition
 		Size size;
 
 		// screen's initial position inside the game world
-		VBVec3D screenInitialPosition;
+		Vector3D screenInitialPosition;
 
 	} level;
 

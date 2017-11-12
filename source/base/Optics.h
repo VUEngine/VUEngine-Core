@@ -35,25 +35,25 @@
 
 // these improve performance in the real machine
 #undef __OPTICS_NORMALIZE
-#define __OPTICS_NORMALIZE(Vector)																		\
-		extern const VBVec3D* _screenPosition;															\
-		Vector.x -= (_screenPosition->x);																\
-		Vector.y -= (_screenPosition->y);																\
-		Vector.z -= (_screenPosition->z);
+#define __OPTICS_NORMALIZE(vector3D)																	\
+		extern const Vector3D* _screenPosition;															\
+		vector3D.x -= (_screenPosition->x);																\
+		vector3D.y -= (_screenPosition->y);																\
+		vector3D.z -= (_screenPosition->z);
 
 #undef __OPTICS_PROJECT_TO_2D
-#define __OPTICS_PROJECT_TO_2D(Vector3D, Vector2D)														\
-		Vector2D.x = Vector3D.x 																		\
-			+ (__FIX19_13_MULT(_optical->horizontalViewPointCenter - 										\
-					Vector3D.x, Vector3D.z) >> _optical->maximumViewDistancePower);						\
-		Vector2D.y = Vector3D.y 																		\
-			- (__FIX19_13_MULT(Vector3D.y - _optical->verticalViewPointCenter,							\
-				Vector3D.z) >> _optical->maximumViewDistancePower);										\
-		Vector2D.z = Vector3D.z;																		\
+#define __OPTICS_PROJECT_TO_2D(vector3D, vector2D)														\
+		vector2D.x = vector3D.x 																		\
+			+ (__FIX19_13_MULT(_optical->horizontalViewPointCenter - 									\
+					vector3D.x, vector3D.z) >> _optical->maximumViewDistancePower);						\
+		vector2D.y = vector3D.y 																		\
+			- (__FIX19_13_MULT(vector3D.y - _optical->verticalViewPointCenter,							\
+				vector3D.z) >> _optical->maximumViewDistancePower);										\
+		vector2D.z = vector3D.z;																		\
 
 #undef __OPTICS_3D_LENGHT_SQUARED
 #define __OPTICS_3D_LENGHT_SQUARED(vector1, vector2)													\
-		__FIX19_13_TO_I(__FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +					\
+		__FIX19_13_TO_I(__FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +				\
         			__FIX19_13_MULT((vector1.y - vector2.y), (vector1.y - vector2.y)) +					\
         			__FIX19_13_MULT((vector1.z - vector2.z), (vector1.z - vector2.z)))					\
 

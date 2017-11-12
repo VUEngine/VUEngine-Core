@@ -159,7 +159,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 		/* fx sound */																					\
 		const u16* fxSound[__FXS];																		\
 		/* space position of each fx */																	\
-		VBVec2D fxPosition[__FXS];																		\
+		Vector2D fxPosition[__FXS];																		\
 
 /**
  * @class	SoundManager
@@ -565,7 +565,7 @@ void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
  *
  * @return 			True if playback started
  */
-int SoundManager_playFxSound(SoundManager this, const u16* fxSound, VBVec3D	position)
+int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D	position)
 {
 	ASSERT(this, "SoundManager::loadFxSound: null this");
 

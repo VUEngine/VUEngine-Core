@@ -46,7 +46,7 @@
 		/* super's attributes */																		\
 		Wireframe_ATTRIBUTES																			\
 		/* vertices */																					\
-		VBVec3D center;																					\
+		Vector3D center;																					\
 		/* radious */																					\
 		fix19_13 radius;																				\
 
@@ -57,11 +57,11 @@ __CLASS(Sphere);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Sphere, VBVec3D center, fix19_13 radius);
+__CLASS_NEW_DECLARE(Sphere, Vector3D center, fix19_13 radius);
 
 void Sphere_destructor(Sphere this);
-VBVec3D Sphere_getCenter(Sphere this);
-void Sphere_setCenter(Sphere this, VBVec3D center);
+Vector3D Sphere_getCenter(Sphere this);
+void Sphere_setCenter(Sphere this, Vector3D center);
 fix19_13 Sphere_getRadius(Sphere this);
 void Sphere_setRadius(Sphere this, fix19_13 radius);
 void Sphere_draw(Sphere this, bool calculateParallax);

@@ -83,7 +83,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 
 	this->body = NULL;
 	this->collisionSolver = NULL;
-	this->previousRotation = this->transform.localRotation;
+	this->previousRotation = this->transformation.localRotation;
 }
 
 // class's destructor
@@ -132,24 +132,24 @@ void Actor_setDefinition(Actor this, void* actorDefinition)
 }
 
 //set class's local position
-void Actor_setLocalPosition(Actor this, const VBVec3D* position)
+void Actor_setLocalPosition(Actor this, const Vector3D* position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
-	VBVec3D displacement = this->transform.localPosition;
+	Vector3D displacement = this->transformation.localPosition;
 	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, position);
 
-	displacement.x -= this->transform.localPosition.x;
-	displacement.y -= this->transform.localPosition.y;
-	displacement.z -= this->transform.localPosition.z;
+	displacement.x -= this->transformation.localPosition.x;
+	displacement.y -= this->transformation.localPosition.y;
+	displacement.z -= this->transformation.localPosition.z;
 
-	this->transform.globalPosition.x += displacement.x;
-	this->transform.globalPosition.y += displacement.y;
-	this->transform.globalPosition.z += displacement.z;
+	this->transformation.globalPosition.x += displacement.x;
+	this->transformation.globalPosition.y += displacement.y;
+	this->transformation.globalPosition.z += displacement.z;
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
 	this->invalidateGlobalTransformation = (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
@@ -171,8 +171,8 @@ void Actor_syncPositionWithBody(Actor this)
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
 	// retrieve the body's displacement
-	VBVec3D bodyLastDisplacement = {0, 0, 0};
-	VBVec3D bodyPosition = this->transform.globalPosition;
+	Vector3D bodyLastDisplacement = {0, 0, 0};
+	Vector3D bodyPosition = this->transformation.globalPosition;
 
 	if(!Clock_isPaused(Game_getPhysicsClock(Game_getInstance())) && Body_isActive(this->body) && Body_isAwake(this->body))
 	{
@@ -180,7 +180,7 @@ void Actor_syncPositionWithBody(Actor this)
 	}
 
 	// modify the global position according to the body's displacement
-	VBVec3D globalPosition = this->transform.globalPosition;
+	Vector3D globalPosition = this->transformation.globalPosition;
 	bodyLastDisplacement.x = bodyPosition.x - globalPosition.x;
 	bodyLastDisplacement.y = bodyPosition.y - globalPosition.y;
 	bodyLastDisplacement.z = bodyPosition.z - globalPosition.z;
@@ -194,7 +194,7 @@ void Actor_syncPositionWithBody(Actor this)
 	Body_setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
 
 	// sync local position with global position
-	VBVec3D localPosition = this->transform.localPosition;
+	Vector3D localPosition = this->transformation.localPosition;
 	localPosition.x += bodyLastDisplacement.x;
 	localPosition.y += bodyLastDisplacement.y;
 	localPosition.z += bodyLastDisplacement.z;
@@ -240,30 +240,30 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 {
 	ASSERT(this, "Actor::transform: null this");
 
-	// apply environment transform
+	// apply environment transformation
 	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
 	if(this->body)
 	{
-		Actor_syncWithBody(this);
-
 		u16 bodyMovement = Body_getMovementOnAllAxes(this->body);
 
 		if(bodyMovement)
 		{
-			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
-		}
+			Actor_syncWithBody(this);
 
-		if(__Z_AXIS & bodyMovement)
-		{
-			this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
+
+			if(__Z_AXIS & bodyMovement)
+			{
+				this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
+			}
 		}
 	}
 
 	// call base
 	__CALL_BASE_METHOD(AnimatedEntity, transform, this, environmentTransform, invalidateTransformationFlag);
 
-	this->previousRotation = this->transform.localRotation;
+	this->previousRotation = this->transformation.localRotation;
 }
 
 void Actor_resume(Actor this)
@@ -301,7 +301,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 }
 
 // whether changed direction in the last cycle or not
-int Actor_changedDirection(Actor this, u16 axis)
+bool Actor_hasChangedDirection(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changedDirection: null this");
 
@@ -309,17 +309,17 @@ int Actor_changedDirection(Actor this, u16 axis)
 	{
 		case __X_AXIS:
 
-			return this->transform.localRotation.x != this->previousRotation.x;
+			return this->transformation.localRotation.x != this->previousRotation.x;
 			break;
 
 		case __Y_AXIS:
 
-			return this->transform.localRotation.y != this->previousRotation.y;
+			return this->transformation.localRotation.y != this->previousRotation.y;
 			break;
 
 		case __Z_AXIS:
 
-			return this->transform.localRotation.z != this->previousRotation.z;
+			return this->transformation.localRotation.z != this->previousRotation.z;
 			break;
 	}
 
@@ -332,7 +332,7 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
 
 	// save current rotation
-	this->previousRotation = this->transform.localRotation;
+	this->previousRotation = this->transformation.localRotation;
 
 	Direction direction = Entity_getDirection(__SAFE_CAST(Entity, this));
 
@@ -376,7 +376,7 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 }
 
 // check if gravity must apply to this actor
-bool Actor_canMoveTowards(Actor this, VBVec3D direction)
+bool Actor_canMoveTowards(Actor this, Vector3D direction)
 {
 	ASSERT(this, "Actor::canMoveTowards: null this");
 
@@ -384,7 +384,7 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 	{
 		fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
 
-		VBVec3D displacement =
+		Vector3D displacement =
 		{
 			direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
 			direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
@@ -409,8 +409,7 @@ bool Actor_canMoveTowards(Actor this, VBVec3D direction)
 
 					if(canMove)
 					{
-//						canMove |= __I_TO_FIX19_13(1) != abs(__FIX19_13_DIV(Vector_dotProduct(collisionSolution->translationVector, displacement), __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_MULT(Vector_lengthSquared(collisionSolution->translationVector), Vector_lengthSquared(collisionSolution->displacement)))));
-						canMove &= __I_TO_FIX19_13(1) != abs(Vector_dotProduct(collisionSolution->collisionPlaneNormal, Vector_normalize(displacement)));
+						canMove &= __I_TO_FIX19_13(1) != abs(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
 					}
 
 					__DELETE_BASIC(collisionSolution);
@@ -450,14 +449,10 @@ bool Actor_processCollision(Actor this, CollisionInformation collisionInformatio
 		{
 			if(collisionInformation.collisionSolution.translationVectorLength)
 			{
-				u16 axesForBouncing = __VIRTUAL_CALL(Actor, getAxesForBouncing, this);
 				fix19_13 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation.collidingShape));
 				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
 
-				if(axesForBouncing)
-				{
-					Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, axesForBouncing, frictionCoefficient, elasticity);
-				}
+				Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
 
 				returnValue = true;
 			}
@@ -505,7 +500,10 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 				case kBodyBounced:
 
-					Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
+					if((int*)Telegram_getExtraInfo(telegram))
+					{
+						Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
+					}
 					return true;
 					break;
 			}
@@ -619,29 +617,29 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 }
 
 // set position
-void Actor_setPosition(Actor this, const VBVec3D* position)
+void Actor_setPosition(Actor this, const Vector3D* position)
 {
 	ASSERT(this, "Actor::setPosition: null this");
 
-	VBVec3D displacement = this->transform.globalPosition;
-	this->transform.globalPosition = *position;
+	Vector3D displacement = this->transformation.globalPosition;
+	this->transformation.globalPosition = *position;
 
-	displacement.x -= this->transform.globalPosition.x;
-	displacement.y -= this->transform.globalPosition.y;
-	displacement.z -= this->transform.globalPosition.z;
+	displacement.x -= this->transformation.globalPosition.x;
+	displacement.y -= this->transformation.globalPosition.y;
+	displacement.z -= this->transformation.globalPosition.z;
 
-	this->transform.localPosition.x -= displacement.x;
-	this->transform.localPosition.y -= displacement.y;
-	this->transform.localPosition.z -= displacement.z;
+	this->transformation.localPosition.x -= displacement.x;
+	this->transformation.localPosition.y -= displacement.y;
+	this->transformation.localPosition.z -= displacement.z;
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transform.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
@@ -651,18 +649,11 @@ void Actor_setPosition(Actor this, const VBVec3D* position)
 }
 
 // retrieve global position
-const VBVec3D* Actor_getPosition(Actor this)
+const Vector3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
 	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getPosition, this);
-}
-
-u16 Actor_getAxesForBouncing(Actor this __attribute__ ((unused)))
-{
-	ASSERT(this, "Actor::getAxesForBouncing: null this");
-
-	return __X_AXIS | __Y_AXIS | __Z_AXIS;
 }
 
 // take hit

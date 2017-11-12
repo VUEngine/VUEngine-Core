@@ -115,10 +115,10 @@ void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
 
-	VBVec3D position3D = this->transform.globalPosition;
+	Vector3D position3D = this->transformation.globalPosition;
 	__OPTICS_NORMALIZE(position3D);
 
-	VBVec2D position2D;
+	Vector2D position2D;
 	// project position to 2D space
 	__OPTICS_PROJECT_TO_2D(position3D, position2D);
 
@@ -718,58 +718,58 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 */
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13(yOutputStartTemp),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13(yOutputStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13(yOutputStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13(yOutputStartTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13(yOutputEndTemp),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13(yOutputEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13(yOutputEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13(yOutputEndTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13(ySourceStartTemp),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13(ySourceStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13(ySourceStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13(ySourceStartTemp),0,0},
 		__COLOR_DARK_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(VBVec2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13(ySourceEndTemp),0,0},
-		(VBVec2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13(ySourceEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13(ySourceEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13(ySourceEndTemp),0,0},
 		__COLOR_DARK_RED
 	);
 */

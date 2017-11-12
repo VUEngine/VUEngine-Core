@@ -80,7 +80,7 @@
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
 		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
 		__VIRTUAL_SET(ClassName, Entity, getElasticity);												\
-		__VIRTUAL_SET(ClassName, Entity, getFrictionCoefficient);													\
+		__VIRTUAL_SET(ClassName, Entity, getFrictionCoefficient);										\
 
 #define Entity_ATTRIBUTES																				\
 		Container_ATTRIBUTES																			\
@@ -115,11 +115,11 @@
 		 */ 																							\
 		EntityDefinition* entityDefinition;																\
 		/**
-		 * @var VBVec3D*			centerDisplacement
+		 * @var Vector3D*			centerDisplacement
 		 * @brief					Center displacement
 		 * @memberof				Entity
 		 */ 																							\
-		VBVec3D* centerDisplacement;																	\
+		Vector3D* centerDisplacement;																	\
 		/**
 		 * @var s16				 	id
 		 * @brief					Entity's id, set by the user
@@ -153,27 +153,27 @@ void Entity_destructor(Entity this);
 
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions);
-Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const VBVec3D* position, void* extraInfo);
+Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo);
 bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionIndex);
 void Entity_addSprites(Entity this, const SpriteDefinition** spritesDefinitions);
 u32 Entity_areAllChildrenInstantiated(Entity this);
 u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
-VBVec3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, VBVec3D environmentPosition, const char* childName);
-bool Entity_canMoveTowards(Entity this, VBVec3D direction);
+Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName);
+bool Entity_canMoveTowards(Entity this, Vector3D direction);
 u16 Entity_getAxisForFlipping(Entity this);
 Entity Entity_getChildById(Entity this, s16 id);
 EntityDefinition* Entity_getEntityDefinition(Entity this);
 int Entity_getMapParallax(Entity this);
 s16 Entity_getId(Entity this);
 s16 Entity_getInternalId(Entity this);
-const VBVec3D* Entity_getPosition(Entity this);
+const Vector3D* Entity_getPosition(Entity this);
 const Rotation* Entity_getRotation(Entity this);
 const Scale* Entity_getScale(Entity this);
 VirtualList Entity_getShapes(Entity this);
 VirtualList Entity_getSprites(Entity this);
-SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const VBVec3D* environmentPosition);
+SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition);
 u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
 u16 Entity_getDepth(Entity this);
@@ -197,7 +197,7 @@ void Entity_setExtraInfo(Entity this, void* extraInfo);
 void Entity_show(Entity this);
 void Entity_suspend(Entity this);
 void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void Entity_setLocalPosition(Entity this, const VBVec3D* position);
+void Entity_setLocalPosition(Entity this, const Vector3D* position);
 void Entity_setLocalRotation(Entity this, const Rotation* rotation);
 bool Entity_updateSpritePosition(Entity this);
 bool Entity_updateSpriteRotation(Entity this);

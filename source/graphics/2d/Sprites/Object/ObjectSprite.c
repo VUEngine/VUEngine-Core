@@ -191,7 +191,7 @@ void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation)
  *
  * @return			2D position
  */
-VBVec2D ObjectSprite_getPosition(ObjectSprite this)
+Vector2D ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
 
@@ -207,7 +207,7 @@ VBVec2D ObjectSprite_getPosition(ObjectSprite this)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
+void ObjectSprite_setPosition(ObjectSprite this, const Vector2D* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
 
@@ -225,11 +225,11 @@ void ObjectSprite_setPosition(ObjectSprite this, const VBVec2D* position)
  * @param this			Function scope
  * @param position		3D position
  */
-void ObjectSprite_position(ObjectSprite this, const VBVec3D* position)
+void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 {
 	ASSERT(this, "ObjectSprite::position: null this");
 
-	VBVec3D position3D = *position;
+	Vector3D position3D = *position;
 
 	// normalize the position to screen coordinates
 	__OPTICS_NORMALIZE(position3D);
@@ -470,7 +470,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void ObjectSprite_addDisplacement(ObjectSprite this, const VBVec2D* displacement)
+void ObjectSprite_addDisplacement(ObjectSprite this, const Vector2D* displacement)
 {
 	ASSERT(this, "ObjectSprite::addDisplacement: null this");
 

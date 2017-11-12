@@ -79,7 +79,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->displacement = (VBVecWorld){0, 0, 0, 0};
+	this->displacement = (WorldVector){0, 0, 0, 0};
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : false;
@@ -219,7 +219,7 @@ bool Sprite_isHidden(Sprite this)
  * @param this			Function scope
  * @param position		3D position
  */
-void Sprite_position(Sprite this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
+void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::position: null this");
 }
@@ -574,7 +574,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
  *
  * @return
  */
-VBVecWorld Sprite_getDisplacement(Sprite this)
+WorldVector Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getDisplacement: null this");
 

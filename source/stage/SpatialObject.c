@@ -97,7 +97,7 @@ bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 }
 
 // defaults to true
-bool SpatialObject_canMoveTowards(SpatialObject this __attribute__ ((unused)), VBVec3D direction __attribute__ ((unused)))
+bool SpatialObject_canMoveTowards(SpatialObject this __attribute__ ((unused)), Vector3D direction __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::canMoveTowards: null this");
 
@@ -125,11 +125,11 @@ u16 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
 	return 0;
 }
 
-const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
+const Vector3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getPosition: null this");
 
-	static VBVec3D position =
+	static Vector3D position =
 	{
 		0, 0, 0
 	};
@@ -137,7 +137,7 @@ const VBVec3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unus
 	return &position;
 }
 
-void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), const VBVec3D* position __attribute__ ((unused)))
+void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::setPosition: null this");
 }

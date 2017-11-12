@@ -61,19 +61,19 @@
 		/* optic values used in projection values */													\
 		Optical optical;																				\
 		/* screen position */																			\
-		VBVec3D position;																				\
-		VBVec3D positionBackup;																			\
+		Vector3D position;																				\
+		Vector3D positionBackup;																			\
 		/* screen position displacement manager */														\
 		ScreenMovementManager screenMovementManager;													\
 		/* screen effect manager */																		\
 		ScreenEffectManager screenEffectManager;														\
 		/* screen position displacement */																\
-		VBVec3D focusEntityPositionDisplacement;														\
+		Vector3D focusEntityPositionDisplacement;														\
 		/* actor to center the screen around */															\
 		Entity focusEntity;																				\
-		const VBVec3D* focusEntityPosition;																\
+		const Vector3D* focusEntityPosition;																\
 		/* world's screen's last displacement */														\
-		VBVec3D lastDisplacement;																		\
+		Vector3D lastDisplacement;																		\
 		/* stage's size in pixels */																	\
 		Size stageSize;																					\
 		/* camera frustum */																			\
@@ -95,8 +95,8 @@ typedef struct CameraFrustum
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-extern const VBVec3D* _screenPosition;
-extern const VBVec3D* _screenDisplacement;
+extern const Vector3D* _screenPosition;
+extern const Vector3D* _screenDisplacement;
 extern const CameraFrustum* _cameraFrustum;
 extern const Optical* _optical;
 
@@ -114,13 +114,13 @@ void Screen_unsetFocusEntity(Screen this);
 Entity Screen_getFocusEntity(Screen this);
 void Screen_onFocusEntityDeleted(Screen this, Entity actor);
 void Screen_capPosition(Screen this);
-void Screen_move(Screen this, VBVec3D translation, int cap);
-VBVec3D Screen_getPosition(Screen this);
-void Screen_setPosition(Screen this, VBVec3D position);
+void Screen_move(Screen this, Vector3D translation, int cap);
+Vector3D Screen_getPosition(Screen this);
+void Screen_setPosition(Screen this, Vector3D position);
 void Screen_prepareForUITransform(Screen this);
 void Screen_doneUITransform(Screen this);
-void Screen_setFocusEntityPositionDisplacement(Screen this, VBVec3D focusEntityPositionDisplacement);
-VBVec3D Screen_getLastDisplacement(Screen this);
+void Screen_setFocusEntityPositionDisplacement(Screen this, Vector3D focusEntityPositionDisplacement);
+Vector3D Screen_getLastDisplacement(Screen this);
 Size Screen_getStageSize(Screen this);
 void Screen_setStageSize(Screen this, Size size);
 void Screen_forceDisplacement(Screen this, int flag);

@@ -200,7 +200,7 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 		return;
 	}
 
-	const VBVec3D* position = Body_getPosition(this->body);
+	const Vector3D* position = Body_getPosition(this->body);
 
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
@@ -302,7 +302,7 @@ void Particle_setMass(Particle this, fix19_13 mass)
  * @param this		Function scope
  * @param position
  */
-void Particle_setPosition(Particle this, const VBVec3D* position)
+void Particle_setPosition(Particle this, const Vector3D* position)
 {
 	ASSERT(this, "Particle::setPosition: null this");
 	ASSERT(this->body, "Particle::setPosition: null body");
@@ -326,7 +326,7 @@ void Particle_setPosition(Particle this, const VBVec3D* position)
  *
  * @return		Position of particle's body
  */
-const VBVec3D* Particle_getPosition(Particle this)
+const Vector3D* Particle_getPosition(Particle this)
 {
 	ASSERT(this, "Particle::getPosition: null this");
 	ASSERT(this->body, "Particle::getPosition: null body");
@@ -404,7 +404,7 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool Particle_canMoveTowards(Particle this, VBVec3D direction __attribute__ ((unused)))
+bool Particle_canMoveTowards(Particle this, Vector3D direction __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::canMoveTowards: null this");
 

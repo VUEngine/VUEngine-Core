@@ -56,7 +56,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this);
 static void ParticleSystem_processExpiredParticles(ParticleSystem this);
 static void ParticleSystem_particleExpired(ParticleSystem this, Particle particle);
 static int ParticleSystem_computeNextSpawnTime(ParticleSystem this);
-static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed);
+static const Vector3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed);
 static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, long seed);
 
 
@@ -324,18 +324,18 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
  *
  * @return		Spawn position
  */
-static const VBVec3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed)
+static const Vector3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem this, long seed)
 {
 	ASSERT(this, "ParticleSystem::getParticleSpawnPosition: null this");
 
-	static VBVec3D position =
+	static Vector3D position =
 	{
 		0, 0, 0
 	};
 
-	position.x = this->transform.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpawnPosition.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
-	position.y = this->transform.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpawnPosition.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
-	position.z = this->transform.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpawnPosition.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
+	position.x = this->transformation.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpawnPosition.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
+	position.y = this->transformation.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpawnPosition.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
+	position.z = this->transformation.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpawnPosition.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
 
 	return &position;
 }
