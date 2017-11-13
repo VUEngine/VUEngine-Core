@@ -593,8 +593,8 @@ void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
 {
 	ASSERT(this, "Printing::setWorldCoordinates: null this");
 
-	this->gx = 0 <= gx && gx <= __SCREEN_WIDTH ? gx : 0;
-	this->gy = 0 <= gy && gy <= __SCREEN_HEIGHT ? gy : 0;
+	this->gx = gx <= __SCREEN_WIDTH ? gx : 0;
+	this->gy = gy <= __SCREEN_HEIGHT ? gy : 0;
 }
 #endif
 
