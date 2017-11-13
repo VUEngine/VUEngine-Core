@@ -215,10 +215,18 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 	for(; node; node = node->next)
 	{
+		Shape shape = __SAFE_CAST(Shape, node->data);
+		shape->checked = false;
+	}
+
+	node = this->movingShapes->head;
+
+	for(; node; node = node->next)
+	{
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, node->data);
 
-		if(shape->checkForCollisions)
+		if(shape->ready && shape->checkForCollisions)
 		{
 			// don't check the current shape again when processing other movable shapes
 			shape->checked = true;
@@ -233,8 +241,9 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 				// don't compare with current movable shape, when the shape already has been checked
 				// and when it is not active
-				if(shape != shapeToCheck && !shapeToCheck->checked)
+				if(shape != shapeToCheck && shapeToCheck->ready && !shapeToCheck->checked)
 				{
+					count++;
 					// check if shapes overlap
 					CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
 

@@ -113,6 +113,7 @@ void Shape_destructor(Shape this)
  */
 void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
+	ASSERT(this, "Shape::setup: null this");
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);
 #endif
