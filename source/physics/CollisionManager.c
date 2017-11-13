@@ -243,7 +243,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 				// and when it is not active
 				if(shape != shapeToCheck && shapeToCheck->ready && !shapeToCheck->checked)
 				{
-					count++;
 					// check if shapes overlap
 					CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
 
