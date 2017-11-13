@@ -422,8 +422,8 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 		{
 			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
 			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			Vector2D position = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, sprite));
-			Vector2D previousPosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, previousSprite));
+			Vector2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+			Vector2D previousPosition = __VIRTUAL_CALL(Sprite, getPosition, previousSprite);
 
 			// check if z positions are swapped
 			if(previousPosition.z + (__SAFE_CAST(Sprite, previousSprite))->displacement.z > position.z + (__SAFE_CAST(Sprite, sprite))->displacement.z)
@@ -500,7 +500,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	{
 		ObjectSprite sprite = __SAFE_CAST(ObjectSprite, node->data);
 
-		if(!sprite->hidden && ((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent))
+		if((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent)
 		{
 			Sprite_update(__SAFE_CAST(Sprite, sprite));
 		}
@@ -536,7 +536,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
+		__VIRTUAL_CALL(Sprite, show, node->data);
 	}
 
 	this->hidden = false;
@@ -561,7 +561,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, hide, __SAFE_CAST(Sprite, node->data));
+			__VIRTUAL_CALL(Sprite, hide, node->data);
 		}
 	}
 
@@ -693,7 +693,7 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const Vec
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, addDisplacement, __SAFE_CAST(Sprite, node->data), displacement);
+			__VIRTUAL_CALL(Sprite, addDisplacement, node->data, displacement);
 		}
 	}
 }

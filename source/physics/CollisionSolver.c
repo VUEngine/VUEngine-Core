@@ -130,7 +130,7 @@ bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 
 			for(; ownerShapeNode; ownerShapeNode = ownerShapeNode->next)
 			{
-				CollisionSolution collisionSolution = __VIRTUAL_CALL(Shape, testForCollision, ownerShapeNode->data, __SAFE_CAST(Shape, shapeToRemove), displacement, sizeIncrement);
+				CollisionSolution collisionSolution = __VIRTUAL_CALL(Shape, testForCollision, ownerShapeNode->data, shapeToRemove, displacement, sizeIncrement);
 
 				if(collisionSolution.translationVectorLength)
 				{
@@ -243,7 +243,7 @@ fix19_13 CollisionSolver_getSurroundingFrictionCoefficient(CollisionSolver this)
 
 	for(; node; node = node->next)
 	{
-		totalFriction += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, __SAFE_CAST(SpatialObject, Shape_getOwner(__SAFE_CAST(Shape, node->data))));
+		totalFriction += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(__SAFE_CAST(Shape, node->data)));
 	}
 
 	return totalFriction;

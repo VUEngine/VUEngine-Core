@@ -300,7 +300,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position)
 	if(previousZPosition != this->drawSpec.position.z)
 	{
 		// calculate sprite's parallax
-		__VIRTUAL_CALL(Sprite, calculateParallax, __SAFE_CAST(Sprite, this), this->drawSpec.position.z);
+		__VIRTUAL_CALL(Sprite, calculateParallax, this, this->drawSpec.position.z);
 	}
 
 	if(!this->worldLayer)

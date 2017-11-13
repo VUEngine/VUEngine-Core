@@ -606,7 +606,7 @@ void Container_synchronizeGraphics(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Container, synchronizeGraphics, __SAFE_CAST(Container, node->data));
+			__VIRTUAL_CALL(Container, synchronizeGraphics, node->data);
 		}
 	}
 }
@@ -805,7 +805,7 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 		for(; node ; node = node->next)
 		{
 			// pass message to each child
-			if(__VIRTUAL_CALL(Container, passMessage, __SAFE_CAST(Container, node->data), propagatedMessageHandler, args))
+			if(__VIRTUAL_CALL(Container, passMessage, node->data, propagatedMessageHandler, args))
 			{
 				return true;
 			}
@@ -1030,9 +1030,7 @@ void Container_hide(Container this)
 
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
-
-			__VIRTUAL_CALL(Container, hide, child);
+			__VIRTUAL_CALL(Container, hide, node->data);
 		}
 	}
 }

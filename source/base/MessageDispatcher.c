@@ -287,7 +287,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 				if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage) && __IS_OBJECT_ALIVE(sender) && __IS_OBJECT_ALIVE(receiver))
 				{
 					messagesDispatched |= true;
-					__VIRTUAL_CALL(Object, handleMessage, __SAFE_CAST(Object, receiver), telegram);
+					__VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
 				}
 
 				VirtualList_removeElement(this->delayedMessages, delayedMessage);
