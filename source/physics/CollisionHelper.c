@@ -377,33 +377,18 @@ static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHel
 
 	Vector3D distanceVector = Vector3D_get(ballA->center, ballB->center);
 
-	fix51_13 distanceVectorLength = Vector3D_length(distanceVector);
+	fix51_13 distanceVectorLength = Vector3D_squareLength(distanceVector);
 	fix51_13 radiusesLength = ballA->radius + ballB->radius;
-	//__FIX19_13_TO_FIX51_13(__FIX19_13_MULT(ballA->radius, ballA->radius) + __FIX19_13_MULT(ballB->radius, ballB->radius)) + __FIX19_13_TO_FIX51_13(__FIX19_13_MULT(ballA->radius + ballB->radius, __I_TO_FIX19_13(2)));
 
-	if(distanceVectorLength < radiusesLength)
+	if(Vector3D_squareLength(distanceVector) < __FIX19_13_MULT(radiusesLength, radiusesLength))
 	{
-		Velocity velocityA = __VIRTUAL_CALL(SpatialObject, getVelocity, Shape_getOwner(__SAFE_CAST(Shape, ballA)));
-		Velocity velocityB = __VIRTUAL_CALL(SpatialObject, getVelocity, Shape_getOwner(__SAFE_CAST(Shape, ballB)));
-		Velocity velocity =
-		{
-			velocityA.x + velocityB.x,
-			velocityA.y + velocityB.y,
-			velocityA.z + velocityB.z,
-		};
-
-		Vector3D toCollisionPoint =
-		{
-			ballB->center.x - __FIX19_13_DIV(__FIX19_13_MULT(ballA->center.x, ballB->radius) + __FIX19_13_MULT(ballB->center.x, ballA->radius), ballA->radius + ballA->radius),
-			ballB->center.y - __FIX19_13_DIV(__FIX19_13_MULT(ballA->center.y, ballB->radius) + __FIX19_13_MULT(ballB->center.y, ballA->radius), ballA->radius + ballA->radius),
-			ballB->center.z - __FIX19_13_DIV(__FIX19_13_MULT(ballA->center.z, ballB->radius) + __FIX19_13_MULT(ballB->center.z, ballA->radius), ballA->radius + ballA->radius),
-		};
+		fix51_13 distanceVectorLength = Vector3D_length(distanceVector);
 
 		CollisionSolution collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
 
 		// add padding to prevent rounding problems
-		collisionSolution.translationVectorLength = radiusesLength - distanceVectorLength + __I_TO_FIX19_13(10);
-		collisionSolution.collisionPlaneNormal = Vector3D_normalize((Vector3D){distanceVector.y, -distanceVector.x, distanceVector.z});
+		collisionSolution.translationVectorLength = radiusesLength - distanceVectorLength + __I_TO_FIX19_13(1);
+		collisionSolution.collisionPlaneNormal = Vector3D_normalize(distanceVector);
 		collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
 
 		if(Vector3D_dotProduct(distanceVector, collisionSolution.collisionPlaneNormal) < 0)
