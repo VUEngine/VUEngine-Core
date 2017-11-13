@@ -380,12 +380,12 @@ static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHel
 
 	if(Vector3D_squareLength(distanceVector) < __FIX51_13_MULT(radiusesLength, radiusesLength))
 	{
-		fix51_13 distanceVectorLength = Vector3D_length(distanceVector);
+		fix19_13 distanceVectorLength = Vector3D_length(distanceVector);
 
 		CollisionSolution collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
 
 		// add padding to prevent rounding problems
-		collisionSolution.translationVectorLength = __FIX51_13_TO_FIX19_13(radiusesLength - distanceVectorLength) + __I_TO_FIX19_13(1);
+		collisionSolution.translationVectorLength = __FIX51_13_TO_FIX19_13(radiusesLength) - distanceVectorLength + __I_TO_FIX19_13(1);
 		collisionSolution.collisionPlaneNormal = Vector3D_normalize(distanceVector);
 		collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
 
