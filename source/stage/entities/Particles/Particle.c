@@ -175,8 +175,6 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
 
 			return true;
 		}
-
-		Sprite_updateAnimation(__SAFE_CAST(Sprite, this->objectSprite));
 	}
 
 	return false;
@@ -228,7 +226,7 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 {
 	ASSERT(this, "Particle::addForce: null this");
 
-	if(__UNIFORM_MOVEMENT == movementType)
+	if(false && __UNIFORM_MOVEMENT == movementType)
 	{
 		fix19_13 mass = Body_getMass(this->body);
 
@@ -373,6 +371,7 @@ void Particle_hide(Particle this)
 	Sprite_hide(__SAFE_CAST(Sprite, this->objectSprite));
 
 	Body_setActive(this->body, false);
+	Body_stopMovement(this->body, __ALL_AXES);
 }
 
 /**
@@ -411,6 +410,7 @@ bool Particle_canMoveTowards(Particle this, Vector3D direction __attribute__ ((u
 	return (bool)Body_getAxisSubjectToGravity(this->body);
 }
 
+void Particle_transform(Particle this);
 /**
  * Transform
  *

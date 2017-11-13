@@ -615,31 +615,31 @@ void Body_stopMovement(Body this, u16 axis)
 	u16 axisOfMovement = Body_getMovementOnAllAxes(this);
 	u16 axisOfStopping = 0;
 
-	if((axisOfMovement & __X_AXIS) && (axis & __X_AXIS))
+	if(axis & __X_AXIS)
 	{
 		// not moving anymore
 		this->velocity.x = 0;
 		this->acceleration.x = 0;
 		this->externalForce.x = 0;
-		axisOfStopping |= __X_AXIS;
+		axisOfStopping |= axisOfMovement & __X_AXIS;
 	}
 
-	if((axisOfMovement & __Y_AXIS) && (axis & __Y_AXIS))
+	if(axis & __Y_AXIS)
 	{
 		// not moving anymore
 		this->velocity.y = 0;
 		this->acceleration.y = 0;
 		this->externalForce.y = 0;
-		axisOfStopping |= __Y_AXIS;
+		axisOfStopping |= axisOfMovement & __Y_AXIS;
 	}
 
-	if((axisOfMovement & __Z_AXIS) && (axis & __Z_AXIS))
+	if(axis & __Z_AXIS)
 	{
 		// not moving anymore
 		this->velocity.z = 0;
 		this->acceleration.z = 0;
 		this->externalForce.z = 0;
-		axisOfStopping |= __Z_AXIS;
+		axisOfStopping |= axisOfMovement & __Z_AXIS;
 	}
 
 	if(axisOfStopping)
