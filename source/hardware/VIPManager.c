@@ -333,9 +333,6 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 
 				VIPManager_registerCurrentDrawingFrameBufferSet(this);
 
-				// make clocks to move forward
-				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
-
 				// increase current game frame's duration
 				Game_increaseGameFrameDuration(Game_getInstance(), __GAME_FRAME_DURATION);
 
