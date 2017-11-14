@@ -56,6 +56,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
+		__VIRTUAL_SET(ClassName, SolidParticle, canMoveTowards);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, transform);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, setPosition);											\
