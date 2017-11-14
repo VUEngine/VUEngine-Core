@@ -502,7 +502,7 @@ static void StageEditor_getShape(StageEditor this)
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
 
-		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
+		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size, kNoLayer, kNoLayer);
 	}
 
 	Shape_setReady(this->shape, false);
@@ -1111,7 +1111,7 @@ static void StageEditor_applyTranslationToScreen(StageEditor this, Vector3D tran
 	StageEditor_printScreenPosition(this);
 	Stage_streamAll(GameState_getStage(this->gameState));
 	CollisionManager_processRemovedShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
-	PhysicalWorld_processRemovedBodies(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
+	PhysicalWorld_processAuxiliaryBodyLists(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 }
 
 /**

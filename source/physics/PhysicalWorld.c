@@ -55,6 +55,12 @@
 		 */																								\
 		VirtualList	removedBodies;																		\
 		/**
+		 * @var VirtualList		bodiesSentToSleep
+		 * @brief				a list of bodies which must be removed from the activeBodies list
+		 * @memberof 			PhysicalWorld
+		 */																								\
+		VirtualList	bodiesSentToSleep;																	\
+		/**
 		 * @var Acceleration	gravity
 		 * @brief				gravity
 		 * @memberof 			PhysicalWorld
@@ -65,7 +71,7 @@
 		 * @brief				frictionCoefficient
 		 * @memberof 			PhysicalWorld
 		 */																								\
-		fix19_13 frictionCoefficient;																				\
+		fix19_13 frictionCoefficient;																	\
 		/**
 		 * @var fix19_13		elapsedTime
 		 * @brief				elapsed time on last cycle
@@ -122,6 +128,8 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->bodies = __NEW(VirtualList);
 	this->activeBodies = __NEW(VirtualList);
 	this->removedBodies = __NEW(VirtualList);
+	this->bodiesSentToSleep = __NEW(VirtualList);
+
 	this->nextBodyToCheckForGravity = NULL;
 
 	this->gravity.x = 0;
@@ -159,10 +167,13 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	__DELETE(this->bodies);
 	__DELETE(this->activeBodies);
 	__DELETE(this->removedBodies);
+	__DELETE(this->bodiesSentToSleep);
+
 
 	this->bodies = NULL;
 	this->activeBodies = NULL;
 	this->removedBodies = NULL;
+	this->bodiesSentToSleep = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -182,6 +193,9 @@ void PhysicalWorld_destructor(PhysicalWorld this)
  *
  * @return				Registered Body
  */
+
+ #include <Body.h>
+ #include <ParticleBody.h>
 Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
 {
 	ASSERT(this, "PhysicalWorld::createBody: null this");
@@ -202,6 +216,8 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 
 		body->awake = true;
 		PhysicalWorld_bodyAwake(this, body);
+
+		this->nextBodyToCheckForGravity = NULL;
 
 		// return created shape
 		return __SAFE_CAST(Body, VirtualList_front(this->bodies));
@@ -232,6 +248,8 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
 
 		// place in the removed bodies list
 		VirtualList_pushFront(this->removedBodies, body);
+
+		this->nextBodyToCheckForGravity = NULL;
 	}
 }
 
@@ -251,8 +269,8 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 
-	// process removed bodies
-	PhysicalWorld_processRemovedBodies(this);
+	// process auxiliary lists
+	PhysicalWorld_processAuxiliaryBodyLists(this);
 
 	VirtualNode node = this->bodies->head;
 
@@ -273,17 +291,18 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 }
 
 /**
- * Process removed bodies
+ * Process auxiliary body lists
  *
  * @memberof	PhysicalWorld
  * @public
  *
  * @param this	Function scope
  */
-void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
+void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this)
 {
-	ASSERT(this, "PhysicalWorld::processRemovedBodies: null this");
-	ASSERT(this->removedBodies, "PhysicalWorld::processRemovedBodies: null bodies");
+	ASSERT(this, "PhysicalWorld::processAuxiliaryBodyLists: null this");
+	ASSERT(this->removedBodies, "PhysicalWorld::processAuxiliaryBodyLists: null removedBodies");
+	ASSERT(this->bodiesSentToSleep, "PhysicalWorld::processAuxiliaryBodyLists: null bodiesSentToSleep");
 
 	VirtualNode node = this->removedBodies->head;
 
@@ -296,9 +315,10 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 			// remove from the lists
 			VirtualList_removeElement(this->bodies, body);
 			VirtualList_removeElement(this->activeBodies, body);
+			VirtualList_removeElement(this->bodiesSentToSleep, body);
 
 			// delete it
-			ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::processRemovedBodies: deleting dead body");
+			ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::processAuxiliaryBodyLists: deleting dead body");
 			__DELETE(body);
 		}
 
@@ -307,6 +327,25 @@ void PhysicalWorld_processRemovedBodies(PhysicalWorld this)
 
 		this->nextBodyToCheckForGravity = NULL;
 	}
+
+	node = this->bodiesSentToSleep->head;
+
+	if(node)
+	{
+		for(; node; node = node->next)
+		{
+			Body body = __SAFE_CAST(Body, node->data);
+
+			// remove from the lists
+			VirtualList_removeElement(this->activeBodies, body);
+		}
+
+		// clear the list
+		VirtualList_clear(this->bodiesSentToSleep);
+
+		this->nextBodyToCheckForGravity = NULL;
+	}
+
 }
 
 /**
@@ -373,7 +412,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
-	PhysicalWorld_processRemovedBodies(this);
+	PhysicalWorld_processAuxiliaryBodyLists(this);
 
 	if(clock->paused)
 	{
@@ -385,6 +424,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	}
 
 	Clock_pause(clock, true);
+
 
 	fix19_13 currentTime = __I_TO_FIX19_13(Clock_getTime(clock));
 	fix19_13 elapsedTime = __FIX19_13_DIV(currentTime - this->previousTime, __I_TO_FIX19_13(__MILLISECONDS_IN_SECOND));
@@ -412,7 +452,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		// check the bodies
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Body, update, __SAFE_CAST(Body, node->data));
+			__VIRTUAL_CALL(Body, update, node->data);
 		}
 	}
 
@@ -535,9 +575,11 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
 	ASSERT(__SAFE_CAST(SpatialObject, body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
+	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::bodyAwake: body not found");
 
 	if(!VirtualList_find(this->activeBodies, body))
 	{
+		VirtualList_removeElement(this->bodiesSentToSleep, body);
 		VirtualList_pushBack(this->activeBodies, body);
 	}
 }
@@ -557,7 +599,7 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	VirtualList_removeElement(this->activeBodies, body);
+	VirtualList_pushBack(this->bodiesSentToSleep, body);
 }
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
@@ -615,8 +657,13 @@ void PhysicalWorld_print(PhysicalWorld this, int x, int y)
 	ASSERT(this, "PhysicalWorld::print: null this");
 
 	Printing_text(Printing_getInstance(), "PHYSICS' STATUS", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Registered bodies: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Registered bodies:     ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->bodies), x + 19, y, NULL);
-	Printing_text(Printing_getInstance(), "Active bodies: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Active bodies:         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->activeBodies), x + 19, y, NULL);
+	Printing_text(Printing_getInstance(), "Removed bodies:        ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->removedBodies), x + 19, y, NULL);
+
+//	Printing_text(Printing_getInstance(), "Error:                 ", x, ++y, NULL);
+//	Printing_int(Printing_getInstance(), VirtualList_getSize(this->bodies) - (VirtualList_getSize(this->activeBodies)), x + 19, y, NULL);
 }

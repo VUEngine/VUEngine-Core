@@ -68,7 +68,7 @@ fix19_13 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this);
 const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
-void PhysicalWorld_processRemovedBodies(PhysicalWorld this);
+void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this);
 Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
 void PhysicalWorld_destroyBody(PhysicalWorld this, Body body);
 void PhysicalWorld_reset(PhysicalWorld this);
