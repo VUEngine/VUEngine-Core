@@ -142,7 +142,7 @@
 #define __TARGET_FPS 							(50 >> __FRAME_CYCLE)
 
 // Milliseconds that must take to complete a game cycle
-#define __GAME_FRAME_DURATION					__MILLISECONDS_IN_SECOND / __TARGET_FPS
+#define __GAME_FRAME_DURATION					(__MILLISECONDS_IN_SECOND / __TARGET_FPS)
 
 // Target frames per second
 #define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)
@@ -194,7 +194,7 @@
 	__BLOCK_DEFINITION(32, 14)																			\
 	__BLOCK_DEFINITION(28, 210)																			\
 	__BLOCK_DEFINITION(24, 80)																			\
-	__BLOCK_DEFINITION(20, 700)																			\
+	__BLOCK_DEFINITION(20, 708)																			\
 	__BLOCK_DEFINITION(16, 480)																			\
 
 
@@ -313,20 +313,15 @@
 //												PHYSICS
 //---------------------------------------------------------------------------------------------------------
 
-#define __GRAVITY								13000
+#define __GRAVITY								980
 
-/* 2's power to divide to the gravity when applied to objects
- * that were at rest before. Initial applied gravity = gravity >> __APPLIED_GRAVITY_FACTOR
- */
-#define __APPLIED_GRAVITY_FACTOR				4
+
+// physics simulation step size
+#define __PHYSICS_TIME_ELAPSED					__FIX19_13_DIV(__1I_FIX19_13, __I_TO_FIX19_13(__TARGET_FPS))
+
 
 // Number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY			10
-
-/* Used to make an approximation of Lorentz' contraction
- * to handle collisions on very fast moving shapes
- */
-#define __LIGHT_SPEED							__I_TO_FIX19_13(50000)
 
 
 //---------------------------------------------------------------------------------------------------------
