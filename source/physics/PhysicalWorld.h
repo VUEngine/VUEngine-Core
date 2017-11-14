@@ -60,6 +60,8 @@ __CLASS_NEW_DECLARE(PhysicalWorld);
 void PhysicalWorld_constructor(PhysicalWorld this);
 void PhysicalWorld_destructor(PhysicalWorld this);
 
+void PhysicalWorld_setTimeScale(PhysicalWorld this, fix19_13 timeScale);
+u32 PhysicalWorld_getTimeScale(PhysicalWorld this);
 void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body);
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);

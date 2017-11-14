@@ -85,6 +85,12 @@
 		 */																								\
 		fix19_13 previousTime;																			\
 		/**
+		 * @var fix19_13		timeScale
+		 * @brief				time scale
+		 * @memberof 			PhysicalWorld
+		 */																								\
+		fix19_13 timeScale;																				\
+		/**
 		 * @var VirtualNode		nextBodyToCheckForGravity
 		 * @brief				body to check for gravity
 		 * @memberof 			PhysicalWorld
@@ -139,6 +145,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->frictionCoefficient = 0;
 	this->elapsedTime = 0;
 	this->previousTime = 0;
+	this->timeScale = __1I_FIX19_13;
 }
 
 /**
@@ -429,6 +436,8 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	fix19_13 currentTime = __I_TO_FIX19_13(Clock_getTime(clock));
 	fix19_13 elapsedTime = __FIX19_13_DIV(currentTime - this->previousTime, __I_TO_FIX19_13(__MILLISECONDS_IN_SECOND));
 
+	elapsedTime = elapsedTime > (__PHYSICS_TIME_ELAPSED << 1) ? __PHYSICS_TIME_ELAPSED << 1 : elapsedTime;
+
 	Clock_pause(clock, false);
 
 	if(this->previousTime)
@@ -443,17 +452,28 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 			return;
 		}
 
-		VirtualNode node = this->activeBodies->head;
-
-		Body_setCurrentElapsedTime(elapsedTime);
+		// TODO: time scale
+//		Body_setCurrentElapsedTime(__FIX19_13_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
+		Body_setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
 		Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 		Body_setCurrentGravity(&this->gravity);
 
-		// check the bodies
-		for(; node; node = node->next)
-		{
-			__VIRTUAL_CALL(Body, update, node->data);
-		}
+		static fix19_13 accumulator = 0;
+
+		accumulator += elapsedTime;
+
+        while (accumulator >= __PHYSICS_TIME_ELAPSED)
+        {
+			accumulator -= __PHYSICS_TIME_ELAPSED;
+
+			VirtualNode node = this->activeBodies->head;
+
+			// check the bodies
+			for(; node; node = node->next)
+			{
+				__VIRTUAL_CALL(Body, update, node->data);
+			}
+        }
 	}
 
 	this->previousTime = __I_TO_FIX19_13(Clock_getTime(clock));
@@ -558,6 +578,39 @@ void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix19_13 frictionC
 
 	this->frictionCoefficient = frictionCoefficient;
 	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
+}
+
+/**
+ * Set time scale
+ *
+ * @memberof		PhysicalWorld
+ * @public
+ *
+ * @param this		Function scope
+ * @param 			timeScale
+ */
+void PhysicalWorld_setTimeScale(PhysicalWorld this, fix19_13 timeScale)
+{
+	ASSERT(this, "PhysicalWorld::setTimeScale: null this");
+
+	this->timeScale = timeScale;
+}
+
+/**
+ * Get time scale
+ *
+ * @memberof		PhysicalWorld
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return 			timeScale
+ */
+u32 PhysicalWorld_getTimeScale(PhysicalWorld this)
+{
+	ASSERT(this, "PhysicalWorld::getTimeScale: null this");
+
+	return this->timeScale;
 }
 
 /**
