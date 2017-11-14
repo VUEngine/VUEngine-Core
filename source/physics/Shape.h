@@ -126,23 +126,17 @@ typedef struct Normals
 		 */																								\
 		u32 layersToIgnore;																				\
 		/**
-		 * @var u8 				checked
-		 * @brief				whether it has been checked for collision in current update
-		 * @memberof			Shape
-		 */																								\
-		u8 checked: 1;																					\
-		/**
 		 * @var u8 				ready
 		 * @brief				flag to know if setup is needed
 		 * @memberof			Shape
 		 */																								\
-		u8 ready: 1;																					\
+		u8 ready;																						\
 		/**
 		 * @var u8 				checkForCollisions
 		 * @brief				flag to check against other shapes
 		 * @memberof			Shape
 		 */																								\
-		u8 checkForCollisions: 1;																		\
+		u8 checkForCollisions;																			\
 
 __CLASS(Shape);
 
@@ -203,13 +197,10 @@ SpatialObject Shape_getOwner(Shape this);
 void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
-bool Shape_isChecked(Shape this);
-void Shape_setChecked(Shape this, bool checked);
 bool Shape_isReady(Shape this);
 void Shape_setMovesFlag(Shape this, bool moves);
 void Shape_print(Shape this, int x, int y);
 void Shape_setActive(Shape this, bool active);
-void Shape_setChecked(Shape this, bool checked);
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 void Shape_setReady(Shape this, bool ready);
 

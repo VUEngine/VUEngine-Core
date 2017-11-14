@@ -65,9 +65,6 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	// set the owner
 	this->owner = owner;
 
-	// not checked yet
-	this->checked = false;
-
 	// not setup yet
 	this->ready = false;
 
@@ -163,39 +160,6 @@ void Shape_setActive(Shape this, bool active)
 	{
 		CollisionManager_shapeBecameInactive(Game_getCollisionManager(Game_getInstance()), this);
 	}
-}
-
-/**
- * Has been checked
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
- *
- * @return		Checked status
- */
-bool Shape_isChecked(Shape this)
-{
-	ASSERT(this, "Shape::isChecked: null this");
-
-	return this->checked;
-}
-
-/**
- * Set check status
- *
- * @memberof		Shape
- * @public
- *
- * @param this		Function scope
- * @param checked
- */
-void Shape_setChecked(Shape this, bool checked)
-{
-	ASSERT(this, "Shape::checked: null this");
-
-	this->checked = checked;
 }
 
 /**
