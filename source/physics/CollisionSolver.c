@@ -96,7 +96,7 @@ void CollisionSolver_destructor(CollisionSolver this)
 
 	for(; node; node = node->next)
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
+		Object_removeEventListeners(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), kEventShapeDeleted);
 	}
 
 	VirtualList_clear(this->collidingShapes);
@@ -148,6 +148,7 @@ bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
 
 			if(!collision)
 			{
+				Object_removeEventListeners(__SAFE_CAST(Object, shapeToRemove), __SAFE_CAST(Object, this), kEventShapeDeleted);
 				VirtualList_removeElement(this->collidingShapes, shapeToRemove);
 				this->collidingShapePurgeNode = this->collidingShapes->head;
 
