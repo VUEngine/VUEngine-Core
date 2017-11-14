@@ -120,7 +120,6 @@ void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position _
 	this->layers = layers;
 	this->layersToIgnore = layersToIgnore;
 
-#define __DRAW_SHAPES
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);
 #endif
