@@ -92,6 +92,13 @@ void CollisionSolver_destructor(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::destructor: null this");
 
+	VirtualNode node = this->collidingShapes->head;
+
+	for(; node; node = node->next)
+	{
+		Object_removeEventListener(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
+	}
+
 	VirtualList_clear(this->collidingShapes);
 
 	__DELETE(this->collidingShapes);
