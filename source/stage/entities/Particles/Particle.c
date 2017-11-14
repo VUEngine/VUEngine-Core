@@ -176,6 +176,7 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
 			return true;
 		}
 
+		Sprite_updateAnimation(__SAFE_CAST(Sprite, this->objectSprite));
 	}
 
 	return false;
