@@ -98,7 +98,7 @@ void Ball_destructor(Ball this)
 	__DESTROY_BASE;
 }
 
-void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
+void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size, u32 layers, u32 layersToIgnore)
 {
 	ASSERT(this, "Ball::setup: null this");
 
@@ -120,7 +120,7 @@ void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __
 	// no more setup needed
 	this->ready = true;
 
-	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size);
+	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
 }
 
 // check if two rectangles overlap
@@ -226,10 +226,10 @@ void Ball_show(Ball this)
 	ASSERT(this, "Ball::draw: null this");
 
 //	Ball_configureWireframe(this, __VIRTUAL_CALL(SpatialObject, moves, this->owner) || !this->ready);
-//	Ball_configureWireframe(this, true);
+	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron
-//	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
+	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
 }
 
 // hide wireframe

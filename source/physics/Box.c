@@ -105,7 +105,7 @@ void Box_destructor(Box this)
 	__DESTROY_BASE;
 }
 
-void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
+void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size, u32 layers, u32 layersToIgnore)
 {
 	ASSERT(this, "Box::setup: null this");
 
@@ -321,7 +321,7 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 	// no more setup needed
 	this->ready = true;
 
-	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size);
+	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
 }
 
 // check if two rectangles overlap

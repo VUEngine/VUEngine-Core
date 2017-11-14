@@ -96,7 +96,7 @@ __CLASS_NEW_DECLARE(Box, SpatialObject owner);
 void Box_constructor(Box this, SpatialObject owner);
 void Box_destructor(Box this);
 
-void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);
 CollisionInformation Box_overlaps(Box this, Shape shape);
 CollisionSolution Box_getCollisionSolution(Box this, Shape shape);
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES]);

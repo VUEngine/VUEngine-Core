@@ -92,7 +92,7 @@ typedef struct Normals
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, overlaps, Shape shape);																\
-		__VIRTUAL_DEC(ClassName, void, setup, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
+		__VIRTUAL_DEC(ClassName, void, setup, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);		\
 		__VIRTUAL_DEC(ClassName, CollisionSolution, getCollisionSolution, Shape collidingShape);		\
 		__VIRTUAL_DEC(ClassName, CollisionSolution, testForCollision, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);													\
@@ -113,6 +113,18 @@ typedef struct Normals
 		 * @memberof			Shape
 		 */																								\
 		SpatialObject owner;																			\
+		/**
+		 * @var 32 				layers
+		 * @brief				layers on which this shape live
+		 * @memberof			Shape
+		 */																								\
+		u32 layers;																						\
+		/**
+		 * @var 32 				layersToIgnore
+		 * @brief				layers to ignore when checking for collisions
+		 * @memberof			Shape
+		 */																								\
+		u32 layersToIgnore;																				\
 		/**
 		 * @var u8 				checked
 		 * @brief				whether it has been checked for collision in current update
@@ -168,6 +180,12 @@ typedef struct ShapeDefinition
 	/// if true this shape checks for collisions against other shapes
 	bool checkForCollisions;
 
+	/// layers to ignore when checking for collisions
+	u32 layers;
+
+	/// if true this shape checks for collisions against other shapes
+	u32 layersToIgnore;
+
 } ShapeDefinition;
 
 typedef const ShapeDefinition ShapeROMDef;
@@ -182,7 +200,7 @@ void Shape_destructor(Shape this);
 
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
-void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isChecked(Shape this);

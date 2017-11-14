@@ -89,7 +89,7 @@ __CLASS_NEW_DECLARE(Ball, SpatialObject owner);
 void Ball_constructor(Ball this, SpatialObject owner);
 void Ball_destructor(Ball this);
 
-void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size, u32 layers, u32 layersToIgnore);
 CollisionInformation Ball_overlaps(Ball this, Shape shape);
 CollisionSolution Ball_getCollisionSolution(Ball this, Shape shape);
 void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max);

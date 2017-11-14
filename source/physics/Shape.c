@@ -73,6 +73,8 @@ void Shape_constructor(Shape this, SpatialObject owner)
 
 	// set flag
 	this->checkForCollisions = false;
+	this->layers = 0;
+	this->layersToIgnore = 0;
 
 	Shape_setActive(this, false);
 }
@@ -111,9 +113,14 @@ void Shape_destructor(Shape this)
  * @param scale					Scale*
  * @param size					Size*
  */
-void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)), u32 layers, u32 layersToIgnore)
 {
 	ASSERT(this, "Shape::setup: null this");
+
+	this->layers = layers;
+	this->layersToIgnore = layersToIgnore;
+
+#define __DRAW_SHAPES
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);
 #endif

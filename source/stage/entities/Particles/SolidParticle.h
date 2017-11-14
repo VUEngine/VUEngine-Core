@@ -110,11 +110,14 @@ typedef struct SolidParticleDefinition
 	/// elasticity for physics
 	fix19_13 elasticity;
 
-	/// flag to ignore collisions against other particles
-	bool ignoreParticles;
-
 	/// object's in-game type
 	u32 inGameType;
+
+	/// layers to ignore when checking for collisions
+	u32 layers;
+
+	/// if true this shape checks for collisions against other shapes
+	u32 layersToIgnore;
 
 } SolidParticleDefinition;
 

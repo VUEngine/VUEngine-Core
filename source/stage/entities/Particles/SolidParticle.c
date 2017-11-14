@@ -187,7 +187,7 @@ static void SolidParticle_transformShape(SolidParticle this)
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
 
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
+	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize, this->solidParticleDefinition->layers, this->solidParticleDefinition->layersToIgnore);
 }
 
 /**
@@ -283,14 +283,6 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
 
 	if(this->collisionSolver && collisionInformation.collidingShape)
 	{
-		if(this->solidParticleDefinition->ignoreParticles)
-		{
-			if(__GET_CAST(Particle, Shape_getOwner(collisionInformation.collidingShape)))
-			{
-				return true;
-			}
-		}
-
 		if(CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation))
 		{
 			if(collisionInformation.collisionSolution.translationVectorLength)

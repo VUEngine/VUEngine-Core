@@ -127,6 +127,11 @@ enum DefaultInGameTypes
 	kNoType = 0,
 };
 
+enum DefaulCollisionLayers
+{
+    kNoLayer = 0,
+};
+
 #undef NM_ASSERT
 
 #ifndef __RELEASE

@@ -1175,7 +1175,7 @@ void Entity_transformShapes(Entity this)
 				__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
 			};
 
-			__VIRTUAL_CALL(Shape, setup, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size);
+			__VIRTUAL_CALL(Shape, setup, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size, shapeDefinitions[i].layers, shapeDefinitions[i].layersToIgnore);
 		}
 	}
 }
