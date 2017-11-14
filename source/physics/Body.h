@@ -104,12 +104,6 @@
 		 */																								\
 		Velocity velocity;																				\
 		/**
-		 * @var u16 			axes of applied gravity
-		 * @brief				gravity structure
-		 * @memberof 			Body
-		 */																								\
-		u16 axesOfAppliedGravity;																		\
-		/**
 		 * @var Acceleration 	acceleration
 		 * @brief				acceleration structure
 		 * @memberof 			Body
@@ -152,11 +146,17 @@
 		 */																								\
 		u16 axisSubjectToGravity;																		\
 		/**
+		 * @var u16 			axes of applied gravity
+		 * @brief				gravity structure
+		 * @memberof 			Body
+		 */																								\
+		u16 axesOfAppliedGravity;																		\
+		/**
 		 * @var bool 			active
 		 * @brief				raise flag to make the body active
 		 * @memberof 			Body
 		 */																								\
-		bool active;																						\
+		bool active;																					\
 		/**
 		 * @var bool			awake
 		 * @brief				raise flag to update body's physics
