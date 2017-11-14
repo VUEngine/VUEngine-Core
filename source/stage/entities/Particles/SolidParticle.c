@@ -385,7 +385,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 			if(!Body_getMovementOnAllAxes(this->body))
 			{
-				//CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+				CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}
 			break;
 	}
