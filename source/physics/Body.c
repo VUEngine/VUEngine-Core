@@ -481,6 +481,9 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 		}
 	}
 
+	// cannot change direction if movement stopped on that axis
+	movementResult.axesOfChangeOfMovement &= ~movementResult.axesStoppedMovement;
+
 	return movementResult;
 }
 
