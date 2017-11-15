@@ -456,19 +456,20 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBox(Co
 	ASSERT(this, "CollisionHelper::getCollisionSolutionBetweenBoxAndBox: null this");
 
 	// get the vertexes of each box
-	Vector3D vertexes[2][__BOX_VERTEXES];
-	Box_getVertexes(boxA, vertexes[0]);
-	Box_getVertexes(boxB, vertexes[1]);
+	Vector3D boxAVertexes[__BOX_VERTEXES];
+	Vector3D boxBVertexes[__BOX_VERTEXES];
+	Box_getVertexes(boxA, boxAVertexes);
+	Box_getVertexes(boxB, boxBVertexes);
 
 	// if the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
-		Box_computeNormals(boxA, vertexes[0]);
+		Box_projectOntoItself(boxA);
 	}
 
 	if(!boxB->normals)
 	{
-		Box_computeNormals(boxB, vertexes[1]);
+		Box_projectOntoItself(boxA);
 	}
 
 	Vector3D* normals[2] =
@@ -509,21 +510,31 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBox(Co
 		{
 			Vector3D currentNormal = normals[boxIndex][normalIndex];
 
-			fix19_13 min[2] = {0, 0};
-			fix19_13 max[2] = {0, 0};
+			fix19_13 boxAMin = boxA->vertexProjections[normalIndex].min;
+			fix19_13 boxAMax = boxA->vertexProjections[normalIndex].max;
+			fix19_13 boxBMin = boxB->vertexProjections[normalIndex].min;
+			fix19_13 boxBMax = boxB->vertexProjections[normalIndex].max;
 
-			Box_project(vertexes[0], currentNormal, &min[0], &max[0]);
-			Box_project(vertexes[1], currentNormal, &min[1], &max[1]);
+			if(normals[boxIndex] == boxA->normals->vectors)
+			{
+				boxBMin = boxBMax = 0;
+				Box_project(boxBVertexes, currentNormal, &boxBMin, &boxBMax);
+			}
+			else if(normals[boxIndex] == boxB->normals->vectors)
+			{
+				boxAMin = boxAMax = 0;
+				Box_project(boxAVertexes, currentNormal, &boxAMin, &boxAMax);
+			}
 
 			fix19_13 intervalDistance = 0;
 
-			if (min[0] < min[1])
+			if (boxAMin < boxBMin)
 			{
-				intervalDistance = min[1] - max[0];
+				intervalDistance = boxBMin - boxAMax;
 			}
 			else
 			{
-				intervalDistance = min[0] - max[1];
+				intervalDistance = boxAMin - boxBMax;
 			}
 
 			if(0 < intervalDistance)
