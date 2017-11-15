@@ -98,6 +98,12 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 
 		// check for collisions against other shapes
 		true,
+
+		/// layers in which I live
+		this->solidParticleDefinition->layers,
+
+		/// layers to ignore when checking for collisions
+		this->solidParticleDefinition->layersToIgnore,
 	};
 
 	this->solidParticleDefinition = solidParticleDefinition;
