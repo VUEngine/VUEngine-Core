@@ -31,6 +31,7 @@
 #include <Ball.h>
 #include <Vector3D.h>
 #include <VirtualList.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -371,30 +372,14 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
-static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHelper this __attribute__ ((unused)), Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHelper this, Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::checkIfBallOverlapsBall: null this");
 
-	Vector3D distanceVector = Vector3D_get(ballA->center, ballB->center);
-	fix51_13 radiusesLength = ballA->radius + ballB->radius;
+	CollisionSolution collisionSolution = CollisionHelper_getCollisionSolutionBetweenBallAndBall(this, ballA, ballB);
 
-	if(Vector3D_squareLength(distanceVector) < __FIX51_13_MULT(radiusesLength, radiusesLength))
+	if(collisionSolution.translationVectorLength)
 	{
-		fix19_13 distanceVectorLength = Vector3D_length(distanceVector);
-
-		CollisionSolution collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
-
-		// add padding to prevent rounding problems
-		collisionSolution.translationVectorLength = __FIX51_13_TO_FIX19_13(radiusesLength) - distanceVectorLength + __I_TO_FIX19_13(1);
-		collisionSolution.collisionPlaneNormal = Vector3D_normalize(distanceVector);
-
-		if(Vector3D_dotProduct(distanceVector, collisionSolution.collisionPlaneNormal) > 0)
-		{
-			collisionSolution.collisionPlaneNormal = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, __I_TO_FIX19_13(-1));
-		}
-
-		collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
-
 		return (CollisionInformation){__SAFE_CAST(Shape, ballA), __SAFE_CAST(Shape, ballB), true, collisionSolution};
 	}
 
@@ -478,13 +463,11 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBox(Co
 	// if the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
-		boxA->normals = __NEW_BASIC(Normals);
 		Box_computeNormals(boxA, vertexes[0]);
 	}
 
 	if(!boxB->normals)
 	{
-		boxB->normals = __NEW_BASIC(Normals);
 		Box_computeNormals(boxB, vertexes[1]);
 	}
 
@@ -580,15 +563,10 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBall(C
 {
 	ASSERT(this, "CollisionHelper::getCollisionSolutionBetweenBoxAndBall: null this");
 
-	// get the vertexes of each box
-	Vector3D vertexes[__BOX_VERTEXES];
-	Box_getVertexes(boxA, vertexes);
-
 	// if the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
-		boxA->normals = __NEW_BASIC(Normals);
-		Box_computeNormals(boxA, vertexes);
+		Box_projectOntoItself(boxA);
 	}
 
 	Vector3D* normals = boxA->normals->vectors;
@@ -614,26 +592,26 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBoxAndBall(C
 	{
 		Vector3D currentNormal = normals[normalIndex];
 
-		fix19_13 min[2] = {0, 0};
-		fix19_13 max[2] = {0, 0};
+		fix19_13 ballBMin = 0;
+		fix19_13 ballBMax = 0;
 
-		Box_project(vertexes, currentNormal, &min[0], &max[0]);
-		Ball_project(ballB->center, ballB->radius, currentNormal, &min[1], &max[1]);
+		Ball_project(ballB->center, ballB->radius, currentNormal, &ballBMin, &ballBMax);
 
 		fix19_13 intervalDistance = 0;
 
-		if (min[0] < min[1])
+		if (boxA->vertexProjections[normalIndex].min < ballBMin)
 		{
-			intervalDistance = min[1] - max[0];
+			intervalDistance = ballBMin - boxA->vertexProjections[normalIndex].max;
 		}
 		else
 		{
-			intervalDistance = min[0] - max[1];
+			intervalDistance = boxA->vertexProjections[normalIndex].min - ballBMax;
 		}
 
 		if(0 < intervalDistance)
 		{
 			collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
+
 			return collisionSolution;
 		}
 
@@ -670,9 +648,30 @@ static CollisionSolution CollisionHelper_getCollisionSolutionBetweenInverseBoxAn
 	return (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
 }
 
-static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBallAndBall(CollisionHelper this __attribute__ ((unused)), Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+static CollisionSolution CollisionHelper_getCollisionSolutionBetweenBallAndBall(CollisionHelper this, Ball ballA, Ball ballB)
 {
 	ASSERT(this, "CollisionHelper::getCollisionSolutionBetweenBallAndBall: null this");
 
-	return (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
+	Vector3D distanceVector = Vector3D_get(ballA->center, ballB->center);
+	fix51_13 radiusesLength = ballA->radius + ballB->radius;
+
+	CollisionSolution collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
+
+	if(Vector3D_squareLength(distanceVector) < __FIX51_13_MULT(radiusesLength, radiusesLength))
+	{
+		fix19_13 distanceVectorLength = Vector3D_length(distanceVector);
+
+		// add padding to prevent rounding problems
+		collisionSolution.translationVectorLength = __FIX51_13_TO_FIX19_13(radiusesLength) - distanceVectorLength + __I_TO_FIX19_13(1);
+		collisionSolution.collisionPlaneNormal = Vector3D_normalize(distanceVector);
+
+		if(Vector3D_dotProduct(distanceVector, collisionSolution.collisionPlaneNormal) > 0)
+		{
+			collisionSolution.collisionPlaneNormal = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, __I_TO_FIX19_13(-1));
+		}
+
+		collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
+	}
+
+	return collisionSolution;
 }

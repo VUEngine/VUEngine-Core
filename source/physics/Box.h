@@ -64,6 +64,12 @@
 		 * @brief			the normals of the box
 		 * @memberof 		Box
 		 */																								\
+		VertexProjection vertexProjections[__SHAPE_NORMALS];											\
+		/**
+		 * @var Polyhedron	polyhedron
+		 * @brief			for debugging purposes
+		 * @memberof 		Box
+		 */																								\
 		Normals* normals;																				\
 		/**
 		 * @var Polyhedron	polyhedron
@@ -76,7 +82,7 @@
 		 * @brief			for rotation purposes
 		 * @memberof 		Box
 		 */																								\
-		Vector3D rotationVertexDisplacement;																\
+		Vector3D rotationVertexDisplacement;															\
 		/**
 		 * @var RightBox	rightBox
 		 * @brief			the rectangle
@@ -102,6 +108,7 @@ CollisionSolution Box_getCollisionSolution(Box this, Shape shape);
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES]);
 void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES]);
 void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix19_13* min, fix19_13* max);
+void Box_projectOntoItself(Box this);
 CollisionSolution Box_testForCollision(Box this, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);
 Vector3D Box_getPosition(Box this);
 RightBox Box_getSurroundingRightBox(Box this);

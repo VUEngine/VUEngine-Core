@@ -88,6 +88,12 @@ typedef struct Normals
 	Vector3D vectors[__SHAPE_NORMALS];
 } Normals;
 
+typedef struct VertexProjection
+{
+	fix19_13 min;
+	fix19_13 max;
+} VertexProjection;
+
 
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\

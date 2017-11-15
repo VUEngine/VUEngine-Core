@@ -85,6 +85,13 @@ void Box_constructor(Box this, SpatialObject owner)
 	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
 
 	this->normals = NULL;
+
+	int normalIndex = 0;
+	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
+	{
+		this->vertexProjections[normalIndex].min = 0;
+		this->vertexProjections[normalIndex].max = 0;
+	}
 }
 
 // class's destructor
@@ -291,14 +298,6 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 				this->rotationVertexDisplacement.z = 0;
 			}
 		}
-
-		if(this->normals)
-		{
-			Vector3D vertexes[__BOX_VERTEXES];
-
-			Box_getVertexes(this, vertexes);
-			Box_computeNormals(this, vertexes);
-		}
 	}
 
 	// box's center if placed on P(0, 0, 0)
@@ -317,6 +316,11 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 	this->rightBox.y1 += position->y;
 	this->rightBox.z0 += position->z;
 	this->rightBox.z1 += position->z;
+
+	if(this->normals)
+	{
+		Box_projectOntoItself(this);
+	}
 
 	// no more setup needed
 	this->ready = true;
@@ -407,6 +411,11 @@ void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
 	normals[2] = Vector3D_getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
 */
 
+	if(!this->normals)
+	{
+		this->normals = __NEW_BASIC(Normals);
+	}
+
 	// fast way given that the cubes are regular
 	this->normals->vectors[0] = (Vector3D)
 	{
@@ -441,22 +450,45 @@ void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix19_13* m
 	// project this onto the current normal
 	fix19_13 dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
 
-	*min = dotProduct;
-	*max = dotProduct;
+	fix19_13 finalMin = dotProduct;
+	fix19_13 finalMax = dotProduct;
 
 	// project this onto the current normal
 	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
 	{
 		dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
 
-		if(dotProduct < *min)
+		if(dotProduct < finalMin)
 		{
-			*min = dotProduct;
+			finalMin = dotProduct;
 		}
-		else if(dotProduct > *max)
+		else if(dotProduct > finalMax)
 		{
-			*max = dotProduct;
+			finalMax = dotProduct;
 		}
+	}
+
+	*min = finalMin;
+	*max = finalMax;
+}
+
+void Box_projectOntoItself(Box this)
+{
+	ASSERT(this, "Box::projectOntoItself: null this");
+
+	Vector3D vertexes[__BOX_VERTEXES];
+	Box_getVertexes(this, vertexes);
+
+	// compute normals
+	Box_computeNormals(this, vertexes);
+
+	// has to project all points on all the normals of the tilted box
+	int normalIndex = 0;
+
+	// initialize vertex projections
+	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
+	{
+		Box_project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
 	}
 }
 
@@ -478,11 +510,15 @@ CollisionSolution Box_testForCollision(Box this, Shape shape, Vector3D displacem
 	this->rightBox.z0 += displacement.z - sizeIncrement;
 	this->rightBox.z1 += displacement.z + sizeIncrement;
 
+	Box_projectOntoItself(this);
+
 	// test for collision on displaced center
 	CollisionSolution collisionSolution = CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 
 	// put back myself
 	this->rightBox = rightBox;
+
+	Box_projectOntoItself(this);
 
 	return collisionSolution;
 }
