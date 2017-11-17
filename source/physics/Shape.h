@@ -180,10 +180,10 @@ typedef struct ShapeDefinition
 	/// if true this shape checks for collisions against other shapes
 	bool checkForCollisions;
 
-	/// layers to ignore when checking for collisions
+	/// layers in which I live
 	u32 layers;
 
-	/// if true this shape checks for collisions against other shapes
+	/// layers to ignore when checking for collisions
 	u32 layersToIgnore;
 
 } ShapeDefinition;
