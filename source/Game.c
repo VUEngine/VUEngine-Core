@@ -1166,6 +1166,13 @@ void Game_checkFrameRate(Game this)
 
 	if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
 	{
+#ifdef __SHOW_COLLISIONS_PROFILING
+		if(Game_getCollisionManager(this))
+		{
+			CollisionManager_print(Game_getCollisionManager(this), 1, 1);
+		}
+#endif
+
 #ifdef __SHOW_GAME_PROFILING
 		if(_updateProfiling)
 		{
