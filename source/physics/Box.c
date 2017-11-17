@@ -157,16 +157,16 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 
 			Vector3D topRightHelper =
 			{
-				abs(topRight.x),
-				abs(topRight.y),
-				abs(topRight.z),
+				__ABS(topRight.x),
+				__ABS(topRight.y),
+				__ABS(topRight.z),
 			};
 
 			Vector3D bottomRightHelper =
 			{
-				abs(bottomRight.x),
-				abs(bottomRight.y),
-				abs(bottomRight.z),
+				__ABS(bottomRight.x),
+				__ABS(bottomRight.y),
+				__ABS(bottomRight.z),
 			};
 
 			surroundingBoxSize.x = __FIX19_13_TO_I(bottomRightHelper.x > topRightHelper.x ? bottomRightHelper.x : topRightHelper.x) << 1;
@@ -213,16 +213,16 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 
 			Vector3D bottomLeftHelper =
 			{
-				abs(bottomLeft.x),
-				abs(bottomLeft.y),
-				abs(bottomLeft.z),
+				__ABS(bottomLeft.x),
+				__ABS(bottomLeft.y),
+				__ABS(bottomLeft.z),
 			};
 
 			Vector3D bottomRightHelper =
 			{
-				abs(bottomRight.x),
-				abs(bottomRight.y),
-				abs(bottomRight.z),
+				__ABS(bottomRight.x),
+				__ABS(bottomRight.y),
+				__ABS(bottomRight.z),
 			};
 
 			surroundingBoxSize.x = __FIX19_13_TO_I(bottomLeftHelper.x > bottomRightHelper.x ? bottomLeftHelper.x : bottomRightHelper.x) << 1;
@@ -269,16 +269,16 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 
 			Vector3D bottomNearHelper =
 			{
-				abs(bottomNear.x),
-				abs(bottomNear.y),
-				abs(bottomNear.z),
+				__ABS(bottomNear.x),
+				__ABS(bottomNear.y),
+				__ABS(bottomNear.z),
 			};
 
 			Vector3D bottomFarHelper =
 			{
-				abs(bottomFar.x),
-				abs(bottomFar.y),
-				abs(bottomFar.z),
+				__ABS(bottomFar.x),
+				__ABS(bottomFar.y),
+				__ABS(bottomFar.z),
 			};
 
 			surroundingBoxSize.y = __FIX19_13_TO_I(bottomFarHelper.y > bottomNearHelper.y ? bottomFarHelper.y : bottomNearHelper.y) << 1;

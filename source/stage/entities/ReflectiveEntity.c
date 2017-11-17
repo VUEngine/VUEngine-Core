@@ -380,8 +380,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
     int ySourceStartHelper = ySourceStart >> Y_STEP_SIZE_2_EXP;
 
-	int xSourceDistance = abs(xSourceEnd - xSourceStart);
-	int xOutputDistance = abs(xOutput - xOutputLimit);
+	int xSourceDistance = __ABS(xSourceEnd - xSourceStart);
+	int xOutputDistance = __ABS(xOutput - xOutputLimit);
 	int xTotal = xOutputDistance > xSourceDistance ? xSourceDistance : xOutputDistance;
 
 	this->waveLutIndex += waveLutIndexIncrement;

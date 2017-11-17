@@ -313,17 +313,17 @@ void Body_clearGravityFlags(Body this)
 {
 	ASSERT(this, "Body::clearGravityFlags: null this");
 
-	if(__STOP_VELOCITY_THRESHOLD < abs(this->velocity.x))
+	if(__STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x))
 	{
 		this->axesOfAppliedGravity &= ~__X_AXIS;
 	}
 
-	if(__STOP_VELOCITY_THRESHOLD < abs(this->velocity.y))
+	if(__STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y))
 	{
 		this->axesOfAppliedGravity &= ~__Y_AXIS;
 	}
 
-	if(__STOP_VELOCITY_THRESHOLD < abs(this->velocity.z))
+	if(__STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.z))
 	{
 		this->axesOfAppliedGravity &= ~__Z_AXIS;
 	}
@@ -458,7 +458,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	{
 		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
 		{
-			if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x))
+			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x))
 			{
 				movementResult.axesStoppedMovement |= __X_AXIS;
 			}
@@ -466,7 +466,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 
 		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->normal.y * this->velocity.y)))
 		{
-			if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.y))
+			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y))
 			{
 				movementResult.axesStoppedMovement |= __Y_AXIS;
 			}
@@ -474,7 +474,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 
 		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->normal.z * this->velocity.z)))
 		{
-			if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.z))
+			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z))
 			{
 				movementResult.axesStoppedMovement |= __Z_AXIS;
 			}
@@ -770,11 +770,11 @@ void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient)
 
 	if(this->frictionCoefficient)
 	{
-		this->frictionForceMagnitude = abs(__FIX19_13_DIV(this->frictionForceMagnitude, this->frictionCoefficient));
+		this->frictionForceMagnitude = __ABS(__FIX19_13_DIV(this->frictionForceMagnitude, this->frictionCoefficient));
 	}
 
 	this->frictionCoefficient = frictionCoefficient;
-	this->frictionForceMagnitude = abs(__FIX19_13_MULT(this->frictionForceMagnitude, this->frictionCoefficient));
+	this->frictionForceMagnitude = __ABS(__FIX19_13_MULT(this->frictionForceMagnitude, this->frictionCoefficient));
 }
 
 fix19_13 Body_getMass(Body this)
@@ -874,17 +874,17 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 	// and if there is no velocity in the other components
 	if(!(this->axesOfAppliedGravity))
 	{
-		if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.x) && !(this->velocity.y | this->velocity.z))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !(this->velocity.y | this->velocity.z))
 		{
 			movementResult.axesStoppedMovement |= __X_AXIS;
 		}
 
-		if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.y) && !(this->velocity.x | this->velocity.z))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !(this->velocity.x | this->velocity.z))
 		{
 			movementResult.axesStoppedMovement |= __Y_AXIS;
 		}
 
-		if(__STOP_VELOCITY_THRESHOLD > abs(this->velocity.z) && !(this->velocity.x | this->velocity.y))
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !(this->velocity.x | this->velocity.y))
 		{
 			movementResult.axesStoppedMovement |= __Z_AXIS;
 		}
@@ -919,7 +919,7 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 	fix19_13 totalElasticity = this->elasticity + elasticity;
 	Acceleration gravity = Body_getGravity(this);
 
-	fix19_13 cosAngle = bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z | gravity.x | gravity.y | gravity.z ? abs(__FIX19_13_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX19_13;
+	fix19_13 cosAngle = (bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX19_13_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX19_13;
 	fix19_13 normalForce = __FIX19_13_MULT(Vector3D_length(this->weight), cosAngle);
 
 	Body_setFrictionCoefficient(this, frictionCoefficient);

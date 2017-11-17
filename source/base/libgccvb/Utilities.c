@@ -153,7 +153,7 @@ long Utilities_randomSeed()
 // These real versions are due to Isaku Wada, 2002/01/09 added
 int Utilities_random(long seed, int randnums)
 {
-	return seed & randnums ? abs((int)(seed % randnums)) : 0;
+	return seed & randnums ? __ABS((int)(seed % randnums)) : 0;
 }
 
 /*

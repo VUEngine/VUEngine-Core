@@ -222,8 +222,8 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-	fix19_13 dx = abs(toPoint.x - fromPoint.x);
-	fix19_13 dy = abs(toPoint.y - fromPoint.y);
+	fix19_13 dx = __ABS(toPoint.x - fromPoint.x);
+	fix19_13 dy = __ABS(toPoint.y - fromPoint.y);
 
 	fix19_13 stepX = __I_TO_FIX19_13(1), stepY = __I_TO_FIX19_13(1);
 	fix19_13 parallax = __I_TO_FIX19_13(fromPoint.parallax);
@@ -265,7 +265,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 
 			fix19_13 fraction = dy - halfDx;
 
-			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), abs(halfDx)) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDx)) : 0;
 			fix19_13 auxParallax = parallax;
 
 			while(fromPoint.x < toPoint.x)
@@ -317,7 +317,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 
 			fix19_13 fraction = dx - halfDy;
 
-			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), abs(halfDy)) : 0;
+			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDy)) : 0;
 			fix19_13 auxParallax = parallax;
 
 			while(fromPoint.y < toPoint.y)
@@ -385,7 +385,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 
 			fix19_13 fraction = dy - halfDx;
 
-			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), abs(halfDx)) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDx)) : 0;
 			fix19_13 auxParallax = parallax;
 
 			while(fromPoint.x < toPoint.x)
@@ -437,7 +437,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 
 			fix19_13 fraction = dx - halfDy;
 
-			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), abs(halfDy)) : 0;
+			fix19_13 parallaxStep = halfDy ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDy)) : 0;
 			fix19_13 auxParallax = parallax;
 
 			while(fromPoint.y < toPoint.y)

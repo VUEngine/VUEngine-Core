@@ -409,7 +409,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 
 					if(canMove)
 					{
-						canMove &= __I_TO_FIX19_13(1) != abs(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
+						canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
 					}
 
 					__DELETE_BASIC(collisionSolution);

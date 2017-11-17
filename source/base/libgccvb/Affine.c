@@ -68,7 +68,7 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 	fixedAffineMatrix.dx =
 		mx
 		+
-		__FIX19_13_TO_FIX13_3(__FIX19_13_DIV(halfWidth, __FIX7_9_TO_FIX19_13(abs(finalScale.x))))
+		__FIX19_13_TO_FIX13_3(__FIX19_13_DIV(halfWidth, __FIX7_9_TO_FIX19_13(__ABS(finalScale.x))))
 		-
 		__FIX19_13_TO_FIX13_3
 		(
@@ -81,7 +81,7 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 	fixedAffineMatrix.dy =
 		my
 		+
-		__FIX19_13_TO_FIX13_3(__FIX19_13_DIV(halfHeight, __FIX7_9_TO_FIX19_13(abs(finalScale.y))))
+		__FIX19_13_TO_FIX13_3(__FIX19_13_DIV(halfHeight, __FIX7_9_TO_FIX19_13(__ABS(finalScale.y))))
 		-
 		(
 			__FIX19_13_TO_FIX13_3(__FIX19_13_MULT(highPrecisionPc, x))

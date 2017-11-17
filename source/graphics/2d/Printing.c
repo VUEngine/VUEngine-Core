@@ -530,7 +530,7 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 
 	int integer = (int)__FIX19_13_TO_I(__F_TO_FIX19_13(value));
 	int decimal = (int)(((float)FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 10000.f);
-	int length = Utilities_intLength(abs(integer)) + (0 > value ? 1 : 0);
+	int length = Utilities_intLength(__ABS(integer)) + (0 > value ? 1 : 0);
 
 	Printing_int(this, integer, x, y, font);
 

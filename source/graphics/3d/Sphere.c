@@ -75,7 +75,7 @@ static void Sphere_constructor(Sphere this, Vector3D center, fix19_13 radius)
 	__CONSTRUCT_BASE(Wireframe);
 
 	this->center = center;
-	this->radius = abs(radius);
+	this->radius = __ABS(radius);
 }
 
 /**
@@ -158,7 +158,7 @@ void Sphere_setRadius(Sphere this, fix19_13 radius)
 {
 	ASSERT(this, "Sphere::destructor: null this");
 
-	this->radius = abs(radius);
+	this->radius = __ABS(radius);
 }
 
 /**

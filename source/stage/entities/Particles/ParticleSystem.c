@@ -98,9 +98,9 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	this->paused = !this->particleSystemDefinition->autoStart;
 
 	// set size from definition
-	this->size.x += __FIX19_13_TO_I(abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
-	this->size.y += __FIX19_13_TO_I(abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
-	this->size.z += __FIX19_13_TO_I(abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
+	this->size.x += __FIX19_13_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
+	this->size.y += __FIX19_13_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
+	this->size.z += __FIX19_13_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
@@ -333,9 +333,9 @@ static const Vector3D* ParticleSystem_getParticleSpawnPosition(ParticleSystem th
 		0, 0, 0
 	};
 
-	position.x = this->transformation.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpawnPosition.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
-	position.y = this->transformation.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpawnPosition.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
-	position.z = this->transformation.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpawnPosition.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
+	position.x = this->transformation.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpawnPosition.x + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
+	position.y = this->transformation.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpawnPosition.y + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
+	position.z = this->transformation.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpawnPosition.z + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
 
 	return &position;
 }
@@ -358,9 +358,9 @@ static const Force* ParticleSystem_getParticleSpawnForce(ParticleSystem this, lo
 		0, 0, 0
 	};
 
-	force.x = __I_TO_FIX19_13(this->particleSystemDefinition->minimumForce.x + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x)));
-	force.y = __I_TO_FIX19_13(this->particleSystemDefinition->minimumForce.y + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y)));
-	force.z = __I_TO_FIX19_13(this->particleSystemDefinition->minimumForce.z + Utilities_random(seed, abs(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z)));
+	force.x = __I_TO_FIX19_13(this->particleSystemDefinition->minimumForce.x + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x)));
+	force.y = __I_TO_FIX19_13(this->particleSystemDefinition->minimumForce.y + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y)));
+	force.z = __I_TO_FIX19_13(this->particleSystemDefinition->minimumForce.z + Utilities_random(seed, __ABS(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z)));
 
 	return &force;
 }

@@ -2344,17 +2344,17 @@ Direction Entity_getDirection(Entity this)
 		__RIGHT, __DOWN, __FAR
 	};
 
-	if((__QUARTER_ROTATION_DEGREES) < abs(this->transformation.globalRotation.y))
+	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transformation.globalRotation.y))
 	{
 		direction.x = __LEFT;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < abs(this->transformation.globalRotation.x))
+	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transformation.globalRotation.x))
 	{
 		direction.y = __UP;
 	}
 
-	if((__QUARTER_ROTATION_DEGREES) < abs(this->transformation.globalRotation.z))
+	if((__QUARTER_ROTATION_DEGREES) < __ABS(this->transformation.globalRotation.z))
 	{
 		direction.z = __NEAR;
 	}

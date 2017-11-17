@@ -187,7 +187,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(abs(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < abs(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
+				if(__ABS(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
