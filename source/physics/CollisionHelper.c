@@ -369,6 +369,68 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 {
 	ASSERT(this, "CollisionHelper::checkIfInverseBoxOverlapsBall: null this");
 
+	Vector3D inverseBoxACenter =
+	{
+		(inverseBoxA->rightBox.x0 + inverseBoxA->rightBox.x1) >> 1,
+		(inverseBoxA->rightBox.y0 + inverseBoxA->rightBox.y1) >> 1,
+		(inverseBoxA->rightBox.z0 + inverseBoxA->rightBox.z1) >> 1,
+	};
+
+	Vector3D intervalDistance =
+	{
+		inverseBoxACenter.x > ballB->center.x ? ((ballB->center.x - ballB->radius) - inverseBoxA->rightBox.x0) : (inverseBoxA->rightBox.x1 - (ballB->center.x + ballB->radius)),
+		inverseBoxACenter.y > ballB->center.y ? ((ballB->center.y - ballB->radius) - inverseBoxA->rightBox.y0) : (inverseBoxA->rightBox.y1 - (ballB->center.y + ballB->radius)),
+		inverseBoxACenter.z > ballB->center.z ? ((ballB->center.z - ballB->radius) - inverseBoxA->rightBox.z0) : (inverseBoxA->rightBox.z1 - (ballB->center.z + ballB->radius)),
+	};
+
+	// test for collision
+	if(0 > intervalDistance.x || 0 > intervalDistance.y || 0 > intervalDistance.z)
+	{
+		// check if both boxes are axis aligned
+		bool isSATCheckPending = inverseBoxA->rotationVertexDisplacement.x | inverseBoxA->rotationVertexDisplacement.y | inverseBoxA->rotationVertexDisplacement.z ? true : false;
+
+		CollisionSolution collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
+		fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
+
+		// if axis aligned, then SAT check is not needed
+		// and we can calculate the minimum displacement vector
+		// to resolve the collision right now
+		if(!isSATCheckPending)
+		{
+			Vector3D distanceVector = Vector3D_get(inverseBoxACenter, ballB->center);
+
+			Vector3D normals[__SHAPE_NORMALS] =
+			{
+				{__I_TO_FIX19_13(1), 0, 0},
+				{0, __I_TO_FIX19_13(1), 0},
+				{0, 0, __I_TO_FIX19_13(1)},
+			};
+
+			int i = 0;
+			fix19_13* component = &intervalDistance.x;
+
+			for(i = 0; i < __SHAPE_NORMALS; i++)
+			{
+				fix19_13 intervalDistance = __ABS(component[i]);
+
+				if(intervalDistance < minimumIntervalDistance)
+				{
+					collisionSolution.translationVectorLength = minimumIntervalDistance = intervalDistance;
+					collisionSolution.collisionPlaneNormal = normals[i];
+
+					if(Vector3D_dotProduct(distanceVector, collisionSolution.collisionPlaneNormal) < 0)
+					{
+						collisionSolution.collisionPlaneNormal = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, __I_TO_FIX19_13(-1));
+					}
+				}
+			}
+
+			collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
+		}
+
+		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), !isSATCheckPending, collisionSolution};
+	}
+
 	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
