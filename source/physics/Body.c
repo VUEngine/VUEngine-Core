@@ -454,7 +454,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
-	if(!(this->axesOfAppliedGravity))
+	if(!(this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.x)
 	{
 		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
 		{
