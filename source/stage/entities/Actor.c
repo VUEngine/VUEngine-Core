@@ -391,6 +391,8 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 			direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
 		};
 
+		Vector3D normalizedDisplacement = Vector3D_normalize(displacement);
+
 		VirtualNode shapeNode = this->shapes->head;
 
 		bool canMove = true;
@@ -398,6 +400,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 		for(; shapeNode; shapeNode = shapeNode->next)
 		{
 			VirtualList collisionSolutionsList = CollisionSolver_testForCollisions(this->collisionSolver, displacement, 0, __SAFE_CAST(Shape, shapeNode->data));
+__PRINT_IN_GAME_TIME(1,15);
 
 			if(collisionSolutionsList)
 			{
@@ -409,7 +412,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 
 					if(canMove)
 					{
-						canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
+						canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
 					}
 
 					__DELETE_BASIC(collisionSolution);
@@ -614,6 +617,29 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 	ASSERT(this, "Actor::changeEnvironment: null this");
 
 	__CALL_BASE_METHOD(AnimatedEntity, changeEnvironment, this, environmentTransform);
+
+	if(this->body)
+	{
+		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
+	}
+}
+
+/**
+ * Initial transformation
+ *
+ * @memberof					Actor
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ * @param recursive
+ */
+void Actor_initialTransform(Actor this, Transformation* environmentTransform, u32 recursive)
+{
+	ASSERT(this, "Entity::initialTransform: null this");
+
+	// call base class's transformation method
+	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
 	if(this->body)
 	{

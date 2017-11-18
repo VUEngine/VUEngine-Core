@@ -51,6 +51,7 @@
 		AnimatedEntity_SET_VTABLE(ClassName)															\
 		__VIRTUAL_SET(ClassName, Actor, update);														\
 		__VIRTUAL_SET(ClassName, Actor, transform);														\
+		__VIRTUAL_SET(ClassName, Actor, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Actor, resume);														\
 		__VIRTUAL_SET(ClassName, Actor, handleMessage);													\
 		__VIRTUAL_SET(ClassName, Actor, moves);															\
@@ -108,6 +109,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 void Actor_destructor(Actor this);
 void Actor_setDefinition(Actor this, void* actorDefinition);
 void Actor_setLocalPosition(Actor this, const Vector3D* position);
+void Actor_initialTransform(Actor this, Transformation* environmentTransform, u32 recursive);
 void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Actor_resume(Actor this);
 void Actor_update(Actor this, u32 elapsedTime);
