@@ -400,7 +400,6 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 		for(; shapeNode; shapeNode = shapeNode->next)
 		{
 			VirtualList collisionSolutionsList = CollisionSolver_testForCollisions(this->collisionSolver, displacement, 0, __SAFE_CAST(Shape, shapeNode->data));
-__PRINT_IN_GAME_TIME(1,15);
 
 			if(collisionSolutionsList)
 			{
