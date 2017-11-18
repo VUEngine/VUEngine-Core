@@ -354,41 +354,44 @@ void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 	Vector3D leftBottomFar 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
 	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
 
-	if(!this->rotationVertexDisplacement.z)
+	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{
-		leftTopNear.y 		+= this->rotationVertexDisplacement.y;
-		rightTopNear.x 		-= this->rotationVertexDisplacement.x;
-		leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
-		rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
+		if(!this->rotationVertexDisplacement.z)
+		{
+			leftTopNear.y 		+= this->rotationVertexDisplacement.y;
+			rightTopNear.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
 
-		leftTopFar.y 		+= this->rotationVertexDisplacement.y;
-		rightTopFar.x 		-= this->rotationVertexDisplacement.x;
-		leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
-		rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
-	}
-	else if(!this->rotationVertexDisplacement.y)
-	{
-		leftTopNear.x 		+= this->rotationVertexDisplacement.x;
-		rightTopNear.z 		+= this->rotationVertexDisplacement.z;
-		leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
-		rightBottomNear.z 	+= this->rotationVertexDisplacement.z;
+			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
+			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomFar.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomFar.y 	-= this->rotationVertexDisplacement.y;
+		}
+		else if(!this->rotationVertexDisplacement.y)
+		{
+			leftTopNear.x 		+= this->rotationVertexDisplacement.x;
+			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
+			leftBottomNear.x 	+= this->rotationVertexDisplacement.x;
+			rightBottomNear.z 	+= this->rotationVertexDisplacement.z;
 
-		leftTopFar.z 		-= this->rotationVertexDisplacement.z;
-		rightTopFar.x 		-= this->rotationVertexDisplacement.x;
-		leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
-		rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
-	}
-	else if(!this->rotationVertexDisplacement.x)
-	{
-		leftTopNear.z 		+= this->rotationVertexDisplacement.z;
-		rightTopNear.z 		+= this->rotationVertexDisplacement.z;
-		leftBottomNear.y 	-= this->rotationVertexDisplacement.y;
-		rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
+			leftTopFar.z 		-= this->rotationVertexDisplacement.z;
+			rightTopFar.x 		-= this->rotationVertexDisplacement.x;
+			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			rightBottomFar.x 	-= this->rotationVertexDisplacement.x;
+		}
+		else if(!this->rotationVertexDisplacement.x)
+		{
+			leftTopNear.z 		+= this->rotationVertexDisplacement.z;
+			rightTopNear.z 		+= this->rotationVertexDisplacement.z;
+			leftBottomNear.y 	-= this->rotationVertexDisplacement.y;
+			rightBottomNear.y 	-= this->rotationVertexDisplacement.y;
 
-		leftTopFar.y 		+= this->rotationVertexDisplacement.y;
-		rightTopFar.y 		+= this->rotationVertexDisplacement.y;
-		leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
-		rightBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			leftTopFar.y 		+= this->rotationVertexDisplacement.y;
+			rightTopFar.y 		+= this->rotationVertexDisplacement.y;
+			leftBottomFar.z 	-= this->rotationVertexDisplacement.z;
+			rightBottomFar.z 	-= this->rotationVertexDisplacement.z;
+		}
 	}
 
 	vertexes[0] = leftTopNear;
