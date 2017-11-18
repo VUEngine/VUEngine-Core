@@ -632,9 +632,10 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 
 	if(!VirtualList_find(this->activeBodies, body))
 	{
-		VirtualList_removeElement(this->bodiesSentToSleep, body);
 		VirtualList_pushBack(this->activeBodies, body);
 	}
+
+	VirtualList_removeElement(this->bodiesSentToSleep, body);
 }
 
 /**
@@ -652,7 +653,10 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	VirtualList_pushBack(this->bodiesSentToSleep, body);
+	if(!VirtualList_find(this->bodiesSentToSleep, body))
+	{
+		VirtualList_pushBack(this->bodiesSentToSleep, body);
+	}
 }
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
