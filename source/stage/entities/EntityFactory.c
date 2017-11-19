@@ -348,6 +348,8 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 		{
 			positionedEntityDescription->transformed = true;
 
+			__VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
+
 			Transformation* environmentTransform = Container_getTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
 
 			__VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, environmentTransform, false);
@@ -393,8 +395,6 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 	{
 		if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
 		{
-			__VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
-
 			// call ready method
 			__VIRTUAL_CALL(Entity, ready, positionedEntityDescription->entity, false);
 
@@ -410,10 +410,7 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 	{
 		VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
-		{
-			__DELETE(positionedEntityDescription->entity);
-		}
+		// don't need to delete the created entity since the parent takes care of that at this point
 
 		__DELETE_BASIC(positionedEntityDescription);
 	}
