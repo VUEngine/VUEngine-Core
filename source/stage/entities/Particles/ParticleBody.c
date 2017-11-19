@@ -67,8 +67,8 @@ Acceleration Body_getGravity(Body this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
-__CLASS_NEW_END(ParticleBody, owner, physicalSpecification);
+__CLASS_NEW_DEFINITION(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+__CLASS_NEW_END(ParticleBody, owner, physicalSpecification, axesSubjectToGravity);
 
 /**
  * Class constructor
@@ -80,11 +80,11 @@ __CLASS_NEW_END(ParticleBody, owner, physicalSpecification);
  * @param owner
  * @param mass
  */
-void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
+void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "ParticleBody::constructor: null this");
 
-	__CONSTRUCT_BASE(Body, owner, physicalSpecification);
+	__CONSTRUCT_BASE(Body, owner, physicalSpecification, axesSubjectToGravity);
 }
 
 /**

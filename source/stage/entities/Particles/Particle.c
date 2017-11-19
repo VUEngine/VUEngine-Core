@@ -82,9 +82,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
 	PhysicalSpecification physicalSpecification = {mass, 0, 0};
-	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification);
-	Body_setAxisSubjectToGravity(this->body,(u16) particleDefinition->axisSubjectToGravity);
-
+	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
 	this->objectSprite = NULL;
 	Particle_addSprite(this);
 }
@@ -409,7 +407,7 @@ bool Particle_canMoveTowards(Particle this, Vector3D direction __attribute__ ((u
 {
 	ASSERT(this, "Particle::canMoveTowards: null this");
 
-	return (bool)Body_getAxisSubjectToGravity(this->body);
+	return (bool)Body_getAxesSubjectToGravity(this->body);
 }
 
 void Particle_transform(Particle this);

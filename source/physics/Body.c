@@ -116,11 +116,11 @@ Acceleration Body_getGravity(Body this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Body, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
-__CLASS_NEW_END(Body, owner, physicalSpecification);
+__CLASS_NEW_DEFINITION(Body, SpatialObject owner, const PhysicalSpecification* physicalSpecification,  u16 axesSubjectToGravity)
+__CLASS_NEW_END(Body, owner, physicalSpecification,  axesSubjectToGravity);
 
 // class's constructor
-void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
+void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "Body::constructor: null this");
 
@@ -134,7 +134,7 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 
 	this->active = true;
 	this->awake = false;
-	this->axisSubjectToGravity = __X_AXIS | __Y_AXIS | __Z_AXIS;
+	this->axesSubjectToGravity = axesSubjectToGravity;
 	this->axesOfAppliedGravity = __NO_AXIS;
 
 	// clear movement type
@@ -491,9 +491,9 @@ Acceleration Body_getGravity(Body this)
 {
 	return (Acceleration)
 	{
-		__X_AXIS & this->axisSubjectToGravity ? _currentGravity->x : 0,
-		__Y_AXIS & this->axisSubjectToGravity ? _currentGravity->y : 0,
-		__Z_AXIS & this->axisSubjectToGravity ? _currentGravity->z : 0,
+		__X_AXIS & this->axesSubjectToGravity ? _currentGravity->x : 0,
+		__Y_AXIS & this->axesSubjectToGravity ? _currentGravity->y : 0,
+		__Z_AXIS & this->axesSubjectToGravity ? _currentGravity->z : 0,
 	};
 }
 
@@ -659,19 +659,19 @@ void Body_stopMovement(Body this, u16 axis)
 }
 
 // get axis subject to gravity
-u8 Body_getAxisSubjectToGravity(Body this)
+u16 Body_getAxesSubjectToGravity(Body this)
 {
-	ASSERT(this, "Body::getAxisSubjectToGravity: null this");
+	ASSERT(this, "Body::getAxesSubjectToGravity: null this");
 
-	return this->axisSubjectToGravity;
+	return this->axesSubjectToGravity;
 }
 
 // set axis subject to gravity
-void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity)
+void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity)
 {
-	ASSERT(this, "Body::setAxisSubjectToGravity: null this");
+	ASSERT(this, "Body::setAxesSubjectToGravity: null this");
 
-	this->axisSubjectToGravity = axisSubjectToGravity;
+	this->axesSubjectToGravity = axesSubjectToGravity;
 }
 
 // set active

@@ -48,7 +48,7 @@
 __CLASS(PhysicalWorld);
 
 
-typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*);
+typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, u16 axesSubjectToGravity);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
 void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this);
-Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
+Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 void PhysicalWorld_destroyBody(PhysicalWorld this, Body body);
 void PhysicalWorld_reset(PhysicalWorld this);
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);

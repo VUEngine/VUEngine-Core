@@ -207,10 +207,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
  *
  * @return				Registered Body
  */
-
- #include <Body.h>
- #include <ParticleBody.h>
-Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification)
+Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "PhysicalWorld::createBody: null this");
 
@@ -224,7 +221,7 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 
 	if(bodyAllocator)
 	{
-		Body body = bodyAllocator(owner, physicalSpecification);
+		Body body = bodyAllocator(owner, physicalSpecification, axesSubjectToGravity);
 		VirtualList_pushFront(this->bodies, body);
 		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
@@ -398,7 +395,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 			// check if necessary to apply gravity
 			u16 movingState = Body_getMovementOnAllAxes(body);
 
-			u16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+			u16 gravitySensibleAxis = body->axesSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
 			if(gravitySensibleAxis && __VIRTUAL_CALL(SpatialObject, canMoveTowards, body->owner, gravityDirection))
 			{

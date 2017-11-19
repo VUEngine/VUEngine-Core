@@ -140,11 +140,11 @@
 		 */																								\
 		MovementType movementType;																		\
 		/**
-		 * @var u8 				axisSubjectToGravity
+		 * @var u8 				axesSubjectToGravity
 		 * @brief				axis that is subject to gravity
 		 * @memberof 			Body
 		 */																								\
-		u16 axisSubjectToGravity;																		\
+		u16 axesSubjectToGravity;																		\
 		/**
 		 * @var u16 			axes of applied gravity
 		 * @brief				gravity structure
@@ -170,11 +170,11 @@ __CLASS(Body);
 // defines a body
 typedef struct PhysicalSpecification
 {
-	// mass
+	/// mass
 	fix19_13 mass;
-	// friction coefficient
+	/// friction coefficient
 	fix19_13 frictionCoefficient;
-	// elasticity
+	/// elasticity
 	fix19_13 elasticity;
 
 } PhysicalSpecification;
@@ -195,9 +195,9 @@ void Body_setCurrentGravity(const Acceleration* currentGravity);
 //										CLASS' INSTANCE METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Body, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
+__CLASS_NEW_DECLARE(Body, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 
-void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
+void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 void Body_destructor(Body this);
 
 void Body_addForce(Body this, const Force* force);
@@ -208,7 +208,7 @@ void Body_clearAcceleration(Body this, u16 axis);
 void Body_clearExternalForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
-u8 Body_getAxisSubjectToGravity(Body this);
+u16 Body_getAxesSubjectToGravity(Body this);
 fix19_13 Body_getElasticity(Body this);
 Vector3D Body_getLastDisplacement(Body this);
 fix19_13 Body_getMass(Body this);
@@ -223,7 +223,7 @@ void Body_moveAccelerated(Body this, u16 axis);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_printPhysics(Body this, int x, int y);
 void Body_setActive(Body this, bool active);
-void Body_setAxisSubjectToGravity(Body this, u16 axisSubjectToGravity);
+void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getNormal(Body this);
 void Body_clearNormal(Body this);

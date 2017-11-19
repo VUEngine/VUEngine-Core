@@ -51,9 +51,9 @@ __CLASS(ParticleBody);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
+__CLASS_NEW_DECLARE(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 
-void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification);
+void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 void ParticleBody_destructor(ParticleBody this);
 
 void ParticleBody_update(ParticleBody this);

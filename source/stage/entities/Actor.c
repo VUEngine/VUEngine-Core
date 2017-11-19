@@ -84,6 +84,32 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	this->body = NULL;
 	this->collisionSolver = NULL;
 	this->previousRotation = this->transformation.localRotation;
+
+	// create body
+	if(actorDefinition->createBody)
+	{
+		if(actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification)
+		{
+			this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification, actorDefinition->axesSubjectToGravity);
+		}
+		else
+		{
+			PhysicalSpecification defaultActorPhysicalSpecification =
+			{
+				__I_TO_FIX19_13(1),
+				0,
+				0
+			};
+
+			this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), &defaultActorPhysicalSpecification, actorDefinition->axesSubjectToGravity);
+		}
+	}
+
+	// create collision solver
+	if(actorDefinition->createCollisionSolver)
+	{
+		this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this));
+	}
 }
 
 // class's destructor
@@ -143,9 +169,9 @@ void Actor_setLocalPosition(Actor this, const Vector3D* position)
 	displacement.y -= this->transformation.localPosition.y;
 	displacement.z -= this->transformation.localPosition.z;
 
-	this->transformation.globalPosition.x += displacement.x;
-	this->transformation.globalPosition.y += displacement.y;
-	this->transformation.globalPosition.z += displacement.z;
+	this->transformation.globalPosition.x -= displacement.x;
+	this->transformation.globalPosition.y -= displacement.y;
+	this->transformation.globalPosition.z -= displacement.z;
 
 	if(this->body)
 	{
@@ -427,16 +453,6 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 	return true;
 }
 
-// retrieve axis free for movement
-u16 Actor_getAxisFreeForMovement(Actor this)
-{
-	ASSERT(this, "Actor::getAxisFreeForMovement: null this");
-
-	u16 movingState = Body_getMovementOnAllAxes(this->body);
-
-	return ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
-}
-
 bool Actor_processCollision(Actor this, CollisionInformation collisionInformation)
 {
 	ASSERT(this, "Actor::processCollision: null this");
@@ -638,7 +654,7 @@ void Actor_initialTransform(Actor this, Transformation* environmentTransform, u3
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// call base class's transformation method
-	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
+	__CALL_BASE_METHOD(AnimatedEntity, initialTransform, this, environmentTransform, recursive);
 
 	if(this->body)
 	{

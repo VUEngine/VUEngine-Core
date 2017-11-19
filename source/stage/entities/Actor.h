@@ -42,7 +42,6 @@
 #define Actor_METHODS(ClassName)																		\
 		AnimatedEntity_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
-		__VIRTUAL_DEC(ClassName, u16, getAxisFreeForMovement);											\
 		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
@@ -59,7 +58,6 @@
 		__VIRTUAL_SET(ClassName, Actor, getMovementState);												\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);													\
-		__VIRTUAL_SET(ClassName, Actor, getAxisFreeForMovement);										\
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
@@ -91,8 +89,17 @@ __CLASS(Actor);
 
 typedef struct ActorDefinition
 {
-	// it has an Entity at the beginning
+	/// it has an Entity at the beginning
 	AnimatedEntityDefinition animatedEntityDefinition;
+
+	/// create collision solver
+	bool createCollisionSolver;
+
+	/// true to create a body
+	bool createBody;
+
+	// axes subject to gravity
+	u16 axesSubjectToGravity;
 
 } ActorDefinition;
 
@@ -117,7 +124,6 @@ bool Actor_hasChangedDirection(Actor this, u16 axis);
 void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
-u16 Actor_getAxisFreeForMovement(Actor this);
 bool Actor_processCollision(Actor this, CollisionInformation collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
