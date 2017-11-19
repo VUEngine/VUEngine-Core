@@ -361,34 +361,29 @@ Transformation Container_getEnvironmentTransform(Container this)
 		return environmentTransform;
 	}
 
-	Transformation transformation = Container_getEnvironmentTransform(this->parent);
-
-	Container_concatenateTransform(&transformation, &this->parent->transformation);
-
-	return transformation;
-
+	return this->parent->transformation;
 }
 
 // contatenate transformation
-void Container_concatenateTransform(Transformation* environmentTransform, Transformation* transformation)
+void Container_concatenateTransform(Transformation* concatenatedTransformation, Transformation* transformation)
 {
-	ASSERT(environmentTransform, "Container::concatenateTransform: null environmentTransform");
+	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
 	ASSERT(transformation, "Container::concatenateTransform: null transformation");
 
 	// tranlate position
-	environmentTransform->globalPosition.x += transformation->localPosition.x;
-	environmentTransform->globalPosition.y += transformation->localPosition.y;
-	environmentTransform->globalPosition.z += transformation->localPosition.z;
+	concatenatedTransformation->globalPosition.x += transformation->localPosition.x;
+	concatenatedTransformation->globalPosition.y += transformation->localPosition.y;
+	concatenatedTransformation->globalPosition.z += transformation->localPosition.z;
 
 	// propagate rotation
-	environmentTransform->globalRotation.x += transformation->localRotation.x;
-	environmentTransform->globalRotation.y += transformation->localRotation.y;
-	environmentTransform->globalRotation.z += transformation->localRotation.z;
+	concatenatedTransformation->globalRotation.x += transformation->localRotation.x;
+	concatenatedTransformation->globalRotation.y += transformation->localRotation.y;
+	concatenatedTransformation->globalRotation.z += transformation->localRotation.z;
 
 	// propagate scale
-	environmentTransform->globalScale.x = __FIX7_9_MULT(environmentTransform->globalScale.x, transformation->localScale.x);
-	environmentTransform->globalScale.y = __FIX7_9_MULT(environmentTransform->globalScale.y, transformation->localScale.y);
-	environmentTransform->globalScale.z = __FIX7_9_MULT(environmentTransform->globalScale.z, transformation->localScale.z);
+	concatenatedTransformation->globalScale.x = __FIX7_9_MULT(concatenatedTransformation->globalScale.x, transformation->localScale.x);
+	concatenatedTransformation->globalScale.y = __FIX7_9_MULT(concatenatedTransformation->globalScale.y, transformation->localScale.y);
+	concatenatedTransformation->globalScale.z = __FIX7_9_MULT(concatenatedTransformation->globalScale.z, transformation->localScale.z);
 }
 
 // change environment
