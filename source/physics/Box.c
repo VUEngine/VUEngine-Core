@@ -345,13 +345,13 @@ CollisionSolution Box_getCollisionSolution(Box this, Shape shape)
 
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 {
-	Vector3D leftTopNear 	= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
-	Vector3D rightTopNear 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
+	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
+	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
 	Vector3D leftBottomNear 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z0};
-	Vector3D rightBottomNear = {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
+	Vector3D rightBottomNear	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z0};
 	Vector3D leftTopFar 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z1};
-	Vector3D rightTopFar 	= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
-	Vector3D leftBottomFar 	= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
+	Vector3D rightTopFar 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z1};
+	Vector3D leftBottomFar 		= {this->rightBox.x0, this->rightBox.y1, this->rightBox.z1};
 	Vector3D rightBottomFar 	= {this->rightBox.x1, this->rightBox.y1, this->rightBox.z1};
 
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)

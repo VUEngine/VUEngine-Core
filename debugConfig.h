@@ -27,11 +27,11 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __PRINT_DETAILED_MEMORY_POOL_STATUS
 //#define __PRINT_MEMORY_POOL_STATUS
-//#define __SHOW_COLLISIONS_PROFILING
+//#define __SHOW_PHYSICS_PROFILING
 //#define __FORCE_PRINTING_LAYER
 
-//#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION						1
+#undef __TIMER_RESOLUTION
+#define __TIMER_RESOLUTION						1
 
 
 // do not delete the following macros!
