@@ -97,11 +97,11 @@
 		 */																								\
 		fix19_13 timeScale;																				\
 		/**
-		 * @var VirtualNode		nextBodyToCheckForGravity
+		 * @var VirtualNode		bodyToCheckForGravityNode
 		 * @brief				body to check for gravity
 		 * @memberof 			PhysicalWorld
 		 */																								\
-		VirtualNode nextBodyToCheckForGravity;															\
+		VirtualNode bodyToCheckForGravityNode;															\
 
 /**
  * @class	PhysicalWorld
@@ -142,7 +142,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->removedBodies = __NEW(VirtualList);
 	this->bodiesSentToSleep = __NEW(VirtualList);
 
-	this->nextBodyToCheckForGravity = NULL;
+	this->bodyToCheckForGravityNode = NULL;
 
 	this->gravity.x = 0;
 	this->gravity.y = 0;
@@ -225,10 +225,7 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 		VirtualList_pushFront(this->bodies, body);
 		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
-		body->awake = true;
-		PhysicalWorld_bodyAwake(this, body);
-
-		this->nextBodyToCheckForGravity = NULL;
+		this->bodyToCheckForGravityNode = NULL;
 
 		// return created shape
 		return __SAFE_CAST(Body, VirtualList_front(this->bodies));
@@ -260,7 +257,7 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
 		// place in the removed bodies list
 		VirtualList_pushFront(this->removedBodies, body);
 
-		this->nextBodyToCheckForGravity = NULL;
+		this->bodyToCheckForGravityNode = NULL;
 	}
 }
 
@@ -336,7 +333,7 @@ void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this)
 		// clear the list
 		VirtualList_clear(this->removedBodies);
 
-		this->nextBodyToCheckForGravity = NULL;
+		this->bodyToCheckForGravityNode = NULL;
 	}
 
 	node = this->bodiesSentToSleep->head;
@@ -354,7 +351,7 @@ void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this)
 		// clear the list
 		VirtualList_clear(this->bodiesSentToSleep);
 
-		this->nextBodyToCheckForGravity = NULL;
+		this->bodyToCheckForGravityNode = NULL;
 	}
 
 }
@@ -372,7 +369,8 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
 	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
 
-	VirtualNode node = !this->nextBodyToCheckForGravity ? this->bodies->head: this->nextBodyToCheckForGravity;
+	// give preference to the last body in the list
+	VirtualNode node = !this->bodyToCheckForGravityNode ? this->bodies->tail: this->bodyToCheckForGravityNode;
 
 	int counter = 0;
 
@@ -385,7 +383,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 	// prepare bodies which move
 	// this will place the shape in the owner's position
-	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->next, counter++)
+	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->previous, counter++)
 	{
 		// load the current shape
 		Body body = __SAFE_CAST(Body, node->data);
@@ -397,7 +395,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 			u16 gravitySensibleAxis = body->axesSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
-			if(gravitySensibleAxis && __VIRTUAL_CALL(SpatialObject, canMoveTowards, body->owner, gravityDirection))
+			if(gravitySensibleAxis && __VIRTUAL_CALL(SpatialObject, isSubjectToGravity, body->owner, gravityDirection))
 			{
 				// must account for the fps to avoid situations is which a collision is not detected
 				// when a body starts to fall and doesn't have enough time to detect a shape below
@@ -407,7 +405,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		}
 	}
 
-	this->nextBodyToCheckForGravity = node;
+	this->bodyToCheckForGravityNode = node;
 }
 
 /**
@@ -463,7 +461,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		this->elapsedTime = 0;
 		this->accumulator += elapsedTime;
 
-        while (this->accumulator >= __PHYSICS_TIME_ELAPSED)
+		while (this->accumulator >= __PHYSICS_TIME_ELAPSED)
         {
 			this->accumulator -= __PHYSICS_TIME_ELAPSED;
 			this->elapsedTime += __PHYSICS_TIME_ELAPSED;
@@ -479,6 +477,10 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	}
 
 	this->previousTime = __I_TO_FIX19_13(Clock_getTime(clock));
+
+#ifdef __SHOW_PHYSICS_PROFILING
+	PhysicalWorld_print(this, 1, 1);
+#endif
 }
 
 /**
@@ -510,7 +512,7 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	this->elapsedTime = 0;
 	this->previousTime = 0;
 	this->accumulator = 0;
-	this->nextBodyToCheckForGravity = NULL;
+	this->bodyToCheckForGravityNode = NULL;
 }
 
 /**
@@ -656,7 +658,7 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	if(!VirtualList_find(this->bodiesSentToSleep, body))
+	if(!VirtualList_find(this->bodiesSentToSleep, body) && VirtualList_find(this->activeBodies, body))
 	{
 		VirtualList_pushBack(this->bodiesSentToSleep, body);
 	}

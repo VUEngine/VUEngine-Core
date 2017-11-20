@@ -28,7 +28,7 @@
 #include <MessageDispatcher.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
-#include <debugUtilities.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -267,6 +267,10 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	this->collisions += this->lastCycleCollisions;
 
 	this->checkingCollisions = false;
+
+#ifdef __SHOW_PHYSICS_PROFILING
+	CollisionManager_print(this, 25, 1);
+#endif
 
 	return returnValue;
 }
