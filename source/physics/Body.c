@@ -401,7 +401,15 @@ void Body_update(Body this)
 		{
 			Acceleration gravity = Body_getGravity(this);
 			this->weight = Vector3D_scalarProduct(gravity, this->mass);
-			this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -this->frictionForceMagnitude);
+
+			Velocity velocity =
+			{
+				__FIX19_13_INT_PART(this->velocity.x),
+				__FIX19_13_INT_PART(this->velocity.y),
+				__FIX19_13_INT_PART(this->velocity.z),
+			};
+
+			this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
 
 			MovementResult movementResult = Body_updateMovement(this, gravity);
 
@@ -448,13 +456,14 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS};
 
 	// xor values, if equal, result is 0
-	movementResult.axesOfChangeOfMovement |= this->velocity.x ^ previousVelocity.x ? __X_AXIS : __NO_AXIS;
-	movementResult.axesOfChangeOfMovement |= this->velocity.y ^ previousVelocity.y ? __Y_AXIS : __NO_AXIS;
-	movementResult.axesOfChangeOfMovement |= this->velocity.z ^ previousVelocity.z ? __Z_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= __FIX19_13_INT_PART(this->velocity.x ^ previousVelocity.x) ? __X_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= __FIX19_13_INT_PART(this->velocity.y ^ previousVelocity.y) ? __Y_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= __FIX19_13_INT_PART(this->velocity.z ^ previousVelocity.z) ? __Z_AXIS : __NO_AXIS;
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
-	if(!(this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.x)
+	if(__UNIFORM_MOVEMENT != this->movementType.x)
+//	if(!(__X_AXIS & this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.x)
 	{
 		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
 		{
@@ -463,7 +472,11 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 				movementResult.axesStoppedMovement |= __X_AXIS;
 			}
 		}
+	}
 
+	if(__UNIFORM_MOVEMENT != this->movementType.y)
+//	if(!(__Y_AXIS & this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.y)
+	{
 		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->normal.y * this->velocity.y)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y))
@@ -471,7 +484,11 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 				movementResult.axesStoppedMovement |= __Y_AXIS;
 			}
 		}
+	}
 
+	if(__UNIFORM_MOVEMENT != this->movementType.z)
+//	if(!(__Z_AXIS & this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.z)
+	{
 		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->normal.z * this->velocity.z)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z))
@@ -534,89 +551,13 @@ MovementResult Body_updateMovement(Body this, Acceleration gravity)
 	return Body_getMovementResult(this, previousVelocity);
 }
 
-void Body_printPhysics(Body this, int x, int y)
-{
-	ASSERT(this, "Body::printPhysics: null this");
-
-	Printing_text(Printing_getInstance(), "Active:", x, y, NULL);
-	Printing_text(Printing_getInstance(), this->active? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
-	Printing_text(Printing_getInstance(), "Awake:", x, y, NULL);
-	Printing_text(Printing_getInstance(), this->awake? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "               X         Y         Z", x, y++, NULL);
-
-	int xDisplacement = 15;
-
-	Printing_text(Printing_getInstance(), "Mov. type", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.x ? "Accel" : "None", xDisplacement + x, y, NULL);
-	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.y ? "Accel" : "None", xDisplacement + x + 10, y, NULL);
-	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.z ? "Accel" : "None", xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Weight", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                             ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->weight.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->weight.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->weight.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Position", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->position.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->position.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->position.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Velocity", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Acceleration", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Acceleration gravity = Body_getGravity(this);
-
-	Printing_text(Printing_getInstance(), "Gravity", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "External Force", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Friction", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Normal", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.z), xDisplacement + x + 10 * 2, y++, NULL);
-
-	Printing_text(Printing_getInstance(), "Normal Force", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->frictionForceMagnitude), xDisplacement + x, y, NULL);
-
-
-}
-
 // stop movement over an axis
 void Body_stopMovement(Body this, u16 axis)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
-	u16 axisOfMovement = Body_getMovementOnAllAxes(this);
-	u16 axisOfStopping = 0;
+	u16 axesOfMovement = Body_getMovementOnAllAxes(this);
+	u16 axesOfStopping = __NO_AXIS;
 
 	if(axis & __X_AXIS)
 	{
@@ -624,7 +565,7 @@ void Body_stopMovement(Body this, u16 axis)
 		this->velocity.x = 0;
 		this->acceleration.x = 0;
 		this->externalForce.x = 0;
-		axisOfStopping |= axisOfMovement & __X_AXIS;
+		axesOfStopping |= axesOfMovement & __X_AXIS;
 	}
 
 	if(axis & __Y_AXIS)
@@ -633,7 +574,7 @@ void Body_stopMovement(Body this, u16 axis)
 		this->velocity.y = 0;
 		this->acceleration.y = 0;
 		this->externalForce.y = 0;
-		axisOfStopping |= axisOfMovement & __Y_AXIS;
+		axesOfStopping |= axesOfMovement & __Y_AXIS;
 	}
 
 	if(axis & __Z_AXIS)
@@ -642,19 +583,19 @@ void Body_stopMovement(Body this, u16 axis)
 		this->velocity.z = 0;
 		this->acceleration.z = 0;
 		this->externalForce.z = 0;
-		axisOfStopping |= axisOfMovement & __Z_AXIS;
+		axesOfStopping |= axesOfMovement & __Z_AXIS;
 	}
 
-	if(axisOfStopping)
+	Body_setMovementType(this, __NO_MOVEMENT, axesOfStopping);
+
+	if(!Body_getMovementOnAllAxes(this))
 	{
-		Body_setMovementType(this, __NO_MOVEMENT, axisOfStopping);
+		Body_sleep(this);
+	}
 
-		if(!Body_getMovementOnAllAxes(this))
-		{
-			Body_sleep(this);
-		}
-
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axisOfStopping);
+	if(axesOfStopping)
+	{
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
 	}
 }
 
@@ -839,11 +780,14 @@ void Body_sleep(Body this)
 {
 	ASSERT(this, "Body::sleep: null this");
 
-	this->awake = false;
+	if(this->awake)
+	{
+		this->awake = false;
 
-	PhysicalWorld_bodySleep(Game_getPhysicalWorld(Game_getInstance()), this);
+		PhysicalWorld_bodySleep(Game_getPhysicalWorld(Game_getInstance()), this);
 
-	MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodySleep, NULL);
+		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodySleep, NULL);
+	}
 }
 
 // is it moving?
@@ -853,9 +797,9 @@ u16 Body_getMovementOnAllAxes(Body this)
 
 	u16 result = 0;
 
-	result |= ((int)__FIX19_13_TO_I(this->velocity.x) | this->acceleration.x) ? __X_AXIS : 0;
-	result |= ((int)__FIX19_13_TO_I(this->velocity.y) | this->acceleration.y) ? __Y_AXIS : 0;
-	result |= ((int)__FIX19_13_TO_I(this->velocity.z) | this->acceleration.z) ? __Z_AXIS : 0;
+	result |= (this->velocity.x | this->acceleration.x) ? __X_AXIS : 0;
+	result |= (this->velocity.y | this->acceleration.y) ? __Y_AXIS : 0;
+	result |= (this->velocity.z | this->acceleration.z) ? __Z_AXIS : 0;
 
 	return this->awake && this->active ? result : 0;
 }
@@ -925,6 +869,12 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 	Body_setFrictionCoefficient(this, frictionCoefficient);
 	this->bouncingPlaneNormal = bouncingPlaneNormal;
 	this->normal = Vector3D_scalarProduct(bouncingPlaneNormal, normalForce);
+
+	// avoid rounding errors
+	this->normal.x = __FIX19_13_INT_PART(this->normal.x + __0_5F_FIX19_13);
+	this->normal.y = __FIX19_13_INT_PART(this->normal.y + __0_5F_FIX19_13);
+	this->normal.z = __FIX19_13_INT_PART(this->normal.z + __0_5F_FIX19_13);
+
 	this->frictionForceMagnitude = __FIX19_13_MULT(normalForce, this->frictionCoefficient);
 
 	if(__1I_FIX19_13 < totalElasticity)
@@ -977,4 +927,78 @@ void Body_takeHitFrom(Body this __attribute__ ((unused)), Body other __attribute
 	ASSERT(this, "Body::takeHitFrom: null this");
 
 	//TODO:
+}
+
+void Body_print(Body this, int x, int y)
+{
+	ASSERT(this, "Body::print: null this");
+
+	Printing_text(Printing_getInstance(), "Active:", x, y, NULL);
+	Printing_text(Printing_getInstance(), this->active? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
+	Printing_text(Printing_getInstance(), "Awake:", x, y, NULL);
+	Printing_text(Printing_getInstance(), this->awake? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "               X         Y         Z", x, y++, NULL);
+
+	int xDisplacement = 15;
+
+	Printing_text(Printing_getInstance(), "Mov. type", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.x ? "Accel" : "None", xDisplacement + x, y, NULL);
+	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.y ? "Accel" : "None", xDisplacement + x + 10, y, NULL);
+	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.z ? "Accel" : "None", xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Weight", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                             ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->weight.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->weight.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->weight.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Position", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->position.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->position.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->position.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Velocity", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->velocity.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Acceleration", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->acceleration.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Acceleration gravity = Body_getGravity(this);
+
+	Printing_text(Printing_getInstance(), "Gravity", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(gravity.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "External Force", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Friction", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Normal", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Normal Force", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->frictionForceMagnitude), xDisplacement + x, y, NULL);
 }

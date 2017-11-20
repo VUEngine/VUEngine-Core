@@ -221,7 +221,6 @@ bool Body_isAwake(Body body);
 u16 Body_getMovementOnAllAxes(Body this);
 void Body_moveAccelerated(Body this, u16 axis);
 void Body_moveUniformly(Body this, Velocity velocity);
-void Body_printPhysics(Body this, int x, int y);
 void Body_setActive(Body this, bool active);
 void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
@@ -236,6 +235,7 @@ void Body_sleep(Body body);
 void Body_stopMovement(Body this, u16 axis);
 void Body_takeHitFrom(Body this, Body other);
 void Body_update(Body this);
+void Body_print(Body this, int x, int y);
 
 
 #endif
