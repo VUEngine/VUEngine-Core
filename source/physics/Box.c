@@ -634,7 +634,6 @@ void Box_show(Box this)
 {
 	ASSERT(this, "Box::draw: null this");
 
-//	Box_configureWireframe(this, __VIRTUAL_CALL(SpatialObject, moves, this->owner) || !this->ready);
 	Box_configureWireframe(this, true);
 
 	// draw the Polyhedron

@@ -225,7 +225,6 @@ void Ball_show(Ball this)
 {
 	ASSERT(this, "Ball::draw: null this");
 
-//	Ball_configureWireframe(this, __VIRTUAL_CALL(SpatialObject, moves, this->owner) || !this->ready);
 	Ball_configureWireframe(this, true);
 
 	// draw the Polyhedron

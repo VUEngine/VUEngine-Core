@@ -204,7 +204,6 @@ void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation,
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isReady(Shape this);
-void Shape_setMovesFlag(Shape this, bool moves);
 void Shape_print(Shape this, int x, int y);
 void Shape_setActive(Shape this, bool active);
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
