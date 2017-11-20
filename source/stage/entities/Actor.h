@@ -53,7 +53,6 @@
 		__VIRTUAL_SET(ClassName, Actor, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Actor, resume);														\
 		__VIRTUAL_SET(ClassName, Actor, handleMessage);													\
-		__VIRTUAL_SET(ClassName, Actor, moves);															\
 		__VIRTUAL_SET(ClassName, Actor, isMoving);														\
 		__VIRTUAL_SET(ClassName, Actor, getMovementState);												\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);												\
@@ -61,7 +60,7 @@
 		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, canMoveTowards);												\
+		__VIRTUAL_SET(ClassName, Actor, isSubjectToGravity);											\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
@@ -123,11 +122,11 @@ void Actor_update(Actor this, u32 elapsedTime);
 bool Actor_hasChangedDirection(Actor this, u16 axis);
 void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
+bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
 bool Actor_processCollision(Actor this, CollisionInformation collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
-bool Actor_moves(Actor this);
 bool Actor_isMoving(Actor this);
 u16 Actor_getMovementState(Actor this);
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);

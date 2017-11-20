@@ -320,9 +320,9 @@ bool SolidParticle_processCollision(SolidParticle this, CollisionInformation col
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool SolidParticle_canMoveTowards(SolidParticle this, Vector3D direction)
+bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 {
-	ASSERT(this, "Particle::canMoveTowards: null this");
+	ASSERT(this, "Particle::isSubjectToGravity: null this");
 
 	if(CollisionSolution_hasCollidingShapes(this->collisionSolver))
 	{
@@ -330,10 +330,12 @@ bool SolidParticle_canMoveTowards(SolidParticle this, Vector3D direction)
 
 		Vector3D displacement =
 		{
-			direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-			direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-			direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
+			gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+			gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+			gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
 		};
+
+		Vector3D normalizedDisplacement = Vector3D_normalize(displacement);
 
 		bool canMove = true;
 
@@ -349,7 +351,8 @@ bool SolidParticle_canMoveTowards(SolidParticle this, Vector3D direction)
 
 				if(canMove)
 				{
-					canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
+					canMove &= __F_TO_FIX19_13(1 - 0.1f) > __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
+//					canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
 				}
 
 				__DELETE_BASIC(collisionSolution);
@@ -389,7 +392,7 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
 
 		case kBodyStopped:
 
-			if(!Body_getMovementOnAllAxes(this->body))
+			if(this->solidParticleDefinition->disableCollisionOnStop && !Body_getMovementOnAllAxes(this->body))
 			{
 				CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 			}

@@ -323,7 +323,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 		}
 	}
 
-//	Body_printPhysics(this->body, 1, 1);
+//	Body_print(this->body, 1, 1);
 }
 
 // whether changed direction in the last cycle or not
@@ -401,6 +401,17 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 	Entity_setDirection(__SAFE_CAST(Entity, this), direction);
 }
 
+
+// check if gravity must apply to this actor
+bool Actor_isSubjectToGravity(Actor this, Acceleration gravity)
+{
+	ASSERT(this, "Actor::isSubjectToGravity: null this");
+
+	u16 axesSubjectToGravity = this->actorDefinition->axesSubjectToGravity;
+
+	return Actor_canMoveTowards(this, gravity);
+}
+
 // check if gravity must apply to this actor
 bool Actor_canMoveTowards(Actor this, Vector3D direction)
 {
@@ -437,7 +448,8 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 
 					if(canMove)
 					{
-						canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
+						canMove &= __F_TO_FIX19_13(1 - 0.1f) > __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
+//						canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
 					}
 
 					__DELETE_BASIC(collisionSolution);
@@ -602,14 +614,6 @@ void Actor_moveUniformly(Actor this, Velocity* velocity)
 
 		Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 	}
-}
-
-// does it move?
-bool Actor_moves(Actor this __attribute__ ((unused)))
-{
-	ASSERT(this, "Actor::moves: null this");
-
-	return true;
 }
 
 // is it moving?

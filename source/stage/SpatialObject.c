@@ -80,15 +80,6 @@ void SpatialObject_destructor(SpatialObject this)
 	__DESTROY_BASE;
 }
 
-// does it move?
-bool SpatialObject_moves(SpatialObject this __attribute__ ((unused)))
-{
-	ASSERT(this, "SpatialObject::moves: null this");
-
-	// not necessarily
-	return false;
-}
-
 bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::isMoving: null this");
@@ -97,9 +88,9 @@ bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 }
 
 // defaults to true
-bool SpatialObject_canMoveTowards(SpatialObject this __attribute__ ((unused)), Vector3D direction __attribute__ ((unused)))
+bool SpatialObject_isSubjectToGravity(SpatialObject this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::canMoveTowards: null this");
+	ASSERT(this, "SpatialObject::isSubjectToGravity: null this");
 
 	return false;
 }

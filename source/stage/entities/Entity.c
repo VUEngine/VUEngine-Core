@@ -2147,8 +2147,10 @@ void Entity_resume(Entity this)
  *
  * @return				Defaults to true
  */
-bool Entity_canMoveTowards(Entity this __attribute__ ((unused)), Vector3D direction __attribute__ ((unused)))
+bool Entity_isSubjectToGravity(Entity this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
 {
+	ASSERT(this, "Entity::isSubjectToGravity: null this");
+
 	return true;
 }
 
@@ -2164,6 +2166,8 @@ bool Entity_canMoveTowards(Entity this __attribute__ ((unused)), Vector3D direct
  */
 u16 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
 {
+	ASSERT(this, "Entity::getAxisForFlipping: null this");
+
 	return __X_AXIS | __Y_AXIS;
 }
 

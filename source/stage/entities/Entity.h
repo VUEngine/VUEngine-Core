@@ -73,7 +73,7 @@
 		__VIRTUAL_SET(ClassName, Entity, getShapes);													\
 		__VIRTUAL_SET(ClassName, Entity, suspend);														\
 		__VIRTUAL_SET(ClassName, Entity, resume);														\
-		__VIRTUAL_SET(ClassName, Entity, canMoveTowards);												\
+		__VIRTUAL_SET(ClassName, Entity, isSubjectToGravity);												\
 		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
@@ -162,7 +162,7 @@ u32 Entity_areAllChildrenInitialized(Entity this);
 u32 Entity_areAllChildrenTransformed(Entity this);
 u32 Entity_areAllChildrenReady(Entity this);
 Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName);
-bool Entity_canMoveTowards(Entity this, Vector3D direction);
+bool Entity_isSubjectToGravity(Entity this, Acceleration gravity);
 u16 Entity_getAxisForFlipping(Entity this);
 Entity Entity_getChildById(Entity this, s16 id);
 EntityDefinition* Entity_getEntityDefinition(Entity this);

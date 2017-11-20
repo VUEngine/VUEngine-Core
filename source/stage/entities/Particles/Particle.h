@@ -51,8 +51,7 @@
 		SpatialObject_SET_VTABLE(ClassName)																\
 		__VIRTUAL_SET(ClassName, Particle, update);														\
 		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
-		__VIRTUAL_SET(ClassName, Particle, moves);														\
-		__VIRTUAL_SET(ClassName, Particle, canMoveTowards);												\
+		__VIRTUAL_SET(ClassName, Particle, isSubjectToGravity);											\
 		__VIRTUAL_SET(ClassName, Particle, transform);													\
 		__VIRTUAL_SET(ClassName, Particle, resume);														\
 		__VIRTUAL_SET(ClassName, Particle, suspend);													\
@@ -154,12 +153,11 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 void Particle_destructor(Particle this);
 
 void Particle_addForce(Particle this, const Force* force, u32 movementType);
-bool Particle_canMoveTowards(Particle this, Vector3D direction);
+bool Particle_isSubjectToGravity(Particle this, Acceleration gravity);
 u16 Particle_getDepth(Particle this);
 u16 Particle_getHeight(Particle this);
 const Vector3D* Particle_getPosition(Particle this);
 void Particle_hide(Particle this);
-bool Particle_moves(Particle this);
 void Particle_transform(Particle this);
 void Particle_resume(Particle this);
 void Particle_setLifeSpan(Particle this, int lifeSpan);

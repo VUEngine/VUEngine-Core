@@ -169,8 +169,7 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
 
 		if(0 > this->lifeSpan)
 		{
-			Body_setActive(this->body, false);
-
+			Body_stopMovement(this->body, __ALL_AXES);
 			return true;
 		}
 
@@ -347,8 +346,6 @@ void Particle_show(Particle this)
 
 	Sprite_show(__SAFE_CAST(Sprite, this->objectSprite));
 
-	Body_setActive(this->body, true);
-
 	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
 	{
 		Sprite_play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
@@ -370,26 +367,7 @@ void Particle_hide(Particle this)
 
 	Sprite_hide(__SAFE_CAST(Sprite, this->objectSprite));
 
-	Body_setActive(this->body, false);
 	Body_stopMovement(this->body, __ALL_AXES);
-}
-
-/**
- * Does it move?
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
- *
- * @return		Always true
- */
-bool Particle_moves(Particle this __attribute__ ((unused)))
-{
-	ASSERT(this, "Particle::moves: null this");
-
-	// not necessarily
-	return true;
 }
 
 /**
@@ -403,14 +381,13 @@ bool Particle_moves(Particle this __attribute__ ((unused)))
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool Particle_canMoveTowards(Particle this, Vector3D direction __attribute__ ((unused)))
+bool Particle_isSubjectToGravity(Particle this, Acceleration gravity __attribute__ ((unused)))
 {
-	ASSERT(this, "Particle::canMoveTowards: null this");
+	ASSERT(this, "Particle::isSubjectToGravity: null this");
 
 	return (bool)Body_getAxesSubjectToGravity(this->body);
 }
 
-void Particle_transform(Particle this);
 /**
  * Transform
  *

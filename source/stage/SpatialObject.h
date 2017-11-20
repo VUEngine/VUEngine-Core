@@ -41,9 +41,8 @@
 #define SpatialObject_METHODS(ClassName)																\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, VirtualList, getShapes);												\
-		__VIRTUAL_DEC(ClassName, bool, moves);															\
 		__VIRTUAL_DEC(ClassName, bool, isMoving);														\
-		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, Vector3D direction);								\
+		__VIRTUAL_DEC(ClassName, bool, isSubjectToGravity, Acceleration gravity);						\
 		__VIRTUAL_DEC(ClassName, u16, getWidth);														\
 		__VIRTUAL_DEC(ClassName, u16, getHeight);														\
 		__VIRTUAL_DEC(ClassName, u16, getDepth);														\
@@ -66,9 +65,8 @@
 #define SpatialObject_SET_VTABLE(ClassName)																\
 		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, SpatialObject, getShapes);												\
-		__VIRTUAL_SET(ClassName, SpatialObject, moves);													\
 		__VIRTUAL_SET(ClassName, SpatialObject, isMoving);												\
-		__VIRTUAL_SET(ClassName, SpatialObject, canMoveTowards);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, isSubjectToGravity);									\
 		__VIRTUAL_SET(ClassName, SpatialObject, getWidth);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, getHeight);												\
 		__VIRTUAL_SET(ClassName, SpatialObject, getDepth);												\
@@ -97,9 +95,8 @@ __CLASS_NEW_DECLARE(SpatialObject);
 
 void SpatialObject_constructor(SpatialObject this);
 void SpatialObject_destructor(SpatialObject this);
-bool SpatialObject_moves(SpatialObject this);
 bool SpatialObject_isMoving(SpatialObject this);
-bool SpatialObject_canMoveTowards(SpatialObject this, Vector3D direction);
+bool SpatialObject_isSubjectToGravity(SpatialObject this, Acceleration gravity);
 u16 SpatialObject_getWidth(SpatialObject this);
 u16 SpatialObject_getHeight(SpatialObject this);
 u16 SpatialObject_getDepth(SpatialObject this);

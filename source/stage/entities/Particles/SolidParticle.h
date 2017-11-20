@@ -56,7 +56,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
-		__VIRTUAL_SET(ClassName, SolidParticle, canMoveTowards);										\
+		__VIRTUAL_SET(ClassName, SolidParticle, isSubjectToGravity);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, transform);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, setPosition);											\
@@ -120,6 +120,9 @@ typedef struct SolidParticleDefinition
 	/// layers to ignore when checking for collisions
 	u32 layersToIgnore;
 
+	/// disable collision detection when the particle stops
+	bool disableCollisionOnStop;
+
 } SolidParticleDefinition;
 
 /**
@@ -144,7 +147,7 @@ u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
 bool SolidParticle_processCollision(SolidParticle this, CollisionInformation collisionInformation);
-bool SolidParticle_canMoveTowards(SolidParticle this, Vector3D direction);
+bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_transform(SolidParticle this);
 void SolidParticle_setPosition(SolidParticle this, const Vector3D* position);
