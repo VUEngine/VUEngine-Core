@@ -82,10 +82,17 @@ extern float fabsf(float);
 #define __FIX7_9_TO_FIX19_13(n)		(fix19_13)((n)<<4)
 #define __FIX51_13_TO_FIX19_13(n)	(fix19_13)((n))
 
+// return the integral part
+#define __FIX7_9_INT_PART(n)		(((fix7_9)n) 	& 0xFE00)
+#define __FIX13_3_INT_PART(n)		(((fix13_3)n) 	& 0xFFF8)
+#define __FIX19_13_INT_PART(n)		(((fix19_13)n) 	& 0xFFFFE000)
+#define __FIX51_13_INT_PART(n)		(((fix51_13)n) 	& 0xFFFFFFFFFFFFE000)
+
 // return fractional part of fixed
-#define __FIX7_9_FRAC(n)			((n)&0x01FF)
-#define __FIX13_3_FRAC(n)			((n)&0x0007)
-//#define FIX23_9_FRAC(n)		((n)&0x01FF)
+#define __FIX7_9_FRAC(n)			(((fix7_9)n) 	& 0x01FF)
+#define __FIX13_3_FRAC(n)			(((fix13_3)n) 	& 0x0007)
+#define __FIX19_13_FRAC(n)			(((fix19_13)n) 	& 0x00001FFF)
+#define __FIX51_13_FRAC(n)			(((fix51_13)n) 	& 0x0000000000001FFF)
 
 // fixed multiplication, what a mess of brackets
 // TODO: how do we return an s32 from s16*s16 without forcing a promotion to s32?

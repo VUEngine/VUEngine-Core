@@ -49,20 +49,18 @@ float Math_squareRoot(float number)
     	return 0;
     }
 
-    long i;
-    float x, y;
-    const float f = 1.5F;
+	long i;
+	float x, y;
+	const float f = 1.5F;
 
-    x = number * 0.5F;
-    y  = number;
-    i  = * ( long * ) &y;
-    i  = 0x5f3759df - ( i >> 1 );
-    y  = * ( float * ) &i;
-    y  = y * ( f - ( x * y * y ) );
-    y  = y * ( f - ( x * y * y ) );
+	x = number * 0.5F;
+	y  = number;
+	i  = * ( long * ) &y;
+	i  = 0x5f3759df - ( i >> 1 );
+	y  = * ( float * ) &i;
 	y  = y * ( f - ( x * y * y ) );
 
-    return number * y;
+	return number * y;
 }
 
 int Math_powerFast(int base, int power)
@@ -112,4 +110,3 @@ fix19_13 Math_fix19_13Infinity()
 {
 	return 0x3FFFFFFF;
 }
-
