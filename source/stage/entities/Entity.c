@@ -2309,10 +2309,13 @@ void Entity_setDirection(Entity this, Direction direction)
 
 	Direction currentDirection = Entity_getDirection(this);
 
+	// if directions XOR is 0, they are equal
 	if(
-		currentDirection.x == direction.x &&
-		currentDirection.y == direction.y &&
-		currentDirection.z == direction.z
+		!(
+			(currentDirection.x ^ direction.x) |
+			(currentDirection.y ^ direction.y) |
+			(currentDirection.z ^ direction.z)
+		)
 	)
 	{
 		return;
@@ -2325,6 +2328,7 @@ void Entity_setDirection(Entity this, Direction direction)
 		//__NEAR == direction.z ? __HALF_ROTATION_DEGREES : __FAR == direction.z ? 0 : this->transformation.localRotation.z,
 		this->transformation.localRotation.z,
 	};
+
 
 	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
 }
