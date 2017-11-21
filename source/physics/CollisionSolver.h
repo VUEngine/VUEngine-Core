@@ -101,7 +101,7 @@ VirtualList CollisionSolver_testForCollisions(CollisionSolver this, Vector3D dis
 bool CollisionSolution_hasCollidingShapes(CollisionSolver this);
 fix19_13 CollisionSolver_getSurroundingFrictionCoefficient(CollisionSolver this);
 void CollisionSolver_resetCollisionStatus(CollisionSolver this);
-bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation* collisionInformation);
+CollisionSolution CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
 bool CollisionSolver_hasCollidingShapes(CollisionSolver this);
 
 #endif

@@ -197,7 +197,7 @@ static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Obje
 }
 
 // resolve collision against other entities
-bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation* collisionInformation)
+CollisionSolution CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "CollisionSolver::resolveCollision: null this");
 	ASSERT(collisionInformation->shape, "CollisionSolver::resolveCollision: null shape");
@@ -206,31 +206,31 @@ bool CollisionSolver_resolveCollision(CollisionSolver this, CollisionInformation
 	// retrieve the colliding spatialObject's position and gap
 	Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
 
+	CollisionSolution collisionSolution = collisionInformation->collisionSolution;
+
 	// if pending SAT check
 	if(!collisionInformation->isCollisionSolutionValid)
 	{
 		// force it
-		collisionInformation->collisionSolution = __VIRTUAL_CALL(Shape, getCollisionSolution, collisionInformation->shape, collisionInformation->collidingShape);
+		collisionSolution = __VIRTUAL_CALL(Shape, getCollisionSolution, collisionInformation->shape, collisionInformation->collidingShape);
 	}
 
-	ownerPosition.x += collisionInformation->collisionSolution.translationVector.x;
-	ownerPosition.y += collisionInformation->collisionSolution.translationVector.y;
-	ownerPosition.z += collisionInformation->collisionSolution.translationVector.z;
+	ownerPosition.x += collisionSolution.translationVector.x;
+	ownerPosition.y += collisionSolution.translationVector.y;
+	ownerPosition.z += collisionSolution.translationVector.z;
 
 	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 
-	if(collisionInformation->collisionSolution.translationVectorLength)
+	if(collisionSolution.translationVectorLength)
 	{
 		VirtualList_removeElement(this->collidingShapes, collisionInformation->collidingShape);
 		VirtualList_pushBack(this->collidingShapes, collisionInformation->collidingShape);
 		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
 
 		this->collidingShapePurgeNode = this->collidingShapes->head;
-
-		return true;
 	}
 
-	return false;
+	return collisionSolution;
 }
 
 bool CollisionSolution_hasCollidingShapes(CollisionSolver this)

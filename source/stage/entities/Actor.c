@@ -407,8 +407,6 @@ bool Actor_isSubjectToGravity(Actor this, Acceleration gravity)
 {
 	ASSERT(this, "Actor::isSubjectToGravity: null this");
 
-	u16 axesSubjectToGravity = this->actorDefinition->axesSubjectToGravity;
-
 	return Actor_canMoveTowards(this, gravity);
 }
 
@@ -465,34 +463,53 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 	return true;
 }
 
-bool Actor_processCollision(Actor this, CollisionInformation collisionInformation)
+fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+{
+	ASSERT(this, "Actor::getElasticityOnCollision: null this");
+
+	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
+
+	return physicalSpecification->elasticity + __VIRTUAL_CALL(SpatialObject, getElasticity, collidingObject);
+}
+
+fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+{
+	ASSERT(this, "Actor::getFrictionOnCollision: null this");
+
+	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
+
+	return physicalSpecification->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collidingObject);
+}
+
+bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "Actor::processCollision: null this");
 	ASSERT(this->body, "Actor::processCollision: null body");
-	ASSERT(collisionInformation.collidingShape, "Actor::processCollision: collidingShapes");
+	ASSERT(collisionInformation->collidingShape, "Actor::processCollision: collidingShapes");
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collisionInformation.collidingShape)
+	if(this->collisionSolver && collisionInformation->collidingShape)
 	{
-		if(CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation))
+		CollisionSolution collisionSolution = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
+
+		if(collisionSolution.translationVectorLength)
 		{
-			if(collisionInformation.collisionSolution.translationVectorLength)
-			{
-				fix19_13 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation.collidingShape));
-				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
+			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
 
-				Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			fix19_13 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->collisionSolution.collisionPlaneNormal);
+			fix19_13 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->collisionSolution.collisionPlaneNormal);
 
-				returnValue = true;
-			}
-			else
-			{
-				Actor_stopAllMovement(this);
-			}
+			Body_bounce(this->body, collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+
+			returnValue = true;
+		}
+		else if(collisionInformation->isCollisionSolutionValid)
+		{
+			Actor_stopAllMovement(this);
 		}
 
-		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, &collisionInformation);
+		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collisionInformation);
 	}
 
 	return returnValue;

@@ -56,7 +56,7 @@
 		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionCoefficient);										\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
-		__VIRTUAL_DEC(ClassName, bool, processCollision, CollisionInformation collisionInformation);	\
+		__VIRTUAL_DEC(ClassName, bool, processCollision, const CollisionInformation* collisionInformation);	\
 		__VIRTUAL_DEC(ClassName, u16, getMovementState);												\
 		__VIRTUAL_DEC(ClassName, u32, getInGameType);													\
 
@@ -110,7 +110,7 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFrictionCoefficient(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
-bool SpatialObject_processCollision(SpatialObject this, CollisionInformation collisionInformation);
+bool SpatialObject_processCollision(SpatialObject this, const CollisionInformation* collisionInformation);
 u16 SpatialObject_getMovementState(SpatialObject this);
 VirtualList SpatialObject_getShapes(SpatialObject this);
 u32 SpatialObject_getInGameType(SpatialObject this);

@@ -276,33 +276,32 @@ u16 SolidParticle_getDepth(SolidParticle this)
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_processCollision(SolidParticle this, CollisionInformation collisionInformation)
+bool SolidParticle_processCollision(SolidParticle this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
-	ASSERT(collisionInformation.collidingShape, "SolidParticle::resolveCollision: collidingShapes");
+	ASSERT(collisionInformation->collidingShape, "SolidParticle::resolveCollision: collidingShapes");
 
-	ASSERT(collisionInformation.collidingShape, "Actor::processCollision: collidingShapes");
+	ASSERT(collisionInformation->collidingShape, "Actor::processCollision: collidingShapes");
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collisionInformation.collidingShape)
+	if(this->collisionSolver && collisionInformation->collidingShape)
 	{
-		if(CollisionSolver_resolveCollision(this->collisionSolver, &collisionInformation))
-		{
-			if(collisionInformation.collisionSolution.translationVectorLength)
-			{
-				fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation.collidingShape));
-				fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation.collidingShape));
+		CollisionSolution collisionSolution = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
 
-				Body_bounce(this->body, collisionInformation.collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
-				returnValue = true;
-			}
-			else
-			{
-				Body_stopMovement(this->body, __ALL_AXES);
-			}
+		if(collisionInformation->collisionSolution.translationVectorLength)
+		{
+			fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
+			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
+
+			Body_bounce(this->body, collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			returnValue = true;
+		}
+		else if(collisionInformation->isCollisionSolutionValid)
+		{
+			Body_stopMovement(this->body, __ALL_AXES);
 		}
 	}
 

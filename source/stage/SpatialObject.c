@@ -197,7 +197,7 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unu
 	return false;
 }
 
-bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), CollisionInformation collisionInformation __attribute__ ((unused)))
+bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::processCollision: null this");
 

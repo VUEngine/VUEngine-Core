@@ -45,6 +45,8 @@
 		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
+		__VIRTUAL_DEC(ClassName, fix19_13, getElasticityOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
+		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedEntity_SET_VTABLE(ClassName)															\
@@ -65,6 +67,8 @@
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
 		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
+		__VIRTUAL_SET(ClassName, Actor, getElasticityOnCollision);										\
+		__VIRTUAL_SET(ClassName, Actor, getFrictionOnCollision);										\
 		__VIRTUAL_SET(ClassName, Actor, processCollision);												\
 		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
 		__VIRTUAL_SET(ClassName, Actor, syncRotationWithBody);											\
@@ -124,7 +128,9 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
 bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
-bool Actor_processCollision(Actor this, CollisionInformation collisionInformation);
+fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_isMoving(Actor this);

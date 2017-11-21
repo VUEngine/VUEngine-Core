@@ -256,7 +256,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 					{
 						this->lastCycleCollisions++;
 
-						__VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, collisionInformation);
+						__VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, &collisionInformation);
 					}
 				}
 			}
