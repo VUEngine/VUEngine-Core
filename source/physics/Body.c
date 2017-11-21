@@ -107,7 +107,7 @@ Clock _physhicsClock = NULL;
 
 MovementResult Body_updateMovement(Body this, Acceleration gravity);
 static void Body_awake(Body this, u16 axesOfAwakening);
-static void Body_setMovementType(Body this, int movementType, u16 axis);
+static void Body_setMovementType(Body this, int movementType, u16 axes);
 Acceleration Body_getGravity(Body this);
 
 
@@ -135,7 +135,6 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->active = true;
 	this->awake = false;
 	this->axesSubjectToGravity = axesSubjectToGravity;
-	this->axesOfAppliedGravity = __NO_AXIS;
 
 	// clear movement type
 	this->movementType.x = __NO_MOVEMENT;
@@ -216,43 +215,43 @@ MovementType Body_getMovementType(Body this)
 }
 
 // set movement type
-static void Body_setMovementType(Body this, int movementType, u16 axis)
+static void Body_setMovementType(Body this, int movementType, u16 axes)
 {
 	ASSERT(this, "Body::setMovementType: null this");
 
-	if(__X_AXIS & axis)
+	if(__X_AXIS & axes)
 	{
 		this->movementType.x = movementType;
 	}
 
-	if(__Y_AXIS & axis)
+	if(__Y_AXIS & axes)
 	{
 		this->movementType.y = movementType;
 	}
 
-	if(__Z_AXIS & axis)
+	if(__Z_AXIS & axes)
 	{
 		this->movementType.z = movementType;
 	}
 }
 
-void Body_clearAcceleration(Body this, u16 axis)
+void Body_clearAcceleration(Body this, u16 axes)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
-	if(__X_AXIS & axis)
+	if(__X_AXIS & axes)
 	{
 		this->acceleration.x = 0;
 		this->externalForce.x = 0;
 	}
 
-	if(__Y_AXIS & axis)
+	if(__Y_AXIS & axes)
 	{
 		this->acceleration.y = 0;
 		this->externalForce.y = 0;
 	}
 
-	if(__Z_AXIS & axis)
+	if(__Z_AXIS & axes)
 	{
 		this->acceleration.z = 0;
 		this->externalForce.z = 0;
@@ -260,11 +259,11 @@ void Body_clearAcceleration(Body this, u16 axis)
 }
 
 // set movement type to accelerated
-void Body_moveAccelerated(Body this, u16 axis)
+void Body_moveAccelerated(Body this, u16 axes)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
-	Body_setMovementType(this, __ACCELERATED_MOVEMENT, axis);
+	Body_setMovementType(this, __ACCELERATED_MOVEMENT, axes);
 }
 
 // set movement type to uniform
@@ -272,30 +271,30 @@ void Body_moveUniformly(Body this, Velocity velocity)
 {
 	ASSERT(this, "Body::moveUniformly: null this");
 
-	u16 axisOfUniformMovement = 0;
+	u16 axesOfUniformMovement = 0;
 
 	if(velocity.x)
 	{
-		axisOfUniformMovement |= __X_AXIS;
+		axesOfUniformMovement |= __X_AXIS;
 		this->velocity.x = velocity.x;
 	}
 
 	if(velocity.y)
 	{
-		axisOfUniformMovement |= __Y_AXIS;
+		axesOfUniformMovement |= __Y_AXIS;
 		this->velocity.y = velocity.y;
 	}
 
 	if(velocity.z)
 	{
-		axisOfUniformMovement |= __Z_AXIS;
+		axesOfUniformMovement |= __Z_AXIS;
 		this->velocity.z = velocity.z;
 	}
 
-	if(axisOfUniformMovement)
+	if(axesOfUniformMovement)
 	{
-		Body_setMovementType(this, __UNIFORM_MOVEMENT, axisOfUniformMovement);
-		Body_awake(this, axisOfUniformMovement);
+		Body_setMovementType(this, __UNIFORM_MOVEMENT, axesOfUniformMovement);
+		Body_awake(this, axesOfUniformMovement);
 	}
 }
 
@@ -307,26 +306,6 @@ void Body_clearExternalForce(Body this)
 	this->externalForce.x = 0;
 	this->externalForce.y = 0;
 	this->externalForce.z = 0;
-}
-
-void Body_clearGravityFlags(Body this)
-{
-	ASSERT(this, "Body::clearGravityFlags: null this");
-
-	if(__STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x))
-	{
-		this->axesOfAppliedGravity &= ~__X_AXIS;
-	}
-
-	if(__STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y))
-	{
-		this->axesOfAppliedGravity &= ~__Y_AXIS;
-	}
-
-	if(__STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.z))
-	{
-		this->axesOfAppliedGravity &= ~__Z_AXIS;
-	}
 }
 
 // apply force
@@ -369,15 +348,13 @@ void Body_applyForce(Body this, const Force* force)
 }
 
 // apply gravity
-void Body_applyGravity(Body this, u16 axis)
+void Body_applyGravity(Body this, u16 axes)
 {
 	ASSERT(this, "Body::applyGravity: null this");
 
-	if(axis)
+	if(axes)
 	{
-		this->axesOfAppliedGravity = axis;
-
-		Body_awake(this, this->axesOfAppliedGravity);
+		Body_awake(this, axes);
 	}
 }
 
@@ -413,7 +390,7 @@ void Body_update(Body this)
 
 			MovementResult movementResult = Body_updateMovement(this, gravity);
 
-			// if stopped on any axis
+			// if stopped on any axes
 			if(movementResult.axesStoppedMovement)
 			{
 				Body_stopMovement(this, movementResult.axesStoppedMovement);
@@ -427,9 +404,6 @@ void Body_update(Body this)
 
 		// clear any force so the next update does not get influenced
 		Body_clearExternalForce(this);
-
-		// clear gravity flags
-		Body_clearGravityFlags(this);
 	}
 }
 
@@ -463,7 +437,6 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
 	if(__UNIFORM_MOVEMENT != this->movementType.x)
-//	if(!(__X_AXIS & this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.x)
 	{
 		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
 		{
@@ -475,7 +448,6 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	}
 
 	if(__UNIFORM_MOVEMENT != this->movementType.y)
-//	if(!(__Y_AXIS & this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.y)
 	{
 		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->normal.y * this->velocity.y)))
 		{
@@ -487,7 +459,6 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	}
 
 	if(__UNIFORM_MOVEMENT != this->movementType.z)
-//	if(!(__Z_AXIS & this->axesOfAppliedGravity) && __UNIFORM_MOVEMENT != this->movementType.z)
 	{
 		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->normal.z * this->velocity.z)))
 		{
@@ -498,7 +469,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 		}
 	}
 
-	// cannot change direction if movement stopped on that axis
+	// cannot change direction if movement stopped on that axes
 	movementResult.axesOfChangeOfMovement &= ~movementResult.axesStoppedMovement;
 
 	return movementResult;
@@ -514,7 +485,7 @@ Acceleration Body_getGravity(Body this)
 	};
 }
 
-// udpdate movement over axis
+// udpdate movement over axes
 MovementResult Body_updateMovement(Body this, Acceleration gravity)
 {
 	ASSERT(this, "Body::updateMovement: null this");
@@ -551,15 +522,15 @@ MovementResult Body_updateMovement(Body this, Acceleration gravity)
 	return Body_getMovementResult(this, previousVelocity);
 }
 
-// stop movement over an axis
-void Body_stopMovement(Body this, u16 axis)
+// stop movement over an axes
+void Body_stopMovement(Body this, u16 axes)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
 	u16 axesOfMovement = Body_getMovementOnAllAxes(this);
 	u16 axesOfStopping = __NO_AXIS;
 
-	if(axis & __X_AXIS)
+	if(axes & __X_AXIS)
 	{
 		// not moving anymore
 		this->velocity.x = 0;
@@ -568,7 +539,7 @@ void Body_stopMovement(Body this, u16 axis)
 		axesOfStopping |= axesOfMovement & __X_AXIS;
 	}
 
-	if(axis & __Y_AXIS)
+	if(axes & __Y_AXIS)
 	{
 		// not moving anymore
 		this->velocity.y = 0;
@@ -577,7 +548,7 @@ void Body_stopMovement(Body this, u16 axis)
 		axesOfStopping |= axesOfMovement & __Y_AXIS;
 	}
 
-	if(axis & __Z_AXIS)
+	if(axes & __Z_AXIS)
 	{
 		// not moving anymore
 		this->velocity.z = 0;
@@ -599,7 +570,7 @@ void Body_stopMovement(Body this, u16 axis)
 	}
 }
 
-// get axis subject to gravity
+// get axes subject to gravity
 u16 Body_getAxesSubjectToGravity(Body this)
 {
 	ASSERT(this, "Body::getAxesSubjectToGravity: null this");
@@ -607,7 +578,7 @@ u16 Body_getAxesSubjectToGravity(Body this)
 	return this->axesSubjectToGravity;
 }
 
-// set axis subject to gravity
+// set axes subject to gravity
 void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "Body::setAxesSubjectToGravity: null this");
@@ -815,23 +786,20 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 	movementResult.axesOfChangeOfMovement |= this->velocity.z ^ previousVelocity.z ? __Z_AXIS : __NO_AXIS;
 
 	// stop if minimum velocity threshold is not reached
-	// and if there is no velocity in the other components
-	if(!(this->axesOfAppliedGravity))
+	// and if there is possible movement in the other components
+	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !__FIX19_13_INT_PART(this->bouncingPlaneNormal.y | this->bouncingPlaneNormal.z))
 	{
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !(this->velocity.y | this->velocity.z))
-		{
-			movementResult.axesStoppedMovement |= __X_AXIS;
-		}
+		movementResult.axesStoppedMovement |= __X_AXIS;
+	}
 
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !(this->velocity.x | this->velocity.z))
-		{
-			movementResult.axesStoppedMovement |= __Y_AXIS;
-		}
+	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !__FIX19_13_INT_PART(this->bouncingPlaneNormal.x | this->bouncingPlaneNormal.z))
+	{
+		movementResult.axesStoppedMovement |= __Y_AXIS;
+	}
 
-		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !(this->velocity.x | this->velocity.y))
-		{
-			movementResult.axesStoppedMovement |= __Z_AXIS;
-		}
+	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !__FIX19_13_INT_PART(this->bouncingPlaneNormal.x | this->bouncingPlaneNormal.y))
+	{
+		movementResult.axesStoppedMovement |= __Z_AXIS;
 	}
 
 	// bounce accelerated if movement changed direction and the previous movement was not uniform
@@ -850,7 +818,7 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 		movementResult.axesOfAcceleratedBouncing |= __Z_AXIS & movementResult.axesOfChangeOfMovement;
 	}
 
-	// don't bounce if movement stopped on that axis
+	// don't bounce if movement stopped on that axes
 	movementResult.axesOfAcceleratedBouncing &= ~movementResult.axesStoppedMovement;
 
 	return movementResult;
@@ -907,7 +875,7 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 	// check it must stop
 	MovementResult movementResult = Body_getBouncingResult(this, velocity);
 
-	// determine the type of movement on each axis
+	// determine the type of movement on each axes
 	if(movementResult.axesOfAcceleratedBouncing)
 	{
 		Body_moveAccelerated(this, movementResult.axesOfAcceleratedBouncing);

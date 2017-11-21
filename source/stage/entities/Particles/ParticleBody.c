@@ -58,7 +58,6 @@ extern fix19_13 _currentElapsedTime;
 extern const Acceleration* _currentGravity;
 
 MovementResult Body_updateMovement(Body this, Acceleration gravity);
-void Body_clearGravityFlags(Body this);
 Acceleration Body_getGravity(Body this);
 
 
@@ -135,8 +134,5 @@ void ParticleBody_update(ParticleBody this)
 
 		// clear any force so the next update does not get influenced
 		Body_clearExternalForce(__SAFE_CAST(Body, this));
-
-		// clear gravity flags
-		Body_clearGravityFlags(__SAFE_CAST(Body, this));
 	}
 }

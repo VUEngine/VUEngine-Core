@@ -141,16 +141,10 @@
 		MovementType movementType;																		\
 		/**
 		 * @var u8 				axesSubjectToGravity
-		 * @brief				axis that is subject to gravity
+		 * @brief				axes that are subject to gravity
 		 * @memberof 			Body
 		 */																								\
 		u16 axesSubjectToGravity;																		\
-		/**
-		 * @var u16 			axes of applied gravity
-		 * @brief				gravity structure
-		 * @memberof 			Body
-		 */																								\
-		u16 axesOfAppliedGravity;																		\
 		/**
 		 * @var bool 			active
 		 * @brief				raise flag to make the body active
@@ -202,9 +196,9 @@ void Body_destructor(Body this);
 
 void Body_addForce(Body this, const Force* force);
 void Body_applyForce(Body this, const Force* force);
-void Body_applyGravity(Body this, u16 axis);
+void Body_applyGravity(Body this, u16 axes);
 void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity);
-void Body_clearAcceleration(Body this, u16 axis);
+void Body_clearAcceleration(Body this, u16 axes);
 void Body_clearExternalForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
@@ -219,7 +213,7 @@ Velocity Body_getVelocity(Body this);
 bool Body_isActive(Body this);
 bool Body_isAwake(Body body);
 u16 Body_getMovementOnAllAxes(Body this);
-void Body_moveAccelerated(Body this, u16 axis);
+void Body_moveAccelerated(Body this, u16 axes);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_setActive(Body this, bool active);
 void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity);
@@ -232,7 +226,7 @@ void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
 void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller);
 void Body_sleep(Body body);
-void Body_stopMovement(Body this, u16 axis);
+void Body_stopMovement(Body this, u16 axes);
 void Body_takeHitFrom(Body this, Body other);
 void Body_update(Body this);
 void Body_print(Body this, int x, int y);
