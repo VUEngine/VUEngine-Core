@@ -828,32 +828,26 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
-	fix19_13 totalElasticity = this->elasticity + elasticity;
 	Acceleration gravity = Body_getGravity(this);
 
+	// set friction and elasticity
+	Body_setElasticity(this, elasticity);
+	Body_setFrictionCoefficient(this, frictionCoefficient);
+
+	// compute bouncing vector
 	fix19_13 cosAngle = (bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX19_13_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX19_13;
 	fix19_13 normalForce = __FIX19_13_MULT(Vector3D_length(this->weight), cosAngle);
 
-	Body_setFrictionCoefficient(this, frictionCoefficient);
 	this->bouncingPlaneNormal = bouncingPlaneNormal;
 	this->normal = Vector3D_scalarProduct(bouncingPlaneNormal, normalForce);
+	this->frictionForceMagnitude = __FIX19_13_MULT(normalForce, this->frictionCoefficient);
 
 	// avoid rounding errors
 	this->normal.x = __FIX19_13_INT_PART(this->normal.x + __0_5F_FIX19_13);
 	this->normal.y = __FIX19_13_INT_PART(this->normal.y + __0_5F_FIX19_13);
 	this->normal.z = __FIX19_13_INT_PART(this->normal.z + __0_5F_FIX19_13);
 
-	this->frictionForceMagnitude = __FIX19_13_MULT(normalForce, this->frictionCoefficient);
-
-	if(__1I_FIX19_13 < totalElasticity)
-	{
-		totalElasticity = __1I_FIX19_13;
-	}
-	else if(0 > totalElasticity)
-	{
-		totalElasticity = 0;
-	}
-
+	// compute bouncing vector
 	Vector3D velocity = this->velocity;
 
 	// compute bouncing velocity vector
@@ -865,17 +859,18 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 		velocity.z - u.z,
 	};
 
-	u = Vector3D_scalarProduct(u, totalElasticity);
+	// add elasticity and friction
+	u = Vector3D_scalarProduct(u, this->elasticity);
 	w = Vector3D_scalarProduct(w, (__I_TO_FIX19_13(1) - this->frictionCoefficient));
 
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;
 	this->velocity.z = w.z - u.z;
 
-	// check it must stop
+	// determine bouncing result
 	MovementResult movementResult = Body_getBouncingResult(this, velocity);
 
-	// determine the type of movement on each axes
+	// bounce over the computed axes
 	if(movementResult.axesOfAcceleratedBouncing)
 	{
 		Body_moveAccelerated(this, movementResult.axesOfAcceleratedBouncing);
@@ -883,6 +878,7 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyBounced, &movementResult.axesOfAcceleratedBouncing);
 	}
 
+	// stop over the axes where there is no bouncing
 	if(movementResult.axesStoppedMovement)
 	{
 		Body_stopMovement(this, movementResult.axesStoppedMovement);
