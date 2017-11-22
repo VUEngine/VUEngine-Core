@@ -64,12 +64,13 @@
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, isSubjectToGravity);											\
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
+		__VIRTUAL_SET(ClassName, Actor, exitCollision);												\
 		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
 		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
 		__VIRTUAL_SET(ClassName, Actor, getElasticityOnCollision);										\
 		__VIRTUAL_SET(ClassName, Actor, getFrictionOnCollision);										\
-		__VIRTUAL_SET(ClassName, Actor, processCollision);												\
+		__VIRTUAL_SET(ClassName, Actor, enterCollision);												\
 		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
 		__VIRTUAL_SET(ClassName, Actor, syncRotationWithBody);											\
 
@@ -130,7 +131,7 @@ bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
 fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
-bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation);
+bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_isMoving(Actor this);
@@ -147,6 +148,7 @@ void Actor_stopMovement(Actor this, u16 axis);
 void Actor_resetCollisionStatus(Actor this);
 Velocity Actor_getVelocity(Actor this);
 void Actor_collisionsProcessingDone(Actor this, const CollisionInformation* collisionInformation);
+void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
 

@@ -250,13 +250,11 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 					this->lastCycleCollisionChecks++;
 
 					// check if shapes overlap
-					CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, overlaps, shape, shapeToCheck);
+					CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, collides, shape, shapeToCheck);
 
 					if(collisionInformation.shape)
 					{
 						this->lastCycleCollisions++;
-
-						__VIRTUAL_CALL(SpatialObject, processCollision, shape->owner, &collisionInformation);
 					}
 				}
 			}

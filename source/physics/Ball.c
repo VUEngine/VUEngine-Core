@@ -123,21 +123,6 @@ void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __
 	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
 }
 
-// check if two rectangles overlap
-CollisionInformation Ball_overlaps(Ball this, Shape shape)
-{
-	ASSERT(this, "Ball::overlaps: null this");
-
-	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
-}
-
-CollisionSolution Ball_getCollisionSolution(Ball this, Shape shape)
-{
-	ASSERT(this, "Ball::getCollisionSolution: null this");
-
-	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
-}
-
 void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max)
 {
 	// project this onto the current normal
@@ -154,15 +139,14 @@ void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* m
 	}
 }
 
-// test if collision with the entity give the displacement
-CollisionSolution Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
+CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
 {
 	ASSERT(this, "Ball::testForCollision: null this");
 
 	// save state
 	Vector3D center = this->center;
 	fix19_13 radius = this->radius;
-	this->radius += sizeIncrement;
+	this->radius = __FIX19_13_MULT(this->radius, sizeIncrement);
 
 	// add displacement
 	this->center.x += displacement.x;
@@ -170,13 +154,13 @@ CollisionSolution Ball_testForCollision(Ball this, Shape shape, Vector3D displac
 	this->center.z += displacement.z;
 
 	// test for collision on displaced center
-	CollisionSolution collisionSolution = CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+	CollisionInformation collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 
 	// restore state
 	this->center = center;
 	this->radius = radius;
 
-	return collisionSolution;
+	return collisionInformation;
 }
 
 Vector3D Ball_getPosition(Ball this)

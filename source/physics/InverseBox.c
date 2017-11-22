@@ -50,8 +50,8 @@ __CLASS_FRIEND_DEFINITION(Box);
 //---------------------------------------------------------------------------------------------------------
 
 static void InverseBox_constructor(InverseBox this, SpatialObject owner);
-bool InverseBox_overlapsWithRightBoxs(RightBox* first, RightBox* second);
-bool InverseBox_overlapsBox(InverseBox this, Box other);
+bool InverseBox_collidesWithRightBoxs(RightBox* first, RightBox* second);
+bool InverseBox_collidesBox(InverseBox this, Box other);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,19 +92,4 @@ static void InverseBox_constructor(InverseBox this, SpatialObject owner)
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
-}
-
-// check if two rectangles overlap
-CollisionInformation InverseBox_overlaps(InverseBox this, Shape shape)
-{
-	ASSERT(this, "InverseBox::overlaps: null this");
-
-	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
-}
-
-CollisionSolution InverseBox_getCollisionSolution(InverseBox this, Shape shape)
-{
-	ASSERT(this, "InverseBox::getCollisionSolution: null this");
-
-	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 }

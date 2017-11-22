@@ -56,7 +56,9 @@
 		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionCoefficient);										\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
-		__VIRTUAL_DEC(ClassName, bool, processCollision, const CollisionInformation* collisionInformation);	\
+		__VIRTUAL_DEC(ClassName, bool, enterCollision, const CollisionInformation* collisionInformation);	\
+		__VIRTUAL_DEC(ClassName, bool, updateCollision, const CollisionInformation* collisionInformation);	\
+		__VIRTUAL_DEC(ClassName, void, exitCollision, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);\
 		__VIRTUAL_DEC(ClassName, u16, getMovementState);												\
 		__VIRTUAL_DEC(ClassName, u32, getInGameType);													\
 
@@ -76,7 +78,9 @@
 		__VIRTUAL_SET(ClassName, SpatialObject, getFrictionCoefficient);								\
 		__VIRTUAL_SET(ClassName, SpatialObject, getVelocity);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, isAffectedByRelativity);								\
-		__VIRTUAL_SET(ClassName, SpatialObject, processCollision);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, enterCollision);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, updateCollision);										\
+		__VIRTUAL_SET(ClassName, SpatialObject, exitCollision);											\
 		__VIRTUAL_SET(ClassName, SpatialObject, getMovementState);										\
 		__VIRTUAL_SET(ClassName, SpatialObject, getInGameType);											\
 
@@ -110,7 +114,9 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this);
 fix19_13 SpatialObject_getFrictionCoefficient(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
-bool SpatialObject_processCollision(SpatialObject this, const CollisionInformation* collisionInformation);
+bool SpatialObject_enterCollision(SpatialObject this, const CollisionInformation* collisionInformation);
+bool SpatialObject_updateCollision(SpatialObject this, const CollisionInformation* collisionInformation);
+void SpatialObject_exitCollision(SpatialObject this, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);
 u16 SpatialObject_getMovementState(SpatialObject this);
 VirtualList SpatialObject_getShapes(SpatialObject this);
 u32 SpatialObject_getInGameType(SpatialObject this);

@@ -65,24 +65,6 @@ enum Axis
 		 * @memberof			CollisionSolver
 		 */																								\
 		SpatialObject owner;																			\
-		/**
-		 * @var VirtualList 	collidingShapes
-		 * @brief				colliding shapes list
-		 * @memberof			CollisionSolver
-		 */																								\
-		VirtualList collidingShapes;																	\
-		/**
-		 * @var VirtualNode 	collidingShapePurgeNode
-		 * @brief				node to deffer the purge of collision shapes
-		 * @memberof			CollisionSolver
-		 */																								\
-		VirtualNode collidingShapePurgeNode;																	\
-		/**
-		 * @var GeneralAxisFlag	sensibleToFriction
-		 * @brief				flags to apply friction on each axis
-		 * @memberof			CollisionSolver
-		 */																								\
-		GeneralAxisFlag sensibleToFriction;																\
 
 __CLASS(CollisionSolver);
 
@@ -96,12 +78,7 @@ __CLASS_NEW_DECLARE(CollisionSolver, SpatialObject owner);
 void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner);
 void CollisionSolver_destructor(CollisionSolver this);
 
-bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this);
-VirtualList CollisionSolver_testForCollisions(CollisionSolver this, Vector3D displacement, fix19_13 sizeIncrement, const Shape shape);
-bool CollisionSolution_hasCollidingShapes(CollisionSolver this);
-fix19_13 CollisionSolver_getSurroundingFrictionCoefficient(CollisionSolver this);
 void CollisionSolver_resetCollisionStatus(CollisionSolver this);
 CollisionSolution CollisionSolver_resolveCollision(CollisionSolver this, const CollisionInformation* collisionInformation);
-bool CollisionSolver_hasCollidingShapes(CollisionSolver this);
 
 #endif

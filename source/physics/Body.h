@@ -221,6 +221,7 @@ void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getNormal(Body this);
 void Body_clearNormal(Body this);
 Vector3D Body_getBouncingPlaneNormal(Body this);
+fix19_13 Body_getFrictionCoefficient(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);

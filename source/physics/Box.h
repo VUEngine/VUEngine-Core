@@ -47,10 +47,8 @@
 
 #define Box_SET_VTABLE(ClassName)																		\
 		Shape_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, Box, overlaps);														\
-		__VIRTUAL_SET(ClassName, Box, getCollisionSolution);											\
 		__VIRTUAL_SET(ClassName, Box, setup);															\
-		__VIRTUAL_SET(ClassName, Box, testForCollision);												\
+		__VIRTUAL_SET(ClassName, Box, testForCollision);													\
 		__VIRTUAL_SET(ClassName, Box, getPosition);														\
 		__VIRTUAL_SET(ClassName, Box, getSurroundingRightBox);											\
 		__VIRTUAL_SET(ClassName, Box, hide);															\
@@ -103,13 +101,11 @@ void Box_constructor(Box this, SpatialObject owner);
 void Box_destructor(Box this);
 
 void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);
-CollisionInformation Box_overlaps(Box this, Shape shape);
-CollisionSolution Box_getCollisionSolution(Box this, Shape shape);
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES]);
 void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES]);
 void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix19_13* min, fix19_13* max);
 void Box_projectOntoItself(Box this);
-CollisionSolution Box_testForCollision(Box this, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);
+CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement);
 Vector3D Box_getPosition(Box this);
 RightBox Box_getSurroundingRightBox(Box this);
 void Box_show(Box this);

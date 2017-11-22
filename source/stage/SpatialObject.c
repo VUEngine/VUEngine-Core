@@ -197,11 +197,23 @@ bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unu
 	return false;
 }
 
-bool SpatialObject_processCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool SpatialObject_enterCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::processCollision: null this");
+	ASSERT(this, "SpatialObject::enterCollision: null this");
 
 	return false;
+}
+
+bool SpatialObject_updateCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::updateCollision: null this");
+
+	return false;
+}
+
+void SpatialObject_exitCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isNonPenetrableShape __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::exitCollision: null this");
 }
 
 

@@ -314,15 +314,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-	if(this->collisionSolver && CollisionSolver_purgeCollidingShapesList(this->collisionSolver))
-	{
-		if(this->body)
-		{
-			Body_clearNormal(this->body);
-			Body_setFrictionCoefficient(this->body, CollisionSolver_getSurroundingFrictionCoefficient(this->collisionSolver));
-		}
-	}
-
+	Shape_print(VirtualList_front(this->shapes), 1, 1);
 //	Body_print(this->body, 1, 1);
 }
 
@@ -357,48 +349,55 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
 
-	// save current rotation
-	this->previousRotation = this->transformation.localRotation;
-
-	Direction direction = Entity_getDirection(__SAFE_CAST(Entity, this));
-
-	if((__X_AXIS & axis))
+	if(this->body)
 	{
-		if(__RIGHT == direction.x)
-		{
-			direction.x = __LEFT;
-		}
-		else
-		{
-			direction.x = __RIGHT;
-		}
+		__VIRTUAL_CALL(Actor, syncRotationWithBody, this);
 	}
-
-	if((__Y_AXIS & axis))
+	else
 	{
-		if(__NEAR == direction.y)
-		{
-			direction.y = __FAR;
-		}
-		else
-		{
-			direction.x = __NEAR;
-		}
-	}
+		// save current rotation
+		this->previousRotation = this->transformation.localRotation;
 
-	if((__Z_AXIS & axis))
-	{
-		if(__RIGHT == direction.z)
-		{
-			direction.x = __LEFT;
-		}
-		else
-		{
-			direction.x = __RIGHT;
-		}
-	}
+		Direction direction = Entity_getDirection(__SAFE_CAST(Entity, this));
 
-	Entity_setDirection(__SAFE_CAST(Entity, this), direction);
+		if((__X_AXIS & axis))
+		{
+			if(__RIGHT == direction.x)
+			{
+				direction.x = __LEFT;
+			}
+			else
+			{
+				direction.x = __RIGHT;
+			}
+		}
+
+		if((__Y_AXIS & axis))
+		{
+			if(__NEAR == direction.y)
+			{
+				direction.y = __FAR;
+			}
+			else
+			{
+				direction.x = __NEAR;
+			}
+		}
+
+		if((__Z_AXIS & axis))
+		{
+			if(__RIGHT == direction.z)
+			{
+				direction.x = __LEFT;
+			}
+			else
+			{
+				direction.x = __RIGHT;
+			}
+		}
+
+		Entity_setDirection(__SAFE_CAST(Entity, this), direction);
+	}
 }
 
 
@@ -415,52 +414,27 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 {
 	ASSERT(this, "Actor::canMoveTowards: null this");
 
-	if(this->collisionSolver && CollisionSolution_hasCollidingShapes(this->collisionSolver))
+	fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+
+	Vector3D displacement =
 	{
-		fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+		direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+		direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+		direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
+	};
 
-		Vector3D displacement =
-		{
-			direction.x ? 0 < direction.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-			direction.y ? 0 < direction.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-			direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
-		};
+	VirtualNode node = this->shapes->head;
 
-		Vector3D normalizedDisplacement = Vector3D_normalize(displacement);
+	bool canMove = true;
 
-		VirtualNode shapeNode = this->shapes->head;
+	for(; node; node = node->next)
+	{
+		Shape shape = __SAFE_CAST(Shape, node->data);
 
-		bool canMove = true;
-
-		for(; shapeNode; shapeNode = shapeNode->next)
-		{
-			VirtualList collisionSolutionsList = CollisionSolver_testForCollisions(this->collisionSolver, displacement, 0, __SAFE_CAST(Shape, shapeNode->data));
-
-			if(collisionSolutionsList)
-			{
-				VirtualNode collisionSolutionNode = collisionSolutionsList->head;
-
-				for(; collisionSolutionNode; collisionSolutionNode = collisionSolutionNode->next)
-				{
-					CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
-
-					if(canMove)
-					{
-						canMove &= __F_TO_FIX19_13(1 - 0.1f) > __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
-//						canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
-					}
-
-					__DELETE_BASIC(collisionSolution);
-				}
-
-				__DELETE(collisionSolutionsList);
-			}
-		}
-
-		return canMove;
+		canMove &= __VIRTUAL_CALL(Shape, canMoveTowards, shape, displacement, 0);
 	}
 
-	return true;
+	return canMove;
 }
 
 fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
@@ -472,20 +446,40 @@ fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObjec
 	return physicalSpecification->elasticity + __VIRTUAL_CALL(SpatialObject, getElasticity, collidingObject);
 }
 
-fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix19_13 Actor_getSurroundingFrictionCoefficient(Actor this)
+{
+	ASSERT(this, "Actor::getSurroundingFrictionCoefficient: null this");
+
+	fix19_13 totalFrictionCoefficient = 0;
+
+	VirtualNode node = this->shapes->head;
+
+	for(; node; node = node->next)
+	{
+		Shape shape = __SAFE_CAST(Shape, node->data);
+
+		totalFrictionCoefficient += Shape_getCollidingFrictionCoefficient(shape);
+	}
+
+	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
+
+	return physicalSpecification->frictionCoefficient + totalFrictionCoefficient;
+}
+
+fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getFrictionOnCollision: null this");
 
 	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
 
-	return physicalSpecification->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collidingObject);
+	return physicalSpecification->frictionCoefficient + Actor_getSurroundingFrictionCoefficient(this);
 }
 
-bool Actor_processCollision(Actor this, const CollisionInformation* collisionInformation)
+bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation)
 {
-	ASSERT(this, "Actor::processCollision: null this");
-	ASSERT(this->body, "Actor::processCollision: null body");
-	ASSERT(collisionInformation->collidingShape, "Actor::processCollision: collidingShapes");
+	ASSERT(this, "Actor::enterCollision: null this");
+	ASSERT(this->body, "Actor::enterCollision: null body");
+	ASSERT(collisionInformation->collidingShape, "Actor::enterCollision: collidingShapes");
 
 	bool returnValue = false;
 
@@ -503,10 +497,6 @@ bool Actor_processCollision(Actor this, const CollisionInformation* collisionInf
 			Body_bounce(this->body, collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
 
 			returnValue = true;
-		}
-		else if(collisionInformation->isCollisionSolutionValid)
-		{
-			Actor_stopAllMovement(this);
 		}
 
 		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collisionInformation);
@@ -547,10 +537,10 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 				case kBodyBounced:
 
-					if((int*)Telegram_getExtraInfo(telegram))
-					{
-						Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
-					}
+					break;
+				case kBodyChangedDirection:
+
+					Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
 					return true;
 					break;
 			}
@@ -753,3 +743,14 @@ void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), const C
 	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }
 
+void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isNonPenetrableShape)
+{
+	ASSERT(this, "Actor::exitCollision: null this");
+
+	Body_setFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
+
+	if(isNonPenetrableShape)
+	{
+		Body_clearNormal(this->body);
+	}
+}

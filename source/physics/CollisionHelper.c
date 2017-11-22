@@ -134,7 +134,7 @@ CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attri
 	ASSERT(shapeA, "CollisionHelper::checkIfOverlap: null shapeA");
 	ASSERT(shapeB, "CollisionHelper::checkIfOverlap: null shapeA");
 
-	CollisionInformation collisionInformation = (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	CollisionInformation collisionInformation = (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 
 	if(__IS_INSTANCE_OF(Box, shapeA))
 	{
@@ -218,7 +218,11 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		if(!isSATCheckPending)
+		if(isSATCheckPending)
+		{
+			collisionSolution = CollisionHelper_getCollisionSolutionBetweenBoxAndBox(this, boxA, boxB);
+		}
+		else
 		{
 			Vector3D boxACenter =
 			{
@@ -265,10 +269,10 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 			collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
 		}
 
-		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, boxB), !isSATCheckPending, collisionSolution};
+		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, boxB), collisionSolution};
 	}
 
-	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
 static CollisionInformation CollisionHelper_checkIfBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB)
@@ -281,12 +285,10 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsInverseBox(Collisi
 	 (boxA->rightBox.z0 < inverseBoxB->rightBox.z0) | (boxA->rightBox.z1 > inverseBoxB->rightBox.z1)
 	)
 	{
-		bool isCollisionSolutionValid = true;
-
-		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, inverseBoxB), isCollisionSolutionValid, {{0, 0, 0}, {0, 0, 0}, 0}};
+		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, inverseBoxB), {{0, 0, 0}, {0, 0, 0}, 0}};
 	}
 
-	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
 static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB)
@@ -319,7 +321,11 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		if(!isSATCheckPending)
+		if(isSATCheckPending)
+		{
+			collisionSolution = CollisionHelper_getCollisionSolutionBetweenBoxAndBall(this, boxA, ballB);
+		}
+		else
 		{
 			Vector3D distanceVector = Vector3D_get(boxACenter, ballB->center);
 
@@ -352,17 +358,17 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 			collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
 		}
 
-		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, ballB), !isSATCheckPending, collisionSolution};
+		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, ballB), collisionSolution};
 	}
 
-	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
 static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::checkIfInverseBoxOverlapsInverseBox: null this");
 
-	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
 static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
@@ -387,51 +393,47 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 	if(0 > intervalDistance.x || 0 > intervalDistance.y || 0 > intervalDistance.z)
 	{
 		// check if both boxes are axis aligned
-		bool isSATCheckPending = inverseBoxA->rotationVertexDisplacement.x | inverseBoxA->rotationVertexDisplacement.y | inverseBoxA->rotationVertexDisplacement.z ? true : false;
-
 		CollisionSolution collisionSolution = (CollisionSolution) {{0, 0, 0}, {0, 0, 0}, 0};
 		fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
 
+		// no SAT when checking inverse boxes
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		if(!isSATCheckPending)
+		Vector3D distanceVector = Vector3D_get(inverseBoxACenter, ballB->center);
+
+		Vector3D normals[__SHAPE_NORMALS] =
 		{
-			Vector3D distanceVector = Vector3D_get(inverseBoxACenter, ballB->center);
+			{__I_TO_FIX19_13(1), 0, 0},
+			{0, __I_TO_FIX19_13(1), 0},
+			{0, 0, __I_TO_FIX19_13(1)},
+		};
 
-			Vector3D normals[__SHAPE_NORMALS] =
+		int i = 0;
+		fix19_13* component = &intervalDistance.x;
+
+		for(i = 0; i < __SHAPE_NORMALS; i++)
+		{
+			fix19_13 intervalDistance = __ABS(component[i]);
+
+			if(intervalDistance < minimumIntervalDistance)
 			{
-				{__I_TO_FIX19_13(1), 0, 0},
-				{0, __I_TO_FIX19_13(1), 0},
-				{0, 0, __I_TO_FIX19_13(1)},
-			};
+				collisionSolution.translationVectorLength = minimumIntervalDistance = intervalDistance;
+				collisionSolution.collisionPlaneNormal = normals[i];
 
-			int i = 0;
-			fix19_13* component = &intervalDistance.x;
-
-			for(i = 0; i < __SHAPE_NORMALS; i++)
-			{
-				fix19_13 intervalDistance = __ABS(component[i]);
-
-				if(intervalDistance < minimumIntervalDistance)
+				if(Vector3D_dotProduct(distanceVector, collisionSolution.collisionPlaneNormal) < 0)
 				{
-					collisionSolution.translationVectorLength = minimumIntervalDistance = intervalDistance;
-					collisionSolution.collisionPlaneNormal = normals[i];
-
-					if(Vector3D_dotProduct(distanceVector, collisionSolution.collisionPlaneNormal) < 0)
-					{
-						collisionSolution.collisionPlaneNormal = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, __I_TO_FIX19_13(-1));
-					}
+					collisionSolution.collisionPlaneNormal = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, __I_TO_FIX19_13(-1));
 				}
 			}
-
-			collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
 		}
 
-		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), !isSATCheckPending, collisionSolution};
+		collisionSolution.translationVector = Vector3D_scalarProduct(collisionSolution.collisionPlaneNormal, collisionSolution.translationVectorLength);
+
+		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), collisionSolution};
 	}
 
-	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
 static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHelper this, Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
@@ -442,10 +444,10 @@ static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHel
 
 	if(collisionSolution.translationVectorLength)
 	{
-		return (CollisionInformation){__SAFE_CAST(Shape, ballA), __SAFE_CAST(Shape, ballB), true, collisionSolution};
+		return (CollisionInformation){__SAFE_CAST(Shape, ballA), __SAFE_CAST(Shape, ballB), collisionSolution};
 	}
 
-	return (CollisionInformation){NULL, NULL, false, {{0, 0, 0}, {0, 0, 0}, 0}};
+	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 }
 
 /**

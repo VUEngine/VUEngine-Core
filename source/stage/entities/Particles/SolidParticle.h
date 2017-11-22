@@ -55,7 +55,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getWidth);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, processCollision);										\
+		__VIRTUAL_SET(ClassName, SolidParticle, enterCollision);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, isSubjectToGravity);										\
 		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, transform);												\
@@ -63,6 +63,7 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getShapes);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getInGameType);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, getVelocity);											\
+		__VIRTUAL_SET(ClassName, SolidParticle, exitCollision);										\
 
 #define SolidParticle_ATTRIBUTES																		\
 		Particle_ATTRIBUTES																				\
@@ -146,7 +147,7 @@ u16 SolidParticle_getWidth(SolidParticle this);
 u16 SolidParticle_getHeight(SolidParticle this);
 u16 SolidParticle_getDepth(SolidParticle this);
 Shape SolidParticle_getShape(SolidParticle this);
-bool SolidParticle_processCollision(SolidParticle this, const CollisionInformation* collisionInformation);
+bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation* collisionInformation);
 bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity);
 bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
 void SolidParticle_transform(SolidParticle this);
@@ -155,6 +156,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 VirtualList SolidParticle_getShapes(SolidParticle this);
 u32 SolidParticle_getInGameType(SolidParticle this);
 Velocity SolidParticle_getVelocity(SolidParticle this);
+void SolidParticle_exitCollision(SolidParticle this, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);
 
 
 #endif

@@ -108,6 +108,7 @@ Clock _physhicsClock = NULL;
 MovementResult Body_updateMovement(Body this, Acceleration gravity);
 static void Body_awake(Body this, u16 axesOfAwakening);
 static void Body_setMovementType(Body this, int movementType, u16 axes);
+static u16 Body_doStopMovement(Body this, u16 axes);
 Acceleration Body_getGravity(Body this);
 
 
@@ -379,6 +380,7 @@ void Body_update(Body this)
 			Acceleration gravity = Body_getGravity(this);
 			this->weight = Vector3D_scalarProduct(gravity, this->mass);
 
+
 			Velocity velocity =
 			{
 				__FIX19_13_INT_PART(this->velocity.x),
@@ -387,13 +389,19 @@ void Body_update(Body this)
 			};
 
 			this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
+//			this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
 
 			MovementResult movementResult = Body_updateMovement(this, gravity);
 
 			// if stopped on any axes
 			if(movementResult.axesStoppedMovement)
 			{
-				Body_stopMovement(this, movementResult.axesStoppedMovement);
+				u16 axesOfStopping = Body_doStopMovement(this, movementResult.axesStoppedMovement);
+
+				if(axesOfStopping)
+				{
+					MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
+				}
 			}
 
 			if(movementResult.axesOfChangeOfMovement)
@@ -523,7 +531,7 @@ MovementResult Body_updateMovement(Body this, Acceleration gravity)
 }
 
 // stop movement over an axes
-void Body_stopMovement(Body this, u16 axes)
+static u16 Body_doStopMovement(Body this, u16 axes)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
@@ -564,10 +572,47 @@ void Body_stopMovement(Body this, u16 axes)
 		Body_sleep(this);
 	}
 
-	if(axesOfStopping)
+	return axesOfStopping;
+}
+
+// stop movement over an axes
+void Body_stopMovement(Body this, u16 axes)
+{
+	ASSERT(this, "Body::stopMovement: null this");
+
+	u16 axesOfMovement = Body_getMovementOnAllAxes(this);
+	u16 axesOfStopping = __NO_AXIS;
+
+	if(axes & __X_AXIS)
 	{
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
+		// not moving anymore
+		this->velocity.x = 0;
+		this->acceleration.x = 0;
+		this->externalForce.x = 0;
+		axesOfStopping |= axesOfMovement & __X_AXIS;
 	}
+
+	if(axes & __Y_AXIS)
+	{
+		// not moving anymore
+		this->velocity.y = 0;
+		this->acceleration.y = 0;
+		this->externalForce.y = 0;
+		axesOfStopping |= axesOfMovement & __Y_AXIS;
+	}
+
+	if(axes & __Z_AXIS)
+	{
+		// not moving anymore
+		this->velocity.z = 0;
+		this->acceleration.z = 0;
+		this->externalForce.z = 0;
+		axesOfStopping |= axesOfMovement & __Z_AXIS;
+	}
+
+	Body_setMovementType(this, __NO_MOVEMENT, axesOfStopping);
+
+//	Body_doStopMovement(this, axes);
 }
 
 // get axes subject to gravity
@@ -666,6 +711,13 @@ Vector3D Body_getBouncingPlaneNormal(Body this)
 	return this->bouncingPlaneNormal;
 }
 
+fix19_13 Body_getFrictionCoefficient(Body this)
+{
+	ASSERT(this, "Body::setFriction: null this");
+
+	return this->frictionCoefficient;
+}
+
 // set elasticity
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient)
 {
@@ -680,11 +732,11 @@ void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient)
 		frictionCoefficient = __I_TO_FIX19_13(1);
 	}
 
-	if(this->frictionCoefficient)
+/*	if(this->frictionCoefficient)
 	{
 		this->frictionForceMagnitude = __ABS(__FIX19_13_DIV(this->frictionForceMagnitude, this->frictionCoefficient));
 	}
-
+*/
 	this->frictionCoefficient = frictionCoefficient;
 	this->frictionForceMagnitude = __ABS(__FIX19_13_MULT(this->frictionForceMagnitude, this->frictionCoefficient));
 }
@@ -881,7 +933,12 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 	// stop over the axes where there is no bouncing
 	if(movementResult.axesStoppedMovement)
 	{
-		Body_stopMovement(this, movementResult.axesStoppedMovement);
+		u16 axesOfStopping = Body_doStopMovement(this, movementResult.axesStoppedMovement);
+
+		if(axesOfStopping)
+		{
+			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
+		}
 	}
 }
 

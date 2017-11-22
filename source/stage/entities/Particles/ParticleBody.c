@@ -121,7 +121,8 @@ void ParticleBody_update(ParticleBody this)
 		{
 			Acceleration gravity = Body_getGravity(__SAFE_CAST(Body, this));
 			this->weight = Vector3D_scalarProduct(gravity, this->mass);
-			this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -this->frictionForceMagnitude);
+		//	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -this->frictionForceMagnitude);
+			this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
 
 			MovementResult movementResult = Body_updateMovement(__SAFE_CAST(Body, this), gravity);
 

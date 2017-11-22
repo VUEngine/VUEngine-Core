@@ -37,9 +37,8 @@
 #define InverseBox_METHODS(ClassName)																\
 		Box_METHODS(ClassName)																		\
 
-#define InverseBox_SET_VTABLE(ClassName)																\
+#define InverseBox_SET_VTABLE(ClassName)															\
 		Box_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, InverseBox, overlaps);												\
 
 #define InverseBox_ATTRIBUTES																		\
 		Box_ATTRIBUTES																				\
@@ -54,8 +53,6 @@ __CLASS(InverseBox);
 __CLASS_NEW_DECLARE(InverseBox, SpatialObject owner);
 
 void InverseBox_destructor(InverseBox this);
-
-CollisionInformation InverseBox_overlaps(InverseBox this, Shape shape);
 
 
 #endif

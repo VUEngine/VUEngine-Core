@@ -328,21 +328,6 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
 }
 
-// check if two rectangles overlap
-CollisionInformation Box_overlaps(Box this, Shape shape)
-{
-	ASSERT(this, "Box::overlaps: null this");
-
-	return CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
-}
-
-CollisionSolution Box_getCollisionSolution(Box this, Shape shape)
-{
-	ASSERT(this, "Box::getCollisionSolution: null this");
-
-	return CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
-}
-
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 {
 	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
@@ -496,34 +481,48 @@ void Box_projectOntoItself(Box this)
 }
 
 // test if collision with the entity give the displacement
-CollisionSolution Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
+CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
 {
 	ASSERT(this, "Box::testForCollision: null this");
 
 	// save position
 	RightBox rightBox = this->rightBox;
 
+	Vector3D halfSize =
+	{
+		(this->rightBox.x1 - this->rightBox.x0) >> 1,
+		(this->rightBox.y1 - this->rightBox.y0) >> 1,
+		(this->rightBox.z1 - this->rightBox.z0) >> 1,
+	};
+
+	Vector3D newHalfSize =
+	{
+		__FIX19_13_MULT(halfSize.x, sizeIncrement),
+		__FIX19_13_MULT(halfSize.y, sizeIncrement),
+		__FIX19_13_MULT(halfSize.x, sizeIncrement),
+	};
+
 	// add displacement
-	this->rightBox.x0 += displacement.x - sizeIncrement;
-	this->rightBox.x1 += displacement.x + sizeIncrement;
+	this->rightBox.x0 += displacement.x - (newHalfSize.x - halfSize.x);
+	this->rightBox.x1 += displacement.x + (newHalfSize.x - halfSize.x);
 
-	this->rightBox.y0 += displacement.y - sizeIncrement;
-	this->rightBox.y1 += displacement.y + sizeIncrement;
+	this->rightBox.y0 += displacement.y - (newHalfSize.y - halfSize.y);
+	this->rightBox.y1 += displacement.y + (newHalfSize.y - halfSize.y);
 
-	this->rightBox.z0 += displacement.z - sizeIncrement;
-	this->rightBox.z1 += displacement.z + sizeIncrement;
+	this->rightBox.z0 += displacement.z - (newHalfSize.z - halfSize.z);
+	this->rightBox.z1 += displacement.z + (newHalfSize.z - halfSize.z);
 
 	Box_projectOntoItself(this);
 
 	// test for collision on displaced center
-	CollisionSolution collisionSolution = CollisionHelper_getCollisionSolution(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+	CollisionInformation collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
 
 	// put back myself
 	this->rightBox = rightBox;
 
 	Box_projectOntoItself(this);
 
-	return collisionSolution;
+	return collisionInformation;
 }
 
 Vector3D Box_getPosition(Box this)

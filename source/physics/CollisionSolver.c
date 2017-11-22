@@ -35,7 +35,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 
-
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
@@ -53,10 +52,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
-
-// global
-
-static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,13 +73,6 @@ void CollisionSolver_constructor(CollisionSolver this, SpatialObject owner)
 	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
-
-	this->sensibleToFriction.x = true;
-	this->sensibleToFriction.y = true;
-	this->sensibleToFriction.z = true;
-
-	this->collidingShapes = __NEW(VirtualList);
-	this->collidingShapePurgeNode = this->collidingShapes->head;
 }
 
 // class's destructor
@@ -92,108 +80,9 @@ void CollisionSolver_destructor(CollisionSolver this)
 {
 	ASSERT(this, "CollisionSolver::destructor: null this");
 
-	VirtualNode node = this->collidingShapes->head;
-
-	for(; node; node = node->next)
-	{
-		Object_removeEventListeners(__SAFE_CAST(Object, node->data), __SAFE_CAST(Object, this), kEventShapeDeleted);
-	}
-
-	VirtualList_clear(this->collidingShapes);
-
-	__DELETE(this->collidingShapes);
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
-}
-
-// update colliding entities
-bool CollisionSolver_purgeCollidingShapesList(CollisionSolver this)
-{
-	ASSERT(this, "CollisionSolver::updateCollisionStatus: null this");
-
-	if(!this->collidingShapePurgeNode)
-	{
-		this->collidingShapePurgeNode = this->collidingShapes->head;
-	}
-
-	if(this->collidingShapePurgeNode)
-	{
-		Shape shapeToRemove = __SAFE_CAST(Shape, this->collidingShapePurgeNode->data);
-
-		this->collidingShapePurgeNode = this->collidingShapePurgeNode->next;
-
-		Vector3D displacement = {0, 0, 0};
-		fix19_13 sizeIncrement = __I_TO_FIX19_13(1);
-
-		VirtualList ownerShapes = __VIRTUAL_CALL(SpatialObject, getShapes, this->owner);
-
-		if(ownerShapes)
-		{
-			VirtualNode ownerShapeNode = ownerShapes->head;
-
-			bool collision = false;
-
-			for(; ownerShapeNode; ownerShapeNode = ownerShapeNode->next)
-			{
-				CollisionSolution collisionSolution = __VIRTUAL_CALL(Shape, testForCollision, ownerShapeNode->data, shapeToRemove, displacement, sizeIncrement);
-
-				if(collisionSolution.translationVectorLength)
-				{
-					collision = true;
-					break;
-				}
-			}
-
-			if(!collision)
-			{
-				Object_removeEventListeners(__SAFE_CAST(Object, shapeToRemove), __SAFE_CAST(Object, this), kEventShapeDeleted);
-				VirtualList_removeElement(this->collidingShapes, shapeToRemove);
-				this->collidingShapePurgeNode = this->collidingShapes->head;
-
-				return true;
-			}
-		}
-	}
-
-	return false;
-}
-
-VirtualList CollisionSolver_testForCollisions(CollisionSolver this, Vector3D displacement, fix19_13 sizeIncrement, const Shape shape)
-{
-	ASSERT(this, "CollisionSolver::testForCollisions: null this");
-
-	if(!(displacement.x | displacement.y | displacement.z))
-	{
-		return 0;
-	}
-
-	VirtualList collisionSolutionList = __NEW(VirtualList);
-	VirtualNode node = this->collidingShapes->head;
-
-	for(; node; node = node->next)
-	{
-		CollisionSolution collisionSolution = __VIRTUAL_CALL(Shape, testForCollision, shape, __SAFE_CAST(Shape, node->data), displacement, sizeIncrement);
-
-		if(collisionSolution.translationVectorLength)
-		{
-			CollisionSolution* collisionSolutionEntry = __NEW_BASIC(CollisionSolution);
-			*collisionSolutionEntry = collisionSolution;
-			VirtualList_pushBack(collisionSolutionList, collisionSolutionEntry);
-		}
-	}
-
-	return collisionSolutionList;
-}
-
-// process event
-static void CollisionSolver_onCollidingShapeDestroyed(CollisionSolver this, Object eventFirer)
-{
-	ASSERT(this, "CollisionSolver::collidingShapeDestroyed: null this");
-
-	VirtualList_removeElement(this->collidingShapes, eventFirer);
-	this->collidingShapePurgeNode = this->collidingShapes->head;
 }
 
 // resolve collision against other entities
@@ -208,51 +97,12 @@ CollisionSolution CollisionSolver_resolveCollision(CollisionSolver this, const C
 
 	CollisionSolution collisionSolution = collisionInformation->collisionSolution;
 
-	// if pending SAT check
-	if(!collisionInformation->isCollisionSolutionValid)
-	{
-		// force it
-		collisionSolution = __VIRTUAL_CALL(Shape, getCollisionSolution, collisionInformation->shape, collisionInformation->collidingShape);
-	}
-
 	ownerPosition.x += collisionSolution.translationVector.x;
 	ownerPosition.y += collisionSolution.translationVector.y;
 	ownerPosition.z += collisionSolution.translationVector.z;
 
 	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 
-	if(collisionSolution.translationVectorLength)
-	{
-		VirtualList_removeElement(this->collidingShapes, collisionInformation->collidingShape);
-		VirtualList_pushBack(this->collidingShapes, collisionInformation->collidingShape);
-		Object_addEventListener(__SAFE_CAST(Object, collisionInformation->collidingShape), __SAFE_CAST(Object, this), (EventListener)CollisionSolver_onCollidingShapeDestroyed, kEventShapeDeleted);
-
-		this->collidingShapePurgeNode = this->collidingShapes->head;
-	}
-
 	return collisionSolution;
 }
 
-bool CollisionSolution_hasCollidingShapes(CollisionSolver this)
-{
-	ASSERT(this, "CollisionSolver::hasCollidingShapes: null this");
-
-	return VirtualList_getSize(this->collidingShapes) ? true : false;
-}
-
-// retrieve friction of colliding objects
-fix19_13 CollisionSolver_getSurroundingFrictionCoefficient(CollisionSolver this)
-{
-	ASSERT(this, "CollisionSolver::getSurroundingFrictionCoefficient: null this");
-
-	fix19_13 totalFriction = 0;
-
-	VirtualNode node = this->collidingShapes->head;
-
-	for(; node; node = node->next)
-	{
-		totalFriction += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(__SAFE_CAST(Shape, node->data)));
-	}
-
-	return totalFriction;
-}

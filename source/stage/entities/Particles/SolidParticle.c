@@ -167,12 +167,6 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 	if(0 <= this->lifeSpan)
 	{
 		SolidParticle_transformShape(this);
-
-		if(CollisionSolver_purgeCollidingShapesList(this->collisionSolver))
-		{
-			Body_clearNormal(this->body);
-			Body_setFrictionCoefficient(this->body, CollisionSolver_getSurroundingFrictionCoefficient(this->collisionSolver));
-		}
 	}
 
 	return expired;
@@ -186,7 +180,6 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
  *
  * @param this	Function scope
  */
-
 static void SolidParticle_transformShape(SolidParticle this)
 {
 	const Rotation shapeRotation = {0, 0, 0};
@@ -276,14 +269,14 @@ u16 SolidParticle_getDepth(SolidParticle this)
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_processCollision(SolidParticle this, const CollisionInformation* collisionInformation)
+bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
 	ASSERT(collisionInformation->collidingShape, "SolidParticle::resolveCollision: collidingShapes");
 
-	ASSERT(collisionInformation->collidingShape, "Actor::processCollision: collidingShapes");
+	ASSERT(collisionInformation->collidingShape, "SolidParticle::enterCollision: collidingShapes");
 
 	bool returnValue = false;
 
@@ -291,17 +284,13 @@ bool SolidParticle_processCollision(SolidParticle this, const CollisionInformati
 	{
 		CollisionSolution collisionSolution = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
 
-		if(collisionInformation->collisionSolution.translationVectorLength)
+		if(collisionSolution.translationVectorLength)
 		{
 			fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
 			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
 
-			Body_bounce(this->body, collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			Body_bounce(this->body, collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
 			returnValue = true;
-		}
-		else if(collisionInformation->isCollisionSolutionValid)
-		{
-			Body_stopMovement(this->body, __ALL_AXES);
 		}
 	}
 
@@ -322,48 +311,18 @@ bool SolidParticle_processCollision(SolidParticle this, const CollisionInformati
 bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 {
 	ASSERT(this, "Particle::isSubjectToGravity: null this");
+	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
-	if(CollisionSolution_hasCollidingShapes(this->collisionSolver))
+	fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+
+	Vector3D displacement =
 	{
-		fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+		gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
+		gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
+		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
+	};
 
-		Vector3D displacement =
-		{
-			gravity.x ? 0 < gravity.x ? collisionCheckDistance : -collisionCheckDistance : 0,
-			gravity.y ? 0 < gravity.y ? collisionCheckDistance : -collisionCheckDistance : 0,
-			gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
-		};
-
-		Vector3D normalizedDisplacement = Vector3D_normalize(displacement);
-
-		bool canMove = true;
-
-		VirtualList collisionSolutionsList = CollisionSolver_testForCollisions(this->collisionSolver, displacement, 0, this->shape);
-
-		if(collisionSolutionsList)
-		{
-			VirtualNode collisionSolutionNode = collisionSolutionsList->head;
-
-			for(; collisionSolutionNode; collisionSolutionNode = collisionSolutionNode->next)
-			{
-				CollisionSolution* collisionSolution = (CollisionSolution*)collisionSolutionNode->data;
-
-				if(canMove)
-				{
-					canMove &= __F_TO_FIX19_13(1 - 0.1f) > __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, normalizedDisplacement));
-//					canMove &= __I_TO_FIX19_13(1) != __ABS(Vector3D_dotProduct(collisionSolution->collisionPlaneNormal, Vector3D_normalize(displacement)));
-				}
-
-				__DELETE_BASIC(collisionSolution);
-			}
-
-			__DELETE(collisionSolutionsList);
-		}
-
-		return canMove;
-	}
-
-	return true;
+	return __VIRTUAL_CALL(Shape, canMoveTowards, this->shape, displacement, 0);
 }
 
 /**
@@ -495,5 +454,29 @@ Velocity SolidParticle_getVelocity(SolidParticle this)
 	ASSERT(this, "SolidParticle::getVelocity: null this");
 
 	return Body_getVelocity(this->body);
+}
+
+/**
+ * Inform me about not colliding shape
+ *
+ * @memberof					SolidParticle
+ * @public
+ *
+ * @param this					Function scope
+ * @param shapeNotColliding		Shape that is no longer colliding
+ */
+void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isNonPenetrableShape)
+{
+	ASSERT(this, "SolidParticle::exitCollision: null this");
+	ASSERT(this->body, "SolidParticle::exitCollision: null this");
+
+	if(isNonPenetrableShape)
+	{
+		Body_clearNormal(this->body);
+	}
+
+	fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + Shape_getCollidingFrictionCoefficient(this->shape);
+
+	Body_setFrictionCoefficient(this->body, frictionCoefficient);
 }
 
