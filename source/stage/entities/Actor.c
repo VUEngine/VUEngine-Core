@@ -82,7 +82,6 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	this->stateMachine = NULL;
 
 	this->body = NULL;
-	this->collisionSolver = NULL;
 	this->previousRotation = this->transformation.localRotation;
 
 	// create body
@@ -104,12 +103,6 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 			this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), &defaultActorPhysicalSpecification, actorDefinition->axesSubjectToGravity);
 		}
 	}
-
-	// create collision solver
-	if(actorDefinition->createCollisionSolver)
-	{
-		this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this));
-	}
 }
 
 // class's destructor
@@ -125,12 +118,6 @@ void Actor_destructor(Actor this)
 		// remove a body
 		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
 		this->body = NULL;
-	}
-
-	if(this->collisionSolver)
-	{
-		__DELETE(this->collisionSolver);
-		this->collisionSolver = NULL;
 	}
 
 	// destroy state machine
@@ -314,8 +301,8 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-	Shape_print(VirtualList_front(this->shapes), 1, 1);
 //	Body_print(this->body, 1, 1);
+//	Shape_print(VirtualList_front(this->shapes), 1, 1);
 }
 
 // whether changed direction in the last cycle or not
@@ -483,9 +470,9 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collisionInformation->collidingShape)
+	if(collisionInformation->shape && collisionInformation->collidingShape)
 	{
-		CollisionSolution collisionSolution = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
+		CollisionSolution collisionSolution = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
 		if(collisionSolution.translationVectorLength)
 		{
@@ -494,7 +481,7 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 			fix19_13 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->collisionSolution.collisionPlaneNormal);
 			fix19_13 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->collisionSolution.collisionPlaneNormal);
 
-			Body_bounce(this->body, collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
 
 			returnValue = true;
 		}
@@ -581,27 +568,12 @@ void Actor_addForce(Actor this, const Force* force)
 	ASSERT(this, "Actor::addForce: null this");
 	ASSERT(this->body, "Actor::addForce: null body");
 
-	/*
-	Acceleration acceleration =
+	if(!Actor_canMoveTowards(this, *force))
 	{
-		force->x,
-		force->y,
-		force->z
-	};
+		return;
+	}
 
-	Velocity velocity = Body_getVelocity(this->body);
-
-	Force effectiveForceToApply = *force;
-	{
-		velocity.x || (force->x && (__X_AXIS & Actor_canMoveTowards(this, &acceleration))) ? force->x : 0,
-		velocity.y || (force->y && (__Y_AXIS & Actor_canMoveTowards(this, &acceleration))) ? force->y : 0,
-		velocity.z || (force->z && (__Z_AXIS & Actor_canMoveTowards(this, &acceleration))) ? force->z : 0
-	};
-	*/
-
-	Force effectiveForceToApply = *force;
-
-	Body_addForce(this->body, &effectiveForceToApply);
+	Body_addForce(this->body, force);
 
 	if(this->shapes)
 	{
@@ -743,14 +715,14 @@ void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), const C
 	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }
 
-void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isNonPenetrableShape)
+void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::exitCollision: null this");
 
 	Body_setFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
 
-	if(isNonPenetrableShape)
+	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body);
+		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
 	}
 }

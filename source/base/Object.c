@@ -56,13 +56,6 @@ typedef struct Event
 	u32 code;
 } Event;
 
-static Event _firingEventMarker =
-{
-	NULL,
-	NULL,
-	0
-};
-
 static Event* _currentFiringEvent = NULL;
 
 
@@ -72,8 +65,6 @@ static Event* _currentFiringEvent = NULL;
 
 // to speed things up
 extern MemoryPool _memoryPool;
-
-static void Object_checkIfFiringEvent(Object this, const char* message);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -110,8 +101,6 @@ void Object_destructor(Object this)
 
 	if(this->events)
 	{
-		Object_checkIfFiringEvent(this, "destructor");
-
 		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
@@ -129,39 +118,6 @@ void Object_destructor(Object this)
 #else
 	*((u32*)this) = 0;
 #endif
-}
-
-/**
- * Prevents the modification or deletion of the event list while
- * the object is firing an event
- *
- * @memberof			Object
- * @private
- *
- * @param this			Function scope
- * @param message		Message to show in case of error
- */
-static void Object_checkIfFiringEvent(Object this, const char* message)
-{
-	ASSERT(this, "Object::checkIfFiringEvent: null this");
-
-	if(&_firingEventMarker == VirtualList_front(this->events))
-	{
-		Printing_setDebugMode(Printing_getInstance());
-		Printing_text(Printing_getInstance(), "Object's class:" , 1, 15, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 17, 15, NULL);
-		Printing_text(Printing_getInstance(), "During:" , 1, 16, NULL);
-		Printing_text(Printing_getInstance(), message, 17, 16, NULL);
-
-		Printing_text(Printing_getInstance(), "Event" , 1, 17, NULL);
-		Printing_text(Printing_getInstance(), "Listener:" , 5, 18, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(_currentFiringEvent->listener), 17, 18, NULL);
-		Printing_text(Printing_getInstance(), "Method:" , 5, 19, NULL);
-		Printing_hex(Printing_getInstance(), (int)_currentFiringEvent->method, 17, 19, 8, NULL);
-		Printing_text(Printing_getInstance(), "Code:" , 5, 20, NULL);
-		Printing_int(Printing_getInstance(), _currentFiringEvent->code, 17, 20, NULL);
-		NM_ASSERT(false, "Object::checkIfFiringEvent: tried to modify event list while firing event")
-	}
 }
 
 /**
@@ -208,8 +164,6 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 	}
 	else
 	{
-		Object_checkIfFiringEvent(this, "addEventListener");
-
 		Object_removeEventListener(this, listener, method, eventCode);
 
 		// the event list can be deleted when removed previous listeners
@@ -244,8 +198,6 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 
 	if(this->events)
 	{
-		Object_checkIfFiringEvent(this, "removeEventListener");
-
 		VirtualNode node = this->events->head;
 
 		for(; node; node = node->next)
@@ -283,11 +235,8 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListeners: null this");
 
-
 	if(this->events)
 	{
-		Object_checkIfFiringEvent(this, "removeEventListeners");
-
 		VirtualList eventsToRemove = __NEW(VirtualList);
 
 		VirtualNode node = this->events->head;
@@ -336,8 +285,6 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 
 	if(this->events)
 	{
-		Object_checkIfFiringEvent(this, "removeEventListeners");
-
 		VirtualList eventsToRemove = __NEW(VirtualList);
 
 		VirtualNode node = this->events->head;
@@ -386,12 +333,11 @@ void Object_fireEvent(Object this, u32 eventCode)
 
 	if(this->events)
 	{
+		// temporal lists to being able to modify the event lists while firing them
+		VirtualList eventsToFire = __NEW(VirtualList);
 		VirtualList eventsToRemove = __NEW(VirtualList);
 
 		VirtualNode node = this->events->head;
-
-		// add marker used to prevent the modification of the events list while firing events
-		VirtualList_pushFront(this->events, &_firingEventMarker);
 
 		for(; node; node = node->next)
 		{
@@ -401,24 +347,39 @@ void Object_fireEvent(Object this, u32 eventCode)
 			{
 				VirtualList_pushBack(eventsToRemove, event);
 			}
-			else
+			else if(eventCode == event->code)
 			{
-				if(eventCode == event->code)
-				{
-					_currentFiringEvent = event;
-					event->method(event->listener, this);
-				}
+				VirtualList_pushBack(eventsToFire, event);
 			}
 		}
 
-		// remove the marker used to prevent the modification of the events list while firing events
-		VirtualList_popFront(this->events);
+		node = eventsToFire->head;
+
+		for(; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+			_currentFiringEvent = event;
+			event->method(event->listener, this);
+
+			// safe check in case that I have been deleted during the previous event
+			if(!__IS_OBJECT_ALIVE(this))
+			{
+				break;
+			}
+		}
+
+		__DELETE(eventsToFire);
 
 		for(node = eventsToRemove->head; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
-			VirtualList_removeElement(this->events, event);
+			// safe check in case that I have been deleted during the previous event
+			if(__IS_OBJECT_ALIVE(this))
+			{
+				VirtualList_removeElement(this->events, event);
+			}
 
 			__DELETE_BASIC(event);
 		}
