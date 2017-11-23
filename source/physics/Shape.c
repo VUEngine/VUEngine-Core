@@ -65,7 +65,7 @@ typedef struct CollidingShapeRegistry
 //---------------------------------------------------------------------------------------------------------
 
 static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D collisionPlaneNormal);
-static void Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
+static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
 static void Shape_registerImpenetrableCollidingShape(Shape this, const CollidingShapeRegistry* collidingShapeRegistry);
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape);
 static bool Shape_isCollidingShapeImpenetrable(Shape this, Shape shape);
@@ -192,6 +192,7 @@ CollisionInformation Shape_collides(Shape this, Shape shape)
 		// if still colliding
 		if(stillColliding)
 		{
+__PRINT_IN_GAME_TIME(40, 1);
 			__VIRTUAL_CALL(SpatialObject, updateCollision, this->owner, &collisionInformation);
 
 			// just return
@@ -200,12 +201,11 @@ CollisionInformation Shape_collides(Shape this, Shape shape)
 
 		bool isImpenetrable = Shape_isCollidingShapeImpenetrable(this, shape);
 
-		Vector3D collisionPlaneNormal = collidingShapeRegistry->collisionPlaneNormal;
-
 		// not colliding anymore
 		Shape_unregisterCollidingShape(this, shape);
 
 		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, isImpenetrable);
+__PRINT_IN_GAME_TIME(40, 2);
 
 		return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
 	}
@@ -215,6 +215,7 @@ CollisionInformation Shape_collides(Shape this, Shape shape)
 
 	if(collisionInformation.shape && collisionInformation.collisionSolution.translationVectorLength)
 	{
+__PRINT_IN_GAME_TIME(40, 0);
 		// new collision
         Shape_registerCollidingShape(this, shape, collisionInformation.collisionSolution.collisionPlaneNormal);
 
@@ -428,7 +429,7 @@ static void Shape_registerImpenetrableCollidingShape(Shape this, const Colliding
  * @param this				Function scope
  * @param collidingShape	Colliding shape to remove
  */
-static void Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
+static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
 {
 	ASSERT(this, "Shape::removeCollidingShape: null this");
 
@@ -447,7 +448,11 @@ static void Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
 
 		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeDeleted);
 		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeChanged);
+
+		return true;
 	}
+
+	return false;
 }
 
 /**
@@ -463,7 +468,14 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 {
 	ASSERT(this, "Shape::onCollidingShapeDestroyed: null this");
 
-	Shape_unregisterCollidingShape(this, __SAFE_CAST(Shape, eventFirer));
+	Shape shape = __SAFE_CAST(Shape, eventFirer);
+
+	bool isCollidingShapeImpenetrable = Shape_isCollidingShapeImpenetrable(this, shape);
+
+	if(Shape_unregisterCollidingShape(this, shape))
+	{
+		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, isCollidingShapeImpenetrable);
+	}
 }
 
 /**
@@ -479,7 +491,16 @@ static void Shape_onCollidingShapeChanged(Shape this, Object eventFirer)
 {
 	ASSERT(this, "Shape::onCollidingShapeChanged: null this");
 
-	Shape_unregisterCollidingShape(this, __SAFE_CAST(Shape, eventFirer));
+	Shape shape = __SAFE_CAST(Shape, eventFirer);
+
+	bool isCollidingShapeImpenetrable = Shape_isCollidingShapeImpenetrable(this, shape);
+
+	if(Shape_unregisterCollidingShape(this, shape))
+	{
+	__PRINT_IN_GAME_TIME(40, 2);
+
+		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, isCollidingShapeImpenetrable);
+	}
 }
 
 /**
