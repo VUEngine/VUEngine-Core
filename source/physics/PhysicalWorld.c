@@ -112,7 +112,7 @@
 		/**
 		 * @var int				idleCyclesBeforeCheckingForGravity
 		 * @brief				number of cycle to remain idle before applying gravity
-		 * @memberof			CollisionSolver
+		 * @memberof			PhysicalWorld
 		 */																								\
 		int idleCyclesBeforeCheckingForGravity;															\
 

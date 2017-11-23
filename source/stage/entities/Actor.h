@@ -30,7 +30,6 @@
 #include <AnimatedEntity.h>
 #include <Body.h>
 #include <StateMachine.h>
-#include <CollisionSolver.h>
 #include <Clock.h>
 
 
@@ -84,8 +83,6 @@
 		StateMachine stateMachine;																		\
 		/* a physical body	*/																			\
 		Body body;																						\
-		/* collision solver */																			\
-		CollisionSolver collisionSolver;																\
 		/* previous velocity */																			\
 		Rotation previousRotation;																		\
 
@@ -95,9 +92,6 @@ typedef struct ActorDefinition
 {
 	/// it has an Entity at the beginning
 	AnimatedEntityDefinition animatedEntityDefinition;
-
-	/// create collision solver
-	bool createCollisionSolver;
 
 	/// true to create a body
 	bool createBody;
@@ -130,6 +124,7 @@ bool Actor_isInsideGame(Actor this);
 bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
 fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+fix19_13 Actor_getSurroundingFrictionCoefficient(Actor this);
 fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation);
 bool Actor_handleMessage(Actor this, Telegram telegram);
@@ -148,7 +143,7 @@ void Actor_stopMovement(Actor this, u16 axis);
 void Actor_resetCollisionStatus(Actor this);
 Velocity Actor_getVelocity(Actor this);
 void Actor_collisionsProcessingDone(Actor this, const CollisionInformation* collisionInformation);
-void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);
+void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
 

@@ -107,7 +107,6 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	};
 
 	this->solidParticleDefinition = solidParticleDefinition;
-	this->collisionSolver = __NEW(CollisionSolver, __SAFE_CAST(SpatialObject, this));
 
 	// register a shape for collision detection
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
@@ -134,12 +133,6 @@ void SolidParticle_destructor(SolidParticle this)
 	CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), this->shape);
 
 	this->shape = NULL;
-
-	if(this->collisionSolver)
-	{
-		__DELETE(this->collisionSolver);
-		this->collisionSolver = NULL;
-	}
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -280,16 +273,16 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 
 	bool returnValue = false;
 
-	if(this->collisionSolver && collisionInformation->collidingShape)
+	if(collisionInformation->shape && collisionInformation->collidingShape)
 	{
-		CollisionSolution collisionSolution = CollisionSolver_resolveCollision(this->collisionSolver, collisionInformation);
+		CollisionSolution collisionSolution = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
 		if(collisionSolution.translationVectorLength)
 		{
 			fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
 			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
 
-			Body_bounce(this->body, collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
 			returnValue = true;
 		}
 	}
@@ -465,14 +458,14 @@ Velocity SolidParticle_getVelocity(SolidParticle this)
  * @param this					Function scope
  * @param shapeNotColliding		Shape that is no longer colliding
  */
-void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isNonPenetrableShape)
+void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
 {
 	ASSERT(this, "SolidParticle::exitCollision: null this");
 	ASSERT(this->body, "SolidParticle::exitCollision: null this");
 
-	if(isNonPenetrableShape)
+	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body);
+		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
 	}
 
 	fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + Shape_getCollidingFrictionCoefficient(this->shape);

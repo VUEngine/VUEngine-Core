@@ -58,7 +58,7 @@
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
 		__VIRTUAL_DEC(ClassName, bool, enterCollision, const CollisionInformation* collisionInformation);	\
 		__VIRTUAL_DEC(ClassName, bool, updateCollision, const CollisionInformation* collisionInformation);	\
-		__VIRTUAL_DEC(ClassName, void, exitCollision, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);\
+		__VIRTUAL_DEC(ClassName, void, exitCollision, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);\
 		__VIRTUAL_DEC(ClassName, u16, getMovementState);												\
 		__VIRTUAL_DEC(ClassName, u32, getInGameType);													\
 
@@ -116,7 +116,7 @@ Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
 bool SpatialObject_enterCollision(SpatialObject this, const CollisionInformation* collisionInformation);
 bool SpatialObject_updateCollision(SpatialObject this, const CollisionInformation* collisionInformation);
-void SpatialObject_exitCollision(SpatialObject this, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);
+void SpatialObject_exitCollision(SpatialObject this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
 u16 SpatialObject_getMovementState(SpatialObject this);
 VirtualList SpatialObject_getShapes(SpatialObject this);
 u32 SpatialObject_getInGameType(SpatialObject this);

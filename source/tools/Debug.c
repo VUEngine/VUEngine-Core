@@ -63,7 +63,6 @@
 #include <Texture.h>
 
 #include <Body.h>
-#include <CollisionSolver.h>
 #include <Ball.h>
 #include <Box.h>
 #include <InverseBox.h>
@@ -994,7 +993,6 @@ static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused))
 	{
 		{&PhysicalWorld_getObjectSize, 					"PhysicalWorld"},
 		{&Body_getObjectSize, 							"Body"},
-		{&CollisionSolver_getObjectSize, 				"CollisionSolver"},
 		{&Shape_getObjectSize, 							"Shape"},
 		{&Ball_getObjectSize, 							"Ball"},
 		{&Box_getObjectSize,		 					"Box"},

@@ -322,9 +322,6 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 		Box_projectOntoItself(this);
 	}
 
-	// no more setup needed
-	this->ready = true;
-
 	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
 }
 
@@ -488,29 +485,15 @@ CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displa
 	// save position
 	RightBox rightBox = this->rightBox;
 
-	Vector3D halfSize =
-	{
-		(this->rightBox.x1 - this->rightBox.x0) >> 1,
-		(this->rightBox.y1 - this->rightBox.y0) >> 1,
-		(this->rightBox.z1 - this->rightBox.z0) >> 1,
-	};
-
-	Vector3D newHalfSize =
-	{
-		__FIX19_13_MULT(halfSize.x, sizeIncrement),
-		__FIX19_13_MULT(halfSize.y, sizeIncrement),
-		__FIX19_13_MULT(halfSize.x, sizeIncrement),
-	};
-
 	// add displacement
-	this->rightBox.x0 += displacement.x - (newHalfSize.x - halfSize.x);
-	this->rightBox.x1 += displacement.x + (newHalfSize.x - halfSize.x);
+	this->rightBox.x0 += displacement.x - sizeIncrement;
+	this->rightBox.x1 += displacement.x + sizeIncrement;
 
-	this->rightBox.y0 += displacement.y - (newHalfSize.y - halfSize.y);
-	this->rightBox.y1 += displacement.y + (newHalfSize.y - halfSize.y);
+	this->rightBox.y0 += displacement.y - sizeIncrement;
+	this->rightBox.y1 += displacement.y + sizeIncrement;
 
-	this->rightBox.z0 += displacement.z - (newHalfSize.z - halfSize.z);
-	this->rightBox.z1 += displacement.z + (newHalfSize.z - halfSize.z);
+	this->rightBox.z0 += displacement.z - sizeIncrement;
+	this->rightBox.z1 += displacement.z + sizeIncrement;
 
 	Box_projectOntoItself(this);
 

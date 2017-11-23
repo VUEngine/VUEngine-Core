@@ -43,6 +43,8 @@
  * @ingroup physics
  */
 __CLASS_DEFINITION(Body, Object);
+__CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(VirtualNode);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -98,6 +100,15 @@ typedef struct MovementResult
 
 } MovementResult;
 
+typedef struct NormalRegistry
+{
+	Object referent;
+	Vector3D direction;
+	fix19_13 magnitude;
+
+} NormalRegistry;
+
+
 Clock _physhicsClock = NULL;
 
 
@@ -105,11 +116,13 @@ Clock _physhicsClock = NULL;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-MovementResult Body_updateMovement(Body this, Acceleration gravity);
+MovementResult Body_updateMovement(Body this);
 static void Body_awake(Body this, u16 axesOfAwakening);
 static void Body_setMovementType(Body this, int movementType, u16 axes);
 static u16 Body_doStopMovement(Body this, u16 axes);
+static void Body_clearNormalOnAxes(Body this, u16 axes);
 Acceleration Body_getGravity(Body this);
+static void Body_computeTotalNormal(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -128,6 +141,7 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	__CONSTRUCT_BASE(Object);
 
 	this->owner = owner;
+	this->normals = NULL;
 	this->mass = 0 < physicalSpecification->mass ? physicalSpecification->mass : __I_TO_FIX19_13(1);
 	this->elasticity = physicalSpecification->elasticity;
 	this->frictionCoefficient = physicalSpecification->frictionCoefficient;
@@ -147,9 +161,8 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->acceleration 			= (Acceleration){0, 0, 0};
 	this->externalForce	 		= (Force){0, 0, 0};
 	this->friction 				= (Force){0, 0, 0};
-	this->normal				= (Force){0, 0, 0};
+	this->totalNormal			= (Force){0, 0, 0};
 	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
-	this->bouncingPlaneNormal 	= (Vector3D){0, 0, 0};
 
 	if(!_physhicsClock)
 	{
@@ -161,6 +174,19 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 void Body_destructor(Body this)
 {
 	ASSERT(this, "Body::destructor: null this");
+
+	if(this->normals)
+	{
+		VirtualNode node = this->normals->head;
+
+		for(; node; node = node->next)
+		{
+			__DELETE_BASIC(node->data);
+		}
+
+		__DELETE(this->normals);
+		this->normals = NULL;
+	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -321,27 +347,22 @@ void Body_applyForce(Body this, const Force* force)
 
 		if(this->externalForce.x)
 		{
-			this->normal.x = 0;
-			this->bouncingPlaneNormal.x = 0;
 			axesOfExternalForce |= __X_AXIS;
 		}
 
 		if(this->externalForce.y)
 		{
-			this->normal.y = 0;
-			this->bouncingPlaneNormal.y = 0;
 			axesOfExternalForce |= __Y_AXIS;
 		}
 
 		if(this->externalForce.z)
 		{
-			this->normal.z = 0;
-			this->bouncingPlaneNormal.z = 0;
 			axesOfExternalForce |= __Z_AXIS;
 		}
 
 		if(axesOfExternalForce)
 		{
+			Body_clearNormalOnAxes(this, axesOfExternalForce);
 			Body_setMovementType(this, __ACCELERATED_MOVEMENT, axesOfExternalForce);
 			Body_awake(this, axesOfExternalForce);
 		}
@@ -377,21 +398,7 @@ void Body_update(Body this)
 	{
 		if(this->awake)
 		{
-			Acceleration gravity = Body_getGravity(this);
-			this->weight = Vector3D_scalarProduct(gravity, this->mass);
-
-
-			Velocity velocity =
-			{
-				__FIX19_13_INT_PART(this->velocity.x),
-				__FIX19_13_INT_PART(this->velocity.y),
-				__FIX19_13_INT_PART(this->velocity.z),
-			};
-
-			this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
-//			this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
-
-			MovementResult movementResult = Body_updateMovement(this, gravity);
+			MovementResult movementResult = Body_updateMovement(this);
 
 			// if stopped on any axes
 			if(movementResult.axesStoppedMovement)
@@ -446,7 +453,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	// and if the velocity minimum threshold is not reached
 	if(__UNIFORM_MOVEMENT != this->movementType.x)
 	{
-		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->normal.x * this->velocity.x)))
+		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->totalNormal.x * this->velocity.x)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x))
 			{
@@ -457,7 +464,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 
 	if(__UNIFORM_MOVEMENT != this->movementType.y)
 	{
-		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->normal.y * this->velocity.y)))
+		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->totalNormal.y * this->velocity.y)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y))
 			{
@@ -468,7 +475,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 
 	if(__UNIFORM_MOVEMENT != this->movementType.z)
 	{
-		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->normal.z * this->velocity.z)))
+		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->totalNormal.z * this->velocity.z)))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z))
 			{
@@ -494,9 +501,22 @@ Acceleration Body_getGravity(Body this)
 }
 
 // udpdate movement over axes
-MovementResult Body_updateMovement(Body this, Acceleration gravity)
+MovementResult Body_updateMovement(Body this)
 {
 	ASSERT(this, "Body::updateMovement: null this");
+
+	Acceleration gravity = Body_getGravity(this);
+	this->weight = Vector3D_scalarProduct(gravity, this->mass);
+
+	Velocity velocity =
+	{
+		__FIX19_13_INT_PART(this->velocity.x),
+		__FIX19_13_INT_PART(this->velocity.y),
+		__FIX19_13_INT_PART(this->velocity.z),
+	};
+
+	this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
+	//this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
 
 	fix19_13 elapsedTime = _currentElapsedTime;
 	fix19_13 elapsedTimeHalfSquare = __FIX19_13_MULT(elapsedTime, elapsedTime) >> 1;
@@ -505,9 +525,9 @@ MovementResult Body_updateMovement(Body this, Acceleration gravity)
 
 	this->acceleration = (Acceleration)
 	{
-		__UNIFORM_MOVEMENT == this->movementType.x ? 0 : gravity.x + __FIX19_13_DIV(this->externalForce.x + this->normal.x + this->friction.x, this->mass),
-		__UNIFORM_MOVEMENT == this->movementType.y ? 0 : gravity.y + __FIX19_13_DIV(this->externalForce.y + this->normal.y + this->friction.y, this->mass),
-		__UNIFORM_MOVEMENT == this->movementType.z ? 0 : gravity.z + __FIX19_13_DIV(this->externalForce.z + this->normal.z + this->friction.z, this->mass),
+		__UNIFORM_MOVEMENT == this->movementType.x ? 0 : gravity.x + __FIX19_13_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass),
+		__UNIFORM_MOVEMENT == this->movementType.y ? 0 : gravity.y + __FIX19_13_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass),
+		__UNIFORM_MOVEMENT == this->movementType.z ? 0 : gravity.z + __FIX19_13_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass),
 	};
 
 	// update the velocity
@@ -691,24 +711,139 @@ void Body_setElasticity(Body this, fix19_13 elasticity)
 	this->elasticity = elasticity;
 }
 
+static void Body_computeTotalNormal(Body this)
+{
+	ASSERT(this, "Body::computeTotalNormal: null this");
+
+	this->totalNormal = (Force){0, 0, 0};
+
+	if(this->normals)
+	{
+		VirtualNode node = this->normals->head;
+
+		for(; node; node = node->next)
+		{
+			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
+
+			if(__IS_OBJECT_ALIVE(normalRegistry->referent))
+			{
+				Vector3D normal = Vector3D_scalarProduct(normalRegistry->direction, normalRegistry->magnitude);
+
+				normal.x = __FIX19_13_INT_PART(normal.x + __0_5F_FIX19_13);
+            	normal.y = __FIX19_13_INT_PART(normal.y + __0_5F_FIX19_13);
+            	normal.z = __FIX19_13_INT_PART(normal.z + __0_5F_FIX19_13);
+
+				this->totalNormal.x += normal.x;
+				this->totalNormal.y += normal.y;
+				this->totalNormal.z += normal.z;
+			}
+		}
+	}
+}
+
+static void Body_addNormal(Body this, Object referent, Vector3D direction, fix19_13 magnitude)
+{
+	ASSERT(this, "Body::addNormal: null this");
+	ASSERT(referent, "Body::addNormal: null referent");
+
+	if(!this->normals)
+	{
+		this->normals = __NEW(VirtualList);
+	}
+
+	NormalRegistry* normalRegistry = __NEW_BASIC(NormalRegistry);
+	normalRegistry->referent = referent;
+	normalRegistry->direction = direction;
+
+	normalRegistry->magnitude = magnitude;
+
+	VirtualList_pushBack(this->normals, normalRegistry);
+
+	Body_computeTotalNormal(this);
+}
+
 Force Body_getNormal(Body this)
 {
 	ASSERT(this, "Body::getNormal: null this");
-	return this->normal;
+
+	return this->totalNormal;
 }
 
-void Body_clearNormal(Body this)
+Force Body_getLastNormalDirection(Body this)
+{
+	ASSERT(this, "Body::getLastNormalDirection: null this");
+
+	if(!this->normals)
+	{
+		return (Force){0, 0, 0};
+	}
+
+	return ((NormalRegistry*)VirtualList_back(this->normals))->direction;
+}
+
+static void Body_clearNormalOnAxes(Body this, u16 axes)
 {
 	ASSERT(this, "Body::clearNormal: null this");
 
-	this->normal = (Force){0, 0, 0};
-	this->bouncingPlaneNormal = (Vector3D){0, 0, 0};
+	if(this->normals)
+	{
+		VirtualList normalsToRemove = __NEW(VirtualList);
+
+		VirtualNode node = this->normals->head;
+
+		for(; node; node = node->next)
+		{
+			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
+
+			if(!__IS_OBJECT_ALIVE(normalRegistry->referent) ||
+				((__X_AXIS & axes) && normalRegistry->direction.x) ||
+				((__Y_AXIS & axes) && normalRegistry->direction.y) ||
+				((__Z_AXIS & axes) && normalRegistry->direction.z)
+			)
+			{
+				VirtualList_pushBack(normalsToRemove, normalRegistry);
+			}
+		}
+
+		node = normalsToRemove->head;
+
+		for(; node; node = node->next)
+		{
+			VirtualList_removeElement(this->normals, node->data);
+
+			__DELETE_BASIC(node->data);
+		}
+
+		__DELETE(normalsToRemove);
+	}
+
+	Body_computeTotalNormal(this);
 }
 
-Vector3D Body_getBouncingPlaneNormal(Body this)
+void Body_clearNormal(Body this, Object referent)
 {
-	ASSERT(this, "Body::getBouncingPlaneNormal: null this");
-	return this->bouncingPlaneNormal;
+	ASSERT(this, "Body::clearNormal: null this");
+
+	if(this->normals)
+	{
+		VirtualNode node = this->normals->head;
+
+		for(; node; node = node->next)
+		{
+			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
+
+			if(!__IS_OBJECT_ALIVE(normalRegistry->referent) || normalRegistry->referent == referent)
+			{
+				VirtualList_removeElement(this->normals, normalRegistry);
+
+				__DELETE_BASIC(normalRegistry);
+
+				break;
+			}
+		}
+	}
+
+	Body_computeTotalNormal(this);
 }
 
 fix19_13 Body_getFrictionCoefficient(Body this)
@@ -827,7 +962,7 @@ u16 Body_getMovementOnAllAxes(Body this)
 	return this->awake && this->active ? result : 0;
 }
 
-static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocity)
+static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocity, Vector3D bouncingPlaneNormal)
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
@@ -839,17 +974,17 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 
 	// stop if minimum velocity threshold is not reached
 	// and if there is possible movement in the other components
-	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !__FIX19_13_INT_PART(this->bouncingPlaneNormal.y | this->bouncingPlaneNormal.z))
+	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) && !__FIX19_13_INT_PART(bouncingPlaneNormal.y | bouncingPlaneNormal.z))
 	{
 		movementResult.axesStoppedMovement |= __X_AXIS;
 	}
 
-	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !__FIX19_13_INT_PART(this->bouncingPlaneNormal.x | this->bouncingPlaneNormal.z))
+	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !__FIX19_13_INT_PART(bouncingPlaneNormal.x | bouncingPlaneNormal.z))
 	{
 		movementResult.axesStoppedMovement |= __Y_AXIS;
 	}
 
-	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !__FIX19_13_INT_PART(this->bouncingPlaneNormal.x | this->bouncingPlaneNormal.y))
+	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !__FIX19_13_INT_PART(bouncingPlaneNormal.x | bouncingPlaneNormal.y))
 	{
 		movementResult.axesStoppedMovement |= __Z_AXIS;
 	}
@@ -877,7 +1012,7 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 }
 
 // bounce back
-void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity)
+void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity)
 {
 	ASSERT(this, "Body::bounce: null this");
 	Acceleration gravity = Body_getGravity(this);
@@ -888,16 +1023,14 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 
 	// compute bouncing vector
 	fix19_13 cosAngle = (bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX19_13_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX19_13;
-	fix19_13 normalForce = __FIX19_13_MULT(Vector3D_length(this->weight), cosAngle);
+	fix19_13 normalMagnitude = __FIX19_13_MULT(Vector3D_length(this->weight), cosAngle);
 
-	this->bouncingPlaneNormal = bouncingPlaneNormal;
-	this->normal = Vector3D_scalarProduct(bouncingPlaneNormal, normalForce);
-	this->frictionForceMagnitude = __FIX19_13_MULT(normalForce, this->frictionCoefficient);
+	// register normal affecting the body
+	Body_addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
+
+	this->frictionForceMagnitude = __FIX19_13_MULT(normalMagnitude, this->frictionCoefficient);
 
 	// avoid rounding errors
-	this->normal.x = __FIX19_13_INT_PART(this->normal.x + __0_5F_FIX19_13);
-	this->normal.y = __FIX19_13_INT_PART(this->normal.y + __0_5F_FIX19_13);
-	this->normal.z = __FIX19_13_INT_PART(this->normal.z + __0_5F_FIX19_13);
 
 	// compute bouncing vector
 	Vector3D velocity = this->velocity;
@@ -920,7 +1053,7 @@ void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoeff
 	this->velocity.z = w.z - u.z;
 
 	// determine bouncing result
-	MovementResult movementResult = Body_getBouncingResult(this, velocity);
+	MovementResult movementResult = Body_getBouncingResult(this, velocity, bouncingPlaneNormal);
 
 	// bounce over the computed axes
 	if(movementResult.axesOfAcceleratedBouncing)
@@ -1015,11 +1148,15 @@ void Body_print(Body this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Normal", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->normal.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->totalNormal.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->totalNormal.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->totalNormal.z), xDisplacement + x + 10 * 2, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Normal Force", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->frictionForceMagnitude), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Normals", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_int(Printing_getInstance(), this->normals ? VirtualList_getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
 }

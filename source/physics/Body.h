@@ -80,17 +80,17 @@
 		 */																								\
 		Force friction;																					\
 		/**
-		 * @var Force 			normal
-		 * @brief				friction surrounding object
+		 * @var Force 			totalNormal
+		 * @brief				total normal forces applied to the body
 		 * @memberof 			Body
 		 */																								\
-		Force normal;																					\
+		Force totalNormal;																					\
 		/**
-		 * @var Vector3D 		bouncingPlaneNormal
-		 * @brief				normal of the bouncing plane
+		 * @var VirtualList 	normals
+		 * @brief				List of normal forces affecting the body
 		 * @memberof 			Body
 		 */																								\
-		Vector3D bouncingPlaneNormal;																	\
+		VirtualList normals;																					\
 		/**
 		 * @var Vector3D 		position
 		 * @brief				spatial position
@@ -197,7 +197,7 @@ void Body_destructor(Body this);
 void Body_addForce(Body this, const Force* force);
 void Body_applyForce(Body this, const Force* force);
 void Body_applyGravity(Body this, u16 axes);
-void Body_bounce(Body this, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity);
+void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix19_13 frictionCoefficient, fix19_13 elasticity);
 void Body_clearAcceleration(Body this, u16 axes);
 void Body_clearExternalForce(Body this);
 Acceleration Body_getAcceleration(Body this);
@@ -219,8 +219,8 @@ void Body_setActive(Body this, bool active);
 void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getNormal(Body this);
-void Body_clearNormal(Body this);
-Vector3D Body_getBouncingPlaneNormal(Body this);
+Force Body_getLastNormalDirection(Body this);
+void Body_clearNormal(Body this, Object referent);
 fix19_13 Body_getFrictionCoefficient(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);

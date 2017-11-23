@@ -117,9 +117,6 @@ void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __
 		this->radius = __I_TO_FIX19_13(size->y);
 	}
 
-	// no more setup needed
-	this->ready = true;
-
 	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
 }
 
@@ -146,7 +143,7 @@ CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D disp
 	// save state
 	Vector3D center = this->center;
 	fix19_13 radius = this->radius;
-	this->radius = __FIX19_13_MULT(this->radius, sizeIncrement);
+	this->radius += sizeIncrement;
 
 	// add displacement
 	this->center.x += displacement.x;

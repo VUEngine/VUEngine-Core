@@ -222,6 +222,7 @@ void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 void Shape_setReady(Shape this, bool ready);
 bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement);
 fix19_13 Shape_getCollidingFrictionCoefficient(Shape this);
+CollisionSolution Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
 
 
 #endif

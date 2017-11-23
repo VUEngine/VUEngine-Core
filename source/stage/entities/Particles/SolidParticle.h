@@ -29,7 +29,6 @@
 
 #include <Particle.h>
 #include <Shape.h>
-#include <CollisionSolver.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,12 +78,6 @@ Shape SpatialObject_getShape(SpatialObject this);
 		 * @memberof						SolidParticle
 		 */																								\
 		const SolidParticleDefinition* solidParticleDefinition;											\
-		/*
-		 * @var CollisionSolver 			collisionSolver
-		 * @brief							Particle's collision solver
-		 * @memberof						SolidParticle
-		 */																								\
-		CollisionSolver collisionSolver;																\
 
 __CLASS(SolidParticle);
 
@@ -156,7 +149,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 VirtualList SolidParticle_getShapes(SolidParticle this);
 u32 SolidParticle_getInGameType(SolidParticle this);
 Velocity SolidParticle_getVelocity(SolidParticle this);
-void SolidParticle_exitCollision(SolidParticle this, Shape shape, Shape shapeNotColliding, bool isNonPenetrableShape);
+void SolidParticle_exitCollision(SolidParticle this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
 
 
 #endif
