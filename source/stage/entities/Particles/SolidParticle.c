@@ -275,14 +275,14 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 
 	if(collisionInformation->shape && collisionInformation->collidingShape)
 	{
-		CollisionSolution collisionSolution = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
+		SolutionVector solutionVector = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
-		if(collisionSolution.translationVectorLength)
+		if(solutionVector.magnitude)
 		{
 			fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
 			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
 
-			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), solutionVector.direction, frictionCoefficient, elasticity);
 			returnValue = true;
 		}
 	}

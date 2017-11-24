@@ -52,7 +52,7 @@ CollisionHelper CollisionHelper_getInstance();
 
 void CollisionHelper_destructor(CollisionHelper this);
 CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this, Shape shapeA, Shape shapeB);
-CollisionSolution CollisionHelper_getCollisionSolution(CollisionHelper this, Shape shapeA, Shape shapeB);
+SolutionVector CollisionHelper_getSolutionVector(CollisionHelper this, Shape shapeA, Shape shapeB);
 
 
 #endif

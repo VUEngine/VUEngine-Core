@@ -302,7 +302,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 	}
 
 //	Body_print(this->body, 1, 1);
-//	Shape_print(VirtualList_front(this->shapes), 1, 1);
+//	Shape_print(VirtualList_front(this->shapes), 1, 17);
 }
 
 // whether changed direction in the last cycle or not
@@ -472,16 +472,16 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 	if(collisionInformation->shape && collisionInformation->collidingShape)
 	{
-		CollisionSolution collisionSolution = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
+		SolutionVector solutionVector = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
-		if(collisionSolution.translationVectorLength)
+		if(solutionVector.magnitude)
 		{
 			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
 
-			fix19_13 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->collisionSolution.collisionPlaneNormal);
-			fix19_13 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->collisionSolution.collisionPlaneNormal);
+			fix19_13 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix19_13 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
 
-			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->collisionSolution.collisionPlaneNormal, frictionCoefficient, elasticity);
+			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 
 			returnValue = true;
 		}

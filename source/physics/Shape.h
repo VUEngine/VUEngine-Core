@@ -49,18 +49,15 @@ __FORWARD_CLASS(Shape)
  *
  * @memberof Shape
  */
-typedef struct CollisionSolution
+typedef struct SolutionVector
 {
-	// minimum vector to solve the collision
-	Vector3D translationVector;
-
 	// collision's plane normal
-	Vector3D collisionPlaneNormal;
+	Vector3D direction;
 
 	// minimum vector to solve the collision
-	fix19_13 translationVectorLength;
+	fix19_13 magnitude;
 
-} CollisionSolution;
+} SolutionVector;
 
 /**
  * Collision information
@@ -76,7 +73,7 @@ typedef struct CollisionInformation
 	Shape collidingShape;
 
 	// information to solve the collision
-	CollisionSolution collisionSolution;
+	SolutionVector solutionVector;
 
 } CollisionInformation;
 
@@ -95,7 +92,7 @@ typedef struct VertexProjection
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, setup, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);		\
-		__VIRTUAL_DEC(ClassName, CollisionInformation, collides, Shape shape);																\
+		__VIRTUAL_DEC(ClassName, bool, collides, Shape shape);											\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);												\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
@@ -124,12 +121,6 @@ typedef struct VertexProjection
 		 * @memberof			CollisionSolver
 		 */																								\
 		VirtualList collidingShapes;																	\
-		/**
-		 * @var VirtualList 	impenetrableCollidingShapes
-		 * @brief				list of colliding shapes that cannot be penetrated
-		 * @memberof			CollisionSolver
-		 */																								\
-		VirtualList impenetrableCollidingShapes;														\
 		/**
 		 * @var 32 				layers
 		 * @brief				layers on which this shape live
@@ -209,20 +200,24 @@ typedef const ShapeDefinition ShapeROMDef;
 void Shape_constructor(Shape this, SpatialObject owner);
 void Shape_destructor(Shape this);
 
-CollisionInformation Shape_collides(Shape this, Shape shape);
+bool Shape_collides(Shape this, Shape shape);
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
 void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isReady(Shape this);
-void Shape_print(Shape this, int x, int y);
 void Shape_setActive(Shape this, bool active);
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 void Shape_setReady(Shape this, bool ready);
 bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement);
 fix19_13 Shape_getCollidingFrictionCoefficient(Shape this);
-CollisionSolution Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
+SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
+u32 Shape_getLayers(Shape this);
+void Shape_setLayers(Shape this, u32 layers);
+u32 Shape_getLayersToIgnore(Shape this);
+void Shape_setLayersToIgnore(Shape this, u32 layersToIgnore);
+void Shape_print(Shape this, int x, int y);
 
 
 #endif

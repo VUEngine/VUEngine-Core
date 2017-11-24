@@ -56,7 +56,9 @@ typedef struct CollidingShapeRegistry
 {
 	Shape shape;
 
-	Vector3D collisionPlaneNormal;
+	Vector3D direction;
+
+	bool isImpenetrable;
 
 } CollidingShapeRegistry;
 
@@ -64,11 +66,10 @@ typedef struct CollidingShapeRegistry
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D collisionPlaneNormal);
+static void Shape_cleanCollidingLists(Shape this);
+static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D direction, bool isImpenetrable);
 static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
-static void Shape_registerImpenetrableCollidingShape(Shape this, const CollidingShapeRegistry* collidingShapeRegistry);
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape);
-static bool Shape_isCollidingShapeImpenetrable(Shape this, Shape shape);
 static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer);
 static void Shape_onCollidingShapeChanged(Shape this, Object eventFirer);
 
@@ -104,7 +105,6 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	this->layers = 0;
 	this->layersToIgnore = 0;
 	this->collidingShapes = NULL;
-	this->impenetrableCollidingShapes = NULL;
 
 	Shape_setActive(this, false);
 }
@@ -142,90 +142,45 @@ void Shape_destructor(Shape this)
 		this->collidingShapes = NULL;
 	}
 
-	if(this->impenetrableCollidingShapes)
-	{
-		__DELETE(this->impenetrableCollidingShapes);
-		this->impenetrableCollidingShapes = NULL;
-	}
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
 }
 
-
-/**
- * Check if collides with other shape
- *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
- * @param shape					shape to check for overlapping
- */
-
-// check if two rectangles overlap
-CollisionInformation Shape_collides(Shape this, Shape shape)
+static void Shape_cleanCollidingLists(Shape this)
 {
-	ASSERT(this, "Ball::collides: null this");
+	ASSERT(this, "Shape::cleanCollidingLists: null this");
 
-	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, shape);
-
-	// if shape is already in my colliding shape list
-	if(collidingShapeRegistry)
+	if(this->collidingShapes)
 	{
-		bool stillColliding = false;
+		VirtualList temporaList = __NEW(VirtualList);
+		VirtualList_copy(temporaList, this->collidingShapes);
 
-		// check if not colliding anymore
-		CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		VirtualNode node = temporaList->head;
 
-		if(collisionInformation.collisionSolution.translationVectorLength)
+		for(; node; node = node->next)
 		{
-		//    B *= (1 - reduction_length/A.length());
-			/*fix19_13 translationVectorCorrectionFactor = __I_TO_FIX19_13(1) - __FIX19_13_DIV(__STILL_COLLIDING_CHECK_SIZE_INCREMENT, collisionInformation.collisionSolution.translationVectorLength);
-			collisionInformation.collisionSolution.translationVector = Vector3D_scalarProduct(collisionInformation.collisionSolution.translationVector, translationVectorCorrectionFactor);
-			collisionInformation.collisionSolution.translationVectorLength = __FIX19_13_MULT(collisionInformation.collisionSolution.translationVectorLength, translationVectorCorrectionFactor);
-*/
-			stillColliding = collisionInformation.collidingShape == shape && collisionInformation.collisionSolution.translationVectorLength >= __I_TO_FIX19_13(1);
+			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
+
+			if(collidingShapeRegistry->isImpenetrable)
+			{
+				VirtualList_removeElement(this->collidingShapes, collidingShapeRegistry);
+				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
+				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
+			}
 		}
 
-		// if still colliding
-		if(stillColliding)
-		{
-__PRINT_IN_GAME_TIME(40, 1);
-			__VIRTUAL_CALL(SpatialObject, updateCollision, this->owner, &collisionInformation);
+		node = temporaList->head;
 
-			// just return
-			return collisionInformation;
+		for(; node; node = node->next)
+		{
+			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
+			__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
+			__DELETE_BASIC(node->data);
 		}
 
-		bool isImpenetrable = Shape_isCollidingShapeImpenetrable(this, shape);
-
-		// not colliding anymore
-		Shape_unregisterCollidingShape(this, shape);
-
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, isImpenetrable);
-__PRINT_IN_GAME_TIME(40, 2);
-
-		return (CollisionInformation){NULL, NULL, {{0, 0, 0}, {0, 0, 0}, 0}};
+		__DELETE(temporaList);
 	}
-
-	// check for new overlap
-	CollisionInformation collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
-
-	if(collisionInformation.shape && collisionInformation.collisionSolution.translationVectorLength)
-	{
-__PRINT_IN_GAME_TIME(40, 0);
-		// new collision
-        Shape_registerCollidingShape(this, shape, collisionInformation.collisionSolution.collisionPlaneNormal);
-
-		if(__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionInformation))
-		{
-			Shape_registerImpenetrableCollidingShape(this, Shape_findCollidingShapeRegistry(this, shape));
-		}
-	}
-
-	return collisionInformation;
 }
 
 /**
@@ -258,6 +213,158 @@ void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position _
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);
 #endif
+}
+
+
+/**
+ * Check if collides with other shape
+ *
+ * @memberof					Shape
+ * @public
+ *
+ * @param this					Function scope
+ * @param shape					shape to check for overlapping
+ */
+
+// check if two rectangles overlap
+bool Shape_collides(Shape this, Shape shape)
+{
+	ASSERT(this, "Ball::collides: null this");
+
+	CollisionInformation collisionInformation;
+
+	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, shape);
+	bool collision = false;
+
+	// test if new collision
+	if(!collidingShapeRegistry)
+	{
+		// check for new overlap
+		collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
+
+		if(collisionInformation.shape && collisionInformation.solutionVector.magnitude)
+		{
+			// new collision
+			Shape_registerCollidingShape(this, shape, collisionInformation.solutionVector.direction, false);
+
+			__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionInformation);
+
+			collision = true;
+		}
+
+		return collision;
+	}
+	// impenetrable registered colliding shapes require a another test
+	// to determine if I'm not colliding against them anymore
+	else if(collidingShapeRegistry->isImpenetrable)
+	{
+		collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+
+		collision = collisionInformation.shape == this && collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT;
+
+		if(collision && collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		{
+//			collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
+
+			Shape_resolveCollision(this, &collisionInformation);
+		}
+	}
+	else
+	{
+		// otherwise make a normal collision test
+		collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
+
+		collision = collisionInformation.shape == this && collisionInformation.solutionVector.magnitude;
+	}
+
+	if(collision)
+	{
+		__VIRTUAL_CALL(SpatialObject, updateCollision, this->owner, &collisionInformation);
+	}
+	else
+	{
+		Shape_unregisterCollidingShape(this, shape);
+		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, collidingShapeRegistry->isImpenetrable);
+	}
+
+	return collision;
+}
+
+/**
+ * Check if there is a collision in the magnitude
+ *
+ * @memberof				Shape
+ * @public
+ *
+ * @param this				Function scope
+ * @param displacement		shape displacement
+ */
+bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement __attribute__ ((unused)))
+{
+	ASSERT(this, "Shape::canMoveTowards: null this");
+
+	if(!this->collidingShapes)
+	{
+		return true;
+	}
+
+	bool canMove = true;
+
+	Vector3D normalizedDisplacement = Vector3D_normalize(displacement);
+
+	VirtualNode node = this->collidingShapes->head;
+
+	for(; canMove && node; node = node->next)
+	{
+		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
+
+		if(collidingShapeRegistry->isImpenetrable)
+		{
+			fix19_13 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->direction, normalizedDisplacement);
+			canMove &= -__F_TO_FIX19_13(1 - 0.1f) < cosAngle;
+		}
+	}
+
+	// not colliding anymore
+	return canMove;
+}
+
+/**
+ * Solve the collision by moving owner
+ *
+ * @memberof			Shape
+ * @public
+ *
+ * @param this			Function scope
+ *
+ * @return				The sum of friction coefficients
+ */
+SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation)
+{
+	ASSERT(this, "Shape::resolveCollision: null this");
+	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
+	ASSERT(collisionInformation->collidingShape, "Shape::resolveCollision: null collidingEntities");
+
+	SolutionVector solutionVector = collisionInformation->solutionVector;
+
+	if(collisionInformation->shape == this && solutionVector.magnitude)
+	{
+		Vector3D displacement = Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude);
+
+		// retrieve the colliding spatialObject's position and gap
+		Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
+
+		ownerPosition.x += displacement.x;
+		ownerPosition.y += displacement.y;
+		ownerPosition.z += displacement.z;
+
+		__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
+
+		//Shape_cleanCollidingLists(this);
+		Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector.direction, true);
+	}
+
+	return solutionVector;
 }
 
 /**
@@ -373,51 +480,36 @@ bool Shape_checkForCollisions(Shape this)
  * @param this				Function scope
  * @param collidingShape	Colliding shape to register
  */
-static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D collisionPlaneNormal)
+static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D direction, bool isImpenetrable)
 {
 	ASSERT(this, "Shape::registerCollidingShape: null this");
-	ASSERT(!Shape_findCollidingShapeRegistry(this, collidingShape), "Shape::registerCollidingShape: already registered shape");
+//	ASSERT(!Shape_findCollidingShapeRegistry(this, collidingShape), "Shape::registerCollidingShape: already registered shape");
 
 	if(!this->collidingShapes)
 	{
 		this->collidingShapes = __NEW(VirtualList);
 	}
 
-	CollidingShapeRegistry* collidingShapeRegistry = __NEW_BASIC(CollidingShapeRegistry);
-	collidingShapeRegistry->shape = collidingShape;
-	collidingShapeRegistry->collisionPlaneNormal = collisionPlaneNormal;
-
-	VirtualList_pushBack(this->collidingShapes, collidingShapeRegistry);
-
-	Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
-	Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
-}
-
-/**
- * Register an impenetrable colliding shape
- *
- * @memberof				Shape
- * @private
- *
- * @param this				Function scope
- * @param collidingShape	Impenetrable colliding shape
- */
-static void Shape_registerImpenetrableCollidingShape(Shape this, const CollidingShapeRegistry* collidingShapeRegistry)
-{
-	ASSERT(this, "Shape::registerImpenetrableCollidingShape: null this");
-	ASSERT(collidingShapeRegistry, "Shape::registerImpenetrableCollidingShape: null registry");
+	bool newEntry = false;
+	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, collidingShape));
 
 	if(!collidingShapeRegistry)
 	{
-		return;
+		newEntry = true;
+		collidingShapeRegistry = __NEW_BASIC(CollidingShapeRegistry);
 	}
 
-	if(!this->impenetrableCollidingShapes)
+	collidingShapeRegistry->shape = collidingShape;
+	collidingShapeRegistry->direction = direction;
+	collidingShapeRegistry->isImpenetrable = isImpenetrable;
+
+	if(newEntry)
 	{
-		this->impenetrableCollidingShapes = __NEW(VirtualList);
-	}
+		VirtualList_pushBack(this->collidingShapes, collidingShapeRegistry);
 
-	VirtualList_pushBack(this->impenetrableCollidingShapes, collidingShapeRegistry);
+		Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
+		Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
+	}
 }
 
 /**
@@ -435,31 +527,26 @@ static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, collidingShape));
 
-	if(collidingShapeRegistry)
+	if(!collidingShapeRegistry)
 	{
-		VirtualList_removeElement(this->collidingShapes, collidingShapeRegistry);
-
-		if(this->impenetrableCollidingShapes)
-		{
-			VirtualList_removeElement(this->impenetrableCollidingShapes, collidingShapeRegistry);
-		}
-
-		__DELETE_BASIC(collidingShapeRegistry);
-
-		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeChanged);
-
-		return true;
+		return false;
 	}
 
-	return false;
+	VirtualList_removeElement(this->collidingShapes, collidingShapeRegistry);
+
+	__DELETE_BASIC(collidingShapeRegistry);
+
+	Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeDeleted);
+	Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeChanged);
+
+	return true;
 }
 
 /**
  * Shape destroying listener
  *
  * @memberof				Shape
- * @public
+ * @private
  *
  * @param this				Function scope
  * @param eventFirer		Destroyed shape
@@ -468,13 +555,16 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 {
 	ASSERT(this, "Shape::onCollidingShapeDestroyed: null this");
 
-	Shape shape = __SAFE_CAST(Shape, eventFirer);
+	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, eventFirer));
 
-	bool isCollidingShapeImpenetrable = Shape_isCollidingShapeImpenetrable(this, shape);
-
-	if(Shape_unregisterCollidingShape(this, shape))
+	if(!collidingShapeRegistry)
 	{
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, isCollidingShapeImpenetrable);
+		return;
+	}
+
+	if(Shape_unregisterCollidingShape(this, collidingShapeRegistry->shape))
+	{
+		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
 	}
 }
 
@@ -482,7 +572,7 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
  * Shape changed listener
  *
  * @memberof				Shape
- * @public
+ * @private
  *
  * @param this				Function scope
  * @param eventFirer		Changed shape
@@ -491,85 +581,17 @@ static void Shape_onCollidingShapeChanged(Shape this, Object eventFirer)
 {
 	ASSERT(this, "Shape::onCollidingShapeChanged: null this");
 
-	Shape shape = __SAFE_CAST(Shape, eventFirer);
+	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, eventFirer));
 
-	bool isCollidingShapeImpenetrable = Shape_isCollidingShapeImpenetrable(this, shape);
-
-	if(Shape_unregisterCollidingShape(this, shape))
+	if(!collidingShapeRegistry)
 	{
-	__PRINT_IN_GAME_TIME(40, 2);
-
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, isCollidingShapeImpenetrable);
-	}
-}
-
-/**
- * Check if there is a collision in the direction
- *
- * @memberof				Shape
- * @public
- *
- * @param this				Function scope
- * @param displacement		shape displacement
- */
-bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement __attribute__ ((unused)))
-{
-	ASSERT(this, "Shape::canMoveTowards: null this");
-
-	if(!this->impenetrableCollidingShapes)
-	{
-		return true;
+		return;
 	}
 
-	bool canMove = true;
-
-	Vector3D normalizedDisplacement = Vector3D_normalize(displacement);
-
-	VirtualNode node = this->impenetrableCollidingShapes->head;
-
-	for(; canMove && node; node = node->next)
+	if(Shape_unregisterCollidingShape(this, collidingShapeRegistry->shape))
 	{
-		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
-
-		canMove &= -__F_TO_FIX19_13(1 - 0.1f) < Vector3D_dotProduct(collidingShapeRegistry->collisionPlaneNormal, normalizedDisplacement);
-
+		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
 	}
-
-	return canMove;
-}
-
-
-/**
- * Check if shape is in the impenetrable shape list
- *
- * @memberof		Shape
- * @private
- *
- * @param this		Function scope
- * @param shape		Shape to find
- *
- * @return			true or false
- */
-static bool Shape_isCollidingShapeImpenetrable(Shape this, Shape shape)
-{
-	ASSERT(this, "Shape::findCollidingShapeRegistry: null this");
-
-	if(!this->impenetrableCollidingShapes)
-	{
-		return false;
-	}
-
-	VirtualNode node = this->impenetrableCollidingShapes->head;
-
-	for(; node; node = node->next)
-	{
-		if(shape == ((CollidingShapeRegistry*)node->data)->shape)
-		{
-			return true;
-		}
-	}
-
-	return false;
 }
 
 /**
@@ -586,8 +608,9 @@ static bool Shape_isCollidingShapeImpenetrable(Shape this, Shape shape)
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape)
 {
 	ASSERT(this, "Shape::findCollidingShapeRegistry: null this");
+	ASSERT(shape, "Shape::findCollidingShapeRegistry: null shape");
 
-	if(!this->collidingShapes)
+	if(!this->collidingShapes || !shape)
 	{
 		return NULL;
 	}
@@ -640,35 +663,55 @@ fix19_13 Shape_getCollidingFrictionCoefficient(Shape this)
 	return totalFrictionCoefficient;
 }
 
-/**
- * Solve the collision by moving owner
- *
- * @memberof			Shape
- * @public
- *
- * @param this			Function scope
- *
- * @return				The sum of friction coefficients
- */
-CollisionSolution Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation)
+int Shape_getNumberOfImpenetrableCollidingShapes(Shape this)
 {
-	ASSERT(this, "Shape::resolveCollision: null this");
-	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
-	ASSERT(collisionInformation->collidingShape, "Shape::resolveCollision: null collidingEntities");
+	ASSERT(this, "Shape::getNumberOfImpenetrableCollidingShapes: null this");
 
-	// retrieve the colliding spatialObject's position and gap
-	Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
+	if(!this->collidingShapes)
+	{
+		return 0;
+	}
 
-	CollisionSolution collisionSolution = collisionInformation->collisionSolution;
+	int count = 0;
 
-	ownerPosition.x += collisionSolution.translationVector.x;
-	ownerPosition.y += collisionSolution.translationVector.y;
-	ownerPosition.z += collisionSolution.translationVector.z;
+	VirtualNode node = this->collidingShapes->head;
 
-	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
+	for(; node; node = node->next)
+	{
+		count += ((CollidingShapeRegistry*)node->data)->isImpenetrable ? 1 : 0;
+	}
 
-	return collisionSolution;
+	return count;
 }
+
+u32 Shape_getLayers(Shape this)
+{
+	ASSERT(this, "Shape::getLayers: null this");
+
+	return this->layers;
+}
+
+void Shape_setLayers(Shape this, u32 layers)
+{
+	ASSERT(this, "Shape::setLayers: null this");
+
+	this->layers = layers;
+}
+
+u32 Shape_getLayersToIgnore(Shape this)
+{
+	ASSERT(this, "Shape::getLayersToIgnore: null this");
+
+	return this->layersToIgnore;
+}
+
+void Shape_setLayersToIgnore(Shape this, u32 layersToIgnore)
+{
+	ASSERT(this, "Shape::setLayersToIgnore: null this");
+
+	this->layersToIgnore = layersToIgnore;
+}
+
 
 void Shape_print(Shape this, int x, int y)
 {
@@ -682,5 +725,5 @@ void Shape_print(Shape this, int x, int y)
 	Printing_text(Printing_getInstance(), "Colliding shapes:            ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->collidingShapes ? VirtualList_getSize(this->collidingShapes) : 0, x + 21, y++, NULL);
 	Printing_text(Printing_getInstance(), "Impenetrable shapes:            ", x, y, NULL);
-	Printing_int(Printing_getInstance(), this->impenetrableCollidingShapes ? VirtualList_getSize(this->impenetrableCollidingShapes) : 0, x + 21, y++, NULL);
+	Printing_int(Printing_getInstance(), Shape_getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
 }
