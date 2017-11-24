@@ -2369,3 +2369,79 @@ Direction Entity_getDirection(Entity this)
 
 	return direction;
 }
+
+u32 Entity_getShapesLayers(Entity this)
+{
+	ASSERT(this, "Entity::getShapesLayers: null this");
+
+	u32 shapesLayers = 0;
+
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			shapesLayers |= Shape_getLayers(shape);
+		}
+	}
+
+	return shapesLayers;
+}
+
+void Entity_setShapesLayers(Entity this, u32 layers)
+{
+	ASSERT(this, "Entity::setShapesLayers: null this");
+
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			Shape_setLayers(shape, layers);
+		}
+	}
+}
+
+u32 Entity_getShapesLayersToIgnore(Entity this)
+{
+	ASSERT(this, "Entity::getShapesLayersToIgnore: null this");
+
+	u32 shapesLayersToIgnore = 0;
+
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			shapesLayersToIgnore |= Shape_getLayersToIgnore(shape);
+		}
+	}
+
+	return shapesLayersToIgnore;
+}
+
+void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
+{
+	ASSERT(this, "Entity::setShapesLayersToIgnore: null this");
+
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			Shape_setLayersToIgnore(shape, layersToIgnore);
+		}
+	}
+}

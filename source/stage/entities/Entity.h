@@ -212,5 +212,10 @@ void Entity_informShapesThatStoppedMoving(Entity this);
 void Entity_activateShapes(Entity this, bool value);
 Direction Entity_getDirection(Entity this);
 void Entity_setDirection(Entity this, Direction direction);
+u32 Entity_getShapesLayers(Entity this);
+void Entity_setShapesLayers(Entity this, u32 layers);
+u32 Entity_getShapesLayersToIgnore(Entity this);
+void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore);
+
 
 #endif
