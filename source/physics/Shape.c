@@ -56,7 +56,7 @@ typedef struct CollidingShapeRegistry
 {
 	Shape shape;
 
-	Vector3D direction;
+	SolutionVector solutionVector;
 
 	bool isImpenetrable;
 
@@ -66,7 +66,7 @@ typedef struct CollidingShapeRegistry
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D direction, bool isImpenetrable);
+static void Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable);
 static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape);
 static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer);
@@ -204,7 +204,7 @@ bool Shape_collides(Shape this, Shape shape)
 
 	if(!__IS_OBJECT_ALIVE(this->owner))
 	{
-		return;
+		return false;
 	}
 
 	CollisionInformation collisionInformation;
@@ -221,7 +221,7 @@ bool Shape_collides(Shape this, Shape shape)
 		if(collisionInformation.shape && collisionInformation.solutionVector.magnitude)
 		{
 			// new collision
-			Shape_registerCollidingShape(this, shape, collisionInformation.solutionVector.direction, false);
+			Shape_registerCollidingShape(this, shape, collisionInformation.solutionVector, false);
 
 			__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionInformation);
 
@@ -296,7 +296,7 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrem
 
 		if(collidingShapeRegistry->isImpenetrable)
 		{
-			fix19_13 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->direction, normalizedDisplacement);
+			fix19_13 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
 			canMove &= -__F_TO_FIX19_13(1 - 0.1f) < cosAngle;
 		}
 	}
@@ -323,7 +323,7 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 
 	if(!__IS_OBJECT_ALIVE(this->owner))
 	{
-		return;
+		return (SolutionVector) {{0, 0, 0}, 0};
 	}
 
 	SolutionVector solutionVector = collisionInformation->solutionVector;
@@ -341,7 +341,7 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 
 		__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 
-		Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector.direction, true);
+		Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 	}
 
 	return solutionVector;
@@ -460,10 +460,9 @@ bool Shape_checkForCollisions(Shape this)
  * @param this				Function scope
  * @param collidingShape	Colliding shape to register
  */
-static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D direction, bool isImpenetrable)
+static void Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable)
 {
 	ASSERT(this, "Shape::registerCollidingShape: null this");
-//	ASSERT(!Shape_findCollidingShapeRegistry(this, collidingShape), "Shape::registerCollidingShape: already registered shape");
 
 	if(!this->collidingShapes)
 	{
@@ -480,7 +479,7 @@ static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vecto
 	}
 
 	collidingShapeRegistry->shape = collidingShape;
-	collidingShapeRegistry->direction = direction;
+	collidingShapeRegistry->solutionVector = solutionVector;
 	collidingShapeRegistry->isImpenetrable = isImpenetrable;
 
 	if(newEntry)
