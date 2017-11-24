@@ -216,6 +216,11 @@ void SpatialObject_exitCollision(SpatialObject this __attribute__ ((unused)), Sh
 	ASSERT(this, "SpatialObject::exitCollision: null this");
 }
 
+void SpatialObject_collidingShapeOwnerDestroyed(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+{
+	ASSERT(this, "SpatialObject::collidingShapeOwnerDestroyed: null this");
+}
+
 u16 SpatialObject_getMovementState(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getMovementState: null this");

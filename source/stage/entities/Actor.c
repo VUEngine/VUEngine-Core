@@ -302,7 +302,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 	}
 
 //	Body_print(this->body, 1, 1);
-//	Shape_print(VirtualList_front(this->shapes), 1, 17);
+//	Shape_print(VirtualList_front(this->shapes), 1, 1);
 }
 
 // whether changed direction in the last cycle or not
@@ -718,6 +718,18 @@ void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), const C
 void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::exitCollision: null this");
+
+	Body_setFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
+
+	if(isShapeImpenetrable)
+	{
+		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
+	}
+}
+
+void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
+{
+	ASSERT(this, "Actor::collidingShapeOwnerDestroyed: null this");
 
 	Body_setFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
 

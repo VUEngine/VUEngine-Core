@@ -66,7 +66,6 @@ typedef struct CollidingShapeRegistry
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Shape_cleanCollidingLists(Shape this);
 static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Vector3D direction, bool isImpenetrable);
 static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape);
@@ -121,6 +120,9 @@ void Shape_destructor(Shape this)
 {
 	ASSERT(this, "Shape::destructor: null this");
 
+	// unset owner now
+	this->owner = NULL;
+
 	if(this->events)
 	{
 		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeDeleted);
@@ -132,8 +134,13 @@ void Shape_destructor(Shape this)
 
 		for(; node; node = node->next)
 		{
-			Object_removeEventListeners(__SAFE_CAST(Object, ((CollidingShapeRegistry*)node->data)->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-			Object_removeEventListeners(__SAFE_CAST(Object, ((CollidingShapeRegistry*)node->data)->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
+			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
+
+			if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape))
+			{
+				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
+				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
+			}
 
 			__DELETE_BASIC(node->data);
 		}
@@ -145,42 +152,6 @@ void Shape_destructor(Shape this)
 	// destroy the super object
 	// must always be called at the end of the destructor
 	__DESTROY_BASE;
-}
-
-static void Shape_cleanCollidingLists(Shape this)
-{
-	ASSERT(this, "Shape::cleanCollidingLists: null this");
-
-	if(this->collidingShapes)
-	{
-		VirtualList temporaList = __NEW(VirtualList);
-		VirtualList_copy(temporaList, this->collidingShapes);
-
-		VirtualNode node = temporaList->head;
-
-		for(; node; node = node->next)
-		{
-			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
-
-			if(collidingShapeRegistry->isImpenetrable)
-			{
-				VirtualList_removeElement(this->collidingShapes, collidingShapeRegistry);
-				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
-			}
-		}
-
-		node = temporaList->head;
-
-		for(; node; node = node->next)
-		{
-			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
-			__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
-			__DELETE_BASIC(node->data);
-		}
-
-		__DELETE(temporaList);
-	}
 }
 
 /**
@@ -230,6 +201,11 @@ void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position _
 bool Shape_collides(Shape this, Shape shape)
 {
 	ASSERT(this, "Ball::collides: null this");
+
+	if(!__IS_OBJECT_ALIVE(this->owner))
+	{
+		return;
+	}
 
 	CollisionInformation collisionInformation;
 
@@ -345,6 +321,11 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
 	ASSERT(collisionInformation->collidingShape, "Shape::resolveCollision: null collidingEntities");
 
+	if(!__IS_OBJECT_ALIVE(this->owner))
+	{
+		return;
+	}
+
 	SolutionVector solutionVector = collisionInformation->solutionVector;
 
 	if(collisionInformation->shape == this && solutionVector.magnitude)
@@ -360,7 +341,6 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 
 		__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 
-		//Shape_cleanCollidingLists(this);
 		Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector.direction, true);
 	}
 
@@ -536,8 +516,11 @@ static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
 
 	__DELETE_BASIC(collidingShapeRegistry);
 
-	Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-	Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeChanged);
+	if(__IS_OBJECT_ALIVE(collidingShape))
+	{
+		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeDeleted);
+		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeChanged);
+	}
 
 	return true;
 }
@@ -555,6 +538,11 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 {
 	ASSERT(this, "Shape::onCollidingShapeDestroyed: null this");
 
+	if(!__IS_OBJECT_ALIVE(this->owner))
+	{
+		return;
+	}
+
 	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, eventFirer));
 
 	if(!collidingShapeRegistry)
@@ -564,7 +552,7 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 
 	if(Shape_unregisterCollidingShape(this, collidingShapeRegistry->shape))
 	{
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
+		__VIRTUAL_CALL(SpatialObject, collidingShapeOwnerDestroyed, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
 	}
 }
 
@@ -580,6 +568,11 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 static void Shape_onCollidingShapeChanged(Shape this, Object eventFirer)
 {
 	ASSERT(this, "Shape::onCollidingShapeChanged: null this");
+
+	if(!__IS_OBJECT_ALIVE(this->owner))
+	{
+		return;
+	}
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, eventFirer));
 
@@ -657,7 +650,10 @@ fix19_13 Shape_getCollidingFrictionCoefficient(Shape this)
 
 		ASSERT(collidingShape, "Shape::getCollidingFriction: null collidingShape");
 
-		totalFrictionCoefficient += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collidingShape));
+		if(__IS_OBJECT_ALIVE(collidingShape->owner))
+		{
+			totalFrictionCoefficient += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collidingShape->owner);
+		}
 	}
 
 	return totalFrictionCoefficient;
@@ -719,7 +715,7 @@ void Shape_print(Shape this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "SHAPE ", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Owner:            ", x, y, NULL);
-	Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this->owner), x + 7, y++, NULL);
+	Printing_text(Printing_getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);
 	Printing_hex(Printing_getInstance(), (int)this->owner, x + 7, y++, 8, NULL);
 
 	Printing_text(Printing_getInstance(), "Colliding shapes:            ", x, y, NULL);
