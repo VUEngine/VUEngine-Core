@@ -30,8 +30,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_PHYSICS_PROFILING
 //#define __FORCE_PRINTING_LAYER
 
-#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						1
+//#undef __TIMER_RESOLUTION
+//#define __TIMER_RESOLUTION						1
 
 
 // do not delete the following macros!
@@ -72,16 +72,27 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #define __PROFILE_GAME
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
+#undef __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
 #endif
 
 // enable game profiling when checking the VIP interrupt
 #ifdef __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+#undef __PROFILE_GAME
 #define __PROFILE_GAME
+#undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
+#undef __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
 #endif
 
 #ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
+#undef __PRINT_MEMORY_POOL_STATUS
 #define __PRINT_MEMORY_POOL_STATUS
+#undef __DIMM_FOR_PROFILING
+#define __DIMM_FOR_PROFILING
+#undef __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
 #endif
 
 #ifdef __ALERT_STACK_OVERFLOW
