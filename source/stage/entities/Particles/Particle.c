@@ -225,7 +225,7 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 {
 	ASSERT(this, "Particle::addForce: null this");
 
-	if(false && __UNIFORM_MOVEMENT == movementType)
+	if(__UNIFORM_MOVEMENT == movementType)
 	{
 		fix19_13 mass = Body_getMass(this->body);
 

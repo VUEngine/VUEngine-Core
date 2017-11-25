@@ -14,7 +14,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
-//#define __SHOW_GAME_DETAILED_PROFILING
+#define __SHOW_GAME_DETAILED_PROFILING
 //#define __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
@@ -30,8 +30,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_PHYSICS_PROFILING
 //#define __FORCE_PRINTING_LAYER
 
-//#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION						1
+#undef __TIMER_RESOLUTION
+#define __TIMER_RESOLUTION						1
 
 
 // do not delete the following macros!

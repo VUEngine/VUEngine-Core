@@ -458,7 +458,12 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	if(this->previousTime)
 	{
-		PhysicalWorld_checkForGravity(this);
+		if(0 >= --this->idleCyclesBeforeCheckingForGravity)
+		{
+			this->idleCyclesBeforeCheckingForGravity = __IDLE_CYCLES_BEFORE_CHECKING_FOR_GRAVITY;
+
+			PhysicalWorld_checkForGravity(this);
+		}
 
 		if(!elapsedTime)
 		{
