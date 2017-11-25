@@ -205,32 +205,30 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	int i = 0;
 	int numberOfOjects = 0;
-	int pool = __MEMORY_POOLS - 1;
+	int pool = __MEMORY_POOLS;
 	int blockSize = this->poolSizes[pool][eBlockSize];
 	int displacement = 0;
 
-	// seach for the shortest pool which can hold the data
-	for(; numberOfBytes > blockSize && pool--; blockSize = this->poolSizes[pool][eBlockSize]);
-
-	if(0 > pool)
+	for(; pool--;)
 	{
-		Printing_setDebugMode(Printing_getInstance());
-		Printing_clear(Printing_getInstance());
-		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 12, NULL);
-		Printing_int(Printing_getInstance(), numberOfBytes, 44, 12, NULL);
-		Printing_text(Printing_getInstance(), "Caller address: ", 20, 15, NULL);
-		Printing_hex(Printing_getInstance(), lp, 36, 15, 8, NULL);
+		// search for the smallest pool which can hold the data
+		blockSize = this->poolSizes[pool][eBlockSize];
+		numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+		if(numberOfBytes <= blockSize)
+		{
+			// look for a free block
+			for(i = 0, displacement = 0;
+				i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
+				i++, displacement += blockSize);
 
-		NM_ASSERT(pool >= 0, "MemoryPool::allocate: object size overflow");
+			if(i < numberOfOjects)
+			{
+				break;
+			}
+
+			// keep looking for a free block on a bigger pool
+		}
 	}
-
-	// get the number of allocable objects in the pool
-	numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
-
-	// look for a free block
-	for(i = 0, displacement = 0;
-		i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
-		i++, displacement += blockSize);
 
 	if(i >= numberOfOjects)
 	{
