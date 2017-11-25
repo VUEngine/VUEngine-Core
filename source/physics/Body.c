@@ -515,8 +515,8 @@ MovementResult Body_updateMovement(Body this)
 		__FIX19_13_INT_PART(this->velocity.z),
 	};
 
-	this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
-	//this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
+	//this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
+	this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
 
 	fix19_13 elapsedTime = _currentElapsedTime;
 	fix19_13 elapsedTimeHalfSquare = __FIX19_13_MULT(elapsedTime, elapsedTime) >> 1;
