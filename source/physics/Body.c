@@ -407,14 +407,13 @@ void Body_update(Body this)
 
 				if(axesOfStopping)
 				{
-			__PRINT_IN_GAME_TIME(40, 0);
 					MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
 				}
 			}
 
+			// no one uses this
 /*			if(movementResult.axesOfChangeOfMovement)
 			{
-			__PRINT_IN_GAME_TIME(40, 1);
 				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
 			}
 */		}
@@ -531,7 +530,7 @@ MovementResult Body_updateMovement(Body this)
 		this->velocity.x += __FIX19_13_MULT(this->acceleration.x, elapsedTime);
 		this->position.x += __FIX19_13_MULT(this->velocity.x, elapsedTime);
 	}
-	else if(gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
+	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
 	{
 		this->acceleration.x = gravity.x + __FIX19_13_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
 		this->velocity.x += __FIX19_13_MULT(this->acceleration.x, elapsedTime);
@@ -544,7 +543,7 @@ MovementResult Body_updateMovement(Body this)
 		this->velocity.y += __FIX19_13_MULT(this->acceleration.y, elapsedTime);
 		this->position.y += __FIX19_13_MULT(this->velocity.y, elapsedTime);
 	}
-	else if(gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
+	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
 	{
 		this->acceleration.y = gravity.y + __FIX19_13_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
 		this->velocity.y += __FIX19_13_MULT(this->acceleration.y, elapsedTime);
@@ -557,7 +556,7 @@ MovementResult Body_updateMovement(Body this)
 		this->velocity.z += __FIX19_13_MULT(this->acceleration.z, elapsedTime);
 		this->position.z += __FIX19_13_MULT(this->velocity.z, elapsedTime);
 	}
-	else if(gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
+	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
 	{
 		this->acceleration.z = gravity.z + __FIX19_13_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
 		this->velocity.z += __FIX19_13_MULT(this->acceleration.z, elapsedTime);
