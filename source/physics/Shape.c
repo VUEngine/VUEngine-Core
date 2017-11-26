@@ -58,6 +58,8 @@ typedef struct CollidingShapeRegistry
 
 	SolutionVector solutionVector;
 
+	fix19_13 frictionCoefficient;
+
 	bool isImpenetrable;
 
 } CollidingShapeRegistry;
@@ -66,7 +68,7 @@ typedef struct CollidingShapeRegistry
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable);
+static CollidingShapeRegistry* Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable);
 static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape);
 static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer);
@@ -221,9 +223,16 @@ bool Shape_collides(Shape this, Shape shape)
 		if(collisionInformation.shape && collisionInformation.solutionVector.magnitude)
 		{
 			// new collision
-			Shape_registerCollidingShape(this, shape, collisionInformation.solutionVector, false);
+			CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, shape, collisionInformation.solutionVector, false);
 
-			__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionInformation);
+			if(__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionInformation))
+			{
+				collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation.collidingShape->owner);
+			}
+			else
+			{
+				collidingShapeRegistry->frictionCoefficient = 0;
+			}
 
 			collision = true;
 		}
@@ -240,8 +249,6 @@ bool Shape_collides(Shape this, Shape shape)
 
 		if(collision && collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
-//			collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
-
 			Shape_resolveCollision(this, &collisionInformation);
 		}
 	}
@@ -341,7 +348,9 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 
 		__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 
-		Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
+		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
+
+		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);
 	}
 
 	return solutionVector;
@@ -460,7 +469,7 @@ bool Shape_checkForCollisions(Shape this)
  * @param this				Function scope
  * @param collidingShape	Colliding shape to register
  */
-static void Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable)
+static CollidingShapeRegistry* Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable)
 {
 	ASSERT(this, "Shape::registerCollidingShape: null this");
 
@@ -481,6 +490,7 @@ static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Solut
 	collidingShapeRegistry->shape = collidingShape;
 	collidingShapeRegistry->solutionVector = solutionVector;
 	collidingShapeRegistry->isImpenetrable = isImpenetrable;
+	collidingShapeRegistry->frictionCoefficient = 0;
 
 	if(newEntry)
 	{
@@ -489,6 +499,8 @@ static void Shape_registerCollidingShape(Shape this, Shape collidingShape, Solut
 		Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
 		Object_addEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
 	}
+
+	return collidingShapeRegistry;
 }
 
 /**
@@ -645,13 +657,13 @@ fix19_13 Shape_getCollidingFrictionCoefficient(Shape this)
 
 	for(; node; node = node->next)
 	{
-		Shape collidingShape = __SAFE_CAST(Shape, ((CollidingShapeRegistry*)node->data)->shape);
+		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
-		ASSERT(collidingShape, "Shape::getCollidingFriction: null collidingShape");
+		ASSERT(collidingShapeRegistry->shape, "Shape::getCollidingFriction: null collidingShape");
 
-		if(__IS_OBJECT_ALIVE(collidingShape->owner))
+		if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape->owner))
 		{
-			totalFrictionCoefficient += __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collidingShape->owner);
+			totalFrictionCoefficient += collidingShapeRegistry->frictionCoefficient;
 		}
 	}
 
