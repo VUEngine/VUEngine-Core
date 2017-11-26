@@ -331,7 +331,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 				Game_saveProcessNameDuringFRAMESTART(Game_getInstance());
 #endif
 
-				//ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
+				ClockManager_update(ClockManager_getInstance(), __GAME_FRAME_DURATION);
 
 				VIPManager_registerCurrentDrawingFrameBufferSet(this);
 

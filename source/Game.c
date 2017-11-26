@@ -1240,7 +1240,7 @@ void Game_currentFrameEnded(Game this)
 inline static void Game_run(Game this)
 {
 	// accumulate time elapsed during last frame
-	ClockManager_update(ClockManager_getInstance(), TimerManager_getMillisecondsElapsed(this->timerManager));
+	//ClockManager_update(ClockManager_getInstance(), TimerManager_getMillisecondsElapsed(this->timerManager));
 
 	// reset timer
 	TimerManager_resetMilliseconds(this->timerManager);
