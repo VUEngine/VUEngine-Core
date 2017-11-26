@@ -34,8 +34,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __IDLE_CYCLES_BEFORE_CHECKING_FOR_GRAVITY		(__TARGET_FPS / 10)
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -109,12 +107,6 @@
 		 * @memberof 			PhysicalWorld
 		 */																								\
 		VirtualNode bodyToCheckForGravityNode;															\
-		/**
-		 * @var int				idleCyclesBeforeCheckingForGravity
-		 * @brief				number of cycle to remain idle before applying gravity
-		 * @memberof			PhysicalWorld
-		 */																								\
-		int idleCyclesBeforeCheckingForGravity;															\
 
 /**
  * @class	PhysicalWorld
@@ -166,7 +158,6 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->previousTime = 0;
 	this->accumulator = 0;
 	this->timeScale = __1I_FIX19_13;
-	this->idleCyclesBeforeCheckingForGravity = __IDLE_CYCLES_BEFORE_CHECKING_FOR_GRAVITY;
 }
 
 /**
@@ -458,12 +449,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	if(this->previousTime)
 	{
-		if(0 >= --this->idleCyclesBeforeCheckingForGravity)
-		{
-			this->idleCyclesBeforeCheckingForGravity = __IDLE_CYCLES_BEFORE_CHECKING_FOR_GRAVITY;
-
-			PhysicalWorld_checkForGravity(this);
-		}
+		PhysicalWorld_checkForGravity(this);
 
 		if(!elapsedTime)
 		{
@@ -480,7 +466,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		this->elapsedTime = 0;
 		this->accumulator += elapsedTime;
 
-//		while (this->accumulator >= __PHYSICS_TIME_ELAPSED)
+		while (this->accumulator >= __PHYSICS_TIME_ELAPSED)
         {
 			this->accumulator -= __PHYSICS_TIME_ELAPSED;
 			this->elapsedTime += __PHYSICS_TIME_ELAPSED;
