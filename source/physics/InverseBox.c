@@ -74,7 +74,7 @@ static void InverseBox_constructor(InverseBox this, SpatialObject owner)
 {
 	ASSERT(this, "InverseBox::constructor: null this");
 
-	__CONSTRUCT_BASE(Shape, owner);
+	__CONSTRUCT_BASE(Box, owner);
 }
 
 /**
