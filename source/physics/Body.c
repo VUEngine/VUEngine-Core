@@ -526,8 +526,6 @@ MovementResult Body_updateMovement(Body this)
 
 	if(__UNIFORM_MOVEMENT == this->movementType.x)
 	{
-		this->acceleration.x = 0;
-		this->velocity.x += __FIX19_13_MULT(this->acceleration.x, elapsedTime);
 		this->position.x += __FIX19_13_MULT(this->velocity.x, elapsedTime);
 	}
 	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
@@ -539,8 +537,6 @@ MovementResult Body_updateMovement(Body this)
 
 	if(__UNIFORM_MOVEMENT == this->movementType.y)
 	{
-		this->acceleration.y = 0;
-		this->velocity.y += __FIX19_13_MULT(this->acceleration.y, elapsedTime);
 		this->position.y += __FIX19_13_MULT(this->velocity.y, elapsedTime);
 	}
 	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
@@ -552,8 +548,6 @@ MovementResult Body_updateMovement(Body this)
 
 	if(__UNIFORM_MOVEMENT == this->movementType.z)
 	{
-		this->acceleration.z = 0;
-		this->velocity.z += __FIX19_13_MULT(this->acceleration.z, elapsedTime);
 		this->position.z += __FIX19_13_MULT(this->velocity.z, elapsedTime);
 	}
 	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
