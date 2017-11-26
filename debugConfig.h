@@ -8,13 +8,14 @@
 void HardwareManager_checkStackStatus(HardwareManager this);
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 
+
 // define / undefine as you see fit
 //#undef __LOW_BATTERY_INDICATOR
 //#define __PRINT_FRAMERATE
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
-#define __SHOW_GAME_DETAILED_PROFILING
+//#define __SHOW_GAME_DETAILED_PROFILING
 //#define __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
@@ -31,7 +32,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __FORCE_PRINTING_LAYER
 
 #undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						1
+#define __TIMER_RESOLUTION						10
 
 
 // do not delete the following macros!
