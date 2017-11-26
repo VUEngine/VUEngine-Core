@@ -239,9 +239,9 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 		if(mass)
 		{
 			acceleration.x = __FIX19_13_DIV(acceleration.x, mass);
-			acceleration.x = __FIX19_13_DIV(acceleration.y, mass);
-			acceleration.x = __FIX19_13_DIV(acceleration.z, mass);
-		};
+			acceleration.y = __FIX19_13_DIV(acceleration.y, mass);
+			acceleration.z = __FIX19_13_DIV(acceleration.z, mass);
+		}
 
 		Velocity velocity =
 		{
