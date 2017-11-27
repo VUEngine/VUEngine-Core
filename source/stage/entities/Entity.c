@@ -1143,8 +1143,8 @@ void Entity_transformShapes(Entity this)
 		const Rotation* myRotation = __VIRTUAL_CALL(SpatialObject, getRotation, this);
 		const Scale* myScale = __VIRTUAL_CALL(SpatialObject, getScale, this);
 
+		Direction currentDirection = Entity_getDirection(this);
 		VirtualNode node = this->shapes->head;
-//		Direction currentDirection = Entity_getDirection(this);
 		int i = 0;
 
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
@@ -1153,13 +1153,10 @@ void Entity_transformShapes(Entity this)
 
 			Vector3D shapePosition =
 			{
-				myPosition->x + shapeDefinitions[i].displacement.x,
-				myPosition->y + shapeDefinitions[i].displacement.y,
-				myPosition->z + shapeDefinitions[i].displacement.z,
-/*				myPosition->x + (__RIGHT == currentDirection.x ? shapeDefinitions[i].displacement.x : -shapeDefinitions[i].displacement.x),
+				myPosition->x + (__RIGHT == currentDirection.x ? shapeDefinitions[i].displacement.x : -shapeDefinitions[i].displacement.x),
 				myPosition->y + (__DOWN == currentDirection.y ? shapeDefinitions[i].displacement.y : -shapeDefinitions[i].displacement.y),
 				myPosition->z + (__FAR == currentDirection.z ? shapeDefinitions[i].displacement.z : -shapeDefinitions[i].displacement.z),
-*/			};
+			};
 
 			Rotation shapeRotation =
 			{
