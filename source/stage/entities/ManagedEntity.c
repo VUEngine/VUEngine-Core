@@ -169,15 +169,9 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
-	// save new global position
-	Vector3D position3D = this->transformation.globalPosition;
-	Vector2D position2D;
-
 	// normalize the position to screen coordinates
-	__OPTICS_NORMALIZE(position3D);
-
-	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D);
 
 	position2D.parallax = 0;
 
@@ -213,14 +207,8 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		this->invalidateGlobalTransformation = 0;
 
 		// save the 2d position
-		Vector3D position3D = this->transformation.globalPosition;
-		Vector2D position2D;
-
-		// normalize the position to screen coordinates
-		__OPTICS_NORMALIZE(position3D);
-
-		// project position to 2D space
-		__OPTICS_PROJECT_TO_2D(position3D, position2D);
+		Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+		Vector2D position2D = Vector3D_projectToVector2D(position3D);
 
 		position2D.parallax = 0;
 
@@ -264,15 +252,8 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 	}
 
 	// save new global position
-	Vector3D position3D = this->transformation.globalPosition;
-	Vector2D position2D;
-	position2D.parallax = 0;
-
-	// normalize the position to screen coordinates
-	__OPTICS_NORMALIZE(position3D);
-
-	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D);
 
 	VirtualNode spriteNode = this->managedSprites->head;
 

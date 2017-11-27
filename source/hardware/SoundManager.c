@@ -581,10 +581,11 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D	pos
 		this->fxSound[i] = fxSound;
 
 		// set position inside screen coordinates
-		__OPTICS_NORMALIZE(position);
+		position = Vector3D_toScreen(position);
 
 		// save position for 3d sound
-		__OPTICS_PROJECT_TO_2D(position, this->fxPosition[i]);
+		this->fxPosition[i] = Vector3D_projectToVector2D(position);
+
 		return true;
 	}
 

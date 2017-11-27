@@ -121,5 +121,31 @@ inline fix19_13 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB)
 	return __F_TO_FIX19_13(Math_squareRoot(__FIX51_13_TO_F(product)));
 }
 
+inline Vector3D Vector3D_toScreen(Vector3D vector3D)
+{
+	extern const Vector3D* _screenPosition;
+
+	vector3D.x -= _screenPosition->x;
+	vector3D.y -= _screenPosition->y;
+	vector3D.z -= _screenPosition->z;
+
+	return vector3D;
+}
+
+inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D)
+{
+	extern const Optical* _optical;
+
+	Vector2D projection =
+	{
+		vector3D.x + (__FIX19_13_MULT(_optical->horizontalViewPointCenter -  vector3D.x, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.y - (__FIX19_13_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.z,
+		0
+	};
+
+	return projection;
+}
+
 
 #endif

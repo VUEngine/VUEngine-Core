@@ -184,12 +184,12 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 			// normalize vertex to screen coordinates
 			fromVertex3D = *((Vector3D*)fromNode->data);
 			toVertex3D = *((Vector3D*)toNode->data);
-			__OPTICS_NORMALIZE(fromVertex3D);
-			__OPTICS_NORMALIZE(toVertex3D);
+			fromVertex3D = Vector3D_toScreen(fromVertex3D);
+			toVertex3D = Vector3D_toScreen(toVertex3D);
 
 			// project to 2d coordinates
-			__OPTICS_PROJECT_TO_2D(fromVertex3D, fromVertex2D);
-			__OPTICS_PROJECT_TO_2D(toVertex3D, toVertex2D);
+			fromVertex2D = Vector3D_projectToVector2D(fromVertex3D);
+			toVertex2D = Vector3D_projectToVector2D(toVertex3D);
 
 			// calculate parallax
 			if(calculateParallax)

@@ -34,24 +34,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // these improve performance in the real machine
-#undef __OPTICS_NORMALIZE
-#define __OPTICS_NORMALIZE(vector3D)																	\
-		extern const Vector3D* _screenPosition;															\
-		vector3D.x -= (_screenPosition->x);																\
-		vector3D.y -= (_screenPosition->y);																\
-		vector3D.z -= (_screenPosition->z);
-
-#undef __OPTICS_PROJECT_TO_2D
-#define __OPTICS_PROJECT_TO_2D(vector3D, vector2D)														\
-		vector2D.x = vector3D.x 																		\
-			+ (__FIX19_13_MULT(_optical->horizontalViewPointCenter - 									\
-					vector3D.x, vector3D.z) >> _optical->maximumViewDistancePower);						\
-		vector2D.y = vector3D.y 																		\
-			- (__FIX19_13_MULT(vector3D.y - _optical->verticalViewPointCenter,							\
-				vector3D.z) >> _optical->maximumViewDistancePower);										\
-		vector2D.z = vector3D.z;																		\
-
-
 
 //---------------------------------------------------------------------------------------------------------
 //												EXTERNALS
@@ -64,8 +46,31 @@ extern const Optical* _optical;
 //											3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Calculate parallax based on the x and z coordinates
+ *
+ * @fn				Optics_calculateParallax()
+ * @public
+ *
+ * @param x			X parameter for the calculation of the parallax displacement
+ * @param x			Z parameter for the calculation of the parallax displacement
+ */
+inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
+{
+	fix19_13 leftEyePoint, rightEyePoint;
+	fix19_13 leftEyeGx, rightEyeGx;
 
-extern int Optics_calculateParallax(fix19_13 x, fix19_13 z);
+	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
+
+	// set map position and parallax
+	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance >> 1);
+	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance >> 1);
+
+	leftEyeGx = x - __FIX19_13_DIV(__FIX19_13_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
+	rightEyeGx = x + __FIX19_13_DIV(__FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
+
+	return __FIX19_13_TO_I(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
+}
 
 
 #endif

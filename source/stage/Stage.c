@@ -239,12 +239,10 @@ static int Stage_isEntityInLoadRange(Stage this, Vector3D position3D, const Smal
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
-	Vector2D position2D;
-
-	__OPTICS_NORMALIZE(position3D);
+	position3D = Vector3D_toScreen(position3D);
 
 	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D);
 	position2D.z = position3D.z;
 	position2D.parallax = Optics_calculateParallax(position3D.x, position3D.z);
 

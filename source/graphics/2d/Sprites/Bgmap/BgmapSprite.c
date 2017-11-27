@@ -244,16 +244,13 @@ void BgmapSprite_setPosition(BgmapSprite this, const Vector2D* position)
 void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "BgmapSprite::position: null this");
+	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
 
 	Vector3D position3D = *position;
 
 	// normalize the position to screen coordinates
-	__OPTICS_NORMALIZE(position3D);
-
-	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
-
-	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, this->drawSpec.position);
+	position3D = Vector3D_toScreen(position3D);
+	this->drawSpec.position = Vector3D_projectToVector2D(position3D);
 
 	this->drawSpec.position.x -= this->halfWidth;
 	this->drawSpec.position.y -= this->halfHeight;

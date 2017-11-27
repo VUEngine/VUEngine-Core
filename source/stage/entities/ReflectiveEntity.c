@@ -115,12 +115,9 @@ void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
 
-	Vector3D position3D = this->transformation.globalPosition;
-	__OPTICS_NORMALIZE(position3D);
+	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
 
-	Vector2D position2D;
-	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, position2D);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D);
 
 	this->position2D = this->nextFramePosition2D;
 	this->nextFramePosition2D.x = __FIX19_13_TO_I(position2D.x);

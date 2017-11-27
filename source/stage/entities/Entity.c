@@ -1877,7 +1877,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	}
 	else
 	{
-		Vector3D position3D = this->transformation.globalPosition;
+		Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
 
 		if(this->centerDisplacement)
 		{
@@ -1886,11 +1886,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-		// normalize the position to screen coordinates
-		__OPTICS_NORMALIZE(position3D);
-
-		Vector2D position2D;
-		__OPTICS_PROJECT_TO_2D(position3D, position2D);
+		Vector2D position2D = Vector3D_projectToVector2D(position3D);
 
 		int halfWidth = (int)(this->size.x >> 1);
 		int halfHeight = (int)(this->size.y >> 1);

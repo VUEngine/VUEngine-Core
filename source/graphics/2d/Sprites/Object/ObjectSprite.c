@@ -228,16 +228,13 @@ void ObjectSprite_setPosition(ObjectSprite this, const Vector2D* position)
 void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 {
 	ASSERT(this, "ObjectSprite::position: null this");
-
-	Vector3D position3D = *position;
-
-	// normalize the position to screen coordinates
-	__OPTICS_NORMALIZE(position3D);
-
 	ASSERT(this->texture, "ObjectSprite::position: null texture");
 
+	Vector3D position3D = Vector3D_toScreen(*position);
+
+
 	// project position to 2D space
-	__OPTICS_PROJECT_TO_2D(position3D, this->position);
+	this->position = Vector3D_projectToVector2D(position3D);
 	this->position.z = position->z;
 
 	ObjectSprite_checkForContainer(this);

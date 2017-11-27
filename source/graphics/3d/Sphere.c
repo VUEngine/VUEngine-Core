@@ -178,7 +178,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 	int color = __COLOR_BRIGHT_RED;
 
 	Vector3D normalizedCenter = this->center;
-	__OPTICS_NORMALIZE(normalizedCenter);
+	normalizedCenter = Vector3D_toScreen(normalizedCenter);
 
 	fix19_13 radiusSquare = __FIX19_13_MULT(this->radius, this->radius);
 
@@ -194,10 +194,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = {0, 0, 0, 0};
-
-		// project to 2d coordinates
-		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
+		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D);
 
 		if(calculateParallax)
 		{
@@ -220,10 +217,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = {0, 0, 0, 0};
-
-		// project to 2d coordinates
-		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
+		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D);
 
 		if(calculateParallax)
 		{
@@ -246,10 +240,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.z = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = {0, 0, 0, 0};
-
-		// project to 2d coordinates
-		__OPTICS_PROJECT_TO_2D(translatedPoint3D, point2D);
+		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D);
 
 		if(calculateParallax)
 		{
