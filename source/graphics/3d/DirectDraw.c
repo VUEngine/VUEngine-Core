@@ -239,7 +239,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 			}
 			if((unsigned)(fromPoint.x + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 			{
-				DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x - parallax), (u16)__FIX19_13_TO_I(fromPoint.y));
+				DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x + parallax), (u16)__FIX19_13_TO_I(fromPoint.y));
 			}
 		}
 
@@ -265,7 +265,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 
 			fix19_13 fraction = dy - halfDx;
 
-			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDx)) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDx << 1)) : 0;
 			fix19_13 auxParallax = parallax;
 
 			while(fromPoint.x < toPoint.x)
@@ -290,7 +290,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 					}
 					if((unsigned)(fromPoint.x + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 					{
-						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x - parallax), (u16)__FIX19_13_TO_I(fromPoint.y));
+						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x + parallax), (u16)__FIX19_13_TO_I(fromPoint.y));
 					}
 				}
 			}
@@ -342,7 +342,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 					}
 					if((unsigned)(fromPoint.x + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 					{
-						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x - parallax), (u16)__FIX19_13_TO_I(fromPoint.y));
+						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x + parallax), (u16)__FIX19_13_TO_I(fromPoint.y));
 					}
 				}
 			}
@@ -359,7 +359,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 			}
 			if((unsigned)(fromPoint.x + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 			{
-				DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x - parallax), (u16)__FIX19_13_TO_I(fromPoint.y), color);
+				DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x + parallax), (u16)__FIX19_13_TO_I(fromPoint.y), color);
 			}
 		}
 
@@ -385,7 +385,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 
 			fix19_13 fraction = dy - halfDx;
 
-			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDx)) : 0;
+			fix19_13 parallaxStep = halfDx ? __FIX19_13_DIV(__I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax), __ABS(halfDx << 1)) : 0;
 			fix19_13 auxParallax = parallax;
 
 			while(fromPoint.x < toPoint.x)
@@ -410,7 +410,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 					}
 					if((unsigned)(fromPoint.x + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 					{
-						DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x - parallax), (u16)__FIX19_13_TO_I(fromPoint.y), color);
+						DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x + parallax), (u16)__FIX19_13_TO_I(fromPoint.y), color);
 					}
 				}
 			}
@@ -462,7 +462,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 					}
 					if((unsigned)(fromPoint.x + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 					{
-						DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x - parallax), (u16)__FIX19_13_TO_I(fromPoint.y), color);
+						DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPoint.x + parallax), (u16)__FIX19_13_TO_I(fromPoint.y), color);
 					}
 				}
 			}
