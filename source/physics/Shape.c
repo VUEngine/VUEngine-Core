@@ -69,6 +69,7 @@ typedef struct CollidingShapeRegistry
 //---------------------------------------------------------------------------------------------------------
 
 static CollidingShapeRegistry* Shape_registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable);
+static void Shape_displaceOwner(Shape this, Vector3D displacement);
 static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape);
 static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shape shape);
 static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer);
@@ -157,6 +158,40 @@ void Shape_destructor(Shape this)
 }
 
 /**
+ * Reset
+ *
+ * @memberof					Shape
+ * @public
+ *
+ * @param this					Function scope
+ */
+void Shape_reset(Shape this)
+{
+	ASSERT(this, "Shape::reset: null this");
+
+	if(this->collidingShapes)
+	{
+		VirtualNode node = this->collidingShapes->head;
+
+		for(; node; node = node->next)
+		{
+			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
+
+			if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape))
+			{
+				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
+				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
+			}
+
+			__DELETE_BASIC(node->data);
+		}
+
+		__DELETE(this->collidingShapes);
+		this->collidingShapes = NULL;
+	}
+}
+
+/**
  * Setup
  *
  * @memberof					Shape
@@ -241,7 +276,7 @@ bool Shape_collides(Shape this, Shape shape)
 	}
 	// impenetrable registered colliding shapes require a another test
 	// to determine if I'm not colliding against them anymore
-	else if(collidingShapeRegistry->isImpenetrable)
+	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
 	{
 		collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
@@ -303,13 +338,68 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrem
 
 		if(collidingShapeRegistry->isImpenetrable)
 		{
-			fix19_13 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-			canMove &= -__F_TO_FIX19_13(1 - 0.1f) < cosAngle;
+			// check if solution is valid
+			if(collidingShapeRegistry->solutionVector.magnitude)
+			{
+				fix19_13 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
+				canMove &= -__F_TO_FIX19_13(1 - 0.1f) < cosAngle;
+			}
 		}
 	}
 
 	// not colliding anymore
 	return canMove;
+}
+
+static void Shape_invalidateSolutionVectors(Shape this, Shape collidingShape)
+{
+	ASSERT(this, "Shape::invalidateSolutionVectors: null this");
+
+	if(!this->collidingShapes)
+	{
+		return;
+	}
+
+	VirtualNode node = this->collidingShapes->head;
+
+	for(; node; node = node->next)
+	{
+		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
+
+		if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->shape != collidingShape)
+		{
+			CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, collidingShapeRegistry->shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+
+			if(!(collisionInformation.shape == this && collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT))
+			{
+				collidingShapeRegistry->solutionVector.magnitude = 0;
+				Shape_displaceOwner(this, Vector3D_scalarProduct(collisionInformation.solutionVector.direction, collisionInformation.solutionVector.magnitude));
+			}
+		}
+	}
+}
+
+/**
+ * Displace owner
+ *
+ * @memberof				Shape
+ * @public
+ *
+ * @param this				Function scope
+ * @param displacement		Displacement to apply to owner
+ */
+static void Shape_displaceOwner(Shape this, Vector3D displacement)
+{
+	ASSERT(this, "Shape::displaceOwner: null this");
+
+	// retrieve the colliding spatialObject's position and gap
+	Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
+
+	ownerPosition.x += displacement.x;
+	ownerPosition.y += displacement.y;
+	ownerPosition.z += displacement.z;
+
+	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
 }
 
 /**
@@ -337,19 +427,12 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 
 	if(collisionInformation->shape == this && solutionVector.magnitude)
 	{
-		Vector3D displacement = Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude);
+		Shape_displaceOwner(this, Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
-		// retrieve the colliding spatialObject's position and gap
-		Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
-
-		ownerPosition.x += displacement.x;
-		ownerPosition.y += displacement.y;
-		ownerPosition.z += displacement.z;
-
-		__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
+		// need to invalidate solution vectors for other colliding shapes
+		Shape_invalidateSolutionVectors(this, collisionInformation->collidingShape);
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
-
 		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);
 	}
 

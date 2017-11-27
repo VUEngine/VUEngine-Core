@@ -779,6 +779,14 @@ Force Body_getLastNormalDirection(Body this)
 	return ((NormalRegistry*)VirtualList_back(this->normals))->direction;
 }
 
+void Body_reset(Body this)
+{
+	ASSERT(this, "Body::reset: null this");
+
+	Body_clearNormalOnAxes(this, __ALL_AXES);
+	Body_setFrictionCoefficient(this, 0);
+}
+
 static void Body_clearNormalOnAxes(Body this, u16 axes)
 {
 	ASSERT(this, "Body::clearNormal: null this");

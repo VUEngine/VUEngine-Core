@@ -180,6 +180,8 @@ static void SolidParticle_transformShape(SolidParticle this)
 	const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
 
 	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize, this->solidParticleDefinition->layers, this->solidParticleDefinition->layersToIgnore);
+	Shape_reset(this->shape);
+	Body_reset(this->body);
 }
 
 /**

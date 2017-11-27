@@ -220,6 +220,7 @@ void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity);
 void Body_setElasticity(Body this, fix19_13 elasticity);
 Force Body_getNormal(Body this);
 Force Body_getLastNormalDirection(Body this);
+void Body_reset(Body this);
 void Body_clearNormal(Body this, Object referent);
 fix19_13 Body_getFrictionCoefficient(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
