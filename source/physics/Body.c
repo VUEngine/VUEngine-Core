@@ -509,6 +509,9 @@ MovementResult Body_updateMovement(Body this)
 	Acceleration gravity = Body_getGravity(this);
 	this->weight = Vector3D_scalarProduct(gravity, this->mass);
 
+	/*
+	// this is the right way to compute the friction, but the
+	// normalization is just oo heavy on hardware
 	Velocity velocity =
 	{
 		__FIX19_13_INT_PART(this->velocity.x),
@@ -516,7 +519,8 @@ MovementResult Body_updateMovement(Body this)
 		__FIX19_13_INT_PART(this->velocity.z),
 	};
 
-	//this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
+	this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
+	*/
 	this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
 
 	fix19_13 elapsedTime = _currentElapsedTime;

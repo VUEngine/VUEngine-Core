@@ -51,12 +51,6 @@
 				vector3D.z) >> _optical->maximumViewDistancePower);										\
 		vector2D.z = vector3D.z;																		\
 
-#undef __OPTICS_3D_LENGHT_SQUARED
-#define __OPTICS_3D_LENGHT_SQUARED(vector1, vector2)													\
-		__FIX19_13_TO_I(__FIX19_13_MULT((vector1.x - vector2.x), (vector1.x - vector2.x)) +				\
-        			__FIX19_13_MULT((vector1.y - vector2.y), (vector1.y - vector2.y)) +					\
-        			__FIX19_13_MULT((vector1.z - vector2.z), (vector1.z - vector2.z)))					\
-
 
 
 //---------------------------------------------------------------------------------------------------------
