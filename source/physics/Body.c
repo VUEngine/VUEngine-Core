@@ -119,7 +119,6 @@ Clock _physhicsClock = NULL;
 MovementResult Body_updateMovement(Body this);
 static void Body_awake(Body this, u16 axesOfAwakening);
 static void Body_setMovementType(Body this, int movementType, u16 axes);
-static u16 Body_doStopMovement(Body this, u16 axes);
 static void Body_clearNormalOnAxes(Body this, u16 axes);
 Acceleration Body_getGravity(Body this);
 static void Body_computeTotalNormal(Body this);
@@ -403,7 +402,7 @@ void Body_update(Body this)
 			// if stopped on any axes
 			if(movementResult.axesStoppedMovement)
 			{
-				u16 axesOfStopping = Body_doStopMovement(this, movementResult.axesStoppedMovement);
+				u16 axesOfStopping = Body_stopMovement(this, movementResult.axesStoppedMovement);
 
 				if(axesOfStopping)
 				{
@@ -590,7 +589,7 @@ MovementResult Body_updateMovement(Body this)
 }
 
 // stop movement over an axes
-static u16 Body_doStopMovement(Body this, u16 axes)
+u16 Body_stopMovement(Body this, u16 axes)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
@@ -632,46 +631,6 @@ static u16 Body_doStopMovement(Body this, u16 axes)
 	}
 
 	return axesOfStopping;
-}
-
-// stop movement over an axes
-void Body_stopMovement(Body this, u16 axes)
-{
-	ASSERT(this, "Body::stopMovement: null this");
-
-	u16 axesOfMovement = Body_getMovementOnAllAxes(this);
-	u16 axesOfStopping = __NO_AXIS;
-
-	if(axes & __X_AXIS)
-	{
-		// not moving anymore
-		this->velocity.x = 0;
-		this->acceleration.x = 0;
-		this->externalForce.x = 0;
-		axesOfStopping |= axesOfMovement & __X_AXIS;
-	}
-
-	if(axes & __Y_AXIS)
-	{
-		// not moving anymore
-		this->velocity.y = 0;
-		this->acceleration.y = 0;
-		this->externalForce.y = 0;
-		axesOfStopping |= axesOfMovement & __Y_AXIS;
-	}
-
-	if(axes & __Z_AXIS)
-	{
-		// not moving anymore
-		this->velocity.z = 0;
-		this->acceleration.z = 0;
-		this->externalForce.z = 0;
-		axesOfStopping |= axesOfMovement & __Z_AXIS;
-	}
-
-	Body_setMovementType(this, __NO_MOVEMENT, axesOfStopping);
-
-//	Body_doStopMovement(this, axes);
 }
 
 // get axes subject to gravity
@@ -1105,7 +1064,7 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	// stop over the axes where there is no bouncing
 	if(movementResult.axesStoppedMovement)
 	{
-		u16 axesOfStopping = Body_doStopMovement(this, movementResult.axesStoppedMovement);
+		u16 axesOfStopping = Body_stopMovement(this, movementResult.axesStoppedMovement);
 
 		if(axesOfStopping)
 		{

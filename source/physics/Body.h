@@ -227,7 +227,7 @@ void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
 void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller);
 void Body_sleep(Body body);
-void Body_stopMovement(Body this, u16 axes);
+u16 Body_stopMovement(Body this, u16 axes);
 void Body_takeHitFrom(Body this, Body other);
 void Body_update(Body this);
 void Body_print(Body this, int x, int y);
