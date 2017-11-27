@@ -31,8 +31,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_PHYSICS_PROFILING
 //#define __FORCE_PRINTING_LAYER
 
-#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						10
+//#undef __TIMER_RESOLUTION
+//#define __TIMER_RESOLUTION						10
 
 
 // do not delete the following macros!
@@ -92,6 +92,11 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #define __PRINT_MEMORY_POOL_STATUS
 #undef __DIMM_FOR_PROFILING
 #define __DIMM_FOR_PROFILING
+#undef __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
+#endif
+
+#ifdef __SHOW_PHYSICS_PROFILING
 #undef __FORCE_PRINTING_LAYER
 #define __FORCE_PRINTING_LAYER
 #endif
