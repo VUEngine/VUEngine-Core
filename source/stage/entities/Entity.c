@@ -1150,12 +1150,13 @@ void Entity_transformShapes(Entity this)
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
+			u16 axesForShapeSyncWithDirection = __VIRTUAL_CALL(Entity, getAxesForShapeSyncWithDirection, this);
 
 			Vector3D shapePosition =
 			{
-				myPosition->x + (__RIGHT == currentDirection.x ? shapeDefinitions[i].displacement.x : -shapeDefinitions[i].displacement.x),
-				myPosition->y + (__DOWN == currentDirection.y ? shapeDefinitions[i].displacement.y : -shapeDefinitions[i].displacement.y),
-				myPosition->z + (__FAR == currentDirection.z ? shapeDefinitions[i].displacement.z : -shapeDefinitions[i].displacement.z),
+				myPosition->x + ((__X_AXIS & axesForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDefinitions[i].displacement.x : shapeDefinitions[i].displacement.x),
+				myPosition->y + ((__Y_AXIS & axesForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDefinitions[i].displacement.y : shapeDefinitions[i].displacement.y),
+				myPosition->z + ((__Z_AXIS & axesForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDefinitions[i].displacement.z : shapeDefinitions[i].displacement.z),
 			};
 
 			Rotation shapeRotation =
@@ -2437,4 +2438,11 @@ void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
 			Shape_setLayersToIgnore(shape, layersToIgnore);
 		}
 	}
+}
+
+u16 Entity_getAxesForShapeSyncWithDirection(Entity this)
+{
+	ASSERT(this, "Entity::getAxesForShapeSyncWithDirection: null this");
+
+	return __ALL_AXES;
 }

@@ -51,6 +51,7 @@
 		__VIRTUAL_DEC(ClassName, void, ready, bool);													\
 		__VIRTUAL_DEC(ClassName, u16, getAxisForFlipping);												\
 		__VIRTUAL_DEC(ClassName, void, setDefinition, void* entityDefinition);							\
+		__VIRTUAL_DEC(ClassName, bool, getAxesForShapeSyncWithDirection);								\
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\
@@ -82,6 +83,7 @@
 		__VIRTUAL_SET(ClassName, Entity, getElasticity);												\
 		__VIRTUAL_SET(ClassName, Entity, getFrictionCoefficient);										\
 		__VIRTUAL_SET(ClassName, Entity, getInGameType);												\
+		__VIRTUAL_SET(ClassName, Entity, getAxesForShapeSyncWithDirection);								\
 
 #define Entity_ATTRIBUTES																				\
 		Container_ATTRIBUTES																			\
@@ -216,6 +218,7 @@ u32 Entity_getShapesLayers(Entity this);
 void Entity_setShapesLayers(Entity this, u32 layers);
 u32 Entity_getShapesLayersToIgnore(Entity this);
 void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore);
+u16 Entity_getAxesForShapeSyncWithDirection(Entity this);
 
 
 #endif

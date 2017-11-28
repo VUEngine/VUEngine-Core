@@ -74,7 +74,6 @@
 		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
 		__VIRTUAL_SET(ClassName, Actor, syncRotationWithBody);											\
 
-
 #define Actor_ATTRIBUTES																				\
 		/* super's attributes */																		\
 		AnimatedEntity_ATTRIBUTES																		\
@@ -148,5 +147,7 @@ void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotColliding, bool 
 void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
+
+
 
 #endif
