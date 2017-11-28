@@ -370,10 +370,25 @@ static void Shape_invalidateSolutionVectors(Shape this, Shape collidingShape)
 		{
 			CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, collidingShapeRegistry->shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
-			if(!(collisionInformation.shape == this && collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT))
+			if(collisionInformation.shape == this && 0 < collisionInformation.solutionVector.magnitude)
 			{
+				if(collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+				{
+					if(Shape_canMoveTowards(this, Vector3D_scalarProduct(collidingShapeRegistry->solutionVector.direction, collisionInformation.solutionVector.magnitude), 0))
+					{
+						Shape_displaceOwner(this, Vector3D_scalarProduct(collisionInformation.solutionVector.direction, collisionInformation.solutionVector.magnitude));
+					}
+				}
+				else if(collisionInformation.solutionVector.magnitude < collidingShapeRegistry->solutionVector.magnitude)
+				{
+					// since I'm not close to that shape anymore, we can discard it
+					collidingShapeRegistry->solutionVector.magnitude = 0;
+				}
+			}
+			else
+			{
+				// since I'm not close to that shape anymore, we can discard it
 				collidingShapeRegistry->solutionVector.magnitude = 0;
-				Shape_displaceOwner(this, Vector3D_scalarProduct(collisionInformation.solutionVector.direction, collisionInformation.solutionVector.magnitude));
 			}
 		}
 	}
