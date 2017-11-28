@@ -232,7 +232,7 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 	ASSERT(this, "MBgmapSprite::position: null this");
 
 	Vector3D position3D = Vector3D_toScreen(*position);
-	Vector2D position2D = Vector3D_projectToVector2D(position3D);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
 	position2D.x -= this->halfWidth;
 	position2D.y -= this->halfHeight;

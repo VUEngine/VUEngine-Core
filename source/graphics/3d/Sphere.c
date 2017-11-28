@@ -194,7 +194,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.y = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D);
+		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D, 0);
 
 		if(calculateParallax)
 		{
@@ -240,7 +240,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.z = __F_TO_FIX19_13(Math_squareRoot(__FIX19_13_TO_F(radiusSquare - __FIX19_13_MULT(point3D.x, point3D.x) - __FIX19_13_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D);
+		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D, 0);
 
 		if(calculateParallax)
 		{

@@ -232,10 +232,8 @@ void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 
 	Vector3D position3D = Vector3D_toScreen(*position);
 
-
 	// project position to 2D space
-	this->position = Vector3D_projectToVector2D(position3D);
-	this->position.z = position->z;
+	this->position = Vector3D_projectToVector2D(position3D, this->position.parallax);
 
 	ObjectSprite_checkForContainer(this);
 }

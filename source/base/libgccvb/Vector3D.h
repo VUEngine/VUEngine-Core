@@ -132,7 +132,7 @@ inline Vector3D Vector3D_toScreen(Vector3D vector3D)
 	return vector3D;
 }
 
-inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D)
+inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix19_13 parallax)
 {
 	extern const Optical* _optical;
 
@@ -141,7 +141,7 @@ inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D)
 		vector3D.x + (__FIX19_13_MULT(_optical->horizontalViewPointCenter -  vector3D.x, vector3D.z) >> _optical->maximumViewDistancePower),
 		vector3D.y - (__FIX19_13_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
 		vector3D.z,
-		0
+		parallax
 	};
 
 	return projection;

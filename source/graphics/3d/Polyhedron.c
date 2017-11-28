@@ -188,8 +188,8 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 			toVertex3D = Vector3D_toScreen(toVertex3D);
 
 			// project to 2d coordinates
-			fromVertex2D = Vector3D_projectToVector2D(fromVertex3D);
-			toVertex2D = Vector3D_projectToVector2D(toVertex3D);
+			fromVertex2D = Vector3D_projectToVector2D(fromVertex3D, 0);
+			toVertex2D = Vector3D_projectToVector2D(toVertex3D, 0);
 
 			// calculate parallax
 			if(calculateParallax)

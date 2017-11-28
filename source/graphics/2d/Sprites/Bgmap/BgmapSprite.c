@@ -250,7 +250,7 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 
 	// normalize the position to screen coordinates
 	position3D = Vector3D_toScreen(position3D);
-	this->drawSpec.position = Vector3D_projectToVector2D(position3D);
+	this->drawSpec.position = Vector3D_projectToVector2D(position3D, this->drawSpec.position.parallax);
 
 	this->drawSpec.position.x -= this->halfWidth;
 	this->drawSpec.position.y -= this->halfHeight;

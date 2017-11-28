@@ -242,9 +242,7 @@ static int Stage_isEntityInLoadRange(Stage this, Vector3D position3D, const Smal
 	position3D = Vector3D_toScreen(position3D);
 
 	// project position to 2D space
-	Vector2D position2D = Vector3D_projectToVector2D(position3D);
-	position2D.z = position3D.z;
-	position2D.parallax = Optics_calculateParallax(position3D.x, position3D.z);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D, Optics_calculateParallax(position3D.x, position3D.z));
 
 	// check x visibility
 	if(__FIX19_13_TO_I(position2D.x) + smallRightBox->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || __FIX19_13_TO_I(position2D.x) + smallRightBox->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)

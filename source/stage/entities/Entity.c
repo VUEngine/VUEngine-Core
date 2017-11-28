@@ -1555,8 +1555,6 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 {
 	ASSERT(this, "Entity::transform: null this");
 
-	this->invalidateSprites = 0;
-
 	if(this->sprites)
 	{
 		this->invalidateSprites = invalidateTransformationFlag | Entity_updateSpritePosition(this) | Entity_updateSpriteRotation(this) | Entity_updateSpriteScale(this);
@@ -1884,7 +1882,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-		Vector2D position2D = Vector3D_projectToVector2D(position3D);
+		Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
 		int halfWidth = (int)(this->size.x >> 1);
 		int halfHeight = (int)(this->size.y >> 1);

@@ -117,7 +117,7 @@ void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 
 	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
 
-	Vector2D position2D = Vector3D_projectToVector2D(position3D);
+	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
 	this->position2D = this->nextFramePosition2D;
 	this->nextFramePosition2D.x = __FIX19_13_TO_I(position2D.x);
