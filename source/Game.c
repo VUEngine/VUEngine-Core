@@ -535,7 +535,7 @@ void Game_start(Game this, GameState state)
 			// skip the rest of the cycle if already late
 			if(this->currentFrameEnded)
 			{
-				Game_showCurrentGameFrameProfiling(this, 1, 0);
+			//	Game_showCurrentGameFrameProfiling(this, 1, 0);
 			}
 #endif
 
@@ -1239,9 +1239,6 @@ void Game_currentFrameEnded(Game this)
 
 inline static void Game_run(Game this)
 {
-	// accumulate time elapsed during last frame
-	//ClockManager_update(ClockManager_getInstance(), TimerManager_getMillisecondsElapsed(this->timerManager));
-
 	// reset timer
 	TimerManager_resetMilliseconds(this->timerManager);
 

@@ -78,24 +78,6 @@
 		 */																								\
 		fix19_13 frictionCoefficient;																	\
 		/**
-		 * @var fix19_13		elapsedTime
-		 * @brief				elapsed time on last cycle
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		fix19_13 elapsedTime;																			\
-		/**
-		 * @var fix19_13		previousTime
-		 * @brief				time on last cycle
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		fix19_13 previousTime;																			\
-		/**
-		 * @var fix19_13		accumulator
-		 * @brief				time remainder between game cycles
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		fix19_13 accumulator;																			\
-		/**
 		 * @var fix19_13		timeScale
 		 * @brief				time scale
 		 * @memberof 			PhysicalWorld
@@ -154,9 +136,6 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->gravity.z = 0;
 
 	this->frictionCoefficient = 0;
-	this->elapsedTime = 0;
-	this->previousTime = 0;
-	this->accumulator = 0;
 	this->timeScale = __1I_FIX19_13;
 }
 
@@ -430,58 +409,23 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 
 	if(clock->paused)
 	{
-		// prevent that the initial update after unpausing the clock
-		// gets a bigger that usual elapsed time
-		this->previousTime = 0;
-		this->elapsedTime = 0;
 		return;
 	}
 
-	Clock_pause(clock, true);
+	PhysicalWorld_checkForGravity(this);
 
+	// TODO: time scale
+	Body_setCurrentElapsedTime(__FIX19_13_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
+	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
+	Body_setCurrentGravity(&this->gravity);
 
-	fix19_13 currentTime = __I_TO_FIX19_13(Clock_getTime(clock));
-	fix19_13 elapsedTime = __FIX19_13_DIV(currentTime - this->previousTime, __I_TO_FIX19_13(__MILLISECONDS_IN_SECOND));
+	VirtualNode node = this->activeBodies->head;
 
-	elapsedTime = elapsedTime > (__PHYSICS_TIME_ELAPSED << 1) ? __PHYSICS_TIME_ELAPSED << 1 : elapsedTime;
-
-	Clock_pause(clock, false);
-
-	if(this->previousTime)
+	// check the bodies
+	for(; node; node = node->next)
 	{
-		PhysicalWorld_checkForGravity(this);
-
-		if(!elapsedTime)
-		{
-			this->previousTime = __I_TO_FIX19_13(Clock_getTime(clock));
-			return;
-		}
-
-		// TODO: time scale
-//		Body_setCurrentElapsedTime(__FIX19_13_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
-		Body_setCurrentElapsedTime(__PHYSICS_TIME_ELAPSED);
-		Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
-		Body_setCurrentGravity(&this->gravity);
-
-		this->elapsedTime = 0;
-		this->accumulator += elapsedTime;
-
-		while (this->accumulator >= __PHYSICS_TIME_ELAPSED)
-        {
-			this->accumulator -= __PHYSICS_TIME_ELAPSED;
-			this->elapsedTime += __PHYSICS_TIME_ELAPSED;
-
-			VirtualNode node = this->activeBodies->head;
-
-			// check the bodies
-			for(; node; node = node->next)
-			{
-				__VIRTUAL_CALL(Body, update, node->data);
-			}
-        }
+		__VIRTUAL_CALL(Body, update, node->data);
 	}
-
-	this->previousTime = __I_TO_FIX19_13(Clock_getTime(clock));
 
 #ifdef __SHOW_PHYSICS_PROFILING
 	PhysicalWorld_print(this, 1, 1);
@@ -514,9 +458,6 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	VirtualList_clear(this->activeBodies);
 	VirtualList_clear(this->removedBodies);
 
-	this->elapsedTime = 0;
-	this->previousTime = 0;
-	this->accumulator = 0;
 	this->bodyToCheckForGravityNode = NULL;
 }
 
@@ -706,7 +647,7 @@ fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 
-	return this->elapsedTime;
+	return __PHYSICS_TIME_ELAPSED;
 }
 
 /**
