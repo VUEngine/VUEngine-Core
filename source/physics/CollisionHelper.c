@@ -136,7 +136,22 @@ CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attri
 
 	CollisionInformation collisionInformation = (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 
-	if(__IS_INSTANCE_OF(Box, shapeA))
+	if(__IS_INSTANCE_OF(Ball, shapeA))
+	{
+		if(__IS_INSTANCE_OF(Box, shapeB))
+    	{
+			collisionInformation = CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
+		}
+		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
+		{
+			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
+		}
+		else if(__IS_INSTANCE_OF(Ball, shapeB))
+		{
+			collisionInformation = CollisionHelper_checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
+		}
+	}
+	else if(__IS_INSTANCE_OF(Box, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
@@ -164,21 +179,6 @@ CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attri
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
 			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
-		}
-	}
-	else if(__IS_INSTANCE_OF(Ball, shapeA))
-	{
-		if(__IS_INSTANCE_OF(Box, shapeB))
-    	{
-			collisionInformation = CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
-		}
-		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
-		{
-			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
-		}
-		else if(__IS_INSTANCE_OF(Ball, shapeB))
-		{
-			collisionInformation = CollisionHelper_checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 
@@ -319,7 +319,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		if(isSATCheckPending)
+		if(false && isSATCheckPending)
 		{
 			solutionVector = CollisionHelper_getSolutionVectorBetweenBoxAndBall(this, boxA, ballB);
 		}
@@ -345,12 +345,12 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 				{
 					solutionVector.magnitude = minimumIntervalDistance = intervalDistance;
 					solutionVector.direction = normals[i];
-
-					if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
-					{
-						solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
-					}
 				}
+			}
+
+			if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+			{
+				solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
 			}
 		}
 
@@ -416,12 +416,12 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 			{
 				solutionVector.magnitude = minimumIntervalDistance = intervalDistance;
 				solutionVector.direction = normals[i];
-
-				if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
-				{
-					solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
-				}
 			}
+		}
+
+		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+		{
+			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
 		}
 
 		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), solutionVector};
@@ -523,11 +523,13 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 	if(!boxA->normals)
 	{
 		Box_projectOntoItself(boxA);
+		__PRINT_IN_GAME_TIME(10, 20);
 	}
 
 	if(!boxB->normals)
 	{
 		Box_projectOntoItself(boxA);
+		__PRINT_IN_GAME_TIME(20, 20);
 	}
 
 	Vector3D* normals[2] =
@@ -607,12 +609,12 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 			{
 				solutionVector.magnitude = minimumIntervalDistance = intervalDistance;
 				solutionVector.direction = currentNormal;
-
-				if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
-				{
-					solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
-				}
 			}
+		}
+
+		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+		{
+			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
 		}
 	}
 
@@ -634,6 +636,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 	if(!boxA->normals)
 	{
 		Box_projectOntoItself(boxA);
+		__PRINT_IN_GAME_TIME(1, 20);
 	}
 
 	Vector3D* normals = boxA->normals->vectors;
@@ -688,12 +691,12 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 		{
 			solutionVector.magnitude = minimumIntervalDistance = intervalDistance;
 			solutionVector.direction = currentNormal;
-
-			if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
-			{
-				solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
-			}
 		}
+	}
+
+	if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+	{
+		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
 	}
 
 	return solutionVector;
@@ -729,11 +732,11 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(Collis
 		// add padding to prevent rounding problems
 		solutionVector.magnitude = __FIX51_13_TO_FIX19_13(radiusesLength) - distanceVectorLength + __I_TO_FIX19_13(1);
 		solutionVector.direction = Vector3D_normalize(distanceVector);
+	}
 
-		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)
-		{
-			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
-		}
+	if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)
+	{
+		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
 	}
 
 	return solutionVector;
