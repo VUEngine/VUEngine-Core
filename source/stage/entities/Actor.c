@@ -417,8 +417,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 	for(; node; node = node->next)
 	{
 		Shape shape = __SAFE_CAST(Shape, node->data);
-
-		canMove &= __VIRTUAL_CALL(Shape, canMoveTowards, shape, displacement, 0);
+		canMove &= Shape_canMoveTowards(shape, displacement, 0);
 	}
 
 	return canMove;

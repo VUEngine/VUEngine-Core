@@ -317,7 +317,7 @@ bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
-	return __VIRTUAL_CALL(Shape, canMoveTowards, this->shape, displacement, 0);
+	return Shape_canMoveTowards(this->shape, displacement, 0);
 }
 
 /**
