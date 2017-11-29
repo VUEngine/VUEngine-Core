@@ -351,7 +351,7 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrem
 	return canMove;
 }
 
-static void Shape_invalidateSolutionVectors(Shape this, Shape collidingShape)
+static void Shape_checkPreviousCollisions(Shape this, Shape collidingShape)
 {
 	ASSERT(this, "Shape::invalidateSolutionVectors: null this");
 
@@ -445,7 +445,7 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 		Shape_displaceOwner(this, Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
 		// need to invalidate solution vectors for other colliding shapes
-		Shape_invalidateSolutionVectors(this, collisionInformation->collidingShape);
+		Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);
