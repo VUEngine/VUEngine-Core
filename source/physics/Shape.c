@@ -424,10 +424,8 @@ static void Shape_displaceOwner(Shape this, Vector3D displacement)
  * @public
  *
  * @param this			Function scope
- *
- * @return				The sum of friction coefficients
  */
-SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation)
+void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "Shape::resolveCollision: null this");
 	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
@@ -435,7 +433,7 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 
 	if(!__IS_OBJECT_ALIVE(this->owner))
 	{
-		return (SolutionVector) {{0, 0, 0}, 0};
+		return;
 	}
 
 	SolutionVector solutionVector = collisionInformation->solutionVector;
@@ -450,8 +448,6 @@ SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* co
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);
 	}
-
-	return solutionVector;
 }
 
 /**

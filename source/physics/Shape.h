@@ -213,7 +213,7 @@ void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 void Shape_setReady(Shape this, bool ready);
 bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement);
 fix19_13 Shape_getCollidingFrictionCoefficient(Shape this);
-SolutionVector Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
+void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
 u32 Shape_getLayers(Shape this);
 void Shape_setLayers(Shape this, u32 layers);
 u32 Shape_getLayersToIgnore(Shape this);
