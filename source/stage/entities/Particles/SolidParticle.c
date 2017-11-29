@@ -281,10 +281,10 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 		{
 			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
-					fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
+			fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
 			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
 
-			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), solutionVector.direction, frictionCoefficient, elasticity);
+			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 			returnValue = true;
 		}
 	}
