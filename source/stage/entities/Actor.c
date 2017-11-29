@@ -472,10 +472,10 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 	if(collisionInformation->shape && collisionInformation->collidingShape)
 	{
-		SolutionVector solutionVector = Shape_resolveCollision(collisionInformation->shape, collisionInformation);
-
-		if(solutionVector.magnitude)
+		if(collisionInformation->solutionVector.magnitude)
 		{
+			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
+
 			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
 
 			fix19_13 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
@@ -485,8 +485,6 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 			returnValue = true;
 		}
-
-		__VIRTUAL_CALL(Actor, collisionsProcessingDone, this, collisionInformation);
 	}
 
 	return returnValue;
@@ -708,11 +706,6 @@ Velocity Actor_getVelocity(Actor this)
 	ASSERT(this, "Actor::getVelocity: null this");
 
 	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getVelocity, this);
-}
-
-void Actor_collisionsProcessingDone(Actor this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
-{
-	ASSERT(this, "Actor::collisionsProcessingDone: null this");
 }
 
 void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)

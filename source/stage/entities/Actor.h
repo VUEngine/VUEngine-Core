@@ -41,7 +41,6 @@
 #define Actor_METHODS(ClassName)																		\
 		AnimatedEntity_METHODS(ClassName)																\
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
-		__VIRTUAL_DEC(ClassName, void, collisionsProcessingDone, const CollisionInformation* collisionInformation);			\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
 		__VIRTUAL_DEC(ClassName, fix19_13, getElasticityOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
@@ -65,7 +64,6 @@
 		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
 		__VIRTUAL_SET(ClassName, Actor, exitCollision);													\
 		__VIRTUAL_SET(ClassName, Actor, collidingShapeOwnerDestroyed);									\
-		__VIRTUAL_SET(ClassName, Actor, collisionsProcessingDone);										\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
 		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
 		__VIRTUAL_SET(ClassName, Actor, getElasticityOnCollision);										\
@@ -141,7 +139,6 @@ void Actor_stopAllMovement(Actor this);
 void Actor_stopMovement(Actor this, u16 axis);
 void Actor_resetCollisionStatus(Actor this);
 Velocity Actor_getVelocity(Actor this);
-void Actor_collisionsProcessingDone(Actor this, const CollisionInformation* collisionInformation);
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation);
 void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
 void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
