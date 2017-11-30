@@ -319,7 +319,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		if(false && isSATCheckPending)
+		if(isSATCheckPending)
 		{
 			solutionVector = CollisionHelper_getSolutionVectorBetweenBoxAndBall(this, boxA, ballB);
 		}
@@ -444,71 +444,6 @@ static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHel
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-/**
- * Check if two shapes overlap
- *
- * @memberof			CollisionHelper
- * @public
- *
- * @param this			Function scope
- * @param shapeA		Shape
- * @param shapeB		Shape
- */
-SolutionVector CollisionHelper_getSolutionVector(CollisionHelper this __attribute__ ((unused)), Shape shapeA, Shape shapeB)
-{
-	ASSERT(this, "CollisionHelper::getSolutionVector: null this");
-	ASSERT(shapeA, "CollisionHelper::getSolutionVector: null shapeA");
-	ASSERT(shapeB, "CollisionHelper::getSolutionVector: null shapeA");
-
-	if(__IS_INSTANCE_OF(Box, shapeA))
-	{
-		if(__IS_INSTANCE_OF(Box, shapeB))
-    	{
-			return CollisionHelper_getSolutionVectorBetweenBoxAndBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Box, shapeB));
-		}
-		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
-		{
-			return CollisionHelper_getSolutionVectorBetweenBoxAndInverseBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(InverseBox, shapeB));
-		}
-		else if(__IS_INSTANCE_OF(Ball, shapeB))
-		{
-			return CollisionHelper_getSolutionVectorBetweenBoxAndBall(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Ball, shapeB));
-		}
-	}
-	else if(__IS_INSTANCE_OF(InverseBox, shapeA))
-	{
-		if(__IS_INSTANCE_OF(Box, shapeB))
-    	{
-			return CollisionHelper_getSolutionVectorBetweenBoxAndInverseBox(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(InverseBox, shapeA));
-		}
-		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
-		{
-			return CollisionHelper_getSolutionVectorBetweenInverseBoxAndInverseBox(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(InverseBox, shapeB));
-		}
-		else if(__IS_INSTANCE_OF(Ball, shapeB))
-		{
-			return CollisionHelper_getSolutionVectorBetweenInverseBoxAndBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
-		}
-	}
-	else if(__IS_INSTANCE_OF(Ball, shapeA))
-	{
-		if(__IS_INSTANCE_OF(Box, shapeB))
-    	{
-			return CollisionHelper_getSolutionVectorBetweenBoxAndBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
-		}
-		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
-		{
-			return CollisionHelper_getSolutionVectorBetweenInverseBoxAndBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
-		}
-		else if(__IS_INSTANCE_OF(Ball, shapeB))
-		{
-			return CollisionHelper_getSolutionVectorBetweenBallAndBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
-		}
-	}
-
-	return (SolutionVector) {{0, 0, 0}, 0};
-}
-
 static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB)
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBoxAndBox: null this");
@@ -523,13 +458,11 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 	if(!boxA->normals)
 	{
 		Box_projectOntoItself(boxA);
-		__PRINT_IN_GAME_TIME(10, 20);
 	}
 
 	if(!boxB->normals)
 	{
 		Box_projectOntoItself(boxA);
-		__PRINT_IN_GAME_TIME(20, 20);
 	}
 
 	Vector3D* normals[2] =
@@ -636,7 +569,6 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 	if(!boxA->normals)
 	{
 		Box_projectOntoItself(boxA);
-		__PRINT_IN_GAME_TIME(1, 20);
 	}
 
 	Vector3D* normals = boxA->normals->vectors;
