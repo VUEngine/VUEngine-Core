@@ -535,9 +535,7 @@ void Game_start(Game this, GameState state)
 			// skip the rest of the cycle if already late
 			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
 			{
-				static int i = 0;
 				Game_showCurrentGameFrameProfiling(this, 1, 0);
-//				while(100 < i++);
 			}
 #endif
 
