@@ -253,6 +253,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 					if(__VIRTUAL_CALL(Shape, collides, shape, shapeToCheck))
 					{
 						this->lastCycleCollisions++;
+						returnValue = true;
 					}
 				}
 			}

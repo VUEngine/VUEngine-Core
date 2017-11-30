@@ -305,7 +305,7 @@ bool Shape_collides(Shape this, Shape shape)
 		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, collidingShapeRegistry->isImpenetrable);
 	}
 
-	return collision;
+	return false;
 }
 
 /**
@@ -825,6 +825,5 @@ void Shape_print(Shape this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Colliding shapes:            ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->collidingShapes ? VirtualList_getSize(this->collidingShapes) : 0, x + 21, y++, NULL);
-	Printing_text(Printing_getInstance(), "Impenetrable shapes:            ", x, y, NULL);
-	Printing_int(Printing_getInstance(), Shape_getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
+	Printing_text(Printing_getInstance(), "Impenetrable shapes:            ", x, y, NULL);Printing_int(Printing_getInstance(), Shape_getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
 }
