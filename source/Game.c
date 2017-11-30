@@ -454,10 +454,6 @@ void Game_start(Game this, GameState state)
 
 		while(true)
 		{
-#ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = "end frame";
-#endif
-
 			while(!this->currentFrameEnded);
 			this->currentFrameEnded = false;
 
@@ -491,6 +487,10 @@ void Game_start(Game this, GameState state)
 
 			// execute game frame
 			Game_run(this);
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+			this->lastProcessName = "end frame";
+#endif
 
 			// increase the fps counter
 			FrameRate_increaseFps(FrameRate_getInstance());
@@ -533,9 +533,11 @@ void Game_start(Game this, GameState state)
 
 #ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 			// skip the rest of the cycle if already late
-			if(this->currentFrameEnded)
+			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
 			{
-			//	Game_showCurrentGameFrameProfiling(this, 1, 0);
+				static int i = 0;
+				Game_showCurrentGameFrameProfiling(this, 1, 0);
+//				while(100 < i++);
 			}
 #endif
 
@@ -1673,6 +1675,9 @@ void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ 
 	Printing_text(printing, "PROFILING", x, y++, NULL);
 
 	Printing_text(printing, "Last game frame's info        (ms)", x, ++y, NULL);
+	Printing_text(printing, "Milliseconds elapsed:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, TimerManager_getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
 
 	Printing_text(printing, "Real duration:", x, ++y, NULL);
 	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
@@ -1807,7 +1812,11 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 	Printing_resetWorldCoordinates(printing);
 
 	Printing_text(printing, "PROFILING", x, y++, NULL);
+
 	Printing_text(printing, "Current game frame's info        (ms)", x, ++y, NULL);
+	Printing_text(printing, "Milliseconds elapsed:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, TimerManager_getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
 
 	Printing_text(printing, "Process during FRAMESTART:", x, y, NULL);
 
@@ -1817,7 +1826,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 	}
 	else
 	{
-		Printing_text(printing, "              ", x + xDisplacement, y++, NULL);
+		Printing_text(printing, "                      ", x + xDisplacement, y++, NULL);
 	}
 
 	Printing_text(printing, "                                                ", x, y, NULL);
@@ -1830,7 +1839,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 	}
 	else
 	{
-		Printing_text(printing, "              ", x + xDisplacement, y++, NULL);
+		Printing_text(printing, "                      ", x + xDisplacement, y++, NULL);
 	}
 
 	Printing_text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
@@ -1904,6 +1913,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 							_streamingProcessTime,
 							x + xDisplacement, y, NULL);
 
+
 		_vipRegisters[__GPLT0] = 0x50;
 		_vipRegisters[__GPLT1] = 0x50;
 		_vipRegisters[__GPLT2] = 0x54;
@@ -1930,6 +1940,9 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x _
 	Printing_text(printing, "PROFILING", x, y++, NULL);
 
 	Printing_text(printing, "Last game frame's info (ms)", x, ++y, NULL);
+	Printing_text(printing, "Milliseconds elapsed:", x, ++y, NULL);
+	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing_int(printing, TimerManager_getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
 
 	Printing_text(printing, "Real duration:", x, ++y, NULL);
 	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
