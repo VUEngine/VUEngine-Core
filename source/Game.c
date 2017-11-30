@@ -1265,11 +1265,11 @@ inline static void Game_run(Game this)
 	// update game"s logic
 	Game_updateLogic(this);
 
+	// dispatch delayed messages
+	Game_dispatchDelayedMessages(this);
+
 	if(!skipNonCriticalProcesses)
 	{
-		// dispatch delayed messages
-		Game_dispatchDelayedMessages(this);
-
 		// stream
 		Game_stream(this);
 	}
