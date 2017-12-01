@@ -266,9 +266,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	this->collisionChecks += this->lastCycleCollisionChecks;
 	this->collisions += this->lastCycleCollisions;
 
-	this->checkingCollisions = false;
-	CollisionManager_print(this, 25, 1);
-
 #ifdef __SHOW_PHYSICS_PROFILING
 	CollisionManager_print(this, 25, 1);
 #endif
