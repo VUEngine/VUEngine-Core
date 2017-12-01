@@ -46,8 +46,8 @@
 
 #define Ball_SET_VTABLE(ClassName)																		\
 		Shape_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, Ball, setup);															\
-		__VIRTUAL_SET(ClassName, Ball, testForCollision);													\
+		__VIRTUAL_SET(ClassName, Ball, position);														\
+		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
 		__VIRTUAL_SET(ClassName, Ball, getPosition);													\
 		__VIRTUAL_SET(ClassName, Ball, getSurroundingRightBox);											\
 		__VIRTUAL_SET(ClassName, Ball, hide);															\
@@ -87,7 +87,7 @@ __CLASS_NEW_DECLARE(Ball, SpatialObject owner);
 void Ball_constructor(Ball this, SpatialObject owner);
 void Ball_destructor(Ball this);
 
-void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size, u32 layers, u32 layersToIgnore);
+void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max);
 CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement);
 Vector3D Ball_getPosition(Ball this);

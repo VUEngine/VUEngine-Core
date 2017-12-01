@@ -1173,7 +1173,7 @@ void Entity_transformShapes(Entity this)
 				__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
 			};
 
-			__VIRTUAL_CALL(Shape, setup, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size, shapeDefinitions[i].layers, shapeDefinitions[i].layersToIgnore);
+			__VIRTUAL_CALL(Shape, position, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size);
 		}
 	}
 }
@@ -1213,6 +1213,8 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 	{
 		Shape shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinitions[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
+
+		Shape_setup(shape, shapeDefinitions[i].layers, shapeDefinitions[i].layersToIgnore);
 
 		Shape_setActive(shape, true);
 

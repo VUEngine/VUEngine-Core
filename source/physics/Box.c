@@ -112,9 +112,9 @@ void Box_destructor(Box this)
 	__DESTROY_BASE;
 }
 
-void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size, u32 layers, u32 layersToIgnore)
+void Box_position(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
 {
-	ASSERT(this, "Box::setup: null this");
+	ASSERT(this, "Box::position: null this");
 
 	this->rotationVertexDisplacement.x = 0;
 	this->rotationVertexDisplacement.y = 0;
@@ -322,7 +322,8 @@ void Box_setup(Box this, const Vector3D* position, const Rotation* rotation, con
 		Box_projectOntoItself(this);
 	}
 
-	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
+	// ready for collision checking
+	this->ready = true;
 }
 
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])

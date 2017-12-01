@@ -110,9 +110,10 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 
 	// register a shape for collision detection
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
-	CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+	Shape_setup(this->shape, this->solidParticleDefinition->layers, this->solidParticleDefinition->layersToIgnore);
 	Shape_setActive(this->shape, true);
 	Shape_setCheckForCollisions(this->shape, true);
+	CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 
 	Body_setElasticity(this->body, this->solidParticleDefinition->elasticity);
 }
@@ -179,7 +180,7 @@ static void SolidParticle_transformShape(SolidParticle this)
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
 
-	__VIRTUAL_CALL(Shape, setup, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize, this->solidParticleDefinition->layers, this->solidParticleDefinition->layersToIgnore);
+	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 	Shape_reset(this->shape);
 	Body_reset(this->body);
 }

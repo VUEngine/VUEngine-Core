@@ -502,7 +502,7 @@ static void StageEditor_getShape(StageEditor this)
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
 
-		__VIRTUAL_CALL(Shape, setup, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size, kNoLayer, kNoLayer);
+		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 	}
 
 	Shape_setReady(this->shape, false);

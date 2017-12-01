@@ -141,8 +141,8 @@ void Shape_destructor(Shape this)
 
 			if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape))
 			{
-				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
+				Object_removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
+				Object_removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			__DELETE_BASIC(node->data);
@@ -179,8 +179,8 @@ void Shape_reset(Shape this)
 
 			if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape))
 			{
-				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-				Object_removeEventListeners(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), kEventShapeChanged);
+				Object_removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
+				Object_removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
 			}
 
 			__DELETE_BASIC(node->data);
@@ -198,12 +198,10 @@ void Shape_reset(Shape this)
  * @public
  *
  * @param this					Function scope
- * @param position				Vector3D*
- * @param rotation				Rotation*
- * @param scale					Scale*
- * @param size					Size*
+ * @param layers				u32
+ * @param layersToIgnore		u32
  */
-void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)), u32 layers, u32 layersToIgnore)
+void Shape_setup(Shape this, u32 layers, u32 layersToIgnore)
 {
 	ASSERT(this, "Shape::setup: null this");
 
@@ -214,9 +212,6 @@ void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position _
 	{
 		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeChanged);
 	}
-
-	// no more setup needed
-	this->ready = true;
 
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);
@@ -233,7 +228,6 @@ void Shape_setup(Shape this __attribute__ ((unused)), const Vector3D* position _
  * @param this					Function scope
  * @param shape					shape to check for overlapping
  */
-
 // check if two rectangles overlap
 bool Shape_collides(Shape this, Shape shape)
 {
@@ -623,8 +617,8 @@ static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
 
 	if(__IS_OBJECT_ALIVE(collidingShape))
 	{
-		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeDeleted);
-		Object_removeEventListeners(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), kEventShapeChanged);
+		Object_removeEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
+		Object_removeEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return true;
@@ -825,5 +819,6 @@ void Shape_print(Shape this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Colliding shapes:            ", x, y, NULL);
 	Printing_int(Printing_getInstance(), this->collidingShapes ? VirtualList_getSize(this->collidingShapes) : 0, x + 21, y++, NULL);
-	Printing_text(Printing_getInstance(), "Impenetrable shapes:            ", x, y, NULL);Printing_int(Printing_getInstance(), Shape_getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
+	Printing_text(Printing_getInstance(), "Impenetrable shapes:            ", x, y, NULL);
+	Printing_int(Printing_getInstance(), Shape_getNumberOfImpenetrableCollidingShapes(this), x + 21, y++, NULL);
 }

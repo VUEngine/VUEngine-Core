@@ -91,7 +91,8 @@ typedef struct VertexProjection
 
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, setup, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);		\
+		__VIRTUAL_DEC(ClassName, void, setup, u32 layers, u32 layersToIgnore);							\
+		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
 		__VIRTUAL_DEC(ClassName, bool, collides, Shape shape);											\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);												\
@@ -204,7 +205,7 @@ bool Shape_collides(Shape this, Shape shape);
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
 void Shape_reset(Shape this);
-void Shape_setup(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size, u32 layers, u32 layersToIgnore);
+void Shape_setup(Shape this, u32 layers, u32 layersToIgnore);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isReady(Shape this);

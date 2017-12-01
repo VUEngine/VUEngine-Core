@@ -98,9 +98,9 @@ void Ball_destructor(Ball this)
 	__DESTROY_BASE;
 }
 
-void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size, u32 layers, u32 layersToIgnore)
+void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
 {
-	ASSERT(this, "Ball::setup: null this");
+	ASSERT(this, "Ball::position: null this");
 
 	this->center = *position;
 	this->radius = __I_TO_FIX19_13(size->z);
@@ -117,7 +117,8 @@ void Ball_setup(Ball this, const Vector3D* position, const Rotation* rotation __
 		this->radius = __I_TO_FIX19_13(size->y);
 	}
 
-	Shape_setup(__SAFE_CAST(Shape, this), position, rotation, scale, size, layers, layersToIgnore);
+	// ready for collision checking
+	this->ready = true;
 }
 
 void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max)
