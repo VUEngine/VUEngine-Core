@@ -44,6 +44,7 @@
 		__VIRTUAL_DEC(ClassName, void, transform);														\
 		__VIRTUAL_DEC(ClassName, void, resume);															\
 		__VIRTUAL_DEC(ClassName, void, suspend);														\
+		__VIRTUAL_DEC(ClassName, void, reset);															\
 
 
 // define the virtual methods
@@ -57,6 +58,7 @@
 		__VIRTUAL_SET(ClassName, Particle, suspend);													\
 		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
 		__VIRTUAL_SET(ClassName, Particle, getPosition);												\
+		__VIRTUAL_SET(ClassName, Particle, reset);														\
 
 
 #define Particle_ATTRIBUTES																				\
@@ -167,6 +169,7 @@ void Particle_show(Particle this);
 void Particle_suspend(Particle this);
 u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
 void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition);
+void Particle_reset(Particle this);
 
 
 #endif

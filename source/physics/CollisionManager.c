@@ -28,7 +28,6 @@
 #include <MessageDispatcher.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
-#include <Screen.h>
 #include <debugConfig.h>
 
 
@@ -132,6 +131,9 @@ Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, c
 
 	// create the shape
 	Shape shape = ((Shape (*)(SpatialObject)) shapeDefinition->allocator)(owner);
+	Shape_setup(shape, shapeDefinition->layers, shapeDefinition->layersToIgnore);
+	Shape_setCheckForCollisions(shape, shapeDefinition->checkForCollisions);
+	Shape_setActive(shape, true);
 
 	// register it
 	VirtualList_pushFront(this->shapes, shape);
@@ -244,21 +246,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 				// load the current shape to check against
 				Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
 
-				extern const Vector3D* _screenPosition;
-				extern const CameraFrustum* _cameraFrustum;
-
-				RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, shapeToCheck);
-
-				if(
-					surroundingRightBox.x0 - _screenPosition->x > __I_TO_FIX19_13(_cameraFrustum->x1) ||
-					surroundingRightBox.x1 - _screenPosition->x < __I_TO_FIX19_13(_cameraFrustum->x0) ||
-					surroundingRightBox.y0 - _screenPosition->y > __I_TO_FIX19_13(_cameraFrustum->y1) ||
-					surroundingRightBox.y1 - _screenPosition->y < __I_TO_FIX19_13(_cameraFrustum->y0)
-				)
-				{
-					continue;
-				}
-
 				// compare only different ready, different shapes against it other if
 				// the layer of the shapeToCheck are not excluded by the current shape
 				if(shape != shapeToCheck && shapeToCheck->ready && !(shape->layersToIgnore & shapeToCheck->layers))
@@ -266,7 +253,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 					this->lastCycleCollisionChecks++;
 
 					// check if shapes overlap
-					if(__VIRTUAL_CALL(Shape, collides, shape, shapeToCheck))
+					if(Shape_collides(shape, shapeToCheck))
 					{
 						this->lastCycleCollisions++;
 						returnValue = true;
@@ -280,6 +267,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	this->collisions += this->lastCycleCollisions;
 
 	this->checkingCollisions = false;
+	CollisionManager_print(this, 25, 1);
 
 #ifdef __SHOW_PHYSICS_PROFILING
 	CollisionManager_print(this, 25, 1);

@@ -1052,7 +1052,7 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 
 	// add elasticity and friction
 	u = Vector3D_scalarProduct(u, this->elasticity);
-	w = Vector3D_scalarProduct(w, (__I_TO_FIX19_13(1) - this->frictionCoefficient));
+	w = Vector3D_scalarProduct(w, (__1I_FIX19_13 - this->frictionCoefficient));
 
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;

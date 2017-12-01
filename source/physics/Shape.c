@@ -28,6 +28,7 @@
 #include <Game.h>
 #include <CollisionManager.h>
 #include <CollisionHelper.h>
+#include <Screen.h>
 #include <debugConfig.h>
 
 
@@ -211,6 +212,44 @@ void Shape_setup(Shape this, u32 layers, u32 layersToIgnore)
 	if(this->events)
 	{
 		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeChanged);
+	}
+}
+
+/**
+ * Position
+ *
+ * @memberof					Shape
+ * @public
+ *
+ * @param this					Function scope
+ * @param position				Vector3d*
+ * @param rotation				Rotation*
+ * @param scale					Scale*
+ * @param size					Size*
+ */
+void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+{
+	if(this->events)
+	{
+		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeChanged);
+	}
+
+	this->ready = true;
+
+	extern const Vector3D* _screenPosition;
+	extern const CameraFrustum* _cameraFrustum;
+
+	RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, this);
+
+	// not ready for collision checks if out of the screen
+	if(
+		surroundingRightBox.x0 - _screenPosition->x > __I_TO_FIX19_13(_cameraFrustum->x1) ||
+		surroundingRightBox.x1 - _screenPosition->x < __I_TO_FIX19_13(_cameraFrustum->x0) ||
+		surroundingRightBox.y0 - _screenPosition->y > __I_TO_FIX19_13(_cameraFrustum->y1) ||
+		surroundingRightBox.y1 - _screenPosition->y < __I_TO_FIX19_13(_cameraFrustum->y0)
+	)
+	{
+		this->ready = false;
 	}
 
 #ifdef __DRAW_SHAPES

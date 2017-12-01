@@ -434,3 +434,17 @@ void Particle_suspend(Particle this)
 
 	this->objectSprite = NULL;
 }
+
+/**
+ * Reset
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Particle_reset(Particle this)
+{
+	ASSERT(this, "Particle::reset: null this");
+}
+

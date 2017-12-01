@@ -44,6 +44,7 @@
 __CLASS_DEFINITION(SolidParticle, Particle);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
+__CLASS_FRIEND_DEFINITION(Shape);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,6 +81,8 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	// construct base Container
 	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
+	this->solidParticleDefinition = solidParticleDefinition;
+
 	ShapeDefinition shapeDefinition =
 	{
 		// shape
@@ -106,13 +109,8 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 		this->solidParticleDefinition->layersToIgnore,
 	};
 
-	this->solidParticleDefinition = solidParticleDefinition;
-
 	// register a shape for collision detection
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
-	Shape_setup(this->shape, this->solidParticleDefinition->layers, this->solidParticleDefinition->layersToIgnore);
-	Shape_setActive(this->shape, true);
-	Shape_setCheckForCollisions(this->shape, true);
 	CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 
 	Body_setElasticity(this->body, this->solidParticleDefinition->elasticity);
@@ -181,8 +179,6 @@ static void SolidParticle_transformShape(SolidParticle this)
 	const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
 
 	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
-	Shape_reset(this->shape);
-	Body_reset(this->body);
 }
 
 /**
@@ -476,3 +472,19 @@ void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ (
 	Body_setFrictionCoefficient(this->body, frictionCoefficient);
 }
 
+
+/**
+ * Reset
+ *
+ * @memberof	SolidParticle
+ * @public
+ *
+ * @param this	Function scope
+ */
+void SolidParticle_reset(SolidParticle this)
+{
+	ASSERT(this, "SolidParticle::reset: null this");
+
+	Shape_reset(this->shape);
+	Body_reset(this->body);
+}

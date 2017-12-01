@@ -62,7 +62,8 @@ Shape SpatialObject_getShape(SpatialObject this);
 		__VIRTUAL_SET(ClassName, SolidParticle, getShapes);												\
 		__VIRTUAL_SET(ClassName, SolidParticle, getInGameType);											\
 		__VIRTUAL_SET(ClassName, SolidParticle, getVelocity);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, exitCollision);										\
+		__VIRTUAL_SET(ClassName, SolidParticle, exitCollision);											\
+		__VIRTUAL_SET(ClassName, SolidParticle, reset);													\
 
 #define SolidParticle_ATTRIBUTES																		\
 		Particle_ATTRIBUTES																				\
@@ -150,6 +151,7 @@ VirtualList SolidParticle_getShapes(SolidParticle this);
 u32 SolidParticle_getInGameType(SolidParticle this);
 Velocity SolidParticle_getVelocity(SolidParticle this);
 void SolidParticle_exitCollision(SolidParticle this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
+void SolidParticle_reset(SolidParticle this);
 
 
 #endif

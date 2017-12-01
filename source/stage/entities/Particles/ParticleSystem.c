@@ -301,6 +301,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		// call the appropriate allocator to support inheritance
 		Particle particle = __SAFE_CAST(Particle, VirtualList_front(this->recyclableParticles));
 
+		__VIRTUAL_CALL(Particle, reset, particle);
 		Particle_setLifeSpan(particle, lifeSpan);
 		Particle_setMass(particle, mass);
 		__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));

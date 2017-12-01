@@ -105,6 +105,7 @@ typedef struct VertexProjection
 #define Shape_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Shape, setup);															\
+		__VIRTUAL_SET(ClassName, Shape, position);															\
 		__VIRTUAL_SET(ClassName, Shape, collides);														\
 		__VIRTUAL_SET(ClassName, Shape, canMoveTowards);												\
 
@@ -206,6 +207,7 @@ bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
 void Shape_reset(Shape this);
 void Shape_setup(Shape this, u32 layers, u32 layersToIgnore);
+void Shape_position(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
 void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isReady(Shape this);

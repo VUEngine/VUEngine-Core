@@ -117,8 +117,7 @@ void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation
 		this->radius = __I_TO_FIX19_13(size->y);
 	}
 
-	// ready for collision checking
-	this->ready = true;
+	__CALL_BASE_METHOD(Shape, position, this, position, rotation, scale, size);
 }
 
 void Ball_project(Vector3D center, fix19_13 radius, Vector3D vector, fix19_13* min, fix19_13* max)
