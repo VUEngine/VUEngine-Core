@@ -28,6 +28,7 @@
 #include <MessageDispatcher.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
+#include <Screen.h>
 #include <debugConfig.h>
 
 
@@ -242,6 +243,21 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 			{
 				// load the current shape to check against
 				Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
+
+				extern const Vector3D* _screenPosition;
+				extern const CameraFrustum* _cameraFrustum;
+
+				RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, shapeToCheck);
+
+				if(
+					surroundingRightBox.x0 - _screenPosition->x > __I_TO_FIX19_13(_cameraFrustum->x1) ||
+					surroundingRightBox.x1 - _screenPosition->x < __I_TO_FIX19_13(_cameraFrustum->x0) ||
+					surroundingRightBox.y0 - _screenPosition->y > __I_TO_FIX19_13(_cameraFrustum->y1) ||
+					surroundingRightBox.y1 - _screenPosition->y < __I_TO_FIX19_13(_cameraFrustum->y0)
+				)
+				{
+					continue;
+				}
 
 				// compare only different ready, different shapes against it other if
 				// the layer of the shapeToCheck are not excluded by the current shape
