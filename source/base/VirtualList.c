@@ -55,6 +55,7 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 //---------------------------------------------------------------------------------------------------------
 
 static void VirtualList_constructor(VirtualList this);
+static void VirtualList_checkThatNodeIsPresent(VirtualList this, VirtualNode node);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -651,6 +652,37 @@ void* VirtualList_back(VirtualList this)
 }
 
 /**
+ * Check if a node is part of this list
+ *
+ * @memberof	VirtualList
+ * @private
+ *
+ * @param this	Function scope
+ * @param node	node to check
+ */
+static void VirtualList_checkThatNodeIsPresent(VirtualList this, VirtualNode node)
+{
+	ASSERT(this, "VirtualList::checkThatNodeIsPresent: null this");
+
+	if(!node)
+	{
+		return;
+	}
+
+	VirtualNode auxNode = this->head;
+
+	for(; auxNode; auxNode = auxNode->next)
+	{
+		if(auxNode == node)
+		{
+			return;
+		}
+	}
+
+	NM_ASSERT(false, "VirtualList::checkThatNodeIsPresent: node doesn't belong to me");
+}
+
+/**
  * Insert a node after the node specified
  *
  * @memberof	VirtualList
@@ -665,6 +697,10 @@ void* VirtualList_back(VirtualList this)
 VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data)
 {
 	ASSERT(this, "VirtualList::insertAfter: null this");
+
+#ifdef __DEBUG
+	VirtualList_checkThatNodeIsPresent(this, node);
+#endif
 
 	VirtualNode newNode = NULL;
 
@@ -714,6 +750,10 @@ VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const vo
 VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const void* const data)
 {
 	ASSERT(this, "VirtualList::insertBefore: null this");
+
+#ifdef __DEBUG
+	VirtualList_checkThatNodeIsPresent(this, node);
+#endif
 
 	VirtualNode newNode = NULL;
 
