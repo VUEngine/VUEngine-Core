@@ -459,3 +459,24 @@ void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher th
 		}
 	}
 }
+
+/**
+ * Print status
+ *
+ * @memberof		MessageDispatcher
+ * @public
+ *
+ * @param this		Function scope
+ * @param x			x screen coordinate
+ * @param y			y screen coordinate
+ */
+void MessageDispatcher_print(MessageDispatcher this, int x, int y)
+{
+	ASSERT(this, "MessageDispatcher::print: null this");
+
+	Printing_text(Printing_getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Delayed messages:     ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->delayedMessages), x + 19, y, NULL);
+	Printing_text(Printing_getInstance(), "Discarded messages:         ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), VirtualList_getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
+}

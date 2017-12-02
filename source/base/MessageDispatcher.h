@@ -61,6 +61,7 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
 void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message);
 void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender);
 void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver);
+void MessageDispatcher_print(MessageDispatcher this, int x, int y);
 
 
 #endif
