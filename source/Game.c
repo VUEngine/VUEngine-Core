@@ -1258,12 +1258,6 @@ inline static void Game_run(Game this)
 	// process collisions
 	skipNonCriticalProcesses |= Game_updateCollisions(this);
 
-	// skip the rest of frame if FRAMESTART already happened
-	if(this->currentFrameEnded)
-	{
-		return;
-	}
-
 	// this is the moment to check if the game"s state
 	// needs to be changed
 	Game_checkForNewState(this);
@@ -1271,23 +1265,11 @@ inline static void Game_run(Game this)
 	// update game"s logic
 	Game_updateLogic(this);
 
-	// skip the rest of frame if FRAMESTART already happened
-	if(this->currentFrameEnded)
-	{
-		return;
-	}
-
 	// dispatch delayed messages
 	Game_dispatchDelayedMessages(this);
 
-	// skip the rest of frame if FRAMESTART already happened
-	if(this->currentFrameEnded)
-	{
-		return;
-	}
-
 	// skip streaming if the game frame has bee too busy
-	if(!skipNonCriticalProcesses)
+	if(!this->currentFrameEnded && !skipNonCriticalProcesses)
 	{
 		// stream
 		Game_stream(this);
