@@ -57,7 +57,8 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
-#define __STOP_VELOCITY_THRESHOLD			__I_TO_FIX19_13(10)
+#define __STOP_VELOCITY_THRESHOLD				__I_TO_FIX19_13(10)
+#define __STOP_BOUNCING_VELOCITY_THRESHOLD 		(__STOP_VELOCITY_THRESHOLD << 1)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -122,6 +123,7 @@ static void Body_setMovementType(Body this, int movementType, u16 axes);
 static void Body_clearNormalOnAxes(Body this, u16 axes);
 Acceleration Body_getGravity(Body this);
 static void Body_computeTotalNormal(Body this);
+static void Body_computeTotalFrictionCoefficient(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -141,9 +143,11 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = 0 < physicalSpecification->mass ? physicalSpecification->mass : __I_TO_FIX19_13(1);
+	this->mass = 0 < physicalSpecification->mass ? physicalSpecification->mass : __1I_FIX19_13;
 	this->elasticity = physicalSpecification->elasticity;
 	this->frictionCoefficient = physicalSpecification->frictionCoefficient;
+	this->surroundingFrictionCoefficient = 0;
+	this->totalFrictionCoefficient = 0;
 	this->frictionForceMagnitude = 0;
 
 	this->active = true;
@@ -520,7 +524,8 @@ MovementResult Body_updateMovement(Body this)
 
 	this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
 	*/
-	this->friction = Vector3D_scalarProduct(this->velocity, -this->frictionCoefficient << 5);
+	// hack to avoid normalization
+	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 5));
 
 	fix19_13 elapsedTime = _currentElapsedTime;
 	fix19_13 elapsedTimeHalfSquare = __FIX19_13_MULT(elapsedTime, elapsedTime) >> 1;
@@ -784,7 +789,7 @@ void Body_reset(Body this)
 	ASSERT(this, "Body::reset: null this");
 
 	Body_clearNormalOnAxes(this, __ALL_AXES);
-	Body_setFrictionCoefficient(this, 0);
+	Body_setSurroundingFrictionCoefficient(this, 0);
 }
 
 static void Body_clearNormalOnAxes(Body this, u16 axes)
@@ -859,7 +864,27 @@ fix19_13 Body_getFrictionCoefficient(Body this)
 	return this->frictionCoefficient;
 }
 
-// set elasticity
+static void Body_computeTotalFrictionCoefficient(Body this)
+{
+	ASSERT(this, "Body::computeFrictionForceMagnitude: null this");
+
+	this->totalFrictionCoefficient = this->totalNormal.x | this->totalNormal.y | this->totalNormal.z ? this->frictionCoefficient : 0;
+
+	this->totalFrictionCoefficient += _currentWorldFriction + this->surroundingFrictionCoefficient;
+
+	if(0 > this->totalFrictionCoefficient)
+	{
+		this->totalFrictionCoefficient = 0;
+	}
+	else if(__1I_FIX19_13 < this->totalFrictionCoefficient)
+	{
+		this->totalFrictionCoefficient = __1I_FIX19_13;
+	}
+
+	this->frictionForceMagnitude = __ABS(__FIX19_13_MULT(this->frictionForceMagnitude, this->totalFrictionCoefficient));
+}
+
+// set friction
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient)
 {
 	ASSERT(this, "Body::setFriction: null this");
@@ -868,18 +893,30 @@ void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient)
 	{
 		frictionCoefficient = 0;
 	}
-	else if(__I_TO_FIX19_13(1) < frictionCoefficient)
+	else if(__1I_FIX19_13 < frictionCoefficient)
 	{
-		frictionCoefficient = __I_TO_FIX19_13(1);
+		frictionCoefficient = __1I_FIX19_13;
 	}
 
-/*	if(this->frictionCoefficient)
-	{
-		this->frictionForceMagnitude = __ABS(__FIX19_13_DIV(this->frictionForceMagnitude, this->frictionCoefficient));
-	}
-*/
 	this->frictionCoefficient = frictionCoefficient;
-	this->frictionForceMagnitude = __ABS(__FIX19_13_MULT(this->frictionForceMagnitude, this->frictionCoefficient));
+	Body_computeTotalFrictionCoefficient(this);
+}
+
+void Body_setSurroundingFrictionCoefficient(Body this, fix19_13 surroundingFrictionCoefficient)
+{
+	ASSERT(this, "Body::setSurroundingFrictionCoefficient: null this");
+
+	if(0 > surroundingFrictionCoefficient)
+	{
+		surroundingFrictionCoefficient = 0;
+	}
+	else if(__1I_FIX19_13 < surroundingFrictionCoefficient)
+	{
+		surroundingFrictionCoefficient = __1I_FIX19_13;
+	}
+
+	this->surroundingFrictionCoefficient = surroundingFrictionCoefficient;
+	Body_computeTotalFrictionCoefficient(this);
 }
 
 fix19_13 Body_getMass(Body this)
@@ -893,7 +930,7 @@ void Body_setMass(Body this, fix19_13 mass)
 {
 	ASSERT(this, "Body::setMass: null this");
 
-	this->mass = 0 < mass ? mass : __I_TO_FIX19_13(1);
+	this->mass = 0 < mass ? mass : __1I_FIX19_13;
 }
 
 // retrieve state
@@ -985,18 +1022,18 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 		movementResult.axesStoppedMovement |= __X_AXIS;
 	}
 
-	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !__FIX19_13_INT_PART(bouncingPlaneNormal.x | bouncingPlaneNormal.z))
+	if(__STOP_BOUNCING_VELOCITY_THRESHOLD > __ABS(this->velocity.y) && !__FIX19_13_INT_PART(bouncingPlaneNormal.x | bouncingPlaneNormal.z))
 	{
 		movementResult.axesStoppedMovement |= __Y_AXIS;
 	}
 
-	if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !__FIX19_13_INT_PART(bouncingPlaneNormal.x | bouncingPlaneNormal.y))
+	if(__STOP_BOUNCING_VELOCITY_THRESHOLD > __ABS(this->velocity.z) && !__FIX19_13_INT_PART(bouncingPlaneNormal.x | bouncingPlaneNormal.y))
 	{
 		movementResult.axesStoppedMovement |= __Z_AXIS;
 	}
 
 	// bounce accelerated if movement changed direction and the previous movement was not uniform
-	if(__UNIFORM_MOVEMENT != this->movementType.x)
+	if(__STOP_BOUNCING_VELOCITY_THRESHOLD != this->movementType.x)
 	{
 		movementResult.axesOfAcceleratedBouncing |= __X_AXIS & movementResult.axesOfChangeOfMovement;
 	}
@@ -1023,9 +1060,8 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	ASSERT(this, "Body::bounce: null this");
 	Acceleration gravity = Body_getGravity(this);
 
-	// set friction and elasticity
-	Body_setElasticity(this, elasticity);
-	Body_setFrictionCoefficient(this, frictionCoefficient);
+	// set friction
+	Body_setSurroundingFrictionCoefficient(this, frictionCoefficient);
 
 	// compute bouncing vector
 	fix19_13 cosAngle = (bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX19_13_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX19_13;
@@ -1033,10 +1069,6 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 
 	// register normal affecting the body
 	Body_addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
-
-	this->frictionForceMagnitude = __FIX19_13_MULT(normalMagnitude, this->frictionCoefficient);
-
-	// avoid rounding errors
 
 	// compute bouncing vector
 	Vector3D velocity = this->velocity;
@@ -1050,9 +1082,20 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 		velocity.z - u.z,
 	};
 
+	elasticity += this->elasticity;
+
+	if(__I_TO_FIX19_13(0) > elasticity)
+	{
+		elasticity = 0;
+	}
+	else if(__1I_FIX19_13 < elasticity)
+	{
+		elasticity = __1I_FIX19_13;
+	}
+
 	// add elasticity and friction
-	u = Vector3D_scalarProduct(u, this->elasticity);
-	w = Vector3D_scalarProduct(w, (__1I_FIX19_13 - this->frictionCoefficient));
+	u = Vector3D_scalarProduct(u, elasticity);
+	w = Vector3D_scalarProduct(w, (__1I_FIX19_13 - this->totalFrictionCoefficient));
 
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;
@@ -1146,12 +1189,6 @@ void Body_print(Body this, int x, int y)
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.y), xDisplacement + x + 10, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->externalForce.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Friction", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
-
 	Printing_text(Printing_getInstance(), "Normal", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->totalNormal.x), xDisplacement + x, y, NULL);
@@ -1165,4 +1202,14 @@ void Body_print(Body this, int x, int y)
 	Printing_text(Printing_getInstance(), "Normals", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
 	Printing_int(Printing_getInstance(), this->normals ? VirtualList_getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Friction", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.x), xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Friction coef.", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, NULL);
 }

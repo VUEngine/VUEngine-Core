@@ -643,7 +643,7 @@ const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this)
  *
  * @return		Elapsed time
  */
-fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this)
+fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this __attribute__ ((unused)))
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 

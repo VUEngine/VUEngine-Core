@@ -301,8 +301,10 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-//	Body_print(this->body, 1, 1);
-//	Shape_print(VirtualList_front(this->shapes), 1, 1);
+/*	Body_print(this->body, 1, 1);
+	Shape_print(VirtualList_front(this->shapes), 1, 17);
+	Printing_resetWorldCoordinates(Printing_getInstance());
+	*/
 }
 
 // whether changed direction in the last cycle or not
@@ -447,18 +449,14 @@ fix19_13 Actor_getSurroundingFrictionCoefficient(Actor this)
 		totalFrictionCoefficient += Shape_getCollidingFrictionCoefficient(shape);
 	}
 
-	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
-
-	return physicalSpecification->frictionCoefficient + totalFrictionCoefficient;
+	return totalFrictionCoefficient;
 }
 
 fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getFrictionOnCollision: null this");
 
-	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
-
-	return physicalSpecification->frictionCoefficient + Actor_getSurroundingFrictionCoefficient(this);
+	return Actor_getSurroundingFrictionCoefficient(this);
 }
 
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation)
@@ -711,7 +709,7 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 {
 	ASSERT(this, "Actor::exitCollision: null this");
 
-	Body_setFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
+	Body_setSurroundingFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
 	{
@@ -723,7 +721,7 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((
 {
 	ASSERT(this, "Actor::collidingShapeOwnerDestroyed: null this");
 
-	Body_setFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
+	Body_setSurroundingFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
 	{

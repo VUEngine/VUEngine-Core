@@ -122,8 +122,20 @@
 		 */																								\
 		fix19_13 frictionCoefficient;																	\
 		/**
+		 * @var fix19_13 		surroundingFrictionCoefficient
+		 * @brief				friction coefficient of the surroundings
+		 * @memberof 			Body
+		 */																								\
+		fix19_13 surroundingFrictionCoefficient;														\
+		/**
 		 * @var fix19_13 		frictionForceMagnitude
 		 * @brief				friction force magnitude
+		 * @memberof 			Body
+		 */																								\
+		fix19_13 totalFrictionCoefficient;																\
+		/**
+		 * @var fix19_13 		totalFrictionCoefficient
+		 * @brief				total friction force magnitude
 		 * @memberof 			Body
 		 */																								\
 		fix19_13 frictionForceMagnitude;																\
@@ -224,6 +236,7 @@ void Body_reset(Body this);
 void Body_clearNormal(Body this, Object referent);
 fix19_13 Body_getFrictionCoefficient(Body this);
 void Body_setFrictionCoefficient(Body this, fix19_13 frictionCoefficient);
+void Body_setSurroundingFrictionCoefficient(Body this, fix19_13 surroundingFrictionCoefficient);
 void Body_setMass(Body this, fix19_13 mass);
 void Body_setOwner(Body this, SpatialObject owner);
 void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller);

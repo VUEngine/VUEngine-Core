@@ -113,7 +113,9 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
 	CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
 
+	// has to set elasticity and friction myself since Particle ignores collisions
 	Body_setElasticity(this->body, this->solidParticleDefinition->elasticity);
+	Body_setFrictionCoefficient(this->body, this->solidParticleDefinition->frictionCoefficient);
 }
 
 /**
@@ -278,11 +280,12 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 		{
 			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
-			fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
+			fix19_13 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
 			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
 
 			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 			returnValue = true;
+
 		}
 	}
 
@@ -467,9 +470,7 @@ void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ (
 		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
 	}
 
-	fix19_13 frictionCoefficient = this->solidParticleDefinition->frictionCoefficient + Shape_getCollidingFrictionCoefficient(this->shape);
-
-	Body_setFrictionCoefficient(this->body, frictionCoefficient);
+	Body_setSurroundingFrictionCoefficient(this->body, Shape_getCollidingFrictionCoefficient(this->shape));
 }
 
 
