@@ -1033,7 +1033,7 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 	}
 
 	// bounce accelerated if movement changed direction and the previous movement was not uniform
-	if(__STOP_BOUNCING_VELOCITY_THRESHOLD != this->movementType.x)
+	if(__UNIFORM_MOVEMENT != this->movementType.x)
 	{
 		movementResult.axesOfAcceleratedBouncing |= __X_AXIS & movementResult.axesOfChangeOfMovement;
 	}
