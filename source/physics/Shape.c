@@ -28,7 +28,6 @@
 #include <Game.h>
 #include <CollisionManager.h>
 #include <CollisionHelper.h>
-#include <Screen.h>
 #include <debugConfig.h>
 
 
@@ -108,6 +107,7 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	this->layers = 0;
 	this->layersToIgnore = 0;
 	this->collidingShapes = NULL;
+	this->isVisible = true;
 
 	Shape_setActive(this, false);
 }
@@ -235,22 +235,6 @@ void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)
 	}
 
 	this->ready = true;
-
-	extern const Vector3D* _screenPosition;
-	extern const CameraFrustum* _cameraFrustum;
-
-	RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, this);
-
-	// not ready for collision checks if out of the screen
-	if(
-		surroundingRightBox.x0 - _screenPosition->x > __I_TO_FIX19_13(_cameraFrustum->x1) ||
-		surroundingRightBox.x1 - _screenPosition->x < __I_TO_FIX19_13(_cameraFrustum->x0) ||
-		surroundingRightBox.y0 - _screenPosition->y > __I_TO_FIX19_13(_cameraFrustum->y1) ||
-		surroundingRightBox.y1 - _screenPosition->y < __I_TO_FIX19_13(_cameraFrustum->y0)
-	)
-	{
-		this->ready = false;
-	}
 
 #ifdef __DRAW_SHAPES
 	__VIRTUAL_CALL(Shape, show, this);

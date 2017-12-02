@@ -28,6 +28,7 @@
 #include <MessageDispatcher.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
+#include <Screen.h>
 #include <debugConfig.h>
 
 
@@ -52,7 +53,7 @@
 		bool checkingCollisions;																		\
 		/* counters for statistics */																	\
 		u32 lastCycleCollisionChecks;																	\
-		u32 lastCycleCollisions;																			\
+		u32 lastCycleCollisions;																		\
 		u32 collisionChecks;																			\
 		u32 collisions;																					\
 		u32 checkCycles;																				\
@@ -228,15 +229,39 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
 
-	// check the shapes
-	VirtualNode node = this->movingShapes->head;
+	// cull off outside of screen bounds shapes
+	VirtualNode node = this->activeShapes->head;
 
 	for(; node; node = node->next)
 	{
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, node->data);
+		shape->isVisible = true;
 
-		if(shape->ready && shape->checkForCollisions)
+		extern const Vector3D* _screenPosition;
+		extern const CameraFrustum* _cameraFrustum;
+
+		RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, shape);
+
+		// not ready for collision checks if out of the screen
+		if(
+			surroundingRightBox.x0 - _screenPosition->x > __I_TO_FIX19_13(_cameraFrustum->x1) ||
+			surroundingRightBox.x1 - _screenPosition->x < __I_TO_FIX19_13(_cameraFrustum->x0) ||
+			surroundingRightBox.y0 - _screenPosition->y > __I_TO_FIX19_13(_cameraFrustum->y1) ||
+			surroundingRightBox.y1 - _screenPosition->y < __I_TO_FIX19_13(_cameraFrustum->y0)
+		)
+		{
+			shape->isVisible = false;
+		}
+	}
+
+	// check the shapes
+	for(node = this->movingShapes->head; node; node = node->next)
+	{
+		// load the current shape
+		Shape shape = __SAFE_CAST(Shape, node->data);
+
+		if(shape->ready && shape->checkForCollisions && shape->isVisible)
 		{
 			VirtualNode nodeForActiveShapes = this->activeShapes->head;
 
@@ -248,7 +273,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 				// compare only different ready, different shapes against it other if
 				// the layer of the shapeToCheck are not excluded by the current shape
-				if(shape != shapeToCheck && shapeToCheck->ready && !(shape->layersToIgnore & shapeToCheck->layers))
+				if(shape != shapeToCheck && shapeToCheck->ready && shapeToCheck->isVisible && !(shape->layersToIgnore & shapeToCheck->layers))
 				{
 					this->lastCycleCollisionChecks++;
 

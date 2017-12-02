@@ -147,6 +147,12 @@ typedef struct VertexProjection
 		 * @memberof			Shape
 		 */																								\
 		u8 checkForCollisions;																			\
+		/**
+		 * @var u8 				isVisible
+		 * @brief				flag to cull off shapes outside the screen
+		 * @memberof			Shape
+		 */																								\
+		u8 isVisible;																					\
 
 __CLASS(Shape);
 
