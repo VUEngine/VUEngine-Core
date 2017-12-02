@@ -660,7 +660,7 @@ void* VirtualList_back(VirtualList this)
  * @param this	Function scope
  * @param node	node to check
  */
-static void VirtualList_checkThatNodeIsPresent(VirtualList this, VirtualNode node)
+__attribute__ ((unused)) static void VirtualList_checkThatNodeIsPresent(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::checkThatNodeIsPresent: null this");
 

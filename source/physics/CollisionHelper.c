@@ -554,7 +554,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 	return solutionVector;
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
+__attribute__ ((unused)) static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBoxAndInverseBox: null this");
 
@@ -634,21 +634,21 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 	return solutionVector;
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
+__attribute__ ((unused)) static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenInverseBoxAndInverseBox: null this");
 
 	return (SolutionVector) {{0, 0, 0}, 0};
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+__attribute__ ((unused)) static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall: null this");
 
 	return (SolutionVector) {{0, 0, 0}, 0};
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(CollisionHelper this, Ball ballA, Ball ballB)
+static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB)
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBallAndBall: null this");
 
