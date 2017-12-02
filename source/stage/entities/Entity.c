@@ -2433,7 +2433,7 @@ void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
 	}
 }
 
-u16 Entity_getAxesForShapeSyncWithDirection(Entity this)
+u16 Entity_getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::getAxesForShapeSyncWithDirection: null this");
 
