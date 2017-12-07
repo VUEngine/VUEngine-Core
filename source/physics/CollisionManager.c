@@ -211,15 +211,15 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
-	if(clock->paused)
-	{
-		return false;
-	}
-
 	// process removed shapes
 	CollisionManager_processRemovedShapes(this);
 
 	CollisionManager_processInactiveShapes(this);
+
+	if(clock->paused)
+	{
+		return false;
+	}
 
 	this->checkingCollisions = true;
 
