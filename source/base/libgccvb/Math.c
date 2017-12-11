@@ -43,12 +43,12 @@ extern float sqrtf (float);
 // this code was taken from the Doom engine
 float Math_squareRoot(float number)
 {
-    // Doom's code causes a warning because of breaking of aliansing rules
 	if(0 >= (* ( long * ) &number))
     {
     	return 0;
     }
 
+    // Doom's code causes a warning because of breaking of aliasing rules
 	long i;
 	float x, y;
 	const float f = 1.5F;
