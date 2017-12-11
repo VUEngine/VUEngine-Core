@@ -44,7 +44,7 @@ extern float sqrtf (float);
 float Math_squareRoot(float number)
 {
     // Doom's code causes a warning because of breaking of aliansing rules
-    if(0 >= number)
+	if(0 >= (* ( long * ) &number))
     {
     	return 0;
     }
