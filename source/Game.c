@@ -1246,30 +1246,29 @@ inline static void Game_run(Game this)
 	Game_synchronizeGraphics(this);
 
 	// process user"s input
-	bool skipNonCriticalProcesses = Game_processUserInput(this);
+	Game_processUserInput(this);
 
-	// physics" update takes place after game"s logic
-	// has been done
+	// simulate physics
 	Game_updatePhysics(this);
 
 	// apply transformations
 	Game_updateTransformations(this);
 
 	// process collisions
-	skipNonCriticalProcesses |= Game_updateCollisions(this);
+	bool skipNonCriticalProcesses = Game_updateCollisions(this);
 
-	// this is the moment to check if the game"s state
+	// this is the moment to check if the game's state
 	// needs to be changed
 	Game_checkForNewState(this);
 
-	// update game"s logic
+	// update game's logic
 	Game_updateLogic(this);
 
 	// dispatch delayed messages
 	Game_dispatchDelayedMessages(this);
 
-	// skip streaming if the game frame has bee too busy
-	if(!this->currentFrameEnded && !skipNonCriticalProcesses)
+	// skip streaming if the game frame has been too busy
+	if(!skipNonCriticalProcesses)
 	{
 		// stream
 		Game_stream(this);
