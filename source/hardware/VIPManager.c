@@ -403,7 +403,6 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 					if(_updateProfiling)
 					{
 						_renderingProcessTimeHelper = _renderingProcessTime = TimerManager_getMillisecondsElapsed(_timerManager) - timeBeforeProcess;
-						_renderingHighestTime = _renderingProcessTime > _renderingHighestTime ? _renderingProcessTime : _renderingHighestTime;
 						_renderingTotalTime += _renderingProcessTime;
 					}
 				}

@@ -394,10 +394,6 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 	int xCounter = xOutputStart - xOutputStartSave;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	if(reflectParallax)
 	{
 		for(; xTotal--; xOutput += xOutputIncrement, xSource++, xCounter++)

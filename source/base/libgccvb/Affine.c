@@ -97,10 +97,6 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix19_13 x, fix19_13 y, fix13_
 	int lastRow = __FIX19_13_TO_I(halfHeight << 1) + 1;
 	int counter = SpriteManager_getMaximumParamTableRowsToComputePerCall(SpriteManager_getInstance());
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	for(;counter && i <= lastRow; i++, counter--)
 	{
 		affine[i].pb_y = __FIX19_13_TO_FIX13_3(__FIX19_13_MULT(__I_TO_FIX19_13(i), highPrecisionPb)) + fixedAffineMatrix.dx;

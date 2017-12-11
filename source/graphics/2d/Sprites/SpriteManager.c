@@ -423,10 +423,6 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 
 	this->zSortingFirstNode = this->zSortingFirstNode ? this->zSortingSecondNode ? this->zSortingFirstNode : this->zSortingFirstNode->next: this->sprites->head;
 
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
-
 	for(; this->zSortingFirstNode; this->zSortingFirstNode = this->zSortingFirstNode->next)
 	{
 		this->zSortingSecondNode = this->zSortingFirstNode->next;
@@ -745,10 +741,6 @@ void SpriteManager_render(SpriteManager this)
 	{
 		this->freeLayer = (__SAFE_CAST(Sprite, node->data))->worldLayer - 1;
 	}
-
-	CACHE_DISABLE;
-	CACHE_CLEAR;
-	CACHE_ENABLE;
 
 	for(; node; node = node->next)
 	{

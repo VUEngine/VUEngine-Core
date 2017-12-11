@@ -38,13 +38,6 @@ void *memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes;
 
-	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < numberOfBytes)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
-	}
-
 	asm("				\n\t"      \
 		"jr end%=		\n\t"      \
 		"loop%=:		\n\t"      \

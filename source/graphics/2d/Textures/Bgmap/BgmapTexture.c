@@ -225,13 +225,6 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
 
-	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < this->textureDefinition->cols * counter)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
-	}
-
 	// put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
@@ -274,13 +267,6 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 
 	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
 	u32 mapDisplacement = this->mapDisplacement >> 1;
-
-	if(__NUMBER_OF_COPIES_TO_ENABLE_CACHE < this->textureDefinition->cols * counter)
-	{
-		CACHE_DISABLE;
-		CACHE_CLEAR;
-		CACHE_ENABLE;
-	}
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
