@@ -787,7 +787,13 @@ void SpriteManager_render(SpriteManager this)
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game_isInSpecialMode(Game_getInstance()))
 	{
-		SpriteManager_print(this, 1, 15, true);
+		static int counter = __TARGET_FPS;
+
+		if(0 >= --counter)
+		{
+			counter = __TARGET_FPS;
+			SpriteManager_print(this, 1, 15, true);
+		}
 	}
 #endif
 }
