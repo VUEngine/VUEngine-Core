@@ -302,11 +302,6 @@
 
 #define __GRAVITY								980
 
-
-// physics simulation step size
-#define __PHYSICS_TIME_ELAPSED					__FIX19_13_DIV(__1I_FIX19_13, __I_TO_FIX19_13(__TARGET_FPS))
-
-
 // Number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY			10
 
