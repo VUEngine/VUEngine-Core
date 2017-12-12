@@ -35,7 +35,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__I_TO_FIX19_13(1)
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(8)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ typedef struct CollidingShapeRegistry
 
 	SolutionVector solutionVector;
 
-	fix19_13 frictionCoefficient;
+	fix10_6 frictionCoefficient;
 
 	bool isImpenetrable;
 
@@ -334,7 +334,7 @@ bool Shape_collides(Shape this, Shape shape)
  * @param this				Function scope
  * @param displacement		shape displacement
  */
-bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement __attribute__ ((unused)))
+bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncrement __attribute__ ((unused)))
 {
 	ASSERT(this, "Shape::canMoveTowards: null this");
 
@@ -358,10 +358,22 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrem
 			// check if solution is valid
 			if(collidingShapeRegistry->solutionVector.magnitude)
 			{
-				fix19_13 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-				canMove &= -__F_TO_FIX19_13(1 - 0.1f) < cosAngle;
+				fix10_6 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
+
+				//Printing_hex(//Printing_getInstance(), collidingShapeRegistry->solutionVector.direction.y, 30, 2, 4, NULL);
+				//Printing_hex(//Printing_getInstance(), normalizedDisplacement.y, 30, 3, 4, NULL);
+
+				//Printing_hex(//Printing_getInstance(), cosAngle, 30, 5, 4, NULL);
+				//Printing_hex(//Printing_getInstance(), -__F_TO_FIX10_6(1 - 0.1f), 30, 6, 4, NULL);
+				canMove &= -__F_TO_FIX10_6(1 - 0.1f) < cosAngle;
+return false;
+				//Printing_hex(//Printing_getInstance(), -__F_TO_FIX10_6(1 - 0.1f) < cosAngle, 30, 8, 4, NULL);
+//__PRINT_IN_GAME_TIME(30,9);
+
 			}
+//__PRINT_IN_GAME_TIME(30,10);
 		}
+return false;
 	}
 
 	// not colliding anymore
@@ -753,7 +765,7 @@ static CollidingShapeRegistry* Shape_findCollidingShapeRegistry(Shape this, Shap
  *
  * @return				The sum of friction coefficients
  */
-fix19_13 Shape_getCollidingFrictionCoefficient(Shape this)
+fix10_6 Shape_getCollidingFrictionCoefficient(Shape this)
 {
 	ASSERT(this, "Shape::getCollidingFriction: null this");
 
@@ -762,7 +774,7 @@ fix19_13 Shape_getCollidingFrictionCoefficient(Shape this)
 		return 0;
 	}
 
-	fix19_13 totalFrictionCoefficient = 0;
+	fix10_6 totalFrictionCoefficient = 0;
 
 	VirtualNode node = this->collidingShapes->head;
 

@@ -125,9 +125,9 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 	// angle | theta | psi
 	if(rotation->z | rotation->y | rotation->x)
 	{
-		fix19_13 width = __I_TO_FIX19_13(surroundingBoxSize.x) >> 1;
-		fix19_13 height = __I_TO_FIX19_13(surroundingBoxSize.y) >> 1;
-		fix19_13 depth = __I_TO_FIX19_13(surroundingBoxSize.z) >> 1;
+		fix10_6 width = surroundingBoxSize.x >> 1;
+		fix10_6 height = surroundingBoxSize.y >> 1;
+		fix10_6 depth = surroundingBoxSize.z >> 1;
 
 		// allow only one rotation
 		if(rotation->z)
@@ -137,21 +137,21 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
-			fix19_13 sinAngle = __FIX7_9_TO_FIX19_13(__SIN(angle));
-			fix19_13 cosAngle = __FIX7_9_TO_FIX19_13(__COS(angle));
+			fix10_6 sinAngle = __FIX7_9_TO_FIX10_6(__SIN(angle));
+			fix10_6 cosAngle = __FIX7_9_TO_FIX10_6(__COS(angle));
 
 			// use vectors (x1, y0, z1) and (x1, y1, z1)
 			Vector3D topRight =
 			{
-				__FIX19_13_MULT(width, cosAngle) - __FIX19_13_MULT(-height, sinAngle),
-				__FIX19_13_MULT(width, sinAngle) + __FIX19_13_MULT(-height, cosAngle),
+				__FIX10_6_MULT(width, cosAngle) - __FIX10_6_MULT(-height, sinAngle),
+				__FIX10_6_MULT(width, sinAngle) + __FIX10_6_MULT(-height, cosAngle),
 				depth
 			};
 
 			Vector3D bottomRight =
 			{
-				__FIX19_13_MULT(width, cosAngle) - __FIX19_13_MULT(height, sinAngle),
-				__FIX19_13_MULT(width, sinAngle) + __FIX19_13_MULT(height, cosAngle),
+				__FIX10_6_MULT(width, cosAngle) - __FIX10_6_MULT(height, sinAngle),
+				__FIX10_6_MULT(width, sinAngle) + __FIX10_6_MULT(height, cosAngle),
 				depth
 			};
 
@@ -169,16 +169,16 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 				__ABS(bottomRight.z),
 			};
 
-			surroundingBoxSize.x = __FIX19_13_TO_I(bottomRightHelper.x > topRightHelper.x ? bottomRightHelper.x : topRightHelper.x) << 1;
-			surroundingBoxSize.y = __FIX19_13_TO_I(bottomRightHelper.y > topRightHelper.y ? bottomRightHelper.y : topRightHelper.y) << 1;
+			surroundingBoxSize.x = (bottomRightHelper.x > topRightHelper.x ? bottomRightHelper.x : topRightHelper.x) << 1;
+			surroundingBoxSize.y = (bottomRightHelper.y > topRightHelper.y ? bottomRightHelper.y : topRightHelper.y) << 1;
 
 			// find the displacement over each axis for the rotated box
 			this->rotationVertexDisplacement.x = bottomRightHelper.x < topRightHelper.x ? bottomRight.x : topRight.x;
 			this->rotationVertexDisplacement.y = bottomRightHelper.y < topRightHelper.y ? bottomRight.y : topRight.y;
 			this->rotationVertexDisplacement.y = angle >= 128 ? -this->rotationVertexDisplacement.y : this->rotationVertexDisplacement.y;
 
-			this->rotationVertexDisplacement.x = (__I_TO_FIX19_13(surroundingBoxSize.x) >> 1) + this->rotationVertexDisplacement.x;
-			this->rotationVertexDisplacement.y = (__I_TO_FIX19_13(surroundingBoxSize.y) >> 1) - this->rotationVertexDisplacement.y;
+			this->rotationVertexDisplacement.x = (surroundingBoxSize.x >> 1) + this->rotationVertexDisplacement.x;
+			this->rotationVertexDisplacement.y = (surroundingBoxSize.y >> 1) - this->rotationVertexDisplacement.y;
 
 			if(!(__MODULO(angle, 128)))
 			{
@@ -193,22 +193,22 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
-			fix19_13 sinAngle = __FIX7_9_TO_FIX19_13(__SIN(angle));
-			fix19_13 cosAngle = __FIX7_9_TO_FIX19_13(__COS(0));
+			fix10_6 sinAngle = __FIX7_9_TO_FIX10_6(__SIN(angle));
+			fix10_6 cosAngle = __FIX7_9_TO_FIX10_6(__COS(0));
 
 			// use vectors (x0, y1, z0) and (x1, y1, z0)
 			Vector3D bottomLeft =
 			{
-				__FIX19_13_MULT(-width, cosAngle) + __FIX19_13_MULT(-depth, sinAngle),
+				__FIX10_6_MULT(-width, cosAngle) + __FIX10_6_MULT(-depth, sinAngle),
 				height,
-				-__FIX19_13_MULT(-width, sinAngle) + __FIX19_13_MULT(-depth, cosAngle),
+				-__FIX10_6_MULT(-width, sinAngle) + __FIX10_6_MULT(-depth, cosAngle),
 			};
 
 			Vector3D bottomRight =
 			{
-				__FIX19_13_MULT(width, cosAngle) + __FIX19_13_MULT(-depth, sinAngle),
+				__FIX10_6_MULT(width, cosAngle) + __FIX10_6_MULT(-depth, sinAngle),
 				height,
-				-__FIX19_13_MULT(width, sinAngle) + __FIX19_13_MULT(-depth, cosAngle),
+				-__FIX10_6_MULT(width, sinAngle) + __FIX10_6_MULT(-depth, cosAngle),
 			};
 
 			Vector3D bottomLeftHelper =
@@ -225,16 +225,16 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 				__ABS(bottomRight.z),
 			};
 
-			surroundingBoxSize.x = __FIX19_13_TO_I(bottomLeftHelper.x > bottomRightHelper.x ? bottomLeftHelper.x : bottomRightHelper.x) << 1;
-			surroundingBoxSize.z = __FIX19_13_TO_I(bottomLeftHelper.z > bottomRightHelper.z ? bottomLeftHelper.z : bottomRightHelper.z) << 1;
+			surroundingBoxSize.x = (bottomLeftHelper.x > bottomRightHelper.x ? bottomLeftHelper.x : bottomRightHelper.x) << 1;
+			surroundingBoxSize.z = (bottomLeftHelper.z > bottomRightHelper.z ? bottomLeftHelper.z : bottomRightHelper.z) << 1;
 
 			// find the displacement over each axis for the rotated box
 			this->rotationVertexDisplacement.x = bottomLeftHelper.x < bottomRightHelper.x ? bottomLeft.x : bottomRight.x;
 			this->rotationVertexDisplacement.x = angle >= 128 ? -this->rotationVertexDisplacement.x : this->rotationVertexDisplacement.x;
 			this->rotationVertexDisplacement.z = bottomLeftHelper.z < bottomRightHelper.z ? bottomLeft.z : bottomRight.z;
 
-			this->rotationVertexDisplacement.x = (__I_TO_FIX19_13(surroundingBoxSize.x) >> 1) - this->rotationVertexDisplacement.x;
-			this->rotationVertexDisplacement.z = (__I_TO_FIX19_13(surroundingBoxSize.z) >> 1) + this->rotationVertexDisplacement.z;
+			this->rotationVertexDisplacement.x = (surroundingBoxSize.x >> 1) - this->rotationVertexDisplacement.x;
+			this->rotationVertexDisplacement.z = (surroundingBoxSize.z >> 1) + this->rotationVertexDisplacement.z;
 
 			if(!(__MODULO(angle, 128)))
 			{
@@ -249,22 +249,22 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 			angle = angle < 0 ? 256 + angle : angle;
 
 			// calculate position of box's right-bottom corner
-			fix19_13 sinAngle = __FIX7_9_TO_FIX19_13(__SIN(angle));
-			fix19_13 cosAngle = __FIX7_9_TO_FIX19_13(__COS(angle));
+			fix10_6 sinAngle = __FIX7_9_TO_FIX10_6(__SIN(angle));
+			fix10_6 cosAngle = __FIX7_9_TO_FIX10_6(__COS(angle));
 
 			// use vectors (x1, y1, z0) and (x1, y1, z1)
 			Vector3D bottomNear =
 			{
 				width,
-				__FIX19_13_MULT(height, cosAngle) - __FIX19_13_MULT(-depth, sinAngle),
-				__FIX19_13_MULT(height, sinAngle) + __FIX19_13_MULT(-depth, cosAngle),
+				__FIX10_6_MULT(height, cosAngle) - __FIX10_6_MULT(-depth, sinAngle),
+				__FIX10_6_MULT(height, sinAngle) + __FIX10_6_MULT(-depth, cosAngle),
 			};
 
 			Vector3D bottomFar =
 			{
 				width,
-				__FIX19_13_MULT(height, cosAngle) - __FIX19_13_MULT(depth, sinAngle),
-				__FIX19_13_MULT(height, sinAngle) + __FIX19_13_MULT(depth, cosAngle),
+				__FIX10_6_MULT(height, cosAngle) - __FIX10_6_MULT(depth, sinAngle),
+				__FIX10_6_MULT(height, sinAngle) + __FIX10_6_MULT(depth, cosAngle),
 			};
 
 			Vector3D bottomNearHelper =
@@ -281,16 +281,16 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 				__ABS(bottomFar.z),
 			};
 
-			surroundingBoxSize.y = __FIX19_13_TO_I(bottomFarHelper.y > bottomNearHelper.y ? bottomFarHelper.y : bottomNearHelper.y) << 1;
-			surroundingBoxSize.z = __FIX19_13_TO_I(bottomFarHelper.z > bottomNearHelper.z ? bottomFarHelper.z : bottomNearHelper.z) << 1;
+			surroundingBoxSize.y = (bottomFarHelper.y > bottomNearHelper.y ? bottomFarHelper.y : bottomNearHelper.y) << 1;
+			surroundingBoxSize.z = (bottomFarHelper.z > bottomNearHelper.z ? bottomFarHelper.z : bottomNearHelper.z) << 1;
 
 			// find the displacement over each axis for the rotated box
 			this->rotationVertexDisplacement.y = bottomFarHelper.y < bottomNearHelper.y ? bottomFar.y : bottomNear.y;
 			this->rotationVertexDisplacement.z = bottomFarHelper.z < bottomNearHelper.z ? bottomFar.z : bottomNear.z;
 			this->rotationVertexDisplacement.z = angle >= 128 ? -this->rotationVertexDisplacement.z : this->rotationVertexDisplacement.z;
 
-			this->rotationVertexDisplacement.y = (__I_TO_FIX19_13(surroundingBoxSize.y) >> 1) - this->rotationVertexDisplacement.y;
-			this->rotationVertexDisplacement.z = (__I_TO_FIX19_13(surroundingBoxSize.z) >> 1) + this->rotationVertexDisplacement.z;
+			this->rotationVertexDisplacement.y = (surroundingBoxSize.y >> 1) - this->rotationVertexDisplacement.y;
+			this->rotationVertexDisplacement.z = (surroundingBoxSize.z >> 1) + this->rotationVertexDisplacement.z;
 
 			if(!(__MODULO(angle, 128)))
 			{
@@ -301,9 +301,9 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 	}
 
 	// box's center if placed on P(0, 0, 0)
-	this->rightBox.x1 = __I_TO_FIX19_13(surroundingBoxSize.x >> 1);
-	this->rightBox.y1 = __I_TO_FIX19_13(surroundingBoxSize.y >> 1);
-	this->rightBox.z1 = __I_TO_FIX19_13(surroundingBoxSize.z >> 1);
+	this->rightBox.x1 = surroundingBoxSize.x >> 1;
+	this->rightBox.y1 = surroundingBoxSize.y >> 1;
+	this->rightBox.z1 = surroundingBoxSize.z >> 1;
 
 	this->rightBox.x0 = -this->rightBox.x1;
 	this->rightBox.y0 = -this->rightBox.y1;
@@ -428,15 +428,15 @@ void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
 	this->normals->vectors[2] = Vector3D_normalize(this->normals->vectors[2]);
 }
 
-void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix19_13* min, fix19_13* max)
+void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	int vertexIndex = 0;
 
 	// project this onto the current normal
-	fix19_13 dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
+	fix10_6 dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
 
-	fix19_13 finalMin = dotProduct;
-	fix19_13 finalMax = dotProduct;
+	fix10_6 finalMin = dotProduct;
+	fix10_6 finalMax = dotProduct;
 
 	// project this onto the current normal
 	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
@@ -478,7 +478,7 @@ void Box_projectOntoItself(Box this)
 }
 
 // test if collision with the entity give the displacement
-CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix19_13 sizeIncrement)
+CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
 {
 	ASSERT(this, "Box::testForCollision: null this");
 
@@ -642,17 +642,17 @@ void Box_print(Box this, int x, int y)
 	RightBox rightBox = this->rightBox;
 
 	Printing_text(Printing_getInstance(), "X:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightBox.x0), x + 2, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.x0), x + 2, y, NULL);
 	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightBox.x1), x + 7, y++, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.x1), x + 7, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Y:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightBox.y0), x + 2, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.y0), x + 2, y, NULL);
 	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightBox.y1), x + 7, y++, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.y1), x + 7, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Z:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightBox.z0), x + 2, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.z0), x + 2, y, NULL);
 	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(rightBox.z1), x + 7, y++, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.z1), x + 7, y++, NULL);
 }

@@ -121,7 +121,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 void ObjectSprite_destructor(ObjectSprite this);
 
 void ObjectSprite_addDisplacement(ObjectSprite this, const Vector2D* displacement);
-void ObjectSprite_calculateParallax(ObjectSprite this, fix19_13 z);
+void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z);
 s16 ObjectSprite_getObjectIndex(ObjectSprite this);
 Vector2D ObjectSprite_getPosition(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);

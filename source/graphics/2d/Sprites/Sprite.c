@@ -79,7 +79,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->displacement = (WorldVector){0, 0, 0, 0};
+	this->displacement = (Vector2D){0, 0, 0, 0};
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : false;
@@ -138,12 +138,12 @@ Scale Sprite_getScale(Sprite this __attribute__ ((unused)))
  * @param scale	Scale struct to apply
  * @param z
  */
-void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
+void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::resize: null this");
 
-	this->halfWidth = __I_TO_FIX19_13((int)Texture_getCols(this->texture) << 2);
-	this->halfHeight = __I_TO_FIX19_13((int)Texture_getRows(this->texture) << 2);
+	this->halfWidth = __I_TO_FIX10_6((int)Texture_getCols(this->texture) << 2);
+	this->halfHeight = __I_TO_FIX10_6((int)Texture_getRows(this->texture) << 2);
 }
 
 /**
@@ -233,7 +233,7 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* posit
  * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
-void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix19_13 z __attribute__ ((unused)))
+void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::calculateParallax: null this");
 }
@@ -574,7 +574,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
  *
  * @return
  */
-WorldVector Sprite_getDisplacement(Sprite this)
+Vector2D Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getDisplacement: null this");
 
@@ -609,7 +609,7 @@ int Sprite_getHalfWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfWidth: null this");
 
-	return __FIX19_13_TO_I(this->halfWidth);
+	return __FIX10_6_TO_I(this->halfWidth);
 }
 
 /**
@@ -626,7 +626,7 @@ int Sprite_getHalfHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfHeight: null this");
 
-	return __FIX19_13_TO_I(this->halfHeight);
+	return __FIX10_6_TO_I(this->halfHeight);
 }
 
 
@@ -1014,8 +1014,8 @@ bool Sprite_isObject(Sprite this)
  * @public
  *
  * @param this		Function scope
- * @param x			Screen's x coordinate
- * @param y			Screen's y coordinate
+ * @param x			Camera's x coordinate
+ * @param y			Camera's y coordinate
  */
 void Sprite_print(Sprite this, int x, int y)
 {
@@ -1050,9 +1050,9 @@ void Sprite_print(Sprite this, int x, int y)
 	Printing_text(Printing_getInstance(), Sprite_isTransparent(this) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
 
 	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX19_13_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
 	Printing_text(Printing_getInstance(), "G (x, y, p):                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGX(this), x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGY(this), x + 24, y, NULL);

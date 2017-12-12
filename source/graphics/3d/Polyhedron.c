@@ -126,7 +126,7 @@ void Polyhedron_destructor(Polyhedron this)
  * @param y		Vertex' y coordinate
  * @param z		Vertex' x coordinate
  */
-void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z)
+void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
 {
 	ASSERT(this, "Polyhedron::addVertex: null this");
 
@@ -184,8 +184,8 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 			// normalize vertex to screen coordinates
 			fromVertex3D = *((Vector3D*)fromNode->data);
 			toVertex3D = *((Vector3D*)toNode->data);
-			fromVertex3D = Vector3D_toScreen(fromVertex3D);
-			toVertex3D = Vector3D_toScreen(toVertex3D);
+			fromVertex3D = Vector3D_getRelativeToCamera(fromVertex3D);
+			toVertex3D = Vector3D_getRelativeToCamera(toVertex3D);
 
 			// project to 2d coordinates
 			fromVertex2D = Vector3D_projectToVector2D(fromVertex3D, 0);

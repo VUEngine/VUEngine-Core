@@ -82,8 +82,8 @@
 		UiContainer uiContainer;																		\
 		/* focus entity: needed for streaming */														\
 		Entity focusEntity;																	\
-		/* screen's previous distance. Used for the streaming */										\
-		long screenPreviousDistance;																	\
+		/* camera's previous distance. Used for the streaming */										\
+		long cameraPreviousDistance;																	\
 		/* next entity's id */																			\
 		s16 nextEntityId;																				\
 
@@ -103,8 +103,8 @@ typedef struct StageDefinition
 		// level's size
 		Size size;
 
-		// screen's initial position inside the game world
-		Vector3D screenInitialPosition;
+		// camera's initial position inside the game world
+		Vector3D cameraInitialPosition;
 
 	} level;
 
@@ -144,7 +144,7 @@ typedef struct StageDefinition
 		s16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
 		// OBJECT segments z coordinates (__spt0 to __spt3)
-		fix19_13 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
+		fix10_6 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure
 		Optical optical;
@@ -157,7 +157,7 @@ typedef struct StageDefinition
 		Acceleration gravity;
 
 		// physical world's friction coefficient
-		fix19_13 frictionCoefficient;
+		fix10_6 frictionCoefficient;
 
 	} physics;
 
@@ -203,7 +203,7 @@ __CLASS_NEW_DECLARE(Stage);
 
 void Stage_destructor(Stage this);
 void Stage_setupPalettes(Stage this);
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 void Stage_loadPostProcessingEffects(Stage this);
 Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);

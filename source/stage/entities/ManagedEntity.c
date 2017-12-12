@@ -169,8 +169,8 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 	__CALL_BASE_METHOD(Entity, initialTransform, this, environmentTransform, recursive);
 
-	// normalize the position to screen coordinates
-	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+	// normalize the position to camera coordinates
+	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
 	this->previous2DPosition = Vector3D_projectToVector2D(position3D, 0);
 
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
@@ -203,7 +203,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 		this->invalidateGlobalTransformation = 0;
 
 		// save the 2d position
-		Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+		Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
 		this->previous2DPosition = Vector3D_projectToVector2D(position3D, 0);
 
 		this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
@@ -243,7 +243,7 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 	}
 
 	// save new global position
-	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
 	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
 	VirtualNode spriteNode = this->managedSprites->head;

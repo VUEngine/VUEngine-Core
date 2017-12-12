@@ -98,13 +98,13 @@ typedef struct SolidParticleDefinition
 	ParticleDefinition particleDefinition;
 
 	/// ball's radius
-	fix19_13 radius;
+	fix10_6 radius;
 
 	/// friction for physics
-	fix19_13 frictionCoefficient;
+	fix10_6 frictionCoefficient;
 
 	/// elasticity for physics
-	fix19_13 elasticity;
+	fix10_6 elasticity;
 
 	/// object's in-game type
 	u32 inGameType;
@@ -132,9 +132,9 @@ typedef const SolidParticleDefinition SolidParticleROMDef;
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
+__CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
 
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
+void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
 void SolidParticle_destructor(SolidParticle this);
 
 u16 SolidParticle_getWidth(SolidParticle this);

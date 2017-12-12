@@ -52,8 +52,8 @@
 		__VIRTUAL_DEC(ClassName, void, setRotation, const Rotation* rotation);							\
 		__VIRTUAL_DEC(ClassName, const Scale*, getScale);												\
 		__VIRTUAL_DEC(ClassName, void, setScale, const Scale* scale);									\
-		__VIRTUAL_DEC(ClassName, fix19_13, getElasticity);												\
-		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionCoefficient);										\
+		__VIRTUAL_DEC(ClassName, fix10_6, getElasticity);												\
+		__VIRTUAL_DEC(ClassName, fix10_6, getFrictionCoefficient);										\
 		__VIRTUAL_DEC(ClassName, Velocity, getVelocity);												\
 		__VIRTUAL_DEC(ClassName, bool, isAffectedByRelativity);											\
 		__VIRTUAL_DEC(ClassName, bool, enterCollision, const CollisionInformation* collisionInformation);	\
@@ -112,8 +112,8 @@ const Rotation* SpatialObject_getRotation(SpatialObject this);
 void SpatialObject_setRotation(SpatialObject this, const Rotation* rotation);
 const Scale* SpatialObject_getScale(SpatialObject this);
 void SpatialObject_setScale(SpatialObject this, const Scale* scale);
-fix19_13 SpatialObject_getElasticity(SpatialObject this);
-fix19_13 SpatialObject_getFrictionCoefficient(SpatialObject this);
+fix10_6 SpatialObject_getElasticity(SpatialObject this);
+fix10_6 SpatialObject_getFrictionCoefficient(SpatialObject this);
 Velocity SpatialObject_getVelocity(SpatialObject this);
 bool SpatialObject_isAffectedByRelativity(SpatialObject this);
 bool SpatialObject_enterCollision(SpatialObject this, const CollisionInformation* collisionInformation);

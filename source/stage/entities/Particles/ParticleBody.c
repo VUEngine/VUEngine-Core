@@ -53,8 +53,8 @@ typedef struct MovementResult
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-extern fix19_13 _currentWorldFriction;
-extern fix19_13 _currentElapsedTime;
+extern fix10_6 _currentWorldFriction;
+extern fix10_6 _currentElapsedTime;
 extern const Acceleration* _currentGravity;
 
 MovementResult Body_updateMovement(Body this);

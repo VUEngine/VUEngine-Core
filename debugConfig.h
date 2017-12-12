@@ -11,7 +11,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 
 // define / undefine as you see fit
 //#undef __LOW_BATTERY_INDICATOR
-//#define __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
@@ -21,7 +21,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
 //#define __ALERT_VIP_OVERTIME
-//#undef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+//#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __DRAW_SHAPES
 //#define __REGISTER_LAST_PROCESS_NAME
 //#define __ALERT_STACK_OVERFLOW
@@ -31,9 +31,11 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_PHYSICS_PROFILING
 //#define __FORCE_PRINTING_LAYER
 
-//#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION						10
+#undef __TIMER_RESOLUTION
+#define __TIMER_RESOLUTION						10
 
+//#undef __SAFE_CAST
+//#define __SAFE_CAST(ClassName, object) (ClassName)object
 
 // do not delete the following macros!
 

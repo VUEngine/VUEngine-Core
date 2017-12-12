@@ -62,11 +62,11 @@ __CLASS(ObjectSpriteContainerManager);
 ObjectSpriteContainerManager ObjectSpriteContainerManager_getInstance();
 void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this);
 
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z);
+ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z);
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment);
 void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y);
 void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
-void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS]);
-void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z);
+void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS]);
+void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix10_6 z);
 
 #endif

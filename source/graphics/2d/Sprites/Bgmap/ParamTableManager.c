@@ -468,8 +468,8 @@ bool ParamTableManager_defragmentProgressively(ParamTableManager this)
  * @public
  *
  * @param this			Function scope
- * @param x				Screen x coordinate
- * @param y				Screen y coordinate
+ * @param x				Camera x coordinate
+ * @param y				Camera y coordinate
  */
 void ParamTableManager_print(ParamTableManager this, int x, int y)
 {

@@ -65,8 +65,8 @@ __CLASS(ReflectiveEntity);
 #define ReflectiveEntity_ATTRIBUTES																		\
 		/* it is derived from */																		\
 		Entity_ATTRIBUTES																		\
-		fix19_13 waveLutIndex;																			\
-		fix19_13 waveLutIndexIncrement;																	\
+		fix10_6 waveLutIndex;																			\
+		fix10_6 waveLutIndexIncrement;																	\
 		Point position2D;																				\
 		Point nextFramePosition2D;																		\
 
@@ -111,8 +111,8 @@ typedef struct ReflectiveEntityDefinition
 	// number of wave lut entries
 	u16 numberOfWaveLutEntries;
 
-	// fix19_13 throttle for the waving
-	fix19_13 waveLutThrottleFactor;
+	// fix10_6 throttle for the waving
+	fix10_6 waveLutThrottleFactor;
 
 	// parallax displacement applied to the reflection
 	s16 parallaxDisplacement;
@@ -153,7 +153,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								u32 overallMask, u32 reflectionMask, u32 backgroundMask,
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
-								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
+								const u8 waveLut[], int numberOfWaveLutEntries, fix10_6 waveLutThrottleFactor,
 								bool flattenTop __attribute__ ((unused)), bool flattenBottom,
 								u32 topBorderMask,
 								u32 bottomBorderMask,

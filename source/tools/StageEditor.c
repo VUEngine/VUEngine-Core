@@ -26,7 +26,7 @@
 
 #include <StageEditor.h>
 #include <Game.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <Optics.h>
 #include <Entity.h>
 #include <CollisionManager.h>
@@ -35,7 +35,7 @@
 #include <GameState.h>
 #include <Stage.h>
 #include <Shape.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <Box.h>
 #include <OptionsSelector.h>
 #include <KeyPadManager.h>
@@ -53,11 +53,11 @@
 #define __SCREEN_Y_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
 #define __SCREEN_Z_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
 
-#define __HVPC_STEP							__I_TO_FIX19_13(8)
-#define __VERTICAL_VIEW_POINT_CENTER_STEP	__I_TO_FIX19_13(8)
-#define __DISTANCE_EYE_SCREEN_STEP			__I_TO_FIX19_13(8)
+#define __HVPC_STEP							__I_TO_FIX10_6(8)
+#define __VERTICAL_VIEW_POINT_CENTER_STEP	__I_TO_FIX10_6(8)
+#define __DISTANCE_EYE_SCREEN_STEP			__I_TO_FIX10_6(8)
 #define __MAXIMUM_VIEW_DISTACE_STEP			1
-#define __BASE_DISTACE_STEP					__I_TO_FIX19_13(8)
+#define __BASE_DISTACE_STEP					__I_TO_FIX10_6(8)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -128,7 +128,7 @@ __CLASS_FRIEND_DEFINITION(Sprite);
 enum Modes
 {
 	kFirstMode = 0,
-	kMoveScreen,
+	kMoveCamera,
 	kChangeProjection,
 	kTranslateEntities,
 	kAddObjects,
@@ -153,12 +153,12 @@ static void StageEditor_highLightEntity(StageEditor this);
 static void StageEditor_selectPreviousEntity(StageEditor this);
 static void StageEditor_selectNextEntity(StageEditor this);
 static void StageEditor_translateEntity(StageEditor this, u32 pressedKey);
-static void StageEditor_moveScreen(StageEditor this, u32 pressedKey);
+static void StageEditor_moveCamera(StageEditor this, u32 pressedKey);
 static void StageEditor_changeProjection(StageEditor this, u32 pressedKey);
 static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D translation);
-static void StageEditor_applyTranslationToScreen(StageEditor this, Vector3D translation);
+static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D translation);
 static void StageEditor_printEntityPosition(StageEditor this);
-static void StageEditor_printScreenPosition(StageEditor this);
+static void StageEditor_printCameraPosition(StageEditor this);
 static void StageEditor_printProjectionValues(StageEditor this);
 static void StageEditor_printUserObjects(StageEditor this);
 static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey);
@@ -332,9 +332,9 @@ void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 
 	switch(this->mode)
 	{
-		case kMoveScreen:
+		case kMoveCamera:
 
-			StageEditor_moveScreen(this, pressedKey);
+			StageEditor_moveCamera(this, pressedKey);
 			break;
 
 		case kChangeProjection:
@@ -397,12 +397,12 @@ static void StageEditor_setupMode(StageEditor this)
 				break;
 			}
 
-			this->mode = kMoveScreen;
+			this->mode = kMoveCamera;
 
-		case kMoveScreen:
+		case kMoveCamera:
 
 			StageEditor_releaseShape(this);
-			StageEditor_printScreenPosition(this);
+			StageEditor_printCameraPosition(this);
 			break;
 
 		case kChangeProjection:
@@ -625,7 +625,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 }
 
 /**
- * Move the screen
+ * Move the camera
  *
  * @memberof 			StageEditor
  * @private
@@ -633,51 +633,51 @@ static void StageEditor_selectNextEntity(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
+static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX19_13(-__SCREEN_X_TRANSLATION_STEP),
+			__I_TO_FIX10_6(-__SCREEN_X_TRANSLATION_STEP),
 			0,
 			0
 		};
 
-		StageEditor_applyTranslationToScreen(this, translation);
+		StageEditor_applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_LR)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX19_13(__SCREEN_X_TRANSLATION_STEP),
+			__I_TO_FIX10_6(__SCREEN_X_TRANSLATION_STEP),
 			0,
 			0
 		};
 
-		StageEditor_applyTranslationToScreen(this, translation);
+		StageEditor_applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_LU)
 	{
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX19_13(-__SCREEN_Y_TRANSLATION_STEP),
+			__I_TO_FIX10_6(-__SCREEN_Y_TRANSLATION_STEP),
 			0
 		};
 
-		StageEditor_applyTranslationToScreen(this, translation);
+		StageEditor_applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_LD)
 	{
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX19_13(__SCREEN_Y_TRANSLATION_STEP),
+			__I_TO_FIX10_6(__SCREEN_Y_TRANSLATION_STEP),
 			0
 		};
 
-		StageEditor_applyTranslationToScreen(this, translation);
+		StageEditor_applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_RU)
 	{
@@ -685,10 +685,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX19_13(__SCREEN_Z_TRANSLATION_STEP),
+			__I_TO_FIX10_6(__SCREEN_Z_TRANSLATION_STEP),
 		};
 
-		StageEditor_applyTranslationToScreen(this, translation);
+		StageEditor_applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_RD)
 	{
@@ -696,10 +696,10 @@ static void StageEditor_moveScreen(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX19_13(-__SCREEN_Z_TRANSLATION_STEP),
+			__I_TO_FIX10_6(-__SCREEN_Z_TRANSLATION_STEP),
 		};
 
-		StageEditor_applyTranslationToScreen(this, translation);
+		StageEditor_applyTranslationToCamera(this, translation);
 	}
 }
 
@@ -762,12 +762,12 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 		optical.baseDistance += __BASE_DISTACE_STEP;
 	}
 
-	Screen_setOptical(Screen_getInstance(), optical);
+	Camera_setOptical(Camera_getInstance(), optical);
 
 	// this hack forces the Entity to recalculate its sprites' value.
 	// must hack this global, otherwise will need another variable which most likely will only
 	// take up the previous RAM, or another branching computation in the Entity's render method.
-	Screen_forceDisplacement(Screen_getInstance(), true);
+	Camera_forceDisplacement(Camera_getInstance(), true);
 
 	StageEditor_printProjectionValues(this);
 	GameState_transform(this->gameState);
@@ -789,7 +789,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX19_13(-this->translationStepSize),
+			__I_TO_FIX10_6(-this->translationStepSize),
 			0,
 			0
 		};
@@ -800,7 +800,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX19_13(this->translationStepSize),
+			__I_TO_FIX10_6(this->translationStepSize),
 			0,
 			0
 		};
@@ -812,7 +812,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX19_13(-this->translationStepSize),
+			__I_TO_FIX10_6(-this->translationStepSize),
 			0
 		};
 
@@ -823,7 +823,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX19_13(this->translationStepSize),
+			__I_TO_FIX10_6(this->translationStepSize),
 			0
 		};
 
@@ -853,7 +853,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX19_13(this->translationStepSize),
+			__I_TO_FIX10_6(this->translationStepSize),
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -864,7 +864,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX19_13(-this->translationStepSize),
+			__I_TO_FIX10_6(-this->translationStepSize),
 		};
 
 		StageEditor_applyTranslationToEntity(this, translation);
@@ -905,7 +905,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D tran
 		// this hack forces the Entity to recalculate its sprites' value.
 		// must hack this global, otherwise will need another variable which most likely will only
 		// take up the previous RAM, or another branching computation in the Entity's render method.
-		Screen_forceDisplacement(Screen_getInstance(), true);
+		Camera_forceDisplacement(Camera_getInstance(), true);
 
 		GameState_transform(this->gameState);
 		GameState_synchronizeGraphics(this->gameState);
@@ -960,8 +960,8 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
 		Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
-		spritePosition.x = __I_TO_FIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
-		spritePosition.y = __I_TO_FIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
@@ -1009,11 +1009,11 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 			return;
 		}
 
-		Vector3D position = Screen_getPosition(Screen_getInstance());
+		Vector3D position = Camera_getPosition(Camera_getInstance());
 
-		position.x += __I_TO_FIX19_13(__HALF_SCREEN_WIDTH);
-		position.y += __I_TO_FIX19_13(__HALF_SCREEN_HEIGHT);
-		position.z += __I_TO_FIX19_13(0);
+		position.x += __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
+		position.y += __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
+		position.z += __I_TO_FIX10_6(0);
 
 		PositionedEntity DUMMY_ENTITY =
 		{
@@ -1077,9 +1077,9 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_text(Printing_getInstance(), "Name:                                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
 		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing_float(Printing_getInstance(), __FIX19_13_TO_F(globalPosition->x), x + 13, y, NULL);
-		Printing_float(Printing_getInstance(), __FIX19_13_TO_F(globalPosition->y), x + 22, y, NULL);
-		Printing_float(Printing_getInstance(), __FIX19_13_TO_F(globalPosition->z), x + 31, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->x), x + 13, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 22, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 13, y, NULL);
 		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
@@ -1092,7 +1092,7 @@ static void StageEditor_printEntityPosition(StageEditor this)
 }
 
 /**
- * Apply a translation to the screen
+ * Apply a translation to the camera
  *
  * @memberof 			StageEditor
  * @private
@@ -1100,40 +1100,45 @@ static void StageEditor_printEntityPosition(StageEditor this)
  * @param this			Function scope
  * @param translation   Translation vector
  */
-static void StageEditor_applyTranslationToScreen(StageEditor this, Vector3D translation)
+static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D translation)
 {
-	Screen_move(Screen_getInstance(), translation, true);
+	Camera_move(Camera_getInstance(), translation, true);
 	GameState_transform(this->gameState);
 	GameState_synchronizeGraphics(this->gameState);
-	StageEditor_printScreenPosition(this);
+	StageEditor_printCameraPosition(this);
 	Stage_streamAll(GameState_getStage(this->gameState));
 	CollisionManager_processRemovedShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 	PhysicalWorld_processAuxiliaryBodyLists(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 }
 
 /**
- * Print the screen position
+ * Print the camera position
  *
  * @memberof 	StageEditor
  * @private
  *
  * @param this	Function scope
  */
-static void StageEditor_printScreenPosition(StageEditor this __attribute__ ((unused)))
+static void StageEditor_printCameraPosition(StageEditor this __attribute__ ((unused)))
 {
 	int x = 1;
 	int y = 2;
 
-	Vector3D position = Screen_getPosition(Screen_getInstance());
+	Vector3D position = Camera_getPosition(Camera_getInstance());
+	Size size = Camera_getStageSize(Camera_getInstance());
 
 	Printing_text(Printing_getInstance(), "MOVE SCREEN", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
 	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);
 	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
+	Printing_text(Printing_getInstance(), "Size:               ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(size.x), x + 10, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(size.y), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(size.z), x + 20, y, NULL);
 	Printing_text(Printing_getInstance(), "Position:               ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(position.x), x + 10, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(position.y), x + 15, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(position.z), x + 20, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(position.x), x + 10, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(position.y), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(position.z), x + 20, y, NULL);
 }
 
 /**
@@ -1158,15 +1163,15 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
 	Printing_text(Printing_getInstance(), "BD     \x17\x18", 38, 6, NULL);
 
 	Printing_text(Printing_getInstance(), "H. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->horizontalViewPointCenter), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->horizontalViewPointCenter), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "V. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->verticalViewPointCenter), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Distance Eye Screen:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->distanceEyeScreen), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Maximum View Screen:            ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->verticalViewPointCenter), x + 22, y, NULL);
+	Printing_text(Printing_getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->distanceEyeScreen), x + 22, y, NULL);
+	Printing_text(Printing_getInstance(), "Maximum View Camera:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), (1 << _optical->maximumViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(_optical->baseDistance), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->baseDistance), x + 22, y, NULL);
 }
 
 /**

@@ -48,9 +48,9 @@
 #include <KeyPadManager.h>
 #include <SRAMManager.h>
 #include <I18n.h>
-#include <Screen.h>
-#include <ScreenEffectManager.h>
-#include <ScreenMovementManager.h>
+#include <Camera.h>
+#include <CameraEffectManager.h>
+#include <CameraMovementManager.h>
 #include <TimerManager.h>
 
 #include <Clock.h>
@@ -769,8 +769,8 @@ static void Debug_removeSubPages(Debug this)
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_generalStatusPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
@@ -812,8 +812,8 @@ static void Debug_generalStatusPage(Debug this, int increment __attribute__ ((un
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -848,8 +848,8 @@ static void Debug_memoryStatusPage(Debug this, int increment __attribute__ ((unu
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowZeroPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -865,7 +865,7 @@ static void Debug_memoryStatusShowZeroPage(Debug this __attribute__ ((unused)), 
 		{&MemoryPool_getObjectSize, 					"MemoryPool"},
 		{&MessageDispatcher_getObjectSize, 				"MessageDispatcher"},
 		{&Printing_getObjectSize, 						"Printing"},
-		{&Screen_getObjectSize, 						"Screen"},
+		{&Camera_getObjectSize, 						"Camera"},
 	};
 
 	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -879,8 +879,8 @@ static void Debug_memoryStatusShowZeroPage(Debug this __attribute__ ((unused)), 
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -895,8 +895,8 @@ static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)),
 		{&HardwareManager_getObjectSize, 				"HardwareManager"},
 		{&KeypadManager_getObjectSize, 					"KeypadManager"},
 		{&ParamTableManager_getObjectSize, 				"ParamTableManager"},
-		{&ScreenEffectManager_getObjectSize, 			"ScreenEff.Manager"},
-		{&ScreenMovementManager_getObjectSize, 			"ScreenMov.Manager"},
+		{&CameraEffectManager_getObjectSize, 			"CameraEff.Manager"},
+		{&CameraMovementManager_getObjectSize, 			"CameraMov.Manager"},
 		{&SpriteManager_getObjectSize, 					"SpriteManager"},
 		{&SoundManager_getObjectSize, 					"SoundManager"},
 		{&SRAMManager_getObjectSize, 					"SRAMManager"},
@@ -915,8 +915,8 @@ static void Debug_memoryStatusShowFirstPage(Debug this __attribute__ ((unused)),
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowSecondPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -944,8 +944,8 @@ static void Debug_memoryStatusShowSecondPage(Debug this __attribute__ ((unused))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowThirdPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -982,8 +982,8 @@ static void Debug_memoryStatusShowThirdPage(Debug this __attribute__ ((unused)),
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1013,8 +1013,8 @@ static void Debug_memoryStatusShowFourthPage(Debug this __attribute__ ((unused))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1043,8 +1043,8 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowSixthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1073,8 +1073,8 @@ static void Debug_memoryStatusShowSixthPage(Debug this __attribute__ ((unused)),
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1103,8 +1103,8 @@ static void Debug_memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1121,8 +1121,8 @@ static void Debug_memoryStatusShowUserDefinedClassesSizes(Debug this __attribute
  * @param this					Function scope
  * @param classesSizeData		Array with a class names and their sizes
  * @param count					Number of entries to print
- * @param x						Screen's x coordinate
- * @param y						Screen's y coordinate
+ * @param x						Camera's x coordinate
+ * @param y						Camera's y coordinate
  * @param message				Message to add to the output
  */
 static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message)
@@ -1157,8 +1157,8 @@ static void Debug_printClassSizes(Debug this __attribute__ ((unused)), ClassSize
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_gameProfilingPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
@@ -1175,8 +1175,8 @@ static void Debug_gameProfilingPage(Debug this, int increment __attribute__ ((un
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_streamingPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1196,8 +1196,8 @@ static void Debug_streamingPage(Debug this, int increment __attribute__ ((unused
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1212,8 +1212,8 @@ static void Debug_streamingShowStatus(Debug this __attribute__ ((unused)), int i
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_charMemoryPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1236,8 +1236,8 @@ static void Debug_charMemoryPage(Debug this, int increment __attribute__ ((unuse
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1283,8 +1283,8 @@ static void Debug_charMemoryShowStatus(Debug this __attribute__ ((unused)), int 
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
@@ -1331,8 +1331,8 @@ static void Debug_charMemoryShowMemory(Debug this, int increment __attribute__ (
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_texturesPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1400,8 +1400,8 @@ static void Debug_showBgmapSegment(Debug this)
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
 {
@@ -1451,8 +1451,8 @@ static void Debug_texturesShowStatus(Debug this, int increment, int x, int y)
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_objectsPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1475,8 +1475,8 @@ static void Debug_objectsPage(Debug this, int increment __attribute__ ((unused))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
 {
@@ -1519,8 +1519,8 @@ static void Debug_objectsShowStatus(Debug this, int increment, int x, int y)
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_spritesPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1543,8 +1543,8 @@ static void Debug_spritesPage(Debug this, int increment __attribute__ ((unused))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
 {
@@ -1586,8 +1586,8 @@ static void Debug_spritesShowStatus(Debug this, int increment, int x, int y)
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_physicsPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1608,8 +1608,8 @@ static void Debug_physicsPage(Debug this, int increment __attribute__ ((unused))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_physicStatusShowStatistics(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1625,8 +1625,8 @@ static void Debug_physicStatusShowStatistics(Debug this __attribute__ ((unused))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_physicStatusShowShapes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
 {
@@ -1655,8 +1655,8 @@ static void Debug_showCollisionShapes(Debug this __attribute__ ((unused)))
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_hardwareRegistersPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
@@ -1673,8 +1673,8 @@ static void Debug_hardwareRegistersPage(Debug this, int increment __attribute__ 
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_sramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
@@ -1697,8 +1697,8 @@ static void Debug_sramPage(Debug this, int increment __attribute__ ((unused)), i
  *
  * @param this			Function scope
  * @param increment		Increment
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 static void Debug_showSramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {

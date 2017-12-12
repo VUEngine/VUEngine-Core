@@ -59,6 +59,8 @@ float Math_squareRoot(float number)
 	i  = 0x5f3759df - ( i >> 1 );
 	y  = * ( float * ) &i;
 	y  = y * ( f - ( x * y * y ) );
+	y  = y * ( f - ( x * y * y ) );
+	y  = y * ( f - ( x * y * y ) );
 
 	return number * y;
 }
@@ -106,7 +108,7 @@ int Math_intInfinity()
 	return 0x3FFFFFFF;
 }
 
-fix19_13 Math_fix19_13Infinity()
+fix10_6 Math_fix10_6Infinity()
 {
-	return 0x3FFFFFFF;
+	return 0x3FFF;
 }

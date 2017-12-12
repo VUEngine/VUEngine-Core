@@ -19,81 +19,78 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef BALL_H_
-#define BALL_H_
+#ifndef CAMERA_EFFECT_MANAGER_H_
+#define CAMERA_EFFECT_MANAGER_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Shape.h>
-#include <Sphere.h>
+#include <Object.h>
+#include <Telegram.h>
+#include <Entity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+enum CameraFX
+{
+	kShow = 0,
+	kHide,
+	kFadeIn,
+	kFadeOut,
+	kFadeTo,
+
+	kCameraLastFX
+};
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Ball_METHODS(ClassName)																			\
-		Shape_METHODS(ClassName)																		\
+// declare the virtual methods
+#define CameraEffectManager_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, startEffect, int effect, va_list args);							\
+		__VIRTUAL_DEC(ClassName, void, stopEffect, int effect);											\
 
-#define Ball_SET_VTABLE(ClassName)																		\
-		Shape_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, Ball, position);														\
-		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
-		__VIRTUAL_SET(ClassName, Ball, getPosition);													\
-		__VIRTUAL_SET(ClassName, Ball, getSurroundingRightBox);											\
-		__VIRTUAL_SET(ClassName, Ball, hide);															\
-		__VIRTUAL_SET(ClassName, Ball, show);															\
-		__VIRTUAL_SET(ClassName, Ball, print);															\
+// declare the virtual methods which are redefined
+#define CameraEffectManager_SET_VTABLE(ClassName)														\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, CameraEffectManager, startEffect);										\
+		__VIRTUAL_SET(ClassName, CameraEffectManager, stopEffect);										\
+		__VIRTUAL_SET(ClassName, CameraEffectManager, handleMessage);									\
 
-#define Ball_ATTRIBUTES																					\
-		Shape_ATTRIBUTES																				\
-		/**
-		 * @var Sphere		sphere
-		 * @brief			for debugging purposes
-		 * @memberof 		Ball
-		 */																								\
-		Sphere sphere;																					\
-		/**
-		 * @var fix10_6*	radius
-		 * @brief			the radius of the ball
-		 * @memberof 		Box
-		 */																								\
-		fix10_6 radius;																				\
-		/**
-		 * @var Vector3D		center
-		 * @brief			the center of the ball
-		 * @memberof 		Box
-		 */																								\
-		Vector3D center;																				\
+#define CameraEffectManager_ATTRIBUTES																	\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+		/* target brightness for current fade effect */													\
+		Brightness fxFadeTargetBrightness;																\
+		/* delay for current fade effect */																\
+		u8 fxFadeDelay;																					\
+		/* callback scope for current fade effect */													\
+		Object fxFadeCallbackScope;
 
-__CLASS(Ball);
+// declare a CameraEffectManager
+__CLASS(CameraEffectManager);
 
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Ball, SpatialObject owner);
+CameraEffectManager CameraEffectManager_getInstance();
 
-void Ball_constructor(Ball this, SpatialObject owner);
-void Ball_destructor(Ball this);
+void CameraEffectManager_constructor(CameraEffectManager this);
+void CameraEffectManager_destructor(CameraEffectManager this);
+void CameraEffectManager_startEffect(CameraEffectManager this, int effect, va_list args);
+void CameraEffectManager_stopEffect(CameraEffectManager this, int effect);
+bool CameraEffectManager_handleMessage(CameraEffectManager this, Telegram telegram);
+Brightness CameraEffectManager_getDefaultBrightness(CameraEffectManager this);
 
-void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-void Ball_project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
-CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
-Vector3D Ball_getPosition(Ball this);
-RightBox Ball_getSurroundingRightBox(Ball this);
-void Ball_show(Ball this);
-void Ball_hide(Ball this);
-void Ball_print(Ball this, int x, int y);
 
 #endif

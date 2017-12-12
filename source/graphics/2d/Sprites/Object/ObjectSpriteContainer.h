@@ -80,11 +80,11 @@
 		 */																								\
 		VirtualNode objectSpriteNodeToDefragment;														\
 		/**
-		 * @var fix19_13	z
+		 * @var fix10_6	z
 		 * @brief			for WORLD sorting
 		 * @memberof		ObjectSpriteContainer
 		 */																								\
-		fix19_13 z;																						\
+		fix10_6 z;																						\
 		/**
 		 * @var int			freedObjectIndex
 		 * @brief			used for defragmentation
@@ -134,7 +134,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 
 void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const Vector2D* displacement);
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
-void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix19_13 z);
+void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix10_6 z);
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);

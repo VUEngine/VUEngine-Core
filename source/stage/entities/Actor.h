@@ -43,8 +43,8 @@
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
-		__VIRTUAL_DEC(ClassName, fix19_13, getElasticityOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
-		__VIRTUAL_DEC(ClassName, fix19_13, getFrictionOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
+		__VIRTUAL_DEC(ClassName, fix10_6, getElasticityOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
+		__VIRTUAL_DEC(ClassName, fix10_6, getFrictionOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedEntity_SET_VTABLE(ClassName)															\
@@ -121,9 +121,9 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
 bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
-fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
-fix19_13 Actor_getSurroundingFrictionCoefficient(Actor this);
-fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+fix10_6 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this);
+fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 bool Actor_handleMessage(Actor this, Telegram telegram);
 StateMachine Actor_getStateMachine(Actor this);
 bool Actor_isMoving(Actor this);
@@ -132,7 +132,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const Vector3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const Vector3D* position);
 void Actor_takeHitFrom(Actor this, Actor other);
-fix19_13 Actor_getElasticity(Actor this);
+fix10_6 Actor_getElasticity(Actor this);
 void Actor_addForce(Actor this, const Force* force);
 void Actor_moveUniformly(Actor this, Velocity* velocity);
 void Actor_stopAllMovement(Actor this);

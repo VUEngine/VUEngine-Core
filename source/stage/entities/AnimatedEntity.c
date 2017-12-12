@@ -28,7 +28,7 @@
 #include <Clock.h>
 #include <MessageDispatcher.h>
 #include <Optics.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <Shape.h>
 #include <PhysicalWorld.h>
 #include <Body.h>

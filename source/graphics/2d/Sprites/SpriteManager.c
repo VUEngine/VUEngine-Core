@@ -31,7 +31,7 @@
 #include <VIPManager.h>
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <TimerManager.h>
 #include <debugConfig.h>
 
@@ -1014,8 +1014,8 @@ void SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager this, 
  * @public
  *
  * @param this		Function scope
- * @param x			Screen x coordinate
- * @param y			Screen y coordinate
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
  * @param resumed	If true prints info about all the Sprites in the list
  */
 void SpriteManager_print(SpriteManager this, int x, int y, bool resumed)

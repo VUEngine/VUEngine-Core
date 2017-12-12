@@ -34,7 +34,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PHYSICS_TIME_ELAPSED					__FIX19_13_DIV(__1I_FIX19_13, __I_TO_FIX19_13(__TARGET_FPS))
+#define __PHYSICS_TIME_ELAPSED					__FIX10_6_DIV(__1I_FIX10_6, __I_TO_FIX10_6(__TARGET_FPS))
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,17 +74,17 @@
 		 */																								\
 		Acceleration gravity;																			\
 		/**
-		 * @var fix19_13		frictionCoefficient
+		 * @var fix10_6		frictionCoefficient
 		 * @brief				frictionCoefficient
 		 * @memberof 			PhysicalWorld
 		 */																								\
-		fix19_13 frictionCoefficient;																	\
+		fix10_6 frictionCoefficient;																	\
 		/**
-		 * @var fix19_13		timeScale
+		 * @var fix10_6		timeScale
 		 * @brief				time scale
 		 * @memberof 			PhysicalWorld
 		 */																								\
-		fix19_13 timeScale;																				\
+		fix10_6 timeScale;																				\
 		/**
 		 * @var VirtualNode		bodyToCheckForGravityNode
 		 * @brief				body to check for gravity
@@ -138,7 +138,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	this->gravity.z = 0;
 
 	this->frictionCoefficient = 0;
-	this->timeScale = __1I_FIX19_13;
+	this->timeScale = __1I_FIX10_6;
 }
 
 /**
@@ -417,7 +417,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	PhysicalWorld_checkForGravity(this);
 
 	// TODO: time scale
-	Body_setCurrentElapsedTime(__FIX19_13_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
+	Body_setCurrentElapsedTime(__FIX10_6_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
 	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body_setCurrentGravity(&this->gravity);
 
@@ -429,6 +429,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		__VIRTUAL_CALL(Body, update, node->data);
 	}
 
+//	PhysicalWorld_print(this, 1, 10);
 #ifdef __SHOW_PHYSICS_PROFILING
 	PhysicalWorld_print(this, 1, 1);
 #endif
@@ -509,7 +510,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
  *
  * @return		PhysicalWorld's frictionCoefficient
  */
-fix19_13 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this)
+fix10_6 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getFrictionCoefficient: null this");
 
@@ -525,7 +526,7 @@ fix19_13 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this)
  * @param this		Function scope
  * @param frictionCoefficient
  */
-void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix19_13 frictionCoefficient)
+void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient)
 {
 	ASSERT(this, "PhysicalWorld::setFrictionCoefficient: null this");
 
@@ -542,7 +543,7 @@ void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix19_13 frictionC
  * @param this		Function scope
  * @param 			timeScale
  */
-void PhysicalWorld_setTimeScale(PhysicalWorld this, fix19_13 timeScale)
+void PhysicalWorld_setTimeScale(PhysicalWorld this, fix10_6 timeScale)
 {
 	ASSERT(this, "PhysicalWorld::setTimeScale: null this");
 
@@ -645,7 +646,7 @@ const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this)
  *
  * @return		Elapsed time
  */
-fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this __attribute__ ((unused)))
+fix10_6 PhysicalWorld_getElapsedTime(PhysicalWorld this __attribute__ ((unused)))
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 

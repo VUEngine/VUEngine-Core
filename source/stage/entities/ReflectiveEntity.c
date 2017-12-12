@@ -27,7 +27,7 @@
 #include <ReflectiveEntity.h>
 #include <Game.h>
 #include <Optics.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <Utilities.h>
 #include <DirectDraw.h>
 
@@ -63,7 +63,7 @@ void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinit
 	__CONSTRUCT_BASE(Entity, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
-	this->waveLutIndexIncrement = __FIX19_13_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, __FIX19_13_DIV(__I_TO_FIX19_13(reflectiveEntityDefinition->numberOfWaveLutEntries), __I_TO_FIX19_13(reflectiveEntityDefinition->width)));
+	this->waveLutIndexIncrement = __FIX10_6_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, __FIX10_6_DIV(__I_TO_FIX10_6(reflectiveEntityDefinition->numberOfWaveLutEntries), __I_TO_FIX10_6(reflectiveEntityDefinition->width)));
 	this->nextFramePosition2D = this->position2D = (Point){_cameraFrustum->x1 + 1, _cameraFrustum->y1 + 1};
 }
 
@@ -115,13 +115,13 @@ void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
 
-	Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
 
 	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
 	this->position2D = this->nextFramePosition2D;
-	this->nextFramePosition2D.x = __FIX19_13_TO_I(position2D.x);
-	this->nextFramePosition2D.y = __FIX19_13_TO_I(position2D.y);
+	this->nextFramePosition2D.x = __FIX10_6_TO_I(position2D.x);
+	this->nextFramePosition2D.y = __FIX10_6_TO_I(position2D.y);
 }
 
 static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
@@ -145,7 +145,7 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 	ReflectiveEntityDefinition* reflectiveEntityDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
 
 /*
-	static fix19_13 index = 0;
+	static fix10_6 index = 0;
 
 	const s16 displ[] =
 	{
@@ -157,7 +157,7 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 
 	index += this->waveLutIndexIncrement;
 
-	if(__FIX19_13_TO_I(index) >= sizeof(displ) / sizeof(s16))
+	if(__FIX10_6_TO_I(index) >= sizeof(displ) / sizeof(s16))
 	{
 		index = 0;
 	}
@@ -215,7 +215,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								u32 overallMask, u32 reflectionMask, u32 backgroundMask,
 								u16 axisForReversing, bool transparent, bool reflectParallax,
 								s16 parallaxDisplacement,
-								const u8 waveLut[], int numberOfWaveLutEntries, fix19_13 waveLutThrottleFactor,
+								const u8 waveLut[], int numberOfWaveLutEntries, fix10_6 waveLutThrottleFactor,
 								bool flattenTop __attribute__ ((unused)), bool flattenBottom,
 								u32 topBorderMask,
 								u32 bottomBorderMask,
@@ -251,14 +251,14 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		return;
 	}
 
-	fix19_13 fixedNumberOfWaveLutEntries = __FIX19_13_MULT(waveLutThrottleFactor, __I_TO_FIX19_13(numberOfWaveLutEntries));
+	fix10_6 fixedNumberOfWaveLutEntries = __FIX10_6_MULT(waveLutThrottleFactor, __I_TO_FIX10_6(numberOfWaveLutEntries));
 
 	u32 transparentMask = transparent ? 0xFFFFFFFF : 0;
 
 	int xClamping = 0;
 	int xOutputStartSave = xOutputStart;
 
-	// clamp values to not write out of the screen
+	// clamp values to not write out of the camera
 	if(xSourceStart < _cameraFrustum->x0)
 	{
 		xClamping = _cameraFrustum->x0 - xSourceStart;
@@ -353,7 +353,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		0
 	};
 
-	fix19_13 waveLutIndexIncrement = this->waveLutIndexIncrement;
+	fix10_6 waveLutIndexIncrement = this->waveLutIndexIncrement;
 
 	if(!waveLut)
 	{
@@ -424,7 +424,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				}
 			}
 
-			int xRelativeCoordinate = (xCounter % width) + __FIX19_13_TO_I(this->waveLutIndex);
+			int xRelativeCoordinate = (xCounter % width) + __FIX10_6_TO_I(this->waveLutIndex);
 			int xIndex = (numberOfWaveLutEntries * xRelativeCoordinate) / width;
 
 			if(xIndex >= numberOfWaveLutEntries)
@@ -590,7 +590,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 				}
 			}
 
-			int xRelativeCoordinate = (xCounter % width) + __FIX19_13_TO_I(this->waveLutIndex);
+			int xRelativeCoordinate = (xCounter % width) + __FIX10_6_TO_I(this->waveLutIndex);
 			int xIndex = (numberOfWaveLutEntries * xRelativeCoordinate) / width;
 
 			if(xIndex >= numberOfWaveLutEntries)
@@ -711,58 +711,58 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 */
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13(yOutputStartTemp),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13(yOutputStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6(yOutputStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6(yOutputStartTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xOutputStartTemp),__I_TO_FIX19_13(yOutputEndTemp),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xOutputEndTemp),__I_TO_FIX19_13(yOutputEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6(yOutputEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6(yOutputEndTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13(ySourceStartTemp),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13(ySourceStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6(ySourceStartTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6(ySourceStartTemp),0,0},
 		__COLOR_DARK_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX19_13(xSourceStartTemp),__I_TO_FIX19_13(ySourceEndTemp),0,0},
-		(Vector2D) {__I_TO_FIX19_13(xSourceEndTemp),__I_TO_FIX19_13(ySourceEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6(ySourceEndTemp),0,0},
+		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6(ySourceEndTemp),0,0},
 		__COLOR_DARK_RED
 	);
 */

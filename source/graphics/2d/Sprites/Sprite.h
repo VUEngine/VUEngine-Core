@@ -57,12 +57,12 @@
 		__VIRTUAL_DEC(ClassName, void, setPosition, const Vector2D* position);							\
 		__VIRTUAL_DEC(ClassName, void, addDisplacement, const Vector2D* displacement);					\
 		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
-		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix19_13 z);								\
+		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);								\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, void, applyAffineTransformations);										\
 		__VIRTUAL_DEC(ClassName, void, applyHbiasEffects);												\
-		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix19_13 z);									\
+		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix10_6 z);									\
 		__VIRTUAL_DEC(ClassName, void, writeAnimation);													\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
@@ -91,11 +91,11 @@
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
 		/*
-		 * @var WorldVector 			displacement
+		 * @var Vector2D 			displacement
 		 * @brief					Displacement modifier to achieve better control over display
 		 * @memberof				Sprite
 		 */																								\
-		WorldVector displacement;																		\
+		Vector2D displacement;																		\
 		/*
 		 * @var AnimationController animationController
 		 * @brief					AnimationController
@@ -109,17 +109,17 @@
 		 */																								\
 		Texture texture;																				\
 		/*
-		 * @var fix19_13 			halfWidth
+		 * @var fix10_6 			halfWidth
 		 * @brief					Texture's half width
 		 * @memberof				Sprite
 		 */																								\
-		fix19_13 halfWidth;																				\
+		fix10_6 halfWidth;																				\
 		/*
-		 * @var fix19_13 			halfHeight
+		 * @var fix10_6 			halfHeight
 		 * @brief					Texture's half height
 		 * @memberof				Sprite
 		 */																								\
-		fix19_13 halfHeight;																			\
+		fix10_6 halfHeight;																			\
 		/*
 		 * @var u16 				head
 		 * @brief					Head definition for world entry setup
@@ -182,7 +182,7 @@ typedef struct SpriteDefinition
 	bool transparent;
 
 	/// displacement modifier to achieve better control over display
-	WorldVector displacement;
+	Vector2D displacement;
 
 } SpriteDefinition;
 
@@ -258,7 +258,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 void Sprite_destructor(Sprite this);
 
 // general
-void Sprite_calculateParallax(Sprite this, fix19_13 z);
+void Sprite_calculateParallax(Sprite this, fix10_6 z);
 u16 Sprite_getHead(Sprite this);
 u16 Sprite_getMode(Sprite this);
 Scale Sprite_getScale(Sprite this);
@@ -278,7 +278,7 @@ s16 Sprite_getWorldMP(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
 bool Sprite_isTransparent(Sprite this);
-void Sprite_resize(Sprite this, Scale scale, fix19_13 z);
+void Sprite_resize(Sprite this, Scale scale, fix10_6 z);
 void Sprite_rewrite(Sprite this);
 void Sprite_setTransparent(Sprite this, bool value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
@@ -287,7 +287,7 @@ void Sprite_position(Sprite this, const Vector3D* position);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);
-WorldVector Sprite_getDisplacement(Sprite this);
+Vector2D Sprite_getDisplacement(Sprite this);
 s8 Sprite_getFrameDuration(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 int Sprite_getHalfWidth(Sprite this);

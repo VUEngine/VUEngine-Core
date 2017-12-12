@@ -679,8 +679,8 @@ void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager thi
  * @private
  *
  * @param this		Function scope
- * @param x			Screen's x coocrinate
- * @param y			Screen's y coocrinate
+ * @param x			Camera's x coocrinate
+ * @param y			Camera's y coocrinate
  */
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y)
 {

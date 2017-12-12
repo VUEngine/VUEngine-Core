@@ -19,39 +19,50 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef VECTOR_3D_H_
-#define VECTOR_3D_H_
+#ifndef CAMERA_MOVEMENT_MANAGER_H_
+#define CAMERA_MOVEMENT_MANAGER_H_
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Types.h>
-#include <MiscStructs.h>
+#include <Object.h>
+#include <Telegram.h>
+#include <Entity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-Vector3D Vector3D_get(Vector3D from, Vector3D to);
-fix10_6 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB);
-Vector3D Vector3D_scalarProduct(Vector3D vector, fix10_6 scalar);
-Vector3D Vector3D_normalize(Vector3D vector);
-Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
-fix10_6 Vector3D_length(Vector3D vector);
-fix19_13 Vector3D_squareLength(Vector3D vector);
-fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
-Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
-Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax);
+// declare the virtual methods
+#define CameraMovementManager_METHODS(ClassName)														\
+		Object_METHODS(ClassName)																		\
+		__VIRTUAL_DEC(ClassName, void, focus, u32 checkIfFocusEntityIsMoving);							\
+
+// declare the virtual methods which are redefined
+#define CameraMovementManager_SET_VTABLE(ClassName)														\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, CameraMovementManager, focus); 										\
+
+#define CameraMovementManager_ATTRIBUTES																\
+		/* super's attributes */																		\
+		Object_ATTRIBUTES																				\
+
+// declare a CameraMovementManager
+__CLASS(CameraMovementManager);
 
 
 //---------------------------------------------------------------------------------------------------------
-//											IMPLEMENTATIONS
+//										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
+CameraMovementManager CameraMovementManager_getInstance();
 
-
+void CameraMovementManager_constructor(CameraMovementManager this);
+void CameraMovementManager_destructor(CameraMovementManager this);
+void CameraMovementManager_focus(CameraMovementManager this, u32 checkIfFocusEntityIsMoving);
 
 
 #endif

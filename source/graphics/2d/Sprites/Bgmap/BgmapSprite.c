@@ -31,7 +31,7 @@
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <VIPManager.h>
 #include <debugConfig.h>
 
@@ -100,8 +100,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 
-		this->halfWidth = __I_TO_FIX19_13((int)Texture_getCols(this->texture) << 2);
-		this->halfHeight = __I_TO_FIX19_13((int)Texture_getRows(this->texture) << 2);
+		this->halfWidth = __I_TO_FIX10_6((int)Texture_getCols(this->texture) << 2);
+		this->halfHeight = __I_TO_FIX10_6((int)Texture_getRows(this->texture) << 2);
 	}
 	else
 	{
@@ -248,8 +248,8 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 
 	Vector3D position3D = *position;
 
-	// normalize the position to screen coordinates
-	position3D = Vector3D_toScreen(position3D);
+	// normalize the position to camera coordinates
+	position3D = Vector3D_getRelativeToCamera(position3D);
 	this->drawSpec.position = Vector3D_projectToVector2D(position3D, this->drawSpec.position.parallax);
 
 	this->drawSpec.position.x -= this->halfWidth;
@@ -281,8 +281,8 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 		if(this->texture)
 		{
-			this->halfWidth = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
-			this->halfHeight = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
+			this->halfWidth = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6;
+			this->halfHeight = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6;
 		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
@@ -302,15 +302,15 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
+void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 {
 	ASSERT(this, "BgmapSprite::resize: null this");
 
 	if(__WORLD_AFFINE & this->head)
 	{
-		z -= _screenPosition->z;
+		z -= _cameraPosition->z;
 
-		fix7_9 ratio = __FIX19_13_TO_FIX7_9(__I_TO_FIX19_13(1) - (z / (1 << _optical->maximumViewDistancePower)));
+		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - (z / (1 << _optical->maximumViewDistancePower)));
 
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
@@ -322,8 +322,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
 
 		if(this->texture)
 		{
-			this->halfWidth = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.y)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.x)))) + __0_5F_FIX19_13;
-			this->halfHeight = __ABS(__FIX19_13_MULT(__FIX7_9_TO_FIX19_13(__COS(this->drawSpec.rotation.x)), __FIX19_13_MULT(__I_TO_FIX19_13((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX19_13(this->drawSpec.scale.y))))  + __0_5F_FIX19_13;
+			this->halfWidth = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6;
+			this->halfHeight = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6;
 		}
 
 		if(this->param)
@@ -342,11 +342,11 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z)
  * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
-void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z)
+void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
-	this->drawSpec.position.z = z - _screenPosition->z;
+	this->drawSpec.position.z = z - _cameraPosition->z;
 	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
 }
 
@@ -400,14 +400,14 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-	int gy = __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	int gx = __FIX10_6_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX10_6);
+	int gy = __FIX10_6_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX10_6);
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
 	// get sprite's size
-	int width = __FIX19_13_TO_I(this->halfWidth) << 1;
-	int height = __FIX19_13_TO_I(this->halfHeight) << 1;
+	int width = __FIX10_6_TO_I(this->halfWidth) << 1;
+	int height = __FIX10_6_TO_I(this->halfHeight) << 1;
 	int w = width;
 	int h = height;
 
@@ -415,7 +415,7 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->my = this->drawSpec.textureSource.my;
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
-	// cap coordinates to screen space
+	// cap coordinates to camera space
 //	int mxDisplacement = 0;
 	if(_cameraFrustum->x0 > gx)
 	{
@@ -435,8 +435,8 @@ void BgmapSprite_render(BgmapSprite this)
 		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
-	worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I((this->displacement.z + this->displacement.p) & 0xFFFFE000);
-//		worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
+	worldPointer->gp = __FIX10_6_TO_I(this->drawSpec.position.parallax + __FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax));
+//		worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX10_6);
 
 	if(w + worldPointer->gx >= _cameraFrustum->x1)
 	{
@@ -502,7 +502,7 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 
 		// provide a little bit of performance gain by only calculation transformation equations
 		// for the visible rows, but causes that some sprites not be rendered completely when the
-		// screen moves vertically
+		// camera moves vertically
 		// int lastRow = height + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: height;
 		// this->paramTableRow = this->paramTableRow ? this->paramTableRow : myDisplacement;
 
@@ -568,7 +568,7 @@ void BgmapSprite_processHbiasEffects(BgmapSprite this)
 }
 
 // handles affine transformations accurately by translating using translations
-// to clip the image to the screen space, but kill the CPU
+// to clip the image to the camera space, but kill the CPU
 /*
 // render a world layer with the map's information
 void BgmapSprite_render(BgmapSprite this)
@@ -588,9 +588,9 @@ void BgmapSprite_render(BgmapSprite this)
 		static WorldAttributes* worldPointer = NULL;
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
-		// set the world screen position
-		int gx = __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x);
-		int gy = __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y);
+		// set the world camera position
+		int gx = __FIX10_6_TO_I(this->drawSpec.position.x + this->displacement.x);
+		int gy = __FIX10_6_TO_I(this->drawSpec.position.y + this->displacement.y);
 
 		int w = Texture_getCols(this->texture)<< 3;
 		int h = Texture_getRows(this->texture)<< 3;
@@ -600,7 +600,7 @@ void BgmapSprite_render(BgmapSprite this)
 
 		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
 		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
-		worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I(this->displacement.z & 0xFFFFE000);
+		worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(this->displacement.z & 0xFFFFE000);
 
 		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
@@ -642,7 +642,7 @@ void BgmapSprite_render(BgmapSprite this)
 				}
 			}
 
-			if(_screenDisplacement->y && 0 > this->paramTableRow)
+			if(_cameraDisplacement->y && 0 > this->paramTableRow)
 			{
 				this->paramTableRow = 0;
 			}

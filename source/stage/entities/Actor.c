@@ -29,7 +29,7 @@
 #include <MessageDispatcher.h>
 #include <CollisionManager.h>
 #include <Optics.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <Shape.h>
 #include <PhysicalWorld.h>
 #include <Body.h>
@@ -95,7 +95,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 		{
 			PhysicalSpecification defaultActorPhysicalSpecification =
 			{
-				__I_TO_FIX19_13(1),
+				__I_TO_FIX10_6(1),
 				0,
 				0
 			};
@@ -110,8 +110,8 @@ void Actor_destructor(Actor this)
 {
 	ASSERT(this, "Actor::destructor: null this");
 
-	// inform the screen I'm being removed
-	Screen_onFocusEntityDeleted(Screen_getInstance(), __SAFE_CAST(Entity, this));
+	// inform the camera I'm being removed
+	Camera_onFocusEntityDeleted(Camera_getInstance(), __SAFE_CAST(Entity, this));
 
 	if(this->body)
 	{
@@ -301,10 +301,9 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-/*	Body_print(this->body, 1, 1);
+	Body_print(this->body, 1, 1);
 	Shape_print(VirtualList_front(this->shapes), 1, 17);
 	Printing_resetWorldCoordinates(Printing_getInstance());
-	*/
 }
 
 // whether changed direction in the last cycle or not
@@ -403,7 +402,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 {
 	ASSERT(this, "Actor::canMoveTowards: null this");
 
-	fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
 
 	Vector3D displacement =
 	{
@@ -425,7 +424,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 	return canMove;
 }
 
-fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix10_6 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getElasticityOnCollision: null this");
 
@@ -434,11 +433,11 @@ fix19_13 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObjec
 	return physicalSpecification->elasticity + __VIRTUAL_CALL(SpatialObject, getElasticity, collidingObject);
 }
 
-fix19_13 Actor_getSurroundingFrictionCoefficient(Actor this)
+fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
 {
 	ASSERT(this, "Actor::getSurroundingFrictionCoefficient: null this");
 
-	fix19_13 totalFrictionCoefficient = 0;
+	fix10_6 totalFrictionCoefficient = 0;
 
 	VirtualNode node = this->shapes->head;
 
@@ -452,7 +451,7 @@ fix19_13 Actor_getSurroundingFrictionCoefficient(Actor this)
 	return totalFrictionCoefficient;
 }
 
-fix19_13 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getFrictionOnCollision: null this");
 
@@ -475,8 +474,8 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
 
-			fix19_13 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
-			fix19_13 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
 
 			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 
@@ -688,7 +687,7 @@ void Actor_takeHitFrom(Actor this, Actor other)
 }
 
 // get elasticity
-fix19_13 Actor_getElasticity(Actor this)
+fix10_6 Actor_getElasticity(Actor this)
 {
 	ASSERT(this, "Actor::getElasticity: null this");
 

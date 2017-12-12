@@ -55,7 +55,7 @@ typedef struct SolutionVector
 	Vector3D direction;
 
 	// minimum vector to solve the collision
-	fix19_13 magnitude;
+	fix10_6 magnitude;
 
 } SolutionVector;
 
@@ -84,8 +84,8 @@ typedef struct Normals
 
 typedef struct VertexProjection
 {
-	fix19_13 min;
-	fix19_13 max;
+	fix10_6 min;
+	fix10_6 max;
 } VertexProjection;
 
 
@@ -94,13 +94,13 @@ typedef struct VertexProjection
 		__VIRTUAL_DEC(ClassName, void, setup, u32 layers, u32 layersToIgnore);							\
 		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
 		__VIRTUAL_DEC(ClassName, bool, collides, Shape shape);											\
-		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix19_13 sizeIncrement);	\
+		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix10_6 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);												\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
 		__VIRTUAL_DEC(ClassName, void, show);															\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
-		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, Vector3D displacement, fix19_13 sizeIncrement);	\
+		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, Vector3D displacement, fix10_6 sizeIncrement);	\
 
 #define Shape_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
@@ -220,8 +220,8 @@ bool Shape_isReady(Shape this);
 void Shape_setActive(Shape this, bool active);
 void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
 void Shape_setReady(Shape this, bool ready);
-bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix19_13 sizeIncrement);
-fix19_13 Shape_getCollidingFrictionCoefficient(Shape this);
+bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncrement);
+fix10_6 Shape_getCollidingFrictionCoefficient(Shape this);
 void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
 u32 Shape_getLayers(Shape this);
 void Shape_setLayers(Shape this, u32 layers);

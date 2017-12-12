@@ -26,7 +26,7 @@
 
 #include <GameState.h>
 #include <Game.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
 #include <VIPManager.h>
@@ -80,9 +80,9 @@ void GameState_constructor(GameState this)
 	this->physicalWorld = __NEW(PhysicalWorld, this->physicsClock);
 	this->collisionManager = __NEW(CollisionManager);
 
-	this->screenPosition.x = 0;
-	this->screenPosition.y = 0;
-	this->screenPosition.z = 0;
+	this->cameraPosition.x = 0;
+	this->cameraPosition.y = 0;
+	this->cameraPosition.z = 0;
 	this->previousUpdateTime = 0;
 }
 
@@ -138,7 +138,7 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 
 	VIPManager_removePostProcessingEffects(VIPManager_getInstance());
 	Printing_resetWorldCoordinates(Printing_getInstance());
-	Screen_resetCameraFrustum(Screen_getInstance());
+	Camera_resetCameraFrustum(Camera_getInstance());
 
 	GameState_pauseClocks(this);
 
@@ -226,8 +226,8 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 	{
 #endif
 
-	// save the screen position for resume reconfiguration
-	this->screenPosition = Screen_getPosition(Screen_getInstance());
+	// save the camera position for resume reconfiguration
+	this->cameraPosition = Camera_getPosition(Camera_getInstance());
 
 	// make sure shapes are not drawn while suspended
 	CollisionManager_hideShapes(this->collisionManager);
@@ -275,9 +275,9 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	{
 #endif
 
-	// set screen to its previous position
-	Screen_setStageSize(Screen_getInstance(), Stage_getSize(this->stage));
-	Screen_setPosition(Screen_getInstance(), this->screenPosition);
+	// set camera to its previous position
+	Camera_setStageSize(Camera_getInstance(), Stage_getSize(this->stage));
+	Camera_setPosition(Camera_getInstance(), this->cameraPosition);
 
 	if(this->stage)
 	{
@@ -290,8 +290,8 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 		__VIRTUAL_CALL(Container, resume, this->stage);
 	}
 
-	// move the screen to its previous position
-	Screen_focus(Screen_getInstance(), false);
+	// move the camera to its previous position
+	Camera_focus(Camera_getInstance(), false);
 
 	// force all transformations to take place again
 	GameState_initialTransform(this);
@@ -412,8 +412,8 @@ void GameState_transform(GameState this)
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	u8 invalidateTransformationFlag = (_screenDisplacement->x | _screenDisplacement->y | _screenDisplacement->z) ? __INVALIDATE_POSITION : 0;
-	invalidateTransformationFlag |= _screenDisplacement->z ? __INVALIDATE_SCALE : 0;
+	u8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_POSITION : 0;
+	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
 
 	// then transformation loaded entities
 	__VIRTUAL_CALL(Container, transform, this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
@@ -496,9 +496,9 @@ u32 GameState_processCollisions(GameState this)
  * @param this							Function scope
  * @param stageDefinition				Stage's configuration
  * @param positionedEntitiesToIgnore	List of entities from the definition to not load
- * @param overrideScreenPosition		Flag to override or not the Screen's current position
+ * @param overrideCameraPosition		Flag to override or not the Camera's current position
  */
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
@@ -523,17 +523,17 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
-	// make sure no entity is set as focus for the screen
-	Screen_setFocusGameEntity(Screen_getInstance(), NULL);
+	// make sure no entity is set as focus for the camera
+	Camera_setFocusGameEntity(Camera_getInstance(), NULL);
 
 	// must make sure that all textures are completely written
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 
 	// load world entities
-	Stage_load(this->stage, stageDefinition, positionedEntitiesToIgnore, overrideScreenPosition);
+	Stage_load(this->stage, stageDefinition, positionedEntitiesToIgnore, overrideCameraPosition);
 
-	// move the screen to its previous position
-	Screen_focus(Screen_getInstance(), false);
+	// move the camera to its previous position
+	Camera_focus(Camera_getInstance(), false);
 
 	// transformation everything
 	GameState_initialTransform(this);

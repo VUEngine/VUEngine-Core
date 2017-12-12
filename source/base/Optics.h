@@ -55,22 +55,8 @@ extern const Optical* _optical;
  * @param x			X parameter for the calculation of the parallax displacement
  * @param x			Z parameter for the calculation of the parallax displacement
  */
-inline int Optics_calculateParallax(fix19_13 x, fix19_13 z)
-{
-	fix19_13 leftEyePoint, rightEyePoint;
-	fix19_13 leftEyeGx, rightEyeGx;
+extern fix10_6 Optics_calculateParallax(fix10_6 x, fix10_6 z);
 
-	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
-
-	// set map position and parallax
-	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance >> 1);
-	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance >> 1);
-
-	leftEyeGx = x - __FIX19_13_DIV(__FIX19_13_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
-	rightEyeGx = x + __FIX19_13_DIV(__FIX19_13_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
-
-	return __FIX19_13_TO_I(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
-}
 
 
 #endif

@@ -27,7 +27,7 @@
 #include <UiContainer.h>
 #include <Optics.h>
 #include <Game.h>
-#include <Screen.h>
+#include <Camera.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -117,14 +117,14 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 {
 	ASSERT(this, "UiContainer::transform: null this");
 
-	Screen screen = Screen_getInstance();
-	ASSERT(screen, "UiContainer::transform: null screen");
+	Camera camera = Camera_getInstance();
+	ASSERT(camera, "UiContainer::transform: null camera");
 
-	Screen_prepareForUITransform(screen);
+	Camera_prepareForUITransform(camera);
 
 	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 
-	Screen_doneUITransform(screen);
+	Camera_doneUITransform(camera);
 }
 
 // transformation
@@ -132,35 +132,35 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 {
 	ASSERT(this, "UiContainer::initialTransform: null this");
 
-	Screen screen = Screen_getInstance();
-	ASSERT(screen, "UiContainer::initialTransform: null screen");
+	Camera camera = Camera_getInstance();
+	ASSERT(camera, "UiContainer::initialTransform: null camera");
 
-	Vector3D originalScreenPosition  =
+	Vector3D originalCameraPosition  =
 	{
 		0, 0, 0
 	};
 
-	if(screen)
+	if(camera)
 	{
-		// must hack the screen position for my children's sprites
+		// must hack the camera position for my children's sprites
 		// being properly rendered
-		originalScreenPosition = Screen_getPosition(screen);
+		originalCameraPosition = Camera_getPosition(camera);
 
-		Vector3D tempScreenPosition =
+		Vector3D tempCameraPosition =
 		{
 			0, 0, 0
 		};
 
-		Screen_setPosition(screen, tempScreenPosition);
+		Camera_setPosition(camera, tempCameraPosition);
 	}
 
 	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
 	__VIRTUAL_CALL(Container, synchronizeGraphics, this);
 
-	if(screen)
+	if(camera)
 	{
-		// recover screen
-		Screen_setPosition(screen, originalScreenPosition);
+		// recover camera
+		Camera_setPosition(camera, originalCameraPosition);
 	}
 }

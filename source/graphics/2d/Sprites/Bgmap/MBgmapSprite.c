@@ -29,7 +29,7 @@
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
 #include <Optics.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <debugConfig.h>
 
 
@@ -231,7 +231,7 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	Vector3D position3D = Vector3D_toScreen(*position);
+	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
 	position2D.x -= this->halfWidth;
@@ -256,7 +256,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position)
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx = -__FIX19_13_TO_I(position->x + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.mx = -__FIX10_6_TO_I(position->x + __0_5F_FIX10_6);
 	}
 	else
 	{
@@ -265,7 +265,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position)
 /*
 		if(0 > position->x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= __FIX19_13_TO_I(position->x + this->displacement.x + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.mx -= __FIX10_6_TO_I(position->x + this->displacement.x + __0_5F_FIX10_6);
 		}
 */
 	}
@@ -273,7 +273,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position)
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my = -__FIX19_13_TO_I(position->y + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.my = -__FIX10_6_TO_I(position->y + __0_5F_FIX10_6);
 	}
 	else
 	{
@@ -282,12 +282,12 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position)
 /*
 		if(0 > position->y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= __FIX19_13_TO_I(position->y + this->displacement.y + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.my -= __FIX10_6_TO_I(position->y + this->displacement.y + __0_5F_FIX10_6);
 		}
 */
 	}
 
-	fix19_13 previousZPosition = this->drawSpec.position.z;
+	fix10_6 previousZPosition = this->drawSpec.position.z;
 	this->drawSpec.position.z = position->z;
 
 	if(previousZPosition != this->drawSpec.position.z)
@@ -319,7 +319,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const Vector2D* displacemen
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
 		this->drawSpec.position.x = 0;
-		this->drawSpec.textureSource.mx -= __FIX19_13_TO_I(displacement->x + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.mx -= __FIX10_6_TO_I(displacement->x + __0_5F_FIX10_6);
 	}
 	else
 	{
@@ -328,7 +328,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const Vector2D* displacemen
 /*
 		if(0 > this->drawSpec.position.x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.mx -= __FIX10_6_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX10_6);
 		}
 */
 	}
@@ -336,7 +336,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const Vector2D* displacemen
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->drawSpec.position.y = 0;
-		this->drawSpec.textureSource.my -= __FIX19_13_TO_I(displacement->y + __0_5F_FIX19_13);
+		this->drawSpec.textureSource.my -= __FIX10_6_TO_I(displacement->y + __0_5F_FIX10_6);
 	}
 	else
 	{
@@ -345,7 +345,7 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const Vector2D* displacemen
 /*
 		if(0 > this->drawSpec.position.y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+			this->drawSpec.textureSource.my -= __FIX10_6_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX10_6);
 		}
 */
 	}
@@ -389,8 +389,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
 	// get coordinates
-	int gx = __FIX19_13_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX19_13);
-	int gy = __FIX19_13_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX19_13);
+	int gx = __FIX10_6_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX10_6);
+	int gy = __FIX10_6_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX10_6);
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
@@ -408,8 +408,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 		myDisplacement = _cameraFrustum->y0 - gy;
 	}
 
-//		worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX19_13);
-	worldPointer->gp = this->drawSpec.position.parallax + __FIX19_13_TO_I((this->displacement.z + this->displacement.p) & 0xFFFFE000);
+//		worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX10_6);
+	worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(__FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax));
 
 	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
@@ -418,7 +418,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	// set the world size
 	if(!this->mBgmapSpriteDefinition->xLoop)
 	{
-    	int w = (__FIX19_13_TO_I(this->halfWidth) << 1) - mxDisplacement;
+    	int w = (__FIX10_6_TO_I(this->halfWidth) << 1) - mxDisplacement;
 
 		if(w + worldPointer->gx >= _cameraFrustum->x1)
 		{
@@ -452,7 +452,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 
 	if(!this->mBgmapSpriteDefinition->yLoop)
 	{
-    	int h = (__FIX19_13_TO_I(this->halfHeight) << 1) - myDisplacement;
+    	int h = (__FIX10_6_TO_I(this->halfHeight) << 1) - myDisplacement;
 
 		if(h + worldPointer->gy >= _cameraFrustum->y1)
 		{
@@ -506,7 +506,7 @@ Vector2D MBgmapSprite_getPosition(MBgmapSprite this)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix19_13 z)
+void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z)
 {
 	ASSERT(this, "MBgmapSprite::resize: null this");
 
@@ -549,8 +549,8 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
 		}
 	}
 
-	this->halfWidth = __I_TO_FIX19_13(cols << 2);
-	this->halfHeight = __I_TO_FIX19_13(rows << 2);
+	this->halfWidth = __I_TO_FIX10_6(cols << 2);
+	this->halfHeight = __I_TO_FIX10_6(rows << 2);
 }
 
 /**

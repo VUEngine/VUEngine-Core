@@ -57,7 +57,7 @@ __CLASS(Polyhedron);
 __CLASS_NEW_DECLARE(Polyhedron);
 
 void Polyhedron_destructor(Polyhedron this);
-void Polyhedron_addVertex(Polyhedron this, fix19_13 x, fix19_13 y, fix19_13 z);
+void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z);
 void Polyhedron_draw(Polyhedron this, bool calculateParallax);
 
 

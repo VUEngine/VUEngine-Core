@@ -98,9 +98,9 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	this->paused = !this->particleSystemDefinition->autoStart;
 
 	// set size from definition
-	this->size.x += __FIX19_13_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
-	this->size.y += __FIX19_13_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
-	this->size.z += __FIX19_13_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
+	this->size.x += __FIX10_6_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
+	this->size.y += __FIX10_6_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
+	this->size.z += __FIX10_6_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 
@@ -296,7 +296,7 @@ static Particle ParticleSystem_recycleParticle(ParticleSystem this)
 		long seed = Utilities_randomSeed();
 
 		int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
-		fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
+		fix10_6 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 
 		// call the appropriate allocator to support inheritance
 		Particle particle = __SAFE_CAST(Particle, VirtualList_front(this->recyclableParticles));
@@ -408,7 +408,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	long seed = Utilities_randomSeed();
 
 	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
-	fix19_13 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
+	fix10_6 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities_random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 
 	int spriteDefinitionIndex = 0;
 
@@ -418,7 +418,7 @@ static Particle ParticleSystem_spawnParticle(ParticleSystem this)
 	}
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix19_13)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
+	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix10_6)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
 	__VIRTUAL_CALL(Particle, setPosition, particle, ParticleSystem_getParticleSpawnPosition(this, seed));
 	Particle_addForce(particle, ParticleSystem_getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
 

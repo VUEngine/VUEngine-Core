@@ -213,7 +213,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 		bool isSATCheckPending = isBoxARotated || isBoxBRotated;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-		fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
+		fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
 
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
@@ -242,17 +242,17 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 
 			Vector3D normals[__SHAPE_NORMALS] =
 			{
-				{__I_TO_FIX19_13(1), 0, 0},
-				{0, __I_TO_FIX19_13(1), 0},
-				{0, 0, __I_TO_FIX19_13(1)},
+				{__I_TO_FIX10_6(1), 0, 0},
+				{0, __I_TO_FIX10_6(1), 0},
+				{0, 0, __I_TO_FIX10_6(1)},
 			};
 
 			int i = 0;
-			fix19_13* component = &intervalDistance.x;
+			fix10_6* component = &intervalDistance.x;
 
 			for(i = 0; i < __SHAPE_NORMALS; i++)
 			{
-				fix19_13 intervalDistance = __ABS(component[i]);
+				fix10_6 intervalDistance = __ABS(component[i]);
 
 				if(intervalDistance < minimumIntervalDistance)
 				{
@@ -261,7 +261,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 
 					if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
 					{
-						solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
+						solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 					}
 				}
 			}
@@ -314,7 +314,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 		bool isSATCheckPending = boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-		fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
+		fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
 
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
@@ -329,17 +329,17 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 
 			Vector3D normals[__SHAPE_NORMALS] =
 			{
-				{__I_TO_FIX19_13(1), 0, 0},
-				{0, __I_TO_FIX19_13(1), 0},
-				{0, 0, __I_TO_FIX19_13(1)},
+				{__I_TO_FIX10_6(1), 0, 0},
+				{0, __I_TO_FIX10_6(1), 0},
+				{0, 0, __I_TO_FIX10_6(1)},
 			};
 
 			int i = 0;
-			fix19_13* component = &intervalDistance.x;
+			fix10_6* component = &intervalDistance.x;
 
 			for(i = 0; i < __SHAPE_NORMALS; i++)
 			{
-				fix19_13 intervalDistance = __ABS(component[i]);
+				fix10_6 intervalDistance = __ABS(component[i]);
 
 				if(intervalDistance < minimumIntervalDistance)
 				{
@@ -350,7 +350,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 
 			if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
 			{
-				solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
+				solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 			}
 		}
 
@@ -390,7 +390,7 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 	{
 		// check if both boxes are axis aligned
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-		fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
+		fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
 
 		// no SAT when checking inverse boxes
 		// if axis aligned, then SAT check is not needed
@@ -400,17 +400,17 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 
 		Vector3D normals[__SHAPE_NORMALS] =
 		{
-			{__I_TO_FIX19_13(1), 0, 0},
-			{0, __I_TO_FIX19_13(1), 0},
-			{0, 0, __I_TO_FIX19_13(1)},
+			{__I_TO_FIX10_6(1), 0, 0},
+			{0, __I_TO_FIX10_6(1), 0},
+			{0, 0, __I_TO_FIX10_6(1)},
 		};
 
 		int i = 0;
-		fix19_13* component = &intervalDistance.x;
+		fix10_6* component = &intervalDistance.x;
 
 		for(i = 0; i < __SHAPE_NORMALS; i++)
 		{
-			fix19_13 intervalDistance = __ABS(component[i]);
+			fix10_6 intervalDistance = __ABS(component[i]);
 
 			if(intervalDistance < minimumIntervalDistance)
 			{
@@ -421,7 +421,7 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 
 		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
 		{
-			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
+			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 		}
 
 		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), solutionVector};
@@ -489,7 +489,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 	Vector3D distanceVector = Vector3D_get(centers[1], centers[0]);
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
- 	fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
+ 	fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
 
 	int boxIndex = 0;
 
@@ -503,10 +503,10 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 		{
 			Vector3D currentNormal = normals[boxIndex][normalIndex];
 
-			fix19_13 boxAMin = boxA->vertexProjections[normalIndex].min;
-			fix19_13 boxAMax = boxA->vertexProjections[normalIndex].max;
-			fix19_13 boxBMin = boxB->vertexProjections[normalIndex].min;
-			fix19_13 boxBMax = boxB->vertexProjections[normalIndex].max;
+			fix10_6 boxAMin = boxA->vertexProjections[normalIndex].min;
+			fix10_6 boxAMax = boxA->vertexProjections[normalIndex].max;
+			fix10_6 boxBMin = boxB->vertexProjections[normalIndex].min;
+			fix10_6 boxBMax = boxB->vertexProjections[normalIndex].max;
 
 			if(normals[boxIndex] == boxA->normals->vectors)
 			{
@@ -519,7 +519,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 				Box_project(boxAVertexes, currentNormal, &boxAMin, &boxAMax);
 			}
 
-			fix19_13 intervalDistance = 0;
+			fix10_6 intervalDistance = 0;
 
 			if (boxAMin < boxBMin)
 			{
@@ -547,7 +547,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 
 		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
 		{
-			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
+			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 		}
 	}
 
@@ -584,7 +584,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 	Vector3D distanceVector = Vector3D_get(boxACenter, ballB->center);
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-	fix19_13 minimumIntervalDistance = Math_fix19_13Infinity();
+	fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
 
 	// has to project all points on all the normals of the tilted box
 	int normalIndex = 0;
@@ -594,12 +594,12 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 	{
 		Vector3D currentNormal = normals[normalIndex];
 
-		fix19_13 ballBMin = 0;
-		fix19_13 ballBMax = 0;
+		fix10_6 ballBMin = 0;
+		fix10_6 ballBMax = 0;
 
 		Ball_project(ballB->center, ballB->radius, currentNormal, &ballBMin, &ballBMax);
 
-		fix19_13 intervalDistance = 0;
+		fix10_6 intervalDistance = 0;
 
 		if (boxA->vertexProjections[normalIndex].min < ballBMin)
 		{
@@ -628,7 +628,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 
 	if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
 	{
-		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
+		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 	}
 
 	return solutionVector;
@@ -653,22 +653,22 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(Collis
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBallAndBall: null this");
 
 	Vector3D distanceVector = Vector3D_get(ballA->center, ballB->center);
-	fix51_13 radiusesLength = ballA->radius + ballB->radius;
+	fix10_6 radiusesLength = ballA->radius + ballB->radius;
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
-	if(Vector3D_squareLength(distanceVector) < __FIX51_13_MULT(radiusesLength, radiusesLength))
+	if(Vector3D_squareLength(distanceVector) < __FIX10_6_MULT(radiusesLength, radiusesLength))
 	{
-		fix19_13 distanceVectorLength = Vector3D_length(distanceVector);
+		fix10_6 distanceVectorLength = Vector3D_length(distanceVector);
 
 		// add padding to prevent rounding problems
-		solutionVector.magnitude = __FIX51_13_TO_FIX19_13(radiusesLength) - distanceVectorLength + __I_TO_FIX19_13(1);
+		solutionVector.magnitude = radiusesLength - distanceVectorLength + __PIXELS_TO_METERS(1);
 		solutionVector.direction = Vector3D_normalize(distanceVector);
 	}
 
 	if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)
 	{
-		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX19_13(-1));
+		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 	}
 
 	return solutionVector;

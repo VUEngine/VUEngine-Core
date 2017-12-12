@@ -411,8 +411,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 
 		if(maxOutputLevel > 0)
 		{
-			int leftDistance = __ABS(__FIX19_13_TO_I(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
-			int rightDistance = __ABS(__FIX19_13_TO_I(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
+			int leftDistance = __ABS(__FIX10_6_TO_I(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
+			int rightDistance = __ABS(__FIX10_6_TO_I(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
 			int leftMinus = 0, rightMinus = 0;
 			int leftOutput, rightOutput;
 
@@ -580,8 +580,8 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D	pos
 		// record the fx definition's address
 		this->fxSound[i] = fxSound;
 
-		// set position inside screen coordinates
-		position = Vector3D_toScreen(position);
+		// set position inside camera coordinates
+		position = Vector3D_getRelativeToCamera(position);
 
 		// save position for 3d sound
 		this->fxPosition[i] = Vector3D_projectToVector2D(position, 0);

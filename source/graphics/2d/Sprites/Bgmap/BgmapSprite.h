@@ -140,12 +140,12 @@ void BgmapSprite_destructor(BgmapSprite this);
 
 // general
 Scale BgmapSprite_getScale(BgmapSprite this);
-void BgmapSprite_resize(BgmapSprite this, Scale scale, fix19_13 z);
+void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z);
 Vector2D BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, const Vector2D* position);
 void BgmapSprite_position(BgmapSprite this, const Vector3D* position);
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation);
-void BgmapSprite_calculateParallax(BgmapSprite this, fix19_13 z);
+void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
 void BgmapSprite_invalidateParamTable(BgmapSprite this);
 void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec);

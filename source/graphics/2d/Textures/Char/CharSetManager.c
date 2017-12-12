@@ -493,8 +493,8 @@ int CharSetManager_getTotalCharSets(CharSetManager this)
  * @public
  *
  * @param this			Function scope
- * @param x				Screen's x coordinate
- * @param y				Screen's y coordinate
+ * @param x				Camera's x coordinate
+ * @param y				Camera's y coordinate
  */
 void CharSetManager_print(CharSetManager this, int x, int y)
 {

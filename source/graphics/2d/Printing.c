@@ -526,10 +526,14 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 {
 	ASSERT(this, "Printing::float: null this");
 
-	#define FIX19_13_FRAC(n)	((n)&0x1FFF)
+	if(0 > value)
+	{
+		value = -value;
+		Printing_text(this, "-", x++, y, font);
+	}
 
 	int integer = (int)__FIX19_13_TO_I(__F_TO_FIX19_13(value));
-	int decimal = (int)(((float)FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 10000.f);
+	int decimal = (int)(((float)__FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 100.f);
 	int length = Utilities_intLength(__ABS(integer)) + (0 > value ? 1 : 0);
 
 	Printing_int(this, integer, x, y, font);
@@ -538,12 +542,15 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 
 	if(decimal)
 	{
-		while(decimal > 10)
+		int auxDecimal = decimal;
+		int displacement = 0;
+		while(!(auxDecimal / 10))
 		{
-			decimal /= 10;
+			auxDecimal *= 10;
+			Printing_int(this, 0, x + length + 1 + displacement++, y, font);
 		}
 
-		Printing_int(this, decimal, x + length + 1, y, font);
+		Printing_int(this, decimal, x + length + 1 + displacement, y, font);
 	}
 	else
 	{

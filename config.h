@@ -408,7 +408,7 @@
 //												EXCEPTIONS
 //---------------------------------------------------------------------------------------------------------
 
-// Screen coordinates for the output of exceptions
+// Camera coordinates for the output of exceptions
 #define __EXCEPTION_COLUMN						0
 #define __EXCEPTION_LINE						0
 

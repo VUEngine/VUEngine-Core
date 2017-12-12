@@ -48,7 +48,7 @@
 		/* vertices */																					\
 		Vector3D center;																					\
 		/* radious */																					\
-		fix19_13 radius;																				\
+		fix10_6 radius;																					\
 
 __CLASS(Sphere);
 
@@ -57,13 +57,13 @@ __CLASS(Sphere);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Sphere, Vector3D center, fix19_13 radius);
+__CLASS_NEW_DECLARE(Sphere, Vector3D center, fix10_6 radius);
 
 void Sphere_destructor(Sphere this);
 Vector3D Sphere_getCenter(Sphere this);
 void Sphere_setCenter(Sphere this, Vector3D center);
-fix19_13 Sphere_getRadius(Sphere this);
-void Sphere_setRadius(Sphere this, fix19_13 radius);
+fix10_6 Sphere_getRadius(Sphere this);
+void Sphere_setRadius(Sphere this, fix10_6 radius);
 void Sphere_draw(Sphere this, bool calculateParallax);
 
 

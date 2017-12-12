@@ -30,7 +30,7 @@
 #include <SpriteManager.h>
 #include <GameState.h>
 #include <Stage.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <string.h>
 #include <OptionsSelector.h>
 #include <Texture.h>
@@ -905,10 +905,10 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 {
 	AnimationInspector_removePreviousSprite(this);
 
-	Vector3D position = *_screenPosition;
+	Vector3D position = *_cameraPosition;
 
-	position.x += __I_TO_FIX19_13(__HALF_SCREEN_WIDTH);
-	position.y += __I_TO_FIX19_13(__HALF_SCREEN_HEIGHT);
+	position.x += __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
+	position.y += __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
 	position.z -= 10;
 
 	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userAnimatedEntities[OptionsSelector_getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->entityDefinition.spriteDefinitions[OptionsSelector_getSelectedOption(this->spriteSelector)];
@@ -920,8 +920,8 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationInspector::createSprite: null texture");
 
 	Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, this->animatedSprite);
-	spritePosition.x = __I_TO_FIX19_13((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
-	spritePosition.y = __I_TO_FIX19_13((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 
 	__VIRTUAL_CALL(Sprite, setPosition, this->animatedSprite, &spritePosition);
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);

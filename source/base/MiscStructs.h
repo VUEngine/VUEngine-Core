@@ -55,13 +55,13 @@ typedef struct Size
 // used to represent a screen position with parallax info
 typedef struct Vector2D
 {
-	fix19_13 x;
-	fix19_13 y;
+	fix10_6 x;
+	fix10_6 y;
 
 	// since parallax may be the same given different z positions
 	// it's needed to have this value to being able to order WORLD layers
-	fix19_13 z;
-	int parallax;
+	fix10_6 z;
+	fix10_6 parallax;
 
 } Vector2D;
 
@@ -69,28 +69,17 @@ typedef struct Vector2D
 typedef struct Vector3D
 {
 	// fps increases a lot in hardware with ints
-	fix19_13 x;
-	fix19_13 y;
-	fix19_13 z;
+	fix10_6 x;
+	fix10_6 y;
+	fix10_6 z;
 
 } Vector3D;
 
-// WORLD vector
-typedef struct WorldVector
-{
-	// fps increases a lot in hardware with ints
-	fix19_13 x;
-	fix19_13 y;
-	fix19_13 z;
-	fix19_13 p;
-
-} WorldVector;
-
 typedef struct Vector3DFlag
 {
-	int x: 2;
-	int y: 2;
-	int z: 2;
+	u16 x: 2;
+	u16 y: 2;
+	u16 z: 2;
 
 } Vector3DFlag;
 
@@ -138,10 +127,10 @@ typedef struct Direction
 typedef struct Optical
 {
 	int maximumViewDistancePower;		// maximum distance from the screen to the infinite
-	fix19_13 distanceEyeScreen;
-	fix19_13 baseDistance;				// distance from left to right eye (depth sensation)
-	fix19_13 horizontalViewPointCenter;	// horizontal View point center
-	fix19_13 verticalViewPointCenter;	// vertical View point center
+	fix10_6 distanceEyeScreen;
+	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
+	fix10_6 horizontalViewPointCenter;	// horizontal View point center
+	fix10_6 verticalViewPointCenter;	// vertical View point center
 
 } Optical;
 
@@ -230,39 +219,17 @@ typedef struct Transformation
 typedef struct RightBox
 {
 	/* left upper corner */
-	fix19_13 x0;
-	fix19_13 y0;
-	fix19_13 z0;
+	fix10_6 x0;
+	fix10_6 y0;
+	fix10_6 z0;
 
 	/* right down corner */
-	fix19_13 x1;
-	fix19_13 y1;
-	fix19_13 z1;
+	fix10_6 x1;
+	fix10_6 y1;
+	fix10_6 z1;
 
 } RightBox;
 
-typedef struct SmallRightBox
-{
-	/* left upper corner */
-	s16 x0;
-	s16 y0;
-	s16 z0;
-
-	/* right down corner */
-	s16 x1;
-	s16 y1;
-	s16 z1;
-
-} SmallRightBox;
-
-// spatial state vector
-typedef struct GeneralAxisFlag
-{
-	s8 x;
-	s8 y;
-	s8 z;
-
-} GeneralAxisFlag;
 
 
 #endif

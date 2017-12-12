@@ -28,7 +28,7 @@
 #include <ObjectSpriteContainerManager.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <SpriteManager.h>
 #include <VIPManager.h>
 #include <Utilities.h>
@@ -705,8 +705,8 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const Vec
  * @public
  *
  * @param this		Function scope
- * @param x			Screen x coordinate
- * @param y			Screen y coordinate
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
  */
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 {
@@ -733,7 +733,7 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 	Printing_text(Printing_getInstance(), "-", x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)), y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getLastObjectIndex(this), x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing_text(Printing_getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX19_13_TO_I(this->z), x + 24, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->z), x + 24, y, NULL);
 }
 
 /**

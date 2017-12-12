@@ -35,31 +35,31 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
-// Screen half width in pixels
+// Camera half width in pixels
 #define __HALF_SCREEN_WIDTH						(__SCREEN_WIDTH >> 1)
 
-// Screen half height in pixels
+// Camera half height in pixels
 #define __HALF_SCREEN_HEIGHT					(__SCREEN_HEIGHT >> 1)
 
-// Screen half depth in pixels
+// Camera half depth in pixels
 #define __HALF_SCREEN_DEPTH						(__SCREEN_DEPTH >> 1)
 
-// Screen width in chars
+// Camera width in chars
 #define __SCREEN_WIDTH_IN_CHARS					(__SCREEN_WIDTH >> 3)
 
-// Screen height in chars
+// Camera height in chars
 #define __SCREEN_HEIGHT_IN_CHARS				(__SCREEN_HEIGHT >> 3)
 
-// Screen depth in chars
+// Camera depth in chars
 #define __SCREEN_DEPTH_IN_CHARS					(__SCREEN_DEPTH >> 3)
 
-// Screen half width in chars
+// Camera half width in chars
 #define __HALF_SCREEN_WIDTH_IN_CHARS			(__SCREEN_WIDTH >> 4)
 
-// Screen half height in chars
+// Camera half height in chars
 #define __HALF_SCREEN_HEIGHT_IN_CHARS			(__SCREEN_HEIGHT >> 4)
 
-// Screen half depth in chars
+// Camera half depth in chars
 #define __HALF_SCREEN_DEPTH_IN_CHARS			(__SCREEN_DEPTH >> 4)
 
 
@@ -68,9 +68,9 @@
 #define __EXCEPTIONS_WORLD		31
 
 // use for faster rounding on fix* values
-#define __1I_FIX7_9 		0x00000200
-#define __1I_FIX19_13		0x00002000
-#define __0_5F_FIX19_13		0x00001000
+#define __1I_FIX7_9 		0x0200
+#define __1I_FIX10_6		0x0040
+#define __0_5F_FIX10_6		0x0020
 
 // override null definition (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000
@@ -165,6 +165,18 @@ enum DefaulCollisionLayers
 		Error_triggerException(Error_getInstance(), Message, NULL);										\
 	}
 #endif
+
+
+#define __PIXELS_PER_METER						16
+#define __METERS_PER_PIXEL						__F_TO_FIX10_6(1.0f/(float)__PIXELS_PER_METER)
+
+#define __PIXELS_PER_METER_2_POWER				4
+#define __PIXELS_TO_METERS(pixels)				(__I_TO_FIX10_6(pixels) >> __PIXELS_PER_METER_2_POWER)
+#define __METERS_TO_PIXELS(meters)				(__FIX10_6_TO_I(meters) << __PIXELS_PER_METER_2_POWER)
+
+#define __SCREEN_WIDTH_METERS					__PIXELS_TO_METERS(__SCREEN_WIDTH)
+#define __SCREEN_HEIGHT_METERS					__PIXELS_TO_METERS(__SCREEN_HEIGHT)
+#define __SCREEN_DEPTH_METERS					__PIXELS_TO_METERS(__SCREEN_DEPTH)
 
 
 #endif

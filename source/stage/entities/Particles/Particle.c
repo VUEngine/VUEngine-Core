@@ -56,7 +56,7 @@ static void Particle_addSprite(Particle this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+__CLASS_NEW_DEFINITION(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 __CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
 
 /**
@@ -71,7 +71,7 @@ __CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
  * @param lifeSpan
  * @param mass
  */
-void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 {
 	ASSERT(this, "Particle::constructor: null this");
 
@@ -227,7 +227,7 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
-		fix19_13 mass = Body_getMass(this->body);
+		fix10_6 mass = Body_getMass(this->body);
 
 		Acceleration acceleration =
 		{
@@ -238,9 +238,9 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 
 		if(mass)
 		{
-			acceleration.x = __FIX19_13_DIV(acceleration.x, mass);
-			acceleration.y = __FIX19_13_DIV(acceleration.y, mass);
-			acceleration.z = __FIX19_13_DIV(acceleration.z, mass);
+			acceleration.x = __FIX10_6_DIV(acceleration.x, mass);
+			acceleration.y = __FIX10_6_DIV(acceleration.y, mass);
+			acceleration.z = __FIX10_6_DIV(acceleration.z, mass);
 		}
 
 		Velocity velocity =
@@ -283,7 +283,7 @@ void Particle_setLifeSpan(Particle this, int lifeSpan)
  * @param this	Function scope
  * @param mass
  */
-void Particle_setMass(Particle this, fix19_13 mass)
+void Particle_setMass(Particle this, fix10_6 mass)
 {
 	ASSERT(this, "Particle::setMass: null this");
 

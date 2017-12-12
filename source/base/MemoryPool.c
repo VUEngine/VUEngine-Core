@@ -410,8 +410,8 @@ int MemoryPool_getPoolSize(MemoryPool this)
  * @public
  *
  * @param this		Function scope
- * @param x			Screen column for the output
- * @param y			Screen row for the output
+ * @param x			Camera column for the output
+ * @param y			Camera row for the output
  */
 void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 {
@@ -478,8 +478,8 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
  * @public
  *
  * @param this		Function scope
- * @param x			Screen column for the output
- * @param y			Screen row for the output
+ * @param x			Camera column for the output
+ * @param y			Camera row for the output
  */
 void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 {

@@ -59,7 +59,7 @@ static void SolidParticle_transformShape(SolidParticle this);
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSpan, mass);
 
 /**
@@ -74,7 +74,7 @@ __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSp
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass)
+void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 {
 	ASSERT(this, "SolidParticle::constructor: null this");
 
@@ -91,10 +91,10 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 		{solidParticleDefinition->radius, solidParticleDefinition->radius, solidParticleDefinition->radius},
 
 		// displacement (x, y, z)
-		{__I_TO_FIX19_13(0), __I_TO_FIX19_13(0), __I_TO_FIX19_13(0)},
+		{__I_TO_FIX10_6(0), __I_TO_FIX10_6(0), __I_TO_FIX10_6(0)},
 
 		// rotation (x, y, z)
-		{__I_TO_FIX19_13(0), __I_TO_FIX19_13(0), __I_TO_FIX19_13(0)},
+		{__I_TO_FIX10_6(0), __I_TO_FIX10_6(0), __I_TO_FIX10_6(0)},
 
 		// scale (x, y, z)
 		{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
@@ -163,6 +163,14 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		SolidParticle_transformShape(this);
 	}
 
+	Shape_print((this->shape), 1, 17);
+
+	Body_print(this->body, 1, 1);
+__PRINT_IN_GAME_TIME(10,0);
+
+	//Body_print(this, 1, 1);
+	Printing_resetWorldCoordinates(Printing_getInstance());
+
 	return expired;
 }
 
@@ -178,7 +186,7 @@ static void SolidParticle_transformShape(SolidParticle this)
 {
 	const Rotation shapeRotation = {0, 0, 0};
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-	const Size shapeSize = {__FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius), __FIX19_13_TO_I(this->solidParticleDefinition->radius)};
+	const Size shapeSize = {this->solidParticleDefinition->radius, this->solidParticleDefinition->radius, this->solidParticleDefinition->radius};
 
 	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
@@ -214,7 +222,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
 
-	return __FIX19_13_TO_I(this->solidParticleDefinition->radius);
+	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
 }
 
 /**
@@ -231,7 +239,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
 
-	return __FIX19_13_TO_I(this->solidParticleDefinition->radius);
+	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
 }
 
 /**
@@ -249,7 +257,7 @@ u16 SolidParticle_getDepth(SolidParticle this)
 	ASSERT(this, "SolidParticle::getDepth: null this");
 
 	// must calculate based on the scale because not affine object must be enlarged
-	return __FIX19_13_TO_I(this->solidParticleDefinition->radius);
+	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
 }
 
 /**
@@ -280,8 +288,8 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 		{
 			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
-			fix19_13 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
-			fix19_13 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
+			fix10_6 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
+			fix10_6 elasticity = __VIRTUAL_CALL(SpatialObject, getElasticity, Shape_getOwner(collisionInformation->collidingShape));
 
 			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 			returnValue = true;
@@ -308,7 +316,7 @@ bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 	ASSERT(this, "Particle::isSubjectToGravity: null this");
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
-	fix19_13 collisionCheckDistance = __I_TO_FIX19_13(1);
+	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
 
 	Vector3D displacement =
 	{

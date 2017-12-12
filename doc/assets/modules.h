@@ -68,8 +68,8 @@
  */
 
 
-/** @defgroup screen Screen
- *  @brief Screen classes
+/** @defgroup camera Camera
+ *  @brief Camera classes
  */
 
 

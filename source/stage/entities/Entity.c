@@ -26,7 +26,7 @@
 
 #include <string.h>
 #include <Entity.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <Game.h>
 #include <Entity.h>
 #include <Optics.h>
@@ -342,7 +342,7 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
  * @param rightBox
  * @param environmentPosition
  */
-static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBox, Vector3D environmentPosition)
+static void Entity_calculateSizeFromChildren(Entity this, RightBox* rightBox, Vector3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
@@ -352,15 +352,15 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBo
 	globalPosition3D.y += this->transformation.localPosition.y;
 	globalPosition3D.z += this->transformation.localPosition.z;
 
-	int left = 0;
-	int right = 0;
-	int top = 0;
-	int bottom = 0;
-	int front = 0;
-	int back = 0;
-	int halfWidth = 0;
-	int halfHeight = 0;
-	int halfDepth = 10;
+	fix10_6 left = 0;
+	fix10_6 right = 0;
+	fix10_6 top = 0;
+	fix10_6 bottom = 0;
+	fix10_6 front = 0;
+	fix10_6 back = 0;
+	fix10_6 halfWidth = 0;
+	fix10_6 halfHeight = 0;
+	fix10_6 halfDepth = 10;
 
 	if((!this->size.x || !this->size.y || !this->size.z) && this->sprites)
 	{
@@ -376,36 +376,36 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBo
 			halfHeight = Sprite_getHalfHeight(sprite);
 			halfDepth = this->size.z >> 1;
 
-			WorldVector spriteDisplacement = Sprite_getDisplacement(sprite);
+			Vector2D spriteDisplacement = Sprite_getDisplacement(sprite);
 
-			if(left > -halfWidth + __FIX19_13_TO_I(spriteDisplacement.x))
+			if(left > -halfWidth + spriteDisplacement.x)
 			{
-				left = -halfWidth + __FIX19_13_TO_I(spriteDisplacement.x);
+				left = -halfWidth + spriteDisplacement.x;
 			}
 
-			if(right < halfWidth + __FIX19_13_TO_I(spriteDisplacement.x))
+			if(right < halfWidth + spriteDisplacement.x)
 			{
-				right = halfWidth + __FIX19_13_TO_I(spriteDisplacement.x);
+				right = halfWidth + spriteDisplacement.x;
 			}
 
-			if(top > -halfHeight + __FIX19_13_TO_I(spriteDisplacement.y))
+			if(top > -halfHeight + spriteDisplacement.y)
 			{
-				top = -halfHeight + __FIX19_13_TO_I(spriteDisplacement.y);
+				top = -halfHeight + spriteDisplacement.y;
 			}
 
-			if(bottom < halfHeight + __FIX19_13_TO_I(spriteDisplacement.y))
+			if(bottom < halfHeight + spriteDisplacement.y)
 			{
-				bottom = halfHeight + __FIX19_13_TO_I(spriteDisplacement.y);
+				bottom = halfHeight + spriteDisplacement.y;
 			}
 
-			if(front > -halfDepth + __FIX19_13_TO_I(spriteDisplacement.z))
+			if(front > -halfDepth + spriteDisplacement.z)
 			{
-				front = -halfDepth + __FIX19_13_TO_I(spriteDisplacement.z);
+				front = -halfDepth + spriteDisplacement.z;
 			}
 
-			if(back < halfDepth + __FIX19_13_TO_I(spriteDisplacement.z))
+			if(back < halfDepth + spriteDisplacement.z)
 			{
-				back = halfDepth + __FIX19_13_TO_I(spriteDisplacement.z);
+				back = halfDepth + spriteDisplacement.z;
 			}
 		}
 	}
@@ -419,9 +419,9 @@ static void Entity_calculateSizeFromChildren(Entity this, SmallRightBox* rightBo
 		back = this->size.z;
 	}
 
-	int x = __FIX19_13_TO_I(globalPosition3D.x);
-	int y = __FIX19_13_TO_I(globalPosition3D.y);
-	int z = __FIX19_13_TO_I(globalPosition3D.z);
+	fix10_6 x = globalPosition3D.x;
+	fix10_6 y = globalPosition3D.y;
+	fix10_6 z = globalPosition3D.z;
 
 	if((0 == rightBox->x0) | (x + left < rightBox->x0))
 	{
@@ -476,15 +476,15 @@ void Entity_calculateSize(Entity this)
 {
 	ASSERT(this, "Entity::calculateSize: null this");
 
-	SmallRightBox rightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
 	Entity_calculateSizeFromChildren(this, &rightBox, (Vector3D){0, 0, 0});
 
 	Vector3D centerDisplacement =
 	{
-		(__I_TO_FIX19_13(rightBox.x1 + rightBox.x0) / 2) - this->transformation.localPosition.x,
-		(__I_TO_FIX19_13(rightBox.y1 + rightBox.y0) / 2) - this->transformation.localPosition.y,
-		(__I_TO_FIX19_13(rightBox.z1 + rightBox.z0) / 2) - this->transformation.localPosition.z
+		(__I_TO_FIX10_6(rightBox.x1 + rightBox.x0) / 2) - this->transformation.localPosition.x,
+		(__I_TO_FIX10_6(rightBox.y1 + rightBox.y0) / 2) - this->transformation.localPosition.y,
+		(__I_TO_FIX10_6(rightBox.z1 + rightBox.z0) / 2) - this->transformation.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
@@ -513,7 +513,7 @@ void Entity_calculateSize(Entity this)
  * @param environmentPosition
  * @param rightBox
  */
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, SmallRightBox* rightBox)
+static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
@@ -525,15 +525,15 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		environmentPosition->z + positionedEntity->position.z
 	};
 
-	int left = 0;
-	int right = 0;
-	int top = 0;
-	int bottom = 0;
-	int front = 0;
-	int back = 0;
-	int halfWidth = 0;
-	int halfHeight = 0;
-	int halfDepth = 5;
+	fix10_6 left = 0;
+	fix10_6 right = 0;
+	fix10_6 top = 0;
+	fix10_6 bottom = 0;
+	fix10_6 front = 0;
+	fix10_6 back = 0;
+	fix10_6 halfWidth = 0;
+	fix10_6 halfHeight = 0;
+	fix10_6 halfDepth = 5;
 
 	if(positionedEntity->entityDefinition->spriteDefinitions && positionedEntity->entityDefinition->spriteDefinitions[0])
 	{
@@ -564,34 +564,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 					}
 				}
 
-				if(left > -halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
+				if(left > -halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x)
 				{
-					left = -halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
+					left = -halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x;
 				}
 
-				if(right < halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x))
+				if(right < halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x)
 				{
-					right = halfWidth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x);
+					right = halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x;
 				}
 
-				if(top > -halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
+				if(top > -halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y)
 				{
-					top = -halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
+					top = -halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y;
 				}
 
-				if(bottom < halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y))
+				if(bottom < halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y)
 				{
-					bottom = halfHeight + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y);
+					bottom = halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y;
 				}
 
-				if(front > __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
+				if(front > mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z)
 				{
-					front = __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
+					front = mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z;
 				}
 
-				if(back < halfDepth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z))
+				if(back < halfDepth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z)
 				{
-					back = halfDepth + __FIX19_13_TO_I(mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z);
+					back = halfDepth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z;
 				}
 
 			}
@@ -602,34 +602,34 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 				halfHeight = spriteDefinition->textureDefinition->rows << 2;
 				halfDepth = 10;
 
-				if(left > -halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x))
+				if(left > -halfWidth + spriteDefinition->displacement.x)
 				{
-					left = -halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x);
+					left = -halfWidth + spriteDefinition->displacement.x;
 				}
 
-				if(right < halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x))
+				if(right < halfWidth + spriteDefinition->displacement.x)
 				{
-					right = halfWidth + __FIX19_13_TO_I(spriteDefinition->displacement.x);
+					right = halfWidth + spriteDefinition->displacement.x;
 				}
 
-				if(top > -halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y))
+				if(top > -halfHeight + spriteDefinition->displacement.y)
 				{
-					top = -halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y);
+					top = -halfHeight + spriteDefinition->displacement.y;
 				}
 
-				if(bottom < halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y))
+				if(bottom < halfHeight + spriteDefinition->displacement.y)
 				{
-					bottom = halfHeight + __FIX19_13_TO_I(spriteDefinition->displacement.y);
+					bottom = halfHeight + spriteDefinition->displacement.y;
 				}
 
-				if(front > -halfDepth + __FIX19_13_TO_I(spriteDefinition->displacement.z))
+				if(front > -halfDepth + spriteDefinition->displacement.z)
 				{
-					front = -halfDepth + __FIX19_13_TO_I(spriteDefinition->displacement.z);
+					front = -halfDepth + spriteDefinition->displacement.z;
 				}
 
-				if(back < (halfDepth << 1) + __FIX19_13_TO_I(spriteDefinition->displacement.z))
+				if(back < (halfDepth << 1) + spriteDefinition->displacement.z)
 				{
-					back = (halfDepth << 1) + __FIX19_13_TO_I(spriteDefinition->displacement.z);
+					back = (halfDepth << 1) + spriteDefinition->displacement.z;
 				}
 			}
 		}
@@ -662,9 +662,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		}
 	}
 
-	int x = __FIX19_13_TO_I(globalPosition3D.x);
-	int y = __FIX19_13_TO_I(globalPosition3D.y);
-	int z = __FIX19_13_TO_I(globalPosition3D.z);
+	fix10_6 x = globalPosition3D.x;
+	fix10_6 y = globalPosition3D.y;
+	fix10_6 z = globalPosition3D.z;
 
 	if((0 == rightBox->x0) | (x + left < rightBox->x0))
 	{
@@ -715,20 +715,20 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
  * @param positionedEntity
  * @param environmentPosition
  *
- * @return						SmallRightBox
+ * @return						RightBox
  */
-SmallRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
+RightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
 {
-	SmallRightBox rightBox = {0, 0, 0, 0, 0, 0};
+	RightBox rightBox = {0, 0, 0, 0, 0, 0};
 
 	Entity_getSizeFromDefinition(positionedEntity, (Vector3D*)environmentPosition, &rightBox);
 
-	rightBox.x0 = rightBox.x0 - __FIX19_13_TO_I(positionedEntity->position.x);
-	rightBox.x1 = rightBox.x1 - __FIX19_13_TO_I(positionedEntity->position.x);
-	rightBox.y0 = rightBox.y0 - __FIX19_13_TO_I(positionedEntity->position.y);
-	rightBox.y1 = rightBox.y1 - __FIX19_13_TO_I(positionedEntity->position.y);
-	rightBox.z0 = rightBox.z0 - __FIX19_13_TO_I(positionedEntity->position.z);
-	rightBox.z1 = rightBox.z1 - __FIX19_13_TO_I(positionedEntity->position.z);
+	rightBox.x0 = rightBox.x0 - positionedEntity->position.x;
+	rightBox.x1 = rightBox.x1 - positionedEntity->position.x;
+	rightBox.y0 = rightBox.y0 - positionedEntity->position.y;
+	rightBox.y1 = rightBox.y1 - positionedEntity->position.y;
+	rightBox.z0 = rightBox.z0 - positionedEntity->position.z;
+	rightBox.z1 = rightBox.z1 - positionedEntity->position.z;
 
 	return rightBox;
 }
@@ -1826,9 +1826,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 			Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 
-			x = __FIX19_13_TO_I(spritePosition.x);
-			y = __FIX19_13_TO_I(spritePosition.y);
-			z = __FIX19_13_TO_I(spritePosition.z);
+			x = spritePosition.x;
+			y = spritePosition.y;
+			z = spritePosition.z;
 
 			// check x visibility
 			if((x + (int)this->size.x < -pad) | (x > __SCREEN_WIDTH + pad))
@@ -1868,7 +1868,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	}
 	else
 	{
-		Vector3D position3D = Vector3D_toScreen(this->transformation.globalPosition);
+		Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
 
 		if(this->centerDisplacement)
 		{
@@ -1879,13 +1879,13 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 		Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
 
-		int halfWidth = (int)(this->size.x >> 1);
-		int halfHeight = (int)(this->size.y >> 1);
-		int halfDepth = (int)(this->size.z >> 1);
+		fix10_6 halfWidth = this->size.x >> 1;
+		fix10_6 halfHeight = this->size.y >> 1;
+		fix10_6 halfDepth = this->size.z >> 1;
 
-		x = __FIX19_13_TO_I(position2D.x);
-		y = __FIX19_13_TO_I(position2D.y);
-		z = __FIX19_13_TO_I(position2D.z);
+		x = position2D.x;
+		y = position2D.y;
+		z = position2D.z;
 
 		// check x visibility
 		if((x + halfWidth <= -pad) | (x - halfWidth >= __SCREEN_WIDTH + pad))
@@ -2186,7 +2186,7 @@ u32 Entity_getInGameType(Entity this)
  *
  * @return		Elasticity
  */
-fix19_13 Entity_getElasticity(Entity this)
+fix10_6 Entity_getElasticity(Entity this)
 {
 	ASSERT(this, "Entity::getElasticity: null this");
 
@@ -2203,7 +2203,7 @@ fix19_13 Entity_getElasticity(Entity this)
  *
  * @return		Friction
  */
-fix19_13 Entity_getFrictionCoefficient(Entity this)
+fix10_6 Entity_getFrictionCoefficient(Entity this)
 {
 	ASSERT(this, "Entity::getFrictionCoefficient: null this");
 

@@ -159,7 +159,7 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
  *
  * @return 						ObjectSpriteContainer instance
  */
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix19_13 z)
+ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
 
@@ -187,7 +187,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(__ABS(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(__FIX19_13_TO_I(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
+				if(__ABS(__FIX10_6_TO_I(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(__FIX10_6_TO_I(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
@@ -229,13 +229,13 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix19_13 z[__TOTAL_OBJECT_SEGMENTS])
+void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
-	fix19_13 availableObjects = __AVAILABLE_CHAR_OBJECTS;
+	fix10_6 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 #ifndef __RELEASE
-	fix19_13 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
+	fix10_6 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
 	// must add them from __SPT3 to __SPT0
@@ -256,7 +256,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 		{
 			Vector2D position =
 			{
-					0, 0, z[i] + __F_TO_FIX19_13(i * 0.1f), 0
+					0, 0, z[i] + __F_TO_FIX10_6(i * 0.1f), 0
 			};
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
@@ -278,7 +278,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
  * @param spt		Spt segment of the ObjectSpriteContainer to modify
  * @param z			New z coordinate
  */
-void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix19_13 z)
+void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix10_6 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
 
@@ -302,8 +302,8 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
  * @public
  *
  * @param this		Function scope
- * @param x			Screen x coordinate
- * @param y			Screen y coordinate
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
  */
 void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y)
 {

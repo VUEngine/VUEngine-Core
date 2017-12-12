@@ -60,13 +60,13 @@ __CLASS_NEW_DECLARE(PhysicalWorld);
 void PhysicalWorld_constructor(PhysicalWorld this);
 void PhysicalWorld_destructor(PhysicalWorld this);
 
-void PhysicalWorld_setTimeScale(PhysicalWorld this, fix19_13 timeScale);
+void PhysicalWorld_setTimeScale(PhysicalWorld this, fix10_6 timeScale);
 u32 PhysicalWorld_getTimeScale(PhysicalWorld this);
 void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body);
 void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
 Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
-fix19_13 PhysicalWorld_getElapsedTime(PhysicalWorld this);
-fix19_13 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this);
+fix10_6 PhysicalWorld_getElapsedTime(PhysicalWorld this);
+fix10_6 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this);
 const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this);
 bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
 void PhysicalWorld_print(PhysicalWorld this, int x, int y);
@@ -75,7 +75,7 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 void PhysicalWorld_destroyBody(PhysicalWorld this, Body body);
 void PhysicalWorld_reset(PhysicalWorld this);
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
-void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix19_13 frictionCoefficient);
+void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient);
 void PhysicalWorld_start(PhysicalWorld this);
 void PhysicalWorld_update(PhysicalWorld this, Clock clock);
 

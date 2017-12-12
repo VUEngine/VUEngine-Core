@@ -470,8 +470,8 @@ void HardwareManager_disableKeypad(HardwareManager this)
  * @public
  *
  * @param this		Function scope
- * @param x			Screen's x coordinate
- * @param y			Screen's y coordinate
+ * @param x			Camera's x coordinate
+ * @param y			Camera's y coordinate
  */
 void HardwareManager_print(HardwareManager this, int x, int y)
 {
@@ -586,8 +586,8 @@ void HardwareManager_checkStackStatus(HardwareManager this __attribute__ ((unuse
  * @public
  *
  * @param this		Function scope
- * @param x			Screen's x coordinate
- * @param y			Screen's y coordinate
+ * @param x			Camera's x coordinate
+ * @param y			Camera's y coordinate
  * @param resumed	Flag to print resumed or detailed info
  */
 void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unused)), int x, int y, bool resumed)

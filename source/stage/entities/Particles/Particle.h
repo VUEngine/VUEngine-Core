@@ -118,10 +118,10 @@ typedef struct ParticleDefinition
 	u16 lifeSpanDelta;
 
 	/// particle's minimum mass
-	fix19_13 minimumMass;
+	fix10_6 minimumMass;
 
 	/// particle's mass delta
-	fix19_13 massDelta;
+	fix10_6 massDelta;
 
 	/// axes subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
 	u16 axesSubjectToGravity;
@@ -149,9 +149,9 @@ typedef const ParticleDefinition ParticleROMDef;
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
+__CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
 
-void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix19_13 mass);
+void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
 void Particle_destructor(Particle this);
 
 void Particle_addForce(Particle this, const Force* force, u32 movementType);
@@ -163,7 +163,7 @@ void Particle_hide(Particle this);
 void Particle_transform(Particle this);
 void Particle_resume(Particle this);
 void Particle_setLifeSpan(Particle this, int lifeSpan);
-void Particle_setMass(Particle this, fix19_13 mass);
+void Particle_setMass(Particle this, fix10_6 mass);
 void Particle_setPosition(Particle this, const Vector3D* position);
 void Particle_show(Particle this);
 void Particle_suspend(Particle this);

@@ -85,11 +85,11 @@
 		 */																								\
 		int canStream;																					\
 		/**
-		 * @var Vector3D 			screenPosition
+		 * @var Vector3D 			cameraPosition
 		 * @brief					must save to allow pause
 		 * @memberof				GameState
 		 */																								\
-		Vector3D screenPosition;																			\
+		Vector3D cameraPosition;																			\
 		/**
 		 * @var Clock 				messagingClock
 		 * @brief					clock for messaging
@@ -134,7 +134,7 @@ PhysicalWorld GameState_getPhysicalWorld(GameState this);
 Clock GameState_getPhysicsClock(GameState this);
 Stage GameState_getStage(GameState this);
 Clock GameState_getUpdateClock(GameState this);
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition);
+void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 void GameState_pauseAnimations(GameState this, bool pause);
 void GameState_pauseClocks(GameState this);
 void GameState_pauseMessagingClock(GameState this, bool pause);

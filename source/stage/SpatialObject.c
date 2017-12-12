@@ -167,7 +167,7 @@ void SpatialObject_setScale(SpatialObject this __attribute__ ((unused)), const S
 }
 
 // get elasticity
-fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getElasticity: null this");
 
@@ -175,7 +175,7 @@ fix19_13 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused))
 }
 
 // get friction
-fix19_13 SpatialObject_getFrictionCoefficient(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject_getFrictionCoefficient(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getFrictionCoefficient: null this");
 

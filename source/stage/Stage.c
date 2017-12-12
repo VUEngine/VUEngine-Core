@@ -33,7 +33,7 @@
 #include <PhysicalWorld.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <HardwareManager.h>
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
@@ -87,7 +87,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 typedef struct StageEntityDescription
 {
 	PositionedEntity* positionedEntity;
-	SmallRightBox smallRightBox;
+	RightBox smallRightBox;
 	s16 internalId;
 	long distance;
 
@@ -187,7 +187,7 @@ static void Stage_constructor(Stage this)
 	this->stageDefinition = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
-	this->screenPreviousDistance = 0;
+	this->cameraPreviousDistance = 0;
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
 	this->streamingCycleCounter = 0;
@@ -235,29 +235,29 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-static int Stage_isEntityInLoadRange(Stage this, Vector3D position3D, const SmallRightBox* smallRightBox)
+static int Stage_isEntityInLoadRange(Stage this, Vector3D position3D, const RightBox* smallRightBox)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
-	position3D = Vector3D_toScreen(position3D);
+	position3D = Vector3D_getRelativeToCamera(position3D);
 
 	// project position to 2D space
 	Vector2D position2D = Vector3D_projectToVector2D(position3D, Optics_calculateParallax(position3D.x, position3D.z));
 
 	// check x visibility
-	if(__FIX19_13_TO_I(position2D.x) + smallRightBox->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || __FIX19_13_TO_I(position2D.x) + smallRightBox->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)
+	if(__FIX10_6_TO_I(position2D.x) + smallRightBox->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || __FIX10_6_TO_I(position2D.x) + smallRightBox->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(__FIX19_13_TO_I(position2D.y) + smallRightBox->y1 <  __LOAD_LOW_Y_LIMIT || __FIX19_13_TO_I(position2D.y) + smallRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	if(__FIX10_6_TO_I(position2D.y) + smallRightBox->y1 <  __LOAD_LOW_Y_LIMIT || __FIX10_6_TO_I(position2D.y) + smallRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(__FIX19_13_TO_I(position2D.z) + smallRightBox->z1 <  __LOAD_LOW_Z_LIMIT || __FIX19_13_TO_I(position2D.z) + smallRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
+	if(__FIX10_6_TO_I(position2D.z) + smallRightBox->z1 <  __LOAD_LOW_Z_LIMIT || __FIX10_6_TO_I(position2D.z) + smallRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
 		return false;
 	}
@@ -281,7 +281,7 @@ void Stage_setupPalettes(Stage this)
 
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideScreenPosition)
+void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	ASSERT(this, "Stage::load: null this");
 
@@ -289,17 +289,17 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	this->stageDefinition = stageDefinition;
 
 	// set optical values
-	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
+	Camera_setOptical(Camera_getInstance(), this->stageDefinition->rendering.optical);
 
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
 
 	// set world's limits
-	Screen_setStageSize(Screen_getInstance(), stageDefinition->level.size);
+	Camera_setStageSize(Camera_getInstance(), stageDefinition->level.size);
 
-	if(overrideScreenPosition)
+	if(overrideCameraPosition)
 	{
-		Screen_setPosition(Screen_getInstance(), stageDefinition->level.screenInitialPosition);
+		Camera_setPosition(Camera_getInstance(), stageDefinition->level.cameraInitialPosition);
 	}
 
 	// set palettes
@@ -326,7 +326,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	Stage_loadInitialEntities(this);
 
 	// retrieve focus entity for streaming
-	Stage_setFocusEntity(this, Screen_getFocusEntity(Screen_getInstance()));
+	Stage_setFocusEntity(this, Camera_getFocusEntity(Camera_getInstance()));
 
 	// set physics
 	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.frictionCoefficient);
@@ -679,11 +679,11 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
 //		Vector3D environmentPosition3D = {0, 0, 0};
-//		SmallRightBox smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
+//		RightBox smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
-		int x = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.x);
-		int y = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.y);
-		int z = __FIX19_13_TO_I(stageEntityDescription->positionedEntity->position.z);
+		int x = __FIX10_6_TO_I(stageEntityDescription->positionedEntity->position.x);
+		int y = __FIX10_6_TO_I(stageEntityDescription->positionedEntity->position.y);
+		int z = __FIX10_6_TO_I(stageEntityDescription->positionedEntity->position.z);
 
 		stageEntityDescription->distance = (x * x + y * y + z * z);
 
@@ -838,20 +838,20 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 
 	bool loadedEntities = false;
-	int xScreenPosition = __FIX19_13_TO_I(_screenPosition->x) + (__HALF_SCREEN_WIDTH);
-	int yScreenPosition = __FIX19_13_TO_I(_screenPosition->y) + (__HALF_SCREEN_HEIGHT);
-	int zScreenPosition = __FIX19_13_TO_I(_screenPosition->z) + (__HALF_SCREEN_DEPTH);
+	int xCameraPosition = __FIX10_6_TO_I(_cameraPosition->x) + (__HALF_SCREEN_WIDTH);
+	int yCameraPosition = __FIX10_6_TO_I(_cameraPosition->y) + (__HALF_SCREEN_HEIGHT);
+	int zCameraPosition = __FIX10_6_TO_I(_cameraPosition->z) + (__HALF_SCREEN_DEPTH);
 
-	long screenDistance = ((long)xScreenPosition * (long)xScreenPosition +
-							(long)yScreenPosition * (long)yScreenPosition +
-							(long)zScreenPosition * (long)zScreenPosition);
+	long cameraDistance = ((long)xCameraPosition * (long)xCameraPosition +
+							(long)yCameraPosition * (long)yCameraPosition +
+							(long)zCameraPosition * (long)zCameraPosition);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
 	u16 amplitude = this->stageDefinition->streaming.streamingAmplitude;
 
-	if(this->screenPreviousDistance != screenDistance)
+	if(this->cameraPreviousDistance != cameraDistance)
 	{
-		advancing = this->screenPreviousDistance < screenDistance;
+		advancing = this->cameraPreviousDistance < cameraDistance;
 	}
 
 	if(!defer)
@@ -883,7 +883,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 
 				if(!this->streamingHeadNode)
 				{
-					if(screenDistance < stageEntityDescription->distance)
+					if(cameraDistance < stageEntityDescription->distance)
 					{
 						this->streamingHeadNode = node;
 					}
@@ -925,7 +925,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 
 				if(!this->streamingHeadNode)
 				{
-					if(screenDistance > stageEntityDescription->distance)
+					if(cameraDistance > stageEntityDescription->distance)
 					{
 						this->streamingHeadNode = node;
 					}
@@ -952,7 +952,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 		}
 	}
 
-	this->screenPreviousDistance = screenDistance;
+	this->cameraPreviousDistance = cameraDistance;
 
 #ifdef __PROFILE_STREAMING
 	u32 processTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(TimerManager_getInstance()) - timeBeforeProcess;
@@ -1163,18 +1163,18 @@ void Stage_suspend(Stage this)
 		__VIRTUAL_CALL(Container, suspend, __SAFE_CAST(Container, this->uiContainer));
 	}
 
-	// relinquish screen focus priority
-	if(this->focusEntity && Screen_getFocusEntity(Screen_getInstance()))
+	// relinquish camera focus priority
+	if(this->focusEntity && Camera_getFocusEntity(Camera_getInstance()))
 	{
-		if(this->focusEntity == Screen_getFocusEntity(Screen_getInstance()))
+		if(this->focusEntity == Camera_getFocusEntity(Camera_getInstance()))
 		{
 			// relinquish focus entity
-			Screen_setFocusGameEntity(Screen_getInstance(), NULL);
+			Camera_setFocusGameEntity(Camera_getInstance(), NULL);
 		}
 	}
 	else
 	{
-		Stage_setFocusEntity(this, Screen_getFocusEntity(Screen_getInstance()));
+		Stage_setFocusEntity(this, Camera_getFocusEntity(Camera_getInstance()));
 	}
 
 	__DELETE(this->entityFactory);
@@ -1187,7 +1187,7 @@ void Stage_resume(Stage this)
 	ASSERT(this, "Stage::resume: null this");
 
 	// set back optical values
-	Screen_setOptical(Screen_getInstance(), this->stageDefinition->rendering.optical);
+	Camera_setOptical(Camera_getInstance(), this->stageDefinition->rendering.optical);
 
 	// set physics
 	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.frictionCoefficient);
@@ -1210,7 +1210,7 @@ void Stage_resume(Stage this)
 	if(this->focusEntity)
 	{
 		// recover focus entity
-		Screen_setFocusGameEntity(Screen_getInstance(), __SAFE_CAST(Entity, this->focusEntity));
+		Camera_setFocusGameEntity(Camera_getInstance(), __SAFE_CAST(Entity, this->focusEntity));
 	}
 
 	// load background music
@@ -1250,11 +1250,11 @@ void Stage_onFocusEntityDeleted(Stage this, Object eventFirer __attribute__ ((un
 
 	this->focusEntity = NULL;
 
-	if(this->focusEntity && Screen_getFocusEntity(Screen_getInstance()))
+	if(this->focusEntity && Camera_getFocusEntity(Camera_getInstance()))
 	{
-		if(this->focusEntity == Screen_getFocusEntity(Screen_getInstance()))
+		if(this->focusEntity == Camera_getFocusEntity(Camera_getInstance()))
 		{
-			Screen_setFocusGameEntity(Screen_getInstance(), NULL);
+			Camera_setFocusGameEntity(Camera_getInstance(), NULL);
 		}
 	}
 }
@@ -1275,11 +1275,11 @@ static void Stage_setFocusEntity(Stage this, Entity focusEntity)
 		Object_addEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
 		Vector3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
-		focusEntityPosition.x = __FIX19_13_TO_I(focusEntityPosition.x);
-		focusEntityPosition.y = __FIX19_13_TO_I(focusEntityPosition.y);
-		focusEntityPosition.z = __FIX19_13_TO_I(focusEntityPosition.z);
+		focusEntityPosition.x = __FIX10_6_TO_I(focusEntityPosition.x);
+		focusEntityPosition.y = __FIX10_6_TO_I(focusEntityPosition.y);
+		focusEntityPosition.z = __FIX10_6_TO_I(focusEntityPosition.z);
 
-		this->screenPreviousDistance = (long)focusEntityPosition.x * (long)focusEntityPosition.x +
+		this->cameraPreviousDistance = (long)focusEntityPosition.x * (long)focusEntityPosition.x +
 											(long)focusEntityPosition.y * (long)focusEntityPosition.y +
 											(long)focusEntityPosition.z * (long)focusEntityPosition.z;
 	}

@@ -28,7 +28,7 @@
 #include <MessageDispatcher.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
-#include <Screen.h>
+#include <Camera.h>
 #include <debugConfig.h>
 
 
@@ -229,7 +229,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	this->lastCycleCollisions = 0;
 	this->checkCycles++;
 
-	// cull off outside of screen bounds shapes
+	// cull off outside of camera bounds shapes
 	VirtualNode node = this->activeShapes->head;
 
 	for(; node; node = node->next)
@@ -238,17 +238,17 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		Shape shape = __SAFE_CAST(Shape, node->data);
 		shape->isVisible = true;
 
-		extern const Vector3D* _screenPosition;
+		extern const Vector3D* _cameraPosition;
 		extern const CameraFrustum* _cameraFrustum;
 
 		RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, shape);
 
-		// not ready for collision checks if out of the screen
+		// not ready for collision checks if out of the camera
 		if(
-			surroundingRightBox.x0 - _screenPosition->x > __I_TO_FIX19_13(_cameraFrustum->x1) ||
-			surroundingRightBox.x1 - _screenPosition->x < __I_TO_FIX19_13(_cameraFrustum->x0) ||
-			surroundingRightBox.y0 - _screenPosition->y > __I_TO_FIX19_13(_cameraFrustum->y1) ||
-			surroundingRightBox.y1 - _screenPosition->y < __I_TO_FIX19_13(_cameraFrustum->y0)
+			surroundingRightBox.x0 - _cameraPosition->x > __I_TO_FIX10_6(_cameraFrustum->x1) ||
+			surroundingRightBox.x1 - _cameraPosition->x < __I_TO_FIX10_6(_cameraFrustum->x0) ||
+			surroundingRightBox.y0 - _cameraPosition->y > __I_TO_FIX10_6(_cameraFrustum->y1) ||
+			surroundingRightBox.y1 - _cameraPosition->y < __I_TO_FIX10_6(_cameraFrustum->y0)
 		)
 		{
 			shape->isVisible = false;

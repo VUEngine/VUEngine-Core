@@ -46,8 +46,8 @@
 #include <CharSetManager.h>
 #include <AnimationCoordinatorFactory.h>
 #include <StateMachine.h>
-#include <Screen.h>
-#include <ScreenMovementManager.h>
+#include <Camera.h>
+#include <CameraMovementManager.h>
 #include <KeyPadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
@@ -134,11 +134,11 @@ enum StateOperations
 		 */																								\
 		TimerManager timerManager;																		\
 		/**
-		 * @var Screen 			screen
+		 * @var Camera 			camera
 		 * @brief
 		 * @memberof			Game
 		 */																								\
-		Screen screen;																					\
+		Camera camera;																					\
 		/**
 		 * @var GameState		nextState
 		 * @brief				game's next state
@@ -362,7 +362,7 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->currentFrameEnded = false;
 
 	// make sure all managers are initialized now
-	this->screen = Screen_getInstance();
+	this->camera = Camera_getInstance();
 	this->keypadManager = KeypadManager_getInstance();
 	this->vipManager = VIPManager_getInstance();
 	this->timerManager = TimerManager_getInstance();
@@ -715,14 +715,14 @@ void Game_reset(Game this)
 
 	// reset managers
 	WireframeManager_reset(WireframeManager_getInstance());
-	Screen_setFocusGameEntity(this->screen, NULL);
+	Camera_setFocusGameEntity(this->camera, NULL);
 	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
 	CharSetManager_reset(CharSetManager_getInstance());
 	ParamTableManager_reset(ParamTableManager_getInstance());
 	SpriteManager_reset(SpriteManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 	Printing_reset(Printing_getInstance());
-	Screen_resetCameraFrustum(Screen_getInstance());
+	Camera_resetCameraFrustum(Camera_getInstance());
 	SoundManager_setWaveForm(SoundManager_getInstance());
 	TimerManager_resetMilliseconds(this->timerManager);
 
@@ -1046,10 +1046,10 @@ inline static void Game_updateTransformations(Game this)
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "focusing screen";
+	this->lastProcessName = "focusing camera";
 #endif
-	// position the screen
-	Screen_focus(this->screen, true);
+	// position the camera
+	Camera_focus(this->camera, true);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "updating transforms";
@@ -1271,7 +1271,7 @@ inline static void Game_run(Game this)
 	if(!skipNonCriticalProcesses)
 	{
 		// stream
-		Game_stream(this);
+	//	Game_stream(this);
 	}
 }
 
@@ -1578,7 +1578,7 @@ GameState Game_getAutomaticPauseState(Game this)
 	return this->automaticPauseState;
 }
 
-// show auto pause screen
+// show auto pause camera
 static void Game_autoPause(Game this)
 {
 	ASSERT(this, "Game::autoPause: null this");

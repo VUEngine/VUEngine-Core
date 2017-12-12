@@ -54,7 +54,7 @@ __CLASS(Wireframe);
 
 void Wireframe_constructor(Wireframe this);
 void Wireframe_destructor(Wireframe this);
-void Wireframe_addVertex(Wireframe this, fix19_13 x, fix19_13 y, fix19_13 z);
+void Wireframe_addVertex(Wireframe this, fix10_6 x, fix10_6 y, fix10_6 z);
 void Wireframe_show(Wireframe this);
 void Wireframe_hide(Wireframe this);
 void Wireframe_draw(Wireframe this, bool calculateParallax);
