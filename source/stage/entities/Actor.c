@@ -303,7 +303,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 
 	Body_print(this->body, 1, 1);
 	Shape_print(VirtualList_front(this->shapes), 1, 17);
-	Printing_resetWorldCoordinates(Printing_getInstance());
+	//Printing_resetWorldCoordinates(Printing_getInstance());
 }
 
 // whether changed direction in the last cycle or not
@@ -516,9 +516,6 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 					}
 					break;
 
-				case kBodyBounced:
-
-					break;
 				case kBodyChangedDirection:
 
 					Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));

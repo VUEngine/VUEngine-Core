@@ -59,8 +59,6 @@ float Math_squareRoot(float number)
 	i  = 0x5f3759df - ( i >> 1 );
 	y  = * ( float * ) &i;
 	y  = y * ( f - ( x * y * y ) );
-	y  = y * ( f - ( x * y * y ) );
-	y  = y * ( f - ( x * y * y ) );
 
 	return number * y;
 }

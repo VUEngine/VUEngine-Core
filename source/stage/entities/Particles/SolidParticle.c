@@ -163,14 +163,6 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		SolidParticle_transformShape(this);
 	}
 
-	Shape_print((this->shape), 1, 17);
-
-	Body_print(this->body, 1, 1);
-__PRINT_IN_GAME_TIME(10,0);
-
-	//Body_print(this, 1, 1);
-	Printing_resetWorldCoordinates(Printing_getInstance());
-
 	return expired;
 }
 
@@ -293,6 +285,7 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 
 			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 			returnValue = true;
+//__PRINT_IN_GAME_TIME(20,0);
 
 		}
 	}
@@ -317,6 +310,7 @@ bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
 	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
+		//__PRINT_IN_GAME_TIME(40,2);
 
 	Vector3D displacement =
 	{

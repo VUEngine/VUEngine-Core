@@ -240,7 +240,6 @@ void Body_setSurroundingFrictionCoefficient(Body this, fix10_6 surroundingFricti
 void Body_setMass(Body this, fix10_6 mass);
 void Body_setOwner(Body this, SpatialObject owner);
 void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller);
-void Body_sleep(Body body);
 u16 Body_stopMovement(Body this, u16 axes);
 void Body_takeHitFrom(Body this, Body other);
 void Body_update(Body this);

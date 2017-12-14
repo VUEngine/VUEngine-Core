@@ -108,9 +108,7 @@ enum MessagesTypes
 	kBodyStopped,
 	kBodyBounced,
 	kBodyStartedMoving,
-	kBodyStartedMovingByGravity,
 	kBodyChangedDirection,
-	kBodySleep,
 
 	// keypad massages
 	kKeyPressed,

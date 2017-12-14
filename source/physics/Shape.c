@@ -35,7 +35,8 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(8)
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
+//#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__I_TO_FIX10_6(1)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -359,21 +360,9 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncreme
 			if(collidingShapeRegistry->solutionVector.magnitude)
 			{
 				fix10_6 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-
-				//Printing_hex(//Printing_getInstance(), collidingShapeRegistry->solutionVector.direction.y, 30, 2, 4, NULL);
-				//Printing_hex(//Printing_getInstance(), normalizedDisplacement.y, 30, 3, 4, NULL);
-
-				//Printing_hex(//Printing_getInstance(), cosAngle, 30, 5, 4, NULL);
-				//Printing_hex(//Printing_getInstance(), -__F_TO_FIX10_6(1 - 0.1f), 30, 6, 4, NULL);
 				canMove &= -__F_TO_FIX10_6(1 - 0.1f) < cosAngle;
-return false;
-				//Printing_hex(//Printing_getInstance(), -__F_TO_FIX10_6(1 - 0.1f) < cosAngle, 30, 8, 4, NULL);
-//__PRINT_IN_GAME_TIME(30,9);
-
 			}
-//__PRINT_IN_GAME_TIME(30,10);
 		}
-return false;
 	}
 
 	// not colliding anymore
@@ -472,7 +461,7 @@ void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInf
 		Shape_displaceOwner(this, Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
 		// need to invalidate solution vectors for other colliding shapes
-		Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
+		//Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);
