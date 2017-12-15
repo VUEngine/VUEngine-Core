@@ -429,7 +429,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		__VIRTUAL_CALL(Body, update, node->data);
 	}
 
-//	PhysicalWorld_print(this, 1, 10);
+//	PhysicalWorld_print(this, 1, 0);
 #ifdef __SHOW_PHYSICS_PROFILING
 	PhysicalWorld_print(this, 1, 1);
 #endif

@@ -58,8 +58,8 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 #define CHANGED_DIRECTION	2
 
 //#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIX10_6(0.9f)
-#define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(2)
-#define __STOP_BOUNCING_VELOCITY_THRESHOLD 		(__STOP_VELOCITY_THRESHOLD << 3)
+#define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(4)
+#define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(16)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -526,20 +526,21 @@ MovementResult Body_updateMovement(Body this)
 	Acceleration gravity = Body_getGravity(this);
 	this->weight = Vector3D_scalarProduct(gravity, this->mass);
 
-	/*
 	// this is the right way to compute the friction, but the
 	// normalization is just oo heavy on hardware
+	/*
 	Velocity velocity =
 	{
-		__FIX10_6_INT_PART(this->velocity.x),
-		__FIX10_6_INT_PART(this->velocity.y),
-		__FIX10_6_INT_PART(this->velocity.z),
+		(this->velocity.x),
+		(this->velocity.y),
+		(this->velocity.z),
 	};
 
 	this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
 	*/
+
 	// hack to avoid normalization
-	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 5));
+	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 0)*0);
 
 	fix10_6 elapsedTime = _currentElapsedTime;
 	fix10_6 elapsedTimeHalfSquare = __FIX10_6_MULT(elapsedTime, elapsedTime) >> 1;
@@ -728,10 +729,6 @@ static void Body_computeTotalNormal(Body this)
 			{
 				Vector3D normal = Vector3D_scalarProduct(normalRegistry->direction, normalRegistry->magnitude);
 
-				normal.x = __FIX10_6_INT_PART(normal.x + __0_5F_FIX10_6);
-            	normal.y = __FIX10_6_INT_PART(normal.y + __0_5F_FIX10_6);
-            	normal.z = __FIX10_6_INT_PART(normal.z + __0_5F_FIX10_6);
-
 				this->totalNormal.x += normal.x;
 				this->totalNormal.y += normal.y;
 				this->totalNormal.z += normal.z;
@@ -786,6 +783,13 @@ void Body_reset(Body this)
 
 	Body_clearNormalOnAxes(this, __ALL_AXES);
 	Body_setSurroundingFrictionCoefficient(this, 0);
+
+	this->velocity 				= (Velocity){0, 0, 0};
+	this->acceleration 			= (Acceleration){0, 0, 0};
+	this->externalForce	 		= (Force){0, 0, 0};
+	this->friction 				= (Force){0, 0, 0};
+	this->totalNormal			= (Force){0, 0, 0};
+	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
 }
 
 static void Body_clearNormalOnAxes(Body this, u16 axes)
@@ -1095,8 +1099,6 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	this->velocity.y = w.y - u.y;
 	this->velocity.z = w.z - u.z;
 
-//	Body_updateMovement(this);
-
 	// determine bouncing result
 	MovementResult movementResult = Body_getBouncingResult(this, velocity, bouncingPlaneNormal);
 
@@ -1110,8 +1112,8 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
 		}
 
-				Body_sleep(__SAFE_CAST(Body, this));
-
+		// TODO: review me, I'm most likely a hack
+		Body_sleep(__SAFE_CAST(Body, this));
 	}
 
 	if(!Body_getMovementOnAllAxes(__SAFE_CAST(Body, this)))

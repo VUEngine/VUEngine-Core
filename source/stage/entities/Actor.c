@@ -301,9 +301,9 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-	Body_print(this->body, 1, 1);
-	Shape_print(VirtualList_front(this->shapes), 1, 17);
-	//Printing_resetWorldCoordinates(Printing_getInstance());
+//	Body_print(this->body, 1, 6);
+//	Shape_print(VirtualList_front(this->shapes), 1, 20);
+//	Printing_resetWorldCoordinates(Printing_getInstance());
 }
 
 // whether changed direction in the last cycle or not

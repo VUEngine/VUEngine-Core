@@ -242,7 +242,6 @@ void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)
 #endif
 }
 
-
 /**
  * Check if collides with other shape
  *
@@ -461,7 +460,7 @@ void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInf
 		Shape_displaceOwner(this, Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
 		// need to invalidate solution vectors for other colliding shapes
-		//Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
+		Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);

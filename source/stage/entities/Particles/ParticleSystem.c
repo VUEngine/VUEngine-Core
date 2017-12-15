@@ -245,7 +245,7 @@ void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
 
 	for(; node; node = node->next)
 	{
-		if(__VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior))
+		if(__VIRTUAL_CALL(Particle, update, node->data, elapsedTime, behavior))// || !Particle_isVisible(__SAFE_CAST(Particle, node->data)))
 		{
 			ParticleSystem_particleExpired(this, __SAFE_CAST(Particle, node->data));
 		}

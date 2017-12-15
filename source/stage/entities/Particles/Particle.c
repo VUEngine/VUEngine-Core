@@ -45,6 +45,13 @@ __CLASS_DEFINITION(Particle, SpatialObject);
 
 
 //---------------------------------------------------------------------------------------------------------
+//												MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __PARTICLE_VISIBILITY_PADDING	__I_TO_FIX10_6(30)
+
+
+//---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
@@ -448,3 +455,40 @@ void Particle_reset(Particle this)
 	ASSERT(this, "Particle::reset: null this");
 }
 
+
+/**
+ * Is visible
+ *
+ * @memberof	Particle
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		True if within camera's reach
+ */
+bool Particle_isVisible(Particle this)
+{
+	ASSERT(this, "Particle::isVisible: null this");
+
+	Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, this->objectSprite);
+
+	// check x visibility
+	if((unsigned)(spritePosition.x + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_WIDTH) + __PARTICLE_VISIBILITY_PADDING))
+	{
+		return false;
+	}
+
+	// check y visibility
+	if((unsigned)(spritePosition.y + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_HEIGHT) + __PARTICLE_VISIBILITY_PADDING))
+	{
+		return false;
+	}
+
+	// check z visibility
+	if((unsigned)(spritePosition.z + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_HEIGHT) + __PARTICLE_VISIBILITY_PADDING))
+	{
+		return false;
+	}
+
+	return true;
+}

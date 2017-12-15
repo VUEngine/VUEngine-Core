@@ -163,6 +163,8 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		SolidParticle_transformShape(this);
 	}
 
+//	Body_print(this->body, 1, 6);
+
 	return expired;
 }
 

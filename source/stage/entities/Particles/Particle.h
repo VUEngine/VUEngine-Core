@@ -170,6 +170,7 @@ void Particle_suspend(Particle this);
 u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
 void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition);
 void Particle_reset(Particle this);
+bool Particle_isVisible(Particle this);
 
 
 #endif
