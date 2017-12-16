@@ -211,12 +211,12 @@ bool SpatialObject_updateCollision(SpatialObject this __attribute__ ((unused)), 
 	return false;
 }
 
-void SpatialObject_exitCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+void SpatialObject_exitCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::exitCollision: null this");
 }
 
-void SpatialObject_collidingShapeOwnerDestroyed(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotColliding __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+void SpatialObject_collidingShapeOwnerDestroyed(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::collidingShapeOwnerDestroyed: null this");
 }

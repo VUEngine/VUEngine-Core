@@ -701,7 +701,7 @@ Velocity Actor_getVelocity(Actor this)
 	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getVelocity, this);
 }
 
-void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
+void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::exitCollision: null this");
 
@@ -709,11 +709,11 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 
 	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
+		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 }
 
-void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
+void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::collidingShapeOwnerDestroyed: null this");
 
@@ -721,6 +721,6 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((
 
 	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
+		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 }

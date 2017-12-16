@@ -140,8 +140,8 @@ void Actor_stopMovement(Actor this, u16 axis);
 void Actor_resetCollisionStatus(Actor this);
 Velocity Actor_getVelocity(Actor this);
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation);
-void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
-void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotColliding, bool isShapeImpenetrable);
+void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
 

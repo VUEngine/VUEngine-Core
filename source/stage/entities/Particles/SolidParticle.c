@@ -164,6 +164,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 	}
 
 //	Body_print(this->body, 1, 6);
+//	Shape_print(this->shape, 21, 6);
 
 	return expired;
 }
@@ -287,8 +288,6 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 
 			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
 			returnValue = true;
-//__PRINT_IN_GAME_TIME(20,0);
-
 		}
 	}
 
@@ -312,7 +311,6 @@ bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
 	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
-		//__PRINT_IN_GAME_TIME(40,2);
 
 	Vector3D displacement =
 	{
@@ -462,16 +460,16 @@ Velocity SolidParticle_getVelocity(SolidParticle this)
  * @public
  *
  * @param this					Function scope
- * @param shapeNotColliding		Shape that is no longer colliding
+ * @param shapeNotCollidingAnymore		Shape that is no longer colliding
  */
-void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotColliding, bool isShapeImpenetrable)
+void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "SolidParticle::exitCollision: null this");
 	ASSERT(this->body, "SolidParticle::exitCollision: null this");
 
 	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotColliding));
+		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 
 	Body_setSurroundingFrictionCoefficient(this->body, Shape_getCollidingFrictionCoefficient(this->shape));
