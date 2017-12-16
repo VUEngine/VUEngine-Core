@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __SHAPE_NORMALS	3
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,6 +44,15 @@
 
 __FORWARD_CLASS(SpatialObject)
 __FORWARD_CLASS(Shape)
+
+typedef enum CollisionResult
+{
+	kNoCollision = 0,
+	kEnterCollision,
+	kUpdateCollision,
+	kExitCollision,
+
+} CollisionResult;
 
 /**
  * Collision information
@@ -77,6 +87,45 @@ typedef struct CollisionInformation
 
 } CollisionInformation;
 
+
+/**
+ * Collision shape registry
+ *
+ * @memberof Shape
+ */
+typedef struct CollidingShapeRegistry
+{
+	Shape shape;
+
+	SolutionVector solutionVector;
+
+	fix10_6 frictionCoefficient;
+
+	bool isImpenetrable;
+
+} CollidingShapeRegistry;
+
+/**
+ * Collision data
+ *
+ * @memberof Shape
+ */
+typedef struct CollisionData
+{
+	SpatialObject shapeOwner;
+	CollisionResult result;
+	CollisionInformation collisionInformation;
+	CollidingShapeRegistry* collidingShapeRegistry;
+	Shape shapeNotCollidingAnymoreAnymore;
+	bool isImpenetrableCollidingShape;
+
+} CollisionData;
+
+/**
+ * Normals
+ *
+ * @memberof Shape
+ */
 typedef struct Normals
 {
 	Vector3D vectors[__SHAPE_NORMALS];
@@ -208,7 +257,7 @@ typedef const ShapeDefinition ShapeROMDef;
 void Shape_constructor(Shape this, SpatialObject owner);
 void Shape_destructor(Shape this);
 
-bool Shape_collides(Shape this, Shape shape);
+CollisionData Shape_collides(Shape this, Shape shape);
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);
 void Shape_reset(Shape this);

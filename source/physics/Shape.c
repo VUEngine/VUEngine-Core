@@ -35,9 +35,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
-//#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__I_TO_FIX10_6(1)
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -52,18 +49,6 @@ __CLASS_DEFINITION(Shape, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 
-
-typedef struct CollidingShapeRegistry
-{
-	Shape shape;
-
-	SolutionVector solutionVector;
-
-	fix10_6 frictionCoefficient;
-
-	bool isImpenetrable;
-
-} CollidingShapeRegistry;
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -250,79 +235,103 @@ void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)
  *
  * @param this					Function scope
  * @param shape					shape to check for overlapping
+ *
+  * @return						CollisionData
  */
 // check if two rectangles overlap
-bool Shape_collides(Shape this, Shape shape)
+CollisionData Shape_collides(Shape this, Shape shape)
 {
 	ASSERT(this, "Ball::collides: null this");
 
+	CollisionData collisionData =
+	{
+		// owner
+		__IS_OBJECT_ALIVE(this->owner)? this->owner : NULL,
+
+		// result
+		kNoCollision,
+
+		// collision information
+		{
+			// shape
+			NULL,
+			// colliding shape
+			NULL,
+			// solution vector
+			{
+				// direction
+				{0, 0, 0},
+				// magnitude
+				0
+			}
+		},
+
+		// colliding shape registry
+		NULL,
+
+		// is impenetrable colliding shape
+		false,
+	};
+
 	if(!__IS_OBJECT_ALIVE(this->owner))
 	{
-		return false;
+		return collisionData;
 	}
 
-	CollisionInformation collisionInformation;
-
-	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, shape);
-	bool collision = false;
+	collisionData.collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, shape);
 
 	// test if new collision
-	if(!collidingShapeRegistry)
+	if(!collisionData.collidingShapeRegistry)
 	{
 		// check for new overlap
-		collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
+		collisionData.collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
 
-		if(collisionInformation.shape && collisionInformation.solutionVector.magnitude)
+		if(collisionData.collisionInformation.shape && collisionData.collisionInformation.solutionVector.magnitude)
 		{
 			// new collision
-			CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, shape, collisionInformation.solutionVector, false);
-
-			if(__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionInformation))
-			{
-				collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation.collidingShape->owner);
-			}
-			else
-			{
-				collidingShapeRegistry->frictionCoefficient = 0;
-			}
-
-			collision = true;
+			collisionData.result = kEnterCollision;
+			collisionData.collidingShapeRegistry = Shape_registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
 		}
 
-		return collision;
+		return collisionData;
 	}
 	// impenetrable registered colliding shapes require a another test
 	// to determine if I'm not colliding against them anymore
-	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
+	else if(collisionData.collidingShapeRegistry->isImpenetrable && collisionData.collidingShapeRegistry->solutionVector.magnitude)
 	{
-		collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		collisionData.collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
-		collision = collisionInformation.shape == this && collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT;
-
-		if(collision && collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
+		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
-			Shape_resolveCollision(this, &collisionInformation);
+			collisionData.result = kUpdateCollision;
+		}
+		else
+		{
+			collisionData.result = kExitCollision;
+			collisionData.isImpenetrableCollidingShape = collisionData.collidingShapeRegistry->isImpenetrable;
+			collisionData.shapeNotCollidingAnymoreAnymore = shape;
+			Shape_unregisterCollidingShape(this, shape);
 		}
 	}
 	else
 	{
 		// otherwise make a normal collision test
-		collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
+		collisionData.collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), this, shape);
 
-		collision = collisionInformation.shape == this && collisionInformation.solutionVector.magnitude;
+		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude)
+		{
+			collisionData.result = kUpdateCollision;
+		}
+		else
+		{
+			collisionData.result = kExitCollision;
+			collisionData.isImpenetrableCollidingShape = collisionData.collidingShapeRegistry->isImpenetrable;
+			collisionData.shapeNotCollidingAnymoreAnymore = shape;
+			Shape_unregisterCollidingShape(this, shape);
+		}
 	}
 
-	if(collision)
-	{
-		__VIRTUAL_CALL(SpatialObject, updateCollision, this->owner, &collisionInformation);
-	}
-	else
-	{
-		Shape_unregisterCollidingShape(this, shape);
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shape, collidingShapeRegistry->isImpenetrable);
-	}
-
-	return false;
+	return collisionData;
 }
 
 /**

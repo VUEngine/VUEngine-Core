@@ -102,9 +102,6 @@ enum MessagesTypes
 	kEntityRemoved,
 
 	// physics messages
-	kNoCollision,
-	kCollision,
-	kCollisionWithYou,
 	kBodyStopped,
 	kBodyBounced,
 	kBodyStartedMoving,
