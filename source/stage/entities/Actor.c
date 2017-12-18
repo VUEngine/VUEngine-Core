@@ -301,7 +301,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 		StateMachine_update(this->stateMachine);
 	}
 
-//	Body_print(this->body, 1, 6);
+//	Body_print(this->body, 1, 0);
 //	Shape_print(VirtualList_front(this->shapes), 1, 20);
 //	Printing_resetWorldCoordinates(Printing_getInstance());
 }
@@ -428,9 +428,7 @@ fix10_6 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject
 {
 	ASSERT(this, "Actor::getElasticityOnCollision: null this");
 
-	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
-
-	return physicalSpecification->elasticity + __VIRTUAL_CALL(SpatialObject, getElasticity, collidingObject);
+	return __VIRTUAL_CALL(SpatialObject, getElasticity, collidingObject);
 }
 
 fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
