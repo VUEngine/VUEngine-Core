@@ -22,6 +22,12 @@
 #ifndef MATH_H_
 #define MATH_H_
 
+//---------------------------------------------------------------------------------------------------------
+//												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <Types.h>
+
 
 //---------------------------------------------------------------------------------------------------------
 //											PROTOTYPES
@@ -43,6 +49,7 @@ extern float fabsf(float);
 #define fix13_3					s16
 #define fix13_3					s16
 #define fix10_6					s16
+#define fix10_6_ext				s32
 #define fix19_13				s32
 
 
@@ -52,35 +59,41 @@ extern float fabsf(float);
 #define __F_CEIL(n)					(int)((n) + 0.5f)
 
 // convert a float to fixed point and back
-#define __F_TO_FIX7_9(n)			(fix7_9)	((n) 	* 512.0f + 0.5f)
-#define __F_TO_FIX13_3(n)			(fix13_3)	((n) 	* 8.0f + 0.5f)
-#define __F_TO_FIX10_6(n)			(fix10_6)	((n) 	* 64.0f + 0.5f)
-#define __F_TO_FIX19_13(n)			(fix19_13)	((n) 	* 8192.0f + 0.5f)
+#define __F_TO_FIX7_9(n)			(fix7_9)		((n) 	* 512.0f + 0.5f)
+#define __F_TO_FIX13_3(n)			(fix13_3)		((n) 	* 8.0f + 0.5f)
+#define __F_TO_FIX10_6(n)			(fix10_6)		((n) 	* 64.0f + 0.5f)
+#define __F_TO_FIX10_6_EXT(n)		(fix10_6_ext)	((n) 	* 64.0f + 0.5f)
+#define __F_TO_FIX19_13(n)			(fix19_13)		((n) 	* 8192.0f + 0.5f)
 
 #define __FIX7_9_TO_F(n)			(float)((n) / 512.0f)
 #define __FIX13_3_TO_F(n)			(float)((n) / 8.0f)
 #define __FIX10_6_TO_F(n)			(float)((n) / 64.0f)
+#define __FIX10_6_EXT_TO_F(n)		(float)((n) / 64.0f)
 #define __FIX19_13_TO_F(n)			(float)((n) / 8192.0f)
 
 // convert an int to fixed point and back
-#define __I_TO_FIX7_9(n)			(fix7_9)	((n) << 9)
-#define __I_TO_FIX13_3(n)			(fix13_3)	((n) << 3)
-#define __I_TO_FIX10_6(n)			(fix10_6)	((n) << 6)
-#define __I_TO_FIX19_13(n)			(fix19_13)	((n) << 13)
+#define __I_TO_FIX7_9(n)			(fix7_9)		((n) << 9)
+#define __I_TO_FIX13_3(n)			(fix13_3)		((n) << 3)
+#define __I_TO_FIX10_6(n)			(fix10_6)		((n) << 6)
+#define __I_TO_FIX10_6_EXT(n)		(fix10_6_ext)	((n) << 6)
+#define __I_TO_FIX19_13(n)			(fix19_13)		((n) << 13)
 
 #define __FIX7_9_TO_I(n)			(s16)((n) >> 9)
 #define __FIX13_3_TO_I(n)			(s16)((n) >> 3)
 #define __FIX10_6_TO_I(n)			(s32)((n) >> 6)
+#define __FIX10_6_EXT_TO_I(n)		(s32)((n) >> 6)
 #define __FIX19_13_TO_I(n)			(s32)((n) >> 13)
 
-#define __FIX10_6_TO_FIX7_9(n)		(fix7_9)	((n) << 3)
-#define __FIX10_6_TO_FIX13_3(n)		(fix13_3)	((n) >> 3)
-#define __FIX10_6_TO_FIX19_13(n)	(fix19_13)	((n) << 7)
-#define __FIX13_3_TO_FIX7_9(n)		(fix7_9)	((n) << 6)
-#define __FIX13_3_TO_FIX10_6(n)		(fix10_6)	((n) << 3)
-#define __FIX7_9_TO_FIX13_3(n)		(fix13_3)	((n) >> 6)
-#define __FIX7_9_TO_FIX10_6(n)		(fix10_6)	((n) >> 3)
-#define __FIX19_13_TO_FIX10_6(n)	(fix10_6)	((n) >> 7)
+#define __FIX10_6_TO_FIX7_9(n)		(fix7_9)		((n) << 3)
+#define __FIX10_6_TO_FIX13_3(n)		(fix13_3)		((n) >> 3)
+#define __FIX10_6_TO_FIX10_6_EXT(n)	(fix10_6_ext)	((n) << 0)
+#define __FIX10_6_EXT_TO_FIX10_6(n)	(fix10_6)		((n) << 0)
+#define __FIX10_6_TO_FIX19_13(n)	(fix19_13)		((n) << 7)
+#define __FIX13_3_TO_FIX7_9(n)		(fix7_9)		((n) << 6)
+#define __FIX13_3_TO_FIX10_6(n)		(fix10_6)		((n) << 3)
+#define __FIX7_9_TO_FIX13_3(n)		(fix13_3)		((n) >> 6)
+#define __FIX7_9_TO_FIX10_6(n)		(fix10_6)		((n) >> 3)
+#define __FIX19_13_TO_FIX10_6(n)	(fix10_6)		((n) >> 7)
 
 // return the integral part
 #define __FIX7_9_INT_PART(n)		(((fix7_9)n) 	& 0xFE00)
@@ -96,16 +109,19 @@ extern float fabsf(float);
 
 // fixed multiplication, what a mess of brackets
 // TODO: how do we return an s32 from s16*s16 without forcing a promotion to s32?
-#define __FIX7_9_MULT(a,b)			(fix7_9)	((((s32)(a))*((s32)(b)))>>9)
-#define __FIX13_3_MULT(a,b)			(fix13_3)	((((s32)(a))*((s32)(b)))>>3)
-#define __FIX10_6_MULT(a,b)			(fix10_6)	((((s32)(a))*((s32)(b)))>>6)
-#define __FIX19_13_MULT(a,b)		(fix19_13)	((((s64)(a))*((s64)(b)))>>13)
+#define __FIX7_9_MULT(a,b)			(fix7_9)	((((s32)(a)) * ((s32)(b))) >> 9)
+#define __FIX13_3_MULT(a,b)			(fix13_3)	((((s32)(a)) * ((s32)(b))) >> 3)
+#define __FIX10_6_MULT(a,b)			(fix10_6)	((((s32)(a)) * ((s32)(b))) >> 6)
+#define __FIX10_6_EXT_MULT(a,b)					((((s32)(a)) * ((s32)(b))) >> 6)
+#define __FIX19_13_MULT(a,b)		(fix19_13)	((((s64)(a)) * ((s64)(b))) >> 13)
+
 
 // fixed division
-#define __FIX7_9_DIV(a,b)			(fix7_9)	((((s32)(a))<<9)/((s32)(b)))
-#define __FIX13_3_DIV(a,b)			(fix13_3)	((((s32)(a))<<3)/((s32)(b)))
-#define __FIX10_6_DIV(a,b)			(fix10_6)	((((s32)(a))<<6)/((s32)(b)))
-#define __FIX19_13_DIV(a,b)			(fix19_13)	((((s64)(a))<<13)/((s64)(b)))
+#define __FIX7_9_DIV(a,b)			(fix7_9)	((((s32)(a)) << 9) / ((s32)(b)))
+#define __FIX13_3_DIV(a,b)			(fix13_3)	((((s32)(a)) << 3) / ((s32)(b)))
+#define __FIX10_6_DIV(a,b)			(fix10_6)	((((s32)(a)) << 6) / ((s32)(b)))
+#define __FIX10_6_EXT_DIV(a,b)					((((s32)(a)) << 6) / ((s32)(b)))
+#define __FIX19_13_DIV(a,b)			(fix19_13)	((((s64)(a)) << 13) / ((s64)(b)))
 
 #define __COS(x) _sinLut[(128 - (x)) & 0x1FF]
 #define __SIN(x) _sinLut[(x) & 0x1FF]

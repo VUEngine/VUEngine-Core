@@ -26,7 +26,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Types.h>
+#include <Math.h>
 #include <MiscStructs.h>
 
 
@@ -34,24 +34,124 @@
 //											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-Vector3D Vector3D_get(Vector3D from, Vector3D to);
-fix10_6 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB);
-Vector3D Vector3D_scalarProduct(Vector3D vector, fix10_6 scalar);
-Vector3D Vector3D_normalize(Vector3D vector);
-Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
-fix10_6 Vector3D_length(Vector3D vector);
-fix19_13 Vector3D_squareLength(Vector3D vector);
-fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
-Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
-Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax);
+inline Vector3D Vector3D_get(Vector3D from, Vector3D to);
+inline fix10_6 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB);
+inline Vector3D Vector3D_scalarProduct(Vector3D vector, fix10_6 scalar);
+inline Vector3D Vector3D_normalize(Vector3D vector);
+inline Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
+inline fix10_6 Vector3D_length(Vector3D vector);
+inline fix19_13 Vector3D_squareLength(Vector3D vector);
+inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
+inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
+inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax);
 
 
 //---------------------------------------------------------------------------------------------------------
 //											IMPLEMENTATIONS
 //---------------------------------------------------------------------------------------------------------
 
+inline Vector3D Vector3D_get(Vector3D from, Vector3D to)
+{
+	return (Vector3D){to.x - from.x, to.y - from.y, to.z - from.z};
+}
 
+inline fix10_6 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB)
+{
+	return __FIX10_6_MULT(vectorA.x, vectorB.x) + __FIX10_6_MULT(vectorA.y, vectorB.y) + __FIX10_6_MULT(vectorA.z, vectorB.z);
+}
 
+inline Vector3D Vector3D_scalarProduct(Vector3D vector, fix10_6 scalar)
+{
+	return (Vector3D){__FIX10_6_MULT(vector.x, scalar), __FIX10_6_MULT(vector.y, scalar), __FIX10_6_MULT(vector.z, scalar)};
+}
+
+inline Vector3D Vector3D_normalize(Vector3D vector)
+{
+	fix10_6 length = Vector3D_length(vector);
+
+	if(length)
+	{
+		return (Vector3D){__FIX10_6_DIV(vector.x, length), __FIX10_6_DIV(vector.y, length),__FIX10_6_DIV(vector.z, length)};
+	}
+
+	return (Vector3D){0, 0, 0};
+}
+
+inline Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC)
+{
+	Vector3D u =
+	{
+		vectorB.x - vectorA.x,
+		vectorB.y - vectorA.y,
+		vectorB.z - vectorA.z,
+	};
+
+	Vector3D v =
+	{
+		vectorC.x - vectorA.x,
+		vectorC.y - vectorA.y,
+		vectorC.z - vectorA.z,
+	};
+
+	return (Vector3D)
+	{
+		__FIX10_6_MULT(u.y, v.z) - __FIX10_6_MULT(u.z, v.y),
+		__FIX10_6_MULT(u.z, v.x) - __FIX10_6_MULT(u.x, v.z),
+		__FIX10_6_MULT(u.x, v.y) - __FIX10_6_MULT(u.y, v.x),
+	};
+}
+
+inline fix10_6 Vector3D_length(Vector3D vector)
+{
+	fix10_6_ext lengthSquare = __FIX10_6_EXT_MULT(vector.x, vector.x) + __FIX10_6_EXT_MULT(vector.y, vector.y) + __FIX10_6_EXT_MULT(vector.z, vector.z);
+
+	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(lengthSquare)));
+}
+
+inline fix19_13 Vector3D_squareLength(Vector3D vector)
+{
+	return __FIX10_6_MULT(vector.x, vector.x) + __FIX10_6_MULT(vector.y, vector.y) + __FIX10_6_MULT(vector.z, vector.z);
+}
+
+inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB)
+{
+	fix10_6 lengthSquareA = __FIX10_6_MULT(vectorA.x, vectorA.x) + __FIX10_6_MULT(vectorA.y, vectorA.y) + __FIX10_6_MULT(vectorA.z, vectorA.z);
+	fix10_6 lengthSquareB = __FIX10_6_MULT(vectorB.x, vectorB.x) + __FIX10_6_MULT(vectorB.y, vectorB.y) + __FIX10_6_MULT(vectorB.z, vectorB.z);
+
+	fix10_6 product = __FIX10_6_MULT(lengthSquareA, lengthSquareB);
+
+	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(product)));
+}
+
+inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D)
+{
+	extern const Vector3D* _cameraPosition;
+
+	vector3D.x -= _cameraPosition->x;
+	vector3D.y -= _cameraPosition->y;
+	vector3D.z -= _cameraPosition->z;
+
+	return vector3D;
+}
+
+inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax)
+{
+	extern const Optical* _optical;
+
+	vector3D.x <<= 4;
+	vector3D.y <<= 4;
+	vector3D.z <<= 4;
+
+	Vector2D projection =
+	{
+		vector3D.x + (__FIX10_6_MULT(_optical->horizontalViewPointCenter -  vector3D.x, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.y - (__FIX10_6_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.z,
+		parallax
+	};
+
+	return projection;
+}
 
 
 #endif
