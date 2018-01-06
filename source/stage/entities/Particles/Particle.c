@@ -453,6 +453,8 @@ void Particle_suspend(Particle this)
 void Particle_reset(Particle this)
 {
 	ASSERT(this, "Particle::reset: null this");
+
+	Body_reset(this->body);
 }
 
 
