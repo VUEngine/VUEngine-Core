@@ -41,6 +41,8 @@
 		/*  */																							\
 		u32 milliseconds;																				\
 		/*  */																							\
+		u32 totalMilliseconds;																				\
+		/*  */																							\
 		u8 tcrValue;																					\
 
 /**
@@ -93,6 +95,7 @@ static void __attribute__ ((noinline)) TimerManager_constructor(TimerManager thi
 
 	this->tcrValue = 0;
 	this->milliseconds = 0;
+	this->totalMilliseconds = 0;
 
 	_timerManager = this;
 	_soundManager = SoundManager_getInstance();
@@ -201,6 +204,7 @@ void TimerManager_interruptHandler(void)
 
 	// update clocks
 	_timerManager->milliseconds += __TIMER_RESOLUTION;
+	_timerManager->totalMilliseconds += __TIMER_RESOLUTION;
 
 	// play sounds
 	static u32 previousHundredthSecond = 0;
@@ -219,20 +223,37 @@ void TimerManager_interruptHandler(void)
 }
 
 /**
- * Retrieve the total milliseconds elapsed
+ * Retrieve the elapsed milliseconds in the current game frame
  *
  * @memberof		TimerManager
  * @public
  *
  * @param this		Function scope
  *
- * @return			Total milliseconds elapsed
+ * @return			Milliseconds elapsed during the current game frame
  */
 u32 TimerManager_getMillisecondsElapsed(TimerManager this)
 {
 	ASSERT(this, "TimerManager::getMillisecondsElapsed: null this");
 
 	return this->milliseconds;
+}
+
+/**
+ * Retrieve the total elapsed milliseconds
+ *
+ * @memberof		TimerManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Total elapsed milliseconds
+ */
+u32 TimerManager_getTotalMillisecondsElapsed(TimerManager this)
+{
+	ASSERT(this, "TimerManager::getTotalMillisecondsElapsed: null this");
+
+	return this->totalMilliseconds;
 }
 
 /**

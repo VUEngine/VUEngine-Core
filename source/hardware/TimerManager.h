@@ -70,6 +70,7 @@ TimerManager TimerManager_getInstance();
 void TimerManager_destructor(TimerManager this);
 void TimerManager_enable(TimerManager this, bool flag);
 u32 TimerManager_getMillisecondsElapsed(TimerManager this);
+u32 TimerManager_getTotalMillisecondsElapsed(TimerManager this);
 u32 TimerManager_resetMilliseconds(TimerManager this);
 void TimerManager_setTime(TimerManager this, u16 time);
 void TimerManager_setFrequency(TimerManager this, int frequency);
