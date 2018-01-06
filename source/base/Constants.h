@@ -132,8 +132,9 @@ enum DefaulCollisionLayers
 #ifndef __RELEASE
 #define NM_ASSERT(Statement, ...)																		\
 	 																									\
-	if(!(Statement))																					\
+	if(!(Statement) && !_triggeringException)																					\
 	{ 																									\
+		_triggeringException = true;																	\
 		asm(" mov sp,%0  ": "=r" (_sp));																\
 		asm(" mov lp,%0  ": "=r" (_lp));																\
 																										\
@@ -151,8 +152,9 @@ enum DefaulCollisionLayers
 #else
 #define ASSERT(Statement, Message)																		\
 	 																									\
-	if(!(Statement)) 																					\
+	if(!(Statement) && !_triggeringException) 																					\
 	{																									\
+		_triggeringException = true;																	\
 		asm(" mov sp,%0  ": "=r" (_sp));																\
 		asm(" mov lp,%0  ": "=r" (_lp));																\
 																										\

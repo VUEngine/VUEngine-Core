@@ -60,6 +60,9 @@
 __CLASS_DEFINITION(Error, Object);
 
 
+bool _triggeringException = false;
+
+
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
@@ -123,6 +126,8 @@ void Error_destructor(Error this)
 #ifndef __RELEASE
 int Error_triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
 {
+	int lp = _lp;
+	int sp = _sp;
 	int x = 0 <= __EXCEPTION_COLUMN && __EXCEPTION_COLUMN <= 24 ? __EXCEPTION_COLUMN : 0;
 	int y = 0 <= __EXCEPTION_LINE && __EXCEPTION_LINE <= 28 ? __EXCEPTION_LINE : 0;
 
@@ -158,9 +163,9 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
 	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
 	Printing_text(Printing_getInstance(), " LP:                                  " , x, y, NULL);
-	Printing_hex(Printing_getInstance(), _lp, x + 5, y, 8, NULL);
+	Printing_hex(Printing_getInstance(), lp, x + 5, y, 8, NULL);
 	Printing_text(Printing_getInstance(), " SP: 		                         " , x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), _sp, x + 5, y, 8, NULL);
+	Printing_hex(Printing_getInstance(), sp, x + 5, y, 8, NULL);
 
 	if(message)
 	{
