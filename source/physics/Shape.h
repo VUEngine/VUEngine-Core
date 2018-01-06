@@ -112,10 +112,8 @@ typedef struct CollidingShapeRegistry
  */
 typedef struct CollisionData
 {
-	SpatialObject shapeOwner;
 	CollisionResult result;
 	CollisionInformation collisionInformation;
-	CollidingShapeRegistry* collidingShapeRegistry;
 	Shape shapeNotCollidingAnymoreAnymore;
 	bool isImpenetrableCollidingShape;
 
@@ -257,6 +255,9 @@ typedef const ShapeDefinition ShapeROMDef;
 void Shape_constructor(Shape this, SpatialObject owner);
 void Shape_destructor(Shape this);
 
+void Shape_enterCollision(Shape this, CollisionData* collisionData);
+void Shape_updateCollision(Shape this, CollisionData* collisionData);
+void Shape_exitCollision(Shape this, CollisionData* collisionData);
 CollisionData Shape_collides(Shape this, Shape shape);
 bool Shape_checkForCollisions(Shape this);
 SpatialObject Shape_getOwner(Shape this);

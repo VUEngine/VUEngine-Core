@@ -45,6 +45,21 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Movement result
+ *
+ * @memberof Body
+ */
+typedef struct MovementResult
+{
+	u16 axesStoppedMovement;
+	u16 axesOfAcceleratedBouncing;
+	u16 axesOfChangeOfMovement;
+	u16 axesOfChangeOfDirection;
+
+} MovementResult;
+
+
 #define Body_METHODS(ClassName)																			\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, update);															\

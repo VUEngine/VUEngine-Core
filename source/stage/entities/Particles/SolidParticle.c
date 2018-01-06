@@ -163,7 +163,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 		SolidParticle_transformShape(this);
 	}
 
-//	Body_print(this->body, 1, 6);
+//	Body_print(this->body, 1, 1);
 //	Shape_print(this->shape, 21, 6);
 
 	return expired;
@@ -388,7 +388,7 @@ void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
 
 	__CALL_BASE_METHOD(Particle, setPosition, this, position);
 
-	SolidParticle_transformShape(this);
+//	SolidParticle_transformShape(this);
 }
 
 /**
@@ -488,6 +488,7 @@ void SolidParticle_reset(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::reset: null this");
 
+	__CALL_BASE_METHOD(Particle, reset, this);
+
 	Shape_reset(this->shape);
-	Body_reset(this->body);
 }

@@ -40,14 +40,6 @@
  */
 __CLASS_DEFINITION(ParticleBody, Body);
 
-typedef struct MovementResult
-{
-	u16 axesStoppedMovement;
-	u16 axesOfAcceleratedBouncing;
-	u16 axesOfChangeOfMovement;
-
-} MovementResult;
-
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -126,13 +118,17 @@ void ParticleBody_update(ParticleBody this)
 			{
 				Body_stopMovement(__SAFE_CAST(Body, this), movementResult.axesStoppedMovement);
 			}
-			else if(!Body_getMovementOnAllAxes(__SAFE_CAST(Body, this)))
+/*			else if(!Body_getMovementOnAllAxes(__SAFE_CAST(Body, this)))
 			{
 				Body_sleep(__SAFE_CAST(Body, this));
 			}
+			*/
 		}
 
 		// clear any force so the next update does not get influenced
 		Body_clearExternalForce(__SAFE_CAST(Body, this));
 	}
+
+if(this->normals)
+		Printing_int(Printing_getInstance(), VirtualList_getSize(this->normals), 40, 17, NULL);
 }

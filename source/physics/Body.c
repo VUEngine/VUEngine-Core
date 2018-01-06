@@ -52,15 +52,19 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 //---------------------------------------------------------------------------------------------------------
 
 // this should be improved and calculated dynamically based on framerate
-
 #define STOPPED_MOVING		0
 #define STILL_MOVES			1
 #define CHANGED_DIRECTION	2
 
 //#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIX10_6(0.9f)
-#define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(4)
+#define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(8)
 #define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(16)
 
+#define __MIN_MASS								__F_TO_FIX10_6(0.1f)
+#define __MAX_MASS								__I_TO_FIX10_6(1)
+#define __MAXIMUM_FRICTION_COEFFICIENT			__I_TO_FIX10_6(1)
+
+#define __FRICTION_FORCE_FACTOR_POWER					2
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS' METHODS
@@ -93,14 +97,6 @@ enum CollidingObjectIndexes
 	eZAxis,
 	eLastCollidingObject,
 };
-
-typedef struct MovementResult
-{
-	u16 axesStoppedMovement;
-	u16 axesOfAcceleratedBouncing;
-	u16 axesOfChangeOfMovement;
-
-} MovementResult;
 
 typedef struct NormalRegistry
 {
@@ -145,7 +141,7 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 
 	this->owner = owner;
 	this->normals = NULL;
-	this->mass = 0 < physicalSpecification->mass ? physicalSpecification->mass : __1I_FIX10_6;
+	this->mass = __MIN_MASS < physicalSpecification->mass ? __MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MASS : __MIN_MASS;
 	this->elasticity = physicalSpecification->elasticity;
 	this->frictionCoefficient = physicalSpecification->frictionCoefficient;
 	this->surroundingFrictionCoefficient = 0;
@@ -347,27 +343,30 @@ void Body_applyForce(Body this, const Force* force)
 
 	if(force)
 	{
-		this->externalForce = *force;
+		this->externalForce.x += force->x;
+		this->externalForce.y += force->y;
+		this->externalForce.z += force->z;
+
 		u16 axesOfExternalForce = __NO_AXIS;
 
-		if(this->externalForce.x)
+		if(force->x)
 		{
 			axesOfExternalForce |= __X_AXIS;
 		}
 
-		if(this->externalForce.y)
+		if(force->y)
 		{
 			axesOfExternalForce |= __Y_AXIS;
 		}
 
-		if(this->externalForce.z)
+		if(force->z)
 		{
 			axesOfExternalForce |= __Z_AXIS;
 		}
 
 		if(axesOfExternalForce)
 		{
-			Body_clearNormalOnAxes(this, axesOfExternalForce);
+			//Body_clearNormalOnAxes(this, axesOfExternalForce);
 			Body_setMovementType(this, __ACCELERATED_MOVEMENT, axesOfExternalForce);
 			Body_awake(this, axesOfExternalForce);
 		}
@@ -381,8 +380,6 @@ void Body_applyGravity(Body this, u16 axes)
 
 	if(axes)
 	{
-		Body_awake(this, axes);
-		/*
 		Acceleration gravityForce = Vector3D_scalarProduct(Body_getGravity(this), this->mass);
 
 		Force force =
@@ -393,7 +390,6 @@ void Body_applyGravity(Body this, u16 axes)
 		};
 
 		Body_applyForce(this, &force);
-		*/
 	}
 }
 
@@ -420,11 +416,11 @@ void Body_update(Body this)
 			// if stopped on any axes
 			if(movementResult.axesStoppedMovement)
 			{
-				u16 axesOfStopping = Body_stopMovement(this, movementResult.axesStoppedMovement);
+				Body_stopMovement(this, movementResult.axesStoppedMovement);
 
-				if(axesOfStopping)
+				if(movementResult.axesStoppedMovement)
 				{
-					MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
+					MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &movementResult.axesStoppedMovement);
 				}
 			}
 
@@ -460,18 +456,34 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
-	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS};
+	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS, __NO_AXIS};
 
-	// xor values, if equal, result is 0
-	movementResult.axesOfChangeOfMovement |= __FIX10_6_INT_PART(this->velocity.x ^ previousVelocity.x) ? __X_AXIS : __NO_AXIS;
-	movementResult.axesOfChangeOfMovement |= __FIX10_6_INT_PART(this->velocity.y ^ previousVelocity.y) ? __Y_AXIS : __NO_AXIS;
-	movementResult.axesOfChangeOfMovement |= __FIX10_6_INT_PART(this->velocity.z ^ previousVelocity.z) ? __Z_AXIS : __NO_AXIS;
+	Vector3D aux =
+	{
+		this->velocity.x ^ previousVelocity.x,
+		this->velocity.y ^ previousVelocity.y,
+		this->velocity.z ^ previousVelocity.z,
+	};
+
+	// xor values, if result != 0, there is movement
+	movementResult.axesOfChangeOfMovement |= aux.x ? __X_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= aux.y ? __Y_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= aux.z ? __Z_AXIS : __NO_AXIS;
+
+	// xor values, if result >= 0, there is no change in direction
+	movementResult.axesOfChangeOfDirection |= 0 <= aux.x ? __NO_AXIS : __X_AXIS;
+	movementResult.axesOfChangeOfDirection |= 0 <= aux.y ? __NO_AXIS : __Y_AXIS;
+	movementResult.axesOfChangeOfDirection |= 0 <= aux.z ? __NO_AXIS : __Z_AXIS;
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
-	if(__UNIFORM_MOVEMENT != this->movementType.x)
+	if(previousVelocity.x && !this->externalForce.x && __UNIFORM_MOVEMENT != this->movementType.x && (this->velocity.x | previousVelocity.x))
 	{
-		if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.x || (0 < this->totalNormal.x * this->velocity.x)))
+		if(__X_AXIS & movementResult.axesOfChangeOfDirection)
+		{
+			movementResult.axesStoppedMovement |= __X_AXIS;
+		}
+		else if((__X_AXIS & movementResult.axesOfChangeOfMovement) && (0 <= this->totalNormal.x * this->velocity.x))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x))
 			{
@@ -480,9 +492,13 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 		}
 	}
 
-	if(__UNIFORM_MOVEMENT != this->movementType.y)
+	if(previousVelocity.y && !this->externalForce.y && __UNIFORM_MOVEMENT != this->movementType.y && (this->velocity.y | previousVelocity.y))
 	{
-		if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.y || (0 < this->totalNormal.y * this->velocity.y)))
+		if(__Y_AXIS & movementResult.axesOfChangeOfDirection)
+		{
+			movementResult.axesStoppedMovement |= __Y_AXIS;
+		}
+		else if((__Y_AXIS & movementResult.axesOfChangeOfMovement) && (0 <= this->totalNormal.y * this->velocity.y))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y))
 			{
@@ -491,9 +507,13 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 		}
 	}
 
-	if(__UNIFORM_MOVEMENT != this->movementType.z)
+	if(previousVelocity.z && !this->externalForce.z && __UNIFORM_MOVEMENT != this->movementType.z && (this->velocity.z | previousVelocity.z))
 	{
-		if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (!this->externalForce.z || (0 < this->totalNormal.z * this->velocity.z)))
+		if(__Z_AXIS & movementResult.axesOfChangeOfDirection)
+		{
+			movementResult.axesStoppedMovement |= __Z_AXIS;
+		}
+		else if((__Z_AXIS & movementResult.axesOfChangeOfMovement) && (0 <= this->totalNormal.z * this->velocity.z))
 		{
 			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z))
 			{
@@ -501,6 +521,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 			}
 		}
 	}
+
 
 	// cannot change direction if movement stopped on that axes
 	movementResult.axesOfChangeOfMovement &= ~movementResult.axesStoppedMovement;
@@ -518,7 +539,7 @@ Acceleration Body_getGravity(Body this)
 	};
 }
 
-// udpdate movement over axes
+// update movement over axes
 MovementResult Body_updateMovement(Body this)
 {
 	ASSERT(this, "Body::updateMovement: null this");
@@ -526,21 +547,11 @@ MovementResult Body_updateMovement(Body this)
 	Acceleration gravity = Body_getGravity(this);
 	this->weight = Vector3D_scalarProduct(gravity, this->mass);
 
-	// this is the right way to compute the friction, but the
-	// normalization is just oo heavy on hardware
-	/*
-	Velocity velocity =
-	{
-		(this->velocity.x),
-		(this->velocity.y),
-		(this->velocity.z),
-	};
-
-	this->friction = Vector3D_scalarProduct(Vector3D_normalize(velocity), -this->frictionForceMagnitude);
-	*/
+	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
+	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
 
 	// hack to avoid normalization
-	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 0)*0);
+//	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 2));
 
 	fix10_6 elapsedTime = _currentElapsedTime;
 	fix10_6 elapsedTimeHalfSquare = __FIX10_6_MULT(elapsedTime, elapsedTime) >> 1;
@@ -553,8 +564,12 @@ MovementResult Body_updateMovement(Body this)
 	}
 	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
 	{
-		this->acceleration.x = gravity.x + __FIX10_6_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
-		this->velocity.x += __FIX10_6_MULT(this->acceleration.x, elapsedTime);
+		// need to use extended types to prevent overflows
+		fix10_6_ext acceleration = gravity.x + __FIX10_6_EXT_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
+		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
+
+		this->acceleration.x = __FIX10_6_EXT_TO_FIX10_6(acceleration);
+		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime) + __FIX10_6_MULT(this->acceleration.x, elapsedTimeHalfSquare);
 	}
 
@@ -564,8 +579,11 @@ MovementResult Body_updateMovement(Body this)
 	}
 	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
 	{
-		this->acceleration.y = gravity.y + __FIX10_6_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
-		this->velocity.y += __FIX10_6_MULT(this->acceleration.y, elapsedTime);
+		fix10_6_ext acceleration = gravity.y + __FIX10_6_EXT_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
+		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
+
+		this->acceleration.y = __FIX10_6_EXT_TO_FIX10_6(acceleration);
+		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime) + __FIX10_6_MULT(this->acceleration.y, elapsedTimeHalfSquare);
 	}
 
@@ -575,19 +593,15 @@ MovementResult Body_updateMovement(Body this)
 	}
 	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
 	{
-		this->acceleration.z = gravity.z + __FIX10_6_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
-		this->velocity.z += __FIX10_6_MULT(this->acceleration.z, elapsedTime);
+		fix10_6_ext acceleration = gravity.z + __FIX10_6_EXT_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
+		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
+
+		this->acceleration.z = __FIX10_6_EXT_TO_FIX10_6(acceleration);
+		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime) + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
 
-	MovementResult movementResult = Body_getMovementResult(this, previousVelocity);
-
-	if(!movementResult.axesStoppedMovement && !Body_getMovementOnAllAxes(this))
-	{
-		Body_sleep(this);
-	}
-
-	return movementResult;
+	return Body_getMovementResult(this, previousVelocity);
 }
 
 // stop movement over an axes
@@ -735,6 +749,17 @@ static void Body_computeTotalNormal(Body this)
 			}
 		}
 	}
+
+	Body_computeTotalFrictionCoefficient(this);
+
+	if(this->totalNormal.x | this->totalNormal.y | this->totalNormal.z)
+	{
+		this->frictionForceMagnitude = __FIX10_6_MULT(Vector3D_length(this->totalNormal), this->totalFrictionCoefficient);
+	}
+	else
+	{
+		this->frictionForceMagnitude = __FIX10_6_MULT(Vector3D_length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER;
+	}
 }
 
 static void Body_addNormal(Body this, Object referent, Vector3D direction, fix10_6 magnitude)
@@ -747,10 +772,17 @@ static void Body_addNormal(Body this, Object referent, Vector3D direction, fix10
 		this->normals = __NEW(VirtualList);
 	}
 
+	VirtualNode node = this->normals->head;
+
+	for(; node; node = node->next)
+	{
+		ASSERT(__IS_BASIC_OBJECT_ALIVE(node->data), "DEAD");
+		ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
+	}
+
 	NormalRegistry* normalRegistry = __NEW_BASIC(NormalRegistry);
 	normalRegistry->referent = referent;
 	normalRegistry->direction = direction;
-
 	normalRegistry->magnitude = magnitude;
 
 	VirtualList_pushBack(this->normals, normalRegistry);
@@ -769,7 +801,21 @@ Force Body_getLastNormalDirection(Body this)
 {
 	ASSERT(this, "Body::getLastNormalDirection: null this");
 
-	if(!this->normals)
+	if(!this->normals || !this->normals->head)
+	{
+		return (Force){0, 0, 0};
+	}
+
+	while(this->normals->head && !__IS_OBJECT_ALIVE(((NormalRegistry*)VirtualList_back(this->normals))->referent))
+	{
+		ASSERT(__IS_BASIC_OBJECT_ALIVE(VirtualList_back(this->normals)), "Body::getLastNormalDirection: dead normal registry");
+
+		__DELETE_BASIC(VirtualList_popBack(this->normals));
+	}
+
+	Body_computeTotalNormal(this);
+
+	if(!this->normals->head)
 	{
 		return (Force){0, 0, 0};
 	}
@@ -781,7 +827,20 @@ void Body_reset(Body this)
 {
 	ASSERT(this, "Body::reset: null this");
 
-	Body_clearNormalOnAxes(this, __ALL_AXES);
+	if(this->normals)
+	{
+		VirtualNode node = this->normals->head;
+
+		for(; node; node = node->next)
+		{
+			__DELETE_BASIC(node->data);
+		}
+
+		__DELETE(this->normals);
+		this->normals = NULL;
+	}
+
+	Body_computeTotalNormal(this);
 	Body_setSurroundingFrictionCoefficient(this, 0);
 
 	this->velocity 				= (Velocity){0, 0, 0};
@@ -795,7 +854,7 @@ void Body_reset(Body this)
 static void Body_clearNormalOnAxes(Body this, u16 axes)
 {
 	ASSERT(this, "Body::clearNormal: null this");
-
+/*
 	if(this->normals)
 	{
 		VirtualList normalsToRemove = __NEW(VirtualList);
@@ -822,18 +881,28 @@ static void Body_clearNormalOnAxes(Body this, u16 axes)
 		{
 			VirtualList_removeElement(this->normals, node->data);
 
+			if(__IS_BASIC_OBJECT_ALIVE(node->data))
+			{
 			__DELETE_BASIC(node->data);
+			}
+			else
+			{
+				Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this->owner), 20, 1, NULL);
+				while(1);
+			}
+
 		}
 
 		__DELETE(normalsToRemove);
 	}
-
+*/
 	Body_computeTotalNormal(this);
 }
 
 void Body_clearNormal(Body this, Object referent)
 {
 	ASSERT(this, "Body::clearNormal: null this");
+	ASSERT(__IS_OBJECT_ALIVE(referent), "Body::clearNormal: dead referent");
 
 	if(this->normals)
 	{
@@ -843,12 +912,13 @@ void Body_clearNormal(Body this, Object referent)
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
-			if(!__IS_OBJECT_ALIVE(normalRegistry->referent) || normalRegistry->referent == referent)
+			// search if registry exists for the referent
+			// it is Ok if it doesn't exist
+			if(normalRegistry->referent == referent)
 			{
+				ASSERT(__IS_BASIC_OBJECT_ALIVE(normalRegistry), "Body::clearNormal: dead normal registry");
 				VirtualList_removeElement(this->normals, normalRegistry);
-
 				__DELETE_BASIC(normalRegistry);
-
 				break;
 			}
 		}
@@ -868,7 +938,7 @@ static void Body_computeTotalFrictionCoefficient(Body this)
 {
 	ASSERT(this, "Body::computeFrictionForceMagnitude: null this");
 
-	this->totalFrictionCoefficient = this->totalNormal.x | this->totalNormal.y | this->totalNormal.z ? this->frictionCoefficient : 0;
+	this->totalFrictionCoefficient = this->frictionCoefficient;
 
 	this->totalFrictionCoefficient += _currentWorldFriction + this->surroundingFrictionCoefficient;
 
@@ -876,12 +946,10 @@ static void Body_computeTotalFrictionCoefficient(Body this)
 	{
 		this->totalFrictionCoefficient = 0;
 	}
-	else if(__1I_FIX10_6 < this->totalFrictionCoefficient)
+	else if(__MAXIMUM_FRICTION_COEFFICIENT < this->totalFrictionCoefficient)
 	{
-		this->totalFrictionCoefficient = __1I_FIX10_6;
+		this->totalFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
-
-	this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(this->frictionForceMagnitude, this->totalFrictionCoefficient));
 }
 
 // set friction
@@ -893,9 +961,9 @@ void Body_setFrictionCoefficient(Body this, fix10_6 frictionCoefficient)
 	{
 		frictionCoefficient = 0;
 	}
-	else if(__1I_FIX10_6 < frictionCoefficient)
+	else if(__MAXIMUM_FRICTION_COEFFICIENT < frictionCoefficient)
 	{
-		frictionCoefficient = __1I_FIX10_6;
+		frictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
 
 	this->frictionCoefficient = frictionCoefficient;
@@ -910,9 +978,9 @@ void Body_setSurroundingFrictionCoefficient(Body this, fix10_6 surroundingFricti
 	{
 		surroundingFrictionCoefficient = 0;
 	}
-	else if(__1I_FIX10_6 < surroundingFrictionCoefficient)
+	else if(__MAXIMUM_FRICTION_COEFFICIENT < surroundingFrictionCoefficient)
 	{
-		surroundingFrictionCoefficient = __1I_FIX10_6;
+		surroundingFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
 
 	this->surroundingFrictionCoefficient = surroundingFrictionCoefficient;
@@ -930,7 +998,7 @@ void Body_setMass(Body this, fix10_6 mass)
 {
 	ASSERT(this, "Body::setMass: null this");
 
-	this->mass = 0 < mass ? mass : __1I_FIX10_6;
+	this->mass = __MIN_MASS < mass ? __MAX_MASS > mass ? mass : __MAX_MASS : __MIN_MASS;
 }
 
 // retrieve state
@@ -1007,7 +1075,7 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
-	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS};
+	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS, __NO_AXIS};
 
 	movementResult.axesOfChangeOfMovement |= this->velocity.x ^ previousVelocity.x ? __X_AXIS : __NO_AXIS;
 	movementResult.axesOfChangeOfMovement |= this->velocity.y ^ previousVelocity.y ? __Y_AXIS : __NO_AXIS;
@@ -1093,11 +1161,11 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 
 	// add elasticity and friction
 	u = Vector3D_scalarProduct(u, elasticity);
-	w = Vector3D_scalarProduct(w, (__1I_FIX10_6 - this->totalFrictionCoefficient));
+	w = Vector3D_scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - this->totalFrictionCoefficient));
 
-	this->velocity.x = w.x - u.x;
-	this->velocity.y = w.y - u.y;
-	this->velocity.z = w.z - u.z;
+	this->velocity.x = __UNIFORM_MOVEMENT != this->movementType.x ? w.x - u.x : this->velocity.x;
+	this->velocity.y = __UNIFORM_MOVEMENT != this->movementType.y ? w.y - u.y : this->velocity.y;
+	this->velocity.z = __UNIFORM_MOVEMENT != this->movementType.z ? w.z - u.z : this->velocity.z;
 
 	// determine bouncing result
 	MovementResult movementResult = Body_getBouncingResult(this, velocity, bouncingPlaneNormal);
@@ -1111,9 +1179,12 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 		{
 			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
 		}
+	}
 
-		// TODO: review me, I'm most likely a hack
-		Body_sleep(__SAFE_CAST(Body, this));
+	if(movementResult.axesOfAcceleratedBouncing)
+	{
+	//	Body_setSurroundingFrictionCoefficient(this, 0);
+	//	Body_clearNormalOnAxes(this, movementResult.axesOfAcceleratedBouncing);
 	}
 
 	if(!Body_getMovementOnAllAxes(__SAFE_CAST(Body, this)))
@@ -1207,7 +1278,7 @@ void Body_print(Body this, int x, int y)
 	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Friction coef.", x, y, NULL);
+	Printing_text(Printing_getInstance(), "Total friction coef.", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, NULL);
 
