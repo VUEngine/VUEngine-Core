@@ -77,7 +77,7 @@
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
 		void ClassName ## dummyMethodClassNew()
 
-#define	__DYNAMIC_STRUCT_PAD	4
+#define	__DYNAMIC_STRUCT_PAD	sizeof(u32)
 
 // like new in C++
 #define __NEW(ClassName, ...)																			\
@@ -98,7 +98,7 @@
 #define __NEW_BASIC(ClassName)																			\
 																										\
 		/* allocate data */																				\
-		(ClassName*)(MemoryPool_allocate(MemoryPool_getInstance(),										\
+		(ClassName*)((u32)MemoryPool_allocate(MemoryPool_getInstance(),									\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 #ifdef __DEBUG
@@ -111,7 +111,7 @@
 																										\
 		/* to speed things up */																		\
 		extern MemoryPool _memoryPool;																	\
-		MemoryPool_free(_memoryPool, (BYTE*)object - __DYNAMIC_STRUCT_PAD)
+		MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD))
 #else
 #define __DELETE_BASIC(object)																			\
 																										\
