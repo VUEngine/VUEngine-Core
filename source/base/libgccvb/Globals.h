@@ -29,6 +29,6 @@
 
 extern int _lp;
 extern int _sp;
-
+extern bool _triggeringException;
 
 #endif

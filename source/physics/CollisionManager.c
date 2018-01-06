@@ -236,7 +236,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	{
 		CollisionData* collisionData = (CollisionData*)node->data;
 
-		if(!collisionData->shapeOwner)
+		if(!__IS_OBJECT_ALIVE(collisionData->collisionInformation.shape->owner))
 		{
 			__DELETE_BASIC(collisionData);
 			continue;
@@ -246,26 +246,17 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		{
 			case kEnterCollision:
 
-				if(__VIRTUAL_CALL(SpatialObject, enterCollision, collisionData->shapeOwner, &collisionData->collisionInformation) && collisionData->collidingShapeRegistry)
-				{
-					collisionData->collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionData->collisionInformation.collidingShape->owner);
-				}
-
+				Shape_enterCollision(collisionData->collisionInformation.shape, collisionData);
 				break;
 
 			case kUpdateCollision:
 
-				if(collisionData->collisionInformation.solutionVector.magnitude > __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
-				{
-					Shape_resolveCollision(collisionData->collisionInformation.shape, &collisionData->collisionInformation);
-				}
-
-				__VIRTUAL_CALL(SpatialObject, updateCollision, collisionData->shapeOwner, &collisionData->collisionInformation);
+				Shape_updateCollision(collisionData->collisionInformation.shape, collisionData);
 				break;
 
 			case kExitCollision:
 
-				__VIRTUAL_CALL(SpatialObject, exitCollision, collisionData->shapeOwner, collisionData->collisionInformation.shape, collisionData->shapeNotCollidingAnymoreAnymore, collisionData->isImpenetrableCollidingShape);
+				Shape_exitCollision(collisionData->collisionInformation.shape, collisionData);
 				break;
 
 			default:
@@ -274,6 +265,9 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 
 		__DELETE_BASIC(collisionData);
 	}
+
+
+
 
 	__DELETE(collisions);
 
