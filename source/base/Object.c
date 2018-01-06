@@ -54,9 +54,8 @@ typedef struct Event
 	EventListener method;
 	/// The code of the event to listen to
 	u32 code;
-} Event;
 
-static Event* _currentFiringEvent = NULL;
+} Event;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -343,7 +342,8 @@ void Object_fireEvent(Object this, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-			if(!__IS_OBJECT_ALIVE(event->listener))
+			// safe check in case that the there is a stacking up of firings within firings
+			if(!__IS_BASIC_OBJECT_ALIVE(event) || !__IS_OBJECT_ALIVE(event->listener))
 			{
 				VirtualList_pushBack(eventsToRemove, event);
 			}
@@ -353,14 +353,32 @@ void Object_fireEvent(Object this, u32 eventCode)
 			}
 		}
 
+		for(node = eventsToRemove->head; node; node = node->next)
+		{
+			Event* event = (Event*)node->data;
+
+			VirtualList_removeElement(this->events, event);
+
+			// safe check in case that the there is a stacking up of firings within firings
+			if(__IS_BASIC_OBJECT_ALIVE(event))
+			{
+				__DELETE_BASIC(event);
+			}
+		}
+
+		__DELETE(eventsToRemove);
+
 		node = eventsToFire->head;
 
 		for(; node; node = node->next)
 		{
 			Event* event = (Event*)node->data;
 
-			_currentFiringEvent = event;
-			event->method(event->listener, this);
+			// safe check in case that the event have been deleted during the previous call to method
+			if(__IS_BASIC_OBJECT_ALIVE(event))
+			{
+				event->method(event->listener, this);
+			}
 
 			// safe check in case that I have been deleted during the previous event
 			if(!__IS_OBJECT_ALIVE(this))
@@ -370,21 +388,6 @@ void Object_fireEvent(Object this, u32 eventCode)
 		}
 
 		__DELETE(eventsToFire);
-
-		for(node = eventsToRemove->head; node; node = node->next)
-		{
-			Event* event = (Event*)node->data;
-
-			// safe check in case that I have been deleted during the previous event
-			if(__IS_OBJECT_ALIVE(this))
-			{
-				VirtualList_removeElement(this->events, event);
-			}
-
-			__DELETE_BASIC(event);
-		}
-
-		__DELETE(eventsToRemove);
 	}
 }
 
