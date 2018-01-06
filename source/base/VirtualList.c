@@ -189,8 +189,10 @@ int VirtualList_pushFront(VirtualList this, const void* const data)
  * @public
  *
  * @param this		Function scope
+ *
+ * @return			Removed element
  */
-void VirtualList_popFront(VirtualList this)
+void* VirtualList_popFront(VirtualList this)
 {
 	ASSERT(this, "VirtualList::popFront: null this");
 
@@ -198,23 +200,72 @@ void VirtualList_popFront(VirtualList this)
 	if(this->head)
 	{
 		VirtualNode node = this->head;
+		void* data = node->data;
 
 		if(node->next)
 		{
 			this->head = node->next;
 
 			// move head's previous pointer
-			this->head->previous=NULL;
+			this->head->previous = NULL;
 		}
 		else
 		{
 			// set head
 			this->head = NULL;
+			this->tail = NULL;
 		}
 
 		// free dynamic memory
 		__DELETE(node);
+
+		return data;
 	}
+
+	return NULL;
+}
+
+/**
+ * Remove the last element from the list
+ *
+ * @memberof		VirtualList
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Removed element
+ */
+void* VirtualList_popBack(VirtualList this)
+{
+	ASSERT(this, "VirtualList::popBack: null this");
+
+	// if tail isn't null
+	if(this->tail)
+	{
+		VirtualNode node = this->tail;
+		void* data = node->data;
+
+		if(node->previous)
+		{
+			this->tail = node->previous;
+
+			// move head's previous pointer
+			this->tail->next = NULL;
+		}
+		else
+		{
+			// set tail
+			this->tail = NULL;
+			this->head = NULL;
+		}
+
+		// free dynamic memory
+		__DELETE(node);
+
+		return data;
+	}
+
+	return NULL;
 }
 
 /**
@@ -413,7 +464,7 @@ void* VirtualList_getObject(VirtualList this, void* const dataPointer)
  *
  * @return				Flag whether action was successful or not
  */
-static bool VirtualList_removeNode(VirtualList this, VirtualNode node)
+bool VirtualList_removeNode(VirtualList this, VirtualNode node)
 {
 	ASSERT(this, "VirtualList::removeNode: null this");
 

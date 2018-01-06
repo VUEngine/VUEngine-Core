@@ -83,9 +83,11 @@ void* VirtualList_getObjectAtPosition(VirtualList this, int position);
 int VirtualList_getSize(VirtualList this);
 VirtualNode VirtualList_insertAfter(VirtualList this, VirtualNode node, const void* const data);
 VirtualNode VirtualList_insertBefore(VirtualList this, VirtualNode node, const void* const data);
-void VirtualList_popFront(VirtualList this);
+void* VirtualList_popFront(VirtualList this);
+void* VirtualList_popBack(VirtualList this);
 int VirtualList_pushBack(VirtualList this, const void* const data);
 int VirtualList_pushFront(VirtualList this, const void* const data);
+bool VirtualList_removeNode(VirtualList this, VirtualNode node);
 bool VirtualList_removeElement(VirtualList this, const void* const dataPointer);
 void VirtualList_swap(VirtualList this, VirtualList secondList);
 
