@@ -314,7 +314,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 #endif
 
 	// set address as free
-	*((u32*)&object[0]) = __MEMORY_FREE_BLOCK_FLAG;
+	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
 }
 
 /**
