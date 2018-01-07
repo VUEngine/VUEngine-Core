@@ -650,11 +650,11 @@ int Printing_getPixelCount(Printing this)
  * @param string	String to compute size for
  * @param font		Name of font to use for size computation
  */
-Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
+FontSize __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
 {
 	ASSERT(this, "Printing::getTextSize: null this");
 
-	Size size = {0, 0, 0};
+	FontSize fontSize = {0, 0, 0};
 	u16 i = 0, currentLineLength = 0;
 
 	FontData* fontData = Printing_getFontByName(this, font);
@@ -662,11 +662,11 @@ Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* 
 	if(!fontData)
 	{
 		// just to make sure that no client code does a 0 division with these results
-		size = (Size){8, 8, 8};
-		return size;
+		fontSize = (FontSize){8, 8, 8};
+		return fontSize;
 	}
 
-	size.y = fontData->fontDefinition->fontSize.y;
+	fontSize.y = fontData->fontDefinition->fontSize.y;
 
 	while(string[i])
 	{
@@ -686,7 +686,7 @@ Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* 
 			// carriage return
 			case 10:
 
-				size.y += fontData->fontDefinition->fontSize.y;
+				fontSize.y += fontData->fontDefinition->fontSize.y;
 				currentLineLength = 0;
 				break;
 
@@ -695,20 +695,20 @@ Size __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* 
 				currentLineLength += fontData->fontDefinition->fontSize.x;
 				if(currentLineLength >= 64)
 				{
-					size.y += fontData->fontDefinition->fontSize.y;
+					fontSize.y += fontData->fontDefinition->fontSize.y;
 					currentLineLength = 0;
 				}
 
 				break;
 		}
 
-		if(currentLineLength > size.x)
+		if(currentLineLength > fontSize.x)
 		{
-			size.x = currentLineLength;
+			fontSize.x = currentLineLength;
 		}
 
 		i++;
 	}
 
-	return size;
+	return fontSize;
 }

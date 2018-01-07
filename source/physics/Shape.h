@@ -222,11 +222,11 @@ typedef struct ShapeDefinition
 	/// class allocator
 	AllocatorPointer allocator;
 
-	/// size
-	Size size;
+	/// size in pixels
+	PixelSize pixelSize;
 
 	/// displacement modifier
-	Vector3D displacement;
+	PixelVector displacement;
 
 	/// rotation modifier
 	Rotation rotation;

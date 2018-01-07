@@ -46,11 +46,20 @@ typedef struct Brightness
 // spatial size
 typedef struct Size
 {
+	fix10_6 x;
+	fix10_6 y;
+	fix10_6 z;
+
+} Size;
+
+// size in pixels
+typedef struct PixelSize
+{
 	u16 x;
 	u16 y;
 	u16 z;
 
-} Size;
+} PixelSize;
 
 // used to represent a screen position with parallax info
 typedef struct Vector2D
@@ -68,12 +77,20 @@ typedef struct Vector2D
 // spatial position
 typedef struct Vector3D
 {
-	// fps increases a lot in hardware with ints
 	fix10_6 x;
 	fix10_6 y;
 	fix10_6 z;
 
 } Vector3D;
+
+// spatial position in screen coordinates
+typedef struct PixelVector
+{
+	s16 x;
+	s16 y;
+	s16 z;
+
+} PixelVector;
 
 typedef struct Vector3DFlag
 {

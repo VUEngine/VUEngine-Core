@@ -27,7 +27,7 @@
 #include <Body.h>
 #include <Game.h>
 #include <Clock.h>
-#include <Vector3D.h>
+#include <SpaceMath.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
 #include <debugConfig.h>

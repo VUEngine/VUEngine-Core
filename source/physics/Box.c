@@ -28,7 +28,7 @@
 #include <InverseBox.h>
 #include <Ball.h>
 #include <CollisionHelper.h>
-#include <Vector3D.h>
+#include <SpaceMath.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <HardwareManager.h>

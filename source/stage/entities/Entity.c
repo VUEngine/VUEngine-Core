@@ -109,7 +109,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->entityFactory = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
-	this->size = entityDefinition->size;
+	this->size = Size_getFromPixelSize(entityDefinition->pixelSize);
 
 	this->invalidateSprites = 0;
 }
@@ -520,9 +520,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 
 	Vector3D globalPosition3D =
 	{
-		environmentPosition->x + positionedEntity->position.x,
-		environmentPosition->y + positionedEntity->position.y,
-		environmentPosition->z + positionedEntity->position.z
+		environmentPosition->x + __PIXELS_TO_METERS(positionedEntity->position.x),
+		environmentPosition->y + __PIXELS_TO_METERS(positionedEntity->position.y),
+		environmentPosition->z + __PIXELS_TO_METERS(positionedEntity->position.z)
 	};
 
 	fix10_6 left = 0;
@@ -534,6 +534,8 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 	fix10_6 halfWidth = 0;
 	fix10_6 halfHeight = 0;
 	fix10_6 halfDepth = 5;
+
+	Size size = Size_getFromPixelSize(positionedEntity->entityDefinition->pixelSize);
 
 	if(positionedEntity->entityDefinition->spriteDefinitions && positionedEntity->entityDefinition->spriteDefinitions[0])
 	{
@@ -640,9 +642,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		if(__TYPE(Entity) == __ALLOCATOR_TYPE(positionedEntity->entityDefinition->allocator)
 		)
 		{
-			halfWidth = positionedEntity->entityDefinition->size.x >> 1;
-			halfHeight = positionedEntity->entityDefinition->size.y >> 1;
-			halfDepth = positionedEntity->entityDefinition->size.z >> 1;
+			halfWidth = size.x >> 1;
+			halfHeight = size.y >> 1;
+			halfDepth = size.z >> 1;
 
 			left = -halfWidth;
 			right = halfWidth;
@@ -723,12 +725,14 @@ RightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEnt
 
 	Entity_getSizeFromDefinition(positionedEntity, (Vector3D*)environmentPosition, &rightBox);
 
-	rightBox.x0 = rightBox.x0 - positionedEntity->position.x;
-	rightBox.x1 = rightBox.x1 - positionedEntity->position.x;
-	rightBox.y0 = rightBox.y0 - positionedEntity->position.y;
-	rightBox.y1 = rightBox.y1 - positionedEntity->position.y;
-	rightBox.z0 = rightBox.z0 - positionedEntity->position.z;
-	rightBox.z1 = rightBox.z1 - positionedEntity->position.z;
+	Vector3D position = Vector3D_getFromPixelVector(positionedEntity->position);
+
+	rightBox.x0 = rightBox.x0 - position.x;
+	rightBox.x1 = rightBox.x1 - position.x;
+	rightBox.y0 = rightBox.y0 - position.y;
+	rightBox.y1 = rightBox.y1 - position.y;
+	rightBox.z0 = rightBox.z0 - position.z;
+	rightBox.z1 = rightBox.z1 - position.z;
 
 	return rightBox;
 }
@@ -761,18 +765,18 @@ Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positi
 	{
 		if(!strncmp(childName, childrenDefinitions[i].name, __MAX_CONTAINER_NAME_LENGTH))
 		{
-			position.x = environmentPosition.x + childrenDefinitions[i].position.x;
-			position.y = environmentPosition.y + childrenDefinitions[i].position.y;
-			position.z = environmentPosition.z + childrenDefinitions[i].position.z;
+			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenDefinitions[i].position.x);
+			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenDefinitions[i].position.y);
+			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenDefinitions[i].position.z);
 			return &position;
 		}
 
 		if(childrenDefinitions[i].childrenDefinitions)
 		{
 			Vector3D concatenatedEnvironmentPosition = environmentPosition;
-			concatenatedEnvironmentPosition.x += childrenDefinitions[i].position.x;
-			concatenatedEnvironmentPosition.y += childrenDefinitions[i].position.y;
-			concatenatedEnvironmentPosition.z += childrenDefinitions[i].position.z;
+			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenDefinitions[i].position.x);
+			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenDefinitions[i].position.y);
+			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenDefinitions[i].position.z);
 
 			Vector3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
 
@@ -876,8 +880,10 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 	Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
 
+	Vector3D position = Vector3D_getFromPixelVector(positionedEntity->position);
+
 	// set spatial position
-	__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+	__VIRTUAL_CALL(Container, setLocalPosition, entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
@@ -949,8 +955,10 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
 		Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
 	}
 
+	Vector3D position = Vector3D_getFromPixelVector(positionedEntity->position);
+
 	// set spatial position
-	__VIRTUAL_CALL(Container, setLocalPosition, entity, &positionedEntity->position);
+	__VIRTUAL_CALL(Container, setLocalPosition, entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
@@ -1152,11 +1160,13 @@ void Entity_transformShapes(Entity this)
 			Shape shape = __SAFE_CAST(Shape, node->data);
 			u16 axesForShapeSyncWithDirection = __VIRTUAL_CALL(Entity, getAxesForShapeSyncWithDirection, this);
 
+			Vector3D displacement = Vector3D_getFromPixelVector(shapeDefinitions[i].displacement);
+
 			Vector3D shapePosition =
 			{
-				myPosition->x + ((__X_AXIS & axesForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDefinitions[i].displacement.x : shapeDefinitions[i].displacement.x),
-				myPosition->y + ((__Y_AXIS & axesForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDefinitions[i].displacement.y : shapeDefinitions[i].displacement.y),
-				myPosition->z + ((__Z_AXIS & axesForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDefinitions[i].displacement.z : shapeDefinitions[i].displacement.z),
+				myPosition->x + ((__X_AXIS & axesForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -displacement.x : displacement.x),
+				myPosition->y + ((__Y_AXIS & axesForShapeSyncWithDirection) && __UP == currentDirection.y ? -displacement.y : displacement.y),
+				myPosition->z + ((__Z_AXIS & axesForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -displacement.z : displacement.z),
 			};
 
 			Rotation shapeRotation =
@@ -1173,7 +1183,9 @@ void Entity_transformShapes(Entity this)
 				__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
 			};
 
-			__VIRTUAL_CALL(Shape, position, shape, &shapePosition, &shapeRotation, &shapeScale, &shapeDefinitions[i].size);
+			Size size = Size_getFromPixelSize(shapeDefinitions[i].pixelSize);
+
+			__VIRTUAL_CALL(Shape, position, shape, &shapePosition, &shapeRotation, &shapeScale, &size);
 		}
 	}
 }
@@ -1826,44 +1838,31 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 			Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 
+			PixelSize pixelSize = PixelSize_getFromSize(this->size);
+
 			x = spritePosition.x;
 			y = spritePosition.y;
 			z = spritePosition.z;
 
 			// check x visibility
-			if((x + (int)this->size.x < -pad) | (x > __SCREEN_WIDTH + pad))
+			if((x + (int)pixelSize.x < -pad) | (x > __SCREEN_WIDTH + pad))
 			{
 				continue;
 			}
 
 			// check y visibility
-			if((y + (int)this->size.y < -pad) | (y > __SCREEN_HEIGHT + pad))
+			if((y + (int)pixelSize.y < -pad) | (y > __SCREEN_HEIGHT + pad))
 			{
 				continue;
 			}
 
 			// check z visibility
-			if((z + (int)this->size.z < -pad) | (z > __SCREEN_DEPTH + pad))
+			if((z + (int)pixelSize.z < -pad) | (z > __SCREEN_DEPTH + pad))
 			{
 				continue;
 			}
 
 			return true;
-
-			/*
-			if(x + (int)this->size.x >= -pad && x <= __SCREEN_WIDTH + pad)
-			{
-				// check y visibility
-				if(y + (int)this->size.y >= -pad && y <= __SCREEN_HEIGHT + pad)
-				{
-					// check z visibility
-					if(z + (int)this->size.z >= -pad && z <= __SCREEN_DEPTH + pad)
-					{
-						return true;
-					}
-				}
-			}
-			*/
 		}
 	}
 	else

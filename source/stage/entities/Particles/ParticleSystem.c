@@ -98,9 +98,9 @@ void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* p
 	this->paused = !this->particleSystemDefinition->autoStart;
 
 	// set size from definition
-	this->size.x += __FIX10_6_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
-	this->size.y += __FIX10_6_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
-	this->size.z += __FIX10_6_TO_I(__ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
+	this->size.x += __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x);
+	this->size.y += __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y);
+	this->size.z += __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z);
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem_computeNextSpawnTime(this);
 

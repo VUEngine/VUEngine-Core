@@ -28,6 +28,7 @@
 
 #include <Math.h>
 #include <MiscStructs.h>
+#include <Constants.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -44,6 +45,8 @@ inline fix19_13 Vector3D_squareLength(Vector3D vector);
 inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
 inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
 inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax);
+inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector);
+inline Size Size_getFromPixelSize(PixelSize pixelSize);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -153,5 +156,35 @@ inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax)
 	return projection;
 }
 
+inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector)
+{
+	return (Vector3D)
+	{
+		__PIXELS_TO_METERS(screenVector.x),
+		__PIXELS_TO_METERS(screenVector.y),
+		__PIXELS_TO_METERS(screenVector.z)
+	};
+}
+
+inline Size Size_getFromPixelSize(PixelSize pixelSize)
+{
+	return (Size)
+	{
+		__PIXELS_TO_METERS(pixelSize.x),
+		__PIXELS_TO_METERS(pixelSize.y),
+		__PIXELS_TO_METERS(pixelSize.z)
+	};
+}
+
+
+inline PixelSize PixelSize_getFromSize(Size size)
+{
+	return (PixelSize)
+	{
+		__METERS_TO_PIXELS(size.x),
+		__METERS_TO_PIXELS(size.y),
+		__METERS_TO_PIXELS(size.z)
+	};
+}
 
 #endif

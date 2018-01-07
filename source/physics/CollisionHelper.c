@@ -29,7 +29,7 @@
 #include <Box.h>
 #include <InverseBox.h>
 #include <Ball.h>
-#include <Vector3D.h>
+#include <SpaceMath.h>
 #include <VirtualList.h>
 #include <debugUtilities.h>
 

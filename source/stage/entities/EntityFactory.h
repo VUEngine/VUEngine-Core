@@ -91,9 +91,9 @@ typedef struct EntityDefinition
 	/// collision shapes
 	const ShapeDefinition* shapeDefinitions;
 
-	/// size
-	// if 0, width and height will be inferred from the first sprite's texture's size
-	Size size;
+	/// pixelSize
+	// if 0, width and height will be inferred from the first sprite's texture's pixelSize
+	PixelSize pixelSize;
 
 	/// object's in-game type
 	u32 inGameType;
@@ -112,8 +112,8 @@ typedef const struct PositionedEntity
 	// pointer to the entity definition in ROM
 	EntityDefinition* entityDefinition;
 
-	// position in the world
-	Vector3D position;
+	// position in the screen coordinates
+	PixelVector position;
 
 	// entity's id
 	s16 id;

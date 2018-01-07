@@ -235,9 +235,16 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-static int Stage_isEntityInLoadRange(Stage this, Vector3D position3D, const RightBox* smallRightBox)
+static int Stage_isEntityInLoadRange(Stage this, PixelVector position, const RightBox* smallRightBox)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
+
+	Vector3D position3D =
+	{
+		__PIXELS_TO_METERS(position.x),
+		__PIXELS_TO_METERS(position.y),
+		__PIXELS_TO_METERS(position.z),
+	};
 
 	position3D = Vector3D_getRelativeToCamera(position3D);
 
@@ -295,11 +302,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	SoundManager_stopAllSound(SoundManager_getInstance());
 
 	// set world's limits
-	Camera_setStageSize(Camera_getInstance(), stageDefinition->level.size);
+	Camera_setStageSize(Camera_getInstance(), Size_getFromPixelSize(stageDefinition->level.pixelSize));
 
 	if(overrideCameraPosition)
 	{
-		Camera_setPosition(Camera_getInstance(), stageDefinition->level.cameraInitialPosition);
+		Camera_setPosition(Camera_getInstance(), Vector3D_getFromPixelVector(stageDefinition->level.cameraInitialPosition));
 	}
 
 	// set palettes
@@ -372,7 +379,7 @@ Size Stage_getSize(Stage this)
 	ASSERT(this->stageDefinition, "Stage::getSize: null stageDefinition");
 
 	// set world's limits
-	return this->stageDefinition->level.size;
+	return Size_getFromPixelSize(this->stageDefinition->level.pixelSize);
 }
 
 // setup ui
@@ -681,9 +688,9 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 //		Vector3D environmentPosition3D = {0, 0, 0};
 //		RightBox smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
 
-		int x = __FIX10_6_TO_I(stageEntityDescription->positionedEntity->position.x);
-		int y = __FIX10_6_TO_I(stageEntityDescription->positionedEntity->position.y);
-		int z = __FIX10_6_TO_I(stageEntityDescription->positionedEntity->position.z);
+		int x = stageEntityDescription->positionedEntity->position.x;
+		int y = stageEntityDescription->positionedEntity->position.y;
+		int z = stageEntityDescription->positionedEntity->position.z;
 
 		stageEntityDescription->distance = (x * x + y * y + z * z);
 

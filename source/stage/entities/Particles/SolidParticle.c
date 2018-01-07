@@ -91,10 +91,10 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 		{solidParticleDefinition->radius, solidParticleDefinition->radius, solidParticleDefinition->radius},
 
 		// displacement (x, y, z)
-		{__I_TO_FIX10_6(0), __I_TO_FIX10_6(0), __I_TO_FIX10_6(0)},
+		{0, 0, 0},
 
 		// rotation (x, y, z)
-		{__I_TO_FIX10_6(0), __I_TO_FIX10_6(0), __I_TO_FIX10_6(0)},
+		{0, 0, 0},
 
 		// scale (x, y, z)
 		{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},

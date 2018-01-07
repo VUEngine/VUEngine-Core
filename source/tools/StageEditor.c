@@ -1009,11 +1009,14 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 			return;
 		}
 
-		Vector3D position = Camera_getPosition(Camera_getInstance());
+		Vector3D cameraPosition = Camera_getPosition(Camera_getInstance());
 
-		position.x += __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
-		position.y += __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
-		position.z += __I_TO_FIX10_6(0);
+		PixelVector position =
+		{
+			__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH,
+			__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT,
+			__METERS_TO_PIXELS(cameraPosition.z) + 0,
+		};
 
 		PositionedEntity DUMMY_ENTITY =
 		{

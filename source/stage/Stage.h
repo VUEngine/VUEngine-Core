@@ -100,11 +100,11 @@ typedef struct StageDefinition
 	// general level's attributes
 	struct Level
 	{
-		// level's size
-		Size size;
+		// level's size in pixels
+		PixelSize pixelSize;
 
 		// camera's initial position inside the game world
-		Vector3D cameraInitialPosition;
+		PixelVector cameraInitialPosition;
 
 	} level;
 

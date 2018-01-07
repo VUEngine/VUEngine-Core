@@ -330,9 +330,6 @@ CollisionData Shape_collides(Shape this, Shape shape)
 			}
 		},
 
-		// colliding shape registry
-		NULL,
-
 		// out-of-collision shape
 		NULL,
 

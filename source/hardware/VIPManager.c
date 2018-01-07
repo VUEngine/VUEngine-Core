@@ -396,7 +396,6 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 #ifdef __PROFILE_GAME
 					extern s16 _renderingProcessTimeHelper;
 					extern s16 _renderingProcessTime;
-					extern s16 _renderingHighestTime;
 					extern s16 _renderingTotalTime;
 					extern bool _updateProfiling;
 

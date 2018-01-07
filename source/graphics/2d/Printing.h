@@ -142,11 +142,7 @@ __CLASS(Printing);
 		 */																								\
 		u8 palette;																						\
 
-typedef struct FontSize
-{
-	u8 x;
-	u8 y;
-} FontSize;
+typedef struct PixelSize FontSize;
 
 /**
  * A font
@@ -210,7 +206,7 @@ void Printing_destructor(Printing this);
 void Printing_clear(Printing this);
 void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
 FontData* Printing_getFontByName(Printing this, const char* font);
-Size Printing_getTextSize(Printing this, const char* string, const char* font);
+FontSize Printing_getTextSize(Printing this, const char* string, const char* font);
 void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
 void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
 void Printing_loadDebugFont(Printing this);
