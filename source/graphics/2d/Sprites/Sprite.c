@@ -1051,8 +1051,9 @@ void Sprite_print(Sprite this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 24, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 34, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 22, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 30, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).parallax), x + 38, y, NULL);
 	Printing_text(Printing_getInstance(), "G (x, y, p):                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGX(this), x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGY(this), x + 24, y, NULL);
