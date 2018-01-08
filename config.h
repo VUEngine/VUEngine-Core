@@ -108,7 +108,7 @@
 #define __MAXIMUM_VIEW_DISTANCE_POWER			9
 
 // Distance between eyes
-#define __BASE_FACTOR							128
+#define __BASE_FACTOR							96
 
 // Player's eyes' horizontal position
 #define __HORIZONTAL_VIEW_POINT_CENTER			__SCREEN_WIDTH / 2
