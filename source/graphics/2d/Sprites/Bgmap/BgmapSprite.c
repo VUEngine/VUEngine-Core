@@ -246,10 +246,8 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 	ASSERT(this, "BgmapSprite::position: null this");
 	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
 
-	Vector3D position3D = *position;
-
 	// normalize the position to camera coordinates
-	position3D = Vector3D_getRelativeToCamera(position3D);
+	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 	this->drawSpec.position = Vector3D_projectToVector2D(position3D, this->drawSpec.position.parallax);
 
 	this->drawSpec.position.x -= this->halfWidth;
