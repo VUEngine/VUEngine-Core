@@ -105,7 +105,7 @@
 #define __DISTANCE_EYE_SCREEN					384
 
 // Maximum view distance (depth) (power of two)
-#define __MAXIMUM_VIEW_DISTANCE_POWER			9
+#define __MAXIMUM_VIEW_DISTANCE_POWER			5
 
 // Distance between eyes
 #define __BASE_FACTOR							96
