@@ -48,10 +48,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_OBJECT_SHOW_ROW 				6
-#define __MAX_TRANSLATION_STEP				8 * 4
-#define __SCREEN_X_TRANSLATION_STEP			__SCREEN_WIDTH / 4
-#define __SCREEN_Y_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
-#define __SCREEN_Z_TRANSLATION_STEP			__SCREEN_HEIGHT / 4
+#define __MAX_TRANSLATION_STEP				__PIXELS_TO_METERS(8 * 4)
+#define __SCREEN_X_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_WIDTH / 4)
+#define __SCREEN_Y_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_HEIGHT / 4)
+#define __SCREEN_Z_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_HEIGHT / 4)
 
 #define __HVPC_STEP							__I_TO_FIX10_6(8)
 #define __VERTICAL_VIEW_POINT_CENTER_STEP	__I_TO_FIX10_6(8)
@@ -221,7 +221,7 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 
 	__DELETE(userObjects);
 
-	this->translationStepSize = 8;
+	this->translationStepSize = 1;
 }
 
 /**
