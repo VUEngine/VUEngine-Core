@@ -141,15 +141,15 @@ inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax)
 {
 	extern const Optical* _optical;
 
-	vector3D.x <<= 4;
-	vector3D.y <<= 4;
-	vector3D.z <<= 4;
+	vector3D.x <<= __PIXELS_PER_METER_2_POWER;
+	vector3D.y <<= __PIXELS_PER_METER_2_POWER;
+	vector3D.z <<= __PIXELS_PER_METER_2_POWER;
 
 	Vector2D projection =
 	{
-		vector3D.x + (__FIX10_6_MULT(_optical->horizontalViewPointCenter -  vector3D.x, vector3D.z) >> _optical->maximumViewDistancePower),
-		vector3D.y - (__FIX10_6_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
-		vector3D.z,
+		vector3D.x + (__FIX10_6_EXT_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.y - (__FIX10_6_EXT_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.z >> __PIXELS_PER_METER_2_POWER,
 		parallax
 	};
 

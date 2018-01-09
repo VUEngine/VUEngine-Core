@@ -26,6 +26,7 @@
 
 #include <Optics.h>
 #include <VIPManager.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -43,15 +44,16 @@ fix10_6 Optics_calculateParallax(fix10_6 x, fix10_6 z)
 	fix10_6 leftEyePoint, rightEyePoint;
 	fix10_6 leftEyeGx, rightEyeGx;
 
+	// z is in meters, need to be in pixels
+	z <<= __PIXELS_PER_METER_2_POWER;
+
 	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
 	// set map position and parallax
-	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance >> 1);
-	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance >> 1);
+	leftEyePoint = _optical->horizontalViewPointCenter - ((unsigned)_optical->baseDistance);
+	rightEyePoint = _optical->horizontalViewPointCenter + ((unsigned)_optical->baseDistance);
+	leftEyeGx = x - __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
+	rightEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
-	leftEyeGx = x - __FIX10_6_DIV(__FIX10_6_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
-	rightEyeGx = x + __FIX10_6_DIV(__FIX10_6_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
-
-	return (rightEyeGx - leftEyeGx) / 16;
-//	return __FIX10_6_TO_I(rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
+	return (rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
 }
