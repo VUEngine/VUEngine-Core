@@ -144,7 +144,7 @@ typedef struct StageDefinition
 		s16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
 		// OBJECT segments z coordinates (__spt0 to __spt3)
-		fix10_6 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
+		s16 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure
 		Optical optical;

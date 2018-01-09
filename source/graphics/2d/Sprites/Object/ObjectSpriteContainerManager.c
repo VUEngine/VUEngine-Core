@@ -229,13 +229,13 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS])
+void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
 	fix10_6 availableObjects = __AVAILABLE_CHAR_OBJECTS;
 #ifndef __RELEASE
-	fix10_6 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
+	s16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
 
 	// must add them from __SPT3 to __SPT0
@@ -256,7 +256,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 		{
 			Vector2D position =
 			{
-					0, 0, z[i] + __F_TO_FIX10_6(i * 0.1f), 0
+					0, 0, __F_TO_FIX10_6(z[i] + i * 0.1f), 0
 			};
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
