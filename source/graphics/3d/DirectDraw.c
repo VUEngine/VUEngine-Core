@@ -186,7 +186,7 @@ void DirectDraw_drawPoint(DirectDraw this, Vector2D point, int color)
 
 	point.x = __FIX10_6_TO_I(point.x);
 	point.y = __FIX10_6_TO_I(point.y);
-	int parallax = point.parallax;
+	fix10_6 parallax = point.parallax;
 
 	if((unsigned)(point.x - parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
 		&&
@@ -226,7 +226,7 @@ void DirectDraw_drawLine(DirectDraw this, Vector2D fromPoint, Vector2D toPoint, 
 	fix10_6 dy = __ABS(toPoint.y - fromPoint.y);
 
 	fix10_6 stepX = __I_TO_FIX10_6(1), stepY = __I_TO_FIX10_6(1);
-	fix10_6 parallax = __I_TO_FIX10_6(fromPoint.parallax);
+	fix10_6 parallax = fromPoint.parallax;
 
 	// duplicating code here since it is much lighter on the cpu
 	if(color == __COLOR_BLACK)
