@@ -409,7 +409,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 	}
 
 //		worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX10_6);
-	worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(__FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax));
+	worldPointer->gp = __FIX10_6_TO_I(this->drawSpec.position.parallax + __FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax));
 
 	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
