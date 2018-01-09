@@ -287,7 +287,6 @@ void ObjectSprite_render(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
-//	ASSERT(Texture_getCharSet(this->texture), "ObjectSprite::render: null charSet");
 
 	//ObjectSprite_checkForContainer(this);
 
@@ -306,7 +305,7 @@ void ObjectSprite_render(ObjectSprite this)
 	int y = __FIX10_6_TO_I(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX10_6) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + __FIX10_6_TO_I(__FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax))) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | (__FIX10_6_TO_I(this->position.parallax + __FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax)) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)
