@@ -256,7 +256,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 		{
 			Vector2D position =
 			{
-					0, 0, __F_TO_FIX10_6(z[i] + i * 0.1f), 0
+					0, 0, __PIXELS_TO_METERS(z[i] + i), 0
 			};
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
