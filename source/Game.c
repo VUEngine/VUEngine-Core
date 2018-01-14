@@ -1271,7 +1271,7 @@ inline static void Game_run(Game this)
 	if(!skipNonCriticalProcesses)
 	{
 		// stream
-	//	Game_stream(this);
+		Game_stream(this);
 	}
 }
 

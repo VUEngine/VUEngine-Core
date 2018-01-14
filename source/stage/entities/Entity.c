@@ -339,28 +339,28 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
  * @private
  *
  * @param this					Function scope
- * @param rightBox
+ * @param º
  * @param environmentPosition
  */
-static void Entity_calculateSizeFromChildren(Entity this, RightBox* rightBox, Vector3D environmentPosition)
+static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRightBox, Vector3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
-	Vector3D globalPosition3D = environmentPosition;
+	PixelVector pixelGlobalPosition = PixelVector_getFromVector3D(environmentPosition);
 
-	globalPosition3D.x += this->transformation.localPosition.x;
-	globalPosition3D.y += this->transformation.localPosition.y;
-	globalPosition3D.z += this->transformation.localPosition.z;
+	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->transformation.localPosition.x);
+	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->transformation.localPosition.y);
+	pixelGlobalPosition.z += __METERS_TO_PIXELS(this->transformation.localPosition.z);
 
-	fix10_6 left = 0;
-	fix10_6 right = 0;
-	fix10_6 top = 0;
-	fix10_6 bottom = 0;
-	fix10_6 front = 0;
-	fix10_6 back = 0;
-	fix10_6 halfWidth = 0;
-	fix10_6 halfHeight = 0;
-	fix10_6 halfDepth = 10;
+	s16 left = 0;
+	s16 right = 0;
+	s16 top = 0;
+	s16 bottom = 0;
+	s16 front = 0;
+	s16 back = 0;
+	s16 halfWidth = 0;
+	s16 halfHeight = 0;
+	s16 halfDepth = 10;
 
 	if((!this->size.x || !this->size.y || !this->size.z) && this->sprites)
 	{
@@ -374,83 +374,79 @@ static void Entity_calculateSizeFromChildren(Entity this, RightBox* rightBox, Ve
 
 			halfWidth = Sprite_getHalfWidth(sprite);
 			halfHeight = Sprite_getHalfHeight(sprite);
-			halfDepth = this->size.z >> 1;
+			halfDepth = 16;
 
-			Vector2D spriteDisplacement = Sprite_getDisplacement(sprite);
+			PixelVector spritePixelDisplacement = PixelVector_getFromVector2D(Sprite_getDisplacement(sprite));
 
-			if(left > -halfWidth + spriteDisplacement.x)
+			if(left > -halfWidth + spritePixelDisplacement.x)
 			{
-				left = -halfWidth + spriteDisplacement.x;
+				left = -halfWidth + spritePixelDisplacement.x;
 			}
 
-			if(right < halfWidth + spriteDisplacement.x)
+			if(right < halfWidth + spritePixelDisplacement.x)
 			{
-				right = halfWidth + spriteDisplacement.x;
+				right = halfWidth + spritePixelDisplacement.x;
 			}
 
-			if(top > -halfHeight + spriteDisplacement.y)
+			if(top > -halfHeight + spritePixelDisplacement.y)
 			{
-				top = -halfHeight + spriteDisplacement.y;
+				top = -halfHeight + spritePixelDisplacement.y;
 			}
 
-			if(bottom < halfHeight + spriteDisplacement.y)
+			if(bottom < halfHeight + spritePixelDisplacement.y)
 			{
-				bottom = halfHeight + spriteDisplacement.y;
+				bottom = halfHeight + spritePixelDisplacement.y;
 			}
 
-			if(front > -halfDepth + spriteDisplacement.z)
+			if(front > -halfDepth + spritePixelDisplacement.z)
 			{
-				front = -halfDepth + spriteDisplacement.z;
+				front = -halfDepth + spritePixelDisplacement.z;
 			}
 
-			if(back < halfDepth + spriteDisplacement.z)
+			if(back < halfDepth + spritePixelDisplacement.z)
 			{
-				back = halfDepth + spriteDisplacement.z;
+				back = halfDepth + spritePixelDisplacement.z;
 			}
 		}
 	}
 	else
 	{
-		right = this->size.x >> 1;
+		right = __METERS_TO_PIXELS(this->size.x >> 1);
 		left = -right;
-		bottom = this->size.y >> 1;
+		bottom = __METERS_TO_PIXELS(this->size.y >> 1);
 		top = -bottom;
-		front = 0;
-		back = this->size.z;
+		back = __METERS_TO_PIXELS(this->size.z >> 1);
+		front = -back;
 	}
 
-	fix10_6 x = globalPosition3D.x;
-	fix10_6 y = globalPosition3D.y;
-	fix10_6 z = globalPosition3D.z;
-
-	if((0 == rightBox->x0) | (x + left < rightBox->x0))
+	if((0 == pixelRightBox->x0) | (pixelGlobalPosition.x + left < pixelRightBox->x0))
 	{
-		rightBox->x0 = x + left;
+		pixelRightBox->x0 = pixelGlobalPosition.x + left;
 	}
 
-	if((0 == rightBox->x1) | (right + x > rightBox->x1))
+	if((0 == pixelRightBox->x1) | (right + pixelGlobalPosition.x > pixelRightBox->x1))
 	{
-		rightBox->x1 = right + x;
+		pixelRightBox->x1 = right + pixelGlobalPosition.x;
 	}
 
-	if((0 == rightBox->y0) | (y + top < rightBox->y0))
+	if((0 == pixelRightBox->y0) | (pixelGlobalPosition.y + top < pixelRightBox->y0))
 	{
-		rightBox->y0 = y + top;
+		pixelRightBox->y0 = pixelGlobalPosition.y + top;
 	}
 
-	if((0 == rightBox->y1) | (bottom + y > rightBox->y1))
+	if((0 == pixelRightBox->y1) | (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
 	{
-		rightBox->y1 = bottom + y;
+		pixelRightBox->y1 = bottom + pixelGlobalPosition.y;
 	}
 
-	if((0 == rightBox->z0) | (z + front < rightBox->z0))
+	if((0 == pixelRightBox->z0) | (pixelGlobalPosition.z + front < pixelRightBox->z0))
 	{
-		rightBox->z0 = z + front;
+		pixelRightBox->z0 = pixelGlobalPosition.z + front;
 	}
 
-	if((0 == rightBox->z1) | (back + z > rightBox->z1))
+	if((0 == pixelRightBox->z1) | (back + pixelGlobalPosition.z > pixelRightBox->z1))
 	{
-		rightBox->z1 = back + z;
+		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
 
 	if(this->children)
@@ -459,7 +455,7 @@ static void Entity_calculateSizeFromChildren(Entity this, RightBox* rightBox, Ve
 
 		for(; childNode; childNode = childNode->next)
 		{
-			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), rightBox, globalPosition3D);
+			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), pixelRightBox, Vector3D_getFromPixelVector(pixelGlobalPosition));
 		}
 	}
 }
@@ -476,15 +472,15 @@ void Entity_calculateSize(Entity this)
 {
 	ASSERT(this, "Entity::calculateSize: null this");
 
-	RightBox rightBox = {0, 0, 0, 0, 0, 0};
+	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_calculateSizeFromChildren(this, &rightBox, (Vector3D){0, 0, 0});
+	Entity_calculateSizeFromChildren(this, &pixelRightBox, (Vector3D){0, 0, 0});
 
 	Vector3D centerDisplacement =
 	{
-		(__I_TO_FIX10_6(rightBox.x1 + rightBox.x0) / 2) - this->transformation.localPosition.x,
-		(__I_TO_FIX10_6(rightBox.y1 + rightBox.y0) / 2) - this->transformation.localPosition.y,
-		(__I_TO_FIX10_6(rightBox.z1 + rightBox.z0) / 2) - this->transformation.localPosition.z
+		(__PIXELS_TO_METERS(pixelRightBox.x1 + pixelRightBox.x0) >> 1) - this->transformation.localPosition.x,
+		(__PIXELS_TO_METERS(pixelRightBox.y1 + pixelRightBox.y0) >> 1) - this->transformation.localPosition.y,
+		(__PIXELS_TO_METERS(pixelRightBox.z1 + pixelRightBox.z0) >> 1) - this->transformation.localPosition.z
 	};
 
 	if(centerDisplacement.x | centerDisplacement.y | centerDisplacement.z)
@@ -498,9 +494,9 @@ void Entity_calculateSize(Entity this)
 		*this->centerDisplacement = centerDisplacement;
 	}
 
-	this->size.x = rightBox.x1 - rightBox.x0;
-	this->size.y = rightBox.y1 - rightBox.y0;
-	this->size.z = rightBox.z1 - rightBox.z0;
+	this->size.x = __PIXELS_TO_METERS(pixelRightBox.x1 - pixelRightBox.x0);
+	this->size.y = __PIXELS_TO_METERS(pixelRightBox.y1 - pixelRightBox.y0);
+	this->size.z = __PIXELS_TO_METERS(pixelRightBox.z1 - pixelRightBox.z0);
 }
 
 /**
@@ -511,34 +507,33 @@ void Entity_calculateSize(Entity this)
  *
  * @param positionedEntity
  * @param environmentPosition
- * @param rightBox
+ * @param pixelRightBox
  */
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, RightBox* rightBox)
+static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition, PixelRightBox* pixelRightBox)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
 
-	Vector3D globalPosition3D =
-	{
-		environmentPosition->x + __PIXELS_TO_METERS(positionedEntity->position.x),
-		environmentPosition->y + __PIXELS_TO_METERS(positionedEntity->position.y),
-		environmentPosition->z + __PIXELS_TO_METERS(positionedEntity->position.z)
-	};
+	PixelVector pixelGlobalPosition = PixelVector_getFromVector3D(*environmentPosition);
 
-	fix10_6 left = 0;
-	fix10_6 right = 0;
-	fix10_6 top = 0;
-	fix10_6 bottom = 0;
-	fix10_6 front = 0;
-	fix10_6 back = 0;
-	fix10_6 halfWidth = 0;
-	fix10_6 halfHeight = 0;
-	fix10_6 halfDepth = 5;
+	pixelGlobalPosition.x += positionedEntity->position.x;
+	pixelGlobalPosition.y += positionedEntity->position.y;
+	pixelGlobalPosition.z += positionedEntity->position.z;
 
-	Size size = Size_getFromPixelSize(positionedEntity->entityDefinition->pixelSize);
+	s16 left = 0;
+	s16 right = 0;
+	s16 top = 0;
+	s16 bottom = 0;
+	s16 front = 0;
+	s16 back = 0;
+	s16 halfWidth = 0;
+	s16 halfHeight = 0;
+	s16 halfDepth = 5;
 
 	if(positionedEntity->entityDefinition->spriteDefinitions && positionedEntity->entityDefinition->spriteDefinitions[0])
 	{
+		extern BgmapSpriteROMDef* LEVEL_1_MAIN_1_MAIN_3_B_IM_SPRITES;
+
 		int i = 0;
 
 		for(; positionedEntity->entityDefinition->spriteDefinitions[i]; i++)
@@ -555,14 +550,14 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 
 				for(; mBgmapSpriteDefinition->textureDefinitions[j]; j++)
 				{
-					if(halfWidth < (int)mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2)
+					if(halfWidth < (s16)(mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2))
 					{
 						halfWidth = mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2;
 					}
 
-					if(halfHeight < (int)mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2)
+					if(halfHeight < (s16)(mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2))
 					{
-						halfHeight = mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2;
+						halfHeight = (s16)(mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2);
 					}
 				}
 
@@ -602,108 +597,95 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 				SpriteDefinition* spriteDefinition = (SpriteDefinition*)positionedEntity->entityDefinition->spriteDefinitions[i];
 				halfWidth = spriteDefinition->textureDefinition->cols << 2;
 				halfHeight = spriteDefinition->textureDefinition->rows << 2;
-				halfDepth = 10;
+				halfDepth = 16;
 
-				if(left > -halfWidth + spriteDefinition->displacement.x)
+				PixelVector displacement = PixelVector_getFromVector2D(spriteDefinition->displacement);
+
+				if(left > -halfWidth + displacement.x)
 				{
-					left = -halfWidth + spriteDefinition->displacement.x;
+					left = -halfWidth + displacement.x;
 				}
 
-				if(right < halfWidth + spriteDefinition->displacement.x)
+				if(right < halfWidth + displacement.x)
 				{
-					right = halfWidth + spriteDefinition->displacement.x;
+					right = halfWidth + displacement.x;
 				}
 
-				if(top > -halfHeight + spriteDefinition->displacement.y)
+				if(top > -halfHeight + displacement.y)
 				{
-					top = -halfHeight + spriteDefinition->displacement.y;
+					top = -halfHeight + displacement.y;
 				}
 
-				if(bottom < halfHeight + spriteDefinition->displacement.y)
+				if(bottom < halfHeight + displacement.y)
 				{
-					bottom = halfHeight + spriteDefinition->displacement.y;
+					bottom = halfHeight + displacement.y;
 				}
 
-				if(front > -halfDepth + spriteDefinition->displacement.z)
+				if(front > -halfDepth + displacement.z)
 				{
-					front = -halfDepth + spriteDefinition->displacement.z;
+					front = -halfDepth + displacement.z;
 				}
 
-				if(back < (halfDepth << 1) + spriteDefinition->displacement.z)
+				if(back < (halfDepth << 1) + displacement.z)
 				{
-					back = (halfDepth << 1) + spriteDefinition->displacement.z;
+					back = (halfDepth << 1) + displacement.z;
 				}
 			}
 		}
 	}
 	else if(!positionedEntity->childrenDefinitions)
 	{
-		// TODO: there should be a class which handles these special cases
-		if(__TYPE(Entity) == __ALLOCATOR_TYPE(positionedEntity->entityDefinition->allocator)
-		)
-		{
-			halfWidth = size.x >> 1;
-			halfHeight = size.y >> 1;
-			halfDepth = size.z >> 1;
+		// TODO: there should be a class which handles special cases
+		halfWidth = positionedEntity->entityDefinition->pixelSize.x >> 1;
+		halfHeight = positionedEntity->entityDefinition->pixelSize.y >> 1;
+		halfDepth = positionedEntity->entityDefinition->pixelSize.z >> 1;
 
-			left = -halfWidth;
-			right = halfWidth;
-			top = -halfHeight;
-			bottom = halfHeight;
-			front = -halfDepth;
-			back = halfDepth;
-		}
-		else
-		{
-			left = -1;
-			right = 1;
-			top = -1;
-			bottom = 1;
-			front = -1;
-			back = 1;
-		}
+		left = -halfWidth;
+		right = halfWidth;
+		top = -halfHeight;
+		bottom = halfHeight;
+		front = -halfDepth;
+		back = halfDepth;
 	}
 
-	fix10_6 x = globalPosition3D.x;
-	fix10_6 y = globalPosition3D.y;
-	fix10_6 z = globalPosition3D.z;
-
-	if((0 == rightBox->x0) | (x + left < rightBox->x0))
+	if((0 == pixelRightBox->x0) | (pixelGlobalPosition.x + left < pixelRightBox->x0))
 	{
-		rightBox->x0 = x + left;
+		pixelRightBox->x0 = pixelGlobalPosition.x + left;
 	}
 
-	if((0 == rightBox->x1) | (right + x > rightBox->x1))
+	if((0 == pixelRightBox->x1) | (right + pixelGlobalPosition.x > pixelRightBox->x1))
 	{
-		rightBox->x1 = right + x;
+		pixelRightBox->x1 = right + pixelGlobalPosition.x;
 	}
 
-	if((0 == rightBox->y0) | (y + top < rightBox->y0))
+	if((0 == pixelRightBox->y0) | (pixelGlobalPosition.y + top < pixelRightBox->y0))
 	{
-		rightBox->y0 = y + top;
+		pixelRightBox->y0 = pixelGlobalPosition.y + top;
 	}
 
-	if((0 == rightBox->y1) | (bottom + y > rightBox->y1))
+	if((0 == pixelRightBox->y1) | (bottom + pixelGlobalPosition.y > pixelRightBox->y1))
 	{
-		rightBox->y1 = bottom + y;
+		pixelRightBox->y1 = bottom + pixelGlobalPosition.y;
 	}
 
-	if((0 == rightBox->z0) | (z + front < rightBox->z0))
+	if((0 == pixelRightBox->z0) | (pixelGlobalPosition.z + front < pixelRightBox->z0))
 	{
-		rightBox->z0 = z + front;
+		pixelRightBox->z0 = pixelGlobalPosition.z + front;
 	}
 
-	if((0 == rightBox->z1) | (back + z > rightBox->z1))
+	if((0 == pixelRightBox->z1) | (back + pixelGlobalPosition.z > pixelRightBox->z1))
 	{
-		rightBox->z1 = back + z;
+		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
 
 	if(positionedEntity->childrenDefinitions)
 	{
+		Vector3D globalPosition3D = Vector3D_getFromPixelVector(pixelGlobalPosition);
+
 		int i = 0;
 		for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
 		{
-			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, rightBox);
+			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &globalPosition3D, pixelRightBox);
 		}
 	}
 }
@@ -717,24 +699,22 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
  * @param positionedEntity
  * @param environmentPosition
  *
- * @return						RightBox
+ * @return						PixelRightBox
  */
-RightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
+PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition)
 {
-	RightBox rightBox = {0, 0, 0, 0, 0, 0};
+	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromDefinition(positionedEntity, (Vector3D*)environmentPosition, &rightBox);
+	Entity_getSizeFromDefinition(positionedEntity, (Vector3D*)environmentPosition, &pixelRightBox);
 
-	Vector3D position = Vector3D_getFromPixelVector(positionedEntity->position);
+	pixelRightBox.x0 = pixelRightBox.x0 - positionedEntity->position.x;
+	pixelRightBox.x1 = pixelRightBox.x1 - positionedEntity->position.x;
+	pixelRightBox.y0 = pixelRightBox.y0 - positionedEntity->position.y;
+	pixelRightBox.y1 = pixelRightBox.y1 - positionedEntity->position.y;
+	pixelRightBox.z0 = pixelRightBox.z0 - positionedEntity->position.z;
+	pixelRightBox.z1 = pixelRightBox.z1 - positionedEntity->position.z;
 
-	rightBox.x0 = rightBox.x0 - position.x;
-	rightBox.x1 = rightBox.x1 - position.x;
-	rightBox.y0 = rightBox.y0 - position.y;
-	rightBox.y1 = rightBox.y1 - position.y;
-	rightBox.z0 = rightBox.z0 - position.z;
-	rightBox.z1 = rightBox.z1 - position.z;
-
-	return rightBox;
+	return pixelRightBox;
 }
 
 /**

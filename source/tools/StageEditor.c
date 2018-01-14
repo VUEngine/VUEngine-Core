@@ -639,7 +639,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX10_6(-__SCREEN_X_TRANSLATION_STEP),
+			-__SCREEN_X_TRANSLATION_STEP,
 			0,
 			0
 		};
@@ -650,7 +650,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX10_6(__SCREEN_X_TRANSLATION_STEP),
+			__SCREEN_X_TRANSLATION_STEP,
 			0,
 			0
 		};
@@ -662,7 +662,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX10_6(-__SCREEN_Y_TRANSLATION_STEP),
+			-__SCREEN_Y_TRANSLATION_STEP,
 			0
 		};
 
@@ -673,7 +673,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX10_6(__SCREEN_Y_TRANSLATION_STEP),
+			__SCREEN_Y_TRANSLATION_STEP,
 			0
 		};
 
@@ -685,7 +685,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX10_6(__SCREEN_Z_TRANSLATION_STEP),
+			__SCREEN_Z_TRANSLATION_STEP,
 		};
 
 		StageEditor_applyTranslationToCamera(this, translation);
@@ -696,7 +696,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX10_6(-__SCREEN_Z_TRANSLATION_STEP),
+			-__SCREEN_Z_TRANSLATION_STEP,
 		};
 
 		StageEditor_applyTranslationToCamera(this, translation);

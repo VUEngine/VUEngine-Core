@@ -247,6 +247,19 @@ typedef struct RightBox
 
 } RightBox;
 
+typedef struct PixelRightBox
+{
+	/* left upper corner */
+	s16 x0;
+	s16 y0;
+	s16 z0;
+
+	/* right down corner */
+	s16 x1;
+	s16 y1;
+	s16 z1;
+
+} PixelRightBox;
 
 
 #endif

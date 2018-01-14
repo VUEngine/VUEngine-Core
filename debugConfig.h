@@ -17,7 +17,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_GAME_PROFILING
 //#define __SHOW_GAME_DETAILED_PROFILING
 //#define __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
-//#define __SHOW_STREAMING_PROFILING
+#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
 //#define __ALERT_VIP_OVERTIME

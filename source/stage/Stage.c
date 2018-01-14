@@ -87,7 +87,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 typedef struct StageEntityDescription
 {
 	PositionedEntity* positionedEntity;
-	RightBox smallRightBox;
+	PixelRightBox pixelRightBox;
 	s16 internalId;
 	long distance;
 
@@ -235,39 +235,48 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-static int Stage_isEntityInLoadRange(Stage this, PixelVector position, const RightBox* smallRightBox)
+static int Stage_isEntityInLoadRange(Stage this, PixelVector position, const PixelRightBox* pixelRightBox)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
-	Vector3D position3D =
-	{
-		__PIXELS_TO_METERS(position.x),
-		__PIXELS_TO_METERS(position.y),
-		__PIXELS_TO_METERS(position.z),
-	};
-
-	position3D = Vector3D_getRelativeToCamera(position3D);
-
-	// project position to 2D space
-	Vector2D position2D = Vector3D_projectToVector2D(position3D, Optics_calculateParallax(position3D.x, position3D.z));
-
 	// check x visibility
-	if(__FIX10_6_TO_I(position2D.x) + smallRightBox->x1 + position2D.parallax <  __LOAD_LOW_X_LIMIT || __FIX10_6_TO_I(position2D.x) + smallRightBox->x0 - position2D.parallax >  __LOAD_HIGHT_X_LIMIT)
+	if(position.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if(__FIX10_6_TO_I(position2D.y) + smallRightBox->y1 <  __LOAD_LOW_Y_LIMIT || __FIX10_6_TO_I(position2D.y) + smallRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
+	if(position.y + pixelRightBox->y1 <  __LOAD_LOW_Y_LIMIT || position.y + pixelRightBox->y0 >  __LOAD_HIGHT_Y_LIMIT)
 	{
 		return false;
 	}
 
 	// check z visibility
-	if(__FIX10_6_TO_I(position2D.z) + smallRightBox->z1 <  __LOAD_LOW_Z_LIMIT || __FIX10_6_TO_I(position2D.z) + smallRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
+	if(position.z + pixelRightBox->z1 <  __LOAD_LOW_Z_LIMIT || position.z + pixelRightBox->z0 >  __LOAD_HIGHT_Z_LIMIT)
 	{
 		return false;
 	}
+
+		// make sure there are fonts to show the exception
+	//	Printing_setDebugMode(Printing_getInstance());
+
+//		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.x) + pixelRightBox->x0, 1, 18, NULL);
+//		Printing_float(Printing_getInstance(), position.x + pixelRightBox->x0, 1, 18, NULL);
+/*		Printing_float(Printing_getInstance(), position.x , 1, 18, NULL);
+		Printing_int(Printing_getInstance(), (pixelRightBox->x0), 10, 18, NULL);
+		Printing_int(Printing_getInstance(), (pixelRightBox->x1), 20, 18, NULL);
+		Printing_float(Printing_getInstance(), (__LOAD_HIGHT_X_LIMIT), 10, 19, NULL);
+//		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.x) + pixelRightBox->x1, 1, 19, NULL);
+/*		Printing_float(Printing_getInstance(), position.x + pixelRightBox->x1, 1, 19, NULL);
+		Printing_float(Printing_getInstance(), (__LOAD_LOW_X_LIMIT), 10, 19, NULL);
+
+		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.y) + pixelRightBox->y0, 1, 22, NULL);
+		Printing_float(Printing_getInstance(), (__LOAD_HIGHT_Y_LIMIT), 10, 22, NULL);
+		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.y) + pixelRightBox->y1, 1, 23, NULL);
+		Printing_float(Printing_getInstance(), (__LOAD_LOW_Y_LIMIT), 10, 23, NULL);
+*/
+
+//		ASSERT(false, "test2");
 
 	return true;
 }
@@ -636,7 +645,13 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	Vector3D environmentPosition3D = {0, 0, 0};
-	stageEntityDescription->smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
+	stageEntityDescription->pixelRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
+
+	int x = stageEntityDescription->positionedEntity->position.x;
+	int y = stageEntityDescription->positionedEntity->position.y;
+	int z = stageEntityDescription->positionedEntity->position.z;
+
+	stageEntityDescription->distance = (x * x + y * y + z * z);
 
 	return stageEntityDescription;
 }
@@ -685,15 +700,6 @@ static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToI
 
 		StageEntityDescription* stageEntityDescription = Stage_registerEntity(this, &this->stageDefinition->entities.children[i]);
 
-//		Vector3D environmentPosition3D = {0, 0, 0};
-//		RightBox smallRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
-
-		int x = stageEntityDescription->positionedEntity->position.x;
-		int y = stageEntityDescription->positionedEntity->position.y;
-		int z = stageEntityDescription->positionedEntity->position.z;
-
-		stageEntityDescription->distance = (x * x + y * y + z * z);
-
 		VirtualNode auxNode = this->stageEntities->head;
 
 		for(; auxNode; auxNode = auxNode->next)
@@ -731,7 +737,7 @@ static void Stage_loadInitialEntities(Stage this)
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightBox))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->pixelRightBox))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
@@ -897,7 +903,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 				}
 
 				// if entity in load range
-				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightBox))
+				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->pixelRightBox))
 				{
 					loadedEntities = true;
 
@@ -939,7 +945,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 				}
 
 				// if entity in load range
-				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->smallRightBox))
+				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->pixelRightBox))
 				{
 					loadedEntities = true;
 

@@ -46,6 +46,8 @@ inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
 inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
 inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax);
 inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector);
+inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D);
+inline PixelVector PixelVector_getFromVector2D(Vector2D vector2D);
 inline Size Size_getFromPixelSize(PixelSize pixelSize);
 
 
@@ -147,7 +149,7 @@ inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax)
 
 	Vector2D projection =
 	{
-		vector3D.x + (__FIX10_6_EXT_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
+		vector3D.x - (__FIX10_6_EXT_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
 		vector3D.y - (__FIX10_6_EXT_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
 		vector3D.z >> __PIXELS_PER_METER_2_POWER,
 		parallax
@@ -163,6 +165,26 @@ inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector)
 		__PIXELS_TO_METERS(screenVector.x),
 		__PIXELS_TO_METERS(screenVector.y),
 		__PIXELS_TO_METERS(screenVector.z)
+	};
+}
+
+inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D)
+{
+	return (PixelVector)
+	{
+		__METERS_TO_PIXELS(vector3D.x),
+		__METERS_TO_PIXELS(vector3D.y),
+		__METERS_TO_PIXELS(vector3D.z)
+	};
+}
+
+inline PixelVector PixelVector_getFromVector2D(Vector2D vector2D)
+{
+	return (PixelVector)
+	{
+		__FIX10_6_TO_I(vector2D.x),
+		__FIX10_6_TO_I(vector2D.y),
+		__FIX10_6_TO_I(vector2D.z)
 	};
 }
 
