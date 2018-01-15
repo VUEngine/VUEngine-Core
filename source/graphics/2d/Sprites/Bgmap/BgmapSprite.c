@@ -100,8 +100,8 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 
-		this->halfWidth = __I_TO_FIX10_6((int)Texture_getCols(this->texture) << 2);
-		this->halfHeight = __I_TO_FIX10_6((int)Texture_getRows(this->texture) << 2);
+		this->halfWidth = Texture_getCols(this->texture) << 2;
+		this->halfHeight = Texture_getRows(this->texture) << 2;
 	}
 	else
 	{
@@ -204,7 +204,7 @@ Scale BgmapSprite_getScale(BgmapSprite this)
  *
  * @return			2D position
  */
-Vector2D BgmapSprite_getPosition(BgmapSprite this)
+PixelVector BgmapSprite_getPosition(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getPosition: null this");
 
@@ -220,7 +220,7 @@ Vector2D BgmapSprite_getPosition(BgmapSprite this)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void BgmapSprite_setPosition(BgmapSprite this, const Vector2D* position)
+void BgmapSprite_setPosition(BgmapSprite this, const PixelVector* position)
 {
 	ASSERT(this, "BgmapSprite::setPosition: null this");
 
@@ -248,7 +248,7 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 
 	// normalize the position to camera coordinates
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
-	this->drawSpec.position = Vector3D_projectToVector2D(position3D, this->drawSpec.position.parallax);
+	this->drawSpec.position = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
 
 	this->drawSpec.position.x -= this->halfWidth;
 	this->drawSpec.position.y -= this->halfHeight;
@@ -279,8 +279,8 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 		if(this->texture)
 		{
-			this->halfWidth = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6;
-			this->halfHeight = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6;
+			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6);
+			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6);
 		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
@@ -320,8 +320,8 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 
 		if(this->texture)
 		{
-			this->halfWidth = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6;
-			this->halfHeight = __ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6;
+			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6);
+			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6);
 		}
 
 		if(this->param)
@@ -398,14 +398,14 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = __FIX10_6_TO_I(this->drawSpec.position.x + this->displacement.x + __0_5F_FIX10_6);
-	int gy = __FIX10_6_TO_I(this->drawSpec.position.y + this->displacement.y + __0_5F_FIX10_6);
+	int gx = this->drawSpec.position.x + this->displacement.x;
+	int gy = this->drawSpec.position.y + this->displacement.y;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
 	// get sprite's size
-	int width = __FIX10_6_TO_I(this->halfWidth) << 1;
-	int height = __FIX10_6_TO_I(this->halfHeight) << 1;
+	int width = this->halfWidth << 1;
+	int height = this->halfHeight << 1;
 	int w = width;
 	int h = height;
 
@@ -433,8 +433,7 @@ void BgmapSprite_render(BgmapSprite this)
 		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
-	worldPointer->gp = __FIX10_6_TO_I(this->drawSpec.position.parallax + __FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax));
-//		worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(this->displacement.z + this->displacement.p + __0_5F_FIX10_6);
+	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z + this->displacement.parallax;
 
 	if(w + worldPointer->gx >= _cameraFrustum->x1)
 	{
@@ -678,7 +677,7 @@ void BgmapSprite_render(BgmapSprite this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void BgmapSprite_addDisplacement(BgmapSprite this, const Vector2D* displacement)
+void BgmapSprite_addDisplacement(BgmapSprite this, const PixelVector* displacement)
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
 
@@ -853,12 +852,12 @@ static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 			// (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
 			// (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
 			// don't do translations
-			this->halfWidth,
-			this->halfHeight,
+			__I_TO_FIX10_6(this->halfWidth),
+			__I_TO_FIX10_6(this->halfHeight),
 			__I_TO_FIX13_3(this->drawSpec.textureSource.mx),
 			__I_TO_FIX13_3(this->drawSpec.textureSource.my),
-			this->halfWidth,
-			this->halfHeight,
+			__I_TO_FIX10_6(this->halfWidth),
+			__I_TO_FIX10_6(this->halfHeight),
 			&this->drawSpec.scale,
 			&this->drawSpec.rotation
 		);

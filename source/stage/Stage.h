@@ -81,7 +81,7 @@
 		/* the ui container */ 																			\
 		UiContainer uiContainer;																		\
 		/* focus entity: needed for streaming */														\
-		Entity focusEntity;																	\
+		Entity focusEntity;																				\
 		/* camera's previous distance. Used for the streaming */										\
 		long cameraPreviousDistance;																	\
 		/* next entity's id */																			\
@@ -147,7 +147,7 @@ typedef struct StageDefinition
 		s16 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure
-		Optical optical;
+		PixelOptical pixelOptical;
 
 	} rendering;
 

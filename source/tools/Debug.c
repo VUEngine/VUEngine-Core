@@ -182,11 +182,11 @@
 		 */																								\
 		int sramPage;																					\
 		/**
-		 * @var Vector2D		mapDisplacement
+		 * @var PixelVector		mapDisplacement
 		 * @brief			window to look into bgmap memory
 		 * @memberof		Debug
 		 */																								\
-		Vector2D mapDisplacement;																		\
+		PixelVector mapDisplacement;																		\
 		/**
 		 * @var void 		(*update)(void	*)
 		 * @brief			update function pointer

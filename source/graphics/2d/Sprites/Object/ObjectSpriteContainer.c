@@ -311,11 +311,11 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfOb
  *
  * @return			2D position
  */
-Vector2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
+PixelVector ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
 
-	Vector2D position =
+	PixelVector position =
 	{
 		0, 0, 0, 0
 	};
@@ -334,7 +334,7 @@ Vector2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const Vector2D* position)
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVector* position)
 {
 	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
 
@@ -346,7 +346,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const Vector2
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+			PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
 			__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 		}
 	}
@@ -422,8 +422,8 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 		{
 			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
 			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			Vector2D position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-			Vector2D previousPosition = __VIRTUAL_CALL(Sprite, getPosition, previousSprite);
+			PixelVector position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+			PixelVector previousPosition = __VIRTUAL_CALL(Sprite, getPosition, previousSprite);
 
 			// check if z positions are swapped
 			if(previousPosition.z + (__SAFE_CAST(Sprite, previousSprite))->displacement.z > position.z + (__SAFE_CAST(Sprite, sprite))->displacement.z)
@@ -683,7 +683,7 @@ int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const Vector2D* displacement)
+void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const PixelVector* displacement)
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
 
@@ -733,7 +733,7 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 	Printing_text(Printing_getInstance(), "-", x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)), y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getLastObjectIndex(this), x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing_text(Printing_getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->z), x + 24, y, NULL);
+	Printing_int(Printing_getInstance(), this->z, x + 24, y, NULL);
 }
 
 /**

@@ -90,8 +90,8 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 
 		{solidParticleDefinition->radius, solidParticleDefinition->radius, solidParticleDefinition->radius},
 
-		// displacement (x, y, z)
-		{0, 0, 0},
+		// displacement (x, y, z, p)
+		{0, 0, 0, 0},
 
 		// rotation (x, y, z)
 		{0, 0, 0},

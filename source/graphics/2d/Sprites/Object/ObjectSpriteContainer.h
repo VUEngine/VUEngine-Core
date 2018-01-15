@@ -132,13 +132,13 @@ __CLASS(ObjectSpriteContainer);
 void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
 void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 
-void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const Vector2D* displacement);
+void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const PixelVector* displacement);
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix10_6 z);
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);
-Vector2D ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
+PixelVector ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);
@@ -147,7 +147,7 @@ void ObjectSpriteContainer_position(ObjectSpriteContainer this, const Vector3D* 
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
 void ObjectSpriteContainer_render(ObjectSpriteContainer this);
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const Vector2D* position);
+void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVector* position);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setMode(ObjectSpriteContainer this, u16 display, u16 mode);
 bool ObjectSpriteContainer_writeTextures(ObjectSpriteContainer this);

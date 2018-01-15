@@ -159,7 +159,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 		/* fx sound */																					\
 		const u16* fxSound[__FXS];																		\
 		/* space position of each fx */																	\
-		Vector2D fxPosition[__FXS];																		\
+		PixelVector fxPosition[__FXS];																		\
 
 /**
  * @class	SoundManager
@@ -584,7 +584,7 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D	pos
 		position = Vector3D_getRelativeToCamera(position);
 
 		// save position for 3d sound
-		this->fxPosition[i] = Vector3D_projectToVector2D(position, 0);
+		this->fxPosition[i] = Vector3D_projectToPixelVector(position, 0);
 
 		return true;
 	}

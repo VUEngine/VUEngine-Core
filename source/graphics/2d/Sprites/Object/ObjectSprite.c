@@ -104,8 +104,8 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 	ASSERT(objectSpriteDefinition->spriteDefinition.textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
 	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
-	this->halfWidth = __I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2);
-	this->halfHeight = __I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2);
+	this->halfWidth = this->texture->textureDefinition->cols << 2;
+	this->halfHeight = this->texture->textureDefinition->rows << 2;
 	this->totalObjects = objectSpriteDefinition->spriteDefinition.textureDefinition->cols * objectSpriteDefinition->spriteDefinition.textureDefinition->rows;
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
@@ -191,7 +191,7 @@ void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation)
  *
  * @return			2D position
  */
-Vector2D ObjectSprite_getPosition(ObjectSprite this)
+PixelVector ObjectSprite_getPosition(ObjectSprite this)
 {
 	ASSERT(this, "ObjectSprite::getPosition: null this");
 
@@ -207,7 +207,7 @@ Vector2D ObjectSprite_getPosition(ObjectSprite this)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void ObjectSprite_setPosition(ObjectSprite this, const Vector2D* position)
+void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
 
@@ -233,7 +233,7 @@ void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 
 	// project position to 2D space
-	this->position = Vector3D_projectToVector2D(position3D, this->position.parallax);
+	this->position = Vector3D_projectToPixelVector(position3D, this->position.parallax);
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -301,11 +301,11 @@ void ObjectSprite_render(ObjectSprite this)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = __FIX10_6_TO_I(this->position.x - this->halfWidth * xDirection + this->displacement.x + __0_5F_FIX10_6) - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-	int y = __FIX10_6_TO_I(this->position.y - this->halfHeight * yDirection + this->displacement.y + __0_5F_FIX10_6) - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
+	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | (__FIX10_6_TO_I(this->position.parallax + __FIX10_6_INT_PART(this->displacement.z + this->displacement.parallax)) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.z + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)
@@ -464,7 +464,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void ObjectSprite_addDisplacement(ObjectSprite this, const Vector2D* displacement)
+void ObjectSprite_addDisplacement(ObjectSprite this, const PixelVector* displacement)
 {
 	ASSERT(this, "ObjectSprite::addDisplacement: null this");
 

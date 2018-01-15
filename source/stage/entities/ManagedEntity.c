@@ -171,7 +171,7 @@ void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environm
 
 	// normalize the position to camera coordinates
 	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
-	this->previous2DPosition = Vector3D_projectToVector2D(position3D, 0);
+	this->previous2DPosition = Vector3D_projectToPixelVector(position3D, 0);
 
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 }
@@ -204,7 +204,7 @@ void ManagedEntity_transform(ManagedEntity this, const Transformation* environme
 
 		// save the 2d position
 		Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
-		this->previous2DPosition = Vector3D_projectToVector2D(position3D, 0);
+		this->previous2DPosition = Vector3D_projectToPixelVector(position3D, 0);
 
 		this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 		return;
@@ -244,11 +244,11 @@ void ManagedEntity_synchronizeGraphics(ManagedEntity this)
 
 	// save new global position
 	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
-	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
+	PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
 
 	VirtualNode spriteNode = this->managedSprites->head;
 
-	Vector2D displacement;
+	PixelVector displacement;
 
 	displacement.x = position2D.x - this->previous2DPosition.x;
 	displacement.y = position2D.y - this->previous2DPosition.y;

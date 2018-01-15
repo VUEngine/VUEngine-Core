@@ -117,11 +117,11 @@ void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
 
 	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
 
-	Vector2D position2D = Vector3D_projectToVector2D(position3D, 0);
+	PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
 
 	this->position2D = this->nextFramePosition2D;
-	this->nextFramePosition2D.x = __FIX10_6_TO_I(position2D.x);
-	this->nextFramePosition2D.y = __FIX10_6_TO_I(position2D.y);
+	this->nextFramePosition2D.x = position2D.x;
+	this->nextFramePosition2D.y = position2D.y;
 }
 
 static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
@@ -711,58 +711,58 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xOutputStartTemp),((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xOutputEndTemp),((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xOutputStartTemp),((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xOutputEndTemp),((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xSourceStartTemp),((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xSourceEndTemp),((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xSourceStartTemp),((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
+		(PixelVector) {(xSourceEndTemp),((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 */
 /*
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6(yOutputStartTemp),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6(yOutputStartTemp),0,0},
+		(PixelVector) {(xOutputStartTemp),(yOutputStartTemp),0,0},
+		(PixelVector) {(xOutputEndTemp),(yOutputStartTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xOutputStartTemp),__I_TO_FIX10_6(yOutputEndTemp),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xOutputEndTemp),__I_TO_FIX10_6(yOutputEndTemp),0,0},
+		(PixelVector) {(xOutputStartTemp),(yOutputEndTemp),0,0},
+		(PixelVector) {(xOutputEndTemp),(yOutputEndTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6(ySourceStartTemp),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6(ySourceStartTemp),0,0},
+		(PixelVector) {(xSourceStartTemp),(ySourceStartTemp),0,0},
+		(PixelVector) {(xSourceEndTemp),(ySourceStartTemp),0,0},
 		__COLOR_DARK_RED
 	);
 
 	DirectDraw_drawLine(
 		DirectDraw_getInstance(),
-		(Vector2D) {__I_TO_FIX10_6(xSourceStartTemp),__I_TO_FIX10_6(ySourceEndTemp),0,0},
-		(Vector2D) {__I_TO_FIX10_6(xSourceEndTemp),__I_TO_FIX10_6(ySourceEndTemp),0,0},
+		(PixelVector) {(xSourceStartTemp),(ySourceEndTemp),0,0},
+		(PixelVector) {(xSourceEndTemp),(ySourceEndTemp),0,0},
 		__COLOR_DARK_RED
 	);
 */

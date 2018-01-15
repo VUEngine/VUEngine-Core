@@ -654,7 +654,7 @@ FontSize __attribute__ ((noinline)) Printing_getTextSize(Printing this, const ch
 {
 	ASSERT(this, "Printing::getTextSize: null this");
 
-	FontSize fontSize = {0, 0, 0};
+	FontSize fontSize = {0, 0};
 	u16 i = 0, currentLineLength = 0;
 
 	FontData* fontData = Printing_getFontByName(this, font);
@@ -662,7 +662,7 @@ FontSize __attribute__ ((noinline)) Printing_getTextSize(Printing this, const ch
 	if(!fontData)
 	{
 		// just to make sure that no client code does a 0 division with these results
-		fontSize = (FontSize){8, 8, 8};
+		fontSize = (FontSize){8, 8};
 		return fontSize;
 	}
 

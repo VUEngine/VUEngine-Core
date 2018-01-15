@@ -176,7 +176,7 @@ const Rotation* Entity_getRotation(Entity this);
 const Scale* Entity_getScale(Entity this);
 VirtualList Entity_getShapes(Entity this);
 VirtualList Entity_getSprites(Entity this);
-PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const Vector3D* environmentPosition);
+PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 u16 Entity_getWidth(Entity this);
 u16 Entity_getHeight(Entity this);
 u16 Entity_getDepth(Entity this);

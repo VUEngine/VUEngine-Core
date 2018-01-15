@@ -53,11 +53,11 @@
 #define __SCREEN_Y_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_HEIGHT / 4)
 #define __SCREEN_Z_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_HEIGHT / 4)
 
-#define __HVPC_STEP							__I_TO_FIX10_6(8)
-#define __VERTICAL_VIEW_POINT_CENTER_STEP	__I_TO_FIX10_6(8)
-#define __DISTANCE_EYE_SCREEN_STEP			__I_TO_FIX10_6(8)
+#define __HVPC_STEP							__PIXELS_TO_METERS(8)
+#define __VERTICAL_VIEW_POINT_CENTER_STEP	__PIXELS_TO_METERS(8)
+#define __DISTANCE_EYE_SCREEN_STEP			__PIXELS_TO_METERS(8)
 #define __MAXIMUM_VIEW_DISTACE_STEP			1
-#define __BASE_DISTACE_STEP					__I_TO_FIX10_6(8)
+#define __BASE_DISTACE_STEP					__PIXELS_TO_METERS(8)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -959,7 +959,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
-		Vector2D spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
+		PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, __SAFE_CAST(Sprite, this->userObjectSprite));
 		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
@@ -1016,6 +1016,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 			__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH,
 			__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT,
 			__METERS_TO_PIXELS(cameraPosition.z) + 0,
+			0
 		};
 
 		PositionedEntity DUMMY_ENTITY =
@@ -1165,15 +1166,15 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
 	Printing_text(Printing_getInstance(), "BD     \x17\x18", 38, 6, NULL);
 
 	Printing_text(Printing_getInstance(), "H. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->horizontalViewPointCenter), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "V. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->verticalViewPointCenter), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->distanceEyeScreen), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Maximum View Camera:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), (1 << _optical->maximumViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(_optical->baseDistance), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 22, y, NULL);
 }
 
 /**

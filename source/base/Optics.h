@@ -55,7 +55,7 @@ extern const Optical* _optical;
  * @param x			X parameter for the calculation of the parallax displacement
  * @param x			Z parameter for the calculation of the parallax displacement
  */
-extern fix10_6 Optics_calculateParallax(fix10_6 x, fix10_6 z);
+extern s16 Optics_calculateParallax(fix10_6 x, fix10_6 z);
 
 
 

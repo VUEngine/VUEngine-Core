@@ -53,9 +53,9 @@
 #define Sprite_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, render);															\
-		__VIRTUAL_DEC(ClassName, Vector2D, getPosition);													\
-		__VIRTUAL_DEC(ClassName, void, setPosition, const Vector2D* position);							\
-		__VIRTUAL_DEC(ClassName, void, addDisplacement, const Vector2D* displacement);					\
+		__VIRTUAL_DEC(ClassName, PixelVector, getPosition);													\
+		__VIRTUAL_DEC(ClassName, void, setPosition, const PixelVector* position);							\
+		__VIRTUAL_DEC(ClassName, void, addDisplacement, const PixelVector* displacement);					\
 		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
 		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);								\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
@@ -91,11 +91,11 @@
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
 		/*
-		 * @var Vector2D 			displacement
+		 * @var PixelVector 			displacement
 		 * @brief					Displacement modifier to achieve better control over display
 		 * @memberof				Sprite
 		 */																								\
-		Vector2D displacement;																		\
+		PixelVector displacement;																		\
 		/*
 		 * @var AnimationController animationController
 		 * @brief					AnimationController
@@ -109,17 +109,17 @@
 		 */																								\
 		Texture texture;																				\
 		/*
-		 * @var fix10_6 			halfWidth
+		 * @var s16 				halfWidth
 		 * @brief					Texture's half width
 		 * @memberof				Sprite
 		 */																								\
-		fix10_6 halfWidth;																				\
+		s16 halfWidth;																					\
 		/*
-		 * @var fix10_6 			halfHeight
+		 * @var s16		 			halfHeight
 		 * @brief					Texture's half height
 		 * @memberof				Sprite
 		 */																								\
-		fix10_6 halfHeight;																			\
+		s16 halfHeight;																					\
 		/*
 		 * @var u16 				head
 		 * @brief					Head definition for world entry setup
@@ -182,7 +182,7 @@ typedef struct SpriteDefinition
 	bool transparent;
 
 	/// displacement modifier to achieve better control over display
-	Vector2D displacement;
+	PixelVector displacement;
 
 } SpriteDefinition;
 
@@ -287,7 +287,7 @@ void Sprite_position(Sprite this, const Vector3D* position);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);
-Vector2D Sprite_getDisplacement(Sprite this);
+PixelVector Sprite_getDisplacement(Sprite this);
 s8 Sprite_getFrameDuration(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 int Sprite_getHalfWidth(Sprite this);

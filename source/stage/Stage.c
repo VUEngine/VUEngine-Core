@@ -305,7 +305,7 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	this->stageDefinition = stageDefinition;
 
 	// set optical values
-	Camera_setOptical(Camera_getInstance(), this->stageDefinition->rendering.optical);
+	Camera_setOptical(Camera_getInstance(), Optical_getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
 
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
@@ -644,8 +644,8 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 	stageEntityDescription->internalId = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;
 
-	Vector3D environmentPosition3D = {0, 0, 0};
-	stageEntityDescription->pixelRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition3D);
+	PixelVector environmentPosition = {0, 0, 0, 0};
+	stageEntityDescription->pixelRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition);
 
 	int x = stageEntityDescription->positionedEntity->position.x;
 	int y = stageEntityDescription->positionedEntity->position.y;
@@ -1042,7 +1042,10 @@ bool Stage_stream(Stage this)
 	ASSERT(this, "Stage::stream: null this");
 
 #ifdef __SHOW_STREAMING_PROFILING
-	EntityFactory_showStatus(this->entityFactory, 25, 3);
+	if(!Game_isInSpecialMode(Game_getInstance()))
+	{
+		EntityFactory_showStatus(this->entityFactory, 25, 3);
+	}
 #endif
 
 	if(Stage_processRemovedChildrenProgressively(this))
@@ -1200,7 +1203,7 @@ void Stage_resume(Stage this)
 	ASSERT(this, "Stage::resume: null this");
 
 	// set back optical values
-	Camera_setOptical(Camera_getInstance(), this->stageDefinition->rendering.optical);
+	Camera_setOptical(Camera_getInstance(), Optical_getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
 
 	// set physics
 	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.frictionCoefficient);

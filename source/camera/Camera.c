@@ -107,19 +107,19 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 
 	// accounts for the physical (real) space between the eyes and
 	// the VB's screens, whose virtual representation is the Camera instance
-	this->optical.distanceEyeScreen = __I_TO_FIX10_6(__DISTANCE_EYE_SCREEN);
+	this->optical.distanceEyeScreen = __PIXELS_TO_METERS(__DISTANCE_EYE_SCREEN);
 
 	// maximum distance from the _SC to the infinite
-	this->optical.maximumViewDistancePower = __MAXIMUM_VIEW_DISTANCE_POWER;
+	this->optical.maximumViewDistancePower = __PIXELS_TO_METERS(__MAXIMUM_VIEW_DISTANCE_POWER);
 
 	// distance from left to right eye (depth sensation)
-	this->optical.baseDistance = __I_TO_FIX10_6(256);
+	this->optical.baseDistance = __PIXELS_TO_METERS(__BASE_FACTOR);
 
 	// horizontal view point center
-	this->optical.horizontalViewPointCenter = __I_TO_FIX10_6(__HORIZONTAL_VIEW_POINT_CENTER);
+	this->optical.horizontalViewPointCenter = __PIXELS_TO_METERS(__HORIZONTAL_VIEW_POINT_CENTER);
 
 	// vertical view point center
-	this->optical.verticalViewPointCenter = __I_TO_FIX10_6(__VERTICAL_VIEW_POINT_CENTER);
+	this->optical.verticalViewPointCenter = __PIXELS_TO_METERS(__VERTICAL_VIEW_POINT_CENTER);
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;

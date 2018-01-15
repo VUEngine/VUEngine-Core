@@ -39,13 +39,10 @@
 //												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-fix10_6 Optics_calculateParallax(fix10_6 x, fix10_6 z)
+s16 Optics_calculateParallax(fix10_6 x, fix10_6 z)
 {
 	fix10_6 leftEyePoint, rightEyePoint;
 	fix10_6 leftEyeGx, rightEyeGx;
-
-	// z is in meters, need to be in pixels
-	z <<= __PIXELS_PER_METER_2_POWER;
 
 	ASSERT(0 <= _optical->baseDistance, "Optics::calculateParallax: baseDistance < 0");
 
@@ -55,5 +52,5 @@ fix10_6 Optics_calculateParallax(fix10_6 x, fix10_6 z)
 	leftEyeGx = x - __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
 	rightEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
-	return (rightEyeGx - leftEyeGx) / __PARALLAX_CORRECTION_FACTOR;
+	return __METERS_TO_PIXELS(__ABS(rightEyeGx - leftEyeGx) >> 1);
 }

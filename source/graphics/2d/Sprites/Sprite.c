@@ -79,7 +79,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
-	this->displacement = (Vector2D){0, 0, 0, 0};
+	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->hidden = false;
 	this->visible = true;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : false;
@@ -142,8 +142,8 @@ void Sprite_resize(Sprite this, Scale scale __attribute__ ((unused)), fix10_6 z 
 {
 	ASSERT(this, "Sprite::resize: null this");
 
-	this->halfWidth = __I_TO_FIX10_6((int)Texture_getCols(this->texture) << 2);
-	this->halfHeight = __I_TO_FIX10_6((int)Texture_getRows(this->texture) << 2);
+	this->halfWidth = Texture_getCols(this->texture) << 2;
+	this->halfHeight = Texture_getRows(this->texture) << 2;
 }
 
 /**
@@ -574,7 +574,7 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
  *
  * @return
  */
-Vector2D Sprite_getDisplacement(Sprite this)
+PixelVector Sprite_getDisplacement(Sprite this)
 {
 	ASSERT(this, "Sprite::getDisplacement: null this");
 
@@ -609,7 +609,7 @@ int Sprite_getHalfWidth(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfWidth: null this");
 
-	return __FIX10_6_TO_I(this->halfWidth);
+	return this->halfWidth;
 }
 
 /**
@@ -626,7 +626,7 @@ int Sprite_getHalfHeight(Sprite this)
 {
 	ASSERT(this, "Sprite::getHalfHeight: null this");
 
-	return __FIX10_6_TO_I(this->halfHeight);
+	return this->halfHeight;
 }
 
 
@@ -1050,10 +1050,10 @@ void Sprite_print(Sprite this, int x, int y)
 	Printing_text(Printing_getInstance(), Sprite_isTransparent(this) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
 
 	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).x), x + 14, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(__VIRTUAL_CALL(Sprite, getPosition, this).y), x + 22, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z), x + 30, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__VIRTUAL_CALL(Sprite, getPosition, this).parallax), x + 38, y, NULL);
+	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).x, x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).y, x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z, x + 30, y, NULL);
+	Printing_float(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).parallax, x + 38, y, NULL);
 	Printing_text(Printing_getInstance(), "G (x, y, p):                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGX(this), x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), Sprite_getWorldGY(this), x + 24, y, NULL);

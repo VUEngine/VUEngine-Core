@@ -44,10 +44,9 @@ inline fix10_6 Vector3D_length(Vector3D vector);
 inline fix19_13 Vector3D_squareLength(Vector3D vector);
 inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
 inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
-inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax);
+inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax);
 inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector);
 inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D);
-inline PixelVector PixelVector_getFromVector2D(Vector2D vector2D);
 inline Size Size_getFromPixelSize(PixelSize pixelSize);
 
 
@@ -139,19 +138,19 @@ inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D)
 	return vector3D;
 }
 
-inline Vector2D Vector3D_projectToVector2D(Vector3D vector3D, fix10_6 parallax)
+inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax)
 {
 	extern const Optical* _optical;
 
-	vector3D.x <<= __PIXELS_PER_METER_2_POWER;
-	vector3D.y <<= __PIXELS_PER_METER_2_POWER;
-	vector3D.z <<= __PIXELS_PER_METER_2_POWER;
+	fix10_6_ext x = (fix10_6_ext)vector3D.x;
+	fix10_6_ext y = (fix10_6_ext)vector3D.y;
+	fix10_6_ext z = (fix10_6_ext)vector3D.z;
 
-	Vector2D projection =
+	PixelVector projection =
 	{
-		vector3D.x - (__FIX10_6_EXT_MULT(vector3D.x - _optical->horizontalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
-		vector3D.y - (__FIX10_6_EXT_MULT(vector3D.y - _optical->verticalViewPointCenter, vector3D.z) >> _optical->maximumViewDistancePower),
-		vector3D.z >> __PIXELS_PER_METER_2_POWER,
+		__METERS_TO_PIXELS(x - (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumViewDistancePower)),
+		__METERS_TO_PIXELS(y - (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumViewDistancePower)),
+		z,
 		parallax
 	};
 
@@ -174,17 +173,8 @@ inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D)
 	{
 		__METERS_TO_PIXELS(vector3D.x),
 		__METERS_TO_PIXELS(vector3D.y),
-		__METERS_TO_PIXELS(vector3D.z)
-	};
-}
-
-inline PixelVector PixelVector_getFromVector2D(Vector2D vector2D)
-{
-	return (PixelVector)
-	{
-		__FIX10_6_TO_I(vector2D.x),
-		__FIX10_6_TO_I(vector2D.y),
-		__FIX10_6_TO_I(vector2D.z)
+		__METERS_TO_PIXELS(vector3D.z),
+		0
 	};
 }
 
@@ -198,7 +188,6 @@ inline Size Size_getFromPixelSize(PixelSize pixelSize)
 	};
 }
 
-
 inline PixelSize PixelSize_getFromSize(Size size)
 {
 	return (PixelSize)
@@ -206,6 +195,18 @@ inline PixelSize PixelSize_getFromSize(Size size)
 		__METERS_TO_PIXELS(size.x),
 		__METERS_TO_PIXELS(size.y),
 		__METERS_TO_PIXELS(size.z)
+	};
+}
+
+inline Optical Optical_getFromPixelOptical(PixelOptical pixelOptical)
+{
+	return (Optical)
+	{
+		pixelOptical.maximumViewDistancePower,
+		__PIXELS_TO_METERS(pixelOptical.distanceEyeScreen),
+		__PIXELS_TO_METERS(pixelOptical.baseDistance),
+		__PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter),
+		__PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter),
 	};
 }
 

@@ -179,7 +179,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	Vector3D normalizedCenter = this->center;
 	normalizedCenter = Vector3D_getRelativeToCamera(normalizedCenter);
-	Vector2D normalizedCenter2D = Vector3D_projectToVector2D(normalizedCenter, 0);
+	PixelVector normalizedCenter2D = Vector3D_projectToPixelVector(normalizedCenter, 0);
 
 	fix10_6 radiusSquare = __FIX10_6_MULT(this->radius, this->radius);
 
@@ -195,7 +195,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.y = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x, point3D.y, point3D.z};
-		Vector2D relativePoint2D = Vector3D_projectToVector2D(translatedPoint3D, 0);
+		PixelVector relativePoint2D = Vector3D_projectToPixelVector(translatedPoint3D, 0);
 
 		if(calculateParallax)
 		{
@@ -203,7 +203,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		}
 
 		{
-			Vector2D absolutePoint2D =
+			PixelVector absolutePoint2D =
 			{
 				normalizedCenter2D.x + relativePoint2D.x,
 				normalizedCenter2D.y + relativePoint2D.y,
@@ -215,7 +215,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		}
 
 		{
-			Vector2D absolutePoint2D =
+			PixelVector absolutePoint2D =
 			{
 				normalizedCenter2D.x + relativePoint2D.x,
 				normalizedCenter2D.y - relativePoint2D.y,
@@ -237,7 +237,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.y = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D);
+		PixelVector point2D = Vector3D_projectToPixelVector(translatedPoint3D);
 
 		if(calculateParallax)
 		{
@@ -260,7 +260,7 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 		point3D.z = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		Vector2D point2D = Vector3D_projectToVector2D(translatedPoint3D, 0);
+		PixelVector point2D = Vector3D_projectToPixelVector(translatedPoint3D, 0);
 
 		if(calculateParallax)
 		{

@@ -61,18 +61,6 @@ typedef struct PixelSize
 
 } PixelSize;
 
-// used to represent a screen position with parallax info
-typedef struct Vector2D
-{
-	fix10_6 x;
-	fix10_6 y;
-
-	// since parallax may be the same given different z positions
-	// it's needed to have this value to being able to order WORLD layers
-	fix10_6 z;
-	fix10_6 parallax;
-
-} Vector2D;
 
 // spatial position
 typedef struct Vector3D
@@ -83,12 +71,14 @@ typedef struct Vector3D
 
 } Vector3D;
 
-// spatial position in screen coordinates
+// used to represent a screen position with parallax info
 typedef struct PixelVector
 {
 	s16 x;
 	s16 y;
+	// it is used for WORLD sorting and having micromanagement allows for easier sorting
 	s16 z;
+	s16 parallax;
 
 } PixelVector;
 
@@ -143,13 +133,25 @@ typedef struct Direction
 // engine's optical values structure
 typedef struct Optical
 {
-	int maximumViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumViewDistancePower;		// maximum distance from the screen to the infinite
 	fix10_6 distanceEyeScreen;
 	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;	// horizontal View point center
 	fix10_6 verticalViewPointCenter;	// vertical View point center
 
 } Optical;
+
+// engine's optical values structure
+typedef struct PixelOptical
+{
+	u16 maximumViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 distanceEyeScreen;
+	u16 baseDistance;				// distance from left to right eye (depth perception)
+	s16 horizontalViewPointCenter;	// horizontal View point center
+	s16 verticalViewPointCenter;	// vertical View point center
+
+} PixelOptical;
+
 
 // define a 2d point
 typedef struct Point
@@ -197,7 +199,7 @@ typedef struct TexturePadding
 typedef struct DrawSpec
 {
 	// spatial position	with parallax info
-	Vector2D position;
+	PixelVector position;
 
 	// bgmap's source coordinates
 	TextureSource textureSource;

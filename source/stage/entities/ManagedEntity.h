@@ -58,7 +58,7 @@ __CLASS(ManagedEntity);
 		/* sprites' list */																				\
 		VirtualList managedSprites;																		\
 		/* previous 2d projected position */															\
-		Vector2D previous2DPosition;																		\
+		PixelVector previous2DPosition;																		\
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -142,7 +142,14 @@ __CLASS(Printing);
 		 */																								\
 		u8 palette;																						\
 
-typedef struct PixelSize FontSize;
+// size in pixels
+typedef struct FontSize
+{
+	u16 x;
+	u16 y;
+
+} FontSize;
+
 
 /**
  * A font

@@ -233,7 +233,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
-	fix10_6 availableObjects = __AVAILABLE_CHAR_OBJECTS;
+	int availableObjects = __AVAILABLE_CHAR_OBJECTS;
 #ifndef __RELEASE
 	s16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
 #endif
@@ -254,7 +254,7 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 
 		if(this->objectSpriteContainers[i])
 		{
-			Vector2D position =
+			PixelVector position =
 			{
 					0, 0, __PIXELS_TO_METERS(z[i] + i), 0
 			};
@@ -286,7 +286,7 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
 
 	if(spt < __TOTAL_OBJECT_SEGMENTS)
 	{
-		Vector2D position =
+		PixelVector position =
 		{
 				0, 0, z, 0
 		};

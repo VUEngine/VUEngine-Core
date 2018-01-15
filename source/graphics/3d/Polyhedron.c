@@ -175,8 +175,8 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 		Vector3D toVertex3D = {0, 0, 0};
 
 		// 2d vertices
-		Vector2D fromVertex2D = {0, 0, 0, 0};
-		Vector2D toVertex2D = {0, 0, 0, 0};
+		PixelVector fromVertex2D = {0, 0, 0, 0};
+		PixelVector toVertex2D = {0, 0, 0, 0};
 
 		// draw the lines
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
@@ -188,8 +188,8 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 			toVertex3D = Vector3D_getRelativeToCamera(toVertex3D);
 
 			// project to 2d coordinates
-			fromVertex2D = Vector3D_projectToVector2D(fromVertex3D, 0);
-			toVertex2D = Vector3D_projectToVector2D(toVertex3D, 0);
+			fromVertex2D = Vector3D_projectToPixelVector(fromVertex3D, 0);
+			toVertex2D = Vector3D_projectToPixelVector(toVertex3D, 0);
 
 			// calculate parallax
 			if(calculateParallax)

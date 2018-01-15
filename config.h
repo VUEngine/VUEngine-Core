@@ -105,10 +105,10 @@
 #define __DISTANCE_EYE_SCREEN					384
 
 // Maximum view distance (depth) (power of two)
-#define __MAXIMUM_VIEW_DISTANCE_POWER			9
+#define __MAXIMUM_VIEW_DISTANCE_POWER			5
 
 // Distance between eyes
-#define __BASE_FACTOR							96
+#define __BASE_FACTOR							32
 
 // Player's eyes' horizontal position
 #define __HORIZONTAL_VIEW_POINT_CENTER			__SCREEN_WIDTH / 2

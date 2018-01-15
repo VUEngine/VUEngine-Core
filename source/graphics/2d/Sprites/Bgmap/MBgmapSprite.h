@@ -122,12 +122,12 @@ __CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefi
 void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
 void MBgmapSprite_destructor(MBgmapSprite this);
 
-void MBgmapSprite_addDisplacement(MBgmapSprite this, const Vector2D* displacement);
-Vector2D MBgmapSprite_getPosition(MBgmapSprite this);
+void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement);
+PixelVector MBgmapSprite_getPosition(MBgmapSprite this);
 void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position);
 void MBgmapSprite_render(MBgmapSprite this);
 void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z);
-void MBgmapSprite_setPosition(MBgmapSprite this, const Vector2D* position);
+void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position);
 void MBgmapSprite_setMode(MBgmapSprite this, u16 display, u16 mode);
 bool MBgmapSprite_writeTextures(MBgmapSprite this);
 bool MBgmapSprite_areTexturesWritten(MBgmapSprite this);
