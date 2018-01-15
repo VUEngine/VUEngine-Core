@@ -657,18 +657,18 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(Collis
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
-	if(Vector3D_squareLength(distanceVector) < __FIX10_6_MULT(radiusesLength, radiusesLength))
+	if(Vector3D_squareLength(distanceVector) < __FIX10_6_EXT_MULT(radiusesLength, radiusesLength))
 	{
 		fix10_6 distanceVectorLength = Vector3D_length(distanceVector);
 
 		// add padding to prevent rounding problems
 		solutionVector.magnitude = radiusesLength - distanceVectorLength + __PIXELS_TO_METERS(1);
 		solutionVector.direction = Vector3D_normalize(distanceVector);
-	}
 
-	if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)
-	{
-		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)
+		{
+			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+		}
 	}
 
 	return solutionVector;
