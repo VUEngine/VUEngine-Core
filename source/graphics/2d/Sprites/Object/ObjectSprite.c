@@ -272,7 +272,7 @@ void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z)
 	ASSERT(this, "ObjectSprite::calculateParallax: null this");
 
 	this->position.z = z - _cameraPosition->z;
-	this->position.parallax = Optics_calculateParallax(this->position.x, z);
+	this->position.parallax = Optics_calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
 }
 
 /**

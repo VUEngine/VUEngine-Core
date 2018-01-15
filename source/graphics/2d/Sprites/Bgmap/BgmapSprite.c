@@ -345,7 +345,7 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z)
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
 	this->drawSpec.position.z = z - _cameraPosition->z;
-	this->drawSpec.position.parallax = Optics_calculateParallax(this->drawSpec.position.x, z);
+	this->drawSpec.position.parallax = Optics_calculateParallax(__PIXELS_TO_METERS(this->drawSpec.position.x), z);
 }
 
 /**

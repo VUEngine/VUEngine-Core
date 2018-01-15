@@ -1268,7 +1268,7 @@ inline static void Game_run(Game this)
 	Game_dispatchDelayedMessages(this);
 
 	// skip streaming if the game frame has been too busy
-	if(!skipNonCriticalProcesses)
+	//if(!skipNonCriticalProcesses)
 	{
 		// stream
 		Game_stream(this);

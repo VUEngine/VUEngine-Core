@@ -32,10 +32,10 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __FORCE_PRINTING_LAYER
 
 #undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						10
+#define __TIMER_RESOLUTION						1
 
-//#undef __SAFE_CAST
-//#define __SAFE_CAST(ClassName, object) (ClassName)object
+#undef __SAFE_CAST
+#define __SAFE_CAST(ClassName, object) (ClassName)object
 
 // do not delete the following macros!
 

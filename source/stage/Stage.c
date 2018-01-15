@@ -56,11 +56,11 @@
 #define __STREAMING_CYCLES		5
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		(- __MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
 #define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageDefinition->streaming.loadPadding)
-#define __LOAD_LOW_Y_LIMIT		(- this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_Y_LIMIT		(-this->stageDefinition->streaming.loadPadding)
 #define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->stageDefinition->streaming.loadPadding)
-#define __LOAD_LOW_Z_LIMIT		(- this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_Z_LIMIT		(-this->stageDefinition->streaming.loadPadding)
 #define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->stageDefinition->streaming.loadPadding)
 
 
@@ -239,6 +239,10 @@ static int Stage_isEntityInLoadRange(Stage this, PixelVector position, const Pix
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
+	position.x -= __METERS_TO_PIXELS(_cameraPosition->x);
+	position.y -= __METERS_TO_PIXELS(_cameraPosition->y);
+	position.z -= __METERS_TO_PIXELS(_cameraPosition->z);
+
 	// check x visibility
 	if(position.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
 	{
@@ -256,27 +260,6 @@ static int Stage_isEntityInLoadRange(Stage this, PixelVector position, const Pix
 	{
 		return false;
 	}
-
-		// make sure there are fonts to show the exception
-	//	Printing_setDebugMode(Printing_getInstance());
-
-//		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.x) + pixelRightBox->x0, 1, 18, NULL);
-//		Printing_float(Printing_getInstance(), position.x + pixelRightBox->x0, 1, 18, NULL);
-/*		Printing_float(Printing_getInstance(), position.x , 1, 18, NULL);
-		Printing_int(Printing_getInstance(), (pixelRightBox->x0), 10, 18, NULL);
-		Printing_int(Printing_getInstance(), (pixelRightBox->x1), 20, 18, NULL);
-		Printing_float(Printing_getInstance(), (__LOAD_HIGHT_X_LIMIT), 10, 19, NULL);
-//		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.x) + pixelRightBox->x1, 1, 19, NULL);
-/*		Printing_float(Printing_getInstance(), position.x + pixelRightBox->x1, 1, 19, NULL);
-		Printing_float(Printing_getInstance(), (__LOAD_LOW_X_LIMIT), 10, 19, NULL);
-
-		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.y) + pixelRightBox->y0, 1, 22, NULL);
-		Printing_float(Printing_getInstance(), (__LOAD_HIGHT_Y_LIMIT), 10, 22, NULL);
-		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(position2D.y) + pixelRightBox->y1, 1, 23, NULL);
-		Printing_float(Printing_getInstance(), (__LOAD_LOW_Y_LIMIT), 10, 23, NULL);
-*/
-
-//		ASSERT(false, "test2");
 
 	return true;
 }
@@ -851,9 +834,9 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 
 	bool loadedEntities = false;
-	int xCameraPosition = __FIX10_6_TO_I(_cameraPosition->x) + (__HALF_SCREEN_WIDTH);
-	int yCameraPosition = __FIX10_6_TO_I(_cameraPosition->y) + (__HALF_SCREEN_HEIGHT);
-	int zCameraPosition = __FIX10_6_TO_I(_cameraPosition->z) + (__HALF_SCREEN_DEPTH);
+	int xCameraPosition = __METERS_TO_PIXELS(_cameraPosition->x) + (__HALF_SCREEN_WIDTH);
+	int yCameraPosition = __METERS_TO_PIXELS(_cameraPosition->y) + (__HALF_SCREEN_HEIGHT);
+	int zCameraPosition = __METERS_TO_PIXELS(_cameraPosition->z) + (__HALF_SCREEN_DEPTH);
 
 	long cameraDistance = ((long)xCameraPosition * (long)xCameraPosition +
 							(long)yCameraPosition * (long)yCameraPosition +
@@ -1291,9 +1274,9 @@ static void Stage_setFocusEntity(Stage this, Entity focusEntity)
 		Object_addEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
 		Vector3D focusEntityPosition = *Container_getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
-		focusEntityPosition.x = __FIX10_6_TO_I(focusEntityPosition.x);
-		focusEntityPosition.y = __FIX10_6_TO_I(focusEntityPosition.y);
-		focusEntityPosition.z = __FIX10_6_TO_I(focusEntityPosition.z);
+		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);
+		focusEntityPosition.y = __METERS_TO_PIXELS(focusEntityPosition.y);
+		focusEntityPosition.z = __METERS_TO_PIXELS(focusEntityPosition.z);
 
 		this->cameraPreviousDistance = (long)focusEntityPosition.x * (long)focusEntityPosition.x +
 											(long)focusEntityPosition.y * (long)focusEntityPosition.y +
