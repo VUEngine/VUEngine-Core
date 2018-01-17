@@ -52,5 +52,5 @@ s16 Optics_calculateParallax(fix10_6 x, fix10_6 z)
 	leftEyeGx = x - __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((x - leftEyePoint) , (z)) , (_optical->distanceEyeScreen + z));
 	rightEyeGx = x + __FIX10_6_EXT_DIV(__FIX10_6_EXT_MULT((rightEyePoint - x) , (z)) , (_optical->distanceEyeScreen + z));
 
-	return __METERS_TO_PIXELS(__ABS(rightEyeGx - leftEyeGx) >> 1);
+	return __METERS_TO_PIXELS((rightEyeGx - leftEyeGx) / 2);
 }

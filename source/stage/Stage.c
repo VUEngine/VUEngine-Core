@@ -235,9 +235,17 @@ void Stage_destructor(Stage this)
 }
 
 // determine if a point is visible
-static int Stage_isEntityInLoadRange(Stage this, PixelVector position, const PixelRightBox* pixelRightBox)
+static int Stage_isEntityInLoadRange(Stage this, ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
+
+	PixelVector position =
+	{
+		onScreenPosition.x,
+		onScreenPosition.y,
+		onScreenPosition.z,
+		0
+	};
 
 	position.x -= __METERS_TO_PIXELS(_cameraPosition->x);
 	position.y -= __METERS_TO_PIXELS(_cameraPosition->y);
@@ -630,9 +638,9 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 	PixelVector environmentPosition = {0, 0, 0, 0};
 	stageEntityDescription->pixelRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition);
 
-	int x = stageEntityDescription->positionedEntity->position.x;
-	int y = stageEntityDescription->positionedEntity->position.y;
-	int z = stageEntityDescription->positionedEntity->position.z;
+	int x = stageEntityDescription->positionedEntity->onScreenPosition.x;
+	int y = stageEntityDescription->positionedEntity->onScreenPosition.y;
+	int z = stageEntityDescription->positionedEntity->onScreenPosition.z;
 
 	stageEntityDescription->distance = (x * x + y * y + z * z);
 
@@ -720,7 +728,7 @@ static void Stage_loadInitialEntities(Stage this)
 		if(-1 == stageEntityDescription->internalId)
 		{
 			// if entity in load range
-			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->pixelRightBox))
+			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
 				Entity entity = Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
@@ -886,7 +894,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 				}
 
 				// if entity in load range
-				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->pixelRightBox))
+				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
 				{
 					loadedEntities = true;
 
@@ -928,7 +936,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 				}
 
 				// if entity in load range
-				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->position, &stageEntityDescription->pixelRightBox))
+				if(Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
 				{
 					loadedEntities = true;
 

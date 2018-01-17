@@ -408,7 +408,7 @@ void MBgmapSprite_render(MBgmapSprite this)
 		myDisplacement = _cameraFrustum->y0 - gy;
 	}
 
-	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z + this->displacement.parallax;
+	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.parallax;
 
 	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;

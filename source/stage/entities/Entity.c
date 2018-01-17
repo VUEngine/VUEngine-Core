@@ -516,9 +516,9 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 
 	PixelVector pixelGlobalPosition = *environmentPosition;
 
-	pixelGlobalPosition.x += positionedEntity->position.x;
-	pixelGlobalPosition.y += positionedEntity->position.y;
-	pixelGlobalPosition.z += positionedEntity->position.z;
+	pixelGlobalPosition.x += positionedEntity->onScreenPosition.x;
+	pixelGlobalPosition.y += positionedEntity->onScreenPosition.y;
+	pixelGlobalPosition.z += positionedEntity->onScreenPosition.z;
 
 	s16 left = 0;
 	s16 right = 0;
@@ -701,12 +701,12 @@ PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* position
 
 	Entity_getSizeFromDefinition(positionedEntity, environmentPosition, &pixelRightBox);
 
-	pixelRightBox.x0 = pixelRightBox.x0 - positionedEntity->position.x;
-	pixelRightBox.x1 = pixelRightBox.x1 - positionedEntity->position.x;
-	pixelRightBox.y0 = pixelRightBox.y0 - positionedEntity->position.y;
-	pixelRightBox.y1 = pixelRightBox.y1 - positionedEntity->position.y;
-	pixelRightBox.z0 = pixelRightBox.z0 - positionedEntity->position.z;
-	pixelRightBox.z1 = pixelRightBox.z1 - positionedEntity->position.z;
+	pixelRightBox.x0 = pixelRightBox.x0 - positionedEntity->onScreenPosition.x;
+	pixelRightBox.x1 = pixelRightBox.x1 - positionedEntity->onScreenPosition.x;
+	pixelRightBox.y0 = pixelRightBox.y0 - positionedEntity->onScreenPosition.y;
+	pixelRightBox.y1 = pixelRightBox.y1 - positionedEntity->onScreenPosition.y;
+	pixelRightBox.z0 = pixelRightBox.z0 - positionedEntity->onScreenPosition.z;
+	pixelRightBox.z1 = pixelRightBox.z1 - positionedEntity->onScreenPosition.z;
 
 	return pixelRightBox;
 }
@@ -739,18 +739,18 @@ Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positi
 	{
 		if(!strncmp(childName, childrenDefinitions[i].name, __MAX_CONTAINER_NAME_LENGTH))
 		{
-			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenDefinitions[i].position.x);
-			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenDefinitions[i].position.y);
-			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenDefinitions[i].position.z);
+			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.x);
+			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.y);
+			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.z + childrenDefinitions[i].onScreenPosition.zDisplacement);
 			return &position;
 		}
 
 		if(childrenDefinitions[i].childrenDefinitions)
 		{
 			Vector3D concatenatedEnvironmentPosition = environmentPosition;
-			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenDefinitions[i].position.x);
-			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenDefinitions[i].position.y);
-			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenDefinitions[i].position.z);
+			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.x);
+			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.y);
+			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.z + childrenDefinitions[i].onScreenPosition.zDisplacement);
 
 			Vector3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
 
@@ -854,7 +854,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 	Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
 
-	Vector3D position = Vector3D_getFromPixelVector(positionedEntity->position);
+	Vector3D position = Vector3D_getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
 	__VIRTUAL_CALL(Container, setLocalPosition, entity, &position);
@@ -929,7 +929,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
 		Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
 	}
 
-	Vector3D position = Vector3D_getFromPixelVector(positionedEntity->position);
+	Vector3D position = Vector3D_getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
 	__VIRTUAL_CALL(Container, setLocalPosition, entity, &position);
@@ -970,10 +970,18 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 
 	PixelVector pixelPosition = PixelVector_getFromVector3D(*position);
 
+	ScreenPixelVector screenPixelVector =
+	{
+		pixelPosition.x,
+		pixelPosition.y,
+		pixelPosition.z,
+		0
+	};
+
 	PositionedEntity positionedEntity =
 	{
 		(EntityDefinition*)entityDefinition,
-		pixelPosition,
+		screenPixelVector,
 		this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)),
 		(char*)name,
 		NULL,

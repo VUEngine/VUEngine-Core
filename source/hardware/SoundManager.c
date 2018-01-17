@@ -418,8 +418,8 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 
 			// calculate the amount of sound that reaches each ear
 			//xDistance / (384/15)
-			leftMinus = leftDistance / ((1 << _optical->maximumViewDistancePower) / maxOutputLevel);
-			rightMinus = rightDistance / ((1 << _optical->maximumViewDistancePower) / maxOutputLevel);
+			leftMinus = leftDistance / ((1 << _optical->maximumXViewDistancePower) / maxOutputLevel);
+			rightMinus = rightDistance / ((1 << _optical->maximumXViewDistancePower) / maxOutputLevel);
 
 			leftOutput = maxOutputLevel - leftMinus;
 			rightOutput = maxOutputLevel - rightMinus;

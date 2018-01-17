@@ -68,9 +68,11 @@
 #define __EXCEPTIONS_WORLD		31
 
 // use for faster rounding on fix* values
-#define __1I_FIX7_9 		0x0200
-#define __1I_FIX10_6		0x0040
-#define __0_5F_FIX10_6		0x0020
+#define __1I_FIX7_9 				0x0200
+#define __1I_FIX10_6				0x0040
+#define __0_5F_FIX10_6				0x0020
+#define __0_5PIXELS_TO_METERS		0x0002	// 0.5f to fix10_6 = 32, 32 fix10_6 pixels = 2 fix10_6 meters
+											// __F_TO_FIX10_6(0.5f) >> __PIXELS_PER_METER_2_POWER
 
 // override null definition (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000

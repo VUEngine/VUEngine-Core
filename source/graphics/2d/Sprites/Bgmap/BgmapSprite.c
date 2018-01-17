@@ -308,7 +308,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 	{
 		z -= _cameraPosition->z;
 
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - (z / (1 << _optical->maximumViewDistancePower)));
+		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - (z / (1 << _optical->maximumXViewDistancePower)));
 
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
@@ -433,7 +433,7 @@ void BgmapSprite_render(BgmapSprite this)
 		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
-	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.z + this->displacement.parallax;
+	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.parallax;
 
 	if(w + worldPointer->gx >= _cameraFrustum->x1)
 	{

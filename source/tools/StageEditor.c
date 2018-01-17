@@ -742,15 +742,22 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 	}
 	else if(pressedKey & K_RU)
 	{
-		optical.maximumViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.maximumXViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.maximumYViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
 	}
 	else if(pressedKey & K_RD)
 	{
-		optical.maximumViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.maximumXViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.maximumYViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
 
-		if(0 >= optical.maximumViewDistancePower)
+		if(0 >= optical.maximumXViewDistancePower)
 		{
-			optical.maximumViewDistancePower = 1;
+			optical.maximumXViewDistancePower = 1;
+		}
+
+		if(0 >= optical.maximumYViewDistancePower)
+		{
+			optical.maximumYViewDistancePower = 1;
 		}
 	}
 	else if(pressedKey & K_LT)
@@ -1011,11 +1018,11 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 
 		Vector3D cameraPosition = Camera_getPosition(Camera_getInstance());
 
-		PixelVector position =
+		ScreenPixelVector position =
 		{
 			__METERS_TO_PIXELS(cameraPosition.x) + __HALF_SCREEN_WIDTH,
 			__METERS_TO_PIXELS(cameraPosition.y) + __HALF_SCREEN_HEIGHT,
-			__METERS_TO_PIXELS(cameraPosition.z) + 0,
+			__METERS_TO_PIXELS(cameraPosition.z),
 			0
 		};
 
@@ -1171,8 +1178,10 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
 	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Maximum View Camera:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), (1 << _optical->maximumViewDistancePower), x + 22, y, NULL);
+	Printing_text(Printing_getInstance(), "Maximum X View Distance:            ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), (1 << _optical->maximumXViewDistancePower), x + 22, y, NULL);
+	Printing_text(Printing_getInstance(), "Maximum Y View Distance:            ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), (1 << _optical->maximumYViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 22, y, NULL);
 }

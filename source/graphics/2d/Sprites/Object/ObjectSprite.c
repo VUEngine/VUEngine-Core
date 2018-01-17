@@ -305,7 +305,7 @@ void ObjectSprite_render(ObjectSprite this)
 	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
-	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.z + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
+	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
 	u16 fourthWordValue = (this->head & 0x3000);
 
 	for(; i < rows; i++)

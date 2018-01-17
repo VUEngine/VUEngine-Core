@@ -104,8 +104,11 @@
 // Distance from player's eyes to the virtual screen
 #define __DISTANCE_EYE_SCREEN					384
 
-// Maximum view distance (depth) (power of two)
-#define __MAXIMUM_VIEW_DISTANCE_POWER			5
+// Maximum x view distance (depth) (power of two)
+#define __MAXIMUM_X_VIEW_DISTANCE_POWER			5
+
+// Maximum y view distance (depth) (power of two)
+#define __MAXIMUM_Y_VIEW_DISTANCE_POWER			10
 
 // Distance between eyes
 #define __BASE_FACTOR							32

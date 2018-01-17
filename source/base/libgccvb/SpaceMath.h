@@ -46,6 +46,7 @@ inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
 inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
 inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax);
 inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector);
+inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
 inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D);
 inline Size Size_getFromPixelSize(PixelSize pixelSize);
 
@@ -148,8 +149,8 @@ inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax
 
 	PixelVector projection =
 	{
-		__METERS_TO_PIXELS(x - (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumViewDistancePower)),
-		__METERS_TO_PIXELS(y - (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumViewDistancePower)),
+		__METERS_TO_PIXELS(__0_5PIXELS_TO_METERS + x - (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower)),
+		__METERS_TO_PIXELS(__0_5PIXELS_TO_METERS + y - (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower)),
 		z,
 		parallax
 	};
@@ -157,15 +158,26 @@ inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax
 	return projection;
 }
 
-inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector)
+inline Vector3D Vector3D_getFromPixelVector(PixelVector pixelVector)
 {
 	return (Vector3D)
 	{
-		__PIXELS_TO_METERS(screenVector.x),
-		__PIXELS_TO_METERS(screenVector.y),
-		__PIXELS_TO_METERS(screenVector.z)
+		__PIXELS_TO_METERS(pixelVector.x),
+		__PIXELS_TO_METERS(pixelVector.y),
+		__PIXELS_TO_METERS(pixelVector.z)
 	};
 }
+
+inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelVector)
+{
+	return (Vector3D)
+	{
+		__PIXELS_TO_METERS(screenPixelVector.x),
+		__PIXELS_TO_METERS(screenPixelVector.y),
+		__PIXELS_TO_METERS(screenPixelVector.z + screenPixelVector.zDisplacement)
+	};
+}
+
 
 inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D)
 {
@@ -202,7 +214,8 @@ inline Optical Optical_getFromPixelOptical(PixelOptical pixelOptical)
 {
 	return (Optical)
 	{
-		pixelOptical.maximumViewDistancePower,
+		pixelOptical.maximumXViewDistancePower,
+		pixelOptical.maximumYViewDistancePower,
 		__PIXELS_TO_METERS(pixelOptical.distanceEyeScreen),
 		__PIXELS_TO_METERS(pixelOptical.baseDistance),
 		__PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter),

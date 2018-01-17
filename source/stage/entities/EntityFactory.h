@@ -113,7 +113,7 @@ typedef const struct PositionedEntity
 	EntityDefinition* entityDefinition;
 
 	// position in the screen coordinates
-	PixelVector position;
+	ScreenPixelVector onScreenPosition;
 
 	// entity's id
 	s16 id;

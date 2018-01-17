@@ -662,7 +662,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(Collis
 		fix10_6 distanceVectorLength = Vector3D_length(distanceVector);
 
 		// add padding to prevent rounding problems
-		solutionVector.magnitude = radiusesLength - distanceVectorLength + __PIXELS_TO_METERS(1);
+		solutionVector.magnitude = radiusesLength - distanceVectorLength;
 		solutionVector.direction = Vector3D_normalize(distanceVector);
 
 		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)

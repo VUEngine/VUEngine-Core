@@ -110,7 +110,10 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 	this->optical.distanceEyeScreen = __PIXELS_TO_METERS(__DISTANCE_EYE_SCREEN);
 
 	// maximum distance from the _SC to the infinite
-	this->optical.maximumViewDistancePower = __PIXELS_TO_METERS(__MAXIMUM_VIEW_DISTANCE_POWER);
+	this->optical.maximumXViewDistancePower = __PIXELS_TO_METERS(__MAXIMUM_X_VIEW_DISTANCE_POWER);
+
+	// maximum distance from the _SC to the infinite
+	this->optical.maximumYViewDistancePower = __PIXELS_TO_METERS(__MAXIMUM_Y_VIEW_DISTANCE_POWER);
 
 	// distance from left to right eye (depth sensation)
 	this->optical.baseDistance = __PIXELS_TO_METERS(__BASE_FACTOR);

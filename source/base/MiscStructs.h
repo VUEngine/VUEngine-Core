@@ -76,11 +76,22 @@ typedef struct PixelVector
 {
 	s16 x;
 	s16 y;
-	// it is used for WORLD sorting and having micromanagement allows for easier sorting
 	s16 z;
 	s16 parallax;
 
 } PixelVector;
+
+// used to represent a screen position with z sorting displacement info
+typedef struct ScreenPixelVector
+{
+	s16 x;
+	s16 y;
+	// it is used for WORLD sorting and having micromanagement allows for easier sorting
+	s16 z;
+	s16 zDisplacement;
+
+} ScreenPixelVector;
+
 
 typedef struct Vector3DFlag
 {
@@ -133,7 +144,8 @@ typedef struct Direction
 // engine's optical values structure
 typedef struct Optical
 {
-	u16 maximumViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
 	fix10_6 distanceEyeScreen;
 	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;	// horizontal View point center
@@ -144,7 +156,8 @@ typedef struct Optical
 // engine's optical values structure
 typedef struct PixelOptical
 {
-	u16 maximumViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
 	u16 distanceEyeScreen;
 	u16 baseDistance;				// distance from left to right eye (depth perception)
 	s16 horizontalViewPointCenter;	// horizontal View point center
