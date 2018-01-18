@@ -35,6 +35,8 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -435,7 +437,7 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncreme
 			if(collidingShapeRegistry->solutionVector.magnitude)
 			{
 				fix10_6 cosAngle = Vector3D_dotProduct(collidingShapeRegistry->solutionVector.direction, normalizedDisplacement);
-				canMove &= -__F_TO_FIX10_6(1 - 0.1f) < cosAngle;
+				canMove &= -__F_TO_FIX10_6(1 - 0.01f) < cosAngle;
 			}
 		}
 	}

@@ -220,7 +220,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 					if(kNoCollision != collisionData.result)
 					{
 						this->lastCycleCollisions++;
-						returnValue = true;
 
 						CollisionData* collisionDataEntry = __NEW_BASIC(CollisionData);
 						*collisionDataEntry = collisionData;
@@ -247,6 +246,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 			case kEnterCollision:
 
 				Shape_enterCollision(collisionData->collisionInformation.shape, collisionData);
+				returnValue = true;
 				break;
 
 			case kUpdateCollision:
@@ -266,15 +266,11 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		__DELETE_BASIC(collisionData);
 	}
 
-
-
-
 	__DELETE(collisions);
 
 	this->collisionChecks += this->lastCycleCollisionChecks;
 	this->collisions += this->lastCycleCollisions;
 
-//	CollisionManager_print(this, 25, 1);
 #ifdef __SHOW_PHYSICS_PROFILING
 	CollisionManager_print(this, 25, 1);
 #endif

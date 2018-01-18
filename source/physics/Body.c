@@ -1163,9 +1163,9 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	u = Vector3D_scalarProduct(u, elasticity);
 	w = Vector3D_scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - this->totalFrictionCoefficient));
 
-	this->velocity.x = __UNIFORM_MOVEMENT != this->movementType.x ? w.x - u.x : this->velocity.x;
-	this->velocity.y = __UNIFORM_MOVEMENT != this->movementType.y ? w.y - u.y : this->velocity.y;
-	this->velocity.z = __UNIFORM_MOVEMENT != this->movementType.z ? w.z - u.z : this->velocity.z;
+	this->velocity.x = w.x - u.x;
+	this->velocity.y = w.y - u.y;
+	this->velocity.z = w.z - u.z;
 
 	// determine bouncing result
 	MovementResult movementResult = Body_getBouncingResult(this, velocity, bouncingPlaneNormal);
