@@ -35,7 +35,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(4)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -704,7 +704,6 @@ static CollidingShapeRegistry* Shape_registerCollidingShape(Shape this, Shape co
  * @param this				Function scope
  * @param collidingShape	Colliding shape to remove
  */
-
 static bool Shape_unregisterCollidingShape(Shape this, Shape collidingShape)
 {
 	ASSERT(this, "Shape::removeCollidingShape: null this");
