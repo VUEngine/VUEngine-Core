@@ -445,9 +445,9 @@ Vector3D Body_getLastDisplacement(Body this)
 
 	fix10_6 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
 
-	displacement.x = __FIX10_6_MULT(this->velocity.x, elapsedTime);
-	displacement.y = __FIX10_6_MULT(this->velocity.y, elapsedTime);
-	displacement.z = __FIX10_6_MULT(this->velocity.z, elapsedTime);
+	displacement.x = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x) ? __FIX10_6_MULT(this->velocity.x, elapsedTime) : 0;
+	displacement.y = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y) ? __FIX10_6_MULT(this->velocity.y, elapsedTime) : 0;
+	displacement.z = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.z) ? __FIX10_6_MULT(this->velocity.z, elapsedTime) : 0;
 
 	return displacement;
 }
@@ -477,7 +477,8 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
-	if(previousVelocity.x && !this->externalForce.x && __UNIFORM_MOVEMENT != this->movementType.x && (this->velocity.x | previousVelocity.x))
+	if(previousVelocity.x && __UNIFORM_MOVEMENT != this->movementType.x && (this->velocity.x | previousVelocity.x))
+//	if(previousVelocity.x && !this->externalForce.x && __UNIFORM_MOVEMENT != this->movementType.x && (this->velocity.x | previousVelocity.x))
 	{
 		if(__X_AXIS & movementResult.axesOfChangeOfDirection)
 		{
@@ -492,7 +493,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 		}
 	}
 
-	if(previousVelocity.y && !this->externalForce.y && __UNIFORM_MOVEMENT != this->movementType.y && (this->velocity.y | previousVelocity.y))
+	if(previousVelocity.y && __UNIFORM_MOVEMENT != this->movementType.y && (this->velocity.y | previousVelocity.y))
 	{
 		if(__Y_AXIS & movementResult.axesOfChangeOfDirection)
 		{
@@ -507,7 +508,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 		}
 	}
 
-	if(previousVelocity.z && !this->externalForce.z && __UNIFORM_MOVEMENT != this->movementType.z && (this->velocity.z | previousVelocity.z))
+	if(previousVelocity.z && __UNIFORM_MOVEMENT != this->movementType.z && (this->velocity.z | previousVelocity.z))
 	{
 		if(__Z_AXIS & movementResult.axesOfChangeOfDirection)
 		{
