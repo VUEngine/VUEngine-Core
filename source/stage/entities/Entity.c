@@ -1824,24 +1824,28 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 			PixelSize pixelSize = PixelSize_getFromSize(this->size);
 
+			s16 halfWidth	 = pixelSize.x >> 1;
+			s16 halfHeight	 = pixelSize.y >> 1;
+			s16 halfDepth	 = pixelSize.z >> 1;
+
 			x = spritePosition.x;
 			y = spritePosition.y;
 			z = spritePosition.z;
 
 			// check x visibility
-			if((x + (int)pixelSize.x < -pad) | (x > __SCREEN_WIDTH + pad))
+			if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
 			{
 				continue;
 			}
 
 			// check y visibility
-			if((y + (int)pixelSize.y < -pad) | (y > __SCREEN_HEIGHT + pad))
+			if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
 			{
 				continue;
 			}
 
 			// check z visibility
-			if((z + (int)pixelSize.z < -pad) | (z > __SCREEN_DEPTH + pad))
+			if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
 			{
 				continue;
 			}
