@@ -1862,9 +1862,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 		PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
 
-		s16 halfWidth = __FIX7_9_TO_I(this->size.x >> 1);
-		s16 halfHeight = __FIX7_9_TO_I(this->size.y >> 1);
-		s16 halfDepth = __FIX7_9_TO_I(this->size.z >> 1);
+		s16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
+		s16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
+		s16 halfDepth = __METERS_TO_PIXELS(this->size.z >> 1);
 
 		x = position2D.x;
 		y = position2D.y;

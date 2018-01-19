@@ -35,6 +35,13 @@
 //												DEFINES
 //---------------------------------------------------------------------------------------------------------
 
+// some handy macros
+#define PRINT_TEXT(string, x, y)		Printing_text(Printing_getInstance(), string, x, y, NULL)
+#define PRINT_INT(number, x, y)			Printing_int(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)		Printing_float(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_HEX(number, x, y)			Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
+
+
 // max length of a font's name
 #define __MAX_FONT_NAME_LENGTH		16
 
@@ -122,13 +129,13 @@ __CLASS(Printing);
 		 * @brief			x coordinate for printing WORLD
 		 * @memberof		Printing
 		 */																								\
-		u16 gx;																						\
+		u16 gx;																							\
 		/*
 		 * @var u16			gy
 		 * @brief			y coordinate for printing WORLD
 		 * @memberof		Printing
 		 */																								\
-		u16 gy;																						\
+		u16 gy;																							\
 		/*
 		 * @var u8			mode
 		 * @brief			Printing mode (Default or Debug)
@@ -211,11 +218,8 @@ Printing Printing_getInstance();
 void Printing_destructor(Printing this);
 
 void Printing_clear(Printing this);
-void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
 FontData* Printing_getFontByName(Printing this, const char* font);
 FontSize Printing_getTextSize(Printing this, const char* string, const char* font);
-void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
-void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
 void Printing_loadDebugFont(Printing this);
 void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
 void Printing_render(Printing this, int textLayer);
@@ -226,6 +230,9 @@ void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy);
 void Printing_resetWorldCoordinates(Printing this);
 int Printing_getPixelCount(Printing this);
 void Printing_text(Printing this, const char *string, int x, int y, const char* font);
+void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
+void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
+void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
 
 
 #endif
