@@ -309,6 +309,10 @@
 // Number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY			10
 
+// divisor to speed up physics simulations
+// bigger numbers equal faster computations
+#define __PHYSICS_TIME_ELAPSED_DIVISOR			2
+
 
 //---------------------------------------------------------------------------------------------------------
 //												SOUND
