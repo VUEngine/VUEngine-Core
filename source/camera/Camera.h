@@ -84,10 +84,12 @@ __CLASS(Camera);
 
 typedef struct CameraFrustum
 {
-	u16 x0;
-	u16 y0;
-	u16 x1;
-	u16 y1;
+	s16 x0;
+	s16 y0;
+	s16 x1;
+	s16 y1;
+	s16 z0;
+	s16 z1;
 
 }CameraFrustum;
 

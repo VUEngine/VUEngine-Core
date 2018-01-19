@@ -446,6 +446,11 @@ void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
 		this->cameraFrustum.y0 = this->cameraFrustum.y1 - 1;
 	}
 
+	if(this->cameraFrustum.z0 > this->cameraFrustum.z1)
+	{
+		this->cameraFrustum.z0 = this->cameraFrustum.z1 - 1;
+	}
+
 	if(this->cameraFrustum.x1 > __SCREEN_WIDTH)
 	{
 		this->cameraFrustum.x1 = __SCREEN_WIDTH;
@@ -454,6 +459,12 @@ void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
 	if(this->cameraFrustum.y1 > __SCREEN_HEIGHT)
 	{
 		this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	}
+
+	// 9: 2's power equal to the math type fix10_6
+	if(this->cameraFrustum.z1 > (1 << (9 + __PIXELS_PER_METER_2_POWER)))
+	{
+		this->cameraFrustum.z1 = 0;
 	}
 }
 

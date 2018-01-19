@@ -1092,9 +1092,9 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 22, y, NULL);
 		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getWidth(entity), x + 13, y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getHeight(entity), x + 20, y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getDepth(entity), x + 27, y, NULL);
+		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getWidth(entity)), x + 13, y, NULL);
+		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getHeight(entity)), x + 20, y, NULL);
+		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getDepth(entity)), x + 27, y, NULL);
 		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
 		Printing_text(Printing_getInstance(), Entity_isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 13, y, NULL);
 		Printing_text(Printing_getInstance(), "Children:                  ", x, ++y, NULL);
