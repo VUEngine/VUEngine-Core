@@ -234,8 +234,8 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 	PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
 
-	position2D.x -= this->halfWidth;
-	position2D.y -= this->halfHeight;
+//	position2D.x -= this->halfWidth;
+//	position2D.y -= this->halfHeight;
 
 	MBgmapSprite_setPosition(this, &position2D);
 }
@@ -389,8 +389,8 @@ void MBgmapSprite_render(MBgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
 	// get coordinates
-	int gx = this->drawSpec.position.x + this->displacement.x;
-	int gy = this->drawSpec.position.y + this->displacement.y;
+	int gx = this->drawSpec.position.x + this->displacement.x - this->halfWidth;
+	int gy = this->drawSpec.position.y + this->displacement.y - this->halfHeight;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 

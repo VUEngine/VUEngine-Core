@@ -250,8 +250,8 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 	this->drawSpec.position = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
 
-	this->drawSpec.position.x -= this->halfWidth;
-	this->drawSpec.position.y -= this->halfHeight;
+	//this->drawSpec.position.x -= this->halfWidth;
+	//this->drawSpec.position.y -= this->halfHeight;
 
 	if(!this->worldLayer)
 	{
@@ -398,8 +398,8 @@ void BgmapSprite_render(BgmapSprite this)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = this->drawSpec.position.x + this->displacement.x;
-	int gy = this->drawSpec.position.y + this->displacement.y;
+	int gx = this->drawSpec.position.x + this->displacement.x - this->halfWidth;
+	int gy = this->drawSpec.position.y + this->displacement.y - this->halfHeight;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
