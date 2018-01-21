@@ -99,16 +99,16 @@
 #define __SCREEN_HEIGHT							224
 
 // Screen depth in pixels
-#define __SCREEN_DEPTH							384
+#define __SCREEN_DEPTH							2048
 
 // Distance from player's eyes to the virtual screen
 #define __DISTANCE_EYE_SCREEN					384
 
 // Maximum x view distance (depth) (power of two)
-#define __MAXIMUM_X_VIEW_DISTANCE_POWER			5
+#define __MAXIMUM_X_VIEW_DISTANCE_POWER			6
 
 // Maximum y view distance (depth) (power of two)
-#define __MAXIMUM_Y_VIEW_DISTANCE_POWER			10
+#define __MAXIMUM_Y_VIEW_DISTANCE_POWER			15
 
 // Distance between eyes
 #define __BASE_FACTOR							32
@@ -304,7 +304,7 @@
 //												PHYSICS
 //---------------------------------------------------------------------------------------------------------
 
-#define __GRAVITY								9.8f
+#define __GRAVITY								(2 * 9.8f)
 
 // Number of bodies to check for gravity on each cycle
 #define __BODIES_TO_CHECK_FOR_GRAVITY			10
