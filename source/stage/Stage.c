@@ -89,7 +89,7 @@ typedef struct StageEntityDescription
 	PositionedEntity* positionedEntity;
 	PixelRightBox pixelRightBox;
 	s16 internalId;
-	long distance;
+	u32 distance;
 
 } StageEntityDescription;
 
@@ -250,6 +250,7 @@ static int Stage_isEntityInLoadRange(Stage this, ScreenPixelVector onScreenPosit
 	position.x -= __METERS_TO_PIXELS(_cameraPosition->x);
 	position.y -= __METERS_TO_PIXELS(_cameraPosition->y);
 	position.z -= __METERS_TO_PIXELS(_cameraPosition->z);
+
 
 	// check x visibility
 	if(position.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)
@@ -638,11 +639,11 @@ static StageEntityDescription* Stage_registerEntity(Stage this __attribute__ ((u
 	PixelVector environmentPosition = {0, 0, 0, 0};
 	stageEntityDescription->pixelRightBox = Entity_getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition);
 
-	int x = stageEntityDescription->positionedEntity->onScreenPosition.x;
-	int y = stageEntityDescription->positionedEntity->onScreenPosition.y;
-	int z = stageEntityDescription->positionedEntity->onScreenPosition.z;
+	int x = stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2;
+	int y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
+	int z = stageEntityDescription->positionedEntity->onScreenPosition.z - (stageEntityDescription->pixelRightBox.z1 - stageEntityDescription->pixelRightBox.z0) / 2;
 
-	stageEntityDescription->distance = (x * x + y * y + z * z);
+	stageEntityDescription->distance = x * x + y * y + z * z;
 
 	return stageEntityDescription;
 }
@@ -842,13 +843,12 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 #endif
 
 	bool loadedEntities = false;
-	int xCameraPosition = __METERS_TO_PIXELS(_cameraPosition->x) + (__HALF_SCREEN_WIDTH);
-	int yCameraPosition = __METERS_TO_PIXELS(_cameraPosition->y) + (__HALF_SCREEN_HEIGHT);
-	int zCameraPosition = __METERS_TO_PIXELS(_cameraPosition->z) + (__HALF_SCREEN_DEPTH);
 
-	long cameraDistance = ((long)xCameraPosition * (long)xCameraPosition +
-							(long)yCameraPosition * (long)yCameraPosition +
-							(long)zCameraPosition * (long)zCameraPosition);
+	PixelVector cameraPosition = PixelVector_getFromVector3D(*_cameraPosition);
+
+	u32 cameraDistance = (cameraPosition.x * cameraPosition.x +
+							cameraPosition.y * cameraPosition.y +
+							cameraPosition.z * cameraPosition.z);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
 	u16 amplitude = this->stageDefinition->streaming.streamingAmplitude;
