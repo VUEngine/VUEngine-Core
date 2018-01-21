@@ -426,8 +426,10 @@ void Camera_resetCameraFrustum(Camera this)
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
+	this->cameraFrustum.z0 = 0;
 	this->cameraFrustum.x1 = __SCREEN_WIDTH;
 	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
+	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 }
 
 void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
