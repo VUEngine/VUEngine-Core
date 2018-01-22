@@ -1078,9 +1078,22 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 
 	MovementResult movementResult = {__NO_AXIS, __NO_AXIS, __NO_AXIS, __NO_AXIS};
 
-	movementResult.axesOfChangeOfMovement |= this->velocity.x ^ previousVelocity.x ? __X_AXIS : __NO_AXIS;
-	movementResult.axesOfChangeOfMovement |= this->velocity.y ^ previousVelocity.y ? __Y_AXIS : __NO_AXIS;
-	movementResult.axesOfChangeOfMovement |= this->velocity.z ^ previousVelocity.z ? __Z_AXIS : __NO_AXIS;
+	Vector3D aux =
+	{
+		this->velocity.x ^ previousVelocity.x,
+		this->velocity.y ^ previousVelocity.y,
+		this->velocity.z ^ previousVelocity.z,
+	};
+
+	// xor values, if result != 0, there is movement
+	movementResult.axesOfChangeOfMovement |= aux.x ? __X_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= aux.y ? __Y_AXIS : __NO_AXIS;
+	movementResult.axesOfChangeOfMovement |= aux.z ? __Z_AXIS : __NO_AXIS;
+
+	// xor values, if result >= 0, there is no change in direction
+	movementResult.axesOfChangeOfDirection |= 0 <= aux.x ? __NO_AXIS : __X_AXIS;
+	movementResult.axesOfChangeOfDirection |= 0 <= aux.y ? __NO_AXIS : __Y_AXIS;
+	movementResult.axesOfChangeOfDirection |= 0 <= aux.z ? __NO_AXIS : __Z_AXIS;
 
 	// stop if minimum velocity threshold is not reached
 	// and if there is possible movement in the other components
