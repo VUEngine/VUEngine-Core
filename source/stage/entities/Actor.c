@@ -722,3 +722,10 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((
 		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 }
+
+Body Actor_getBody(Actor this)
+{
+	ASSERT(this, "Actor::getBody: null this");
+
+	return this->body;
+}

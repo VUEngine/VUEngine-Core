@@ -144,7 +144,7 @@ void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotCollidingAnymore
 void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
-
+Body Actor_getBody(Actor this);
 
 
 #endif
