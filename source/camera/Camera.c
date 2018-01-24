@@ -308,9 +308,9 @@ void Camera_setPosition(Camera this, Vector3D position)
 
 	this->position = position;
 
-	this->lastDisplacement.x = __1I_FIX10_6;
-	this->lastDisplacement.y = __1I_FIX10_6;
-	this->lastDisplacement.z = __1I_FIX10_6;
+	this->lastDisplacement.x = __PIXELS_TO_METERS(1);
+	this->lastDisplacement.y = __PIXELS_TO_METERS(1);
+	this->lastDisplacement.z = __PIXELS_TO_METERS(1);
 
 	Camera_capPosition(this);
 }
