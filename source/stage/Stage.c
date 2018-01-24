@@ -86,10 +86,10 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
  */
 typedef struct StageEntityDescription
 {
-	PositionedEntity* positionedEntity;
 	PixelRightBox pixelRightBox;
-	s16 internalId;
+	PositionedEntity* positionedEntity;
 	u32 distance;
+	s16 internalId;
 
 } StageEntityDescription;
 
