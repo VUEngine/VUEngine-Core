@@ -183,15 +183,15 @@
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
 	__BLOCK_DEFINITION(164, 1)																			\
-	__BLOCK_DEFINITION(152, 5)																			\
+	__BLOCK_DEFINITION(152, 10)																			\
 	__BLOCK_DEFINITION(140, 10)																			\
 	__BLOCK_DEFINITION(116, 30)																			\
 	__BLOCK_DEFINITION(108, 40)																			\
 	__BLOCK_DEFINITION(80, 50)																			\
 	__BLOCK_DEFINITION(68, 60)																			\
 	__BLOCK_DEFINITION(40, 30)																			\
-	__BLOCK_DEFINITION(28, 260)																			\
-	__BLOCK_DEFINITION(20, 600)																			\
+	__BLOCK_DEFINITION(28, 300)																			\
+	__BLOCK_DEFINITION(20, 650)																			\
 	__BLOCK_DEFINITION(16, 350)																			\
 
 #undef __SET_MEMORY_POOL_ARRAYS
