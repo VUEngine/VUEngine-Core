@@ -1864,7 +1864,8 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-		PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
+//		PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
+		PixelVector position2D = PixelVector_getFromVector3D(position3D);
 
 		s16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
 		s16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
@@ -1875,19 +1876,19 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 		z = position2D.z;
 
 		// check x visibility
-		if((x + halfWidth <= -pad) | (x - halfWidth >= __SCREEN_WIDTH + pad))
+		if((x + halfWidth < _cameraFrustum->x0 - pad) || (x - halfWidth > _cameraFrustum->x1 + pad))
 		{
 			return false;
 		}
 
 		// check y visibility
-		if((y + halfHeight <= -pad) | (y - halfHeight >= __SCREEN_HEIGHT + pad))
+		if((y + halfHeight < _cameraFrustum->y0 - pad) || (y - halfHeight > _cameraFrustum->y1 + pad))
 		{
 			return false;
 		}
 
 		// check z visibility
-		if((z + halfDepth <= -pad) | (z - halfDepth >= __SCREEN_DEPTH + pad))
+		if((z + halfDepth < _cameraFrustum->z0 - pad) || (z - halfDepth > _cameraFrustum->z1 + pad))
 		{
 			return false;
 		}
