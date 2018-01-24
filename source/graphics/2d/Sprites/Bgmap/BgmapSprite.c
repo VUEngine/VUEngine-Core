@@ -250,9 +250,6 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 	this->drawSpec.position = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
 
-	//this->drawSpec.position.x -= this->halfWidth;
-	//this->drawSpec.position.y -= this->halfHeight;
-
 	if(!this->worldLayer)
 	{
 		// register with sprite manager
@@ -344,7 +341,7 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
-	this->drawSpec.position.z = z - _cameraPosition->z;
+	this->drawSpec.position.z = __METERS_TO_PIXELS(z - _cameraPosition->z);
 	this->drawSpec.position.parallax = Optics_calculateParallax(__PIXELS_TO_METERS(this->drawSpec.position.x), z);
 }
 

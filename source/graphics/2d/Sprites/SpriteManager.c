@@ -387,7 +387,7 @@ void SpriteManager_sortLayers(SpriteManager this)
 				PixelVector nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
-				if(__METERS_TO_PIXELS(nextPosition.z) + nextSprite->displacement.z < __METERS_TO_PIXELS(position.z) + sprite->displacement.z)
+				if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 				{
 					// get each entity's layer
 					u8 worldLayer1 = sprite->worldLayer;
@@ -435,7 +435,7 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 			PixelVector nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 			// check if z positions are swapped
-			if(__METERS_TO_PIXELS(nextPosition.z) + nextSprite->displacement.z < __METERS_TO_PIXELS(position.z) + sprite->displacement.z)
+			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
 				Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
