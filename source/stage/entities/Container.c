@@ -298,6 +298,18 @@ void Container_processRemovedChildren(Container this)
 	// remove each child
 	for(; node ; node = node->next)
 	{
+#ifndef __RELEASE
+		if(!__IS_OBJECT_ALIVE(node->data))
+		{
+			Printing_setDebugMode(Printing_getInstance());
+			Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
+			Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
+			Printing_text(Printing_getInstance(), "Object's type: ", 1, 16, NULL);
+			Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
+
+			NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
+		}
+#endif
 		Container child = __SAFE_CAST(Container, node->data);
 
 		VirtualList_removeElement(this->children, child);
@@ -897,11 +909,11 @@ static Container Container_findChildByName(Container this, VirtualList children,
 		return NULL;
 	}
 
-	Container child, grandChild;
-	VirtualNode node = children->head;
-
 	// first remove children
 	Container_processRemovedChildren(this);
+
+	Container child, grandChild;
+	VirtualNode node = children->head;
 
 	// look through all children
 	for(; node ; node = node->next)
