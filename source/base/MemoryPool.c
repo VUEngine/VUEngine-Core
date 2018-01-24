@@ -302,8 +302,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 		if(object == &this->poolLocation[pool][displacement])
 		{
 			// free the block
-			*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_FREE_BLOCK_FLAG;
-
+			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
 			return;
 		}
 	}
