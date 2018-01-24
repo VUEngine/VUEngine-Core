@@ -183,28 +183,28 @@
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS																			\
 	__BLOCK_DEFINITION(164, 1)																			\
-	__BLOCK_DEFINITION(152, 8)																			\
+	__BLOCK_DEFINITION(152, 5)																			\
 	__BLOCK_DEFINITION(140, 10)																			\
-	__BLOCK_DEFINITION(132, 30)																			\
-	__BLOCK_DEFINITION(120, 20)																			\
-	__BLOCK_DEFINITION(116, 20)																			\
-	__BLOCK_DEFINITION(108, 90)																			\
-	__BLOCK_DEFINITION(80, 120)																			\
-	__BLOCK_DEFINITION(32, 250)																			\
-	__BLOCK_DEFINITION(20, 500)																			\
-	__BLOCK_DEFINITION(16, 500)																			\
+	__BLOCK_DEFINITION(116, 30)																			\
+	__BLOCK_DEFINITION(108, 40)																			\
+	__BLOCK_DEFINITION(80, 50)																			\
+	__BLOCK_DEFINITION(68, 60)																			\
+	__BLOCK_DEFINITION(40, 30)																			\
+	__BLOCK_DEFINITION(28, 260)																			\
+	__BLOCK_DEFINITION(20, 600)																			\
+	__BLOCK_DEFINITION(16, 350)																			\
 
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS																		\
 	__SET_MEMORY_POOL_ARRAY(164)																		\
 	__SET_MEMORY_POOL_ARRAY(152)																		\
 	__SET_MEMORY_POOL_ARRAY(140)																		\
-	__SET_MEMORY_POOL_ARRAY(132)																		\
-	__SET_MEMORY_POOL_ARRAY(120)																		\
 	__SET_MEMORY_POOL_ARRAY(116)																		\
 	__SET_MEMORY_POOL_ARRAY(108)																		\
 	__SET_MEMORY_POOL_ARRAY(80)																			\
-	__SET_MEMORY_POOL_ARRAY(32)																			\
+	__SET_MEMORY_POOL_ARRAY(68)																			\
+	__SET_MEMORY_POOL_ARRAY(40)																			\
+	__SET_MEMORY_POOL_ARRAY(28)																			\
 	__SET_MEMORY_POOL_ARRAY(20)																			\
 	__SET_MEMORY_POOL_ARRAY(16)
 
