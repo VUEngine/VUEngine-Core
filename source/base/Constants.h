@@ -147,6 +147,22 @@ enum DefaulCollisionLayers
 	#define NM_ASSERT(Statement, ...)
 #endif
 
+#undef NM_CAST_ASSERT
+
+#ifndef __RELEASE
+#define NM_CAST_ASSERT(Statement, ...)																		\
+	 																									\
+	if(!(Statement) && !_triggeringException)																					\
+	{ 																									\
+		_triggeringException = true;																	\
+																										\
+		/* thrown exception */																			\
+		Error_triggerException(Error_getInstance(), __MAKE_STRING(__VA_ARGS__), NULL);					\
+	}
+#else
+	#define NM_CAST_ASSERT(Statement, ...)
+#endif
+
 #undef ASSERT
 
 #ifndef __DEBUG

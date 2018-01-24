@@ -405,10 +405,21 @@ void Object_fireEvent(Object this, u32 eventCode)
  */
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
+	static int lp = 0;
+	static int sp = 0;
+
+	if(!lp && !sp)
+	{
+		asm(" mov sp,%0  ": "=r" (lp));
+		asm(" mov lp,%0  ": "=r" (lp));
+	}
+
 	ASSERT(this, "Object::getCast: null this");
 
 	if(!this)
 	{
+		lp = 0;
+		sp = 0;
 		return NULL;
 	}
 
@@ -417,7 +428,10 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 		Printing_setDebugMode(Printing_getInstance());
 		Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
 		Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
-		NM_ASSERT(false, "Object::getCast: deleted this");
+
+		_lp = lp;
+		_sp = sp;
+		NM_CAST_ASSERT(false, "Object::getCast: deleted this");
 	}
 
 	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, this), "Object::getCast: null getClassName");
@@ -427,6 +441,8 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 	{
 		if(targetClassGetClassMethod == (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
 		{
+			lp = 0;
+			sp = 0;
 			return this;
 		}
 
@@ -437,11 +453,15 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 
 	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
 	{
+		lp = 0;
+		sp = 0;
 		return NULL;
 	}
 
 	if(targetClassGetClassMethod == baseClassGetClassMethod)
 	{
+		lp = 0;
+		sp = 0;
 		return this;
 	}
 
