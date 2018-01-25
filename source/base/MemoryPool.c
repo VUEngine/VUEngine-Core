@@ -48,7 +48,8 @@
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
 	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
-	this->poolSizes[pool++][eBlockSize] = BlockSize;													\
+	this->poolSizes[pool][eBlockSize] = BlockSize;														\
+	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +66,7 @@
 		/* pointer to the beginning of each memory pool */												\
 		BYTE* poolLocation[__MEMORY_POOLS];																\
 		/* pool's size and pool's block size */															\
-		int poolSizes[__MEMORY_POOLS][2];																\
+		u16 poolSizes[__MEMORY_POOLS][3];																\
 
 /**
  * @class 	MemoryPool
@@ -77,7 +78,8 @@ __CLASS_DEFINITION(MemoryPool, Object);
 enum MemoryPoolSizes
 {
 	ePoolSize = 0,
-	eBlockSize
+	eBlockSize,
+	eLastFreeBlockIndex,
 };
 
 
@@ -204,33 +206,60 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	int lp = HardwareManager_getLinkPointer(HardwareManager_getInstance());
 
 	int i = 0;
+	int j = 0;
 	int numberOfOjects = 0;
 	int pool = __MEMORY_POOLS;
 	int blockSize = this->poolSizes[pool][eBlockSize];
 	int displacement = 0;
 
-	for(; pool--;)
+	bool blockFound = false;
+
+	while(!blockFound && pool--)
 	{
 		// search for the smallest pool which can hold the data
 		blockSize = this->poolSizes[pool][eBlockSize];
 		numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+
+		int forwardDisplacement = 0;
+		int backwardDisplacement = 0;
+
 		if(numberOfBytes <= blockSize)
 		{
-			// look for a free block
-			for(i = 0, displacement = 0;
-				i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG != *((u32*)&this->poolLocation[pool][displacement]);
-				i++, displacement += blockSize);
+			for(i = this->poolSizes[pool][eLastFreeBlockIndex],
+			 	j = i,
+				forwardDisplacement = backwardDisplacement = i * blockSize;
+				!blockFound && (i < numberOfOjects || 0 <= j);
+				i++, j--,
+				forwardDisplacement += blockSize, backwardDisplacement -= blockSize
+			)
+			{
+				if(i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][forwardDisplacement]))
+				{
+					displacement = forwardDisplacement;
+					this->poolSizes[pool][eLastFreeBlockIndex] = i;
+					blockFound = true;
+					break;
+				}
 
-			if(i < numberOfOjects)
+				if(0 <= j && __MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][backwardDisplacement]))
+				{
+					displacement = backwardDisplacement;
+					this->poolSizes[pool][eLastFreeBlockIndex] = j;
+					blockFound = true;
+					break;
+				}
+			}
+/*
+			if(blockFound)
 			{
 				break;
 			}
-
+*/
 			// keep looking for a free block on a bigger pool
 		}
 	}
 
-	if(i >= numberOfOjects)
+	if(!blockFound)
 	{
 		Printing_setDebugMode(Printing_getInstance());
 		Printing_clear(Printing_getInstance());
