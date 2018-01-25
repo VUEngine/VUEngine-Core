@@ -305,14 +305,19 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// set up visual representation
 	GameState_synchronizeGraphics(this);
 
-	// sort all sprites' layers
-	SpriteManager_sortLayers(SpriteManager_getInstance());
-
 	// make sure all textures are written right now
 	SpriteManager_writeTextures(SpriteManager_getInstance());
 
+	// sort all sprites' layers
+	SpriteManager_sortLayers(SpriteManager_getInstance());
+
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
+
+	// sort all sprites' layers again
+	// don't remove me, some custom sprites depend on others
+	// to have been setup up before
+	SpriteManager_sortLayers(SpriteManager_getInstance());
 
 	// defer rendering again
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
@@ -541,14 +546,19 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// set up visual representation
 	GameState_synchronizeGraphics(this);
 
-	// sort all sprites' layers
-	SpriteManager_sortLayers(SpriteManager_getInstance());
-
 	// make sure all textures are written right now
 	SpriteManager_writeTextures(SpriteManager_getInstance());
 
+	// sort all sprites' layers
+	SpriteManager_sortLayers(SpriteManager_getInstance());
+
 	// render sprites as soon as possible
 	SpriteManager_render(SpriteManager_getInstance());
+
+	// sort all sprites' layers again
+	// don't remove me, some custom sprites depend on others
+	// to have been setup up before
+	SpriteManager_sortLayers(SpriteManager_getInstance());
 
 	// defer rendering again
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
