@@ -394,6 +394,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 #endif
 
 #ifdef __PROFILE_GAME
+					extern s16 _renderingHighestTime;
 					extern s16 _renderingProcessTimeHelper;
 					extern s16 _renderingProcessTime;
 					extern s16 _renderingTotalTime;
@@ -403,6 +404,7 @@ inline static void VIPManager_processInterrupt(VIPManager this, u16 interrupt)
 					{
 						_renderingProcessTimeHelper = _renderingProcessTime = TimerManager_getMillisecondsElapsed(_timerManager) - timeBeforeProcess;
 						_renderingTotalTime += _renderingProcessTime;
+						_renderingHighestTime = _renderingHighestTime < _renderingProcessTime ? _renderingProcessTime : _renderingHighestTime;
 					}
 				}
 #endif

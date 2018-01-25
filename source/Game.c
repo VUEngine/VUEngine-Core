@@ -482,7 +482,7 @@ void Game_start(Game this, GameState state)
 
 #ifdef __PROFILE_GAME
 			_waitForFrameStartTotalTime += TimerManager_getMillisecondsElapsed(this->timerManager) - elapsedTime;
-			Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
+//			Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
 #endif
 
 			// execute game frame
@@ -879,6 +879,7 @@ static u32 Game_processUserInput(Game this)
 	{
 		_processUserInputProcessTime =  -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_processUserInputTotalTime += _processUserInputProcessTime;
+		_processUserInputHighestTime = _processUserInputHighestTime < _processUserInputProcessTime ? _processUserInputProcessTime : _processUserInputHighestTime;
 	}
 #endif
 
@@ -910,6 +911,7 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
 		{
 			_dispatchDelayedMessageProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 			_dispatchDelayedMessageTotalTime += _dispatchDelayedMessageProcessTime;
+			_dispatchDelayedMessageHighestTime = _dispatchDelayedMessageHighestTime < _dispatchDelayedMessageProcessTime ? _dispatchDelayedMessageProcessTime : _dispatchDelayedMessageHighestTime;
 		}
 
 		return dispatchedMessages;
@@ -968,6 +970,7 @@ inline static void Game_updateLogic(Game this)
 	{
 		_updateLogicProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateLogicTotalTime += _updateLogicProcessTime;
+		_updateLogicHighestTime = _updateLogicHighestTime < _updateLogicProcessTime ? _updateLogicProcessTime : _updateLogicHighestTime;
 	}
 #endif
 }
@@ -1009,6 +1012,7 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 	{
 		_synchronizeGraphicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_synchronizeGraphicsTotalTime += _synchronizeGraphicsProcessTime;
+		_synchronizeGraphicsHighestTime = _synchronizeGraphicsHighestTime < _synchronizeGraphicsProcessTime ? _synchronizeGraphicsProcessTime : _synchronizeGraphicsHighestTime;
 	}
 
 #endif
@@ -1034,6 +1038,7 @@ inline static void Game_updatePhysics(Game this)
 	{
 		_updatePhysicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updatePhysicsTotalTime += _updatePhysicsProcessTime;
+		_updatePhysicsHighestTime = _updatePhysicsHighestTime < _updatePhysicsProcessTime ? _updatePhysicsProcessTime : _updatePhysicsHighestTime;
 	}
 #endif
 }
@@ -1063,6 +1068,7 @@ inline static void Game_updateTransformations(Game this)
 	{
 		_updateTransformationsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateTransformationsTotalTime += _updateTransformationsProcessTime;
+		_updateTransformationsHighestTime = _updateTransformationsHighestTime < _updateTransformationsProcessTime ? _updateTransformationsProcessTime : _updateTransformationsHighestTime;
 	}
 #endif
 }
@@ -1087,6 +1093,7 @@ inline static u32 Game_updateCollisions(Game this)
 	{
 		_processingCollisionsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_processingCollisionsTotalTime += _processingCollisionsProcessTime;
+		_processingCollisionsHighestTime = _processingCollisionsHighestTime < _processingCollisionsProcessTime ? _processingCollisionsProcessTime : _processingCollisionsHighestTime;
 	}
 
 	return processedCollisions;
@@ -1113,6 +1120,7 @@ bool Game_stream(Game this)
 	{
 		_streamingProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_streamingTotalTime += _streamingProcessTime;
+		_streamingHighestTime = _streamingHighestTime < _streamingProcessTime ? _streamingProcessTime : _streamingHighestTime;
 	}
 
 	return streamProcessed;
@@ -1225,6 +1233,8 @@ void Game_checkFrameRate(Game this)
 #endif
 		//reset frame rate counters
 		FrameRate_reset(FrameRate_getInstance());
+
+		Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
 	}
 
 	// enable timer
@@ -2031,9 +2041,10 @@ void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gam
 	ASSERT(this, "Game::showProfiling: this null");
 
 #ifdef __PROFILE_GAME
-
+/*
 	if(_gameFrameHighestEffectiveDuration < gameFrameDuration)
 	{
+	//	_renderingHighestTime = _renderingProcessTime;
 		_dispatchDelayedMessageHighestTime = _dispatchDelayedMessageProcessTime;
 		_processUserInputHighestTime = _processUserInputProcessTime;
 		_updateLogicHighestTime = _updateLogicProcessTime;
@@ -2043,7 +2054,7 @@ void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gam
 		_processingCollisionsHighestTime = _processingCollisionsProcessTime;
 		_streamingHighestTime = _streamingProcessTime;
 	}
-
+*/
 	_renderingProcessTimeHelper = 0;
 	_renderingProcessTime = 0;
 	_synchronizeGraphicsProcessTime = 0;
@@ -2120,7 +2131,6 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	_processUserInputHighestTime = 0;
 	_dispatchDelayedMessageHighestTime = 0;
 	_processingCollisionsHighestTime = 0;
-	_renderingHighestTime = 0;
 
 	_renderingProcessTime = 0;
 
