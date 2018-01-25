@@ -163,12 +163,17 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 	}
 	else
 	{
-		Object_removeEventListener(this, listener, method, eventCode);
+		// don't add the same listener twice
+		VirtualNode node = this->events->head;
 
-		// the event list can be deleted when removed previous listeners
-		if(NULL == this->events)
+		for(; node; node = node->next)
 		{
-			this->events = __NEW(VirtualList);
+			Event* event = (Event*)node->data;
+
+			if(listener == event->listener && method == event->method && eventCode == event->code)
+			{
+				return;
+			}
 		}
 	}
 
@@ -205,17 +210,11 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 
 			if(listener == event->listener && method == event->method && eventCode == event->code)
 			{
-				VirtualList_removeElement(this->events, event);
+				VirtualList_removeNode(this->events, node);
 
 				__DELETE_BASIC(event);
 				break;
 			}
-		}
-
-		if(!this->events->head)
-		{
-			__DELETE(this->events);
-			this->events = NULL;
 		}
 	}
 }
