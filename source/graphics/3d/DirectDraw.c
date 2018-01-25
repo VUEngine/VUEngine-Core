@@ -259,9 +259,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
         		fromPointY = aux;
         	}
 
-			if(toPointX < fromPointX)
+			if(toPointY < fromPointY)
 			{
-				stepX = -stepX;
+				stepY = -stepY;
 			}
 
 			fix10_6 halfDx = dx >> 1;
@@ -311,9 +311,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
         		fromPointY = aux;
         	}
 
-			if(toPointY < fromPointY)
+			if(toPointX < fromPointX)
 			{
-				stepY = -stepY;
+				stepX = -stepX;
 			}
 
 			fix10_6 halfDy = dy >> 1;
