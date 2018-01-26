@@ -117,7 +117,7 @@ Clock _physhicsClock = NULL;
 MovementResult Body_updateMovement(Body this);
 static void Body_awake(Body this, u16 axesOfAwakening);
 static void Body_setMovementType(Body this, int movementType, u16 axes);
-static void Body_clearNormalOnAxes(Body this, u16 axes);
+//static void Body_clearNormalOnAxes(Body this, u16 axes);
 Acceleration Body_getGravity(Body this);
 static void Body_computeTotalNormal(Body this);
 static void Body_computeTotalFrictionCoefficient(Body this);
@@ -852,10 +852,11 @@ void Body_reset(Body this)
 	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
 }
 
-static void Body_clearNormalOnAxes(Body this, u16 axes)
+/*
+static void Body_clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused))) __attribute__ ((unused))
 {
 	ASSERT(this, "Body::clearNormal: null this");
-/*
+
 	if(this->normals)
 	{
 		VirtualList normalsToRemove = __NEW(VirtualList);
@@ -896,9 +897,10 @@ static void Body_clearNormalOnAxes(Body this, u16 axes)
 
 		__DELETE(normalsToRemove);
 	}
-*/
+
 	Body_computeTotalNormal(this);
 }
+*/
 
 void Body_clearNormal(Body this, Object referent)
 {

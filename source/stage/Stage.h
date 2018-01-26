@@ -83,7 +83,7 @@
 		/* focus entity: needed for streaming */														\
 		Entity focusEntity;																				\
 		/* camera's previous distance. Used for the streaming */										\
-		long cameraPreviousDistance;																	\
+		u32 cameraPreviousDistance;																		\
 		/* next entity's id */																			\
 		s16 nextEntityId;																				\
 
