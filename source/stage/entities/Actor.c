@@ -500,7 +500,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 			{
 				case kBodyStartedMoving:
 
-					ASSERT(this->shapes, "Actor::handleMessage: null shapes");
+					ASSERT(this->shapes, "Actor::handleMessage: null shapes when body started moving");
 					Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 					return true;
 					break;
@@ -509,7 +509,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 					if(!Body_getMovementOnAllAxes(this->body))
 					{
-						ASSERT(this->shapes, "Actor::handleMessage: null shapes");
+						ASSERT(this->shapes, "Actor::handleMessage: null shapes when body stopped moving");
 						Entity_informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
 					}
 					break;
