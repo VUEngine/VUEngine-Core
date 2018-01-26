@@ -180,7 +180,7 @@ void Container_processRemovedChildren(Container this);
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...);
 void Container_setupGraphics(Container this);
 void Container_releaseGraphics(Container this);
-void Container_removeChild(Container this, Container child);
+void Container_removeChild(Container this, Container child, bool deleteChild);
 void Container_resume(Container this);
 void Container_setLocalPosition(Container this, const Vector3D* position);
 void Container_setLocalRotation(Container this, const Rotation* rotation);

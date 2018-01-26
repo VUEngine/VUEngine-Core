@@ -532,8 +532,7 @@ static void Stage_unloadChild(Stage this, Container child)
 		return;
 	}
 
-	child->deleteMe = true;
-	Container_removeChild(__SAFE_CAST(Container, this), child);
+	Container_removeChild(__SAFE_CAST(Container, this), child, true);
 	__VIRTUAL_CALL(Container, releaseGraphics, child);
 	Object_fireEvent(__SAFE_CAST(Object, child), kStageChildStreamedOut);
 	Object_removeAllEventListeners(__SAFE_CAST(Object, child), kStageChildStreamedOut);

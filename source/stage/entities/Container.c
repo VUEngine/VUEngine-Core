@@ -135,8 +135,7 @@ void Container_destructor(Container this)
 	if(this->parent)
 	{
 		// don't allow my parent to try to delete me again
-		this->deleteMe = false;
-		Container_removeChild(this->parent, this);
+		Container_removeChild(this->parent, this, false);
 	}
 
 	// delete name
@@ -195,7 +194,7 @@ void Container_addChild(Container this, Container child)
 	{
 		if(child->parent)
 		{
-			Container_removeChild(child->parent, child);
+			Container_removeChild(child->parent, child, false);
 
 			__VIRTUAL_CALL(Container, changeEnvironment, child, &this->transformation);
 		}
@@ -209,7 +208,7 @@ void Container_addChild(Container this, Container child)
 		if(this->removedChildren)
 		{
 			// make sure it is not up for removal
-			VirtualList_removeElement(this->removedChildren, (void*)child);
+			VirtualList_removeElement(this->removedChildren, child);
 		}
 
 		Container_invalidateGlobalTransformation(child);
@@ -217,7 +216,7 @@ void Container_addChild(Container this, Container child)
 }
 
 // remove child Container
-void Container_removeChild(Container this, Container child)
+void Container_removeChild(Container this, Container child, bool deleteChild)
 {
 	ASSERT(this, "Container::removeChild: null this");
 
@@ -234,11 +233,15 @@ void Container_removeChild(Container this, Container child)
 		this->removedChildren = __NEW(VirtualList);
 	}
 
-	// register for removing
-	VirtualList_pushBack(this->removedChildren, (void*)child);
+	if(!VirtualList_find(this->removedChildren, child))
+	{
+		// register for removing
+		VirtualList_pushBack(this->removedChildren, child);
 
-	// set no parent
-	child->parent = NULL;
+		// set no parent
+		child->parent = NULL;
+		child->deleteMe = deleteChild;
+	}
 }
 
 void Container_setupGraphics(Container this __attribute__ ((unused)))
@@ -322,7 +325,6 @@ void Container_processRemovedChildren(Container this)
 	}
 
 	__DELETE(this->removedChildren);
-
 	this->removedChildren = NULL;
 }
 
