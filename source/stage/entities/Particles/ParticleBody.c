@@ -128,7 +128,4 @@ void ParticleBody_update(ParticleBody this)
 		// clear any force so the next update does not get influenced
 		Body_clearExternalForce(__SAFE_CAST(Body, this));
 	}
-
-if(this->normals)
-		Printing_int(Printing_getInstance(), VirtualList_getSize(this->normals), 40, 17, NULL);
 }
