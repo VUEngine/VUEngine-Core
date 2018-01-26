@@ -109,19 +109,19 @@ extern float fabsf(float);
 
 // fixed multiplication, what a mess of brackets
 // TODO: how do we return an s32 from s16*s16 without forcing a promotion to s32?
-#define __FIX7_9_MULT(a,b)			(fix7_9)	((((s32)(a)) * ((s32)(b))) >> 9)
-#define __FIX13_3_MULT(a,b)			(fix13_3)	((((s32)(a)) * ((s32)(b))) >> 3)
-#define __FIX10_6_MULT(a,b)			(fix10_6)	((((s32)(a)) * ((s32)(b))) >> 6)
-#define __FIX10_6_EXT_MULT(a,b)					((((s32)(a)) * ((s32)(b))) >> 6)
-#define __FIX19_13_MULT(a,b)		(fix19_13)	((((s64)(a)) * ((s64)(b))) >> 13)
+#define __FIX7_9_MULT(a,b)			(fix7_9)		((((s32)(a)) * ((s32)(b))) >> 9)
+#define __FIX13_3_MULT(a,b)			(fix13_3)		((((s32)(a)) * ((s32)(b))) >> 3)
+#define __FIX10_6_MULT(a,b)			(fix10_6)		((((s32)(a)) * ((s32)(b))) >> 6)
+#define __FIX10_6_EXT_MULT(a,b)		(fix10_6_ext)	((((s32)(a)) * ((s32)(b))) >> 6)
+#define __FIX19_13_MULT(a,b)		(fix19_13)		((((s64)(a)) * ((s64)(b))) >> 13)
 
 
 // fixed division
-#define __FIX7_9_DIV(a,b)			(fix7_9)	((((s32)(a)) << 9) / ((s32)(b)))
-#define __FIX13_3_DIV(a,b)			(fix13_3)	((((s32)(a)) << 3) / ((s32)(b)))
-#define __FIX10_6_DIV(a,b)			(fix10_6)	((((s32)(a)) << 6) / ((s32)(b)))
-#define __FIX10_6_EXT_DIV(a,b)					((((s32)(a)) << 6) / ((s32)(b)))
-#define __FIX19_13_DIV(a,b)			(fix19_13)	((((s64)(a)) << 13) / ((s64)(b)))
+#define __FIX7_9_DIV(a,b)			(fix7_9)		((((s32)(a)) << 9) / ((s32)(b)))
+#define __FIX13_3_DIV(a,b)			(fix13_3)		((((s32)(a)) << 3) / ((s32)(b)))
+#define __FIX10_6_DIV(a,b)			(fix10_6)		((((s32)(a)) << 6) / ((s32)(b)))
+#define __FIX10_6_EXT_DIV(a,b)		(fix10_6_ext)	((((s32)(a)) << 6) / ((s32)(b)))
+#define __FIX19_13_DIV(a,b)			(fix19_13)		((((s64)(a)) << 13) / ((s64)(b)))
 
 #define __COS(x) _sinLut[(128 - (x)) & 0x1FF]
 #define __SIN(x) _sinLut[(x) & 0x1FF]

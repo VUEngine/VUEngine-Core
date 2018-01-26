@@ -100,9 +100,9 @@ inline Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vect
 
 	return (Vector3D)
 	{
-		__FIX10_6_MULT(u.y, v.z) - __FIX10_6_MULT(u.z, v.y),
-		__FIX10_6_MULT(u.z, v.x) - __FIX10_6_MULT(u.x, v.z),
-		__FIX10_6_MULT(u.x, v.y) - __FIX10_6_MULT(u.y, v.x),
+		__FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(u.y, v.z) - __FIX10_6_EXT_MULT(u.z, v.y)),
+		__FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(u.z, v.x) - __FIX10_6_EXT_MULT(u.x, v.z)),
+		__FIX10_6_EXT_TO_FIX10_6(__FIX10_6_EXT_MULT(u.x, v.y) - __FIX10_6_EXT_MULT(u.y, v.x)),
 	};
 }
 
@@ -120,12 +120,12 @@ inline fix10_6_ext Vector3D_squareLength(Vector3D vector)
 
 inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB)
 {
-	fix10_6 lengthSquareA = __FIX10_6_MULT(vectorA.x, vectorA.x) + __FIX10_6_MULT(vectorA.y, vectorA.y) + __FIX10_6_MULT(vectorA.z, vectorA.z);
-	fix10_6 lengthSquareB = __FIX10_6_MULT(vectorB.x, vectorB.x) + __FIX10_6_MULT(vectorB.y, vectorB.y) + __FIX10_6_MULT(vectorB.z, vectorB.z);
+	fix10_6_ext lengthSquareA = __FIX10_6_EXT_MULT(vectorA.x, vectorA.x) + __FIX10_6_EXT_MULT(vectorA.y, vectorA.y) + __FIX10_6_EXT_MULT(vectorA.z, vectorA.z);
+	fix10_6_ext lengthSquareB = __FIX10_6_EXT_MULT(vectorB.x, vectorB.x) + __FIX10_6_EXT_MULT(vectorB.y, vectorB.y) + __FIX10_6_EXT_MULT(vectorB.z, vectorB.z);
 
-	fix10_6 product = __FIX10_6_MULT(lengthSquareA, lengthSquareB);
+	fix10_6_ext product = __FIX10_6_EXT_MULT(lengthSquareA, lengthSquareB);
 
-	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(product)));
+	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(product)));
 }
 
 inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D)
