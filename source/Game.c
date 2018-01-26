@@ -482,7 +482,6 @@ void Game_start(Game this, GameState state)
 
 #ifdef __PROFILE_GAME
 			_waitForFrameStartTotalTime += TimerManager_getMillisecondsElapsed(this->timerManager) - elapsedTime;
-//			Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
 #endif
 
 			// execute game frame
@@ -728,6 +727,7 @@ void Game_reset(Game this)
 
 	// reset profiling
 	Game_resetProfiling(this);
+
 
 	// turn on VIP
 	HardwareManager_displayOn(HardwareManager_getInstance());
@@ -1234,7 +1234,9 @@ void Game_checkFrameRate(Game this)
 		//reset frame rate counters
 		FrameRate_reset(FrameRate_getInstance());
 
+#ifdef __PROFILE_GAME
 		Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
+#endif
 	}
 
 	// enable timer
