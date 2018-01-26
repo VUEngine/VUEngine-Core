@@ -481,7 +481,7 @@ void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container
 }
 
 // add entity to the stage
-void Stage_removeChild(Stage this, Container child)
+void Stage_removeChild(Stage this, Container child, bool deleteChild)
 {
 	ASSERT(this, "Stage::removeEntity: null this");
 	ASSERT(child, "Stage::removeEntity: null child");
@@ -491,7 +491,7 @@ void Stage_removeChild(Stage this, Container child)
 		return;
 	}
 
-	__CALL_BASE_METHOD(Container, removeChild, this, child);
+	__CALL_BASE_METHOD(Container, removeChild, this, child, deleteChild);
 
 	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
 

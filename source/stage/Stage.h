@@ -209,7 +209,7 @@ Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);
 void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
 Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
-void Stage_removeChild(Stage this, Container child);
+void Stage_removeChild(Stage this, Container child, bool deleteChild);
 void Stage_update(Stage this, u32 elapsedTime);
 void Stage_transform(Stage this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void Stage_synchronizeGraphics(Stage this);

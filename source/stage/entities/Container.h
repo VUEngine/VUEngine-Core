@@ -79,7 +79,7 @@
 		__VIRTUAL_DEC(ClassName, void, setLocalRotation, const Rotation* rotation);						\
 		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
 		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
-		__VIRTUAL_DEC(ClassName, void, removeChild, Container child);									\
+		__VIRTUAL_DEC(ClassName, void, removeChild, Container child, bool deleteChild);					\
 		__VIRTUAL_DEC(ClassName, void, changeEnvironment, Transformation* environmentTransform);		\
 		__VIRTUAL_DEC(ClassName, void, suspend);														\
 		__VIRTUAL_DEC(ClassName, void, resume);															\

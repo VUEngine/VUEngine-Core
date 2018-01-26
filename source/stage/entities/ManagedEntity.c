@@ -153,13 +153,13 @@ static void ManagedEntity_unregisterSprites(ManagedEntity this, Entity child)
 	}
 }
 
-void ManagedEntity_removeChild(ManagedEntity this, Container child)
+void ManagedEntity_removeChild(ManagedEntity this, Container child, bool deleteChild)
 {
 	ASSERT(this, "ManagedEntity::removeChild: null this");
 
 	ManagedEntity_unregisterSprites(this, __SAFE_CAST(Entity, child));
 
-	__CALL_BASE_METHOD(Entity, removeChild, this, child);
+	__CALL_BASE_METHOD(Entity, removeChild, this, child, deleteChild);
 }
 
 // transformation class

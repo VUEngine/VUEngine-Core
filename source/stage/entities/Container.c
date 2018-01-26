@@ -159,8 +159,7 @@ void Container_deleteMyself(Container this)
 {
 	if(this->parent)
 	{
-		this->deleteMe = true;
-		__VIRTUAL_CALL(Container, removeChild, this->parent, this);
+		__VIRTUAL_CALL(Container, removeChild, this->parent, this, true);
 		__VIRTUAL_CALL(Container, releaseGraphics, this);
 	}
 	else

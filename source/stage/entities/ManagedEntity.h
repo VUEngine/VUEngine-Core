@@ -77,7 +77,7 @@ __CLASS_NEW_DECLARE(ManagedEntity, EntityDefinition* definition, s16 id, s16 int
 
 void ManagedEntity_constructor(ManagedEntity this, EntityDefinition* definition, s16 id, s16 internalId, const char* const name);
 void ManagedEntity_destructor(ManagedEntity this);
-void ManagedEntity_removeChild(ManagedEntity this, Container child);
+void ManagedEntity_removeChild(ManagedEntity this, Container child, bool deleteChild);
 void ManagedEntity_initialTransform(ManagedEntity this, Transformation* environmentTransform, u32 recursive);
 void ManagedEntity_transform(ManagedEntity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 void ManagedEntity_synchronizeGraphics(ManagedEntity this);
