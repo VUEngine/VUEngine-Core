@@ -265,6 +265,8 @@ static void Entity_destroyShapes(Entity this)
 
 	if(this->shapes)
 	{
+		ASSERT(__IS_OBJECT_ALIVE(this->shapes), "Entity::setDefinition: dead shapes");
+
 		VirtualNode node = this->shapes->head;
 
 		for(; node; node = node->next)

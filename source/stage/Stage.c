@@ -1104,11 +1104,6 @@ void Stage_synchronizeGraphics(Stage this)
 	ASSERT(this, "Stage::synchronizeGraphics: null this");
 
 	__CALL_BASE_METHOD(Container, synchronizeGraphics, this);
-
-	if(this->uiContainer)
-	{
-		__VIRTUAL_CALL(Container, synchronizeGraphics, this->uiContainer);
-	}
 }
 
 // retrieve ui
