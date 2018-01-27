@@ -44,12 +44,26 @@
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)															\
 	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
+	u32 pool ## BlockSize ## Directory[(Elements / (sizeof(u32) * 8)) + 								\
+										((Elements % (sizeof(u32) * 8)) ? 1 : 0)];						\
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
 	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
+	this->poolDirectory[pool] = &this->pool ## BlockSize ## Directory[0];										\
 	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
 	this->poolSizes[pool][eBlockSize] = BlockSize;														\
 	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
+	int i ## BlockSize = 0;																				\
+	int elements ## BlockSize = sizeof(this->pool ## BlockSize ## B) / BlockSize;						\
+	int directory ## BlockSize ## Entries = (elements ## BlockSize / (sizeof(u32) * 8)) + 				\
+                                            ((elements ## BlockSize % (sizeof(u32) * 8)) ? 1 : 0);		\
+	for(; i ## BlockSize < directory ## BlockSize ## Entries; i ## BlockSize++)							\
+	{																									\
+		this->pool ## BlockSize ## Directory[i ## BlockSize] = 0;										\
+	}																									\
+	int remainder ## BlockSize = elements ## BlockSize % (sizeof(u32) * 8);								\
+	u32 mask ## BlockSize = 0xFFFFFFFF << remainder ## BlockSize;										\
+	this->pool ## BlockSize ## Directory[i ## BlockSize - 1] = mask ## BlockSize;						\
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,6 +79,7 @@
 		__MEMORY_POOL_ARRAYS																			\
 		/* pointer to the beginning of each memory pool */												\
 		BYTE* poolLocation[__MEMORY_POOLS];																\
+		u32* poolDirectory[__MEMORY_POOLS];																\
 		/* pool's size and pool's block size */															\
 		u16 poolSizes[__MEMORY_POOLS][3];																\
 
@@ -82,6 +97,27 @@ enum MemoryPoolSizes
 	eLastFreeBlockIndex,
 };
 
+void MemoryPool_printDirectory(MemoryPool this, int x, int y, int pool)
+{
+	pool = pool < __MEMORY_POOLS ? pool : __MEMORY_POOLS - 1;
+
+	for(; pool < __MEMORY_POOLS; pool++)
+	{
+		int blockSize = this->poolSizes[pool][eBlockSize];
+    	int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+		int directoryEntries = (numberOfOjects / (sizeof(u32) * 8)) + ((numberOfOjects % (sizeof(u32) * 8)) ? 1 : 0);
+		int directoryIndex = directoryEntries;
+
+		int col = 0;
+		int row = 0;
+
+		for(; directoryIndex--; )
+		{
+			PRINT_HEX(this->poolDirectory[pool][directoryIndex], x + col, y + row++);
+		}
+		break;
+	}
+}
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -205,12 +241,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	int lp = HardwareManager_getLinkPointer(HardwareManager_getInstance());
 
-	int i = 0;
-	int j = 0;
-	int numberOfOjects = 0;
 	int pool = __MEMORY_POOLS;
 	int blockSize = this->poolSizes[pool][eBlockSize];
-	int displacement = 0;
 
 	bool blockFound = false;
 
@@ -218,43 +250,35 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	{
 		// search for the smallest pool which can hold the data
 		blockSize = this->poolSizes[pool][eBlockSize];
-		numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
+		int numberOfOjects = this->poolSizes[pool][ePoolSize] / blockSize;
 
-		int forwardDisplacement = 0;
-		int backwardDisplacement = 0;
+		int directoryEntries = (numberOfOjects / (sizeof(u32) * 8)) + ((numberOfOjects % (sizeof(u32) * 8)) ? 1 : 0);
 
 		if(numberOfBytes <= blockSize)
 		{
-			for(i = this->poolSizes[pool][eLastFreeBlockIndex],
-			 	j = i,
-				forwardDisplacement = backwardDisplacement = i * blockSize;
-				!blockFound && (i < numberOfOjects || 0 <= j);
-				i++, j--,
-				forwardDisplacement += blockSize, backwardDisplacement -= blockSize
+			int i = 0;
+        	int j = 0;
+
+			for(i = this->poolSizes[pool][eLastFreeBlockIndex], j = i;
+				!blockFound && (i < directoryEntries || 0 <= j);
+				i++, j--
 			)
 			{
-				if(i < numberOfOjects && __MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][forwardDisplacement]))
+				if(i < directoryEntries && this->poolDirectory[pool][i] ^ 0xFFFFFFFF)
 				{
-					displacement = forwardDisplacement;
 					this->poolSizes[pool][eLastFreeBlockIndex] = i;
 					blockFound = true;
 					break;
 				}
 
-				if(0 <= j && __MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][backwardDisplacement]))
+				if(0 <= j && this->poolDirectory[pool][j] ^ 0xFFFFFFFF)
 				{
-					displacement = backwardDisplacement;
 					this->poolSizes[pool][eLastFreeBlockIndex] = j;
 					blockFound = true;
 					break;
 				}
 			}
-/*
-			if(blockFound)
-			{
-				break;
-			}
-*/
+
 			// keep looking for a free block on a bigger pool
 		}
 	}
@@ -275,11 +299,27 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
+	u32 directoryEntry = this->poolDirectory[pool][this->poolSizes[pool][eLastFreeBlockIndex]];
+	u32 blockDisplacement = 0;
+
+	while(directoryEntry & 0x00000001)
+	{
+		directoryEntry >>= 1;
+		blockDisplacement++;
+	}
+
+	int freeBlockIndex = (this->poolSizes[pool][eLastFreeBlockIndex] * (sizeof(u32) * 8) + blockDisplacement) * blockSize;
+
+	// mark block as used
+	this->poolDirectory[pool][this->poolSizes[pool][eLastFreeBlockIndex]] |= (1 << blockDisplacement);
+
+	ASSERT(__MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][freeBlockIndex]), "MemoryPool::allocate: block is not free");
+
 	// mark address as allocated
-	*((u32*)&this->poolLocation[pool][displacement]) = __MEMORY_USED_BLOCK_FLAG;
+	*((u32*)&this->poolLocation[pool][freeBlockIndex]) = __MEMORY_USED_BLOCK_FLAG;
 
 	// return designed address
-	return &this->poolLocation[pool][displacement];
+	return &this->poolLocation[pool][freeBlockIndex];
 }
 
 /**
@@ -293,19 +333,16 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  */
 void MemoryPool_free(MemoryPool this, BYTE* object)
 {
+
 	ASSERT(this, "MemoryPool::free: null this");
+	ASSERT(object, "MemoryPool::free: null object");
 
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
 		return;
 	}
 
-#ifdef __DEBUG
-
-	int i;
 	int pool = 0;
-	int displacement = 0;
-	int numberOfOjects = 0;
 
 	if(!object)
 	{
@@ -313,33 +350,23 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	}
 
 	// look for the pool containing the object
-	for(pool = 0; pool < __MEMORY_POOLS && object >= &this->poolLocation[pool][0]; pool++);
+	for(pool = __MEMORY_POOLS; pool-- && (u32)object < (u32)this->poolLocation[pool];);
 
 	// look for the registry in which the object is
-	ASSERT(pool <= __MEMORY_POOLS , "MemoryPool::free: deleting something not allocated");
+	ASSERT(0 <= pool , "MemoryPool::free: deleting something not allocated");
 
-	// move one pool back since the above loop passed the target by one
-	pool--;
+	u32 displacement = (((u32)object) - ((u32)this->poolLocation[pool]));
+	u32 objectBlockIndex = displacement / this->poolSizes[pool][eBlockSize];
 
-	// get the total objects in the pool
-	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
+	u32 directoryIndex = objectBlockIndex / (sizeof(u32) * 8);
+	u32 directoryDisplacement = objectBlockIndex % (sizeof(u32) * 8);
 
-	// search for the pool in which it is allocated
-	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
-	{
-		// if the object has been found
-		if(object == &this->poolLocation[pool][displacement])
-		{
-			// free the block
-			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
-			return;
-		}
-	}
+	u32 mask = 1 << directoryDisplacement;
+
+	this->poolDirectory[pool][directoryIndex] &= mask ^ 0xFFFFFFFF;
 
 	// thrown exception
-	ASSERT(false, "MemoryPool::free: deleting something not allocated");
-
-#endif
+	ASSERT(object == &this->poolLocation[pool][displacement], "MemoryPool::free: deleting something not allocated");
 
 	// set address as free
 	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
