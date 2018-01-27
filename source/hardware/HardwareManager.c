@@ -599,6 +599,13 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 
 	int room = sp - (int)&_bss_end;
 
+	static int lowestRoom = 65536;
+
+	if(room < lowestRoom)
+	{
+		lowestRoom = room;
+	}
+
 	if(resumed)
 	{
 		if((__SCREEN_WIDTH_IN_CHARS) < x + Utilities_intLength(room) + 13)
@@ -613,7 +620,7 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 	{
 		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities_intLength(room) + 10)
 		{
-			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities_intLength(room) - 10;
+			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities_intLength(room) - 11;
 		}
 
 		Printing_text(Printing_getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
@@ -623,6 +630,8 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 		Printing_hex(Printing_getInstance(), (int)&_bss_end, x + 10, y, 4, NULL);
 		Printing_text(Printing_getInstance(), "Room:           " , x, ++y, NULL);
 		Printing_int(Printing_getInstance(), room, x + 10, y, NULL);
+		Printing_text(Printing_getInstance(), "Lowest Room:           " , x, ++y, NULL);
+		Printing_int(Printing_getInstance(), lowestRoom, x + 10, y, NULL);
 	}
 }
 #endif
