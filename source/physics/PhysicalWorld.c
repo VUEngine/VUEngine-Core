@@ -232,10 +232,11 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::destroyBody: null this");
+	ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::destroyBody: dead body");
 	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 	ASSERT(!VirtualList_find(this->removedBodies, body), "PhysicalWorld::destroyBody: body already being destroyed");
 
-	if(body && !VirtualList_find(this->removedBodies, body))
+	if(__IS_OBJECT_ALIVE(body) && !VirtualList_find(this->removedBodies, body))
 	{
 		// deactivate the shape, will be removed in the next update
 		Body_setActive(body, false);

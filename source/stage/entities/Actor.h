@@ -48,6 +48,7 @@
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedEntity_SET_VTABLE(ClassName)															\
+		__VIRTUAL_SET(ClassName, Actor, iAmDeletingMyself);												\
 		__VIRTUAL_SET(ClassName, Actor, update);														\
 		__VIRTUAL_SET(ClassName, Actor, transform);														\
 		__VIRTUAL_SET(ClassName, Actor, initialTransform);												\
@@ -110,6 +111,7 @@ __CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id, s16 i
 
 void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
 void Actor_destructor(Actor this);
+void Actor_iAmDeletingMyself(Actor this);
 void Actor_setDefinition(Actor this, void* actorDefinition);
 void Actor_setLocalPosition(Actor this, const Vector3D* position);
 void Actor_initialTransform(Actor this, Transformation* environmentTransform, u32 recursive);

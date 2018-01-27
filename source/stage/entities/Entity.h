@@ -55,6 +55,7 @@
 
 #define Entity_SET_VTABLE(ClassName)																	\
 		Container_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, Entity	, iAmDeletingMyself);											\
 		__VIRTUAL_SET(ClassName, Entity, initialTransform);												\
 		__VIRTUAL_SET(ClassName, Entity, transform);													\
 		__VIRTUAL_SET(ClassName, Entity, setLocalPosition);												\
@@ -154,6 +155,7 @@ __CLASS_NEW_DECLARE(Entity, EntityDefinition* entityDefinition, s16 id, s16 inte
 void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);
 void Entity_destructor(Entity this);
 
+void Entity_iAmDeletingMyself(Entity this);
 void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions);
 void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions);
 Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo);
@@ -211,6 +213,7 @@ fix10_6 Entity_getElasticity(Entity this);
 fix10_6 Entity_getFrictionCoefficient(Entity this);
 void Entity_informShapesThatStartedMoving(Entity this);
 void Entity_informShapesThatStoppedMoving(Entity this);
+void Entity_disableShapes(Entity this);
 void Entity_activateShapes(Entity this, bool value);
 Direction Entity_getDirection(Entity this);
 void Entity_setDirection(Entity this, Direction direction);

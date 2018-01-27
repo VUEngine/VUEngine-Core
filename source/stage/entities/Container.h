@@ -69,6 +69,7 @@
 // declare the virtual methods
 #define Container_METHODS(ClassName)																	\
 		SpatialObject_METHODS(ClassName)																\
+		__VIRTUAL_DEC(ClassName, void, iAmDeletingMyself);												\
 		__VIRTUAL_DEC(ClassName, void, update, u32);													\
 		__VIRTUAL_DEC(ClassName, void, setupGraphics);													\
 		__VIRTUAL_DEC(ClassName, void, releaseGraphics);												\
@@ -91,6 +92,7 @@
 // define the virtual methods
 #define Container_SET_VTABLE(ClassName)																	\
 		SpatialObject_SET_VTABLE(ClassName)																\
+		__VIRTUAL_SET(ClassName, Container, iAmDeletingMyself);											\
 		__VIRTUAL_SET(ClassName, Container, update);													\
 		__VIRTUAL_SET(ClassName, Container, setupGraphics);												\
 		__VIRTUAL_SET(ClassName, Container, releaseGraphics);											\
@@ -151,6 +153,7 @@ void Container_applyEnvironmentToTransformation(Container this, const Transforma
 void Container_changeEnvironment(Container this, Transformation* environmentTransform);
 void Container_concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
 void Container_deleteMyself(Container this);
+void Container_iAmDeletingMyself(Container this);
 int Container_doKeyHold(Container this, int pressedKey);
 int Container_doKeyPressed(Container this, int pressedKey);
 int Container_doKeyUp(Container this, int pressedKey);

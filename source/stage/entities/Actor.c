@@ -132,6 +132,21 @@ void Actor_destructor(Actor this)
 	__DESTROY_BASE;
 }
 
+void Actor_iAmDeletingMyself(Actor this)
+{
+	ASSERT(this, "Actor::iAmDeletingMyself: null this");
+
+	__CALL_BASE_METHOD(AnimatedEntity, iAmDeletingMyself, this);
+
+	// destroy body to prevent any more physical interactions
+	if(this->body)
+	{
+		// remove a body
+		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
+		this->body = NULL;
+	}
+}
+
 // set definition
 void Actor_setDefinition(Actor this, void* actorDefinition)
 {
@@ -183,6 +198,11 @@ void Actor_syncPositionWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
+	if(!this->body)
+	{
+		return;
+	}
+
 	// retrieve the body's displacement
 	Vector3D bodyLastDisplacement = {0, 0, 0};
 	Vector3D bodyPosition = this->transformation.globalPosition;
@@ -219,7 +239,7 @@ void Actor_syncRotationWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncRotationWithBody: null this");
 
-	if(Body_getMovementOnAllAxes(this->body))
+	if(this->body && Body_getMovementOnAllAxes(this->body))
 	{
 		Velocity velocity = Body_getVelocity(this->body);
 
@@ -411,14 +431,17 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 		direction.z ? 0 < direction.z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
-	VirtualNode node = this->shapes->head;
-
 	bool canMove = true;
 
-	for(; node; node = node->next)
+	if(this->shapes)
 	{
-		Shape shape = __SAFE_CAST(Shape, node->data);
-		canMove &= Shape_canMoveTowards(shape, displacement, 0);
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape shape = __SAFE_CAST(Shape, node->data);
+			canMove &= Shape_canMoveTowards(shape, displacement, 0);
+		}
 	}
 
 	return canMove;
@@ -437,13 +460,16 @@ fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
 
 	fix10_6 totalFrictionCoefficient = 0;
 
-	VirtualNode node = this->shapes->head;
-
-	for(; node; node = node->next)
+	if(this->shapes)
 	{
-		Shape shape = __SAFE_CAST(Shape, node->data);
+		VirtualNode node = this->shapes->head;
 
-		totalFrictionCoefficient += Shape_getCollidingFrictionCoefficient(shape);
+		for(; node; node = node->next)
+		{
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			totalFrictionCoefficient += Shape_getCollidingFrictionCoefficient(shape);
+		}
 	}
 
 	return totalFrictionCoefficient;
@@ -459,8 +485,12 @@ fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject _
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "Actor::enterCollision: null this");
-	ASSERT(this->body, "Actor::enterCollision: null body");
 	ASSERT(collisionInformation->collidingShape, "Actor::enterCollision: collidingShapes");
+
+	if(!this->body)
+	{
+		return false;
+	}
 
 	bool returnValue = false;
 
@@ -494,22 +524,23 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 		// retrieve message
 		int message = Telegram_getMessage(telegram);
 
-		if(this->body)
+		if(this->body && Body_isActive(this->body))
 		{
 			switch(message)
 			{
 				case kBodyStartedMoving:
 
-					ASSERT(this->shapes, "Actor::handleMessage: null shapes when body started moving");
-					Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
-					return true;
+					if(this->shapes)
+					{
+						Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
+						return true;
+					}
 					break;
 
 				case kBodyStopped:
 
-					if(!Body_getMovementOnAllAxes(this->body))
+					if(!Body_getMovementOnAllAxes(this->body) && this->shapes)
 					{
-						ASSERT(this->shapes, "Actor::handleMessage: null shapes when body stopped moving");
 						Entity_informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
 					}
 					break;
@@ -557,6 +588,11 @@ void Actor_addForce(Actor this, const Force* force)
 	ASSERT(this, "Actor::addForce: null this");
 	ASSERT(this->body, "Actor::addForce: null body");
 
+	if(!this->body)
+	{
+		return;
+	}
+
 	if(!Actor_canMoveTowards(this, *force))
 	{
 		return;
@@ -596,7 +632,7 @@ u16 Actor_getMovementState(Actor this)
 {
 	ASSERT(this, "Actor::getMovementState: null this");
 
-	return Body_getMovementOnAllAxes(this->body);
+	return Actor_isMoving(this);
 }
 
 void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
@@ -675,7 +711,7 @@ void Actor_takeHitFrom(Actor this, Actor other)
 	ASSERT(this, "Actor::takeHitFrom: null this");
 	ASSERT(__SAFE_CAST(Actor, other), "Actor::takeHitFrom: other is not actor");
 
-	if(other->body)
+	if(this->body && other->body)
 	{
 		Body_takeHitFrom(this->body, other->body);
 	}
@@ -703,6 +739,11 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 {
 	ASSERT(this, "Actor::exitCollision: null this");
 
+	if(!this->body)
+	{
+		return;
+	}
+
 	Body_setSurroundingFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
@@ -714,6 +755,11 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::collidingShapeOwnerDestroyed: null this");
+
+	if(!this->body)
+	{
+		return;
+	}
 
 	Body_setSurroundingFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
 

@@ -26,6 +26,7 @@
 
 #include <Container.h>
 #include <string.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -157,16 +158,29 @@ void Container_destructor(Container this)
 // safe call to delete entities within a normal stage
 void Container_deleteMyself(Container this)
 {
-	if(this->parent)
+	ASSERT(this, "Container::deleteMyself: null this");
+	ASSERT(__IS_OBJECT_ALIVE(this), "Container::deleteMyself: deleted this");
+	ASSERT(__IS_OBJECT_ALIVE(this->parent), "Container::deleteMyself: deleted parent");
+
+	if(__IS_OBJECT_ALIVE(this->parent))
 	{
 		__VIRTUAL_CALL(Container, removeChild, this->parent, this, true);
+		__VIRTUAL_CALL(Container, iAmDeletingMyself, this);
 		__VIRTUAL_CALL(Container, releaseGraphics, this);
 	}
 	else
 	{
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(this), 1, 15, NULL);
+		//Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(this), 1, 15, NULL);
 		NM_ASSERT(false, "Container::deleteMyself: I'm orphan");
 	}
+}
+
+void Container_iAmDeletingMyself(Container this)
+{
+	ASSERT(this, "Container::iAmDeletingMyself: null this");
+
+	// first remove children
+//	Container_processRemovedChildren(this);
 }
 
 // add a child Container
@@ -218,6 +232,7 @@ void Container_addChild(Container this, Container child)
 void Container_removeChild(Container this, Container child, bool deleteChild)
 {
 	ASSERT(this, "Container::removeChild: null this");
+	ASSERT(this == child->parent, "Container::removeChild: not my child");
 
 	// check if child is valid and if I'm its parent
 	if(!(child && this == child->parent && this->children))
@@ -241,6 +256,18 @@ void Container_removeChild(Container this, Container child, bool deleteChild)
 		child->parent = NULL;
 		child->deleteMe = deleteChild;
 	}
+#ifndef __RELEASE
+	else
+	{
+		Printing_setDebugMode(Printing_getInstance());
+		Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
+		Printing_text(Printing_getInstance(), "Object's type: ", 1, 16, NULL);
+		Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this), 18, 16, NULL);
+
+		NM_ASSERT(false, "Container::removeChild: removing child twice");
+	}
+#endif
 }
 
 void Container_setupGraphics(Container this __attribute__ ((unused)))
@@ -585,6 +612,8 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	// if I have children
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -609,6 +638,8 @@ void Container_synchronizeGraphics(Container this)
 	// if I have children
 	if(this->children)
 	{
+		Container_processRemovedChildren(this);
+
 		VirtualNode node = this->children->head;
 
 		// update each child

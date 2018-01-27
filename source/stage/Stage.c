@@ -159,7 +159,6 @@ static u32 entityFactoryHighestTime = 0;
 static u32 timeBeforeProcess = 0;
 #endif
 
-bool reset = false;
 
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
@@ -1077,19 +1076,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 {
 	ASSERT(this, "Stage::update: null this");
 
-	VirtualNode node = this->children->head;
-
-	for(; node ; node = node->next)
-	{
-		Container child = __SAFE_CAST(Container, node->data);
-
-		if(child->parent != __SAFE_CAST(Container, this))
-		{
-			continue;
-		}
-
-		__VIRTUAL_CALL(Container, update, child, elapsedTime);
-	}
+	__CALL_BASE_METHOD(Container, update, this, elapsedTime);
 
 	if(this->uiContainer)
 	{
@@ -1104,19 +1091,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 {
 	ASSERT(this, "Stage::transform: null this");
 
-	VirtualNode node = this->children->head;
-
-	for(; node; node = node->next)
-	{
-		Container child = __SAFE_CAST(Container, node->data);
-
-		if(child->parent != __SAFE_CAST(Container, this))
-		{
-			continue;
-		}
-
-		__VIRTUAL_CALL(Container, transform, child, environmentTransform, invalidateTransformationFlag);
-	}
+	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
 
 	if(this->uiContainer)
 	{
@@ -1128,18 +1103,11 @@ void Stage_synchronizeGraphics(Stage this)
 {
 	ASSERT(this, "Stage::synchronizeGraphics: null this");
 
-	VirtualNode node = this->children->head;
+	__CALL_BASE_METHOD(Container, synchronizeGraphics, this);
 
-	for(; node; node = node->next)
+	if(this->uiContainer)
 	{
-		Container child = __SAFE_CAST(Container, node->data);
-
-		if(child->parent != __SAFE_CAST(Container, this))
-		{
-			continue;
-		}
-
-		__VIRTUAL_CALL(Container, synchronizeGraphics, child);
+		__VIRTUAL_CALL(Container, synchronizeGraphics, this->uiContainer);
 	}
 }
 

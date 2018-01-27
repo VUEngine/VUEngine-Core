@@ -141,7 +141,7 @@ typedef struct MovementResult
 		 * @brief				friction coefficient of the surroundings
 		 * @memberof 			Body
 		 */																								\
-		fix10_6 surroundingFrictionCoefficient;														\
+		fix10_6 surroundingFrictionCoefficient;															\
 		/**
 		 * @var fix10_6 		frictionForceMagnitude
 		 * @brief				friction force magnitude
@@ -153,7 +153,7 @@ typedef struct MovementResult
 		 * @brief				total friction force magnitude
 		 * @memberof 			Body
 		 */																								\
-		fix10_6 frictionForceMagnitude;																\
+		fix10_6 frictionForceMagnitude;																	\
 		/**
 		 * @var fix10_6 		mass
 		 * @brief				mass

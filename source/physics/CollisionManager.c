@@ -235,7 +235,12 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	{
 		CollisionData* collisionData = (CollisionData*)node->data;
 
-		if(!__IS_OBJECT_ALIVE(collisionData->collisionInformation.shape->owner))
+		// don't process if shape's owner has been destroyed during the processing of a previous collision
+		// or if the shape or collidingShape have been removed
+		if(!__IS_OBJECT_ALIVE(collisionData->collisionInformation.shape->owner) ||
+			(!__IS_OBJECT_ALIVE(collisionData->collisionInformation.shape) || (collisionData->collisionInformation.collidingShape && !VirtualList_find(this->shapes, collisionData->collisionInformation.shape)))  ||
+			((collisionData->collisionInformation.collidingShape && !__IS_OBJECT_ALIVE(collisionData->collisionInformation.collidingShape)) || (collisionData->collisionInformation.collidingShape && !VirtualList_find(this->shapes, collisionData->collisionInformation.collidingShape)))
+		)
 		{
 			__DELETE_BASIC(collisionData);
 			continue;

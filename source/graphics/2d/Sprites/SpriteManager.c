@@ -294,14 +294,16 @@ void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite)
 	ASSERT(this, "SpriteManager::disposeSprite: null this");
 	ASSERT(__IS_OBJECT_ALIVE(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
+	this->lockSpritesLists = true;
+
 	if(sprite && !VirtualList_find(this->spritesToDispose, sprite))
 	{
-		this->lockSpritesLists = true;
 		VirtualList_pushBack(this->spritesToDispose, sprite);
 
 		Sprite_hide(sprite);
-		this->lockSpritesLists = false;
 	}
+
+	this->lockSpritesLists = false;
 }
 
 /**
@@ -473,7 +475,6 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 
 	s8 layer = 0;
 
-#ifdef __DEBUG
 	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
 
 	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::getWorldLayer: sprite already registered");
@@ -481,7 +482,7 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 	if(!alreadyLoadedSpriteNode)
 	{
 		this->lockSpritesLists = true;
-#endif
+
 		// retrieve the next free layer, taking into account
 		// if there are layers being freed up by the recovery algorithm
 		layer = __TOTAL_LAYERS - 1;
@@ -501,9 +502,7 @@ void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 		this->zSortingFirstNode = NULL;
 		this->zSortingSecondNode = NULL;
 
-#ifdef __DEBUG
 	}
-#endif
 
 	Sprite_setWorldLayer(sprite, layer);
 
