@@ -404,12 +404,12 @@ void Object_fireEvent(Object this, u32 eventCode)
  */
 Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
-	static int lp = 0;
-	static int sp = 0;
+	static int lp = -1;
+	static int sp = -1;
 
-	if(!lp && !sp)
+	if(-1 == lp && -1 == sp)
 	{
-		asm(" mov sp,%0  ": "=r" (lp));
+		asm(" mov sp,%0  ": "=r" (sp));
 		asm(" mov lp,%0  ": "=r" (lp));
 	}
 
@@ -417,8 +417,8 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 
 	if(!this)
 	{
-		lp = 0;
-		sp = 0;
+		lp = -1;
+		sp = -1;
 		return NULL;
 	}
 
@@ -440,8 +440,8 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 	{
 		if(targetClassGetClassMethod == (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
 		{
-			lp = 0;
-			sp = 0;
+			lp = -1;
+			sp = -1;
 			return this;
 		}
 
@@ -452,15 +452,15 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 
 	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
 	{
-		lp = 0;
-		sp = 0;
+		lp = -1;
+		sp = -1;
 		return NULL;
 	}
 
 	if(targetClassGetClassMethod == baseClassGetClassMethod)
 	{
-		lp = 0;
-		sp = 0;
+		lp = -1;
+		sp = -1;
 		return this;
 	}
 

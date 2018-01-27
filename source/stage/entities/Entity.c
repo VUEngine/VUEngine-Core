@@ -146,6 +146,24 @@ void Entity_destructor(Entity this)
 }
 
 /**
+ * Clean up method
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ */
+void Entity_iAmDeletingMyself(Entity this)
+{
+	ASSERT(this, "Entity::iAmDeletingMyself: null this");
+
+	__CALL_BASE_METHOD(Container, iAmDeletingMyself, this);
+
+	// destroy collision shapes
+	Entity_destroyShapes(this);
+}
+
+/**
  * Retrieve instance's in game id
  *
  * @memberof	Entity
@@ -327,7 +345,6 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
 
 		// delete the sprites
 		__DELETE(this->sprites);
-
 		this->sprites = NULL;
 	}
 }
