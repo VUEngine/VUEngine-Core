@@ -116,7 +116,8 @@
 #define __DELETE_BASIC(object)																			\
 																										\
 		/* free the memory */																			\
-		*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = 0;
+		extern MemoryPool _memoryPool;																	\
+		MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD))
 #endif
 
 // construct the base object

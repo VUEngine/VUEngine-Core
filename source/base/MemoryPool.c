@@ -264,14 +264,14 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 				i++, j--
 			)
 			{
-				if(i < directoryEntries && this->poolDirectory[pool][i] ^ 0xFFFFFFFF)
+				if(i < directoryEntries && (this->poolDirectory[pool][i] ^ 0xFFFFFFFF))
 				{
 					this->poolSizes[pool][eLastFreeBlockIndex] = i;
 					blockFound = true;
 					break;
 				}
 
-				if(0 <= j && this->poolDirectory[pool][j] ^ 0xFFFFFFFF)
+				if(0 <= j && (this->poolDirectory[pool][j] ^ 0xFFFFFFFF))
 				{
 					this->poolSizes[pool][eLastFreeBlockIndex] = j;
 					blockFound = true;
@@ -296,6 +296,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 		Printing_hex(Printing_getInstance(), lp, 36, 15, 8, NULL);
 
+		MemoryPool_printDirectory(this, 30, 20, 7);
+
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
@@ -311,7 +313,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	int freeBlockIndex = (this->poolSizes[pool][eLastFreeBlockIndex] * (sizeof(u32) * 8) + blockDisplacement) * blockSize;
 
 	// mark block as used
-	this->poolDirectory[pool][this->poolSizes[pool][eLastFreeBlockIndex]] |= (1 << blockDisplacement);
+	this->poolDirectory[pool][this->poolSizes[pool][eLastFreeBlockIndex]] |= (0x00000001 << blockDisplacement);
 
 	ASSERT(__MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][freeBlockIndex]), "MemoryPool::allocate: block is not free");
 
@@ -361,9 +363,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	u32 directoryIndex = objectBlockIndex / (sizeof(u32) * 8);
 	u32 directoryDisplacement = objectBlockIndex % (sizeof(u32) * 8);
 
-	u32 mask = 1 << directoryDisplacement;
-
-	this->poolDirectory[pool][directoryIndex] &= mask ^ 0xFFFFFFFF;
+	this->poolDirectory[pool][directoryIndex] &= (0x00000001 << directoryDisplacement) ^ 0xFFFFFFFF;
 
 	// thrown exception
 	ASSERT(object == &this->poolLocation[pool][displacement], "MemoryPool::free: deleting something not allocated");
