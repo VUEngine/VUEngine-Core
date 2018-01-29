@@ -237,18 +237,9 @@ static int Stage_isEntityInLoadRange(Stage this, ScreenPixelVector onScreenPosit
 {
 	ASSERT(this, "Stage::isEntityInLoadRange: null this");
 
-	PixelVector position =
-	{
-		onScreenPosition.x,
-		onScreenPosition.y,
-		onScreenPosition.z,
-		0
-	};
+	Vector3D spatialPosition = Vector3D_getFromScreenPixelVector(onScreenPosition);
 
-	position.x -= __METERS_TO_PIXELS(_cameraPosition->x);
-	position.y -= __METERS_TO_PIXELS(_cameraPosition->y);
-	position.z -= __METERS_TO_PIXELS(_cameraPosition->z);
-
+	PixelVector position = Vector3D_projectToPixelVector(Vector3D_getRelativeToCamera(spatialPosition), 0);
 
 	// check x visibility
 	if(position.x + pixelRightBox->x1 <  __LOAD_LOW_X_LIMIT || position.x + pixelRightBox->x0 >  __LOAD_HIGHT_X_LIMIT)

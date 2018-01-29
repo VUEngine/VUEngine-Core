@@ -1880,8 +1880,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-//		PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
-		PixelVector position2D = PixelVector_getFromVector3D(position3D);
+		PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
 
 		s16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
 		s16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
