@@ -45,6 +45,8 @@
 // declare the virtual methods
 #define Stage_METHODS(ClassName)																		\
 		Container_METHODS(ClassName)																	\
+		__VIRTUAL_DEC(ClassName, bool, stream);															\
+		__VIRTUAL_DEC(ClassName, void, streamAll);														\
 
 // declare the virtual methods which are redefined
 #define Stage_SET_VTABLE(ClassName)																		\
@@ -56,6 +58,8 @@
 		__VIRTUAL_SET(ClassName, Stage, resume);														\
 		__VIRTUAL_SET(ClassName, Stage, removeChild);													\
 		__VIRTUAL_SET(ClassName, Stage, handlePropagatedMessage);										\
+		__VIRTUAL_SET(ClassName, Stage, stream);														\
+		__VIRTUAL_SET(ClassName, Stage, streamAll);														\
 
 #define Stage_ATTRIBUTES																				\
 		/* super's attributes */																		\
@@ -97,6 +101,9 @@ __CLASS(Stage);
 // defines a game world in ROM memory
 typedef struct StageDefinition
 {
+	/// class allocator
+	AllocatorPointer allocator;
+
 	// general level's attributes
 	struct Level
 	{
@@ -199,11 +206,12 @@ typedef const StageDefinition StageROMDef;
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DECLARE(Stage);
+__CLASS_NEW_DECLARE(Stage, StageDefinition* stageDefinition);
 
+void Stage_constructor(Stage this, StageDefinition* stageDefinition);
 void Stage_destructor(Stage this);
 void Stage_setupPalettes(Stage this);
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
+void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 void Stage_loadPostProcessingEffects(Stage this);
 Size Stage_getSize(Stage this);
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);

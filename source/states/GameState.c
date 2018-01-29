@@ -279,16 +279,13 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	Camera_setStageSize(Camera_getInstance(), Stage_getSize(this->stage));
 	Camera_setPosition(Camera_getInstance(), this->cameraPosition);
 
-	if(this->stage)
-	{
-		Game_reset(Game_getInstance());
+	Game_reset(Game_getInstance());
 
-		// must make sure that all textures are completely written
-		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
+	// must make sure that all textures are completely written
+	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 
-		// update the stage
-		__VIRTUAL_CALL(Container, resume, this->stage);
-	}
+	// update the stage
+	__VIRTUAL_CALL(Container, resume, this->stage);
 
 	// move the camera to its previous position
 	Camera_focus(Camera_getInstance(), false);
@@ -297,7 +294,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	GameState_initialTransform(this);
 
 	// force all streaming right now
-	Stage_streamAll(this->stage);
+	__VIRTUAL_CALL(Stage, streamAll, this->stage);
 
 	// force char memory defragmentation
 	CharSetManager_defragment(CharSetManager_getInstance());
@@ -399,7 +396,7 @@ bool GameState_stream(GameState this)
 {
 	ASSERT(this, "GameState::stream: null this");
 
-	return Stage_stream(this->stage);
+	return __VIRTUAL_CALL(Stage, stream, this->stage);
 }
 
 /**
@@ -523,9 +520,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// reset the engine state
 	Game_reset(Game_getInstance());
 
-	// construct the stage
-	this->stage = __NEW(Stage);
-
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	// make sure no entity is set as focus for the camera
@@ -534,8 +528,11 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// must make sure that all textures are completely written
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 
+	// construct the stage
+	this->stage = ((Stage (*)(StageDefinition*)) stageDefinition->allocator)((StageDefinition*)stageDefinition);
+
 	// load world entities
-	Stage_load(this->stage, stageDefinition, positionedEntitiesToIgnore, overrideCameraPosition);
+	Stage_load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
 
 	// move the camera to its previous position
 	Camera_focus(Camera_getInstance(), false);

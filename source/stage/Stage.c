@@ -123,7 +123,6 @@ const Transformation neutralEnvironmentTransformation =
 // global
 BgmapTexture BgmapTextureManager_loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
 
-static void Stage_constructor(Stage this);
 static void Stage_setupUI(Stage this);
 static StageEntityDescription* Stage_registerEntity(Stage this, PositionedEntity* positionedEntity);
 static void Stage_registerEntities(Stage this, VirtualList positionedEntitiesToIgnore);
@@ -165,11 +164,11 @@ static u32 timeBeforeProcess = 0;
 //---------------------------------------------------------------------------------------------------------
 
 // always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Stage)
-__CLASS_NEW_END(Stage);
+__CLASS_NEW_DEFINITION(Stage, StageDefinition *stageDefinition)
+__CLASS_NEW_END(Stage, stageDefinition);
 
 // class's constructor
-static void Stage_constructor(Stage this)
+void Stage_constructor(Stage this, StageDefinition *stageDefinition)
 {
 	ASSERT(this, "Stage::constructor: null this");
 
@@ -180,10 +179,10 @@ static void Stage_constructor(Stage this)
 	this->particleRemover = __NEW(ParticleRemover);
 	this->children = __NEW(VirtualList);
 
+	this->stageDefinition = stageDefinition;
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
 	this->uiContainer = NULL;
-	this->stageDefinition = NULL;
 	this->focusEntity = NULL;
 	this->streamingHeadNode = NULL;
 	this->cameraPreviousDistance = 0;
@@ -288,12 +287,9 @@ void Stage_setupPalettes(Stage this)
 
 
 // load stage's entites
-void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	ASSERT(this, "Stage::load: null this");
-
-	// set world's definition
-	this->stageDefinition = stageDefinition;
 
 	// set optical values
 	Camera_setOptical(Camera_getInstance(), Optical_getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
@@ -302,11 +298,11 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	SoundManager_stopAllSound(SoundManager_getInstance());
 
 	// set world's limits
-	Camera_setStageSize(Camera_getInstance(), Size_getFromPixelSize(stageDefinition->level.pixelSize));
+	Camera_setStageSize(Camera_getInstance(), Size_getFromPixelSize(this->stageDefinition->level.pixelSize));
 
 	if(overrideCameraPosition)
 	{
-		Camera_setPosition(Camera_getInstance(), Vector3D_getFromPixelVector(stageDefinition->level.cameraInitialPosition));
+		Camera_setPosition(Camera_getInstance(), Vector3D_getFromPixelVector(this->stageDefinition->level.cameraInitialPosition));
 	}
 
 	// set palettes
@@ -336,18 +332,18 @@ void Stage_load(Stage this, StageDefinition* stageDefinition, VirtualList positi
 	Stage_setFocusEntity(this, Camera_getFocusEntity(Camera_getInstance()));
 
 	// set physics
-	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.frictionCoefficient);
-	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), stageDefinition->physics.gravity);
+	PhysicalWorld_setFrictionCoefficient(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.frictionCoefficient);
+	PhysicalWorld_setGravity(Game_getPhysicalWorld(Game_getInstance()), this->stageDefinition->physics.gravity);
 
 	// load background music
-	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])stageDefinition->assets.bgm);
+	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
 
 	// setup colors and brightness
-	VIPManager_setBackgroundColor(VIPManager_getInstance(), stageDefinition->rendering.colorConfig.backgroundColor);
-	VIPManager_setupBrightnessRepeat(VIPManager_getInstance(), stageDefinition->rendering.colorConfig.brightnessRepeat);
+	VIPManager_setBackgroundColor(VIPManager_getInstance(), this->stageDefinition->rendering.colorConfig.backgroundColor);
+	VIPManager_setupBrightnessRepeat(VIPManager_getInstance(), this->stageDefinition->rendering.colorConfig.brightnessRepeat);
 
 	// set particle removal delay
-	ParticleRemover_setRemovalDelayCycles(this->particleRemover, stageDefinition->streaming.particleRemovalDelayCycles);
+	ParticleRemover_setRemovalDelayCycles(this->particleRemover, this->stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
 	__VIRTUAL_CALL(Container, initialTransform, this, &neutralEnvironmentTransformation, true);
