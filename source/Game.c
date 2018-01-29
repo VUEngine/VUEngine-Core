@@ -1273,9 +1273,6 @@ inline static void Game_run(Game this)
 	// needs to be changed
 	Game_checkForNewState(this);
 
-	// update game's logic
-	Game_updateLogic(this);
-
 	// dispatch delayed messages
 	Game_dispatchDelayedMessages(this);
 
@@ -1285,6 +1282,9 @@ inline static void Game_run(Game this)
 		// stream
 		Game_stream(this);
 	}
+
+	// update game's logic
+	Game_updateLogic(this);
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME

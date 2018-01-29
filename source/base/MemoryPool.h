@@ -55,6 +55,7 @@ void MemoryPool_destructor(MemoryPool this);
 void MemoryPool_cleanUp(MemoryPool this);
 BYTE* MemoryPool_allocate(MemoryPool this, int numBytes);
 void MemoryPool_free(MemoryPool this, BYTE* object);
+void MemoryPool_printDirectory(MemoryPool this, int x, int y, int pool);
 void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y);
 void MemoryPool_printResumedUsage(MemoryPool this, int x, int y);
 

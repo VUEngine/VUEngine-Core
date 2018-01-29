@@ -25,6 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <MemoryPool.h>
+#include <HardwareManager.h>
 #include <Game.h>
 #include <Utilities.h>
 #include <Types.h>
@@ -229,6 +230,9 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	bool blockFound = false;
 
+	// make sure that this process is not interrupted
+	HardwareManager_disableInterrupts();
+
 	while(!blockFound && pool--)
 	{
 		// search for the smallest pool which can hold the data
@@ -307,6 +311,9 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	ASSERT(__MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][freeBlockIndex]), "MemoryPool::allocate: block is not free");
 	*((u32*)&this->poolLocation[pool][freeBlockIndex]) = __MEMORY_USED_BLOCK_FLAG;
 
+	// make sure that this process is not interrupted
+	HardwareManager_enableInterrupts();
+
 	// return designed address
 	return &this->poolLocation[pool][freeBlockIndex];
 }
@@ -336,12 +343,12 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	for(; pool-- && (u32)object < (u32)this->poolLocation[pool];);
 
 	// look for the registry in which the object is
-	NM_ASSERT(0 <= pool , "MemoryPool::free: deleting something not allocated");
+	ASSERT(0 <= pool , "MemoryPool::free: deleting something not allocated");
 
 	u32 displacement = (((u32)object) - ((u32)this->poolLocation[pool]));
 
 	// thrown exception
-	NM_ASSERT(object == &this->poolLocation[pool][displacement], "MemoryPool::free: deleting something not allocated");
+	ASSERT(object == &this->poolLocation[pool][displacement], "MemoryPool::free: deleting something not allocated");
 
 	// mark block as free
 	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
@@ -351,8 +358,6 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	// mark block in the dictionary
 	this->poolDirectory[pool][objectBlockIndex >> __BITS_IN_U32_TYPE_EXP] &= (0x00000001 << __MODULO(objectBlockIndex, __BITS_IN_U32_TYPE)) ^ 0xFFFFFFFF;
 }
-
-
 
 /**
  * Clear all memory pool

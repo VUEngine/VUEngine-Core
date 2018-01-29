@@ -100,6 +100,32 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 #endif
 
 /**
+ * Enable interrupts
+ *
+ * @memberof					HardwareManager
+ * @public
+ *
+ * @param this					Function scope
+ */
+inline void HardwareManager_enableInterrupts()
+{
+	asm("cli");
+}
+
+/**
+ * Disable interrupts
+ *
+ * @memberof					HardwareManager
+ * @public
+ *
+ * @param this					Function scope
+ */
+inline void HardwareManager_disableInterrupts()
+{
+	asm("sei");
+}
+
+/**
  * Enable multiplexed interrupts
  *
  * @memberof					VIPManager
