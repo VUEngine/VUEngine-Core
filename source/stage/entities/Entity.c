@@ -214,9 +214,6 @@ Entity Entity_getChildById(Entity this, s16 id)
 
 	if(this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(__SAFE_CAST(Container, this));
-
 		VirtualNode node = this->children->head;
 
 		// look through all children

@@ -180,7 +180,7 @@ void Container_iAmDeletingMyself(Container this)
 	ASSERT(this, "Container::iAmDeletingMyself: null this");
 
 	// first remove children
-//	Container_processRemovedChildren(this);
+	Container_processRemovedChildren(this);
 }
 
 // add a child Container
@@ -277,9 +277,6 @@ void Container_setupGraphics(Container this __attribute__ ((unused)))
 	// if I have children
 	if(this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -297,9 +294,6 @@ void Container_releaseGraphics(Container this)
 	// if I have children
 	if(this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -475,9 +469,6 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	// if I have children
 	if(recursive && this->children)
 	{
-		// first remove children
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -612,8 +603,6 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	// if I have children
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -638,8 +627,6 @@ void Container_synchronizeGraphics(Container this)
 	// if I have children
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		// update each child
@@ -941,9 +928,6 @@ static Container Container_findChildByName(Container this, VirtualList children,
 		return NULL;
 	}
 
-	// first remove children
-	Container_processRemovedChildren(this);
-
 	Container child, grandChild;
 	VirtualNode node = children->head;
 
@@ -1020,8 +1004,6 @@ void Container_resume(Container this)
 
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
-
 		VirtualNode node = this->children->head;
 
 		for(; node; node = node->next)
