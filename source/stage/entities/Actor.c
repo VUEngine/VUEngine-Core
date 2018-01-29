@@ -447,7 +447,7 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 	return canMove;
 }
 
-fix10_6 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix10_6 Actor_getElasticityOnCollision(Actor this __attribute__ ((unused)), SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getElasticityOnCollision: null this");
 
