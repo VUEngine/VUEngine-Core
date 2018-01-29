@@ -47,22 +47,25 @@
 										((Elements % __BITS_IN_U32_TYPE) ? 1 : 0)];						\
 
 #define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
-	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
-	this->poolDirectory[pool] = &this->pool ## BlockSize ## Directory[0];										\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
-	this->poolSizes[pool][eBlockSize] = BlockSize;														\
-	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
-	int i ## BlockSize = 0;																				\
-	int elements ## BlockSize = sizeof(this->pool ## BlockSize ## B) / BlockSize;						\
-	int directory ## BlockSize ## Entries = (elements ## BlockSize / __BITS_IN_U32_TYPE) + 				\
-                                            ((elements ## BlockSize % __BITS_IN_U32_TYPE) ? 1 : 0);		\
-	for(; i ## BlockSize < directory ## BlockSize ## Entries; i ## BlockSize++)							\
 	{																									\
-		this->pool ## BlockSize ## Directory[i ## BlockSize] = 0;										\
-	}																									\
-	int remainder ## BlockSize = elements ## BlockSize % __BITS_IN_U32_TYPE;								\
-	u32 mask ## BlockSize = 0xFFFFFFFF << remainder ## BlockSize;										\
-	this->pool ## BlockSize ## Directory[i ## BlockSize - 1] = mask ## BlockSize;						\
+		int i = 0;																						\
+		int totalBlocks = sizeof(this->pool ## BlockSize ## B) / BlockSize;								\
+		int totalDirectoryEntries = (totalBlocks >> __BITS_IN_U32_TYPE_EXP) + 							\
+									(__MODULO(totalBlocks, __BITS_IN_U32_TYPE) ? 1 : 0);				\
+		for(; i < totalDirectoryEntries; i++)															\
+		{																								\
+			this->pool ## BlockSize ## Directory[i] = 0;												\
+		}																								\
+		int remainder = totalBlocks % __BITS_IN_U32_TYPE;												\
+		u32 mask = 0xFFFFFFFF << remainder;																\
+		this->pool ## BlockSize ## Directory[i - 1] = mask;												\
+		this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];									\
+		this->poolDirectory[pool] = &this->pool ## BlockSize ## Directory[0];							\
+		this->poolInfo[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
+		this->poolInfo[pool][eBlockSize] = BlockSize;													\
+		this->poolInfo[pool][eDirectoryEntries] = totalDirectoryEntries;								\
+		this->poolInfo[pool++][eLastFreeBlockIndex] = 0;												\
+	}
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,7 +83,7 @@
 		BYTE* poolLocation[__MEMORY_POOLS];																\
 		u32* poolDirectory[__MEMORY_POOLS];																\
 		/* pool's size and pool's block size */															\
-		u16 poolSizes[__MEMORY_POOLS][3];																\
+		u16 poolInfo[__MEMORY_POOLS][4];																\
 
 /**
  * @class 	MemoryPool
@@ -93,30 +96,10 @@ enum MemoryPoolSizes
 {
 	ePoolSize = 0,
 	eBlockSize,
+	eDirectoryEntries,
 	eLastFreeBlockIndex,
 };
 
-void MemoryPool_printDirectory(MemoryPool this, int x, int y, int pool)
-{
-	pool = pool < __MEMORY_POOLS ? pool : __MEMORY_POOLS - 1;
-
-	for(; pool < __MEMORY_POOLS; pool++)
-	{
-		int blockSize = this->poolSizes[pool][eBlockSize];
-    	int numberOfBlocks = this->poolSizes[pool][ePoolSize] / blockSize;
-		int directoryEntries = (numberOfBlocks >> __BITS_IN_U32_TYPE_EXP) + (__MODULO(numberOfBlocks, __BITS_IN_U32_TYPE) ? 1 : 0);
-		int directoryIndex = directoryEntries;
-
-		int col = 0;
-		int row = 0;
-
-		for(; directoryIndex--; )
-		{
-			PRINT_HEX(this->poolDirectory[pool][directoryIndex], x + col, y + row++);
-		}
-		break;
-	}
-}
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -242,23 +225,22 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	int lp = HardwareManager_getLinkPointer(HardwareManager_getInstance());
 
 	int pool = __MEMORY_POOLS;
-	int blockSize = this->poolSizes[pool][eBlockSize];
+	int blockSize = this->poolInfo[pool][eBlockSize];
 
 	bool blockFound = false;
 
 	while(!blockFound && pool--)
 	{
 		// search for the smallest pool which can hold the data
-		blockSize = this->poolSizes[pool][eBlockSize];
-		int numberOfBlocks = this->poolSizes[pool][ePoolSize] / blockSize;
-		int directoryEntries = (numberOfBlocks >> __BITS_IN_U32_TYPE_EXP) + (__MODULO(numberOfBlocks, __BITS_IN_U32_TYPE) ? 1 : 0);
+		blockSize = this->poolInfo[pool][eBlockSize];
+		int directoryEntries = this->poolInfo[pool][eDirectoryEntries];
 
 		if(numberOfBytes <= blockSize)
 		{
 			int i = 0;
         	int j = 0;
 
-			for(i = this->poolSizes[pool][eLastFreeBlockIndex], j = i;
+			for(i = this->poolInfo[pool][eLastFreeBlockIndex], j = i;
 				(i < directoryEntries) | (0 <= j);
 				i++, j--
 			)
@@ -267,7 +249,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 				if(blockFound)
 				{
-					this->poolSizes[pool][eLastFreeBlockIndex] = i;
+					this->poolInfo[pool][eLastFreeBlockIndex] = i;
 					break;
 				}
 
@@ -275,7 +257,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 				if(blockFound)
 				{
-					this->poolSizes[pool][eLastFreeBlockIndex] = j;
+					this->poolInfo[pool][eLastFreeBlockIndex] = j;
 					break;
 				}
 			}
@@ -302,7 +284,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
-	u32 directoryIndex = this->poolSizes[pool][eLastFreeBlockIndex];
+	u32 directoryIndex = this->poolInfo[pool][eLastFreeBlockIndex];
 	u32 directoryEntry = this->poolDirectory[pool][directoryIndex];
 	u32 blockDisplacement = 0;
 
@@ -316,10 +298,10 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 		blockDisplacement++;
 	}
 
-	int freeBlockIndex = ((directoryIndex << __BITS_IN_U32_TYPE_EXP) + blockDisplacement) * blockSize;
-
 	// mark block as used before flagging the actual block
 	this->poolDirectory[pool][directoryIndex] |= (0x00000001 << blockDisplacement);
+
+	int freeBlockIndex = ((directoryIndex << __BITS_IN_U32_TYPE_EXP) + blockDisplacement) * blockSize;
 
 	// mark block as allocated
 	ASSERT(__MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][freeBlockIndex]), "MemoryPool::allocate: block is not free");
@@ -343,7 +325,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	ASSERT(this, "MemoryPool::free: null this");
 	ASSERT(object, "MemoryPool::free: null object");
 
-	if((unsigned)((unsigned)object - (int)&this->poolLocation[0][0]) >= (unsigned)((int)&this->poolLocation[__MEMORY_POOLS - 1][ePoolSize] - (int)&this->poolLocation[0][0]))
+	if((unsigned)((int)object - (int)&this->poolLocation[0][0]) > (unsigned)((int)&this->poolLocation[__MEMORY_POOLS - 1][this->poolInfo[__MEMORY_POOLS - 1][ePoolSize]] - (int)&this->poolLocation[0][0]))
 	{
 		return;
 	}
@@ -354,17 +336,17 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	for(; pool-- && (u32)object < (u32)this->poolLocation[pool];);
 
 	// look for the registry in which the object is
-	ASSERT(0 <= pool , "MemoryPool::free: deleting something not allocated");
+	NM_ASSERT(0 <= pool , "MemoryPool::free: deleting something not allocated");
 
 	u32 displacement = (((u32)object) - ((u32)this->poolLocation[pool]));
 
 	// thrown exception
-	ASSERT(object == &this->poolLocation[pool][displacement], "MemoryPool::free: deleting something not allocated");
+	NM_ASSERT(object == &this->poolLocation[pool][displacement], "MemoryPool::free: deleting something not allocated");
 
 	// mark block as free
 	*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
 
-	u32 objectBlockIndex = displacement / this->poolSizes[pool][eBlockSize];
+	u32 objectBlockIndex = displacement / this->poolInfo[pool][eBlockSize];
 
 	// mark block in the dictionary
 	this->poolDirectory[pool][objectBlockIndex >> __BITS_IN_U32_TYPE_EXP] &= (0x00000001 << __MODULO(objectBlockIndex, __BITS_IN_U32_TYPE)) ^ 0xFFFFFFFF;
@@ -393,7 +375,7 @@ static void MemoryPool_reset(MemoryPool this)
 	// clear all memory pool entries
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		for(i = 0; i < this->poolSizes[pool][ePoolSize]; i++)
+		for(i = 0; i < this->poolInfo[pool][ePoolSize]; i++)
 		{
 			*((u32*)&this->poolLocation[pool][i]) = __MEMORY_FREE_BLOCK_FLAG;
 		}
@@ -418,12 +400,12 @@ void MemoryPool_cleanUp(MemoryPool this)
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
 		int i = 0;
-		for(; i < this->poolSizes[pool][ePoolSize]; i += this->poolSizes[pool][eBlockSize])
+		for(; i < this->poolInfo[pool][ePoolSize]; i += this->poolInfo[pool][eBlockSize])
 		{
 			if(!*((u32*)&this->poolLocation[pool][i]))
 			{
 				int j = i;
-				for(; j < this->poolSizes[pool][eBlockSize]; j++)
+				for(; j < this->poolInfo[pool][eBlockSize]; j++)
 				{
 					this->poolLocation[pool][j] = 0;
 				}
@@ -452,7 +434,7 @@ int MemoryPool_getPoolSize(MemoryPool this)
 	// clear all allocable objects usage
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		size += this->poolSizes[pool][ePoolSize];
+		size += this->poolInfo[pool][ePoolSize];
 	}
 
 	return size;
@@ -490,8 +472,8 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
-		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
+		int totalBlocks = this->poolInfo[pool][ePoolSize] / this->poolInfo[pool][eBlockSize];
+		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolInfo[pool][eBlockSize])
 		{
 			if(*((u32*)&this->poolLocation[pool][displacement]))
 			{
@@ -499,11 +481,11 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 			}
 		}
 
-		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
+		totalUsedBytes += totalUsedBlocks * this->poolInfo[pool][eBlockSize];
 
 		Printing_text(printing, "	              ", x, ++y, NULL);
-		Printing_int(printing, this->poolSizes[pool][eBlockSize],  x, y, NULL);
-		Printing_int(printing, this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
+		Printing_int(printing, this->poolInfo[pool][eBlockSize],  x, y, NULL);
+		Printing_int(printing, this->poolInfo[pool][ePoolSize] / this->poolInfo[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
 		Printing_int(printing, totalUsedBlocks, x + 10, y, NULL);
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
@@ -556,8 +538,8 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 	for(y += 2, pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
-		int totalBlocks = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
-		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolSizes[pool][eBlockSize])
+		int totalBlocks = this->poolInfo[pool][ePoolSize] / this->poolInfo[pool][eBlockSize];
+		for(displacement = 0, i = 0, totalUsedBlocks = 0 ; i < totalBlocks; i++, displacement += this->poolInfo[pool][eBlockSize])
 		{
 			if(this->poolLocation[pool][displacement])
 			{
@@ -565,7 +547,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 			}
 		}
 
-		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
+		totalUsedBytes += totalUsedBlocks * this->poolInfo[pool][eBlockSize];
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 
@@ -573,7 +555,7 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
-			Printing_int(printing, this->poolSizes[pool][eBlockSize], x, y, NULL);
+			Printing_int(printing, this->poolInfo[pool][eBlockSize], x, y, NULL);
 			Printing_int(printing, usedBlocksPercentage, x + 7 - Utilities_intLength(usedBlocksPercentage), y, NULL);
 			Printing_text(printing, "% ", x + 7, y++, NULL);
 		}
@@ -587,4 +569,24 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	Printing_text(printing, "% ", x + 11, y++, NULL);
 	Printing_text(printing, "Used: ", x, ++y, NULL);
 	Printing_int(printing, totalUsedBytes, x + 12 - Utilities_intLength(totalUsedBytes), y++, NULL);
+}
+
+void MemoryPool_printDirectory(MemoryPool this, int x, int y, int pool)
+{
+	pool = pool < __MEMORY_POOLS ? pool : __MEMORY_POOLS - 1;
+
+	for(; pool < __MEMORY_POOLS; pool++)
+	{
+		int blockSize = this->poolInfo[pool][eBlockSize];
+		int directoryIndex = this->poolInfo[pool][eDirectoryEntries];
+
+		int col = 0;
+		int row = 0;
+
+		for(; directoryIndex--;)
+		{
+			PRINT_HEX(this->poolDirectory[pool][directoryIndex], x + col, y + row++);
+		}
+		break;
+	}
 }
