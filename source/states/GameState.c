@@ -520,8 +520,6 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 	// reset the engine state
 	Game_reset(Game_getInstance());
 
-	ASSERT(this->stage, "GameState::loadStage: null stage");
-
 	// make sure no entity is set as focus for the camera
 	Camera_setFocusGameEntity(Camera_getInstance(), NULL);
 
@@ -530,6 +528,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// construct the stage
 	this->stage = ((Stage (*)(StageDefinition*)) stageDefinition->allocator)((StageDefinition*)stageDefinition);
+	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	// load world entities
 	Stage_load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
