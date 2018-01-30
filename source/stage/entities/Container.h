@@ -179,7 +179,7 @@ void Container_invalidateGlobalTransformation(Container this);
 bool Container_isHidden(Container this);
 int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
 int Container_onPropagatedMessage(Container this, va_list args);
-void Container_processRemovedChildren(Container this);
+void Container_purgeChildren(Container this);
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...);
 void Container_setupGraphics(Container this);
 void Container_releaseGraphics(Container this);

@@ -59,7 +59,6 @@ void CollisionManager_destructor(CollisionManager this);
 
 void CollisionManager_hideShapes(CollisionManager this);
 void CollisionManager_print(CollisionManager this, int x, int y);
-void CollisionManager_processRemovedShapes(CollisionManager this);
 Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition);
 void CollisionManager_destroyShape(CollisionManager this, Shape shape);
 void CollisionManager_reset(CollisionManager this);

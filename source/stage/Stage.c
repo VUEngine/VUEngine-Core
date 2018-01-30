@@ -133,7 +133,7 @@ static void Stage_setFocusEntity(Stage this, Entity focusEntity);
 static void Stage_loadInitialEntities(Stage this);
 static bool Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static bool Stage_loadInRangeEntities(Stage this, int defer);
-static bool Stage_processRemovedChildrenProgressively(Stage this);
+static bool Stage_purgeChildrenProgressively(Stage this);
 static bool Stage_updateEntityFactory(Stage this);
 static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId);
 
@@ -952,7 +952,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 }
 
 // process removed children
-static bool Stage_processRemovedChildrenProgressively(Stage this)
+static bool Stage_purgeChildrenProgressively(Stage this)
 {
 	ASSERT(this, "Stage::processRemovedChildrenProgressively: null this");
 
@@ -1024,7 +1024,7 @@ bool Stage_stream(Stage this)
 	}
 #endif
 
-	if(Stage_processRemovedChildrenProgressively(this))
+	if(Stage_purgeChildrenProgressively(this))
 	{
 		return true;
 	}
@@ -1049,11 +1049,11 @@ void Stage_streamAll(Stage this)
 	ASSERT(this, "Stage::streamAll: null this");
 
 	// must make sure there are not pending entities for removal
-	Container_processRemovedChildren(__SAFE_CAST(Container, this));
+	Container_purgeChildren(__SAFE_CAST(Container, this));
 
 	Stage_unloadOutOfRangeEntities(this, false);
 	SpriteManager_disposeSprites(SpriteManager_getInstance());
-	Container_processRemovedChildren(__SAFE_CAST(Container, this));
+	Container_purgeChildren(__SAFE_CAST(Container, this));
 	Stage_loadInRangeEntities(this, false);
 	EntityFactory_prepareAllEntities(this->entityFactory);
 	SpriteManager_writeTextures(SpriteManager_getInstance());

@@ -307,7 +307,7 @@ void Container_releaseGraphics(Container this)
 }
 
 // process removed children
-void Container_processRemovedChildren(Container this)
+void Container_purgeChildren(Container this)
 {
 	ASSERT(this, "Container::processRemovedChildren: null this");
 
@@ -359,7 +359,7 @@ void Container_update(Container this, u32 elapsedTime)
 	if(this->children)
 	{
 		// first remove children
-		Container_processRemovedChildren(this);
+		Container_purgeChildren(this);
 
 		VirtualNode node = this->children->head;
 
@@ -986,7 +986,7 @@ void Container_suspend(Container this)
 
 	if(this->children)
 	{
-		Container_processRemovedChildren(this);
+		Container_purgeChildren(this);
 
 		VirtualNode node = this->children->head;
 
