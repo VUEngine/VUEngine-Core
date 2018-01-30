@@ -582,7 +582,6 @@ void MemoryPool_printDirectory(MemoryPool this, int x, int y, int pool)
 
 	for(; pool < __MEMORY_POOLS; pool++)
 	{
-		int blockSize = this->poolInfo[pool][eBlockSize];
 		int directoryIndex = this->poolInfo[pool][eDirectoryEntries];
 
 		int col = 0;
