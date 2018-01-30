@@ -282,7 +282,7 @@ void SoundManager_playSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playSounds: null this");
 
-	//SoundManager_continuePlayingBGM(this);
+	SoundManager_continuePlayingBGM(this);
 	SoundManager_continuePlayingFxSounds(this);
 }
 
