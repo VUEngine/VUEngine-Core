@@ -158,8 +158,9 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 		const u16 (*bgm)[__BGM_CHANNELS];																\
 		/* fx sound */																					\
 		const u16* fxSound[__FXS];																		\
-		/* space position of each fx */																	\
-		PixelVector fxPosition[__FXS];																		\
+		/* output level based on sound position of each fx */											\
+		s16 fxLeftOutput[__FXS];																		\
+		s16 fxRightOutput[__FXS];																		\
 
 /**
  * @class	SoundManager
@@ -225,7 +226,8 @@ static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager thi
 		{
 			this->fxSound[i] = NULL;
 
-			this->fxPosition[i].parallax = -10000;
+			this->fxLeftOutput[i] = 0;
+			this->fxRightOutput[i] = 0;
 		}
 	}
 }
@@ -280,7 +282,7 @@ void SoundManager_playSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playSounds: null this");
 
-	SoundManager_continuePlayingBGM(this);
+	//SoundManager_continuePlayingBGM(this);
 	SoundManager_continuePlayingFxSounds(this);
 }
 
@@ -396,48 +398,23 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
 {
 	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
 
-	float zMinus = 0;
 	int output = 0x00;
-	int maxOutputLevel = __MAXIMUM_OUTPUT_LEVEL;
 
 	/* The maximum sound level for each side is 0xF
 	 * In the center position the output level is the one
 	 * defined in the sound's definition */
-//	if(-10000 != this->fxPosition[fxS].parallax )
+	if(0 < this->fxLeftOutput[fxS])
 	{
-		//zMinus = this->fxPosition[fxS].parallax ;//* this->zFactor;
+		output |= (((int)this->fxLeftOutput[fxS]) << 4);
+	}
 
-		maxOutputLevel -= zMinus;
-
-		if(maxOutputLevel > 0)
-		{
-			int leftDistance = __ABS(__FIX10_6_TO_I(this->fxPosition[fxS].x) - __LEFT_EAR_CENTER);
-			int rightDistance = __ABS(__FIX10_6_TO_I(this->fxPosition[fxS].x) - __RIGHT_EAR_CENTER);
-			int leftMinus = 0, rightMinus = 0;
-			int leftOutput, rightOutput;
-
-			// calculate the amount of sound that reaches each ear
-			//xDistance / (384/15)
-			leftMinus = leftDistance / ((1 << _optical->maximumXViewDistancePower) / maxOutputLevel);
-			rightMinus = rightDistance / ((1 << _optical->maximumXViewDistancePower) / maxOutputLevel);
-
-			leftOutput = maxOutputLevel - leftMinus;
-			rightOutput = maxOutputLevel - rightMinus;
-
-			if(0 < leftOutput)
-			{
-				output |= (((int)leftOutput) << 4);
-			}
-
-			if(0 < rightOutput)
-			{
-				output|=(((int)rightOutput));
-			}
-			else
-			{
-				output &= 0xF0;
-			}
-		}
+	if(0 < this->fxRightOutput[fxS])
+	{
+		output|=(((int)this->fxRightOutput[fxS]));
+	}
+	else
+	{
+		output &= 0xF0;
 	}
 
 	return output;
@@ -477,7 +454,8 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this)
 				{
 					// stop sound
 					this->fxSound[fxS] = NULL;
-					this->fxPosition[fxS].parallax = -10000;
+					this->fxLeftOutput[fxS] = 0;
+					this->fxRightOutput[fxS] = 0;
 					this->noteWait[fxS + 1] = 0;
 					this->actualNote[fxS + 1] = 0;
 					SND_REGS[fxS + 2].SxLRV = 0x00;
@@ -565,7 +543,7 @@ void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
  *
  * @return 			True if playback started
  */
-int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D	position)
+int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D position)
 {
 	ASSERT(this, "SoundManager::loadFxSound: null this");
 
@@ -583,8 +561,15 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D	pos
 		// set position inside camera coordinates
 		position = Vector3D_getRelativeToCamera(position);
 
-		// save position for 3d sound
-		this->fxPosition[i] = Vector3D_projectToPixelVector(position, 0);
+		fix10_6 maxOutputLevel = __I_TO_FIX10_6(__MAXIMUM_OUTPUT_LEVEL);
+		fix10_6 leftDistance = __ABS(__FIX10_6_MULT(position.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+		fix10_6 rightDistance = __ABS(__FIX10_6_MULT(position.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+
+		fix10_6 leftOutput = maxOutputLevel - __FIX10_6_MULT(maxOutputLevel, __FIX10_6_DIV(leftDistance, _optical->horizontalViewPointCenter));
+		this->fxLeftOutput[i] = __FIX10_6_TO_I(leftOutput - __FIX10_6_MULT(leftOutput, __FIX10_6_DIV(position.z, __I_TO_FIX10_6((1 << _optical->maximumXViewDistancePower)))));
+
+		fix10_6 rightOutput = maxOutputLevel - __FIX10_6_MULT(maxOutputLevel, __FIX10_6_DIV(rightDistance, _optical->horizontalViewPointCenter));
+		this->fxRightOutput[i] = __FIX10_6_TO_I(rightOutput - __FIX10_6_MULT(rightOutput, __FIX10_6_DIV(position.z, __I_TO_FIX10_6((1 << _optical->maximumXViewDistancePower)))));
 
 		return true;
 	}
