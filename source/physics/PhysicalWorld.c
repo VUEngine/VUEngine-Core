@@ -265,7 +265,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 
 	// process auxiliary lists
-	PhysicalWorld_processAuxiliaryBodyLists(this);
+	PhysicalWorld_purgeBodyLists(this);
 
 	VirtualNode node = this->bodies->head;
 
@@ -293,7 +293,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
  *
  * @param this	Function scope
  */
-void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this)
+void PhysicalWorld_purgeBodyLists(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::processAuxiliaryBodyLists: null this");
 	ASSERT(this->removedBodies, "PhysicalWorld::processAuxiliaryBodyLists: null removedBodies");
@@ -340,7 +340,6 @@ void PhysicalWorld_processAuxiliaryBodyLists(PhysicalWorld this)
 
 		this->bodyToCheckForGravityNode = NULL;
 	}
-
 }
 
 /**
@@ -408,7 +407,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
-	PhysicalWorld_processAuxiliaryBodyLists(this);
+	PhysicalWorld_purgeBodyLists(this);
 
 	if(clock->paused)
 	{
@@ -448,6 +447,8 @@ void PhysicalWorld_reset(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
+
+	PhysicalWorld_purgeBodyLists(this);
 
 	VirtualNode node = this->bodies->head;
 
@@ -613,6 +614,28 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 		VirtualList_pushBack(this->bodiesSentToSleep, body);
 	}
 }
+
+/**
+ * Inform that body has been inactivated
+ *
+ * @memberof	PhysicalWorld
+ * @public
+ *
+ * @param this	Function scope
+ * @param body
+ */
+void PhysicalWorld_bodySetInactive(PhysicalWorld this, Body body)
+{
+	ASSERT(this, "PhysicalWorld::bodySetInactive: null this");
+	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
+	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
+
+	if(!VirtualList_find(this->bodiesSentToSleep, body) && VirtualList_find(this->activeBodies, body))
+	{
+		VirtualList_pushBack(this->bodiesSentToSleep, body);
+	}
+}
+
 // set gravity
 void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
 {

@@ -141,9 +141,11 @@ void Actor_iAmDeletingMyself(Actor this)
 	// destroy body to prevent any more physical interactions
 	if(this->body)
 	{
+		Body_setActive(this->body, false);
+
 		// remove a body
-		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
-		this->body = NULL;
+//		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
+//		this->body = NULL;
 	}
 }
 

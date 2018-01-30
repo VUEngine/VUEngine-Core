@@ -160,7 +160,8 @@ void Entity_iAmDeletingMyself(Entity this)
 	__CALL_BASE_METHOD(Container, iAmDeletingMyself, this);
 
 	// destroy collision shapes
-	Entity_destroyShapes(this);
+	Entity_activateShapes(this, false);
+//	Entity_destroyShapes(this);
 }
 
 /**

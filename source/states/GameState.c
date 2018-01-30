@@ -181,6 +181,8 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::exit: null this");
 
+	Game_disableHardwareInterrupts(Game_getInstance());
+
 	// make sure to free the memory
 	if(this->stage)
 	{

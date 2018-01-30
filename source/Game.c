@@ -686,7 +686,7 @@ void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
 	ASSERT(this, "Game::disableHardwareInterrupts: null this");
 
 	// disable rendering
-	HardwareManager_disableRendering(HardwareManager_getInstance());
+	HardwareManager_disableInterrupts();
 }
 
 // enable interrupts
@@ -727,7 +727,6 @@ void Game_reset(Game this)
 
 	// reset profiling
 	Game_resetProfiling(this);
-
 
 	// turn on VIP
 	HardwareManager_displayOn(HardwareManager_getInstance());
@@ -1269,10 +1268,6 @@ inline static void Game_run(Game this)
 	// process collisions
 	skipNonCriticalProcesses |= Game_updateCollisions(this);
 
-	// this is the moment to check if the game's state
-	// needs to be changed
-	Game_checkForNewState(this);
-
 	// dispatch delayed messages
 	Game_dispatchDelayedMessages(this);
 
@@ -1285,6 +1280,10 @@ inline static void Game_run(Game this)
 
 	// update game's logic
 	Game_updateLogic(this);
+
+	// this is the moment to check if the game's state
+	// needs to be changed
+	Game_checkForNewState(this);
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME

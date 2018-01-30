@@ -1118,7 +1118,7 @@ static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D tran
 	GameState_synchronizeGraphics(this->gameState);
 	StageEditor_printCameraPosition(this);
 	__VIRTUAL_CALL(Stage, streamAll, GameState_getStage(this->gameState));
-	PhysicalWorld_processAuxiliaryBodyLists(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
+	PhysicalWorld_purgeBodyLists(GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
 }
 
 /**

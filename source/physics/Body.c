@@ -672,6 +672,8 @@ void Body_setActive(Body this, bool active)
 	ASSERT(this, "Body::setActive: null this");
 
 	this->active = active;
+
+	PhysicalWorld_bodySetInactive(Game_getPhysicalWorld(Game_getInstance()), this);
 }
 
 // is active?

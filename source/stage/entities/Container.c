@@ -99,7 +99,11 @@ void Container_destructor(Container this)
 	ASSERT(this, "Container::destructor: null this");
 
 	// first remove any children removed
-	Container_processRemovedChildren(this);
+	if(this->removedChildren)
+	{
+		__DELETE(this->removedChildren);
+		this->removedChildren = NULL;
+	}
 
 	// if I have children
 	if(this->children)
@@ -111,7 +115,7 @@ void Container_destructor(Container this)
 		for(; node ; node = node->next)
 		{
 			Container child = __SAFE_CAST(Container, node->data);
-
+/*
 #ifdef __DEBUG
 			if(child->parent != this)
 			{
@@ -122,6 +126,7 @@ void Container_destructor(Container this)
 			}
 #endif
 			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
+*/
 			child->parent = NULL;
 			__DELETE(child);
 		}
@@ -178,9 +183,6 @@ void Container_deleteMyself(Container this)
 void Container_iAmDeletingMyself(Container this)
 {
 	ASSERT(this, "Container::iAmDeletingMyself: null this");
-
-	// first remove children
-	Container_processRemovedChildren(this);
 }
 
 // add a child Container

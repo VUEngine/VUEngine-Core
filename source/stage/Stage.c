@@ -196,6 +196,8 @@ void Stage_destructor(Stage this)
 {
 	ASSERT(this, "Stage::destructor: null this");
 
+	Stage_setFocusEntity(this, NULL);
+
 	__DELETE(this->particleRemover);
 	this->particleRemover = NULL;
 
