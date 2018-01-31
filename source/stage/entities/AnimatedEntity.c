@@ -68,7 +68,6 @@ AnimationController Sprite_getAnimationController(Sprite this);
 __CLASS_NEW_DEFINITION(AnimatedEntity, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
 __CLASS_NEW_END(AnimatedEntity, animatedEntityDefinition, id, internalId, name);
 
-// AnimatedEntity.c
 // class's constructor
 void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
