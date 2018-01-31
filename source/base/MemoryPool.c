@@ -231,7 +231,6 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	bool blockFound = false;
 
 	// make sure that this process is not interrupted
-	HardwareManager_disableInterrupts();
 
 	while(!blockFound && pool--)
 	{
@@ -253,6 +252,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 				if(blockFound)
 				{
+					HardwareManager_disableInterrupts();
+
 					this->poolInfo[pool][eLastFreeBlockIndex] = i;
 					break;
 				}
@@ -261,6 +262,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 				if(blockFound)
 				{
+					HardwareManager_disableInterrupts();
+
 					this->poolInfo[pool][eLastFreeBlockIndex] = j;
 					break;
 				}
@@ -337,8 +340,6 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 		return;
 	}
 
-	// make sure that this process is not interrupted
-	HardwareManager_disableInterrupts();
 
 	int pool = __MEMORY_POOLS;
 
@@ -360,9 +361,6 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 
 	// mark block in the dictionary
 	this->poolDirectory[pool][objectBlockIndex >> __BITS_IN_U32_TYPE_EXP] &= (0x00000001 << __MODULO(objectBlockIndex, __BITS_IN_U32_TYPE)) ^ 0xFFFFFFFF;
-
-	// enable interrupts
-	HardwareManager_enableInterrupts();
 }
 
 /**
