@@ -311,7 +311,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 	ASSERT(__MEMORY_FREE_BLOCK_FLAG == *((u32*)&this->poolLocation[pool][freeBlockIndex]), "MemoryPool::allocate: block is not free");
 	*((u32*)&this->poolLocation[pool][freeBlockIndex]) = __MEMORY_USED_BLOCK_FLAG;
 
-	// make sure that this process is not interrupted
+	// enable interrupts
 	HardwareManager_enableInterrupts();
 
 	// return designed address
@@ -337,6 +337,9 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 		return;
 	}
 
+	// make sure that this process is not interrupted
+	HardwareManager_disableInterrupts();
+
 	int pool = __MEMORY_POOLS;
 
 	// look for the pool containing the object
@@ -357,6 +360,9 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 
 	// mark block in the dictionary
 	this->poolDirectory[pool][objectBlockIndex >> __BITS_IN_U32_TYPE_EXP] &= (0x00000001 << __MODULO(objectBlockIndex, __BITS_IN_U32_TYPE)) ^ 0xFFFFFFFF;
+
+	// enable interrupts
+	HardwareManager_enableInterrupts();
 }
 
 /**
