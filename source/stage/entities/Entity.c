@@ -224,7 +224,7 @@ Entity Entity_getChildById(Entity this, s16 id)
 
 			if(Entity_getId(child) == id)
 			{
-				return child;
+				return this->removedChildren && VirtualList_find(this->removedChildren, child) ? NULL : child;
 			}
 		}
 	}

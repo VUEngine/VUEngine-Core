@@ -974,7 +974,7 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 		}
 	}
 
-	return foundChild;
+	return this->removedChildren && VirtualList_find(this->removedChildren, foundChild) ? NULL : foundChild;
 }
 
 
