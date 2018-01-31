@@ -101,6 +101,7 @@
 		(ClassName*)((u32)MemoryPool_allocate(MemoryPool_getInstance(),									\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
+#ifdef __DEBUG
 // like delete in C++ (calls virtual destructor)
 #define __DELETE_BASIC(object)																			\
 																										\
@@ -111,6 +112,12 @@
 		/* to speed things up */																		\
 		extern MemoryPool _memoryPool;																	\
 		MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD))
+#else
+#define __DELETE_BASIC(object)																			\
+																										\
+		/* free the memory */																			\
+		*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;
+#endif
 
 // construct the base object
 #define __CONSTRUCT_BASE(BaseClass, ...)																\
