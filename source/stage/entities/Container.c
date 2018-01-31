@@ -877,14 +877,6 @@ int Container_getChildCount(Container this)
 	return this->children ? VirtualList_getSize(this->children) : 0;
 }
 
-// retrieve children
-VirtualList Container_getChildren(Container this)
-{
-	ASSERT(this, "Container::getChildren: null this");
-
-	return this->children;
-}
-
 // set name
 void Container_setName(Container this, const char* const name)
 {
@@ -976,8 +968,6 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 
 	return this->removedChildren && VirtualList_find(this->removedChildren, foundChild) ? NULL : foundChild;
 }
-
-
 
 // suspend for pause
 void Container_suspend(Container this)

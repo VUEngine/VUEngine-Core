@@ -119,6 +119,7 @@ __CLASS_DEFINITION(StageEditor, Object);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
 __CLASS_FRIEND_DEFINITION(Sprite);
+__CLASS_FRIEND_DEFINITION(Container);
 
 /**
  * The different modes of the StageEditor
@@ -566,7 +567,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 {
 	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
+	VirtualList stageEntities = (__SAFE_CAST(Container, GameState_getStage(this->gameState)))->children;
 
 	if(!this->currentEntityNode)
 	{
@@ -601,7 +602,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
 {
 	StageEditor_releaseShape(this);
 
-	VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
+	VirtualList stageEntities = (__SAFE_CAST(Container, GameState_getStage(this->gameState)))->children;
 
 	if(!this->currentEntityNode)
 	{
@@ -1040,7 +1041,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 		Stage_addChildEntity(GameState_getStage(this->gameState), &DUMMY_ENTITY, false);
 		SpriteManager_sortLayers(SpriteManager_getInstance());
 
-		VirtualList stageEntities = Container_getChildren(__SAFE_CAST(Container, GameState_getStage(this->gameState)));
+		VirtualList stageEntities = (__SAFE_CAST(Container, GameState_getStage(this->gameState)))->children;
 		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 
 		// select the added entity

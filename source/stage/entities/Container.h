@@ -159,7 +159,6 @@ int Container_doKeyPressed(Container this, int pressedKey);
 int Container_doKeyUp(Container this, int pressedKey);
 Container Container_getChildByName(Container this, char* childName, bool recursive);
 int Container_getChildCount(Container this);
-VirtualList Container_getChildren(Container this);
 Transformation Container_getEnvironmentTransform(Container this);
 Transformation* Container_getTransform(Container this);
 const Vector3D* Container_getGlobalPosition(Container this);
