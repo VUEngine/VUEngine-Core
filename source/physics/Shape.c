@@ -292,8 +292,8 @@ void Shape_exitCollision(Shape this, CollisionData* collisionData)
 {
 	ASSERT(this, "Shape::exitCollision: null this");
 
-	__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, collisionData->collisionInformation.shape, collisionData->shapeNotCollidingAnymoreAnymore, collisionData->isImpenetrableCollidingShape);
-	Shape_unregisterCollidingShape(this, collisionData->shapeNotCollidingAnymoreAnymore);
+	__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, collisionData->collisionInformation.shape, collisionData->shapeNotCollidingAnymore, collisionData->isImpenetrableCollidingShape);
+	Shape_unregisterCollidingShape(this, collisionData->shapeNotCollidingAnymore);
 }
 
 /**
@@ -377,7 +377,7 @@ CollisionData Shape_collides(Shape this, Shape shape)
 			collisionData.collisionInformation.shape = this;
 			collisionData.result = kExitCollision;
 			collisionData.isImpenetrableCollidingShape = true;
-			collisionData.shapeNotCollidingAnymoreAnymore = shape;
+			collisionData.shapeNotCollidingAnymore = shape;
 		}
 	}
 	else
@@ -394,7 +394,7 @@ CollisionData Shape_collides(Shape this, Shape shape)
 			collisionData.collisionInformation.shape = this;
 			collisionData.result = kExitCollision;
 			collisionData.isImpenetrableCollidingShape = collidingShapeRegistry->isImpenetrable;
-			collisionData.shapeNotCollidingAnymoreAnymore = shape;
+			collisionData.shapeNotCollidingAnymore = shape;
 		}
 	}
 
@@ -747,7 +747,9 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 		return;
 	}
 
-	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, eventFirer));
+	Shape shapeNotCollidingAnymore = __SAFE_CAST(Shape, eventFirer);
+
+	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, shapeNotCollidingAnymore);
 	ASSERT(collidingShapeRegistry, "Shape::onCollidingShapeDestroyed: onCollidingShapeDestroyed not found");
 
 	if(!collidingShapeRegistry)
@@ -755,9 +757,11 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 		return;
 	}
 
-	if(Shape_unregisterCollidingShape(this, collidingShapeRegistry->shape))
+	bool isImpenetrable = collidingShapeRegistry->isImpenetrable;
+
+	if(Shape_unregisterCollidingShape(this, shapeNotCollidingAnymore))
 	{
-		__VIRTUAL_CALL(SpatialObject, collidingShapeOwnerDestroyed, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
+		__VIRTUAL_CALL(SpatialObject, collidingShapeOwnerDestroyed, this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -779,14 +783,18 @@ static void Shape_onCollidingShapeChanged(Shape this, Object eventFirer)
 		return;
 	}
 
-	Shape_registerCollidingShape(this, (Shape)eventFirer, (SolutionVector){{0, 0, 0}, 0}, true);
+	Shape shapeNotCollidingAnymore = __SAFE_CAST(Shape, eventFirer);
 
-	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, __SAFE_CAST(Shape, eventFirer));
+	Shape_registerCollidingShape(this, shapeNotCollidingAnymore, (SolutionVector){{0, 0, 0}, 0}, true);
+
+	CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, shapeNotCollidingAnymore);
 	ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::removeCollidingShape: dead collidingShapeRegistry");
 
-	if(Shape_unregisterCollidingShape(this, collidingShapeRegistry->shape))
+	bool isImpenetrable = collidingShapeRegistry->isImpenetrable;
+
+	if(Shape_unregisterCollidingShape(this, shapeNotCollidingAnymore))
 	{
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, collidingShapeRegistry->shape, collidingShapeRegistry->isImpenetrable);
+		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
 	}
 }
 

@@ -113,7 +113,7 @@ typedef struct CollisionData
 {
 	CollisionResult result;
 	CollisionInformation collisionInformation;
-	Shape shapeNotCollidingAnymoreAnymore;
+	Shape shapeNotCollidingAnymore;
 	bool isImpenetrableCollidingShape;
 
 } CollisionData;
