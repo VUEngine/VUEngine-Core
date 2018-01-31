@@ -35,7 +35,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(4)
+#define __STILL_COLLIDING_CHECK_SIZE_INCREMENT 		__PIXELS_TO_METERS(2)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -359,7 +359,7 @@ CollisionData Shape_collides(Shape this, Shape shape)
 			collidingShapeRegistry = Shape_registerCollidingShape(this, shape, collisionData.collisionInformation.solutionVector, false);
 		}
 
-		return collisionData;
+		//return collisionData;
 	}
 	// impenetrable registered colliding shapes require a another test
 	// to determine if I'm not colliding against them anymore
@@ -396,6 +396,27 @@ CollisionData Shape_collides(Shape this, Shape shape)
 			collisionData.isImpenetrableCollidingShape = collidingShapeRegistry->isImpenetrable;
 			collisionData.shapeNotCollidingAnymore = shape;
 		}
+	}
+
+	switch(collisionData.result)
+	{
+		case kEnterCollision:
+
+			Shape_enterCollision(this, &collisionData);
+			break;
+
+		case kUpdateCollision:
+
+			Shape_updateCollision(this, &collisionData);
+			break;
+
+		case kExitCollision:
+
+			Shape_exitCollision(this, &collisionData);
+			break;
+
+		default:
+			break;
 	}
 
 	return collisionData;
@@ -540,7 +561,7 @@ void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInf
 		Shape_displaceOwner(this, Vector3D_scalarProduct(solutionVector.direction, solutionVector.magnitude));
 
 		// need to invalidate solution vectors for other colliding shapes
-		Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
+		//Shape_checkPreviousCollisions(this, collisionInformation->collidingShape);
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 		ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::resolveCollision: dead collidingShapeRegistry");

@@ -56,18 +56,6 @@
 		 */																								\
 		VirtualList	activeBodies;																		\
 		/**
-		 * @var VirtualList		removedBodies
-		 * @brief				a list of bodies which must be removed
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		VirtualList	removedBodies;																		\
-		/**
-		 * @var VirtualList		bodiesSentToSleep
-		 * @brief				a list of bodies which must be removed from the activeBodies list
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		VirtualList	bodiesSentToSleep;																	\
-		/**
 		 * @var Acceleration	gravity
 		 * @brief				gravity
 		 * @memberof 			PhysicalWorld
@@ -128,8 +116,6 @@ void PhysicalWorld_constructor(PhysicalWorld this)
 	// create the shape list
 	this->bodies = __NEW(VirtualList);
 	this->activeBodies = __NEW(VirtualList);
-	this->removedBodies = __NEW(VirtualList);
-	this->bodiesSentToSleep = __NEW(VirtualList);
 
 	this->bodyToCheckForGravityNode = NULL;
 
@@ -166,14 +152,10 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 	// delete lists
 	__DELETE(this->bodies);
 	__DELETE(this->activeBodies);
-	__DELETE(this->removedBodies);
-	__DELETE(this->bodiesSentToSleep);
 
 
 	this->bodies = NULL;
 	this->activeBodies = NULL;
-	this->removedBodies = NULL;
-	this->bodiesSentToSleep = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -234,16 +216,14 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
 	ASSERT(this, "PhysicalWorld::destroyBody: null this");
 	ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::destroyBody: dead body");
 	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
-	ASSERT(!VirtualList_find(this->removedBodies, body), "PhysicalWorld::destroyBody: body already being destroyed");
 
-	if(__IS_OBJECT_ALIVE(body) && !VirtualList_find(this->removedBodies, body))
+	if(__IS_OBJECT_ALIVE(body) && VirtualList_find(this->bodies, body))
 	{
-		// deactivate the shape, will be removed in the next update
-		Body_setActive(body, false);
-
 		// place in the removed bodies list
-		VirtualList_pushFront(this->removedBodies, body);
+		VirtualList_removeElement(this->bodies, body);
+		VirtualList_removeElement(this->activeBodies, body);
 
+		__DELETE(body);
 		this->bodyToCheckForGravityNode = NULL;
 	}
 }
@@ -264,9 +244,6 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 
-	// process auxiliary lists
-	PhysicalWorld_purgeBodyLists(this);
-
 	VirtualNode node = this->bodies->head;
 
 	for(; node; node = node->next)
@@ -283,63 +260,6 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
 	}
 
 	return NULL;
-}
-
-/**
- * Process auxiliary body lists
- *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
- */
-void PhysicalWorld_purgeBodyLists(PhysicalWorld this)
-{
-	ASSERT(this, "PhysicalWorld::processAuxiliaryBodyLists: null this");
-	ASSERT(this->removedBodies, "PhysicalWorld::processAuxiliaryBodyLists: null removedBodies");
-	ASSERT(this->bodiesSentToSleep, "PhysicalWorld::processAuxiliaryBodyLists: null bodiesSentToSleep");
-
-	VirtualNode node = this->removedBodies->head;
-
-	if(node)
-	{
-		for(; node; node = node->next)
-		{
-			Body body = __SAFE_CAST(Body, node->data);
-
-			// remove from the lists
-			VirtualList_removeElement(this->bodies, body);
-			VirtualList_removeElement(this->activeBodies, body);
-			VirtualList_removeElement(this->bodiesSentToSleep, body);
-
-			// delete it
-			ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::processAuxiliaryBodyLists: deleting dead body");
-			__DELETE(body);
-		}
-
-		// clear the list
-		VirtualList_clear(this->removedBodies);
-
-		this->bodyToCheckForGravityNode = NULL;
-	}
-
-	node = this->bodiesSentToSleep->head;
-
-	if(node)
-	{
-		for(; node; node = node->next)
-		{
-			Body body = __SAFE_CAST(Body, node->data);
-
-			// remove from the lists
-			VirtualList_removeElement(this->activeBodies, body);
-		}
-
-		// clear the list
-		VirtualList_clear(this->bodiesSentToSleep);
-
-		this->bodyToCheckForGravityNode = NULL;
-	}
 }
 
 /**
@@ -407,8 +327,6 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
-	PhysicalWorld_purgeBodyLists(this);
-
 	if(clock->paused)
 	{
 		return;
@@ -421,13 +339,23 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body_setCurrentGravity(&this->gravity);
 
+	VirtualList activeBodies = __NEW(VirtualList);
+	VirtualList_copy(activeBodies, this->activeBodies);
+
 	VirtualNode node = this->activeBodies->head;
 
 	// check the bodies
 	for(; node; node = node->next)
 	{
+		if(!__IS_OBJECT_ALIVE(node->data))
+		{
+			continue;
+		}
+
 		__VIRTUAL_CALL(Body, update, node->data);
 	}
+
+	__DELETE(activeBodies);
 
 //	PhysicalWorld_print(this, 1, 0);
 #ifdef __SHOW_PHYSICS_PROFILING
@@ -448,8 +376,6 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
-	PhysicalWorld_purgeBodyLists(this);
-
 	VirtualNode node = this->bodies->head;
 
 	for(; node; node = node->next)
@@ -461,7 +387,6 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	// empty the lists
 	VirtualList_clear(this->bodies);
 	VirtualList_clear(this->activeBodies);
-	VirtualList_clear(this->removedBodies);
 
 	this->bodyToCheckForGravityNode = NULL;
 }
@@ -590,8 +515,6 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
 	{
 		VirtualList_pushBack(this->activeBodies, body);
 	}
-
-	VirtualList_removeElement(this->bodiesSentToSleep, body);
 }
 
 /**
@@ -609,10 +532,7 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	if(!VirtualList_find(this->bodiesSentToSleep, body) && VirtualList_find(this->activeBodies, body))
-	{
-		VirtualList_pushBack(this->bodiesSentToSleep, body);
-	}
+	VirtualList_removeElement(this->activeBodies, body);
 }
 
 /**
@@ -630,10 +550,7 @@ void PhysicalWorld_bodySetInactive(PhysicalWorld this, Body body)
 	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	if(!VirtualList_find(this->bodiesSentToSleep, body) && VirtualList_find(this->activeBodies, body))
-	{
-		VirtualList_pushBack(this->bodiesSentToSleep, body);
-	}
+	VirtualList_removeElement(this->activeBodies, body);
 }
 
 // set gravity
@@ -696,8 +613,6 @@ void PhysicalWorld_print(PhysicalWorld this, int x, int y)
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->bodies), x + 19, y, NULL);
 	Printing_text(Printing_getInstance(), "Active bodies:         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->activeBodies), x + 19, y, NULL);
-	Printing_text(Printing_getInstance(), "Removed bodies:        ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->removedBodies), x + 19, y, NULL);
 
 //	Printing_text(Printing_getInstance(), "Error:                 ", x, ++y, NULL);
 //	Printing_int(Printing_getInstance(), VirtualList_getSize(this->bodies) - (VirtualList_getSize(this->activeBodies)), x + 19, y, NULL);

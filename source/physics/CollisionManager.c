@@ -190,21 +190,35 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		}
 	}
 
-	VirtualList collisions = __NEW(VirtualList);
+	VirtualList movingShapes = __NEW(VirtualList);
+	VirtualList_copy(movingShapes, this->movingShapes);
+
+	VirtualList activeShapes = __NEW(VirtualList);
+	VirtualList_copy(activeShapes, this->activeShapes);
 
 	// check the shapes
-	for(node = this->movingShapes->head; node; node = node->next)
+	for(node = movingShapes->head; node; node = node->next)
 	{
+		if(!__IS_OBJECT_ALIVE(node->data))
+		{
+			continue;
+		}
+
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, node->data);
 
 		if(shape->ready && shape->checkForCollisions && shape->isVisible)
 		{
-			VirtualNode nodeForActiveShapes = this->activeShapes->head;
+			VirtualNode nodeForActiveShapes = activeShapes->head;
 
 			// check the shapes
 			for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
 			{
+				if(!__IS_OBJECT_ALIVE(nodeForActiveShapes->data))
+				{
+					continue;
+				}
+
 				// load the current shape to check against
 				Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
 
@@ -220,58 +234,14 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 					if(kNoCollision != collisionData.result)
 					{
 						this->lastCycleCollisions++;
-
-						CollisionData* collisionDataEntry = __NEW_BASIC(CollisionData);
-						*collisionDataEntry = collisionData;
-
-						VirtualList_pushBack(collisions, collisionDataEntry);
 					}
 				}
 			}
 		}
 	}
 
-	for(node = collisions->head; node; node = node->next)
-	{
-		CollisionData* collisionData = (CollisionData*)node->data;
-
-		// don't process if shape's owner has been destroyed during the processing of a previous collision
-		// or if the shape or collidingShape have been removed
-		if(!__IS_OBJECT_ALIVE(collisionData->collisionInformation.shape->owner) ||
-			(!__IS_OBJECT_ALIVE(collisionData->collisionInformation.shape) || (collisionData->collisionInformation.collidingShape && !VirtualList_find(this->shapes, collisionData->collisionInformation.shape)))  ||
-			((collisionData->collisionInformation.collidingShape && !__IS_OBJECT_ALIVE(collisionData->collisionInformation.collidingShape)) || (collisionData->collisionInformation.collidingShape && !VirtualList_find(this->shapes, collisionData->collisionInformation.collidingShape)))
-		)
-		{
-			__DELETE_BASIC(collisionData);
-			continue;
-		}
-
-		switch(collisionData->result)
-		{
-			case kEnterCollision:
-
-				Shape_enterCollision(collisionData->collisionInformation.shape, collisionData);
-				returnValue = true;
-				break;
-
-			case kUpdateCollision:
-
-				Shape_updateCollision(collisionData->collisionInformation.shape, collisionData);
-				break;
-
-			case kExitCollision:
-
-				Shape_exitCollision(collisionData->collisionInformation.shape, collisionData);
-				break;
-
-			default:
-				break;
-		}
-
-		__DELETE_BASIC(collisionData);
-	}
-
-	__DELETE(collisions);
+	__DELETE(movingShapes);
+	__DELETE(activeShapes);
 
 	this->collisionChecks += this->lastCycleCollisionChecks;
 	this->collisions += this->lastCycleCollisions;
