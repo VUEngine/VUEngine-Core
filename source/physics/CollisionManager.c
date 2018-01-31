@@ -33,6 +33,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											MACROS
+//---------------------------------------------------------------------------------------------------------
+#define __TOTAL_USABLE_SHAPES		128
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -190,37 +196,54 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		}
 	}
 
-	VirtualList movingShapes = __NEW(VirtualList);
-	VirtualList_copy(movingShapes, this->movingShapes);
+	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList_getSize(this->movingShapes), "CollisionManager::update: too many moving shapes");
+	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList_getSize(this->activeShapes), "CollisionManager::update: too many activeShapes shapes");
 
-	VirtualList activeShapes = __NEW(VirtualList);
-	VirtualList_copy(activeShapes, this->activeShapes);
+	Shape movingShapes[__TOTAL_USABLE_SHAPES];
+	Shape activeShapes[__TOTAL_USABLE_SHAPES];
+
+	int movingShapesIndex = 0;
+	int activeShapesIndex = 0;
 
 	// check the shapes
-	for(node = movingShapes->head; node; node = node->next)
+	for(movingShapesIndex = 0, node = this->movingShapes->head; node; node = node->next, movingShapesIndex++)
 	{
-		if(!__IS_OBJECT_ALIVE(node->data))
+		movingShapes[movingShapesIndex] = __SAFE_CAST(Shape, node->data);
+	}
+
+	movingShapes[movingShapesIndex] = NULL;
+
+	// check the shapes
+	for(activeShapesIndex = 0, node = this->activeShapes->head; node; node = node->next, activeShapesIndex++)
+	{
+		activeShapes[activeShapesIndex] = __SAFE_CAST(Shape, node->data);
+	}
+
+	activeShapes[activeShapesIndex] = NULL;
+
+	// check the shapes
+	for(movingShapesIndex = 0; movingShapes[movingShapesIndex]; movingShapesIndex++)
+	{
+		if(!__IS_OBJECT_ALIVE(movingShapes[movingShapesIndex]))
 		{
 			continue;
 		}
 
 		// load the current shape
-		Shape shape = __SAFE_CAST(Shape, node->data);
+		Shape shape = __SAFE_CAST(Shape, movingShapes[movingShapesIndex]);
 
 		if(shape->ready && shape->checkForCollisions && shape->isVisible)
 		{
-			VirtualNode nodeForActiveShapes = activeShapes->head;
-
 			// check the shapes
-			for(; nodeForActiveShapes; nodeForActiveShapes = nodeForActiveShapes->next)
+			for(activeShapesIndex = 0; activeShapes[activeShapesIndex]; activeShapesIndex++)
 			{
-				if(!__IS_OBJECT_ALIVE(nodeForActiveShapes->data))
+				if(!__IS_OBJECT_ALIVE(activeShapes[activeShapesIndex]))
 				{
 					continue;
 				}
 
 				// load the current shape to check against
-				Shape shapeToCheck = __SAFE_CAST(Shape, nodeForActiveShapes->data);
+				Shape shapeToCheck = __SAFE_CAST(Shape, activeShapes[activeShapesIndex]);
 
 				// compare only different ready, different shapes against it other if
 				// the layer of the shapeToCheck are not excluded by the current shape
@@ -239,9 +262,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 			}
 		}
 	}
-
-	__DELETE(movingShapes);
-	__DELETE(activeShapes);
 
 	this->collisionChecks += this->lastCycleCollisionChecks;
 	this->collisions += this->lastCycleCollisions;

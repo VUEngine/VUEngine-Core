@@ -34,7 +34,8 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PHYSICS_TIME_ELAPSED					__FIX10_6_DIV(__1I_FIX10_6, __I_TO_FIX10_6(__TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR))
+#define __PHYSICS_TIME_ELAPSED			__FIX10_6_DIV(__1I_FIX10_6, __I_TO_FIX10_6(__TARGET_FPS / __PHYSICS_TIME_ELAPSED_DIVISOR))
+#define __TOTAL_USABLE_BODIES			128
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -339,23 +340,30 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 	Body_setCurrentGravity(&this->gravity);
 
-	VirtualList activeBodies = __NEW(VirtualList);
-	VirtualList_copy(activeBodies, this->activeBodies);
+	NM_ASSERT(__TOTAL_USABLE_BODIES >= VirtualList_getSize(this->activeBodies), "PhysicalWorld::update: too many active bodies");
+
+	Body activeBodies[__TOTAL_USABLE_BODIES];
+	int activeBodiesIndex = 0;
 
 	VirtualNode node = this->activeBodies->head;
 
-	// check the bodies
-	for(; node; node = node->next)
+	// check the shapes
+	for(activeBodiesIndex = 0, node = this->activeBodies->head; node; node = node->next, activeBodiesIndex++)
 	{
-		if(!__IS_OBJECT_ALIVE(node->data))
+		activeBodies[activeBodiesIndex] = __SAFE_CAST(Shape, node->data);
+	}
+
+	activeBodies[activeBodiesIndex] = NULL;
+
+	for(activeBodiesIndex = 0; activeBodies[activeBodiesIndex]; activeBodiesIndex++)
+	{
+		if(!__IS_OBJECT_ALIVE(activeBodies[activeBodiesIndex]))
 		{
 			continue;
 		}
 
-		__VIRTUAL_CALL(Body, update, node->data);
+		__VIRTUAL_CALL(Body, update, activeBodies[activeBodiesIndex]);
 	}
-
-	__DELETE(activeBodies);
 
 //	PhysicalWorld_print(this, 1, 0);
 #ifdef __SHOW_PHYSICS_PROFILING

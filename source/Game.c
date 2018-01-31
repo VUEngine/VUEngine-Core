@@ -731,6 +731,7 @@ void Game_reset(Game this)
 	// turn on VIP
 	HardwareManager_displayOn(HardwareManager_getInstance());
 	HardwareManager_enableRendering(HardwareManager_getInstance());
+	HardwareManager_enableInterrupts();
 }
 
 // process input data according to the actual game status
