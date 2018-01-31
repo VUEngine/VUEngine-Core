@@ -521,7 +521,6 @@ static void Stage_unloadChild(Stage this, Container child)
 	}
 
 	Container_removeChild(__SAFE_CAST(Container, this), child, true);
-	__VIRTUAL_CALL(Container, releaseGraphics, child);
 	Object_fireEvent(__SAFE_CAST(Object, child), kStageChildStreamedOut);
 	Object_removeAllEventListeners(__SAFE_CAST(Object, child), kStageChildStreamedOut);
 	MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, child));
