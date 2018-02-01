@@ -36,6 +36,7 @@
 #include <ObjectSpriteContainerManager.h>
 #include <ParticleRemover.h>
 #include <VIPManager.h>
+#include <Camera.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,6 +113,9 @@ typedef struct StageDefinition
 
 		// camera's initial position inside the game world
 		PixelVector cameraInitialPosition;
+
+		// camera's frustum
+		CameraFrustum cameraFrustum;
 
 	} level;
 
@@ -214,6 +218,7 @@ void Stage_setupPalettes(Stage this);
 void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 void Stage_loadPostProcessingEffects(Stage this);
 Size Stage_getSize(Stage this);
+CameraFrustum Stage_getCameraFrustum(Stage this);
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);
 void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
 Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);

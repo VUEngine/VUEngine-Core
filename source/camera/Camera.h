@@ -86,9 +86,9 @@ typedef struct CameraFrustum
 {
 	s16 x0;
 	s16 y0;
+	s16 z0;
 	s16 x1;
 	s16 y1;
-	s16 z0;
 	s16 z1;
 
 }CameraFrustum;

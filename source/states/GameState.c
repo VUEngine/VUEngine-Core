@@ -284,6 +284,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	// set camera to its previous position
 	Camera_setStageSize(Camera_getInstance(), Stage_getSize(this->stage));
 	Camera_setPosition(Camera_getInstance(), this->cameraPosition);
+	Camera_setCameraFrustum(Camera_getInstance(), Stage_getCameraFrustum(this->stage));
 
 	Game_reset(Game_getInstance());
 

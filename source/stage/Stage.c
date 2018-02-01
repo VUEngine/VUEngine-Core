@@ -290,7 +290,7 @@ void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrid
 	// stop all sounds
 	SoundManager_stopAllSound(SoundManager_getInstance());
 
-	// set world's limits
+	Camera_setCameraFrustum(Camera_getInstance(), this->stageDefinition->level.cameraFrustum);
 	Camera_setStageSize(Camera_getInstance(), Size_getFromPixelSize(this->stageDefinition->level.pixelSize));
 
 	if(overrideCameraPosition)
@@ -371,6 +371,14 @@ Size Stage_getSize(Stage this)
 	return Size_getFromPixelSize(this->stageDefinition->level.pixelSize);
 }
 
+CameraFrustum Stage_getCameraFrustum(Stage this)
+{
+	ASSERT(this, "Stage::getCameraFrustum: null this");
+	ASSERT(this->stageDefinition, "Stage::getCameraFrustum: null stageDefinition");
+
+	// set world's limits
+	return this->stageDefinition->level.cameraFrustum;
+}
 // setup ui
 static void Stage_setupUI(Stage this)
 {
