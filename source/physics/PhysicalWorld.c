@@ -350,7 +350,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 	// check the shapes
 	for(activeBodiesIndex = 0, node = this->activeBodies->head; node; node = node->next, activeBodiesIndex++)
 	{
-		activeBodies[activeBodiesIndex] = __SAFE_CAST(Shape, node->data);
+		activeBodies[activeBodiesIndex] = __SAFE_CAST(Body, node->data);
 	}
 
 	activeBodies[activeBodiesIndex] = NULL;
