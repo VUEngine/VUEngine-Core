@@ -143,6 +143,8 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 	GameState_pauseClocks(this);
 
 	Clock_start(this->messagingClock);
+
+	Game_enableHardwareInterrupts(Game_getInstance());
 }
 
 /**
@@ -212,6 +214,8 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::suspend: null this");
+
+	Game_disableHardwareInterrupts(Game_getInstance());
 
 	Clock_pause(this->messagingClock, true);
 
@@ -335,6 +339,8 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 
 	// unpause clock
 	Clock_pause(this->messagingClock, false);
+
+	Game_enableHardwareInterrupts(Game_getInstance());
 }
 
 /**
@@ -563,6 +569,8 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 
 	// load post processing effects
 	Stage_loadPostProcessingEffects(this->stage);
+
+	Game_enableHardwareInterrupts(Game_getInstance());
 }
 
 /**

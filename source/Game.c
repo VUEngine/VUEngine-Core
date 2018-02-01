@@ -685,7 +685,6 @@ void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::disableHardwareInterrupts: null this");
 
-	// disable rendering
 	HardwareManager_disableInterrupts();
 }
 
@@ -693,6 +692,8 @@ void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
 void Game_enableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::enableHardwareInterrupts: null this");
+
+	HardwareManager_enableInterrupts();
 }
 
 // erase engine's current status
