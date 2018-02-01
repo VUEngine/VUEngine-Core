@@ -180,7 +180,7 @@ void Container_deleteMyself(Container this)
 	}
 }
 
-void Container_iAmDeletingMyself(Container this)
+void Container_iAmDeletingMyself(Container this __attribute__ ((unused)))
 {
 	ASSERT(this, "Container::iAmDeletingMyself: null this");
 }
