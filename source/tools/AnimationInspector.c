@@ -920,8 +920,8 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationInspector::createSprite: null texture");
 
 	PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, this->animatedSprite);
-	spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
-	spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 
 	__VIRTUAL_CALL(Sprite, setPosition, this->animatedSprite, &spritePosition);
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
