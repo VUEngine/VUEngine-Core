@@ -210,6 +210,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	bool blockFound = false;
 
+	HardwareManager_disableInterrupts();
+
 	while(!blockFound && pool--)
 	{
 		// search for the smallest pool which can hold the data
@@ -273,6 +275,8 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
+	HardwareManager_enableInterrupts();
+
 	// return designed address
 	return &this->poolLocation[pool][displacement];
 }
@@ -319,6 +323,8 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	// get the total objects in the pool
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
+	HardwareManager_disableInterrupts();
+
 	// search for the pool in which it is allocated
 	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
 	{
@@ -327,6 +333,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 		{
 			// free the block
 			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
+			HardwareManager_enableInterrupts();
 			return;
 		}
 	}
