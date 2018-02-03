@@ -93,6 +93,7 @@ typedef struct UserInput
 	u16 pressedKey;
 	u16 releasedKey;
 	u16 holdKey;
+	u32 holdKeyDuration;
 	u16 previousKey;
 	u16 powerFlag;
 } UserInput;
@@ -114,6 +115,7 @@ void KeypadManager_enable(KeypadManager this);
 void KeypadManager_enableInterrupt(KeypadManager this);
 void KeypadManager_flush(KeypadManager this);
 u16 KeypadManager_getHoldKey(KeypadManager this);
+u32 KeypadManager_getHoldKeyDuration(KeypadManager this);
 u16 KeypadManager_getPressedKey(KeypadManager this);
 u16 KeypadManager_getPreviousKey(KeypadManager this);
 u16 KeypadManager_getReleasedKey(KeypadManager this);

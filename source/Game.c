@@ -1258,7 +1258,7 @@ inline static void Game_run(Game this)
 	// sync entities with their sprites
 	Game_synchronizeGraphics(this);
 
-	// process user"s input
+	// process user's input
 	bool skipNonCriticalProcesses = Game_processUserInput(this);
 
 	// simulate physics

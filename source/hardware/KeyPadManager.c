@@ -34,12 +34,9 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define KeypadManager_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/*  */																							\
 		UserInput userInput;																			\
 		UserInput userInputToRegister;																	\
-		/*  */																							\
 		bool enabled;																					\
 
 /**
@@ -91,8 +88,8 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
 	KeypadManager_flush(this);
 	this->enabled = false;
 
-	this->userInput = (UserInput){0, 0, 0, 0, 0, 0};
-	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
+	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
@@ -209,21 +206,25 @@ UserInput KeypadManager_read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
-	// wait keypad to stabilize
+	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
 
-	// now read the key
+	// now read the keys
 	this->userInput.allKeys = (((_hardwareRegisters[__SDHR] << 8)) | _hardwareRegisters[__SDLR]);
 
 	// enable next reading cycle
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
+	// store keys
 	this->userInput.powerFlag 	= this->userInput.allKeys & 0x0001;
 	this->userInput.allKeys 	&= 0xFFFC;
 	this->userInput.pressedKey 	= (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey;
 	this->userInput.releasedKey = (~this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.releasedKey;
 	this->userInput.holdKey 	= (this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
+	this->userInput.holdKeyDuration = (this->userInput.holdKey == this->userInput.previousKey)
+		? this->userInput.holdKeyDuration + 1
+		: 0;
 
 	return this->userInput;
 }
@@ -257,7 +258,7 @@ void KeypadManager_flush(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::flush: null this");
 
-	this->userInput = (UserInput){0, 0, 0, 0, 0, 0};
+	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
 }
 
 /**
@@ -294,12 +295,38 @@ u16 KeypadManager_getReleasedKey(KeypadManager this)
 	return this->userInput.releasedKey;
 }
 
-// get hold key
+/**
+ * Retrieves the currently held key(s)
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Currently held keys
+ */
 u16 KeypadManager_getHoldKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKey: null this");
 
 	return this->userInput.holdKey;
+}
+
+/**
+ * Retrieves the duration (in game frames) for which the current key(s) have been held.
+ *
+ * @memberof	KeypadManager
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Duration of currently held keys
+ */
+u32 KeypadManager_getHoldKeyDuration(KeypadManager this)
+{
+	ASSERT(this, "KeypadManager::getHoldKeyDuration: null this");
+
+	return this->userInput.holdKeyDuration;
 }
 
 /**
@@ -342,7 +369,6 @@ void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister)
  *
  * @memberof	KeypadManager
  * @public
- *
  */
 void KeypadManager_interruptHandler(void)
 {
