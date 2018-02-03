@@ -467,6 +467,7 @@ bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncreme
 	return canMove;
 }
 
+/*
 static void Shape_checkPreviousCollisions(Shape this, Shape collidingShape)
 {
 	ASSERT(this, "Shape::invalidateSolutionVectors: null this");
@@ -511,6 +512,7 @@ static void Shape_checkPreviousCollisions(Shape this, Shape collidingShape)
 		}
 	}
 }
+*/
 
 /**
  * Displace owner
