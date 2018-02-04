@@ -278,7 +278,6 @@ void Stage_setupPalettes(Stage this)
 	VIPManager_setupPalettes(VIPManager_getInstance(), &this->stageDefinition->rendering.paletteConfig);
 }
 
-
 // load stage's entites
 void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {

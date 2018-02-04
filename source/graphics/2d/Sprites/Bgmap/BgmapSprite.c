@@ -291,7 +291,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 	{
 		z -= _cameraPosition->z;
 
-		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - __FIX10_6_EXT_DIV(z, (__I_TO_FIX10_6(1) << _optical->maximumXViewDistancePower)));
+		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - __FIX10_6_EXT_DIV(z, _optical->scalingFactor));
 
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 

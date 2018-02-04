@@ -150,6 +150,7 @@ typedef struct Optical
 	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;	// horizontal View point center
 	fix10_6 verticalViewPointCenter;	// vertical View point center
+	fix10_6 scalingFactor;	// vertical View point center
 
 } Optical;
 
@@ -159,9 +160,10 @@ typedef struct PixelOptical
 	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
 	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
 	u16 distanceEyeScreen;
-	u16 baseDistance;				// distance from left to right eye (depth perception)
-	s16 horizontalViewPointCenter;	// horizontal View point center
-	s16 verticalViewPointCenter;	// vertical View point center
+	u16 baseDistance;					// distance from left to right eye (depth perception)
+	s16 horizontalViewPointCenter;		// horizontal View point center
+	s16 verticalViewPointCenter;		// vertical View point center
+	float scalingFactor;				// scaling factor for sprite resizing
 
 } PixelOptical;
 

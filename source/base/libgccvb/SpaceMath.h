@@ -220,6 +220,7 @@ inline Optical Optical_getFromPixelOptical(PixelOptical pixelOptical)
 		__PIXELS_TO_METERS(pixelOptical.baseDistance),
 		__PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter),
 		__PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter),
+		__FIX10_6_MULT(__F_TO_FIX10_6(pixelOptical.scalingFactor), __I_TO_FIX10_6(1) << pixelOptical.maximumXViewDistancePower)
 	};
 }
 
