@@ -715,16 +715,17 @@ void Game_reset(Game this)
 
 	// reset managers
 	WireframeManager_reset(WireframeManager_getInstance());
-	Camera_setFocusGameEntity(this->camera, NULL);
+	Camera_reset(this->camera);
+	SoundManager_setWaveForm(SoundManager_getInstance());
+	TimerManager_resetMilliseconds(this->timerManager);
+
+	// the order of reset for the graphics managers must not be changed!
+	SpriteManager_reset(SpriteManager_getInstance());
 	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
 	CharSetManager_reset(CharSetManager_getInstance());
 	ParamTableManager_reset(ParamTableManager_getInstance());
-	SpriteManager_reset(SpriteManager_getInstance());
 	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
 	Printing_reset(Printing_getInstance());
-	Camera_resetCameraFrustum(Camera_getInstance());
-	SoundManager_setWaveForm(SoundManager_getInstance());
-	TimerManager_resetMilliseconds(this->timerManager);
 
 	// reset profiling
 	Game_resetProfiling(this);

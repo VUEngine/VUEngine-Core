@@ -420,9 +420,17 @@ void Camera_stopEffect(Camera this, int effect)
 	__VIRTUAL_CALL(CameraEffectManager, stopEffect, this->cameraEffectManager, effect);
 }
 
+void Camera_reset(Camera this)
+{
+	ASSERT(this, "Camera::reset: null this");
+
+	Camera_setFocusGameEntity(this, NULL);
+	Camera_resetCameraFrustum(this);
+}
+
 void Camera_resetCameraFrustum(Camera this)
 {
-	ASSERT(this, "Camera::stopEffect: null this");
+	ASSERT(this, "Camera::resetCameraFrustum: null this");
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;

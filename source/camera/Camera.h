@@ -128,6 +128,7 @@ void Camera_setStageSize(Camera this, Size size);
 void Camera_forceDisplacement(Camera this, int flag);
 void Camera_startEffect(Camera this, int effect, ...);
 void Camera_stopEffect(Camera this, int effect);
+void Camera_reset(Camera this);
 void Camera_resetCameraFrustum(Camera this);
 void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum);
 CameraFrustum Camera_getCameraFrustum(Camera this);
