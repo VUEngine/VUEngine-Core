@@ -138,7 +138,7 @@ void Entity_destructor(Entity this)
 		__DELETE(this->entityFactory);
 	}
 
-	Entity_releaseSprites(this, true);
+	Entity_releaseSprites(this);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -308,7 +308,7 @@ void Entity_releaseGraphics(Entity this)
 
 	__CALL_BASE_METHOD(Container, releaseGraphics, this);
 
-	Entity_releaseSprites(this, false);
+	Entity_releaseSprites(this);
 }
 
 /**
@@ -318,9 +318,8 @@ void Entity_releaseGraphics(Entity this)
  * @public
  *
  * @param this			Function scope
- * @param deleteThem	True deleted Sprites immediately, false defers sprite disposal to not impact performance.
  */
-void Entity_releaseSprites(Entity this, bool deleteThem)
+void Entity_releaseSprites(Entity this)
 {
 	ASSERT(this, "Entity::releaseSprites: null this");
 
@@ -328,19 +327,11 @@ void Entity_releaseSprites(Entity this, bool deleteThem)
 	{
 		VirtualNode node = this->sprites->head;
 
-		if(deleteThem)
+		SpriteManager spriteManager = SpriteManager_getInstance();
+
+		for(; node ; node = node->next)
 		{
-			for(; node ; node = node->next)
-			{
-				__DELETE(node->data);
-			}
-		}
-		else
-		{
-			for(; node ; node = node->next)
-			{
-				SpriteManager_disposeSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, node->data));
-			}
+			SpriteManager_disposeSprite(spriteManager, __SAFE_CAST(Sprite, node->data));
 		}
 
 		// delete the sprites
@@ -1314,22 +1305,22 @@ void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
 		return;
 	}
 
-	int i = 0;
-
 	if(!this->sprites)
 	{
 		this->sprites = __NEW(VirtualList);
 	}
+
+	SpriteManager spriteManager = SpriteManager_getInstance();
+
+	int i = 0;
 
 	// go through n sprites in entity's definition
 	for(; spriteDefinitions[i]; i++)
 	{
 		ASSERT(spriteDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
 
-		Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinitions[i]->allocator)((SpriteDefinition*)spriteDefinitions[i], __SAFE_CAST(Object, this));
-		ASSERT(sprite, "Entity::addSprite: sprite not created");
-
-		VirtualList_pushBack(this->sprites, (void*)sprite);
+		VirtualList_pushBack(this->sprites, SpriteManager_createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], __SAFE_CAST(Object, this)));
+		ASSERT(__SAFE_CAST(Sprite, VirtualList_back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 }
 
@@ -1360,16 +1351,13 @@ bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionInde
 		return false;
 	}
 
-	// call the appropriate allocator to support inheritance
-	Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
-	ASSERT(sprite, "Entity::addSprite: sprite not created");
-
 	if(!this->sprites)
 	{
 		this->sprites = __NEW(VirtualList);
 	}
 
-	VirtualList_pushBack(this->sprites, sprite);
+	// call the appropriate allocator to support inheritance
+	VirtualList_pushBack(this->sprites, SpriteManager_createSprite(SpriteManager_getInstance(), (SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this)));
 
 	return true;
 }
@@ -2081,7 +2069,7 @@ void Entity_suspend(Entity this)
 
 	__CALL_BASE_METHOD(Container, suspend, this);
 
-	Entity_releaseSprites(this, true);
+	Entity_releaseSprites(this);
 }
 
 /**

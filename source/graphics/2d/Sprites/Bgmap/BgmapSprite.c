@@ -82,7 +82,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 {
 	ASSERT(this, "BgmapSprite::constructor: null this");
 
-	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)bgmapSpriteDefinition, owner);
+	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
 
 	// create the texture
 	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
@@ -145,13 +145,6 @@ void BgmapSprite_destructor(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
-	if(this->worldLayer)
-	{
-		// remove from sprite manager before I become invalid
-		// and the VPU triggers a new render cycle
-		SpriteManager_unregisterSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-	}
-
 	// if affine or bgmap
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
@@ -160,16 +153,16 @@ void BgmapSprite_destructor(BgmapSprite this)
 	}
 
 	// free the texture
-	if(this->texture)
+	if(__IS_OBJECT_ALIVE(this->texture))
 	{
 		Object_removeEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite_onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, this->texture));
-		this->texture = NULL;
 	}
+
+	this->texture = NULL;
 
 	// force stop rendering
 	this->head = __WORLD_OFF;
-
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -224,12 +217,9 @@ void BgmapSprite_setPosition(BgmapSprite this, const PixelVector* position)
 {
 	ASSERT(this, "BgmapSprite::setPosition: null this");
 
-	this->drawSpec.position = *position;
+	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
 
-	if(!this->worldLayer)
-	{
-		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-	}
+	this->drawSpec.position = *position;
 }
 
 /**
@@ -246,15 +236,11 @@ void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
 	ASSERT(this, "BgmapSprite::position: null this");
 	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
 
+	__CALL_BASE_METHOD(Sprite, position, this, position);
+
 	// normalize the position to camera coordinates
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 	this->drawSpec.position = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
-
-	if(!this->worldLayer)
-	{
-		// register with sprite manager
-		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-	}
 }
 
 /**
@@ -374,6 +360,11 @@ void BgmapSprite_render(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
+
+	if(!this->ready)
+	{
+		return;
+	}
 
 	if(!this->worldLayer)
 	{
@@ -569,6 +560,11 @@ void BgmapSprite_render(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
+
+	if(!this->ready)
+	{
+		return;
+	}
 
 	// if render flag is set
 	if(this->initialized)

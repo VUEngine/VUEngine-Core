@@ -129,11 +129,12 @@ void ObjectSprite_destructor(ObjectSprite this)
 		ObjectSpriteContainer_removeObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 
-	if(this->texture)
+	if(__IS_OBJECT_ALIVE(this->texture))
 	{
 		__DELETE(this->texture);
-		this->texture = NULL;
 	}
+
+	this->texture = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -211,6 +212,8 @@ void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
 
+	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
+
 	this->position = *position;
 
 	ObjectSprite_checkForContainer(this);
@@ -229,6 +232,8 @@ void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 {
 	ASSERT(this, "ObjectSprite::position: null this");
 	ASSERT(this->texture, "ObjectSprite::position: null texture");
+
+	__CALL_BASE_METHOD(Sprite, position, this, position);
 
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
 

@@ -128,11 +128,6 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		if(this->objectSpriteContainers[i])
-		{
-			__DELETE(this->objectSpriteContainers[i]);
-		}
-
 		this->objectSpriteContainers[i] = NULL;
 	}
 
@@ -229,7 +224,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
+const ObjectSpriteContainer* ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
@@ -266,6 +261,8 @@ void ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContai
 #endif
 		}
 	}
+
+	return this->objectSpriteContainers;
 }
 
 /**

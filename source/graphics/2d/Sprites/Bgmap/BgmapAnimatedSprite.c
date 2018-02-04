@@ -29,6 +29,7 @@
 #include <BgmapAnimatedSprite.h>
 #include <AnimationController.h>
 #include <BgmapTextureManager.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------

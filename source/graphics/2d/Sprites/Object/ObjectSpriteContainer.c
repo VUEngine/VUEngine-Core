@@ -121,13 +121,6 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 
 	// must setup the STP registers regardless of the totalObjects
 	_vipRegisters[__SPT0 + this->spt] = this->firstObjectIndex + this->totalObjects - 1;
-
-	// only request a WORLD layer if can hold any OBJECT
-	if(this->totalObjects)
-	{
-		// register to sprite manager
-		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-	}
 }
 
 /**
@@ -142,12 +135,6 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
-
-	if(this->totalObjects && this->worldLayer)
-	{
-		// remove from sprite manager
-		SpriteManager_unregisterSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-	}
 
 	VirtualNode node = this->objectSprites->head;
 

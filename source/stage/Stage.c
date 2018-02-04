@@ -268,7 +268,7 @@ static void Stage_setObjectSpritesContainers(Stage this)
 {
 	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
 
-	ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager_getInstance(), this->stageDefinition->rendering.objectSpritesContainersSize, this->stageDefinition->rendering.objectSpritesContainersZPosition);
+	SpriteManager_setupObjectSpriteContainers(SpriteManager_getInstance(), this->stageDefinition->rendering.objectSpritesContainersSize, this->stageDefinition->rendering.objectSpritesContainersZPosition);
 }
 
 void Stage_setupPalettes(Stage this)

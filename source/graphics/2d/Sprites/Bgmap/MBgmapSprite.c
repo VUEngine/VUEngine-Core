@@ -231,8 +231,10 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
+	__CALL_BASE_METHOD(Sprite, position, this, position);
+
 	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
-	PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
+	PixelVector position2D = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
 
 	MBgmapSprite_setPosition(this, &position2D);
 }
@@ -249,6 +251,8 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
+
+	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -292,12 +296,6 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 		// calculate sprite's parallax
 		__VIRTUAL_CALL(Sprite, calculateParallax, this, this->drawSpec.position.z);
 	}
-
-	if(!this->worldLayer)
-	{
-		// register with sprite manager
-		SpriteManager_registerSprite(SpriteManager_getInstance(), __SAFE_CAST(Sprite, this));
-	}
 }
 
 /**
@@ -312,6 +310,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement)
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
+	this->ready = true;
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -362,6 +361,11 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displace
 void MBgmapSprite_render(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
+
+	if(!this->ready)
+	{
+		return;
+	}
 
 	// if render flag is set
 	if(!this->texture | !this->worldLayer)

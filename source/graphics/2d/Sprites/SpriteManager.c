@@ -142,6 +142,7 @@ typedef struct SpritesList
  */
 __CLASS_DEFINITION(SpriteManager, Object);
 __CLASS_FRIEND_DEFINITION(Sprite);
+__CLASS_FRIEND_DEFINITION(ObjectSpriteContainer);
 __CLASS_FRIEND_DEFINITION(Texture);
 __CLASS_FRIEND_DEFINITION(VirtualNode);
 __CLASS_FRIEND_DEFINITION(VirtualList);
@@ -154,10 +155,15 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 static void SpriteManager_constructor(SpriteManager this);
 static void SpriteManager_selectSpritePendingTextureWriting(SpriteManager this);
 static bool SpriteManager_disposeSpritesProgressively(SpriteManager this);
+static void SpriteManager_registerSprite(SpriteManager this, Sprite sprite);
+static void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite);
 
 #ifdef __PROFILE_GAME
 int _totalPixelsToDraw = 0;
 #endif
+
+void ObjectSprite_checkForContainer(ObjectSprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -248,19 +254,26 @@ void SpriteManager_reset(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::reset: null this");
 
+	this->lockSpritesLists = true;
+
 	// must reset the ObjectSpriteContainerManager before the SpriteManager!
 	ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager_getInstance());
 
 	if(this->spritesToDispose)
 	{
-		while(SpriteManager_disposeSpritesProgressively(this));
-
 		__DELETE(this->spritesToDispose);
 		this->spritesToDispose = NULL;
 	}
 
 	if(this->sprites)
 	{
+		VirtualNode node = this->sprites->head;
+
+		for(; node; node = node->next)
+		{
+			__DELETE(node->data);
+		}
+
 		__DELETE(this->sprites);
 		this->sprites = NULL;
 	}
@@ -278,10 +291,64 @@ void SpriteManager_reset(SpriteManager this)
 	this->waitToWriteSpriteTextures = 0;
 
 	SpriteManager_renderLastLayer(this);
+
+	this->lockSpritesLists = false;
 }
 
 /**
- * Delete disposable sprites
+ * Setup object sprite containers
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param size			Array with the number of OBJECTs per container
+ * @param z				Z coordinate of each container
+ */
+void SpriteManager_setupObjectSpriteContainers(SpriteManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
+{
+	const ObjectSpriteContainer* objectSpriteContainers = ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager_getInstance(), size, z);
+
+	int i = __TOTAL_OBJECT_SEGMENTS;
+	for(; i--; )
+	{
+		// only request a WORLD layer if can hold any OBJECT
+		if(objectSpriteContainers[i]->totalObjects)
+		{
+			// register to sprite manager
+			SpriteManager_registerSprite(this, __SAFE_CAST(Sprite, objectSpriteContainers[i]));
+		}
+	}
+}
+
+/**
+ * Dispose sprite
+ *
+ * @memberof		SpriteManager
+ * @public
+ *
+ * @param this		Function scope
+ * @param sprite	Sprite to dispose
+ */
+Sprite SpriteManager_createSprite(SpriteManager this, SpriteDefinition* spriteDefinition, Object owner)
+{
+	ASSERT(this, "SpriteManager::createSprite: null this");
+	ASSERT(spriteDefinition, "SpriteManager::createSprite: null spriteDefinition");
+
+	this->lockSpritesLists = true;
+
+	Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, owner);
+	ASSERT(__IS_OBJECT_ALIVE(sprite), "SpriteManager::createSprite: failed creating sprite");
+
+	SpriteManager_registerSprite(this, sprite);
+
+	this->lockSpritesLists = false;
+
+	return sprite;
+}
+
+/**
+ * Dispose sprite
  *
  * @memberof		SpriteManager
  * @public
@@ -322,13 +389,17 @@ static bool SpriteManager_disposeSpritesProgressively(SpriteManager this)
 
 	if(!this->lockSpritesLists && this->spritesToDispose->head)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_front(this->spritesToDispose));
+		this->lockSpritesLists = true;
 
-		VirtualList_popFront(this->spritesToDispose);
+		Sprite sprite = __SAFE_CAST(Sprite, VirtualList_popFront(this->spritesToDispose));
+
+		SpriteManager_unregisterSprite(SpriteManager_getInstance(), sprite);
 
 		__DELETE(sprite);
 
 		this->spritePendingTextureWriting = __IS_OBJECT_ALIVE(this->spritePendingTextureWriting)? this->spritePendingTextureWriting : NULL;
+
+		this->lockSpritesLists = false;
 
 		return true;
 	}
@@ -463,74 +534,76 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
  * Register a Sprite and assign a WORLD layer to it
  *
  * @memberof		SpriteManager
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param sprite	Sprite to assign the WORLD layer
  */
-void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
+static void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 {
 	ASSERT(this, "SpriteManager::getWorldLayer: null this");
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::getWorldLayer: adding no sprite");
 
-	s8 layer = 0;
-
-	VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
-
-	ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::getWorldLayer: sprite already registered");
-
-	if(!alreadyLoadedSpriteNode)
+	if(!__GET_CAST(ObjectSprite, sprite))
 	{
-		this->lockSpritesLists = true;
+		s8 layer = 0;
 
-		// retrieve the next free layer, taking into account
-		// if there are layers being freed up by the recovery algorithm
-		layer = __TOTAL_LAYERS - 1;
+		VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
 
-		VirtualNode head = this->sprites->head;
+		ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::getWorldLayer: sprite already registered");
 
-		if(head)
+		if(!alreadyLoadedSpriteNode)
 		{
-			layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
+			this->lockSpritesLists = true;
+
+			// retrieve the next free layer, taking into account
+			// if there are layers being freed up by the recovery algorithm
+			layer = __TOTAL_LAYERS - 1;
+
+			VirtualNode head = this->sprites->head;
+
+			if(head)
+			{
+				layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
+			}
+
+			NM_ASSERT(0 < layer, "SpriteManager::getWorldLayer: no more layers");
+
+			// add to the front: last element corresponds to the 31 WORLD
+			VirtualList_pushFront(this->sprites, sprite);
+
+			this->zSortingFirstNode = NULL;
+			this->zSortingSecondNode = NULL;
 		}
 
-		NM_ASSERT(0 < layer, "SpriteManager::getWorldLayer: no more layers");
+		Sprite_setWorldLayer(sprite, layer);
 
-		// add to the front: last element corresponds to the 31 WORLD
-		VirtualList_pushFront(this->sprites, sprite);
-
-		this->zSortingFirstNode = NULL;
-		this->zSortingSecondNode = NULL;
+		this->lockSpritesLists = false;
 
 	}
-
-	Sprite_setWorldLayer(sprite, layer);
-
-	this->lockSpritesLists = false;
 }
 
 /**
  * Remove a registered Sprite and get back the WORLD layer previously assigned to it
  *
  * @memberof		SpriteManager
- * @public
+ * @private
  *
  * @param this		Function scope
  * @param sprite	Sprite to assign the WORLD layer
  */
-void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
+static void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::relinquishWorldLayer: null this");
-	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::relinquishWorldLayer: removing no sprite");
+	ASSERT(this, "SpriteManager::unregisterSprite: null this");
+	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
-	ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::relinquishWorldLayer: sprite not found");
-
-	this->lockSpritesLists = true;
-
-	// check if exists
-	if(VirtualList_removeElement(this->sprites, sprite))
+	if(!__GET_CAST(ObjectSprite, sprite))
 	{
-		VirtualList_removeElement(this->sprites, this->spritesToDispose);
+		ASSERT(__GET_CAST(BgmapSprite, sprite), "SpriteManager::unregisterSprite: non bgmap sprite");
+		NM_ASSERT(VirtualList_find(this->sprites, sprite), "SpriteManager::unregisterSprite: sprite not found");
+
+		// check if exists
+		VirtualList_removeElement(this->sprites, sprite);
 
 		u8 spriteLayer = sprite->worldLayer;
 
@@ -556,22 +629,17 @@ void SpriteManager_unregisterSprite(SpriteManager this, Sprite sprite)
 
 		for(; node; node = node->previous)
 		{
-			ASSERT(spriteLayer-- == (__SAFE_CAST(Sprite, node->data))->worldLayer + 1, "SpriteManager::relinquishWorldLayer: wrong layers");
+			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			ASSERT(spriteLayer-- == sprite->worldLayer + 1, "SpriteManager::unregisterSprite: wrong layers");
 
 			// move the sprite to the freed layer
-			(__SAFE_CAST(Sprite, node->data))->worldLayer += 1;
+			Sprite_setWorldLayer(sprite, sprite->worldLayer + 1);
 		}
 
 		// sorting needs to restart
 		this->zSortingFirstNode = NULL;
 		this->zSortingSecondNode = NULL;
 	}
-	else
-	{
-		ASSERT(false, "SpriteManager::relinquishWorldLayer: sprite not registered");
-	}
-
-	this->lockSpritesLists = false;
 }
 
 /**
@@ -1032,6 +1100,8 @@ void SpriteManager_print(SpriteManager this, int x, int y, bool resumed)
 	Printing_int(Printing_getInstance(), __TOTAL_LAYERS - 1 - VirtualList_getSize(this->sprites), x + 17, y, NULL);
 	Printing_text(Printing_getInstance(), "Sprites' count:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->sprites), x + 17, y, NULL);
+	Printing_text(Printing_getInstance(), "Disposed sprites:      ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), this->spritesToDispose ? VirtualList_getSize(this->spritesToDispose) : 0, x + 17, y, NULL);
 
 	if(resumed)
 	{

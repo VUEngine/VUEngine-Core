@@ -195,7 +195,7 @@ void Entity_resume(Entity this);
 void Entity_transformShapes(Entity this);
 void Entity_setupGraphics(Entity this);
 void Entity_releaseGraphics(Entity this);
-void Entity_releaseSprites(Entity this, bool deleteThem);
+void Entity_releaseSprites(Entity this);
 void Entity_setAnimation(Entity this, void (*animation)(Entity this));
 void Entity_setDefinition(Entity this, void* entityDefinition);
 void Entity_setExtraInfo(Entity this, void* extraInfo);

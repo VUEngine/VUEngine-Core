@@ -84,6 +84,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->visible = true;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : false;
 	this->writeAnimationFrame = false;
+	this->ready = false;
 }
 
 /**
@@ -222,6 +223,24 @@ bool Sprite_isHidden(Sprite this)
 void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::position: null this");
+
+	this->ready = true;
+}
+
+/**
+ * Set position
+ *
+ * @memberof			Sprite
+ * @public
+ *
+ * @param this			Function scope
+ * @param position		Pixel position
+ */
+void Sprite_setPosition(Sprite this, const PixelVector* position __attribute__ ((unused)))
+{
+	ASSERT(this, "Sprite::setPosition: null this");
+
+	this->ready = true;
 }
 
 /**
@@ -269,6 +288,11 @@ void Sprite_setWorldLayer(Sprite this, u8 worldLayer)
 	ASSERT(this, "Sprite::setWorldLayer: null this");
 
 	this->worldLayer = worldLayer;
+
+	if(0 <= (s8)this->worldLayer)
+	{
+		_worldAttributesBaseAddress[this->worldLayer].head &= ~__WORLD_END;
+	}
 }
 
 /**

@@ -84,6 +84,7 @@
 		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
 		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
 		__VIRTUAL_SET(ClassName, Sprite, position);														\
+		__VIRTUAL_SET(ClassName, Sprite, setPosition);													\
 		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
 		__VIRTUAL_SET(ClassName, Sprite, writeTextures);												\
 		__VIRTUAL_SET(ClassName, Sprite, areTexturesWritten);											\
@@ -157,6 +158,12 @@
 		 * @memberof				Sprite
 		 */																								\
 		bool visible : 2;																				\
+		/*
+		 * @var bool 				ready
+		 * @brief					Flag to allow rendering
+		 * @memberof				Sprite
+		 */																								\
+		bool ready : 2;																					\
 
 __CLASS(Sprite);
 
@@ -284,6 +291,7 @@ void Sprite_setTransparent(Sprite this, bool value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
 void Sprite_position(Sprite this, const Vector3D* position);
+void Sprite_setPosition(Sprite this, const PixelVector* position);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);
