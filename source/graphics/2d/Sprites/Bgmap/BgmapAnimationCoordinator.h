@@ -54,10 +54,9 @@ __CLASS(BgmapAnimationCoordinator);
 
 __CLASS_NEW_DECLARE(BgmapAnimationCoordinator, const CharSetDefinition* charSetDefinition);
 
+void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
 void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition);
 void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this);
-
-void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
 void BgmapAnimationCoordinator_removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
 
 

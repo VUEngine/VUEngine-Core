@@ -38,7 +38,7 @@
 /**
  * @class	Camera
  * @extends Object
- * @ingroup screen
+ * @ingroup camera
  */
 __CLASS_DEFINITION(Camera, Object);
 
@@ -64,10 +64,25 @@ const CameraFrustum* _cameraFrustum = NULL;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// it's a singleton
+/**
+ * Get instance
+ *
+ * @fn			Camera_getInstance()
+ * @memberof	Camera
+ * @public
+ *
+ * @return		Camera instance
+ */
 __SINGLETON(Camera);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 {
 	ASSERT(this, "Camera::constructor: null this");
@@ -134,7 +149,14 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 	_cameraFrustum = &this->cameraFrustum;
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_destructor(Camera this)
 {
 	ASSERT(this, "Camera::destructor: null this");
@@ -143,7 +165,15 @@ void Camera_destructor(Camera this)
 	__SINGLETON_DESTROY;
 }
 
-// set the movement manager
+/**
+ * Set the movement manager
+ *
+ * @memberof					Camera
+ * @public
+ *
+ * @param this					Function scope
+ * @param cameraMovementManager	The CameraMovementManager
+ */
 void Camera_setCameraMovementManager(Camera this, CameraMovementManager cameraMovementManager)
 {
 	ASSERT(this, "Camera::setCameraMovementManager: null this");
@@ -159,7 +189,15 @@ void Camera_setCameraMovementManager(Camera this, CameraMovementManager cameraMo
 	}
 }
 
-// set the effect manager
+/**
+ * Set the effect manager
+ *
+ * @memberof					Camera
+ * @public
+ *
+ * @param this					Function scope
+ * @param cameraEffectManager	The CameraEffectManager
+ */
 void Camera_setCameraEffectManager(Camera this, CameraEffectManager cameraEffectManager)
 {
 	ASSERT(this, "Camera::setCameraEffectManager: null this");
@@ -175,7 +213,15 @@ void Camera_setCameraEffectManager(Camera this, CameraEffectManager cameraEffect
 	}
 }
 
-// center world's camera in function of focus actor's position
+/**
+ * Center world's camera in function of focus actor's position
+ *
+ * @memberof							Camera
+ * @public
+ *
+ * @param this							Function scope
+ * @param checkIfFocusEntityIsMoving	The CameraEffectManager
+ */
 void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "Camera::focus: null this");
@@ -194,7 +240,15 @@ void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving)
 	__VIRTUAL_CALL(CameraMovementManager, focus, this->cameraMovementManager, checkIfFocusEntityIsMoving);
 }
 
-// set the focus entity
+/**
+ * Set the focus entity
+ *
+ * @memberof			Camera
+ * @public
+ *
+ * @param this			Function scope
+ * @param focusEntity	The CameraEffectManager
+ */
 void Camera_setFocusGameEntity(Camera this, Entity focusEntity)
 {
 	ASSERT(this, "Camera::setFocusEntity: null this");
@@ -211,7 +265,14 @@ void Camera_setFocusGameEntity(Camera this, Entity focusEntity)
 	}
 }
 
-// unset the focus entity
+/**
+ * Unset the focus entity
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_unsetFocusEntity(Camera this)
 {
 	ASSERT(this, "Camera::unsetFocusEntity: null this");
@@ -223,7 +284,16 @@ void Camera_unsetFocusEntity(Camera this)
 	this->lastDisplacement.z = 0;
 }
 
-// retrieve focus entity
+/**
+ * Retrieve focus entity
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Focus Entity
+ */
 Entity Camera_getFocusEntity(Camera this)
 {
 	ASSERT(this, "Camera::getFocusEntity: null this");
@@ -231,7 +301,15 @@ Entity Camera_getFocusEntity(Camera this)
 	return this->focusEntity;
 }
 
-// an actor has been deleted
+/**
+ * An actor has been deleted
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ * @param actor	Entity that has been deleted
+ */
 void Camera_onFocusEntityDeleted(Camera this, Entity actor)
 {
 	ASSERT(this, "Camera::focusEntityDeleted: null this");
@@ -242,8 +320,16 @@ void Camera_onFocusEntityDeleted(Camera this, Entity actor)
 	}
 }
 
-
-// translate camera
+/**
+ * Translate camera
+ *
+ * @memberof			Camera
+ * @public
+ *
+ * @param this			Function scope
+ * @param translation
+ * @param cap
+ */
 void Camera_move(Camera this, Vector3D translation, int cap)
 {
 	ASSERT(this, "Camera::move: null this");
@@ -260,7 +346,14 @@ void Camera_move(Camera this, Vector3D translation, int cap)
 	}
 }
 
-// translate camera
+/**
+ * Translate camera
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_capPosition(Camera this)
 {
 	ASSERT(this, "Camera::capPosition: null this");
@@ -296,7 +389,16 @@ void Camera_capPosition(Camera this)
 	}
 }
 
-// get camera's position
+/**
+ * Get camera's position
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Camera position
+ */
 Vector3D Camera_getPosition(Camera this)
 {
 	ASSERT(this, "Camera::getPosition: null this");
@@ -304,7 +406,15 @@ Vector3D Camera_getPosition(Camera this)
 	return this->position;
 }
 
-// set camera's position
+/**
+ * Set camera's position
+ *
+ * @memberof		Camera
+ * @public
+ *
+ * @param this		Function scope
+ * @param position	Camera position
+ */
 void Camera_setPosition(Camera this, Vector3D position)
 {
 	ASSERT(this, "Camera::setPosition: null this");
@@ -318,7 +428,14 @@ void Camera_setPosition(Camera this, Vector3D position)
 	Camera_capPosition(this);
 }
 
-// set camera's position for UI transformation
+/**
+ * Set camera's position for UI transformation
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_prepareForUITransform(Camera this)
 {
 	ASSERT(this, "Camera::prepareForUITransform: null this");
@@ -330,7 +447,14 @@ void Camera_prepareForUITransform(Camera this)
 	this->lastDisplacement.z = 0;
 }
 
-// set camera's position after UI transformation
+/**
+ * Set camera's position after UI transformation
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_doneUITransform(Camera this)
 {
 	ASSERT(this, "Camera::doneUITransform: null this");
@@ -342,7 +466,16 @@ void Camera_doneUITransform(Camera this)
 	this->lastDisplacement.z = 0;
 }
 
-// retrieve optical config structure
+/**
+ * Retrieve optical config structure
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return 		Optical config structure
+ */
 Optical Camera_getOptical(Camera this)
 {
 	ASSERT(this, "Camera::getOptical: null this");
@@ -350,7 +483,15 @@ Optical Camera_getOptical(Camera this)
 	return this->optical;
 }
 
-// set optical config structure
+/**
+ * Set optical config structure
+ *
+ * @memberof		Camera
+ * @public
+ *
+ * @param this		Function scope
+ * @param optical
+ */
 void Camera_setOptical(Camera this, Optical optical)
 {
 	ASSERT(this, "Camera::setOptical: null this");
@@ -358,7 +499,15 @@ void Camera_setOptical(Camera this, Optical optical)
 	this->optical = optical;
 }
 
-// set camera's position displacement
+/**
+ * Set camera's position displacement
+ *
+ * @memberof								Camera
+ * @public
+ *
+ * @param this								Function scope
+ * @param focusEntityPositionDisplacement
+ */
 void Camera_setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntityPositionDisplacement)
 {
 	ASSERT(this, "Camera::setPosition: null this");
@@ -372,7 +521,16 @@ void Camera_setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntity
 	Camera_forceDisplacement(this, true);
 }
 
-// retrieve last displacement
+/**
+ * Retrieve last displacement
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Last displacement vector
+ */
 Vector3D Camera_getLastDisplacement(Camera this)
 {
 	ASSERT(this, "Camera::getLastDisplacement: null this");
@@ -380,7 +538,16 @@ Vector3D Camera_getLastDisplacement(Camera this)
 	return this->lastDisplacement;
 }
 
-// get current stage's size
+/**
+ * Get current stage's size
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Stage size
+ */
 Size Camera_getStageSize(Camera this)
 {
 	ASSERT(this, "Camera::getStageSize: null this");
@@ -388,7 +555,15 @@ Size Camera_getStageSize(Camera this)
 	return this->stageSize;
 }
 
-// set current stage's size
+/**
+ * Set current stage's size
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ * @param size	Stage size
+ */
 void Camera_setStageSize(Camera this, Size size)
 {
 	ASSERT(this, "Camera::setStageSize: null this");
@@ -396,7 +571,15 @@ void Camera_setStageSize(Camera this, Size size)
 	this->stageSize = size;
 }
 
-// force values as if camera is moving
+/**
+ * Force values as if camera is moving
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ * @param flag
+ */
 void Camera_forceDisplacement(Camera this, int flag)
 {
 	ASSERT(this, "Camera::forceDisplacement: null this");
@@ -406,6 +589,16 @@ void Camera_forceDisplacement(Camera this, int flag)
 	this->lastDisplacement.z = flag ? __1I_FIX10_6 : 0;
 }
 
+/**
+ * Start an effect
+ *
+ * @memberof		Camera
+ * @public
+ *
+ * @param this		Function scope
+ * @param effect	Effect reference ID
+ * @param args		Various effect parameters
+ */
 void Camera_startEffect(Camera this, int effect, ...)
 {
 	ASSERT(this, "Camera::startEffect: null this");
@@ -416,6 +609,15 @@ void Camera_startEffect(Camera this, int effect, ...)
 	va_end(args);
 }
 
+/**
+ * Stop an effect
+ *
+ * @memberof		Camera
+ * @public
+ *
+ * @param this		Function scope
+ * @param effect	Effect reference ID
+ */
 void Camera_stopEffect(Camera this, int effect)
 {
 	ASSERT(this, "Camera::stopEffect: null this");
@@ -423,6 +625,14 @@ void Camera_stopEffect(Camera this, int effect)
 	__VIRTUAL_CALL(CameraEffectManager, stopEffect, this->cameraEffectManager, effect);
 }
 
+/**
+ * Reset the camera
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_reset(Camera this)
 {
 	ASSERT(this, "Camera::reset: null this");
@@ -431,6 +641,14 @@ void Camera_reset(Camera this)
 	Camera_resetCameraFrustum(this);
 }
 
+/**
+ * Reset the camera frustum
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Camera_resetCameraFrustum(Camera this)
 {
 	ASSERT(this, "Camera::resetCameraFrustum: null this");
@@ -443,6 +661,15 @@ void Camera_resetCameraFrustum(Camera this)
 	this->cameraFrustum.z1 = __SCREEN_DEPTH;
 }
 
+/**
+ * Set the camera frustum
+ *
+ * @memberof			Camera
+ * @public
+ *
+ * @param this			Function scope
+ * @param cameraFrustum	Camera frustum
+ */
 void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
 {
 	ASSERT(this, "Camera::setCameraFrustum: null this");
@@ -481,6 +708,16 @@ void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
 	}
 }
 
+/**
+ * Get the camera frustum
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Camera frustum
+ */
 CameraFrustum Camera_getCameraFrustum(Camera this)
 {
 	ASSERT(this, "Camera::getCameraFrustum: null this");

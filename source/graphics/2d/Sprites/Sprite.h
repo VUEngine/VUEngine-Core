@@ -53,11 +53,11 @@
 #define Sprite_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, render);															\
-		__VIRTUAL_DEC(ClassName, PixelVector, getPosition);													\
-		__VIRTUAL_DEC(ClassName, void, setPosition, const PixelVector* position);							\
-		__VIRTUAL_DEC(ClassName, void, addDisplacement, const PixelVector* displacement);					\
+		__VIRTUAL_DEC(ClassName, PixelVector, getPosition);												\
+		__VIRTUAL_DEC(ClassName, void, setPosition, const PixelVector* position);						\
+		__VIRTUAL_DEC(ClassName, void, addDisplacement, const PixelVector* displacement);				\
 		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
-		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);								\
+		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);									\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, void, applyAffineTransformations);										\
@@ -133,7 +133,6 @@
 		 * @memberof				Sprite
 		 */																								\
 		u8 worldLayer;																					\
-		/*int hbiasAmplitude;*/																			\
 		/*
 		 * @var bool 				hidden
 		  * @brief

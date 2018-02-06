@@ -79,21 +79,21 @@ __CLASS(HardwareManager);
 
 HardwareManager HardwareManager_getInstance();
 
-void HardwareManager_destructor(HardwareManager this);
-void HardwareManager_setInterruptVectors(HardwareManager this);
-void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
-void HardwareManager_initializeTimer(HardwareManager this);
 void HardwareManager_clearScreen(HardwareManager this);
-void HardwareManager_displayOn(HardwareManager this);
-void HardwareManager_displayOff(HardwareManager this);
-void HardwareManager_disableRendering(HardwareManager this);
-void HardwareManager_enableRendering(HardwareManager this);
-void HardwareManager_upBrightness(HardwareManager this);
-void HardwareManager_lowerBrightness(HardwareManager this);
-void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition);
-void HardwareManager_enableKeypad(HardwareManager this);
+void HardwareManager_destructor(HardwareManager this);
 void HardwareManager_disableKeypad(HardwareManager this);
+void HardwareManager_disableRendering(HardwareManager this);
+void HardwareManager_displayOff(HardwareManager this);
+void HardwareManager_displayOn(HardwareManager this);
+void HardwareManager_enableKeypad(HardwareManager this);
+void HardwareManager_enableRendering(HardwareManager this);
+void HardwareManager_initializeTimer(HardwareManager this);
+void HardwareManager_lowerBrightness(HardwareManager this);
 void HardwareManager_print(HardwareManager this, int x, int y);
+void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
+void HardwareManager_setInterruptVectors(HardwareManager this);
+void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition);
+void HardwareManager_upBrightness(HardwareManager this);
 #ifdef __ALERT_STACK_OVERFLOW
 void HardwareManager_checkStackStatus(HardwareManager this);
 void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);

@@ -47,10 +47,8 @@
 		__VIRTUAL_SET(ClassName, CameraMovementManager, focus); 										\
 
 #define CameraMovementManager_ATTRIBUTES																\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
 
-// declare a CameraMovementManager
 __CLASS(CameraMovementManager);
 
 

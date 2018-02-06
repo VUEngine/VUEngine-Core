@@ -37,24 +37,34 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
 #define HardwareManager_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* Timer manager */																				\
+		/**
+		 * @var TimerManager 	timerManager
+		 * @brief				Timer manager
+		 * @memberof			HardwareManager
+		 */																								\
 		TimerManager timerManager;																		\
-		/* VPU manager */																				\
+		/**
+		 * @var VIPManager 		vipManager
+		 * @brief				VPU manager
+		 * @memberof			HardwareManager
+		 */																								\
 		VIPManager vipManager;																			\
-		/* VPU manager */																				\
+		/**
+		 * @var KeypadManager 	keypadManager
+		 * @brief				VPU manager
+		 * @memberof			HardwareManager
+		 */																								\
 		KeypadManager keypadManager;																	\
-		/* HW registry */																				\
+		/**
+		 * @var u8*  			hwRegisters
+		 * @brief				HW registry
+		 * @memberof			HardwareManager
+		 */																								\
 		u8*  hwRegisters;																				\
 
 /**

@@ -129,12 +129,11 @@ __CLASS(ObjectSpriteContainer);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
-void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
-void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
-
 void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const PixelVector* displacement);
 s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
 void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix10_6 z);
+void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
+void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);

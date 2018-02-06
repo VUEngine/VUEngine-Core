@@ -45,15 +45,25 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock cloc
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// text box based on bgmaps
 #define MessageDispatcher_ATTRIBUTES																	\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* delayed messages */																			\
+		/**
+		 * @var VirtualList	delayedMessages
+		 * @brief			Delayed messages
+		 * @memberof		MessageDispatcher
+		 */																								\
 		VirtualList delayedMessages;																	\
-		/* delayed messages */																			\
+		/**
+		 * @var VirtualList	delayedMessagesToDiscard
+		 * @brief			Delayed messages to discard
+		 * @memberof		MessageDispatcher
+		 */																								\
 		VirtualList delayedMessagesToDiscard;															\
-		/* delayed messages */																			\
+		/**
+		 * @var VirtualList	delayedMessagesToDispatch
+		 * @brief			Delayed messages to dispatch
+		 * @memberof		MessageDispatcher
+		 */																								\
 		VirtualList delayedMessagesToDispatch;															\
 
 /**

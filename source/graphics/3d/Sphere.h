@@ -43,11 +43,18 @@
 		__VIRTUAL_SET(ClassName, Sphere, draw);															\
 
 #define Sphere_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Wireframe_ATTRIBUTES																			\
-		/* vertices */																					\
-		Vector3D center;																					\
-		/* radious */																					\
+		/**
+		 * @var Vector3D 	center
+		 * @brief			Vertices
+		 * @memberof		Sphere
+		 */																								\
+		Vector3D center;																				\
+		/**
+		 * @var fix10_6 	radius
+		 * @brief			Radious
+		 * @memberof		Sphere
+		 */																								\
 		fix10_6 radius;																					\
 
 __CLASS(Sphere);
@@ -60,11 +67,11 @@ __CLASS(Sphere);
 __CLASS_NEW_DECLARE(Sphere, Vector3D center, fix10_6 radius);
 
 void Sphere_destructor(Sphere this);
-Vector3D Sphere_getCenter(Sphere this);
-void Sphere_setCenter(Sphere this, Vector3D center);
-fix10_6 Sphere_getRadius(Sphere this);
-void Sphere_setRadius(Sphere this, fix10_6 radius);
 void Sphere_draw(Sphere this, bool calculateParallax);
+Vector3D Sphere_getCenter(Sphere this);
+fix10_6 Sphere_getRadius(Sphere this);
+void Sphere_setCenter(Sphere this, Vector3D center);
+void Sphere_setRadius(Sphere this, fix10_6 radius);
 
 
 #endif

@@ -42,7 +42,6 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define Wireframe_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
 
 __CLASS(Wireframe);
@@ -52,12 +51,12 @@ __CLASS(Wireframe);
 //										PUBLIC INTERFACE
 //---------------------------------------------------------------------------------------------------------
 
+void Wireframe_addVertex(Wireframe this, fix10_6 x, fix10_6 y, fix10_6 z);
 void Wireframe_constructor(Wireframe this);
 void Wireframe_destructor(Wireframe this);
-void Wireframe_addVertex(Wireframe this, fix10_6 x, fix10_6 y, fix10_6 z);
-void Wireframe_show(Wireframe this);
-void Wireframe_hide(Wireframe this);
 void Wireframe_draw(Wireframe this, bool calculateParallax);
+void Wireframe_hide(Wireframe this);
+void Wireframe_show(Wireframe this);
 
 
 #endif

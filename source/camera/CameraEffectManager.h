@@ -66,13 +66,24 @@ enum CameraFX
 		__VIRTUAL_SET(ClassName, CameraEffectManager, handleMessage);									\
 
 #define CameraEffectManager_ATTRIBUTES																	\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* target brightness for current fade effect */													\
+		/**
+		 * @var Brightness	fxFadeTargetBrightness
+		 * @brief			Target brightness for current fade effect
+		 * @memberof		CameraEffectManager
+		 */																								\
 		Brightness fxFadeTargetBrightness;																\
-		/* delay for current fade effect */																\
+		/**
+		 * @var u8			fxFadeDelay
+		 * @brief			Delay for current fade effect
+		 * @memberof		CameraEffectManager
+		 */																								\
 		u8 fxFadeDelay;																					\
-		/* callback scope for current fade effect */													\
+		/**
+		 * @var Object		fxFadeCallbackScope
+		 * @brief			Callback scope for current fade effect
+		 * @memberof		CameraEffectManager
+		 */																								\
 		Object fxFadeCallbackScope;
 
 // declare a CameraEffectManager
@@ -87,10 +98,10 @@ CameraEffectManager CameraEffectManager_getInstance();
 
 void CameraEffectManager_constructor(CameraEffectManager this);
 void CameraEffectManager_destructor(CameraEffectManager this);
+Brightness CameraEffectManager_getDefaultBrightness(CameraEffectManager this);
+bool CameraEffectManager_handleMessage(CameraEffectManager this, Telegram telegram);
 void CameraEffectManager_startEffect(CameraEffectManager this, int effect, va_list args);
 void CameraEffectManager_stopEffect(CameraEffectManager this, int effect);
-bool CameraEffectManager_handleMessage(CameraEffectManager this, Telegram telegram);
-Brightness CameraEffectManager_getDefaultBrightness(CameraEffectManager this);
 
 
 #endif

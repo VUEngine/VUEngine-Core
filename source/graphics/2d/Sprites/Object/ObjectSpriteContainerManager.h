@@ -61,7 +61,6 @@ __CLASS(ObjectSpriteContainerManager);
 
 ObjectSpriteContainerManager ObjectSpriteContainerManager_getInstance();
 void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this);
-
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z);
 ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment);
 void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y);

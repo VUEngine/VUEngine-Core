@@ -60,7 +60,6 @@ __CLASS_FRIEND_DEFINITION(Texture);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-
 static void ObjectSprite_checkForContainer(ObjectSprite this);
 
 

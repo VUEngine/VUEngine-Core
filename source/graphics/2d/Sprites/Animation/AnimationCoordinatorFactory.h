@@ -52,8 +52,8 @@ __CLASS(AnimationCoordinatorFactory);
 AnimationCoordinatorFactory AnimationCoordinatorFactory_getInstance();
 
 void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this);
-void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this);
 AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
+void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this);
 
 
 #endif

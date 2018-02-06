@@ -69,15 +69,30 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define CharSet_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* char set definition */																		\
+		/**
+		 * @var CharSetDefinition*  charSetDefinition
+		 * @brief					Charset definition
+		 * @memberof				CharSet
+		 */																								\
 		CharSetDefinition* charSetDefinition;															\
-		/* array definition of the charSet */															\
+		/**
+		 * @var u32 				charDefinitionDisplacement
+		 * @brief					Array definition of the charSet
+		 * @memberof				CharSet
+		 */																								\
 		u32 charDefinitionDisplacement;																	\
-		/* memory displacement */																		\
+		/**
+		 * @var u16 				offset
+		 * @brief					Memory displacement
+		 * @memberof				CharSet
+		 */																								\
 		u16 offset;																						\
-		/* how many textures are using me */															\
+		/**
+		 * @var u8 					usageCount
+		 * @brief					How many textures are using me
+		 * @memberof				CharSet
+		 */																								\
 		u8 usageCount;																					\
 
 __CLASS(CharSet);

@@ -45,16 +45,26 @@
 		__VIRTUAL_SET(ClassName, BgmapTexture, rewrite);												\
 
 #define BgmapTexture_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		Texture_ATTRIBUTES																				\
-		/* segment */																					\
+		/**
+		 * @var s8 		segment
+		 * @brief		Segment
+		 * @memberof	BgmapTexture
+		 */																								\
 		s8 segment;																						\
-		/* how many textures are using me */															\
+		/**
+		 * @var u8 		usageCount
+		 * @brief		How many textures are using me
+		 * @memberof	BgmapTexture
+		 */																								\
 		u8 usageCount;																					\
-		/* remaining rows to be written */																\
+		/**
+		 * @var s8 		remainingRowsToBeWritten
+		 * @brief		Remaining rows to be written
+		 * @memberof	BgmapTexture
+		 */																								\
 		s8 remainingRowsToBeWritten;																	\
 
-// A texture which has the logic to be allocated in graphic memory
 __CLASS(BgmapTexture);
 
 

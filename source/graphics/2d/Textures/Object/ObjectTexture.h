@@ -44,12 +44,14 @@
 		__VIRTUAL_SET(ClassName, ObjectTexture, write);													\
 
 #define ObjectTexture_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Texture_ATTRIBUTES																				\
-		/* object index */																				\
+		/**
+		 * @var int 	objectIndex
+		 * @brief		Object index
+		 * @memberof	ObjectTexture
+		 */																								\
 		int objectIndex;																				\
 
-// A texture which has the logic to be allocated in graphic memory
 __CLASS(ObjectTexture);
 
 

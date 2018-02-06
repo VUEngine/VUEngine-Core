@@ -36,12 +36,24 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define CharSetManager_ATTRIBUTES																		\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* charsets defined */																			\
+		/**
+		 * @var VirtualList charSets
+		 * @brief			Charsets defined
+		 * @memberof		CharSetManager
+		 */																								\
 		VirtualList charSets;																			\
+		/**
+		 * @var VirtualList charSetsPendingWriting
+		 * @brief			Charsets pending writing
+		 * @memberof		CharSetManager
+		 */																								\
 		VirtualList charSetsPendingWriting;																\
-		/* next offset to reclaim */																	\
+		/**
+		 * @var u16 		freedOffset
+		 * @brief			Next offset to be reclaimed
+		 * @memberof		CharSetManager
+		 */																								\
 		u16 freedOffset;																				\
 
 /**

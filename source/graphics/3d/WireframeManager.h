@@ -51,11 +51,11 @@ __CLASS(WireframeManager);
 WireframeManager WireframeManager_getInstance();
 
 void WireframeManager_destructor(WireframeManager this);
+void WireframeManager_drawWireframes(WireframeManager this);
+void WireframeManager_print(WireframeManager this, int x, int y);
 void WireframeManager_register(WireframeManager this, Wireframe wireframe);
 void WireframeManager_remove(WireframeManager this, Wireframe wireframe);
 void WireframeManager_reset(WireframeManager this);
-void WireframeManager_drawWireframes(WireframeManager this);
-void WireframeManager_print(WireframeManager this, int x, int y);
 
 
 #endif

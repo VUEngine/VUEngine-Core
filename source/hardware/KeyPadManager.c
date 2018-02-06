@@ -35,8 +35,23 @@
 
 #define KeypadManager_ATTRIBUTES																		\
 		Object_ATTRIBUTES																				\
+		/**
+		 * @var UserInput 	userInput
+		 * @brief			User's Input
+		 * @memberof		KeypadManager
+		 */																								\
 		UserInput userInput;																			\
+		/**
+		 * @var UserInput 	userInputToRegister
+		 * @brief			User's Input to be registered
+		 * @memberof		KeypadManager
+		 */																								\
 		UserInput userInputToRegister;																	\
+		/**
+		 * @var bool 		enabled
+		 * @brief			Enabled
+		 * @memberof		KeypadManager
+		 */																								\
 		bool enabled;																					\
 
 /**

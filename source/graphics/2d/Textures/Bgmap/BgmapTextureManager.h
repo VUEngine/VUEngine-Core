@@ -61,18 +61,18 @@ __CLASS(BgmapTextureManager);
 
 BgmapTextureManager BgmapTextureManager_getInstance();
 
-void BgmapTextureManager_destructor(BgmapTextureManager this);
-void BgmapTextureManager_reset(BgmapTextureManager this);
-void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture);
 void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture);
+void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);
+void BgmapTextureManager_destructor(BgmapTextureManager this);
+s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this);
+s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
 BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
 s16 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id);
 s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id);
-void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);
-s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this);
-s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
-void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 paramTableSegments);
 void BgmapTextureManager_print(BgmapTextureManager this, int x, int y);
+void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture);
+void BgmapTextureManager_reset(BgmapTextureManager this);
+void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 paramTableSegments);
 
 
 #endif

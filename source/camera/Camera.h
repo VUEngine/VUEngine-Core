@@ -56,42 +56,98 @@
 		Object_SET_VTABLE(ClassName)																	\
 
 #define Camera_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* optic values used in projection values */													\
+		/**
+		 * @var Optical					optical
+		 * @brief						Optical values used in projection values
+		 * @memberof					Camera
+		 */																								\
 		Optical optical;																				\
-		/* camera position */																			\
+		/**
+		 * @var Vector3D				position
+		 * @brief						Camera position
+		 * @memberof					Camera
+		 */																								\
 		Vector3D position;																				\
-		Vector3D positionBackup;																			\
-		/* camera position displacement manager */														\
+		/**
+		 * @var Vector3D				positionBackup
+		 * @brief						Backup of Camera position
+		 * @memberof					Camera
+		 */																								\
+		Vector3D positionBackup;																		\
+		/**
+		 * @var CameraMovementManager	cameraMovementManager
+		 * @brief						Camera position displacement manager
+		 * @memberof					Camera
+		 */																								\
 		CameraMovementManager cameraMovementManager;													\
-		/* camera effect manager */																		\
+		/**
+		 * @var CameraEffectManager		cameraEffectManager
+		 * @brief						Camera effect manager
+		 * @memberof					Camera
+		 */																								\
 		CameraEffectManager cameraEffectManager;														\
-		/* camera position displacement */																\
+		/**
+		 * @var Vector3D				focusEntityPositionDisplacement
+		 * @brief						Camera position displacement
+		 * @memberof					Camera
+		 */																								\
 		Vector3D focusEntityPositionDisplacement;														\
-		/* actor to center the camera around */															\
+		/**
+		 * @var Entity					focusEntity
+		 * @brief						Actor to center the camera around
+		 * @memberof					Camera
+		 */																								\
 		Entity focusEntity;																				\
-		const Vector3D* focusEntityPosition;																\
-		/* world's camera's last displacement */														\
+		/**
+		 * @var const					focusEntityPosition
+		 * @brief						Position of actor to center the camera around
+		 * @memberof					Camera
+		 */																								\
+		const Vector3D* focusEntityPosition;															\
+		/**
+		 * @var Vector3D				lastDisplacement
+		 * @brief						World's camera's last displacement
+		 * @memberof					Camera
+		 */																								\
 		Vector3D lastDisplacement;																		\
-		/* stage's size in pixels */																	\
+		/**
+		 * @var Size					stageSize
+		 * @brief						Stage's size in pixels
+		 * @memberof					Camera
+		 */																								\
 		Size stageSize;																					\
-		/* camera frustum */																			\
+		/**
+		 * @var CameraFrustum			cameraFrustum
+		 * @brief						Camera frustum
+		 * @memberof					Camera
+		 */																								\
 		CameraFrustum cameraFrustum;																	\
 
-// declare a Camera
 __CLASS(Camera);
 
+/**
+ * Camera frustum
+ *
+ * @memberof 	Camera
+ */
 typedef struct CameraFrustum
 {
+	/// x0 frustum
 	s16 x0;
+	/// y0 frustum
 	s16 y0;
+	/// z0 frustum
 	s16 z0;
+	/// x1 frustum
 	s16 x1;
+	/// y1 frustum
 	s16 y1;
+	/// z1 frustum
 	s16 z1;
 
-}CameraFrustum;
+} CameraFrustum;
+
 
 //---------------------------------------------------------------------------------------------------------
 //										PUBLIC INTERFACE
@@ -102,35 +158,35 @@ extern const Vector3D* _cameraDisplacement;
 extern const CameraFrustum* _cameraFrustum;
 extern const Optical* _optical;
 
-
 Camera Camera_getInstance();
 
-void Camera_destructor(Camera this);
-void Camera_setCameraMovementManager(Camera this, CameraMovementManager cameraMovementManager);
-void Camera_setCameraEffectManager(Camera this, CameraEffectManager cameraEffectManager);
-void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving);
-Optical Camera_getOptical(Camera this);
-void Camera_setOptical(Camera this, Optical optical);
-void Camera_setFocusGameEntity(Camera this, Entity focusEntity);
-void Camera_unsetFocusEntity(Camera this);
-Entity Camera_getFocusEntity(Camera this);
-void Camera_onFocusEntityDeleted(Camera this, Entity actor);
 void Camera_capPosition(Camera this);
-void Camera_move(Camera this, Vector3D translation, int cap);
-Vector3D Camera_getPosition(Camera this);
-void Camera_setPosition(Camera this, Vector3D position);
-void Camera_prepareForUITransform(Camera this);
+void Camera_destructor(Camera this);
 void Camera_doneUITransform(Camera this);
-void Camera_setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntityPositionDisplacement);
-Vector3D Camera_getLastDisplacement(Camera this);
-Size Camera_getStageSize(Camera this);
-void Camera_setStageSize(Camera this, Size size);
+void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving);
 void Camera_forceDisplacement(Camera this, int flag);
-void Camera_startEffect(Camera this, int effect, ...);
-void Camera_stopEffect(Camera this, int effect);
+CameraFrustum Camera_getCameraFrustum(Camera this);
+Entity Camera_getFocusEntity(Camera this);
+Vector3D Camera_getLastDisplacement(Camera this);
+Optical Camera_getOptical(Camera this);
+Vector3D Camera_getPosition(Camera this);
+Size Camera_getStageSize(Camera this);
+void Camera_move(Camera this, Vector3D translation, int cap);
+void Camera_onFocusEntityDeleted(Camera this, Entity actor);
+void Camera_prepareForUITransform(Camera this);
 void Camera_reset(Camera this);
 void Camera_resetCameraFrustum(Camera this);
+void Camera_setCameraEffectManager(Camera this, CameraEffectManager cameraEffectManager);
 void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum);
-CameraFrustum Camera_getCameraFrustum(Camera this);
+void Camera_setCameraMovementManager(Camera this, CameraMovementManager cameraMovementManager);
+void Camera_setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntityPositionDisplacement);
+void Camera_setFocusGameEntity(Camera this, Entity focusEntity);
+void Camera_setOptical(Camera this, Optical optical);
+void Camera_setPosition(Camera this, Vector3D position);
+void Camera_setStageSize(Camera this, Size size);
+void Camera_startEffect(Camera this, int effect, ...);
+void Camera_stopEffect(Camera this, int effect);
+void Camera_unsetFocusEntity(Camera this);
+
 
 #endif

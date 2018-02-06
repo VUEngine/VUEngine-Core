@@ -47,19 +47,42 @@
 		__VIRTUAL_SET(ClassName, Texture, rewrite);														\
 
 #define Texture_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* char group to use int this texture */														\
+		/**
+		 * @var CharSet				charSet
+		 * @brief					Char group to use int this texture
+		 * @memberof				Texture
+		 */																								\
 		CharSet charSet;																				\
-		/* pointer to ROM definition */																	\
+		/**
+		 * @var TextureDefinition*	textureDefinition
+		 * @brief					Pointer to ROM definition
+		 * @memberof				Texture
+		 */																								\
 		TextureDefinition* textureDefinition;															\
-		/* array definition of the map */																\
+		/**
+		 * @var u32					mapDisplacement
+		 * @brief					Array definition of the map
+		 * @memberof				Texture
+		 */																								\
 		u32 mapDisplacement;																			\
-		/* texture's id */																				\
+		/**
+		 * @var u16					id
+		 * @brief					Texture's id
+		 * @memberof				Texture
+		 */																								\
 		u16 id;																							\
-		/* color palette */																				\
+		/**
+		 * @var u8					palette
+		 * @brief					Color palette
+		 * @memberof				Texture
+		 */																								\
 		u8 palette;																						\
-		/* written flag */																				\
+		/**
+		 * @var u8					written
+		 * @brief					Written flag
+		 * @memberof				Texture
+		 */																								\
 		u8 written;																						\
 
 // A texture which has the logic to be allocated in graphic memory

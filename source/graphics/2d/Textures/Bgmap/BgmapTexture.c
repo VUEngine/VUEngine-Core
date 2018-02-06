@@ -41,6 +41,7 @@
  * @class 	BgmapTexture
  * @extends Texture
  * @ingroup graphics-2d-textures-bgmap
+ * @brief 	A texture which has the logic to be allocated in graphic memory
  */
 __CLASS_DEFINITION(BgmapTexture, Texture);
 

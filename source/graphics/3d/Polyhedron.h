@@ -42,9 +42,12 @@
 		__VIRTUAL_SET(ClassName, Polyhedron, draw);														\
 
 #define Polyhedron_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Wireframe_ATTRIBUTES																				\
-		/* vertices */																					\
+		Wireframe_ATTRIBUTES																			\
+		/**
+		 * @var VirtualList vertices
+		 * @brief			Vertices
+		 * @memberof		Polyhedron
+		 */																								\
 		VirtualList vertices;																			\
 
 __CLASS(Polyhedron);
@@ -56,8 +59,8 @@ __CLASS(Polyhedron);
 
 __CLASS_NEW_DECLARE(Polyhedron);
 
-void Polyhedron_destructor(Polyhedron this);
 void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z);
+void Polyhedron_destructor(Polyhedron this);
 void Polyhedron_draw(Polyhedron this, bool calculateParallax);
 
 

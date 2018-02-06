@@ -70,11 +70,11 @@
 		 */																								\
 		ObjectSpriteContainer objectSpriteContainer;													\
 		/**
-		 * @var PixelVector 				position
+		 * @var PixelVector 			position
 		 * @brief						positioning
 		 * @memberof					ObjectSprite
 		 */																								\
-		PixelVector position;																				\
+		PixelVector position;																			\
 		/**
 		 * @var s16 					objectIndex
 		 * @brief						object index

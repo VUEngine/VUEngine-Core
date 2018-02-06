@@ -34,15 +34,30 @@
 
 // a state machine
 #define StateMachine_ATTRIBUTES																			\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* that which owns this instance */																\
+		/**
+		 * @var void*		owner
+		 * @brief			Object which owns this instance
+		 * @memberof		StateMachine
+		 */																								\
 		void* owner;																					\
-		/* pointer to the current state */																\
+		/**
+		 * @var State		currentState
+		 * @brief			Pointer to the current state
+		 * @memberof		StateMachine
+		 */																								\
 		State currentState;																				\
-		/* pointer to the previous state */																\
+		/**
+		 * @var State		previousState
+		 * @brief			Pointer to the previous state
+		 * @memberof		StateMachine
+		 */																								\
 		State previousState;																			\
-		/* stack of states */																			\
+		/**
+		 * @var VirtualList	stateStack
+		 * @brief			Stack of states
+		 * @memberof		StateMachine
+		 */																								\
 		VirtualList stateStack;																			\
 
 /**
@@ -319,6 +334,8 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
  *
  * @param this			Function scope
  * @param telegram		Telegram to forward
+ *
+ * @return				True if successfully processed, false otherwise
  */
 bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 {

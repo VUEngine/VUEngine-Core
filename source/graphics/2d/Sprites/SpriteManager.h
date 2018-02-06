@@ -53,31 +53,31 @@ __CLASS(SpriteManager);
 //---------------------------------------------------------------------------------------------------------
 
 SpriteManager SpriteManager_getInstance();
-void SpriteManager_destructor(SpriteManager this);
 
+Sprite SpriteManager_createSprite(SpriteManager this, SpriteDefinition* spriteDefinition, Object owner);
 void SpriteManager_deferParamTableEffects(SpriteManager this, bool deferAffineTransformations);
 void SpriteManager_deferTextureWriting(SpriteManager this, bool deferTextureWriting);
+void SpriteManager_destructor(SpriteManager this);
+void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite);
+void SpriteManager_disposeSprites(SpriteManager this);
 u8 SpriteManager_getFreeLayer(SpriteManager this);
 int SpriteManager_getMaximumParamTableRowsToComputePerCall(SpriteManager this);
-s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this);
 Sprite SpriteManager_getSpriteAtLayer(SpriteManager this, u8 layer);
+s8 SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager this);
 void SpriteManager_print(SpriteManager this, int x, int y, bool resumed);
 void SpriteManager_processFreedLayers(SpriteManager this);
 void SpriteManager_processLayers(SpriteManager this);
 void SpriteManager_recoverLayers(SpriteManager this);
-void SpriteManager_writeTextures(SpriteManager this);
 void SpriteManager_render(SpriteManager this);
 void SpriteManager_renderLastLayer(SpriteManager this);
 void SpriteManager_reset(SpriteManager this);
-void SpriteManager_setupObjectSpriteContainers(SpriteManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
-void SpriteManager_disposeSprites(SpriteManager this);
-Sprite SpriteManager_createSprite(SpriteManager this, SpriteDefinition* spriteDefinition, Object owner);
-void SpriteManager_disposeSprite(SpriteManager this, Sprite sprite);
 void SpriteManager_setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
 void SpriteManager_setMaximumParamTableRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);
 void SpriteManager_setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
+void SpriteManager_setupObjectSpriteContainers(SpriteManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
 void SpriteManager_showLayer(SpriteManager this, u8 layer);
 void SpriteManager_sortLayers(SpriteManager this);
+void SpriteManager_writeTextures(SpriteManager this);
 
 
 #endif

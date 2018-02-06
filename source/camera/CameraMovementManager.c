@@ -51,10 +51,25 @@ __CLASS_FRIEND_DEFINITION(Camera);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// it's a singleton
+/**
+ * Get instance
+ *
+ * @fn			CameraMovementManager_getInstance()
+ * @memberof	CameraMovementManager
+ * @public
+ *
+ * @return		CameraMovementManager instance
+ */
 __SINGLETON(CameraMovementManager);
 
-// class's constructor
+/**
+ * Class constructor
+ *
+ * @memberof	CameraMovementManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovementManager this)
 {
 	ASSERT(this, "CameraMovementManager::constructor: null this");
@@ -63,7 +78,14 @@ void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovement
 	__CONSTRUCT_BASE(Object);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	CameraMovementManager
+ * @public
+ *
+ * @param this	Function scope
+ */
 void CameraMovementManager_destructor(CameraMovementManager this)
 {
 	ASSERT(this, "CameraMovementManager::destructor: null this");
@@ -72,7 +94,15 @@ void CameraMovementManager_destructor(CameraMovementManager this)
 	__SINGLETON_DESTROY;
 }
 
-// center world's camera in function of focus actor's position
+/**
+ * Center world's camera in function of focus actor's position
+ *
+ * @memberof							CameraMovementManager
+ * @public
+ *
+ * @param this							Function scope
+ * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
+ */
 void CameraMovementManager_focus(CameraMovementManager this __attribute__ ((unused)), u32 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "CameraMovementManager::update: null this");

@@ -32,11 +32,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define WireframeManager_ATTRIBUTES																	\
-		/* super's attributes */																		\
+#define WireframeManager_ATTRIBUTES																		\
 		Object_ATTRIBUTES																				\
-		/* wireframes */																				\
-		VirtualList wireframes;																		\
+		/**
+		 * @var VirtualList wireframes
+		 * @brief			Wireframes
+		 * @memberof		WireframeManager
+		 */																								\
+		VirtualList wireframes;																			\
 
 /**
  * @class	WireframeManager

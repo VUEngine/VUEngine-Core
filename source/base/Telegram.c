@@ -33,15 +33,30 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define Telegram_ATTRIBUTES																				\
-		/* super's attributes */																		\
 		Object_ATTRIBUTES																				\
-		/* the message itself. These are all enumerated in a file */									\
+		/**
+		 * @var int		message
+		 * @brief		The message itself. These are all enumerated in a file.
+		 * @memberof	Telegram
+		 */																								\
 		int message;																					\
-		/* any additional information that may accompany the message */									\
+		/**
+		 * @var void*	extraInfo
+		 * @brief		Any additional information that may accompany the message
+		 * @memberof	Telegram
+		 */																								\
 		void* extraInfo;																				\
-		/* who sent this telegram */																	\
+		/**
+		 * @var void*	sender
+		 * @brief		Who sent this telegram
+		 * @memberof	Telegram
+		 */																								\
 		void* sender;																					\
-		/* who is to receive this telegram */															\
+		/**
+		 * @var void*	receiver
+		 * @brief		Who is to receive this telegram
+		 * @memberof	Telegram
+		 */																								\
 		void* receiver;																					\
 
 /**
