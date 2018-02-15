@@ -248,7 +248,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 
 		if(dx > dy)
 		{
-			if(toPointX < fromPointX)
+			if(toPointY < fromPointY)
         	{
         		fix10_6 aux = toPointX;
         		toPointX = fromPointX;
@@ -259,9 +259,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
         		fromPointY = aux;
         	}
 
-			if(toPointY < fromPointY)
+			if(toPointX < fromPointX)
 			{
-				stepY = -stepY;
+				stepX = -stepX;
 			}
 
 			fix10_6 halfDx = dx >> 1;
@@ -271,14 +271,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			fix10_6 parallaxStep = halfDx ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDx << 1)) : 0;
 			fix10_6 auxParallax = parallax;
 
-			while(fromPointX < toPointX)
+			while(fromPointY < toPointY)
 			{
-				if(fraction >= 0)
-				{
-					fromPointY += stepY;
-					fraction -= dx;
-				}
-
+				fromPointY += stepY;
 				fromPointX += stepX;
 				fraction += dy;
 
@@ -300,7 +295,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 		}
 		else
 		{
-			if(toPointY < fromPointY)
+			if(toPointX < fromPointX)
         	{
         		fix10_6 aux = toPointX;
         		toPointX = fromPointX;
@@ -311,9 +306,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
         		fromPointY = aux;
         	}
 
-			if(toPointX < fromPointX)
+			if(toPointY < fromPointY)
 			{
-				stepX = -stepX;
+				stepY = -stepY;
 			}
 
 			fix10_6 halfDy = dy >> 1;
@@ -323,14 +318,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			fix10_6 parallaxStep = halfDy ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDy)) : 0;
 			fix10_6 auxParallax = parallax;
 
-			while(fromPointY < toPointY)
+			while(fromPointX < toPointX)
 			{
-				if(fraction >= 0)
-				{
-					fromPointX += stepX;
-					fraction -= dy;
-				}
-
+				fromPointX += stepX;
 				fromPointY += stepY;
 				fraction += dx;
 
@@ -368,7 +358,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 
 		if(dx > dy)
 		{
-			if(toPointX < fromPointX)
+			if(toPointY < fromPointY)
         	{
         		fix10_6 aux = toPointX;
         		toPointX = fromPointX;
@@ -379,9 +369,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
         		fromPointY = aux;
         	}
 
-			if(toPointY < fromPointY)
+			if(toPointX < fromPointX)
 			{
-				stepY = -stepY;
+				stepX = -stepX;
 			}
 
 			fix10_6 halfDx = dx >> 1;
@@ -391,14 +381,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			fix10_6 parallaxStep = halfDx ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDx << 1)) : 0;
 			fix10_6 auxParallax = parallax;
 
-			while(fromPointX < toPointX)
+			while(fromPointY < toPointY)
 			{
-				if(fraction >= 0)
-				{
-					fromPointY += stepY;
-					fraction -= dx;
-				}
-
+				fromPointY += stepY;
 				fromPointX += stepX;
 				fraction += dy;
 
@@ -420,7 +405,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 		}
 		else
 		{
-			if(toPointY < fromPointY)
+			if(toPointX < fromPointX)
         	{
         		fix10_6 aux = toPointX;
         		toPointX = fromPointX;
@@ -431,9 +416,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
         		fromPointY = aux;
         	}
 
-			if(toPointX < fromPointX)
+			if(toPointY < fromPointY)
 			{
-				stepX = -stepX;
+				stepY = -stepY;
 			}
 
 			fix10_6 halfDy = dy >> 1;
@@ -443,14 +428,9 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			fix10_6 parallaxStep = halfDy ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDy)) : 0;
 			fix10_6 auxParallax = parallax;
 
-			while(fromPointY < toPointY)
+			while(fromPointX < toPointX)
 			{
-				if(fraction >= 0)
-				{
-					fromPointX += stepX;
-					fraction -= dy;
-				}
-
+				fromPointX += stepX;
 				fromPointY += stepY;
 				fraction += dx;
 
