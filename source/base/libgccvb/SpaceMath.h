@@ -149,8 +149,8 @@ inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax
 
 	PixelVector projection =
 	{
-		__METERS_TO_PIXELS(__0_5PIXELS_TO_METERS + x - (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower)),
-		__METERS_TO_PIXELS(__0_5PIXELS_TO_METERS + y - (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower)),
+		__METERS_TO_PIXELS(x - (__FIX10_6_EXT_MULT(x - _optical->horizontalViewPointCenter, z) >> _optical->maximumXViewDistancePower)),
+		__METERS_TO_PIXELS(y - (__FIX10_6_EXT_MULT(y - _optical->verticalViewPointCenter, z) >> _optical->maximumYViewDistancePower)),
 		__METERS_TO_PIXELS(z),
 		parallax
 	};

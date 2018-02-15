@@ -73,11 +73,8 @@
 #define __EXCEPTIONS_WORLD		31
 
 // use for faster rounding on fix* values
-#define __1I_FIX7_9 				0x0200
-#define __1I_FIX10_6				0x0040
-#define __0_5F_FIX10_6				0x0020
-#define __0_5PIXELS_TO_METERS		0x0002	// 0.5f to fix10_6 = 32, 32 fix10_6 pixels = 2 fix10_6 meters
-											// __F_TO_FIX10_6(0.5f) >> __PIXELS_PER_METER_2_POWER
+#define __1I_FIX7_9 			0x0200
+#define __1I_FIX10_6			0x0040
 
 // override null definition (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000
@@ -97,7 +94,7 @@
 #define __NEAR		((int)-1)
 #define __FAR		((int)1)
 
-#define __MILLISECONDS_IN_SECOND				1000
+#define __MILLISECONDS_IN_SECOND	1000
 
 // messages
 enum MessagesTypes
@@ -139,7 +136,7 @@ enum DefaulCollisionLayers
 #ifndef __RELEASE
 #define NM_ASSERT(Statement, ...)																		\
 	 																									\
-	if(!(Statement) && !_triggeringException)																					\
+	if(!(Statement) && !_triggeringException)															\
 	{ 																									\
 		_triggeringException = true;																	\
 		asm(" mov sp,%0  ": "=r" (_sp));																\
@@ -155,9 +152,9 @@ enum DefaulCollisionLayers
 #undef NM_CAST_ASSERT
 
 #ifndef __RELEASE
-#define NM_CAST_ASSERT(Statement, ...)																		\
+#define NM_CAST_ASSERT(Statement, ...)																	\
 	 																									\
-	if(!(Statement) && !_triggeringException)																					\
+	if(!(Statement) && !_triggeringException)															\
 	{ 																									\
 		_triggeringException = true;																	\
 																										\
@@ -192,7 +189,7 @@ enum DefaulCollisionLayers
 
 #define __PIXELS_PER_METER_2_POWER				4
 #define __PIXELS_TO_METERS(pixels)				(fix10_6)(__I_TO_FIX10_6_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
-#define __METERS_TO_PIXELS(meters)				__FIX10_6_TO_I((((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER) + __0_5F_FIX10_6)
+#define __METERS_TO_PIXELS(meters)				__FIX10_6_TO_I(((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER)
 
 #define __SCREEN_WIDTH_METERS					__PIXELS_TO_METERS(__SCREEN_WIDTH)
 #define __SCREEN_HEIGHT_METERS					__PIXELS_TO_METERS(__SCREEN_HEIGHT)

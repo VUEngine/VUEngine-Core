@@ -262,8 +262,20 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 		if(this->texture)
 		{
-			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6);
-			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6);
+			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
+				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
+				__FIX10_6_MULT(
+					__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
+					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
+				)
+			)));
+			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
+				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
+				__FIX10_6_MULT(
+					__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
+					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
+				)
+			)));
 		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
@@ -303,8 +315,20 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 
 		if(this->texture)
 		{
-			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)))) + __0_5F_FIX10_6);
-			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)), __FIX10_6_MULT(__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2), __FIX7_9_TO_FIX10_6(this->drawSpec.scale.y))))  + __0_5F_FIX10_6);
+			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
+				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
+				__FIX10_6_MULT(
+					__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
+					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
+				)
+			)));
+			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
+				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
+				__FIX10_6_MULT(
+					__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
+					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
+				)
+			)));
 		}
 
 		if(this->param)

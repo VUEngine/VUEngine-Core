@@ -347,7 +347,7 @@ void Entity_releaseSprites(Entity this)
  * @private
  *
  * @param this					Function scope
- * @param º
+ * @param pixelRightBox
  * @param environmentPosition
  */
 static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRightBox, Vector3D environmentPosition)
