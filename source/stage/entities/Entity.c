@@ -2417,3 +2417,10 @@ u16 Entity_getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused))
 
 	return __ALL_AXES;
 }
+
+bool Entity_respawn(Entity this __attribute__ ((unused)))
+{
+	ASSERT(this, "Entity::respawn: null this");
+
+	return true;
+}

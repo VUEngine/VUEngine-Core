@@ -49,6 +49,7 @@
 		__VIRTUAL_DEC(ClassName, void, setExtraInfo, void*);											\
 		__VIRTUAL_DEC(ClassName, void, initialize, bool);												\
 		__VIRTUAL_DEC(ClassName, void, ready, bool);													\
+		__VIRTUAL_DEC(ClassName, bool, respawn);														\
 		__VIRTUAL_DEC(ClassName, u16, getAxisForFlipping);												\
 		__VIRTUAL_DEC(ClassName, void, setDefinition, void* entityDefinition);							\
 		__VIRTUAL_DEC(ClassName, bool, getAxesForShapeSyncWithDirection);								\
@@ -75,9 +76,10 @@
 		__VIRTUAL_SET(ClassName, Entity, getShapes);													\
 		__VIRTUAL_SET(ClassName, Entity, suspend);														\
 		__VIRTUAL_SET(ClassName, Entity, resume);														\
-		__VIRTUAL_SET(ClassName, Entity, isSubjectToGravity);												\
+		__VIRTUAL_SET(ClassName, Entity, isSubjectToGravity);											\
 		__VIRTUAL_SET(ClassName, Entity, initialize);													\
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
+		__VIRTUAL_SET(ClassName, Entity, respawn);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
 		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
@@ -222,6 +224,7 @@ void Entity_setShapesLayers(Entity this, u32 layers);
 u32 Entity_getShapesLayersToIgnore(Entity this);
 void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore);
 u16 Entity_getAxesForShapeSyncWithDirection(Entity this);
+bool Entity_respawn(Entity this);
 
 
 #endif
