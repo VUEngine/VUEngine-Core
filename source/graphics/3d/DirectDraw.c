@@ -222,7 +222,8 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 	fix10_6 dx = __ABS(toPointX - fromPointX);
 	fix10_6 dy = __ABS(toPointY - fromPointY);
 
-	fix10_6 stepX = __I_TO_FIX10_6(1), stepY = __I_TO_FIX10_6(1);
+	fix10_6 stepX = dx ? __I_TO_FIX10_6(1) : 0;
+	fix10_6 stepY = dy ? __I_TO_FIX10_6(1) : 0;
 	fix10_6 parallax = __I_TO_FIX10_6(fromPoint.parallax);
 
 	// duplicating code here since it is much lighter on the cpu
@@ -240,7 +241,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			}
 		}
 
-		if(dx > dy)
+		if(0 == dx && 0 < dy)
 		{
 			if(toPointY < fromPointY)
         	{
@@ -350,7 +351,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			}
 		}
 
-		if(dx > dy)
+		if(0 == dx && 0 < dy)
 		{
 			if(toPointY < fromPointY)
         	{
