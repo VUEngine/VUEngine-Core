@@ -121,10 +121,10 @@ void WireframeManager_destructor(WireframeManager this)
 /**
  * Register a Wireframe to be rendered
  *
- * @memberof			WireframeManager
+ * @memberof		WireframeManager
  * @public
  *
- * @param this			Function scope
+ * @param this		Function scope
  * @param wireframe	Wireframe to register
  */
 void WireframeManager_register(WireframeManager this, Wireframe wireframe)
@@ -141,10 +141,10 @@ void WireframeManager_register(WireframeManager this, Wireframe wireframe)
 /**
  * Remove a registered Wireframe
  *
- * @memberof			WireframeManager
+ * @memberof		WireframeManager
  * @public
  *
- * @param this			Function scope
+ * @param this		Function scope
  * @param wireframe	Wireframe to remove
  */
 void WireframeManager_remove(WireframeManager this, Wireframe wireframe)
@@ -158,10 +158,10 @@ void WireframeManager_remove(WireframeManager this, Wireframe wireframe)
 /**
  * Reset manager's state
  *
- * @memberof			WireframeManager
+ * @memberof	WireframeManager
  * @public
  *
- * @param this			Function scope
+ * @param this	Function scope
  */
 void WireframeManager_reset(WireframeManager this)
 {
@@ -173,10 +173,10 @@ void WireframeManager_reset(WireframeManager this)
 /**
  * Draw the wireframes to the frame buffers
  *
- * @memberof			WireframeManager
+ * @memberof	WireframeManager
  * @public
  *
- * @param this			Function scope
+ * @param this	Function scope
  */
 void WireframeManager_drawWireframes(WireframeManager this)
 {
@@ -195,12 +195,12 @@ void WireframeManager_drawWireframes(WireframeManager this)
 /**
  * Print manager's state
  *
- * @memberof			WireframeManager
+ * @memberof	WireframeManager
  * @public
  *
- * @param this			Function scope
- * @param x				Camera's x coordinate
- * @param y				Camera's y coordinate
+ * @param this	Function scope
+ * @param x		Camera's x coordinate
+ * @param y		Camera's y coordinate
  */
 void WireframeManager_print(WireframeManager this, int x, int y)
 {

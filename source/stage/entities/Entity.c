@@ -239,7 +239,7 @@ Entity Entity_getChildById(Entity this, s16 id)
  * @public
  *
  * @param this				Function scope
- * @param entityDefinition
+ * @param entityDefinition	EntityDefinition
  */
 void Entity_setDefinition(Entity this, void* entityDefinition)
 {
@@ -312,12 +312,12 @@ void Entity_releaseGraphics(Entity this)
 }
 
 /**
- * Release sprites
+ * Delete all of the Entity's sprites
  *
- * @memberof			Entity
+ * @memberof	Entity
  * @public
  *
- * @param this			Function scope
+ * @param this	Function scope
  */
 void Entity_releaseSprites(Entity this)
 {
@@ -513,7 +513,7 @@ void Entity_calculateSize(Entity this)
  * @memberof					Entity
  * @private
  *
- * @param positionedEntity
+ * @param positionedEntity		Function scope
  * @param environmentPosition
  * @param pixelRightBox
  */
@@ -698,7 +698,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
  * @memberof					Entity
  * @public
  *
- * @param positionedEntity
+ * @param positionedEntity		Function scope
  * @param environmentPosition
  *
  * @return						PixelRightBox
@@ -725,7 +725,7 @@ PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* position
  * @memberof					Entity
  * @public
  *
- * @param childrenDefinitions
+ * @param childrenDefinitions	Function scope
  * @param environmentPosition
  * @param childName
  *
@@ -842,13 +842,13 @@ void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefini
 /**
  * Load an entity and instantiate all its children
  *
- * @memberof					Entity
+ * @memberof				Entity
  * @public
  *
  * @param positionedEntity
  * @param internalId
  *
- * @return						Entity
+ * @return					Entity
  */
 Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
 {
@@ -997,8 +997,8 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 		false
 	};
 
-	// create the hint entity and add it to the hero as a child entity
-	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > internalId? internalId: positionedEntity.id);
+	// load child entity
+	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > internalId ? internalId : positionedEntity.id);
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics
@@ -2136,7 +2136,6 @@ u16 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
 	return __X_AXIS | __Y_AXIS;
 }
 
-
 /**
  * Get in game type
  *
@@ -2301,12 +2300,12 @@ void Entity_setDirection(Entity this, Direction direction)
 /**
  * Get direction
  *
- * @memberof			Entity
+ * @memberof	Entity
  * @public
  *
- * @param this			Function scope
+ * @param this	Function scope
  *
- * @return				Direction
+ * @return		Direction
  */
 Direction Entity_getDirection(Entity this)
 {
@@ -2335,6 +2334,16 @@ Direction Entity_getDirection(Entity this)
 	return direction;
 }
 
+/**
+ * Get Shape layers
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Shape layers
+ */
 u32 Entity_getShapesLayers(Entity this)
 {
 	ASSERT(this, "Entity::getShapesLayers: null this");
@@ -2356,6 +2365,15 @@ u32 Entity_getShapesLayers(Entity this)
 	return shapesLayers;
 }
 
+/**
+ * Set Shape layers
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ * @param u32	Shape layers
+ */
 void Entity_setShapesLayers(Entity this, u32 layers)
 {
 	ASSERT(this, "Entity::setShapesLayers: null this");
@@ -2373,6 +2391,16 @@ void Entity_setShapesLayers(Entity this, u32 layers)
 	}
 }
 
+/**
+ * Get Shape layers to ignore
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Shape layers to ignore
+ */
 u32 Entity_getShapesLayersToIgnore(Entity this)
 {
 	ASSERT(this, "Entity::getShapesLayersToIgnore: null this");
@@ -2394,6 +2422,15 @@ u32 Entity_getShapesLayersToIgnore(Entity this)
 	return shapesLayersToIgnore;
 }
 
+/**
+ * Set Shape layers to ignore
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ * @param u32	Shape layers to ignore
+ */
 void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
 {
 	ASSERT(this, "Entity::setShapesLayersToIgnore: null this");
@@ -2411,9 +2448,36 @@ void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
 	}
 }
 
+/**
+ * Get axes for Shape sync with direction
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Axes
+ */
 u16 Entity_getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::getAxesForShapeSyncWithDirection: null this");
 
 	return __ALL_AXES;
+}
+
+/**
+ * Whether to respawn this Entity after it has been streamed out
+ *
+ * @memberof	Entity
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Boolean whether to respawn this Entity
+ */
+bool Entity_respawn(Entity this __attribute__ ((unused)))
+{
+	ASSERT(this, "Entity::respawn: null this");
+
+	return true;
 }

@@ -475,7 +475,7 @@ void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container
 	EntityFactory_spawnEntity(this->entityFactory, positionedEntity, requester, callback, this->nextEntityId++);
 }
 
-// add entity to the stage
+// remove entity from the stage
 void Stage_removeChild(Stage this, Container child, bool deleteChild)
 {
 	ASSERT(this, "Stage::removeEntity: null this");
@@ -544,6 +544,14 @@ static void Stage_unloadChild(Stage this, Container child)
 		if(stageEntityDescription->internalId == internalId)
 		{
 			stageEntityDescription->internalId = -1;
+
+			// remove from list of entities that are to be loaded by the streaming,
+			// if the entity is not to be respawned
+			if(!__VIRTUAL_CALL(Entity, respawn, child))
+			{
+				VirtualList_removeElement(this->stageEntities, node->data);
+			}
+
 			break;
 		}
 	}
