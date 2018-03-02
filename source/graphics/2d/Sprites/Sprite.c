@@ -664,9 +664,8 @@ int Sprite_getHalfHeight(Sprite this)
  * @public
  *
  * @param this		Function scope
- * @param evenFrame
  */
-void Sprite_update(Sprite this, bool evenFrame)
+void Sprite_update(Sprite this)
 {
 	ASSERT(this, "Sprite::update: null this");
 
@@ -679,10 +678,24 @@ void Sprite_update(Sprite this, bool evenFrame)
 			this->writeAnimationFrame = false;
 		}
 	}
+}
+
+/**
+ * Render
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ * @param eventFrame
+ */
+void Sprite_render(Sprite this, bool eventFrame)
+{
+	ASSERT(this, "Sprite::update: null this");
 
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
-					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
+					((this->transparent == __TRANSPARENCY_EVEN) && eventFrame) ||
+					((this->transparent == __TRANSPARENCY_ODD) && !eventFrame);
 }
 
 /**

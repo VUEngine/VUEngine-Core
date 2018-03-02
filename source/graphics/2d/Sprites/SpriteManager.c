@@ -98,11 +98,11 @@ typedef struct SpritesList
 	 */																									\
 	bool lockSpritesLists;																				\
 	/**
-	 * @var bool		evenFrame
+	 * @var bool		eventFrame
 	 * @brief 			Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	 * @memberof		SpriteManager
 	 */																									\
-	bool evenFrame;																						\
+	bool eventFrame;																						\
 	/**
 	 * @var u8			freeLayer
 	 * @brief 			next world layer
@@ -214,7 +214,7 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->deferParamTableEffects = false;
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
-	this->evenFrame = true;
+	this->eventFrame = true;
 
 	SpriteManager_reset(this);
 }
@@ -300,7 +300,7 @@ void SpriteManager_reset(SpriteManager this)
 	SpriteManager_renderLastLayer(this);
 
 	this->lockSpritesLists = false;
-	this->evenFrame = true;
+	this->eventFrame = true;
 }
 
 /**
@@ -789,7 +789,7 @@ void SpriteManager_render(SpriteManager this)
 	ASSERT(this, "SpriteManager::render: null this");
 
 	// switch between even and odd frame
-	this->evenFrame = !this->evenFrame;
+	this->eventFrame = !this->eventFrame;
 
 	// must dispose sprites before doing anything else in order to try to make room in DRAM to new sprites
 	// as soon as possible
@@ -824,18 +824,23 @@ void SpriteManager_render(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		// first update
-		if((u32)sprite->animationController | (sprite->transparent != __TRANSPARENCY_NONE))
+		if((u32)sprite->animationController)
 		{
-			Sprite_update(__SAFE_CAST(Sprite, sprite), this->evenFrame);
+			Sprite_update(__SAFE_CAST(Sprite, sprite));
 		}
 
-		if(sprite->hidden | !sprite->visible)
+		if(sprite->hidden)
 		{
 			_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, render, sprite);
+			__VIRTUAL_CALL(Sprite, render, sprite, this->eventFrame);
+
+			if(!sprite->visible)
+			{
+				_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
+			}
 		}
 	}
 

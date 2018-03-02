@@ -454,8 +454,9 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
  * @public
  *
  * @param this		Function scope
+ * @param eventFrame
  */
-void ObjectSpriteContainer_render(ObjectSpriteContainer this)
+void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool eventFrame)
 {
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
@@ -489,7 +490,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 
 		if((sprite->texture && sprite->texture->written && sprite->animationController) || (sprite->transparent != __TRANSPARENCY_NONE))
 		{
-			Sprite_update(__SAFE_CAST(Sprite, sprite), true);
+			Sprite_update(__SAFE_CAST(Sprite, sprite));
 		}
 
 		if((sprite->hidden | !sprite->visible) && 0 <= sprite->objectIndex)
@@ -502,7 +503,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, render, sprite);
+			__VIRTUAL_CALL(Sprite, render, sprite, eventFrame);
 		}
 	}
 }
