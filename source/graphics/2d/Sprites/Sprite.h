@@ -66,7 +66,7 @@
 		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
 		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
-		__VIRTUAL_DEC(ClassName, void, render, bool eventFrame);															\
+		__VIRTUAL_DEC(ClassName, void, render, bool evenFrame);											\
 		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);									\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
 		__VIRTUAL_DEC(ClassName, void, setMode, u16 display, u16 mode);									\
@@ -316,7 +316,7 @@ void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 void Sprite_setFrameCycleDecrement(Sprite this, u8 frameDelayDelta);
 void Sprite_setFrameDuration(Sprite this, u8 frameDuration);
 void Sprite_update(Sprite this);
-void Sprite_render(Sprite this, bool eventFrame);
+void Sprite_render(Sprite this, bool evenFrame);
 void Sprite_updateAnimation(Sprite this);
 void Sprite_writeAnimation(Sprite this);
 

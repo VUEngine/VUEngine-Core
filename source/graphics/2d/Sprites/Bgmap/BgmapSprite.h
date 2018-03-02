@@ -152,7 +152,7 @@ void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec);
 s16 BgmapSprite_getParamTableRow(BgmapSprite this);
 u32 BgmapSprite_getParam(BgmapSprite this);
 void BgmapSprite_setParam(BgmapSprite this, u32 param);
-void BgmapSprite_render(BgmapSprite this, bool eventFrame);
+void BgmapSprite_render(BgmapSprite this, bool evenFrame);
 void BgmapSprite_addDisplacement(BgmapSprite this, const PixelVector* displacement);
 void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode);
 

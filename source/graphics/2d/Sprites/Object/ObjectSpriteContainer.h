@@ -150,7 +150,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
 void ObjectSpriteContainer_position(ObjectSpriteContainer this, const Vector3D* position);
 void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
 void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
-void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool eventFrame);
+void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool evenFrame);
 void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVector* position);
 void ObjectSpriteContainer_show(ObjectSpriteContainer this);
 void ObjectSpriteContainer_setMode(ObjectSpriteContainer this, u16 display, u16 mode);

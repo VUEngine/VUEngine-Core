@@ -454,9 +454,9 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
  * @public
  *
  * @param this		Function scope
- * @param eventFrame
+ * @param evenFrame
  */
-void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool eventFrame)
+void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool evenFrame)
 {
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
@@ -503,7 +503,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool eventFrame)
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, render, sprite, eventFrame);
+			__VIRTUAL_CALL(Sprite, render, sprite, evenFrame);
 		}
 	}
 }

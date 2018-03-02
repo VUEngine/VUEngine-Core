@@ -379,14 +379,14 @@ DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this)
  * @public
  *
  * @param this		Function scope
- * @param eventFrame
+ * @param evenFrame
  */
-void BgmapSprite_render(BgmapSprite this, bool eventFrame)
+void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 {
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-	__CALL_BASE_METHOD(Sprite, render, this, eventFrame);
+	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
 
 	if(!this->ready)
 	{

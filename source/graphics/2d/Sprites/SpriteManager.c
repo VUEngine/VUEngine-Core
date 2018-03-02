@@ -98,11 +98,11 @@ typedef struct SpritesList
 	 */																									\
 	bool lockSpritesLists;																				\
 	/**
-	 * @var bool		eventFrame
+	 * @var bool		evenFrame
 	 * @brief 			Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	 * @memberof		SpriteManager
 	 */																									\
-	bool eventFrame;																						\
+	bool evenFrame;																						\
 	/**
 	 * @var u8			freeLayer
 	 * @brief 			next world layer
@@ -214,7 +214,7 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->deferParamTableEffects = false;
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
-	this->eventFrame = true;
+	this->evenFrame = true;
 
 	SpriteManager_reset(this);
 }
@@ -300,7 +300,7 @@ void SpriteManager_reset(SpriteManager this)
 	SpriteManager_renderLastLayer(this);
 
 	this->lockSpritesLists = false;
-	this->eventFrame = true;
+	this->evenFrame = true;
 }
 
 /**
@@ -789,7 +789,7 @@ void SpriteManager_render(SpriteManager this)
 	ASSERT(this, "SpriteManager::render: null this");
 
 	// switch between even and odd frame
-	this->eventFrame = !this->eventFrame;
+	this->evenFrame = !this->evenFrame;
 
 	// must dispose sprites before doing anything else in order to try to make room in DRAM to new sprites
 	// as soon as possible
@@ -835,7 +835,7 @@ void SpriteManager_render(SpriteManager this)
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, render, sprite, this->eventFrame);
+			__VIRTUAL_CALL(Sprite, render, sprite, this->evenFrame);
 
 			if(!sprite->visible)
 			{

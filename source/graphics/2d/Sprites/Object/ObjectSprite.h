@@ -127,7 +127,7 @@ PixelVector ObjectSprite_getPosition(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
 void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D);
-void ObjectSprite_render(ObjectSprite this, bool eventFrame);
+void ObjectSprite_render(ObjectSprite this, bool evenFrame);
 void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
 void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position);

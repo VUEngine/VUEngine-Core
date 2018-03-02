@@ -122,8 +122,8 @@
 // Parallax values are divide by this factor to control their strength
 #define __PARALLAX_CORRECTION_FACTOR			4
 
-// Affects the strong of the scaling
-#define __SCALLING_MODIFIER_FACTOR				0.20f
+// Affects the strength of the scaling
+#define __SCALING_MODIFIER_FACTOR				0.20f
 
 
 //---------------------------------------------------------------------------------------------------------

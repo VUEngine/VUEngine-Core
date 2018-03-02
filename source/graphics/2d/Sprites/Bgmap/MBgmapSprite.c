@@ -357,13 +357,13 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displace
  * @public
  *
  * @param this		Function scope
- * @param eventFrame
+ * @param evenFrame
  */
-void MBgmapSprite_render(MBgmapSprite this, bool eventFrame)
+void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
 
-	__CALL_BASE_METHOD(Sprite, render, this, eventFrame);
+	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
 
 	if(!this->ready)
 	{

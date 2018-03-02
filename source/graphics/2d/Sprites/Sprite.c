@@ -687,15 +687,15 @@ void Sprite_update(Sprite this)
  * @public
  *
  * @param this		Function scope
- * @param eventFrame
+ * @param evenFrame
  */
-void Sprite_render(Sprite this, bool eventFrame)
+void Sprite_render(Sprite this, bool evenFrame)
 {
 	ASSERT(this, "Sprite::update: null this");
 
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					((this->transparent == __TRANSPARENCY_EVEN) && eventFrame) ||
-					((this->transparent == __TRANSPARENCY_ODD) && !eventFrame);
+					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
+					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
 }
 
 /**

@@ -286,14 +286,14 @@ void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z)
  * @public
  *
  * @param this		Function scope
- * @param eventFrame
+ * @param evenFrame
  */
-void ObjectSprite_render(ObjectSprite this, bool eventFrame)
+void ObjectSprite_render(ObjectSprite this, bool evenFrame)
 {
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
-	__CALL_BASE_METHOD(Sprite, render, this, eventFrame);
+	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
 
 	//ObjectSprite_checkForContainer(this);
 
