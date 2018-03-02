@@ -44,6 +44,10 @@
 #define __UPDATE_SIZE	0x04
 #define __UPDATE_M		0x08
 
+#define __TRANSPARENCY_NONE	0
+#define __TRANSPARENCY_EVEN	1
+#define __TRANSPARENCY_ODD	2
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -52,42 +56,42 @@
 // declare the virtual methods
 #define Sprite_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, render);															\
-		__VIRTUAL_DEC(ClassName, PixelVector, getPosition);												\
-		__VIRTUAL_DEC(ClassName, void, setPosition, const PixelVector* position);						\
 		__VIRTUAL_DEC(ClassName, void, addDisplacement, const PixelVector* displacement);				\
-		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
-		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);									\
-		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
-		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, void, applyAffineTransformations);										\
 		__VIRTUAL_DEC(ClassName, void, applyHbiasEffects);												\
-		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix10_6 z);									\
-		__VIRTUAL_DEC(ClassName, void, writeAnimation);													\
-		__VIRTUAL_DEC(ClassName, void, show);															\
-		__VIRTUAL_DEC(ClassName, void, hide);															\
-		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
-		__VIRTUAL_DEC(ClassName, void, setMode, u16 display, u16 mode);									\
-		__VIRTUAL_DEC(ClassName, bool, writeTextures);													\
 		__VIRTUAL_DEC(ClassName, bool, areTexturesWritten);												\
+		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix10_6 z);									\
+		__VIRTUAL_DEC(ClassName, PixelVector, getPosition);												\
+		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
+		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
+		__VIRTUAL_DEC(ClassName, void, hide);															\
+		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
+		__VIRTUAL_DEC(ClassName, void, render);															\
+		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);									\
+		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
+		__VIRTUAL_DEC(ClassName, void, setMode, u16 display, u16 mode);									\
+		__VIRTUAL_DEC(ClassName, void, setPosition, const PixelVector* position);						\
+		__VIRTUAL_DEC(ClassName, void, show);															\
+		__VIRTUAL_DEC(ClassName, void, writeAnimation);													\
+		__VIRTUAL_DEC(ClassName, bool, writeTextures);													\
 
 // declare the virtual methods which are redefined
 #define Sprite_SET_VTABLE(ClassName)																	\
 		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Sprite, getScale);														\
 		__VIRTUAL_SET(ClassName, Sprite, applyAffineTransformations);									\
 		__VIRTUAL_SET(ClassName, Sprite, applyHbiasEffects);											\
-		__VIRTUAL_SET(ClassName, Sprite, resize);														\
-		__VIRTUAL_SET(ClassName, Sprite, writeAnimation);												\
-		__VIRTUAL_SET(ClassName, Sprite, show);															\
-		__VIRTUAL_SET(ClassName, Sprite, hide);															\
-		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
-		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
-		__VIRTUAL_SET(ClassName, Sprite, position);														\
-		__VIRTUAL_SET(ClassName, Sprite, setPosition);													\
-		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
-		__VIRTUAL_SET(ClassName, Sprite, writeTextures);												\
 		__VIRTUAL_SET(ClassName, Sprite, areTexturesWritten);											\
+		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
+		__VIRTUAL_SET(ClassName, Sprite, getScale);														\
+		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
+		__VIRTUAL_SET(ClassName, Sprite, hide);															\
+		__VIRTUAL_SET(ClassName, Sprite, position);														\
+		__VIRTUAL_SET(ClassName, Sprite, resize);														\
+		__VIRTUAL_SET(ClassName, Sprite, rotate);														\
+		__VIRTUAL_SET(ClassName, Sprite, setPosition);													\
+		__VIRTUAL_SET(ClassName, Sprite, show);															\
+		__VIRTUAL_SET(ClassName, Sprite, writeAnimation);												\
+		__VIRTUAL_SET(ClassName, Sprite, writeTextures);												\
 
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
@@ -128,12 +132,6 @@
 		 */																								\
 		u16 head;																						\
 		/*
-		 * @var u8 					worldLayer
-		 * @brief					World layer where to render the texture
-		 * @memberof				Sprite
-		 */																								\
-		u8 worldLayer;																					\
-		/*
 		 * @var bool 				hidden
 		  * @brief
 		  * @memberof				Sprite
@@ -146,12 +144,6 @@
 		 */																								\
 		bool writeAnimationFrame : 2;																	\
 		/*
-		 * @var bool 				transparent
-		 * @brief					Flag for making it transparent
-		 * @memberof				Sprite
-		 */																								\
-		bool transparent : 2;																			\
-		/*
 		 * @var bool 				visible
 		 * @brief					Flag for transparency control
 		 * @memberof				Sprite
@@ -163,6 +155,18 @@
 		 * @memberof				Sprite
 		 */																								\
 		bool ready : 2;																					\
+		/*
+		 * @var u8 					worldLayer
+		 * @brief					World layer where to render the texture
+		 * @memberof				Sprite
+		 */																								\
+		u8 worldLayer;																					\
+		/*
+		 * @var bool 				transparent
+		 * @brief					Flag for making it transparent
+		 * @memberof				Sprite
+		 */																								\
+		u8 transparent;																					\
 
 __CLASS(Sprite);
 
@@ -184,8 +188,8 @@ typedef struct SpriteDefinition
 	/// texture to use with the sprite
 	TextureDefinition* textureDefinition;
 
-	/// is it transparent
-	bool transparent;
+	/// transparency mode
+	u8 transparent;
 
 	/// displacement modifier to achieve better control over display
 	PixelVector displacement;
@@ -234,8 +238,6 @@ typedef struct AnimationFunction
  */
 typedef const AnimationFunction AnimationFunctionROMDef;
 
-
-
 /**
  * An animation definition
  *
@@ -264,33 +266,33 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition, O
 void Sprite_destructor(Sprite this);
 
 // general
+bool Sprite_areTexturesWritten(Sprite this);
 void Sprite_calculateParallax(Sprite this, fix10_6 z);
 u16 Sprite_getHead(Sprite this);
 u16 Sprite_getMode(Sprite this);
 Scale Sprite_getScale(Sprite this);
 Texture Sprite_getTexture(Sprite this);
+u8 Sprite_getTransparent(Sprite this);
 u32 Sprite_getWorldHead(Sprite this);
 u16 Sprite_getWorldHeight(Sprite this);
 u8 Sprite_getWorldLayer(Sprite this);
-bool Sprite_writeTextures(Sprite this);
-bool Sprite_areTexturesWritten(Sprite this);
 u16 Sprite_getWorldWidth(Sprite this);
+s16 Sprite_getWorldGP(Sprite this);
 s16 Sprite_getWorldGX(Sprite this);
 s16 Sprite_getWorldGY(Sprite this);
-s16 Sprite_getWorldGP(Sprite this);
+s16 Sprite_getWorldMP(Sprite this);
 s16 Sprite_getWorldMX(Sprite this);
 s16 Sprite_getWorldMY(Sprite this);
-s16 Sprite_getWorldMP(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
-bool Sprite_isTransparent(Sprite this);
+void Sprite_position(Sprite this, const Vector3D* position);
 void Sprite_resize(Sprite this, Scale scale, fix10_6 z);
 void Sprite_rewrite(Sprite this);
-void Sprite_setTransparent(Sprite this, bool value);
+void Sprite_setPosition(Sprite this, const PixelVector* position);
+void Sprite_setTransparent(Sprite this, u8 value);
 void Sprite_setWorldLayer(Sprite this, u8 worldLayer);
 void Sprite_show(Sprite this);
-void Sprite_position(Sprite this, const Vector3D* position);
-void Sprite_setPosition(Sprite this, const PixelVector* position);
+bool Sprite_writeTextures(Sprite this);
 
 // animation
 s8 Sprite_getActualFrame(Sprite this);
@@ -312,7 +314,7 @@ void Sprite_rotate(Sprite this, const Rotation* rotation);
 void Sprite_setActualFrame(Sprite this, s8 actualFrame);
 void Sprite_setFrameCycleDecrement(Sprite this, u8 frameDelayDelta);
 void Sprite_setFrameDuration(Sprite this, u8 frameDuration);
-void Sprite_update(Sprite this);
+void Sprite_update(Sprite this, bool evenFrame);
 void Sprite_updateAnimation(Sprite this);
 void Sprite_writeAnimation(Sprite this);
 

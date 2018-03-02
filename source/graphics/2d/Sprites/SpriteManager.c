@@ -92,6 +92,18 @@ typedef struct SpritesList
 	 */																									\
 	Sprite spritePendingTextureWriting;																	\
 	/**
+	 * @var bool		lockSpritesLists
+	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
+	 * @memberof		SpriteManager
+	 */																									\
+	bool lockSpritesLists;																				\
+	/**
+	 * @var bool		evenFrame
+	 * @brief 			Flag to distinguish between even and odd game frames, needed for sprite transparency.
+	 * @memberof		SpriteManager
+	 */																									\
+	bool evenFrame;																						\
+	/**
 	 * @var u8			freeLayer
 	 * @brief 			next world layer
 	 * @memberof		SpriteManager
@@ -102,7 +114,7 @@ typedef struct SpritesList
 	 * @brief 			number of cycles that the texture writing is idle
 	 * @memberof		SpriteManager
 	 */																									\
-	s8 cyclesToWaitForSpriteTextureWriting;																	\
+	s8 cyclesToWaitForSpriteTextureWriting;																\
 	/**
 	 * @var s8			texturesMaximumRowsToWrite
 	 * @brief 			number of rows to write in texture's writing
@@ -127,12 +139,6 @@ typedef struct SpritesList
 	 * @memberof		SpriteManager
 	 */																									\
 	s8 waitToWriteSpriteTextures;																		\
-	/**
-	 * @var bool		lockSpritesLists
-	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
-	 * @memberof		SpriteManager
-	 */																									\
-	bool lockSpritesLists;																				\
 
 
 /**
@@ -208,6 +214,7 @@ static void __attribute__ ((noinline)) SpriteManager_constructor(SpriteManager t
 	this->deferParamTableEffects = false;
 	this->waitToWriteSpriteTextures = 0;
 	this->lockSpritesLists = false;
+	this->evenFrame = true;
 
 	SpriteManager_reset(this);
 }
@@ -293,6 +300,7 @@ void SpriteManager_reset(SpriteManager this)
 	SpriteManager_renderLastLayer(this);
 
 	this->lockSpritesLists = false;
+	this->evenFrame = true;
 }
 
 /**
@@ -780,8 +788,10 @@ void SpriteManager_render(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::render: null this");
 
-	// must dispose sprites before doing anything else in
-	// order to try to make room in DRAM to new sprites
+	// switch between even and odd frame
+	this->evenFrame = !this->evenFrame;
+
+	// must dispose sprites before doing anything else in order to try to make room in DRAM to new sprites
 	// as soon as possible
 
 	bool skipNonCriticalProcesses = SpriteManager_disposeSpritesProgressively(this);
@@ -814,9 +824,9 @@ void SpriteManager_render(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		// first update
-		if((u32)sprite->animationController | sprite->transparent)
+		if((u32)sprite->animationController | (sprite->transparent != __TRANSPARENCY_NONE))
 		{
-			Sprite_update(__SAFE_CAST(Sprite, sprite));
+			Sprite_update(__SAFE_CAST(Sprite, sprite), this->evenFrame);
 		}
 
 		if(sprite->hidden | !sprite->visible)

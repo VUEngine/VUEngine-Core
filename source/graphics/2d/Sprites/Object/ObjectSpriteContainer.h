@@ -72,6 +72,11 @@
 		 * @memberof		ObjectSpriteContainer
 		 */																								\
 		VirtualNode node;																				\
+		/**
+		 * @var VirtualNode	previousNode
+		 * @brief			for z sorting
+		 * @memberof		ObjectSpriteContainer
+		 */																								\
 		VirtualNode previousNode;																		\
 		/**
 		 * @var VirtualNode	objectSpriteNodeToDefragment

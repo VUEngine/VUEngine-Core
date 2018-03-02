@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Sprite.h>
-#include <SpriteManager.h>
 #include <AnimationController.h>
 #include <VIPManager.h>
 #include <BgmapTexture.h>
@@ -81,8 +80,8 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->texture = NULL;
 	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->hidden = false;
+	this->transparent = spriteDefinition ? spriteDefinition->transparent : __TRANSPARENCY_NONE;
 	this->visible = true;
-	this->transparent = spriteDefinition ? spriteDefinition->transparent : false;
 	this->writeAnimationFrame = false;
 	this->ready = false;
 }
@@ -661,12 +660,13 @@ int Sprite_getHalfHeight(Sprite this)
 /**
  * Update
  *
- * @memberof	Sprite
+ * @memberof		Sprite
  * @public
  *
- * @param this	Function scope
+ * @param this		Function scope
+ * @param evenFrame
  */
-void Sprite_update(Sprite this)
+void Sprite_update(Sprite this, bool evenFrame)
 {
 	ASSERT(this, "Sprite::update: null this");
 
@@ -680,20 +680,22 @@ void Sprite_update(Sprite this)
 		}
 	}
 
-	this->visible = !this->transparent | !this->visible;
+	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
+					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
+					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
 }
 
 /**
- * Is Sprite transparent?
+ * Get Sprite's transparency mode
  *
  * @memberof	Sprite
  * @public
  *
  * @param this	Function scope
  *
- * @return		Boolean whether Sprite is transparent
+ * @return		Transparency mode
  */
-bool Sprite_isTransparent(Sprite this)
+u8 Sprite_getTransparent(Sprite this)
 {
 	ASSERT(this, "Sprite::isTransparent: null this");
 
@@ -707,18 +709,14 @@ bool Sprite_isTransparent(Sprite this)
  * @public
  *
  * @param this	Function scope
- * @param value	Boolean
+ * @param value	Transparency mode
  */
-void Sprite_setTransparent(Sprite this, bool value)
+void Sprite_setTransparent(Sprite this, u8 value)
 {
 	ASSERT(this, "Sprite::setTransparent: null this");
 
 	this->transparent = value;
-
-	if(!value)
-	{
-		this->visible = true;
-	}
+	this->visible = true;
 }
 
 /**
@@ -1071,7 +1069,9 @@ void Sprite_print(Sprite this, int x, int y)
 	}
 
 	Printing_text(Printing_getInstance(), "Transparent:                         ", x, ++y, NULL);
-	Printing_text(Printing_getInstance(), Sprite_isTransparent(this) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
+	u8 spriteTransparency = Sprite_getTransparent(this);
+	Printing_text(Printing_getInstance(), (spriteTransparency > 0) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
+	Printing_text(Printing_getInstance(), (spriteTransparency == 1) ? "(Even)" : (spriteTransparency == 2) ? "(Odd)" : "", x + 16, y, NULL);
 
 	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).x, x + 14, y, NULL);

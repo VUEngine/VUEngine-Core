@@ -103,7 +103,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	this->removingObjectSprite = false;
 	this->hidden = false;
 	this->visible = true;
-	this->transparent = false;
+	this->transparent = __TRANSPARENCY_NONE;
 
 	this->node = NULL;
 	this->previousNode = NULL;
@@ -459,7 +459,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 {
 	ASSERT(this, "ObjectSpriteContainer::render: null this");
 
-	//if render flag is set
+	// if render flag is set
 	if(!this->worldLayer)
 	{
 		return;
@@ -487,9 +487,9 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this)
 	{
 		ObjectSprite sprite = __SAFE_CAST(ObjectSprite, node->data);
 
-		if((sprite->texture && sprite->texture->written && sprite->animationController) || sprite->transparent)
+		if((sprite->texture && sprite->texture->written && sprite->animationController) || (sprite->transparent != __TRANSPARENCY_NONE))
 		{
-			Sprite_update(__SAFE_CAST(Sprite, sprite));
+			Sprite_update(__SAFE_CAST(Sprite, sprite), true);
 		}
 
 		if((sprite->hidden | !sprite->visible) && 0 <= sprite->objectIndex)

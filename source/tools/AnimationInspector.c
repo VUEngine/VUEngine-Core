@@ -279,7 +279,7 @@ void AnimationInspector_update(AnimationInspector this)
 	if(this->gameState && this->animatedSprite)
 	{
 		Sprite_updateAnimation(this->animatedSprite);
-		Sprite_update(this->animatedSprite);
+		Sprite_update(this->animatedSprite, true);
 		__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
 		__VIRTUAL_CALL(Sprite, applyHbiasEffects, this->animatedSprite);
 	}
