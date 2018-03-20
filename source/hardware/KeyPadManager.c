@@ -233,9 +233,9 @@ UserInput KeypadManager_read(KeypadManager this)
 	// store keys
 	this->userInput.powerFlag 	= this->userInput.allKeys & 0x0001;
 	this->userInput.allKeys 	&= 0xFFFC;
-	this->userInput.pressedKey 	= (this->userInput.allKeys & ~this->userInput.previousKey) & this->userInputToRegister.pressedKey;
-	this->userInput.releasedKey = (~this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.releasedKey;
-	this->userInput.holdKey 	= (this->userInput.allKeys & this->userInput.previousKey) & this->userInputToRegister.holdKey;
+	this->userInput.pressedKey 	= KeypadManager_getPressedKey(this) & this->userInputToRegister.pressedKey;
+	this->userInput.releasedKey = KeypadManager_getReleasedKey(this) & this->userInputToRegister.releasedKey;
+	this->userInput.holdKey 	= KeypadManager_getHoldKey(this) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
 	this->userInput.holdKeyDuration = (this->userInput.holdKey == this->userInput.previousKey)
 		? this->userInput.holdKeyDuration + 1
@@ -290,7 +290,7 @@ u16 KeypadManager_getPressedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPressedKey: null this");
 
-	return this->userInput.pressedKey;
+	return this->userInput.allKeys & ~this->userInput.previousKey;
 }
 
 /**
@@ -307,7 +307,7 @@ u16 KeypadManager_getReleasedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
-	return this->userInput.releasedKey;
+	return ~this->userInput.allKeys & this->userInput.previousKey;
 }
 
 /**
@@ -324,7 +324,7 @@ u16 KeypadManager_getHoldKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKey: null this");
 
-	return this->userInput.holdKey;
+	return this->userInput.allKeys & this->userInput.previousKey;
 }
 
 /**
