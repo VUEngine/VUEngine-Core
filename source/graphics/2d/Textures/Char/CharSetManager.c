@@ -306,7 +306,8 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 		CharSet charSet = __NEW(CharSet, charSetDefinition, offset);
 
 		VirtualList_pushBack(this->charSets, charSet);
-
+		VirtualList_pushBack(this->charSetsPendingWriting, charSet);
+/*
 		switch(charSetDefinition->allocationType)
 		{
 			case __ANIMATED_SINGLE:
@@ -322,7 +323,7 @@ static CharSet CharSetManager_allocateCharSet(CharSetManager this, CharSetDefini
 				VirtualList_pushBack(this->charSetsPendingWriting, charSet);
 				break;
 		}
-
+*/
 		return charSet;
 	}
 
