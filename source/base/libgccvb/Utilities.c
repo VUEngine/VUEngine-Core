@@ -104,12 +104,10 @@ const char* Utilities_toUppercase(const char* string)
 	char* result = NULL;
 	while(string[i])
 	{
-		result[i] = (string[i] >= 'a' && string[i] <= 'z')
-			? string[i] - 32
-			: string[i];
-
+		result[i] = (string[i] >= 'a' && string[i] <= 'z') ? string[i] - 32 : string[i];
 		i++;
 	}
+	result[i] = 0;
 
 	return result;
 }
@@ -120,12 +118,10 @@ const char* Utilities_toLowercase(const char* string)
 	char* result = NULL;
 	while(string[i])
 	{
-		result[i] = (string[i] >= 'A' && string[i] <= 'Z')
-			? string[i] + 32
-			: string[i];
-
+		result[i] = (string[i] >= 'A' && string[i] <= 'Z') ? string[i] + 32 : string[i];
 		i++;
 	}
+	result[i] = 0;
 
 	return result;
 }
