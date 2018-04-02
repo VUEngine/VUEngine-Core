@@ -123,7 +123,7 @@
 #define __PARALLAX_CORRECTION_FACTOR			4
 
 // Affects the strength of the scaling
-#define __SCALING_MODIFIER_FACTOR				0.20f
+#define __SCALLING_MODIFIER_FACTOR				0.20f
 
 
 //---------------------------------------------------------------------------------------------------------

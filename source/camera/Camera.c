@@ -140,7 +140,7 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 	this->optical.verticalViewPointCenter = __PIXELS_TO_METERS(__VERTICAL_VIEW_POINT_CENTER);
 
 	// scaling factor
-	this->optical.scalingFactor = __FIX10_6_MULT(__F_TO_FIX10_6(__SCALING_MODIFIER_FACTOR), __I_TO_FIX10_6(1) << _optical->maximumXViewDistancePower);
+	this->optical.scalingFactor = __FIX10_6_MULT(__F_TO_FIX10_6(__SCALLING_MODIFIER_FACTOR), __I_TO_FIX10_6(1) << _optical->maximumXViewDistancePower);
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;

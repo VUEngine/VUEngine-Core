@@ -574,7 +574,11 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
 {
 	ASSERT(this, "Printing::text: null this");
 
+#ifdef __FORCE_UPPERCASE
+	Printing_out(this, x, y, Utilities_toUppercase(string), font);
+#else
 	Printing_out(this, x, y, string, font);
+#endif
 }
 
 /**

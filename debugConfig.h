@@ -30,6 +30,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __SHOW_PHYSICS_PROFILING
 //#define __FORCE_PRINTING_LAYER
+//#define __FORCE_UPPERCASE
+//#define __DISABLE_STREAMING
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10
