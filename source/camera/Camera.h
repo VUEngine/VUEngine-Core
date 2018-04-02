@@ -70,6 +70,12 @@
 		 */																								\
 		Vector3D position;																				\
 		/**
+		 * @var Vector3D				previousPosition
+		 * @brief						Backup of Camera position
+		 * @memberof					Camera
+		 */																								\
+		Vector3D previousPosition;																		\
+		/**
 		 * @var Vector3D				positionBackup
 		 * @brief						Backup of Camera position
 		 * @memberof					Camera
@@ -154,6 +160,7 @@ typedef struct CameraFrustum
 //---------------------------------------------------------------------------------------------------------
 
 extern const Vector3D* _cameraPosition;
+extern const Vector3D* _cameraPreviousPosition;
 extern const Vector3D* _cameraDisplacement;
 extern const CameraFrustum* _cameraFrustum;
 extern const Optical* _optical;
@@ -187,6 +194,7 @@ void Camera_setStageSize(Camera this, Size size);
 void Camera_startEffect(Camera this, int effect, ...);
 void Camera_stopEffect(Camera this, int effect);
 void Camera_unsetFocusEntity(Camera this);
-
+Vector3D Camera_getFocusEntityPosition(Camera this);
+Vector3D Camera_getFocusEntityPositionDisplacement(Camera this);
 
 #endif

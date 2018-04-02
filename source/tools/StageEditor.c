@@ -1179,9 +1179,9 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
 	Printing_text(Printing_getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Maximum X View Distance:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), (1 << _optical->maximumXViewDistancePower), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->maximumXViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Maximum Y View Distance:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), (1 << _optical->maximumYViewDistancePower), x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->maximumYViewDistancePower), x + 22, y, NULL);
 	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 22, y, NULL);
 }

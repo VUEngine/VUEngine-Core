@@ -61,9 +61,6 @@
 #define BgmapSprite_SET_VTABLE(ClassName)																\
 		Sprite_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, BgmapSprite, render);													\
-		__VIRTUAL_SET(ClassName, BgmapSprite, getPosition);												\
-		__VIRTUAL_SET(ClassName, BgmapSprite, setPosition);												\
-		__VIRTUAL_SET(ClassName, BgmapSprite, position);												\
 		__VIRTUAL_SET(ClassName, BgmapSprite, rotate);													\
 		__VIRTUAL_SET(ClassName, BgmapSprite, getScale);												\
 		__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);								\
@@ -141,9 +138,7 @@ void BgmapSprite_destructor(BgmapSprite this);
 // general
 Scale BgmapSprite_getScale(BgmapSprite this);
 void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z);
-PixelVector BgmapSprite_getPosition(BgmapSprite this);
 void BgmapSprite_setPosition(BgmapSprite this, const PixelVector* position);
-void BgmapSprite_position(BgmapSprite this, const Vector3D* position);
 void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation);
 void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z);
 DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);

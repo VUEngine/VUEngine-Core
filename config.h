@@ -105,10 +105,10 @@
 #define __DISTANCE_EYE_SCREEN					384
 
 // Maximum x view distance (depth) (power of two)
-#define __MAXIMUM_X_VIEW_DISTANCE_POWER			7
+#define __MAXIMUM_X_VIEW_DISTANCE				2048
 
 // Maximum y view distance (depth) (power of two)
-#define __MAXIMUM_Y_VIEW_DISTANCE_POWER			15
+#define __MAXIMUM_Y_VIEW_DISTANCE				4096
 
 // Distance between eyes
 #define __BASE_FACTOR							32
@@ -123,8 +123,10 @@
 #define __PARALLAX_CORRECTION_FACTOR			4
 
 // Affects the strength of the scaling
-#define __SCALING_MODIFIER_FACTOR				0.20f
+#define __SCALLING_MODIFIER_FACTOR				0.20f
 
+// minimum number of pixels that the camera can move
+#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
 
 //---------------------------------------------------------------------------------------------------------
 //											FRAME RATE CONTROL

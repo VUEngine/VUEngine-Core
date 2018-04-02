@@ -65,7 +65,7 @@
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
-		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
+		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position, bool reproject);				\
 		__VIRTUAL_DEC(ClassName, void, render, bool evenFrame);											\
 		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);									\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
@@ -82,6 +82,7 @@
 		__VIRTUAL_SET(ClassName, Sprite, applyHbiasEffects);											\
 		__VIRTUAL_SET(ClassName, Sprite, areTexturesWritten);											\
 		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
+		__VIRTUAL_SET(ClassName, Sprite, getPosition);													\
 		__VIRTUAL_SET(ClassName, Sprite, getScale);														\
 		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
 		__VIRTUAL_SET(ClassName, Sprite, hide);															\
@@ -97,7 +98,20 @@
 #define Sprite_ATTRIBUTES																				\
 		Object_ATTRIBUTES																				\
 		/*
-		 * @var PixelVector 			displacement
+		 * @var PixelVector 		Position
+		 * @brief					Projected position based on optics configuration
+		 * @memberof				Sprite
+		 */																								\
+		PixelVector position;																			\
+		/*
+		 * @var PixelVector 		Displacement relative to camera's total displacement
+		 * @brief					Displacement applied to the position for final rendering based on the
+		 							camera's total displacement
+		 * @memberof				Sprite
+		 */																								\
+		PixelVector displacementRelativeToCamera;														\
+		/*
+		 * @var PixelVector 		Displacement
 		 * @brief					Displacement modifier to achieve better control over display
 		 * @memberof				Sprite
 		 */																								\
@@ -269,6 +283,7 @@ void Sprite_destructor(Sprite this);
 // general
 bool Sprite_areTexturesWritten(Sprite this);
 void Sprite_calculateParallax(Sprite this, fix10_6 z);
+PixelVector Sprite_getPosition(Sprite this);
 u16 Sprite_getHead(Sprite this);
 u16 Sprite_getMode(Sprite this);
 Scale Sprite_getScale(Sprite this);
@@ -286,7 +301,7 @@ s16 Sprite_getWorldMX(Sprite this);
 s16 Sprite_getWorldMY(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
-void Sprite_position(Sprite this, const Vector3D* position);
+void Sprite_position(Sprite this, const Vector3D* position, bool reproject);
 void Sprite_resize(Sprite this, Scale scale, fix10_6 z);
 void Sprite_rewrite(Sprite this);
 void Sprite_setPosition(Sprite this, const PixelVector* position);

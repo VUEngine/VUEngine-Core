@@ -19,7 +19,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
-//#define __DIMM_FOR_PROFILING
+#define __DIMM_FOR_PROFILING
 //#define __ALERT_VIP_OVERTIME
 //#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __DRAW_SHAPES
@@ -29,13 +29,15 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __PRINT_DETAILED_MEMORY_POOL_STATUS
 //#define __PRINT_MEMORY_POOL_STATUS
 //#define __SHOW_PHYSICS_PROFILING
-//#define __FORCE_PRINTING_LAYER
+#define __FORCE_PRINTING_LAYER
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object
+#undef __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER
+#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
 
 
 // do not delete the following macros!

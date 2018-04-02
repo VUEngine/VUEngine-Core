@@ -75,6 +75,7 @@
 // use for faster rounding on fix* values
 #define __1I_FIX7_9 			0x0200
 #define __1I_FIX10_6			0x0040
+#define __05F_FIX10_6			0x0020
 
 // override null definition (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000
@@ -190,10 +191,20 @@ enum DefaulCollisionLayers
 #define __PIXELS_PER_METER_2_POWER				4
 #define __PIXELS_TO_METERS(pixels)				(fix10_6)(__I_TO_FIX10_6_EXT(pixels) >> __PIXELS_PER_METER_2_POWER)
 #define __METERS_TO_PIXELS(meters)				__FIX10_6_TO_I(((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER)
+#define __METERS_TO_PIXELS_ROUNDED(meters)		__FIX10_6_TO_I(__05F_FIX10_6 + (((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER))
 
 #define __SCREEN_WIDTH_METERS					__PIXELS_TO_METERS(__SCREEN_WIDTH)
 #define __SCREEN_HEIGHT_METERS					__PIXELS_TO_METERS(__SCREEN_HEIGHT)
 #define __SCREEN_DEPTH_METERS					__PIXELS_TO_METERS(__SCREEN_DEPTH)
 
+// round meters to multiples of 4 since that is
+// the size of 1 pixel
+#define __CLAMP_METERS(value)				((((value) + ((1 << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER) - 1)) >> __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER) << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER)
+
+#define __CAMERA_MINIMUM_DISPLACEMENT_ROUNDING(value)		((value) & (0xFFFF << __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER))
+
+
+#define __MINIMUM_X_VIEW_DISTANCE_POWER			4
+#define __MINIMUM_Y_VIEW_DISTANCE_POWER			4
 
 #endif

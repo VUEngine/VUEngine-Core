@@ -26,6 +26,7 @@
 
 #include <Sprite.h>
 #include <AnimationController.h>
+#include <Camera.h>
 #include <VIPManager.h>
 #include <BgmapTexture.h>
 #include <debugUtilities.h>
@@ -78,6 +79,8 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
+	this->position = (PixelVector){0, 0, 0, 0};
+	this->displacementRelativeToCamera = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->hidden = false;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : __TRANSPARENCY_NONE;
@@ -218,10 +221,58 @@ bool Sprite_isHidden(Sprite this)
  *
  * @param this			Function scope
  * @param position		3D position
+ * @param reproject		Force 3D to 2D projection
  */
-void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
+void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position, bool reproject __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::position: null this");
+
+	if(!this->ready || reproject)
+	{
+		this->position = Vector3D_projectToPixelVector(*position, this->position.parallax);
+	}
+
+
+	{
+
+		int maximumXViewDistancePower = __PIXELS_TO_METERS(2048 - 512);
+		int maximumYViewDistancePower = __PIXELS_TO_METERS(2048);
+
+		Vector3D a =
+		{
+			__FIX10_6_MULT(_cameraPosition->x, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumXViewDistancePower)),
+			__FIX10_6_MULT(_cameraPosition->y, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumYViewDistancePower)),
+			0
+		};
+
+		Vector3D b =
+		{
+			__FIX10_6_MULT(_cameraPreviousPosition->x, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumXViewDistancePower)),
+			__FIX10_6_MULT(_cameraPreviousPosition->y, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumYViewDistancePower)),
+			0
+		};
+
+		this->displacementRelativeToCamera.x = __METERS_TO_PIXELS(-b.x - (-0 + b.x - a.x));
+		//this->displacementRelativeToCamera.y = -b.x + __METERS_TO_PIXELS_ROUNDED(b.y - a.y);
+/*
+		if(64 == __METERS_TO_PIXELS(position->z))
+		{
+			PRINT_INT(_cameraPosition->x, 1, 1);
+			PRINT_INT(_cameraPreviousPosition->x, 1, 2);
+			PRINT_INT(_cameraPosition->x - _cameraPreviousPosition->x, 1, 3);
+
+			PRINT_INT(a.x, 10, 1);
+			PRINT_INT(b.x, 10, 2);
+			PRINT_INT(b.x - a.x, 10, 3);
+		}
+		*/
+
+#define __METERS_TO_PIXELS_ROUNDED(meters)		__FIX10_6_TO_I(__05F_FIX10_6 + (((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER))
+
+		this->displacementRelativeToCamera.x = -__METERS_TO_PIXELS_ROUNDED(__FIX10_6_MULT(__CLAMP_METERS(_cameraPosition->x), __I_TO_FIX10_6(1) - (position->z >> _optical->maximumXViewDistancePower)));
+		this->displacementRelativeToCamera.y = -__METERS_TO_PIXELS_ROUNDED(__FIX10_6_MULT(_cameraPosition->y, __I_TO_FIX10_6(1) - (position->z >> _optical->maximumYViewDistancePower)));
+
+	}
 
 	this->ready = true;
 }
@@ -235,11 +286,13 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* posit
  * @param this			Function scope
  * @param position		Pixel position
  */
-void Sprite_setPosition(Sprite this, const PixelVector* position __attribute__ ((unused)))
+void Sprite_setPosition(Sprite this, const PixelVector* position)
 {
 	ASSERT(this, "Sprite::setPosition: null this");
 
 	this->ready = true;
+
+	this->position = *position;
 }
 
 /**
@@ -254,6 +307,30 @@ void Sprite_setPosition(Sprite this, const PixelVector* position __attribute__ (
 void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::calculateParallax: null this");
+}
+
+
+/**
+ * Get position relative to the camera
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Position relative to camera
+ */
+PixelVector Sprite_getPosition(Sprite this)
+{
+	PixelVector position =
+	{
+		this->position.x + this->displacement.x + this->displacementRelativeToCamera.x,
+		this->position.y + this->displacement.y + this->displacementRelativeToCamera.y,
+		this->position.z + this->displacement.z + this->displacementRelativeToCamera.z,
+		this->position.parallax + this->displacement.parallax
+	};
+
+	return position;
 }
 
 /**

@@ -843,7 +843,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 
 	bool loadedEntities = false;
 
-	PixelVector cameraPosition = PixelVector_getFromVector3D(*_cameraPosition);
+	PixelVector cameraPosition = PixelVector_getFromVector3D(*_cameraPosition, 0);
 
 	u32 cameraDistance = (cameraPosition.x * cameraPosition.x +
 							cameraPosition.y * cameraPosition.y +

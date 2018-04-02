@@ -182,23 +182,6 @@ void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation)
 }
 
 /**
- * Retrieve 2D position
- *
- * @memberof		ObjectSprite
- * @public
- *
- * @param this		Function scope
- *
- * @return			2D position
- */
-PixelVector ObjectSprite_getPosition(ObjectSprite this)
-{
-	ASSERT(this, "ObjectSprite::getPosition: null this");
-
-	return this->position;
-}
-
-/**
  * Set 2D position
  *
  * @memberof			ObjectSprite
@@ -213,8 +196,6 @@ void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position)
 
 	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
 
-	this->position = *position;
-
 	ObjectSprite_checkForContainer(this);
 }
 
@@ -226,18 +207,14 @@ void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position)
  *
  * @param this			Function scope
  * @param position		3D position
+ * @param reproject		Force 3D to 2D projection
  */
-void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
+void ObjectSprite_position(ObjectSprite this, const Vector3D* position, bool reproject)
 {
 	ASSERT(this, "ObjectSprite::position: null this");
 	ASSERT(this->texture, "ObjectSprite::position: null texture");
 
-	__CALL_BASE_METHOD(Sprite, position, this, position);
-
-	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
-
-	// project position to 2D space
-	this->position = Vector3D_projectToPixelVector(position3D, this->position.parallax);
+	__CALL_BASE_METHOD(Sprite, position, this, position, reproject);
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -308,8 +285,8 @@ void ObjectSprite_render(ObjectSprite this, bool evenFrame)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0) + this->displacementRelativeToCamera.x;
+	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0) + this->displacementRelativeToCamera.y;
 
 	int i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
