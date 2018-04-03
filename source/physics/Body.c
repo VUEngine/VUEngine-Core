@@ -780,7 +780,7 @@ static void Body_addNormal(Body this, Object referent, Vector3D direction, fix10
 	for(; node; node = node->next)
 	{
 		ASSERT(__IS_BASIC_OBJECT_ALIVE(node->data), "DEAD");
-		ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
+	//	ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
 	}
 
 	NormalRegistry* normalRegistry = __NEW_BASIC(NormalRegistry);

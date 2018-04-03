@@ -2205,8 +2205,12 @@ void Entity_informShapesThatStartedMoving(Entity this)
 
 		for(; node; node = node->next)
 		{
-			Shape_setActive(__SAFE_CAST(Shape, node->data), true);
-			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(Shape, node->data));
+			Shape shape = __SAFE_CAST(Shape, node->data);
+
+			if(Shape_isActive(shape))
+			{
+				CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), shape);
+			}
 		}
 	}
 }
@@ -2229,7 +2233,6 @@ void Entity_informShapesThatStoppedMoving(Entity this)
 
 		for(; node; node = node->next)
 		{
-			Shape_setActive(__SAFE_CAST(Shape, node->data), true);
 			CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(Shape, node->data));
 		}
 	}

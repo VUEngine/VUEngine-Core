@@ -62,8 +62,6 @@ void CollisionManager_print(CollisionManager this, int x, int y);
 Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition);
 void CollisionManager_destroyShape(CollisionManager this, Shape shape);
 void CollisionManager_reset(CollisionManager this);
-void CollisionManager_shapeBecameActive(CollisionManager this, Shape shape);
-void CollisionManager_shapeBecameInactive(CollisionManager this, Shape shape);
 void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
 void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);
 void CollisionManager_showShapes(CollisionManager this);

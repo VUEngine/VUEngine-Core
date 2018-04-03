@@ -188,6 +188,12 @@ typedef struct VertexProjection
 		 */																								\
 		u8 ready;																						\
 		/**
+		 * @var u8 				isActive
+		 * @brief				flag to know if shape is reacting to collisions
+		 * @memberof			Shape
+		 */																								\
+		u8 isActive;																					\
+		/**
 		 * @var u8 				checkForCollisions
 		 * @brief				flag to check against other shapes
 		 * @memberof			Shape

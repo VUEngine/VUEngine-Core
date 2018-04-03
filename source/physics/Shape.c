@@ -89,6 +89,7 @@ void Shape_constructor(Shape this, SpatialObject owner)
 
 	// not setup yet
 	this->ready = false;
+	this->isActive = true;
 
 	// set flag
 	this->checkForCollisions = false;
@@ -96,8 +97,6 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	this->layersToIgnore = 0;
 	this->collidingShapes = NULL;
 	this->isVisible = true;
-
-	Shape_setActive(this, false);
 }
 
 /**
@@ -221,16 +220,12 @@ void Shape_setup(Shape this, u32 layers, u32 layersToIgnore)
  */
 void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
-	if(this->events)
+	if(this->isActive && this->events)
 	{
 		Object_fireEvent(__SAFE_CAST(Object, this), kEventShapeChanged);
 	}
 
 	this->ready = true;
-
-#ifdef __DRAW_SHAPES
-	__VIRTUAL_CALL(Shape, show, this);
-#endif
 }
 
 /**
@@ -589,6 +584,24 @@ SpatialObject Shape_getOwner(Shape this)
 }
 
 /**
+ * Is active?
+ *
+ * @memberof	Shape
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Active status
+ */
+bool Shape_isActive(Shape this)
+{
+	ASSERT(this, "Shape::isActive: null this");
+
+	return this->isActive;
+}
+
+
+/**
  * Set active
  *
  * @memberof		Shape
@@ -601,14 +614,7 @@ void Shape_setActive(Shape this, bool active)
 {
 	ASSERT(this, "Shape::setActive: null this");
 
-	if(active)
-	{
-		CollisionManager_shapeBecameActive(Game_getCollisionManager(Game_getInstance()), this);
-	}
-	else
-	{
-		CollisionManager_shapeBecameInactive(Game_getCollisionManager(Game_getInstance()), this);
-	}
+	this->isActive = active;
 }
 
 /**
