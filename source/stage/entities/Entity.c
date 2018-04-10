@@ -2207,10 +2207,7 @@ void Entity_informShapesThatStartedMoving(Entity this)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			if(Shape_isActive(shape))
-			{
-				CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), shape);
-			}
+			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), shape);
 		}
 	}
 }
