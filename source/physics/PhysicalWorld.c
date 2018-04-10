@@ -365,7 +365,6 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		__VIRTUAL_CALL(Body, update, activeBodies[activeBodiesIndex]);
 	}
 
-//	PhysicalWorld_print(this, 1, 0);
 #ifdef __SHOW_PHYSICS_PROFILING
 	PhysicalWorld_print(this, 1, 1);
 #endif
@@ -615,6 +614,8 @@ fix10_6 PhysicalWorld_getElapsedTime(PhysicalWorld this __attribute__ ((unused))
 void PhysicalWorld_print(PhysicalWorld this, int x, int y)
 {
 	ASSERT(this, "PhysicalWorld::print: null this");
+
+	Printing_resetWorldCoordinates(Printing_getInstance());
 
 	Printing_text(Printing_getInstance(), "PHYSICS' STATUS", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "Registered bodies:     ", x, ++y, NULL);

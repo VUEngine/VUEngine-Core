@@ -398,6 +398,8 @@ void CollisionManager_print(CollisionManager this, int x, int y)
 {
 	ASSERT(this, "CollisionManager::print: null this");
 
+	Printing_resetWorldCoordinates(Printing_getInstance());
+
 	Printing_text(Printing_getInstance(), "COLLISION MANAGER", x, y++, NULL);
 	Printing_text(Printing_getInstance(), "SHAPES", x, ++y, NULL);
 	Printing_text(Printing_getInstance(), "  Registered:     ", x, ++y, NULL);
