@@ -104,13 +104,6 @@
 		 */																								\
 		PixelVector position;																			\
 		/*
-		 * @var PixelVector 		Displacement relative to camera's total displacement
-		 * @brief					Displacement applied to the position for final rendering based on the
-		 							camera's total displacement
-		 * @memberof				Sprite
-		 */																								\
-		PixelVector displacementRelativeToCamera;														\
-		/*
 		 * @var PixelVector 		Displacement
 		 * @brief					Displacement modifier to achieve better control over display
 		 * @memberof				Sprite

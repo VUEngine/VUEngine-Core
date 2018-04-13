@@ -352,46 +352,11 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = this->position.x + this->displacement.x - this->halfWidth + this->displacementRelativeToCamera.x;
-	int gy = this->position.y + this->displacement.y - this->halfHeight + this->displacementRelativeToCamera.y;
+	int gx = this->position.x + this->displacement.x - this->halfWidth;
+	int gy = this->position.y + this->displacement.y - this->halfHeight;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 	worldPointer->gp = this->position.parallax + this->displacement.parallax;
-
-	extern TextureDefinition TREE_1_TX;
-
-	if(&TREE_1_TX == Texture_getTextureDefinition(this->texture))
-	{
-		static s16 previosX = 0;
-		static s16 previosGX = 0;
-		static s16 previosDX = 0;
-		static s16 campreviosX = 0;
-
-		if(abs(_cameraDisplacement->x) ==8 )
-//		if(abs(this->displacementRelativeToCamera.x - previosDX) == 8 )
-		{
-		PRINT_TIME(30, 0);
-		PRINT_TEXT("    ", 21, 0);
-		PRINT_INT(_cameraDisplacement->x, 21, 0);
-
-		PRINT_TEXT("    ", 1, 0);
-		PRINT_TEXT("    ", 1, 1);
-		PRINT_TEXT("    ", 1, 2);
-		PRINT_INT(this->position.x - previosX, 1, 0);
-		PRINT_INT(worldPointer->gx - previosGX, 1, 1);
-		PRINT_INT(this->displacementRelativeToCamera.x - previosDX, 1, 2);
-//		PRINT_INT(_cameraPreviousPosition, 1, 4);
-//		PRINT_INT(_cameraPosition->x, 1, 5);
-//		PRINT_INT(this->position.z, 1, 6);
-//		PRINT_INT(previosDX, 10, 5);
-//		PRINT_INT(this->displacementRelativeToCamera.x, 10, 6);
-		}
-
-		campreviosX = _cameraPosition->x;
-		previosX = this->position.x;
-		previosGX = worldPointer->gx;
-		previosDX = this->displacementRelativeToCamera.x;
-	}
 
 	// get sprite's size
 	int width = this->halfWidth << 1;

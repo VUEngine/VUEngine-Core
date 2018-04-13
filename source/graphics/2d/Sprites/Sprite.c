@@ -80,7 +80,6 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->animationController = NULL;
 	this->texture = NULL;
 	this->position = (PixelVector){0, 0, 0, 0};
-	this->displacementRelativeToCamera = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->hidden = false;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : __TRANSPARENCY_NONE;
@@ -227,52 +226,7 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* posit
 {
 	ASSERT(this, "Sprite::position: null this");
 
-	if(!this->ready || reproject)
-	{
-		this->position = Vector3D_projectToPixelVector(*position, this->position.parallax);
-	}
-
-
-	{
-
-		int maximumXViewDistancePower = __PIXELS_TO_METERS(2048 - 512);
-		int maximumYViewDistancePower = __PIXELS_TO_METERS(2048);
-
-		Vector3D a =
-		{
-			__FIX10_6_MULT(_cameraPosition->x, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumXViewDistancePower)),
-			__FIX10_6_MULT(_cameraPosition->y, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumYViewDistancePower)),
-			0
-		};
-
-		Vector3D b =
-		{
-			__FIX10_6_MULT(_cameraPreviousPosition->x, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumXViewDistancePower)),
-			__FIX10_6_MULT(_cameraPreviousPosition->y, __I_TO_FIX10_6(1) - __FIX10_6_DIV(position->z, maximumYViewDistancePower)),
-			0
-		};
-
-		this->displacementRelativeToCamera.x = __METERS_TO_PIXELS(-b.x - (-0 + b.x - a.x));
-		//this->displacementRelativeToCamera.y = -b.x + __METERS_TO_PIXELS_ROUNDED(b.y - a.y);
-/*
-		if(64 == __METERS_TO_PIXELS(position->z))
-		{
-			PRINT_INT(_cameraPosition->x, 1, 1);
-			PRINT_INT(_cameraPreviousPosition->x, 1, 2);
-			PRINT_INT(_cameraPosition->x - _cameraPreviousPosition->x, 1, 3);
-
-			PRINT_INT(a.x, 10, 1);
-			PRINT_INT(b.x, 10, 2);
-			PRINT_INT(b.x - a.x, 10, 3);
-		}
-		*/
-
-#define __METERS_TO_PIXELS_ROUNDED(meters)		__FIX10_6_TO_I(__05F_FIX10_6 + (((fix10_6_ext)meters) << __PIXELS_PER_METER_2_POWER))
-
-		this->displacementRelativeToCamera.x = -__METERS_TO_PIXELS_ROUNDED(__FIX10_6_MULT(__CLAMP_METERS(_cameraPosition->x), __I_TO_FIX10_6(1) - (position->z >> _optical->maximumXViewDistancePower)));
-		this->displacementRelativeToCamera.y = -__METERS_TO_PIXELS_ROUNDED(__FIX10_6_MULT(_cameraPosition->y, __I_TO_FIX10_6(1) - (position->z >> _optical->maximumYViewDistancePower)));
-
-	}
+	this->position = Vector3D_projectToPixelVector(Vector3D_getRelativeToCamera(*position), this->position.parallax);
 
 	this->ready = true;
 }
@@ -324,9 +278,9 @@ PixelVector Sprite_getPosition(Sprite this)
 {
 	PixelVector position =
 	{
-		this->position.x + this->displacement.x + this->displacementRelativeToCamera.x,
-		this->position.y + this->displacement.y + this->displacementRelativeToCamera.y,
-		this->position.z + this->displacement.z + this->displacementRelativeToCamera.z,
+		this->position.x + this->displacement.x,
+		this->position.y + this->displacement.y,
+		this->position.z + this->displacement.z,
 		this->position.parallax + this->displacement.parallax
 	};
 

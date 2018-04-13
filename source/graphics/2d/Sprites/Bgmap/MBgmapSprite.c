@@ -400,22 +400,22 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 	int mxPositionDisplacement = 0;
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
-    	mxPositionDisplacement = this->displacementRelativeToCamera.x;
+//    	mxPositionDisplacement = this->displacementRelativeToCamera.x;
 	}
 	else
 	{
-    	xPositionDisplacement = this->displacementRelativeToCamera.x;
+//    	xPositionDisplacement = this->displacementRelativeToCamera.x;
 	}
 
 	int yPositionDisplacement = 0;
 	int myPositionDisplacement = 0;
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
-		myPositionDisplacement = this->displacementRelativeToCamera.y;
+//		myPositionDisplacement = this->displacementRelativeToCamera.y;
 	}
 	else
 	{
-		yPositionDisplacement = this->displacementRelativeToCamera.y;
+//		yPositionDisplacement = this->displacementRelativeToCamera.y;
 	}
 
 	// get coordinates
