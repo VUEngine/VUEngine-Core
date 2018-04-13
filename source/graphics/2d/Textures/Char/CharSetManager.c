@@ -515,10 +515,10 @@ void CharSetManager_print(CharSetManager this, int x, int y)
 
 	Printing_text(Printing_getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Total CharSets: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Total CharSets:        ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), VirtualList_getSize(this->charSets), x + 18, y, NULL);
-	Printing_text(Printing_getInstance(), "Total used chars: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Total used chars:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), CharSetManager_getTotalUsedChars(this), x + 18, y, NULL);
-	Printing_text(Printing_getInstance(), "Total free chars: ", x, ++y, NULL);
+	Printing_text(Printing_getInstance(), "Total free chars:      ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), CharSetManager_getTotalFreeChars(this), x + 18, y, NULL);
 }
