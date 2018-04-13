@@ -138,7 +138,7 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
 
 	VIPManager_removePostProcessingEffects(VIPManager_getInstance());
 	Printing_resetWorldCoordinates(Printing_getInstance());
-	Camera_resetCameraFrustum(Camera_getInstance());
+	Camera_reset(Camera_getInstance());
 
 	GameState_pauseClocks(this);
 
@@ -423,7 +423,7 @@ void GameState_transform(GameState this)
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	u8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_POSITION : 0;
+	u8 invalidateTransformationFlag = (_cameraDisplacement->x | _cameraDisplacement->y | _cameraDisplacement->z) ? __INVALIDATE_PROJECTION : 0;
 	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
 
 	// then transformation loaded entities

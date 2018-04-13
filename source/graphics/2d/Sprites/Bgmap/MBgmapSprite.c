@@ -226,17 +226,21 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
  *
  * @param this			Function scope
  * @param position		3D position
+ * @param reproject		Force 3D to 2D projection
  */
-void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
+void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position, bool reproject)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	__CALL_BASE_METHOD(Sprite, position, this, position);
+	bool haveToSetPosition = (!this->ready) | reproject;
 
-	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
-	PixelVector position2D = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
+	__CALL_BASE_METHOD(Sprite, position, this, position, reproject);
 
-	MBgmapSprite_setPosition(this, &position2D);
+	if(haveToSetPosition)
+	{
+		PixelVector position2D = this->position;
+    	MBgmapSprite_setPosition(this, &position2D);
+	}
 }
 
 /**
@@ -252,17 +256,17 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 
-	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
+	__CALL_BASE_METHOD(BgmapSprite, setPosition, this, position);
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
-		this->drawSpec.position.x = 0;
 		this->drawSpec.textureSource.mx = -position->x;
+		this->position.x = 0;
 	}
 	else
 	{
 		this->drawSpec.textureSource.mx = this->textureXOffset;
-		this->drawSpec.position.x = position->x;
+		this->position.x = position->x;
 /*
 		if(0 > position->x + this->displacement.x)
 		{
@@ -273,13 +277,13 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
-		this->drawSpec.position.y = 0;
+		this->position.y = 0;
 		this->drawSpec.textureSource.my = -position->y;
 	}
 	else
 	{
 		this->drawSpec.textureSource.my = this->textureYOffset;
-		this->drawSpec.position.y = position->y;
+		this->position.y = position->y;
 /*
 		if(0 > position->y + this->displacement.y)
 		{
@@ -288,13 +292,13 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 */
 	}
 
-	fix10_6 previousZPosition = this->drawSpec.position.z;
-	this->drawSpec.position.z = position->z;
+	fix10_6 previousZPosition = this->position.z;
+	this->position.z = position->z;
 
-	if(previousZPosition != this->drawSpec.position.z)
+	if(previousZPosition != this->position.z)
 	{
 		// calculate sprite's parallax
-		__VIRTUAL_CALL(Sprite, calculateParallax, this, this->drawSpec.position.z);
+		__VIRTUAL_CALL(Sprite, calculateParallax, this, this->position.z);
 	}
 }
 
@@ -314,40 +318,40 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displace
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
-		this->drawSpec.position.x = 0;
+		this->position.x = 0;
 		this->drawSpec.textureSource.mx -= displacement->x;
 	}
 	else
 	{
 		this->drawSpec.textureSource.mx = this->textureXOffset;
-		this->drawSpec.position.x += displacement->x;
+		this->position.x += displacement->x;
 /*
-		if(0 > this->drawSpec.position.x + this->displacement.x)
+		if(0 > this->position.x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= this->drawSpec.position.x + this->displacement.x;
+			this->drawSpec.textureSource.mx -= this->position.x + this->displacement.x;
 		}
 */
 	}
 
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
-		this->drawSpec.position.y = 0;
+		this->position.y = 0;
 		this->drawSpec.textureSource.my -= displacement->y;
 	}
 	else
 	{
 		this->drawSpec.textureSource.my = this->textureYOffset;
-		this->drawSpec.position.y += displacement->y;
+		this->position.y += displacement->y;
 /*
-		if(0 > this->drawSpec.position.y + this->displacement.y)
+		if(0 > this->position.y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= this->drawSpec.position.y + this->displacement.y;
+			this->drawSpec.textureSource.my -= this->position.y + this->displacement.y;
 		}
 */
 	}
 
-	this->drawSpec.position.z += displacement->z;
-	this->drawSpec.position.parallax += displacement->parallax;
+	this->position.z += displacement->z;
+	this->position.parallax += displacement->parallax;
 }
 
 /**
@@ -392,9 +396,31 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 	// set the head
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
+	int xPositionDisplacement = 0;
+	int mxPositionDisplacement = 0;
+	if(this->mBgmapSpriteDefinition->xLoop)
+	{
+//    	mxPositionDisplacement = this->displacementRelativeToCamera.x;
+	}
+	else
+	{
+//    	xPositionDisplacement = this->displacementRelativeToCamera.x;
+	}
+
+	int yPositionDisplacement = 0;
+	int myPositionDisplacement = 0;
+	if(this->mBgmapSpriteDefinition->yLoop)
+	{
+//		myPositionDisplacement = this->displacementRelativeToCamera.y;
+	}
+	else
+	{
+//		yPositionDisplacement = this->displacementRelativeToCamera.y;
+	}
+
 	// get coordinates
-	int gx = this->drawSpec.position.x + this->displacement.x - this->halfWidth;
-	int gy = this->drawSpec.position.y + this->displacement.y - this->halfHeight;
+	int gx = this->position.x + this->displacement.x - this->halfWidth + xPositionDisplacement;
+	int gy = this->position.y + this->displacement.y - this->halfHeight + yPositionDisplacement;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
@@ -412,10 +438,10 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 		myDisplacement = _cameraFrustum->y0 - gy;
 	}
 
-	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.parallax;
+	worldPointer->gp = this->position.parallax + this->displacement.parallax;
 
-	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
-	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
+	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement - mxPositionDisplacement;
+	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement - myPositionDisplacement;
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// set the world size
@@ -494,23 +520,6 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 	}
 
 	BgmapSprite_processHbiasEffects(__SAFE_CAST(BgmapSprite, this));
-}
-
-/**
- * Retrieve position
- *
- * @memberof		MBgmapSprite
- * @public
- *
- * @param this		Function scope
- *
- * @return			2D position
- */
-PixelVector MBgmapSprite_getPosition(MBgmapSprite this)
-{
-	ASSERT(this, "BgmapSprite::getPosition: null this");
-
-	return this->drawSpec.position;
 }
 
 /**

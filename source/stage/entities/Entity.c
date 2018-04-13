@@ -64,7 +64,7 @@ u32 EntityFactory_transformEntities(EntityFactory this);
 u32 EntityFactory_makeReadyEntities(EntityFactory this);
 u32 EntityFactory_callLoadedEntities(EntityFactory this);
 
-static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation);
+static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
 static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes);
 static void Entity_destroyShapes(Entity this);
 
@@ -354,7 +354,7 @@ static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRi
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
-	PixelVector pixelGlobalPosition = PixelVector_getFromVector3D(environmentPosition);
+	PixelVector pixelGlobalPosition = PixelVector_getFromVector3D(environmentPosition, 0);
 
 	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->transformation.localPosition.x);
 	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->transformation.localPosition.y);
@@ -976,7 +976,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 		return NULL;
 	}
 
-	PixelVector pixelPosition = PixelVector_getFromVector3D(*position);
+	PixelVector pixelPosition = PixelVector_getFromVector3D(*position, 0);
 
 	ScreenPixelVector screenPixelVector =
 	{
@@ -1362,19 +1362,7 @@ bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionInde
 	return true;
 }
 
-/**
- * Update sprites
- *
- * @memberof				Entity
- * @private
- *
- * @param this				Function scope
- * @param updatePosition
- * @param updateScale
- * @param updateRotation
- */
- /*
-static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
+static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -1383,46 +1371,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 		return;
 	}
 
-	updatePosition |= updateRotation;
-
-	VirtualNode node = this->sprites->head;
-
-	for(; node ; node = node->next)
-	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
-
-		if(updatePosition)
-		{
-			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
-		}
-
-		if(updateRotation)
-		{
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
-		}
-
-		if(updateScale)
-		{
-			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
-
-			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
-		}
-	}
-}
-*/
-static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation)
-{
-	ASSERT(this, "Entity::transform: null this");
-
-	if(!this->sprites)
-	{
-		return;
-	}
+	bool iMoved = updatePosition;
 
 	updatePosition |= updateRotation;
+	updatePosition |= updateProjection;
 
 	VirtualNode node = this->sprites->head;
 
@@ -1433,7 +1385,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
 
 			// update sprite's 2D rotation
 			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
@@ -1452,7 +1404,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
 
 			// update sprite's 2D rotation
 			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
@@ -1465,7 +1417,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
 
 			// calculate the scale
 			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
@@ -1481,7 +1433,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
 		}
 	}
 	else if(updateScale)
@@ -1620,7 +1572,7 @@ void Entity_synchronizeGraphics(Entity this)
 		__CALL_BASE_METHOD(Container, synchronizeGraphics, this);
 	}
 
-	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION);
+	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION, this->invalidateSprites & __INVALIDATE_PROJECTION);
 
 	this->invalidateSprites = false;
 }

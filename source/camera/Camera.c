@@ -48,6 +48,7 @@ __CLASS_DEFINITION(Camera, Object);
 //---------------------------------------------------------------------------------------------------------
 
 static void Camera_constructor(Camera this);
+static Vector3D Camera_getCappedPosition(Camera this, Vector3D position);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,6 +57,7 @@ static void Camera_constructor(Camera this);
 
 const Optical* _optical = NULL;
 const Vector3D* _cameraPosition = NULL;
+const Vector3D* _cameraPreviousPosition = NULL;
 const Vector3D* _cameraDisplacement = NULL;
 const CameraFrustum* _cameraFrustum = NULL;
 
@@ -91,11 +93,7 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 	__CONSTRUCT_BASE(Object);
 
 	// initialize world's camera's position
-	this->position.x = 0;
-	this->position.y = 0;
-	this->position.z = 0;
-
-	this->positionBackup = this->position;
+	this->position = (Vector3D){0, 0, 0};
 
 	// set the default camera movement manager
 	this->cameraMovementManager = CameraMovementManager_getInstance();
@@ -111,40 +109,33 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
 	this->focusEntity = NULL;
 	this->focusEntityPosition = NULL;
 
-	this->lastDisplacement.x = 0;
-	this->lastDisplacement.y = 0;
-	this->lastDisplacement.z = 0;
+	this->position = (Vector3D){0, 0, 0};
+	this->previousPosition = (Vector3D){0, 0, 0};
+	this->positionBackup = (Vector3D){0, 0, 0};
+	this->lastDisplacement = (Vector3D){0, 0, 0};
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
 	this->cameraFrustum.x1 = __SCREEN_WIDTH;
 	this->cameraFrustum.y1 = __SCREEN_HEIGHT;
 
-	// accounts for the physical (real) space between the eyes and
-	// the VB's screens, whose virtual representation is the Camera instance
-	this->optical.distanceEyeScreen = __PIXELS_TO_METERS(__DISTANCE_EYE_SCREEN);
+	PixelOptical pixelOptical =
+    {
+    	__MAXIMUM_X_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+    	__MAXIMUM_Y_VIEW_DISTANCE,				// maximum distance from the screen to the infinite
+    	__DISTANCE_EYE_SCREEN,
+    	__BASE_FACTOR,							// distance from left to right eye (depth perception)
+    	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
+    	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
+    	__SCALLING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
+    };
 
-	// maximum distance from the _SC to the infinite
-	this->optical.maximumXViewDistancePower = __PIXELS_TO_METERS(__MAXIMUM_X_VIEW_DISTANCE_POWER);
-
-	// maximum distance from the _SC to the infinite
-	this->optical.maximumYViewDistancePower = __PIXELS_TO_METERS(__MAXIMUM_Y_VIEW_DISTANCE_POWER);
-
-	// distance from left to right eye (depth sensation)
-	this->optical.baseDistance = __PIXELS_TO_METERS(__BASE_FACTOR);
-
-	// horizontal view point center
-	this->optical.horizontalViewPointCenter = __PIXELS_TO_METERS(__HORIZONTAL_VIEW_POINT_CENTER);
-
-	// vertical view point center
-	this->optical.verticalViewPointCenter = __PIXELS_TO_METERS(__VERTICAL_VIEW_POINT_CENTER);
-
-	// scaling factor
-	this->optical.scalingFactor = __FIX10_6_MULT(__F_TO_FIX10_6(__SCALLING_MODIFIER_FACTOR), __I_TO_FIX10_6(1) << _optical->maximumXViewDistancePower);
+	Camera_setOptical(this, Optical_getFromPixelOptical(pixelOptical));
 
 	// set global pointer to improve access to critical values
 	_optical = &this->optical;
 	_cameraPosition = &this->position;
+	_cameraPreviousPosition = &this->previousPosition;
 	_cameraDisplacement = &this->lastDisplacement;
 	_cameraFrustum = &this->cameraFrustum;
 }
@@ -347,6 +338,53 @@ void Camera_move(Camera this, Vector3D translation, int cap)
 }
 
 /**
+ * Cap position
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return position	Capped Vector3d
+ */
+static Vector3D Camera_getCappedPosition(Camera this, Vector3D position)
+{
+	ASSERT(this, "Camera::getCappedPosition: null this");
+
+	if(position.x < 0)
+	{
+		position.x = 0;
+	}
+
+	if(position.x + __SCREEN_WIDTH_METERS > this->stageSize.x)
+	{
+		position.x = this->stageSize.x - __SCREEN_WIDTH_METERS;
+	}
+
+	if(position.y < 0)
+	{
+		position.y = 0;
+	}
+
+	if(position.y + __SCREEN_HEIGHT_METERS > this->stageSize.y)
+	{
+		position.y = this->stageSize.y - __SCREEN_HEIGHT_METERS;
+	}
+
+	if(position.z < 0)
+	{
+		position.z = 0;
+	}
+
+	if(position.z > this->stageSize.z)
+	{
+		position.z = this->stageSize.z;
+	}
+
+	return position;
+}
+
+/**
  * Translate camera
  *
  * @memberof	Camera
@@ -358,35 +396,7 @@ void Camera_capPosition(Camera this)
 {
 	ASSERT(this, "Camera::capPosition: null this");
 
-	if(this->position.x < 0)
-	{
-		this->position.x = 0;
-	}
-
-	if(this->position.x + __SCREEN_WIDTH_METERS > this->stageSize.x)
-	{
-		this->position.x = this->stageSize.x - __SCREEN_WIDTH_METERS;
-	}
-
-	if(this->position.y < 0)
-	{
-		this->position.y = 0;
-	}
-
-	if(this->position.y + __SCREEN_HEIGHT_METERS > this->stageSize.y)
-	{
-		this->position.y = this->stageSize.y - __SCREEN_HEIGHT_METERS;
-	}
-
-	if(this->position.z < 0)
-	{
-		this->position.z = 0;
-	}
-
-	if(this->position.z > this->stageSize.z)
-	{
-		this->position.z = this->stageSize.z;
-	}
+	this->position = Camera_getCappedPosition(this, this->position);
 }
 
 /**
@@ -419,13 +429,14 @@ void Camera_setPosition(Camera this, Vector3D position)
 {
 	ASSERT(this, "Camera::setPosition: null this");
 
+	position = Camera_getCappedPosition(this, position);
+
+	this->lastDisplacement.x = position.x - this->position.x;
+	this->lastDisplacement.y = position.y - this->position.y;
+	this->lastDisplacement.z = position.z - this->position.z;
+
+	this->previousPosition = this->position;
 	this->position = position;
-
-	this->lastDisplacement.x = __PIXELS_TO_METERS(1);
-	this->lastDisplacement.y = __PIXELS_TO_METERS(1);
-	this->lastDisplacement.z = __PIXELS_TO_METERS(1);
-
-	Camera_capPosition(this);
 }
 
 /**
@@ -442,9 +453,9 @@ void Camera_prepareForUITransform(Camera this)
 
 	this->positionBackup = this->position;
 
-	this->lastDisplacement.x = 0;
-	this->lastDisplacement.y = 0;
-	this->lastDisplacement.z = 0;
+	this->position.x = 0;
+	this->position.y = 0;
+	this->position.z = 0;
 }
 
 /**
@@ -460,10 +471,6 @@ void Camera_doneUITransform(Camera this)
 	ASSERT(this, "Camera::doneUITransform: null this");
 
 	this->position = this->positionBackup;
-
-	this->lastDisplacement.x = 0;
-	this->lastDisplacement.y = 0;
-	this->lastDisplacement.z = 0;
 }
 
 /**
@@ -638,6 +645,11 @@ void Camera_reset(Camera this)
 	ASSERT(this, "Camera::reset: null this");
 
 	Camera_setFocusGameEntity(this, NULL);
+
+	this->position = (Vector3D){0, 0, 0};
+	this->previousPosition = this->position;
+	this->lastDisplacement = (Vector3D){0, 0, 0};
+
 	Camera_resetCameraFrustum(this);
 }
 
@@ -723,4 +735,38 @@ CameraFrustum Camera_getCameraFrustum(Camera this)
 	ASSERT(this, "Camera::getCameraFrustum: null this");
 
 	return this->cameraFrustum;
+}
+
+/**
+ * Retrieve focus entity position
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Focus entity position vector
+ */
+Vector3D Camera_getFocusEntityPosition(Camera this)
+{
+	ASSERT(this, "Camera::getLastDisplacement: null this");
+
+	return this->focusEntityPosition ? *this->focusEntityPosition : (Vector3D){0, 0, 0};
+}
+
+/**
+ * Retrieve focus entity position displacement
+ *
+ * @memberof	Camera
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Focus entity position displacement vector
+ */
+Vector3D Camera_getFocusEntityPositionDisplacement(Camera this)
+{
+	ASSERT(this, "Camera::getFocusEntityPositionDisplacement: null this");
+
+	return this->focusEntityPositionDisplacement;
 }

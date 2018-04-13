@@ -52,7 +52,6 @@
 #define ObjectSprite_SET_VTABLE(ClassName)																\
 		Sprite_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ObjectSprite, render);													\
-		__VIRTUAL_SET(ClassName, ObjectSprite, getPosition);											\
 		__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);											\
 		__VIRTUAL_SET(ClassName, ObjectSprite, position);												\
 		__VIRTUAL_SET(ClassName, ObjectSprite, rotate);													\
@@ -69,12 +68,6 @@
 		 * @memberof					ObjectSprite
 		 */																								\
 		ObjectSpriteContainer objectSpriteContainer;													\
-		/**
-		 * @var PixelVector 			position
-		 * @brief						positioning
-		 * @memberof					ObjectSprite
-		 */																								\
-		PixelVector position;																			\
 		/**
 		 * @var s16 					objectIndex
 		 * @brief						object index
@@ -123,10 +116,9 @@ void ObjectSprite_destructor(ObjectSprite this);
 void ObjectSprite_addDisplacement(ObjectSprite this, const PixelVector* displacement);
 void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z);
 s16 ObjectSprite_getObjectIndex(ObjectSprite this);
-PixelVector ObjectSprite_getPosition(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
-void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D);
+void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D, bool reproject);
 void ObjectSprite_render(ObjectSprite this, bool evenFrame);
 void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);

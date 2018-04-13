@@ -38,6 +38,8 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object
+#undef __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER
+#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
 
 
 // do not delete the following macros!

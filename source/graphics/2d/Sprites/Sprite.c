@@ -26,6 +26,7 @@
 
 #include <Sprite.h>
 #include <AnimationController.h>
+#include <Camera.h>
 #include <VIPManager.h>
 #include <BgmapTexture.h>
 #include <debugUtilities.h>
@@ -78,6 +79,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->halfHeight = 0;
 	this->animationController = NULL;
 	this->texture = NULL;
+	this->position = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->hidden = false;
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : __TRANSPARENCY_NONE;
@@ -218,10 +220,13 @@ bool Sprite_isHidden(Sprite this)
  *
  * @param this			Function scope
  * @param position		3D position
+ * @param reproject		Force 3D to 2D projection
  */
-void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
+void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position, bool reproject __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::position: null this");
+
+	this->position = Vector3D_projectToPixelVector(Vector3D_getRelativeToCamera(*position), this->position.parallax);
 
 	this->ready = true;
 }
@@ -235,11 +240,13 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* posit
  * @param this			Function scope
  * @param position		Pixel position
  */
-void Sprite_setPosition(Sprite this, const PixelVector* position __attribute__ ((unused)))
+void Sprite_setPosition(Sprite this, const PixelVector* position)
 {
 	ASSERT(this, "Sprite::setPosition: null this");
 
 	this->ready = true;
+
+	this->position = *position;
 }
 
 /**
@@ -254,6 +261,30 @@ void Sprite_setPosition(Sprite this, const PixelVector* position __attribute__ (
 void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
 {
 	ASSERT(this, "Sprite::calculateParallax: null this");
+}
+
+
+/**
+ * Get position relative to the camera
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Position relative to camera
+ */
+PixelVector Sprite_getPosition(Sprite this)
+{
+	PixelVector position =
+	{
+		this->position.x + this->displacement.x,
+		this->position.y + this->displacement.y,
+		this->position.z + this->displacement.z,
+		this->position.parallax + this->displacement.parallax
+	};
+
+	return position;
 }
 
 /**

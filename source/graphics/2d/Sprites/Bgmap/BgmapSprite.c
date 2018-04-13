@@ -110,12 +110,6 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 		this->drawSpec.textureSource.mp = 0;
 	}
 
-	// clear position
-	this->drawSpec.position.x = 0;
-	this->drawSpec.position.y = 0;
-	this->drawSpec.position.z = 0;
-	this->drawSpec.position.parallax = 0;
-
 	this->drawSpec.scale.x = __1I_FIX7_9;
 	this->drawSpec.scale.y = __1I_FIX7_9;
 
@@ -185,62 +179,6 @@ Scale BgmapSprite_getScale(BgmapSprite this)
 
 	// return the scale
 	return this->drawSpec.scale;
-}
-
-/**
- * Retrieve 2D position
- *
- * @memberof		BgmapSprite
- * @public
- *
- * @param this		Function scope
- *
- * @return			2D position
- */
-PixelVector BgmapSprite_getPosition(BgmapSprite this)
-{
-	ASSERT(this, "BgmapSprite::getPosition: null this");
-
-	return this->drawSpec.position;
-}
-
-/**
- * Set 2D position
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param this			Function scope
- * @param position		New 2D position
- */
-void BgmapSprite_setPosition(BgmapSprite this, const PixelVector* position)
-{
-	ASSERT(this, "BgmapSprite::setPosition: null this");
-
-	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
-
-	this->drawSpec.position = *position;
-}
-
-/**
- * Calculate 2D position
- *
- * @memberof			BgmapSprite
- * @public
- *
- * @param this			Function scope
- * @param position		3D position
- */
-void BgmapSprite_position(BgmapSprite this, const Vector3D* position)
-{
-	ASSERT(this, "BgmapSprite::position: null this");
-	ASSERT(this->texture, "BgmapSprite::setPosition: null texture");
-
-	__CALL_BASE_METHOD(Sprite, position, this, position);
-
-	// normalize the position to camera coordinates
-	Vector3D position3D = Vector3D_getRelativeToCamera(*position);
-	this->drawSpec.position = Vector3D_projectToPixelVector(position3D, this->drawSpec.position.parallax);
 }
 
 /**
@@ -351,8 +289,8 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
-	this->drawSpec.position.z = __METERS_TO_PIXELS(z - _cameraPosition->z);
-	this->drawSpec.position.parallax = Optics_calculateParallax(__PIXELS_TO_METERS(this->drawSpec.position.x), z);
+	this->position.z = __METERS_TO_PIXELS(z - _cameraPosition->z);
+	this->position.parallax = Optics_calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
 }
 
 /**
@@ -409,36 +347,35 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 		return;
 	}
 */
+
 	// set the head
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
 
 	// get coordinates
-	int gx = this->drawSpec.position.x + this->displacement.x - this->halfWidth;
-	int gy = this->drawSpec.position.y + this->displacement.y - this->halfHeight;
+	int gx = this->position.x + this->displacement.x - this->halfWidth;
+	int gy = this->position.y + this->displacement.y - this->halfHeight;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
+	worldPointer->gp = this->position.parallax + this->displacement.parallax;
 
 	// get sprite's size
 	int width = this->halfWidth << 1;
 	int height = this->halfHeight << 1;
 	int w = width;
 	int h = height;
+	int myDisplacement = 0;
 
 	worldPointer->mx = this->drawSpec.textureSource.mx;
 	worldPointer->my = this->drawSpec.textureSource.my;
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to camera space
-//	int mxDisplacement = 0;
-	if(_cameraFrustum->x0 > gx)
+	if(_cameraFrustum->x0 - worldPointer->gp > gx)
 	{
-		worldPointer->gx = _cameraFrustum->x0;
-		worldPointer->mx += (_cameraFrustum->x0 - gx);
-		w -= (_cameraFrustum->x0 - gx);
-//		mxDisplacement = (_cameraFrustum->x0 - gx);
+		worldPointer->gx = _cameraFrustum->x0 - worldPointer->gp;
+		worldPointer->mx += (_cameraFrustum->x0 - worldPointer->gp - gx);
+		w -= (_cameraFrustum->x0 - worldPointer->gp - gx);
 	}
-
-	int myDisplacement = 0;
 
 	if(_cameraFrustum->y0 > gy)
 	{
@@ -448,11 +385,9 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
-	worldPointer->gp = this->drawSpec.position.parallax + this->displacement.parallax;
-
-	if(w + worldPointer->gx >= _cameraFrustum->x1)
+	if(w + worldPointer->gx >= _cameraFrustum->x1 + worldPointer->gp)
 	{
-		w = _cameraFrustum->x1 - worldPointer->gx;
+		w = _cameraFrustum->x1 - worldPointer->gx + worldPointer->gp;
 	}
 
 	if (0 >= w)
@@ -464,6 +399,7 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 #endif
 		return;
 	}
+
 /*
 	if(_cameraFrustum->y0 > h + gy)
 	{
@@ -606,8 +542,8 @@ void BgmapSprite_render(BgmapSprite this)
 		worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
 		// set the world camera position
-		int gx = __FIX10_6_TO_I(this->drawSpec.position.x + this->displacement.x);
-		int gy = __FIX10_6_TO_I(this->drawSpec.position.y + this->displacement.y);
+		int gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
+		int gy = __FIX10_6_TO_I(this->position.y + this->displacement.y);
 
 		int w = Texture_getCols(this->texture)<< 3;
 		int h = Texture_getRows(this->texture)<< 3;
@@ -617,7 +553,7 @@ void BgmapSprite_render(BgmapSprite this)
 
 		worldPointer->gx = gx > _cameraFrustum->x1 ? _cameraFrustum->x1 : 0 > gx ? 0: gx;
 		worldPointer->gy = gy > _cameraFrustum->y1 ? _cameraFrustum->y1 : 0 > gy ? 0: gy;
-		worldPointer->gp = this->drawSpec.position.parallax + __FIX10_6_TO_I(this->displacement.z & 0xFFFFE000);
+		worldPointer->gp = this->position.parallax + __FIX10_6_TO_I(this->displacement.z & 0xFFFFE000);
 
 		worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
 		worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
@@ -701,10 +637,10 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const PixelVector* displaceme
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
 
-	this->drawSpec.position.x += displacement->x;
-	this->drawSpec.position.y += displacement->y;
-	this->drawSpec.position.z += displacement->z;
-	this->drawSpec.position.parallax += displacement->parallax;
+	this->position.x += displacement->x;
+	this->position.y += displacement->y;
+	this->position.z += displacement->z;
+	this->position.parallax += displacement->parallax;
 }
 
 /**
@@ -869,8 +805,8 @@ static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 			this->param,
 			this->paramTableRow,
 			// geometrically accurate, but kills the CPU
-			// (0 > this->drawSpec.position.x? this->drawSpec.position.x : 0) + this->halfWidth,
-			// (0 > this->drawSpec.position.y? this->drawSpec.position.y : 0) + this->halfHeight,
+			// (0 > this->position.x? this->position.x : 0) + this->halfWidth,
+			// (0 > this->position.y? this->position.y : 0) + this->halfHeight,
 			// don't do translations
 			__I_TO_FIX10_6(this->halfWidth),
 			__I_TO_FIX10_6(this->halfHeight),

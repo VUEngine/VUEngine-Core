@@ -44,7 +44,6 @@
 		__VIRTUAL_SET(ClassName, MBgmapSprite, position);												\
 		__VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);											\
 		__VIRTUAL_SET(ClassName, MBgmapSprite, render);													\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, getPosition);											\
 		__VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
 		__VIRTUAL_SET(ClassName, MBgmapSprite, resize);													\
 		__VIRTUAL_SET(ClassName, MBgmapSprite, setMode);												\
@@ -123,8 +122,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 void MBgmapSprite_destructor(MBgmapSprite this);
 
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement);
-PixelVector MBgmapSprite_getPosition(MBgmapSprite this);
-void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position);
+void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position, bool reproject);
 void MBgmapSprite_render(MBgmapSprite this, bool evenFrame);
 void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z);
 void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position);

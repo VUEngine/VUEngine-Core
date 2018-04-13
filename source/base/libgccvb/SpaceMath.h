@@ -47,7 +47,7 @@ inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
 inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax);
 inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector);
 inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
-inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D);
+inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D, s16 parallax);
 inline Size Size_getFromPixelSize(PixelSize pixelSize);
 
 
@@ -143,9 +143,9 @@ inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax
 {
 	extern const Optical* _optical;
 
-	fix10_6_ext x = (fix10_6_ext)vector3D.x;
-	fix10_6_ext y = (fix10_6_ext)vector3D.y;
-	fix10_6_ext z = (fix10_6_ext)vector3D.z;
+	fix10_6_ext x = (fix10_6_ext)(vector3D.x);
+	fix10_6_ext y = (fix10_6_ext)(vector3D.y);
+	fix10_6_ext z = (fix10_6_ext)(vector3D.z);
 
 	PixelVector projection =
 	{
@@ -179,14 +179,14 @@ inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelV
 }
 
 
-inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D)
+inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D, s16 parallax)
 {
 	return (PixelVector)
 	{
 		__METERS_TO_PIXELS(vector3D.x),
 		__METERS_TO_PIXELS(vector3D.y),
 		__METERS_TO_PIXELS(vector3D.z),
-		0
+		parallax
 	};
 }
 
@@ -212,15 +212,33 @@ inline PixelSize PixelSize_getFromSize(Size size)
 
 inline Optical Optical_getFromPixelOptical(PixelOptical pixelOptical)
 {
+	s16 maximumXViewDistancePower = 0;
+	s16 maximumYViewDistancePower = 0;
+
+	pixelOptical.maximumXViewDistance >>= __PIXELS_PER_METER_2_POWER;
+	pixelOptical.maximumYViewDistance >>= __PIXELS_PER_METER_2_POWER;
+
+	while(pixelOptical.maximumXViewDistance)
+	{
+		pixelOptical.maximumXViewDistance >>= 1;
+		maximumXViewDistancePower++;
+	}
+
+	while(pixelOptical.maximumYViewDistance)
+	{
+		pixelOptical.maximumYViewDistance >>= 1;
+		maximumYViewDistancePower++;
+	}
+
 	return (Optical)
 	{
-		pixelOptical.maximumXViewDistancePower,
-		pixelOptical.maximumYViewDistancePower,
+		__MINIMUM_X_VIEW_DISTANCE_POWER <= maximumXViewDistancePower ? maximumXViewDistancePower - 1 : __MINIMUM_X_VIEW_DISTANCE_POWER,
+		__MINIMUM_Y_VIEW_DISTANCE_POWER <= maximumYViewDistancePower ? maximumYViewDistancePower - 1 : __MINIMUM_Y_VIEW_DISTANCE_POWER,
 		__PIXELS_TO_METERS(pixelOptical.distanceEyeScreen),
 		__PIXELS_TO_METERS(pixelOptical.baseDistance),
 		__PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter),
 		__PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter),
-		__FIX10_6_MULT(__F_TO_FIX10_6(pixelOptical.scalingFactor), __I_TO_FIX10_6(1) << pixelOptical.maximumXViewDistancePower)
+		__F_TO_FIX10_6(pixelOptical.scalingFactor) << maximumXViewDistancePower
 	};
 }
 

@@ -715,7 +715,6 @@ void Game_reset(Game this)
 
 	// reset managers
 	WireframeManager_reset(WireframeManager_getInstance());
-	Camera_reset(this->camera);
 	SoundManager_setWaveForm(SoundManager_getInstance());
 	TimerManager_resetMilliseconds(this->timerManager);
 

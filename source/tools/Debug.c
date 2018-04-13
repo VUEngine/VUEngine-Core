@@ -78,8 +78,7 @@
 #include <AnimationCoordinatorFactory.h>
 #include <Entity.h>
 #include <Actor.h>
-#include <ManagedEntity.h>
-#include <ManagedEntity.h>
+#include <Entity.h>
 #include <Particle.h>
 #include <ParticleBody.h>
 #include <ParticleSystem.h>
@@ -1029,7 +1028,6 @@ static void Debug_memoryStatusShowFifthPage(Debug this __attribute__ ((unused)),
 		{&EntityFactory_getObjectSize,					"EntityFactory"},
 		{&GameState_getObjectSize,						"GameState"},
 		{&GameState_getObjectSize,						"Stage"},
-		{&ManagedEntity_getObjectSize,					"ManagedEntity"},
 	};
 
 	Debug_printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");

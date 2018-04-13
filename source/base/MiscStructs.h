@@ -144,8 +144,8 @@ typedef struct Direction
 // engine's optical values structure
 typedef struct Optical
 {
-	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
-	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
+	fix10_6 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
+	fix10_6 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
 	fix10_6 distanceEyeScreen;
 	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;	// horizontal View point center
@@ -157,8 +157,8 @@ typedef struct Optical
 // engine's optical values structure
 typedef struct PixelOptical
 {
-	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
-	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumXViewDistance;		// maximum distance from the screen to the infinite
+	u16 maximumYViewDistance;		// maximum distance from the screen to the infinite
 	u16 distanceEyeScreen;
 	u16 baseDistance;					// distance from left to right eye (depth perception)
 	s16 horizontalViewPointCenter;		// horizontal View point center
@@ -213,9 +213,6 @@ typedef struct TexturePadding
 // a spatial description
 typedef struct DrawSpec
 {
-	// spatial position	with parallax info
-	PixelVector position;
-
 	// bgmap's source coordinates
 	TextureSource textureSource;
 
