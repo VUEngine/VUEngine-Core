@@ -1038,12 +1038,12 @@ bool Stage_stream(Stage this)
 	}
 #endif
 
-	if(Stage_purgeChildrenProgressively(this))
+	if(Stage_purgeChildrenProgressively(this) && this->stageDefinition->streaming.deferred)
 	{
 		return true;
 	}
 
-	if(Stage_updateEntityFactory(this))
+	if(Stage_updateEntityFactory(this) && this->stageDefinition->streaming.deferred)
 	{
 		return false;
 	}
@@ -1055,7 +1055,7 @@ bool Stage_stream(Stage this)
 		this->streamingPhase = 0;
 	}
 
-	return _streamingPhases[this->streamingPhase](this, true);
+	return _streamingPhases[this->streamingPhase](this, this->stageDefinition->streaming.deferred);
 }
 
 void Stage_streamAll(Stage this)

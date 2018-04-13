@@ -126,6 +126,7 @@ typedef struct StageDefinition
 		u16 unloadPadding;
 		u16 streamingAmplitude;
 		u16 particleRemovalDelayCycles;
+		bool deferred;
 
 	} streaming;
 
