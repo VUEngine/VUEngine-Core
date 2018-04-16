@@ -61,7 +61,6 @@
 		__VIRTUAL_DEC(ClassName, void, applyHbiasEffects);												\
 		__VIRTUAL_DEC(ClassName, bool, areTexturesWritten);												\
 		__VIRTUAL_DEC(ClassName, void, calculateParallax, fix10_6 z);									\
-		__VIRTUAL_DEC(ClassName, PixelVector, getPosition);												\
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
@@ -82,7 +81,6 @@
 		__VIRTUAL_SET(ClassName, Sprite, applyHbiasEffects);											\
 		__VIRTUAL_SET(ClassName, Sprite, areTexturesWritten);											\
 		__VIRTUAL_SET(ClassName, Sprite, calculateParallax);											\
-		__VIRTUAL_SET(ClassName, Sprite, getPosition);													\
 		__VIRTUAL_SET(ClassName, Sprite, getScale);														\
 		__VIRTUAL_SET(ClassName, Sprite, getWorldLayer);												\
 		__VIRTUAL_SET(ClassName, Sprite, hide);															\
@@ -277,6 +275,7 @@ void Sprite_destructor(Sprite this);
 bool Sprite_areTexturesWritten(Sprite this);
 void Sprite_calculateParallax(Sprite this, fix10_6 z);
 PixelVector Sprite_getPosition(Sprite this);
+PixelVector Sprite_getDisplacedPosition(Sprite this);
 u16 Sprite_getHead(Sprite this);
 u16 Sprite_getMode(Sprite this);
 Scale Sprite_getScale(Sprite this);

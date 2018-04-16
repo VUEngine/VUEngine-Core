@@ -263,7 +263,6 @@ void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z __
 	ASSERT(this, "Sprite::calculateParallax: null this");
 }
 
-
 /**
  * Get position relative to the camera
  *
@@ -275,6 +274,22 @@ void Sprite_calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z __
  * @return			Position relative to camera
  */
 PixelVector Sprite_getPosition(Sprite this)
+{
+	return this->position;
+}
+
+
+/**
+ * Get displaced position relative to the camera
+ *
+ * @memberof		Sprite
+ * @public
+ *
+ * @param this		Function scope
+ *
+ * @return			Displaced position relative to camera
+ */
+PixelVector Sprite_getDisplacedPosition(Sprite this)
 {
 	PixelVector position =
 	{
@@ -1118,10 +1133,10 @@ void Sprite_print(Sprite this, int x, int y)
 	Printing_text(Printing_getInstance(), (spriteTransparency == 1) ? "(Even)" : (spriteTransparency == 2) ? "(Odd)" : "", x + 16, y, NULL);
 
 	Printing_text(Printing_getInstance(), "Position:                         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).x, x + 14, y, NULL);
-	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).y, x + 22, y, NULL);
-	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).z + Sprite_getDisplacement(this).z, x + 30, y, NULL);
-	Printing_int(Printing_getInstance(), __VIRTUAL_CALL(Sprite, getPosition, this).parallax, x + 38, y, NULL);
+	Printing_int(Printing_getInstance(), this->position.x, x + 14, y, NULL);
+	Printing_int(Printing_getInstance(), this->position.y, x + 22, y, NULL);
+	Printing_int(Printing_getInstance(), this->position.z + Sprite_getDisplacement(this).z, x + 30, y, NULL);
+	Printing_int(Printing_getInstance(), this->position.parallax, x + 38, y, NULL);
 	Printing_text(Printing_getInstance(), "Texture size:                         ", x, ++y, NULL);
 	Printing_int(Printing_getInstance(), this->halfWidth * 2, x + 14, y, NULL);
 	Printing_int(Printing_getInstance(), this->halfHeight * 2, x + 22, y, NULL);

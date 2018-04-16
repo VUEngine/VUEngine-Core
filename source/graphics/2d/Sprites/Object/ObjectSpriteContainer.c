@@ -289,30 +289,6 @@ bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfOb
 }
 
 /**
- * Retrieve 2D position
- *
- * @memberof		ObjectSpriteContainer
- * @public
- *
- * @param this		Function scope
- *
- * @return			2D position
- */
-PixelVector ObjectSpriteContainer_getPosition(ObjectSpriteContainer this)
-{
-	ASSERT(this, "ObjectSpriteContainer::getPosition: null this");
-
-	PixelVector position =
-	{
-		0, 0, 0, 0
-	};
-
-	position.z = this->z;
-
-	return position;
-}
-
-/**
  * Set 2D position
  *
  * @memberof			ObjectSpriteContainer
@@ -333,8 +309,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVe
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-			__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
+			__VIRTUAL_CALL(Sprite, setPosition, sprite, &sprite->position);
 		}
 	}
 
@@ -409,11 +384,9 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
 		{
 			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->node));
 			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode_getData(this->previousNode));
-			PixelVector position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-			PixelVector previousPosition = __VIRTUAL_CALL(Sprite, getPosition, previousSprite);
 
 			// check if z positions are swapped
-			if(previousPosition.z + (__SAFE_CAST(Sprite, previousSprite))->displacement.z > position.z + (__SAFE_CAST(Sprite, sprite))->displacement.z)
+			if(previousSprite->position.z + (__SAFE_CAST(Sprite, previousSprite))->displacement.z > sprite->position.z + (__SAFE_CAST(Sprite, sprite))->displacement.z)
 			{
 				if(this->availableObjects >= sprite->totalObjects)
 				{

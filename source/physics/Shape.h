@@ -151,7 +151,7 @@ typedef struct VertexProjection
 #define Shape_SET_VTABLE(ClassName)																		\
 		Object_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, Shape, setup);															\
-		__VIRTUAL_SET(ClassName, Shape, position);															\
+		__VIRTUAL_SET(ClassName, Shape, position);														\
 		__VIRTUAL_SET(ClassName, Shape, collides);														\
 		__VIRTUAL_SET(ClassName, Shape, canMoveTowards);												\
 

@@ -1777,7 +1777,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-			PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
+			PixelVector spritePosition = Sprite_getDisplacedPosition(sprite);
 
 			PixelSize pixelSize = PixelSize_getFromSize(this->size);
 

@@ -464,11 +464,9 @@ void SpriteManager_sortLayers(SpriteManager this)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, node->data);
 				Sprite nextSprite = __SAFE_CAST(Sprite, nextNode->data);
-				PixelVector position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-				PixelVector nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 				// check if z positions are swapped
-				if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
+				if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 				{
 					// get each entity's layer
 					u8 worldLayer1 = sprite->worldLayer;
@@ -512,11 +510,9 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
 			Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
-			PixelVector position = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-			PixelVector nextPosition = __VIRTUAL_CALL(Sprite, getPosition, nextSprite);
 
 			// check if z positions are swapped
-			if(nextPosition.z + nextSprite->displacement.z < position.z + sprite->displacement.z)
+			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 			{
 				Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
 				Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
@@ -925,10 +921,6 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 			__VIRTUAL_CALL(Sprite, show, sprite);
 		}
 
-		// force initialization
-		PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
-
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}
 }
@@ -951,10 +943,6 @@ void SpriteManager_recoverLayers(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		__VIRTUAL_CALL(Sprite, show, sprite);
-
-		// force inialization
-		PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, sprite);
-		__VIRTUAL_CALL(Sprite, setPosition, sprite, &spritePosition);
 
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}

@@ -49,7 +49,6 @@
 #define ObjectSpriteContainer_SET_VTABLE(ClassName)														\
 		Sprite_SET_VTABLE(ClassName)																	\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);										\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, getPosition);									\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);									\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
 		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
@@ -142,7 +141,6 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);
-PixelVector ObjectSpriteContainer_getPosition(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
 int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
 bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);

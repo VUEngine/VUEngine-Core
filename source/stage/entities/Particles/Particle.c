@@ -472,7 +472,7 @@ bool Particle_isVisible(Particle this)
 {
 	ASSERT(this, "Particle::isVisible: null this");
 
-	PixelVector spritePosition = __VIRTUAL_CALL(Sprite, getPosition, this->objectSprite);
+	PixelVector spritePosition = Sprite_getDisplacedPosition(__SAFE_CAST(Sprite, this->objectSprite));
 
 	// check x visibility
 	if((unsigned)(spritePosition.x + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_WIDTH) + __PARTICLE_VISIBILITY_PADDING))

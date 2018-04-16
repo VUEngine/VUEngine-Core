@@ -182,7 +182,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(__ABS(__FIX10_6_TO_I(ObjectSpriteContainer_getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(__FIX10_6_TO_I(ObjectSpriteContainer_getPosition(suitableObjectSpriteContainer).z - z)))
+				if(__ABS(__FIX10_6_TO_I(Sprite_getPosition(__SAFE_CAST(Sprite, this->objectSpriteContainers[i])).z - z)) < __ABS(__FIX10_6_TO_I(Sprite_getPosition(__SAFE_CAST(Sprite, suitableObjectSpriteContainer)).z - z)))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
