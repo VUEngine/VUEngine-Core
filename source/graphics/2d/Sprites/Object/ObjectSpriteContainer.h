@@ -84,12 +84,6 @@
 		 */																								\
 		VirtualNode objectSpriteNodeToDefragment;														\
 		/**
-		 * @var fix10_6	z
-		 * @brief			for WORLD sorting
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		fix10_6 z;																						\
-		/**
 		 * @var int			freedObjectIndex
 		 * @brief			used for defragmentation
 		 * @memberof		ObjectSpriteContainer

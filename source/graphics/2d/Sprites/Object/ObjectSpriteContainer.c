@@ -99,7 +99,6 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	this->objectSprites = __NEW(VirtualList);
 	this->objectSpriteNodeToDefragment = NULL;
 	this->freedObjectIndex = 0;
-	this->z = 0;
 	this->removingObjectSprite = false;
 	this->hidden = false;
 	this->visible = true;
@@ -313,7 +312,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVe
 		}
 	}
 
-	this->z = position->z;
+	this->position.z = position->z;
 }
 
 /**
@@ -694,7 +693,7 @@ void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y)
 	Printing_text(Printing_getInstance(), "-", x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)), y, NULL);
 	Printing_int(Printing_getInstance(), ObjectSpriteContainer_getLastObjectIndex(this), x  + 24 + Utilities_intLength(ObjectSpriteContainer_getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing_text(Printing_getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->z, x + 24, y, NULL);
+	Printing_int(Printing_getInstance(), this->position.z, x + 24, y, NULL);
 }
 
 /**

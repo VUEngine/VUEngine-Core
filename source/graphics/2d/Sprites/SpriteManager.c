@@ -921,6 +921,8 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 			__VIRTUAL_CALL(Sprite, show, sprite);
 		}
 
+		Sprite_setPosition(sprite, &sprite->position);
+
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}
 }
@@ -943,6 +945,8 @@ void SpriteManager_recoverLayers(SpriteManager this)
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 		__VIRTUAL_CALL(Sprite, show, sprite);
+
+		Sprite_setPosition(sprite, &sprite->position);
 
 		_worldAttributesBaseAddress[sprite->worldLayer].head &= ~__WORLD_END;
 	}
