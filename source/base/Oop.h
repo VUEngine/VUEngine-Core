@@ -62,7 +62,7 @@
 #define __CLASS_NEW_END(ClassName, ...)																	\
 																										\
 			/* set the vtable pointer */																\
-			this->vTable = (void*)&ClassName ## _vTable;												\
+			this->vTable = (void*)&ClassName ## _vTable;													\
 																										\
 			/* construct the object */																	\
 			ClassName ## _constructor(this, ##__VA_ARGS__);												\
@@ -90,7 +90,7 @@
 #define __DELETE(object)																				\
 																										\
 		/* since the destructor is the first element in the virtual table */							\
-		ASSERT(object && *(u32*)object, "Deleting null object");										\
+		ASSERT(object && *(u32*)object, "Deleting null object");											\
 		/* ((void (*)(void*))((void***)object)[0][0])(object); */										\
 		((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object)				\
 
@@ -184,7 +184,7 @@
 #define __IS_INSTANCE_OF(ClassName, object)																\
 																										\
 		/* try to up cast object */																		\
-		(void*)&ClassName ## _vTable == (void*)*((void**)object)										\
+		(void*)&ClassName ## _vTable == (void*)*((void**)object)											\
 
 // declare a virtual method
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)											\
@@ -220,7 +220,7 @@
 																										\
 			/* check that no method is null */															\
 			u32 i = 0;																					\
-			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
+			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)							\
 			{																							\
 				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##	is abstract);		\
 			}																							\
@@ -248,7 +248,7 @@
 																										\
 			/* clean up the vtable */																	\
 			u32 i = 0;																					\
-			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
+			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)							\
 			{																							\
 				((void (*(*))())&ClassName ## _vTable)[i] = NULL;										\
 			}																							\
@@ -285,7 +285,7 @@
 			__VIRTUAL_DEC(ClassName, ObjectBaseClassPointer, getBaseClass);								\
 																										\
 			/* all destructors are virtual */															\
-			__VIRTUAL_DEC(ClassName, const char*, getClassName);										\
+			__VIRTUAL_DEC(ClassName, const char*, getClassName);											\
 																										\
 			/* insert class's virtual methods names */													\
 			ClassName ## _METHODS(ClassName)															\
@@ -297,13 +297,13 @@
 // forward declare a class
 #define __FORWARD_CLASS(ClassName)																		\
 		/* declare a pointer */																			\
-		typedef struct ClassName ## _str* ClassName;													\
+		typedef struct ClassName ## _str* ClassName;														\
 
 // declare a class
 #define __CLASS(ClassName)																				\
 																										\
 		/* declare a pointer */																			\
-		typedef struct ClassName ## _str* ClassName;													\
+		typedef struct ClassName ## _str* ClassName;														\
 																										\
 		/* typedef for RTTI */																			\
 		typedef void* (*(*ClassName ## BaseClassPointer)(Object))(Object);								\
@@ -332,7 +332,7 @@
 			ClassName ## _ATTRIBUTES																	\
 																										\
 			/* end definition */																		\
-		} ClassName ## _str 																			\
+		} ClassName ## _str 																				\
 
 
 // define method only when compiling with debugging tools
@@ -356,14 +356,14 @@
 			ClassName ## _ATTRIBUTES																	\
 																										\
 			/* end definition */																		\
-		} ClassName ## _str;																			\
+		} ClassName ## _str;																				\
 																										\
 		/* class' vtable's definition */																\
 		struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		static void (* const _baseDestructor)(Object) =													\
 		/* class' base's destructor */																	\
-			(void (*)(Object))&BaseClassName ## _destructor;											\
+			(void (*)(Object))&BaseClassName ## _destructor;												\
 																										\
 		/* define class's getSize method */																\
 		__GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
