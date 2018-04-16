@@ -85,7 +85,7 @@ void Sprite_constructor(Sprite this, const SpriteDefinition* spriteDefinition __
 	this->transparent = spriteDefinition ? spriteDefinition->transparent : __TRANSPARENCY_NONE;
 	this->visible = true;
 	this->writeAnimationFrame = false;
-	this->ready = false;
+	this->positioned = false;
 }
 
 /**
@@ -228,7 +228,7 @@ void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* posit
 
 	this->position = Vector3D_projectToPixelVector(Vector3D_getRelativeToCamera(*position), this->position.parallax);
 
-	this->ready = true;
+	this->positioned = true;
 }
 
 /**
@@ -244,7 +244,7 @@ void Sprite_setPosition(Sprite this, const PixelVector* position)
 {
 	ASSERT(this, "Sprite::setPosition: null this");
 
-	this->ready = true;
+	this->positioned = true;
 
 	this->position = *position;
 }

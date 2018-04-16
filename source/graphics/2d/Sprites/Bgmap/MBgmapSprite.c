@@ -232,7 +232,7 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position, bool rep
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	bool haveToSetPosition = (!this->ready) | reproject;
+	bool haveToSetPosition = (!this->positioned) | reproject;
 
 	__CALL_BASE_METHOD(Sprite, position, this, position, reproject);
 
@@ -314,7 +314,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement)
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
-	this->ready = true;
+	this->positioned = true;
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -369,7 +369,7 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 
 	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
 
-	if(!this->ready)
+	if(!this->positioned)
 	{
 		return;
 	}

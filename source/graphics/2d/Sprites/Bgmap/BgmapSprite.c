@@ -326,7 +326,7 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 
 	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
 
-	if(!this->ready)
+	if(!this->positioned)
 	{
 		return;
 	}
@@ -524,7 +524,7 @@ void BgmapSprite_render(BgmapSprite this)
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-	if(!this->ready)
+	if(!this->positioned)
 	{
 		return;
 	}

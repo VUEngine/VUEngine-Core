@@ -566,7 +566,7 @@ static void AnimationInspector_removePreviousSprite(AnimationInspector this)
 {
 	if(this->animatedSprite)
 	{
-		__DELETE(this->animatedSprite);
+		SpriteManager_disposeSprite(SpriteManager_getInstance(), this->animatedSprite);
 		this->animatedSprite = NULL;
 	}
 }
@@ -915,7 +915,7 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 
 	NM_ASSERT(spriteDefinition, "AnimationInspector::createSprite: null spriteDefinition");
 
-	this->animatedSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
+	this->animatedSprite = __SAFE_CAST(Sprite, SpriteManager_createSprite(SpriteManager_getInstance(), (SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this)));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
 	ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationInspector::createSprite: null texture");
 
@@ -925,7 +925,6 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 
 	__VIRTUAL_CALL(Sprite, setPosition, this->animatedSprite, &spritePosition);
 	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
-	SpriteManager_showLayer(SpriteManager_getInstance(), __VIRTUAL_CALL(Sprite, getWorldLayer, this->animatedSprite));
 
 	Rotation spriteRotation = {0, 0, 0};
 	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};

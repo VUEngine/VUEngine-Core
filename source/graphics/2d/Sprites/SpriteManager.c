@@ -545,8 +545,8 @@ void SpriteManager_sortLayersProgressively(SpriteManager this)
  */
 static void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::getWorldLayer: null this");
-	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::getWorldLayer: adding no sprite");
+	ASSERT(this, "SpriteManager::registerSprite: null this");
+	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::registerSprite: adding no sprite");
 
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
@@ -554,7 +554,7 @@ static void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 
 		VirtualNode alreadyLoadedSpriteNode = VirtualList_find(this->sprites, sprite);
 
-		ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::getWorldLayer: sprite already registered");
+		ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::registerSprite: sprite already registered");
 
 		if(!alreadyLoadedSpriteNode)
 		{
@@ -571,7 +571,7 @@ static void SpriteManager_registerSprite(SpriteManager this, Sprite sprite)
 				layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
 			}
 
-			NM_ASSERT(0 < layer, "SpriteManager::getWorldLayer: no more layers");
+			NM_ASSERT(0 < layer, "SpriteManager::registerSprite: no more layers");
 
 			// add to the front: last element corresponds to the 31 WORLD
 			VirtualList_pushFront(this->sprites, sprite);
