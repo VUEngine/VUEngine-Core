@@ -43,9 +43,9 @@
 		__VIRTUAL_DEC(ClassName, VirtualList, getShapes);												\
 		__VIRTUAL_DEC(ClassName, bool, isMoving);														\
 		__VIRTUAL_DEC(ClassName, bool, isSubjectToGravity, Acceleration gravity);						\
-		__VIRTUAL_DEC(ClassName, u16, getWidth);														\
-		__VIRTUAL_DEC(ClassName, u16, getHeight);														\
-		__VIRTUAL_DEC(ClassName, u16, getDepth);														\
+		__VIRTUAL_DEC(ClassName, fix10_6, getWidth);													\
+		__VIRTUAL_DEC(ClassName, fix10_6, getHeight);													\
+		__VIRTUAL_DEC(ClassName, fix10_6, getDepth);													\
 		__VIRTUAL_DEC(ClassName, const Vector3D*, getPosition);											\
 		__VIRTUAL_DEC(ClassName, void, setPosition, const Vector3D* position);							\
 		__VIRTUAL_DEC(ClassName, const Rotation*, getRotation);											\
@@ -103,9 +103,9 @@ void SpatialObject_constructor(SpatialObject this);
 void SpatialObject_destructor(SpatialObject this);
 bool SpatialObject_isMoving(SpatialObject this);
 bool SpatialObject_isSubjectToGravity(SpatialObject this, Acceleration gravity);
-u16 SpatialObject_getWidth(SpatialObject this);
-u16 SpatialObject_getHeight(SpatialObject this);
-u16 SpatialObject_getDepth(SpatialObject this);
+fix10_6 SpatialObject_getWidth(SpatialObject this);
+fix10_6 SpatialObject_getHeight(SpatialObject this);
+fix10_6 SpatialObject_getDepth(SpatialObject this);
 const Vector3D* SpatialObject_getPosition(SpatialObject this);
 void SpatialObject_setPosition(SpatialObject this, const Vector3D* position);
 const Rotation* SpatialObject_getRotation(SpatialObject this);

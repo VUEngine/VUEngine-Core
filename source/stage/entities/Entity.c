@@ -1690,7 +1690,7 @@ bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegra
  *
  * @return		Entity's width
  */
-u16 Entity_getWidth(Entity this)
+fix10_6 Entity_getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
@@ -1713,7 +1713,7 @@ u16 Entity_getWidth(Entity this)
  *
  * @return		Entity's height
  */
-u16 Entity_getHeight(Entity this)
+fix10_6 Entity_getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
@@ -1735,7 +1735,7 @@ u16 Entity_getHeight(Entity this)
  *
  * @return		Entity's depth
  */
-u16 Entity_getDepth(Entity this)
+fix10_6 Entity_getDepth(Entity this)
 {
 	ASSERT(this, "Entity::getDepth: null this");
 

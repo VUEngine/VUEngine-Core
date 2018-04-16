@@ -95,21 +95,21 @@ bool SpatialObject_isSubjectToGravity(SpatialObject this __attribute__ ((unused)
 	return false;
 }
 
-u16 SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getWidth: null this");
 
 	return 0;
 }
 
-u16 SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getHeight: null this");
 
 	return 0;
 }
 
-u16 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getDepth: null this");
 

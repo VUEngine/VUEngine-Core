@@ -501,7 +501,7 @@ static void StageEditor_getShape(StageEditor this)
 		this->shape = __SAFE_CAST(Shape, __NEW(Box, __SAFE_CAST(SpatialObject, entity)));
 
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
+		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), 0};
 
 		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 	}
@@ -525,7 +525,7 @@ static void StageEditor_positionShape(StageEditor this)
 	}
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
+	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), 0};
 
 	__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 
