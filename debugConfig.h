@@ -32,14 +32,15 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __FORCE_PRINTING_LAYER
 //#define __FORCE_UPPERCASE
 //#define __DISABLE_STREAMING
+//#define __PRINT_CAMERA_STATUS
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object
-#undef __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER
-#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
+//#undef __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER
+//#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	1
 
 
 // do not delete the following macros!
