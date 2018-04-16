@@ -103,18 +103,18 @@ void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation
 	ASSERT(this, "Ball::position: null this");
 
 	this->center = *position;
-	this->radius = size->z;
+	this->radius = size->z >> 1;
 
 	if(size->x > size->y)
 	{
 		if(size->x > size->z)
 		{
-			this->radius = size->x;
+			this->radius = size->x >> 1;
 		}
 	}
 	else if(size->y > size->z)
 	{
-		this->radius = size->y;
+		this->radius = size->y >> 1;
 	}
 
 	__CALL_BASE_METHOD(Shape, position, this, position, rotation, scale, size);
