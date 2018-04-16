@@ -627,9 +627,8 @@ void Box_hide(Box this)
 {
 	if(this->polyhedron)
 	{
-		// draw the Polyhedron
+		// delete the Polyhedron
 		__DELETE(this->polyhedron);
-
 		this->polyhedron = NULL;
 	}
 }

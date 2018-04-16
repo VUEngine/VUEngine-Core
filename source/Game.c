@@ -1385,7 +1385,7 @@ bool Game_isInDebugMode(Game this)
 #ifdef __STAGE_EDITOR
 bool Game_isInStageEditor(Game this)
 {
-	ASSERT(this, "Game::isInGameStateEditor: null this");
+	ASSERT(this, "Game::isInStageEditor: null this");
 
 	return StateMachine_getCurrentState(this->stateMachine) == (State)StageEditorState_getInstance();
 }

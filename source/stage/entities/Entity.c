@@ -253,7 +253,7 @@ void Entity_setDefinition(Entity this, void* entityDefinition)
  * Destroy shapes
  *
  * @memberof	Entity
- * @public
+ * @private
  *
  * @param this	Function scope
  */

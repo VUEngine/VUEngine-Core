@@ -11,7 +11,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 
 // define / undefine as you see fit
 //#undef __LOW_BATTERY_INDICATOR
-//#define __PRINT_FRAMERATE
+#undef __PRINT_FRAMERATE
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING

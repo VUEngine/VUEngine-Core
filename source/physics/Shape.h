@@ -269,7 +269,6 @@ SpatialObject Shape_getOwner(Shape this);
 void Shape_reset(Shape this);
 void Shape_setup(Shape this, u32 layers, u32 layersToIgnore);
 void Shape_position(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-void Shape_hide(Shape this);
 bool Shape_isActive(Shape this);
 bool Shape_isReady(Shape this);
 void Shape_setActive(Shape this, bool active);

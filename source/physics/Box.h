@@ -76,7 +76,7 @@
 		 */																								\
 		Polyhedron polyhedron;																			\
 		/**
-		 * @var Vector3D		rotationVertexDisplacement
+		 * @var Vector3D	rotationVertexDisplacement
 		 * @brief			for rotation purposes
 		 * @memberof 		Box
 		 */																								\

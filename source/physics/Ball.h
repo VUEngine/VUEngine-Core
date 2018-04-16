@@ -67,7 +67,7 @@
 		 * @brief			the radius of the ball
 		 * @memberof 		Box
 		 */																								\
-		fix10_6 radius;																				\
+		fix10_6 radius;																					\
 		/**
 		 * @var Vector3D		center
 		 * @brief			the center of the ball
