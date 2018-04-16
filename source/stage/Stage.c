@@ -294,6 +294,7 @@ void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrid
 
 	if(overrideCameraPosition)
 	{
+		Camera_reset(Camera_getInstance());
 		Camera_setPosition(Camera_getInstance(), Vector3D_getFromPixelVector(this->stageDefinition->level.cameraInitialPosition));
 	}
 

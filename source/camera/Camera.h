@@ -196,5 +196,6 @@ void Camera_stopEffect(Camera this, int effect);
 void Camera_unsetFocusEntity(Camera this);
 Vector3D Camera_getFocusEntityPosition(Camera this);
 Vector3D Camera_getFocusEntityPositionDisplacement(Camera this);
+void Camera_print(Camera this, int x, int y);
 
 #endif

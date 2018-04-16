@@ -29,6 +29,7 @@
 #include <Game.h>
 #include <CameraMovementManager.h>
 #include <CameraEffectManager.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -229,6 +230,10 @@ void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving)
 #endif
 
 	__VIRTUAL_CALL(CameraMovementManager, focus, this->cameraMovementManager, checkIfFocusEntityIsMoving);
+
+#ifdef __PRINT_CAMERA_STATUS
+	Camera_print(this, 1, 1);
+#endif
 }
 
 /**
@@ -769,4 +774,33 @@ Vector3D Camera_getFocusEntityPositionDisplacement(Camera this)
 	ASSERT(this, "Camera::getFocusEntityPositionDisplacement: null this");
 
 	return this->focusEntityPositionDisplacement;
+}
+
+
+/**
+ * Print status
+ *
+ * @memberof			Camera
+ * @public
+ *
+ * @param this			Function scope
+ * @param x				Column
+ * @param y				Row
+ */
+void Camera_print(Camera this, int x, int y)
+{
+	ASSERT(this, "Camera::print: null this");
+
+	Printing_text(Printing_getInstance(), "MOVE SCREEN", x, y++, NULL);
+	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);
+	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
+	Printing_text(Printing_getInstance(), "Stage's size:               ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->stageSize.x), x + 10, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->stageSize.y), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->stageSize.z), x + 20, y, NULL);
+	Printing_text(Printing_getInstance(), "Position:               ", x, ++y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->position.x), x + 10, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->position.y), x + 15, y, NULL);
+	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->position.z), x + 20, y, NULL);
 }

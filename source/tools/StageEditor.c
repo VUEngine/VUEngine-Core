@@ -1132,24 +1132,7 @@ static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D tran
  */
 static void StageEditor_printCameraPosition(StageEditor this __attribute__ ((unused)))
 {
-	int x = 1;
-	int y = 2;
-
-	Vector3D position = Camera_getPosition(Camera_getInstance());
-	Size size = Camera_getStageSize(Camera_getInstance());
-
-	Printing_text(Printing_getInstance(), "MOVE SCREEN", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);
-	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
-	Printing_text(Printing_getInstance(), "Size:               ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(size.x), x + 10, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(size.y), x + 15, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(size.z), x + 20, y, NULL);
-	Printing_text(Printing_getInstance(), "Position:               ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(position.x), x + 10, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(position.y), x + 15, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(position.z), x + 20, y, NULL);
+	Camera_print(Camera_getInstance(), 1, 2);
 }
 
 /**

@@ -182,6 +182,9 @@ enum DefaulCollisionLayers
 		/* thrown exception */																			\
 		Error_triggerException(Error_getInstance(), Message, NULL);										\
 	}
+
+	#undef __FORCE_PRINTING_LAYER
+	#define __FORCE_PRINTING_LAYER
 #endif
 
 
