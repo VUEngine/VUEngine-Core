@@ -226,13 +226,12 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
  *
  * @param this			Function scope
  * @param position		3D position
- * @param reproject		Force 3D to 2D projection
  */
-void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position, bool reproject)
+void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	__CALL_BASE_METHOD(Sprite, position, this, position, reproject);
+	__CALL_BASE_METHOD(Sprite, position, this, position);
 
 	MBgmapSprite_setPosition(this, &this->position);
 }

@@ -64,7 +64,7 @@
 		__VIRTUAL_DEC(ClassName, Scale, getScale);														\
 		__VIRTUAL_DEC(ClassName, u8, getWorldLayer);													\
 		__VIRTUAL_DEC(ClassName, void, hide);															\
-		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position, bool reproject);				\
+		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position);								\
 		__VIRTUAL_DEC(ClassName, void, render, bool evenFrame);											\
 		__VIRTUAL_DEC(ClassName, void, resize, Scale scale, fix10_6 z);									\
 		__VIRTUAL_DEC(ClassName, void, rotate, const Rotation* rotation);								\
@@ -293,7 +293,7 @@ s16 Sprite_getWorldMX(Sprite this);
 s16 Sprite_getWorldMY(Sprite this);
 void Sprite_hide(Sprite this);
 bool Sprite_isHidden(Sprite this);
-void Sprite_position(Sprite this, const Vector3D* position, bool reproject);
+void Sprite_position(Sprite this, const Vector3D* position);
 void Sprite_resize(Sprite this, Scale scale, fix10_6 z);
 void Sprite_rewrite(Sprite this);
 void Sprite_setPosition(Sprite this, const PixelVector* position);

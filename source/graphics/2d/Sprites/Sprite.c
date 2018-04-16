@@ -220,9 +220,8 @@ bool Sprite_isHidden(Sprite this)
  *
  * @param this			Function scope
  * @param position		3D position
- * @param reproject		Force 3D to 2D projection
  */
-void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position, bool reproject __attribute__ ((unused)))
+void Sprite_position(Sprite this __attribute__ ((unused)), const Vector3D* position)
 {
 	ASSERT(this, "Sprite::position: null this");
 

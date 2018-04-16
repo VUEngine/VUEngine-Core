@@ -207,14 +207,13 @@ void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position)
  *
  * @param this			Function scope
  * @param position		3D position
- * @param reproject		Force 3D to 2D projection
  */
-void ObjectSprite_position(ObjectSprite this, const Vector3D* position, bool reproject)
+void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 {
 	ASSERT(this, "ObjectSprite::position: null this");
 	ASSERT(this->texture, "ObjectSprite::position: null texture");
 
-	__CALL_BASE_METHOD(Sprite, position, this, position, reproject);
+	__CALL_BASE_METHOD(Sprite, position, this, position);
 
 	ObjectSprite_checkForContainer(this);
 }

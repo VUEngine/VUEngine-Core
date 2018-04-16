@@ -122,7 +122,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 void MBgmapSprite_destructor(MBgmapSprite this);
 
 void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement);
-void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position, bool reproject);
+void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position);
 void MBgmapSprite_render(MBgmapSprite this, bool evenFrame);
 void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z);
 void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position);

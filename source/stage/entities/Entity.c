@@ -1371,8 +1371,6 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 		return;
 	}
 
-	bool iMoved = updatePosition;
-
 	updatePosition |= updateRotation;
 	updatePosition |= updateProjection;
 
@@ -1385,7 +1383,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
 			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
@@ -1404,7 +1402,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
 			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
@@ -1417,7 +1415,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 
 			// calculate the scale
 			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
@@ -1433,7 +1431,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition, iMoved);
+			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
 		}
 	}
 	else if(updateScale)

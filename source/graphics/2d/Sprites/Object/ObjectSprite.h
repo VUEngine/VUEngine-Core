@@ -118,7 +118,7 @@ void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z);
 s16 ObjectSprite_getObjectIndex(ObjectSprite this);
 s16 ObjectSprite_getTotalObjects(ObjectSprite this);
 u8 ObjectSprite_getWorldLayer(ObjectSprite this);
-void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D, bool reproject);
+void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D);
 void ObjectSprite_render(ObjectSprite this, bool evenFrame);
 void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation);
 void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
