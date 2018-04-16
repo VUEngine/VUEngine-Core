@@ -524,9 +524,10 @@ static void StageEditor_positionShape(StageEditor this)
 		return;
 	}
 
-//	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), Entity_getDepth(entity)};
 
-//		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), false);
+	__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 
 	if(this->shape)
 	{
