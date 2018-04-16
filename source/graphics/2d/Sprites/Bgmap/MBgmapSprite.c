@@ -232,15 +232,9 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position, bool rep
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	bool haveToSetPosition = (!this->positioned) | reproject;
-
 	__CALL_BASE_METHOD(Sprite, position, this, position, reproject);
 
-	if(haveToSetPosition)
-	{
-		PixelVector position2D = this->position;
-    	MBgmapSprite_setPosition(this, &position2D);
-	}
+	MBgmapSprite_setPosition(this, &this->position);
 }
 
 /**
@@ -256,21 +250,23 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 
+	PixelVector auxPosition = *position;
+
 	__CALL_BASE_METHOD(BgmapSprite, setPosition, this, position);
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
-		this->drawSpec.textureSource.mx = -position->x;
 		this->position.x = 0;
+		this->drawSpec.textureSource.mx = -auxPosition.x;
 	}
 	else
 	{
 		this->drawSpec.textureSource.mx = this->textureXOffset;
-		this->position.x = position->x;
+		this->position.x = auxPosition.x;
 /*
-		if(0 > position->x + this->displacement.x)
+		if(0 > auxPosition.x + this->displacement.x)
 		{
-			this->drawSpec.textureSource.mx -= position->x + this->displacement.x;
+			this->drawSpec.textureSource.mx -= auxPosition.x + this->displacement.x;
 		}
 */
 	}
@@ -278,22 +274,22 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 	if(this->mBgmapSpriteDefinition->yLoop)
 	{
 		this->position.y = 0;
-		this->drawSpec.textureSource.my = -position->y;
+		this->drawSpec.textureSource.my = -auxPosition.y;
 	}
 	else
 	{
 		this->drawSpec.textureSource.my = this->textureYOffset;
-		this->position.y = position->y;
+		this->position.y = auxPosition.y;
 /*
-		if(0 > position->y + this->displacement.y)
+		if(0 > auxPosition.y + this->displacement.y)
 		{
-			this->drawSpec.textureSource.my -= position->y + this->displacement.y;
+			this->drawSpec.textureSource.my -= auxPosition.y + this->displacement.y;
 		}
 */
 	}
 
 	fix10_6 previousZPosition = this->position.z;
-	this->position.z = position->z;
+	this->position.z = auxPosition.z;
 
 	if(previousZPosition != this->position.z)
 	{
@@ -396,31 +392,9 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 	// set the head
 	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
-	int xPositionDisplacement = 0;
-	int mxPositionDisplacement = 0;
-	if(this->mBgmapSpriteDefinition->xLoop)
-	{
-//    	mxPositionDisplacement = this->displacementRelativeToCamera.x;
-	}
-	else
-	{
-//    	xPositionDisplacement = this->displacementRelativeToCamera.x;
-	}
-
-	int yPositionDisplacement = 0;
-	int myPositionDisplacement = 0;
-	if(this->mBgmapSpriteDefinition->yLoop)
-	{
-//		myPositionDisplacement = this->displacementRelativeToCamera.y;
-	}
-	else
-	{
-//		yPositionDisplacement = this->displacementRelativeToCamera.y;
-	}
-
 	// get coordinates
-	int gx = this->position.x + this->displacement.x - this->halfWidth + xPositionDisplacement;
-	int gy = this->position.y + this->displacement.y - this->halfHeight + yPositionDisplacement;
+	int gx = this->position.x + this->displacement.x - this->halfWidth;
+	int gy = this->position.y + this->displacement.y - this->halfHeight;
 	worldPointer->gx = gx;
 	worldPointer->gy = gy;
 
@@ -440,8 +414,8 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 
 	worldPointer->gp = this->position.parallax + this->displacement.parallax;
 
-	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement - mxPositionDisplacement;
-	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement - myPositionDisplacement;
+	worldPointer->mx = this->drawSpec.textureSource.mx + mxDisplacement;
+	worldPointer->my = this->drawSpec.textureSource.my + myDisplacement;
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// set the world size
