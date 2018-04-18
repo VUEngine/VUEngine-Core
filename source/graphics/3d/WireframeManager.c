@@ -26,6 +26,7 @@
 
 #include <WireframeManager.h>
 #include <VirtualList.h>
+#include <debugUtilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
