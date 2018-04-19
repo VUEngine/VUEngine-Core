@@ -51,8 +51,7 @@
 		__VIRTUAL_SET(ClassName, Box, testForCollision);												\
 		__VIRTUAL_SET(ClassName, Box, getPosition);														\
 		__VIRTUAL_SET(ClassName, Box, getSurroundingRightBox);											\
-		__VIRTUAL_SET(ClassName, Box, hide);															\
-		__VIRTUAL_SET(ClassName, Box, show);															\
+		__VIRTUAL_SET(ClassName, Box, configureWireframe);												\
 		__VIRTUAL_SET(ClassName, Box, print);															\
 
 #define Box_ATTRIBUTES																					\
@@ -64,17 +63,11 @@
 		 */																								\
 		VertexProjection vertexProjections[__SHAPE_NORMALS];											\
 		/**
-		 * @var Polyhedron	polyhedron
-		 * @brief			for debugging purposes
+		 * @var Normals*	normals
+		 * @brief			for collision detection purposes
 		 * @memberof 		Box
 		 */																								\
 		Normals* normals;																				\
-		/**
-		 * @var Polyhedron	polyhedron
-		 * @brief			for debugging purposes
-		 * @memberof 		Box
-		 */																								\
-		Polyhedron polyhedron;																			\
 		/**
 		 * @var Vector3D	rotationVertexDisplacement
 		 * @brief			for rotation purposes
@@ -108,8 +101,7 @@ void Box_projectOntoItself(Box this);
 CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 Vector3D Box_getPosition(Box this);
 RightBox Box_getSurroundingRightBox(Box this);
-void Box_show(Box this);
-void Box_hide(Box this);
+void Box_configureWireframe(Box this);
 void Box_print(Box this, int x, int y);
 
 

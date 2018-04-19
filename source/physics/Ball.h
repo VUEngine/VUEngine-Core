@@ -50,18 +50,11 @@
 		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
 		__VIRTUAL_SET(ClassName, Ball, getPosition);													\
 		__VIRTUAL_SET(ClassName, Ball, getSurroundingRightBox);											\
-		__VIRTUAL_SET(ClassName, Ball, hide);															\
-		__VIRTUAL_SET(ClassName, Ball, show);															\
+		__VIRTUAL_SET(ClassName, Ball, configureWireframe);												\
 		__VIRTUAL_SET(ClassName, Ball, print);															\
 
 #define Ball_ATTRIBUTES																					\
 		Shape_ATTRIBUTES																				\
-		/**
-		 * @var Sphere		sphere
-		 * @brief			for debugging purposes
-		 * @memberof 		Ball
-		 */																								\
-		Sphere sphere;																					\
 		/**
 		 * @var fix10_6*	radius
 		 * @brief			the radius of the ball
@@ -92,8 +85,7 @@ void Ball_project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min
 CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
 Vector3D Ball_getPosition(Ball this);
 RightBox Ball_getSurroundingRightBox(Ball this);
-void Ball_show(Ball this);
-void Ball_hide(Ball this);
+void Ball_configureWireframe(Ball this);
 void Ball_print(Ball this, int x, int y);
 
 #endif

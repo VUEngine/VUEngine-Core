@@ -172,6 +172,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, node->data);
 		shape->isVisible = true;
+		shape->moved = false;
 
 		extern const Vector3D* _cameraPosition;
 		extern const CameraFrustum* _cameraFrustum;
@@ -192,11 +193,11 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 #ifdef __DRAW_SHAPES
 		if(shape->isActive && shape->isVisible)
 		{
-			__VIRTUAL_CALL(Shape, show, shape);
+			Shape_show(shape);
 		}
 		else
 		{
-			__VIRTUAL_CALL(Shape, hide, shape);
+			Shape_hide(shape);
 		}
 #endif
 
@@ -350,7 +351,7 @@ void CollisionManager_showShapes(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Shape, show, node->data);
+		Shape_show(__SAFE_CAST(Shape, node->data));
 	}
 }
 
@@ -366,7 +367,7 @@ void CollisionManager_hideShapes(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Shape, hide, node->data);
+		Shape_hide(__SAFE_CAST(Shape, node->data));
 	}
 }
 

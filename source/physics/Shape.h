@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
-
+#include <Wireframe.h>
 
 //---------------------------------------------------------------------------------------------------------
 //												MACROS
@@ -143,8 +143,7 @@ typedef struct VertexProjection
 		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix10_6 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);												\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
-		__VIRTUAL_DEC(ClassName, void, show);															\
-		__VIRTUAL_DEC(ClassName, void, hide);															\
+		__VIRTUAL_DEC(ClassName, void, configureWireframe);												\
 		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
 		__VIRTUAL_DEC(ClassName, bool, canMoveTowards, Vector3D displacement, fix10_6 sizeIncrement);	\
 
@@ -182,11 +181,23 @@ typedef struct VertexProjection
 		 */																								\
 		u32 layersToIgnore;																				\
 		/**
+		 * @var Sphere		wireframe
+		 * @brief			for debugging purposes
+		 * @memberof 		Ball
+		 */																								\
+		Wireframe wireframe;																			\
+		/**
 		 * @var u8 				ready
 		 * @brief				flag to know if setup is needed
 		 * @memberof			Shape
 		 */																								\
 		u8 ready;																						\
+		/**
+		 * @var u8 				moved
+		 * @brief				flag to know if has moved
+		 * @memberof			Shape
+		 */																								\
+		u8 moved;																						\
 		/**
 		 * @var u8 				isActive
 		 * @brief				flag to know if shape is reacting to collisions
@@ -281,6 +292,8 @@ u32 Shape_getLayers(Shape this);
 void Shape_setLayers(Shape this, u32 layers);
 u32 Shape_getLayersToIgnore(Shape this);
 void Shape_setLayersToIgnore(Shape this, u32 layersToIgnore);
+void Shape_show(Shape this);
+void Shape_hide(Shape this);
 void Shape_print(Shape this, int x, int y);
 
 

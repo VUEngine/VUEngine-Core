@@ -61,8 +61,6 @@ __CLASS_DEFINITION(Ball, Shape);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Ball_configureWireframe(Ball this, int renew);
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,15 +81,12 @@ void Ball_constructor(Ball this, SpatialObject owner)
 
 	this->center = (Vector3D){0, 0, 0};
 	this->radius = 0;
-	this->sphere = NULL;
 }
 
 // class's destructor
 void Ball_destructor(Ball this)
 {
 	ASSERT(this, "Ball::destructor: null this");
-
-	Ball_hide(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -184,46 +179,18 @@ RightBox Ball_getSurroundingRightBox(Ball this)
 }
 
 // configure Polyhedron
-static void Ball_configureWireframe(Ball this, int renew)
+void Ball_configureWireframe(Ball this)
 {
 	ASSERT(this, "Ball::draw: null this");
 
-	if(renew)
+	if(this->wireframe)
 	{
-		Ball_hide(this);
-	}
-	else if(this->sphere)
-	{
+		Sphere_setCenter(__SAFE_CAST(Sphere, this->wireframe), this->center);
 		return;
 	}
 
 	// create a wireframe
-	this->sphere = __NEW(Sphere, this->center, this->radius);
-}
-
-// show me
-void Ball_show(Ball this)
-{
-	ASSERT(this, "Ball::draw: null this");
-
-	Ball_configureWireframe(this, true);
-
-	// draw the Polyhedron
-	Wireframe_show(__SAFE_CAST(Wireframe, this->sphere));
-}
-
-// hide wireframe
-void Ball_hide(Ball this)
-{
-	ASSERT(this, "Ball::hide: null this");
-
-	if(this->sphere)
-	{
-		// draw the wireframe
-		__DELETE(this->sphere);
-
-		this->sphere = NULL;
-	}
+	this->wireframe = __SAFE_CAST(Wireframe, __NEW(Sphere, this->center, this->radius));
 }
 
 // print debug data

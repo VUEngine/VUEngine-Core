@@ -476,6 +476,10 @@ void Game_start(Game this, GameState state)
 			Game_checkFrameRate(this);
 #endif
 
+#ifdef __PRINT_WIREFRAME_MANAGER_STATUS
+			WireframeManager_print(WireframeManager_getInstance(), 1, 1);
+#endif
+
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "start frame";
 #endif

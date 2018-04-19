@@ -91,12 +91,15 @@ void Shape_constructor(Shape this, SpatialObject owner)
 	this->ready = false;
 	this->isActive = true;
 
+	this->wireframe = NULL;
+
 	// set flag
 	this->checkForCollisions = false;
 	this->layers = 0;
 	this->layersToIgnore = 0;
 	this->collidingShapes = NULL;
 	this->isVisible = true;
+	this->moved = false;
 }
 
 /**
@@ -113,6 +116,8 @@ void Shape_destructor(Shape this)
 
 	// unset owner now
 	this->owner = NULL;
+
+	Shape_hide(this);
 
 	if(this->events)
 	{
@@ -226,6 +231,7 @@ void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)
 	}
 
 	this->ready = true;
+	this->moved = true;
 }
 
 /**
@@ -951,6 +957,33 @@ void Shape_setLayersToIgnore(Shape this, u32 layersToIgnore)
 	this->layersToIgnore = layersToIgnore;
 }
 
+
+// show me
+void Shape_show(Shape this)
+{
+	ASSERT(this, "Shape::draw: null this");
+
+	if(this->moved)
+	{
+		Shape_hide(this);
+	}
+
+	__VIRTUAL_CALL(Shape, configureWireframe, this);
+
+	// show the wireframe
+	Wireframe_show(__SAFE_CAST(Wireframe, this->wireframe));
+}
+
+// hide polyhedron
+void Shape_hide(Shape this)
+{
+	if(this->wireframe)
+	{
+		// delete the Polyhedron
+		__DELETE(this->wireframe);
+		this->wireframe = NULL;
+	}
+}
 
 void Shape_print(Shape this, int x, int y)
 {

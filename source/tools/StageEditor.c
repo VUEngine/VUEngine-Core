@@ -464,7 +464,7 @@ static void StageEditor_releaseShape(StageEditor this)
 			}
 			else if(this->shape)
 			{
-				__VIRTUAL_CALL(Shape, hide, this->shape);
+				Shape_hide(this->shape);
 			}
 		}
 		else if(this->shape)
@@ -531,7 +531,7 @@ static void StageEditor_positionShape(StageEditor this)
 
 	if(this->shape)
 	{
-		__VIRTUAL_CALL(Shape, show, this->shape);
+		Shape_show(this->shape);
 	}
 }
 
