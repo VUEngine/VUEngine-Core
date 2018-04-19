@@ -243,13 +243,14 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 
 		fix7_9 ratio = __FIX10_6_TO_FIX7_9(__I_TO_FIX10_6(1) - __FIX10_6_EXT_DIV(z, _optical->scalingFactor));
 
+		ratio = 0 > ratio? 0 : ratio;
 		ratio = __I_TO_FIX7_9(__MAXIMUM_SCALE) < ratio? __I_TO_FIX7_9(__MAXIMUM_SCALE) : ratio;
 
 		this->drawSpec.scale.x = __FIX7_9_MULT(scale.x, ratio);
 		this->drawSpec.scale.y = __FIX7_9_MULT(scale.y, ratio);
 
-		ASSERT(this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
-		ASSERT(this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
+		ASSERT(0 <= this->drawSpec.scale.x, "BgmapSprite::resize: null scale x");
+		ASSERT(0 <= this->drawSpec.scale.y, "BgmapSprite::resize: null scale y");
 
 		if(this->texture)
 		{
