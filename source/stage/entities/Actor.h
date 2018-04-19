@@ -43,7 +43,7 @@
 		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
 		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
-		__VIRTUAL_DEC(ClassName, fix10_6, getElasticityOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
+		__VIRTUAL_DEC(ClassName, fix10_6, getBouncinessOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
 		__VIRTUAL_DEC(ClassName, fix10_6, getFrictionOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
 
 #define Actor_SET_VTABLE(ClassName)																		\
@@ -58,7 +58,7 @@
 		__VIRTUAL_SET(ClassName, Actor, getMovementState);												\
 		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);												\
 		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);													\
-		__VIRTUAL_SET(ClassName, Actor, getElasticity);													\
+		__VIRTUAL_SET(ClassName, Actor, getBounciness);													\
 		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
 		__VIRTUAL_SET(ClassName, Actor, isSubjectToGravity);											\
@@ -67,7 +67,7 @@
 		__VIRTUAL_SET(ClassName, Actor, collidingShapeOwnerDestroyed);									\
 		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
 		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
-		__VIRTUAL_SET(ClassName, Actor, getElasticityOnCollision);										\
+		__VIRTUAL_SET(ClassName, Actor, getBouncinessOnCollision);										\
 		__VIRTUAL_SET(ClassName, Actor, getFrictionOnCollision);										\
 		__VIRTUAL_SET(ClassName, Actor, enterCollision);												\
 		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
@@ -123,7 +123,7 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis);
 bool Actor_isInsideGame(Actor this);
 bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
 bool Actor_canMoveTowards(Actor this, Vector3D direction);
-fix10_6 Actor_getElasticityOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+fix10_6 Actor_getBouncinessOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this);
 fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 bool Actor_handleMessage(Actor this, Telegram telegram);
@@ -134,7 +134,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
 const Vector3D* Actor_getPosition(Actor this);
 void Actor_setPosition(Actor this, const Vector3D* position);
 void Actor_takeHitFrom(Actor this, Actor other);
-fix10_6 Actor_getElasticity(Actor this);
+fix10_6 Actor_getBounciness(Actor this);
 void Actor_addForce(Actor this, const Force* force);
 void Actor_moveUniformly(Actor this, Velocity* velocity);
 void Actor_stopAllMovement(Actor this);

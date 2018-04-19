@@ -78,7 +78,7 @@
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
 		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
-		__VIRTUAL_SET(ClassName, Entity, getElasticity);												\
+		__VIRTUAL_SET(ClassName, Entity, getBounciness);												\
 		__VIRTUAL_SET(ClassName, Entity, getFrictionCoefficient);										\
 		__VIRTUAL_SET(ClassName, Entity, getInGameType);												\
 		__VIRTUAL_SET(ClassName, Entity, getAxesForShapeSyncWithDirection);								\
@@ -206,7 +206,7 @@ bool Entity_updateSpriteRotation(Entity this);
 bool Entity_updateSpriteScale(Entity this);
 void Entity_synchronizeGraphics(Entity this);
 u32 Entity_getInGameType(Entity this);
-fix10_6 Entity_getElasticity(Entity this);
+fix10_6 Entity_getBounciness(Entity this);
 fix10_6 Entity_getFrictionCoefficient(Entity this);
 void Entity_informShapesThatStartedMoving(Entity this);
 void Entity_informShapesThatStoppedMoving(Entity this);

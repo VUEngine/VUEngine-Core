@@ -125,11 +125,11 @@ typedef struct MovementResult
 		 */																								\
 		Acceleration acceleration;																		\
 		/**
-		 * @var fix10_6 		elasticity
-		 * @brief				elasticity
+		 * @var fix10_6 		bounciness
+		 * @brief				bounciness
 		 * @memberof 			Body
 		 */																								\
-		fix10_6 elasticity;																			\
+		fix10_6 bounciness;																			\
 		/**
 		 * @var fix10_6 		frictionCoefficient
 		 * @brief				friction coefficient
@@ -195,8 +195,8 @@ typedef struct PhysicalSpecification
 	fix10_6 mass;
 	/// friction coefficient
 	fix10_6 frictionCoefficient;
-	/// elasticity
-	fix10_6 elasticity;
+	/// bounciness
+	fix10_6 bounciness;
 
 } PhysicalSpecification;
 
@@ -224,13 +224,13 @@ void Body_destructor(Body this);
 void Body_addForce(Body this, const Force* force);
 void Body_applyForce(Body this, const Force* force);
 void Body_applyGravity(Body this, u16 axes);
-void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 elasticity);
+void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness);
 void Body_clearAcceleration(Body this, u16 axes);
 void Body_clearExternalForce(Body this);
 Acceleration Body_getAcceleration(Body this);
 Force Body_getAppliedForce(Body this);
 u16 Body_getAxesSubjectToGravity(Body this);
-fix10_6 Body_getElasticity(Body this);
+fix10_6 Body_getBounciness(Body this);
 Vector3D Body_getLastDisplacement(Body this);
 fix10_6 Body_getMass(Body this);
 MovementType Body_getMovementType(Body this);
@@ -244,7 +244,7 @@ void Body_moveAccelerated(Body this, u16 axes);
 void Body_moveUniformly(Body this, Velocity velocity);
 void Body_setActive(Body this, bool active);
 void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity);
-void Body_setElasticity(Body this, fix10_6 elasticity);
+void Body_setBounciness(Body this, fix10_6 bounciness);
 Force Body_getNormal(Body this);
 Force Body_getLastNormalDirection(Body this);
 void Body_reset(Body this);

@@ -103,8 +103,8 @@ typedef struct SolidParticleDefinition
 	/// friction for physics
 	fix10_6 frictionCoefficient;
 
-	/// elasticity for physics
-	fix10_6 elasticity;
+	/// bounciness for physics
+	fix10_6 bounciness;
 
 	/// object's in-game type
 	u32 inGameType;

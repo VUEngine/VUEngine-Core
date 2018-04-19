@@ -142,7 +142,7 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->owner = owner;
 	this->normals = NULL;
 	this->mass = __MIN_MASS < physicalSpecification->mass ? __MAX_MASS > physicalSpecification->mass ? physicalSpecification->mass : __MAX_MASS : __MIN_MASS;
-	this->elasticity = physicalSpecification->elasticity;
+	this->bounciness = physicalSpecification->bounciness;
 	this->frictionCoefficient = physicalSpecification->frictionCoefficient;
 	this->surroundingFrictionCoefficient = 0;
 	this->totalFrictionCoefficient = 0;
@@ -703,29 +703,29 @@ void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller)
 	}
 }
 
-// get elasticity
-fix10_6 Body_getElasticity(Body this)
+// get bounciness
+fix10_6 Body_getBounciness(Body this)
 {
-	ASSERT(this, "Body::getElasticity: null this");
+	ASSERT(this, "Body::getBounciness: null this");
 
-	return this->elasticity;
+	return this->bounciness;
 }
 
-// set elasticity
-void Body_setElasticity(Body this, fix10_6 elasticity)
+// set bounciness
+void Body_setBounciness(Body this, fix10_6 bounciness)
 {
-	ASSERT(this, "Body::setElasticity: null this");
+	ASSERT(this, "Body::setBounciness: null this");
 
-	if(__I_TO_FIX10_6(0) > elasticity)
+	if(__I_TO_FIX10_6(0) > bounciness)
 	{
-		elasticity = 0;
+		bounciness = 0;
 	}
-	else if(__1I_FIX10_6 < elasticity)
+	else if(__1I_FIX10_6 < bounciness)
 	{
-		elasticity = __1I_FIX10_6;
+		bounciness = __1I_FIX10_6;
 	}
 
-	this->elasticity = elasticity;
+	this->bounciness = bounciness;
 }
 
 static void Body_computeTotalNormal(Body this)
@@ -1139,7 +1139,7 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 }
 
 // bounce back
-void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 elasticity)
+void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness)
 {
 	ASSERT(this, "Body::bounce: null this");
 	Acceleration gravity = Body_getGravity(this);
@@ -1166,19 +1166,19 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 		velocity.z - u.z,
 	};
 
-	elasticity += this->elasticity;
+	bounciness += this->bounciness;
 
-	if(__I_TO_FIX10_6(0) > elasticity)
+	if(__I_TO_FIX10_6(0) > bounciness)
 	{
-		elasticity = 0;
+		bounciness = 0;
 	}
-	else if(__1I_FIX10_6 < elasticity)
+	else if(__1I_FIX10_6 < bounciness)
 	{
-		elasticity = __1I_FIX10_6;
+		bounciness = __1I_FIX10_6;
 	}
 
-	// add elasticity and friction
-	u = Vector3D_scalarProduct(u, elasticity);
+	// add bounciness and friction
+	u = Vector3D_scalarProduct(u, bounciness);
 	w = Vector3D_scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - this->totalFrictionCoefficient));
 
 	this->velocity.x = w.x - u.x;

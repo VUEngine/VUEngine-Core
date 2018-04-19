@@ -166,10 +166,10 @@ void SpatialObject_setScale(SpatialObject this __attribute__ ((unused)), const S
 	ASSERT(this, "SpatialObject::setScale: null this");
 }
 
-// get elasticity
-fix10_6 SpatialObject_getElasticity(SpatialObject this __attribute__ ((unused)))
+// get bounciness
+fix10_6 SpatialObject_getBounciness(SpatialObject this __attribute__ ((unused)))
 {
-	ASSERT(this, "SpatialObject::getElasticity: null this");
+	ASSERT(this, "SpatialObject::getBounciness: null this");
 
 	return 0;
 }

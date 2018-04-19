@@ -2104,20 +2104,20 @@ u32 Entity_getInGameType(Entity this)
 }
 
 /**
- * Get elasticity for physics
+ * Get bounciness for physics
  *
  * @memberof	Entity
  * @public
  *
  * @param this	Function scope
  *
- * @return		Elasticity
+ * @return		Bounciness
  */
-fix10_6 Entity_getElasticity(Entity this)
+fix10_6 Entity_getBounciness(Entity this)
 {
-	ASSERT(this, "Entity::getElasticity: null this");
+	ASSERT(this, "Entity::getBounciness: null this");
 
-	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->elasticity : 0;
+	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->bounciness : 0;
 }
 
 /**

@@ -449,11 +449,11 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 	return canMove;
 }
 
-fix10_6 Actor_getElasticityOnCollision(Actor this __attribute__ ((unused)), SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix10_6 Actor_getBouncinessOnCollision(Actor this __attribute__ ((unused)), SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
-	ASSERT(this, "Actor::getElasticityOnCollision: null this");
+	ASSERT(this, "Actor::getBouncinessOnCollision: null this");
 
-	return __VIRTUAL_CALL(SpatialObject, getElasticity, collidingObject);
+	return __VIRTUAL_CALL(SpatialObject, getBounciness, collidingObject);
 }
 
 fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
@@ -504,10 +504,10 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
 
-			fix10_6 elasticity = __VIRTUAL_CALL(Actor, getElasticityOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 bounciness = __VIRTUAL_CALL(Actor, getBouncinessOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
 			fix10_6 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
 
-			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, elasticity);
+			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
 			returnValue = true;
 		}
@@ -719,14 +719,14 @@ void Actor_takeHitFrom(Actor this, Actor other)
 	}
 }
 
-// get elasticity
-fix10_6 Actor_getElasticity(Actor this)
+// get bounciness
+fix10_6 Actor_getBounciness(Actor this)
 {
-	ASSERT(this, "Actor::getElasticity: null this");
+	ASSERT(this, "Actor::getBounciness: null this");
 
 	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
 
-	return this->body ? Body_getElasticity(this->body) : physicalSpecification ? physicalSpecification->elasticity : 0;
+	return this->body ? Body_getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
 }
 
 // get velocity
