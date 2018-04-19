@@ -318,6 +318,9 @@
 // bigger numbers equal faster computations
 #define __PHYSICS_TIME_ELAPSED_DIVISOR			2
 
+// maximum bounciness coefficient allowed
+#define __MAXIMUM_BOUNCINESS_COEFFICIENT		1.2f
+
 
 //---------------------------------------------------------------------------------------------------------
 //												SOUND

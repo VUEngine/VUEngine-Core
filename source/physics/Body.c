@@ -51,6 +51,10 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#ifndef __MAXIMUM_BOUNCINESS_COEFFICIENT
+	#define __MAXIMUM_BOUNCINESS_COEFFICIENT	2
+#endif
+
 // this should be improved and calculated dynamically based on framerate
 #define STOPPED_MOVING		0
 #define STILL_MOVES			1
@@ -1172,7 +1176,7 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	{
 		bounciness = 0;
 	}
-	else if(__1I_FIX10_6 < bounciness)
+	else if(__F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT) < bounciness)
 	{
 		bounciness = __1I_FIX10_6;
 	}
