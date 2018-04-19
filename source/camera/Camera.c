@@ -128,7 +128,7 @@ static void __attribute__ ((noinline)) Camera_constructor(Camera this)
     	__BASE_FACTOR,							// distance from left to right eye (depth perception)
     	__HORIZONTAL_VIEW_POINT_CENTER,			// horizontal View point center
     	__VERTICAL_VIEW_POINT_CENTER,			// vertical View point center
-    	__SCALLING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
+    	__SCALING_MODIFIER_FACTOR,				// scaling factor for sprite resizing
     };
 
 	Camera_setOptical(this, Optical_getFromPixelOptical(pixelOptical));
