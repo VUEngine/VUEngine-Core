@@ -177,54 +177,30 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	int color = __COLOR_BRIGHT_RED;
 
-	Vector3D normalizedCenter = this->center;
-	normalizedCenter = Vector3D_getRelativeToCamera(normalizedCenter);
-	PixelVector normalizedCenter2D = Vector3D_projectToPixelVector(normalizedCenter, 0);
+	Vector3D normalizedCenter3D = Vector3D_getRelativeToCamera(this->center);
 
 	fix10_6 radiusSquare = __FIX10_6_MULT(this->radius, this->radius);
 
-	Vector3D point3D;
-
-	// draw on XY plane
-	point3D.x = -this->radius;
-	point3D.y = 0;
-	point3D.z = 0;
-
-	for(; point3D.x < this->radius; point3D.x += __METERS_PER_PIXEL)
+	Vector3D relativePoint3D =
 	{
-		point3D.y = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
+		// draw on XY plane
+		-this->radius,
+		0,
+		this->center.z
+	};
 
-		Vector3D translatedPoint3D = {point3D.x, point3D.y, point3D.z};
-		PixelVector relativePoint2D = Vector3D_projectToPixelVector(translatedPoint3D, 0);
+	for(; relativePoint3D.x < this->radius; relativePoint3D.x += __METERS_PER_PIXEL)
+	{
+		relativePoint3D.y = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(radiusSquare - __FIX10_6_EXT_MULT(relativePoint3D.x, relativePoint3D.x))));
+		Vector3D topTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y - relativePoint3D.y, normalizedCenter3D.z};
+		Vector3D bottomTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y + relativePoint3D.y, normalizedCenter3D.z};
 
-		if(calculateParallax)
-		{
-			relativePoint2D.parallax = Optics_calculateParallax(point3D.x, point3D.z);
-		}
+		s16 parallax = calculateParallax ? Optics_calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
+		PixelVector topPoint2D = Vector3D_projectToPixelVector(topTranslatedPoint3D, parallax);
+		PixelVector bottomPoint2D = Vector3D_projectToPixelVector(bottomTranslatedPoint3D, parallax);
 
-		{
-			PixelVector absolutePoint2D =
-			{
-				normalizedCenter2D.x + relativePoint2D.x,
-				normalizedCenter2D.y + relativePoint2D.y,
-				normalizedCenter2D.z + relativePoint2D.z,
-				relativePoint2D.parallax,
-			};
-
-			DirectDraw_drawPoint(DirectDraw_getInstance(), absolutePoint2D, color);
-		}
-
-		{
-			PixelVector absolutePoint2D =
-			{
-				normalizedCenter2D.x + relativePoint2D.x,
-				normalizedCenter2D.y - relativePoint2D.y,
-				normalizedCenter2D.z + relativePoint2D.z,
-				relativePoint2D.parallax,
-			};
-
-			DirectDraw_drawPoint(DirectDraw_getInstance(), absolutePoint2D, color);
-		}
+		DirectDraw_drawPoint(DirectDraw_getInstance(), topPoint2D, color);
+		DirectDraw_drawPoint(DirectDraw_getInstance(), bottomPoint2D, color);
 	}
 /*
 	// draw on YZ plane
