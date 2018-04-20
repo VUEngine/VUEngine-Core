@@ -182,10 +182,8 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
 		{
 			// normalize vertex to screen coordinates
-			fromVertex3D = *((Vector3D*)fromNode->data);
-			toVertex3D = *((Vector3D*)toNode->data);
-			fromVertex3D = Vector3D_getRelativeToCamera(fromVertex3D);
-			toVertex3D = Vector3D_getRelativeToCamera(toVertex3D);
+			fromVertex3D = Vector3D_getRelativeToCamera(*((Vector3D*)fromNode->data));
+			toVertex3D = Vector3D_getRelativeToCamera(*((Vector3D*)toNode->data));
 
 			// project to 2d coordinates
 			fromVertex2D = Vector3D_projectToPixelVector(fromVertex3D, 0);

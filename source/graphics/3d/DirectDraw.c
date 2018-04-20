@@ -165,6 +165,26 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
 }
 
 /**
+ * Draws a black pixel on the screen.
+ *
+ * @brief			Draws a black pixel on the screen
+ * @memberof		DirectDraw
+ * @private
+ *
+ * @param this		Function scope
+ * @param buffer	Buffer base address
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
+ */
+static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
+{
+	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
+
+	DirectDraw_drawBlackPixel(this, buffer, x, y);
+}
+
+
+/**
  * Draws a point between two given 2D points
  *
  * @memberof		DirectDraw
@@ -222,228 +242,102 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 	fix10_6 dx = __ABS(toPointX - fromPointX);
 	fix10_6 dy = __ABS(toPointY - fromPointY);
 
+	if(0 == dx && 0 == dy)
+	{
+		return;
+	}
+
 	fix10_6 stepX = dx ? __I_TO_FIX10_6(1) : 0;
 	fix10_6 stepY = dy ? __I_TO_FIX10_6(1) : 0;
 	fix10_6 parallax = __I_TO_FIX10_6(fromPoint.parallax);
+	fix10_6 parallaxDelta = __I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax);
 
+	void (*drawPixelMethod)(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color) = DirectDraw_drawPixel;
 	// duplicating code here since it is much lighter on the cpu
+
 	if(color == __COLOR_BLACK)
 	{
-		if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
-		{
-			if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-			{
-				DirectDraw_drawBlackPixel(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY));
-			}
-			if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-			{
-				DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY));
-			}
-		}
-
-		if(0 == dx && 0 < dy)
-		{
-			if(toPointY < fromPointY)
-        	{
-        		fix10_6 aux = toPointX;
-        		toPointX = fromPointX;
-        		fromPointX = aux;
-
-        		aux = toPointY;
-        		toPointY = fromPointY;
-        		fromPointY = aux;
-        	}
-
-			if(toPointX < fromPointX)
-			{
-				stepX = -stepX;
-			}
-
-			fix10_6 halfDx = dx >> 1;
-
-			fix10_6 fraction = dy - halfDx;
-
-			fix10_6 parallaxStep = halfDx ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDx << 1)) : 0;
-			fix10_6 auxParallax = parallax;
-
-			while(fromPointY < toPointY)
-			{
-				fromPointY += stepY;
-				fromPointX += stepX;
-				fraction += dy;
-
-				auxParallax += parallaxStep;
-				parallax = auxParallax;
-
-				if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
-				{
-					if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawBlackPixel(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY));
-					}
-					if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY));
-					}
-				}
-			}
-		}
-		else
-		{
-			if(toPointX < fromPointX)
-        	{
-        		fix10_6 aux = toPointX;
-        		toPointX = fromPointX;
-        		fromPointX = aux;
-
-        		aux = toPointY;
-        		toPointY = fromPointY;
-        		fromPointY = aux;
-        	}
-
-			if(toPointY < fromPointY)
-			{
-				stepY = -stepY;
-			}
-
-			fix10_6 halfDy = dy >> 1;
-
-			fix10_6 fraction = dx - halfDy;
-
-			fix10_6 parallaxStep = halfDy ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDy)) : 0;
-			fix10_6 auxParallax = parallax;
-
-			while(fromPointX < toPointX)
-			{
-				fromPointX += stepX;
-				fromPointY += stepY;
-				fraction += dx;
-
-				auxParallax += parallaxStep;
-				parallax = auxParallax;
-
-				if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
-				{
-					if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawBlackPixel(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY));
-					}
-					if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawBlackPixel(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY));
-					}
-				}
-			}
-		}
-
+		drawPixelMethod = DirectDraw_drawBlackPixelWrapper;
 	}
-	else
+
+	fix10_6* fromCoordinate = NULL;
+	fix10_6* toCoordinate = NULL;
+	fix10_6 parallaxStep = 0;
+
+	if(dy == dx || dy < dx || 0 == dy)
 	{
+		fromCoordinate = &fromPointX;
+		toCoordinate = &toPointX;
+
+		stepX = __I_TO_FIX10_6(1);
+		stepY = __FIX10_6_DIV(dy, dx);
+
+		if(toPointX < fromPointX)
+		{
+			fix10_6 aux = toPointX;
+			toPointX = fromPointX;
+			fromPointX = aux;
+
+			aux = toPointY;
+			toPointY = fromPointY;
+			fromPointY = aux;
+		}
+
+		if(toPointY < fromPointY)
+		{
+			stepY = -stepY;
+		}
+
+		parallaxStep = __FIX10_6_DIV(parallaxDelta, __ABS(dx));
+	}
+	else if(dx < dy || 0 == dx)
+	{
+		fromCoordinate = &fromPointY;
+		toCoordinate = &toPointY;
+
+		stepX = __FIX10_6_DIV(dx, dy);
+		stepY = __I_TO_FIX10_6(1);
+
+		if(toPointY < fromPointY)
+		{
+			fix10_6 aux = toPointX;
+			toPointX = fromPointX;
+			fromPointX = aux;
+
+			aux = toPointY;
+			toPointY = fromPointY;
+			fromPointY = aux;
+		}
+
+		if(toPointX < fromPointX)
+		{
+			stepX = -stepX;
+		}
+
+		parallaxStep = __FIX10_6_DIV(parallaxDelta, __ABS(dy));
+	}
+
+	fix10_6 auxParallax = parallax;
+
+	while(*fromCoordinate <= *toCoordinate)
+	{
+		parallax = auxParallax;
+
 		if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
 		{
 			if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
 			{
-				DirectDraw_drawPixel(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
+				drawPixelMethod(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
 			}
+
 			if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
 			{
-				DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
+				drawPixelMethod(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
 			}
 		}
 
-		if(0 == dx && 0 < dy)
-		{
-			if(toPointY < fromPointY)
-        	{
-        		fix10_6 aux = toPointX;
-        		toPointX = fromPointX;
-        		fromPointX = aux;
-
-        		aux = toPointY;
-        		toPointY = fromPointY;
-        		fromPointY = aux;
-        	}
-
-			if(toPointX < fromPointX)
-			{
-				stepX = -stepX;
-			}
-
-			fix10_6 halfDx = dx >> 1;
-
-			fix10_6 fraction = dy - halfDx;
-
-			fix10_6 parallaxStep = halfDx ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDx << 1)) : 0;
-			fix10_6 auxParallax = parallax;
-
-			while(fromPointY < toPointY)
-			{
-				fromPointY += stepY;
-				fromPointX += stepX;
-				fraction += dy;
-
-				auxParallax += parallaxStep;
-				parallax = auxParallax;
-
-				if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
-				{
-					if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawPixel(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
-					}
-					if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
-					}
-				}
-			}
-		}
-		else
-		{
-			if(toPointX < fromPointX)
-        	{
-        		fix10_6 aux = toPointX;
-        		toPointX = fromPointX;
-        		fromPointX = aux;
-
-        		aux = toPointY;
-        		toPointY = fromPointY;
-        		fromPointY = aux;
-        	}
-
-			if(toPointY < fromPointY)
-			{
-				stepY = -stepY;
-			}
-
-			fix10_6 halfDy = dy >> 1;
-
-			fix10_6 fraction = dx - halfDy;
-
-			fix10_6 parallaxStep = halfDy ? __FIX10_6_DIV(__I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax), __ABS(halfDy)) : 0;
-			fix10_6 auxParallax = parallax;
-
-			while(fromPointX < toPointX)
-			{
-				fromPointX += stepX;
-				fromPointY += stepY;
-				fraction += dx;
-
-				auxParallax += parallaxStep;
-				parallax = auxParallax;
-
-				if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
-				{
-					if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawPixel(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
-					}
-					if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
-					{
-						DirectDraw_drawPixel(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
-					}
-				}
-			}
-		}
+		fromPointX += stepX;
+		fromPointY += stepY;
+		auxParallax += parallaxStep;
 	}
 }
