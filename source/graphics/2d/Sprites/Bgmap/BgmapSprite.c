@@ -254,20 +254,22 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 
 		if(this->texture)
 		{
+			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
+
 			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
 				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
 				__FIX10_6_MULT(
 					__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
 					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
 				)
-			)));
+			))) + 1;
 			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
 				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
 				__FIX10_6_MULT(
 					__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
 					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
 				)
-			)));
+			))) + 1;
 		}
 
 		if(this->param)
@@ -462,9 +464,6 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 			worldPointer->w = width;
 		}
 
-		// apply scaling and add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-		worldPointer->w += 1;
-		worldPointer->h += 1;
 
 		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
 
