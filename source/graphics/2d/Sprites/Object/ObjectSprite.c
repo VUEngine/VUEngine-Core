@@ -155,8 +155,8 @@ void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation)
 
 	Direction direction =
 	{
-		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) ? __LEFT : __RIGHT,
-		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) ? __UP : __DOWN,
+		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
+		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->x) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z) ? __UP : __DOWN,
 		__FAR,
 	};
 
