@@ -1080,7 +1080,9 @@ static void StageEditor_printEntityPosition(StageEditor this)
 	if(this->currentEntityNode)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		const Vector3D* globalPosition = Container_getGlobalPosition(__SAFE_CAST(Container, entity));
+		const Vector3D* globalPosition = __VIRTUAL_CALL(SpatialObject, getPosition, entity);
+		const Rotation* globalRotation = __VIRTUAL_CALL(SpatialObject, getRotation, entity);
+		const Scale* globalScale = __VIRTUAL_CALL(SpatialObject, getScale, entity);
 		char* entityName = Container_getName(__SAFE_CAST(Container, entity));
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
@@ -1093,6 +1095,14 @@ static void StageEditor_printEntityPosition(StageEditor this)
 		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->x), x + 13, y, NULL);
 		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 22, y, NULL);
 		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
+		Printing_text(Printing_getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
+		Printing_int(Printing_getInstance(), globalRotation->x, x + 13, y, NULL);
+		Printing_int(Printing_getInstance(), globalRotation->y, x + 22, y, NULL);
+		Printing_int(Printing_getInstance(), globalRotation->z, x + 31, y, NULL);
+		Printing_text(Printing_getInstance(), "Scl. (x,y,z):                  ", x, ++y, NULL);
+		Printing_float(Printing_getInstance(), __FIX7_9_TO_F(globalScale->x), x + 13, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX7_9_TO_F(globalScale->y), x + 22, y, NULL);
+		Printing_float(Printing_getInstance(), __FIX7_9_TO_F(globalScale->z), x + 31, y, NULL);
 		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
 		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getWidth(entity)), x + 13, y, NULL);
 		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getHeight(entity)), x + 20, y, NULL);
