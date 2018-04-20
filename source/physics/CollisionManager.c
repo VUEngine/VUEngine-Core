@@ -172,7 +172,6 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		// load the current shape
 		Shape shape = __SAFE_CAST(Shape, node->data);
 		shape->isVisible = true;
-		shape->moved = false;
 
 		extern const Vector3D* _cameraPosition;
 		extern const CameraFrustum* _cameraFrustum;
@@ -201,6 +200,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		}
 #endif
 
+		shape->moved = false;
 	}
 
 	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList_getSize(this->movingShapes), "CollisionManager::update: too many moving shapes");

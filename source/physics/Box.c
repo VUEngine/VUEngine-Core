@@ -124,7 +124,7 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 		fix10_6 depth = surroundingBoxSize.z >> 1;
 
 		// allow only one rotation
-		if(rotation->z)
+		if(rotation->z && 256 != rotation->z)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
 			s16 angle = rotation->z - ((rotation->z / 256) << 8);
@@ -180,7 +180,7 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 				this->rotationVertexDisplacement.y = 0;
 			}
 		}
-		else if(rotation->y)
+		else if(rotation->y && 256 != rotation->y)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
 			s16 angle = rotation->y - ((rotation->y / 256) << 8);
@@ -236,7 +236,7 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 				this->rotationVertexDisplacement.z = 0;
 			}
 		}
-		else if(rotation->x)
+		else if(rotation->x && 256 != rotation->x)
 		{
 			// clamp value around 256 degrees (180) to avoid conditionals later when calculating rotationVertexDisplacement
 			s16 angle = rotation->x - ((rotation->x / 256) << 8);
@@ -317,6 +317,8 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 	}
 
 	__CALL_BASE_METHOD(Shape, position, this, position, rotation, scale, size);
+
+//	Shape_show(this);
 }
 
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
@@ -545,14 +547,14 @@ void Box_configureWireframe(Box this)
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
-
-/*
+#ifdef __DRAW_COMPLETE_BOXES
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-*/		}
+#endif
+		}
 
 		if(!this->rotationVertexDisplacement.y)
 		{
@@ -561,12 +563,13 @@ void Box_configureWireframe(Box this)
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1 - this->rotationVertexDisplacement.z);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-
+#ifdef __DRAW_COMPLETE_BOXES
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+#endif
 		}
 
 		if(!this->rotationVertexDisplacement.x)
@@ -576,12 +579,13 @@ void Box_configureWireframe(Box this)
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-
+#ifdef __DRAW_COMPLETE_BOXES
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
 			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+#endif
 		}
 	}
 	else
@@ -591,12 +595,14 @@ void Box_configureWireframe(Box this)
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-/*		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+#ifdef __DRAW_COMPLETE_BOXES
+		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
 		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-*/	}
+#endif
+	}
 }
 
 // print debug data
