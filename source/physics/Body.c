@@ -1228,9 +1228,6 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	{
 		Body_sleep(__SAFE_CAST(Body, this));
 	}
-
-		Body_print(this, 1, 1);
-
 }
 
 // take a hit
