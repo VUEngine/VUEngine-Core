@@ -316,7 +316,7 @@
 
 // divisor to speed up physics simulations
 // bigger numbers equal faster computations
-#define __PHYSICS_TIME_ELAPSED_DIVISOR			2
+#define __PHYSICS_TIME_ELAPSED_DIVISOR			1
 
 // maximum bounciness coefficient allowed
 #define __MAXIMUM_BOUNCINESS_COEFFICIENT		1.2f

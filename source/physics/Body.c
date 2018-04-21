@@ -52,7 +52,7 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 //---------------------------------------------------------------------------------------------------------
 
 #ifndef __MAXIMUM_BOUNCINESS_COEFFICIENT
-	#define __MAXIMUM_BOUNCINESS_COEFFICIENT	2
+	#define __MAXIMUM_BOUNCINESS_COEFFICIENT	1
 #endif
 
 // this should be improved and calculated dynamically based on framerate
@@ -62,7 +62,7 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 
 //#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIX10_6(0.9f)
 #define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(8)
-#define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(16)
+#define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(48)
 
 #define __MIN_MASS								__F_TO_FIX10_6(0.1f)
 #define __MAX_MASS								__I_TO_FIX10_6(1)
@@ -553,7 +553,7 @@ MovementResult Body_updateMovement(Body this)
 	this->weight = Vector3D_scalarProduct(gravity, this->mass);
 
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
+	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -(this->frictionForceMagnitude << 0));
 
 	// hack to avoid normalization
 //	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 2));
@@ -724,9 +724,9 @@ void Body_setBounciness(Body this, fix10_6 bounciness)
 	{
 		bounciness = 0;
 	}
-	else if(__1I_FIX10_6 < bounciness)
+	else if(__F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT))
 	{
-		bounciness = __1I_FIX10_6;
+		bounciness = __F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT);
 	}
 
 	this->bounciness = bounciness;
@@ -759,13 +759,13 @@ static void Body_computeTotalNormal(Body this)
 
 	Body_computeTotalFrictionCoefficient(this);
 
-	if(this->totalNormal.x | this->totalNormal.y | this->totalNormal.z)
+	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
 	{
-		this->frictionForceMagnitude = __FIX10_6_MULT(Vector3D_length(this->totalNormal), this->totalFrictionCoefficient);
+		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D_length(this->totalNormal), this->totalFrictionCoefficient));
 	}
 	else
 	{
-		this->frictionForceMagnitude = __FIX10_6_MULT(Vector3D_length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER;
+		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D_length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER);
 	}
 }
 
@@ -1152,8 +1152,8 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	Body_setSurroundingFrictionCoefficient(this, frictionCoefficient);
 
 	// compute bouncing vector
-	fix10_6 cosAngle = __I_TO_FIX10_6(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX10_6_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX10_6;
-	fix10_6 normalMagnitude = __FIX10_6_MULT(Vector3D_length(this->weight), cosAngle);
+	fix10_6 cosAngle = __I_TO_FIX10_6(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX10_6_EXT_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX10_6;
+	fix10_6 normalMagnitude = __FIX10_6_EXT_MULT(Vector3D_length(this->weight), cosAngle);
 
 	// register normal affecting the body
 	Body_addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
@@ -1178,7 +1178,7 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	}
 	else if(__F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT) < bounciness)
 	{
-		bounciness = __1I_FIX10_6;
+		bounciness = __F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT);
 	}
 
 	// add bounciness and friction
@@ -1188,6 +1188,21 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;
 	this->velocity.z = w.z - u.z;
+
+	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
+	{
+		this->movementType.x = __ACCELERATED_MOVEMENT;
+	}
+
+	if(__NO_MOVEMENT == this->movementType.y && this->velocity.y)
+	{
+		this->movementType.y = __ACCELERATED_MOVEMENT;
+	}
+
+	if(__NO_MOVEMENT == this->movementType.z && this->velocity.z)
+	{
+		this->movementType.z = __ACCELERATED_MOVEMENT;
+	}
 
 	// determine bouncing result
 	MovementResult movementResult = Body_getBouncingResult(this, velocity, bouncingPlaneNormal);
@@ -1213,6 +1228,9 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	{
 		Body_sleep(__SAFE_CAST(Body, this));
 	}
+
+		Body_print(this, 1, 1);
+
 }
 
 // take a hit
@@ -1259,6 +1277,10 @@ void Body_print(Body this, int x, int y)
 	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 10, y, NULL);
 	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 10 * 2, y++, NULL);
+
+	Printing_text(Printing_getInstance(), "Speed", x, y, NULL);
+	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(Vector3D_length(this->velocity)), xDisplacement + x, y++, NULL);
 
 	Printing_text(Printing_getInstance(), "Acceleration", x, y, NULL);
 	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
