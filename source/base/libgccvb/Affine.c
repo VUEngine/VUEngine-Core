@@ -45,20 +45,16 @@ extern double fabs (double);
 
 s16 Affine_applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Scale* scale, const Rotation* rotation)
 {
-	Scale finalScale =
-	{
-		__FIX7_9_MULT(__COS(rotation->y), scale->x),
-		__FIX7_9_MULT(__COS(rotation->x), scale->y),
-		__1I_FIX7_9,
-	};
+	fix10_6 finalScaleX = __FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(rotation->y)), __FIX7_9_TO_FIX10_6(scale->x));
+	fix10_6 finalScaleY = __FIX10_6_MULT(__FIX7_9_TO_FIX10_6(__COS(rotation->x)), __FIX7_9_TO_FIX10_6(scale->y));
 
-	ASSERT(finalScale.x, "Affine::applyAll: 0 x scale");
-	ASSERT(finalScale.y, "Affine::applyAll: 0 y scale");
+	ASSERT(finalScaleX, "Affine::applyAll: 0 x scale");
+	ASSERT(finalScaleY, "Affine::applyAll: 0 y scale");
 
-	fix10_6 highPrecisionPa = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__COS(-rotation->z)), __FIX7_9_TO_FIX10_6(finalScale.x));
-	fix10_6 highPrecisionPb = -__FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__SIN(-rotation->z)), __FIX7_9_TO_FIX10_6(finalScale.x));
-	fix10_6 highPrecisionPc = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__SIN(-rotation->z)), __FIX7_9_TO_FIX10_6(finalScale.y));
-	fix10_6 highPrecisionPd = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__COS(-rotation->z)), __FIX7_9_TO_FIX10_6(finalScale.y));
+	fix10_6 highPrecisionPa = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__COS(-rotation->z)), finalScaleX);
+	fix10_6 highPrecisionPb = -__FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__SIN(-rotation->z)), finalScaleX);
+	fix10_6 highPrecisionPc = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__SIN(-rotation->z)), finalScaleY);
+	fix10_6 highPrecisionPd = __FIX10_6_DIV(__FIX7_9_TO_FIX10_6(__COS(-rotation->z)), finalScaleY);
 
 	FixedAffineMatrix fixedAffineMatrix;
 	fixedAffineMatrix.pa = __FIX10_6_TO_FIX7_9(highPrecisionPa);
@@ -68,25 +64,30 @@ s16 Affine_applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 
 	fixedAffineMatrix.dx =
 		mx
 		+
-		__FIX10_6_TO_FIX13_3(__FIX10_6_DIV(halfWidth, __FIX7_9_TO_FIX10_6(__ABS(finalScale.x))))
-		-
 		__FIX10_6_TO_FIX13_3
 		(
-			__FIX10_6_MULT(highPrecisionPa, x)
-			+
-			__FIX10_6_MULT(highPrecisionPb, y)
+			halfWidth
+			-
+			(
+				__FIX10_6_MULT(highPrecisionPa, x)
+				+
+				__FIX10_6_MULT(highPrecisionPb, y)
+			)
 		);
 
 	// bgY + bgHeight - pc * dispX - pd * dispY
 	fixedAffineMatrix.dy =
 		my
 		+
-		__FIX10_6_TO_FIX13_3(__FIX10_6_DIV(halfHeight, __FIX7_9_TO_FIX10_6(__ABS(finalScale.y))))
-		-
+		__FIX10_6_TO_FIX13_3
 		(
-			__FIX10_6_TO_FIX13_3(__FIX10_6_MULT(highPrecisionPc, x))
-			+
-			__FIX10_6_TO_FIX13_3(__FIX10_6_MULT(highPrecisionPd, y))
+			halfHeight
+			-
+			(
+				__FIX10_6_MULT(highPrecisionPc, x)
+				+
+				__FIX10_6_MULT(highPrecisionPd, y)
+			)
 		);
 
 	fixedAffineMatrix.parallax = 0;

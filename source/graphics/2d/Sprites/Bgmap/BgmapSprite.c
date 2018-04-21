@@ -59,6 +59,8 @@ __CLASS_FRIEND_DEFINITION(BgmapTexture);
 
 void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
 static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
+static void BgmapSprite_computeDimensions(BgmapSprite this);
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -182,6 +184,35 @@ Scale BgmapSprite_getScale(BgmapSprite this)
 }
 
 /**
+ * Calculate with and height
+ *
+ * @memberof			BgmapSprite
+ * @private
+ *
+ * @param this			Function scope
+ */
+static void BgmapSprite_computeDimensions(BgmapSprite this)
+{
+	ASSERT(this, "BgmapSprite::rotate: null this");
+
+	this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
+		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
+		__FIX10_6_MULT(
+			__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
+			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
+		)
+	))) + 1;
+
+	this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
+		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
+		__FIX10_6_MULT(
+			__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
+			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
+		)
+	))) + 1;
+}
+
+/**
  * Rotate
  *
  * @memberof			BgmapSprite
@@ -200,20 +231,7 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 		if(this->texture)
 		{
-			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
-				__FIX10_6_MULT(
-					__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
-					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
-				)
-			)));
-			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
-				__FIX10_6_MULT(
-					__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
-					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
-				)
-			)));
+			BgmapSprite_computeDimensions(this);
 		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
@@ -255,21 +273,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 		if(this->texture)
 		{
 			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-
-			this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
-				__FIX10_6_MULT(
-					__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
-					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
-				)
-			))) + 1;
-			this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
-				__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
-				__FIX10_6_MULT(
-					__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
-					__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
-				)
-			))) + 1;
+			BgmapSprite_computeDimensions(this);
 		}
 
 		if(this->param)
@@ -812,8 +816,8 @@ static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
 			__I_TO_FIX10_6(this->halfHeight),
 			__I_TO_FIX13_3(this->drawSpec.textureSource.mx),
 			__I_TO_FIX13_3(this->drawSpec.textureSource.my),
-			__I_TO_FIX10_6(this->halfWidth),
-			__I_TO_FIX10_6(this->halfHeight),
+			__I_TO_FIX10_6(this->texture->textureDefinition->cols << 2),
+			__I_TO_FIX10_6(this->texture->textureDefinition->rows << 2),
 			&this->drawSpec.scale,
 			&this->drawSpec.rotation
 		);
