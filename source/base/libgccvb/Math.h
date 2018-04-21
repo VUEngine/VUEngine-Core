@@ -37,8 +37,31 @@
 extern int abs(int);
 extern float fabsf(float);
 
-//#define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
+#ifdef __USE_WORDS_SIZE_ABS_FUNCTION
+#define __ABS(number)   (((number) + ((number) >> 31)) ^ ((number) >> 31))
+#else
+#ifdef __USE_VB_REGISTER_ABS_FUNCTION
+#define __ABS(number)	customAbs(number)
+#else
 #define __ABS(number)   abs(number)
+#endif
+#endif
+
+inline int customAbs(int number)
+{
+	int result = 0;
+
+	asm("				\n\t"	\
+		"ldsr %1, 31	\n\t"	\
+		"stsr 31, %0	\n\t"	\
+		: "=r" (result)			\
+		: "r" (number)			\
+		:
+	);
+
+	return result;
+}
+
 
 // usable only when m is a power of 2
 #define __MODULO(n, m)			(n & (m - 1))
