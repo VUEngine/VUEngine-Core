@@ -119,6 +119,12 @@ typedef struct MovementResult
 		 */																								\
 		Velocity velocity;																				\
 		/**
+		 * @var Velocity 		maximum velocity
+		 * @brief				maximum velocity on each instance
+		 * @memberof 			Body
+		 */																								\
+		Velocity maximumVelocity;																		\
+		/**
 		 * @var Acceleration 	acceleration
 		 * @brief				acceleration structure
 		 * @memberof 			Body
@@ -197,6 +203,8 @@ typedef struct PhysicalSpecification
 	fix10_6 frictionCoefficient;
 	/// bounciness
 	fix10_6 bounciness;
+	/// maximum velocity
+	Velocity maximumVelocity;
 
 } PhysicalSpecification;
 

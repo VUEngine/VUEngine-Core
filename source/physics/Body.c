@@ -126,6 +126,7 @@ Acceleration Body_getGravity(Body this);
 static void Body_computeTotalNormal(Body this);
 static void Body_computeTotalFrictionCoefficient(Body this);
 void Body_sleep(Body body);
+static void Body_capVelocity(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -168,6 +169,7 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->friction 				= (Force){0, 0, 0};
 	this->totalNormal			= (Force){0, 0, 0};
 	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
+	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
 
 	if(!_physhicsClock)
 	{
@@ -544,6 +546,41 @@ Acceleration Body_getGravity(Body this)
 	};
 }
 
+static void Body_capVelocity(Body this)
+{
+	ASSERT(this, "Body::capVelocity: null this");
+
+	if(this->maximumVelocity.x)
+	{
+		if(__ABS(this->maximumVelocity.x) < __ABS(this->velocity.x))
+		{
+			int sign = 0 <= this->velocity.x ? 1 : -1;
+
+			this->velocity.x = (this->maximumVelocity.x * sign);
+		}
+	}
+
+	if(this->maximumVelocity.y)
+	{
+		if(__ABS(this->maximumVelocity.y) < __ABS(this->velocity.y))
+		{
+			int sign = 0 <= this->velocity.y ? 1 : -1;
+
+			this->velocity.y = (this->maximumVelocity.y * sign);
+		}
+	}
+
+	if(this->maximumVelocity.z)
+	{
+		if(__ABS(this->maximumVelocity.z) < __ABS(this->velocity.z))
+		{
+			int sign = 0 <= this->velocity.z ? 1 : -1;
+
+			this->velocity.z = (this->maximumVelocity.z * sign);
+		}
+	}
+}
+
 // update movement over axes
 MovementResult Body_updateMovement(Body this)
 {
@@ -605,6 +642,8 @@ MovementResult Body_updateMovement(Body this)
 		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime) + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
+
+	Body_capVelocity(this);
 
 	return Body_getMovementResult(this, previousVelocity);
 }
@@ -1188,6 +1227,8 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;
 	this->velocity.z = w.z - u.z;
+
+	Body_capVelocity(this);
 
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
 	{
