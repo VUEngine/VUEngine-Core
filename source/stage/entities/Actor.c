@@ -481,7 +481,7 @@ fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject _
 {
 	ASSERT(this, "Actor::getFrictionOnCollision: null this");
 
-	return Actor_getSurroundingFrictionCoefficient(this);
+	return __VIRTUAL_CALL(Actor, getSurroundingFrictionCoefficient, this);
 }
 
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation)
@@ -746,7 +746,7 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 		return;
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
+	Body_setSurroundingFrictionCoefficient(this->body, __VIRTUAL_CALL(Actor, getSurroundingFrictionCoefficient, this));
 
 	if(isShapeImpenetrable)
 	{
@@ -763,7 +763,7 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((
 		return;
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body, Actor_getSurroundingFrictionCoefficient(this));
+	Body_setSurroundingFrictionCoefficient(this->body, __VIRTUAL_CALL(Actor, getSurroundingFrictionCoefficient, this));
 
 	if(isShapeImpenetrable)
 	{

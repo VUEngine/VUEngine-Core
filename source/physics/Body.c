@@ -68,8 +68,9 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 #define __MAX_MASS								__I_TO_FIX10_6(1)
 #define __MAXIMUM_FRICTION_COEFFICIENT			__I_TO_FIX10_6(1)
 
+#ifndef __FRICTION_FORCE_FACTOR_POWER
 #define __FRICTION_FORCE_FACTOR_POWER					2
-
+#endif
 //---------------------------------------------------------------------------------------------------------
 //												CLASS' METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -222,6 +223,18 @@ Velocity Body_getVelocity(Body this)
 	ASSERT(this, "Body::getVelocity: null this");
 
 	return this->velocity;
+}
+
+void Body_modifyVelocity(Body this, const Velocity* multiplier)
+{
+	ASSERT(this, "Body::modifyVelocity: null this");
+	ASSERT(multiplier, "Body::modifyVelocity: null multiplier");
+
+	this->velocity.x += multiplier->x;
+	this->velocity.y += multiplier->y;
+	this->velocity.z += multiplier->z;
+
+	Body_capVelocity(this);
 }
 
 // retrieve acceleration
@@ -589,11 +602,13 @@ MovementResult Body_updateMovement(Body this)
 	Acceleration gravity = Body_getGravity(this);
 	this->weight = Vector3D_scalarProduct(gravity, this->mass);
 
+#ifndef __USE_HACK_FOR_FRICTION
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -(this->frictionForceMagnitude << 0));
-
+	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
+#else
 	// hack to avoid normalization
-//	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << 2));
+	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << __FRICTION_FORCE_FACTOR_POWER));
+#endif
 
 	fix10_6 elapsedTime = _currentElapsedTime;
 	fix10_6 elapsedTimeHalfSquare = __FIX10_6_MULT(elapsedTime, elapsedTime) >> 1;

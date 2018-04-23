@@ -205,6 +205,8 @@ typedef struct PhysicalSpecification
 	fix10_6 bounciness;
 	/// maximum velocity
 	Velocity maximumVelocity;
+																			\
+
 
 } PhysicalSpecification;
 
@@ -245,6 +247,7 @@ MovementType Body_getMovementType(Body this);
 SpatialObject Body_getOwner(Body this);
 const Vector3D* Body_getPosition(Body this);
 Velocity Body_getVelocity(Body this);
+void Body_modifyVelocity(Body this, const Velocity* multiplier);
 bool Body_isActive(Body this);
 bool Body_isAwake(Body body);
 u16 Body_getMovementOnAllAxes(Body this);

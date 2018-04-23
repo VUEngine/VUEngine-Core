@@ -45,6 +45,7 @@
 		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
 		__VIRTUAL_DEC(ClassName, fix10_6, getBouncinessOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
 		__VIRTUAL_DEC(ClassName, fix10_6, getFrictionOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
+		__VIRTUAL_DEC(ClassName, fix10_6, getSurroundingFrictionCoefficient);							\
 
 #define Actor_SET_VTABLE(ClassName)																		\
 		AnimatedEntity_SET_VTABLE(ClassName)															\
@@ -72,6 +73,7 @@
 		__VIRTUAL_SET(ClassName, Actor, enterCollision);												\
 		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
 		__VIRTUAL_SET(ClassName, Actor, syncRotationWithBody);											\
+		__VIRTUAL_SET(ClassName, Actor, getSurroundingFrictionCoefficient);								\
 
 #define Actor_ATTRIBUTES																				\
 		/* super's attributes */																		\
@@ -147,6 +149,7 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotC
 void Actor_syncPositionWithBody(Actor this);
 void Actor_syncRotationWithBody(Actor this);
 Body Actor_getBody(Actor this);
+fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this);
 
 
 #endif
