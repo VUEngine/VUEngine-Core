@@ -305,6 +305,7 @@ bool Sprite_writeTextures(Sprite this);
 // animation
 s8 Sprite_getActualFrame(Sprite this);
 PixelVector Sprite_getDisplacement(Sprite this);
+void Sprite_setDisplacement(Sprite this, PixelVector displacement);
 s8 Sprite_getFrameDuration(Sprite this);
 int Sprite_getHalfHeight(Sprite this);
 int Sprite_getHalfWidth(Sprite this);

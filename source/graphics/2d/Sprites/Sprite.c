@@ -650,6 +650,22 @@ PixelVector Sprite_getDisplacement(Sprite this)
 }
 
 /**
+ * Set displacement
+ *
+ * @memberof	Sprite
+ * @public
+ *
+ * @param this	Function scope
+ * @param displacement 	PixelVector
+ */
+void Sprite_setDisplacement(Sprite this, PixelVector displacement)
+{
+	ASSERT(this, "Sprite::setDisplacement: null this");
+
+	this->displacement = displacement;
+}
+
+/**
  * Rotate
  *
  * @memberof		Sprite
