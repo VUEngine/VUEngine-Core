@@ -88,7 +88,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
-	PhysicalSpecification physicalSpecification = {mass, 0, 0};
+	PhysicalSpecification physicalSpecification = {mass, 0, 0, (Vector3D){0, 0, 0}};
 	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
 	this->objectSprite = NULL;
 	Particle_addSprite(this);

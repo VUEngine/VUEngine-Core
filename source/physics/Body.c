@@ -778,7 +778,7 @@ void Body_setBounciness(Body this, fix10_6 bounciness)
 	{
 		bounciness = 0;
 	}
-	else if(__F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT))
+	else if(__F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT) < bounciness)
 	{
 		bounciness = __F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT);
 	}
