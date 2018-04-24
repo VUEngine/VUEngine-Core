@@ -507,7 +507,18 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 			fix10_6 bounciness = __VIRTUAL_CALL(Actor, getBouncinessOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
 			fix10_6 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
 
-			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			if(__VIRTUAL_CALL(Actor, mustBounce, this))
+			{
+				Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			}
+			else
+			{
+				u16 axis = __NO_AXIS;
+				axis |= collisionInformation->solutionVector.direction.x ? __X_AXIS : __NO_AXIS;
+				axis |= collisionInformation->solutionVector.direction.y ? __Y_AXIS : __NO_AXIS;
+				axis |= collisionInformation->solutionVector.direction.z ? __Z_AXIS : __NO_AXIS;
+				Actor_stopMovement(this, axis);
+			}
 
 			returnValue = true;
 		}
@@ -776,4 +787,11 @@ Body Actor_getBody(Actor this)
 	ASSERT(this, "Actor::getBody: null this");
 
 	return this->body;
+}
+
+bool Actor_mustBounce(Actor this)
+{
+	ASSERT(this, "Actor::mustBounce: null this");
+
+	return true;
 }
