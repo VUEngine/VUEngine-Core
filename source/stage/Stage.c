@@ -135,7 +135,8 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer);
 static bool Stage_loadInRangeEntities(Stage this, int defer);
 static bool Stage_purgeChildrenProgressively(Stage this);
 static bool Stage_updateEntityFactory(Stage this);
-static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId);
+static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady);
+static void Stage_makeChildReady(Stage this, Entity entity);
 
 #ifdef __PROFILE_STREAMING
 extern s16 _renderingProcessTimeHelper;
@@ -411,17 +412,18 @@ Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positioned
 {
 	ASSERT(this, "Stage::addEntity: null this");
 
-	return Stage_doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++);
+	return Stage_doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++, true);
 }
 
 // add entity to the stage
-static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId)
+static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady)
 {
-	ASSERT(this, "Stage::addEntity: null this");
+	ASSERT(this, "Stage::doAddChildEntity: null this");
 
 	if(positionedEntity)
 	{
 		Entity entity = Entity_loadEntity(positionedEntity, internalId);
+		ASSERT(entity, "Stage::doAddChildEntity: entity not loaded");
 
 		if(entity)
 		{
@@ -435,7 +437,11 @@ static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const p
 			// apply transformations
 			__VIRTUAL_CALL(Container, initialTransform, entity, &neutralEnvironmentTransformation, true);
 
-			__VIRTUAL_CALL(Entity, ready, entity, true);
+			if(makeReady)
+			{
+				Stage_makeChildReady(this, entity);
+			}
+
 		}
 /*
 		if(permanent)
@@ -447,6 +453,19 @@ static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const p
 	}
 
 	return NULL;
+}
+
+// initialize child
+static void Stage_makeChildReady(Stage this, Entity entity)
+{
+	ASSERT(this, "Stage::setChildReady: null this");
+	ASSERT(entity, "Stage::setChildReady: null entity");
+	ASSERT(entity->parent == __SAFE_CAST(Container, this), "Stage::setChildReady: I'm not its parent");
+
+	if(entity->parent == __SAFE_CAST(Container, this))
+	{
+		__VIRTUAL_CALL(Entity, ready, entity, true);
+	}
 }
 
 bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition)
@@ -734,7 +753,7 @@ static void Stage_loadInitialEntities(Stage this)
 			if(stageEntityDescription->positionedEntity->loadRegardlessOfPosition || Stage_isEntityInLoadRange(this, stageEntityDescription->positionedEntity->onScreenPosition, &stageEntityDescription->pixelRightBox))
 			{
 				stageEntityDescription->internalId = this->nextEntityId++;
-				Entity entity = Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+				Entity entity = Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, false);
 				ASSERT(entity, "Stage::loadInRangeEntities: entity not loaded");
 
 				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
@@ -747,6 +766,13 @@ static void Stage_loadInitialEntities(Stage this)
 				VirtualList_pushBack(this->loadedStageEntities, stageEntityDescription);
 			}
 		}
+	}
+
+	node = this->children->head;
+
+	for(; node; node = node->next)
+	{
+		Stage_makeChildReady(this, __SAFE_CAST(Entity, node->data));
 	}
 }
 
@@ -907,7 +933,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					}
 					else
 					{
-						Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
 					}
 				}
 			}
@@ -949,7 +975,7 @@ static bool Stage_loadInRangeEntities(Stage this, int defer __attribute__ ((unus
 					}
 					else
 					{
-						Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId);
+						Stage_doAddChildEntity(this, stageEntityDescription->positionedEntity, false, stageEntityDescription->internalId, true);
 					}
 				}
 			}
