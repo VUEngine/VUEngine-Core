@@ -225,14 +225,14 @@ Velocity Body_getVelocity(Body this)
 	return this->velocity;
 }
 
-void Body_modifyVelocity(Body this, const Velocity* multiplier)
+void Body_modifyVelocity(Body this, const Velocity* modifier)
 {
 	ASSERT(this, "Body::modifyVelocity: null this");
-	ASSERT(multiplier, "Body::modifyVelocity: null multiplier");
+	ASSERT(modifier, "Body::modifyVelocity: null multiplier");
 
-	this->velocity.x += multiplier->x;
-	this->velocity.y += multiplier->y;
-	this->velocity.z += multiplier->z;
+	this->velocity.x += modifier->x;
+	this->velocity.y += modifier->y;
+	this->velocity.z += modifier->z;
 
 	Body_capVelocity(this);
 }
@@ -1292,6 +1292,20 @@ void Body_takeHitFrom(Body this __attribute__ ((unused)), Body other __attribute
 	ASSERT(this, "Body::takeHitFrom: null this");
 
 	//TODO:
+}
+
+void Body_setMaximumVelocity(Body this, Velocity maximumVelocity)
+{
+	ASSERT(this, "Body::setMaximumVelocity: null this");
+
+	this->maximumVelocity = maximumVelocity;
+}
+
+Velocity Body_getMaximumVelocity(Body this)
+{
+	ASSERT(this, "Body::getMaximumVelocity: null this");
+
+	return this->maximumVelocity;
 }
 
 void Body_print(Body this, int x, int y)

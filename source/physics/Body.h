@@ -269,6 +269,8 @@ void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller)
 u16 Body_stopMovement(Body this, u16 axes);
 void Body_takeHitFrom(Body this, Body other);
 void Body_update(Body this);
+void Body_setMaximumVelocity(Body this, Velocity maximumVelocity);
+Velocity Body_getMaximumVelocity(Body this);
 void Body_print(Body this, int x, int y);
 
 
