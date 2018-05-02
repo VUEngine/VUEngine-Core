@@ -68,6 +68,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes);
 static void Entity_destroyShapes(Entity this);
 
+
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -1950,17 +1951,16 @@ void Entity_show(Entity this)
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(Container, transform, this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
-	// and update the visual representation
+	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity_synchronizeGraphics(this);
 
 	__CALL_BASE_METHOD(Container, show, this);
 
+	// show all sprites
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
-
-		// move each child to a temporary list
 		for(; node ; node = node->next)
 		{
 			__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
@@ -1987,17 +1987,16 @@ void Entity_hide(Entity this)
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 	__VIRTUAL_CALL(Container, transform, this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
-	// and update the visual representation
+	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity_synchronizeGraphics(this);
 
 	__CALL_BASE_METHOD(Container, hide, this);
 
+	// hide all sprites
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
-
-		// move each child to a temporary list
 		for(; node ; node = node->next)
 		{
 			__VIRTUAL_CALL(Sprite, hide, __SAFE_CAST(Sprite, node->data));

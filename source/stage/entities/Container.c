@@ -60,7 +60,16 @@ static void Container_applyEnvironmentToScale(Container this, const Transformati
 __CLASS_NEW_DEFINITION(Container, const char* const name)
 __CLASS_NEW_END(Container, name);
 
-// class's constructor
+
+/**
+ * Class constructor
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ * @param name
+ */
 void Container_constructor(Container this, const char* const name)
 {
 	ASSERT(this, "Container::constructor: null this");
@@ -93,7 +102,14 @@ void Container_constructor(Container this, const char* const name)
 	Container_setName(this, name);
 }
 
-// class's destructor
+/**
+ * Class destructor
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_destructor(Container this)
 {
 	ASSERT(this, "Container::destructor: null this");
@@ -160,7 +176,14 @@ void Container_destructor(Container this)
 	__DESTROY_BASE;
 }
 
-// safe call to delete entities within a normal stage
+/**
+ * Safe call to delete entities within a normal stage
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_deleteMyself(Container this)
 {
 	ASSERT(this, "Container::deleteMyself: null this");
@@ -180,12 +203,28 @@ void Container_deleteMyself(Container this)
 	}
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_iAmDeletingMyself(Container this __attribute__ ((unused)))
 {
 	ASSERT(this, "Container::iAmDeletingMyself: null this");
 }
 
-// add a child Container
+/**
+ * Add a child Container
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ * @param child	Child Container to add
+ */
 void Container_addChild(Container this, Container child)
 {
 	ASSERT(this, "Container::addChild: null this");
@@ -230,7 +269,16 @@ void Container_addChild(Container this, Container child)
 	}
 }
 
-// remove child Container
+/**
+ * Remove a child Container
+ *
+ * @memberof			Container
+ * @public
+ *
+ * @param this			Function scope
+ * @param child			Child Container to remove
+ * @param deleteChild
+ */
 void Container_removeChild(Container this, Container child, bool deleteChild)
 {
 	ASSERT(this, "Container::removeChild: null this");
@@ -272,6 +320,14 @@ void Container_removeChild(Container this, Container child, bool deleteChild)
 #endif
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_setupGraphics(Container this __attribute__ ((unused)))
 {
 	ASSERT(this, "Container::setupGraphics: null this");
@@ -289,6 +345,14 @@ void Container_setupGraphics(Container this __attribute__ ((unused)))
 	}
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_releaseGraphics(Container this)
 {
 	ASSERT(this, "Container::releaseGraphics: null this");
@@ -306,7 +370,14 @@ void Container_releaseGraphics(Container this)
 	}
 }
 
-// process removed children
+/**
+ * Process removed children
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_purgeChildren(Container this)
 {
 	ASSERT(this, "Container::processRemovedChildren: null this");
@@ -350,7 +421,15 @@ void Container_purgeChildren(Container this)
 	this->removedChildren = NULL;
 }
 
-// update each Container's child
+/**
+ * Update each Container's child
+ *
+ * @memberof			Container
+ * @public
+ *
+ * @param this			Function scope
+ * @param elapsedTime
+ */
 void Container_update(Container this, u32 elapsedTime)
 {
 	ASSERT(this, "Container::update: null this");
@@ -371,7 +450,17 @@ void Container_update(Container this, u32 elapsedTime)
 	}
 }
 
-// retrieve environment transformation
+/**
+ * Retrieve environment transformation
+ *
+ * @memberof			Container
+ * @public
+ *
+ * @param this			Function scope
+ * @param elapsedTime
+ *
+ * @return				Environment Transformation
+ */
 Transformation Container_getEnvironmentTransform(Container this)
 {
 	ASSERT(this, "Container::getEnvironmentTransform: null this");
@@ -400,8 +489,17 @@ Transformation Container_getEnvironmentTransform(Container this)
 	return this->parent->transformation;
 }
 
-// contatenate transformation
-void Container_concatenateTransform(Transformation* concatenatedTransformation, Transformation* transformation)
+/**
+ * Contatenate transformation
+ *
+ * @memberof							Container
+ * @public
+ *
+ * @param this							Function scope
+ * @param concatenatedTransformation
+ * @param transformation
+ */
+void Container_concatenateTransform(Container this __attribute__ ((unused)), Transformation* concatenatedTransformation, Transformation* transformation)
 {
 	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
 	ASSERT(transformation, "Container::concatenateTransform: null transformation");
@@ -422,7 +520,15 @@ void Container_concatenateTransform(Transformation* concatenatedTransformation, 
 	concatenatedTransformation->globalScale.z = __FIX7_9_MULT(concatenatedTransformation->globalScale.z, transformation->localScale.z);
 }
 
-// change environment
+/**
+ * Change environment
+ *
+ * @memberof					Container
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 void Container_changeEnvironment(Container this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::changeEnvironment: null this");
@@ -456,7 +562,16 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
 	Container_invalidateGlobalTransformation(this);
 }
 
-// initial transformation
+/**
+ * Initial transformation
+ *
+ * @memberof					Container
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ * @param recursive
+ */
 void Container_initialTransform(Container this, Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Container::initialTransform: null this");
@@ -485,6 +600,15 @@ void Container_initialTransform(Container this, Transformation* environmentTrans
 	}
 }
 
+/**
+ *
+ *
+ * @memberof					Container
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 void Container_applyEnvironmentToTransformation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
@@ -494,6 +618,15 @@ void Container_applyEnvironmentToTransformation(Container this, const Transforma
 	Container_applyEnvironmentToScale(this, environmentTransform);
 }
 
+/**
+ *
+ *
+ * @memberof					Container
+ * @private
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 inline static void Container_applyEnvironmentToPosition(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
@@ -509,6 +642,16 @@ inline static void Container_applyEnvironmentToPosition(Container this, const Tr
 	this->transformation.globalPosition = globalPosition;
 }
 
+
+/**
+ *
+ *
+ * @memberof					Container
+ * @private
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 inline static void Container_applyEnvironmentToRotation(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToRotation: null this");
@@ -524,6 +667,16 @@ inline static void Container_applyEnvironmentToRotation(Container this, const Tr
 	this->transformation.globalRotation = globalRotation;
 }
 
+
+/**
+ *
+ *
+ * @memberof					Container
+ * @private
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 inline static void Container_applyEnvironmentToScale(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::applyEnvironmentToScale: null this");
@@ -539,7 +692,15 @@ inline static void Container_applyEnvironmentToScale(Container this, const Trans
 	this->transformation.globalScale = globalScale;
 }
 
-// initial transformation but don't call the virtual method
+/**
+ * Initial transformation but without calling the virtual method
+ *
+ * @memberof					Container
+ * @public
+ *
+ * @param this					Function scope
+ * @param environmentTransform
+ */
 void Container_transformNonVirtual(Container this, const Transformation* environmentTransform)
 {
 	ASSERT(this, "Container::transformNonVirtual: null this");
@@ -580,7 +741,16 @@ void Container_transformNonVirtual(Container this, const Transformation* environ
 	this->invalidateGlobalTransformation = 0;
 }
 
-// initial transformation
+/**
+ * Initial transformation
+ *
+ * @memberof							Container
+ * @public
+ *
+ * @param this							Function scope
+ * @param environmentTransform
+ * @param invalidateTransformationFlag
+ */
 void Container_transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Container::transform: null this");
@@ -622,6 +792,14 @@ void Container_transform(Container this, const Transformation* environmentTransf
 	this->invalidateGlobalTransformation = 0;
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_synchronizeGraphics(Container this)
 {
 	ASSERT(this, "Container::synchronizeGraphics: null this");
@@ -639,7 +817,16 @@ void Container_synchronizeGraphics(Container this)
 	}
 }
 
-// retrieve transformation
+/**
+ * Retrieve transformation
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Pointer to Transformation
+ */
 Transformation* Container_getTransform(Container this)
 {
 	ASSERT(this, "Container::getTransform: null this");
@@ -647,7 +834,16 @@ Transformation* Container_getTransform(Container this)
 	return &this->transformation;
 }
 
-// retrieve global position
+/**
+ * Retrieve global position
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Pointer to global position
+ */
 const Vector3D* Container_getGlobalPosition(Container this)
 {
 	ASSERT(this, "Container::getGlobalPosition: null this");
@@ -655,7 +851,16 @@ const Vector3D* Container_getGlobalPosition(Container this)
 	return &this->transformation.globalPosition;
 }
 
-// retrieve local position
+/**
+ * Retrieve local position
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Pointer to local position
+ */
 const Vector3D* Container_getLocalPosition(Container this)
 {
 	ASSERT(this, "Container::getLocalPosition: null this");
@@ -663,7 +868,15 @@ const Vector3D* Container_getLocalPosition(Container this)
 	return &this->transformation.localPosition;
 }
 
-//set class's local position
+/**
+ * Set local position
+ *
+ * @memberof		Container
+ * @public
+ *
+ * @param this		Function scope
+ * @param position	Pointer to position
+ */
 void Container_setLocalPosition(Container this, const Vector3D* position)
 {
 	ASSERT(this, "Container::setLocalPosition: null this");
@@ -686,6 +899,16 @@ void Container_setLocalPosition(Container this, const Vector3D* position)
 	this->transformation.localPosition = *position;
 }
 
+/**
+ * Retrieve local rotation
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Pointer to local Rotation
+ */
 const Rotation* Container_getLocalRotation(Container this)
 {
 	ASSERT(this, "Container::getLocalRotation: null this");
@@ -693,7 +916,15 @@ const Rotation* Container_getLocalRotation(Container this)
 	return &this->transformation.localRotation;
 }
 
-//set class's local position
+/**
+ * Set local rotation
+ *
+ * @memberof		Container
+ * @public
+ *
+ * @param this		Function scope
+ * @param rotation	Pointer to Rotation
+ */
 void Container_setLocalRotation(Container this, const Rotation* rotation)
 {
 	ASSERT(this, "Container::setLocalRotation: null this");
@@ -703,6 +934,16 @@ void Container_setLocalRotation(Container this, const Rotation* rotation)
 	Container_invalidateGlobalRotation(this);
 }
 
+/**
+ * Retrieve local scale
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Pointer to local Scale
+ */
 const Scale* Container_getLocalScale(Container this)
 {
 	ASSERT(this, "Container::getLocalScale: null this");
@@ -710,7 +951,15 @@ const Scale* Container_getLocalScale(Container this)
 	return &this->transformation.localScale;
 }
 
-//set class's local position
+/**
+ * Set local scale
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ * @param scale	Pointer to Scale
+ */
 void Container_setLocalScale(Container this, const Scale* scale)
 {
 	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
@@ -720,6 +969,14 @@ void Container_setLocalScale(Container this, const Scale* scale)
 	Container_invalidateGlobalScale(this);
 }
 
+/**
+ * Invalidate global transformation
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_invalidateGlobalTransformation(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
@@ -733,13 +990,20 @@ void Container_invalidateGlobalTransformation(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			// make sure children recalculates its global position
+			// make sure child recalculates its global position
 			Container_invalidateGlobalTransformation(__SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
-// invalidate global position
+/**
+ * Invalidate global position
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_invalidateGlobalPosition(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalPosition: null this");
@@ -753,13 +1017,20 @@ void Container_invalidateGlobalPosition(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			// make sure children recalculates its global position
+			// make sure child recalculates its global position
 			Container_invalidateGlobalPosition(__SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
-// invalidate global rotation
+/**
+ * Invalidate global rotation
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_invalidateGlobalRotation(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalRotation: null this");
@@ -773,13 +1044,20 @@ void Container_invalidateGlobalRotation(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			// make sure children recalculates its global position
+			// make sure child recalculates its global position
 			Container_invalidateGlobalRotation(__SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
-// invalidate global scale
+/**
+ * Invalidate global scale
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_invalidateGlobalScale(Container this)
 {
 	ASSERT(this, "Container::invalidateGlobalScale: null this");
@@ -793,13 +1071,24 @@ void Container_invalidateGlobalScale(Container this)
 		// update each child
 		for(; node; node = node->next)
 		{
-			// make sure children recalculates its global position
+			// make sure child recalculates its global position
 			Container_invalidateGlobalScale(__SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
-// propagate a message to the children wrapper
+/**
+ * Propagate a message to the child wrapper
+ *
+ * @memberof						Container
+ * @public
+ *
+ * @param this						Function scope
+ * @param propagatedMessageHandler
+ * @param args						va_list of propagated message parameters
+
+ * @return							Result
+ */
 int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...)
 {
 	ASSERT(this, "Container::propagateMessage: null this");
@@ -813,7 +1102,18 @@ int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(C
 	return result;
 }
 
-// pass message to children recursively
+/**
+ * Pass message to children recursively
+ *
+ * @memberof						Container
+ * @public
+ *
+ * @param this						Function scope
+ * @param propagatedMessageHandler
+ * @param args						va_list of propagated message parameters
+
+ * @return							Result
+ */
 int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
 {
 	ASSERT(this, "Container::passMessage: null this");
@@ -844,7 +1144,17 @@ int Container_passMessage(Container this, int (*propagatedMessageHandler)(Contai
 	return propagatedMessageHandler(this, args);
 }
 
-// process user input
+/**
+ * Process user input
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ * @param args	va_list of propagated message parameters
+
+ * @return		Result
+ */
 int Container_onPropagatedMessage(Container this, va_list args)
 {
 	ASSERT(this, "Container::onPropagatedMessage: null this");
@@ -853,7 +1163,17 @@ int Container_onPropagatedMessage(Container this, va_list args)
 	return __VIRTUAL_CALL(Container, handlePropagatedMessage, this, message);
 }
 
-// process message
+/**
+ * Process message
+ *
+ * @memberof		Container
+ * @public
+ *
+ * @param this		Function scope
+ * @param message	Message
+
+ * @return			Result
+ */
 bool Container_handlePropagatedMessage(Container this __attribute__ ((unused)), int message __attribute__ ((unused)))
 {
 	ASSERT(this, "Container::handlePropagatedMessage: null this");
@@ -861,7 +1181,16 @@ bool Container_handlePropagatedMessage(Container this __attribute__ ((unused)), 
 	return false;
 }
 
-// retrieve parent
+/**
+ * Retrieve parent
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+
+ * @return		Parent Container
+ */
 Container Container_getParent(Container this)
 {
 	ASSERT(this, "Container::getParent: null this");
@@ -869,7 +1198,16 @@ Container Container_getParent(Container this)
 	return this->parent;
 }
 
-// retrieve child count
+/**
+ * Retrieve children count
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+
+ * @return		Children count
+ */
 int Container_getChildCount(Container this)
 {
 	ASSERT(this, "Container::getChildCount: null this");
@@ -877,7 +1215,15 @@ int Container_getChildCount(Container this)
 	return this->children ? VirtualList_getSize(this->children) : 0;
 }
 
-// set name
+/**
+ * Set name
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ * @param name	Name
+ */
 void Container_setName(Container this, const char* const name)
 {
 	ASSERT(this, "Container::setName: null this");
@@ -904,7 +1250,16 @@ void Container_setName(Container this, const char* const name)
 	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);
 }
 
-// get name
+/**
+ * Retrieve name
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Name
+ */
 char* Container_getName(Container this)
 {
 	ASSERT(this, "Container::getName: null this");
@@ -912,7 +1267,19 @@ char* Container_getName(Container this)
 	return this->name;
 }
 
-// find child by name in given list
+/**
+ * Find child by name in given list
+ *
+ * @memberof		Container
+ * @public
+ *
+ * @param this		Function scope
+ * @param children	List to search
+ * @param childName	Name of child to search for
+ * @param recursive	Whether to search recursively
+ *
+ * @return			Child Container
+ */
 static Container Container_findChildByName(Container this, VirtualList children, char* childName, bool recursive)
 {
 	ASSERT(this, "Container::findChildByName: null this");
@@ -947,7 +1314,18 @@ static Container Container_findChildByName(Container this, VirtualList children,
 	return NULL;
 }
 
-// get child by name
+/**
+ * Get child by name
+ *
+ * @memberof		Container
+ * @public
+ *
+ * @param this		Function scope
+ * @param childName	Name of child to search for
+ * @param recursive	Whether to search recursively
+ *
+ * @return			Child Container
+ */
 Container Container_getChildByName(Container this, char* childName, bool recursive)
 {
 	ASSERT(this, "Container::getChildByName: null this");
@@ -969,7 +1347,14 @@ Container Container_getChildByName(Container this, char* childName, bool recursi
 	return this->removedChildren && VirtualList_find(this->removedChildren, foundChild) ? NULL : foundChild;
 }
 
-// suspend for pause
+/**
+ * Suspend for pause
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_suspend(Container this)
 {
 	ASSERT(this, "Container::suspend: null this");
@@ -989,7 +1374,14 @@ void Container_suspend(Container this)
 	}
 }
 
-// resume after pause
+/**
+ * Resume after pause
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_resume(Container this)
 {
 	ASSERT(this, "Container::resume: null this");
@@ -1010,6 +1402,14 @@ void Container_resume(Container this)
 	Container_invalidateGlobalTransformation(this);
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_show(Container this)
 {
 	ASSERT(this, "Container::show: null this");
@@ -1022,15 +1422,21 @@ void Container_show(Container this)
 
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
-
-			__VIRTUAL_CALL(Container, show, child);
+			__VIRTUAL_CALL(Container, show, __SAFE_CAST(Container, node->data));
 		}
 	}
 
 	Container_invalidateGlobalTransformation(this);
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ */
 void Container_hide(Container this)
 {
 	ASSERT(this, "Container::hide: null this");
@@ -1043,11 +1449,21 @@ void Container_hide(Container this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Container, hide, node->data);
+			__VIRTUAL_CALL(Container, hide, __SAFE_CAST(Container, node->data));
 		}
 	}
 }
 
+/**
+ *
+ *
+ * @memberof	Container
+ * @public
+ *
+ * @param this	Function scope
+ *
+ * @return		Where Container is hidden
+ */
 bool Container_isHidden(Container this)
 {
 	ASSERT(this, "Container::isHidden: null this");
