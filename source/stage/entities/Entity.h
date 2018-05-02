@@ -76,6 +76,7 @@
 		__VIRTUAL_SET(ClassName, Entity, ready);														\
 		__VIRTUAL_SET(ClassName, Entity, respawn);														\
 		__VIRTUAL_SET(ClassName, Entity, getAxisForFlipping);											\
+		__VIRTUAL_SET(ClassName, Entity, show);															\
 		__VIRTUAL_SET(ClassName, Entity, hide);															\
 		__VIRTUAL_SET(ClassName, Entity, setDefinition);												\
 		__VIRTUAL_SET(ClassName, Entity, getBounciness);												\
