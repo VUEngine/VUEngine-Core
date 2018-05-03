@@ -117,7 +117,7 @@ void CameraMovementManager_focus(CameraMovementManager this __attribute__ ((unus
 		if(focusEntityParent)
 		{
 			// get focusEntity is moving
-			if(__VIRTUAL_CALL(SpatialObject, isMoving, camera->focusEntity) || !checkIfFocusEntityIsMoving)
+			if( SpatialObject_isMoving(camera->focusEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				camera->lastDisplacement = camera->position;

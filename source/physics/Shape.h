@@ -139,7 +139,7 @@ typedef struct VertexProjection
 		Object_METHODS(ClassName)																		\
 		__VIRTUAL_DEC(ClassName, void, setup, u32 layers, u32 layersToIgnore);							\
 		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
-		__VIRTUAL_DEC(ClassName, bool, collides, Shape shape);											\
+		__VIRTUAL_DEC(ClassName, CollisionData, collides, Shape shape);									\
 		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix10_6 sizeIncrement);	\
 		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);												\
 		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\

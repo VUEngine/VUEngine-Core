@@ -189,7 +189,7 @@ void WireframeManager_drawWireframes(WireframeManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Wireframe, draw, node->data, true);
+		 Wireframe_draw(node->data, true);
 	}
 }
 

@@ -191,9 +191,9 @@ void Actor_syncWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
-	__VIRTUAL_CALL(Actor, syncPositionWithBody, this);
+	 Actor_syncPositionWithBody(this);
 
-	__VIRTUAL_CALL(Actor, syncRotationWithBody, this);
+	 Actor_syncRotationWithBody(this);
 }
 
 void Actor_syncPositionWithBody(Actor this)
@@ -361,7 +361,7 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 
 	if(this->body)
 	{
-		__VIRTUAL_CALL(Actor, syncRotationWithBody, this);
+		 Actor_syncRotationWithBody(this);
 	}
 	else
 	{
@@ -453,7 +453,7 @@ fix10_6 Actor_getBouncinessOnCollision(Actor this __attribute__ ((unused)), Spat
 {
 	ASSERT(this, "Actor::getBouncinessOnCollision: null this");
 
-	return __VIRTUAL_CALL(SpatialObject, getBounciness, collidingObject);
+	return  SpatialObject_getBounciness(collidingObject);
 }
 
 fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
@@ -481,7 +481,7 @@ fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject _
 {
 	ASSERT(this, "Actor::getFrictionOnCollision: null this");
 
-	return __VIRTUAL_CALL(Actor, getSurroundingFrictionCoefficient, this);
+	return  Actor_getSurroundingFrictionCoefficient(this);
 }
 
 bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation)
@@ -504,10 +504,10 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 
 			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
 
-			fix10_6 bounciness = __VIRTUAL_CALL(Actor, getBouncinessOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
-			fix10_6 frictionCoefficient = __VIRTUAL_CALL(Actor, getFrictionOnCollision, this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 bounciness =  Actor_getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 frictionCoefficient =  Actor_getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
-			if(__VIRTUAL_CALL(Actor, mustBounce, this))
+			if( Actor_mustBounce(this))
 			{
 				Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			}
@@ -757,7 +757,7 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 		return;
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body, __VIRTUAL_CALL(Actor, getSurroundingFrictionCoefficient, this));
+	Body_setSurroundingFrictionCoefficient(this->body,  Actor_getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
 	{
@@ -774,7 +774,7 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((
 		return;
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body, __VIRTUAL_CALL(Actor, getSurroundingFrictionCoefficient, this));
+	Body_setSurroundingFrictionCoefficient(this->body,  Actor_getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
 	{

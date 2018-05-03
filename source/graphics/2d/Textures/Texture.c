@@ -227,7 +227,7 @@ void Texture_rewrite(Texture this)
 
 	this->written = false;
 
-	__VIRTUAL_CALL(Texture, write, this);
+	 Texture_write(this);
 }
 
 /**
@@ -542,7 +542,7 @@ static void Texture_onCharSetRewritten(Texture this, Object eventFirer __attribu
 {
 	ASSERT(this, "Texture::onCharSetRewritten: null this");
 
-	__VIRTUAL_CALL(Texture, rewrite, this);
+	 Texture_rewrite(this);
 
 	// propagate event
 	Object_fireEvent(__SAFE_CAST(Object, this), kEventTextureRewritten);

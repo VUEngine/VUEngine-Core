@@ -171,7 +171,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 		Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
 		// send the telegram to the recipient
-		bool result = __VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
+		bool result =  Object_handleMessage(receiver, telegram);
 
 		__DELETE(telegram);
 		return result;
@@ -297,7 +297,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 				if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage) && __IS_OBJECT_ALIVE(sender) && __IS_OBJECT_ALIVE(receiver))
 				{
 					messagesDispatched |= true;
-					__VIRTUAL_CALL(Object, handleMessage, receiver, telegram);
+					 Object_handleMessage(receiver, telegram);
 				}
 
 				VirtualList_removeElement(this->delayedMessages, delayedMessage);

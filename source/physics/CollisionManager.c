@@ -176,7 +176,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		extern const Vector3D* _cameraPosition;
 		extern const CameraFrustum* _cameraFrustum;
 
-		RightBox surroundingRightBox = __VIRTUAL_CALL(Shape, getSurroundingRightBox, shape);
+		RightBox surroundingRightBox =  Shape_getSurroundingRightBox(shape);
 
 		// not ready for collision checks if out of the camera
 		if(

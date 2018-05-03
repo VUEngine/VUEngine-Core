@@ -510,7 +510,7 @@ static BgmapTexture BgmapTextureManager_findTexture(BgmapTextureManager this, Bg
 	{
 		Texture_setDefinition(__SAFE_CAST(Texture, selectedBgmapTexture), textureDefinition);
 		Texture_setPalette(__SAFE_CAST(Texture, selectedBgmapTexture), textureDefinition->palette);
-		__VIRTUAL_CALL(Texture, rewrite, selectedBgmapTexture);
+		 Texture_rewrite(selectedBgmapTexture);
 	}
 
 	return selectedBgmapTexture;

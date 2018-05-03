@@ -379,7 +379,7 @@ static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRi
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-//			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+//			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			halfWidth = Sprite_getHalfWidth(sprite);
 			halfHeight = Sprite_getHalfHeight(sprite);
@@ -803,7 +803,7 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id
 	// process extra info
 	if(extraInfo)
 	{
-		__VIRTUAL_CALL(Entity, setExtraInfo, entity, extraInfo);
+		 Entity_setExtraInfo(entity, extraInfo);
 	}
 
 	return entity;
@@ -866,7 +866,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 	Vector3D position = Vector3D_getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	__VIRTUAL_CALL(Container, setLocalPosition, entity, &position);
+	 Container_setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
@@ -941,7 +941,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
 	Vector3D position = Vector3D_getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	__VIRTUAL_CALL(Container, setLocalPosition, entity, &position);
+	 Container_setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
@@ -1003,8 +1003,8 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics
-	__VIRTUAL_CALL(Container, setupGraphics, childEntity);
-	__VIRTUAL_CALL(Entity, initialize, childEntity, true);
+	 Container_setupGraphics(childEntity);
+	 Entity_initialize(childEntity, true);
 
 	// create the entity and add it to the world
 	Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
@@ -1013,10 +1013,10 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
 
 	 // apply transformations
-	__VIRTUAL_CALL(Container, initialTransform, childEntity, &environmentTransform, true);
+	 Container_initialTransform(childEntity, &environmentTransform, true);
 
 	// make ready
-	__VIRTUAL_CALL(Entity, ready, childEntity, true);
+	 Entity_ready(childEntity, true);
 
 	return childEntity;
 }
@@ -1139,10 +1139,10 @@ void Entity_transformShapes(Entity this)
 		const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
 
 		// setup shape
-//		bool isAffectedByRelativity = __VIRTUAL_CALL(SpatialObject, isAffectedByRelativity, this);
-		const Vector3D* myPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this);
-		const Rotation* myRotation = __VIRTUAL_CALL(SpatialObject, getRotation, this);
-		const Scale* myScale = __VIRTUAL_CALL(SpatialObject, getScale, this);
+//		bool isAffectedByRelativity =  SpatialObject_isAffectedByRelativity(this);
+		const Vector3D* myPosition =  SpatialObject_getPosition(this);
+		const Rotation* myRotation =  SpatialObject_getRotation(this);
+		const Scale* myScale =  SpatialObject_getScale(this);
 
 		Direction currentDirection = Entity_getDirection(this);
 		VirtualNode node = this->shapes->head;
@@ -1151,7 +1151,7 @@ void Entity_transformShapes(Entity this)
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
-			u16 axesForShapeSyncWithDirection = __VIRTUAL_CALL(Entity, getAxesForShapeSyncWithDirection, this);
+			u16 axesForShapeSyncWithDirection =  Entity_getAxesForShapeSyncWithDirection(this);
 
 			Vector3D shapeDisplacement = Vector3D_getFromPixelVector(shapeDefinitions[i].displacement);
 
@@ -1178,7 +1178,7 @@ void Entity_transformShapes(Entity this)
 
 			Size size = Size_getFromPixelSize(shapeDefinitions[i].pixelSize);
 
-			__VIRTUAL_CALL(Shape, position, shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			 Shape_position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
 		}
 	}
 }
@@ -1244,7 +1244,7 @@ void Entity_initialize(Entity this, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			__VIRTUAL_CALL(Entity, initialize, childNode->data, recursive);
+			 Entity_initialize(childNode->data, recursive);
 		}
 	}
 }
@@ -1269,7 +1269,7 @@ void Entity_ready(Entity this, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			__VIRTUAL_CALL(Entity, ready, childNode->data, recursive);
+			 Entity_ready(childNode->data, recursive);
 		}
 	}
 }
@@ -1384,16 +1384,16 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			 Sprite_position(sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
+			 Sprite_rotate(sprite, &this->transformation.globalRotation);
 
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
+			 Sprite_calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition && updateRotation)
@@ -1403,10 +1403,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			 Sprite_position(sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			__VIRTUAL_CALL(Sprite, rotate, sprite, &this->transformation.globalRotation);
+			 Sprite_rotate(sprite, &this->transformation.globalRotation);
 		}
 	}
 	else if(updatePosition && updateScale)
@@ -1416,13 +1416,13 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			 Sprite_position(sprite, &this->transformation.globalPosition);
 
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
+			 Sprite_calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition)
@@ -1432,7 +1432,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			__VIRTUAL_CALL(Sprite, position, sprite, &this->transformation.globalPosition);
+			 Sprite_position(sprite, &this->transformation.globalPosition);
 		}
 	}
 	else if(updateScale)
@@ -1442,10 +1442,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// calculate the scale
-			__VIRTUAL_CALL(Sprite, resize, sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			__VIRTUAL_CALL(Sprite, calculateParallax, sprite, this->transformation.globalPosition.z);
+			 Sprite_calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 }
@@ -1857,7 +1857,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			if(__VIRTUAL_CALL(Entity, isVisible, VirtualNode_getData(childNode), pad, true))
+			if( Entity_isVisible(VirtualNode_getData(childNode), pad, true))
 			{
 				return true;
 			}
@@ -1949,7 +1949,7 @@ void Entity_show(Entity this)
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, transform, this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
+	 Container_transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
@@ -1963,7 +1963,7 @@ void Entity_show(Entity this)
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, show, __SAFE_CAST(Sprite, node->data));
+			 Sprite_show(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 
@@ -1985,7 +1985,7 @@ void Entity_hide(Entity this)
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	__VIRTUAL_CALL(Container, transform, this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
+	 Container_transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
@@ -1999,7 +1999,7 @@ void Entity_hide(Entity this)
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, hide, __SAFE_CAST(Sprite, node->data));
+			 Sprite_hide(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 }

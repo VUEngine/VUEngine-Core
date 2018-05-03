@@ -35,6 +35,8 @@ done
 
 SAVED_HEADERS_FILE=$GAME_HOME/lib/compiler/headerFiles.txt
 TEMPORAL_HEADERS_FILE=temporalHeaderFiles.txt
+VIRTUAL_METHODS_FILE=$GAME_HOME/lib/compiler/virtualMethods.txt
+VIRTUAL_CALLS_FILE=$GAME_HOME/lib/compiler/virtualMethodCalls.txt
 
 CLASSES_FILE="classFile.txt"
 
@@ -45,6 +47,10 @@ if [ ! -f $SAVED_HEADERS_FILE ] || [ ! -f $OUTPUT_C_FILE ] ; then
 	# if no, create them
     echo $HEADER_FILES > $SAVED_HEADERS_FILE
 	HEADER_FILES=`cat $SAVED_HEADERS_FILE`
+	rm $VIRTUAL_METHODS_FILE
+	rm $VIRTUAL_CALLS_FILE
+	touch $VIRTUAL_METHODS_FILE
+	touch $VIRTUAL_CALLS_FILE
 else
 	SAVED_HEADER_FILES=`cat $SAVED_HEADERS_FILE`
 	TEMPORAL_HEADER_FILES=`cat $TEMPORAL_HEADERS_FILE`
@@ -57,8 +63,11 @@ else
 		HEADER_FILES=$TEMPORAL_HEADERS_FILE
 		`cat $TEMPORAL_HEADERS_FILE > $SAVED_HEADERS_FILE`
 		HEADER_FILES=`cat $SAVED_HEADERS_FILE`
+		touch $VIRTUAL_METHODS_FILE
+		touch $VIRTUAL_CALLS_FILE
     fi
 fi
+
 
 # if the header files list was populated, generate the setupClass.c files
 if [ -n "$HEADER_FILES" ]; then
@@ -78,6 +87,25 @@ if [ -n "$HEADER_FILES" ]; then
 		if ! [[ "$className" =~ "define" ]]; then
 			if [ -n "$className" ]; then
 				echo $className >> $CLASSES_FILE
+
+				virtualMethods=`grep "VIRTUAL_DEC" $headerFile | grep -v "#define" | cut -d, -f3 | cut -d\) -f1 | sed '/^\s*$/d'`
+				overrodeMethods=`grep "__VIRTUAL_SET" $headerFile | grep -v "#define" | cut -d, -f3  | cut -d\) -f1 | sed '/^\s*$/d'`
+
+				for method in $virtualMethods$overrodeMethods
+				do
+					if [ ! -z "$method" ]
+					then
+						methodCall="$className""_""$method"
+
+						hasMethod=`grep -sw $method $VIRTUAL_METHODS_FILE`
+						if [ -z "$hasMethod" ];
+						then
+							echo "$method" >> $VIRTUAL_METHODS_FILE
+						fi
+
+						echo "$methodCall" >> $VIRTUAL_CALLS_FILE
+					fi
+				done
 			fi
 		fi
 	done

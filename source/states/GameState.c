@@ -163,7 +163,7 @@ void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
 	if(!Clock_isPaused(this->messagingClock))
 	{
 		// update the stage
-		__VIRTUAL_CALL(Container, update, this->stage, Clock_getTime(this->updateClock) - this->previousUpdateTime);
+		 Container_update(this->stage, Clock_getTime(this->updateClock) - this->previousUpdateTime);
 
 		this->previousUpdateTime = Clock_getTime(this->updateClock);
 	}
@@ -239,7 +239,7 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
 
 	if(this->stage)
 	{
-		__VIRTUAL_CALL(Container, suspend, this->stage);
+		 Container_suspend(this->stage);
 	}
 
 #ifdef __DEBUG_TOOLS
@@ -291,7 +291,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
 
 	// update the stage
-	__VIRTUAL_CALL(Container, resume, this->stage);
+	 Container_resume(this->stage);
 
 	// move the camera to its previous position
 	Camera_focus(Camera_getInstance(), false);
@@ -300,7 +300,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 	GameState_initialTransform(this);
 
 	// force all streaming right now
-	__VIRTUAL_CALL(Stage, streamAll, this->stage);
+	 Stage_streamAll(this->stage);
 
 	// force char memory defragmentation
 	CharSetManager_defragment(CharSetManager_getInstance());
@@ -404,7 +404,7 @@ bool GameState_stream(GameState this)
 {
 	ASSERT(this, "GameState::stream: null this");
 
-	return __VIRTUAL_CALL(Stage, stream, this->stage);
+	return  Stage_stream(this->stage);
 }
 
 /**
@@ -426,7 +426,7 @@ void GameState_transform(GameState this)
 	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
 
 	// then transformation loaded entities
-	__VIRTUAL_CALL(Container, transform, this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
+	 Container_transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
 }
 
 /**
@@ -444,7 +444,7 @@ static void GameState_initialTransform(GameState this)
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	__VIRTUAL_CALL(Container, initialTransform, this->stage, &neutralEnvironmentTransformation, true);
+	 Container_initialTransform(this->stage, &neutralEnvironmentTransformation, true);
 }
 
 
@@ -462,7 +462,7 @@ void GameState_synchronizeGraphics(GameState this)
 	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transformation loaded entities
-	__VIRTUAL_CALL(Container, synchronizeGraphics, this->stage);
+	 Container_synchronizeGraphics(this->stage);
 }
 
 /**

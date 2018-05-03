@@ -308,7 +308,7 @@ void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVe
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-			__VIRTUAL_CALL(Sprite, setPosition, sprite, &sprite->position);
+			 Sprite_setPosition(sprite, &sprite->position);
 		}
 	}
 
@@ -475,7 +475,7 @@ void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool evenFrame)
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, render, sprite, evenFrame);
+			 Sprite_render(sprite, evenFrame);
 		}
 	}
 }
@@ -496,7 +496,7 @@ void ObjectSpriteContainer_show(ObjectSpriteContainer this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Sprite, show, node->data);
+		 Sprite_show(node->data);
 	}
 
 	this->hidden = false;
@@ -521,7 +521,7 @@ void ObjectSpriteContainer_hide(ObjectSpriteContainer this)
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, hide, node->data);
+			 Sprite_hide(node->data);
 		}
 	}
 
@@ -653,7 +653,7 @@ void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const Pix
 
 		for(; node; node = node->next)
 		{
-			__VIRTUAL_CALL(Sprite, addDisplacement, node->data, displacement);
+			 Sprite_addDisplacement(node->data, displacement);
 		}
 	}
 }

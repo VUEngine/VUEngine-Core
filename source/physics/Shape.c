@@ -245,13 +245,13 @@ void Shape_position(Shape this, const Vector3D* position __attribute__ ((unused)
  */
 void Shape_enterCollision(Shape this, CollisionData* collisionData)
 {
-	if(__VIRTUAL_CALL(SpatialObject, enterCollision, this->owner, &collisionData->collisionInformation))
+	if( SpatialObject_enterCollision(this->owner, &collisionData->collisionInformation))
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_findCollidingShapeRegistry(this, collisionData->collisionInformation.collidingShape);
 
 		if(collidingShapeRegistry)
 		{
-			collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionData->collisionInformation.collidingShape->owner);
+			collidingShapeRegistry->frictionCoefficient =  SpatialObject_getFrictionCoefficient(collisionData->collisionInformation.collidingShape->owner);
 		}
 	}
 }
@@ -276,7 +276,7 @@ void Shape_updateCollision(Shape this, CollisionData* collisionData)
 	}
 	else
 	{
-		__VIRTUAL_CALL(SpatialObject, updateCollision, this->owner, &collisionData->collisionInformation);
+		 SpatialObject_updateCollision(this->owner, &collisionData->collisionInformation);
 	}
 }
 
@@ -293,7 +293,7 @@ void Shape_exitCollision(Shape this, CollisionData* collisionData)
 {
 	ASSERT(this, "Shape::exitCollision: null this");
 
-	__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, collisionData->collisionInformation.shape, collisionData->shapeNotCollidingAnymore, collisionData->isImpenetrableCollidingShape);
+	SpatialObject_exitCollision(this->owner, collisionData->collisionInformation.shape, collisionData->shapeNotCollidingAnymore, collisionData->isImpenetrableCollidingShape);
 	Shape_unregisterCollidingShape(this, collisionData->shapeNotCollidingAnymore);
 }
 
@@ -366,7 +366,7 @@ CollisionData Shape_collides(Shape this, Shape shape)
 	// to determine if I'm not colliding against them anymore
 	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
 	{
-		collisionData.collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		collisionData.collisionInformation =  Shape_testForCollision(this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -488,7 +488,7 @@ static void Shape_checkPreviousCollisions(Shape this, Shape collidingShape)
 
 		if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->shape != collidingShape)
 		{
-			CollisionInformation collisionInformation = __VIRTUAL_CALL(Shape, testForCollision, this, collidingShapeRegistry->shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+			CollisionInformation collisionInformation =  Shape_testForCollision(this, collidingShapeRegistry->shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 			if(collisionInformation.shape == this && 0 < collisionInformation.solutionVector.magnitude)
 			{
@@ -529,13 +529,13 @@ static void Shape_displaceOwner(Shape this, Vector3D displacement)
 	ASSERT(this, "Shape::displaceOwner: null this");
 
 	// retrieve the colliding spatialObject's position and gap
-	Vector3D ownerPosition = *__VIRTUAL_CALL(SpatialObject, getPosition, this->owner);
+	Vector3D ownerPosition = * SpatialObject_getPosition(this->owner);
 
 	ownerPosition.x += displacement.x;
 	ownerPosition.y += displacement.y;
 	ownerPosition.z += displacement.z;
 
-	__VIRTUAL_CALL(SpatialObject, setPosition, this->owner, &ownerPosition);
+	 SpatialObject_setPosition(this->owner, &ownerPosition);
 }
 
 /**
@@ -568,7 +568,7 @@ void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInf
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape_registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
 		ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::resolveCollision: dead collidingShapeRegistry");
-		collidingShapeRegistry->frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, collisionInformation->collidingShape->owner);
+		collidingShapeRegistry->frictionCoefficient =  SpatialObject_getFrictionCoefficient(collisionInformation->collidingShape->owner);
 	}
 }
 
@@ -796,7 +796,7 @@ static void Shape_onCollidingShapeDestroyed(Shape this, Object eventFirer)
 
 	if(Shape_unregisterCollidingShape(this, shapeNotCollidingAnymore))
 	{
-		__VIRTUAL_CALL(SpatialObject, collidingShapeOwnerDestroyed, this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
+		 SpatialObject_collidingShapeOwnerDestroyed(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -829,7 +829,7 @@ static void Shape_onCollidingShapeChanged(Shape this, Object eventFirer)
 
 	if(Shape_unregisterCollidingShape(this, shapeNotCollidingAnymore))
 	{
-		__VIRTUAL_CALL(SpatialObject, exitCollision, this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
+		 SpatialObject_exitCollision(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -968,7 +968,7 @@ void Shape_show(Shape this)
 		Shape_hide(this);
 	}
 
-	__VIRTUAL_CALL(Shape, configureWireframe, this);
+	 Shape_configureWireframe(this);
 
 	// show the wireframe
 	Wireframe_show(__SAFE_CAST(Wireframe, this->wireframe));

@@ -302,7 +302,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 
 			u16 gravitySensibleAxis = body->axesSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
-			if(gravitySensibleAxis && __VIRTUAL_CALL(SpatialObject, isSubjectToGravity, body->owner, gravityDirection))
+			if(gravitySensibleAxis &&  SpatialObject_isSubjectToGravity(body->owner, gravityDirection))
 			{
 				// must account for the fps to avoid situations is which a collision is not detected
 				// when a body starts to fall and doesn't have enough time to detect a shape below
@@ -362,7 +362,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 			continue;
 		}
 
-		__VIRTUAL_CALL(Body, update, activeBodies[activeBodiesIndex]);
+		 Body_update(activeBodies[activeBodiesIndex]);
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING

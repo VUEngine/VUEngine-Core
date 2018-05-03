@@ -400,7 +400,7 @@ void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex)
 
 			if(!this->hidden)
 			{
-				__VIRTUAL_CALL(Sprite, show, this);
+				 Sprite_show(this);
 
 				// turn off previous OBJs' to avoid ghosting
 				if(this->objectIndex < previousObjectIndex)
@@ -435,7 +435,7 @@ u8 ObjectSprite_getWorldLayer(ObjectSprite this)
 	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
-	return this->objectSpriteContainer ? __VIRTUAL_CALL(Sprite, getWorldLayer, __SAFE_CAST(Sprite, this->objectSpriteContainer)) : 0;
+	return this->objectSpriteContainer ?  Sprite_getWorldLayer(__SAFE_CAST(Sprite, this->objectSpriteContainer)) : 0;
 }
 
 /**

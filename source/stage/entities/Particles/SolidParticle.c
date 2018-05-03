@@ -183,7 +183,7 @@ static void SolidParticle_transformShape(SolidParticle this)
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {this->solidParticleDefinition->radius, this->solidParticleDefinition->radius, this->solidParticleDefinition->radius};
 
-	__VIRTUAL_CALL(Shape, position, this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
+	 Shape_position(this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
 
 /**
@@ -283,8 +283,8 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 		{
 			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
 
-			fix10_6 frictionCoefficient = __VIRTUAL_CALL(SpatialObject, getFrictionCoefficient, Shape_getOwner(collisionInformation->collidingShape));
-			fix10_6 bounciness = __VIRTUAL_CALL(SpatialObject, getBounciness, Shape_getOwner(collisionInformation->collidingShape));
+			fix10_6 frictionCoefficient =  SpatialObject_getFrictionCoefficient(Shape_getOwner(collisionInformation->collidingShape));
+			fix10_6 bounciness =  SpatialObject_getBounciness(Shape_getOwner(collisionInformation->collidingShape));
 
 			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;

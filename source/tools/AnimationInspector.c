@@ -280,8 +280,8 @@ void AnimationInspector_update(AnimationInspector this)
 	{
 		Sprite_updateAnimation(this->animatedSprite);
 		Sprite_update(this->animatedSprite);
-		__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
-		__VIRTUAL_CALL(Sprite, applyHbiasEffects, this->animatedSprite);
+		 Sprite_applyAffineTransformations(this->animatedSprite);
+		 Sprite_applyHbiasEffects(this->animatedSprite);
 	}
 }
 
@@ -426,7 +426,7 @@ static void AnimationInspector_setupMode(AnimationInspector this)
 			AnimationInspector_createAnimationEditionSelector(this);
 			AnimationInspector_createFrameEditionSelector(this);
 			AnimationController_playAnimationFunction(Sprite_getAnimationController(this->animatedSprite), &this->animationFunction);
-			__VIRTUAL_CALL(Sprite, writeAnimation, this->animatedSprite);
+			 Sprite_writeAnimation(this->animatedSprite);
 			Sprite_pause(this->animatedSprite, true);
 			Sprite_pause(this->animatedSprite, false);
 			AnimationInspector_printAnimationConfig(this);
@@ -923,16 +923,16 @@ static void AnimationInspector_createSprite(AnimationInspector this)
 	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
 
-	__VIRTUAL_CALL(Sprite, setPosition, this->animatedSprite, &spritePosition);
-	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this->animatedSprite);
+	 Sprite_setPosition(this->animatedSprite, &spritePosition);
+	 Sprite_applyAffineTransformations(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
 	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 
-	__VIRTUAL_CALL(Sprite, setPosition, this->animatedSprite, &spritePosition);
-	__VIRTUAL_CALL(Sprite, rotate, this->animatedSprite, &spriteRotation);
-	__VIRTUAL_CALL(Sprite, resize, this->animatedSprite, spriteScale, spritePosition.z);
-	__VIRTUAL_CALL(Sprite, calculateParallax, this->animatedSprite, spritePosition.z);
+	 Sprite_setPosition(this->animatedSprite, &spritePosition);
+	 Sprite_rotate(this->animatedSprite, &spriteRotation);
+	 Sprite_resize(this->animatedSprite, spriteScale, spritePosition.z);
+	 Sprite_calculateParallax(this->animatedSprite, spritePosition.z);
 
 	this->animatedSprite->writeAnimationFrame = true;
 	SpriteManager_writeTextures(SpriteManager_getInstance());

@@ -689,9 +689,9 @@ static void SpriteManager_selectSpritePendingTextureWriting(SpriteManager this)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		if(__IS_OBJECT_ALIVE(sprite) && !__VIRTUAL_CALL(Sprite, areTexturesWritten, sprite))
+		if(__IS_OBJECT_ALIVE(sprite) && ! Sprite_areTexturesWritten(sprite))
 		{
-			bool areTexturesWritten = __VIRTUAL_CALL(Sprite, writeTextures, sprite);
+			bool areTexturesWritten =  Sprite_writeTextures(sprite);
 
 			this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
 			this->spritePendingTextureWriting = !areTexturesWritten ? sprite : NULL;
@@ -723,7 +723,7 @@ void SpriteManager_writeTextures(SpriteManager this)
 
 	for(; node; node = node->next)
 	{
-		__VIRTUAL_CALL(Sprite, writeTextures, node->data);
+		 Sprite_writeTextures(node->data);
 	}
 
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
@@ -747,9 +747,9 @@ static bool SpriteManager_writeSelectedSprite(SpriteManager this)
 	{
 		if(this->spritePendingTextureWriting)
 		{
-			if(__IS_OBJECT_ALIVE(this->spritePendingTextureWriting) && !__VIRTUAL_CALL(Sprite, areTexturesWritten, this->spritePendingTextureWriting))
+			if(__IS_OBJECT_ALIVE(this->spritePendingTextureWriting) && ! Sprite_areTexturesWritten(this->spritePendingTextureWriting))
 			{
-				this->spritePendingTextureWriting = __VIRTUAL_CALL(Sprite, writeTextures, this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
+				this->spritePendingTextureWriting =  Sprite_writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
 				this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;
 				textureWritten = true;
 			}
@@ -831,7 +831,7 @@ void SpriteManager_render(SpriteManager this)
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, render, sprite, this->evenFrame);
+			 Sprite_render(sprite, this->evenFrame);
 
 			if(!sprite->visible)
 			{
@@ -914,11 +914,11 @@ void SpriteManager_showLayer(SpriteManager this, u8 layer)
 
 		if(sprite->worldLayer != layer)
 		{
-			__VIRTUAL_CALL(Sprite, hide, sprite);
+			 Sprite_hide(sprite);
 		}
 		else
 		{
-			__VIRTUAL_CALL(Sprite, show, sprite);
+			 Sprite_show(sprite);
 		}
 
 		Sprite_setPosition(sprite, &sprite->position);
@@ -944,7 +944,7 @@ void SpriteManager_recoverLayers(SpriteManager this)
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		__VIRTUAL_CALL(Sprite, show, sprite);
+		 Sprite_show(sprite);
 
 		Sprite_setPosition(sprite, &sprite->position);
 

@@ -69,7 +69,7 @@ static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiC
 	__CONSTRUCT_BASE(Container, NULL);
 
 	// add entities in the definition
-	__VIRTUAL_CALL(UiContainer, addEntities, this, uiContainerDefinition->entities);
+	 UiContainer_addEntities(this, uiContainerDefinition->entities);
 }
 
 // class's destructor
@@ -98,16 +98,16 @@ void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 		if(entity)
 		{
 			// setup graphics
-			__VIRTUAL_CALL(Container, setupGraphics, entity);
+			 Container_setupGraphics(entity);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
 			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			__VIRTUAL_CALL(Container, initialTransform, entity, &environmentTransform, true);
+			 Container_initialTransform(entity, &environmentTransform, true);
 
-			__VIRTUAL_CALL(Entity, ready, entity, true);
+			 Entity_ready(entity, true);
 		}
 	}
 }
@@ -156,7 +156,7 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 
 	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
 
-	__VIRTUAL_CALL(Container, synchronizeGraphics, this);
+	 Container_synchronizeGraphics(this);
 
 	if(camera)
 	{

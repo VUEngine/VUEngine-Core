@@ -377,7 +377,7 @@ bool Sprite_writeTextures(Sprite this __attribute__ ((unused)))
 
 	if(!this->texture->written)
 	{
-		__VIRTUAL_CALL(Texture, write, this->texture);
+		 Texture_write(this->texture);
 	}
 
 	return this->texture->written;
@@ -611,7 +611,7 @@ void Sprite_rewrite(Sprite this)
 	if(this->texture)
 	{
 		// write it in graphical memory
-		__VIRTUAL_CALL(Texture, rewrite, this->texture);
+		 Texture_rewrite(this->texture);
 	}
 }
 
@@ -628,8 +628,8 @@ void Sprite_onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((un
 {
 	ASSERT(this, "Sprite::onTextureRewritten: null this");
 
-	__VIRTUAL_CALL(Sprite, applyAffineTransformations, this);
-	__VIRTUAL_CALL(Sprite, applyHbiasEffects, this);
+	 Sprite_applyAffineTransformations(this);
+	 Sprite_applyHbiasEffects(this);
 }
 
 /**
@@ -735,7 +735,7 @@ void Sprite_update(Sprite this)
 		// first animate the frame
 		if(this->writeAnimationFrame)
 		{
-			__VIRTUAL_CALL(Sprite, writeAnimation, this);
+			 Sprite_writeAnimation(this);
 			this->writeAnimationFrame = false;
 		}
 	}

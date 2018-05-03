@@ -34,6 +34,7 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
 //#define __DISABLE_STREAMING
 //#define __PRINT_CAMERA_STATUS
 //#define __PRINT_WIREFRAME_MANAGER_STATUS
+//#define __MAXIMUM_BOUNCINESS_COEFFICIENT		5.5f
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10

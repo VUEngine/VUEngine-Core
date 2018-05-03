@@ -135,7 +135,7 @@ static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialOb
 
 	ReflectiveEntity this = __SAFE_CAST(ReflectiveEntity, spatialObject);
 
-	__VIRTUAL_CALL(ReflectiveEntity, applyReflection, this, currentDrawingFrameBufferSet);
+	 ReflectiveEntity_applyReflection(this, currentDrawingFrameBufferSet);
 }
 
 void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet)

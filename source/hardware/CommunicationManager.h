@@ -19,95 +19,59 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef COMMUNICATTION_MANAGER_H_
+#define COMMUNICATTION_MANAGER_H_
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Wireframe.h>
-#include <WireframeManager.h>
-#include <debugConfig.h>
+#include <Object.h>
+#include <Telegram.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Wireframe
- * @extends Object
- * @ingroup graphics-3d
- */
-__CLASS_DEFINITION(Wireframe, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+typedef struct Package
+{
+	u8 payload;
+	bool isValid;
+} Package;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
- */
-void Wireframe_constructor(Wireframe this)
-{
-	ASSERT(this, "Wireframe::constructor: null this");
 
-	// construct base object
-	__CONSTRUCT_BASE(Object);
-}
 
-/**
- * Class destructor
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
- */
-void Wireframe_destructor(Wireframe this)
-{
-	ASSERT(this, "Wireframe::destructor: null this");
+// declare the virtual methods
+#define CommunicationManager_METHODS(ClassName)															\
+		Object_METHODS(ClassName)																		\
 
-	Wireframe_hide(this);
+// declare the virtual methods which are redefined
+#define CommunicationManager_SET_VTABLE(ClassName)														\
+		Object_SET_VTABLE(ClassName)																	\
+		__VIRTUAL_SET(ClassName, CommunicationManager, handleMessage);									\
 
-	// destroy the super object
-	// must always be called at the end of the destructor
-	__DESTROY_BASE;
-}
+__CLASS(CommunicationManager);
 
-/**
- * Start being rendered
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
- */
-void Wireframe_show(Wireframe this)
-{
-	ASSERT(this, "Wireframe::show: null this");
 
-	WireframeManager_register(WireframeManager_getInstance(), this);
-}
+//---------------------------------------------------------------------------------------------------------
+//										PUBLIC INTERFACE
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Stop being rendered
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
- */
-void Wireframe_hide(Wireframe this)
-{
-	ASSERT(this, "Wireframe::hide: null this");
+CommunicationManager CommunicationManager_getInstance();
 
-	WireframeManager_remove(WireframeManager_getInstance(), this);
-}
+void CommunicationManager_destructor(CommunicationManager this);
+void CommunicationManager_update(CommunicationManager this);
+bool CommunicationManager_sendPayload(CommunicationManager this, u8 payload);
+bool CommunicationManager_receivePayload(CommunicationManager this);
+Package CommunicationManager_getPackage(CommunicationManager this);
+bool CommunicationManager_handleMessage(CommunicationManager this, Telegram telegram);
+
+
+#endif

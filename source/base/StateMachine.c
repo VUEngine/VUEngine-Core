@@ -145,7 +145,7 @@ void StateMachine_update(StateMachine this)
 
 	if(this->currentState)
 	{
-		__VIRTUAL_CALL(State, execute, this->currentState, this->owner);
+		 State_execute(this->currentState, this->owner);
 	}
 }
 
@@ -173,7 +173,7 @@ void StateMachine_swapState(StateMachine this, State newState)
 		this->previousState = this->currentState;
 
 		// call the exit method from current state
-		__VIRTUAL_CALL(State, exit, this->currentState, this->owner);
+		 State_exit(this->currentState, this->owner);
 	}
 
 	this->currentState = newState;
@@ -183,7 +183,7 @@ void StateMachine_swapState(StateMachine this, State newState)
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// call enter method from new state
-	__VIRTUAL_CALL(State, enter, this->currentState, this->owner);
+	 State_enter(this->currentState, this->owner);
 }
 
 /**
@@ -210,7 +210,7 @@ u32 StateMachine_pushState(StateMachine this, State newState)
 	if(this->currentState)
 	{
 		// call the pause method from current state
-		__VIRTUAL_CALL(State, suspend, this->currentState, this->owner);
+		 State_suspend(this->currentState, this->owner);
 	}
 
 	// set new state
@@ -222,7 +222,7 @@ u32 StateMachine_pushState(StateMachine this, State newState)
 	VirtualList_pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// call enter method from new state
-	__VIRTUAL_CALL(State, enter, this->currentState, this->owner);
+	 State_enter(this->currentState, this->owner);
 
 	// return the resulting stack size
 	return StateMachine_getStackSize(this);
@@ -252,7 +252,7 @@ u32 StateMachine_popState(StateMachine this)
 	if(this->currentState)
 	{
 		// call the exit method from current state
-		__VIRTUAL_CALL(State, exit, this->currentState, this->owner);
+		 State_exit(this->currentState, this->owner);
 	}
 
 	// update the stack
@@ -265,7 +265,7 @@ u32 StateMachine_popState(StateMachine this)
 	// call resume method from new state
 	if(this->currentState)
 	{
-		__VIRTUAL_CALL(State, resume, this->currentState, this->owner);
+		 State_resume(this->currentState, this->owner);
 	}
 
 	// return the resulting stack size
@@ -288,7 +288,7 @@ void StateMachine_returnToPreviousState(StateMachine this)
 	{
 		if(this->currentState)
 		{
-			__VIRTUAL_CALL(State, exit, this->currentState, this->owner);
+			 State_exit(this->currentState, this->owner);
 		}
 
 		this->currentState = this->previousState;
@@ -316,14 +316,14 @@ void StateMachine_changeToGlobal(StateMachine this, State globalState)
 	}
 	if(this->currentState)
 	{
-		__VIRTUAL_CALL(State, suspend, this->currentState, this->owner);
+		 State_suspend(this->currentState, this->owner);
 
 		this->previousState = this->currentState;
 	}
 
 	this->currentState = globalState;
 
-	__VIRTUAL_CALL(State, enter, this->currentState, this->owner);
+	 State_enter(this->currentState, this->owner);
 }
 
 /**
@@ -343,7 +343,7 @@ bool StateMachine_handleMessage(StateMachine this, Telegram telegram)
 
 	if(this->currentState )
 	{
-		return __VIRTUAL_CALL(State, processMessage, this->currentState, this->owner, telegram);
+		return  State_processMessage(this->currentState, this->owner, telegram);
 	}
 
 	return false;

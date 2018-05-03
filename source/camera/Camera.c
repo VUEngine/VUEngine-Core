@@ -229,7 +229,7 @@ void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving)
 	if(!Game_isInSpecialMode(Game_getInstance()))
 #endif
 
-	__VIRTUAL_CALL(CameraMovementManager, focus, this->cameraMovementManager, checkIfFocusEntityIsMoving);
+	 CameraMovementManager_focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
 #ifdef __PRINT_CAMERA_STATUS
 	Camera_print(this, 1, 1);
@@ -254,7 +254,7 @@ void Camera_setFocusGameEntity(Camera this, Entity focusEntity)
 
 	if(focusEntity)
 	{
-		this->focusEntityPosition = __VIRTUAL_CALL(SpatialObject, getPosition, this->focusEntity);
+		this->focusEntityPosition =  SpatialObject_getPosition(this->focusEntity);
 
 		// focus now
 		Camera_focus(this, false);
@@ -617,7 +617,7 @@ void Camera_startEffect(Camera this, int effect, ...)
 
 	va_list args;
 	va_start(args, effect);
-	__VIRTUAL_CALL(CameraEffectManager, startEffect, this->cameraEffectManager, effect, args);
+	 CameraEffectManager_startEffect(this->cameraEffectManager, effect, args);
 	va_end(args);
 }
 
@@ -634,7 +634,7 @@ void Camera_stopEffect(Camera this, int effect)
 {
 	ASSERT(this, "Camera::stopEffect: null this");
 
-	__VIRTUAL_CALL(CameraEffectManager, stopEffect, this->cameraEffectManager, effect);
+	 CameraEffectManager_stopEffect(this->cameraEffectManager, effect);
 }
 
 /**

@@ -20,6 +20,7 @@
  */
 
 
+
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
@@ -454,6 +455,7 @@ void Game_start(Game this, GameState state)
 
 		while(true)
 		{
+			//CommunicationManager_update(CommunicationManager_getInstance());
 			while(!this->currentFrameEnded);
 			this->currentFrameEnded = false;
 
@@ -876,7 +878,7 @@ static u32 Game_processUserInput(Game this)
 
 	if(userInput.pressedKey | userInput.releasedKey | userInput.holdKey)
 	{
-		__VIRTUAL_CALL(GameState, processUserInput, Game_getCurrentState(this), userInput);
+		 GameState_processUserInput(Game_getCurrentState(this), userInput);
 	}
 
 #ifdef __PROFILE_GAME

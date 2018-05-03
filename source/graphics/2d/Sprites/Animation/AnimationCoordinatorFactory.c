@@ -164,7 +164,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 
 					if(AnimationCoordinator_getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
-						__VIRTUAL_CALL(AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
+						 AnimationCoordinator_addAnimationController(animationCoordinator, animationController);
 						return animationCoordinator;
 					}
 				}
@@ -185,7 +185,7 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				}
 
 				// create a new coordinator
-				__VIRTUAL_CALL(AnimationCoordinator, addAnimationController, animationCoordinator, animationController);
+				 AnimationCoordinator_addAnimationController(animationCoordinator, animationController);
 
 				VirtualList_pushBack(this->animationCoordinators, animationCoordinator);
 

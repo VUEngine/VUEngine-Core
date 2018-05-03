@@ -99,6 +99,7 @@ int _sp = 0;
 void TimerManager_interruptHandler(void);
 void KeypadManager_interruptHandler(void);
 void VIPManager_interruptHandler(void);
+void CommunicationManager_interruptHandler(void);
 static void HardwareManager_constructor(HardwareManager this);
 
 
@@ -238,7 +239,7 @@ void HardwareManager_setInterruptVectors(HardwareManager this __attribute__ ((un
 	keyVector = (u32)KeypadManager_interruptHandler;
 	timVector = (u32)TimerManager_interruptHandler;
 	croVector = (u32)HardwareManager_croInterruptHandler;
-	comVector = (u32)HardwareManager_communicationInterruptHandler;
+	comVector = (u32)CommunicationManager_interruptHandler;
 	vipVector = (u32)VIPManager_interruptHandler;
 }
 

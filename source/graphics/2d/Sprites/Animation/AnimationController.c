@@ -113,7 +113,7 @@ void AnimationController_destructor(AnimationController this)
 
 	if(this->animationCoordinator)
 	{
-		__VIRTUAL_CALL(AnimationCoordinator, removeAnimationController, this->animationCoordinator, this);
+		 AnimationCoordinator_removeAnimationController(this->animationCoordinator, this);
 		this->animationCoordinator = NULL;
 	}
 

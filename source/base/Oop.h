@@ -29,6 +29,8 @@
 #define __MAKE_CONCAT(str_1,str_2) str_1 ## str_2
 #define __CUSTOM_CONCAT(str_1,str_2) __MAKE_CONCAT(str_1,str_2)
 
+#define __BASE	((void*)this)
+
 
 // define the class's allocator declaration
 #define __CLASS_NEW_DECLARE(ClassName, ...)																\
@@ -137,12 +139,15 @@
 		/* call derived implementation */																\
 		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)								\
 
+#define __VIRTUAL_CALL_COMMA_HELPER(...) ,##__VA_ARGS__
+
+
 // call a virtual method (in debug a check is performed to assert that the method isn't null)
 #define __VIRTUAL_CALL(ClassName, MethodName, object, ...)												\
 																										\
 		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))							\
 		(																								\
-			__SAFE_CAST(ClassName, object), ##__VA_ARGS__												\
+			__SAFE_CAST(ClassName, object) __VIRTUAL_CALL_COMMA_HELPER(__VA_ARGS__)												\
 		)
 
 // call the base's method

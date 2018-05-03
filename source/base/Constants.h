@@ -117,6 +117,10 @@ enum MessagesTypes
 	kKeyReleased,
 	kKeyHold,
 
+	// communication messages
+	kCommunicationsSendSyn,
+	kCommunicationsWaitSyn,
+
 	// don't place messages below this
 	kLastEngineMessage
 };

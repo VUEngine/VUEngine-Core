@@ -295,7 +295,7 @@ u32 EntityFactory_initializeEntities(EntityFactory this)
 				positionedEntityDescription->initialized = true;
 
 				// call ready method
-				__VIRTUAL_CALL(Entity, initialize, positionedEntityDescription->entity, false);
+				 Entity_initialize(positionedEntityDescription->entity, false);
 
 				return __ENTITY_PENDING_PROCESSING;
 			}
@@ -348,11 +348,11 @@ u32 EntityFactory_transformEntities(EntityFactory this)
 		{
 			positionedEntityDescription->transformed = true;
 
-			__VIRTUAL_CALL(Container, addChild, positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
+			 Container_addChild(positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
 
 			Transformation* environmentTransform = Container_getTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
 
-			__VIRTUAL_CALL(Container, initialTransform, positionedEntityDescription->entity, environmentTransform, false);
+			 Container_initialTransform(positionedEntityDescription->entity, environmentTransform, false);
 		}
 
 		if(Entity_areAllChildrenTransformed(positionedEntityDescription->entity))
@@ -396,7 +396,7 @@ u32 EntityFactory_makeReadyEntities(EntityFactory this)
 		if(Entity_areAllChildrenReady(positionedEntityDescription->entity))
 		{
 			// call ready method
-			__VIRTUAL_CALL(Entity, ready, positionedEntityDescription->entity, false);
+			 Entity_ready(positionedEntityDescription->entity, false);
 
 			VirtualList_pushBack(this->spawnedEntities, positionedEntityDescription);
 			VirtualList_removeElement(this->entitiesToMakeReady, positionedEntityDescription);

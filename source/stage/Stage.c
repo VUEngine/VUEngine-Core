@@ -340,11 +340,11 @@ void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrid
 	ParticleRemover_setRemovalDelayCycles(this->particleRemover, this->stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
-	__VIRTUAL_CALL(Container, initialTransform, this, &neutralEnvironmentTransformation, true);
+	 Container_initialTransform(this, &neutralEnvironmentTransformation, true);
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &neutralEnvironmentTransformation, true);
+		 Container_initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 }
 
@@ -402,7 +402,7 @@ static void Stage_setupUI(Stage this)
 		if(this->uiContainer)
 		{
 			// apply transformations
-			__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &neutralEnvironmentTransformation, true);
+			 Container_initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 		}
 	}
 }
@@ -428,14 +428,14 @@ static Entity Stage_doAddChildEntity(Stage this, const PositionedEntity* const p
 		if(entity)
 		{
 			// must add graphics
-			__VIRTUAL_CALL(Container, setupGraphics, entity);
-			__VIRTUAL_CALL(Entity, initialize, entity, true);
+			 Container_setupGraphics(entity);
+			 Entity_initialize(entity, true);
 
 			// create the entity and add it to the world
 			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
-			__VIRTUAL_CALL(Container, initialTransform, entity, &neutralEnvironmentTransformation, true);
+			 Container_initialTransform(entity, &neutralEnvironmentTransformation, true);
 
 			if(makeReady)
 			{
@@ -464,7 +464,7 @@ static void Stage_makeChildReady(Stage this, Entity entity)
 
 	if(entity->parent == __SAFE_CAST(Container, this))
 	{
-		__VIRTUAL_CALL(Entity, ready, entity, true);
+		 Entity_ready(entity, true);
 	}
 }
 
@@ -567,7 +567,7 @@ static void Stage_unloadChild(Stage this, Container child)
 
 			// remove from list of entities that are to be loaded by the streaming,
 			// if the entity is not to be respawned
-			if(!__VIRTUAL_CALL(Entity, respawn, child))
+			if(! Entity_respawn(child))
 			{
 				VirtualList_removeElement(this->stageEntities, node->data);
 			}
@@ -619,7 +619,7 @@ static void Stage_preloadAssets(Stage this)
 
 				if(bgmapTexture)
 				{
-					__VIRTUAL_CALL(Texture, write, bgmapTexture);
+					 Texture_write(bgmapTexture);
 
 					if(this->stageDefinition->assets.textureDefinitions[i]->recyclable)
 					{
@@ -801,7 +801,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		Entity entity = __SAFE_CAST(Entity, node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == __SAFE_CAST(Container, this) && !__VIRTUAL_CALL(Entity, isVisible, entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == __SAFE_CAST(Container, this) && ! Entity_isVisible(entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity_getInternalId(entity);
 
@@ -1125,7 +1125,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, transform, this->uiContainer, environmentTransform, invalidateTransformationFlag);
+		 Container_transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
 	}
 }
 
@@ -1157,7 +1157,7 @@ void Stage_suspend(Stage this)
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, suspend, __SAFE_CAST(Container, this->uiContainer));
+		 Container_suspend(__SAFE_CAST(Container, this->uiContainer));
 	}
 
 	// relinquish camera focus priority
@@ -1216,13 +1216,13 @@ void Stage_resume(Stage this)
 	__CALL_BASE_METHOD(Container, resume, this);
 
 	// apply transformations
-	__VIRTUAL_CALL(Container, initialTransform, this, &neutralEnvironmentTransformation, true);
+	 Container_initialTransform(this, &neutralEnvironmentTransformation, true);
 
 	if(this->uiContainer)
 	{
-		__VIRTUAL_CALL(Container, resume, __SAFE_CAST(Container, this->uiContainer));
+		 Container_resume(__SAFE_CAST(Container, this->uiContainer));
 
-		__VIRTUAL_CALL(Container, initialTransform, this->uiContainer, &neutralEnvironmentTransformation, true);
+		 Container_initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 
 	this->entityFactory = __NEW(EntityFactory);

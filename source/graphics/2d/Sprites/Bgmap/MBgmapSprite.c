@@ -293,7 +293,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 	if(previousZPosition != this->position.z)
 	{
 		// calculate sprite's parallax
-		__VIRTUAL_CALL(Sprite, calculateParallax, this, this->position.z);
+		 Sprite_calculateParallax(this, this->position.z);
 	}
 }
 
@@ -590,7 +590,7 @@ bool MBgmapSprite_writeTextures(MBgmapSprite this)
 
 		if(!texture->written)
 		{
-			__VIRTUAL_CALL(Texture, write, texture);
+			 Texture_write(texture);
 			break;
 		}
 	}

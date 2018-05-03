@@ -444,7 +444,7 @@ static void StageEditor_releaseShape(StageEditor this)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 
-		VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
+		VirtualList shapes =  Entity_getShapes(entity);
 
 		if(shapes)
 		{
@@ -492,7 +492,7 @@ static void StageEditor_getShape(StageEditor this)
 	}
 
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-	VirtualList shapes = __VIRTUAL_CALL(Entity, getShapes, entity);
+	VirtualList shapes =  Entity_getShapes(entity);
 
 	this->shape = shapes ? __SAFE_CAST(Shape, VirtualList_front(shapes)) : NULL;
 
@@ -503,7 +503,7 @@ static void StageEditor_getShape(StageEditor this)
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), 0};
 
-		__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
+		 Shape_position(this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 	}
 
 	Shape_setReady(this->shape, false);
@@ -527,7 +527,7 @@ static void StageEditor_positionShape(StageEditor this)
 	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
 	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), 0};
 
-	__VIRTUAL_CALL(Shape, position, this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
+	 Shape_position(this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
 
 	if(this->shape)
 	{
@@ -908,7 +908,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D tran
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-		__VIRTUAL_CALL(Container, setLocalPosition, container, &localPosition);
+		 Container_setLocalPosition(container, &localPosition);
 		Container_invalidateGlobalPosition(container);
 
 		// this hack forces the Entity to recalculate its sprites' value.
@@ -974,10 +974,10 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-		__VIRTUAL_CALL(Sprite, setPosition, this->userObjectSprite, &spritePosition);
-		__VIRTUAL_CALL(Sprite, rotate, this->userObjectSprite, &spriteRotation);
-		__VIRTUAL_CALL(Sprite, resize, this->userObjectSprite, spriteScale, spritePosition.z);
-		__VIRTUAL_CALL(Sprite, calculateParallax, this->userObjectSprite, spritePosition.z);
+		 Sprite_setPosition(this->userObjectSprite, &spritePosition);
+		 Sprite_rotate(this->userObjectSprite, &spriteRotation);
+		 Sprite_resize(this->userObjectSprite, spriteScale, spritePosition.z);
+		 Sprite_calculateParallax(this->userObjectSprite, spritePosition.z);
 
 		this->userObjectSprite->writeAnimationFrame = true;
 		SpriteManager_writeTextures(SpriteManager_getInstance());
@@ -1080,9 +1080,9 @@ static void StageEditor_printEntityPosition(StageEditor this)
 	if(this->currentEntityNode)
 	{
 		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		const Vector3D* globalPosition = __VIRTUAL_CALL(SpatialObject, getPosition, entity);
-		const Rotation* globalRotation = __VIRTUAL_CALL(SpatialObject, getRotation, entity);
-		const Scale* globalScale = __VIRTUAL_CALL(SpatialObject, getScale, entity);
+		const Vector3D* globalPosition =  SpatialObject_getPosition(entity);
+		const Rotation* globalRotation =  SpatialObject_getRotation(entity);
+		const Scale* globalScale =  SpatialObject_getScale(entity);
 		char* entityName = Container_getName(__SAFE_CAST(Container, entity));
 
 		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
@@ -1129,7 +1129,7 @@ static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D tran
 	GameState_transform(this->gameState);
 	GameState_synchronizeGraphics(this->gameState);
 	StageEditor_printCameraPosition(this);
-	__VIRTUAL_CALL(Stage, streamAll, GameState_getStage(this->gameState));
+	 Stage_streamAll(GameState_getStage(this->gameState));
 }
 
 /**

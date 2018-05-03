@@ -211,11 +211,11 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
 	if(__Z_AXIS & Body_getMovementOnAllAxes(this->body))
 	{
 		// calculate sprite's parallax
-		__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
+		 Sprite_calculateParallax(this->objectSprite, position->z);
 	}
 
 	// update sprite's 2D position
-	__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
+	 Sprite_position(this->objectSprite, position);
 }
 
 /**
@@ -314,10 +314,10 @@ void Particle_setPosition(Particle this, const Vector3D* position)
 	Body_setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
 
 	// sync sprite
-	__VIRTUAL_CALL(Sprite, position, this->objectSprite, position);
+	 Sprite_position(this->objectSprite, position);
 
 	// calculate sprite's parallax
-	__VIRTUAL_CALL(Sprite, calculateParallax, this->objectSprite, position->z);
+	 Sprite_calculateParallax(this->objectSprite, position->z);
 }
 
 /**
