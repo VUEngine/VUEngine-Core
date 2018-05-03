@@ -112,7 +112,7 @@ void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation
 		this->radius = size->y >> 1;
 	}
 
-	__CALL_BASE_METHOD(Shape, position, this, position, rotation, scale, size);
+	Base_position(this, position, rotation, scale, size);
 }
 
 void Ball_project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)

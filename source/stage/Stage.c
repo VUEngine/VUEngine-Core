@@ -506,7 +506,7 @@ void Stage_removeChild(Stage this, Container child, bool deleteChild)
 		return;
 	}
 
-	__CALL_BASE_METHOD(Container, removeChild, this, child, deleteChild);
+	Base_removeChild(this, child, deleteChild);
 
 	s16 internalId = Entity_getInternalId(__SAFE_CAST(Entity, child));
 
@@ -1106,7 +1106,7 @@ void Stage_update(Stage this, u32 elapsedTime)
 {
 	ASSERT(this, "Stage::update: null this");
 
-	__CALL_BASE_METHOD(Container, update, this, elapsedTime);
+	Base_update(this, elapsedTime);
 
 	if(this->uiContainer)
 	{
@@ -1121,7 +1121,7 @@ void Stage_transform(Stage this, const Transformation* environmentTransform __at
 {
 	ASSERT(this, "Stage::transform: null this");
 
-	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+	Base_transform(this, environmentTransform, invalidateTransformationFlag);
 
 	if(this->uiContainer)
 	{
@@ -1133,7 +1133,7 @@ void Stage_synchronizeGraphics(Stage this)
 {
 	ASSERT(this, "Stage::synchronizeGraphics: null this");
 
-	__CALL_BASE_METHOD(Container, synchronizeGraphics, this);
+	Base_synchronizeGraphics(this);
 }
 
 // retrieve ui
@@ -1153,7 +1153,7 @@ void Stage_suspend(Stage this)
 	// the stage entity registries
 	EntityFactory_prepareAllEntities(this->entityFactory);
 
-	__CALL_BASE_METHOD(Container, suspend, this);
+	Base_suspend(this);
 
 	if(this->uiContainer)
 	{
@@ -1213,7 +1213,7 @@ void Stage_resume(Stage this)
 	// load background music
 	SoundManager_playBGM(SoundManager_getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
 
-	__CALL_BASE_METHOD(Container, resume, this);
+	Base_resume(this);
 
 	// apply transformations
 	 Container_initialTransform(this, &neutralEnvironmentTransformation, true);

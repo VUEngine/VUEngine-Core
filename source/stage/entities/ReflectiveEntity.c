@@ -85,7 +85,7 @@ void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
 	ASSERT(this, "ReflectiveEntity::ready: null this");
 
 	// call base
-	__CALL_BASE_METHOD(Entity, ready, this, recursive);
+	Base_ready(this, recursive);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -95,7 +95,7 @@ void ReflectiveEntity_suspend(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::suspend: null this");
 
-	__CALL_BASE_METHOD(Entity, suspend, this);
+	Base_suspend(this);
 
 	// remove post processing effect
 	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
@@ -105,7 +105,7 @@ void ReflectiveEntity_resume(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::resume: null this");
 
-	__CALL_BASE_METHOD(Entity, resume, this);
+	Base_resume(this);
 
 	// add post processing effect to make key emit rhombuses
 	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));

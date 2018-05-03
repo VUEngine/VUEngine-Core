@@ -233,8 +233,7 @@ void ParticleSystem_update(ParticleSystem this, u32 elapsedTime)
 {
 	ASSERT(this, "ParticleSystem::update: null this");
 
-	// bypass Entity's method
-	Container_update(this, elapsedTime);
+	Base_update(this, elapsedTime);
 
 	ParticleSystem_processExpiredParticles(this);
 
@@ -436,7 +435,7 @@ void ParticleSystem_transform(ParticleSystem this, const Transformation* environ
 {
 	ASSERT(this, "ParticleSystem::transform: null this");
 
-	__CALL_BASE_METHOD(Entity, transform, this, environmentTransform, invalidateTransformationFlag);
+	Base_transform(this, environmentTransform, invalidateTransformationFlag);
 
 	ParticleSystem_processExpiredParticles(this);
 
@@ -501,7 +500,7 @@ void ParticleSystem_show(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::show: null this");
 
-	__CALL_BASE_METHOD(Entity, show, this);
+	Base_show(this);
 
 	VirtualNode node = this->particles->head;
 
@@ -521,7 +520,7 @@ void ParticleSystem_hide(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::hide: null this");
 
-	__CALL_BASE_METHOD(Entity, hide, this);
+	Base_hide(this);
 
 	VirtualNode node = this->particles->head;
 
@@ -541,7 +540,7 @@ void ParticleSystem_resume(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::resume: null this");
 
-	__CALL_BASE_METHOD(Entity, resume, this);
+	Base_resume(this);
 
 	VirtualNode node = this->particles->head;
 
@@ -581,7 +580,7 @@ void ParticleSystem_suspend(ParticleSystem this)
 {
 	ASSERT(this, "ParticleSystem::suspend: null this");
 
-	__CALL_BASE_METHOD(Entity, suspend, this);
+	Base_suspend(this);
 
 	ParticleSystem_processExpiredParticles(this);
 

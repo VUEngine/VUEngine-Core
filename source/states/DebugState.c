@@ -116,7 +116,7 @@ static void DebugState_enter(DebugState this __attribute__ ((unused)), void* own
 {
 	ASSERT(this, "DebugState::enter: null this");
 
-	__CALL_BASE_METHOD(GameState, enter, this, owner);
+	Base_enter(this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	Debug_show(Debug_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
@@ -152,7 +152,7 @@ static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owne
 
 	Debug_hide(Debug_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	__CALL_BASE_METHOD(GameState, exit, this, owner);
+	Base_exit(this, owner);
 }
 
 /**

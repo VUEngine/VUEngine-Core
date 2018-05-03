@@ -158,7 +158,7 @@ void Entity_iAmDeletingMyself(Entity this)
 {
 	ASSERT(this, "Entity::iAmDeletingMyself: null this");
 
-	__CALL_BASE_METHOD(Container, iAmDeletingMyself, this);
+	Base_iAmDeletingMyself(this);
 
 	// destroy collision shapes
 	Entity_activateShapes(this, false);
@@ -290,7 +290,7 @@ void Entity_setupGraphics(Entity this)
 {
 	ASSERT(this, "Entity::setupGraphics: null this");
 
-	__CALL_BASE_METHOD(Container, setupGraphics, this);
+	Base_setupGraphics(this);
 
 	Entity_addSprites(this, this->entityDefinition->spriteDefinitions);
 }
@@ -307,7 +307,7 @@ void Entity_releaseGraphics(Entity this)
 {
 	ASSERT(this, "Entity::releaseGraphics: null this");
 
-	__CALL_BASE_METHOD(Container, releaseGraphics, this);
+	Base_releaseGraphics(this);
 
 	Entity_releaseSprites(this);
 }
@@ -1465,7 +1465,7 @@ void Entity_initialTransform(Entity this, Transformation* environmentTransform, 
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// call base class's transformation method
-	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
+	Base_initialTransform(this, environmentTransform, recursive);
 
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
@@ -1512,11 +1512,11 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
 		Entity_transformShapes(this);
 
 		// call base class's transformation method
-		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+		Base_transform(this, environmentTransform, invalidateTransformationFlag);
 	}
 	else if((u32)this->children)
 	{
-		__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+		Base_transform(this, environmentTransform, invalidateTransformationFlag);
 	}
 }
 
@@ -1532,7 +1532,7 @@ void Entity_setLocalPosition(Entity this, const Vector3D* position)
 {
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
-	__CALL_BASE_METHOD(Container, setLocalPosition, this, position);
+	Base_setLocalPosition(this, position);
 
 	Entity_transformShapes(this);
 }
@@ -1549,7 +1549,7 @@ void Entity_setLocalRotation(Entity this, const Rotation* rotation)
 {
 	ASSERT(this, "Entity::setLocalRotation: null this");
 
-	__CALL_BASE_METHOD(Container, setLocalRotation, this, rotation);
+	Base_setLocalRotation(this, rotation);
 
 	Entity_transformShapes(this);
 }
@@ -1568,7 +1568,7 @@ void Entity_synchronizeGraphics(Entity this)
 
 	if(this->children)
 	{
-		__CALL_BASE_METHOD(Container, synchronizeGraphics, this);
+		Base_synchronizeGraphics(this);
 	}
 
 	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION, this->invalidateSprites & __INVALIDATE_PROJECTION);
@@ -1955,7 +1955,7 @@ void Entity_show(Entity this)
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity_synchronizeGraphics(this);
 
-	__CALL_BASE_METHOD(Container, show, this);
+	Base_show(this);
 
 	// show all sprites
 	if(this->sprites)
@@ -1991,7 +1991,7 @@ void Entity_hide(Entity this)
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity_synchronizeGraphics(this);
 
-	__CALL_BASE_METHOD(Container, hide, this);
+	Base_hide(this);
 
 	// hide all sprites
 	if(this->sprites)
@@ -2016,7 +2016,7 @@ void Entity_suspend(Entity this)
 {
 	ASSERT(this, "Entity::suspend: null this");
 
-	__CALL_BASE_METHOD(Container, suspend, this);
+	Base_suspend(this);
 
 	Entity_releaseSprites(this);
 }
@@ -2033,7 +2033,7 @@ void Entity_resume(Entity this)
 {
 	ASSERT(this, "Entity::resume: null this");
 
-	__CALL_BASE_METHOD(Container, resume, this);
+	Base_resume(this);
 
 	// initialize sprites
 	if(this->entityDefinition)

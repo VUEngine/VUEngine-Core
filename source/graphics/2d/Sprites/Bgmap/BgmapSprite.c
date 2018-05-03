@@ -331,7 +331,7 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
+	Base_render(this, evenFrame);
 
 	if(!this->positioned)
 	{

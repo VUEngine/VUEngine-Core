@@ -155,7 +155,7 @@ void BgmapTexture_write(BgmapTexture this)
 		this->remainingRowsToBeWritten = this->textureDefinition->rows;
 	}
 
-	__CALL_BASE_METHOD(Texture, write, this);
+	Base_write(this);
 
 	if(!this->charSet)
 	{

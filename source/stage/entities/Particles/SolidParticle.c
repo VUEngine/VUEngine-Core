@@ -156,7 +156,7 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
-	u32 expired = __CALL_BASE_METHOD(Particle, update, this, timeElapsed, behavior);
+	u32 expired = Base_update(this, timeElapsed, behavior);
 
 	if(0 <= this->lifeSpan)
 	{
@@ -386,7 +386,7 @@ void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
 
-	__CALL_BASE_METHOD(Particle, setPosition, this, position);
+	Base_setPosition(this, position);
 
 //	SolidParticle_transformShape(this);
 }
@@ -488,7 +488,7 @@ void SolidParticle_reset(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::reset: null this");
 
-	__CALL_BASE_METHOD(Particle, reset, this);
+	Base_reset(this);
 
 	Shape_reset(this->shape);
 }

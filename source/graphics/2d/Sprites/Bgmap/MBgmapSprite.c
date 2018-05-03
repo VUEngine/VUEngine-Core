@@ -231,7 +231,7 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	__CALL_BASE_METHOD(Sprite, position, this, position);
+	Base_position(this, position);
 
 	MBgmapSprite_setPosition(this, &this->position);
 }
@@ -251,7 +251,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 
 	PixelVector auxPosition = *position;
 
-	__CALL_BASE_METHOD(BgmapSprite, setPosition, this, position);
+	Base_setPosition(this, position);
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -362,7 +362,7 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
 
-	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
+	Base_render(this, evenFrame);
 
 	if(!this->positioned)
 	{
@@ -509,7 +509,7 @@ void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z)
 {
 	ASSERT(this, "MBgmapSprite::resize: null this");
 
-	__CALL_BASE_METHOD(BgmapSprite, resize, this, scale, z);
+	Base_resize(this, scale, z);
 
 	MBgmapSprite_calculateSize(this);
 }

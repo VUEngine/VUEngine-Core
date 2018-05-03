@@ -136,7 +136,7 @@ void Actor_iAmDeletingMyself(Actor this)
 {
 	ASSERT(this, "Actor::iAmDeletingMyself: null this");
 
-	__CALL_BASE_METHOD(AnimatedEntity, iAmDeletingMyself, this);
+	Base_iAmDeletingMyself(this);
 
 	// destroy body to prevent any more physical interactions
 	if(this->body)
@@ -158,7 +158,7 @@ void Actor_setDefinition(Actor this, void* actorDefinition)
 	// save definition
 	this->actorDefinition = actorDefinition;
 
-	__CALL_BASE_METHOD(AnimatedEntity, setDefinition, this, &((ActorDefinition*)actorDefinition)->animatedEntityDefinition);
+	Base_setDefinition(this, &((ActorDefinition*)actorDefinition)->animatedEntityDefinition);
 }
 
 //set class's local position
@@ -167,7 +167,7 @@ void Actor_setLocalPosition(Actor this, const Vector3D* position)
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	Vector3D displacement = this->transformation.localPosition;
-	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, position);
+	Base_setLocalPosition(this, position);
 
 	displacement.x -= this->transformation.localPosition.x;
 	displacement.y -= this->transformation.localPosition.y;
@@ -234,7 +234,7 @@ void Actor_syncPositionWithBody(Actor this)
 	localPosition.y += bodyLastDisplacement.y;
 	localPosition.z += bodyLastDisplacement.z;
 
-	__CALL_BASE_METHOD(AnimatedEntity, setLocalPosition, this, &localPosition);
+	Base_setLocalPosition(this, &localPosition);
 }
 
 void Actor_syncRotationWithBody(Actor this)
@@ -296,7 +296,7 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 	}
 
 	// call base
-	__CALL_BASE_METHOD(AnimatedEntity, transform, this, environmentTransform, invalidateTransformationFlag);
+	Base_transform(this, environmentTransform, invalidateTransformationFlag);
 
 	this->previousRotation = this->transformation.localRotation;
 }
@@ -305,7 +305,7 @@ void Actor_resume(Actor this)
 {
 	ASSERT(this, "Actor::resume: null this");
 
-	__CALL_BASE_METHOD(AnimatedEntity, resume, this);
+	Base_resume(this);
 
 	Actor_syncWithBody(this);
 }
@@ -316,7 +316,7 @@ void Actor_update(Actor this, u32 elapsedTime)
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	__CALL_BASE_METHOD(AnimatedEntity, update, this, elapsedTime);
+	Base_update(this, elapsedTime);
 
 	if(this->stateMachine)
 	{
@@ -652,7 +652,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::changeEnvironment: null this");
 
-	__CALL_BASE_METHOD(AnimatedEntity, changeEnvironment, this, environmentTransform);
+	Base_changeEnvironment(this, environmentTransform);
 
 	if(this->body)
 	{
@@ -675,7 +675,7 @@ void Actor_initialTransform(Actor this, Transformation* environmentTransform, u3
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// call base class's transformation method
-	__CALL_BASE_METHOD(AnimatedEntity, initialTransform, this, environmentTransform, recursive);
+	Base_initialTransform(this, environmentTransform, recursive);
 
 	if(this->body)
 	{
@@ -715,7 +715,7 @@ const Vector3D* Actor_getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	return this->body ? Body_getPosition(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getPosition, this);
+	return this->body ? Body_getPosition(this->body) : Base_getPosition(this);
 }
 
 // take hit
@@ -745,7 +745,7 @@ Velocity Actor_getVelocity(Actor this)
 {
 	ASSERT(this, "Actor::getVelocity: null this");
 
-	return this->body ? Body_getVelocity(this->body) : __CALL_BASE_METHOD(AnimatedEntity, getVelocity, this);
+	return this->body ? Body_getVelocity(this->body) : Base_getVelocity(this);
 }
 
 void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)

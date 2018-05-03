@@ -117,7 +117,7 @@ static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)
 {
 	ASSERT(this, "StageEditorState::enter: null this");
 
-	__CALL_BASE_METHOD(GameState, enter, this, owner);
+	Base_enter(this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	StageEditor_show(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
@@ -153,7 +153,7 @@ static void StageEditorState_exit(StageEditorState this __attribute__ ((unused))
 
 	StageEditor_hide(StageEditor_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	__CALL_BASE_METHOD(GameState, exit, this, owner);
+	Base_exit(this, owner);
 }
 
 /**

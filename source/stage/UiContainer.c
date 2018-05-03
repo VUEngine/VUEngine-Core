@@ -122,7 +122,7 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 
 	Camera_prepareForUITransform(camera);
 
-	__CALL_BASE_METHOD(Container, transform, this, environmentTransform, invalidateTransformationFlag);
+	Base_transform(this, environmentTransform, invalidateTransformationFlag);
 
 	Camera_doneUITransform(camera);
 }
@@ -154,7 +154,7 @@ void UiContainer_initialTransform(UiContainer this, Transformation* environmentT
 		Camera_setPosition(camera, tempCameraPosition);
 	}
 
-	__CALL_BASE_METHOD(Container, initialTransform, this, environmentTransform, recursive);
+	Base_initialTransform(this, environmentTransform, recursive);
 
 	 Container_synchronizeGraphics(this);
 

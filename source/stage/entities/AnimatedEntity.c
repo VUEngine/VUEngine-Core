@@ -102,7 +102,7 @@ void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefin
 	// save definition
 	this->animatedEntityDefinition = animatedEntityDefinition;
 
-	__CALL_BASE_METHOD(Entity, setDefinition, this, &((AnimatedEntityDefinition*)animatedEntityDefinition)->entityDefinition);
+	Base_setDefinition(this, &((AnimatedEntityDefinition*)animatedEntityDefinition)->entityDefinition);
 }
 
 // ready method
@@ -111,7 +111,7 @@ void AnimatedEntity_ready(AnimatedEntity this, bool recursive)
 	ASSERT(this, "AnimatedEntity::ready: null this");
 	ASSERT(this->animatedEntityDefinition, "AnimatedEntity::ready: null animatedEntityDefinition");
 
-	__CALL_BASE_METHOD(Entity, ready, this, recursive);
+	Base_ready(this, recursive);
 
 	AnimatedEntity_playAnimation(this, this->animatedEntityDefinition->initialAnimation);
 }
@@ -123,7 +123,7 @@ void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime)
 	ASSERT(this, "AnimatedEntity::update: null this");
 
 	// call base
-	__CALL_BASE_METHOD(Entity, update, this, elapsedTime);
+	Base_update(this, elapsedTime);
 
 	if(!elapsedTime)
 	{
@@ -277,7 +277,7 @@ void AnimatedEntity_resume(AnimatedEntity this)
 {
 	ASSERT(this, "AnimatedEntity::resume: null this");
 
-	__CALL_BASE_METHOD(Entity, resume, this);
+	Base_resume(this);
 
 	AnimatedEntity_playAnimation(this, this->currentAnimationName);
 }

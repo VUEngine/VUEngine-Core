@@ -316,7 +316,7 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 		Box_projectOntoItself(this);
 	}
 
-	__CALL_BASE_METHOD(Shape, position, this, position, rotation, scale, size);
+	Base_position(this, position, rotation, scale, size);
 }
 
 void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])

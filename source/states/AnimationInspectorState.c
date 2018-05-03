@@ -117,7 +117,7 @@ static void AnimationInspectorState_enter(AnimationInspectorState this __attribu
 {
 	ASSERT(this, "AnimationInspectorState::enter: null this");
 
-	__CALL_BASE_METHOD(GameState, enter, this, owner);
+	Base_enter(this, owner);
 	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 	AnimationInspector_show(AnimationInspector_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
 }
@@ -153,7 +153,7 @@ static void AnimationInspectorState_exit(AnimationInspectorState this __attribut
 
 	AnimationInspector_hide(AnimationInspector_getInstance());
 	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	__CALL_BASE_METHOD(GameState, exit, this, owner);
+	Base_exit(this, owner);
 }
 
 /**

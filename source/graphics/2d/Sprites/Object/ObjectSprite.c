@@ -194,7 +194,7 @@ void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position)
 {
 	ASSERT(this, "ObjectSprite::setPosition: null this");
 
-	__CALL_BASE_METHOD(Sprite, setPosition, this, position);
+	Base_setPosition(this, position);
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -213,7 +213,7 @@ void ObjectSprite_position(ObjectSprite this, const Vector3D* position)
 	ASSERT(this, "ObjectSprite::position: null this");
 	ASSERT(this->texture, "ObjectSprite::position: null texture");
 
-	__CALL_BASE_METHOD(Sprite, position, this, position);
+	Base_position(this, position);
 
 	ObjectSprite_checkForContainer(this);
 }
@@ -269,7 +269,7 @@ void ObjectSprite_render(ObjectSprite this, bool evenFrame)
 	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
-	__CALL_BASE_METHOD(Sprite, render, this, evenFrame);
+	Base_render(this, evenFrame);
 
 	//ObjectSprite_checkForContainer(this);
 

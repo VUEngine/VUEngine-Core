@@ -182,7 +182,7 @@ setupClass:
 	@echo "	"$(GAME_HOME) | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
 	@echo "	"$(ADDITIONAL_CLASSES_FOLDERS) | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
 	@sh $(VUENGINE_HOME)/lib/compiler/setupClasses.sh -h $(GAME_HOME) $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c
-#	@sh $(VUENGINE_HOME)/lib/compiler/processVirtualCalls.sh $(VUENGINE_HOME)/source $(GAME_HOME) $(VUENGINE_HOME)
+#	@sh $(VUENGINE_HOME)/lib/compiler/cleanSyntax.sh $(VUENGINE_HOME)/source $(GAME_HOME) $(VUENGINE_HOME)
 	@echo Classes processing done
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)

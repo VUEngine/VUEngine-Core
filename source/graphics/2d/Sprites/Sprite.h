@@ -160,7 +160,7 @@
 		 * @brief					Flag to allow rendering
 		 * @memberof				Sprite
 		 */																								\
-		bool positioned : 2;																					\
+		bool positioned : 2;																			\
 		/*
 		 * @var u8 					worldLayer
 		 * @brief					World layer where to render the texture
