@@ -205,8 +205,6 @@ typedef struct PhysicalSpecification
 	fix10_6 bounciness;
 	/// maximum velocity
 	Velocity maximumVelocity;
-																			\
-
 
 } PhysicalSpecification;
 
