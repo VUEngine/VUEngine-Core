@@ -426,7 +426,7 @@ static void ObjectSpriteContainer_sortProgressively(ObjectSpriteContainer this)
  * @public
  *
  * @param this		Function scope
- * @param evenFrame
+ * @param evenFrame Even/odd frame flag for transparency control
  */
 void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool evenFrame)
 {

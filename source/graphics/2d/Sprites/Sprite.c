@@ -748,7 +748,7 @@ void Sprite_update(Sprite this)
  * @public
  *
  * @param this		Function scope
- * @param evenFrame
+ * @param evenFrame Even/odd frame flag for transparency control
  */
 void Sprite_render(Sprite this, bool evenFrame)
 {

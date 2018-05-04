@@ -262,7 +262,7 @@ void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z)
  * @public
  *
  * @param this		Function scope
- * @param evenFrame
+ * @param evenFrame Even/odd frame flag for transparency control
  */
 void ObjectSprite_render(ObjectSprite this, bool evenFrame)
 {
