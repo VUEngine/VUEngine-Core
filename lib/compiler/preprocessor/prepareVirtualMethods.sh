@@ -3,6 +3,9 @@
 GAME_HOME=
 OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
+DELETE_HELPER_FILES=false
+WORKING_FOLDER=build/compiler/preprocessor
+HELPER_FILES_PREFIX=engine
 
 while [[ $# -gt 1 ]]
 do
@@ -12,9 +15,15 @@ do
 		HEADER_FOLDERS="$HEADER_FOLDERS $2"
 		shift # past argument
 		;;
-		-g|-output)
-		GAME_HOME="$2"
-		HEADER_FOLDERS="$HEADER_FOLDERS $2"
+		-w|-output)
+		WORKING_FOLDER="$2"
+		shift # past argument
+		;;
+		-d|-output)
+		DELETE_HELPER_FILES=true
+		;;
+		-p|-output)
+		HELPER_FILES_PREFIX="$2"
 		shift # past argument
 		;;
 	esac
@@ -29,27 +38,44 @@ echo Preprocessing virtual methods in:
 
 for headerFolder in $HEADER_FOLDERS; do
 
-	echo "	"$headerFolder | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
+	echo "	$headerFolder"
 
 	HEADER_FILES="$HEADER_FILES "`find $headerFolder/ -name "*.h"`
 done
 
-WORKING_FOLDER=$GAME_HOME/lib/compiler/preprocessor
 
-VIRTUAL_METHODS_FILE=$WORKING_FOLDER/virtualMethods.txt
-VIRTUAL_CALLS_FILE=$WORKING_FOLDER/virtualMethodCalls.txt
+if [ ! -d $WORKING_FOLDER ]; then
+	mkdir -p $WORKING_FOLDER
+fi
+
+VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethods.txt"
+VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethodCalls.txt"
+
+#echo VIRTUAL_METHODS_FILE $VIRTUAL_METHODS_FILE
+#echo VIRTUAL_CALLS_FILE $VIRTUAL_CALLS_FILE
 
 # check if necessary files already exist
-if [ -f $VIRTUAL_METHODS_FILE ] ; then
-	rm $VIRTUAL_METHODS_FILE
-fi
 
-if [ -f $VIRTUAL_CALLS_FILE ] ; then
-	rm $VIRTUAL_CALLS_FILE
-fi
+if [ $DELETE_HELPER_FILES ]; then
+	if [ -f $VIRTUAL_METHODS_FILE ] ; then
+		rm $VIRTUAL_METHODS_FILE
+	fi
 
-touch $VIRTUAL_METHODS_FILE
-touch $VIRTUAL_CALLS_FILE
+	if [ -f $VIRTUAL_CALLS_FILE ] ; then
+		rm $VIRTUAL_CALLS_FILE
+	fi
+
+	touch $VIRTUAL_METHODS_FILE
+	touch $VIRTUAL_CALLS_FILE
+else
+	if [ ! -f $VIRTUAL_METHODS_FILE ] ; then
+		touch $VIRTUAL_METHODS_FILE
+	fi
+
+	if [ ! -f $VIRTUAL_CALLS_FILE ] ; then
+		touch $VIRTUAL_CALLS_FILE
+	fi
+fi
 
 # if the header files list was populated, generate the helper files
 if [ -n "$HEADER_FILES" ]; then
@@ -66,19 +92,38 @@ if [ -n "$HEADER_FILES" ]; then
 				virtualMethods=`grep "VIRTUAL_DEC" $headerFile | grep -v "#define" | cut -d, -f3 | cut -d\) -f1 | sed '/^\s*$/d'`
 				overrodeMethods=`grep "__VIRTUAL_SET" $headerFile | grep -v "#define" | cut -d, -f3  | cut -d\) -f1 | sed '/^\s*$/d'`
 
-				for method in $virtualMethods$overrodeMethods
+				for method in $virtualMethods
 				do
 					if [ ! -z "$method" ]
 					then
-						methodCall="$className""_""$method"
-
 						hasMethod=`grep -sw $method $VIRTUAL_METHODS_FILE`
 						if [ -z "$hasMethod" ];
 						then
 							echo "$method" >> $VIRTUAL_METHODS_FILE
 						fi
 
-						echo "$methodCall" >> $VIRTUAL_CALLS_FILE
+						methodCall="$className""_""$method"
+
+						hasMethod=`grep -sw $methodCall $VIRTUAL_CALLS_FILE`
+						if [ -z "$hasMethod" ];
+						then
+							echo "$methodCall" >> $VIRTUAL_CALLS_FILE
+						fi
+
+					fi
+				done
+
+				for method in $overrodeMethods
+				do
+					if [ ! -z "$method" ]
+					then
+						methodCall="$className""_""$method"
+
+						hasMethod=`grep -sw $methodCall $VIRTUAL_CALLS_FILE`
+						if [ -z "$hasMethod" ];
+						then
+							echo "$methodCall" >> $VIRTUAL_CALLS_FILE
+						fi
 					fi
 				done
 			fi

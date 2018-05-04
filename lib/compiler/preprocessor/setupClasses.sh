@@ -1,8 +1,8 @@
 #!/bin/bash
 
-GAME_HOME=
 OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
+WORKING_FOLDER=build/compiler/preprocessor
 
 while [[ $# -gt 1 ]]
 do
@@ -12,13 +12,12 @@ do
 		HEADER_FOLDERS="$HEADER_FOLDERS $2"
 		shift # past argument
 		;;
-		-g|-output)
-		GAME_HOME="$2"
-		HEADER_FOLDERS="$HEADER_FOLDERS $2"
-		shift # past argument
-		;;
 		-o|-output)
 		OUTPUT_C_FILE="$2"
+		shift # past argument
+		;;
+		-w|-output)
+		WORKING_FOLDER="$2"
 		shift # past argument
 		;;
 		*)
@@ -29,21 +28,25 @@ do
 	shift
 done
 
-
 HEADER_FILES=
+SAVED_HEADERS_FILE=$WORKING_FOLDER/headerFilesFor-$OUTPUT_C_FILE.txt
+TEMPORAL_HEADERS_FILE=temporalHeaderFiles.txt
+SETUP_FUNCTION=`echo $OUTPUT_C_FILE | sed -e "s/.c//g"`
+OUTPUT_C_FILE="$WORKING_FOLDER/$OUTPUT_C_FILE"
+#echo WORKING_FOLDER $WORKING_FOLDER
+#echo OUTPUT_C_FILE $OUTPUT_C_FILE
 
 echo Preprocessing classes in:
 
 for headerFolder in $HEADER_FOLDERS; do
 
-	echo "	"$headerFolder | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
+	echo "	$headerFolder"
 	HEADER_FILES="$HEADER_FILES "`find $headerFolder/source/ -name "*.h"`
 done
 
-WORKING_FOLDER=$GAME_HOME/lib/compiler/preprocessor
-
-SAVED_HEADERS_FILE=$WORKING_FOLDER/headerFiles.txt
-TEMPORAL_HEADERS_FILE=temporalHeaderFiles.txt
+if [ ! -d $WORKING_FOLDER ]; then
+	mkdir -p $WORKING_FOLDER
+fi
 
 CLASSES_FILE="classFile.txt"
 
@@ -74,7 +77,7 @@ fi
 if [ -n "$HEADER_FILES" ]; then
 
 	echo -n "Generating "
-	echo $OUTPUT_C_FILE | sed 's/.//1' | sed 's/./\:\//2' | sed 's/./\u&/1'
+	echo $OUTPUT_C_FILE
 	rm -f $CLASSES_FILE
 	rm -f $OUTPUT_C_FILE
 	echo " " > $OUTPUT_C_FILE
@@ -106,7 +109,7 @@ if [ -n "$HEADER_FILES" ]; then
 	echo "// setup function" >> $OUTPUT_C_FILE
 
 	#create the function
-	echo "void setupClasses(void)" >> $OUTPUT_C_FILE
+	echo "void $SETUP_FUNCTION(void)" >> $OUTPUT_C_FILE
 	echo "{" >> $OUTPUT_C_FILE
 
 	# Create the calls directives
@@ -114,6 +117,36 @@ if [ -n "$HEADER_FILES" ]; then
 		echo "	"$className"_setVTable();" >> $OUTPUT_C_FILE
 	done
 	echo "}" >> $OUTPUT_C_FILE
+
+	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/setupClasses.c
+
+	if [ -f $FINAL_SETUP_CLASSES_FILE ]; then
+		rm $FINAL_SETUP_CLASSES_FILE
+	fi
+
+	# Setup calls in final file
+	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/ -name "*SetupClasses.c"`
+
+	echo "// setup function" > $FINAL_SETUP_CLASSES_FILE
+
+	#create the function
+	echo "void setupClasses(void)" >> $FINAL_SETUP_CLASSES_FILE
+	echo "{" >> $FINAL_SETUP_CLASSES_FILE
+
+	# Create the calls directives
+	for setupClassFile in $SETUP_CLASSES_FILES
+	do
+		setupFunction=`grep "SetupClasses" $setupClassFile | sed -e "s/.*void \+\(.*SetupClasses\)(.*/\1/g"`
+		echo setupFunction $setupFunction
+
+		# add function setup call
+		echo "	"$setupFunction"();" >> $FINAL_SETUP_CLASSES_FILE
+
+		#add forward declaration
+		echo "void $setupFunction(void);" | cat - $FINAL_SETUP_CLASSES_FILE > $WORKING_FOLDER/temp.txt && mv $WORKING_FOLDER/temp.txt $FINAL_SETUP_CLASSES_FILE
+	done
+
+	echo "}" >> $FINAL_SETUP_CLASSES_FILE
 fi
 
 rm -f $CLASSES_FILE

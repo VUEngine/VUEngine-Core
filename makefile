@@ -9,6 +9,7 @@ TYPE = debug
 
 # output dir
 BUILD_DIR = build
+WORKING_FOLDER = $(GAME_HOME)/./$(BUILD_DIR)/compiler
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -94,6 +95,7 @@ VUENGINE_HOME = $(VBDE)libs/vuengine
 
 # Which directories contain source files
 DIRS = $(shell find $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets $(VUENGINE_HOME)/lib/compiler -type d -print)
+HEADER_DIRS = $(shell find $(VUENGINE_HOME)/source -type d -print)
 
 # Obligatory headers
 CONFIG_FILE =       $(shell pwd)/config.h
@@ -141,20 +143,21 @@ VUENGINE_INCLUDE_PATHS = $(shell find $(VUENGINE_HOME) -type d -print)
 # Where to store object and dependency files.
 STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
 
-# Makes a list of the source (.cpp) files.
+# Makes a list of the source (.c) files.
 C_SOURCE = $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.c))
 
 # Makes a list of the source (.s) files.
 ASSEMBLY_SOURCE = $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.s))
 
 # List of header files.
-HEADERS = $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.h))
+HEADERS = $(foreach DIR,$(HEADER_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES = $(addprefix $(STORE)/, $(HEADERS:.h=.hh))
+H_FILES = $(addprefix $(WORKING_FOLDER)/sources/, $(HEADERS:.h=.h))
 
 # Makes a list of the object files that will have to be created.
 C_OBJECTS = $(addprefix $(STORE)/, $(C_SOURCE:.c=.o))
+C_INTERMEDIATE_SOURCES = $(addprefix $(WORKING_FOLDER)/sources/, $(C_SOURCE:.c=.c))
 
 # Makes a list of the object files that will have to be created.
 ASSEMBLY_OBJECTS = $(addprefix $(STORE)/, $(ASSEMBLY_SOURCE:.s=.o))
@@ -162,20 +165,21 @@ ASSEMBLY_OBJECTS = $(addprefix $(STORE)/, $(ASSEMBLY_SOURCE:.s=.o))
 # Same for the .d (dependency) files.
 D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
 
+HELPERS_PREFIX=engine
+
 # Class setup file
-SETUP_CLASSES = $(GAME_HOME)/lib/compiler/preprocessor/setupClasses
+SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
+SETUP_CLASSES_OBJECT = $(STORE)/$(SETUP_CLASSES)
 
 # Virtual methods preprocessor file
-VIRTUAL_METHODS_HELPER=$(GAME_HOME)/lib/compiler/preprocessor/virtualMethods.txt
-
+VIRTUAL_METHODS_HELPER=$(WORKING_FOLDER)/preprocessor/$(HELPERS_PREFIX)VirtualMethods.txt
 
 # the target file
 TARGET_FILE = libvuengine
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printBuildingInfo setupClasses $(TARGET).a
-
+all: printBuildingInfo dirs $(TARGET).a
 
 printBuildingInfo:
 	@echo Building $(TARGET).a
@@ -187,37 +191,47 @@ START_TIME=`date +%s`
 elapsedTime=$$(( `date +%s` - $(START_TIME) ))
 
 setupClasses:
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -h $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -g $(GAME_HOME) -o $(SETUP_CLASSES).c
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -h $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c -w $(WORKING_FOLDER)/preprocessor
 	@echo Classes processing done
 
-$(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
+$(TARGET).a: $(VIRTUAL_METHODS_HELPER) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a
-	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS)
+	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+
+$(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).a in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Time elapsed: $(elapsedTime) seconds"
 
+$(SETUP_CLASSES_OBJECT).o: $(WORKING_FOLDER)/preprocessor/$(SETUP_CLASSES).c
+	@echo Compiling $<
+	@$(GCC) $(foreach INC,$(VUENGINE_INCLUDE_PATHS) $(GAME_INCLUDE_PATHS),-I$(INC))\
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
+
+$(WORKING_FOLDER)/preprocessor/$(SETUP_CLASSES).c: setupClasses
+
 $(VIRTUAL_METHODS_HELPER): $(H_FILES)
-	@echo "Preparing virtual methods ENGINE"
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/prepareVirtualMethods.sh -g $(GAME_HOME) -h $(VUENGINE_HOME)/source
+	@echo "Preparing virtual methods in engine"
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/prepareVirtualMethods.sh -d -w $(WORKING_FOLDER)/preprocessor -h $(VUENGINE_HOME)/source -p $(HELPERS_PREFIX)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(STORE)/%.o: $(STORE)/%.c
-	@echo Compiling $<
-	@$(GCC) -pipe -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
+$(STORE)/%.o: $(WORKING_FOLDER)/sources/%.c
+	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
 
-$(STORE)/%.c: %.c
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh $< ./$@ $(GAME_HOME)
+$(WORKING_FOLDER)/sources/%.c: %.c
+	@echo -n "Compiling "
+	@echo $<
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX)
 
 $(STORE)/%.o: %.s
 	@echo Creating object file for $*
 	@$(AS) -o $@ $<
 
-$(STORE)/%.hh: %.h
+$(WORKING_FOLDER)/sources/%.h: %.h
 	@cp $< $@
 
 # Empty rule to prevent problems when a header is deleted.
@@ -233,9 +247,13 @@ clean:
 
 # Create necessary directories
 dirs:
+	@echo Checking working dirs..
 	@-if [ ! -e $(STORE) ]; then mkdir -p $(STORE); fi;
 	@-$(foreach DIR,$(DIRS), if [ ! -e $(STORE)/$(DIR) ]; \
          then mkdir -p $(STORE)/$(DIR); fi; )
+	@-if [ ! -e $(WORKING_FOLDER)/sources ]; then mkdir -p $(WORKING_FOLDER)/sources; fi;
+	@-$(foreach DIR,$(DIRS), if [ ! -e $(WORKING_FOLDER)/sources/$(DIR) ]; \
+         then mkdir -p $(WORKING_FOLDER)/sources/$(DIR); fi; )
 
 # Includes the .d files so it knows the exact dependencies for every source
 -include $(D_FILES)

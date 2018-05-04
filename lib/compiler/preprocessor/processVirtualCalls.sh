@@ -1,7 +1,38 @@
 #!/bin/bash
 
-INPUT_FILE=$1
-OUTPUT_FILE=$2
+INPUT_FILE=
+OUTPUT_FILE=
+WORKING_FOLDER=build/compiler/preprocessor
+HELPER_FILES_PREFIXES=
+
+while [[ $# -gt 1 ]]
+do
+	key="$1"
+	case $key in
+		-i|-output)
+		INPUT_FILE="$2"
+		shift # past argument
+		;;
+		-o|-output)
+		OUTPUT_FILE="$2"
+		shift # past argument
+		;;
+		-w|-output)
+		WORKING_FOLDER="$2"
+		shift # past argument
+		;;
+		-p|-output)
+		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $2"
+		shift # past argument
+		;;
+	esac
+
+	shift
+done
+
+#echo WORKING_FOLDER $WORKING_FOLDER
+#echo INPUT_FILE $INPUT_FILE
+#echo OUTPUT_FILE $OUTPUT_FILE
 cat $INPUT_FILE > $OUTPUT_FILE
 
 if [[ ${INPUT_FILE} != *"source/"* ]];then
@@ -9,64 +40,77 @@ if [[ ${INPUT_FILE} != *"source/"* ]];then
 	exit 0
 fi
 
-GAME_HOME=$3
+if [ ! -d $WORKING_FOLDER ]; then
+	mkdir -p $WORKING_FOLDER
+fi
 
-WORKING_FOLDER=$GAME_HOME/lib/compiler/preprocessor
-virtualMethods=`cat $WORKING_FOLDER/virtualMethods.txt`
-fileClass=`grep "__CLASS_DEFINITION(" $OUTPUT_FILE | cut -d, -f1 | cut -d\( -f2 `
-fileBaseClass=`grep "__CLASS_DEFINITION(" $OUTPUT_FILE | cut -d, -f2  | cut -d\) -f1 `
-TEMPORAL_METHOD_LIST=$WORKING_FOLDER/processedMethods.txt
-
-echo "" > $TEMPORAL_METHOD_LIST
-
-# replace base method calls
-sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass, \1, #g" $OUTPUT_FILE
-
-#echo "Processing source $INPUT_FILE"
-
-for method in $virtualMethods
+for prefix in $HELPER_FILES_PREFIXES
 do
-	if [ ! -z "$method" ];
-	then
-		#echo "Checking $method"
-		methodPartialCall="_$method"
-		grep -o -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE  | while IFS= read -r methodCall;
-		do
-			methodCall=`echo $methodCall | sed -e "s#$method(.*[A-Za-z0-9] \+[A-Za-z0-9].*)#VUEngine_DEC_MARK#g"`
+	#echo prefix $prefix
+	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$prefix"VirtualMethods.txt"
+	VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
-			if [[ ${methodCall} != *"VUEngine_DEC_MARK"* ]];then
+	virtualMethods=`cat $VIRTUAL_METHODS_FILE`
+	fileClass=`grep "__CLASS_DEFINITION(" $OUTPUT_FILE | cut -d, -f1 | cut -d\( -f2 `
+	fileBaseClass=`grep "__CLASS_DEFINITION(" $OUTPUT_FILE | cut -d, -f2  | cut -d\) -f1 `
+	TEMPORAL_METHOD_LIST=$WORKING_FOLDER/processedMethods.txt
 
-				pureMethodCall=`echo $methodCall | sed -e "s#(.*##g"`
-
-				methodAlreadyProcessed=`grep $pureMethodCall $TEMPORAL_METHOD_LIST`
-
-				if [ ! -z "$methodAlreadyProcessed" ];
-				then
-					#echo "Already processed $pureMethodCall"
-					continue
-				fi
-
-				echo $pureMethodCall >> $TEMPORAL_METHOD_LIST
-
-				isVirtual=`grep $pureMethodCall $WORKING_FOLDER/virtualMethodCalls.txt`
-				if [ ! -z "$isVirtual" ];
-				then
-					class=`echo $pureMethodCall | cut -d_ -f1 `
-					#echo $method is going to be virtualized
-
-					# flag declarations so they don't get replaced
-					sed -i -e "s#\(\<$pureMethodCall\>(.*[A-z] [A-z].*\)#VUEngine_DEC_MARK\1#g" $OUTPUT_FILE
-
-					# replace virtual method calls
-					sed -i -e "s#\<$pureMethodCall\>(#__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
-
-					# remove declaration
-					sed -i -e "s#VUEngine_DEC_MARK##g" $OUTPUT_FILE
-				fi
-            fi
-
-		done;
+	if [ -f $TEMPORAL_METHOD_LIST ] ; then
+		rm $TEMPORAL_METHOD_LIST
 	fi
+
+	touch $TEMPORAL_METHOD_LIST
+
+	# replace base method calls
+	sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass, \1, #g" $OUTPUT_FILE
+
+	#echo "Processing source $INPUT_FILE"
+
+	for method in $virtualMethods
+	do
+		if [ ! -z "$method" ];
+		then
+			#echo "Checking $method"
+			methodPartialCall="_$method"
+			grep -o -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE  | while IFS= read -r methodCall;
+			do
+				methodCall=`echo $methodCall | sed -e "s#$method(.*[A-Za-z0-9] \+[A-Za-z0-9].*)#VUEngine_DEC_MARK#g"`
+
+				if [[ ${methodCall} != *"VUEngine_DEC_MARK"* ]];then
+
+					pureMethodCall=`echo $methodCall | sed -e "s#(.*##g"`
+
+					methodAlreadyProcessed=`grep $pureMethodCall $TEMPORAL_METHOD_LIST`
+
+					if [ ! -z "$methodAlreadyProcessed" ];
+					then
+						#echo "Already processed $pureMethodCall"
+						continue
+					fi
+
+					echo $pureMethodCall >> $TEMPORAL_METHOD_LIST
+
+					isVirtual=`grep $pureMethodCall $VIRTUAL_CALLS_FILE`
+					if [ ! -z "$isVirtual" ];
+					then
+						class=`echo $pureMethodCall | cut -d_ -f1 `
+						#echo $method is going to be virtualized
+
+						# flag declarations so they don't get replaced
+						sed -i -e "s#\(\<$pureMethodCall\>(.*[A-z] [A-z].*\)#VUEngine_DEC_MARK\1#g" $OUTPUT_FILE
+
+						# replace virtual method calls
+						sed -i -e "s#\<$pureMethodCall\>(#__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
+
+						# remove declaration
+						sed -i -e "s#VUEngine_DEC_MARK##g" $OUTPUT_FILE
+					fi
+				fi
+
+			done;
+		fi
+	done
 done
 
-cat $OUTPUT_FILE > $OUTPUT_FILE.cc
+
+grep VIRTUAL_CALL $OUTPUT_FILE >> $WORKING_FOLDER/virtualizations.txt
