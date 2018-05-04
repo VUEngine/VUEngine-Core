@@ -122,6 +122,7 @@ enum HandshakeStatus
 __CLASS_DEFINITION(CommunicationManager, Object);
 
 
+
 static CommunicationManager _communicationManager;
 
 

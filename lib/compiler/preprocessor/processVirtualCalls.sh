@@ -77,6 +77,11 @@ do
 
 			while IFS= read -r methodCall;
 			do
+
+				if [ -z "$methodCall" ]; then
+					break;
+				fi
+
 				methodCall=`echo $methodCall | sed -e "s#$method(.*[A-Za-z0-9] \+[A-Za-z0-9].*)#VUEngine_DEC_MARK#g"`
 
 				if [[ ${methodCall} != *"VUEngine_DEC_MARK"* ]];then
