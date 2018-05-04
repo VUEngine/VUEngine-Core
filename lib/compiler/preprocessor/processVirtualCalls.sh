@@ -44,6 +44,8 @@ if [ ! -d $WORKING_FOLDER ]; then
 	mkdir -p $WORKING_FOLDER
 fi
 
+anyMethodVirtualized=false
+
 for prefix in $HELPER_FILES_PREFIXES
 do
 	#echo prefix $prefix
@@ -72,7 +74,8 @@ do
 		then
 			#echo "Checking $method"
 			methodPartialCall="_$method"
-			grep -o -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE  | while IFS= read -r methodCall;
+
+			while IFS= read -r methodCall;
 			do
 				methodCall=`echo $methodCall | sed -e "s#$method(.*[A-Za-z0-9] \+[A-Za-z0-9].*)#VUEngine_DEC_MARK#g"`
 
@@ -95,6 +98,7 @@ do
 					then
 						class=`echo $pureMethodCall | cut -d_ -f1 `
 						#echo $method is going to be virtualized
+						anyMethodVirtualized=true
 
 						# flag declarations so they don't get replaced
 						sed -i -e "s#\(\<$pureMethodCall\>(.*[A-z] [A-z].*\)#VUEngine_DEC_MARK\1#g" $OUTPUT_FILE
@@ -106,11 +110,18 @@ do
 						sed -i -e "s#VUEngine_DEC_MARK##g" $OUTPUT_FILE
 					fi
 				fi
-
-			done;
+			done <<< "$(grep -o -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE)";
 		fi
 	done
 done
 
-
-grep VIRTUAL_CALL $OUTPUT_FILE >> $WORKING_FOLDER/virtualizations.txt
+if [ "$anyMethodVirtualized" = true ] ; then
+	echo "" >> $WORKING_FOLDER/virtualizations.txt
+	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
+	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
+	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
+	echo "FILE: $INPUT_FILE" >> $WORKING_FOLDER/virtualizations.txt
+	echo "" >> $WORKING_FOLDER/virtualizations.txt
+	grep VIRTUAL_CALL $OUTPUT_FILE | sed -e "s#.*\(__VIRTUAL_CALL(.*\)#	\1#g" >> $WORKING_FOLDER/virtualizations.txt
+	echo "" >> $WORKING_FOLDER/virtualizations.txt
+fi

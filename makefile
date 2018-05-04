@@ -218,7 +218,7 @@ $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: $(WORKING_FOLDER)/sources/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ | sed -e "s#[Cc]:/#/c/#g"
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
 
