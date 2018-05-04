@@ -64,7 +64,7 @@
 #define __CLASS_NEW_END(ClassName, ...)																	\
 																										\
 			/* set the vtable pointer */																\
-			this->vTable = (void*)&ClassName ## _vTable;													\
+			this->vTable = (void*)&ClassName ## _vTable;												\
 																										\
 			/* construct the object */																	\
 			ClassName ## _constructor(this, ##__VA_ARGS__);												\
