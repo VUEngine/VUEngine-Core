@@ -254,6 +254,7 @@ dirs:
 	@-if [ ! -e $(WORKING_FOLDER)/sources ]; then mkdir -p $(WORKING_FOLDER)/sources; fi;
 	@-$(foreach DIR,$(DIRS), if [ ! -e $(WORKING_FOLDER)/sources/$(DIR) ]; \
          then mkdir -p $(WORKING_FOLDER)/sources/$(DIR); fi; )
+	@-if [ -f $(WORKING_FOLDER)/preprocessor/virtualizations.txt ]; then rm $(WORKING_FOLDER)/preprocessor/virtualizations.txt; fi;
 
 # Includes the .d files so it knows the exact dependencies for every source
 -include $(D_FILES)

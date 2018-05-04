@@ -64,7 +64,7 @@ do
 	touch $TEMPORAL_METHOD_LIST
 
 	# replace base method calls
-	sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass, \1, #g" $OUTPUT_FILE
+	sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass,\1, #g" $OUTPUT_FILE
 
 	#echo "Processing source $INPUT_FILE"
 
@@ -121,6 +121,8 @@ if [ "$anyMethodVirtualized" = true ] ; then
 	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
 	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
 	echo "FILE: $INPUT_FILE" >> $WORKING_FOLDER/virtualizations.txt
+	echo "" >> $WORKING_FOLDER/virtualizations.txt
+	grep CALL_BASE_METHOD $OUTPUT_FILE | sed -e "s#.*\(__CALL_BASE_METHOD(.*\)#	\1#g" >> $WORKING_FOLDER/virtualizations.txt
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 	grep VIRTUAL_CALL $OUTPUT_FILE | sed -e "s#.*\(__VIRTUAL_CALL(.*\)#	\1#g" >> $WORKING_FOLDER/virtualizations.txt
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
