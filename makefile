@@ -150,6 +150,9 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.s))
 # List of header files.
 HEADERS = $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.h))
 
+# Makes a list of the header files that will have to be created.
+H_FILES = $(addprefix $(STORE)/, $(HEADERS:.h=.hh))
+
 # Makes a list of the object files that will have to be created.
 C_OBJECTS = $(addprefix $(STORE)/, $(C_SOURCE:.c=.o))
 
@@ -162,12 +165,16 @@ D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
 # Class setup file
 SETUP_CLASSES = $(GAME_HOME)/lib/compiler/preprocessor/setupClasses
 
+# Virtual methods preprocessor file
+VIRTUAL_METHODS_HELPER=$(GAME_HOME)/lib/compiler/preprocessor/virtualMethods.txt
+
+
 # the target file
 TARGET_FILE = libvuengine
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printBuildingInfo setupClass $(TARGET).a
+all: printBuildingInfo setupClasses $(TARGET).a
 
 
 printBuildingInfo:
@@ -179,13 +186,8 @@ printBuildingInfo:
 START_TIME=`date +%s`
 elapsedTime=$$(( `date +%s` - $(START_TIME) ))
 
-setupClass:
-	@echo Preprocessing classes in:
-	@echo "	"${VUENGINE_HOME} | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
-	@echo "	"$(GAME_HOME) | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
-	@echo "	"$(ADDITIONAL_CLASSES_FOLDERS) | sed 's/.//2' | sed 's/./\:\//3' | sed 's/./\u&/2'
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -h $(GAME_HOME) $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c
-#	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/cleanSyntax.sh $(VUENGINE_HOME)/source
+setupClasses:
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -h $(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -g $(GAME_HOME) -o $(SETUP_CLASSES).c
 	@echo Classes processing done
 
 $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
@@ -194,6 +196,10 @@ $(TARGET).a: dirs $(C_OBJECTS) $(ASSEMBLY_OBJECTS)
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).a in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Time elapsed: $(elapsedTime) seconds"
+
+$(VIRTUAL_METHODS_HELPER): $(H_FILES)
+	@echo "Preparing virtual methods ENGINE"
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/prepareVirtualMethods.sh -g $(GAME_HOME) -h $(VUENGINE_HOME)/source
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
@@ -210,6 +216,9 @@ $(STORE)/%.c: %.c
 $(STORE)/%.o: %.s
 	@echo Creating object file for $*
 	@$(AS) -o $@ $<
+
+$(STORE)/%.hh: %.h
+	@cp $< $@
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;

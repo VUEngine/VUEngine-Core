@@ -22,6 +22,8 @@ echo "" > $TEMPORAL_METHOD_LIST
 # replace base method calls
 sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass, \1, #g" $OUTPUT_FILE
 
+#echo "Processing source $INPUT_FILE"
+
 for method in $virtualMethods
 do
 	if [ ! -z "$method" ];
