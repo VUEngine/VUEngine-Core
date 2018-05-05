@@ -4,6 +4,7 @@ INPUT_FILE=
 OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
 HELPER_FILES_PREFIXES=
+PRINT_DEBUG_OUTPUT=
 
 while [[ $# -gt 1 ]]
 do
@@ -24,6 +25,9 @@ do
 		-p|-output)
 		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $2"
 		shift # past argument
+		;;
+		-d|-output)
+		PRINT_DEBUG_OUTPUT="true"
 		;;
 	esac
 
@@ -123,7 +127,7 @@ do
 	done
 done
 
-if [ "$anyMethodVirtualized" = true ] ; then
+if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
 	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
