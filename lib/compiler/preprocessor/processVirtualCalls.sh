@@ -79,43 +79,46 @@ do
 			do
 
 				if [ -z "$methodCall" ]; then
-					break;
+					#echo "Empty string"
+					continue;
 				fi
 
-				methodCall=`echo $methodCall | sed -e "s#$method(.*[A-Za-z0-9] \+[A-Za-z0-9].*)#VUEngine_DEC_MARK#g"`
+				line=`cut -d: -f1 <<< "$methodCall"`
+				methodCall=`cut -d: -f2 <<< "$methodCall"`
+				#echo $methodCall in $line
+				#echo $methodCall >> test.txt
 
 				if [[ ${methodCall} != *"VUEngine_DEC_MARK"* ]];then
 
-					pureMethodCall=`echo $methodCall | sed -e "s#(.*##g"`
+					pureMethodCall=`sed -e "s#(.*##g" <<< "$methodCall"`
 
-					methodAlreadyProcessed=`grep $pureMethodCall $TEMPORAL_METHOD_LIST`
+					# Check if already processed as virtual
+					isVirtual=`grep $pureMethodCall $TEMPORAL_METHOD_LIST`
 
-					if [ ! -z "$methodAlreadyProcessed" ];
+					# If not processed as virtual
+					if [ -z "$isVirtual" ];
 					then
-						#echo "Already processed $pureMethodCall"
-						continue
+						# check if virtual
+						isVirtual=`grep $pureMethodCall $VIRTUAL_CALLS_FILE`
+
+						if [ ! -z "$isVirtual" ];
+						then
+							# register as virtual
+							echo $pureMethodCall >> $TEMPORAL_METHOD_LIST
+						fi
 					fi
 
-					echo $pureMethodCall >> $TEMPORAL_METHOD_LIST
-
-					isVirtual=`grep $pureMethodCall $VIRTUAL_CALLS_FILE`
 					if [ ! -z "$isVirtual" ];
 					then
-						class=`echo $pureMethodCall | cut -d_ -f1 `
-						#echo $method is going to be virtualized
+						class=`cut -d_ -f1 <<< "$pureMethodCall"`
+						#echo $pureMethodCall is going to be virtualized
 						anyMethodVirtualized=true
 
-						# flag declarations so they don't get replaced
-						sed -i -e "s#\(\<$pureMethodCall\>(.*[A-z] [A-z].*\)#VUEngine_DEC_MARK\1#g" $OUTPUT_FILE
-
 						# replace virtual method calls
-						sed -i -e "s#\<$pureMethodCall\>(#__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
-
-						# remove declaration
-						sed -i -e "s#VUEngine_DEC_MARK##g" $OUTPUT_FILE
+						sed -i -e "${line}s#\<$pureMethodCall\>(#__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
 					fi
 				fi
-			done <<< "$(grep -o -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE)";
+			done <<< "$(grep -o -n -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE | grep -v -e '(.*[A-Za-z0-9] \+[A-Za-z0-9].*)')";
 		fi
 	done
 done
