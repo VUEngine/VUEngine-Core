@@ -34,6 +34,7 @@
 #include <Error.h>
 #include <MemoryPool.h>
 #include <Printing.h>
+#include <debugUtilities.h>
 
 
 #endif

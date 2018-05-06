@@ -96,20 +96,13 @@ if [ -n "$HEADER_FILES" ]; then
 				do
 					if [ ! -z "$method" ]
 					then
-						hasMethod=`grep -sw $method $VIRTUAL_METHODS_FILE`
-						if [ -z "$hasMethod" ];
-						then
-							echo -n "[A-z]\+[a-zA-z0-9]*_$method(.*)\|" >> $VIRTUAL_METHODS_FILE
-						fi
-
 						methodCall="$className""_""$method"
+						hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
 
-						hasMethod=`grep -sw $methodCall $VIRTUAL_CALLS_FILE`
 						if [ -z "$hasMethod" ];
 						then
-							echo "$methodCall" >> $VIRTUAL_CALLS_FILE
+							echo -n "$methodCall(.*\|" >> $VIRTUAL_METHODS_FILE
 						fi
-
 					fi
 				done
 
@@ -118,11 +111,11 @@ if [ -n "$HEADER_FILES" ]; then
 					if [ ! -z "$method" ]
 					then
 						methodCall="$className""_""$method"
+						hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
 
-						hasMethod=`grep -sw $methodCall $VIRTUAL_CALLS_FILE`
 						if [ -z "$hasMethod" ];
 						then
-							echo "$methodCall" >> $VIRTUAL_CALLS_FILE
+							echo -n "$methodCall(.*\|" >> $VIRTUAL_METHODS_FILE
 						fi
 					fi
 				done
