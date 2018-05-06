@@ -226,7 +226,7 @@ $(STORE)/%.o: $(WORKING_FOLDER)/sources/%.c
 $(WORKING_FOLDER)/sources/%.c: %.c
 	@echo -n "Compiling "
 	@echo $<
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX)
 
 $(STORE)/%.o: %.s
 	@echo Creating object file for $*

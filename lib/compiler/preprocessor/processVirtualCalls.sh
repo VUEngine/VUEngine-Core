@@ -5,7 +5,6 @@ OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
 HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
-PRINT_DEBUG_OUTPUT="true"
 
 while [[ $# -gt 1 ]]
 do
