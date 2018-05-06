@@ -176,13 +176,12 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
+static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color __attribute__ ((unused)))
 {
 	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
 
 	DirectDraw_drawBlackPixel(this, buffer, x, y);
 }
-
 
 /**
  * Draws a point between two given 2D points
