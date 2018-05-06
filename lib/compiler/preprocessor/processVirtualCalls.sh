@@ -72,59 +72,45 @@ do
 
 	#echo "Processing source $INPUT_FILE"
 
-	for method in $virtualMethods
+	while IFS= read -r methodCall;
 	do
-		if [ ! -z "$method" ];
+		if [ -z "$methodCall" ];
 		then
-			#echo "Checking $method"
-			methodPartialCall="_$method"
-
-			while IFS= read -r methodCall;
-			do
-
-				if [ -z "$methodCall" ]; then
-					#echo "Empty string"
-					continue;
-				fi
-
-				line=`cut -d: -f1 <<< "$methodCall"`
-				methodCall=`cut -d: -f2 <<< "$methodCall"`
-				#echo $methodCall in $line
-				#echo $methodCall >> test.txt
-
-				if [[ ${methodCall} != *"VUEngine_DEC_MARK"* ]];then
-
-					pureMethodCall=`sed -e "s#(.*##g" <<< "$methodCall"`
-
-					# Check if already processed as virtual
-					isVirtual=`grep $pureMethodCall $TEMPORAL_METHOD_LIST`
-
-					# If not processed as virtual
-					if [ -z "$isVirtual" ];
-					then
-						# check if virtual
-						isVirtual=`grep $pureMethodCall $VIRTUAL_CALLS_FILE`
-
-						if [ ! -z "$isVirtual" ];
-						then
-							# register as virtual
-							echo $pureMethodCall >> $TEMPORAL_METHOD_LIST
-						fi
-					fi
-
-					if [ ! -z "$isVirtual" ];
-					then
-						class=`cut -d_ -f1 <<< "$pureMethodCall"`
-						#echo $pureMethodCall is going to be virtualized
-						anyMethodVirtualized=true
-
-						# replace virtual method calls
-						sed -i -e "${line}s#\<$pureMethodCall\>(#__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
-					fi
-				fi
-			done <<< "$(grep -o -n -e "[A-z]\+[a-zA-z0-9]*$methodPartialCall(.*)" $OUTPUT_FILE | grep -v -e '(.*[A-Za-z0-9] \+[A-Za-z0-9].*)')";
+			continue;
 		fi
-	done
+
+		#echo "Checking $methodCall"
+		pureMethodCall=`echo $methodCall | cut -d: -f2 | cut -d\( -f1`
+		#echo $pureMethodCall
+
+		# Check if already processed as virtual
+		isVirtual=`grep $pureMethodCall $TEMPORAL_METHOD_LIST`
+
+		# If not processed as virtual
+		if [ -z "$isVirtual" ];
+		then
+			# check if virtual
+			isVirtual=`grep $pureMethodCall $VIRTUAL_CALLS_FILE`
+
+			if [ ! -z "$isVirtual" ];
+			then
+				# register as virtual
+				echo $pureMethodCall >> $TEMPORAL_METHOD_LIST
+			fi
+		fi
+
+		if [ ! -z "$isVirtual" ];
+		then
+			line=`cut -d: -f1 <<< "$methodCall"`
+			class=`cut -d_ -f1 <<< "$pureMethodCall"`
+			method=`cut -d_ -f2 <<< "$pureMethodCall"`
+			#echo $pureMethodCall is going to be virtualized for $class and $method
+			anyMethodVirtualized=true
+
+			# replace virtual method calls
+			sed -i -e "${line}s#\<$pureMethodCall\>(#__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
+		fi
+	done <<< "$(grep -o -n -e "$virtualMethods" $OUTPUT_FILE | grep -v -e '(.*[A-Za-z0-9] \+[A-Za-z0-9].*)')";
 done
 
 if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then

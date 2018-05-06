@@ -99,7 +99,7 @@ if [ -n "$HEADER_FILES" ]; then
 						hasMethod=`grep -sw $method $VIRTUAL_METHODS_FILE`
 						if [ -z "$hasMethod" ];
 						then
-							echo "$method" >> $VIRTUAL_METHODS_FILE
+							echo -n "[A-z]\+[a-zA-z0-9]*_$method(.*)\|" >> $VIRTUAL_METHODS_FILE
 						fi
 
 						methodCall="$className""_""$method"
