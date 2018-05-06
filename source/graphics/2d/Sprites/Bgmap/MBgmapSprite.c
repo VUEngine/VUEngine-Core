@@ -562,9 +562,11 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 display, u16 mode __attribute__ ((unused)))
 {
 	ASSERT(this, "MBgmapSprite::setMode: null this");
+
+	this->head = display | __WORLD_BGMAP;
 }
 
 /**
