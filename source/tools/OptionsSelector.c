@@ -146,7 +146,7 @@ void OptionsSelector_destructor(OptionsSelector this)
 
 	// allow a new construct
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

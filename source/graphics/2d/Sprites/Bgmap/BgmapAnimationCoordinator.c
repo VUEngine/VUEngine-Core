@@ -60,7 +60,7 @@ void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const
 {
 	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
+	Base_constructor(this, charSetDefinition);
 }
 
 /**
@@ -77,7 +77,7 @@ void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

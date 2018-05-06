@@ -74,7 +74,7 @@ void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSprite
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(BgmapSprite, bgmapSpriteDefinition, owner);
+	Base_constructor(this, bgmapSpriteDefinition, owner);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
@@ -105,7 +105,7 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

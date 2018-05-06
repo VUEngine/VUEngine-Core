@@ -174,7 +174,7 @@ void Stage_constructor(Stage this, StageDefinition *stageDefinition)
 	ASSERT(this, "Stage::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Container, NULL);
+	Base_constructor(this, NULL);
 
 	this->entityFactory = __NEW(EntityFactory);
 	this->particleRemover = __NEW(ParticleRemover);
@@ -232,7 +232,7 @@ void Stage_destructor(Stage this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 // determine if a point is visible

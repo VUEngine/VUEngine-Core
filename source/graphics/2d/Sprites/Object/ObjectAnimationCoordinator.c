@@ -62,7 +62,7 @@ void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, con
 {
 	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
 
-	__CONSTRUCT_BASE(AnimationCoordinator, charSetDefinition);
+	Base_constructor(this, charSetDefinition);
 }
 
 /**
@@ -79,7 +79,7 @@ void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

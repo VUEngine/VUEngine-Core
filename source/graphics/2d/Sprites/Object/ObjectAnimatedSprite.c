@@ -77,7 +77,7 @@ static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const Ob
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(ObjectSprite, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
+	Base_constructor(this, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
@@ -102,7 +102,7 @@ void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

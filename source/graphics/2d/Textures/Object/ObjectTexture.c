@@ -74,7 +74,7 @@ static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinitio
 	ASSERT(this, "ObjectTexture::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Texture, (TextureDefinition*)objectTextureDefinition, id);
+	Base_constructor(this, (TextureDefinition*)objectTextureDefinition, id);
 
 	this->objectIndex = -1;
 	this->mapDisplacement = 0;
@@ -96,7 +96,7 @@ void ObjectTexture_destructor(ObjectTexture this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

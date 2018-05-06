@@ -89,7 +89,7 @@ void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int 
 	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
-	__CONSTRUCT_BASE(Sprite, NULL, NULL);
+	Base_constructor(this, NULL, NULL);
 
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 	this->spt = spt;
@@ -148,7 +148,7 @@ void ObjectSpriteContainer_destructor(ObjectSpriteContainer this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

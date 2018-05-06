@@ -84,7 +84,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 {
 	ASSERT(this, "BgmapSprite::constructor: null this");
 
-	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
+	Base_constructor(this, (SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
 
 	// create the texture
 	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
@@ -162,7 +162,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

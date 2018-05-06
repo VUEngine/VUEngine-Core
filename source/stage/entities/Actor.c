@@ -73,7 +73,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(AnimatedEntity, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
+	Base_constructor(this, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;
@@ -130,7 +130,7 @@ void Actor_destructor(Actor this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 void Actor_iAmDeletingMyself(Actor this)

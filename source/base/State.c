@@ -74,7 +74,7 @@ void State_destructor(State this)
 
 	// free processor's memory
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

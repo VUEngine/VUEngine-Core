@@ -60,7 +60,7 @@ void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinit
 	ASSERT(this, "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(Entity, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
+	Base_constructor(this, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
 	this->waveLutIndexIncrement = __FIX10_6_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, __FIX10_6_DIV(__I_TO_FIX10_6(reflectiveEntityDefinition->numberOfWaveLutEntries), __I_TO_FIX10_6(reflectiveEntityDefinition->width)));
@@ -77,7 +77,7 @@ void ReflectiveEntity_destructor(ReflectiveEntity this)
 
 	// delete the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)

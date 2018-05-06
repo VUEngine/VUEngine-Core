@@ -68,6 +68,10 @@ do
 	touch $TEMPORAL_METHOD_LIST
 
 	# replace base method calls
+	sed -i -e "s#Base_constructor(this,\(.*\)#__CONSTRUCT_BASE($fileBaseClass,\1#g" $OUTPUT_FILE
+	sed -i -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
+
+	# replace base method calls
 	sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass,\1, #g" $OUTPUT_FILE
 
 	#echo "Processing source $INPUT_FILE"

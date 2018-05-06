@@ -74,7 +74,7 @@ static void InverseBox_constructor(InverseBox this, SpatialObject owner)
 {
 	ASSERT(this, "InverseBox::constructor: null this");
 
-	__CONSTRUCT_BASE(Box, owner);
+	Base_constructor(this, owner);
 }
 
 /**
@@ -91,5 +91,5 @@ static void InverseBox_constructor(InverseBox this, SpatialObject owner)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }

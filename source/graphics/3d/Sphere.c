@@ -94,7 +94,7 @@ void Sphere_destructor(Sphere this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

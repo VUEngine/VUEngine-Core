@@ -79,7 +79,7 @@ void Wireframe_destructor(Wireframe this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

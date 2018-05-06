@@ -82,7 +82,7 @@ static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* 
 	ASSERT(this, "BgmapTexture::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Texture, (TextureDefinition*)bgmapTextureDefinition, id);
+	Base_constructor(this, (TextureDefinition*)bgmapTextureDefinition, id);
 
 	this->segment = -1;
 	this->usageCount = 1;
@@ -116,7 +116,7 @@ void BgmapTexture_destructor(BgmapTexture this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

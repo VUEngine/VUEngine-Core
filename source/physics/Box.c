@@ -76,7 +76,7 @@ void Box_constructor(Box this, SpatialObject owner)
 {
 	ASSERT(this, "Box::constructor: null this");
 
-	__CONSTRUCT_BASE(Shape, owner);
+	Base_constructor(this, owner);
 
 	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
 
@@ -103,7 +103,7 @@ void Box_destructor(Box this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 void Box_position(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)

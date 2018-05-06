@@ -66,7 +66,7 @@ static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiC
 	ASSERT(this, "UiContainer::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Container, NULL);
+	Base_constructor(this, NULL);
 
 	// add entities in the definition
 	 UiContainer_addEntities(this, uiContainerDefinition->entities);
@@ -79,7 +79,7 @@ void UiContainer_destructor(UiContainer this)
 
 	// destroy base
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 // add entities

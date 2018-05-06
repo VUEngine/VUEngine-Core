@@ -94,7 +94,7 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
 {
 	ASSERT(this, "MBgmapSprite::constructor: null this");
 
-	__CONSTRUCT_BASE(BgmapSprite, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
+	Base_constructor(this, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
 
 	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
 
@@ -126,7 +126,7 @@ void MBgmapSprite_destructor(MBgmapSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

@@ -85,7 +85,7 @@ void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* o
 {
 	ASSERT(this, "ObjectSprite::constructor: null this");
 
-	__CONSTRUCT_BASE(Sprite, (SpriteDefinition*)objectSpriteDefinition, owner);
+	Base_constructor(this, (SpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->head = objectSpriteDefinition->display;
 	this->objectIndex = -1;
@@ -137,7 +137,7 @@ void ObjectSprite_destructor(ObjectSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

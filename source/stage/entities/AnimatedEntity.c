@@ -74,7 +74,7 @@ void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* a
 	ASSERT(this, "AnimatedEntity::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Entity, &animatedEntityDefinition->entityDefinition, id, internalId, name);
+	Base_constructor(this, &animatedEntityDefinition->entityDefinition, id, internalId, name);
 
 	// save ROM definition
 	this->animatedEntityDefinition = animatedEntityDefinition;
@@ -90,7 +90,7 @@ void AnimatedEntity_destructor(AnimatedEntity this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 // set definition

@@ -79,7 +79,7 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	ASSERT(this, "SolidParticle::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(Particle, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
+	Base_constructor(this, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
 	this->solidParticleDefinition = solidParticleDefinition;
 
@@ -137,7 +137,7 @@ void SolidParticle_destructor(SolidParticle this)
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**

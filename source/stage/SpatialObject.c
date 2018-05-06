@@ -77,7 +77,7 @@ void SpatialObject_destructor(SpatialObject this)
 
 	// destroy the super SpatialObject
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))

@@ -77,7 +77,7 @@ void Ball_constructor(Ball this, SpatialObject owner)
 {
 	ASSERT(this, "Ball::constructor: null this");
 
-	__CONSTRUCT_BASE(Shape, owner);
+	Base_constructor(this, owner);
 
 	this->center = (Vector3D){0, 0, 0};
 	this->radius = 0;
@@ -90,7 +90,7 @@ void Ball_destructor(Ball this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)

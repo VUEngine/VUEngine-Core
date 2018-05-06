@@ -75,7 +75,7 @@ void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const Phys
 {
 	ASSERT(this, "ParticleBody::constructor: null this");
 
-	__CONSTRUCT_BASE(Body, owner, physicalSpecification, axesSubjectToGravity);
+	Base_constructor(this, owner, physicalSpecification, axesSubjectToGravity);
 }
 
 /**
@@ -92,7 +92,7 @@ void ParticleBody_destructor(ParticleBody this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	__DESTROY_BASE;
+	Base_destructor();
 }
 
 /**
