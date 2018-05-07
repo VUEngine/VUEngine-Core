@@ -49,10 +49,8 @@ if [ ! -d $WORKING_FOLDER ]; then
 fi
 
 VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethods.txt"
-VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethodCalls.txt"
 
 #echo VIRTUAL_METHODS_FILE $VIRTUAL_METHODS_FILE
-#echo VIRTUAL_CALLS_FILE $VIRTUAL_CALLS_FILE
 
 # check if necessary files already exist
 
@@ -61,19 +59,10 @@ if [ $DELETE_HELPER_FILES ]; then
 		rm $VIRTUAL_METHODS_FILE
 	fi
 
-	if [ -f $VIRTUAL_CALLS_FILE ] ; then
-		rm $VIRTUAL_CALLS_FILE
-	fi
-
 	touch $VIRTUAL_METHODS_FILE
-	touch $VIRTUAL_CALLS_FILE
 else
 	if [ ! -f $VIRTUAL_METHODS_FILE ] ; then
 		touch $VIRTUAL_METHODS_FILE
-	fi
-
-	if [ ! -f $VIRTUAL_CALLS_FILE ] ; then
-		touch $VIRTUAL_CALLS_FILE
 	fi
 fi
 
@@ -101,7 +90,8 @@ if [ -n "$HEADER_FILES" ]; then
 
 						if [ -z "$hasMethod" ];
 						then
-							echo -n "$methodCall(.*\|" >> $VIRTUAL_METHODS_FILE
+							echo -n "$separator\<$methodCall(.*\>" >> $VIRTUAL_METHODS_FILE
+							separator="\|"
 						fi
 					fi
 				done
@@ -115,7 +105,8 @@ if [ -n "$HEADER_FILES" ]; then
 
 						if [ -z "$hasMethod" ];
 						then
-							echo -n "$methodCall(.*\|" >> $VIRTUAL_METHODS_FILE
+							echo -n "$separator\<$methodCall(.*\>" >> $VIRTUAL_METHODS_FILE
+							separator="\|"
 						fi
 					fi
 				done
