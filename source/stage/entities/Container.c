@@ -156,6 +156,7 @@ void Container_destructor(Container this)
 	// first remove from parent
 	if(this->parent)
 	{
+		ASSERT(this != this->parent, "Container::destructor: I'm my own father");
 		// don't allow my parent to try to delete me again
 		Container_removeChild(this->parent, this, false);
 	}
