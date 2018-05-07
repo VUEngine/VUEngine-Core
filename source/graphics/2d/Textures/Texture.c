@@ -227,7 +227,7 @@ void Texture_rewrite(Texture this)
 
 	this->written = false;
 
-	 Texture_write(this);
+	Texture_write(this);
 }
 
 /**

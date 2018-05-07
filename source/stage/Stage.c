@@ -801,7 +801,7 @@ static bool Stage_unloadOutOfRangeEntities(Stage this, int defer)
 		Entity entity = __SAFE_CAST(Entity, node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == __SAFE_CAST(Container, this) && ! Entity_isVisible(entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == __SAFE_CAST(Container, this) && !Entity_isVisible(entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity_getInternalId(entity);
 

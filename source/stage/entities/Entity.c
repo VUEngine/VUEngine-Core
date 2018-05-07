@@ -1985,7 +1985,7 @@ void Entity_hide(Entity this)
 
 	// update transformation before hiding
 	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	 Container_transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
+	Container_transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;

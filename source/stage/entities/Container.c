@@ -251,7 +251,7 @@ void Container_addChild(Container this, Container child)
 		{
 			Container_removeChild(child->parent, child, false);
 
-			 Container_changeEnvironment(child, &this->transformation);
+			Container_changeEnvironment(child, &this->transformation);
 		}
 
 		// set new parent
