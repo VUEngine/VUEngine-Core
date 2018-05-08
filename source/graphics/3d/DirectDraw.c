@@ -233,24 +233,24 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
-	fix10_6 fromPointX = __I_TO_FIX10_6(fromPoint.x);
-	fix10_6 fromPointY = __I_TO_FIX10_6(fromPoint.y);
+	fix19_13 fromPointX = __I_TO_FIX19_13(fromPoint.x);
+	fix19_13 fromPointY = __I_TO_FIX19_13(fromPoint.y);
 
-	fix10_6 toPointX = __I_TO_FIX10_6(toPoint.x);
-	fix10_6 toPointY = __I_TO_FIX10_6(toPoint.y);
+	fix19_13 toPointX = __I_TO_FIX19_13(toPoint.x);
+	fix19_13 toPointY = __I_TO_FIX19_13(toPoint.y);
 
-	fix10_6 dx = __ABS(toPointX - fromPointX);
-	fix10_6 dy = __ABS(toPointY - fromPointY);
+	fix19_13 dx = __ABS(toPointX - fromPointX);
+	fix19_13 dy = __ABS(toPointY - fromPointY);
 
 	if(0 == dx && 0 == dy)
 	{
 		return;
 	}
 
-	fix10_6 stepX = dx ? __I_TO_FIX10_6(1) : 0;
-	fix10_6 stepY = dy ? __I_TO_FIX10_6(1) : 0;
-	fix10_6 parallax = __I_TO_FIX10_6(fromPoint.parallax);
-	fix10_6 parallaxDelta = __I_TO_FIX10_6(toPoint.parallax - fromPoint.parallax);
+	fix19_13 stepX = dx ? __I_TO_FIX19_13(1) : 0;
+	fix19_13 stepY = dy ? __I_TO_FIX19_13(1) : 0;
+	fix19_13 parallax = __I_TO_FIX19_13(fromPoint.parallax);
+	fix19_13 parallaxDelta = __I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax);
 
 	void (*drawPixelMethod)(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color) = DirectDraw_drawPixel;
 	// duplicating code here since it is much lighter on the cpu
@@ -260,21 +260,21 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 		drawPixelMethod = DirectDraw_drawBlackPixelWrapper;
 	}
 
-	fix10_6* fromCoordinate = NULL;
-	fix10_6* toCoordinate = NULL;
-	fix10_6 parallaxStep = 0;
+	fix19_13* fromCoordinate = NULL;
+	fix19_13* toCoordinate = NULL;
+	fix19_13 parallaxStep = 0;
 
 	if(dy == dx || dy < dx || 0 == dy)
 	{
 		fromCoordinate = &fromPointX;
 		toCoordinate = &toPointX;
 
-		stepX = __I_TO_FIX10_6(1);
-		stepY = __FIX10_6_DIV(dy, dx);
+		stepX = __I_TO_FIX19_13(1);
+		stepY = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(dy), __FIX19_13_TO_FIX10_6(dx)));
 
 		if(toPointX < fromPointX)
 		{
-			fix10_6 aux = toPointX;
+			fix19_13 aux = toPointX;
 			toPointX = fromPointX;
 			fromPointX = aux;
 
@@ -288,19 +288,20 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			stepY = -stepY;
 		}
 
-		parallaxStep = __FIX10_6_DIV(parallaxDelta, __ABS(dx));
+		parallaxStep = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(parallaxDelta), __FIX19_13_TO_FIX10_6(dx)));
 	}
 	else if(dx < dy || 0 == dx)
 	{
 		fromCoordinate = &fromPointY;
 		toCoordinate = &toPointY;
 
-		stepX = __FIX10_6_DIV(dx, dy);
-		stepY = __I_TO_FIX10_6(1);
+		// make sure that no software based divisions is introduced
+		stepX = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(dx), __FIX19_13_TO_FIX10_6(dy)));
+		stepY = __I_TO_FIX19_13(1);
 
 		if(toPointY < fromPointY)
 		{
-			fix10_6 aux = toPointX;
+			fix19_13 aux = toPointX;
 			toPointX = fromPointX;
 			fromPointX = aux;
 
@@ -314,25 +315,25 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 			stepX = -stepX;
 		}
 
-		parallaxStep = __FIX10_6_DIV(parallaxDelta, __ABS(dy));
+		parallaxStep = __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(parallaxDelta), __FIX19_13_TO_FIX10_6(dy)));
 	}
 
-	fix10_6 auxParallax = parallax;
+	fix19_13 auxParallax = parallax;
 
 	while(*fromCoordinate <= *toCoordinate)
 	{
 		parallax = auxParallax;
 
-		if((unsigned)(fromPointY - __I_TO_FIX10_6(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->y1) - __I_TO_FIX10_6(_cameraFrustum->y0)))
+		if((unsigned)(fromPointY - __I_TO_FIX19_13(_cameraFrustum->y0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->y1) - __I_TO_FIX19_13(_cameraFrustum->y0)))
 		{
-			if((unsigned)(fromPointX - parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
+			if((unsigned)(fromPointX - parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 			{
-				drawPixelMethod(this, leftBuffer, (u16)__FIX10_6_TO_I(fromPointX - parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
+				drawPixelMethod(this, leftBuffer, (u16)__FIX19_13_TO_I(fromPointX - parallax), (u16)__FIX19_13_TO_I(fromPointY), color);
 			}
 
-			if((unsigned)(fromPointX + parallax - __I_TO_FIX10_6(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX10_6(_cameraFrustum->x1) - __I_TO_FIX10_6(_cameraFrustum->x0)))
+			if((unsigned)(fromPointX + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 			{
-				drawPixelMethod(this, rightBuffer, (u16)__FIX10_6_TO_I(fromPointX + parallax), (u16)__FIX10_6_TO_I(fromPointY), color);
+				drawPixelMethod(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPointX + parallax), (u16)__FIX19_13_TO_I(fromPointY), color);
 			}
 		}
 
