@@ -251,7 +251,7 @@ const ObjectSpriteContainer* ObjectSpriteContainerManager_setupObjectSpriteConta
 		{
 			PixelVector position =
 			{
-					0, 0, z[i] + i, 0
+					0, 0, z[i], 0
 			};
 
 			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
