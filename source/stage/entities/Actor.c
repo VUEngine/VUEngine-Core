@@ -93,14 +93,7 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 		}
 		else
 		{
-			PhysicalSpecification defaultActorPhysicalSpecification =
-			{
-				__I_TO_FIX10_6(1),
-				0,
-				0,
-				(Velocity){0, 0, 0}
-			};
-
+			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0}};
 			this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), &defaultActorPhysicalSpecification, actorDefinition->axesSubjectToGravity);
 		}
 	}
@@ -790,7 +783,7 @@ Body Actor_getBody(Actor this)
 	return this->body;
 }
 
-bool Actor_mustBounce(Actor this)
+bool Actor_mustBounce(Actor this __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::mustBounce: null this");
 

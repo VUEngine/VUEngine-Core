@@ -99,13 +99,13 @@ typedef struct MovementResult
 		 * @brief				total normal forces applied to the body
 		 * @memberof 			Body
 		 */																								\
-		Force totalNormal;																					\
+		Force totalNormal;																				\
 		/**
 		 * @var VirtualList 	normals
 		 * @brief				List of normal forces affecting the body
 		 * @memberof 			Body
 		 */																								\
-		VirtualList normals;																					\
+		VirtualList normals;																			\
 		/**
 		 * @var Vector3D 		position
 		 * @brief				spatial position
@@ -135,7 +135,7 @@ typedef struct MovementResult
 		 * @brief				bounciness
 		 * @memberof 			Body
 		 */																								\
-		fix10_6 bounciness;																			\
+		fix10_6 bounciness;																				\
 		/**
 		 * @var fix10_6 		frictionCoefficient
 		 * @brief				friction coefficient
