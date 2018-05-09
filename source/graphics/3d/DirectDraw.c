@@ -176,7 +176,7 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color, __attribute__ ((unused)))
+static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color __attribute__ ((unused)))
 {
 	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
 
@@ -252,7 +252,7 @@ void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toP
 	fix19_13 parallax = __I_TO_FIX19_13(fromPoint.parallax);
 	fix19_13 parallaxDelta = __I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax);
 
-	void (*drawPixelMethod)(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color) = DirectDraw_drawPixel;
+	void (*drawPixelMethod)(DirectDraw this, u32 buffer, u16 x, u16 y, int color) = DirectDraw_drawPixel;
 	// duplicating code here since it is much lighter on the cpu
 
 	if(color == __COLOR_BLACK)
