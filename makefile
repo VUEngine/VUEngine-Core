@@ -220,8 +220,8 @@ $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 $(STORE)/%.o: $(WORKING_FOLDER)/sources/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
-#	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
-#	@rm -f $(STORE)/$*.dd
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
+	@rm -f $(STORE)/$*.dd
 
 $(WORKING_FOLDER)/sources/%.c: %.c
 	@echo -n "Compiling "

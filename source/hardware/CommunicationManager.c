@@ -27,7 +27,6 @@
 #include <CommunicationManager.h>
 #include <TimerManager.h>
 #include <Game.h>
-#include <MessageDispatcher.h>
 #include <Utilities.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
@@ -50,19 +49,21 @@ static u8* volatile _communicationRegisters =			(u8*)0x02000000;
 enum CommunicationManagerStatus
 {
 	kStatusIdle = 0,
-	kWaitingPayload,
 	kSendingPayload,
+	kWaitingPayload,
 };
 
 enum HandshakeStatus
 {
 	kHandshakeIdle = 0,
-	kWaitingSyn,
-	kWaitingAck,
-	kWaitingKeepAlive,
 	kSendingSyn,
+	kWaitingSyn,
 	kSendingAck,
+	kWaitingAck,
 	kSendingKeepAlive,
+	kWaitingKeepAlive,
+	kSendingMessage,
+	kWaitingMessage,
 };
 
 
@@ -91,14 +92,14 @@ enum HandshakeStatus
 
 
 
-#define __COM_TIME_TO_WAIT_FOR_SYN		500
-#define __HANDSHAKE_TRIES				10000
-#define __COM_WAIT_TO_FINISH			-1
-#define __HANDSHAKE_SIN					0x11
-#define __HANDSHAKE_ACK					0x22
-#define __HANDSHAKE_FIN					0x33
-#define __KEEP_ALIVE					0x44
-#define __WAIT_PAYLOAD_TRIES			100
+#define __COM_TIME_TO_WAIT_FOR_RESPONSE		10
+#define __HANDSHAKE_TRIES					10000
+#define __COM_WAIT_TO_FINISH				-1
+#define __HANDSHAKE_SIN						0x11
+#define __HANDSHAKE_ACK						0x22
+#define __HANDSHAKE_FIN						0x33
+#define __KEEP_ALIVE						0x44
+#define __WAIT_RESPONSE_TRIES				100
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,7 +113,8 @@ enum HandshakeStatus
 		u8 sequenceNumber;																				\
 		int handshake;																					\
 		int status;																						\
-		int waitPayloadTries;																			\
+		int messageToSelf;																				\
+		int waitCycles;
 
 /**
  * @class	CommunicationManager
@@ -135,7 +137,7 @@ static void CommunicationManager_processInterrupt(CommunicationManager this);
 static void CommunicationManager_enableInterrupts(CommunicationManager this __attribute__ ((unused)));
 static void CommunicationManager_disableInterrupts(CommunicationManager this __attribute__ ((unused)));
 static void CommunicationManager_resetCommunications(CommunicationManager this);
-
+static void CommunicationManager_handleMessageToSelf(CommunicationManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -215,7 +217,7 @@ static void CommunicationManager_disableInterrupts(CommunicationManager this __a
 	ASSERT(this, "CommunicationManager::disableInterrupts: null this");
 
 	// disable interrupts to allow sends without affecting unready receiver
-	_communicationRegisters[__CCSR] = 0xFF;
+//	_communicationRegisters[__CCSR] = 0xFF;
 	_communicationRegisters[__CCR] |= __COM_DISABLE_INTERRUPT;
 }
 
@@ -270,18 +272,18 @@ static void CommunicationManager_resetCommunications(CommunicationManager this)
 {
 	// reset
 	this->communicationMode = __COM_AS_REMOTE;
-	this->handshake = kHandshakeIdle;
 	this->status = kStatusIdle;
 	this->sequenceNumber = 1;
-	this->waitPayloadTries = 0;
+	this->handshake = kHandshakeIdle;
+	this->messageToSelf = kNoMessage;
+	this->waitCycles = __COM_TIME_TO_WAIT_FOR_RESPONSE + Utilities_random(Utilities_randomSeed(), __COM_TIME_TO_WAIT_FOR_RESPONSE);
 	CommunicationManager_disableInterrupts(this);
-
-	MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kCommunicationsSendSyn);
-	MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kCommunicationsWaitSyn);
 }
 
 static bool CommunicationManager_sendHandshake(CommunicationManager this, u8 handshakePayload)
 {
+	//CommunicationManager_disableInterrupts(this);
+
 	if(__HANDSHAKE_SIN == handshakePayload)
 	{
 		this->communicationMode = __COM_AS_MASTER;
@@ -293,25 +295,29 @@ static bool CommunicationManager_sendHandshake(CommunicationManager this, u8 han
 	}
 	else if(__KEEP_ALIVE == handshakePayload)
 	{
-		this->handshake = kSendingKeepAlive;
+		this->handshake = kWaitingToSendKeepAlive;
 		this->sequenceNumber++;
 	}
 
 	this->status = kStatusIdle;
-
 	CommunicationManager_sendPayload(this, handshakePayload);
+	this->messageToSelf = kCommunicationsReset;
 
-	this->waitPayloadTries = __WAIT_PAYLOAD_TRIES + Utilities_random(Utilities_randomSeed(), __WAIT_PAYLOAD_TRIES);
-
+	this->waitCycles = __COM_TIME_TO_WAIT_FOR_RESPONSE + Utilities_random(Utilities_randomSeed(), __COM_TIME_TO_WAIT_FOR_RESPONSE);
 	return true;
 }
 
-static bool CommunicationManager_waitHandshake(CommunicationManager this, u8 handshakePayload)
+static bool CommunicationManager_waitHandshake(CommunicationManager this, u8 handshakePayload, bool sendMessage)
 {
+	this->messageToSelf = sendMessage ? kCommunicationsReset : this->messageToSelf;
+
+	//CommunicationManager_disableInterrupts(this);
+
 	if(__HANDSHAKE_SIN == handshakePayload)
 	{
 		this->communicationMode = __COM_AS_REMOTE;
 		this->handshake = kWaitingSyn;
+		this->messageToSelf = sendMessage ? kCommunicationsSendSyn : this->messageToSelf;
 	}
 	else if(__HANDSHAKE_ACK == handshakePayload)
 	{
@@ -319,13 +325,17 @@ static bool CommunicationManager_waitHandshake(CommunicationManager this, u8 han
 	}
 	else if(__KEEP_ALIVE == handshakePayload)
 	{
-		this->handshake = kWaitingKeepAlive;
+		this->handshake = kWaitingToWaitKeepAlive;
 		this->sequenceNumber++;
 	}
 
 	this->status = kStatusIdle;
-
 	CommunicationManager_receivePayload(this);
+
+	if(sendMessage)
+	{
+		this->waitCycles = __COM_TIME_TO_WAIT_FOR_RESPONSE + Utilities_random(Utilities_randomSeed(), __COM_TIME_TO_WAIT_FOR_RESPONSE);
+	}
 
 	return true;
 }
@@ -338,17 +348,7 @@ static bool CommunicationManager_waitHandshake(CommunicationManager this, u8 han
  */
 inline static void CommunicationManager_processInterrupt(CommunicationManager this)
 {
-
-	PRINT_TIME(31, 3);
-	PRINT_INT(this->waitPayloadTries, 31, 8);
-	PRINT_TEXT("Status: ", 31, 9);
-	PRINT_INT(this->status, 31 + 12, 9);
-	PRINT_TEXT("Handshake: ", 31, 10);
-	PRINT_INT(this->handshake, 31 + 12, 10);
-	PRINT_TEXT("Connected: ", 31, 11);
-	PRINT_INT(this->handshake == kSendingKeepAlive || this->handshake == kWaitingKeepAlive, 31 + 12, 11);
-	PRINT_TEXT("Mode: ", 31, 12);
-	PRINT_TEXT(__COM_AS_REMOTE == this->communicationMode ? "Remote" : "Master ", 31 + 12, 12);
+//	CommunicationManager_printStatus(this, 25, 5);
 
 	switch(this->status)
 	{
@@ -361,11 +361,15 @@ inline static void CommunicationManager_processInterrupt(CommunicationManager th
 			{
 				Package package = (Package){_communicationRegisters[__CDRR], !(_communicationRegisters[__CCR] & __COM_PENDING)};
 
-				if(!package.isValid)
+/*				if(!package.isValid)
 				{
-					CommunicationManager_resetCommunications(this);
+					PRINT_TEXT("!package.isValid", 20, 24);
+					PRINT_HEX(__HANDSHAKE_SIN, 30, 23);
+					PRINT_HEX(package.payload, 30, 24);
+					CommunicationManager_enableInterrupts(_communicationManager);
 					return;
 				}
+*/
 
 				switch(this->handshake)
 				{
@@ -373,19 +377,12 @@ inline static void CommunicationManager_processInterrupt(CommunicationManager th
 
 						if(__HANDSHAKE_SIN == package.payload)
 						{
-							//MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kCommunicationsSendSyn);
-
 							CommunicationManager_sendHandshake(this, __HANDSHAKE_ACK);
-						}
-						else if(0 < --this->waitPayloadTries)
-						{
-							CommunicationManager_waitHandshake(this, __HANDSHAKE_SIN);
 						}
 						else
 						{
-							//CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-		//					CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-							CommunicationManager_resetCommunications(this);
+	//PRINT_TIME(1, 3);
+							CommunicationManager_waitHandshake(this, __HANDSHAKE_SIN, false);
 						}
 
 						break;
@@ -396,14 +393,10 @@ inline static void CommunicationManager_processInterrupt(CommunicationManager th
 						{
 							CommunicationManager_sendHandshake(this, __KEEP_ALIVE);
 						}
-						else if(0 < --this->waitPayloadTries)
-						{
-							CommunicationManager_waitHandshake(this, __HANDSHAKE_ACK);
-						}
 						else
 						{
-//							CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-							CommunicationManager_resetCommunications(this);
+	//PRINT_TIME(8, 3);
+							CommunicationManager_waitHandshake(this, __HANDSHAKE_ACK, false);
 						}
 
 						break;
@@ -415,14 +408,10 @@ inline static void CommunicationManager_processInterrupt(CommunicationManager th
 						{
 							CommunicationManager_sendHandshake(this, __KEEP_ALIVE);
 						}
-						else if(0 < --this->waitPayloadTries)
-						{
-							CommunicationManager_waitHandshake(this, __KEEP_ALIVE);
-						}
 						else
 						{
-//							CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-							CommunicationManager_resetCommunications(this);
+	//PRINT_TIME(15, 3);
+							CommunicationManager_waitHandshake(this, __KEEP_ALIVE, false);
 						}
 
 						break;
@@ -434,80 +423,83 @@ inline static void CommunicationManager_processInterrupt(CommunicationManager th
 		case kSendingPayload:
 			{
 				Package package = (Package){_communicationRegisters[__CDTR], !(_communicationRegisters[__CCR] & __COM_PENDING)};
-
+/*
 				if(!package.isValid)
 				{
 					CommunicationManager_resetCommunications(this);
 					return;
 				}
-
+*/
 				switch(this->handshake)
 				{
 					case kSendingSyn:
 
-						if(__HANDSHAKE_SIN == package.payload)
-						{
-//							MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kCommunicationsWaitSyn);
-
-							CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-							//CommunicationManager_waitHandshake(this, __HANDSHAKE_ACK);
-						}
-
-						PRINT_TEXT("hola", 20, 14);
-
+//	PRINT_TIME(22, 3);
+						// wait for ack
+						CommunicationManager_waitHandshake(this, __HANDSHAKE_ACK, true);
 						break;
 
 					case kSendingAck:
 
-						if(__HANDSHAKE_ACK == package.payload)
-						{
-							CommunicationManager_waitHandshake(this, __KEEP_ALIVE);
-						}
-
+//	PRINT_TIME(29, 3);
+						// wait for keep alive
+						CommunicationManager_waitHandshake(this, __KEEP_ALIVE, true);
 						break;
 
 					case kSendingKeepAlive:
 
-						if(__KEEP_ALIVE == package.payload)
-						{
-							CommunicationManager_waitHandshake(this, __KEEP_ALIVE);
-						}
-
+//	PRINT_TIME(36, 3);
+						// wait for keep alive
+						CommunicationManager_waitHandshake(this, __KEEP_ALIVE, true);
 						break;
 				}
 
 				break;
 			}
 	}
+
+//	CommunicationManager_printStatus(this, 25, 15);
 }
 
-bool CommunicationManager_handleMessage(CommunicationManager this, Telegram telegram)
+static void CommunicationManager_handleMessageToSelf(CommunicationManager this)
 {
-/*
-	switch(Telegram_getMessage(telegram))
+	switch(this->messageToSelf)
 	{
 		case kCommunicationsSendSyn:
 
 			// try as master
-			this->communicationMode = __COM_AS_MASTER;
-
-			if(CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN))
-			{
-				MessageDispatcher_dispatchMessage(__COM_TIME_TO_WAIT_FOR_SYN + Utilities_random(Utilities_randomSeed(), __COM_TIME_TO_WAIT_FOR_SYN), __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kCommunicationsWaitSyn, NULL);
-			}
+			CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
+			PRINT_TIME(20, 13);
+			PRINT_TEXT("M", 20, 14);
 
 			break;
 
-		case kCommunicationsWaitSyn:
+		case kCommunicationsReset:
 
 			// reset
 			CommunicationManager_resetCommunications(this);
+			PRINT_TIME(20, 15);
+			PRINT_TEXT("R", 20, 14);
 			break;
-	}
-*/
-	return false;
-}
 
+		case kNoMessage:
+
+			switch(this->status)
+        	{
+        		case kStatusIdle:
+
+        			switch(this->handshake)
+        			{
+        				case kHandshakeIdle:
+
+        					CommunicationManager_waitHandshake(this, __HANDSHAKE_SIN, true);
+        					break;
+        			}
+
+        			break;
+        	}
+	}
+}
 
 bool CommunicationManager_sendPayload(CommunicationManager this, u8 payload)
 {
@@ -548,86 +540,13 @@ Package CommunicationManager_getPackage(CommunicationManager this)
 
 void CommunicationManager_update(CommunicationManager this)
 {
-	PRINT_INT(this->waitPayloadTries, 1, 8);
-	PRINT_TEXT("Status: ", 1, 9);
-	PRINT_INT(this->status, 1 + 12, 9);
-	PRINT_TEXT("Handshake: ", 1, 10);
-	PRINT_INT(this->handshake, 1 + 12, 10);
-	PRINT_TEXT("Connected: ", 1, 11);
-	PRINT_INT(this->handshake == kSendingKeepAlive || this->handshake == kWaitingKeepAlive, 1 + 12, 11);
-	PRINT_TEXT("Mode: ", 1, 12);
-	PRINT_TEXT(__COM_AS_REMOTE == this->communicationMode ? "Remote" : "Master ", 1 + 12, 12);
-	PRINT_TEXT(_communicationRegisters[__CCR] & __COM_PENDING ? "Pending" : "Done  ", 1, 13);
-	PRINT_HEX(_communicationRegisters[__CCR], 1 + 12, 13);
+	CommunicationManager_printStatus(this, 1, 5);
 //	_communicationRegisters[__CCSR] = 0xFF;
-	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
+//	_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
 
-	if(_communicationRegisters[__CCR] & __COM_PENDING)
+	if(0 >= --this->waitCycles)
 	{
-		PRINT_TIME(10, 4);
-		return;
-	}
-
-		PRINT_TIME(1, 4);
-		return;
-	switch(this->status)
-	{
-		case kStatusIdle:
-
-			switch(this->handshake)
-			{
-				case kHandshakeIdle:
-					{
-						PRINT_TIME(1, 3);
-						this->waitPayloadTries = __WAIT_PAYLOAD_TRIES + Utilities_random(Utilities_randomSeed(), __WAIT_PAYLOAD_TRIES);
-
-						CommunicationManager_waitHandshake(this, __HANDSHAKE_SIN);
-/*
-						if(CommunicationManager_waitHandshake(this, __HANDSHAKE_SIN))
-						{
-							MessageDispatcher_dispatchMessage(__COM_TIME_TO_WAIT_FOR_SYN + Utilities_random(Utilities_randomSeed(), __COM_TIME_TO_WAIT_FOR_SYN), __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kCommunicationsSendSyn, NULL);
-						}
-						*/
-					}
-
-
-					break;
-			}
-
-			break;
-
-		case kWaitingPayload:
-
-			switch(this->handshake)
-			{
-				case kWaitingSyn:
-
-					if(0 < --this->waitPayloadTries)
-					{
-						CommunicationManager_waitHandshake(this, __HANDSHAKE_SIN);
-					}
-					else
-					{
-						CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-					}
-
-					break;
-/*
-				case kWaitingAck:
-
-					if(0 < --this->waitPayloadTries)
-					{
-						CommunicationManager_sendHandshake(this, __HANDSHAKE_SIN);
-					}
-
-					break;
-					*/
-			}
-
-		default:
-
-			PRINT_TIME(1, 4);
-			break;
+		CommunicationManager_handleMessageToSelf(this);
 	}
 
 /*
@@ -635,5 +554,58 @@ void CommunicationManager_update(CommunicationManager this)
 	PRINT_INT(sizeof(UserInput) * 8, 10, 11);
 	PRINT_INT(sizeof(UserInput) * 8 *50, 10, 12);
 	*/
+}
 
+void CommunicationManager_printStatus(CommunicationManager this, int x, int y)
+{
+	PRINT_TIME(x, y++);
+	PRINT_TEXT("Status:", x, y);
+	char* helper = "";
+
+	switch(this->status)
+	{
+		case kStatusIdle:
+			helper = "Idle   ";
+			break;
+		case kWaitingPayload:
+			helper = "Waiting";
+			break;
+		case kSendingPayload:
+			helper = "Sending";
+			break;
+	}
+
+	PRINT_TEXT(helper, x + 12, y++);
+	PRINT_TEXT("Handshake:", 1, y);
+
+	switch(this->handshake)
+	{
+		case kHandshakeIdle:
+			helper = "Idle    ";
+			break;
+		case kSendingSyn:
+		case kWaitingSyn:
+			helper = "Syn     ";
+			break;
+		case kSendingAck:
+		case kWaitingAck:
+			helper = "Ack      ";
+			break;
+		case kSendingKeepAlive:
+		case kWaitingKeepAlive:
+			helper = "KeepAlive";
+			break;
+	}
+
+	PRINT_TEXT(helper, x + 12, y++);
+
+	PRINT_TEXT(this->handshake == kSendingKeepAlive || this->handshake == kWaitingKeepAlive ? "Connected" : "           ", x, y++);
+	PRINT_TEXT("Mode: ", x, y);
+	PRINT_TEXT(__COM_AS_REMOTE == this->communicationMode ? "Remote" : "Master ", x + 12, y++);
+//	PRINT_TEXT(_communicationRegisters[__CCR] & __COM_PENDING ? "Pending" : "Done  ", 1, y++);
+/*	PRINT_TEXT("CCR: ", x, y);
+	PRINT_HEX(_communicationRegisters[__CCR], x + 12, y++);
+	PRINT_TEXT("CCSR: ", x, y);
+	PRINT_HEX(_communicationRegisters[__CCSR], x + 12, y);
+	*/
 }

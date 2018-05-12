@@ -100,8 +100,9 @@
 // messages
 enum MessagesTypes
 {
+	kNoMessage = 0,
 	// general purpose messages
-	kHighFps = 0,
+	kHighFps,
 	kAutoPause,
 	kLowBatteryIndicator,
 	kEntityRemoved,
@@ -120,6 +121,11 @@ enum MessagesTypes
 	// communication messages
 	kCommunicationsSendSyn,
 	kCommunicationsWaitSyn,
+	kCommunicationsSendAck,
+	kCommunicationsWaitAck,
+	kCommunicationsSendKeepAlive,
+	kCommunicationsWaitKeepAlive,
+	kCommunicationsReset,
 
 	// don't place messages below this
 	kLastEngineMessage

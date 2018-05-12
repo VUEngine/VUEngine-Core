@@ -44,6 +44,7 @@
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
+#include <CommunicationManager.h>
 #include <AnimationCoordinatorFactory.h>
 #include <StateMachine.h>
 #include <Camera.h>
@@ -455,6 +456,7 @@ void Game_start(Game this, GameState state)
 		while(true)
 		{
 			while(!this->currentFrameEnded);
+
 			this->currentFrameEnded = false;
 
 #ifdef __PROFILE_GAME
@@ -1258,6 +1260,8 @@ inline static void Game_run(Game this)
 {
 	// reset timer
 	TimerManager_resetMilliseconds(this->timerManager);
+
+	CommunicationManager_update(CommunicationManager_getInstance());
 
 	// sync entities with their sprites
 	Game_synchronizeGraphics(this);

@@ -55,7 +55,6 @@ typedef struct Package
 // declare the virtual methods which are redefined
 #define CommunicationManager_SET_VTABLE(ClassName)														\
 		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, CommunicationManager, handleMessage);									\
 
 __CLASS(CommunicationManager);
 
@@ -71,7 +70,7 @@ void CommunicationManager_update(CommunicationManager this);
 bool CommunicationManager_sendPayload(CommunicationManager this, u8 payload);
 bool CommunicationManager_receivePayload(CommunicationManager this);
 Package CommunicationManager_getPackage(CommunicationManager this);
-bool CommunicationManager_handleMessage(CommunicationManager this, Telegram telegram);
+void CommunicationManager_update(CommunicationManager this);
 
 
 #endif
