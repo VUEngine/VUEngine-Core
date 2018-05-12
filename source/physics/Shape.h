@@ -134,6 +134,49 @@ typedef struct VertexProjection
 	fix10_6 max;
 } VertexProjection;
 
+/**
+ * Possible types of a Shape
+ *
+ * @memberof Shape
+ */
+enum ShapeTypes
+{
+	kNoShape = 0,
+	kBall,
+	kBox,
+	kInverseBox,
+};
+
+// defines a shape
+typedef struct ShapeDefinition
+{
+	/// class allocator
+	AllocatorPointer allocator;
+
+	/// size in pixels
+	PixelSize pixelSize;
+
+	/// displacement modifier
+	PixelVector displacement;
+
+	/// rotation modifier
+	Rotation rotation;
+
+	/// scale modifier
+	Scale scale;
+
+	/// if true this shape checks for collisions against other shapes
+	bool checkForCollisions;
+
+	/// layers in which I live
+	u32 layers;
+
+	/// layers to ignore when checking for collisions
+	u32 layersToIgnore;
+
+} ShapeDefinition;
+
+typedef const ShapeDefinition ShapeROMDef;
 
 #define Shape_METHODS(ClassName)																		\
 		Object_METHODS(ClassName)																		\
@@ -215,49 +258,7 @@ typedef struct VertexProjection
 
 __CLASS(Shape);
 
-/**
- * Possible types of a Shape
- *
- * @memberof Shape
- */
-enum ShapeTypes
-{
-	kNoShape = 0,
-	kBall,
-	kBox,
-	kInverseBox,
-};
 
-// defines a shape
-typedef struct ShapeDefinition
-{
-	/// class allocator
-	AllocatorPointer allocator;
-
-	/// size in pixels
-	PixelSize pixelSize;
-
-	/// displacement modifier
-	PixelVector displacement;
-
-	/// rotation modifier
-	Rotation rotation;
-
-	/// scale modifier
-	Scale scale;
-
-	/// if true this shape checks for collisions against other shapes
-	bool checkForCollisions;
-
-	/// layers in which I live
-	u32 layers;
-
-	/// layers to ignore when checking for collisions
-	u32 layersToIgnore;
-
-} ShapeDefinition;
-
-typedef const ShapeDefinition ShapeROMDef;
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -60,8 +60,6 @@
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, applyReflection);									\
 		__VIRTUAL_SET(ClassName, ReflectiveEntity, synchronizeGraphics);								\
 
-__CLASS(ReflectiveEntity);
-
 #define ReflectiveEntity_ATTRIBUTES																		\
 		/* it is derived from */																		\
 		Entity_ATTRIBUTES																		\
@@ -69,6 +67,9 @@ __CLASS(ReflectiveEntity);
 		fix10_6 waveLutIndexIncrement;																	\
 		Point position2D;																				\
 		Point nextFramePosition2D;																		\
+
+__CLASS(ReflectiveEntity);
+
 
 typedef struct ReflectiveEntityDefinition
 {

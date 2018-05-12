@@ -104,51 +104,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Printing_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define Printing_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-
-// declare class
-__CLASS(Printing);
-
-// declare class attributes
-#define Printing_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/*
-		 * @var VirtualList fonts
-		 * @brief			A list of loaded fonts and their respective CharSets
-		 * @memberof		Printing
-		 */																								\
-		VirtualList fonts;																				\
-		/*
-		 * @var u16			gx
-		 * @brief			x coordinate for printing WORLD
-		 * @memberof		Printing
-		 */																								\
-		u16 gx;																							\
-		/*
-		 * @var u16			gy
-		 * @brief			y coordinate for printing WORLD
-		 * @memberof		Printing
-		 */																								\
-		u16 gy;																							\
-		/*
-		 * @var u8			mode
-		 * @brief			Printing mode (Default or Debug)
-		 * @memberof		Printing
-		 */																								\
-		u8 mode;																						\
-		/*
-		 * @var u8			palette
-		 * @brief			Palette to use for printing
-		 * @memberof		Printing
-		 */																								\
-		u8 palette;																						\
-
 // size in pixels
 typedef struct FontSize
 {
@@ -207,6 +162,51 @@ typedef struct FontData
  * @memberof 	Printing
  */
 typedef const FontData FontROMData;
+
+// declare the virtual methods
+#define Printing_METHODS(ClassName)																		\
+		Object_METHODS(ClassName)																		\
+
+// declare the virtual methods which are redefined
+#define Printing_SET_VTABLE(ClassName)																	\
+		Object_SET_VTABLE(ClassName)																	\
+
+// declare class attributes
+#define Printing_ATTRIBUTES																				\
+		Object_ATTRIBUTES																				\
+		/*
+		 * @var VirtualList fonts
+		 * @brief			A list of loaded fonts and their respective CharSets
+		 * @memberof		Printing
+		 */																								\
+		VirtualList fonts;																				\
+		/*
+		 * @var u16			gx
+		 * @brief			x coordinate for printing WORLD
+		 * @memberof		Printing
+		 */																								\
+		u16 gx;																							\
+		/*
+		 * @var u16			gy
+		 * @brief			y coordinate for printing WORLD
+		 * @memberof		Printing
+		 */																								\
+		u16 gy;																							\
+		/*
+		 * @var u8			mode
+		 * @brief			Printing mode (Default or Debug)
+		 * @memberof		Printing
+		 */																								\
+		u8 mode;																						\
+		/*
+		 * @var u8			palette
+		 * @brief			Palette to use for printing
+		 * @memberof		Printing
+		 */																								\
+		u8 palette;																						\
+
+// declare class
+__CLASS(Printing);
 
 
 //---------------------------------------------------------------------------------------------------------
