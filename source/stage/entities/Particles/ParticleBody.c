@@ -49,8 +49,8 @@ extern fix10_6 _currentWorldFriction;
 extern fix10_6 _currentElapsedTime;
 extern const Acceleration* _currentGravity;
 
-MovementResult Body_updateMovement(Body this);
-Acceleration Body_getGravity(Body this);
+MovementResult Body::updateMovement(Body this);
+Acceleration Body::getGravity(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,11 +71,11 @@ __CLASS_NEW_END(ParticleBody, owner, physicalSpecification, axesSubjectToGravity
  * @param owner
  * @param mass
  */
-void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+void ParticleBody::constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "ParticleBody::constructor: null this");
 
-	Base_constructor(this, owner, physicalSpecification, axesSubjectToGravity);
+	Base::constructor(this, owner, physicalSpecification, axesSubjectToGravity);
 }
 
 /**
@@ -86,13 +86,13 @@ void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const Phys
  *
  * @param this	Function scope
  */
-void ParticleBody_destructor(ParticleBody this)
+void ParticleBody::destructor(ParticleBody this)
 {
 	ASSERT(this, "ParticleBody::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -103,7 +103,7 @@ void ParticleBody_destructor(ParticleBody this)
  *
  * @param this	Function scope
  */
-void ParticleBody_update(ParticleBody this)
+void ParticleBody::update(ParticleBody this)
 {
 	ASSERT(this, "ParticleBody::update: null this");
 
@@ -111,21 +111,21 @@ void ParticleBody_update(ParticleBody this)
 	{
 		if(this->awake)
 		{
-			MovementResult movementResult = Body_updateMovement(__SAFE_CAST(Body, this));
+			MovementResult movementResult = Body::updateMovement(__SAFE_CAST(Body, this));
 
 			// if stopped on any axis
 			if(movementResult.axesStoppedMovement)
 			{
-				Body_stopMovement(__SAFE_CAST(Body, this), movementResult.axesStoppedMovement);
+				Body::stopMovement(__SAFE_CAST(Body, this), movementResult.axesStoppedMovement);
 			}
-/*			else if(!Body_getMovementOnAllAxes(__SAFE_CAST(Body, this)))
+/*			else if(!Body::getMovementOnAllAxes(__SAFE_CAST(Body, this)))
 			{
-				Body_sleep(__SAFE_CAST(Body, this));
+				Body::sleep(__SAFE_CAST(Body, this));
 			}
 			*/
 		}
 
 		// clear any force so the next update does not get influenced
-		Body_clearExternalForce(__SAFE_CAST(Body, this));
+		Body::clearExternalForce(__SAFE_CAST(Body, this));
 	}
 }

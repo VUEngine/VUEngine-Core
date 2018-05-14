@@ -66,7 +66,7 @@ __CLASS_DEFINITION(KeypadManager, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void KeypadManager_constructor(KeypadManager this);
+static void KeypadManager::constructor(KeypadManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ static unsigned int volatile* _readingStatus = NULL;
 /**
  * Get instance
  *
- * @fn			KeypadManager_getInstance()
+ * @fn			KeypadManager::getInstance()
  * @memberof	KeypadManager
  * @public
  *
@@ -94,13 +94,13 @@ __SINGLETON(KeypadManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager this)
+static void __attribute__ ((noinline)) KeypadManager::constructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
-	KeypadManager_flush(this);
+	KeypadManager::flush(this);
 	this->enabled = false;
 
 	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
@@ -117,7 +117,7 @@ static void __attribute__ ((noinline)) KeypadManager_constructor(KeypadManager t
  *
  * @param this	Function scope
  */
-void KeypadManager_destructor(KeypadManager this)
+void KeypadManager::destructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::destructor: null this");
 
@@ -133,11 +133,11 @@ void KeypadManager_destructor(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
+void KeypadManager::enableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::enable: null this");
 
-	KeypadManager_flush(this);
+	KeypadManager::flush(this);
 
 	_hardwareRegisters[__SCR] = 0;
 	_hardwareRegisters[__SCR] &= ~(__S_HWDIS | __S_INTDIS);
@@ -152,7 +152,7 @@ void KeypadManager_enableInterrupt(KeypadManager this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
+void KeypadManager::disableInterrupt(KeypadManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "KeypadManager::disable: null this");
 
@@ -167,14 +167,14 @@ void KeypadManager_disableInterrupt(KeypadManager this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void KeypadManager_enable(KeypadManager this)
+void KeypadManager::enable(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::enable: null this");
 
 	this->enabled = true;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
-	KeypadManager_flush(this);
+	KeypadManager::flush(this);
 }
 
 /**
@@ -185,7 +185,7 @@ void KeypadManager_enable(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager_disable(KeypadManager this)
+void KeypadManager::disable(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::disable: null this");
 
@@ -202,7 +202,7 @@ void KeypadManager_disable(KeypadManager this)
  *
  * @return			True if user input is enabled
  */
-int KeypadManager_isEnabled(KeypadManager this)
+int KeypadManager::isEnabled(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::disable: null this");
 
@@ -217,7 +217,7 @@ int KeypadManager_isEnabled(KeypadManager this)
  *
  * @param this	Function scope
  */
-UserInput KeypadManager_read(KeypadManager this)
+UserInput KeypadManager::read(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
@@ -233,9 +233,9 @@ UserInput KeypadManager_read(KeypadManager this)
 	// store keys
 	this->userInput.powerFlag 	= this->userInput.allKeys & 0x0001;
 	this->userInput.allKeys 	&= 0xFFFC;
-	this->userInput.pressedKey 	= KeypadManager_getPressedKey(this) & this->userInputToRegister.pressedKey;
-	this->userInput.releasedKey = KeypadManager_getReleasedKey(this) & this->userInputToRegister.releasedKey;
-	this->userInput.holdKey 	= KeypadManager_getHoldKey(this) & this->userInputToRegister.holdKey;
+	this->userInput.pressedKey 	= KeypadManager::getPressedKey(this) & this->userInputToRegister.pressedKey;
+	this->userInput.releasedKey = KeypadManager::getReleasedKey(this) & this->userInputToRegister.releasedKey;
+	this->userInput.holdKey 	= KeypadManager::getHoldKey(this) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
 	this->userInput.holdKeyDuration = (this->userInput.holdKey == this->userInput.previousKey)
 		? this->userInput.holdKeyDuration + 1
@@ -254,7 +254,7 @@ UserInput KeypadManager_read(KeypadManager this)
  *
  * @return		User input
  */
-UserInput KeypadManager_getUserInput(KeypadManager this)
+UserInput KeypadManager::getUserInput(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getUserInput: null this");
 
@@ -269,7 +269,7 @@ UserInput KeypadManager_getUserInput(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager_flush(KeypadManager this)
+void KeypadManager::flush(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::flush: null this");
 
@@ -286,7 +286,7 @@ void KeypadManager_flush(KeypadManager this)
  *
  * @return 		Currently pressed keys
  */
-u16 KeypadManager_getPressedKey(KeypadManager this)
+u16 KeypadManager::getPressedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPressedKey: null this");
 
@@ -303,7 +303,7 @@ u16 KeypadManager_getPressedKey(KeypadManager this)
  *
  * @return 		Currently released keys
  */
-u16 KeypadManager_getReleasedKey(KeypadManager this)
+u16 KeypadManager::getReleasedKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::read: null this");
 
@@ -320,7 +320,7 @@ u16 KeypadManager_getReleasedKey(KeypadManager this)
  *
  * @return 		Currently held keys
  */
-u16 KeypadManager_getHoldKey(KeypadManager this)
+u16 KeypadManager::getHoldKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKey: null this");
 
@@ -337,7 +337,7 @@ u16 KeypadManager_getHoldKey(KeypadManager this)
  *
  * @return 		Duration of currently held keys
  */
-u32 KeypadManager_getHoldKeyDuration(KeypadManager this)
+u32 KeypadManager::getHoldKeyDuration(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getHoldKeyDuration: null this");
 
@@ -354,7 +354,7 @@ u32 KeypadManager_getHoldKeyDuration(KeypadManager this)
  *
  * @return 		Previously pressed keys
  */
-u16 KeypadManager_getPreviousKey(KeypadManager this)
+u16 KeypadManager::getPreviousKey(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::getPreviousKey: null this");
 
@@ -370,7 +370,7 @@ u16 KeypadManager_getPreviousKey(KeypadManager this)
  * @param this				Function scope
  * @param inputToRegister	Flag
  */
-void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister)
+void KeypadManager::registerInput(KeypadManager this, u16 inputToRegister)
 {
 	ASSERT(this, "KeypadManager::registerInput: null this");
 
@@ -385,9 +385,9 @@ void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister)
  * @memberof	KeypadManager
  * @public
  */
-void KeypadManager_interruptHandler()
+void KeypadManager::interruptHandler()
 {
-	Printing_resetWorldCoordinates(Printing_getInstance());
-	Printing_text(Printing_getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
+	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 

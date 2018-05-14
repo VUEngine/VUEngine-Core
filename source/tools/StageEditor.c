@@ -145,27 +145,27 @@ enum Modes
 // globals
 extern UserObject _userObjects[];
 
-static void StageEditor_constructor(StageEditor this);
-static void StageEditor_setupMode(StageEditor this);
-static void StageEditor_releaseShape(StageEditor this);
-static void StageEditor_getShape(StageEditor this);
-static void StageEditor_positionShape(StageEditor this);
-static void StageEditor_highLightEntity(StageEditor this);
-static void StageEditor_selectPreviousEntity(StageEditor this);
-static void StageEditor_selectNextEntity(StageEditor this);
-static void StageEditor_translateEntity(StageEditor this, u32 pressedKey);
-static void StageEditor_moveCamera(StageEditor this, u32 pressedKey);
-static void StageEditor_changeProjection(StageEditor this, u32 pressedKey);
-static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D translation);
-static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D translation);
-static void StageEditor_printEntityPosition(StageEditor this);
-static void StageEditor_printCameraPosition(StageEditor this);
-static void StageEditor_printProjectionValues(StageEditor this);
-static void StageEditor_printUserObjects(StageEditor this);
-static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey);
-static void StageEditor_printTranslationStepSize(StageEditor this);
-static void StageEditor_removePreviousSprite(StageEditor this);
-static void StageEditor_showSelectedUserObject(StageEditor this);
+static void StageEditor::constructor(StageEditor this);
+static void StageEditor::setupMode(StageEditor this);
+static void StageEditor::releaseShape(StageEditor this);
+static void StageEditor::getShape(StageEditor this);
+static void StageEditor::positionShape(StageEditor this);
+static void StageEditor::highLightEntity(StageEditor this);
+static void StageEditor::selectPreviousEntity(StageEditor this);
+static void StageEditor::selectNextEntity(StageEditor this);
+static void StageEditor::translateEntity(StageEditor this, u32 pressedKey);
+static void StageEditor::moveCamera(StageEditor this, u32 pressedKey);
+static void StageEditor::changeProjection(StageEditor this, u32 pressedKey);
+static void StageEditor::applyTranslationToEntity(StageEditor this, Vector3D translation);
+static void StageEditor::applyTranslationToCamera(StageEditor this, Vector3D translation);
+static void StageEditor::printEntityPosition(StageEditor this);
+static void StageEditor::printCameraPosition(StageEditor this);
+static void StageEditor::printProjectionValues(StageEditor this);
+static void StageEditor::printUserObjects(StageEditor this);
+static void StageEditor::selectUserObject(StageEditor this, u32 pressedKey);
+static void StageEditor::printTranslationStepSize(StageEditor this);
+static void StageEditor::removePreviousSprite(StageEditor this);
+static void StageEditor::showSelectedUserObject(StageEditor this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -175,7 +175,7 @@ static void StageEditor_showSelectedUserObject(StageEditor this);
 /**
  * Get instance
  *
- * @fn			StageEditor_getInstance()
+ * @fn			StageEditor::getInstance()
  * @memberof	StageEditor
  * @public
  *
@@ -191,7 +191,7 @@ __SINGLETON(StageEditor);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
+static void __attribute__ ((noinline)) StageEditor::constructor(StageEditor this)
 {
 	ASSERT(this, "StageEditor::constructor: null this");
 
@@ -212,12 +212,12 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
 		Option* option = __NEW_BASIC(Option);
 		option->value = _userObjects[i].name;
 		option->type = kString;
-		VirtualList_pushBack(userObjects, option);
+		VirtualList::pushBack(userObjects, option);
 	}
 
-	if(VirtualList_getSize(userObjects))
+	if(VirtualList::getSize(userObjects))
 	{
-		OptionsSelector_setOptions(this->userObjectsSelector, userObjects);
+		OptionsSelector::setOptions(this->userObjectsSelector, userObjects);
 	}
 
 	__DELETE(userObjects);
@@ -233,7 +233,7 @@ static void __attribute__ ((noinline)) StageEditor_constructor(StageEditor this)
  *
  * @param this	Function scope
  */
-void StageEditor_destructor(StageEditor this)
+void StageEditor::destructor(StageEditor this)
 {
 	ASSERT(this, "StageEditor::destructor: null this");
 
@@ -254,7 +254,7 @@ void StageEditor_destructor(StageEditor this)
  *
  * @param this	Function scope
  */
-void StageEditor_update(StageEditor this __attribute__ ((unused)))
+void StageEditor::update(StageEditor this __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditor::update: null this");
 }
@@ -268,7 +268,7 @@ void StageEditor_update(StageEditor this __attribute__ ((unused)))
  * @param this		Function scope
  * @param gameState Current game state
  */
-void StageEditor_show(StageEditor this, GameState gameState)
+void StageEditor::show(StageEditor this, GameState gameState)
 {
 	ASSERT(this, "StageEditor::start: null this");
 	ASSERT(gameState, "StageEditor::start: gameState this");
@@ -277,8 +277,8 @@ void StageEditor_show(StageEditor this, GameState gameState)
 	this->mode = kFirstMode + 1;
 	this->userObjectSprite = NULL;
 
-	StageEditor_releaseShape(this);
-	StageEditor_setupMode(this);
+	StageEditor::releaseShape(this);
+	StageEditor::setupMode(this);
 }
 
 /**
@@ -289,14 +289,14 @@ void StageEditor_show(StageEditor this, GameState gameState)
  *
  * @param this	Function scope
  */
-void StageEditor_hide(StageEditor this)
+void StageEditor::hide(StageEditor this)
 {
 	ASSERT(this, "StageEditor::stop: null this");
 
-	CollisionManager_hideShapes(GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance())))));
-	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-	StageEditor_removePreviousSprite(this);
-	StageEditor_releaseShape(this);
+	CollisionManager::hideShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	StageEditor::removePreviousSprite(this);
+	StageEditor::releaseShape(this);
 	this->currentEntityNode = NULL;
 }
 
@@ -309,7 +309,7 @@ void StageEditor_hide(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	User input
  */
-void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
+void StageEditor::processUserInput(StageEditor this, u16 pressedKey)
 {
 	ASSERT(this, "StageEditor::handleMessage: null this");
 
@@ -327,7 +327,7 @@ void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 			this->mode = kFirstMode + 1;
 		}
 
-		StageEditor_setupMode(this);
+		StageEditor::setupMode(this);
 		return;
 	}
 
@@ -335,22 +335,22 @@ void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
 	{
 		case kMoveCamera:
 
-			StageEditor_moveCamera(this, pressedKey);
+			StageEditor::moveCamera(this, pressedKey);
 			break;
 
 		case kChangeProjection:
 
-			StageEditor_changeProjection(this, pressedKey);
+			StageEditor::changeProjection(this, pressedKey);
 			break;
 
 		case kTranslateEntities:
 
-			StageEditor_translateEntity(this, pressedKey);
+			StageEditor::translateEntity(this, pressedKey);
 			break;
 
 		case kAddObjects:
 
-			StageEditor_selectUserObject(this, pressedKey);
+			StageEditor::selectUserObject(this, pressedKey);
 			break;
 	}
 }
@@ -363,13 +363,13 @@ void StageEditor_processUserInput(StageEditor this, u16 pressedKey)
  *
  * @param this	Function scope
  */
-static void StageEditor_printHeader(StageEditor this)
+static void StageEditor::printHeader(StageEditor this)
 {
-	Printing_text(Printing_getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-	Printing_text(Printing_getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
-	Printing_text(Printing_getInstance(), "  /  ", 16, 0, NULL);
-	Printing_int(Printing_getInstance(), this->mode, 17, 0, NULL);
-	Printing_int(Printing_getInstance(), kLastMode - 1, 19, 0, NULL);
+	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text(Printing::getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
+	Printing::text(Printing::getInstance(), "  /  ", 16, 0, NULL);
+	Printing::int(Printing::getInstance(), this->mode, 17, 0, NULL);
+	Printing::int(Printing::getInstance(), kLastMode - 1, 19, 0, NULL);
 }
 
 /**
@@ -380,21 +380,21 @@ static void StageEditor_printHeader(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_setupMode(StageEditor this)
+static void StageEditor::setupMode(StageEditor this)
 {
-	VIPManager_clearBgmapSegment(VIPManager_getInstance(), BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()), __PRINTABLE_BGMAP_AREA);
-	StageEditor_printHeader(this);
-	StageEditor_removePreviousSprite(this);
+	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
+	StageEditor::printHeader(this);
+	StageEditor::removePreviousSprite(this);
 
 	switch(this->mode)
 	{
 		case kAddObjects:
 
-			if(OptionsSelector_getNumberOfOptions(this->userObjectsSelector))
+			if(OptionsSelector::getNumberOfOptions(this->userObjectsSelector))
 			{
-				StageEditor_releaseShape(this);
-				StageEditor_printUserObjects(this);
-				StageEditor_showSelectedUserObject(this);
+				StageEditor::releaseShape(this);
+				StageEditor::printUserObjects(this);
+				StageEditor::showSelectedUserObject(this);
 				break;
 			}
 
@@ -402,30 +402,30 @@ static void StageEditor_setupMode(StageEditor this)
 
 		case kMoveCamera:
 
-			StageEditor_releaseShape(this);
-			StageEditor_printCameraPosition(this);
+			StageEditor::releaseShape(this);
+			StageEditor::printCameraPosition(this);
 			break;
 
 		case kChangeProjection:
 
-			StageEditor_releaseShape(this);
-			StageEditor_printProjectionValues(this);
+			StageEditor::releaseShape(this);
+			StageEditor::printProjectionValues(this);
 			break;
 
 		case kTranslateEntities:
 
 			if(!this->currentEntityNode)
 			{
-				StageEditor_selectNextEntity(this);
+				StageEditor::selectNextEntity(this);
 			}
 			else
 			{
-				StageEditor_getShape(this);
-				StageEditor_highLightEntity(this);
+				StageEditor::getShape(this);
+				StageEditor::highLightEntity(this);
 			}
 
-			StageEditor_printEntityPosition(this);
-			StageEditor_printTranslationStepSize(this);
+			StageEditor::printEntityPosition(this);
+			StageEditor::printTranslationStepSize(this);
 			break;
 	}
 }
@@ -438,13 +438,13 @@ static void StageEditor_setupMode(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_releaseShape(StageEditor this)
+static void StageEditor::releaseShape(StageEditor this)
 {
 	if(this->currentEntityNode)
 	{
-		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
+		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
 
-		VirtualList shapes =  Entity_getShapes(entity);
+		VirtualList shapes =  Entity::getShapes(entity);
 
 		if(shapes)
 		{
@@ -464,7 +464,7 @@ static void StageEditor_releaseShape(StageEditor this)
 			}
 			else if(this->shape)
 			{
-				Shape_hide(this->shape);
+				Shape::hide(this->shape);
 			}
 		}
 		else if(this->shape)
@@ -484,29 +484,29 @@ static void StageEditor_releaseShape(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_getShape(StageEditor this)
+static void StageEditor::getShape(StageEditor this)
 {
 	if(!this->currentEntityNode)
 	{
 		return;
 	}
 
-	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-	VirtualList shapes =  Entity_getShapes(entity);
+	Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+	VirtualList shapes =  Entity::getShapes(entity);
 
-	this->shape = shapes ? __SAFE_CAST(Shape, VirtualList_front(shapes)) : NULL;
+	this->shape = shapes ? __SAFE_CAST(Shape, VirtualList::front(shapes)) : NULL;
 
 	if(!this->shape)
 	{
 		this->shape = __SAFE_CAST(Shape, __NEW(Box, __SAFE_CAST(SpatialObject, entity)));
 
-		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		Size size = {Entity_getWidth(entity), Entity_getHeight(entity), 0};
+		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-		 Shape_position(this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
+		 Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 	}
 
-	Shape_setReady(this->shape, false);
+	Shape::setReady(this->shape, false);
 }
 
 /**
@@ -517,21 +517,21 @@ static void StageEditor_getShape(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_positionShape(StageEditor this)
+static void StageEditor::positionShape(StageEditor this)
 {
 	if(!this->currentEntityNode || !this->shape)
 	{
 		return;
 	}
 
-	Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-	Size size = {Entity_getWidth(entity), Entity_getHeight(entity), 0};
+	Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+	Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-	 Shape_position(this->shape, Entity_getPosition(entity), Entity_getRotation(entity), Entity_getScale(entity), &size);
+	 Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 
 	if(this->shape)
 	{
-		Shape_show(this->shape);
+		Shape::show(this->shape);
 	}
 }
 
@@ -543,16 +543,16 @@ static void StageEditor_positionShape(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_highLightEntity(StageEditor this)
+static void StageEditor::highLightEntity(StageEditor this)
 {
 	if(this->currentEntityNode)
 	{
-		StageEditor_printEntityPosition(this);
-		StageEditor_positionShape(this);
+		StageEditor::printEntityPosition(this);
+		StageEditor::positionShape(this);
 	}
 	else
 	{
-		Printing_text(Printing_getInstance(), "No entities in stage", 1, 4, NULL);
+		Printing::text(Printing::getInstance(), "No entities in stage", 1, 4, NULL);
 	}
 }
 
@@ -564,11 +564,11 @@ static void StageEditor_highLightEntity(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_selectPreviousEntity(StageEditor this)
+static void StageEditor::selectPreviousEntity(StageEditor this)
 {
-	StageEditor_releaseShape(this);
+	StageEditor::releaseShape(this);
 
-	VirtualList stageEntities = (__SAFE_CAST(Container, GameState_getStage(this->gameState)))->children;
+	VirtualList stageEntities = (__SAFE_CAST(Container, GameState::getStage(this->gameState)))->children;
 
 	if(!this->currentEntityNode)
 	{
@@ -576,7 +576,7 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 	}
 	else
 	{
-		this->currentEntityNode = VirtualNode_getPrevious(this->currentEntityNode);
+		this->currentEntityNode = VirtualNode::getPrevious(this->currentEntityNode);
 
 		if(!this->currentEntityNode)
 		{
@@ -586,8 +586,8 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
 
 	if(this->currentEntityNode)
 	{
-		StageEditor_getShape(this);
-		StageEditor_highLightEntity(this);
+		StageEditor::getShape(this);
+		StageEditor::highLightEntity(this);
 	}
 }
 
@@ -599,11 +599,11 @@ static void StageEditor_selectPreviousEntity(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_selectNextEntity(StageEditor this)
+static void StageEditor::selectNextEntity(StageEditor this)
 {
-	StageEditor_releaseShape(this);
+	StageEditor::releaseShape(this);
 
-	VirtualList stageEntities = (__SAFE_CAST(Container, GameState_getStage(this->gameState)))->children;
+	VirtualList stageEntities = (__SAFE_CAST(Container, GameState::getStage(this->gameState)))->children;
 
 	if(!this->currentEntityNode)
 	{
@@ -621,8 +621,8 @@ static void StageEditor_selectNextEntity(StageEditor this)
 
 	if(this->currentEntityNode)
 	{
-		StageEditor_getShape(this);
-		StageEditor_highLightEntity(this);
+		StageEditor::getShape(this);
+		StageEditor::highLightEntity(this);
 	}
 }
 
@@ -635,7 +635,7 @@ static void StageEditor_selectNextEntity(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
+static void StageEditor::moveCamera(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -646,7 +646,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToCamera(this, translation);
+		StageEditor::applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_LR)
 	{
@@ -657,7 +657,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToCamera(this, translation);
+		StageEditor::applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_LU)
 	{
@@ -668,7 +668,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToCamera(this, translation);
+		StageEditor::applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_LD)
 	{
@@ -679,7 +679,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToCamera(this, translation);
+		StageEditor::applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_RU)
 	{
@@ -690,7 +690,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 			__SCREEN_Z_TRANSLATION_STEP,
 		};
 
-		StageEditor_applyTranslationToCamera(this, translation);
+		StageEditor::applyTranslationToCamera(this, translation);
 	}
 	else if(pressedKey & K_RD)
 	{
@@ -701,7 +701,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
 			-__SCREEN_Z_TRANSLATION_STEP,
 		};
 
-		StageEditor_applyTranslationToCamera(this, translation);
+		StageEditor::applyTranslationToCamera(this, translation);
 	}
 }
 
@@ -714,7 +714,7 @@ static void StageEditor_moveCamera(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
+static void StageEditor::changeProjection(StageEditor this, u32 pressedKey)
 {
 	Optical optical = *_optical;
 
@@ -771,16 +771,16 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
 		optical.baseDistance += __BASE_DISTACE_STEP;
 	}
 
-	Camera_setOptical(Camera_getInstance(), optical);
+	Camera::setOptical(Camera::getInstance(), optical);
 
 	// this hack forces the Entity to recalculate its sprites' value.
 	// must hack this global, otherwise will need another variable which most likely will only
 	// take up the previous RAM, or another branching computation in the Entity's render method.
-	Camera_forceDisplacement(Camera_getInstance(), true);
+	Camera::forceDisplacement(Camera::getInstance(), true);
 
-	StageEditor_printProjectionValues(this);
-	GameState_transform(this->gameState);
-	GameState_synchronizeGraphics(this->gameState);
+	StageEditor::printProjectionValues(this);
+	GameState::transform(this->gameState);
+	GameState::synchronizeGraphics(this->gameState);
 }
 
 /**
@@ -792,7 +792,7 @@ static void StageEditor_changeProjection(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
+static void StageEditor::translateEntity(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -803,7 +803,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LR)
 	{
@@ -814,7 +814,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LU)
 	{
@@ -825,7 +825,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LD)
 	{
@@ -836,7 +836,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			0
 		};
 
-		StageEditor_applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_RR)
 	{
@@ -845,7 +845,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
-		StageEditor_printTranslationStepSize(this);
+		StageEditor::printTranslationStepSize(this);
 	}
 	else if(pressedKey & K_RL)
 	{
@@ -854,7 +854,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			this->translationStepSize = 1;
 		}
 
-		StageEditor_printTranslationStepSize(this);
+		StageEditor::printTranslationStepSize(this);
 	}
 	else if(pressedKey & K_RU)
 	{
@@ -865,7 +865,7 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			__I_TO_FIX10_6(this->translationStepSize),
 		};
 
-		StageEditor_applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_RD)
 	{
@@ -876,15 +876,15 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
 			__I_TO_FIX10_6(-this->translationStepSize),
 		};
 
-		StageEditor_applyTranslationToEntity(this, translation);
+		StageEditor::applyTranslationToEntity(this, translation);
 	}
 	else if(pressedKey & K_LT)
 	{
-		StageEditor_selectPreviousEntity(this);
+		StageEditor::selectPreviousEntity(this);
 	}
 	else if(pressedKey & K_RT)
 	{
-		StageEditor_selectNextEntity(this);
+		StageEditor::selectNextEntity(this);
 	}
 }
 
@@ -897,35 +897,35 @@ static void StageEditor_translateEntity(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param translation	Translation vector
  */
-static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D translation)
+static void StageEditor::applyTranslationToEntity(StageEditor this, Vector3D translation)
 {
 	if(this->currentEntityNode && this->shape)
 	{
 		Container container = __SAFE_CAST(Container, this->currentEntityNode->data);
-		Vector3D localPosition = *Container_getLocalPosition(container);
+		Vector3D localPosition = *Container::getLocalPosition(container);
 
 		localPosition.x += translation.x;
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-		 Container_setLocalPosition(container, &localPosition);
-		Container_invalidateGlobalPosition(container);
+		 Container::setLocalPosition(container, &localPosition);
+		Container::invalidateGlobalPosition(container);
 
 		// this hack forces the Entity to recalculate its sprites' value.
 		// must hack this global, otherwise will need another variable which most likely will only
 		// take up the previous RAM, or another branching computation in the Entity's render method.
-		Camera_forceDisplacement(Camera_getInstance(), true);
+		Camera::forceDisplacement(Camera::getInstance(), true);
 
-		GameState_transform(this->gameState);
-		GameState_synchronizeGraphics(this->gameState);
+		GameState::transform(this->gameState);
+		GameState::synchronizeGraphics(this->gameState);
 
-		StageEditor_positionShape(this);
+		StageEditor::positionShape(this);
 
-		StageEditor_printEntityPosition(this);
+		StageEditor::printEntityPosition(this);
 
-		SpriteManager_sortLayers(SpriteManager_getInstance());
+		SpriteManager::sortLayers(SpriteManager::getInstance());
 
-		StageEditor_printTranslationStepSize(this);
+		StageEditor::printTranslationStepSize(this);
 	}
 }
 
@@ -937,7 +937,7 @@ static void StageEditor_applyTranslationToEntity(StageEditor this, Vector3D tran
  *
  * @param this	Function scope
  */
-static void StageEditor_removePreviousSprite(StageEditor this)
+static void StageEditor::removePreviousSprite(StageEditor this)
 {
 	if(this->userObjectSprite)
 	{
@@ -945,7 +945,7 @@ static void StageEditor_removePreviousSprite(StageEditor this)
 		this->userObjectSprite = NULL;
 	}
 
-	SpriteManager_sortLayers(SpriteManager_getInstance());
+	SpriteManager::sortLayers(SpriteManager::getInstance());
 }
 
 /**
@@ -956,35 +956,35 @@ static void StageEditor_removePreviousSprite(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_showSelectedUserObject(StageEditor this)
+static void StageEditor::showSelectedUserObject(StageEditor this)
 {
-	StageEditor_removePreviousSprite(this);
+	StageEditor::removePreviousSprite(this);
 
-	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition->spriteDefinitions[0];
+	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entityDefinition->spriteDefinitions[0];
 
 	if(spriteDefinition)
 	{
 		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
-		ASSERT(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
+		ASSERT(Sprite::getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
 
-		PixelVector spritePosition = Sprite_getDisplacedPosition(__SAFE_CAST(Sprite, this->userObjectSprite));
-		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture_getCols(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
-		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture_getRows(Sprite_getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		PixelVector spritePosition = Sprite::getDisplacedPosition(__SAFE_CAST(Sprite, this->userObjectSprite));
+		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-		 Sprite_setPosition(this->userObjectSprite, &spritePosition);
-		 Sprite_rotate(this->userObjectSprite, &spriteRotation);
-		 Sprite_resize(this->userObjectSprite, spriteScale, spritePosition.z);
-		 Sprite_calculateParallax(this->userObjectSprite, spritePosition.z);
+		 Sprite::setPosition(this->userObjectSprite, &spritePosition);
+		 Sprite::rotate(this->userObjectSprite, &spriteRotation);
+		 Sprite::resize(this->userObjectSprite, spriteScale, spritePosition.z);
+		 Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
 
 		this->userObjectSprite->writeAnimationFrame = true;
-		SpriteManager_writeTextures(SpriteManager_getInstance());
-		SpriteManager_sortLayers(SpriteManager_getInstance());
-		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
-		SpriteManager_render(SpriteManager_getInstance());
-		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
+		SpriteManager::writeTextures(SpriteManager::getInstance());
+		SpriteManager::sortLayers(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
+		SpriteManager::render(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 	}
 }
 
@@ -997,28 +997,28 @@ static void StageEditor_showSelectedUserObject(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
+static void StageEditor::selectUserObject(StageEditor this, u32 pressedKey)
 {
 	if(pressedKey & K_LU)
 	{
-		OptionsSelector_selectPrevious(this->userObjectsSelector);
-		StageEditor_showSelectedUserObject(this);
+		OptionsSelector::selectPrevious(this->userObjectsSelector);
+		StageEditor::showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_LD)
 	{
-		OptionsSelector_selectNext(this->userObjectsSelector);
-		StageEditor_showSelectedUserObject(this);
+		OptionsSelector::selectNext(this->userObjectsSelector);
+		StageEditor::showSelectedUserObject(this);
 	}
 	else if(pressedKey & K_A)
 	{
-		if(1 >= SpriteManager_getFreeLayer(SpriteManager_getInstance()))
+		if(1 >= SpriteManager::getFreeLayer(SpriteManager::getInstance()))
 		{
-			Printing_text(Printing_getInstance(), "No more WORLDs", 48 - 15, 5, NULL);
-			Printing_text(Printing_getInstance(), "available     ", 48 - 15, 6, NULL);
+			Printing::text(Printing::getInstance(), "No more WORLDs", 48 - 15, 5, NULL);
+			Printing::text(Printing::getInstance(), "available     ", 48 - 15, 6, NULL);
 			return;
 		}
 
-		Vector3D cameraPosition = Camera_getPosition(Camera_getInstance());
+		Vector3D cameraPosition = Camera::getPosition(Camera::getInstance());
 
 		ScreenPixelVector position =
 		{
@@ -1030,7 +1030,7 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 
 		PositionedEntity DUMMY_ENTITY =
 		{
-			(EntityDefinition*)_userObjects[OptionsSelector_getSelectedOption(this->userObjectsSelector)].entityDefinition,
+			(EntityDefinition*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entityDefinition,
 			position,
 			0,
 			NULL,
@@ -1039,22 +1039,22 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
 			false
 		};
 
-		Stage_addChildEntity(GameState_getStage(this->gameState), &DUMMY_ENTITY, false);
-		SpriteManager_sortLayers(SpriteManager_getInstance());
+		Stage::addChildEntity(GameState::getStage(this->gameState), &DUMMY_ENTITY, false);
+		SpriteManager::sortLayers(SpriteManager::getInstance());
 
-		VirtualList stageEntities = (__SAFE_CAST(Container, GameState_getStage(this->gameState)))->children;
+		VirtualList stageEntities = (__SAFE_CAST(Container, GameState::getStage(this->gameState)))->children;
 		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 
 		// select the added entity
 		this->mode = kTranslateEntities;
-		StageEditor_setupMode(this);
+		StageEditor::setupMode(this);
 
-		StageEditor_removePreviousSprite(this);
-		SpriteManager_sortLayers(SpriteManager_getInstance());
-		SpriteManager_writeTextures(SpriteManager_getInstance());
-		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
-		SpriteManager_render(SpriteManager_getInstance());
-		SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
+		StageEditor::removePreviousSprite(this);
+		SpriteManager::sortLayers(SpriteManager::getInstance());
+		SpriteManager::writeTextures(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
+		SpriteManager::render(SpriteManager::getInstance());
+		SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 	}
 }
 
@@ -1066,51 +1066,51 @@ static void StageEditor_selectUserObject(StageEditor this, u32 pressedKey)
  *
  * @param this	Function scope
  */
-static void StageEditor_printEntityPosition(StageEditor this)
+static void StageEditor::printEntityPosition(StageEditor this)
 {
 	int x = 1;
 	int y = 2;
 
-	Printing_text(Printing_getInstance(), "MOVE OBJECT", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing_text(Printing_getInstance(), "Next   \x17\x18", 38, 2, NULL);
-	Printing_text(Printing_getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 3, NULL);
-	Printing_text(Printing_getInstance(), "      \x1F\x1A\x1B", 38, 4, NULL);
+	Printing::text(Printing::getInstance(), "MOVE OBJECT", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing::text(Printing::getInstance(), "Next   \x17\x18", 38, 2, NULL);
+	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 3, NULL);
+	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", 38, 4, NULL);
 
 	if(this->currentEntityNode)
 	{
-		Entity entity = __SAFE_CAST(Entity, VirtualNode_getData(this->currentEntityNode));
-		const Vector3D* globalPosition =  SpatialObject_getPosition(entity);
-		const Rotation* globalRotation =  SpatialObject_getRotation(entity);
-		const Scale* globalScale =  SpatialObject_getScale(entity);
-		char* entityName = Container_getName(__SAFE_CAST(Container, entity));
+		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+		const Vector3D* globalPosition =  SpatialObject::getPosition(entity);
+		const Rotation* globalRotation =  SpatialObject::getRotation(entity);
+		const Scale* globalScale =  SpatialObject::getScale(entity);
+		char* entityName = Container::getName(__SAFE_CAST(Container, entity));
 
-		Printing_text(Printing_getInstance(), "ID: ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Entity_getInternalId(__SAFE_CAST(Entity, entity)), x + 6, y, NULL);
-		Printing_text(Printing_getInstance(), "Type:                                  ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
-		Printing_text(Printing_getInstance(), "Name:                                  ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
-		Printing_text(Printing_getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->x), x + 13, y, NULL);
-		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 22, y, NULL);
-		Printing_float(Printing_getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
-		Printing_text(Printing_getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), globalRotation->x, x + 13, y, NULL);
-		Printing_int(Printing_getInstance(), globalRotation->y, x + 22, y, NULL);
-		Printing_int(Printing_getInstance(), globalRotation->z, x + 31, y, NULL);
-		Printing_text(Printing_getInstance(), "Scl. (x,y,z):                  ", x, ++y, NULL);
-		Printing_float(Printing_getInstance(), __FIX7_9_TO_F(globalScale->x), x + 13, y, NULL);
-		Printing_float(Printing_getInstance(), __FIX7_9_TO_F(globalScale->y), x + 22, y, NULL);
-		Printing_float(Printing_getInstance(), __FIX7_9_TO_F(globalScale->z), x + 31, y, NULL);
-		Printing_text(Printing_getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getWidth(entity)), x + 13, y, NULL);
-		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getHeight(entity)), x + 20, y, NULL);
-		Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(Entity_getDepth(entity)), x + 27, y, NULL);
-		Printing_text(Printing_getInstance(), "Is visible:                  ", x, ++y, NULL);
-		Printing_text(Printing_getInstance(), Entity_isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 13, y, NULL);
-		Printing_text(Printing_getInstance(), "Children:                  ", x, ++y, NULL);
-		Printing_int(Printing_getInstance(), Container_getChildCount(__SAFE_CAST(Container, entity)), x + 13, y, NULL);
+		Printing::text(Printing::getInstance(), "ID: ", x, ++y, NULL);
+		Printing::int(Printing::getInstance(), Entity::getInternalId(__SAFE_CAST(Entity, entity)), x + 6, y, NULL);
+		Printing::text(Printing::getInstance(), "Type:                                  ", x, ++y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
+		Printing::text(Printing::getInstance(), "Name:                                  ", x, ++y, NULL);
+		Printing::text(Printing::getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
+		Printing::text(Printing::getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
+		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->x), x + 13, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 22, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
+		Printing::text(Printing::getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->x, x + 13, y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->y, x + 22, y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->z, x + 31, y, NULL);
+		Printing::text(Printing::getInstance(), "Scl. (x,y,z):                  ", x, ++y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 13, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 22, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 31, y, NULL);
+		Printing::text(Printing::getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getWidth(entity)), x + 13, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getHeight(entity)), x + 20, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getDepth(entity)), x + 27, y, NULL);
+		Printing::text(Printing::getInstance(), "Is visible:                  ", x, ++y, NULL);
+		Printing::text(Printing::getInstance(), Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 13, y, NULL);
+		Printing::text(Printing::getInstance(), "Children:                  ", x, ++y, NULL);
+		Printing::int(Printing::getInstance(), Container::getChildCount(__SAFE_CAST(Container, entity)), x + 13, y, NULL);
 	}
 }
 
@@ -1123,13 +1123,13 @@ static void StageEditor_printEntityPosition(StageEditor this)
  * @param this			Function scope
  * @param translation   Translation vector
  */
-static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D translation)
+static void StageEditor::applyTranslationToCamera(StageEditor this, Vector3D translation)
 {
-	Camera_move(Camera_getInstance(), translation, true);
-	GameState_transform(this->gameState);
-	GameState_synchronizeGraphics(this->gameState);
-	StageEditor_printCameraPosition(this);
-	 Stage_streamAll(GameState_getStage(this->gameState));
+	Camera::move(Camera::getInstance(), translation, true);
+	GameState::transform(this->gameState);
+	GameState::synchronizeGraphics(this->gameState);
+	StageEditor::printCameraPosition(this);
+	 Stage::streamAll(GameState::getStage(this->gameState));
 }
 
 /**
@@ -1140,9 +1140,9 @@ static void StageEditor_applyTranslationToCamera(StageEditor this, Vector3D tran
  *
  * @param this	Function scope
  */
-static void StageEditor_printCameraPosition(StageEditor this __attribute__ ((unused)))
+static void StageEditor::printCameraPosition(StageEditor this __attribute__ ((unused)))
 {
-	Camera_print(Camera_getInstance(), 1, 2);
+	Camera::print(Camera::getInstance(), 1, 2);
 }
 
 /**
@@ -1153,31 +1153,31 @@ static void StageEditor_printCameraPosition(StageEditor this __attribute__ ((unu
  *
  * @param this	Function scope
  */
-static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((unused)))
+static void StageEditor::printProjectionValues(StageEditor this __attribute__ ((unused)))
 {
 	int x = 1;
 	int y = 2;
 
-	Printing_text(Printing_getInstance(), "PROJECTION VALUES", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing_text(Printing_getInstance(), "HVPC  \x1E\x1C\x1D", 38, 2, NULL);
-	Printing_text(Printing_getInstance(), "VVPC  \x1E\x1A\x1B", 38, 3, NULL);
-	Printing_text(Printing_getInstance(), "DES   \x1F\x1C\x1D", 38, 4, NULL);
-	Printing_text(Printing_getInstance(), "MVD   \x1F\x1A\x1B", 38, 5, NULL);
-	Printing_text(Printing_getInstance(), "BD     \x17\x18", 38, 6, NULL);
+	Printing::text(Printing::getInstance(), "PROJECTION VALUES", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing::text(Printing::getInstance(), "HVPC  \x1E\x1C\x1D", 38, 2, NULL);
+	Printing::text(Printing::getInstance(), "VVPC  \x1E\x1A\x1B", 38, 3, NULL);
+	Printing::text(Printing::getInstance(), "DES   \x1F\x1C\x1D", 38, 4, NULL);
+	Printing::text(Printing::getInstance(), "MVD   \x1F\x1A\x1B", 38, 5, NULL);
+	Printing::text(Printing::getInstance(), "BD     \x17\x18", 38, 6, NULL);
 
-	Printing_text(Printing_getInstance(), "H. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "V. view point center:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Maximum X View Distance:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->maximumXViewDistancePower), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Maximum Y View Distance:            ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->maximumYViewDistancePower), x + 22, y, NULL);
-	Printing_text(Printing_getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 22, y, NULL);
+	Printing::text(Printing::getInstance(), "H. view point center:            ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 22, y, NULL);
+	Printing::text(Printing::getInstance(), "V. view point center:            ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 22, y, NULL);
+	Printing::text(Printing::getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 22, y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum X View Distance:            ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->maximumXViewDistancePower), x + 22, y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum Y View Distance:            ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->maximumYViewDistancePower), x + 22, y, NULL);
+	Printing::text(Printing::getInstance(), "Base Distance:                  ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 22, y, NULL);
 }
 
 /**
@@ -1188,14 +1188,14 @@ static void StageEditor_printProjectionValues(StageEditor this __attribute__ ((u
  *
  * @param this	Function scope
  */
-static void StageEditor_printUserObjects(StageEditor this)
+static void StageEditor::printUserObjects(StageEditor this)
 {
-	Printing_text(Printing_getInstance(), "ADD OBJECTS", 1, 2, NULL);
-	Printing_text(Printing_getInstance(), "                       ", 1, 3, NULL);
-	Printing_text(Printing_getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing_text(Printing_getInstance(), "Accept  \x13", 38, 2, NULL);
+	Printing::text(Printing::getInstance(), "ADD OBJECTS", 1, 2, NULL);
+	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
+	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
+	Printing::text(Printing::getInstance(), "Accept  \x13", 38, 2, NULL);
 
-	OptionsSelector_printOptions(this->userObjectsSelector, 1, 4);
+	OptionsSelector::printOptions(this->userObjectsSelector, 1, 4);
 }
 
 /**
@@ -1206,9 +1206,9 @@ static void StageEditor_printUserObjects(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor_printTranslationStepSize(StageEditor this)
+static void StageEditor::printTranslationStepSize(StageEditor this)
 {
-	Printing_text(Printing_getInstance(), "Step  \x1F\x1C\x1D", 38, 5, NULL);
-	Printing_text(Printing_getInstance(), "+     ", 38, 6, NULL);
-	Printing_int(Printing_getInstance(), this->translationStepSize, 39, 6, NULL);
+	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", 38, 5, NULL);
+	Printing::text(Printing::getInstance(), "+     ", 38, 6, NULL);
+	Printing::int(Printing::getInstance(), this->translationStepSize, 39, 6, NULL);
 }

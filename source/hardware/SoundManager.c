@@ -176,9 +176,9 @@ __CLASS_DEFINITION(SoundManager, Object);
 
 // globals
 
-static void SoundManager_constructor(SoundManager this);
-static void SoundManager_continuePlayingBGM(SoundManager this);
-static void SoundManager_continuePlayingFxSounds(SoundManager this);
+static void SoundManager::constructor(SoundManager this);
+static void SoundManager::continuePlayingBGM(SoundManager this);
+static void SoundManager::continuePlayingFxSounds(SoundManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -188,7 +188,7 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this);
 /**
  * Get instance
  *
- * @fn			SoundManager_getInstance()
+ * @fn			SoundManager::getInstance()
  * @memberof	SoundManager
  * @public
  *
@@ -204,7 +204,7 @@ __SINGLETON(SoundManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager this)
+static void __attribute__ ((noinline)) SoundManager::constructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::constructor: null this");
 
@@ -240,7 +240,7 @@ static void __attribute__ ((noinline)) SoundManager_constructor(SoundManager thi
  *
  * @param this	Function scope
  */
-void SoundManager_destructor(SoundManager this)
+void SoundManager::destructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::destructor: null this");
 
@@ -255,7 +255,7 @@ void SoundManager_destructor(SoundManager this)
  *
  * @param this	Function scope
  */
-void SoundManager_setWaveForm(SoundManager this __attribute__ ((unused)))
+void SoundManager::setWaveForm(SoundManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "SoundManager::setWaveForm: null this");
 
@@ -278,12 +278,12 @@ void SoundManager_setWaveForm(SoundManager this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void SoundManager_playSounds(SoundManager this)
+void SoundManager::playSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playSounds: null this");
 
-	SoundManager_continuePlayingBGM(this);
-	SoundManager_continuePlayingFxSounds(this);
+	SoundManager::continuePlayingBGM(this);
+	SoundManager::continuePlayingFxSounds(this);
 }
 
 /**
@@ -294,7 +294,7 @@ void SoundManager_playSounds(SoundManager this)
  *
  * @param this	Function scope
  */
-static void SoundManager_continuePlayingBGM(SoundManager this)
+static void SoundManager::continuePlayingBGM(SoundManager this)
 {
 	ASSERT(this, "SoundManager::playBGM: null this");
 
@@ -394,7 +394,7 @@ static void SoundManager_continuePlayingBGM(SoundManager this)
  * @param this	Function scope
  * @param fxS	Fx sound index
  */
-static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
+static int SoundManager::calculateSoundPosition(SoundManager this, int fxS)
 {
 	ASSERT(this, "SoundManager::calculateSoundPosition: null this");
 
@@ -428,7 +428,7 @@ static int SoundManager_calculateSoundPosition(SoundManager this, int fxS)
  *
  * @param this	Function scope
  */
-static void SoundManager_continuePlayingFxSounds(SoundManager this)
+static void SoundManager::continuePlayingFxSounds(SoundManager this)
 {
 	ASSERT(this, "SoundManager::continuePlayingFxSounds: null this");
 
@@ -482,7 +482,7 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this)
 				if(note != 0)
 				{
 					// if sound is positioned
-					SND_REGS[fxS + 2].SxLRV = SoundManager_calculateSoundPosition(this, fxS);
+					SND_REGS[fxS + 2].SxLRV = SoundManager::calculateSoundPosition(this, fxS);
 
 					// set note's frequency
 					SND_REGS[fxS + 2].SxFQL = (note & 0xFF);
@@ -522,11 +522,11 @@ static void SoundManager_continuePlayingFxSounds(SoundManager this)
  * @param this	Function scope
  * @param bgm	Background music
  */
-void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
+void SoundManager::playBGM(SoundManager this, const u16 (*bgm)[])
 {
 	ASSERT(this, "SoundManager::loadBGM: null this");
 
-	SoundManager_stopAllSound(this);
+	SoundManager::stopAllSound(this);
 	this->bgm = bgm;
 }
 
@@ -543,7 +543,7 @@ void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[])
  *
  * @return 			True if playback started
  */
-int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D position)
+int SoundManager::playFxSound(SoundManager this, const u16* fxSound, Vector3D position)
 {
 	ASSERT(this, "SoundManager::loadFxSound: null this");
 
@@ -559,7 +559,7 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D pos
 		this->fxSound[i] = fxSound;
 
 		// set position inside camera coordinates
-		position = Vector3D_getRelativeToCamera(position);
+		position = Vector3D::getRelativeToCamera(position);
 
 		fix10_6 maxOutputLevel = __I_TO_FIX10_6(__MAXIMUM_OUTPUT_LEVEL);
 		fix10_6 leftDistance = __ABS(__FIX10_6_MULT(position.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
@@ -579,7 +579,7 @@ int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D pos
 }
 
 // returns true if the sound is being played
-int SoundManager_playingSound(SoundManager this, const u16* fxSound)
+int SoundManager::playingSound(SoundManager this, const u16* fxSound)
 {
 	ASSERT(this, "SoundManager::playingSound: null this");
 
@@ -605,7 +605,7 @@ int SoundManager_playingSound(SoundManager this, const u16* fxSound)
  *
  * @param this		Function scope
  */
-void SoundManager_stopAllSound(SoundManager this __attribute__ ((unused)))
+void SoundManager::stopAllSound(SoundManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "SoundManager::stopAllSound: null this");
 

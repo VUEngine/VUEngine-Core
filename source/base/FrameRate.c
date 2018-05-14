@@ -53,7 +53,7 @@ __CLASS_DEFINITION(FrameRate, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void FrameRate_constructor(FrameRate this);
+static void FrameRate::constructor(FrameRate this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ static void FrameRate_constructor(FrameRate this);
 /**
  * Get instance
  *
- * @fn			FrameRate_getInstance()
+ * @fn			FrameRate::getInstance()
  * @memberof	FrameRate
  * @public
  *
@@ -79,7 +79,7 @@ __SINGLETON(FrameRate);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
+static void __attribute__ ((noinline)) FrameRate::constructor(FrameRate this)
 {
 	ASSERT(this, "FrameRate::constructor: null this");
 
@@ -96,7 +96,7 @@ static void __attribute__ ((noinline)) FrameRate_constructor(FrameRate this)
  *
  * @param this	Function scope
  */
-void FrameRate_destructor(FrameRate this)
+void FrameRate::destructor(FrameRate this)
 {
 	ASSERT(this, "FrameRate::destructor: null this");
 
@@ -112,7 +112,7 @@ void FrameRate_destructor(FrameRate this)
  *
  * @param this	Function scope
  */
-void FrameRate_reset(FrameRate this)
+void FrameRate::reset(FrameRate this)
 {
 	ASSERT(this, "FrameRate::reset: null this");
 
@@ -127,7 +127,7 @@ void FrameRate_reset(FrameRate this)
  *
  * @param this	Function scope
  */
-u16 FrameRate_getFps(FrameRate this)
+u16 FrameRate::getFps(FrameRate this)
 {
 	ASSERT(this, "FrameRate::getFps: null this");
 
@@ -142,7 +142,7 @@ u16 FrameRate_getFps(FrameRate this)
  *
  * @param this	Function scope
  */
-void FrameRate_increaseFps(FrameRate this)
+void FrameRate::increaseFps(FrameRate this)
 {
 	ASSERT(this, "FrameRate::increaseFps: null this");
 
@@ -159,11 +159,11 @@ void FrameRate_increaseFps(FrameRate this)
  * @param col	Column to start printing at
  * @param row	Row to start printing at
  */
-void FrameRate_print(FrameRate this, int col, int row)
+void FrameRate::print(FrameRate this, int col, int row)
 {
 	ASSERT(this, "FrameRate::print: null this");
 
-	Printing printing = Printing_getInstance();
-	Printing_text(printing, "FPS      ", col, row, NULL);
-	Printing_int(printing, this->fps, col + 4, row++, NULL);
+	Printing printing = Printing::getInstance();
+	Printing::text(printing, "FPS      ", col, row, NULL);
+	Printing::int(printing, this->fps, col + 4, row++, NULL);
 }

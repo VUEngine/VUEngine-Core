@@ -79,9 +79,9 @@ __CLASS_DEFINITION(Printing, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Printing_constructor(Printing this);
-static void Printing_out(Printing this, u8 x, u8 y, const char* string, const char* font);
-void Printing_loadDebugFont(Printing this);
+static void Printing::constructor(Printing this);
+static void Printing::out(Printing this, u8 x, u8 y, const char* string, const char* font);
+void Printing::loadDebugFont(Printing this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void Printing_loadDebugFont(Printing this);
 /**
  * Get instance
  *
- * @fn			Printing_getInstance()
+ * @fn			Printing::getInstance()
  * @memberof	Printing
  * @public
  *
@@ -107,7 +107,7 @@ __SINGLETON(Printing);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) Printing_constructor(Printing this)
+static void __attribute__ ((noinline)) Printing::constructor(Printing this)
 {
 	ASSERT(this, "Printing::constructor: null this");
 
@@ -129,7 +129,7 @@ static void __attribute__ ((noinline)) Printing_constructor(Printing this)
  *
  * @param this	Function scope
  */
-void Printing_destructor(Printing this)
+void Printing::destructor(Printing this)
 {
 	ASSERT(this, "Printing::destructor: null this");
 
@@ -148,13 +148,13 @@ void Printing_destructor(Printing this)
  * @param this		Function scope
  * @param textLayer	Number of layer (World) to set as printing layer
  */
-void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((unused)), int textLayer)
+void __attribute__ ((noinline)) Printing::render(Printing this __attribute__ ((unused)), int textLayer)
 {
 	ASSERT(this, "Printing::render: null this");
 
 	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
 
-	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance()));
+	_worldAttributesBaseAddress[textLayer].head = __WORLD_ON | __WORLD_BGMAP | __WORLD_OVR | (BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()));
 	_worldAttributesBaseAddress[textLayer].mx = this->gx;
 	_worldAttributesBaseAddress[textLayer].mp = 0;
 	_worldAttributesBaseAddress[textLayer].my = this->gy;
@@ -173,18 +173,18 @@ void __attribute__ ((noinline)) Printing_render(Printing this __attribute__ ((un
  *
  * @param this	Function scope
  */
-void Printing_reset(Printing this)
+void Printing::reset(Printing this)
 {
 	ASSERT(this, "Printing::destructor: null this");
 
-	VirtualNode node = VirtualList_begin(this->fonts);
+	VirtualNode node = VirtualList::begin(this->fonts);
 
-	for(; node; node = VirtualNode_getNext(node))
+	for(; node; node = VirtualNode::getNext(node))
 	{
-		__DELETE_BASIC(VirtualNode_getData(node));
+		__DELETE_BASIC(VirtualNode::getData(node));
 	}
 
-	VirtualList_clear(this->fonts);
+	VirtualList::clear(this->fonts);
 
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
@@ -199,12 +199,12 @@ void Printing_reset(Printing this)
  * @param this				Function scope
  * @param fontDefinitions	Array of font definitions whose charset should pre preloaded
  */
-void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition** fontDefinitions)
+void __attribute__ ((noinline)) Printing::loadFonts(Printing this, FontDefinition** fontDefinitions)
 {
 	ASSERT(this, "Printing::loadFonts: null this");
 
 	// empty list of registered fonts
-	Printing_reset(this);
+	Printing::reset(this);
 
 	// iterate over all defined fonts and add to internal list
 	u32 i = 0, j = 0;
@@ -224,13 +224,13 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
 				// preload charset and save charset reference, if font was found
 				if(__FONTS[i]->charSetDefinition == fontDefinitions[j]->charSetDefinition)
 				{
-					fontData->offset = CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), fontDefinitions[j]->charSetDefinition));
+					fontData->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), fontDefinitions[j]->charSetDefinition));
 				}
 			}
 		}
 
 		// add fontdata to internal list
-		VirtualList_pushBack(this->fonts, fontData);
+		VirtualList::pushBack(this->fonts, fontData);
 	}
 }
 
@@ -242,11 +242,11 @@ void __attribute__ ((noinline)) Printing_loadFonts(Printing this, FontDefinition
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute__ ((unused)))
+void __attribute__ ((noinline)) Printing::loadDebugFont(Printing this __attribute__ ((unused)))
 {
 	ASSERT(this, "Printing::destructor: null this");
 
-	Mem_copyBYTE(
+	Mem::copyBYTE(
 		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_DATA.offset << 4)),
 		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontDefinition->charSetDefinition->charDefinition),
 		VUENGINE_DEBUG_FONT_SIZE << 4
@@ -261,12 +261,12 @@ void __attribute__ ((noinline)) Printing_loadDebugFont(Printing this __attribute
  *
  * @param this	Function scope
  */
-void Printing_setDebugMode(Printing this)
+void Printing::setDebugMode(Printing this)
 {
 	ASSERT(this, "Printing::setDebugMode: null this");
 
-	Printing_resetWorldCoordinates(this);
-	Printing_loadDebugFont(this);
+	Printing::resetWorldCoordinates(this);
+	Printing::loadDebugFont(this);
 	this->mode = __PRINTING_MODE_DEBUG;
 }
 
@@ -278,7 +278,7 @@ void Printing_setDebugMode(Printing this)
  *
  * @param this	Function scope
  */
-void Printing_setPalette(Printing this, u8 palette)
+void Printing::setPalette(Printing this, u8 palette)
 {
 	ASSERT(this, "Printing::destructor: null this");
 
@@ -296,13 +296,13 @@ void Printing_setPalette(Printing this, u8 palette)
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unused)))
+void __attribute__ ((noinline)) Printing::clear(Printing this __attribute__ ((unused)))
 {
 	ASSERT(this, "Printing::clear: null this");
 
-	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode? __EXCEPTIONS_BGMAP : BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
-	VIPManager_clearBgmapSegment(VIPManager_getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
+	VIPManager::clearBgmapSegment(VIPManager::getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
 /**
@@ -316,7 +316,7 @@ void __attribute__ ((noinline)) Printing_clear(Printing this __attribute__ ((unu
  *
  * @return		FontData of desired font or default font if NULL or none could be found matching the name
  */
-FontData* Printing_getFontByName(Printing this, const char* font)
+FontData* Printing::getFontByName(Printing this, const char* font)
 {
 	ASSERT(this, "Printing::getFontByName: null this");
 
@@ -329,17 +329,17 @@ FontData* Printing_getFontByName(Printing this, const char* font)
 	else if(this->fonts)
 	{
 		// set first defined font as default
-		result = VirtualList_front(this->fonts);
+		result = VirtualList::front(this->fonts);
 
 		if(result)
 		{
 			if(font)
 			{
 				// iterate over registered fonts to find definition of font to use
-				VirtualNode node = VirtualList_begin(this->fonts);
-				for(; node; node = VirtualNode_getNext(node))
+				VirtualNode node = VirtualList::begin(this->fonts);
+				for(; node; node = VirtualNode::getNext(node))
 				{
-					FontData* fontData = VirtualNode_getData(node);
+					FontData* fontData = VirtualNode::getData(node);
 					if(!strcmp(fontData->fontDefinition->name, font))
 					{
 						result = fontData;
@@ -351,7 +351,7 @@ FontData* Printing_getFontByName(Printing this, const char* font)
 			// if font's charset has not been preloaded, load it now
 			if(!result->offset)
 			{
-				result->offset = CharSet_getOffset(CharSetManager_getCharSet(CharSetManager_getInstance(), result->fontDefinition->charSetDefinition));
+				result->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontDefinition->charSetDefinition));
 			}
 		}
 	}
@@ -371,7 +371,7 @@ FontData* Printing_getFontByName(Printing this, const char* font)
  * @param string	String to print
  * @param font		Name of font to use for printing
  */
-static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, const char* string, const char* font)
+static void __attribute__ ((noinline)) Printing::out(Printing this, u8 x, u8 y, const char* string, const char* font)
 {
 	ASSERT(this, "Printing::out: null this");
 
@@ -380,9 +380,9 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
 	u32 startColumn = x;
 	u32 charOffsetX = 0;
 	u32 charOffsetY = 0;
-	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager_getInstance());
+	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
-	FontData* fontData = Printing_getFontByName(this, font);
+	FontData* fontData = Printing::getFontByName(this, font);
 
 	if(!fontData)
 	{
@@ -473,7 +473,7 @@ static void __attribute__ ((noinline)) Printing_out(Printing this, u8 x, u8 y, c
  * @param y		Row to start printing at
  * @param font	Name of font to use for printing
  */
-void __attribute__ ((noinline)) Printing_int(Printing this, int value, u8 x, u8 y, const char* font)
+void __attribute__ ((noinline)) Printing::int(Printing this, int value, u8 x, u8 y, const char* font)
 {
 	ASSERT(this, "Printing::int: null this");
 
@@ -481,12 +481,12 @@ void __attribute__ ((noinline)) Printing_int(Printing this, int value, u8 x, u8 
 	{
 		value *= -1;
 
-		Printing_out(this, x++, y, "-", font);
-		Printing_out(this, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), font);
+		Printing::out(this, x++, y, "-", font);
+		Printing::out(this, x, y, Utilities::itoa((int)(value), 10, Utilities::getDigitCount(value)), font);
 	}
 	else
 	{
-		Printing_out(this, x, y, Utilities_itoa((int)(value), 10, Utilities_getDigitCount(value)), font);
+		Printing::out(this, x, y, Utilities::itoa((int)(value), 10, Utilities::getDigitCount(value)), font);
 	}
 }
 
@@ -503,11 +503,11 @@ void __attribute__ ((noinline)) Printing_int(Printing this, int value, u8 x, u8 
  * @param length	digits to print
  * @param font		Name of font to use for printing
  */
-void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font)
+void __attribute__ ((noinline)) Printing::hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font)
 {
 	ASSERT(this, "Printing::destructor: null this");
 
-	Printing_out(this, x,y, Utilities_itoa((int)(value), 16, length), font);
+	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
 }
 
 /**
@@ -522,23 +522,23 @@ void __attribute__ ((noinline)) Printing_hex(Printing this, WORD value, u8 x, u8
  * @param y		Row to start printing at
  * @param font	Name of font to use for printing
  */
-void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x, u8 y, const char* font)
+void __attribute__ ((noinline)) Printing::float(Printing this, float value, u8 x, u8 y, const char* font)
 {
 	ASSERT(this, "Printing::float: null this");
 
 	if(0 > value)
 	{
 		value = -value;
-		Printing_text(this, "-", x++, y, font);
+		Printing::text(this, "-", x++, y, font);
 	}
 
 	int integer = (int)__FIX19_13_TO_I(__F_TO_FIX19_13(value));
 	int decimal = (int)(((float)__FIX19_13_FRAC(__F_TO_FIX19_13(value)) / 8192.f) * 100.f);
-	int length = Utilities_intLength(__ABS(integer)) + (0 > value ? 1 : 0);
+	int length = Utilities::intLength(__ABS(integer)) + (0 > value ? 1 : 0);
 
-	Printing_int(this, integer, x, y, font);
+	Printing::int(this, integer, x, y, font);
 
-	Printing_text(this, ".", x + length, y, font);
+	Printing::text(this, ".", x + length, y, font);
 
 	if(decimal)
 	{
@@ -547,14 +547,14 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
 		while(!(auxDecimal / 10))
 		{
 			auxDecimal *= 10;
-			Printing_int(this, 0, x + length + 1 + displacement++, y, font);
+			Printing::int(this, 0, x + length + 1 + displacement++, y, font);
 		}
 
-		Printing_int(this, decimal, x + length + 1 + displacement, y, font);
+		Printing::int(this, decimal, x + length + 1 + displacement, y, font);
 	}
 	else
 	{
-		Printing_int(this, 0, x + length + 1, y, font);
+		Printing::int(this, 0, x + length + 1, y, font);
 	}
 }
 
@@ -570,14 +570,14 @@ void __attribute__ ((noinline)) Printing_float(Printing this, float value, u8 x,
  * @param y			Row to start printing at
  * @param font		Name of font to use for printing
  */
-void __attribute__ ((noinline)) Printing_text(Printing this, const char* string, int x, int y, const char* font)
+void __attribute__ ((noinline)) Printing::text(Printing this, const char* string, int x, int y, const char* font)
 {
 	ASSERT(this, "Printing::text: null this");
 
 #ifdef __FORCE_UPPERCASE
-	Printing_out(this, x, y, Utilities_toUppercase(string), font);
+	Printing::out(this, x, y, Utilities::toUppercase(string), font);
 #else
-	Printing_out(this, x, y, string, font);
+	Printing::out(this, x, y, string, font);
 #endif
 }
 
@@ -592,7 +592,7 @@ void __attribute__ ((noinline)) Printing_text(Printing this, const char* string,
  * @param gy		WORLD y coordinate
  */
 #ifdef __FORCE_PRINTING_LAYER
-void Printing_setWorldCoordinates(Printing this, u16 gx __attribute__ ((unused)), u16 gy __attribute__ ((unused)))
+void Printing::setWorldCoordinates(Printing this, u16 gx __attribute__ ((unused)), u16 gy __attribute__ ((unused)))
 {
 	ASSERT(this, "Printing::setWorldCoordinates: null this");
 
@@ -600,7 +600,7 @@ void Printing_setWorldCoordinates(Printing this, u16 gx __attribute__ ((unused))
 	this->gy = 0;
 }
 #else
-void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
+void Printing::setWorldCoordinates(Printing this, u16 gx, u16 gy)
 {
 	ASSERT(this, "Printing::setWorldCoordinates: null this");
 
@@ -617,7 +617,7 @@ void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy)
  *
  * @param this		Function scope
  */
-void Printing_resetWorldCoordinates(Printing this)
+void Printing::resetWorldCoordinates(Printing this)
 {
 	ASSERT(this, "Printing::destructor: null this");
 
@@ -636,7 +636,7 @@ void Printing_resetWorldCoordinates(Printing this)
  *
  * @return			number of pixels
  */
-int Printing_getPixelCount(Printing this)
+int Printing::getPixelCount(Printing this)
 {
 	ASSERT(this, "Printing::getPixelCount: null this");
 
@@ -654,14 +654,14 @@ int Printing_getPixelCount(Printing this)
  * @param string	String to compute size for
  * @param font		Name of font to use for size computation
  */
-FontSize __attribute__ ((noinline)) Printing_getTextSize(Printing this, const char* string, const char* font)
+FontSize __attribute__ ((noinline)) Printing::getTextSize(Printing this, const char* string, const char* font)
 {
 	ASSERT(this, "Printing::getTextSize: null this");
 
 	FontSize fontSize = {0, 0};
 	u16 i = 0, currentLineLength = 0;
 
-	FontData* fontData = Printing_getFontByName(this, font);
+	FontData* fontData = Printing::getFontByName(this, font);
 
 	if(!fontData)
 	{

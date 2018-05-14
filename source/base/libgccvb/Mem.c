@@ -56,7 +56,7 @@ void *memcpy(void *destination, const void *source, size_t numberOfBytes)
 	return destination;
 }
 
-void Mem_clear(BYTE* destination, u32 numberOfBYTES)
+void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 {
 	u32 i;
 
@@ -67,7 +67,7 @@ void Mem_clear(BYTE* destination, u32 numberOfBYTES)
 }
 
 // Copy a block of data from one area in memory to another.
-void Mem_copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
+void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
 {
 	asm("          \n\t"      \
 		"mov r29,r1\n\t"      \
@@ -102,7 +102,7 @@ void Mem_copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
 */
 }
 
-void Mem_copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
+void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 
@@ -122,7 +122,7 @@ void Mem_copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
 	);
 }
 
-void Mem_copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
+void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
 {
 	const WORD* finalSource = source + numberOfWORDS;
 
@@ -142,7 +142,7 @@ void Mem_copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
 	);
 }
 
-void Mem_addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
+void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
 {
 	const BYTE* finalSource = source + numberOfBYTES;
 
@@ -163,7 +163,7 @@ void Mem_addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 o
     );
 }
 
-void Mem_addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
+void Mem::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 

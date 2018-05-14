@@ -56,11 +56,11 @@ __CLASS_NEW_END(BgmapAnimationCoordinator, charSetDefinition);
  * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition used by the sprites to be coordinated
  */
-void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
+void BgmapAnimationCoordinator::constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
 
-	Base_constructor(this, charSetDefinition);
+	Base::constructor(this, charSetDefinition);
 }
 
 /**
@@ -71,13 +71,13 @@ void BgmapAnimationCoordinator_constructor(BgmapAnimationCoordinator this, const
  *
  * @param this		Function scope
  */
-void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
+void BgmapAnimationCoordinator::destructor(BgmapAnimationCoordinator this)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -89,29 +89,29 @@ void BgmapAnimationCoordinator_destructor(BgmapAnimationCoordinator this)
  * @param this						Function scope
  * @param animationController		Animation controller to register
  */
-void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
+void BgmapAnimationCoordinator::addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::addAnimationController: null this");
 	ASSERT(animationController, "BgmapAnimationCoordinator::addAnimationController: null animationController");
-	ASSERT(!VirtualList_find(this->animationControllers, animationController), "BgmapAnimationCoordinator::addAnimationController: animationController already registered");
+	ASSERT(!VirtualList::find(this->animationControllers, animationController), "BgmapAnimationCoordinator::addAnimationController: animationController already registered");
 
-	if(VirtualList_front(this->animationControllers))
+	if(VirtualList::front(this->animationControllers))
 	{
-		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
+		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
 
 		ASSERT(firstAnimationController, "BgmapAnimationCoordinator::addAnimationController: null firstAnimationController");
 
-		if(AnimationController_isPlaying(firstAnimationController))
+		if(AnimationController::isPlaying(firstAnimationController))
 		{
-			AnimationController_playAnimationFunction(animationController, AnimationController_getPlayingAnimationFunction(firstAnimationController));
-			s8 currentFrame = AnimationController_getActualFrame(firstAnimationController);
-			s8 frameDuration = AnimationController_getFrameDuration(firstAnimationController);
-			AnimationController_setActualFrame(animationController, currentFrame);
-			AnimationController_setFrameDuration(animationController, frameDuration);
+			AnimationController::playAnimationFunction(animationController, AnimationController::getPlayingAnimationFunction(firstAnimationController));
+			s8 currentFrame = AnimationController::getActualFrame(firstAnimationController);
+			s8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
+			AnimationController::setActualFrame(animationController, currentFrame);
+			AnimationController::setFrameDuration(animationController, frameDuration);
 		}
 	}
 
-	VirtualList_pushBack(this->animationControllers, animationController);
+	VirtualList::pushBack(this->animationControllers, animationController);
 }
 
 /**
@@ -123,10 +123,10 @@ void BgmapAnimationCoordinator_addAnimationController(BgmapAnimationCoordinator 
  * @param this						Function scope
  * @param animationController		Animation controller to unregister
  */
-void BgmapAnimationCoordinator_removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
+void BgmapAnimationCoordinator::removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "BgmapAnimationCoordinator::removeAnimationController: null this");
 
-	VirtualList_removeElement(this->animationControllers, animationController);
+	VirtualList::removeElement(this->animationControllers, animationController);
 }
 

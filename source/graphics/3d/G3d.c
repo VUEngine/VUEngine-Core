@@ -119,7 +119,7 @@ const s32 sine[360]=
 /****************************
 Copies one vector to another
 *****************************/
-void inline G3d_copyVector3d(vector3d* from, vector3d* to)
+void inline G3d::copyVector3d(vector3d* from, vector3d* to)
 {
 #ifndef __ASM_CODE
 	to->x = from->x;
@@ -149,11 +149,11 @@ void inline G3d_copyVector3d(vector3d* from, vector3d* to)
 /****************************
 Scales a vector by a given fixed point vector
 *****************************/
-void inline G3d_scale(vector3d* factor, vector3d* v, vector3d* o)
+void inline G3d::scale(vector3d* factor, vector3d* v, vector3d* o)
 {
 	if(factor->x == 1 && factor->y == 1 && factor->z == 1)
 	{
-		G3d_copyVector3d(v,o);
+		G3d::copyVector3d(v,o);
 		return;
 	}
 #ifndef __ASM_CODE
@@ -200,7 +200,7 @@ void inline G3d_scale(vector3d* factor, vector3d* v, vector3d* o)
 /***********************************
 Rotates a point around the X axis
 ************************************/
-void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o)
+void  G3d::rotateXAxis(s32 degrees, vector3d* v, vector3d* o)
 {
 	o->x = v->x;
 #ifndef __ASM_CODE
@@ -245,7 +245,7 @@ void  G3d_rotateXAxis(s32 degrees, vector3d* v, vector3d* o)
 /**********************************
 Rotates a point around the Y axis
 ***********************************/
-void  G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o)
+void  G3d::rotateYAxis(s32 degrees, vector3d* v, vector3d* o)
 {
 	o->y = v->y;
 #ifndef __ASM_CODE
@@ -290,7 +290,7 @@ void  G3d_rotateYAxis(s32 degrees, vector3d* v, vector3d* o)
 /**********************************
 Rotates a point around the Z axis
 ***********************************/
-void  G3d_rotateZAxis(s32 degrees, vector3d* v, vector3d* o)
+void  G3d::rotateZAxis(s32 degrees, vector3d* v, vector3d* o)
 {
 	o->z = v->z;
 #ifndef __ASM_CODE
@@ -339,13 +339,13 @@ values are not zero before performing the rotation calculations.
 rx,ry,and rz are degrees and are NOT fixed point
 Make sure the rotation values are between -360 and 360
 ************************************************/
-void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
+void  G3d::rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
 {
 	vector3d t;
 
 	if(rx==0 && ry==0 && rz==0)
 	{
-		G3d_copyVector3d(v,o);
+		G3d::copyVector3d(v,o);
 		return;
 	}
 
@@ -353,29 +353,29 @@ void  G3d_rotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
 	if(ry<0) ry=359+ry;
 	if(rz<0) rz=359+rz;
 
-	G3d_copyVector3d(v,&t);
+	G3d::copyVector3d(v,&t);
 	if(ry != 0)
 	{
-		G3d_rotateYAxis(ry,&t,o);
-		G3d_copyVector3d(o,&t);
+		G3d::rotateYAxis(ry,&t,o);
+		G3d::copyVector3d(o,&t);
 	}
 	if(rx != 0)
 	{
-		G3d_rotateXAxis(rx,&t,o);
-		G3d_copyVector3d(o,&t);
+		G3d::rotateXAxis(rx,&t,o);
+		G3d::copyVector3d(o,&t);
 	}
 	if(rz != 0)
 	{
-		G3d_rotateZAxis(rz,&t,o);
-		G3d_copyVector3d(o,&t);
+		G3d::rotateZAxis(rz,&t,o);
+		G3d::copyVector3d(o,&t);
 	}
-	G3d_copyVector3d(&t,o);
+	G3d::copyVector3d(&t,o);
 }
 
 /*******************************
 This translates or moves a point
 ********************************/
-void  G3d_translate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
+void  G3d::translate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
 {
 #ifndef __ASM_CODE
 	o->x = v->x + x;
@@ -404,7 +404,7 @@ This performs the rotations for the camera.
 It just rotates a point in the opposite direction
 of the cameras rotation angles.
 *********************************/
-void  G3d_cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
+void  G3d::cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
 {
 #ifndef __ASM_CODE
 	rx = (~rx)+1;
@@ -429,7 +429,7 @@ void  G3d_cameraRotateAllAxis(s32 rx, s32 ry, s32 rz, vector3d* v, vector3d* o)
 	:"r5"
 	);
 #endif
-	G3d_rotateAllAxis(rx,ry,rz,v,o);
+	G3d::rotateAllAxis(rx,ry,rz,v,o);
 }
 
 /**********************************
@@ -437,7 +437,7 @@ This performs the camera translate or move by
 calculating the difference between the camera's position
 and the points position.
 ***********************************/
-void  G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
+void  G3d::cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
 {
 #ifndef __ASM_CODE
 	o->x = v->x - x;
@@ -465,30 +465,30 @@ void  G3d_cameraTranslate(s32 x, s32 y, s32 z, vector3d* v, vector3d* o)
 This performs all affine transformation
 functions against a vector3d object
 ***********************************/
-void G3d_renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube)
+void G3d::renderVector3d(object* obj, vector3d* v, vector3d* o, u8 initHitCube)
 {
 	vector3d t;
 	//Transformations
-	G3d_scale(&obj->worldScale,v,&t);
-	G3d_copyVector3d(&t,o);
+	G3d::scale(&obj->worldScale,v,&t);
+	G3d::copyVector3d(&t,o);
 
-	G3d_rotateAllAxis(obj->worldRotation.x,obj->worldRotation.y,obj->worldRotation.z,o,&t);
-	G3d_copyVector3d(&t,o);
+	G3d::rotateAllAxis(obj->worldRotation.x,obj->worldRotation.y,obj->worldRotation.z,o,&t);
+	G3d::copyVector3d(&t,o);
 
-	G3d_translate(obj->worldPosition.x,obj->worldPosition.y,obj->worldPosition.z,o,&t);
-	G3d_copyVector3d(&t,o);
+	G3d::translate(obj->worldPosition.x,obj->worldPosition.y,obj->worldPosition.z,o,&t);
+	G3d::copyVector3d(&t,o);
 
 	if(cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0)
 	{
-		G3d_cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,o,&t);
-		G3d_copyVector3d(&t,o);
+		G3d::cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,o,&t);
+		G3d::copyVector3d(&t,o);
 	}
 
-	G3d_cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,o,&t);
-	G3d_copyVector3d(&t,o);
+	G3d::cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,o,&t);
+	G3d::copyVector3d(&t,o);
 }
 
-void G3d_calculateProjection(vector3d* o)
+void G3d::calculateProjection(vector3d* o)
 {
 #ifndef __ASM_CODE
 	o->sx = F_NUM_DN(F_ADD(F_DIV(F_MUL(o->x,cam.d),F_ADD(cam.d,o->z)),F_NUM_UP(SCREEN_WIDTH>>1)));
@@ -546,7 +546,7 @@ void G3d_calculateProjection(vector3d* o)
 This procedure actually draws an
 object
 **************************/
-void G3d_drawObject(object* o)
+void G3d::drawObject(object* o)
 {
 	s32 vertices,lines,v,verts,i;
 	vector3d v1;
@@ -558,7 +558,7 @@ void G3d_drawObject(object* o)
 	v2p = &v2;
 
 	//Clip objects if needed
-	G3d_clipObject(o);
+	G3d::clipObject(o);
 
 	if(o->properties.visible == 0 || o->properties.clip == 1) return;
 
@@ -570,7 +570,7 @@ void G3d_drawObject(object* o)
 	i=0;
 
 	//Put object through the render pipeline
-	G3d_renderObject(o);
+	G3d::renderObject(o);
 	/*vertices=o->objData->vertexSize;//total elements in array
 	lines=o->objData->lineSize;//Total line endpoints
 	verts=o->objData->faceSize;//total vertices per section
@@ -586,7 +586,7 @@ void G3d_drawObject(object* o)
 		v1.y = o->objData->data[v+1];
 		v1.z = o->objData->data[v+2];
 
-		G3d_renderVector3d(o, &v1, &v2, ((v==0)?(1):(0)));
+		G3d::renderVector3d(o, &v1, &v2, ((v==0)?(1):(0)));
 
 		vertexBuffer[i] = v2;
 		i++;
@@ -608,10 +608,10 @@ void G3d_drawObject(object* o)
 
 			if((v1p->z > cam.d) || (v2p->z > cam.d))
 			{
-				G3d_clipZAxis(v1p, v2p);
-				G3d_calculateProjection(v1p);
-				G3d_calculateProjection(v2p);
-				G3d_drawLine(v1p,v2p,o->properties.lineColor);
+				G3d::clipZAxis(v1p, v2p);
+				G3d::calculateProjection(v1p);
+				G3d::calculateProjection(v2p);
+				G3d::drawLine(v1p,v2p,o->properties.lineColor);
 			}
 			vtp = v2p;
 			v1p = v2p;
@@ -622,7 +622,7 @@ void G3d_drawObject(object* o)
 	}
 }
 
-void G3d_renderObject(object* o)
+void G3d::renderObject(object* o)
 {
 	u8 resetCube;
 #ifndef __ASM_CODE
@@ -643,7 +643,7 @@ void G3d_renderObject(object* o)
 		v1.y = o->objData->data[v+1];
 		v1.z = o->objData->data[v+2];
 
-		G3d_renderVector3d(o, &v1, &v2, ((v==0)?(1):(0)));
+		G3d::renderVector3d(o, &v1, &v2, ((v==0)?(1):(0)));
 
 		vertexBuffer[i] = v2;
 		i++;
@@ -1150,7 +1150,7 @@ void G3d_renderObject(object* o)
 Quick and dirty cube based
 collision detection.
 ***********************/
-void  G3d_detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag)
+void  G3d::detectCollision(vector3d* position1, collisionCube* c1, vector3d* position2, collisionCube* c2, u32* flag)
 {
 	s32 c1minX, c1maxX,
 		c1minY, c1maxY,
@@ -1223,7 +1223,7 @@ Cheap little object clipping function.
 If the center of the object is off the
 screen we'll clip it.
 *************************************/
-void  G3d_clipObject(object* o)
+void  G3d::clipObject(object* o)
 {
 	vector3d worldTemp, worldOrig;
 
@@ -1231,16 +1231,16 @@ void  G3d_clipObject(object* o)
 	worldOrig.y = o->worldPosition.y;
 	worldOrig.z = o->worldPosition.z;
 
-	G3d_cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,&worldOrig,&worldTemp);
-	G3d_copyVector3d(&worldTemp,&worldOrig);
+	G3d::cameraTranslate(cam.worldPosition.x,cam.worldPosition.y,cam.worldPosition.z,&worldOrig,&worldTemp);
+	G3d::copyVector3d(&worldTemp,&worldOrig);
 
 	if(cam.worldRotation.x != 0 || cam.worldRotation.y != 0 || cam.worldRotation.z != 0)
 	{
-		G3d_cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,&worldOrig,&worldTemp);
-		G3d_copyVector3d(&worldTemp,&worldOrig);
+		G3d::cameraRotateAllAxis(cam.worldRotation.x,cam.worldRotation.y,cam.worldRotation.z,&worldOrig,&worldTemp);
+		G3d::copyVector3d(&worldTemp,&worldOrig);
 	}
 
-	G3d_calculateProjection(&worldOrig);
+	G3d::calculateProjection(&worldOrig);
 	o->properties.clip = 0;
 	if(worldOrig.sx < 0 || worldOrig.sx > SCREEN_WIDTH) o->properties.clip = 1;
 	if(worldOrig.sy < -SCREEN_HEIGHT || worldOrig.sy > (SCREEN_HEIGHT<<1)) o->properties.clip = 1;
@@ -1257,7 +1257,7 @@ but should be ok for general purposes.
 This function needs performed before the
 projection calculation occurs.
 **************************************/
-void  G3d_clipZAxis(vector3d* v1, vector3d* v2)
+void  G3d::clipZAxis(vector3d* v1, vector3d* v2)
 {
 	s32 fracz,fracx,fracy,diff,mult;
 	vector3d* minV;
@@ -1337,7 +1337,7 @@ void  drawPoint(s32 x, s32 y, u8 color, s32 p)
 /*******************************
 My Line Algorithm (Brezenham based)
 *******************************/
-void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* v2, u8 color)
+void /*__attribute__((section(".data")))*/ G3d::drawLine(vector3d* v1, vector3d* v2, u8 color)
 {
 	s32 vx,vy,vz,vx2,vy2;
 	s32 dx, dy, dz;
@@ -1674,7 +1674,7 @@ void /*__attribute__((section(".data")))*/ G3d_drawLine(vector3d* v1, vector3d* 
 /*********************************
 This initializes an object type
 *********************************/
-void  G3d_initObject(object* o, objectData* objData)
+void  G3d::initObject(object* o, objectData* objData)
 {
 	o->worldPosition.x = 0;
 	o->worldPosition.y = 0;
@@ -1709,7 +1709,7 @@ void  G3d_initObject(object* o, objectData* objData)
 	o->properties.state           = 0;
 }
 
-void  G3d_moveObject(object* o)
+void  G3d::moveObject(object* o)
 {
 	//Increment attributes
 	if(o->rotation.x != 0)           o->worldRotation.x += o->rotation.x;
@@ -1774,7 +1774,7 @@ void  G3d_moveObject(object* o)
 	}
 }
 
-void  G3d_moveCamera(camera* c)
+void  G3d::moveCamera(camera* c)
 {
 	//Do increments
 	if(c->rotation.x != 0)   c->worldRotation.x += c->rotation.x;

@@ -58,11 +58,11 @@ __CLASS_NEW_END(ObjectAnimationCoordinator, charSetDefinition);
  * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition
  */
-void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
+void ObjectAnimationCoordinator::constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
 
-	Base_constructor(this, charSetDefinition);
+	Base::constructor(this, charSetDefinition);
 }
 
 /**
@@ -73,13 +73,13 @@ void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, con
  *
  * @param this					Function scope
  */
-void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
+void ObjectAnimationCoordinator::destructor(ObjectAnimationCoordinator this)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -91,18 +91,18 @@ void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this)
  * @param this					Function scope
  * @param animationController		Animation controller to register
  */
-void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
+void ObjectAnimationCoordinator::addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::addAnimationController: null this");
 	ASSERT(animationController, "ObjectAnimationCoordinator::addAnimationController: null animationController");
-	ASSERT(!VirtualList_find(this->animationControllers, animationController), "ObjectAnimationCoordinator::addAnimationController: animationController already registered");
+	ASSERT(!VirtualList::find(this->animationControllers, animationController), "ObjectAnimationCoordinator::addAnimationController: animationController already registered");
 
 	if(this->animationControllers->head)
 	{
-		AnimationController_stop(animationController);
+		AnimationController::stop(animationController);
 	}
 
-	VirtualList_pushBack(this->animationControllers, animationController);
+	VirtualList::pushBack(this->animationControllers, animationController);
 }
 
 /**
@@ -114,28 +114,28 @@ void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinato
  * @param this						Function scope
  * @param animationController		Animation controller to unregister
  */
-void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
+void ObjectAnimationCoordinator::removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController)
 {
 	ASSERT(this, "ObjectAnimationCoordinator::removeAnimationController: null this");
 	ASSERT(this->animationControllers->head, "ObjectAnimationCoordinator::removeAnimationController: null this");
 
-	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
-	VirtualList_removeElement(this->animationControllers, animationController);
+	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
+	VirtualList::removeElement(this->animationControllers, animationController);
 
 	if(mustChangeLeader && this->animationControllers->head)
 	{
-		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
+		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
 
 		if(firstAnimationController)
 		{
-			if(AnimationController_isPlaying(animationController))
+			if(AnimationController::isPlaying(animationController))
 			{
-				AnimationController_playAnimationFunction(firstAnimationController, AnimationController_getPlayingAnimationFunction(animationController));
-				s8 currentFrame = AnimationController_getActualFrame(firstAnimationController);
-				s8 frameDuration = AnimationController_getFrameDuration(firstAnimationController);
-				AnimationController_setActualFrame(firstAnimationController, currentFrame);
-				AnimationController_setFrameDuration(firstAnimationController, frameDuration);
-				AnimationController_stop(animationController);
+				AnimationController::playAnimationFunction(firstAnimationController, AnimationController::getPlayingAnimationFunction(animationController));
+				s8 currentFrame = AnimationController::getActualFrame(firstAnimationController);
+				s8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
+				AnimationController::setActualFrame(firstAnimationController, currentFrame);
+				AnimationController::setFrameDuration(firstAnimationController, frameDuration);
+				AnimationController::stop(animationController);
 			}
 		}
 	}

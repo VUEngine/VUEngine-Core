@@ -85,7 +85,7 @@ __CLASS_NEW_END(ParticleRemover);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this)
+void __attribute__ ((noinline)) ParticleRemover::constructor(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::constructor: null this");
 
@@ -105,18 +105,18 @@ void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this
  *
  * @param this	Function scope
  */
-void ParticleRemover_destructor(ParticleRemover this)
+void ParticleRemover::destructor(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::destructor: null this");
 
-	ParticleRemover_reset(this);
+	ParticleRemover::reset(this);
 
 	__DELETE(this->particlesLists);
 	this->particlesLists = NULL;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 /**
  * Reset
@@ -126,7 +126,7 @@ void ParticleRemover_destructor(ParticleRemover this)
  *
  * @param this	Function scope
  */
-void ParticleRemover_reset(ParticleRemover this)
+void ParticleRemover::reset(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::reset: null this");
 
@@ -148,7 +148,7 @@ void ParticleRemover_reset(ParticleRemover this)
 		__DELETE(particlesList);
 	}
 
-	VirtualList_clear(this->particlesLists);
+	VirtualList::clear(this->particlesLists);
 
 	this->remainingRemoveDelayCycles = this->removalDelayCycles;
 }
@@ -161,7 +161,7 @@ void ParticleRemover_reset(ParticleRemover this)
  *
  * @param this	Function scope
  */
-void ParticleRemover_update(ParticleRemover this)
+void ParticleRemover::update(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::update: null this");
 
@@ -172,27 +172,27 @@ void ParticleRemover_update(ParticleRemover this)
 
 	if(0 > this->removalDelayCycles)
 	{
-		ParticleRemover_reset(this);
+		ParticleRemover::reset(this);
 	}
 	else if(0 >= --this->remainingRemoveDelayCycles)
 	{
-		VirtualList particlesList = VirtualList_front(this->particlesLists);
+		VirtualList particlesList = VirtualList::front(this->particlesLists);
 
 		if(particlesList->head)
 		{
-			__DELETE(VirtualList_front(particlesList));
-			VirtualList_popFront(particlesList);
+			__DELETE(VirtualList::front(particlesList));
+			VirtualList::popFront(particlesList);
 
-			if(!VirtualList_getSize(particlesList))
+			if(!VirtualList::getSize(particlesList))
 			{
 				__DELETE(particlesList);
-				VirtualList_popFront(this->particlesLists);
+				VirtualList::popFront(this->particlesLists);
 			}
 		}
 		else
 		{
 			__DELETE(particlesList);
-			VirtualList_popFront(this->particlesLists);
+			VirtualList::popFront(this->particlesLists);
 		}
 
 		this->remainingRemoveDelayCycles = this->removalDelayCycles;
@@ -208,7 +208,7 @@ void ParticleRemover_update(ParticleRemover this)
  * @param this		Function scope
  * @param particles	List of Particles to delete
  */
-void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles)
+void ParticleRemover::deleteParticles(ParticleRemover this, VirtualList particles)
 {
 	ASSERT(this, "ParticleRemover::registerParticles: null this");
 
@@ -224,7 +224,7 @@ void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles
 
 		__DELETE(particles);
 
-		VirtualList_pushBack(this->particlesLists, particlesList);
+		VirtualList::pushBack(this->particlesLists, particlesList);
 	}
 }
 
@@ -237,7 +237,7 @@ void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles
  * @param this					Function scope
  * @param removalDelayCycles	New value
  */
-void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles)
+void ParticleRemover::setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles)
 {
 	ASSERT(this, "ParticleRemover::registerParticle: null this");
 

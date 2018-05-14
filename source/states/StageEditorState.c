@@ -36,7 +36,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void StageEditorState_constructor(StageEditorState this);
+static void StageEditorState::constructor(StageEditorState this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ __CLASS_DEFINITION(StageEditorState, GameState);
 /**
  * Get instance
  *
- * @fn			StageEditorState_getInstance()
+ * @fn			StageEditorState::getInstance()
  * @memberof	StageEditorState
  * @public
  *
@@ -77,7 +77,7 @@ __SINGLETON(StageEditorState);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorState this)
+static void __attribute__ ((noinline)) StageEditorState::constructor(StageEditorState this)
 {
 	ASSERT(this, "StageEditorState::constructor: null this");
 
@@ -92,7 +92,7 @@ static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorS
  *
  * @param this	Function scope
  */
-void StageEditorState_destructor(StageEditorState this)
+void StageEditorState::destructor(StageEditorState this)
 {
 	ASSERT(this, "StageEditorState::destructor: null this");
 
@@ -109,13 +109,13 @@ void StageEditorState_destructor(StageEditorState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void StageEditorState::enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditorState::enter: null this");
 
-	Base_enter(this, owner);
-	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	StageEditor_show(StageEditor_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	Base::enter(this, owner);
+	GameState::pauseClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	StageEditor::show(StageEditor::getInstance(), __SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 }
 
 /**
@@ -127,11 +127,11 @@ void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void StageEditorState::execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditorState::execute: null this");
 
-	StageEditor_update(StageEditor_getInstance());
+	StageEditor::update(StageEditor::getInstance());
 }
 
 /**
@@ -143,13 +143,13 @@ void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), vo
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void StageEditorState::exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditorState::exit: null this");
 
-	StageEditor_hide(StageEditor_getInstance());
-	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	Base_exit(this, owner);
+	StageEditor::hide(StageEditor::getInstance());
+	GameState::resumeClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	Base::exit(this, owner);
 }
 
 /**
@@ -161,9 +161,9 @@ void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void*
  * @param this			Function scope
  * @param userInput		User input
  */
-void StageEditorState_processUserInput(StageEditorState this __attribute__ ((unused)), UserInput userInput)
+void StageEditorState::processUserInput(StageEditorState this __attribute__ ((unused)), UserInput userInput)
 {
 	ASSERT(this, "StageEditorState::processUserInput: null this");
 
-	StageEditor_processUserInput(StageEditor_getInstance(), userInput.pressedKey);
+	StageEditor::processUserInput(StageEditor::getInstance(), userInput.pressedKey);
 }

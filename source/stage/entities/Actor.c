@@ -68,12 +68,12 @@ __CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id, s1
 __CLASS_NEW_END(Actor, actorDefinition, id, internalId, name);
 
 // class's constructor
-void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
+void Actor::constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	Base_constructor(this, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
+	Base::constructor(this, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;
@@ -89,28 +89,28 @@ void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 i
 	{
 		if(actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification)
 		{
-			this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification, actorDefinition->axesSubjectToGravity);
+			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification, actorDefinition->axesSubjectToGravity);
 		}
 		else
 		{
 			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0}};
-			this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), &defaultActorPhysicalSpecification, actorDefinition->axesSubjectToGravity);
+			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), __SAFE_CAST(SpatialObject, this), &defaultActorPhysicalSpecification, actorDefinition->axesSubjectToGravity);
 		}
 	}
 }
 
 // class's destructor
-void Actor_destructor(Actor this)
+void Actor::destructor(Actor this)
 {
 	ASSERT(this, "Actor::destructor: null this");
 
 	// inform the camera I'm being removed
-	Camera_onFocusEntityDeleted(Camera_getInstance(), __SAFE_CAST(Entity, this));
+	Camera::onFocusEntityDeleted(Camera::getInstance(), __SAFE_CAST(Entity, this));
 
 	if(this->body)
 	{
 		// remove a body
-		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
+		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
 		this->body = NULL;
 	}
 
@@ -123,28 +123,28 @@ void Actor_destructor(Actor this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
-void Actor_iAmDeletingMyself(Actor this)
+void Actor::iAmDeletingMyself(Actor this)
 {
 	ASSERT(this, "Actor::iAmDeletingMyself: null this");
 
-	Base_iAmDeletingMyself(this);
+	Base::iAmDeletingMyself(this);
 
 	// destroy body to prevent any more physical interactions
 	if(this->body)
 	{
-		Body_setActive(this->body, false);
+		Body::setActive(this->body, false);
 
 		// remove a body
-//		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
+//		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
 //		this->body = NULL;
 	}
 }
 
 // set definition
-void Actor_setDefinition(Actor this, void* actorDefinition)
+void Actor::setDefinition(Actor this, void* actorDefinition)
 {
 	ASSERT(this, "Actor::setDefinition: null this");
 	ASSERT(actorDefinition, "Actor::setDefinition: null definition");
@@ -152,16 +152,16 @@ void Actor_setDefinition(Actor this, void* actorDefinition)
 	// save definition
 	this->actorDefinition = actorDefinition;
 
-	Base_setDefinition(this, &((ActorDefinition*)actorDefinition)->animatedEntityDefinition);
+	Base::setDefinition(this, &((ActorDefinition*)actorDefinition)->animatedEntityDefinition);
 }
 
 //set class's local position
-void Actor_setLocalPosition(Actor this, const Vector3D* position)
+void Actor::setLocalPosition(Actor this, const Vector3D* position)
 {
 	ASSERT(this, "Actor::setLocalPosition: null this");
 
 	Vector3D displacement = this->transformation.localPosition;
-	Base_setLocalPosition(this, position);
+	Base::setLocalPosition(this, position);
 
 	displacement.x -= this->transformation.localPosition.x;
 	displacement.y -= this->transformation.localPosition.y;
@@ -173,24 +173,24 @@ void Actor_setLocalPosition(Actor this, const Vector3D* position)
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body::setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
 	this->invalidateGlobalTransformation = (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 
-	Entity_transformShapes(__SAFE_CAST(Entity, this));
+	Entity::transformShapes(__SAFE_CAST(Entity, this));
 }
 
-void Actor_syncWithBody(Actor this)
+void Actor::syncWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
-	 Actor_syncPositionWithBody(this);
+	 Actor::syncPositionWithBody(this);
 
-	 Actor_syncRotationWithBody(this);
+	 Actor::syncRotationWithBody(this);
 }
 
-void Actor_syncPositionWithBody(Actor this)
+void Actor::syncPositionWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncPositionWithBody: null this");
 
@@ -203,9 +203,9 @@ void Actor_syncPositionWithBody(Actor this)
 	Vector3D bodyLastDisplacement = {0, 0, 0};
 	Vector3D bodyPosition = this->transformation.globalPosition;
 
-	if(!Clock_isPaused(Game_getPhysicsClock(Game_getInstance())) && Body_isActive(this->body) && Body_isAwake(this->body))
+	if(!Clock::isPaused(Game::getPhysicsClock(Game::getInstance())) && Body::isActive(this->body) && Body::isAwake(this->body))
 	{
-		bodyPosition = *Body_getPosition(this->body);
+		bodyPosition = *Body::getPosition(this->body);
 	}
 
 	// modify the global position according to the body's displacement
@@ -220,7 +220,7 @@ void Actor_syncPositionWithBody(Actor this)
 
 	// move the body to the new global position
 	// to account for any parenting
-	Body_setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
+	Body::setPosition(this->body, &globalPosition, __SAFE_CAST(SpatialObject, this));
 
 	// sync local position with global position
 	Vector3D localPosition = this->transformation.localPosition;
@@ -228,16 +228,16 @@ void Actor_syncPositionWithBody(Actor this)
 	localPosition.y += bodyLastDisplacement.y;
 	localPosition.z += bodyLastDisplacement.z;
 
-	Base_setLocalPosition(this, &localPosition);
+	Base::setLocalPosition(this, &localPosition);
 }
 
-void Actor_syncRotationWithBody(Actor this)
+void Actor::syncRotationWithBody(Actor this)
 {
 	ASSERT(this, "Actor::syncRotationWithBody: null this");
 
-	if(this->body && Body_getMovementOnAllAxes(this->body))
+	if(this->body && Body::getMovementOnAllAxes(this->body))
 	{
-		Velocity velocity = Body_getVelocity(this->body);
+		Velocity velocity = Body::getVelocity(this->body);
 
 		Direction direction =
 		{
@@ -259,26 +259,26 @@ void Actor_syncRotationWithBody(Actor this)
 			direction.z = __NEAR;
 		}
 
-		Entity_setDirection(__SAFE_CAST(Entity, this), direction);
+		Entity::setDirection(__SAFE_CAST(Entity, this), direction);
 	}
 }
 
 // updates the animation attributes
 // graphically refresh of characters that are visible
-void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Actor::transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Actor::transform: null this");
 
 	// apply environment transformation
-	Container_applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
+	Container::applyEnvironmentToTransformation(__SAFE_CAST(Container, this), environmentTransform);
 
 	if(this->body)
 	{
-		u16 bodyMovement = Body_getMovementOnAllAxes(this->body);
+		u16 bodyMovement = Body::getMovementOnAllAxes(this->body);
 
 		if(bodyMovement)
 		{
-			Actor_syncWithBody(this);
+			Actor::syncWithBody(this);
 
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
@@ -290,40 +290,40 @@ void Actor_transform(Actor this, const Transformation* environmentTransform, u8 
 	}
 
 	// call base
-	Base_transform(this, environmentTransform, invalidateTransformationFlag);
+	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	this->previousRotation = this->transformation.localRotation;
 }
 
-void Actor_resume(Actor this)
+void Actor::resume(Actor this)
 {
 	ASSERT(this, "Actor::resume: null this");
 
-	Base_resume(this);
+	Base::resume(this);
 
-	Actor_syncWithBody(this);
+	Actor::syncWithBody(this);
 }
 
 // execute character's logic
-void Actor_update(Actor this, u32 elapsedTime)
+void Actor::update(Actor this, u32 elapsedTime)
 {
 	ASSERT(this, "Actor::update: null this");
 
 	// call base
-	Base_update(this, elapsedTime);
+	Base::update(this, elapsedTime);
 
 	if(this->stateMachine)
 	{
-		StateMachine_update(this->stateMachine);
+		StateMachine::update(this->stateMachine);
 	}
 
-//	Body_print(this->body, 1, 0);
-//	Shape_print(VirtualList_front(this->shapes), 1, 20);
-//	Printing_resetWorldCoordinates(Printing_getInstance());
+//	Body::print(this->body, 1, 0);
+//	Shape::print(VirtualList::front(this->shapes), 1, 20);
+//	Printing::resetWorldCoordinates(Printing::getInstance());
 }
 
 // whether changed direction in the last cycle or not
-bool Actor_hasChangedDirection(Actor this, u16 axis)
+bool Actor::hasChangedDirection(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changedDirection: null this");
 
@@ -349,20 +349,20 @@ bool Actor_hasChangedDirection(Actor this, u16 axis)
 }
 
 // change direction over axis
-void Actor_changeDirectionOnAxis(Actor this, u16 axis)
+void Actor::changeDirectionOnAxis(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::changeDirectionOnAxis: null this");
 
 	if(this->body)
 	{
-		 Actor_syncRotationWithBody(this);
+		 Actor::syncRotationWithBody(this);
 	}
 	else
 	{
 		// save current rotation
 		this->previousRotation = this->transformation.localRotation;
 
-		Direction direction = Entity_getDirection(__SAFE_CAST(Entity, this));
+		Direction direction = Entity::getDirection(__SAFE_CAST(Entity, this));
 
 		if((__X_AXIS & axis))
 		{
@@ -400,21 +400,21 @@ void Actor_changeDirectionOnAxis(Actor this, u16 axis)
 			}
 		}
 
-		Entity_setDirection(__SAFE_CAST(Entity, this), direction);
+		Entity::setDirection(__SAFE_CAST(Entity, this), direction);
 	}
 }
 
 
 // check if gravity must apply to this actor
-bool Actor_isSubjectToGravity(Actor this, Acceleration gravity)
+bool Actor::isSubjectToGravity(Actor this, Acceleration gravity)
 {
 	ASSERT(this, "Actor::isSubjectToGravity: null this");
 
-	return Actor_canMoveTowards(this, gravity);
+	return Actor::canMoveTowards(this, gravity);
 }
 
 // check if gravity must apply to this actor
-bool Actor_canMoveTowards(Actor this, Vector3D direction)
+bool Actor::canMoveTowards(Actor this, Vector3D direction)
 {
 	ASSERT(this, "Actor::canMoveTowards: null this");
 
@@ -436,21 +436,21 @@ bool Actor_canMoveTowards(Actor this, Vector3D direction)
 		for(; node; node = node->next)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
-			canMove &= Shape_canMoveTowards(shape, displacement, 0);
+			canMove &= Shape::canMoveTowards(shape, displacement, 0);
 		}
 	}
 
 	return canMove;
 }
 
-fix10_6 Actor_getBouncinessOnCollision(Actor this __attribute__ ((unused)), SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix10_6 Actor::getBouncinessOnCollision(Actor this __attribute__ ((unused)), SpatialObject collidingObject, const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getBouncinessOnCollision: null this");
 
-	return  SpatialObject_getBounciness(collidingObject);
+	return  SpatialObject::getBounciness(collidingObject);
 }
 
-fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
+fix10_6 Actor::getSurroundingFrictionCoefficient(Actor this)
 {
 	ASSERT(this, "Actor::getSurroundingFrictionCoefficient: null this");
 
@@ -464,21 +464,21 @@ fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			totalFrictionCoefficient += Shape_getCollidingFrictionCoefficient(shape);
+			totalFrictionCoefficient += Shape::getCollidingFrictionCoefficient(shape);
 		}
 	}
 
 	return totalFrictionCoefficient;
 }
 
-fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
+fix10_6 Actor::getFrictionOnCollision(Actor this, SpatialObject collidingObject __attribute__ ((unused)), const Vector3D* collidingObjectNormal __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::getFrictionOnCollision: null this");
 
-	return  Actor_getSurroundingFrictionCoefficient(this);
+	return  Actor::getSurroundingFrictionCoefficient(this);
 }
 
-bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation)
+bool Actor::enterCollision(Actor this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "Actor::enterCollision: null this");
 	ASSERT(collisionInformation->collidingShape, "Actor::enterCollision: collidingShapes");
@@ -494,16 +494,16 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
+			Shape::resolveCollision(collisionInformation->shape, collisionInformation);
 
-			SpatialObject collidingObject = Shape_getOwner(collisionInformation->collidingShape);
+			SpatialObject collidingObject = Shape::getOwner(collisionInformation->collidingShape);
 
-			fix10_6 bounciness =  Actor_getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
-			fix10_6 frictionCoefficient =  Actor_getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 bounciness =  Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
+			fix10_6 frictionCoefficient =  Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
-			if( Actor_mustBounce(this))
+			if( Actor::mustBounce(this))
 			{
-				Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+				Body::bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			}
 			else
 			{
@@ -511,7 +511,7 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 				axis |= collisionInformation->solutionVector.direction.x ? __X_AXIS : __NO_AXIS;
 				axis |= collisionInformation->solutionVector.direction.y ? __Y_AXIS : __NO_AXIS;
 				axis |= collisionInformation->solutionVector.direction.z ? __Z_AXIS : __NO_AXIS;
-				Actor_stopMovement(this, axis);
+				Actor::stopMovement(this, axis);
 			}
 
 			returnValue = true;
@@ -522,16 +522,16 @@ bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInfor
 }
 
 // process a telegram
-bool Actor_handleMessage(Actor this, Telegram telegram)
+bool Actor::handleMessage(Actor this, Telegram telegram)
 {
 	ASSERT(this, "Actor::handleMessage: null this");
 
-	if(!this->stateMachine || !StateMachine_handleMessage(this->stateMachine, telegram))
+	if(!this->stateMachine || !StateMachine::handleMessage(this->stateMachine, telegram))
 	{
 		// retrieve message
-		int message = Telegram_getMessage(telegram);
+		int message = Telegram::getMessage(telegram);
 
-		if(this->body && Body_isActive(this->body))
+		if(this->body && Body::isActive(this->body))
 		{
 			switch(message)
 			{
@@ -539,22 +539,22 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 
 					if(this->shapes)
 					{
-						Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
+						Entity::informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 						return true;
 					}
 					break;
 
 				case kBodyStopped:
 
-					if(!Body_getMovementOnAllAxes(this->body) && this->shapes)
+					if(!Body::getMovementOnAllAxes(this->body) && this->shapes)
 					{
-						Entity_informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
+						Entity::informShapesThatStoppedMoving(__SAFE_CAST(Entity, this));
 					}
 					break;
 
 				case kBodyChangedDirection:
 
-					Actor_changeDirectionOnAxis(this, *(int*)Telegram_getExtraInfo(telegram));
+					Actor::changeDirectionOnAxis(this, *(int*)Telegram::getExtraInfo(telegram));
 					return true;
 					break;
 			}
@@ -564,7 +564,7 @@ bool Actor_handleMessage(Actor this, Telegram telegram)
 }
 
 // retrieve state machine
-StateMachine Actor_getStateMachine(Actor this)
+StateMachine Actor::getStateMachine(Actor this)
 {
 	ASSERT(this, "Actor::getStateMachine: null this");
 
@@ -572,25 +572,25 @@ StateMachine Actor_getStateMachine(Actor this)
 }
 
 // stop movement completely
-void Actor_stopAllMovement(Actor this)
+void Actor::stopAllMovement(Actor this)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
-	Actor_stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
+	Actor::stopMovement(this, __X_AXIS | __Y_AXIS | __Z_AXIS);
 }
 
 // stop movement completely
-void Actor_stopMovement(Actor this, u16 axis)
+void Actor::stopMovement(Actor this, u16 axis)
 {
 	ASSERT(this, "Actor::stopMovement: null this");
 
 	if(this->body)
 	{
-		Body_stopMovement(this->body, axis);
+		Body::stopMovement(this->body, axis);
 	}
 }
 
-void Actor_addForce(Actor this, const Force* force)
+void Actor::addForce(Actor this, const Force* force)
 {
 	ASSERT(this, "Actor::addForce: null this");
 	ASSERT(this->body, "Actor::addForce: null body");
@@ -600,57 +600,57 @@ void Actor_addForce(Actor this, const Force* force)
 		return;
 	}
 
-	if(!Actor_canMoveTowards(this, *force))
+	if(!Actor::canMoveTowards(this, *force))
 	{
 		return;
 	}
 
-	Body_addForce(this->body, force);
+	Body::addForce(this->body, force);
 
 	if(this->shapes)
 	{
 		// register the shape for collision detections
-		Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
+		Entity::informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 	}
 }
 
-void Actor_moveUniformly(Actor this, Velocity* velocity)
+void Actor::moveUniformly(Actor this, Velocity* velocity)
 {
 	ASSERT(this, "Actor::moveUniformly: null this");
 
 	// move me with physics
 	if(this->body)
 	{
-		Body_moveUniformly(this->body, *velocity);
+		Body::moveUniformly(this->body, *velocity);
 
-		Entity_informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
+		Entity::informShapesThatStartedMoving(__SAFE_CAST(Entity, this));
 	}
 }
 
 // is it moving?
-bool Actor_isMoving(Actor this)
+bool Actor::isMoving(Actor this)
 {
 	ASSERT(this, "Actor::isMoving: null this");
 
-	return this->body ? Body_getMovementOnAllAxes(this->body) : 0;
+	return this->body ? Body::getMovementOnAllAxes(this->body) : 0;
 }
 
-u16 Actor_getMovementState(Actor this)
+u16 Actor::getMovementState(Actor this)
 {
 	ASSERT(this, "Actor::getMovementState: null this");
 
-	return Actor_isMoving(this);
+	return Actor::isMoving(this);
 }
 
-void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
+void Actor::changeEnvironment(Actor this, Transformation* environmentTransform)
 {
 	ASSERT(this, "Actor::changeEnvironment: null this");
 
-	Base_changeEnvironment(this, environmentTransform);
+	Base::changeEnvironment(this, environmentTransform);
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body::setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 }
 
@@ -664,21 +664,21 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
  * @param environmentTransform
  * @param recursive
  */
-void Actor_initialTransform(Actor this, const Transformation* environmentTransform, u32 recursive)
+void Actor::initialTransform(Actor this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// call base class's transformation method
-	Base_initialTransform(this, environmentTransform, recursive);
+	Base::initialTransform(this, environmentTransform, recursive);
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body::setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 }
 
 // set position
-void Actor_setPosition(Actor this, const Vector3D* position)
+void Actor::setPosition(Actor this, const Vector3D* position)
 {
 	ASSERT(this, "Actor::setPosition: null this");
 
@@ -695,54 +695,54 @@ void Actor_setPosition(Actor this, const Vector3D* position)
 
 	if(this->body)
 	{
-		Body_setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
+		Body::setPosition(this->body, &this->transformation.globalPosition, __SAFE_CAST(SpatialObject, this));
 	}
 
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
-	Entity_transformShapes(__SAFE_CAST(Entity, this));
+	Entity::transformShapes(__SAFE_CAST(Entity, this));
 }
 
 // retrieve global position
-const Vector3D* Actor_getPosition(Actor this)
+const Vector3D* Actor::getPosition(Actor this)
 {
 	ASSERT(this, "Actor::getPosition: null this");
 
-	return this->body ? Body_getPosition(this->body) : Base_getPosition(this);
+	return this->body ? Body::getPosition(this->body) : Base::getPosition(this);
 }
 
 // take hit
-void Actor_takeHitFrom(Actor this, Actor other)
+void Actor::takeHitFrom(Actor this, Actor other)
 {
 	ASSERT(this, "Actor::takeHitFrom: null this");
 	ASSERT(__SAFE_CAST(Actor, other), "Actor::takeHitFrom: other is not actor");
 
 	if(this->body && other->body)
 	{
-		Body_takeHitFrom(this->body, other->body);
+		Body::takeHitFrom(this->body, other->body);
 	}
 }
 
 // get bounciness
-fix10_6 Actor_getBounciness(Actor this)
+fix10_6 Actor::getBounciness(Actor this)
 {
 	ASSERT(this, "Actor::getBounciness: null this");
 
 	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
 
-	return this->body ? Body_getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
+	return this->body ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
 }
 
 // get velocity
-Velocity Actor_getVelocity(Actor this)
+Velocity Actor::getVelocity(Actor this)
 {
 	ASSERT(this, "Actor::getVelocity: null this");
 
-	return this->body ? Body_getVelocity(this->body) : Base_getVelocity(this);
+	return this->body ? Body::getVelocity(this->body) : Base::getVelocity(this);
 }
 
-void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void Actor::exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::exitCollision: null this");
 
@@ -751,15 +751,15 @@ void Actor_exitCollision(Actor this, Shape shape  __attribute__ ((unused)), Shap
 		return;
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body,  Actor_getSurroundingFrictionCoefficient(this));
+	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 }
 
-void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void Actor::collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "Actor::collidingShapeOwnerDestroyed: null this");
 
@@ -768,22 +768,22 @@ void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape __attribute__ ((
 		return;
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body,  Actor_getSurroundingFrictionCoefficient(this));
+	Body::setSurroundingFrictionCoefficient(this->body,  Actor::getSurroundingFrictionCoefficient(this));
 
 	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 }
 
-Body Actor_getBody(Actor this)
+Body Actor::getBody(Actor this)
 {
 	ASSERT(this, "Actor::getBody: null this");
 
 	return this->body;
 }
 
-bool Actor_mustBounce(Actor this __attribute__ ((unused)))
+bool Actor::mustBounce(Actor this __attribute__ ((unused)))
 {
 	ASSERT(this, "Actor::mustBounce: null this");
 

@@ -58,15 +58,15 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 // global
 
-u32 EntityFactory_instantiateEntities(EntityFactory this);
-u32 EntityFactory_initializeEntities(EntityFactory this);
-u32 EntityFactory_transformEntities(EntityFactory this);
-u32 EntityFactory_makeReadyEntities(EntityFactory this);
-u32 EntityFactory_callLoadedEntities(EntityFactory this);
+u32 EntityFactory::instantiateEntities(EntityFactory this);
+u32 EntityFactory::initializeEntities(EntityFactory this);
+u32 EntityFactory::transformEntities(EntityFactory this);
+u32 EntityFactory::makeReadyEntities(EntityFactory this);
+u32 EntityFactory::callLoadedEntities(EntityFactory this);
 
-static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
-static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes);
-static void Entity_destroyShapes(Entity this);
+static void Entity::updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
+static void Entity::addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes);
+static void Entity::destroyShapes(Entity this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -89,12 +89,12 @@ __CLASS_NEW_END(Entity, entityDefinition, id, internalId, name);
  * @param internalId
  * @param name
  */
-void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
+void Entity::constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "Entity::constructor: null this");
 
 	// construct base Container
-	Base_constructor(this, name);
+	Base::constructor(this, name);
 
 	// set the ids
 	this->id = id;
@@ -110,7 +110,7 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
 	this->entityFactory = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
-	this->size = Size_getFromPixelSize(entityDefinition->pixelSize);
+	this->size = Size::getFromPixelSize(entityDefinition->pixelSize);
 
 	this->invalidateSprites = 0;
 }
@@ -123,11 +123,11 @@ void Entity_constructor(Entity this, EntityDefinition* entityDefinition, s16 id,
  *
  * @param this	Function scope
  */
-void Entity_destructor(Entity this)
+void Entity::destructor(Entity this)
 {
 	ASSERT(this, "Entity::destructor: null this");
 
-	Entity_destroyShapes(this);
+	Entity::destroyShapes(this);
 
 	if(this->centerDisplacement)
 	{
@@ -139,11 +139,11 @@ void Entity_destructor(Entity this)
 		__DELETE(this->entityFactory);
 	}
 
-	Entity_releaseSprites(this);
+	Entity::releaseSprites(this);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -154,15 +154,15 @@ void Entity_destructor(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_iAmDeletingMyself(Entity this)
+void Entity::iAmDeletingMyself(Entity this)
 {
 	ASSERT(this, "Entity::iAmDeletingMyself: null this");
 
-	Base_iAmDeletingMyself(this);
+	Base::iAmDeletingMyself(this);
 
 	// destroy collision shapes
-	Entity_activateShapes(this, false);
-//	Entity_destroyShapes(this);
+	Entity::activateShapes(this, false);
+//	Entity::destroyShapes(this);
 }
 
 /**
@@ -175,7 +175,7 @@ void Entity_iAmDeletingMyself(Entity this)
  *
  * @return		Internal ID
  */
-s16 Entity_getInternalId(Entity this)
+s16 Entity::getInternalId(Entity this)
 {
 	ASSERT(this, "Entity::getInternalId: null this");
 
@@ -192,7 +192,7 @@ s16 Entity_getInternalId(Entity this)
  *
  * @return		ID
  */
-s16 Entity_getId(Entity this)
+s16 Entity::getId(Entity this)
 {
 	ASSERT(this, "Entity::getId: null this");
 
@@ -210,7 +210,7 @@ s16 Entity_getId(Entity this)
  *
  * @return		Child Entity
  */
-Entity Entity_getChildById(Entity this, s16 id)
+Entity Entity::getChildById(Entity this, s16 id)
 {
 	ASSERT(this, "Entity::getChildById: null this");
 
@@ -223,9 +223,9 @@ Entity Entity_getChildById(Entity this, s16 id)
 		{
 			Entity child = __SAFE_CAST(Entity, node->data);
 
-			if(Entity_getId(child) == id)
+			if(Entity::getId(child) == id)
 			{
-				return this->removedChildren && VirtualList_find(this->removedChildren, child) ? NULL : child;
+				return this->removedChildren && VirtualList::find(this->removedChildren, child) ? NULL : child;
 			}
 		}
 	}
@@ -242,7 +242,7 @@ Entity Entity_getChildById(Entity this, s16 id)
  * @param this				Function scope
  * @param entityDefinition	EntityDefinition
  */
-void Entity_setDefinition(Entity this, void* entityDefinition)
+void Entity::setDefinition(Entity this, void* entityDefinition)
 {
 	ASSERT(this, "Entity::setDefinition: null this");
 
@@ -258,7 +258,7 @@ void Entity_setDefinition(Entity this, void* entityDefinition)
  *
  * @param this	Function scope
  */
-static void Entity_destroyShapes(Entity this)
+static void Entity::destroyShapes(Entity this)
 {
 	ASSERT(this, "Entity::setDefinition: null this");
 
@@ -270,7 +270,7 @@ static void Entity_destroyShapes(Entity this)
 
 		for(; node; node = node->next)
 		{
-			CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(Shape, node->data));
+			CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(Shape, node->data));
 		}
 
 		__DELETE(this->shapes);
@@ -286,13 +286,13 @@ static void Entity_destroyShapes(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_setupGraphics(Entity this)
+void Entity::setupGraphics(Entity this)
 {
 	ASSERT(this, "Entity::setupGraphics: null this");
 
-	Base_setupGraphics(this);
+	Base::setupGraphics(this);
 
-	Entity_addSprites(this, this->entityDefinition->spriteDefinitions);
+	Entity::addSprites(this, this->entityDefinition->spriteDefinitions);
 }
 
 /**
@@ -303,13 +303,13 @@ void Entity_setupGraphics(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_releaseGraphics(Entity this)
+void Entity::releaseGraphics(Entity this)
 {
 	ASSERT(this, "Entity::releaseGraphics: null this");
 
-	Base_releaseGraphics(this);
+	Base::releaseGraphics(this);
 
-	Entity_releaseSprites(this);
+	Entity::releaseSprites(this);
 }
 
 /**
@@ -320,7 +320,7 @@ void Entity_releaseGraphics(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_releaseSprites(Entity this)
+void Entity::releaseSprites(Entity this)
 {
 	ASSERT(this, "Entity::releaseSprites: null this");
 
@@ -328,11 +328,11 @@ void Entity_releaseSprites(Entity this)
 	{
 		VirtualNode node = this->sprites->head;
 
-		SpriteManager spriteManager = SpriteManager_getInstance();
+		SpriteManager spriteManager = SpriteManager::getInstance();
 
 		for(; node ; node = node->next)
 		{
-			SpriteManager_disposeSprite(spriteManager, __SAFE_CAST(Sprite, node->data));
+			SpriteManager::disposeSprite(spriteManager, __SAFE_CAST(Sprite, node->data));
 		}
 
 		// delete the sprites
@@ -351,11 +351,11 @@ void Entity_releaseSprites(Entity this)
  * @param pixelRightBox
  * @param environmentPosition
  */
-static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRightBox, Vector3D environmentPosition)
+static void Entity::calculateSizeFromChildren(Entity this, PixelRightBox* pixelRightBox, Vector3D environmentPosition)
 {
 	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
 
-	PixelVector pixelGlobalPosition = PixelVector_getFromVector3D(environmentPosition, 0);
+	PixelVector pixelGlobalPosition = PixelVector::getFromVector3D(environmentPosition, 0);
 
 	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->transformation.localPosition.x);
 	pixelGlobalPosition.y += __METERS_TO_PIXELS(this->transformation.localPosition.y);
@@ -379,13 +379,13 @@ static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRi
 		{
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-//			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+//			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
-			halfWidth = Sprite_getHalfWidth(sprite);
-			halfHeight = Sprite_getHalfHeight(sprite);
+			halfWidth = Sprite::getHalfWidth(sprite);
+			halfHeight = Sprite::getHalfHeight(sprite);
 			halfDepth = 16;
 
-			PixelVector spriteDisplacement = Sprite_getDisplacement(sprite);
+			PixelVector spriteDisplacement = Sprite::getDisplacement(sprite);
 
 			if(left > -halfWidth + spriteDisplacement.x)
 			{
@@ -464,7 +464,7 @@ static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRi
 
 		for(; childNode; childNode = childNode->next)
 		{
-			Entity_calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), pixelRightBox, Vector3D_getFromPixelVector(pixelGlobalPosition));
+			Entity::calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), pixelRightBox, Vector3D::getFromPixelVector(pixelGlobalPosition));
 		}
 	}
 }
@@ -477,13 +477,13 @@ static void Entity_calculateSizeFromChildren(Entity this, PixelRightBox* pixelRi
  *
  * @param this	Function scope
  */
-void Entity_calculateSize(Entity this)
+void Entity::calculateSize(Entity this)
 {
 	ASSERT(this, "Entity::calculateSize: null this");
 
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_calculateSizeFromChildren(this, &pixelRightBox, (Vector3D){0, 0, 0});
+	Entity::calculateSizeFromChildren(this, &pixelRightBox, (Vector3D){0, 0, 0});
 
 	Vector3D centerDisplacement =
 	{
@@ -518,7 +518,7 @@ void Entity_calculateSize(Entity this)
  * @param environmentPosition
  * @param pixelRightBox
  */
-static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition, PixelRightBox* pixelRightBox)
+static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition, PixelRightBox* pixelRightBox)
 {
 	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
 	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
@@ -688,7 +688,7 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
 		int i = 0;
 		for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
 		{
-			Entity_getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &pixelGlobalPosition, pixelRightBox);
+			Entity::getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &pixelGlobalPosition, pixelRightBox);
 		}
 	}
 }
@@ -704,11 +704,11 @@ static void Entity_getSizeFromDefinition(const PositionedEntity* positionedEntit
  *
  * @return						PixelRightBox
  */
-PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
+PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity_getSizeFromDefinition(positionedEntity, environmentPosition, &pixelRightBox);
+	Entity::getSizeFromDefinition(positionedEntity, environmentPosition, &pixelRightBox);
 
 	pixelRightBox.x0 = pixelRightBox.x0 - positionedEntity->onScreenPosition.x;
 	pixelRightBox.x1 = pixelRightBox.x1 - positionedEntity->onScreenPosition.x;
@@ -732,7 +732,7 @@ PixelRightBox Entity_getTotalSizeFromDefinition(const PositionedEntity* position
  *
  * @return						Entity's global position
  */
-Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
+Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
 {
 	ASSERT(childrenDefinitions, "Entity::calculateGlobalPositionFromDefinitionByName: null positionedEntity");
 
@@ -761,7 +761,7 @@ Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positi
 			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.y);
 			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.z + childrenDefinitions[i].onScreenPosition.zDisplacement);
 
-			Vector3D* position = Entity_calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
+			Vector3D* position = Entity::calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
 
 			if(position)
 			{
@@ -787,7 +787,7 @@ Vector3D* Entity_calculateGlobalPositionFromDefinitionByName(const struct Positi
  *
  * @return					Entity instance
  */
-Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
+Entity Entity::instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -803,7 +803,7 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id
 	// process extra info
 	if(extraInfo)
 	{
-		 Entity_setExtraInfo(entity, extraInfo);
+		 Entity::setExtraInfo(entity, extraInfo);
 	}
 
 	return entity;
@@ -818,7 +818,7 @@ Entity Entity_instantiate(const EntityDefinition* const entityDefinition, s16 id
  * @param this					Function scope
  * @param childrenDefinitions
  */
-void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefinitions)
+void Entity::addChildEntities(Entity this, const PositionedEntity* childrenDefinitions)
 {
 	ASSERT(this, "Entity::loadChildren: null this");
 
@@ -832,11 +832,11 @@ void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefini
 	// go through n sprites in entity's definition
 	for(; childrenDefinitions[i].entityDefinition; i++)
 	{
-		Entity child = Entity_loadEntity(&childrenDefinitions[i], this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
+		Entity child = Entity::loadEntity(&childrenDefinitions[i], this->internalId + Container::getChildCount(__SAFE_CAST(Container, this)));
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
-		Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
+		Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
 	}
 }
 
@@ -851,7 +851,7 @@ void Entity_addChildEntities(Entity this, const PositionedEntity* childrenDefini
  *
  * @return					Entity
  */
-Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
+Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 
@@ -860,18 +860,18 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
 		return NULL;
 	}
 
-	Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
 
-	Vector3D position = Vector3D_getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	 Container_setLocalPosition(entity, &position);
+	 Container::setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
 	{
-		Entity_addChildEntities(entity, positionedEntity->childrenDefinitions);
+		Entity::addChildEntities(entity, positionedEntity->childrenDefinitions);
 	}
 
 	return entity;
@@ -886,7 +886,7 @@ Entity Entity_loadEntity(const PositionedEntity* const positionedEntity, s16 int
  * @param this					Function scope
  * @param childrenDefinitions
  */
-void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
+void Entity::addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
 {
 	ASSERT(this, "Entity::addChildEntitiesDeferred: null this");
 	ASSERT(childrenDefinitions, "Entity::addChildEntitiesDeferred: null childrenDefinitions");
@@ -906,7 +906,7 @@ void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childr
 	// go through n sprites in entity's definition
 	for(; childrenDefinitions[i].entityDefinition; i++)
 	{
-		EntityFactory_spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)));
+		EntityFactory::spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->internalId + Container::getChildCount(__SAFE_CAST(Container, this)));
 	}
 }
 
@@ -921,7 +921,7 @@ void Entity_addChildEntitiesDeferred(Entity this, const PositionedEntity* childr
  *
  * @return					Entity
  */
-Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
+Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
@@ -930,23 +930,23 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
 		return NULL;
 	}
 
-	Entity entity = Entity_instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
 	if(positionedEntity->name)
 	{
-		Container_setName(__SAFE_CAST(Container, entity), positionedEntity->name);
+		Container::setName(__SAFE_CAST(Container, entity), positionedEntity->name);
 	}
 
-	Vector3D position = Vector3D_getFromScreenPixelVector(positionedEntity->onScreenPosition);
+	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	 Container_setLocalPosition(entity, &position);
+	 Container::setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
 	{
-		Entity_addChildEntitiesDeferred(entity, positionedEntity->childrenDefinitions);
+		Entity::addChildEntitiesDeferred(entity, positionedEntity->childrenDefinitions);
 	}
 
 	return entity;
@@ -967,7 +967,7 @@ Entity Entity_loadEntityDeferred(const PositionedEntity* const positionedEntity,
  *
  * @return					Entity
  */
-Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
 {
 	ASSERT(this, "Entity::addChildEntity: null this");
 	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
@@ -977,7 +977,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 		return NULL;
 	}
 
-	PixelVector pixelPosition = PixelVector_getFromVector3D(*position, 0);
+	PixelVector pixelPosition = PixelVector::getFromVector3D(*position, 0);
 
 	ScreenPixelVector screenPixelVector =
 	{
@@ -991,7 +991,7 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	{
 		(EntityDefinition*)entityDefinition,
 		screenPixelVector,
-		this->internalId + Container_getChildCount(__SAFE_CAST(Container, this)),
+		this->internalId + Container::getChildCount(__SAFE_CAST(Container, this)),
 		(char*)name,
 		NULL,
 		extraInfo,
@@ -999,24 +999,24 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
 	};
 
 	// load child entity
-	Entity childEntity = Entity_loadEntity(&positionedEntity, 0 > internalId ? internalId : positionedEntity.id);
+	Entity childEntity = Entity::loadEntity(&positionedEntity, 0 > internalId ? internalId : positionedEntity.id);
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics
-	 Container_setupGraphics(childEntity);
-	 Entity_initialize(childEntity, true);
+	 Container::setupGraphics(childEntity);
+	 Entity::initialize(childEntity, true);
 
 	// create the entity and add it to the world
-	Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
+	Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
 
 	// apply transformations
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
+	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
 
 	 // apply transformations
-	 Container_initialTransform(childEntity, &environmentTransform, true);
+	 Container::initialTransform(childEntity, &environmentTransform, true);
 
 	// make ready
-	 Entity_ready(childEntity, true);
+	 Entity::ready(childEntity, true);
 
 	return childEntity;
 }
@@ -1031,13 +1031,13 @@ Entity Entity_addChildEntity(Entity this, const EntityDefinition* entityDefiniti
  *
  * @return		Boolean whether all children are instantiated
  */
-u32 Entity_areAllChildrenInstantiated(Entity this)
+u32 Entity::areAllChildrenInstantiated(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenInstantiated: null this");
 
 	if(this->entityFactory)
 	{
-		return __LIST_EMPTY == EntityFactory_instantiateEntities(this->entityFactory);
+		return __LIST_EMPTY == EntityFactory::instantiateEntities(this->entityFactory);
 	}
 
 	return true;
@@ -1053,13 +1053,13 @@ u32 Entity_areAllChildrenInstantiated(Entity this)
  *
  * @return		Boolean whether all children are initialized
  */
-u32 Entity_areAllChildrenInitialized(Entity this)
+u32 Entity::areAllChildrenInitialized(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenInitialized: null this");
 
 	if(this->entityFactory)
 	{
-		return __LIST_EMPTY == EntityFactory_initializeEntities(this->entityFactory);
+		return __LIST_EMPTY == EntityFactory::initializeEntities(this->entityFactory);
 	}
 
 	return true;
@@ -1075,13 +1075,13 @@ u32 Entity_areAllChildrenInitialized(Entity this)
  *
  * @return		Boolean whether all children are transformed
  */
-u32 Entity_areAllChildrenTransformed(Entity this)
+u32 Entity::areAllChildrenTransformed(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenTransformed: null this");
 
 	if(this->entityFactory)
 	{
-		return __LIST_EMPTY == EntityFactory_transformEntities(this->entityFactory);
+		return __LIST_EMPTY == EntityFactory::transformEntities(this->entityFactory);
 	}
 
 	return true;
@@ -1097,27 +1097,27 @@ u32 Entity_areAllChildrenTransformed(Entity this)
  *
  * @return		Boolean whether all children are ready
  */
-u32 Entity_areAllChildrenReady(Entity this)
+u32 Entity::areAllChildrenReady(Entity this)
 {
 	ASSERT(this, "Entity::areAllChildrenReady: null this");
 
 	if(this->entityFactory)
 	{
-		u32 returnValue = __LIST_EMPTY == EntityFactory_makeReadyEntities(this->entityFactory);
+		u32 returnValue = __LIST_EMPTY == EntityFactory::makeReadyEntities(this->entityFactory);
 
-		if(!EntityFactory_hasEntitiesPending(this->entityFactory))
+		if(!EntityFactory::hasEntitiesPending(this->entityFactory))
 		{
 			__DELETE(this->entityFactory);
 			this->entityFactory = NULL;
 
 			// must force size calculation now that all children are loaded
-			Entity_calculateSize(this);
+			Entity::calculateSize(this);
 		}
 
 		return returnValue;
 	}
 
-	Entity_calculateSize(this);
+	Entity::calculateSize(this);
 
 	return true;
 }
@@ -1130,7 +1130,7 @@ u32 Entity_areAllChildrenReady(Entity this)
  *
  * @param this					Function scope
  */
-void Entity_transformShapes(Entity this)
+void Entity::transformShapes(Entity this)
 {
 	ASSERT(this, "Entity::transformShapes: null this");
 
@@ -1139,21 +1139,21 @@ void Entity_transformShapes(Entity this)
 		const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
 
 		// setup shape
-//		bool isAffectedByRelativity =  SpatialObject_isAffectedByRelativity(this);
-		const Vector3D* myPosition =  SpatialObject_getPosition(this);
-		const Rotation* myRotation =  SpatialObject_getRotation(this);
-		const Scale* myScale =  SpatialObject_getScale(this);
+//		bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
+		const Vector3D* myPosition =  SpatialObject::getPosition(this);
+		const Rotation* myRotation =  SpatialObject::getRotation(this);
+		const Scale* myScale =  SpatialObject::getScale(this);
 
-		Direction currentDirection = Entity_getDirection(this);
+		Direction currentDirection = Entity::getDirection(this);
 		VirtualNode node = this->shapes->head;
 		int i = 0;
 
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
-			u16 axesForShapeSyncWithDirection =  Entity_getAxesForShapeSyncWithDirection(this);
+			u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
 
-			Vector3D shapeDisplacement = Vector3D_getFromPixelVector(shapeDefinitions[i].displacement);
+			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeDefinitions[i].displacement);
 
 			Vector3D shapePosition =
 			{
@@ -1176,9 +1176,9 @@ void Entity_transformShapes(Entity this)
 				__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
 			};
 
-			Size size = Size_getFromPixelSize(shapeDefinitions[i].pixelSize);
+			Size size = Size::getFromPixelSize(shapeDefinitions[i].pixelSize);
 
-			 Shape_position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			 Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
 		}
 	}
 }
@@ -1192,7 +1192,7 @@ void Entity_transformShapes(Entity this)
  * @param this					Function scope
  * @param shapeDefinitions		List of shapes
  */
-static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
+static void Entity::addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
 {
 	ASSERT(this, "Entity::addShapes: null this");
 
@@ -1203,7 +1203,7 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 
 	if(destroyPreviousShapes)
 	{
-		Entity_destroyShapes(this);
+		Entity::destroyShapes(this);
 	}
 
 	int i = 0;
@@ -1216,12 +1216,12 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
 	// go through n sprites in entity's definition
 	for(; shapeDefinitions[i].allocator; i++)
 	{
-		Shape shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinitions[i]);
+		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinitions[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
-		VirtualList_pushBack(this->shapes, shape);
+		VirtualList::pushBack(this->shapes, shape);
 	}
 
-	Entity_transformShapes(this);
+	Entity::transformShapes(this);
 }
 
 /**
@@ -1233,7 +1233,7 @@ static void Entity_addShapes(Entity this, const ShapeDefinition* shapeDefinition
  * @param this		Function scope
  * @param recursive
  */
-void Entity_initialize(Entity this, bool recursive)
+void Entity::initialize(Entity this, bool recursive)
 {
 	ASSERT(this, "Entity::initialize: null this");
 
@@ -1244,7 +1244,7 @@ void Entity_initialize(Entity this, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			 Entity_initialize(childNode->data, recursive);
+			 Entity::initialize(childNode->data, recursive);
 		}
 	}
 }
@@ -1258,7 +1258,7 @@ void Entity_initialize(Entity this, bool recursive)
  * @param this		Function scope
  * @param recursive
  */
-void Entity_ready(Entity this, bool recursive)
+void Entity::ready(Entity this, bool recursive)
 {
 	ASSERT(this, "Entity::ready: null this");
 
@@ -1269,7 +1269,7 @@ void Entity_ready(Entity this, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			 Entity_ready(childNode->data, recursive);
+			 Entity::ready(childNode->data, recursive);
 		}
 	}
 }
@@ -1283,7 +1283,7 @@ void Entity_ready(Entity this, bool recursive)
  * @param this		Function scope
  * @param extraInfo
  */
-void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
+void Entity::setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::setExtraInfo: null this");
 }
@@ -1297,7 +1297,7 @@ void Entity_setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo _
  * @param this					Function scope
  * @param spriteDefinitions
  */
-void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
+void Entity::addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
 {
 	ASSERT(this, "Entity::addSprites: null this");
 
@@ -1311,7 +1311,7 @@ void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
 		this->sprites = __NEW(VirtualList);
 	}
 
-	SpriteManager spriteManager = SpriteManager_getInstance();
+	SpriteManager spriteManager = SpriteManager::getInstance();
 
 	int i = 0;
 
@@ -1320,8 +1320,8 @@ void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
 	{
 		ASSERT(spriteDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
 
-		VirtualList_pushBack(this->sprites, SpriteManager_createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], __SAFE_CAST(Object, this)));
-		ASSERT(__SAFE_CAST(Sprite, VirtualList_back(this->sprites)), "Entity::addSprite: sprite not created");
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], __SAFE_CAST(Object, this)));
+		ASSERT(__SAFE_CAST(Sprite, VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 }
 
@@ -1336,7 +1336,7 @@ void Entity_addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
  *
  * @return							True if a sprite was created
  */
-bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionIndex)
+bool Entity::addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionIndex)
 {
 	ASSERT(this, "Entity::addSprite: null this");
 
@@ -1358,12 +1358,12 @@ bool Entity_addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionInde
 	}
 
 	// call the appropriate allocator to support inheritance
-	VirtualList_pushBack(this->sprites, SpriteManager_createSprite(SpriteManager_getInstance(), (SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this)));
+	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this)));
 
 	return true;
 }
 
-static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
+static void Entity::updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
 {
 	ASSERT(this, "Entity::transform: null this");
 
@@ -1384,16 +1384,16 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			 Sprite_position(sprite, &this->transformation.globalPosition);
+			 Sprite::position(sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			 Sprite_rotate(sprite, &this->transformation.globalRotation);
+			 Sprite::rotate(sprite, &this->transformation.globalRotation);
 
 			// calculate the scale
-			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			 Sprite_calculateParallax(sprite, this->transformation.globalPosition.z);
+			 Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition && updateRotation)
@@ -1403,10 +1403,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			 Sprite_position(sprite, &this->transformation.globalPosition);
+			 Sprite::position(sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			 Sprite_rotate(sprite, &this->transformation.globalRotation);
+			 Sprite::rotate(sprite, &this->transformation.globalRotation);
 		}
 	}
 	else if(updatePosition && updateScale)
@@ -1416,13 +1416,13 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			 Sprite_position(sprite, &this->transformation.globalPosition);
+			 Sprite::position(sprite, &this->transformation.globalPosition);
 
 			// calculate the scale
-			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			 Sprite_calculateParallax(sprite, this->transformation.globalPosition.z);
+			 Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition)
@@ -1432,7 +1432,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// update sprite's 2D position
-			 Sprite_position(sprite, &this->transformation.globalPosition);
+			 Sprite::position(sprite, &this->transformation.globalPosition);
 		}
 	}
 	else if(updateScale)
@@ -1442,10 +1442,10 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
 			Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
 			// calculate the scale
-			 Sprite_resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			 Sprite_calculateParallax(sprite, this->transformation.globalPosition.z);
+			 Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 }
@@ -1460,32 +1460,32 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
  * @param environmentTransform
  * @param recursive
  */
-void Entity_initialTransform(Entity this, const Transformation* environmentTransform, u32 recursive)
+void Entity::initialTransform(Entity this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 
 	// call base class's transformation method
-	Base_initialTransform(this, environmentTransform, recursive);
+	Base::initialTransform(this, environmentTransform, recursive);
 
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 	if(this->hidden)
 	{
-		Entity_hide(this);
+		Entity::hide(this);
 	}
 
 	// now can calculate the size
 	if(recursive && (!this->size.x || !this->size.y || !this->size.z))
 	{
 		// must force size calculation now
-		Entity_calculateSize(this);
+		Entity::calculateSize(this);
 	}
 
 	// this method can be called multiple times so only add shapes
 	// if not already done
 	if(!this->shapes)
 	{
-		Entity_addShapes(this, this->entityDefinition->shapeDefinitions, false);
+		Entity::addShapes(this, this->entityDefinition->shapeDefinitions, false);
 	}
 }
 
@@ -1498,25 +1498,25 @@ void Entity_initialTransform(Entity this, const Transformation* environmentTrans
  * @param this					Function scope
  * @param environmentTransform
  */
-void Entity_transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Entity::transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "Entity::transform: null this");
 
 	if(this->sprites)
 	{
-		this->invalidateSprites = invalidateTransformationFlag | Entity_updateSpritePosition(this) | Entity_updateSpriteRotation(this) | Entity_updateSpriteScale(this);
+		this->invalidateSprites = invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
 	if(this->invalidateGlobalTransformation)
 	{
-		Entity_transformShapes(this);
+		Entity::transformShapes(this);
 
 		// call base class's transformation method
-		Base_transform(this, environmentTransform, invalidateTransformationFlag);
+		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
 	else if((u32)this->children)
 	{
-		Base_transform(this, environmentTransform, invalidateTransformationFlag);
+		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
 }
 
@@ -1528,13 +1528,13 @@ void Entity_transform(Entity this, const Transformation* environmentTransform, u
  *
  * @param this	Function scope
  */
-void Entity_setLocalPosition(Entity this, const Vector3D* position)
+void Entity::setLocalPosition(Entity this, const Vector3D* position)
 {
 	ASSERT(this, "Entity::setLocalPosition: null this");
 
-	Base_setLocalPosition(this, position);
+	Base::setLocalPosition(this, position);
 
-	Entity_transformShapes(this);
+	Entity::transformShapes(this);
 }
 
 /**
@@ -1545,13 +1545,13 @@ void Entity_setLocalPosition(Entity this, const Vector3D* position)
  *
  * @param this	Function scope
  */
-void Entity_setLocalRotation(Entity this, const Rotation* rotation)
+void Entity::setLocalRotation(Entity this, const Rotation* rotation)
 {
 	ASSERT(this, "Entity::setLocalRotation: null this");
 
-	Base_setLocalRotation(this, rotation);
+	Base::setLocalRotation(this, rotation);
 
-	Entity_transformShapes(this);
+	Entity::transformShapes(this);
 }
 
 /**
@@ -1562,16 +1562,16 @@ void Entity_setLocalRotation(Entity this, const Rotation* rotation)
  *
  * @param this	Function scope
  */
-void Entity_synchronizeGraphics(Entity this)
+void Entity::synchronizeGraphics(Entity this)
 {
 	ASSERT(this, "Entity::synchronizeGraphics: null this");
 
 	if(this->children)
 	{
-		Base_synchronizeGraphics(this);
+		Base::synchronizeGraphics(this);
 	}
 
-	Entity_updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION, this->invalidateSprites & __INVALIDATE_PROJECTION);
+	Entity::updateSprites(this, this->invalidateSprites & __INVALIDATE_POSITION, this->invalidateSprites & __INVALIDATE_SCALE, this->invalidateSprites & __INVALIDATE_ROTATION, this->invalidateSprites & __INVALIDATE_PROJECTION);
 
 	this->invalidateSprites = false;
 }
@@ -1586,7 +1586,7 @@ void Entity_synchronizeGraphics(Entity this)
  *
  * @return		EntityDefinition
  */
-EntityDefinition* Entity_getEntityDefinition(Entity this)
+EntityDefinition* Entity::getEntityDefinition(Entity this)
 {
 	ASSERT(this, "Entity::getEntityDefinition: null this");
 
@@ -1603,7 +1603,7 @@ EntityDefinition* Entity_getEntityDefinition(Entity this)
  *
  * @return		Global position
  */
-const Vector3D* Entity_getPosition(Entity this)
+const Vector3D* Entity::getPosition(Entity this)
 {
 	ASSERT(this, "Entity::getPosition: null this");
 
@@ -1620,7 +1620,7 @@ const Vector3D* Entity_getPosition(Entity this)
  *
  * @return		Global rotation
  */
-const Rotation* Entity_getRotation(Entity this)
+const Rotation* Entity::getRotation(Entity this)
 {
 	ASSERT(this, "Entity::getRotation: null this");
 
@@ -1637,7 +1637,7 @@ const Rotation* Entity_getRotation(Entity this)
  *
  * @return		Global position
  */
-const Scale* Entity_getScale(Entity this)
+const Scale* Entity::getScale(Entity this)
 {
 	ASSERT(this, "Entity::getScale: null this");
 
@@ -1654,7 +1654,7 @@ const Scale* Entity_getScale(Entity this)
  *
  * @return		VirtualList of Entity's sprites
  */
-VirtualList Entity_getSprites(Entity this)
+VirtualList Entity::getSprites(Entity this)
 {
 	ASSERT(this, "Entity::getSprites: null this");
 
@@ -1672,7 +1672,7 @@ VirtualList Entity_getSprites(Entity this)
  *
  * @return			True if successfully processed, false otherwise
  */
-bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
+bool Entity::handleMessage(Entity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::handleMessage: null this");
 
@@ -1689,13 +1689,13 @@ bool Entity_handleMessage(Entity this __attribute__ ((unused)), Telegram telegra
  *
  * @return		Entity's width
  */
-fix10_6 Entity_getWidth(Entity this)
+fix10_6 Entity::getWidth(Entity this)
 {
 	ASSERT(this, "Entity::getWidth: null this");
 
 	if(!this->size.x)
 	{
-		Entity_calculateSize(this);
+		Entity::calculateSize(this);
 	}
 
 	// must calculate based on the scale because not affine container must be enlarged
@@ -1712,13 +1712,13 @@ fix10_6 Entity_getWidth(Entity this)
  *
  * @return		Entity's height
  */
-fix10_6 Entity_getHeight(Entity this)
+fix10_6 Entity::getHeight(Entity this)
 {
 	ASSERT(this, "Entity::getHeight: null this");
 
 	if(!this->size.y)
 	{
-		Entity_calculateSize(this);
+		Entity::calculateSize(this);
 	}
 
 	return this->size.y;
@@ -1734,13 +1734,13 @@ fix10_6 Entity_getHeight(Entity this)
  *
  * @return		Entity's depth
  */
-fix10_6 Entity_getDepth(Entity this)
+fix10_6 Entity::getDepth(Entity this)
 {
 	ASSERT(this, "Entity::getDepth: null this");
 
 	if(!this->size.z)
 	{
-		Entity_calculateSize(this);
+		Entity::calculateSize(this);
 	}
 
 	// must calculate based on the scale because not affine object must be enlarged
@@ -1759,7 +1759,7 @@ fix10_6 Entity_getDepth(Entity this)
  *
  * @return			Boolean if visible
  */
-bool Entity_isVisible(Entity this, int pad, bool recursive)
+bool Entity::isVisible(Entity this, int pad, bool recursive)
 {
 	ASSERT(this, "Entity::isVisible: null this");
 
@@ -1776,9 +1776,9 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
-			PixelVector spritePosition = Sprite_getDisplacedPosition(sprite);
+			PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
 
-			PixelSize pixelSize = PixelSize_getFromSize(this->size);
+			PixelSize pixelSize = PixelSize::getFromSize(this->size);
 
 			s16 halfWidth	 = pixelSize.x >> 1;
 			s16 halfHeight	 = pixelSize.y >> 1;
@@ -1811,7 +1811,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 	}
 	else
 	{
-		Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
+		Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
 
 		if(this->centerDisplacement)
 		{
@@ -1820,7 +1820,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 			position3D.z += this->centerDisplacement->z;
 		}
 
-		PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
+		PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
 		s16 halfWidth = __METERS_TO_PIXELS(this->size.x >> 1);
 		s16 halfHeight = __METERS_TO_PIXELS(this->size.y >> 1);
@@ -1857,7 +1857,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			if( Entity_isVisible(VirtualNode_getData(childNode), pad, true))
+			if( Entity::isVisible(VirtualNode::getData(childNode), pad, true))
 			{
 				return true;
 			}
@@ -1877,7 +1877,7 @@ bool Entity_isVisible(Entity this, int pad, bool recursive)
  *
  * @return		Boolean if necessary
  */
-bool Entity_updateSpritePosition(Entity this)
+bool Entity::updateSpritePosition(Entity this)
 {
 	ASSERT(this, "Entity::updateSpritePosition: null this");
 
@@ -1894,7 +1894,7 @@ bool Entity_updateSpritePosition(Entity this)
  *
  * @return		Boolean if necessary
  */
-bool Entity_updateSpriteRotation(Entity this)
+bool Entity::updateSpriteRotation(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteRotation: null this");
 
@@ -1911,7 +1911,7 @@ bool Entity_updateSpriteRotation(Entity this)
  *
  * @return		Boolean if necessary
  */
-bool Entity_updateSpriteScale(Entity this)
+bool Entity::updateSpriteScale(Entity this)
 {
 	ASSERT(this, "Entity::updateSpriteScale: null this");
 
@@ -1928,7 +1928,7 @@ bool Entity_updateSpriteScale(Entity this)
  *
  * @return		Entity's Shape list
  */
-VirtualList Entity_getShapes(Entity this)
+VirtualList Entity::getShapes(Entity this)
 {
 	ASSERT(this, "Entity::getShapes: null this");
 
@@ -1943,19 +1943,19 @@ VirtualList Entity_getShapes(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_show(Entity this)
+void Entity::show(Entity this)
 {
 	ASSERT(this, "Entity::show: null this");
 
 	// update transformation before hiding
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	 Container_transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
+	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+	 Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
-	Entity_synchronizeGraphics(this);
+	Entity::synchronizeGraphics(this);
 
-	Base_show(this);
+	Base::show(this);
 
 	// show all sprites
 	if(this->sprites)
@@ -1963,12 +1963,12 @@ void Entity_show(Entity this)
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			 Sprite_show(__SAFE_CAST(Sprite, node->data));
+			 Sprite::show(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 
 	// force invalid position to update sprites and children's sprites
-	Container_invalidateGlobalTransformation(__SAFE_CAST(Container, this));
+	Container::invalidateGlobalTransformation(__SAFE_CAST(Container, this));
 }
 
 /**
@@ -1979,19 +1979,19 @@ void Entity_show(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_hide(Entity this)
+void Entity::hide(Entity this)
 {
 	ASSERT(this, "Entity::hide: null this");
 
 	// update transformation before hiding
-	Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-	Container_transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
+	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
-	Entity_synchronizeGraphics(this);
+	Entity::synchronizeGraphics(this);
 
-	Base_hide(this);
+	Base::hide(this);
 
 	// hide all sprites
 	if(this->sprites)
@@ -1999,7 +1999,7 @@ void Entity_hide(Entity this)
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			 Sprite_hide(__SAFE_CAST(Sprite, node->data));
+			 Sprite::hide(__SAFE_CAST(Sprite, node->data));
 		}
 	}
 }
@@ -2012,13 +2012,13 @@ void Entity_hide(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_suspend(Entity this)
+void Entity::suspend(Entity this)
 {
 	ASSERT(this, "Entity::suspend: null this");
 
-	Base_suspend(this);
+	Base::suspend(this);
 
-	Entity_releaseSprites(this);
+	Entity::releaseSprites(this);
 }
 
 /**
@@ -2029,21 +2029,21 @@ void Entity_suspend(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_resume(Entity this)
+void Entity::resume(Entity this)
 {
 	ASSERT(this, "Entity::resume: null this");
 
-	Base_resume(this);
+	Base::resume(this);
 
 	// initialize sprites
 	if(this->entityDefinition)
 	{
-		Entity_addSprites(this, this->entityDefinition->spriteDefinitions);
+		Entity::addSprites(this, this->entityDefinition->spriteDefinitions);
 	}
 
 	if(this->hidden)
 	{
-		Entity_hide(this);
+		Entity::hide(this);
 	}
 
 	// force update sprites on next game's cycle
@@ -2061,7 +2061,7 @@ void Entity_resume(Entity this)
  *
  * @return				Defaults to true
  */
-bool Entity_isSubjectToGravity(Entity this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
+bool Entity::isSubjectToGravity(Entity this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::isSubjectToGravity: null this");
 
@@ -2078,7 +2078,7 @@ bool Entity_isSubjectToGravity(Entity this __attribute__ ((unused)), Acceleratio
  *
  * @return		Defaults to true
  */
-u16 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
+u16 Entity::getAxisForFlipping(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::getAxisForFlipping: null this");
 
@@ -2095,7 +2095,7 @@ u16 Entity_getAxisForFlipping(Entity this __attribute__ ((unused)))
  *
  * @return		Type of entity within the game's logic
  */
-u32 Entity_getInGameType(Entity this)
+u32 Entity::getInGameType(Entity this)
 {
 	ASSERT(this, "Entity::getInGameType: null this");
 
@@ -2112,7 +2112,7 @@ u32 Entity_getInGameType(Entity this)
  *
  * @return		Bounciness
  */
-fix10_6 Entity_getBounciness(Entity this)
+fix10_6 Entity::getBounciness(Entity this)
 {
 	ASSERT(this, "Entity::getBounciness: null this");
 
@@ -2129,7 +2129,7 @@ fix10_6 Entity_getBounciness(Entity this)
  *
  * @return		Friction
  */
-fix10_6 Entity_getFrictionCoefficient(Entity this)
+fix10_6 Entity::getFrictionCoefficient(Entity this)
 {
 	ASSERT(this, "Entity::getFrictionCoefficient: null this");
 
@@ -2144,7 +2144,7 @@ fix10_6 Entity_getFrictionCoefficient(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_informShapesThatStartedMoving(Entity this)
+void Entity::informShapesThatStartedMoving(Entity this)
 {
 	ASSERT(this, "Entity::informShapesThatStartedMoving: null this");
 
@@ -2156,7 +2156,7 @@ void Entity_informShapesThatStartedMoving(Entity this)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), shape);
+			CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), shape);
 		}
 	}
 }
@@ -2169,7 +2169,7 @@ void Entity_informShapesThatStartedMoving(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_informShapesThatStoppedMoving(Entity this)
+void Entity::informShapesThatStoppedMoving(Entity this)
 {
 	ASSERT(this, "Entity::informShapesThatStoppedMoving: null this");
 
@@ -2179,7 +2179,7 @@ void Entity_informShapesThatStoppedMoving(Entity this)
 
 		for(; node; node = node->next)
 		{
-			CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(Shape, node->data));
+			CollisionManager::shapeStoppedMoving(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(Shape, node->data));
 		}
 	}
 }
@@ -2192,7 +2192,7 @@ void Entity_informShapesThatStoppedMoving(Entity this)
  *
  * @param this	Function scope
  */
-void Entity_activateShapes(Entity this, bool value)
+void Entity::activateShapes(Entity this, bool value)
 {
 	ASSERT(this, "Entity::activateShapes: null this");
 
@@ -2202,7 +2202,7 @@ void Entity_activateShapes(Entity this, bool value)
 
 		for(; node; node = node->next)
 		{
-			Shape_setActive(__SAFE_CAST(Shape, node->data), value);
+			Shape::setActive(__SAFE_CAST(Shape, node->data), value);
 		}
 	}
 }
@@ -2216,11 +2216,11 @@ void Entity_activateShapes(Entity this, bool value)
  * @param this			Function scope
  * @param direction		Direction
  */
-void Entity_setDirection(Entity this, Direction direction)
+void Entity::setDirection(Entity this, Direction direction)
 {
 	ASSERT(this, "Entity::setDirection: null this");
 
-	Direction currentDirection = Entity_getDirection(this);
+	Direction currentDirection = Entity::getDirection(this);
 
 	// if directions XOR is 0, they are equal
 	if(
@@ -2243,7 +2243,7 @@ void Entity_setDirection(Entity this, Direction direction)
 	};
 
 
-	Container_setLocalRotation(__SAFE_CAST(Container, this), &rotation);
+	Container::setLocalRotation(__SAFE_CAST(Container, this), &rotation);
 }
 
 /**
@@ -2256,7 +2256,7 @@ void Entity_setDirection(Entity this, Direction direction)
  *
  * @return		Direction
  */
-Direction Entity_getDirection(Entity this)
+Direction Entity::getDirection(Entity this)
 {
 	ASSERT(this, "Entity::getDirection: null this");
 
@@ -2293,7 +2293,7 @@ Direction Entity_getDirection(Entity this)
  *
  * @return		Shape layers
  */
-u32 Entity_getShapesLayers(Entity this)
+u32 Entity::getShapesLayers(Entity this)
 {
 	ASSERT(this, "Entity::getShapesLayers: null this");
 
@@ -2307,7 +2307,7 @@ u32 Entity_getShapesLayers(Entity this)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			shapesLayers |= Shape_getLayers(shape);
+			shapesLayers |= Shape::getLayers(shape);
 		}
 	}
 
@@ -2323,7 +2323,7 @@ u32 Entity_getShapesLayers(Entity this)
  * @param this	Function scope
  * @param u32	Shape layers
  */
-void Entity_setShapesLayers(Entity this, u32 layers)
+void Entity::setShapesLayers(Entity this, u32 layers)
 {
 	ASSERT(this, "Entity::setShapesLayers: null this");
 
@@ -2335,7 +2335,7 @@ void Entity_setShapesLayers(Entity this, u32 layers)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			Shape_setLayers(shape, layers);
+			Shape::setLayers(shape, layers);
 		}
 	}
 }
@@ -2350,7 +2350,7 @@ void Entity_setShapesLayers(Entity this, u32 layers)
  *
  * @return		Shape layers to ignore
  */
-u32 Entity_getShapesLayersToIgnore(Entity this)
+u32 Entity::getShapesLayersToIgnore(Entity this)
 {
 	ASSERT(this, "Entity::getShapesLayersToIgnore: null this");
 
@@ -2364,7 +2364,7 @@ u32 Entity_getShapesLayersToIgnore(Entity this)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			shapesLayersToIgnore |= Shape_getLayersToIgnore(shape);
+			shapesLayersToIgnore |= Shape::getLayersToIgnore(shape);
 		}
 	}
 
@@ -2380,7 +2380,7 @@ u32 Entity_getShapesLayersToIgnore(Entity this)
  * @param this	Function scope
  * @param u32	Shape layers to ignore
  */
-void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
+void Entity::setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
 {
 	ASSERT(this, "Entity::setShapesLayersToIgnore: null this");
 
@@ -2392,7 +2392,7 @@ void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
 		{
 			Shape shape = __SAFE_CAST(Shape, node->data);
 
-			Shape_setLayersToIgnore(shape, layersToIgnore);
+			Shape::setLayersToIgnore(shape, layersToIgnore);
 		}
 	}
 }
@@ -2407,7 +2407,7 @@ void Entity_setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
  *
  * @return		Axes
  */
-u16 Entity_getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused)))
+u16 Entity::getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::getAxesForShapeSyncWithDirection: null this");
 
@@ -2424,7 +2424,7 @@ u16 Entity_getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused))
  *
  * @return		Boolean whether to respawn this Entity
  */
-bool Entity_respawn(Entity this __attribute__ ((unused)))
+bool Entity::respawn(Entity this __attribute__ ((unused)))
 {
 	ASSERT(this, "Entity::respawn: null this");
 

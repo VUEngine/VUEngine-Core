@@ -70,7 +70,7 @@ __CLASS_NEW_END(AnimationController, owner, sprite, charSetDefinition);
  * @param sprite				Sprite to animate
  * @param charSetDefinition		CharSetDefinition used to decide the animation allocation type
  */
-void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
+void AnimationController::constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationController::constructor: null this");
 
@@ -96,7 +96,7 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
 	ASSERT(charSetDefinition, "AnimationController::constructor: null charSetDefinition");
 
 	// animation coordinator
-	this->animationCoordinator = AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory_getInstance(), this, sprite, charSetDefinition);
+	this->animationCoordinator = AnimationCoordinatorFactory::getCoordinator(AnimationCoordinatorFactory::getInstance(), this, sprite, charSetDefinition);
 }
 
 /**
@@ -107,19 +107,19 @@ void AnimationController_constructor(AnimationController this, Object owner, Spr
  *
  * @param this	Function scope
  */
-void AnimationController_destructor(AnimationController this)
+void AnimationController::destructor(AnimationController this)
 {
 	ASSERT(this, "AnimationController::destructor: null this");
 
 	if(this->animationCoordinator)
 	{
-		 AnimationCoordinator_removeAnimationController(this->animationCoordinator, this);
+		 AnimationCoordinator::removeAnimationController(this->animationCoordinator, this);
 		this->animationCoordinator = NULL;
 	}
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -132,7 +132,7 @@ void AnimationController_destructor(AnimationController this)
  *
  * @return 		Actual frame of animation index
  */
-s8 AnimationController_getActualFrameIndex(AnimationController this)
+s8 AnimationController::getActualFrameIndex(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getActualFrameIndex: null this");
 
@@ -149,7 +149,7 @@ s8 AnimationController_getActualFrameIndex(AnimationController this)
  *
  * @return 		Actual frame of animation
  */
-s8 AnimationController_getActualFrame(AnimationController this)
+s8 AnimationController::getActualFrame(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getActualFrame: null this");
 
@@ -166,7 +166,7 @@ s8 AnimationController_getActualFrame(AnimationController this)
  *
  * @return 		Previous frame of animation
  */
-s8 AnimationController_getPreviousFrame(AnimationController this)
+s8 AnimationController::getPreviousFrame(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getPreviousFrame: null this");
 
@@ -182,7 +182,7 @@ s8 AnimationController_getPreviousFrame(AnimationController this)
  * @param this			Function scope
  * @param actualFrame	The new frame of animation
  */
-void AnimationController_setActualFrame(AnimationController this, s8 actualFrame)
+void AnimationController::setActualFrame(AnimationController this, s8 actualFrame)
 {
 	ASSERT(this, "AnimationController::setActualFrame: null this");
 
@@ -199,7 +199,7 @@ void AnimationController_setActualFrame(AnimationController this, s8 actualFrame
  *
  * @return		Frame duration in game cycles
  */
-s8 AnimationController_getFrameDuration(AnimationController this)
+s8 AnimationController::getFrameDuration(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getFrameDuration: null this");
 
@@ -215,7 +215,7 @@ s8 AnimationController_getFrameDuration(AnimationController this)
  * @param this			Function scope
  * @param frameDuration	Number of cycles that each frame of animation is shown
  */
-void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration)
+void AnimationController::setFrameDuration(AnimationController this, u8 frameDuration)
 {
 	ASSERT(this, "AnimationController::setFrameDuration: null this");
 
@@ -232,7 +232,7 @@ void AnimationController_setFrameDuration(AnimationController this, u8 frameDura
  *
  * @return		Frame cycle decrement
  */
-u8 AnimationController_getFrameCycleDecrement(AnimationController this)
+u8 AnimationController::getFrameCycleDecrement(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getFrameCycleDecrement: null this");
 
@@ -248,7 +248,7 @@ u8 AnimationController_getFrameCycleDecrement(AnimationController this)
  * @param this					Function scope
  * @param frameCycleDecrement	Decrement value for the frame cycle on each game cycle
  */
-void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement)
+void AnimationController::setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement)
 {
 	ASSERT(this, "AnimationController::setFrameCycleDecrement: null this");
 
@@ -265,7 +265,7 @@ void AnimationController_setFrameCycleDecrement(AnimationController this, u8 fra
  *
  * @return		True if the animation frame changed
  */
-bool AnimationController_updateAnimation(AnimationController this)
+bool AnimationController::updateAnimation(AnimationController this)
 {
 	ASSERT(this, "AnimationController::updateAnimation: null this");
 
@@ -296,7 +296,7 @@ bool AnimationController_updateAnimation(AnimationController this)
 			// the last frame has been reached
 			if(this->animationFunction->onAnimationComplete)
 			{
-				Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+				Object::fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
 			}
 
 			// rewind to first frame
@@ -324,7 +324,7 @@ bool AnimationController_updateAnimation(AnimationController this)
 		else if(0 > this->frameDuration)
 		{
 			// pick up a random delay
-			this->frameDuration = 1 + Utilities_random(Utilities_randomSeed(), __ABS(this->frameDuration));
+			this->frameDuration = 1 + Utilities::random(Utilities::randomSeed(), __ABS(this->frameDuration));
 		}
 
 		return true;
@@ -342,7 +342,7 @@ bool AnimationController_updateAnimation(AnimationController this)
  * @param this					Function scope
  * @param animationFunction		Animation function to play
  */
-void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction)
+void AnimationController::playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction)
 {
 	ASSERT(this, "AnimationController::playAnimationFunction: null this");
 	ASSERT(animationFunction, "AnimationController::playAnimationFunction: null animationFunction");
@@ -350,7 +350,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		Object::removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// setup animation frame
@@ -359,7 +359,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
 	// register event callback
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		Object::addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update
@@ -385,7 +385,7 @@ void AnimationController_playAnimationFunction(AnimationController this, const A
  *
  * @return			Animation function
  */
-const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this)
+const AnimationFunction* AnimationController::getPlayingAnimationFunction(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getPlayingAnimationFunction: null this");
 
@@ -404,7 +404,7 @@ const AnimationFunction* AnimationController_getPlayingAnimationFunction(Animati
  *
  * @return							True if the animation started playing
  */
-bool AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationController::play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName)
 {
 	ASSERT(this, "AnimationController::play: null this");
 	ASSERT(animationDescription, "AnimationController::play: null animationDescription");
@@ -412,7 +412,7 @@ bool AnimationController_play(AnimationController this, const AnimationDescripti
 
 	if(this->animationCoordinator)
 	{
-		if(!AnimationCoordinator_playAnimation(this->animationCoordinator, this, animationDescription, functionName))
+		if(!AnimationCoordinator::playAnimation(this->animationCoordinator, this, animationDescription, functionName))
 		{
 			return false;
 		}
@@ -429,14 +429,14 @@ bool AnimationController_play(AnimationController this, const AnimationDescripti
 			// remove previous listeners
 			if(this->animationFunction && this->animationFunction->onAnimationComplete)
 			{
-				Object_removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+				Object::removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 			}
 
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 
 			// register event callback
-			Object_addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+			Object::addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 
 			// force frame writing in the next update
 			this->previousFrame = 0;
@@ -465,7 +465,7 @@ bool AnimationController_play(AnimationController this, const AnimationDescripti
  *
  * @param this	Function scope
  */
-void AnimationController_stop(AnimationController this)
+void AnimationController::stop(AnimationController this)
 {
 	ASSERT(this, "AnimationController::stop: null this");
 
@@ -482,7 +482,7 @@ void AnimationController_stop(AnimationController this)
  *
  * @param this	Function scope
  */
-void AnimationController_nextFrame(AnimationController this)
+void AnimationController::nextFrame(AnimationController this)
 {
 	ASSERT(this, "AnimationController::nextFrame: null this");
 
@@ -502,7 +502,7 @@ void AnimationController_nextFrame(AnimationController this)
 	}
 	else
 	{
-		Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+		Object::fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
 	}
 }
 
@@ -514,7 +514,7 @@ void AnimationController_nextFrame(AnimationController this)
  *
  * @param this	Function scope
  */
-void AnimationController_previousFrame(AnimationController this)
+void AnimationController::previousFrame(AnimationController this)
 {
 	ASSERT(this, "AnimationController::previousFrame: null this");
 
@@ -534,7 +534,7 @@ void AnimationController_previousFrame(AnimationController this)
 	}
 	else
 	{
-		Object_fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+		Object::fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
 	}
 }
 
@@ -549,7 +549,7 @@ void AnimationController_previousFrame(AnimationController this)
  *
  * @return						True if the animation is playing
  */
-bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName)
+bool AnimationController::isPlayingFunction(AnimationController this, const char* functionName)
 {
 	ASSERT(this, "AnimationController::isPlayingFunction: null this");
 
@@ -567,7 +567,7 @@ bool AnimationController_isPlayingFunction(AnimationController this, const char*
  *
  * @return							True if there is an animation playing
  */
-bool AnimationController_isPlaying(AnimationController this)
+bool AnimationController::isPlaying(AnimationController this)
 {
 	ASSERT(this, "AnimationController::isPlaying: null this");
 
@@ -583,7 +583,7 @@ bool AnimationController_isPlaying(AnimationController this)
  * @param this			Function scope
  * @param pause			Flag to pause or to resume animation
  */
-void AnimationController_pause(AnimationController this, bool pause)
+void AnimationController::pause(AnimationController this, bool pause)
 {
 	ASSERT(this, "AnimationController::pause: null this");
 	this->playing = !pause;
@@ -602,7 +602,7 @@ void AnimationController_pause(AnimationController this, bool pause)
  *
  * @param this	Function scope
  */
-int AnimationController_getNumberOfFrames(AnimationController this)
+int AnimationController::getNumberOfFrames(AnimationController this)
 {
 	ASSERT(this, "AnimationController::getNumberOfFrames: null this");
 

@@ -96,11 +96,11 @@ extern u32 _dram_data_start;
 int _lp = 0;
 int _sp = 0;
 
-void TimerManager_interruptHandler();
-void KeypadManager_interruptHandler();
-void VIPManager_interruptHandler();
-void CommunicationManager_interruptHandler();
-static void HardwareManager_constructor(HardwareManager this);
+void TimerManager::interruptHandler();
+void KeypadManager::interruptHandler();
+void VIPManager::interruptHandler();
+void CommunicationManager::interruptHandler();
+static void HardwareManager::constructor(HardwareManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ static void HardwareManager_constructor(HardwareManager this);
 /**
  * Get instance
  *
- * @fn			HardwareManager_getInstance()
+ * @fn			HardwareManager::getInstance()
  * @memberof	HardwareManager
  * @public
  *
@@ -126,7 +126,7 @@ __SINGLETON(HardwareManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManager this)
+static void __attribute__ ((noinline)) HardwareManager::constructor(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::constructor: null this");
 
@@ -136,13 +136,13 @@ static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManag
 	_hardwareRegisters[__WCR] |= 0x0001;
 
 	this->hwRegisters =	(u8*)0x02000000;
-	this->timerManager = TimerManager_getInstance();
-	this->vipManager = VIPManager_getInstance();
-	this->keypadManager = KeypadManager_getInstance();
+	this->timerManager = TimerManager::getInstance();
+	this->vipManager = VIPManager::getInstance();
+	this->keypadManager = KeypadManager::getInstance();
 
 	//setup timer interrupts
-	HardwareManager_setInterruptVectors(this);
-	HardwareManager_setInterruptLevel(this, 0);
+	HardwareManager::setInterruptVectors(this);
+	HardwareManager::setInterruptLevel(this, 0);
 }
 
 /**
@@ -153,7 +153,7 @@ static void __attribute__ ((noinline)) HardwareManager_constructor(HardwareManag
  *
  * @param this	Function scope
  */
-void HardwareManager_destructor(HardwareManager this)
+void HardwareManager::destructor(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::destructor: null this");
 
@@ -168,35 +168,35 @@ void HardwareManager_destructor(HardwareManager this)
  * @memberof	HardwareManager
  * @public
  */
-void HardwareManager_checkMemoryMap()
+void HardwareManager::checkMemoryMap()
 {
 	if((u32)&_dram_data_start < __WORLD_SPACE_BASE_ADDRESS && (u32)&_dram_bss_end >= __WORLD_SPACE_BASE_ADDRESS)
 	{
-		MemoryPool_getInstance();
-		Printing_setDebugMode(Printing_getInstance());
+		MemoryPool::getInstance();
+		Printing::setDebugMode(Printing::getInstance());
 		int y = 15;
 		u32 missingSpace = (u32)&_dram_bss_end - __WORLD_SPACE_BASE_ADDRESS;
 		u32 recommendedDramStart = (u32)&_dram_data_start - missingSpace;
 		u32 recommendedDramSize = (__WORLD_SPACE_BASE_ADDRESS - recommendedDramStart);
 		u32 recommendedBgmapSegments = (recommendedDramStart - __BGMAP_SPACE_BASE_ADDRESS) / 8192;
 
-		Printing_text(Printing_getInstance(), "Increase the dram section in the vb.ld file", 1, y++, NULL);
-		Printing_text(Printing_getInstance(), "Missing space: ", 1, ++y, NULL);
-		Printing_int(Printing_getInstance(), missingSpace, 17, y, NULL);
-		Printing_text(Printing_getInstance(), "Bytes ", 17 + Utilities_intLength(missingSpace) + 1, y++, NULL);
-		Printing_text(Printing_getInstance(), "WORLD space: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (u32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
-		Printing_text(Printing_getInstance(), "DRAM start: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (u32)&_dram_data_start, 17, y, 4, NULL);
-		Printing_text(Printing_getInstance(), "DRAM end: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (u32)&_dram_bss_end, 17, y++, 4, NULL);
-		Printing_text(Printing_getInstance(), "Suggested DRAM start: ", 1, ++y, NULL);
-		Printing_hex(Printing_getInstance(), recommendedDramStart, 25, y, 4, NULL);
-		Printing_text(Printing_getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
-		Printing_int(Printing_getInstance(), recommendedDramSize, 25, y, NULL);
-		Printing_text(Printing_getInstance(), "Bytes ", 25 + Utilities_intLength(recommendedDramSize) + 1, y++, NULL);
-		Printing_text(Printing_getInstance(), "Maximum BGMAP segments: ", 1, ++y, NULL);
-		Printing_int(Printing_getInstance(), recommendedBgmapSegments, 25, y, NULL);
+		Printing::text(Printing::getInstance(), "Increase the dram section in the vb.ld file", 1, y++, NULL);
+		Printing::text(Printing::getInstance(), "Missing space: ", 1, ++y, NULL);
+		Printing::int(Printing::getInstance(), missingSpace, 17, y, NULL);
+		Printing::text(Printing::getInstance(), "Bytes ", 17 + Utilities::intLength(missingSpace) + 1, y++, NULL);
+		Printing::text(Printing::getInstance(), "WORLD space: ", 1, ++y, NULL);
+		Printing::hex(Printing::getInstance(), (u32)__WORLD_SPACE_BASE_ADDRESS, 17, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "DRAM start: ", 1, ++y, NULL);
+		Printing::hex(Printing::getInstance(), (u32)&_dram_data_start, 17, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "DRAM end: ", 1, ++y, NULL);
+		Printing::hex(Printing::getInstance(), (u32)&_dram_bss_end, 17, y++, 4, NULL);
+		Printing::text(Printing::getInstance(), "Suggested DRAM start: ", 1, ++y, NULL);
+		Printing::hex(Printing::getInstance(), recommendedDramStart, 25, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "Suggested DRAM size: ", 1, ++y, NULL);
+		Printing::int(Printing::getInstance(), recommendedDramSize, 25, y, NULL);
+		Printing::text(Printing::getInstance(), "Bytes ", 25 + Utilities::intLength(recommendedDramSize) + 1, y++, NULL);
+		Printing::text(Printing::getInstance(), "Maximum BGMAP segments: ", 1, ++y, NULL);
+		Printing::int(Printing::getInstance(), recommendedBgmapSegments, 25, y, NULL);
 
 		NM_ASSERT(false, "HardwareManager::checkMemoryMap: DRAM section overflow");
 	}
@@ -208,10 +208,10 @@ void HardwareManager_checkMemoryMap()
  * @memberof	HardwareManager
  * @public
  */
-void HardwareManager_croInterruptHandler()
+void HardwareManager::croInterruptHandler()
 {
-	Printing_resetWorldCoordinates(Printing_getInstance());
-	Printing_text(Printing_getInstance(), "EXP cron", 48 - 13, 0, NULL);
+	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::text(Printing::getInstance(), "EXP cron", 48 - 13, 0, NULL);
 }
 
 /**
@@ -220,10 +220,10 @@ void HardwareManager_croInterruptHandler()
  * @memberof	HardwareManager
  * @public
  */
-void HardwareManager_communicationInterruptHandler()
+void HardwareManager::communicationInterruptHandler()
 {
-	Printing_resetWorldCoordinates(Printing_getInstance());
-	Printing_text(Printing_getInstance(), "COM interrupt", 48 - 13, 0, NULL);
+	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::text(Printing::getInstance(), "COM interrupt", 48 - 13, 0, NULL);
 }
 
 /**
@@ -234,7 +234,7 @@ void HardwareManager_communicationInterruptHandler()
  *
  * @param this	Function scope
  */
-void HardwareManager_setInterruptVectors(HardwareManager this __attribute__ ((unused)))
+void HardwareManager::setInterruptVectors(HardwareManager this __attribute__ ((unused)))
 {
 	keyVector = (u32)KeypadManager_interruptHandler;
 	timVector = (u32)TimerManager_interruptHandler;
@@ -252,7 +252,7 @@ void HardwareManager_setInterruptVectors(HardwareManager this __attribute__ ((un
  * @param this		Function scope
  * @param level	 	Interrupt level
  */
-void HardwareManager_setInterruptLevel(HardwareManager this __attribute__ ((unused)), u8 level)
+void HardwareManager::setInterruptLevel(HardwareManager this __attribute__ ((unused)), u8 level)
 {
 	ASSERT(this, "HardwareManager::setInterruptLevel: null this");
 
@@ -283,7 +283,7 @@ void HardwareManager_setInterruptLevel(HardwareManager this __attribute__ ((unus
  *
  * @return		 	Interrupt level
  */
-int HardwareManager_getInterruptLevel(HardwareManager this __attribute__ ((unused)))
+int HardwareManager::getInterruptLevel(HardwareManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
 
@@ -311,11 +311,11 @@ int HardwareManager_getInterruptLevel(HardwareManager this __attribute__ ((unuse
  *
  * @param this		Function scope
  */
-void HardwareManager_initializeTimer(HardwareManager this)
+void HardwareManager::initializeTimer(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::initializeTimer: null this");
 
-	TimerManager_initialize(this->timerManager);
+	TimerManager::initialize(this->timerManager);
 }
 
 /**
@@ -326,11 +326,11 @@ void HardwareManager_initializeTimer(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_clearScreen(HardwareManager this)
+void HardwareManager::clearScreen(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::clearScreen: null this");
 
-	VIPManager_clearScreen(this->vipManager);
+	VIPManager::clearScreen(this->vipManager);
 }
 
 /**
@@ -341,11 +341,11 @@ void HardwareManager_clearScreen(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_displayOn(HardwareManager this)
+void HardwareManager::displayOn(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::displayOn: null this");
 
-	VIPManager_displayOn(this->vipManager);
+	VIPManager::displayOn(this->vipManager);
 }
 
 /**
@@ -356,11 +356,11 @@ void HardwareManager_displayOn(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_displayOff(HardwareManager this)
+void HardwareManager::displayOff(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::displayOff: null this");
 
-	VIPManager_displayOff(this->vipManager);
+	VIPManager::displayOff(this->vipManager);
 }
 
 /**
@@ -371,13 +371,13 @@ void HardwareManager_displayOff(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_disableRendering(HardwareManager this)
+void HardwareManager::disableRendering(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::disableRendering: null this");
 
 	// disable interrupt
-	VIPManager_disableInterrupts(this->vipManager);
-	VIPManager_disableDrawing(this->vipManager);
+	VIPManager::disableInterrupts(this->vipManager);
+	VIPManager::disableDrawing(this->vipManager);
 }
 
 /**
@@ -388,14 +388,14 @@ void HardwareManager_disableRendering(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_enableRendering(HardwareManager this)
+void HardwareManager::enableRendering(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::enableRendering: null this");
 
 	// turn on display
-	VIPManager_displayOn(this->vipManager);
-	VIPManager_enableInterrupt(this->vipManager, __FRAMESTART | __XPEND);
-	VIPManager_enableDrawing(this->vipManager);
+	VIPManager::displayOn(this->vipManager);
+	VIPManager::enableInterrupt(this->vipManager, __FRAMESTART | __XPEND);
+	VIPManager::enableDrawing(this->vipManager);
 }
 
 /**
@@ -406,11 +406,11 @@ void HardwareManager_enableRendering(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_upBrightness(HardwareManager this)
+void HardwareManager::upBrightness(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::upBrightness: null this");
 
-	VIPManager_upBrightness(this->vipManager);
+	VIPManager::upBrightness(this->vipManager);
 }
 
 /**
@@ -421,11 +421,11 @@ void HardwareManager_upBrightness(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_lowerBrightness(HardwareManager this)
+void HardwareManager::lowerBrightness(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::lowerBrightness: null this");
 
-	VIPManager_lowerBrightness(this->vipManager);
+	VIPManager::lowerBrightness(this->vipManager);
 }
 
 /**
@@ -437,11 +437,11 @@ void HardwareManager_lowerBrightness(HardwareManager this)
  * @param this						Function scope
  * @param columnTableDefinition		Definition to use
  */
-void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition)
+void HardwareManager::setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition)
 {
 	ASSERT(this, "HardwareManager::setupColumnTable: null this");
 
-	VIPManager_setupColumnTable(this->vipManager, columnTableDefinition);
+	VIPManager::setupColumnTable(this->vipManager, columnTableDefinition);
 }
 
 /**
@@ -452,11 +452,11 @@ void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinitio
  *
  * @param this		Function scope
  */
-void HardwareManager_enableKeypad(HardwareManager this)
+void HardwareManager::enableKeypad(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::enableKeypad: null this");
 
-	KeypadManager_enable(this->keypadManager);
+	KeypadManager::enable(this->keypadManager);
 }
 
 /**
@@ -467,11 +467,11 @@ void HardwareManager_enableKeypad(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager_disableKeypad(HardwareManager this)
+void HardwareManager::disableKeypad(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::disableKeypad: null this");
 
-	KeypadManager_disable(this->keypadManager);
+	KeypadManager::disable(this->keypadManager);
 }
 
 /**
@@ -484,86 +484,86 @@ void HardwareManager_disableKeypad(HardwareManager this)
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
-void HardwareManager_print(HardwareManager this, int x, int y)
+void HardwareManager::print(HardwareManager this, int x, int y)
 {
 	ASSERT(this, "HardwareManager::print: null this");
 
-	Printing_text(Printing_getInstance(), "HARDWARE STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
 	int auxY = y;
 	int xDisplacement = 6;
 
 	// print registries' status to know the call source
-	Printing_text(Printing_getInstance(), "PSW:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(), x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "SP:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "LP:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getLinkPointer(this), x + xDisplacement, auxY++, 4, NULL);
+	Printing::text(Printing::getInstance(), "PSW:" , x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), HardwareManager::getPSW(), x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "SP:" , x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), HardwareManager::getStackPointer(this), x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "LP:" , x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), HardwareManager::getLinkPointer(this), x + xDisplacement, auxY++, 4, NULL);
 
-	Printing_text(Printing_getInstance(), "_hardwareRegisters", x, ++auxY, NULL);
+	Printing::text(Printing::getInstance(), "_hardwareRegisters", x, ++auxY, NULL);
 	auxY++;
-	Printing_text(Printing_getInstance(), "WCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "CCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CCR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "CCSR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CCSR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "CDTR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CDTR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "CDRR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__CDRR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "SDLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SDLR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "SDHR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SDHR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "TLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__TLR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "THR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__THR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "TCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__TCR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "WCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "SCR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _hardwareRegisters[__SCR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "WCR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "CCR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__CCR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "CCSR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__CCSR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "CDTR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__CDTR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "CDRR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__CDRR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "SDLR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__SDLR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "SDHR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__SDHR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "TLR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__TLR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "THR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__THR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "TCR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__TCR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "WCR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "SCR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _hardwareRegisters[__SCR], x + xDisplacement, auxY, 4, NULL);
 
 	auxY = y + 4;
 	x += 19;
 	xDisplacement = 8;
 
-	Printing_text(Printing_getInstance(), "_vipRegisters", x, ++auxY, NULL);
+	Printing::text(Printing::getInstance(), "_vipRegisters", x, ++auxY, NULL);
 	auxY++;
-	Printing_text(Printing_getInstance(), "INTPND:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "INTENB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__INTENB], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "INTCLR:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__INTCLR], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "DPSTTS:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__DPSTTS], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "DPCTRL:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "BRTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "BRTB:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "BRTC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), (u8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "REST:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "FRMCYC:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__FRMCYC], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "CTA:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__CTA], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "XPSTTS:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__XPSTTS], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "XPCTRL:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__XPCTRL], x + xDisplacement, auxY, 4, NULL);
-	Printing_text(Printing_getInstance(), "VER:", x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), _vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "INTPND:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "INTENB:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__INTENB], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "INTCLR:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__INTCLR], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "DPSTTS:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__DPSTTS], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "DPCTRL:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__DPCTRL], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "BRTA:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), (u8)_vipRegisters[__BRTA], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "BRTB:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), (u8)_vipRegisters[__BRTB], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "BRTC:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), (u8)_vipRegisters[__BRTC], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "REST:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__REST], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "FRMCYC:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__FRMCYC], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "CTA:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__CTA], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "XPSTTS:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__XPSTTS], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "XPCTRL:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__XPCTRL], x + xDisplacement, auxY, 4, NULL);
+	Printing::text(Printing::getInstance(), "VER:", x, ++auxY, NULL);
+	Printing::hex(Printing::getInstance(), _vipRegisters[__VER], x + xDisplacement, auxY, 4, NULL);
 
-//	Printing_hex(Printing_getInstance(), HardwareManager_readKeypad(HardwareManager_getInstance()), 38, 5, 4, NULL);
+//	Printing::hex(Printing::getInstance(), HardwareManager::readKeypad(HardwareManager::getInstance()), 38, 5, 4, NULL);
 }
 
 #ifdef __ALERT_STACK_OVERFLOW
@@ -576,7 +576,7 @@ void HardwareManager_print(HardwareManager this, int x, int y)
  *
  * @param this		Function scope
  */
-void HardwareManager_checkStackStatus(HardwareManager this __attribute__ ((unused)))
+void HardwareManager::checkStackStatus(HardwareManager this __attribute__ ((unused)))
 {
 	ASSERT(this, "HardwareManager::checkStackStatus: null this");
 
@@ -585,7 +585,7 @@ void HardwareManager_checkStackStatus(HardwareManager this __attribute__ ((unuse
 
 	if((0x05000000 & sp) && sp < (int)&_bss_end)
 	{
-		HardwareManager_printStackStatus(HardwareManager_getInstance(), 1, 15, false);
+		HardwareManager::printStackStatus(HardwareManager::getInstance(), 1, 15, false);
 		NM_ASSERT(false, "HardwareManager::checkStackStatus: stack overflown!");
 	}
 }
@@ -601,7 +601,7 @@ void HardwareManager_checkStackStatus(HardwareManager this __attribute__ ((unuse
  * @param y			Camera's y coordinate
  * @param resumed	Flag to print resumed or detailed info
  */
-void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unused)), int x, int y, bool resumed)
+void HardwareManager::printStackStatus(HardwareManager this __attribute__ ((unused)), int x, int y, bool resumed)
 {
 	ASSERT(this, "HardwareManager::print: null this");
 
@@ -619,30 +619,30 @@ void HardwareManager_printStackStatus(HardwareManager this __attribute__ ((unuse
 
 	if(resumed)
 	{
-		if((__SCREEN_WIDTH_IN_CHARS) < x + Utilities_intLength(room) + 13)
+		if((__SCREEN_WIDTH_IN_CHARS) < x + Utilities::intLength(room) + 13)
 		{
-			x = (__SCREEN_WIDTH_IN_CHARS) - Utilities_intLength(room) - 13;
+			x = (__SCREEN_WIDTH_IN_CHARS) - Utilities::intLength(room) - 13;
 		}
 
-		Printing_text(Printing_getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
-		Printing_int(Printing_getInstance(), room, x + 13, y, NULL);
+		Printing::text(Printing::getInstance(), "   STACK'S ROOM        " , x - 3, y, NULL);
+		Printing::int(Printing::getInstance(), room, x + 13, y, NULL);
 	}
 	else
 	{
-		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities_intLength(room) + 10)
+		if((__SCREEN_WIDTH_IN_CHARS) - 1 < Utilities::intLength(room) + 10)
 		{
-			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities_intLength(room) - 11;
+			x = (__SCREEN_WIDTH_IN_CHARS) - 1 - Utilities::intLength(room) - 11;
 		}
 
-		Printing_text(Printing_getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
-		Printing_text(Printing_getInstance(), "Pointer:" , x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), sp, x + 10, y, 4, NULL);
-		Printing_text(Printing_getInstance(), "Bss' end:" , x, ++y, NULL);
-		Printing_hex(Printing_getInstance(), (int)&_bss_end, x + 10, y, 4, NULL);
-		Printing_text(Printing_getInstance(), "Room:           " , x, ++y, NULL);
-		Printing_int(Printing_getInstance(), room, x + 10, y, NULL);
-		Printing_text(Printing_getInstance(), "Lowest Room:           " , x, ++y, NULL);
-		Printing_int(Printing_getInstance(), lowestRoom, x + 10, y, NULL);
+		Printing::text(Printing::getInstance(), "   STACK'S STATUS" , x - 3, y, NULL);
+		Printing::text(Printing::getInstance(), "Pointer:" , x, ++y, NULL);
+		Printing::hex(Printing::getInstance(), sp, x + 10, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "Bss' end:" , x, ++y, NULL);
+		Printing::hex(Printing::getInstance(), (int)&_bss_end, x + 10, y, 4, NULL);
+		Printing::text(Printing::getInstance(), "Room:           " , x, ++y, NULL);
+		Printing::int(Printing::getInstance(), room, x + 10, y, NULL);
+		Printing::text(Printing::getInstance(), "Lowest Room:           " , x, ++y, NULL);
+		Printing::int(Printing::getInstance(), lowestRoom, x + 10, y, NULL);
 	}
 }
 #endif

@@ -55,7 +55,7 @@ __CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
 
 __CLASS_NEW_DECLARE(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex);
 
-static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this);
+static void ObjectSpriteContainerManager::constructor(ObjectSpriteContainerManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ static void ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManage
 /**
  * Get instance
  *
- * @fn			ObjectSpriteContainerManager_getInstance()
+ * @fn			ObjectSpriteContainerManager::getInstance()
  * @memberof	ObjectSpriteContainerManager
  * @public
  *
@@ -81,7 +81,7 @@ __SINGLETON(ObjectSpriteContainerManager);
  *
  * @param this		Function scope
  */
-void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectSpriteContainerManager this)
+void __attribute__ ((noinline)) ObjectSpriteContainerManager::constructor(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
 
@@ -103,11 +103,11 @@ void __attribute__ ((noinline)) ObjectSpriteContainerManager_constructor(ObjectS
  *
  * @param this		Function scope
  */
-void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
+void ObjectSpriteContainerManager::destructor(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::destructor: null this");
 
-	ObjectSpriteContainerManager_reset(this);
+	ObjectSpriteContainerManager::reset(this);
 
 	// allow a new construct
 	__SINGLETON_DESTROY;
@@ -121,7 +121,7 @@ void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this)
  *
  * @param this		Function scope
  */
-void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
+void ObjectSpriteContainerManager::reset(ObjectSpriteContainerManager this)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::reset: null this");
 
@@ -154,7 +154,7 @@ void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this)
  *
  * @return 						ObjectSpriteContainer instance
  */
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z)
+ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainer: null this");
 
@@ -174,7 +174,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 
 	for(i = __TOTAL_OBJECT_SEGMENTS; i--; )
 	{
-		if(this->objectSpriteContainers[i] && ObjectSpriteContainer_hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
+		if(this->objectSpriteContainers[i] && ObjectSpriteContainer::hasRoomFor(this->objectSpriteContainers[i], numberOfObjects))
 		{
 			if(!suitableObjectSpriteContainer)
 			{
@@ -182,7 +182,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
 			}
 			else
 			{
-				if(__ABS(__FIX10_6_TO_I(Sprite_getPosition(__SAFE_CAST(Sprite, this->objectSpriteContainers[i])).z - z)) < __ABS(__FIX10_6_TO_I(Sprite_getPosition(__SAFE_CAST(Sprite, suitableObjectSpriteContainer)).z - z)))
+				if(__ABS(__FIX10_6_TO_I(Sprite::getPosition(__SAFE_CAST(Sprite, this->objectSpriteContainers[i])).z - z)) < __ABS(__FIX10_6_TO_I(Sprite::getPosition(__SAFE_CAST(Sprite, suitableObjectSpriteContainer)).z - z)))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}
@@ -206,7 +206,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(Obje
  *
  * @return 				ObjectSpriteContainer instance
  */
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment)
+ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: null this");
 	ASSERT((unsigned)segment < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainerManager::getObjectSpriteContainerBySegment: invalid segment");
@@ -224,7 +224,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySeg
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-const ObjectSpriteContainer* ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
+const ObjectSpriteContainer* ObjectSpriteContainerManager::setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	ASSERT(this, "ObjectSpriteContainerManager::setupObjectSpriteContainers: null this");
 
@@ -254,7 +254,7 @@ const ObjectSpriteContainer* ObjectSpriteContainerManager_setupObjectSpriteConta
 					0, 0, z[i], 0
 			};
 
-			ObjectSpriteContainer_setPosition(this->objectSpriteContainers[i], &position);
+			ObjectSpriteContainer::setPosition(this->objectSpriteContainers[i], &position);
 
 #ifndef __RELEASE
 			previousZ = z[i];
@@ -275,7 +275,7 @@ const ObjectSpriteContainer* ObjectSpriteContainerManager_setupObjectSpriteConta
  * @param spt		Spt segment of the ObjectSpriteContainer to modify
  * @param z			New z coordinate
  */
-void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix10_6 z)
+void ObjectSpriteContainerManager::setZPosition(ObjectSpriteContainerManager this, int spt, fix10_6 z)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::position: null this");
 
@@ -288,7 +288,7 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
 				0, 0, z, 0
 		};
 
-		ObjectSpriteContainer_setPosition(this->objectSpriteContainers[spt], &position);
+		ObjectSpriteContainer::setPosition(this->objectSpriteContainers[spt], &position);
 	}
 }
 
@@ -302,18 +302,18 @@ void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y)
+void ObjectSpriteContainerManager::print(ObjectSpriteContainerManager this, int x, int y)
 {
 	ASSERT(this, "ObjectSpriteContainerManager::print: null this");
 
-	Printing_text(Printing_getInstance(), "OBJECTS' USAGE", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "OBJECTS' USAGE", x, y++, NULL);
 	int totalUsedObjects = 0;
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)
 	{
-		totalUsedObjects += ObjectSpriteContainer_getTotalUsedObjects(this->objectSpriteContainers[i]);
+		totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(this->objectSpriteContainers[i]);
 	}
 
-	Printing_text(Printing_getInstance(), "Total used objects: ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), totalUsedObjects, x + 20, y, NULL);
+	Printing::text(Printing::getInstance(), "Total used objects: ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
 }

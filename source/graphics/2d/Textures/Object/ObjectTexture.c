@@ -67,12 +67,12 @@ __CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
  * @param objectTextureDefinition		Texture definition
  * @param id							Identifier
  */
-void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
+void ObjectTexture::constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
 	ASSERT(this, "ObjectTexture::constructor: null this");
 
 	// construct base object
-	Base_constructor(this, (TextureDefinition*)objectTextureDefinition, id);
+	Base::constructor(this, (TextureDefinition*)objectTextureDefinition, id);
 
 	this->objectIndex = -1;
 	this->mapDisplacement = 0;
@@ -86,7 +86,7 @@ void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* obje
  *
  * @param this			Function scope
  */
-void ObjectTexture_destructor(ObjectTexture this)
+void ObjectTexture::destructor(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::destructor: null this");
 
@@ -94,7 +94,7 @@ void ObjectTexture_destructor(ObjectTexture this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -105,7 +105,7 @@ void ObjectTexture_destructor(ObjectTexture this)
  *
  * @param this			Function scope
  */
-void ObjectTexture_write(ObjectTexture this)
+void ObjectTexture::write(ObjectTexture this)
 {
 	ASSERT(this, "ObjectTexture::write: null this");
 
@@ -114,7 +114,7 @@ void ObjectTexture_write(ObjectTexture this)
 		return;
 	}
 
-	Base_write(this);
+	Base::write(this);
 
 	if(!this->charSet)
 	{
@@ -122,7 +122,7 @@ void ObjectTexture_write(ObjectTexture this)
 	}
 
 	int palette = this->palette << 14;
-	int charLocation = CharSet_getOffset(this->charSet);
+	int charLocation = CharSet::getOffset(this->charSet);
 	int rows = this->textureDefinition->rows;
 	int cols = this->textureDefinition->cols;
 	BYTE* framePointer = this->textureDefinition->mapDefinition + this->mapDisplacement;
@@ -151,7 +151,7 @@ void ObjectTexture_write(ObjectTexture this)
  * @param this				Function scope
  * @param objectIndex		OBJECT index
  */
-void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex)
+void ObjectTexture::setObjectIndex(ObjectTexture this, int objectIndex)
 {
 	ASSERT(this, "ObjectTexture::setObjectIndex: null this");
 

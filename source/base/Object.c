@@ -78,7 +78,7 @@ extern MemoryPool _memoryPool;
  *
  * @param this	Function scope
  */
-void Object_constructor(Object this)
+void Object::constructor(Object this)
 {
 	ASSERT(this, "Object::destructor: null this");
 
@@ -93,7 +93,7 @@ void Object_constructor(Object this)
  *
  * @param this	Function scope
  */
-void Object_destructor(Object this)
+void Object::destructor(Object this)
 {
 	ASSERT(this, "Object::destructor: null this");
 	ASSERT(__IS_OBJECT_ALIVE(this), "Object::destructor: already deleted this");
@@ -113,7 +113,7 @@ void Object_destructor(Object this)
 
 	// free the memory
 #ifdef __DEBUG
-	MemoryPool_free(_memoryPool, (void*)this);
+	MemoryPool::free(_memoryPool, (void*)this);
 #else
 	*((u32*)this) = __MEMORY_FREE_BLOCK_FLAG;
 #endif
@@ -130,7 +130,7 @@ void Object_destructor(Object this)
  *
  * @return			Always returns false, this is meant to be used only in derived classes
  */
-bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
+bool Object::handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
 {
 	ASSERT(this, "Object::handleMessage: null this");
 
@@ -148,7 +148,7 @@ bool Object_handleMessage(Object this __attribute__ ((unused)), void* telegram _
  * @param method		The method to execute on event
  * @param eventCode		The code of the event to listen to
  */
-void Object_addEventListener(Object this, Object listener, EventListener method, u32 eventCode)
+void Object::addEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
 	ASSERT(this, "Object::addEventListener: null this");
 
@@ -182,7 +182,7 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
 	event->method = method;
 	event->code = eventCode;
 
-	VirtualList_pushBack(this->events, event);
+	VirtualList::pushBack(this->events, event);
 }
 
 /**
@@ -196,7 +196,7 @@ void Object_addEventListener(Object this, Object listener, EventListener method,
  * @param method		The method attached to event listener
  * @param eventCode		The code of the event
  */
-void Object_removeEventListener(Object this, Object listener, EventListener method, u32 eventCode)
+void Object::removeEventListener(Object this, Object listener, EventListener method, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListener: null this");
 
@@ -210,7 +210,7 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
 
 			if(listener == event->listener && method == event->method && eventCode == event->code)
 			{
-				VirtualList_removeNode(this->events, node);
+				VirtualList::removeNode(this->events, node);
 
 				__DELETE_BASIC(event);
 				break;
@@ -229,7 +229,7 @@ void Object_removeEventListener(Object this, Object listener, EventListener meth
  * @param listener		Object where event listener is registered at
  * @param eventCode		The code of the event
  */
-void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
+void Object::removeEventListeners(Object this, Object listener, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListeners: null this");
 
@@ -245,7 +245,7 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 
 			if(listener == event->listener && eventCode == event->code)
 			{
-				VirtualList_pushBack(eventsToRemove, event);
+				VirtualList::pushBack(eventsToRemove, event);
 			}
 		}
 
@@ -253,7 +253,7 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-			VirtualList_removeElement(this->events, event);
+			VirtualList::removeElement(this->events, event);
 
 			__DELETE_BASIC(event);
 		}
@@ -277,7 +277,7 @@ void Object_removeEventListeners(Object this, Object listener, u32 eventCode)
  * @param this			Function scope
  * @param eventCode		The code of the event
  */
-void Object_removeAllEventListeners(Object this, u32 eventCode)
+void Object::removeAllEventListeners(Object this, u32 eventCode)
 {
 	ASSERT(this, "Object::removeEventListeners: null this");
 
@@ -293,7 +293,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 
 			if(eventCode == event->code)
 			{
-				VirtualList_pushBack(eventsToRemove, event);
+				VirtualList::pushBack(eventsToRemove, event);
 			}
 		}
 
@@ -301,7 +301,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-			VirtualList_removeElement(this->events, event);
+			VirtualList::removeElement(this->events, event);
 
 			__DELETE_BASIC(event);
 		}
@@ -325,7 +325,7 @@ void Object_removeAllEventListeners(Object this, u32 eventCode)
  * @param this			Function scope
  * @param eventCode		The code of the event
  */
-void Object_fireEvent(Object this, u32 eventCode)
+void Object::fireEvent(Object this, u32 eventCode)
 {
 	ASSERT(this, "Object::fireEvent: null this");
 
@@ -344,11 +344,11 @@ void Object_fireEvent(Object this, u32 eventCode)
 			// safe check in case that the there is a stacking up of firings within firings
 			if(!__IS_BASIC_OBJECT_ALIVE(event) || !__IS_OBJECT_ALIVE(event->listener))
 			{
-				VirtualList_pushBack(eventsToRemove, event);
+				VirtualList::pushBack(eventsToRemove, event);
 			}
 			else if(eventCode == event->code)
 			{
-				VirtualList_pushBack(eventsToFire, event);
+				VirtualList::pushBack(eventsToFire, event);
 			}
 		}
 
@@ -356,7 +356,7 @@ void Object_fireEvent(Object this, u32 eventCode)
 		{
 			Event* event = (Event*)node->data;
 
-			VirtualList_removeElement(this->events, event);
+			VirtualList::removeElement(this->events, event);
 
 			// safe check in case that the there is a stacking up of firings within firings
 			if(__IS_BASIC_OBJECT_ALIVE(event))
@@ -402,7 +402,7 @@ void Object_fireEvent(Object this, u32 eventCode)
  *
  * @return								Casted Object
  */
-Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
+Object Object::getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
 	static int lp = -1;
 	static int sp = -1;
@@ -425,9 +425,9 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 	if(!__IS_OBJECT_ALIVE(this))
 	{
 	/*
-		Printing_setDebugMode(Printing_getInstance());
-		Printing_text(Printing_getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing_hex(Printing_getInstance(), (u32)this, 18, 15, 8, NULL);
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
+		Printing::hex(Printing::getInstance(), (u32)this, 18, 15, 8, NULL);
 */
 		_lp = lp;
 		_sp = sp;
@@ -465,7 +465,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
 		return this;
 	}
 
-	return Object_getCast((Object)this, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(this));
+	return Object::getCast((Object)this, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(this));
 }
 
 /**
@@ -478,7 +478,7 @@ Object Object_getCast(Object this, ObjectBaseClassPointer targetClassGetClassMet
  *
  * @return		vTable pointer
  */
-const void* Object_getVTable(Object this)
+const void* Object::getVTable(Object this)
 {
 	ASSERT(this, "Object::getVTable: null this");
 

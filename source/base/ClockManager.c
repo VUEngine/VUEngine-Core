@@ -62,7 +62,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 
 //class's constructor
-static void ClockManager_constructor(ClockManager this);
+static void ClockManager::constructor(ClockManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ static void ClockManager_constructor(ClockManager this);
 /**
  * Get instance
  *
- * @fn			ClockManager_getInstance()
+ * @fn			ClockManager::getInstance()
  * @memberof	ClockManager
  * @public
  *
@@ -88,7 +88,7 @@ __SINGLETON(ClockManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager this)
+static void __attribute__ ((noinline)) ClockManager::constructor(ClockManager this)
 {
 	ASSERT(this, "ClockManager::constructor: null this");
 
@@ -106,7 +106,7 @@ static void __attribute__ ((noinline)) ClockManager_constructor(ClockManager thi
  *
  * @param this	Function scope
  */
-void ClockManager_destructor(ClockManager this)
+void ClockManager::destructor(ClockManager this)
 {
 	ASSERT(this, "ClockManager::destructor: null this");
 
@@ -115,7 +115,7 @@ void ClockManager_destructor(ClockManager this)
 	// destroy all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock_destructor(__SAFE_CAST(Clock, node->data));
+		Clock::destructor(__SAFE_CAST(Clock, node->data));
 	}
 
 	// clear my list
@@ -134,13 +134,13 @@ void ClockManager_destructor(ClockManager this)
  * @param this	Function scope
  * @param clock Clock to register
  */
-void ClockManager_register(ClockManager this, Clock clock)
+void ClockManager::register(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::register: null this");
 
-	if(!VirtualList_find(this->clocks, clock))
+	if(!VirtualList::find(this->clocks, clock))
 	{
-		VirtualList_pushFront(this->clocks, clock);
+		VirtualList::pushFront(this->clocks, clock);
 	}
 }
 
@@ -153,11 +153,11 @@ void ClockManager_register(ClockManager this, Clock clock)
  * @param this	Function scope
  * @param clock Clock to un-register
  */
-void ClockManager_unregister(ClockManager this, Clock clock)
+void ClockManager::unregister(ClockManager this, Clock clock)
 {
 	ASSERT(this, "ClockManager::unregister: null this");
 
-	VirtualList_removeElement(this->clocks, clock);
+	VirtualList::removeElement(this->clocks, clock);
 }
 
 /**
@@ -169,7 +169,7 @@ void ClockManager_unregister(ClockManager this, Clock clock)
  * @param this					Function scope
  * @param millisecondsElapsed	Milliseconds elapsed between calls
  */
-void ClockManager_update(ClockManager this, u32 millisecondsElapsed)
+void ClockManager::update(ClockManager this, u32 millisecondsElapsed)
 {
 	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
@@ -179,7 +179,7 @@ void ClockManager_update(ClockManager this, u32 millisecondsElapsed)
 	// update all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock_update(__SAFE_CAST(Clock, node->data), millisecondsElapsed);
+		Clock::update(__SAFE_CAST(Clock, node->data), millisecondsElapsed);
 	}
 }
 
@@ -191,7 +191,7 @@ void ClockManager_update(ClockManager this, u32 millisecondsElapsed)
  *
  * @param this			Function scope
  */
-void ClockManager_reset(ClockManager this)
+void ClockManager::reset(ClockManager this)
 {
 	ASSERT(this, "ClockManager::reset: null this");
 	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
@@ -201,6 +201,6 @@ void ClockManager_reset(ClockManager this)
 	// update all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock_reset(__SAFE_CAST(Clock, node->data));
+		Clock::reset(__SAFE_CAST(Clock, node->data));
 	}
 }

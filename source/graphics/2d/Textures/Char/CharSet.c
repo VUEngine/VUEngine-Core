@@ -68,7 +68,7 @@ __CLASS_NEW_END(CharSet, charSetDefinition, offset);
  * @param charSetDefinition				CharSet definition
  * @param offset						Displacement within the CHAR segment
  */
-void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
+void CharSet::constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
 {
 	ASSERT(this, "CharSet::constructor: null this");
 
@@ -91,18 +91,18 @@ void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16
  *
  * @param this							Function scope
  */
-void CharSet_destructor(CharSet this)
+void CharSet::destructor(CharSet this)
 {
 	ASSERT(this, "CharSet::destructor: null this");
 
-	Object_fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
+	Object::fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
 
 	// make sure that I'm not destroyed again
 	this->usageCount = 00;
 
 	// free processor memory
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -113,7 +113,7 @@ void CharSet_destructor(CharSet this)
  *
  * @param this							Function scope
  */
-void CharSet_increaseUsageCount(CharSet this)
+void CharSet::increaseUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::increaseUsageCoung: null this");
 
@@ -130,7 +130,7 @@ void CharSet_increaseUsageCount(CharSet this)
  *
  * @return								True if usage count is zero
  */
-bool CharSet_decreaseUsageCount(CharSet this)
+bool CharSet::decreaseUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::getAllocationType: null this");
 
@@ -152,7 +152,7 @@ bool CharSet_decreaseUsageCount(CharSet this)
  *
  * @return								Usage count
  */
-u8 CharSet_getUsageCount(CharSet this)
+u8 CharSet::getUsageCount(CharSet this)
 {
 	ASSERT(this, "CharSet::getUsageCount: null this");
 
@@ -169,7 +169,7 @@ u8 CharSet_getUsageCount(CharSet this)
  *
  * @return				Allocation type
  */
-u32 CharSet_getAllocationType(CharSet this)
+u32 CharSet::getAllocationType(CharSet this)
 {
 	ASSERT(this, "CharSet::getAllocationType: null this");
 
@@ -186,7 +186,7 @@ u32 CharSet_getAllocationType(CharSet this)
  *
  * @return				Offset within CHAR memory
  */
-u32 CharSet_getOffset(CharSet this)
+u32 CharSet::getOffset(CharSet this)
 {
 	ASSERT(this, "CharSet::getOffset: null this");
 
@@ -202,7 +202,7 @@ u32 CharSet_getOffset(CharSet this)
  * @param this			Function scope
  * @param offset		Offset within CHAR memory
  */
-void CharSet_setOffset(CharSet this, u16 offset)
+void CharSet::setOffset(CharSet this, u16 offset)
 {
 	ASSERT(this, "CharSet::setOffset: null this");
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
@@ -220,7 +220,7 @@ void CharSet_setOffset(CharSet this, u16 offset)
  *
  * @return				CharSetDefinition
  */
-CharSetDefinition* CharSet_getCharSetDefinition(CharSet this)
+CharSetDefinition* CharSet::getCharSetDefinition(CharSet this)
 {
 	ASSERT(this, "CharSet::getCharDefinition: null this");
 
@@ -236,7 +236,7 @@ CharSetDefinition* CharSet_getCharSetDefinition(CharSet this)
  * @param this						Function scope
  * @param charSetDefinition			CharSetDefinition
  */
-void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition)
+void CharSet::setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "CharSet::setCharDefinition: null this");
 
@@ -253,7 +253,7 @@ void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefini
  *
  * @return 			Number of CHARS in the definition
  */
-u32 CharSet_getNumberOfChars(CharSet this)
+u32 CharSet::getNumberOfChars(CharSet this)
 {
 	ASSERT(this, "CharSet::getNumberOfChars: null this");
 
@@ -268,11 +268,11 @@ u32 CharSet_getNumberOfChars(CharSet this)
  *
  * @param this		Function scope
  */
-void CharSet_write(CharSet this)
+void CharSet::write(CharSet this)
 {
 	ASSERT(this, "CharSet::write: null this");
 
-	Mem_copyWORD(
+	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
 		(WORD*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
 		(u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 2
@@ -287,15 +287,15 @@ void CharSet_write(CharSet this)
  *
  * @param this		Function scope
  */
-void CharSet_rewrite(CharSet this)
+void CharSet::rewrite(CharSet this)
 {
 	ASSERT(this, "CharSet::rewrite: null this");
 
 	// write again
-	CharSet_write(this);
+	CharSet::write(this);
 
 	// propagate event
-	Object_fireEvent(__SAFE_CAST(Object, this), kEventCharSetRewritten);
+	Object::fireEvent(__SAFE_CAST(Object, this), kEventCharSetRewritten);
 }
 
 /**
@@ -307,7 +307,7 @@ void CharSet_rewrite(CharSet this)
  * @param this								Function scope
  * @param charDefinitionDisplacement		Displacement
  */
-void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement)
+void CharSet::setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement)
 {
 	ASSERT(this, "CharSet::setCharDefinitionDisplacement: null this");
 
@@ -324,13 +324,13 @@ void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDispl
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
+void CharSet::putChar(CharSet this, u32 charToReplace, BYTE* newChar)
 {
 	ASSERT(this, "CharSet::putChar: null this");
 
 	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
-		Mem_copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 3));
+		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 3));
 	}
 }
 
@@ -345,7 +345,7 @@ void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void CharSet_putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
+void CharSet::putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
 	ASSERT(this, "CharSet::putPixel: null this");
 
@@ -363,11 +363,11 @@ void CharSet_putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE
 			0x00, 0x00,
 		};
 
-		Mem_copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
+		Mem::copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
 
 		u16 displacement = (charSetPixel->y << 1) + (charSetPixel->x >> 2);
 		u16 pixelToReplaceDisplacement = (charSetPixel->x % 4) << 1;
 		auxChar[displacement] &= (~(0x03 << pixelToReplaceDisplacement) | ((u16)newPixelColor << pixelToReplaceDisplacement));
-		Mem_copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
+		Mem::copyBYTE((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), auxChar, (int)(1 << 4));
 	}
 }

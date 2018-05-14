@@ -39,7 +39,7 @@
 //												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-s16 Optics_calculateParallax(fix10_6 x, fix10_6 z)
+s16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 {
 	fix10_6 leftEyePoint, rightEyePoint;
 	fix10_6 leftEyeGx, rightEyeGx;

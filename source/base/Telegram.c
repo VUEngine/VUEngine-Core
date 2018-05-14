@@ -92,7 +92,7 @@ __CLASS_NEW_END(Telegram, sender, receiver, message, extraInfo);
  * @param message		Message code
  * @param extraInfo		Pointer to any attachment to the message
  */
-void Telegram_constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo)
+void Telegram::constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo)
 {
 	ASSERT(this, "Telegram::constructor: null this");
 
@@ -114,7 +114,7 @@ void Telegram_constructor(Telegram this, void* sender, void* receiver, int messa
  *
  * @param this			Function scope
  */
-void Telegram_destructor(Telegram this)
+void Telegram::destructor(Telegram this)
 {
 	ASSERT(this, "Telegram::destructor: null this");
 
@@ -124,7 +124,7 @@ void Telegram_destructor(Telegram this)
 
 	// free the memory
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -137,7 +137,7 @@ void Telegram_destructor(Telegram this)
  *
  * @return				Sender of the message
  */
-void* Telegram_getSender(Telegram this)
+void* Telegram::getSender(Telegram this)
 {
 	ASSERT(this, "Telegram::getSender: null this");
 
@@ -154,7 +154,7 @@ void* Telegram_getSender(Telegram this)
  *
  * @return				Intended receiver
  */
-void* Telegram_getReceiver(Telegram this)
+void* Telegram::getReceiver(Telegram this)
 {
 	ASSERT(this, "Telegram::getReceiver: null this");
 
@@ -171,7 +171,7 @@ void* Telegram_getReceiver(Telegram this)
  *
  * @return				Message code
  */
-int Telegram_getMessage(Telegram this)
+int Telegram::getMessage(Telegram this)
 {
 	ASSERT(this, "Telegram::getMessage: null this");
 
@@ -188,7 +188,7 @@ int Telegram_getMessage(Telegram this)
  *
  * @return				Pointer to any attachment to the message
  */
-void* Telegram_getExtraInfo(Telegram this)
+void* Telegram::getExtraInfo(Telegram this)
 {
 	ASSERT(this, "Telegram::getExtraInfo: null this");
 

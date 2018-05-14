@@ -35,8 +35,8 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MessageDispatcher_constructor(MessageDispatcher this);
-void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay, Object sender,
+static void MessageDispatcher::constructor(MessageDispatcher this);
+void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay, Object sender,
 	Object receiver, int message, void* extraInfo);
 
 
@@ -98,7 +98,7 @@ typedef struct DelayedMessage
 /**
  * Get instance
  *
- * @fn			MessageDispatcher_getInstance()
+ * @fn			MessageDispatcher::getInstance()
  * @memberof	MessageDispatcher
  * @public
  *
@@ -114,7 +114,7 @@ typedef struct DelayedMessage
  *
  * @param this		Function scope
  */
- static void __attribute__ ((noinline)) MessageDispatcher_constructor(MessageDispatcher this)
+ static void __attribute__ ((noinline)) MessageDispatcher::constructor(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::constructor: null this");
 
@@ -133,7 +133,7 @@ typedef struct DelayedMessage
  *
  * @param this		Function scope
  */
-__attribute__((unused)) void MessageDispatcher_destructor(MessageDispatcher this)
+__attribute__((unused)) void MessageDispatcher::destructor(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::destructor: null this");
 
@@ -158,7 +158,7 @@ __attribute__((unused)) void MessageDispatcher_destructor(MessageDispatcher this
  *
  * @return			a flag indicating the status of the processing of the message
  */
-bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
+bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -170,14 +170,14 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
 		Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
 		// send the telegram to the recipient
-		bool result =  Object_handleMessage(receiver, telegram);
+		bool result =  Object::handleMessage(receiver, telegram);
 
 		__DELETE(telegram);
 		return result;
 	}
 	else
 	{
-		MessageDispatcher_dispatchDelayedMessage(MessageDispatcher_getInstance(), Game_getMessagingClock(Game_getInstance()), delay, sender, receiver, message, extraInfo);
+		MessageDispatcher::dispatchDelayedMessage(MessageDispatcher::getInstance(), Game::getMessagingClock(Game::getInstance()), delay, sender, receiver, message, extraInfo);
 	}
 
 	return false;
@@ -196,7 +196,7 @@ bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver
  * @param message	the actual message code
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
-void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay,
+void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay,
  	Object sender, Object receiver, int message, void* extraInfo)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
@@ -207,10 +207,10 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock cloc
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
 	delayMessage->telegram = telegram;
-	delayMessage->clock = clock ? clock : Game_getMessagingClock(Game_getInstance());
-	delayMessage->timeOfArrival = Clock_getTime(delayMessage->clock) + delay;
+	delayMessage->clock = clock ? clock : Game::getMessagingClock(Game::getInstance());
+	delayMessage->timeOfArrival = Clock::getTime(delayMessage->clock) + delay;
 
-	VirtualList_pushBack(this->delayedMessages, delayMessage);
+	VirtualList::pushBack(this->delayedMessages, delayMessage);
 }
 
 /**
@@ -221,7 +221,7 @@ void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock cloc
  *
  * @param this		Function scope
  */
-void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
+void MessageDispatcher::processDiscardedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::processDiscardedMessages: null this");
 	ASSERT(this->delayedMessagesToDiscard, "MessageDispatcher::processDiscardedMessages: null delayedMessagesToDiscard");
@@ -237,7 +237,7 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 			ASSERT(telegram, "MessageDispatcher::processDiscardedMessages: null telegram");
 			ASSERT(delayedMessage, "MessageDispatcher::processDiscardedMessages: null delayedMessage");
 
-			VirtualList_removeElement(this->delayedMessages, delayedMessage);
+			VirtualList::removeElement(this->delayedMessages, delayedMessage);
 
 			if(__IS_BASIC_OBJECT_ALIVE(delayedMessage))
 			{
@@ -250,7 +250,7 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
 			}
 		}
 
-		VirtualList_clear(this->delayedMessagesToDiscard);
+		VirtualList::clear(this->delayedMessagesToDiscard);
 	}
 
 }
@@ -263,14 +263,14 @@ void MessageDispatcher_processDiscardedMessages(MessageDispatcher this)
  *
  * @param this		Function scope
  */
-u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
+u32 MessageDispatcher::dispatchDelayedMessages(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
 	u32 messagesDispatched = false;
 
-	MessageDispatcher_processDiscardedMessages(this);
+	MessageDispatcher::processDiscardedMessages(this);
 
 	if(this->delayedMessages->head)
 	{
@@ -282,28 +282,28 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
 
 			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
-			if(!Clock_isPaused(delayedMessage->clock) && Clock_getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
+			if(!Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{
 				Telegram telegram = delayedMessage->telegram;
 
-				void* sender = Telegram_getSender(telegram);
-				void* receiver = Telegram_getReceiver(telegram);
+				void* sender = Telegram::getSender(telegram);
+				void* receiver = Telegram::getReceiver(telegram);
 
 				ASSERT(sender, "MessageDispatcher::dispatchDelayedMessages: null sender");
 				ASSERT(receiver, "MessageDispatcher::dispatchDelayedMessages: null receiver");
 
 				// check if sender and receiver are still alive
-				if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage) && __IS_OBJECT_ALIVE(sender) && __IS_OBJECT_ALIVE(receiver))
+				if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage) && __IS_OBJECT_ALIVE(sender) && __IS_OBJECT_ALIVE(receiver))
 				{
 					messagesDispatched |= true;
-					 Object_handleMessage(receiver, telegram);
+					 Object::handleMessage(receiver, telegram);
 				}
 
-				VirtualList_removeElement(this->delayedMessages, delayedMessage);
+				VirtualList::removeElement(this->delayedMessages, delayedMessage);
 
-				if(VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+				if(VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 				{
-					VirtualList_removeElement(this->delayedMessagesToDiscard, delayedMessage);
+					VirtualList::removeElement(this->delayedMessagesToDiscard, delayedMessage);
 				}
 
 				if(__IS_OBJECT_ALIVE(telegram))
@@ -333,7 +333,7 @@ u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this)
  * @param this		Function scope
  * @param clock		the clock against which the message's delay is measured
  */
-void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
+void MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessagesWithClock: null this");
 
@@ -343,9 +343,9 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
 	{
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
-		if(delayedMessage->clock == clock && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(delayedMessage->clock == clock && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
-			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}
 	}
 }
@@ -360,7 +360,7 @@ void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, C
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
-void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
+void MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
 
@@ -371,9 +371,9 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(Telegram_getMessage(telegram) == message && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(Telegram::getMessage(telegram) == message && Telegram::getSender(telegram) == sender && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
-			VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
 		}
 	}
 }
@@ -388,7 +388,7 @@ void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, 
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
-void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message)
+void MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message)
 {
 	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
 
@@ -399,11 +399,11 @@ void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this,
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getMessage(telegram) == message && Telegram_getReceiver(telegram) == receiver && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram::getMessage(telegram) == message && Telegram::getReceiver(telegram) == receiver && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
-			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+			if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 			{
-				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+				VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
 			}
 		}
 	}
@@ -418,7 +418,7 @@ void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this,
  * @param this		Function scope
  * @param sender	the object that originally sent the message
  */
-void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender)
+void MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender)
 {
 	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesFromSender: null this");
 
@@ -429,11 +429,11 @@ void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher thi
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getSender(telegram) == sender && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram::getSender(telegram) == sender && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
-			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+			if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 			{
-				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+				VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
 			}
 		}
 	}
@@ -448,7 +448,7 @@ void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher thi
  * @param this		Function scope
  * @param sender	the object that the message was originally sent to
  */
-void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver)
+void MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver)
 {
 	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesForReceiver: null this");
 
@@ -459,11 +459,11 @@ void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher th
 		DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 		Telegram telegram = delayedMessage->telegram;
 
-		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram_getReceiver(telegram) == receiver && !VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+		if(__IS_BASIC_OBJECT_ALIVE(delayedMessage) && __IS_OBJECT_ALIVE(telegram) && Telegram::getReceiver(telegram) == receiver && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
-			if(!VirtualList_find(this->delayedMessagesToDiscard, delayedMessage))
+			if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 			{
-				VirtualList_pushBack(this->delayedMessagesToDiscard, delayedMessage);
+				VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
 			}
 		}
 	}
@@ -479,13 +479,13 @@ void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher th
  * @param x			x screen coordinate
  * @param y			y screen coordinate
  */
-void MessageDispatcher_print(MessageDispatcher this, int x, int y)
+void MessageDispatcher::print(MessageDispatcher this, int x, int y)
 {
 	ASSERT(this, "MessageDispatcher::print: null this");
 
-	Printing_text(Printing_getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Delayed messages:     ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->delayedMessages), x + 19, y, NULL);
-	Printing_text(Printing_getInstance(), "Discarded messages:         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
+	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
+	Printing::text(Printing::getInstance(), "Discarded messages:         ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
 }

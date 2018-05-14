@@ -83,8 +83,8 @@ enum MemoryPoolSizes
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MemoryPool_constructor(MemoryPool this);
-static void MemoryPool_reset(MemoryPool this);
+static void MemoryPool::constructor(MemoryPool this);
+static void MemoryPool::reset(MemoryPool this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ static void MemoryPool_reset(MemoryPool this);
 /**
  * Get instance
  *
- * @fn			MemoryPool_getInstance()
+ * @fn			MemoryPool::getInstance()
  * @memberof	MemoryPool
  * @public
  *
@@ -158,14 +158,14 @@ __MEMORY_POOL_SINGLETON(MemoryPool)
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
+static void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::constructor: null this");
 
 	__CONSTRUCT_BASE(Object);
 
-	MemoryPool_reset(this);
-	MemoryPool_cleanUp(this);
+	MemoryPool::reset(this);
+	MemoryPool::cleanUp(this);
 }
 
 /**
@@ -176,7 +176,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  *
  * @param this	Function scope
  */
- void MemoryPool_destructor(MemoryPool this)
+ void MemoryPool::destructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::destructor: null this");
 
@@ -195,11 +195,11 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  *
  * @return					Pointer to the memory pool entry allocated
  */
- BYTE* MemoryPool_allocate(MemoryPool this, int numberOfBytes)
+ BYTE* MemoryPool::allocate(MemoryPool this, int numberOfBytes)
 {
 	ASSERT(this, "MemoryPool::allocate: null this");
 
-	int lp = HardwareManager_getLinkPointer(HardwareManager_getInstance());
+	int lp = HardwareManager::getLinkPointer(HardwareManager::getInstance());
 
 	int i = 0;
 	int j = 0;
@@ -210,7 +210,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	bool blockFound = false;
 
-	HardwareManager_disableInterrupts();
+	HardwareManager::disableInterrupts();
 
 	while(!blockFound && pool--)
 	{
@@ -261,21 +261,21 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
 
 	if(!blockFound)
 	{
-		Printing_setDebugMode(Printing_getInstance());
-		Printing_clear(Printing_getInstance());
-		MemoryPool_printDetailedUsage(this, 1, 8);
-		Printing_text(Printing_getInstance(), "Pool's size: ", 20, 12, NULL);
-		Printing_int(Printing_getInstance(), blockSize, 44, 12, NULL);
-		Printing_text(Printing_getInstance(), "Block's size requested: ", 20, 13, NULL);
-		Printing_int(Printing_getInstance(), numberOfBytes, 44, 13, NULL);
-		Printing_text(Printing_getInstance(), "Caller address: ", 20, 15, NULL);
+		Printing::setDebugMode(Printing::getInstance());
+		Printing::clear(Printing::getInstance());
+		MemoryPool::printDetailedUsage(this, 1, 8);
+		Printing::text(Printing::getInstance(), "Pool's size: ", 20, 12, NULL);
+		Printing::int(Printing::getInstance(), blockSize, 44, 12, NULL);
+		Printing::text(Printing::getInstance(), "Block's size requested: ", 20, 13, NULL);
+		Printing::int(Printing::getInstance(), numberOfBytes, 44, 13, NULL);
+		Printing::text(Printing::getInstance(), "Caller address: ", 20, 15, NULL);
 
-		Printing_hex(Printing_getInstance(), lp, 36, 15, 8, NULL);
+		Printing::hex(Printing::getInstance(), lp, 36, 15, 8, NULL);
 
 		NM_ASSERT(false, "MemoryPool::allocate: pool exhausted");
 	}
 
-	HardwareManager_enableInterrupts();
+	HardwareManager::enableInterrupts();
 
 	// return designed address
 	return &this->poolLocation[pool][displacement];
@@ -290,7 +290,7 @@ static void __attribute__ ((noinline)) MemoryPool_constructor(MemoryPool this)
  * @param this		Function scope
  * @param object	Pointer to the memory pool entry to free
  */
-void MemoryPool_free(MemoryPool this, BYTE* object)
+void MemoryPool::free(MemoryPool this, BYTE* object)
 {
 	ASSERT(this, "MemoryPool::free: null this");
 
@@ -323,7 +323,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 	// get the total objects in the pool
 	numberOfOjects = this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize];
 
-	HardwareManager_disableInterrupts();
+	HardwareManager::disableInterrupts();
 
 	// search for the pool in which it is allocated
 	for(i = 0, displacement = 0; i < numberOfOjects; i++, displacement += this->poolSizes[pool][eBlockSize])
@@ -333,7 +333,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
 		{
 			// free the block
 			*(u32*)((u32)object) = __MEMORY_FREE_BLOCK_FLAG;
-			HardwareManager_enableInterrupts();
+			HardwareManager::enableInterrupts();
 			return;
 		}
 	}
@@ -355,7 +355,7 @@ void MemoryPool_free(MemoryPool this, BYTE* object)
  *
  * @param this		Function scope
  */
-static void MemoryPool_reset(MemoryPool this)
+static void MemoryPool::reset(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::reset: null this");
 
@@ -383,7 +383,7 @@ static void MemoryPool_reset(MemoryPool this)
  *
  * @param this		Function scope
  */
-void MemoryPool_cleanUp(MemoryPool this)
+void MemoryPool::cleanUp(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::reset: null this");
 
@@ -417,7 +417,7 @@ void MemoryPool_cleanUp(MemoryPool this)
  *
  * @return			Total size of the memory pool
  */
-int MemoryPool_getPoolSize(MemoryPool this)
+int MemoryPool::getPoolSize(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::reset: null this");
 
@@ -443,7 +443,7 @@ int MemoryPool_getPoolSize(MemoryPool this)
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
-void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
+void MemoryPool::printDetailedUsage(MemoryPool this, int x, int y)
 {
 	ASSERT(this, "MemoryPool::printMemUsage: null this");
 
@@ -453,15 +453,15 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 	int pool;
 	int displacement = 0;
 
-	Printing printing = Printing_getInstance();
+	Printing printing = Printing::getInstance();
 
-	Printing_resetWorldCoordinates(printing);
+	Printing::resetWorldCoordinates(printing);
 
-	Printing_text(printing, "MEMORY POOL'S STATUS", x, y++, NULL);
+	Printing::text(printing, "MEMORY POOL'S STATUS", x, y++, NULL);
 
-	Printing_text(printing, "Pool", x, ++y, NULL);
-	Printing_text(printing, "Free", x + 5, y, NULL);
-	Printing_text(printing, "Used", x + 10, y, NULL);
+	Printing::text(printing, "Pool", x, ++y, NULL);
+	Printing::text(printing, "Free", x + 5, y, NULL);
+	Printing::text(printing, "Used", x + 10, y, NULL);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -476,29 +476,29 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
 
 		totalUsedBytes += totalUsedBlocks * this->poolSizes[pool][eBlockSize];
 
-		Printing_text(printing, "	              ", x, ++y, NULL);
-		Printing_int(printing, this->poolSizes[pool][eBlockSize],  x, y, NULL);
-		Printing_int(printing, this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
-		Printing_int(printing, totalUsedBlocks, x + 10, y, NULL);
+		Printing::text(printing, "	              ", x, ++y, NULL);
+		Printing::int(printing, this->poolSizes[pool][eBlockSize],  x, y, NULL);
+		Printing::int(printing, this->poolSizes[pool][ePoolSize] / this->poolSizes[pool][eBlockSize] - totalUsedBlocks, x + 5, y, NULL);
+		Printing::int(printing, totalUsedBlocks, x + 10, y, NULL);
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
-		Printing_int(printing, usedBlocksPercentage, x + 17 - Utilities_intLength(usedBlocksPercentage), y, NULL);
-		Printing_text(printing, "% ", x + 17, y, NULL);
+		Printing::int(printing, usedBlocksPercentage, x + 17 - Utilities::intLength(usedBlocksPercentage), y, NULL);
+		Printing::text(printing, "% ", x + 17, y, NULL);
 
 		totalUsedBlocks = 0 ;
 	}
 
 	++y;
-	int poolSize = MemoryPool_getPoolSize(this);
-	Printing_text(printing, "Pool size: ", x, ++y, NULL);
-	Printing_int(printing, poolSize, x + 18 - Utilities_intLength(poolSize), y, NULL);
+	int poolSize = MemoryPool::getPoolSize(this);
+	Printing::text(printing, "Pool size: ", x, ++y, NULL);
+	Printing::int(printing, poolSize, x + 18 - Utilities::intLength(poolSize), y, NULL);
 
-	Printing_text(printing, "Pool usage: ", x, ++y, NULL);
-	Printing_int(printing, totalUsedBytes, x + 18 - Utilities_intLength(totalUsedBytes), y++, NULL);
+	Printing::text(printing, "Pool usage: ", x, ++y, NULL);
+	Printing::int(printing, totalUsedBytes, x + 18 - Utilities::intLength(totalUsedBytes), y++, NULL);
 
 	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
-	Printing_int(printing, usedBytesPercentage, x + 17 - Utilities_intLength(usedBytesPercentage), y, NULL);
-	Printing_text(printing, "% ", x + 17, y++, NULL);
+	Printing::int(printing, usedBytesPercentage, x + 17 - Utilities::intLength(usedBytesPercentage), y, NULL);
+	Printing::text(printing, "% ", x + 17, y++, NULL);
 }
 
 /**
@@ -511,7 +511,7 @@ void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y)
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
-void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
+void MemoryPool::printResumedUsage(MemoryPool this, int x, int y)
 {
 	ASSERT(this, "MemoryPool::printMemUsage: null this");
 
@@ -522,12 +522,12 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 	int pool;
 	int displacement = 0;
 
-	Printing printing = Printing_getInstance();
+	Printing printing = Printing::getInstance();
 
-	Printing_text(printing, "MEMORY:", x, y, NULL);
-	int poolSize = MemoryPool_getPoolSize(MemoryPool_getInstance());
-	Printing_text(printing, "Total: ", x, ++y, NULL);
-	Printing_int(printing, poolSize, x + 12 - Utilities_intLength(poolSize), y, NULL);
+	Printing::text(printing, "MEMORY:", x, y, NULL);
+	int poolSize = MemoryPool::getPoolSize(MemoryPool::getInstance());
+	Printing::text(printing, "Total: ", x, ++y, NULL);
+	Printing::int(printing, poolSize, x + 12 - Utilities::intLength(poolSize), y, NULL);
 
 	for(y += 2, pool = 0; pool < __MEMORY_POOLS; pool++)
 	{
@@ -544,13 +544,13 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 		int usedBlocksPercentage = (100 * totalUsedBlocks) / totalBlocks;
 
-		Printing_text(printing, "           ", x, originalY + 3 + pool, NULL);
+		Printing::text(printing, "           ", x, originalY + 3 + pool, NULL);
 
 		if(__MEMORY_POOL_WARNING_THRESHOLD < usedBlocksPercentage)
 		{
-			Printing_int(printing, this->poolSizes[pool][eBlockSize], x, y, NULL);
-			Printing_int(printing, usedBlocksPercentage, x + 7 - Utilities_intLength(usedBlocksPercentage), y, NULL);
-			Printing_text(printing, "% ", x + 7, y++, NULL);
+			Printing::int(printing, this->poolSizes[pool][eBlockSize], x, y, NULL);
+			Printing::int(printing, usedBlocksPercentage, x + 7 - Utilities::intLength(usedBlocksPercentage), y, NULL);
+			Printing::text(printing, "% ", x + 7, y++, NULL);
 		}
 
 		totalUsedBlocks = 0 ;
@@ -558,8 +558,8 @@ void MemoryPool_printResumedUsage(MemoryPool this, int x, int y)
 
 	y = originalY;
 	int usedBytesPercentage = (100 * totalUsedBytes) / poolSize;
-	Printing_int(printing, usedBytesPercentage, x + 11 - Utilities_intLength(usedBytesPercentage), y, NULL);
-	Printing_text(printing, "% ", x + 11, y++, NULL);
-	Printing_text(printing, "Used: ", x, ++y, NULL);
-	Printing_int(printing, totalUsedBytes, x + 12 - Utilities_intLength(totalUsedBytes), y++, NULL);
+	Printing::int(printing, usedBytesPercentage, x + 11 - Utilities::intLength(usedBytesPercentage), y, NULL);
+	Printing::text(printing, "% ", x + 11, y++, NULL);
+	Printing::text(printing, "Used: ", x, ++y, NULL);
+	Printing::int(printing, totalUsedBytes, x + 12 - Utilities::intLength(totalUsedBytes), y++, NULL);
 }

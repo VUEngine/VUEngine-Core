@@ -56,7 +56,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void WireframeManager_constructor(WireframeManager this);
+static void WireframeManager::constructor(WireframeManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ static void WireframeManager_constructor(WireframeManager this);
 /**
  * Get instance
  *
- * @fn			WireframeManager_getInstance()
+ * @fn			WireframeManager::getInstance()
  * @memberof	WireframeManager
  * @public
  *
@@ -82,7 +82,7 @@ __SINGLETON(WireframeManager);
  *
  * @param this	Function scope
  */
-static void WireframeManager_constructor(WireframeManager this)
+static void WireframeManager::constructor(WireframeManager this)
 {
 	ASSERT(this, "WireframeManager::constructor: null this");
 
@@ -99,7 +99,7 @@ static void WireframeManager_constructor(WireframeManager this)
  *
  * @param this	Function scope
  */
-void WireframeManager_destructor(WireframeManager this)
+void WireframeManager::destructor(WireframeManager this)
 {
 	ASSERT(this, "WireframeManager::destructor: null this");
 	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
@@ -128,14 +128,14 @@ void WireframeManager_destructor(WireframeManager this)
  * @param this		Function scope
  * @param wireframe	Wireframe to register
  */
-void WireframeManager_register(WireframeManager this, Wireframe wireframe)
+void WireframeManager::register(WireframeManager this, Wireframe wireframe)
 {
 	ASSERT(this, "WireframeManager::register: null this");
 	ASSERT(wireframe, "WireframeManager::register: null wireframe");
 
-	if(!VirtualList_find(this->wireframes, wireframe))
+	if(!VirtualList::find(this->wireframes, wireframe))
 	{
-		VirtualList_pushBack(this->wireframes, wireframe);
+		VirtualList::pushBack(this->wireframes, wireframe);
 	}
 }
 
@@ -148,12 +148,12 @@ void WireframeManager_register(WireframeManager this, Wireframe wireframe)
  * @param this		Function scope
  * @param wireframe	Wireframe to remove
  */
-void WireframeManager_remove(WireframeManager this, Wireframe wireframe)
+void WireframeManager::remove(WireframeManager this, Wireframe wireframe)
 {
 	ASSERT(this, "WireframeManager::remove: null this");
 	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
 
-	VirtualList_removeElement(this->wireframes, wireframe);
+	VirtualList::removeElement(this->wireframes, wireframe);
 }
 
 /**
@@ -164,11 +164,11 @@ void WireframeManager_remove(WireframeManager this, Wireframe wireframe)
  *
  * @param this	Function scope
  */
-void WireframeManager_reset(WireframeManager this)
+void WireframeManager::reset(WireframeManager this)
 {
 	ASSERT(this, "WireframeManager::reset: null this");
 
-	VirtualList_clear(this->wireframes);
+	VirtualList::clear(this->wireframes);
 }
 
 /**
@@ -179,7 +179,7 @@ void WireframeManager_reset(WireframeManager this)
  *
  * @param this	Function scope
  */
-void WireframeManager_drawWireframes(WireframeManager this)
+void WireframeManager::drawWireframes(WireframeManager this)
 {
 	ASSERT(this, "WireframeManager::draw: null this");
 
@@ -189,7 +189,7 @@ void WireframeManager_drawWireframes(WireframeManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		 Wireframe_draw(node->data, true);
+		 Wireframe::draw(node->data, true);
 	}
 }
 
@@ -203,11 +203,11 @@ void WireframeManager_drawWireframes(WireframeManager this)
  * @param x		Camera's x coordinate
  * @param y		Camera's y coordinate
  */
-void WireframeManager_print(WireframeManager this, int x, int y)
+void WireframeManager::print(WireframeManager this, int x, int y)
 {
-	Printing_text(Printing_getInstance(), "WireframeManager's status", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "WireframeManager's status", x, y++, NULL);
 	y++;
-	Printing_text(Printing_getInstance(), "Entries: ", x, y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->wireframes), x + 17, y++, NULL);
+	Printing::text(Printing::getInstance(), "Entries: ", x, y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->wireframes), x + 17, y++, NULL);
 }
 

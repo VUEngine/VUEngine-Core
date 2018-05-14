@@ -57,19 +57,19 @@ __CLASS_FRIEND_DEFINITION(Ball);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void CollisionHelper_constructor(CollisionHelper this);
-static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB);
-static CollisionInformation CollisionHelper_checkIfBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB);
-static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB);
-static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, InverseBox inverseBoxB);
-static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, Ball ballB);
-static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB);
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB);
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB);
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB);
-static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, InverseBox inverseBoxB);
-static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, Ball ballB);
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB);
+static void CollisionHelper::constructor(CollisionHelper this);
+static CollisionInformation CollisionHelper::checkIfBoxOverlapsBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB);
+static CollisionInformation CollisionHelper::checkIfBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB);
+static CollisionInformation CollisionHelper::checkIfBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB);
+static CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, InverseBox inverseBoxB);
+static CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, Ball ballB);
+static CollisionInformation CollisionHelper::checkIfBallOverlapsBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB);
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB);
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB);
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB);
+static SolutionVector CollisionHelper::getSolutionVectorBetweenInverseBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, InverseBox inverseBoxB);
+static SolutionVector CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA, Ball ballB);
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(Collis
 /**
  * Get instance
  *
- * @fn			CollisionHelper_getInstance()
+ * @fn			CollisionHelper::getInstance()
  * @memberof	CollisionHelper
  * @public
  *
@@ -95,7 +95,7 @@ __SINGLETON(CollisionHelper);
  *
  * @param this	Function scope
  */
-static void CollisionHelper_constructor(CollisionHelper this)
+static void CollisionHelper::constructor(CollisionHelper this)
 {
 	ASSERT(this, "CollisionHelper::constructor: null this");
 
@@ -110,7 +110,7 @@ static void CollisionHelper_constructor(CollisionHelper this)
  *
  * @param this	Function scope
  */
-void CollisionHelper_destructor(CollisionHelper this)
+void CollisionHelper::destructor(CollisionHelper this)
 {
 	ASSERT(this, "CollisionHelper::destructor: null this");
 
@@ -128,7 +128,7 @@ void CollisionHelper_destructor(CollisionHelper this)
  * @param shapeA		Shape
  * @param shapeB		Shape
  */
-CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attribute__ ((unused)), Shape shapeA, Shape shapeB)
+CollisionInformation CollisionHelper::checkIfOverlap(CollisionHelper this __attribute__ ((unused)), Shape shapeA, Shape shapeB)
 {
 	ASSERT(this, "CollisionHelper::checkIfOverlap: null this");
 	ASSERT(shapeA, "CollisionHelper::checkIfOverlap: null shapeA");
@@ -140,45 +140,45 @@ CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attri
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			collisionInformation = CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
+			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			collisionInformation = CollisionHelper_checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper::checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(Box, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			collisionInformation = CollisionHelper_checkIfBoxOverlapsBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Box, shapeB));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Box, shapeB));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			collisionInformation = CollisionHelper_checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(InverseBox, shapeB));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(InverseBox, shapeB));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			collisionInformation = CollisionHelper_checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(InverseBox, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			collisionInformation = CollisionHelper_checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(InverseBox, shapeA));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(InverseBox, shapeA));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsInverseBox(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(InverseBox, shapeB));
+			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsInverseBox(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(InverseBox, shapeB));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			collisionInformation = CollisionHelper_checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
 		}
 	}
 
@@ -193,7 +193,7 @@ CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this __attri
 	return collisionInformation;
 }
 
-static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB)
+static CollisionInformation CollisionHelper::checkIfBoxOverlapsBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB)
 {
 	ASSERT(this, "CollisionHelper::checkIfBoxOverlapsBox: null this");
 
@@ -213,14 +213,14 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 		bool isSATCheckPending = isBoxARotated || isBoxBRotated;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-		fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
+		fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
 		if(isSATCheckPending)
 		{
-			solutionVector = CollisionHelper_getSolutionVectorBetweenBoxAndBox(this, boxA, boxB);
+			solutionVector = CollisionHelper::getSolutionVectorBetweenBoxAndBox(this, boxA, boxB);
 		}
 		else
 		{
@@ -238,7 +238,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 				(boxB->rightBox.z0 + boxB->rightBox.z1) >> 1,
 			};
 
-			Vector3D distanceVector = Vector3D_get(boxBCenter, boxACenter);
+			Vector3D distanceVector = Vector3D::get(boxBCenter, boxACenter);
 
 			Vector3D normals[__SHAPE_NORMALS] =
 			{
@@ -259,9 +259,9 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 					solutionVector.magnitude = minimumIntervalDistance = intervalDistance;
 					solutionVector.direction = normals[i];
 
-					if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+					if(Vector3D::dotProduct(distanceVector, solutionVector.direction) < 0)
 					{
-						solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+						solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 					}
 				}
 			}
@@ -273,7 +273,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBox(CollisionHelpe
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-static CollisionInformation CollisionHelper_checkIfBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB)
+static CollisionInformation CollisionHelper::checkIfBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB)
 {
 	ASSERT(this, "CollisionHelper::checkIfBoxOverlapsInverseBox: null this");
 
@@ -289,7 +289,7 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsInverseBox(Collisi
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB)
+static CollisionInformation CollisionHelper::checkIfBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB)
 {
 	ASSERT(this, "CollisionHelper::checkIfBoxOverlapsBall: null this");
 
@@ -314,18 +314,18 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 		bool isSATCheckPending = boxA->rotationVertexDisplacement.x | boxA->rotationVertexDisplacement.y | boxA->rotationVertexDisplacement.z ? true : false;
 
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-		fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
+		fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
 		if(isSATCheckPending)
 		{
-			solutionVector = CollisionHelper_getSolutionVectorBetweenBoxAndBall(this, boxA, ballB);
+			solutionVector = CollisionHelper::getSolutionVectorBetweenBoxAndBall(this, boxA, ballB);
 		}
 		else
 		{
-			Vector3D distanceVector = Vector3D_get(boxACenter, ballB->center);
+			Vector3D distanceVector = Vector3D::get(boxACenter, ballB->center);
 
 			Vector3D normals[__SHAPE_NORMALS] =
 			{
@@ -348,9 +348,9 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 				}
 			}
 
-			if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+			if(Vector3D::dotProduct(distanceVector, solutionVector.direction) < 0)
 			{
-				solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+				solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 			}
 		}
 
@@ -360,14 +360,14 @@ static CollisionInformation CollisionHelper_checkIfBoxOverlapsBall(CollisionHelp
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
+static CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::checkIfInverseBoxOverlapsInverseBox: null this");
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+static CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::checkIfInverseBoxOverlapsBall: null this");
 
@@ -390,13 +390,13 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 	{
 		// check if both boxes are axis aligned
 		SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-		fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
+		fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
 		// no SAT when checking inverse boxes
 		// if axis aligned, then SAT check is not needed
 		// and we can calculate the minimum displacement vector
 		// to resolve the collision right now
-		Vector3D distanceVector = Vector3D_get(inverseBoxACenter, ballB->center);
+		Vector3D distanceVector = Vector3D::get(inverseBoxACenter, ballB->center);
 
 		Vector3D normals[__SHAPE_NORMALS] =
 		{
@@ -419,9 +419,9 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 			}
 		}
 
-		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+		if(Vector3D::dotProduct(distanceVector, solutionVector.direction) < 0)
 		{
-			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+			solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 		}
 
 		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), solutionVector};
@@ -430,11 +430,11 @@ static CollisionInformation CollisionHelper_checkIfInverseBoxOverlapsBall(Collis
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHelper this, Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+static CollisionInformation CollisionHelper::checkIfBallOverlapsBall(CollisionHelper this, Ball ballA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::checkIfBallOverlapsBall: null this");
 
-	SolutionVector solutionVector = CollisionHelper_getSolutionVectorBetweenBallAndBall(this, ballA, ballB);
+	SolutionVector solutionVector = CollisionHelper::getSolutionVectorBetweenBallAndBall(this, ballA, ballB);
 
 	if(solutionVector.magnitude)
 	{
@@ -444,25 +444,25 @@ static CollisionInformation CollisionHelper_checkIfBallOverlapsBall(CollisionHel
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB)
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB)
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBoxAndBox: null this");
 
 	// get the vertexes of each box
 	Vector3D boxAVertexes[__BOX_VERTEXES];
 	Vector3D boxBVertexes[__BOX_VERTEXES];
-	Box_getVertexes(boxA, boxAVertexes);
-	Box_getVertexes(boxB, boxBVertexes);
+	Box::getVertexes(boxA, boxAVertexes);
+	Box::getVertexes(boxB, boxBVertexes);
 
 	// if the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
-		Box_projectOntoItself(boxA);
+		Box::projectOntoItself(boxA);
 	}
 
 	if(!boxB->normals)
 	{
-		Box_projectOntoItself(boxA);
+		Box::projectOntoItself(boxA);
 	}
 
 	Vector3D* normals[2] =
@@ -486,10 +486,10 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 		}
 	};
 
-	Vector3D distanceVector = Vector3D_get(centers[1], centers[0]);
+	Vector3D distanceVector = Vector3D::get(centers[1], centers[0]);
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
- 	fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
+ 	fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
 	int boxIndex = 0;
 
@@ -511,12 +511,12 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 			if(normals[boxIndex] == boxA->normals->vectors)
 			{
 				boxBMin = boxBMax = 0;
-				Box_project(boxBVertexes, currentNormal, &boxBMin, &boxBMax);
+				Box::project(boxBVertexes, currentNormal, &boxBMin, &boxBMax);
 			}
 			else if(normals[boxIndex] == boxB->normals->vectors)
 			{
 				boxAMin = boxAMax = 0;
-				Box_project(boxAVertexes, currentNormal, &boxAMin, &boxAMax);
+				Box::project(boxAVertexes, currentNormal, &boxAMin, &boxAMax);
 			}
 
 			fix10_6 intervalDistance = 0;
@@ -545,30 +545,30 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBox(Collisio
 			}
 		}
 
-		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+		if(Vector3D::dotProduct(distanceVector, solutionVector.direction) < 0)
 		{
-			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+			solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 		}
 	}
 
 	return solutionVector;
 }
 
-__attribute__ ((unused)) static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
+__attribute__ ((unused)) static SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBoxAndInverseBox: null this");
 
 	return (SolutionVector) {{0, 0, 0}, 0};
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(CollisionHelper this __attribute__ ((unused)), Box boxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBoxAndBall(CollisionHelper this __attribute__ ((unused)), Box boxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBoxAndBall: null this");
 
 	// if the normals have not been computed yet do so now
 	if(!boxA->normals)
 	{
-		Box_projectOntoItself(boxA);
+		Box::projectOntoItself(boxA);
 	}
 
 	Vector3D* normals = boxA->normals->vectors;
@@ -581,10 +581,10 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 		(boxA->rightBox.z0 + boxA->rightBox.z1) >> 1,
 	};
 
-	Vector3D distanceVector = Vector3D_get(boxACenter, ballB->center);
+	Vector3D distanceVector = Vector3D::get(boxACenter, ballB->center);
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
-	fix10_6 minimumIntervalDistance = Math_fix10_6Infinity();
+	fix10_6 minimumIntervalDistance = Math::fix10_6Infinity();
 
 	// has to project all points on all the normals of the tilted box
 	int normalIndex = 0;
@@ -597,7 +597,7 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 		fix10_6 ballBMin = 0;
 		fix10_6 ballBMax = 0;
 
-		Ball_project(ballB->center, ballB->radius, currentNormal, &ballBMin, &ballBMax);
+		Ball::project(ballB->center, ballB->radius, currentNormal, &ballBMin, &ballBMax);
 
 		fix10_6 intervalDistance = 0;
 
@@ -626,48 +626,48 @@ static SolutionVector CollisionHelper_getSolutionVectorBetweenBoxAndBall(Collisi
 		}
 	}
 
-	if(Vector3D_dotProduct(distanceVector, solutionVector.direction) < 0)
+	if(Vector3D::dotProduct(distanceVector, solutionVector.direction) < 0)
 	{
-		solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+		solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 	}
 
 	return solutionVector;
 }
 
-__attribute__ ((unused)) static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
+__attribute__ ((unused)) static SolutionVector CollisionHelper::getSolutionVectorBetweenInverseBoxAndInverseBox(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), InverseBox inverseBoxB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenInverseBoxAndInverseBox: null this");
 
 	return (SolutionVector) {{0, 0, 0}, 0};
 }
 
-__attribute__ ((unused)) static SolutionVector CollisionHelper_getSolutionVectorBetweenInverseBoxAndBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
+__attribute__ ((unused)) static SolutionVector CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall(CollisionHelper this __attribute__ ((unused)), InverseBox inverseBoxA __attribute__ ((unused)), Ball ballB __attribute__ ((unused)))
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenInverseBoxAndBall: null this");
 
 	return (SolutionVector) {{0, 0, 0}, 0};
 }
 
-static SolutionVector CollisionHelper_getSolutionVectorBetweenBallAndBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB)
+static SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(CollisionHelper this __attribute__ ((unused)), Ball ballA, Ball ballB)
 {
 	ASSERT(this, "CollisionHelper::getSolutionVectorBetweenBallAndBall: null this");
 
-	Vector3D distanceVector = Vector3D_get(ballA->center, ballB->center);
+	Vector3D distanceVector = Vector3D::get(ballA->center, ballB->center);
 	fix10_6 radiusesLength = ballA->radius + ballB->radius;
 
 	SolutionVector solutionVector = (SolutionVector) {{0, 0, 0}, 0};
 
-	if(Vector3D_squareLength(distanceVector) < __FIX10_6_EXT_MULT(radiusesLength, radiusesLength))
+	if(Vector3D::squareLength(distanceVector) < __FIX10_6_EXT_MULT(radiusesLength, radiusesLength))
 	{
-		fix10_6 distanceVectorLength = Vector3D_length(distanceVector);
+		fix10_6 distanceVectorLength = Vector3D::length(distanceVector);
 
 		// add padding to prevent rounding problems
 		solutionVector.magnitude = radiusesLength - distanceVectorLength;
-		solutionVector.direction = Vector3D_normalize(distanceVector);
+		solutionVector.direction = Vector3D::normalize(distanceVector);
 
-		if(Vector3D_dotProduct(distanceVector, solutionVector.direction) > 0)
+		if(Vector3D::dotProduct(distanceVector, solutionVector.direction) > 0)
 		{
-			solutionVector.direction = Vector3D_scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
+			solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 		}
 	}
 

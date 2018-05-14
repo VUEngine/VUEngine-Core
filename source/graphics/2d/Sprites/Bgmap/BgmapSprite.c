@@ -57,9 +57,9 @@ __CLASS_FRIEND_DEFINITION(BgmapTexture);
 
 // global
 
-void Sprite_onTextureRewritten(Sprite this, Object eventFirer);
-static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this);
-static void BgmapSprite_computeDimensions(BgmapSprite this);
+void Sprite::onTextureRewritten(Sprite this, Object eventFirer);
+static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite this);
+static void BgmapSprite::computeDimensions(BgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,30 +80,30 @@ __CLASS_NEW_END(BgmapSprite, bgmapSpriteDefinition, owner);
  * @param bgmapSpriteDefinition		Sprite definition
  * @param owner						Owner
  */
-void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+void BgmapSprite::constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
 	ASSERT(this, "BgmapSprite::constructor: null this");
 
-	Base_constructor(this, (SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
+	Base::constructor(this, (SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
 
 	// create the texture
 	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
 	{
-		this->texture = __SAFE_CAST(Texture, BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition));
+		this->texture = __SAFE_CAST(Texture, BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
 
 	if(this->texture)
 	{
-		Object_addEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite_onTextureRewritten, kEventTextureRewritten);
+		Object::addEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite_onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-		this->drawSpec.textureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.my = BgmapTexture::getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		this->drawSpec.textureSource.mp = 0;
 
-		this->halfWidth = Texture_getCols(this->texture) << 2;
-		this->halfHeight = Texture_getRows(this->texture) << 2;
+		this->halfWidth = Texture::getCols(this->texture) << 2;
+		this->halfHeight = Texture::getRows(this->texture) << 2;
 	}
 	else
 	{
@@ -126,7 +126,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
 
 	// set WORLD layer's head according to map's render mode
 	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect;
-	BgmapSprite_setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
+	BgmapSprite::setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
 }
 
 /**
@@ -137,7 +137,7 @@ void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgma
  *
  * @param this			Function scope
  */
-void BgmapSprite_destructor(BgmapSprite this)
+void BgmapSprite::destructor(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::destructor: null cast");
 
@@ -145,14 +145,14 @@ void BgmapSprite_destructor(BgmapSprite this)
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
-		ParamTableManager_free(ParamTableManager_getInstance(), this);
+		ParamTableManager::free(ParamTableManager::getInstance(), this);
 	}
 
 	// free the texture
 	if(__IS_OBJECT_ALIVE(this->texture))
 	{
-		Object_removeEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite_onTextureRewritten, kEventTextureRewritten);
-		BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, this->texture));
+		Object::removeEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite_onTextureRewritten, kEventTextureRewritten);
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, this->texture));
 	}
 
 	this->texture = NULL;
@@ -162,7 +162,7 @@ void BgmapSprite_destructor(BgmapSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -175,7 +175,7 @@ void BgmapSprite_destructor(BgmapSprite this)
  *
  * @return			Scale
  */
-Scale BgmapSprite_getScale(BgmapSprite this)
+Scale BgmapSprite::getScale(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getScale: null this");
 
@@ -191,7 +191,7 @@ Scale BgmapSprite_getScale(BgmapSprite this)
  *
  * @param this			Function scope
  */
-static void BgmapSprite_computeDimensions(BgmapSprite this)
+static void BgmapSprite::computeDimensions(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
 
@@ -221,7 +221,7 @@ static void BgmapSprite_computeDimensions(BgmapSprite this)
  * @param this			Function scope
  * @param rotation		Rotation
  */
-void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
+void BgmapSprite::rotate(BgmapSprite this, const Rotation* rotation)
 {
 	ASSERT(this, "BgmapSprite::rotate: null this");
 
@@ -231,13 +231,13 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
 
 		if(this->texture)
 		{
-			BgmapSprite_computeDimensions(this);
+			BgmapSprite::computeDimensions(this);
 		}
 
 		this->paramTableRow = -1 == this->paramTableRow ? 0 : this->paramTableRow;
 
 		// scale the texture in the next render cycle
-		BgmapSprite_invalidateParamTable(this);
+		BgmapSprite::invalidateParamTable(this);
 	}
 }
 
@@ -251,7 +251,7 @@ void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
+void BgmapSprite::resize(BgmapSprite this, Scale scale, fix10_6 z)
 {
 	ASSERT(this, "BgmapSprite::resize: null this");
 
@@ -273,7 +273,7 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
 		if(this->texture)
 		{
 			// apply add 1 pixel to the width and 7 to the height to avoid cutting off the graphics
-			BgmapSprite_computeDimensions(this);
+			BgmapSprite::computeDimensions(this);
 		}
 
 		if(this->param)
@@ -292,12 +292,12 @@ void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z)
  * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
-void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z)
+void BgmapSprite::calculateParallax(BgmapSprite this, fix10_6 z)
 {
 	ASSERT(this, "BgmapSprite::calculateParallax: null this");
 
 	this->position.z = __METERS_TO_PIXELS(z - _cameraPosition->z);
-	this->position.parallax = Optics_calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
+	this->position.parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
 }
 
 /**
@@ -310,7 +310,7 @@ void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z)
  *
  * @return			DrawSpec
  */
-DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this)
+DrawSpec BgmapSprite::getDrawSpec(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getDrawSpec: null this");
 
@@ -326,12 +326,12 @@ DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this)
  * @param this		Function scope
  * @param evenFrame
  */
-void BgmapSprite_render(BgmapSprite this, bool evenFrame)
+void BgmapSprite::render(BgmapSprite this, bool evenFrame)
 {
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
 
-	Base_render(this, evenFrame);
+	Base::render(this, evenFrame);
 
 	if(!this->positioned)
 	{
@@ -436,11 +436,11 @@ void BgmapSprite_render(BgmapSprite this, bool evenFrame)
 	worldPointer->h = h - __WORLD_SIZE_DISPLACEMENT;
 
 	// set the world size according to the zoom
-	BgmapSprite_processAffineEffects(this, gx, width, myDisplacement);
-	BgmapSprite_processHbiasEffects(this);
+	BgmapSprite::processAffineEffects(this, gx, width, myDisplacement);
+	BgmapSprite::processHbiasEffects(this);
 }
 
-void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int myDisplacement)
+void BgmapSprite::processAffineEffects(BgmapSprite this, int gx, int width, int myDisplacement)
 {
 	ASSERT(this, "BgmapSprite::processAffineEffects: null this");
 
@@ -449,7 +449,7 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 		if(!this->param)
 		{
 			// allocate param table space
-			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
     	}
 
 		static WorldAttributes* worldPointer = NULL;
@@ -487,7 +487,7 @@ void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int m
 
 }
 
-void BgmapSprite_processHbiasEffects(BgmapSprite this)
+void BgmapSprite::processHbiasEffects(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::processHbiasEffects: null this");
 
@@ -496,7 +496,7 @@ void BgmapSprite_processHbiasEffects(BgmapSprite this)
 		if(!this->param)
 		{
 			// allocate param table space
-			this->param = ParamTableManager_allocate(ParamTableManager_getInstance(), this);
+			this->param = ParamTableManager::allocate(ParamTableManager::getInstance(), this);
     	}
 
 		static WorldAttributes* worldPointer = NULL;
@@ -523,7 +523,7 @@ void BgmapSprite_processHbiasEffects(BgmapSprite this)
 // to clip the image to the camera space, but kill the CPU
 /*
 // render a world layer with the map's information
-void BgmapSprite_render(BgmapSprite this)
+void BgmapSprite::render(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::render: null this");
 	ASSERT(this->texture, "BgmapSprite::render: null texture");
@@ -549,8 +549,8 @@ void BgmapSprite_render(BgmapSprite this)
 		int gx = __FIX10_6_TO_I(this->position.x + this->displacement.x);
 		int gy = __FIX10_6_TO_I(this->position.y + this->displacement.y);
 
-		int w = Texture_getCols(this->texture)<< 3;
-		int h = Texture_getRows(this->texture)<< 3;
+		int w = Texture::getCols(this->texture)<< 3;
+		int h = Texture::getRows(this->texture)<< 3;
 
 		int mxDisplacement = 0 > gx ? -gx : 0;
 		int myDisplacement = 0 > gy ? -gy : 0;
@@ -609,10 +609,10 @@ void BgmapSprite_render(BgmapSprite this)
 
 			 if(0 <= this->paramTableRow)
 			{
-				h = Texture_getRows(this->texture)<< 3;
+				h = Texture::getRows(this->texture)<< 3;
 				int lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;
 
-				BgmapSprite_doApplyAffineTransformations(this, lastRow);
+				BgmapSprite::doApplyAffineTransformations(this, lastRow);
 
 				if(0 >= this->paramTableRow)
 				{
@@ -623,7 +623,7 @@ void BgmapSprite_render(BgmapSprite this)
 			worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 		}
 
-		worldPointer->head = this->head | BgmapTexture_getSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		worldPointer->head = this->head | BgmapTexture::getSegment(__SAFE_CAST(BgmapTexture, this->texture));
 	}
 }
 */
@@ -637,7 +637,7 @@ void BgmapSprite_render(BgmapSprite this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void BgmapSprite_addDisplacement(BgmapSprite this, const PixelVector* displacement)
+void BgmapSprite::addDisplacement(BgmapSprite this, const PixelVector* displacement)
 {
 	ASSERT(this, "BgmapSprite::addDisplacement: null this");
 
@@ -657,7 +657,7 @@ void BgmapSprite_addDisplacement(BgmapSprite this, const PixelVector* displaceme
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
+void BgmapSprite::setMode(BgmapSprite this, u16 display, u16 mode)
 {
 	ASSERT(this, "BgmapSprite::setMode: null this");
 
@@ -666,7 +666,7 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
-		ParamTableManager_free(ParamTableManager_getInstance(), this);
+		ParamTableManager::free(ParamTableManager::getInstance(), this);
 
 		this->param = 0;
 	}
@@ -705,7 +705,7 @@ void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode)
  *
  * @return			Param table address
  */
-u32 BgmapSprite_getParam(BgmapSprite this)
+u32 BgmapSprite::getParam(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::getParam: null this");
 
@@ -721,14 +721,14 @@ u32 BgmapSprite_getParam(BgmapSprite this)
  * @param this		Function scope
  * @param param		Net param table address
  */
-void BgmapSprite_setParam(BgmapSprite this, u32 param)
+void BgmapSprite::setParam(BgmapSprite this, u32 param)
 {
 	ASSERT(this, "BgmapSprite::setParam: null this");
 
 	this->param = param;
 
 	// set flag to rewrite texture's param table
-	BgmapSprite_invalidateParamTable(this);
+	BgmapSprite::invalidateParamTable(this);
 }
 
 /**
@@ -739,17 +739,17 @@ void BgmapSprite_setParam(BgmapSprite this, u32 param)
  *
  * @param this		Function scope
  */
-void BgmapSprite_invalidateParamTable(BgmapSprite this)
+void BgmapSprite::invalidateParamTable(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::invalidateParamTable: null this");
 
 	if(__WORLD_AFFINE & this->head)
 	{
-		BgmapSprite_applyAffineTransformations(this);
+		BgmapSprite::applyAffineTransformations(this);
 	}
 	else if(__WORLD_HBIAS & this->head)
 	{
-		BgmapSprite_applyHbiasEffects(this);
+		BgmapSprite::applyHbiasEffects(this);
 	}
 }
 
@@ -762,7 +762,7 @@ void BgmapSprite_invalidateParamTable(BgmapSprite this)
  * @param this			Function scope
  * @param drawSpec		New drawSpec
  */
-void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
+void BgmapSprite::setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
 {
 	ASSERT(this, "BgmapSprite::setDrawSpec: null this");
 
@@ -779,7 +779,7 @@ void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec)
  *
  * @return				Next param table row to calculate
  */
-s16 BgmapSprite_getParamTableRow(BgmapSprite this)
+s16 BgmapSprite::getParamTableRow(BgmapSprite this)
 {
 	return this->paramTableRow;
 }
@@ -798,14 +798,14 @@ s16 BgmapSprite_getParamTableRow(BgmapSprite this)
  * @param this			Function scope
  * @return 				last computed row
  */
-static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
+static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::doApplyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
 	if(this->param)
 	{
-		return Affine_applyAll(
+		return Affine::applyAll(
 			this->param,
 			this->paramTableRow,
 			// geometrically accurate, but kills the CPU
@@ -834,7 +834,7 @@ static s16 BgmapSprite_doApplyAffineTransformations(BgmapSprite this)
  *
  * @param this			Function scope
  */
-void BgmapSprite_applyAffineTransformations(BgmapSprite this)
+void BgmapSprite::applyAffineTransformations(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::applyAffineTransformations: null this");
 	ASSERT(this->texture, "BgmapSprite::applyAffineTransformations: null texture");
@@ -850,7 +850,7 @@ void BgmapSprite_applyAffineTransformations(BgmapSprite this)
  *
  * @param this			Function scope
  */
-void BgmapSprite_applyHbiasEffects(BgmapSprite this)
+void BgmapSprite::applyHbiasEffects(BgmapSprite this)
 {
 	ASSERT(this, "BgmapSprite::applyHbiasEffects: null this");
 	ASSERT(this->texture, "BgmapSprite::applyHbiasEffects: null texture");

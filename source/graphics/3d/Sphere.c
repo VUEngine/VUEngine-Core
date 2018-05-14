@@ -66,7 +66,7 @@ __CLASS_NEW_END(Sphere, center, radius);
  *
  * @param this	Function scope
  */
-void Sphere_constructor(Sphere this, Vector3D center, fix10_6 radius)
+void Sphere::constructor(Sphere this, Vector3D center, fix10_6 radius)
 {
 	ASSERT(this, "Sphere::constructor: null this");
 
@@ -85,15 +85,15 @@ void Sphere_constructor(Sphere this, Vector3D center, fix10_6 radius)
  *
  * @param this	Function scope
  */
-void Sphere_destructor(Sphere this)
+void Sphere::destructor(Sphere this)
 {
 	ASSERT(this, "Sphere::destructor: null this");
 
-	Wireframe_hide(__SAFE_CAST(Wireframe, this));
+	Wireframe::hide(__SAFE_CAST(Wireframe, this));
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -105,7 +105,7 @@ void Sphere_destructor(Sphere this)
  * @param this					Function scope
  * @return 						Sphere's center
  */
-Vector3D Sphere_getCenter(Sphere this)
+Vector3D Sphere::getCenter(Sphere this)
 {
 	ASSERT(this, "Sphere::getCenter: null this");
 
@@ -121,7 +121,7 @@ Vector3D Sphere_getCenter(Sphere this)
  * @param this					Function scope
  * @param center 				New value
  */
-void Sphere_setCenter(Sphere this, Vector3D center)
+void Sphere::setCenter(Sphere this, Vector3D center)
 {
 	ASSERT(this, "Sphere::destructor: null this");
 
@@ -137,7 +137,7 @@ void Sphere_setCenter(Sphere this, Vector3D center)
  * @param this					Function scope
  * @return 						Sphere's radius
  */
-fix10_6 Sphere_getRadius(Sphere this)
+fix10_6 Sphere::getRadius(Sphere this)
 {
 	ASSERT(this, "Sphere::destructor: null this");
 
@@ -153,7 +153,7 @@ fix10_6 Sphere_getRadius(Sphere this)
  * @param this					Function scope
  * @param radius 				New value
  */
-void Sphere_setRadius(Sphere this, fix10_6 radius)
+void Sphere::setRadius(Sphere this, fix10_6 radius)
 {
 	ASSERT(this, "Sphere::destructor: null this");
 
@@ -170,13 +170,13 @@ void Sphere_setRadius(Sphere this, fix10_6 radius)
  * @param this					Function scope
  * @param calculateParallax		Tru to compute the parallax displacement for each pixel
  */
-void Sphere_draw(Sphere this, bool calculateParallax)
+void Sphere::draw(Sphere this, bool calculateParallax)
 {
 	ASSERT(this, "Sphere::draw: null this");
 
 	int color = __COLOR_BRIGHT_RED;
 
-	Vector3D normalizedCenter3D = Vector3D_getRelativeToCamera(this->center);
+	Vector3D normalizedCenter3D = Vector3D::getRelativeToCamera(this->center);
 
 	fix10_6 radiusSquare = __FIX10_6_MULT(this->radius, this->radius);
 
@@ -190,16 +190,16 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	for(; relativePoint3D.x < this->radius; relativePoint3D.x += __METERS_PER_PIXEL)
 	{
-		relativePoint3D.y = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(radiusSquare - __FIX10_6_EXT_MULT(relativePoint3D.x, relativePoint3D.x))));
+		relativePoint3D.y = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_EXT_TO_F(radiusSquare - __FIX10_6_EXT_MULT(relativePoint3D.x, relativePoint3D.x))));
 		Vector3D topTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y - relativePoint3D.y, normalizedCenter3D.z};
 		Vector3D bottomTranslatedPoint3D = {normalizedCenter3D.x + relativePoint3D.x, normalizedCenter3D.y + relativePoint3D.y, normalizedCenter3D.z};
 
-		s16 parallax = calculateParallax ? Optics_calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
-		PixelVector topPoint2D = Vector3D_projectToPixelVector(topTranslatedPoint3D, parallax);
-		PixelVector bottomPoint2D = Vector3D_projectToPixelVector(bottomTranslatedPoint3D, parallax);
+		s16 parallax = calculateParallax ? Optics::calculateParallax(relativePoint3D.x, relativePoint3D.z) : 0;
+		PixelVector topPoint2D = Vector3D::projectToPixelVector(topTranslatedPoint3D, parallax);
+		PixelVector bottomPoint2D = Vector3D::projectToPixelVector(bottomTranslatedPoint3D, parallax);
 
-		DirectDraw_drawPoint(DirectDraw_getInstance(), topPoint2D, color);
-		DirectDraw_drawPoint(DirectDraw_getInstance(), bottomPoint2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), topPoint2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), bottomPoint2D, color);
 	}
 /*
 	// draw on YZ plane
@@ -209,20 +209,20 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	for(; point3D.z < this->radius; point3D.z += __I_TO_FIX10_6(1))
 	{
-		point3D.y = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
+		point3D.y = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		PixelVector point2D = Vector3D_projectToPixelVector(translatedPoint3D);
+		PixelVector point2D = Vector3D::projectToPixelVector(translatedPoint3D);
 
 		if(calculateParallax)
 		{
-			point2D.parallax = Optics_calculateParallax(point3D.x, point3D.z);
+			point2D.parallax = Optics::calculateParallax(point3D.x, point3D.z);
 		}
 
-		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), point2D, color);
 
 		point2D.y = -point3D.y + normalizedCenter.y;
-		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), point2D, color);
 	}
 
 	// draw on XZ plane
@@ -232,20 +232,20 @@ void Sphere_draw(Sphere this, bool calculateParallax)
 
 	for(; point3D.x < this->radius; point3D.x += __I_TO_FIX10_6(1))
 	{
-		point3D.z = __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
+		point3D.z = __F_TO_FIX10_6(Math::squareRoot(__FIX10_6_TO_F(radiusSquare - __FIX10_6_MULT(point3D.x, point3D.x) - __FIX10_6_MULT(point3D.z, point3D.z))));
 
 		Vector3D translatedPoint3D = {point3D.x + normalizedCenter.x, point3D.y + normalizedCenter.y, point3D.z + normalizedCenter.z};
-		PixelVector point2D = Vector3D_projectToPixelVector(translatedPoint3D, 0);
+		PixelVector point2D = Vector3D::projectToPixelVector(translatedPoint3D, 0);
 
 		if(calculateParallax)
 		{
-			point2D.parallax = Optics_calculateParallax(point3D.x, point3D.z);
+			point2D.parallax = Optics::calculateParallax(point3D.x, point3D.z);
 		}
 
-		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), point2D, color);
 
 		point2D.y = -point3D.y + normalizedCenter.y;
-		DirectDraw_drawPoint(DirectDraw_getInstance(), point2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), point2D, color);
 	}
 */
 }

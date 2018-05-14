@@ -55,7 +55,7 @@ __CLASS_DEFINITION(Particle, SpatialObject);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Particle_addSprite(Particle this);
+static void Particle::addSprite(Particle this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -78,7 +78,7 @@ __CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
  * @param lifeSpan
  * @param mass
  */
-void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
+void Particle::constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 {
 	ASSERT(this, "Particle::constructor: null this");
 
@@ -89,9 +89,9 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
 	PhysicalSpecification physicalSpecification = {mass, 0, 0, (Vector3D){0, 0, 0}};
-	this->body = PhysicalWorld_createBody(Game_getPhysicalWorld(Game_getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
+	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
 	this->objectSprite = NULL;
-	Particle_addSprite(this);
+	Particle::addSprite(this);
 }
 
 /**
@@ -102,7 +102,7 @@ void Particle_constructor(Particle this, const ParticleDefinition* particleDefin
  *
  * @param this	Function scope
  */
-void Particle_destructor(Particle this)
+void Particle::destructor(Particle this)
 {
 	ASSERT(this, "Particle::destructor: null this");
 
@@ -110,7 +110,7 @@ void Particle_destructor(Particle this)
 	if(this->body)
 	{
 		// remove a body
-		PhysicalWorld_destroyBody(Game_getPhysicalWorld(Game_getInstance()), this->body);
+		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
 		this->body = NULL;
 	}
 
@@ -122,7 +122,7 @@ void Particle_destructor(Particle this)
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -133,7 +133,7 @@ void Particle_destructor(Particle this)
  *
  * @param this	Function scope
  */
-static void Particle_addSprite(Particle this)
+static void Particle::addSprite(Particle this)
 {
 	ASSERT(this, "Particle::addSprite: null this");
 	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator");
@@ -143,7 +143,7 @@ static void Particle_addSprite(Particle this)
 
 	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
 	{
-		Sprite_play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite::play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
 	}
 
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
@@ -161,7 +161,7 @@ static void Particle_addSprite(Particle this)
  *
  * @return				Boolean that tells whether a body was set active(?)
  */
-u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle))
+u32 Particle::update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "Particle::update: null this");
 
@@ -176,11 +176,11 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
 
 		if(0 > this->lifeSpan)
 		{
-			Body_stopMovement(this->body, __ALL_AXES);
+			Body::stopMovement(this->body, __ALL_AXES);
 			return true;
 		}
 
-		Sprite_updateAnimation(__SAFE_CAST(Sprite, this->objectSprite));
+		Sprite::updateAnimation(__SAFE_CAST(Sprite, this->objectSprite));
 	}
 
 	return false;
@@ -195,27 +195,27 @@ u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle p
  * @param this					Function scope
  * @param updateSpritePosition
  */
-void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
+void Particle::synchronizeGraphics(Particle this, bool updateSpritePosition)
 {
 	ASSERT(this, "Particle::synchronizeGraphics: null this");
 
-	if(!(updateSpritePosition | Body_isAwake(this->body)))
+	if(!(updateSpritePosition | Body::isAwake(this->body)))
 	{
 		return;
 	}
 
-	const Vector3D* position = Body_getPosition(this->body);
+	const Vector3D* position = Body::getPosition(this->body);
 
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
-	if(__Z_AXIS & Body_getMovementOnAllAxes(this->body))
+	if(__Z_AXIS & Body::getMovementOnAllAxes(this->body))
 	{
 		// calculate sprite's parallax
-		 Sprite_calculateParallax(this->objectSprite, position->z);
+		 Sprite::calculateParallax(this->objectSprite, position->z);
 	}
 
 	// update sprite's 2D position
-	 Sprite_position(this->objectSprite, position);
+	 Sprite::position(this->objectSprite, position);
 }
 
 /**
@@ -228,13 +228,13 @@ void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition)
  * @param force
  * @param movementType
  */
-void Particle_addForce(Particle this, const Force* force, u32 movementType)
+void Particle::addForce(Particle this, const Force* force, u32 movementType)
 {
 	ASSERT(this, "Particle::addForce: null this");
 
 	if(__UNIFORM_MOVEMENT == movementType)
 	{
-		fix10_6 mass = Body_getMass(this->body);
+		fix10_6 mass = Body::getMass(this->body);
 
 		Acceleration acceleration =
 		{
@@ -257,11 +257,11 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
 			acceleration.z
 		};
 
-		Body_moveUniformly(this->body, velocity);
+		Body::moveUniformly(this->body, velocity);
 	}
 	else
 	{
-		Body_addForce(this->body, force);
+		Body::addForce(this->body, force);
 	}
 }
 
@@ -274,7 +274,7 @@ void Particle_addForce(Particle this, const Force* force, u32 movementType)
  * @param this		Function scope
  * @param lifeSpan
  */
-void Particle_setLifeSpan(Particle this, int lifeSpan)
+void Particle::setLifeSpan(Particle this, int lifeSpan)
 {
 	ASSERT(this, "Particle::setLifeSpan: null this");
 
@@ -290,11 +290,11 @@ void Particle_setLifeSpan(Particle this, int lifeSpan)
  * @param this	Function scope
  * @param mass
  */
-void Particle_setMass(Particle this, fix10_6 mass)
+void Particle::setMass(Particle this, fix10_6 mass)
 {
 	ASSERT(this, "Particle::setMass: null this");
 
-	Body_setMass(this->body, mass);
+	Body::setMass(this->body, mass);
 }
 
 /**
@@ -306,18 +306,18 @@ void Particle_setMass(Particle this, fix10_6 mass)
  * @param this		Function scope
  * @param position
  */
-void Particle_setPosition(Particle this, const Vector3D* position)
+void Particle::setPosition(Particle this, const Vector3D* position)
 {
 	ASSERT(this, "Particle::setPosition: null this");
 	ASSERT(this->body, "Particle::setPosition: null body");
 
-	Body_setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
+	Body::setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
 
 	// sync sprite
-	 Sprite_position(this->objectSprite, position);
+	 Sprite::position(this->objectSprite, position);
 
 	// calculate sprite's parallax
-	 Sprite_calculateParallax(this->objectSprite, position->z);
+	 Sprite::calculateParallax(this->objectSprite, position->z);
 }
 
 /**
@@ -330,12 +330,12 @@ void Particle_setPosition(Particle this, const Vector3D* position)
  *
  * @return		Position of particle's body
  */
-const Vector3D* Particle_getPosition(Particle this)
+const Vector3D* Particle::getPosition(Particle this)
 {
 	ASSERT(this, "Particle::getPosition: null this");
 	ASSERT(this->body, "Particle::getPosition: null body");
 
-	return Body_getPosition(this->body);
+	return Body::getPosition(this->body);
 }
 
 /**
@@ -346,16 +346,16 @@ const Vector3D* Particle_getPosition(Particle this)
  *
  * @param this	Function scope
  */
-void Particle_show(Particle this)
+void Particle::show(Particle this)
 {
 	ASSERT(this, "Particle::show: null this");
 	ASSERT(this->objectSprite, "Particle::show: null objectSprite");
 
-	Sprite_show(__SAFE_CAST(Sprite, this->objectSprite));
+	Sprite::show(__SAFE_CAST(Sprite, this->objectSprite));
 
 	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
 	{
-		Sprite_play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite::play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
 	}
 }
 
@@ -367,14 +367,14 @@ void Particle_show(Particle this)
  *
  * @param this	Function scope
  */
-void Particle_hide(Particle this)
+void Particle::hide(Particle this)
 {
 	ASSERT(this, "Particle::hide: null this");
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
 
-	Sprite_hide(__SAFE_CAST(Sprite, this->objectSprite));
+	Sprite::hide(__SAFE_CAST(Sprite, this->objectSprite));
 
-	Body_stopMovement(this->body, __ALL_AXES);
+	Body::stopMovement(this->body, __ALL_AXES);
 }
 
 /**
@@ -388,11 +388,11 @@ void Particle_hide(Particle this)
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool Particle_isSubjectToGravity(Particle this, Acceleration gravity __attribute__ ((unused)))
+bool Particle::isSubjectToGravity(Particle this, Acceleration gravity __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::isSubjectToGravity: null this");
 
-	return (bool)Body_getAxesSubjectToGravity(this->body);
+	return (bool)Body::getAxesSubjectToGravity(this->body);
 }
 
 /**
@@ -403,7 +403,7 @@ bool Particle_isSubjectToGravity(Particle this, Acceleration gravity __attribute
  *
  * @param this	Function scope
  */
-void Particle_transform(Particle this __attribute__ ((unused)))
+void Particle::transform(Particle this __attribute__ ((unused)))
 {
 	ASSERT(this, "Particle::transform: null this");
 }
@@ -416,11 +416,11 @@ void Particle_transform(Particle this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void Particle_resume(Particle this)
+void Particle::resume(Particle this)
 {
 	ASSERT(this, "Particle::resume: null this");
 
-	Particle_addSprite(this);
+	Particle::addSprite(this);
 
 	NM_ASSERT(this->objectSprite, "Particle::resume: null objectSprite");
 }
@@ -433,7 +433,7 @@ void Particle_resume(Particle this)
  *
  * @param this	Function scope
  */
-void Particle_suspend(Particle this)
+void Particle::suspend(Particle this)
 {
 	ASSERT(this, "Particle::suspend: null this");
 
@@ -450,11 +450,11 @@ void Particle_suspend(Particle this)
  *
  * @param this	Function scope
  */
-void Particle_reset(Particle this)
+void Particle::reset(Particle this)
 {
 	ASSERT(this, "Particle::reset: null this");
 
-	Body_reset(this->body);
+	Body::reset(this->body);
 }
 
 
@@ -468,11 +468,11 @@ void Particle_reset(Particle this)
  *
  * @return		True if within camera's reach
  */
-bool Particle_isVisible(Particle this)
+bool Particle::isVisible(Particle this)
 {
 	ASSERT(this, "Particle::isVisible: null this");
 
-	PixelVector spritePosition = Sprite_getDisplacedPosition(__SAFE_CAST(Sprite, this->objectSprite));
+	PixelVector spritePosition = Sprite::getDisplacedPosition(__SAFE_CAST(Sprite, this->objectSprite));
 
 	// check x visibility
 	if((unsigned)(spritePosition.x + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_WIDTH) + __PARTICLE_VISIBILITY_PADDING))

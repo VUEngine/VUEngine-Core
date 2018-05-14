@@ -55,7 +55,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this);
+static void AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ static void AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory 
 /**
  * Get instance
  *
- * @fn			AnimationCoordinatorFactory_getInstance()
+ * @fn			AnimationCoordinatorFactory::getInstance()
  * @memberof	AnimationCoordinatorFactory
  * @public
  *
@@ -81,7 +81,7 @@ __SINGLETON(AnimationCoordinatorFactory);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(AnimationCoordinatorFactory this)
+static void __attribute__ ((noinline)) AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
 
@@ -98,12 +98,12 @@ static void __attribute__ ((noinline)) AnimationCoordinatorFactory_constructor(A
  *
  * @param this	Function scope
  */
-void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
+void AnimationCoordinatorFactory::destructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::destructor: null this");
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
 
-	AnimationCoordinatorFactory_reset(this);
+	AnimationCoordinatorFactory::reset(this);
 	__DELETE(this->animationCoordinators);
 	this->animationCoordinators = NULL;
 
@@ -119,7 +119,7 @@ void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this)
  *
  * @param this	Function scope
  */
-void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
+void AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::reset: null this");
 
@@ -130,7 +130,7 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
 		__DELETE(node->data);
 	}
 
-	VirtualList_clear(this->animationCoordinators);
+	VirtualList::clear(this->animationCoordinators);
 }
 
 /**
@@ -146,7 +146,7 @@ void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this)
  *
  * @return						AnimationCoordinator instance
  */
-AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");
 	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
@@ -162,9 +162,9 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				{
 					AnimationCoordinator animationCoordinator = __SAFE_CAST(AnimationCoordinator, node->data);
 
-					if(AnimationCoordinator_getCharSetDefinition(animationCoordinator) == charSetDefinition)
+					if(AnimationCoordinator::getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
-						 AnimationCoordinator_addAnimationController(animationCoordinator, animationController);
+						 AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 						return animationCoordinator;
 					}
 				}
@@ -185,9 +185,9 @@ AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordin
 				}
 
 				// create a new coordinator
-				 AnimationCoordinator_addAnimationController(animationCoordinator, animationController);
+				 AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 
-				VirtualList_pushBack(this->animationCoordinators, animationCoordinator);
+				VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
 
 				return animationCoordinator;
 			}

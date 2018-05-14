@@ -79,17 +79,17 @@ fix10_6 _currentWorldFriction = 0;
 fix10_6 _currentElapsedTime = 0;
 const Acceleration* _currentGravity = 0;
 
-void Body_setCurrentWorldFrictionCoefficient(fix10_6 currentWorldFriction)
+void Body::setCurrentWorldFrictionCoefficient(fix10_6 currentWorldFriction)
 {
 	_currentWorldFriction = currentWorldFriction;
 }
 
-void Body_setCurrentElapsedTime(fix10_6 currentElapsedTime)
+void Body::setCurrentElapsedTime(fix10_6 currentElapsedTime)
 {
 	_currentElapsedTime = currentElapsedTime;
 }
 
-void Body_setCurrentGravity(const Acceleration* currentGravity)
+void Body::setCurrentGravity(const Acceleration* currentGravity)
 {
 	_currentGravity = currentGravity;
 }
@@ -119,15 +119,15 @@ Clock _physhicsClock = NULL;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-MovementResult Body_updateMovement(Body this);
-static void Body_awake(Body this, u16 axesOfAwakening);
-static void Body_setMovementType(Body this, int movementType, u16 axes);
-//static void Body_clearNormalOnAxes(Body this, u16 axes);
-Acceleration Body_getGravity(Body this);
-static void Body_computeTotalNormal(Body this);
-static void Body_computeTotalFrictionCoefficient(Body this);
-void Body_sleep(Body body);
-static void Body_capVelocity(Body this);
+MovementResult Body::updateMovement(Body this);
+static void Body::awake(Body this, u16 axesOfAwakening);
+static void Body::setMovementType(Body this, int movementType, u16 axes);
+//static void Body::clearNormalOnAxes(Body this, u16 axes);
+Acceleration Body::getGravity(Body this);
+static void Body::computeTotalNormal(Body this);
+static void Body::computeTotalFrictionCoefficient(Body this);
+void Body::sleep(Body body);
+static void Body::capVelocity(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -139,7 +139,7 @@ __CLASS_NEW_DEFINITION(Body, SpatialObject owner, const PhysicalSpecification* p
 __CLASS_NEW_END(Body, owner, physicalSpecification,  axesSubjectToGravity);
 
 // class's constructor
-void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+void Body::constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "Body::constructor: null this");
 
@@ -169,17 +169,17 @@ void Body_constructor(Body this, SpatialObject owner, const PhysicalSpecificatio
 	this->externalForce	 		= (Force){0, 0, 0};
 	this->friction 				= (Force){0, 0, 0};
 	this->totalNormal			= (Force){0, 0, 0};
-	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
+	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
 
 	if(!_physhicsClock)
 	{
-		_physhicsClock = Game_getPhysicsClock(Game_getInstance());
+		_physhicsClock = Game::getPhysicsClock(Game::getInstance());
 	}
 }
 
 // class's destructor
-void Body_destructor(Body this)
+void Body::destructor(Body this)
 {
 	ASSERT(this, "Body::destructor: null this");
 
@@ -198,11 +198,11 @@ void Body_destructor(Body this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 // set game entity
-void Body_setOwner(Body this, SpatialObject owner)
+void Body::setOwner(Body this, SpatialObject owner)
 {
 	ASSERT(this, "Body::setOwner: null this");
 
@@ -210,7 +210,7 @@ void Body_setOwner(Body this, SpatialObject owner)
 }
 
 // get game entity
-SpatialObject Body_getOwner(Body this)
+SpatialObject Body::getOwner(Body this)
 {
 	ASSERT(this, "Body::getOwner: null this");
 
@@ -218,14 +218,14 @@ SpatialObject Body_getOwner(Body this)
 }
 
 // retrieve character's velocity
-Velocity Body_getVelocity(Body this)
+Velocity Body::getVelocity(Body this)
 {
 	ASSERT(this, "Body::getVelocity: null this");
 
 	return this->velocity;
 }
 
-void Body_modifyVelocity(Body this, const Velocity* modifier)
+void Body::modifyVelocity(Body this, const Velocity* modifier)
 {
 	ASSERT(this, "Body::modifyVelocity: null this");
 	ASSERT(modifier, "Body::modifyVelocity: null multiplier");
@@ -234,11 +234,11 @@ void Body_modifyVelocity(Body this, const Velocity* modifier)
 	this->velocity.y += modifier->y;
 	this->velocity.z += modifier->z;
 
-	Body_capVelocity(this);
+	Body::capVelocity(this);
 }
 
 // retrieve acceleration
-Acceleration Body_getAcceleration(Body this)
+Acceleration Body::getAcceleration(Body this)
 {
 	ASSERT(this, "Body::getAcceleration: null this");
 
@@ -246,7 +246,7 @@ Acceleration Body_getAcceleration(Body this)
 }
 
 // retrieve applied force
-Force Body_getAppliedForce(Body this)
+Force Body::getAppliedForce(Body this)
 {
 	ASSERT(this, "Body::getAppliedForce: null this");
 
@@ -254,7 +254,7 @@ Force Body_getAppliedForce(Body this)
 }
 
 // retrieve movement type
-MovementType Body_getMovementType(Body this)
+MovementType Body::getMovementType(Body this)
 {
 	ASSERT(this, "Body::getMovementType: null this");
 
@@ -262,7 +262,7 @@ MovementType Body_getMovementType(Body this)
 }
 
 // set movement type
-static void Body_setMovementType(Body this, int movementType, u16 axes)
+static void Body::setMovementType(Body this, int movementType, u16 axes)
 {
 	ASSERT(this, "Body::setMovementType: null this");
 
@@ -282,7 +282,7 @@ static void Body_setMovementType(Body this, int movementType, u16 axes)
 	}
 }
 
-void Body_clearAcceleration(Body this, u16 axes)
+void Body::clearAcceleration(Body this, u16 axes)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
@@ -306,15 +306,15 @@ void Body_clearAcceleration(Body this, u16 axes)
 }
 
 // set movement type to accelerated
-void Body_moveAccelerated(Body this, u16 axes)
+void Body::moveAccelerated(Body this, u16 axes)
 {
 	ASSERT(this, "Body::moveAccelerated: null this");
 
-	Body_setMovementType(this, __ACCELERATED_MOVEMENT, axes);
+	Body::setMovementType(this, __ACCELERATED_MOVEMENT, axes);
 }
 
 // set movement type to uniform
-void Body_moveUniformly(Body this, Velocity velocity)
+void Body::moveUniformly(Body this, Velocity velocity)
 {
 	ASSERT(this, "Body::moveUniformly: null this");
 
@@ -340,13 +340,13 @@ void Body_moveUniformly(Body this, Velocity velocity)
 
 	if(axesOfUniformMovement)
 	{
-		Body_setMovementType(this, __UNIFORM_MOVEMENT, axesOfUniformMovement);
-		Body_awake(this, axesOfUniformMovement);
+		Body::setMovementType(this, __UNIFORM_MOVEMENT, axesOfUniformMovement);
+		Body::awake(this, axesOfUniformMovement);
 	}
 }
 
 // clear force
-void Body_clearExternalForce(Body this)
+void Body::clearExternalForce(Body this)
 {
 	ASSERT(this, "Body::clearExternalForce: null this");
 
@@ -356,7 +356,7 @@ void Body_clearExternalForce(Body this)
 }
 
 // apply force
-void Body_applyForce(Body this, const Force* force)
+void Body::applyForce(Body this, const Force* force)
 {
 	ASSERT(this, "Body::applyForce: null this");
 
@@ -385,21 +385,21 @@ void Body_applyForce(Body this, const Force* force)
 
 		if(axesOfExternalForce)
 		{
-			//Body_clearNormalOnAxes(this, axesOfExternalForce);
-			Body_setMovementType(this, __ACCELERATED_MOVEMENT, axesOfExternalForce);
-			Body_awake(this, axesOfExternalForce);
+			//Body::clearNormalOnAxes(this, axesOfExternalForce);
+			Body::setMovementType(this, __ACCELERATED_MOVEMENT, axesOfExternalForce);
+			Body::awake(this, axesOfExternalForce);
 		}
 	}
 }
 
 // apply gravity
-void Body_applyGravity(Body this, u16 axes)
+void Body::applyGravity(Body this, u16 axes)
 {
 	ASSERT(this, "Body::applyGravity: null this");
 
 	if(axes)
 	{
-		Acceleration gravityForce = Vector3D_scalarProduct(Body_getGravity(this), this->mass);
+		Acceleration gravityForce = Vector3D::scalarProduct(Body::getGravity(this), this->mass);
 
 		Force force =
 		{
@@ -408,21 +408,21 @@ void Body_applyGravity(Body this, u16 axes)
 			__Z_AXIS & axes ? gravityForce.z : 0,
 		};
 
-		Body_applyForce(this, &force);
+		Body::applyForce(this, &force);
 	}
 }
 
 // add force
-void Body_addForce(Body this, const Force* force)
+void Body::addForce(Body this, const Force* force)
 {
 	ASSERT(this, "Body::addForce: null this");
 	ASSERT(force, "Body::addForce: null force");
 
-	Body_applyForce(this, force);
+	Body::applyForce(this, force);
 }
 
 // update movement
-void Body_update(Body this)
+void Body::update(Body this)
 {
 	ASSERT(this, "Body::update: null this");
 
@@ -430,39 +430,39 @@ void Body_update(Body this)
 	{
 		if(this->awake)
 		{
-			MovementResult movementResult = Body_updateMovement(this);
+			MovementResult movementResult = Body::updateMovement(this);
 
 			// if stopped on any axes
 			if(movementResult.axesStoppedMovement)
 			{
-				Body_stopMovement(this, movementResult.axesStoppedMovement);
+				Body::stopMovement(this, movementResult.axesStoppedMovement);
 
 				if(movementResult.axesStoppedMovement)
 				{
-					MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &movementResult.axesStoppedMovement);
+					MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &movementResult.axesStoppedMovement);
 				}
 			}
 
 			// no one uses this
 /*			if(movementResult.axesOfChangeOfMovement)
 			{
-				MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
+				MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
 			}
 */		}
 
 		// clear any force so the next update does not get influenced
-		Body_clearExternalForce(this);
+		Body::clearExternalForce(this);
 	}
 }
 
 // retrieve last displacement
-Vector3D Body_getLastDisplacement(Body this)
+Vector3D Body::getLastDisplacement(Body this)
 {
 	ASSERT(this, "Body::getLastDisplacement: null this");
 
 	Vector3D displacement = {0, 0, 0};
 
-	fix10_6 elapsedTime = PhysicalWorld_getElapsedTime(Game_getPhysicalWorld(Game_getInstance()));
+	fix10_6 elapsedTime = PhysicalWorld::getElapsedTime(Game::getPhysicalWorld(Game::getInstance()));
 
 	displacement.x = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.x) ? __FIX10_6_MULT(this->velocity.x, elapsedTime) : 0;
 	displacement.y = __STOP_VELOCITY_THRESHOLD < __ABS(this->velocity.y) ? __FIX10_6_MULT(this->velocity.y, elapsedTime) : 0;
@@ -471,7 +471,7 @@ Vector3D Body_getLastDisplacement(Body this)
 	return displacement;
 }
 
-static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocity)
+static MovementResult Body::getMovementResult(Body this, Vector3D previousVelocity)
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
@@ -549,7 +549,7 @@ static MovementResult Body_getMovementResult(Body this, Vector3D previousVelocit
 	return movementResult;
 }
 
-Acceleration Body_getGravity(Body this)
+Acceleration Body::getGravity(Body this)
 {
 	return (Acceleration)
 	{
@@ -559,7 +559,7 @@ Acceleration Body_getGravity(Body this)
 	};
 }
 
-static void Body_capVelocity(Body this)
+static void Body::capVelocity(Body this)
 {
 	ASSERT(this, "Body::capVelocity: null this");
 
@@ -595,19 +595,19 @@ static void Body_capVelocity(Body this)
 }
 
 // update movement over axes
-MovementResult Body_updateMovement(Body this)
+MovementResult Body::updateMovement(Body this)
 {
 	ASSERT(this, "Body::updateMovement: null this");
 
-	Acceleration gravity = Body_getGravity(this);
-	this->weight = Vector3D_scalarProduct(gravity, this->mass);
+	Acceleration gravity = Body::getGravity(this);
+	this->weight = Vector3D::scalarProduct(gravity, this->mass);
 
 #ifndef __USE_HACK_FOR_FRICTION
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D_scalarProduct(Vector3D_normalize(this->velocity), -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
+	this->friction = Vector3D::scalarProduct(Vector3D::normalize(this->velocity), -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
 #else
 	// hack to avoid normalization
-	this->friction = Vector3D_scalarProduct(this->velocity, -(this->totalFrictionCoefficient << __FRICTION_FORCE_FACTOR_POWER));
+	this->friction = Vector3D::scalarProduct(this->velocity, -(this->totalFrictionCoefficient << __FRICTION_FORCE_FACTOR_POWER));
 #endif
 
 	fix10_6 elapsedTime = _currentElapsedTime;
@@ -658,17 +658,17 @@ MovementResult Body_updateMovement(Body this)
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime) + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
 
-	Body_capVelocity(this);
+	Body::capVelocity(this);
 
-	return Body_getMovementResult(this, previousVelocity);
+	return Body::getMovementResult(this, previousVelocity);
 }
 
 // stop movement over an axes
-u16 Body_stopMovement(Body this, u16 axes)
+u16 Body::stopMovement(Body this, u16 axes)
 {
 	ASSERT(this, "Body::stopMovement: null this");
 
-	u16 axesOfMovement = Body_getMovementOnAllAxes(this);
+	u16 axesOfMovement = Body::getMovementOnAllAxes(this);
 	u16 axesOfStopping = __NO_AXIS;
 
 	if(axes & __X_AXIS)
@@ -698,18 +698,18 @@ u16 Body_stopMovement(Body this, u16 axes)
 		axesOfStopping |= axesOfMovement & __Z_AXIS;
 	}
 
-	Body_setMovementType(this, __NO_MOVEMENT, axesOfStopping);
+	Body::setMovementType(this, __NO_MOVEMENT, axesOfStopping);
 
-	if(!Body_getMovementOnAllAxes(this))
+	if(!Body::getMovementOnAllAxes(this))
 	{
-		Body_sleep(this);
+		Body::sleep(this);
 	}
 
 	return axesOfStopping;
 }
 
 // get axes subject to gravity
-u16 Body_getAxesSubjectToGravity(Body this)
+u16 Body::getAxesSubjectToGravity(Body this)
 {
 	ASSERT(this, "Body::getAxesSubjectToGravity: null this");
 
@@ -717,7 +717,7 @@ u16 Body_getAxesSubjectToGravity(Body this)
 }
 
 // set axes subject to gravity
-void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity)
+void Body::setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "Body::setAxesSubjectToGravity: null this");
 
@@ -725,17 +725,17 @@ void Body_setAxesSubjectToGravity(Body this, u16 axesSubjectToGravity)
 }
 
 // set active
-void Body_setActive(Body this, bool active)
+void Body::setActive(Body this, bool active)
 {
 	ASSERT(this, "Body::setActive: null this");
 
 	this->active = active;
 
-	PhysicalWorld_bodySetInactive(Game_getPhysicalWorld(Game_getInstance()), this);
+	PhysicalWorld::bodySetInactive(Game::getPhysicalWorld(Game::getInstance()), this);
 }
 
 // is active?
-bool Body_isActive(Body this)
+bool Body::isActive(Body this)
 {
 	ASSERT(this, "Body::isActive: null this");
 
@@ -743,7 +743,7 @@ bool Body_isActive(Body this)
 }
 
 // retrieve position
-const Vector3D* Body_getPosition(Body this)
+const Vector3D* Body::getPosition(Body this)
 {
 	ASSERT(this, "Body::getPosition: null this");
 
@@ -751,7 +751,7 @@ const Vector3D* Body_getPosition(Body this)
 }
 
 // retrieve position
-void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller)
+void Body::setPosition(Body this, const Vector3D* position, SpatialObject caller)
 {
 	ASSERT(this, "Body::setPosition: null this");
 
@@ -762,7 +762,7 @@ void Body_setPosition(Body this, const Vector3D* position, SpatialObject caller)
 }
 
 // get bounciness
-fix10_6 Body_getBounciness(Body this)
+fix10_6 Body::getBounciness(Body this)
 {
 	ASSERT(this, "Body::getBounciness: null this");
 
@@ -770,7 +770,7 @@ fix10_6 Body_getBounciness(Body this)
 }
 
 // set bounciness
-void Body_setBounciness(Body this, fix10_6 bounciness)
+void Body::setBounciness(Body this, fix10_6 bounciness)
 {
 	ASSERT(this, "Body::setBounciness: null this");
 
@@ -786,7 +786,7 @@ void Body_setBounciness(Body this, fix10_6 bounciness)
 	this->bounciness = bounciness;
 }
 
-static void Body_computeTotalNormal(Body this)
+static void Body::computeTotalNormal(Body this)
 {
 	ASSERT(this, "Body::computeTotalNormal: null this");
 
@@ -802,7 +802,7 @@ static void Body_computeTotalNormal(Body this)
 
 			if(__IS_OBJECT_ALIVE(normalRegistry->referent))
 			{
-				Vector3D normal = Vector3D_scalarProduct(normalRegistry->direction, normalRegistry->magnitude);
+				Vector3D normal = Vector3D::scalarProduct(normalRegistry->direction, normalRegistry->magnitude);
 
 				this->totalNormal.x += normal.x;
 				this->totalNormal.y += normal.y;
@@ -811,19 +811,19 @@ static void Body_computeTotalNormal(Body this)
 		}
 	}
 
-	Body_computeTotalFrictionCoefficient(this);
+	Body::computeTotalFrictionCoefficient(this);
 
 	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
 	{
-		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D_length(this->totalNormal), this->totalFrictionCoefficient));
+		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->totalNormal), this->totalFrictionCoefficient));
 	}
 	else
 	{
-		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D_length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER);
+		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER);
 	}
 }
 
-static void Body_addNormal(Body this, Object referent, Vector3D direction, fix10_6 magnitude)
+static void Body::addNormal(Body this, Object referent, Vector3D direction, fix10_6 magnitude)
 {
 	ASSERT(this, "Body::addNormal: null this");
 	ASSERT(referent, "Body::addNormal: null referent");
@@ -846,19 +846,19 @@ static void Body_addNormal(Body this, Object referent, Vector3D direction, fix10
 	normalRegistry->direction = direction;
 	normalRegistry->magnitude = magnitude;
 
-	VirtualList_pushBack(this->normals, normalRegistry);
+	VirtualList::pushBack(this->normals, normalRegistry);
 
-	Body_computeTotalNormal(this);
+	Body::computeTotalNormal(this);
 }
 
-Force Body_getNormal(Body this)
+Force Body::getNormal(Body this)
 {
 	ASSERT(this, "Body::getNormal: null this");
 
 	return this->totalNormal;
 }
 
-Force Body_getLastNormalDirection(Body this)
+Force Body::getLastNormalDirection(Body this)
 {
 	ASSERT(this, "Body::getLastNormalDirection: null this");
 
@@ -867,24 +867,24 @@ Force Body_getLastNormalDirection(Body this)
 		return (Force){0, 0, 0};
 	}
 
-	while(this->normals->head && !__IS_OBJECT_ALIVE(((NormalRegistry*)VirtualList_back(this->normals))->referent))
+	while(this->normals->head && !__IS_OBJECT_ALIVE(((NormalRegistry*)VirtualList::back(this->normals))->referent))
 	{
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(VirtualList_back(this->normals)), "Body::getLastNormalDirection: dead normal registry");
+		ASSERT(__IS_BASIC_OBJECT_ALIVE(VirtualList::back(this->normals)), "Body::getLastNormalDirection: dead normal registry");
 
-		__DELETE_BASIC(VirtualList_popBack(this->normals));
+		__DELETE_BASIC(VirtualList::popBack(this->normals));
 	}
 
-	Body_computeTotalNormal(this);
+	Body::computeTotalNormal(this);
 
 	if(!this->normals->head)
 	{
 		return (Force){0, 0, 0};
 	}
 
-	return ((NormalRegistry*)VirtualList_back(this->normals))->direction;
+	return ((NormalRegistry*)VirtualList::back(this->normals))->direction;
 }
 
-void Body_reset(Body this)
+void Body::reset(Body this)
 {
 	ASSERT(this, "Body::reset: null this");
 
@@ -901,19 +901,19 @@ void Body_reset(Body this)
 		this->normals = NULL;
 	}
 
-	Body_computeTotalNormal(this);
-	Body_setSurroundingFrictionCoefficient(this, 0);
+	Body::computeTotalNormal(this);
+	Body::setSurroundingFrictionCoefficient(this, 0);
 
 	this->velocity 				= (Velocity){0, 0, 0};
 	this->acceleration 			= (Acceleration){0, 0, 0};
 	this->externalForce	 		= (Force){0, 0, 0};
 	this->friction 				= (Force){0, 0, 0};
 	this->totalNormal			= (Force){0, 0, 0};
-	this->weight 				= Vector3D_scalarProduct(*_currentGravity, this->mass);
+	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 }
 
 /*
-static void Body_clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused))) __attribute__ ((unused))
+static void Body::clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused))) __attribute__ ((unused))
 {
 	ASSERT(this, "Body::clearNormal: null this");
 
@@ -933,7 +933,7 @@ static void Body_clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused)))
 				((__Z_AXIS & axes) && normalRegistry->direction.z)
 			)
 			{
-				VirtualList_pushBack(normalsToRemove, normalRegistry);
+				VirtualList::pushBack(normalsToRemove, normalRegistry);
 			}
 		}
 
@@ -941,7 +941,7 @@ static void Body_clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused)))
 
 		for(; node; node = node->next)
 		{
-			VirtualList_removeElement(this->normals, node->data);
+			VirtualList::removeElement(this->normals, node->data);
 
 			if(__IS_BASIC_OBJECT_ALIVE(node->data))
 			{
@@ -949,7 +949,7 @@ static void Body_clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused)))
 			}
 			else
 			{
-				Printing_text(Printing_getInstance(), __GET_CLASS_NAME(this->owner), 20, 1, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this->owner), 20, 1, NULL);
 				while(1);
 			}
 
@@ -958,11 +958,11 @@ static void Body_clearNormalOnAxes(Body this, u16 axes __attribute__ ((unused)))
 		__DELETE(normalsToRemove);
 	}
 
-	Body_computeTotalNormal(this);
+	Body::computeTotalNormal(this);
 }
 */
 
-void Body_clearNormal(Body this, Object referent)
+void Body::clearNormal(Body this, Object referent)
 {
 	ASSERT(this, "Body::clearNormal: null this");
 	ASSERT(__IS_OBJECT_ALIVE(referent), "Body::clearNormal: dead referent");
@@ -980,24 +980,24 @@ void Body_clearNormal(Body this, Object referent)
 			if(normalRegistry->referent == referent)
 			{
 				ASSERT(__IS_BASIC_OBJECT_ALIVE(normalRegistry), "Body::clearNormal: dead normal registry");
-				VirtualList_removeElement(this->normals, normalRegistry);
+				VirtualList::removeElement(this->normals, normalRegistry);
 				__DELETE_BASIC(normalRegistry);
 				break;
 			}
 		}
 	}
 
-	Body_computeTotalNormal(this);
+	Body::computeTotalNormal(this);
 }
 
-fix10_6 Body_getFrictionCoefficient(Body this)
+fix10_6 Body::getFrictionCoefficient(Body this)
 {
 	ASSERT(this, "Body::setFriction: null this");
 
 	return this->frictionCoefficient;
 }
 
-static void Body_computeTotalFrictionCoefficient(Body this)
+static void Body::computeTotalFrictionCoefficient(Body this)
 {
 	ASSERT(this, "Body::computeFrictionForceMagnitude: null this");
 
@@ -1016,7 +1016,7 @@ static void Body_computeTotalFrictionCoefficient(Body this)
 }
 
 // set friction
-void Body_setFrictionCoefficient(Body this, fix10_6 frictionCoefficient)
+void Body::setFrictionCoefficient(Body this, fix10_6 frictionCoefficient)
 {
 	ASSERT(this, "Body::setFriction: null this");
 
@@ -1030,10 +1030,10 @@ void Body_setFrictionCoefficient(Body this, fix10_6 frictionCoefficient)
 	}
 
 	this->frictionCoefficient = frictionCoefficient;
-	Body_computeTotalFrictionCoefficient(this);
+	Body::computeTotalFrictionCoefficient(this);
 }
 
-void Body_setSurroundingFrictionCoefficient(Body this, fix10_6 surroundingFrictionCoefficient)
+void Body::setSurroundingFrictionCoefficient(Body this, fix10_6 surroundingFrictionCoefficient)
 {
 	ASSERT(this, "Body::setSurroundingFrictionCoefficient: null this");
 
@@ -1047,17 +1047,17 @@ void Body_setSurroundingFrictionCoefficient(Body this, fix10_6 surroundingFricti
 	}
 
 	this->surroundingFrictionCoefficient = surroundingFrictionCoefficient;
-	Body_computeTotalFrictionCoefficient(this);
+	Body::computeTotalFrictionCoefficient(this);
 }
 
-fix10_6 Body_getMass(Body this)
+fix10_6 Body::getMass(Body this)
 {
 	ASSERT(this, "Body::getMass: null this");
 
 	return this->mass;
 }
 
-void Body_setMass(Body this, fix10_6 mass)
+void Body::setMass(Body this, fix10_6 mass)
 {
 	ASSERT(this, "Body::setMass: null this");
 
@@ -1065,7 +1065,7 @@ void Body_setMass(Body this, fix10_6 mass)
 }
 
 // retrieve state
-bool Body_isAwake(Body this)
+bool Body::isAwake(Body this)
 {
 	ASSERT(this, "Body::isAwake: null this");
 
@@ -1073,7 +1073,7 @@ bool Body_isAwake(Body this)
 }
 
 // awake body
-static void Body_awake(Body this, u16 axesOfAwakening)
+static void Body::awake(Body this, u16 axesOfAwakening)
 {
 	ASSERT(this, "Body::awake: null this");
 
@@ -1083,7 +1083,7 @@ static void Body_awake(Body this, u16 axesOfAwakening)
 	{
 		this->awake = true;
 
-		PhysicalWorld_bodyAwake(Game_getPhysicalWorld(Game_getInstance()), this);
+		PhysicalWorld::bodyAwake(Game::getPhysicalWorld(Game::getInstance()), this);
 	}
 
 	if(!this->velocity.x && (__X_AXIS & axesOfAwakening))
@@ -1103,12 +1103,12 @@ static void Body_awake(Body this, u16 axesOfAwakening)
 
 	if(dispatchMessage)
 	{
-		MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStartedMoving, &axesOfAwakening);
+		MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStartedMoving, &axesOfAwakening);
 	}
 }
 
 // go to sleep
-void Body_sleep(Body this)
+void Body::sleep(Body this)
 {
 	ASSERT(this, "Body::sleep: null this");
 
@@ -1116,12 +1116,12 @@ void Body_sleep(Body this)
 	{
 		this->awake = false;
 
-		PhysicalWorld_bodySleep(Game_getPhysicalWorld(Game_getInstance()), this);
+		PhysicalWorld::bodySleep(Game::getPhysicalWorld(Game::getInstance()), this);
 	}
 }
 
 // is it moving?
-u16 Body_getMovementOnAllAxes(Body this)
+u16 Body::getMovementOnAllAxes(Body this)
 {
 	ASSERT(this, "Body::isMoving: null this");
 
@@ -1134,7 +1134,7 @@ u16 Body_getMovementOnAllAxes(Body this)
 	return this->awake && this->active ? result : 0;
 }
 
-static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocity, Vector3D bouncingPlaneNormal)
+static MovementResult Body::getBouncingResult(Body this, Vector3D previousVelocity, Vector3D bouncingPlaneNormal)
 {
 	ASSERT(this, "Body::checkIfStopped: null this");
 
@@ -1197,26 +1197,26 @@ static MovementResult Body_getBouncingResult(Body this, Vector3D previousVelocit
 }
 
 // bounce back
-void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness)
+void Body::bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness)
 {
 	ASSERT(this, "Body::bounce: null this");
-	Acceleration gravity = Body_getGravity(this);
+	Acceleration gravity = Body::getGravity(this);
 
 	// set friction
-	Body_setSurroundingFrictionCoefficient(this, frictionCoefficient);
+	Body::setSurroundingFrictionCoefficient(this, frictionCoefficient);
 
 	// compute bouncing vector
-	fix10_6 cosAngle = __I_TO_FIX10_6(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX10_6_EXT_DIV(Vector3D_dotProduct(gravity, bouncingPlaneNormal), Vector3D_lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX10_6;
-	fix10_6 normalMagnitude = __FIX10_6_EXT_MULT(Vector3D_length(this->weight), cosAngle);
+	fix10_6 cosAngle = __I_TO_FIX10_6(bouncingPlaneNormal.x | bouncingPlaneNormal.y | bouncingPlaneNormal.z) && (gravity.x | gravity.y | gravity.z) ? __ABS(__FIX10_6_EXT_DIV(Vector3D::dotProduct(gravity, bouncingPlaneNormal), Vector3D::lengthProduct(gravity, bouncingPlaneNormal))) : __1I_FIX10_6;
+	fix10_6 normalMagnitude = __FIX10_6_EXT_MULT(Vector3D::length(this->weight), cosAngle);
 
 	// register normal affecting the body
-	Body_addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
+	Body::addNormal(this, bounceReferent, bouncingPlaneNormal, normalMagnitude);
 
 	// compute bouncing vector
 	Vector3D velocity = this->velocity;
 
 	// compute bouncing velocity vector
-	Vector3D u = Vector3D_scalarProduct(bouncingPlaneNormal, Vector3D_dotProduct(velocity, bouncingPlaneNormal));
+	Vector3D u = Vector3D::scalarProduct(bouncingPlaneNormal, Vector3D::dotProduct(velocity, bouncingPlaneNormal));
 	Vector3D w =
 	{
 		velocity.x - u.x,
@@ -1236,14 +1236,14 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	}
 
 	// add bounciness and friction
-	u = Vector3D_scalarProduct(u, bounciness);
-	w = Vector3D_scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - this->totalFrictionCoefficient));
+	u = Vector3D::scalarProduct(u, bounciness);
+	w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - this->totalFrictionCoefficient));
 
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;
 	this->velocity.z = w.z - u.z;
 
-	Body_capVelocity(this);
+	Body::capVelocity(this);
 
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
 	{
@@ -1261,140 +1261,140 @@ void Body_bounce(Body this, Object bounceReferent, Vector3D bouncingPlaneNormal,
 	}
 
 	// determine bouncing result
-	MovementResult movementResult = Body_getBouncingResult(this, velocity, bouncingPlaneNormal);
+	MovementResult movementResult = Body::getBouncingResult(this, velocity, bouncingPlaneNormal);
 
 	// stop over the axes where there is no bouncing
 	if(movementResult.axesStoppedMovement)
 	{
-		u16 axesOfStopping = Body_stopMovement(this, movementResult.axesStoppedMovement);
+		u16 axesOfStopping = Body::stopMovement(this, movementResult.axesStoppedMovement);
 
 		if(axesOfStopping)
 		{
-			MessageDispatcher_dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
+			MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
 		}
 	}
 
 	if(movementResult.axesOfAcceleratedBouncing)
 	{
-	//	Body_setSurroundingFrictionCoefficient(this, 0);
-	//	Body_clearNormalOnAxes(this, movementResult.axesOfAcceleratedBouncing);
+	//	Body::setSurroundingFrictionCoefficient(this, 0);
+	//	Body::clearNormalOnAxes(this, movementResult.axesOfAcceleratedBouncing);
 	}
 
-	if(!Body_getMovementOnAllAxes(__SAFE_CAST(Body, this)))
+	if(!Body::getMovementOnAllAxes(__SAFE_CAST(Body, this)))
 	{
-		Body_sleep(__SAFE_CAST(Body, this));
+		Body::sleep(__SAFE_CAST(Body, this));
 	}
 }
 
 // take a hit
-void Body_takeHitFrom(Body this __attribute__ ((unused)), Body other __attribute__ ((unused)))
+void Body::takeHitFrom(Body this __attribute__ ((unused)), Body other __attribute__ ((unused)))
 {
 	ASSERT(this, "Body::takeHitFrom: null this");
 
 	//TODO:
 }
 
-void Body_setMaximumVelocity(Body this, Velocity maximumVelocity)
+void Body::setMaximumVelocity(Body this, Velocity maximumVelocity)
 {
 	ASSERT(this, "Body::setMaximumVelocity: null this");
 
 	this->maximumVelocity = maximumVelocity;
 }
 
-Velocity Body_getMaximumVelocity(Body this)
+Velocity Body::getMaximumVelocity(Body this)
 {
 	ASSERT(this, "Body::getMaximumVelocity: null this");
 
 	return this->maximumVelocity;
 }
 
-void Body_print(Body this, int x, int y)
+void Body::print(Body this, int x, int y)
 {
 	ASSERT(this, "Body::print: null this");
 
-	Printing_text(Printing_getInstance(), "Active:", x, y, NULL);
-	Printing_text(Printing_getInstance(), this->active? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
-	Printing_text(Printing_getInstance(), "Awake:", x, y, NULL);
-	Printing_text(Printing_getInstance(), this->awake? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
+	Printing::text(Printing::getInstance(), "Active:", x, y, NULL);
+	Printing::text(Printing::getInstance(), this->active? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
+	Printing::text(Printing::getInstance(), "Awake:", x, y, NULL);
+	Printing::text(Printing::getInstance(), this->awake? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "               X         Y         Z", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "               X         Y         Z", x, y++, NULL);
 
 	int xDisplacement = 15;
 
-	Printing_text(Printing_getInstance(), "Mov. type", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.x ? "Accel" : "None", xDisplacement + x, y, NULL);
-	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.y ? "Accel" : "None", xDisplacement + x + 10, y, NULL);
-	Printing_text(Printing_getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.z ? "Accel" : "None", xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Mov. type", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.x ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.x ? "Accel" : "None", xDisplacement + x, y, NULL);
+	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.y ? "Accel" : "None", xDisplacement + x + 10, y, NULL);
+	Printing::text(Printing::getInstance(), __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __UNIFORM_MOVEMENT == this->movementType.y ? "Uniform" : __ACCELERATED_MOVEMENT == this->movementType.z ? "Accel" : "None", xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Weight", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                             ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->weight.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->weight.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->weight.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Weight", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                             ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->weight.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Position", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->position.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->position.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->position.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Position", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->position.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Velocity", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Velocity", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Speed", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                                ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(Vector3D_length(this->velocity)), xDisplacement + x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Speed", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(Vector3D::length(this->velocity)), xDisplacement + x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Acceleration", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->acceleration.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->acceleration.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->acceleration.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Acceleration", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->acceleration.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Acceleration gravity = Body_getGravity(this);
+	Acceleration gravity = Body::getGravity(this);
 
-	Printing_text(Printing_getInstance(), "Gravity", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                               ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(gravity.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(gravity.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(gravity.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Gravity", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                               ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(gravity.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "External Force", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->externalForce.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->externalForce.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->externalForce.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "External Force", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->externalForce.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Normal", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->totalNormal.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->totalNormal.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->totalNormal.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Normal", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalNormal.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Normal Force", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Normal Force", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->frictionForceMagnitude), xDisplacement + x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Normals", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_int(Printing_getInstance(), this->normals ? VirtualList_getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Normals", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing::int(Printing::getInstance(), this->normals ? VirtualList::getSize(this->normals) : 0, xDisplacement + x, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Friction", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->friction.x), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
+	Printing::text(Printing::getInstance(), "Friction", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->friction.z), xDisplacement + x + 10 * 2, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Total friction coef.", x, y, NULL);
-	Printing_text(Printing_getInstance(), "                              ", xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Total friction coef.", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, NULL);
 
 
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__STOP_VELOCITY_THRESHOLD), xDisplacement + x, y, NULL);
-	Printing_float(Printing_getInstance(), __FIX10_6_TO_F(__STOP_BOUNCING_VELOCITY_THRESHOLD), 10 +xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(__STOP_VELOCITY_THRESHOLD), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(__STOP_BOUNCING_VELOCITY_THRESHOLD), 10 +xDisplacement + x, y, NULL);
 
 }

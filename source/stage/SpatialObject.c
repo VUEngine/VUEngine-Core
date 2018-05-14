@@ -57,7 +57,7 @@ __CLASS_NEW_DEFINITION(SpatialObject)
 __CLASS_NEW_END(SpatialObject);
 
 // class's constructor
-void SpatialObject_constructor(SpatialObject this)
+void SpatialObject::constructor(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::constructor: null this");
 
@@ -66,21 +66,21 @@ void SpatialObject_constructor(SpatialObject this)
 }
 
 // class's destructor
-void SpatialObject_destructor(SpatialObject this)
+void SpatialObject::destructor(SpatialObject this)
 {
 	ASSERT(this, "SpatialObject::destructor: null this");
 
 	if(this->events)
 	{
-		Object_fireEvent(__SAFE_CAST(Object, this), kEventSpatialObjectDeleted);
+		Object::fireEvent(__SAFE_CAST(Object, this), kEventSpatialObjectDeleted);
 	}
 
 	// destroy the super SpatialObject
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
-bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
+bool SpatialObject::isMoving(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::isMoving: null this");
 
@@ -88,35 +88,35 @@ bool SpatialObject_isMoving(SpatialObject this __attribute__ ((unused)))
 }
 
 // defaults to true
-bool SpatialObject_isSubjectToGravity(SpatialObject this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
+bool SpatialObject::isSubjectToGravity(SpatialObject this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::isSubjectToGravity: null this");
 
 	return false;
 }
 
-fix10_6 SpatialObject_getWidth(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject::getWidth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getWidth: null this");
 
 	return 0;
 }
 
-fix10_6 SpatialObject_getHeight(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject::getHeight(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getHeight: null this");
 
 	return 0;
 }
 
-fix10_6 SpatialObject_getDepth(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject::getDepth(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getDepth: null this");
 
 	return 0;
 }
 
-const Vector3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unused)))
+const Vector3D* SpatialObject::getPosition(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getPosition: null this");
 
@@ -128,12 +128,12 @@ const Vector3D* SpatialObject_getPosition(SpatialObject this __attribute__ ((unu
 	return &position;
 }
 
-void SpatialObject_setPosition(SpatialObject this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
+void SpatialObject::setPosition(SpatialObject this __attribute__ ((unused)), const Vector3D* position __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::setPosition: null this");
 }
 
-const Rotation* SpatialObject_getRotation(SpatialObject this __attribute__ ((unused)))
+const Rotation* SpatialObject::getRotation(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getRotation: null this");
 
@@ -145,12 +145,12 @@ const Rotation* SpatialObject_getRotation(SpatialObject this __attribute__ ((unu
 	return &rotation;
 }
 
-void SpatialObject_setRotation(SpatialObject this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
+void SpatialObject::setRotation(SpatialObject this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::setRotation: null this");
 }
 
-const Scale* SpatialObject_getScale(SpatialObject this __attribute__ ((unused)))
+const Scale* SpatialObject::getScale(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getScale: null this");
 
@@ -161,13 +161,13 @@ const Scale* SpatialObject_getScale(SpatialObject this __attribute__ ((unused)))
 
 	return &scale;
 }
-void SpatialObject_setScale(SpatialObject this __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)))
+void SpatialObject::setScale(SpatialObject this __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::setScale: null this");
 }
 
 // get bounciness
-fix10_6 SpatialObject_getBounciness(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject::getBounciness(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getBounciness: null this");
 
@@ -175,7 +175,7 @@ fix10_6 SpatialObject_getBounciness(SpatialObject this __attribute__ ((unused)))
 }
 
 // get friction
-fix10_6 SpatialObject_getFrictionCoefficient(SpatialObject this __attribute__ ((unused)))
+fix10_6 SpatialObject::getFrictionCoefficient(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getFrictionCoefficient: null this");
 
@@ -183,45 +183,45 @@ fix10_6 SpatialObject_getFrictionCoefficient(SpatialObject this __attribute__ ((
 }
 
 // get velocity
-Velocity SpatialObject_getVelocity(SpatialObject this __attribute__ ((unused)))
+Velocity SpatialObject::getVelocity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getVelocity: null this");
 
 	return (Velocity){0, 0, 0};
 }
 
-bool SpatialObject_isAffectedByRelativity(SpatialObject this __attribute__ ((unused)))
+bool SpatialObject::isAffectedByRelativity(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::isAffectedByRelativity: null this");
 
 	return false;
 }
 
-bool SpatialObject_enterCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool SpatialObject::enterCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::enterCollision: null this");
 
 	return false;
 }
 
-bool SpatialObject_updateCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
+bool SpatialObject::updateCollision(SpatialObject this __attribute__ ((unused)), const CollisionInformation* collisionInformation __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::updateCollision: null this");
 
 	return false;
 }
 
-void SpatialObject_exitCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+void SpatialObject::exitCollision(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::exitCollision: null this");
 }
 
-void SpatialObject_collidingShapeOwnerDestroyed(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
+void SpatialObject::collidingShapeOwnerDestroyed(SpatialObject this __attribute__ ((unused)), Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore __attribute__ ((unused)), bool isShapeImpenetrable __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::collidingShapeOwnerDestroyed: null this");
 }
 
-u16 SpatialObject_getMovementState(SpatialObject this __attribute__ ((unused)))
+u16 SpatialObject::getMovementState(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getMovementState: null this");
 
@@ -238,7 +238,7 @@ u16 SpatialObject_getMovementState(SpatialObject this __attribute__ ((unused)))
  *
  * @return		SpatialObject's Shape list
  */
-VirtualList SpatialObject_getShapes(SpatialObject this __attribute__ ((unused)))
+VirtualList SpatialObject::getShapes(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getShapes: null this");
 
@@ -255,7 +255,7 @@ VirtualList SpatialObject_getShapes(SpatialObject this __attribute__ ((unused)))
  *
  * @return		no type
  */
-u32 SpatialObject_getInGameType(SpatialObject this __attribute__ ((unused)))
+u32 SpatialObject::getInGameType(SpatialObject this __attribute__ ((unused)))
 {
 	ASSERT(this, "SpatialObject::getInGameType: null this");
 

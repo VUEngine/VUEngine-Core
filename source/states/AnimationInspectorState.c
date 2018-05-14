@@ -36,7 +36,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimationInspectorState_constructor(AnimationInspectorState this);
+static void AnimationInspectorState::constructor(AnimationInspectorState this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ __CLASS_DEFINITION(AnimationInspectorState, GameState);
 /**
  * Get instance
  *
- * @fn			AnimationInspectorState_getInstance()
+ * @fn			AnimationInspectorState::getInstance()
  * @memberof	AnimationInspectorState
  * @public
  *
@@ -77,7 +77,7 @@ __SINGLETON(AnimationInspectorState);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) AnimationInspectorState_constructor(AnimationInspectorState this)
+void __attribute__ ((noinline)) AnimationInspectorState::constructor(AnimationInspectorState this)
 {
 	ASSERT(this, "AnimationInspectorState::constructor: null this");
 
@@ -92,7 +92,7 @@ void __attribute__ ((noinline)) AnimationInspectorState_constructor(AnimationIns
  *
  * @param this	Function scope
  */
-void AnimationInspectorState_destructor(AnimationInspectorState this)
+void AnimationInspectorState::destructor(AnimationInspectorState this)
 {
 	ASSERT(this, "AnimationInspectorState::destructor: null this");
 
@@ -109,13 +109,13 @@ void AnimationInspectorState_destructor(AnimationInspectorState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void AnimationInspectorState_enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState::enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "AnimationInspectorState::enter: null this");
 
-	Base_enter(this, owner);
-	GameState_pauseClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	AnimationInspector_show(AnimationInspector_getInstance(), __SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
+	Base::enter(this, owner);
+	GameState::pauseClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	AnimationInspector::show(AnimationInspector::getInstance(), __SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 }
 
 /**
@@ -127,11 +127,11 @@ void AnimationInspectorState_enter(AnimationInspectorState this __attribute__ ((
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void AnimationInspectorState_execute(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState::execute(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "AnimationInspectorState::execute: null this");
 
-	AnimationInspector_update(AnimationInspector_getInstance());
+	AnimationInspector::update(AnimationInspector::getInstance());
 }
 
 /**
@@ -143,13 +143,13 @@ void AnimationInspectorState_execute(AnimationInspectorState this __attribute__ 
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void AnimationInspectorState_exit(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState::exit(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "AnimationInspectorState::exit: null this");
 
-	AnimationInspector_hide(AnimationInspector_getInstance());
-	GameState_resumeClocks(__SAFE_CAST(GameState, StateMachine_getPreviousState(Game_getStateMachine(Game_getInstance()))));
-	Base_exit(this, owner);
+	AnimationInspector::hide(AnimationInspector::getInstance());
+	GameState::resumeClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	Base::exit(this, owner);
 }
 
 /**
@@ -161,9 +161,9 @@ void AnimationInspectorState_exit(AnimationInspectorState this __attribute__ ((u
  * @param this			Function scope
  * @param userInput		User input
  */
-void AnimationInspectorState_processUserInput(AnimationInspectorState this __attribute__ ((unused)), UserInput userInput)
+void AnimationInspectorState::processUserInput(AnimationInspectorState this __attribute__ ((unused)), UserInput userInput)
 {
 	ASSERT(this, "AnimationInspectorState::processUserInput: null this");
 
-	AnimationInspector_processUserInput(AnimationInspector_getInstance(), userInput.pressedKey);
+	AnimationInspector::processUserInput(AnimationInspector::getInstance(), userInput.pressedKey);
 }

@@ -50,8 +50,8 @@ __CLASS_DEFINITION(BgmapTexture, Texture);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void BgmapTexture_writeAnimatedMulti(BgmapTexture this);
-static void BgmapTexture_doWrite(BgmapTexture this);
+static void BgmapTexture::writeAnimatedMulti(BgmapTexture this);
+static void BgmapTexture::doWrite(BgmapTexture this);
 
 static BgmapTextureManager _bgmapTextureManager = NULL;
 static SpriteManager _spriteManager = NULL;
@@ -76,12 +76,12 @@ __CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
  * @param bgmapTextureDefinition		Texture definition
  * @param id							Identifier
  */
-void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
+void BgmapTexture::constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
 {
 	ASSERT(this, "BgmapTexture::constructor: null this");
 
 	// construct base object
-	Base_constructor(this, (TextureDefinition*)bgmapTextureDefinition, id);
+	Base::constructor(this, (TextureDefinition*)bgmapTextureDefinition, id);
 
 	this->segment = -1;
 	this->usageCount = 1;
@@ -89,12 +89,12 @@ void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTe
 
 	if(!_bgmapTextureManager)
 	{
-		_bgmapTextureManager = BgmapTextureManager_getInstance();
+		_bgmapTextureManager = BgmapTextureManager::getInstance();
 	}
 
 	if(!_spriteManager)
 	{
-		_spriteManager = SpriteManager_getInstance();
+		_spriteManager = SpriteManager::getInstance();
 	}
 }
 
@@ -106,7 +106,7 @@ void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTe
  *
  * @param this							Function scope
  */
-void BgmapTexture_destructor(BgmapTexture this)
+void BgmapTexture::destructor(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::destructor: null this");
 
@@ -115,7 +115,7 @@ void BgmapTexture_destructor(BgmapTexture this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -126,14 +126,14 @@ void BgmapTexture_destructor(BgmapTexture this)
  *
  * @param this			Function scope
  */
-void BgmapTexture_rewrite(BgmapTexture this)
+void BgmapTexture::rewrite(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
 	this->written = false;
 	this->remainingRowsToBeWritten = this->textureDefinition->rows;
 
-	BgmapTexture_write(this);
+	BgmapTexture::write(this);
 }
 
 /**
@@ -144,7 +144,7 @@ void BgmapTexture_rewrite(BgmapTexture this)
  *
  * @param this			Function scope
  */
-void BgmapTexture_write(BgmapTexture this)
+void BgmapTexture::write(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::write: null this");
 
@@ -154,7 +154,7 @@ void BgmapTexture_write(BgmapTexture this)
 		this->remainingRowsToBeWritten = this->textureDefinition->rows;
 	}
 
-	Base_write(this);
+	Base::write(this);
 
 	if(!this->charSet)
 	{
@@ -176,13 +176,13 @@ void BgmapTexture_write(BgmapTexture this)
 		case __ANIMATED_SHARED_COORDINATED:
 		case __NOT_ANIMATED:
 
-			BgmapTexture_doWrite(this);
+			BgmapTexture::doWrite(this);
 			break;
 
 		case __ANIMATED_MULTI:
 
 			// write the definition to graphic memory
-			BgmapTexture_writeAnimatedMulti(this);
+			BgmapTexture::writeAnimatedMulti(this);
 			break;
 
 		default:
@@ -201,12 +201,12 @@ void BgmapTexture_write(BgmapTexture this)
  *
  * @param this			Function scope
  */
-static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
+static void BgmapTexture::writeAnimatedMulti(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimatedShared: null this");
 
-	int xOffset = (int)BgmapTextureManager_getXOffset(_bgmapTextureManager, this->id);
-	int yOffset = (int)BgmapTextureManager_getYOffset(_bgmapTextureManager, this->id);
+	int xOffset = (int)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
+	int yOffset = (int)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 
 	if((0 > xOffset) | (0 > yOffset))
 	{
@@ -219,11 +219,11 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 
 	// determine the number of frames the map had
 	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
-	int charLocation = (int)CharSet_getOffset(this->charSet);
-	int frames = CharSet_getNumberOfChars(this->charSet) / area;
+	int charLocation = (int)CharSet::getOffset(this->charSet);
+	int frames = CharSet::getNumberOfChars(this->charSet) / area;
 	u32 mapDisplacement = this->mapDisplacement >> 1;
 
-	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
+	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 
 	// put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
@@ -233,7 +233,7 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
 		// specifying the char displacement inside the char mem
 		for(; j <= frames; j++)
 		{
-			Mem_addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureDefinition->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
+			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureDefinition->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
 				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
 				this->textureDefinition->cols,
 				(palette) | (charLocation + area * (j - 1)));
@@ -249,12 +249,12 @@ static void BgmapTexture_writeAnimatedMulti(BgmapTexture this)
  *
  * @param this			Function scope
  */
-static void BgmapTexture_doWrite(BgmapTexture this)
+static void BgmapTexture::doWrite(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::doWrite: null this");
 
-	int xOffset = (int)BgmapTextureManager_getXOffset(_bgmapTextureManager, this->id);
-	int yOffset = (int)BgmapTextureManager_getYOffset(_bgmapTextureManager, this->id);
+	int xOffset = (int)BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
+	int yOffset = (int)BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 
 	if((0 > xOffset) | (0 > yOffset))
 	{
@@ -263,15 +263,15 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 
 	int bgmapSegment = this->segment;
 	int offsetDisplacement = xOffset + (yOffset << 6);
-	u32 colorInformation = (int)CharSet_getOffset(this->charSet) | (this->palette << 14);
+	u32 colorInformation = (int)CharSet::getOffset(this->charSet) | (this->palette << 14);
 
-	int counter = SpriteManager_getTexturesMaximumRowsToWrite(_spriteManager);
+	int counter = SpriteManager::getTexturesMaximumRowsToWrite(_spriteManager);
 	u32 mapDisplacement = this->mapDisplacement >> 1;
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-		Mem_addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
+		Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
 				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
 				this->textureDefinition->cols,
 				colorInformation);
@@ -279,26 +279,26 @@ static void BgmapTexture_doWrite(BgmapTexture this)
 }
 
 /*
-static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
+static void BgmapTexture::writeAnimatedSingleOptimized(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::writeAnimatedSingleOptimized: null this");
 
 	int bgmapSegment = this->segment;
 	int palette = this->palette << 14;
 
-	int charLocation = (int)CharSet_getOffset(this->charSet);
+	int charLocation = (int)CharSet::getOffset(this->charSet);
 
 	if((0 > xOffset) | (0 > yOffset))
 	{
 		return;
 	}
 
-	int counter = SpriteManager_getTexturesMaximumRowsToWrite(SpriteManager_getInstance());
+	int counter = SpriteManager::getTexturesMaximumRowsToWrite(SpriteManager::getInstance());
 
 	//put the map into memory calculating the number of char for each reference
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
-		Mem_add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
+		Mem::add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
 				(const u8*)(this->textureDefinition->mapDefinition + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
 				this->textureDefinition->cols << 1,
 				(palette) | (charLocation));
@@ -316,7 +316,7 @@ static void BgmapTexture_writeAnimatedSingleOptimized(BgmapTexture this)
  *
  * @return				Number of rows pending writing
  */
-s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this)
+s8 BgmapTexture::getRemainingRowsToBeWritten(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getRemainingRowsToBeWritten: null this");
 
@@ -333,11 +333,11 @@ s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this)
  *
  * @return				Texture's x offset within BGMAP segment
  */
-s16 BgmapTexture_getXOffset(BgmapTexture this)
+s16 BgmapTexture::getXOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getXOffset: null this");
 
-	return BgmapTextureManager_getXOffset(_bgmapTextureManager, this->id);
+	return BgmapTextureManager::getXOffset(_bgmapTextureManager, this->id);
 }
 
 /**
@@ -350,11 +350,11 @@ s16 BgmapTexture_getXOffset(BgmapTexture this)
  *
  * @return				Texture's y offset within BGMAP segment
  */
-s16 BgmapTexture_getYOffset(BgmapTexture this)
+s16 BgmapTexture::getYOffset(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getYOffset: null this");
 
-	return BgmapTextureManager_getYOffset(_bgmapTextureManager, this->id);
+	return BgmapTextureManager::getYOffset(_bgmapTextureManager, this->id);
 }
 
 /**
@@ -366,7 +366,7 @@ s16 BgmapTexture_getYOffset(BgmapTexture this)
  * @param this			Function scope
  * @param segment		Texture's BGMAP segment
  */
-void BgmapTexture_setSegment(BgmapTexture this, s8 segment)
+void BgmapTexture::setSegment(BgmapTexture this, s8 segment)
 {
 	ASSERT(this, "BgmapTexture::setSegment: null this");
 
@@ -383,7 +383,7 @@ void BgmapTexture_setSegment(BgmapTexture this, s8 segment)
  *
  * @return				Texture's BGMAP segment
  */
-s8 BgmapTexture_getSegment(BgmapTexture this)
+s8 BgmapTexture::getSegment(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getSegment: null this");
 
@@ -400,7 +400,7 @@ s8 BgmapTexture_getSegment(BgmapTexture this)
  *
  * @return				Texture's count usage
  */
-u8 BgmapTexture_getUsageCount(BgmapTexture this)
+u8 BgmapTexture::getUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::getUsageCount: null this");
 
@@ -415,7 +415,7 @@ u8 BgmapTexture_getUsageCount(BgmapTexture this)
  *
  * @param this			Function scope
  */
-void BgmapTexture_increaseUsageCount(BgmapTexture this)
+void BgmapTexture::increaseUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::increaseUsageCoung: null this");
 
@@ -432,7 +432,7 @@ void BgmapTexture_increaseUsageCount(BgmapTexture this)
  *
  * @return				True if count usage reached zero
  */
-bool BgmapTexture_decreaseUsageCount(BgmapTexture this)
+bool BgmapTexture::decreaseUsageCount(BgmapTexture this)
 {
 	ASSERT(this, "BgmapTexture::decreaseUsageCoung: null this");
 

@@ -55,7 +55,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
  *
  * @param this	Function scope
  */
-void Wireframe_constructor(Wireframe this)
+void Wireframe::constructor(Wireframe this)
 {
 	ASSERT(this, "Wireframe::constructor: null this");
 
@@ -71,15 +71,15 @@ void Wireframe_constructor(Wireframe this)
  *
  * @param this	Function scope
  */
-void Wireframe_destructor(Wireframe this)
+void Wireframe::destructor(Wireframe this)
 {
 	ASSERT(this, "Wireframe::destructor: null this");
 
-	Wireframe_hide(this);
+	Wireframe::hide(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -90,11 +90,11 @@ void Wireframe_destructor(Wireframe this)
  *
  * @param this	Function scope
  */
-void Wireframe_show(Wireframe this)
+void Wireframe::show(Wireframe this)
 {
 	ASSERT(this, "Wireframe::show: null this");
 
-	WireframeManager_register(WireframeManager_getInstance(), this);
+	WireframeManager::register(WireframeManager::getInstance(), this);
 }
 
 /**
@@ -105,9 +105,9 @@ void Wireframe_show(Wireframe this)
  *
  * @param this	Function scope
  */
-void Wireframe_hide(Wireframe this)
+void Wireframe::hide(Wireframe this)
 {
 	ASSERT(this, "Wireframe::hide: null this");
 
-	WireframeManager_remove(WireframeManager_getInstance(), this);
+	WireframeManager::remove(WireframeManager::getInstance(), this);
 }

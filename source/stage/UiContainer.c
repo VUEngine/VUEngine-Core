@@ -60,29 +60,29 @@ __CLASS_NEW_DEFINITION(UiContainer, UiContainerDefinition* uiContainerDefinition
 __CLASS_NEW_END(UiContainer, uiContainerDefinition);
 
 // class's constructor
-void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
+void UiContainer::constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
 {
 	ASSERT(this, "UiContainer::constructor: null this");
 
 	// construct base object
-	Base_constructor(this, NULL);
+	Base::constructor(this, NULL);
 
 	// add entities in the definition
-	 UiContainer_addEntities(this, uiContainerDefinition->entities);
+	 UiContainer::addEntities(this, uiContainerDefinition->entities);
 }
 
 // class's destructor
-void UiContainer_destructor(UiContainer this)
+void UiContainer::destructor(UiContainer this)
 {
 	ASSERT(this, "UiContainer::destructor: null this");
 
 	// destroy base
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 // add entities
-void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
+void UiContainer::addEntities(UiContainer this, PositionedEntity* entities)
 {
 	ASSERT(this, "UiContainer::addEntities: null this");
 	ASSERT(entities, "UiContainer::addEntities: null entities");
@@ -92,46 +92,46 @@ void UiContainer_addEntities(UiContainer this, PositionedEntity* entities)
 
 	for(;entities && entities[i].entityDefinition; i++)
 	{
-		Entity entity = Entity_loadEntity(&entities[i], internalId++);
+		Entity entity = Entity::loadEntity(&entities[i], internalId++);
 
 		if(entity)
 		{
 			// setup graphics
-			 Container_setupGraphics(entity);
+			 Container::setupGraphics(entity);
 
 			// create the entity and add it to the world
-			Container_addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+			Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
 
 			// apply transformations
-			Transformation environmentTransform = Container_getEnvironmentTransform(__SAFE_CAST(Container, this));
-			 Container_initialTransform(entity, &environmentTransform, true);
+			Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+			 Container::initialTransform(entity, &environmentTransform, true);
 
-			 Entity_ready(entity, true);
+			 Entity::ready(entity, true);
 		}
 	}
 }
 
 // transformation
-void UiContainer_transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void UiContainer::transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
 	ASSERT(this, "UiContainer::transform: null this");
 
-	Camera camera = Camera_getInstance();
+	Camera camera = Camera::getInstance();
 	ASSERT(camera, "UiContainer::transform: null camera");
 
-	Camera_prepareForUITransform(camera);
+	Camera::prepareForUITransform(camera);
 
-	Base_transform(this, environmentTransform, invalidateTransformationFlag);
+	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
-	Camera_doneUITransform(camera);
+	Camera::doneUITransform(camera);
 }
 
 // transformation
-void UiContainer_initialTransform(UiContainer this, const Transformation* environmentTransform, u32 recursive)
+void UiContainer::initialTransform(UiContainer this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "UiContainer::initialTransform: null this");
 
-	Camera camera = Camera_getInstance();
+	Camera camera = Camera::getInstance();
 	ASSERT(camera, "UiContainer::initialTransform: null camera");
 
 	Vector3D originalCameraPosition  =
@@ -143,23 +143,23 @@ void UiContainer_initialTransform(UiContainer this, const Transformation* enviro
 	{
 		// must hack the camera position for my children's sprites
 		// being properly rendered
-		originalCameraPosition = Camera_getPosition(camera);
+		originalCameraPosition = Camera::getPosition(camera);
 
 		Vector3D tempCameraPosition =
 		{
 			0, 0, 0
 		};
 
-		Camera_setPosition(camera, tempCameraPosition);
+		Camera::setPosition(camera, tempCameraPosition);
 	}
 
-	Base_initialTransform(this, environmentTransform, recursive);
+	Base::initialTransform(this, environmentTransform, recursive);
 
-	 Container_synchronizeGraphics(this);
+	 Container::synchronizeGraphics(this);
 
 	if(camera)
 	{
 		// recover camera
-		Camera_setPosition(camera, originalCameraPosition);
+		Camera::setPosition(camera, originalCameraPosition);
 	}
 }

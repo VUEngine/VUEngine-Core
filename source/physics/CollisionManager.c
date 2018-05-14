@@ -82,7 +82,7 @@ __CLASS_NEW_DEFINITION(CollisionManager)
 __CLASS_NEW_END(CollisionManager);
 
 // class's constructor
-void CollisionManager_constructor(CollisionManager this)
+void CollisionManager::constructor(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::constructor: null this");
 
@@ -100,12 +100,12 @@ void CollisionManager_constructor(CollisionManager this)
 }
 
 // class's destructor
-void CollisionManager_destructor(CollisionManager this)
+void CollisionManager::destructor(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::destructor: null this");
 	ASSERT(this->shapes, "CollisionManager::destructor: null shapes");
 
-	CollisionManager_reset(this);
+	CollisionManager::reset(this);
 
 	// delete lists
 	__DELETE(this->shapes);
@@ -113,35 +113,35 @@ void CollisionManager_destructor(CollisionManager this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 // register a shape
-Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition)
+Shape CollisionManager::createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition)
 {
 	ASSERT(this, "CollisionManager::createShape: null this");
 
 	// create the shape
 	Shape shape = ((Shape (*)(SpatialObject)) shapeDefinition->allocator)(owner);
-	Shape_setup(shape, shapeDefinition->layers, shapeDefinition->layersToIgnore);
-	Shape_setCheckForCollisions(shape, shapeDefinition->checkForCollisions);
+	Shape::setup(shape, shapeDefinition->layers, shapeDefinition->layersToIgnore);
+	Shape::setCheckForCollisions(shape, shapeDefinition->checkForCollisions);
 
 	// register it
-	VirtualList_pushFront(this->shapes, shape);
+	VirtualList::pushFront(this->shapes, shape);
 
 	// return created shape
 	return shape;
 }
 
 // remove a shape
-void CollisionManager_destroyShape(CollisionManager this, Shape shape)
+void CollisionManager::destroyShape(CollisionManager this, Shape shape)
 {
 	ASSERT(this, "CollisionManager::destroyShape: null this");
 
-	if(shape && VirtualList_find(this->shapes, shape))
+	if(shape && VirtualList::find(this->shapes, shape))
 	{
-		VirtualList_removeElement(this->shapes, shape);
-		VirtualList_removeElement(this->movingShapes, shape);
+		VirtualList::removeElement(this->shapes, shape);
+		VirtualList::removeElement(this->movingShapes, shape);
 
 		// delete it
 		__DELETE(shape);
@@ -149,7 +149,7 @@ void CollisionManager_destroyShape(CollisionManager this, Shape shape)
 }
 
 // calculate collisions
-u32 CollisionManager_update(CollisionManager this, Clock clock)
+u32 CollisionManager::update(CollisionManager this, Clock clock)
 {
 	ASSERT(this, "CollisionManager::update: null this");
 
@@ -176,7 +176,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 		extern const Vector3D* _cameraPosition;
 		extern const CameraFrustum* _cameraFrustum;
 
-		RightBox surroundingRightBox =  Shape_getSurroundingRightBox(shape);
+		RightBox surroundingRightBox =  Shape::getSurroundingRightBox(shape);
 
 		// not ready for collision checks if out of the camera
 		if(
@@ -192,18 +192,18 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 #ifdef __DRAW_SHAPES
 		if(shape->isActive && shape->isVisible)
 		{
-			Shape_show(shape);
+			Shape::show(shape);
 		}
 		else
 		{
-			Shape_hide(shape);
+			Shape::hide(shape);
 		}
 #endif
 
 		shape->moved = false;
 	}
 
-	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList_getSize(this->movingShapes), "CollisionManager::update: too many moving shapes");
+	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList::getSize(this->movingShapes), "CollisionManager::update: too many moving shapes");
 
 	Shape movingShapes[__TOTAL_USABLE_SHAPES];
 	Shape activeShapes[__TOTAL_USABLE_SHAPES];
@@ -272,7 +272,7 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 				{
 					this->lastCycleCollisionChecks++;
 
-					CollisionData collisionData = Shape_collides(shape, shapeToCheck);
+					CollisionData collisionData = Shape::collides(shape, shapeToCheck);
 
 					// check if shapes overlap
 					if(kNoCollision != collisionData.result)
@@ -288,14 +288,14 @@ u32 CollisionManager_update(CollisionManager this, Clock clock)
 	this->collisions += this->lastCycleCollisions;
 
 #ifdef __SHOW_PHYSICS_PROFILING
-	CollisionManager_print(this, 25, 1);
+	CollisionManager::print(this, 25, 1);
 #endif
 
 	return returnValue;
 }
 
 // unregister all shapes
-void CollisionManager_reset(CollisionManager this)
+void CollisionManager::reset(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::reset: null this");
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
@@ -309,8 +309,8 @@ void CollisionManager_reset(CollisionManager this)
 	}
 
 	// empty the lists
-	VirtualList_clear(this->shapes);
-	VirtualList_clear(this->movingShapes);
+	VirtualList::clear(this->shapes);
+	VirtualList::clear(this->movingShapes);
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -320,28 +320,28 @@ void CollisionManager_reset(CollisionManager this)
 }
 
 // inform of a change in the shape
-void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape)
+void CollisionManager::shapeStartedMoving(CollisionManager this, Shape shape)
 {
 	ASSERT(this, "CollisionManager::shapeStartedMoving: null this");
 	ASSERT(shape, "CollisionManager::shapeStartedMoving: null shape");
 
-	if(!VirtualList_find(this->movingShapes, shape))
+	if(!VirtualList::find(this->movingShapes, shape))
 	{
-		VirtualList_pushBack(this->movingShapes, shape);
+		VirtualList::pushBack(this->movingShapes, shape);
 	}
 }
 
 // inform of a change in the shape
-void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape)
+void CollisionManager::shapeStoppedMoving(CollisionManager this, Shape shape)
 {
 	ASSERT(this, "CollisionManager::shapeStoppedMoving: null this");
 	ASSERT(shape, "CollisionManager::shapeStoppedMoving: null shape");
 
-	VirtualList_removeElement(this->movingShapes, shape);
+	VirtualList::removeElement(this->movingShapes, shape);
 }
 
 // draw shapes
-void CollisionManager_showShapes(CollisionManager this)
+void CollisionManager::showShapes(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::drawShapes: null this");
 
@@ -351,12 +351,12 @@ void CollisionManager_showShapes(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		Shape_show(__SAFE_CAST(Shape, node->data));
+		Shape::show(__SAFE_CAST(Shape, node->data));
 	}
 }
 
 // free memory by deleting direct draw Polyhedrons
-void CollisionManager_hideShapes(CollisionManager this)
+void CollisionManager::hideShapes(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::drawShapes: null this");
 //	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
@@ -367,11 +367,11 @@ void CollisionManager_hideShapes(CollisionManager this)
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		Shape_hide(__SAFE_CAST(Shape, node->data));
+		Shape::hide(__SAFE_CAST(Shape, node->data));
 	}
 }
 
-int CollisionManager_getNumberOfActiveShapes(CollisionManager this)
+int CollisionManager::getNumberOfActiveShapes(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::getNumberOfActiveShapes: null this");
 
@@ -395,30 +395,30 @@ int CollisionManager_getNumberOfActiveShapes(CollisionManager this)
 }
 
 // print status
-void CollisionManager_print(CollisionManager this, int x, int y)
+void CollisionManager::print(CollisionManager this, int x, int y)
 {
 	ASSERT(this, "CollisionManager::print: null this");
 
-	Printing_resetWorldCoordinates(Printing_getInstance());
+	Printing::resetWorldCoordinates(Printing::getInstance());
 
-	Printing_text(Printing_getInstance(), "COLLISION MANAGER", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "SHAPES", x, ++y, NULL);
-	Printing_text(Printing_getInstance(), "  Registered:     ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->shapes), x + 14, y, NULL);
-	Printing_text(Printing_getInstance(), "  Active:          ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), CollisionManager_getNumberOfActiveShapes(this), x + 14, y, NULL);
-	Printing_text(Printing_getInstance(), "  Moving:          ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->movingShapes), x + 14, y++, NULL);
+	Printing::text(Printing::getInstance(), "COLLISION MANAGER", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "SHAPES", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "  Registered:     ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->shapes), x + 14, y, NULL);
+	Printing::text(Printing::getInstance(), "  Active:          ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), CollisionManager::getNumberOfActiveShapes(this), x + 14, y, NULL);
+	Printing::text(Printing::getInstance(), "  Moving:          ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->movingShapes), x + 14, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "STATISTICS (per cycle)", x, ++y, NULL);
-	Printing_text(Printing_getInstance(), "Average", x, ++y, NULL);
-	Printing_text(Printing_getInstance(), "  Checks:          ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->checkCycles ? this->collisionChecks / this->checkCycles : 0, x + 14, y, NULL);
-	Printing_text(Printing_getInstance(), "  Collisions:      ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->checkCycles ? this->collisions / this->checkCycles : 0, x + 14, y, NULL);
-	Printing_text(Printing_getInstance(), "Last cycle", x, ++y, NULL);
-	Printing_text(Printing_getInstance(), "  Checks:          ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->lastCycleCollisionChecks, x + 14, y, NULL);
-	Printing_text(Printing_getInstance(), "  Collisions:      ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), this->lastCycleCollisions, x + 14, y, NULL);
+	Printing::text(Printing::getInstance(), "STATISTICS (per cycle)", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Average", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "  Checks:          ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->checkCycles ? this->collisionChecks / this->checkCycles : 0, x + 14, y, NULL);
+	Printing::text(Printing::getInstance(), "  Collisions:      ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->checkCycles ? this->collisions / this->checkCycles : 0, x + 14, y, NULL);
+	Printing::text(Printing::getInstance(), "Last cycle", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "  Checks:          ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->lastCycleCollisionChecks, x + 14, y, NULL);
+	Printing::text(Printing::getInstance(), "  Collisions:      ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->lastCycleCollisions, x + 14, y, NULL);
 }

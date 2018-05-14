@@ -34,7 +34,7 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-class Telegram : Object
+final class Telegram : Object
 {
 	void constructor(void* sender, void* receiver, int message, void* extraInfo);
 	void* getSender();

@@ -55,7 +55,7 @@ __CLASS_FRIEND_DEFINITION(Camera);
 //---------------------------------------------------------------------------------------------------------
 
 
-static void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovementManager this);
+static void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovementManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -64,7 +64,7 @@ static void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraM
 /**
  * Get instance
  *
- * @fn			CameraMovementManager_getInstance()
+ * @fn			CameraMovementManager::getInstance()
  * @memberof	CameraMovementManager
  * @public
  *
@@ -80,7 +80,7 @@ __SINGLETON(CameraMovementManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovementManager this)
+static void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovementManager this)
 {
 	ASSERT(this, "CameraMovementManager::constructor: null this");
 
@@ -96,7 +96,7 @@ static void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraM
  *
  * @param this	Function scope
  */
-void CameraMovementManager_destructor(CameraMovementManager this)
+void CameraMovementManager::destructor(CameraMovementManager this)
 {
 	ASSERT(this, "CameraMovementManager::destructor: null this");
 
@@ -113,27 +113,27 @@ void CameraMovementManager_destructor(CameraMovementManager this)
  * @param this							Function scope
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager_focus(CameraMovementManager this __attribute__ ((unused)), u32 checkIfFocusEntityIsMoving)
+void CameraMovementManager::focus(CameraMovementManager this __attribute__ ((unused)), u32 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this, "CameraMovementManager::update: null this");
 
-	Camera camera = Camera_getInstance();
+	Camera camera = Camera::getInstance();
 
 	// if focusEntity is defined
 	if(camera && camera->focusEntity)
 	{
-		Container focusEntityParent = Container_getParent(__SAFE_CAST(Container, camera->focusEntity));
+		Container focusEntityParent = Container::getParent(__SAFE_CAST(Container, camera->focusEntity));
 
 		if(focusEntityParent)
 		{
 			// get focusEntity is moving
-			if( SpatialObject_isMoving(camera->focusEntity) || !checkIfFocusEntityIsMoving)
+			if( SpatialObject::isMoving(camera->focusEntity) || !checkIfFocusEntityIsMoving)
 			{
 				// save last position
 				camera->lastDisplacement = camera->position;
 
 				// get focusEntity's position
-				camera->position = *Entity_getPosition(__SAFE_CAST(Entity, camera->focusEntity));
+				camera->position = *Entity::getPosition(__SAFE_CAST(Entity, camera->focusEntity));
 
 				camera->position.x += camera->focusEntityPositionDisplacement.x - __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
 				camera->position.y += camera->focusEntityPositionDisplacement.y - __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);

@@ -49,8 +49,8 @@ __CLASS_FRIEND_DEFINITION(Box);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-bool InverseBox_collidesWithRightBoxs(RightBox* first, RightBox* second);
-bool InverseBox_collidesBox(InverseBox this, Box other);
+bool InverseBox::collidesWithRightBoxs(RightBox* first, RightBox* second);
+bool InverseBox::collidesBox(InverseBox this, Box other);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,11 +69,11 @@ __CLASS_NEW_END(InverseBox, owner);
  * @param this	Function scope
  * @param owner
  */
-void InverseBox_constructor(InverseBox this, SpatialObject owner)
+void InverseBox::constructor(InverseBox this, SpatialObject owner)
 {
 	ASSERT(this, "InverseBox::constructor: null this");
 
-	Base_constructor(this, owner);
+	Base::constructor(this, owner);
 }
 
 /**
@@ -84,11 +84,11 @@ void InverseBox_constructor(InverseBox this, SpatialObject owner)
  *
  * @param this	Function scope
  */
- void InverseBox_destructor(InverseBox this)
+ void InverseBox::destructor(InverseBox this)
 {
 	ASSERT(this, "InverseBox::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }

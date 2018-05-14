@@ -73,27 +73,27 @@ __CLASS_NEW_END(Ball, owner);
 
 
 // class's constructor
-void Ball_constructor(Ball this, SpatialObject owner)
+void Ball::constructor(Ball this, SpatialObject owner)
 {
 	ASSERT(this, "Ball::constructor: null this");
 
-	Base_constructor(this, owner);
+	Base::constructor(this, owner);
 
 	this->center = (Vector3D){0, 0, 0};
 	this->radius = 0;
 }
 
 // class's destructor
-void Ball_destructor(Ball this)
+void Ball::destructor(Ball this)
 {
 	ASSERT(this, "Ball::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
-void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
+void Ball::position(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
 {
 	ASSERT(this, "Ball::position: null this");
 
@@ -112,13 +112,13 @@ void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation
 		this->radius = size->y >> 1;
 	}
 
-	Base_position(this, position, rotation, scale, size);
+	Base::position(this, position, rotation, scale, size);
 }
 
-void Ball_project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
+void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	// project this onto the current normal
-	fix10_6 dotProduct = Vector3D_dotProduct(vector, center);
+	fix10_6 dotProduct = Vector3D::dotProduct(vector, center);
 
 	*min = dotProduct - radius;
 	*max = dotProduct + radius;
@@ -131,7 +131,7 @@ void Ball_project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min
 	}
 }
 
-CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation Ball::testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
 {
 	ASSERT(this, "Ball::testForCollision: null this");
 
@@ -146,7 +146,7 @@ CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D disp
 	this->center.z += displacement.z;
 
 	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), __SAFE_CAST(Shape, this), shape);
 
 	// restore state
 	this->center = center;
@@ -155,14 +155,14 @@ CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D disp
 	return collisionInformation;
 }
 
-Vector3D Ball_getPosition(Ball this)
+Vector3D Ball::getPosition(Ball this)
 {
 	ASSERT(this, "Ball::getPosition: null this");
 
 	return this->center;
 }
 
-RightBox Ball_getSurroundingRightBox(Ball this)
+RightBox Ball::getSurroundingRightBox(Ball this)
 {
 	ASSERT(this, "Ball::getSurroundingRightBox: null this");
 
@@ -179,13 +179,13 @@ RightBox Ball_getSurroundingRightBox(Ball this)
 }
 
 // configure Polyhedron
-void Ball_configureWireframe(Ball this)
+void Ball::configureWireframe(Ball this)
 {
 	ASSERT(this, "Ball::draw: null this");
 
 	if(this->wireframe)
 	{
-		Sphere_setCenter(__SAFE_CAST(Sphere, this->wireframe), this->center);
+		Sphere::setCenter(__SAFE_CAST(Sphere, this->wireframe), this->center);
 		return;
 	}
 
@@ -194,27 +194,27 @@ void Ball_configureWireframe(Ball this)
 }
 
 // print debug data
-void Ball_print(Ball this, int x, int y)
+void Ball::print(Ball this, int x, int y)
 {
 	ASSERT(this, "Ball::print: null this");
 
-	Printing_text(Printing_getInstance(), "C:         " , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.x), x + 2, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.y), x + 6, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.z), x + 10, y++, NULL);
+	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x), x + 2, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y), x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.z), x + 10, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "X:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.x - this->radius), x + 2, y, NULL);
-	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.x + this->radius), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "X:" , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x - this->radius), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x + this->radius), x + 7, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Y:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.y - this->radius), x + 2, y, NULL);
-	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.y + this->radius), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Y:" , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y - this->radius), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y + this->radius), x + 7, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Z:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.z - this->radius), x + 2, y, NULL);
-	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(this->center.z + this->radius), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Z:" , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.z - this->radius), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.z + this->radius), x + 7, y++, NULL);
 }

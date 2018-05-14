@@ -71,12 +71,12 @@ __CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
  * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
-void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+void ObjectAnimatedSprite::constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
 
 	// construct base object
-	Base_constructor(this, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
+	Base::constructor(this, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
@@ -89,7 +89,7 @@ void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpr
  *
  * @param this		Function scope
  */
-void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
+void ObjectAnimatedSprite::destructor(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::destructor: null this");
 
@@ -101,7 +101,7 @@ void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -112,7 +112,7 @@ void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this)
  *
  * @param this		Function scope
  */
-void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
+void ObjectAnimatedSprite::writeAnimation(ObjectAnimatedSprite this)
 {
 	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
 
@@ -121,7 +121,7 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 		return;
 	}
 
-	int animationFrame = (int)AnimationController_getActualFrameIndex(this->animationController);
+	int animationFrame = (int)AnimationController::getActualFrameIndex(this->animationController);
 
 	if(0 > animationFrame)
 	{
@@ -129,23 +129,23 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 	}
 
 	// write according to the allocation type
-	switch(CharSet_getAllocationType(Texture_getCharSet(this->texture, true)))
+	switch(CharSet::getAllocationType(Texture::getCharSet(this->texture, true)))
 	{
 		case __ANIMATED_SINGLE_OPTIMIZED:
 			{
-				CharSet charSet = Texture_getCharSet(this->texture, true);
+				CharSet charSet = Texture::getCharSet(this->texture, true);
 
 				// move charset definition to the next frame chars
-				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
+				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
+						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				ObjectTexture objectTexture = __SAFE_CAST(ObjectTexture, this->texture);
 
 				// move map definition to the next frame
-				Texture_setMapDisplacement(this->texture, Texture_getCols(this->texture) * Texture_getRows(this->texture) * (animationFrame << 1));
+				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
 
-				CharSet_write(charSet);
-				ObjectTexture_write(objectTexture);
+				CharSet::write(charSet);
+				ObjectTexture::write(objectTexture);
 			}
 			break;
 
@@ -153,21 +153,21 @@ void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this)
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 			{
-				CharSet charSet = Texture_getCharSet(this->texture, true);
+				CharSet charSet = Texture::getCharSet(this->texture, true);
 
 				// move charset definition to the next frame chars
-				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) * (animationFrame << 4));
+				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) * (animationFrame << 4));
 
 				// write charset
-				CharSet_write(charSet);
+				CharSet::write(charSet);
 			}
 
 			break;
 
 		case __ANIMATED_MULTI:
 
-			Texture_setMapDisplacement(this->texture, Texture_getCols(this->texture) * Texture_getRows(this->texture) * (animationFrame << 1));
-			ObjectTexture_write(__SAFE_CAST(ObjectTexture, this->texture));
+			Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
+			ObjectTexture::write(__SAFE_CAST(ObjectTexture, this->texture));
 			break;
 	}
 }

@@ -63,7 +63,7 @@ __CLASS_NEW_END(Clock);
  *
  * @param this	Function scope
  */
-void Clock_constructor(Clock this)
+void Clock::constructor(Clock this)
 {
 	ASSERT(this, "Clock::constructor: null this");
 
@@ -79,7 +79,7 @@ void Clock_constructor(Clock this)
 	this->previousMinute = 0;
 
 	// register clock
-	ClockManager_register(ClockManager_getInstance(), this);
+	ClockManager::register(ClockManager::getInstance(), this);
 }
 
 /**
@@ -90,16 +90,16 @@ void Clock_constructor(Clock this)
  *
  * @param this	Function scope
  */
-void Clock_destructor(Clock this)
+void Clock::destructor(Clock this)
 {
 	ASSERT(this, "Clock::destructor: null this");
 
 	// unregister the clock
-	ClockManager_unregister(ClockManager_getInstance(), this);
+	ClockManager::unregister(ClockManager::getInstance(), this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -113,22 +113,22 @@ void Clock_destructor(Clock this)
  * @param row
  * @param font
  */
-void Clock_print(Clock this, int col, int row, const char* font)
+void Clock::print(Clock this, int col, int row, const char* font)
 {
 	ASSERT(this, "Clock::print: null this");
 
 	char output[] = "00:00";
-	char* minutes = Utilities_itoa(Clock_getMinutes(this), 10, 2);
+	char* minutes = Utilities::itoa(Clock::getMinutes(this), 10, 2);
 
 	output[0] = minutes[0];
 	output[1] = minutes[1];
 
-	char* seconds = Utilities_itoa((Clock_getSeconds(this) - Clock_getMinutes(this) * 60) % 60, 10, 2);
+	char* seconds = Utilities::itoa((Clock::getSeconds(this) - Clock::getMinutes(this) * 60) % 60, 10, 2);
 
 	output[3] = seconds[0];
 	output[4] = seconds[1];
 
-	Printing_text(Printing_getInstance(), output, col, row, font);
+	Printing::text(Printing::getInstance(), output, col, row, font);
 }
 
 /**
@@ -140,7 +140,7 @@ void Clock_print(Clock this, int col, int row, const char* font)
  * @param this						Function scope
  * @param millisecondsElapsed		Time elapsed between calls
  */
-void Clock_update(Clock this, u32 millisecondsElapsed)
+void Clock::update(Clock this, u32 millisecondsElapsed)
 {
 	ASSERT(this, "Clock::update: null this");
 
@@ -152,21 +152,21 @@ void Clock_update(Clock this, u32 millisecondsElapsed)
 
 	this->milliSeconds += millisecondsElapsed;
 
-	u32 currentSecond = Clock_getSeconds(this);
+	u32 currentSecond = Clock::getSeconds(this);
 
 	if(currentSecond != this->previousSecond)
 	{
 		this->previousSecond = currentSecond;
 
-		Object_fireEvent(__SAFE_CAST(Object, this), kEventSecondChanged);
+		Object::fireEvent(__SAFE_CAST(Object, this), kEventSecondChanged);
 
-		u32 currentMinute = Clock_getMinutes(this);
+		u32 currentMinute = Clock::getMinutes(this);
 
 		if(currentMinute != this->previousMinute)
 		{
 			this->previousMinute = currentMinute;
 
-			Object_fireEvent(__SAFE_CAST(Object, this), kEventMinuteChanged);
+			Object::fireEvent(__SAFE_CAST(Object, this), kEventMinuteChanged);
 		}
 	}
 }
@@ -179,7 +179,7 @@ void Clock_update(Clock this, u32 millisecondsElapsed)
  *
  * @param this	Function scope
  */
-void Clock_reset(Clock this)
+void Clock::reset(Clock this)
 {
 	ASSERT(this, "Clock::reset: null this");
 
@@ -198,7 +198,7 @@ void Clock_reset(Clock this)
  *
  * @return		Current milliseconds
  */
-u32 Clock_getMilliSeconds(Clock this)
+u32 Clock::getMilliSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getMilliSeconds: null this");
 
@@ -215,7 +215,7 @@ u32 Clock_getMilliSeconds(Clock this)
  *
  * @return		Current seconds
  */
-u32 Clock_getSeconds(Clock this)
+u32 Clock::getSeconds(Clock this)
 {
 	ASSERT(this, "Clock::getSeconds: null this");
 
@@ -232,7 +232,7 @@ u32 Clock_getSeconds(Clock this)
  *
  * @return		Current minutes
  */
-u32 Clock_getMinutes(Clock this)
+u32 Clock::getMinutes(Clock this)
 {
 	ASSERT(this, "Clock::getMinutes: null this");
 
@@ -249,7 +249,7 @@ u32 Clock_getMinutes(Clock this)
  *
  * @return		Current milliseconds
  */
-u32 Clock_getTime(Clock this)
+u32 Clock::getTime(Clock this)
 {
 	ASSERT(this, "Clock::getTime: null this");
 
@@ -266,7 +266,7 @@ u32 Clock_getTime(Clock this)
  *
  * @return		Elapsed milliseconds in the current second
  */
-int Clock_getTimeInCurrentSecond(Clock this)
+int Clock::getTimeInCurrentSecond(Clock this)
 {
 	ASSERT(this, "Clock::getTimeInCurrentSecond: null this");
 
@@ -282,7 +282,7 @@ int Clock_getTimeInCurrentSecond(Clock this)
  * @param this			Function scope
  * @param totalSeconds
  */
-void Clock_setTimeInSeconds(Clock this, float totalSeconds)
+void Clock::setTimeInSeconds(Clock this, float totalSeconds)
 {
 	ASSERT(this, "Clock::setTimeInSeconds: null this");
 
@@ -298,7 +298,7 @@ void Clock_setTimeInSeconds(Clock this, float totalSeconds)
  * @param this			Function scope
  * @param milliSeconds
  */
-void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
+void Clock::setTimeInMilliSeconds(Clock this, u32 milliSeconds)
 {
 	ASSERT(this, "Clock::setTimeInSeconds: null this");
 
@@ -313,10 +313,10 @@ void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds)
  *
  * @param this	Function scope
  */
-void Clock_start(Clock this)
+void Clock::start(Clock this)
 {
 	ASSERT(this, "Clock::start: null this");
-	Clock_reset(this);
+	Clock::reset(this);
 
 	this->paused = false;
 }
@@ -329,11 +329,11 @@ void Clock_start(Clock this)
  *
  * @param this	Function scope
  */
-void Clock_stop(Clock this)
+void Clock::stop(Clock this)
 {
 	ASSERT(this, "Clock::stop: null this");
 
-	Clock_reset(this);
+	Clock::reset(this);
 	this->paused = true;
 }
 
@@ -346,7 +346,7 @@ void Clock_stop(Clock this)
  * @param this		Function scope
  * @param paused	Set to paused or unpaused?
  */
-void Clock_pause(Clock this, bool paused)
+void Clock::pause(Clock this, bool paused)
 {
 	ASSERT(this, "Clock::pause: null this");
 
@@ -363,7 +363,7 @@ void Clock_pause(Clock this, bool paused)
  *
  * @return		Paused flag
  */
-bool Clock_isPaused(Clock this)
+bool Clock::isPaused(Clock this)
 {
 	ASSERT(this, "Clock::isPaused: null this");
 

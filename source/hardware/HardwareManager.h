@@ -75,10 +75,8 @@ singleton class HardwareManager : Object
 	void setInterruptVectors();
 	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
 	void upBrightness();
-#ifdef __ALERT_STACK_OVERFLOW
 	void checkStackStatus();
 	void printStackStatus(int x, int y, bool resumed);
-#endif
 }
 
 /**

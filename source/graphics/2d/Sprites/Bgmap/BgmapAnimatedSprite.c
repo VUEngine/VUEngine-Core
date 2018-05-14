@@ -69,20 +69,20 @@ __CLASS_NEW_END(BgmapAnimatedSprite, bgmapSpriteDefinition, owner);
  * @param bgmapSpriteDefinition		Sprite definition
  * @param owner						Owner
  */
-void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+void BgmapAnimatedSprite::constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
 	// construct base object
-	Base_constructor(this, bgmapSpriteDefinition, owner);
+	Base::constructor(this, bgmapSpriteDefinition, owner);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
     this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 
     // since the offset will be moved during animation, must save it
-    this->originalTextureSource.mx = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-    this->originalTextureSource.my = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+    this->originalTextureSource.mx = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+    this->originalTextureSource.my = BgmapTexture::getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 }
 
 /**
@@ -93,7 +93,7 @@ void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSprite
  *
  * @param this						Function scope
  */
-void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
+void BgmapAnimatedSprite::destructor(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::destructor: null this");
 
@@ -105,7 +105,7 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -116,11 +116,11 @@ void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this)
  *
  * @param this		Function scope
  */
-void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
+void BgmapAnimatedSprite::writeAnimation(BgmapAnimatedSprite this)
 {
 	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
 
-	CharSet charSet = Texture_getCharSet(this->texture, true);
+	CharSet charSet = Texture::getCharSet(this->texture, true);
 
 	ASSERT(charSet, "BgmapAnimatedSprite::writeAnimation: null charset");
 
@@ -130,22 +130,22 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 	}
 
 	// write according to the allocation type
-	switch(CharSet_getAllocationType(charSet))
+	switch(CharSet::getAllocationType(charSet))
 	{
 		case __ANIMATED_SINGLE_OPTIMIZED:
 			{
 				// move charset definition to the next frame chars
-				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
+				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
+						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				BgmapTexture bgmapTexture = __SAFE_CAST(BgmapTexture, this->texture);
 
 				// move map definition to the next frame
-				Texture_setMapDisplacement(this->texture, Texture_getCols(this->texture) * Texture_getRows(this->texture) *
-						((int)AnimationController_getActualFrameIndex(this->animationController) << 1));
+				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) *
+						((int)AnimationController::getActualFrameIndex(this->animationController) << 1));
 
-				CharSet_write(charSet);
-				BgmapTexture_rewrite(bgmapTexture);
+				CharSet::write(charSet);
+				BgmapTexture::rewrite(bgmapTexture);
 			}
 			break;
 
@@ -154,23 +154,23 @@ void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this)
 		case __ANIMATED_SHARED_COORDINATED:
 			{
 				// move charset definition to the next frame chars
-				CharSet_setCharDefinitionDisplacement(charSet, Texture_getNumberOfChars(this->texture) *
-						((int)AnimationController_getActualFrameIndex(this->animationController) << 4));
+				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
+						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				// write charset
-				CharSet_write(charSet);
+				CharSet::write(charSet);
 			}
 			break;
 
 		case __ANIMATED_MULTI:
 			{
 				int totalColumns = 64 - (this->originalTextureSource.mx / 8);
-				int frameColumn = Texture_getCols(this->texture) * AnimationController_getActualFrameIndex(this->animationController);
+				int frameColumn = Texture::getCols(this->texture) * AnimationController::getActualFrameIndex(this->animationController);
 				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
 
-			BgmapSprite_invalidateParamTable(__SAFE_CAST(BgmapSprite, this));
+			BgmapSprite::invalidateParamTable(__SAFE_CAST(BgmapSprite, this));
 			break;
 	}
 }

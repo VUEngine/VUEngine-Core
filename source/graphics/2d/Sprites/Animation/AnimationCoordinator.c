@@ -55,7 +55,7 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
  * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition
  */
-void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition)
+void AnimationCoordinator::constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition)
 {
 	ASSERT(this, "AnimationCoordinator::constructor: null this");
 
@@ -73,7 +73,7 @@ void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDe
  *
  * @param this			Function scope
  */
-void AnimationCoordinator_destructor(AnimationCoordinator this)
+void AnimationCoordinator::destructor(AnimationCoordinator this)
 {
 	ASSERT(this, "AnimationCoordinator::destructor: null this");
 	ASSERT(this->animationControllers, "AnimationCoordinator::destructor: null animationControllers");
@@ -83,7 +83,7 @@ void AnimationCoordinator_destructor(AnimationCoordinator this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -96,7 +96,7 @@ void AnimationCoordinator_destructor(AnimationCoordinator this)
  *
  * @return 				CharSetDefinition
  */
-const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoordinator this)
+const CharSetDefinition* AnimationCoordinator::getCharSetDefinition(AnimationCoordinator this)
 {
 	ASSERT(this, "AnimationCoordinator::getCharSetDefinition: null this");
 
@@ -116,13 +116,13 @@ const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoor
  *
  * @return 							True if the animation started playing
  */
-bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationCoordinator::playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
 {
 	ASSERT(this, "AnimationCoordinator::playAnimation: null this");
 
 	if(this->animationControllers->head)
 	{
-		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList_front(this->animationControllers));
+		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
 
 		if(animationController == firstAnimationController)
 		{
@@ -130,10 +130,10 @@ bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationCont
 		}
 
 		// only if not playing already
-		if(!AnimationController_isPlaying(firstAnimationController) || strncmp(functionName, AnimationController_getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
+		if(!AnimationController::isPlaying(firstAnimationController) || strncmp(functionName, AnimationController::getPlayingAnimationFunction(firstAnimationController)->name, __MAX_ANIMATION_FUNCTION_NAME_LENGTH))
 		{
 			// first animate the frame
-			AnimationController_play(firstAnimationController, animationDescription, functionName);
+			AnimationController::play(firstAnimationController, animationDescription, functionName);
 		}
 
 		return false;

@@ -72,11 +72,11 @@ __CLASS_NEW_END(Box, owner);
 
 
 // class's constructor
-void Box_constructor(Box this, SpatialObject owner)
+void Box::constructor(Box this, SpatialObject owner)
 {
 	ASSERT(this, "Box::constructor: null this");
 
-	Base_constructor(this, owner);
+	Base::constructor(this, owner);
 
 	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
 
@@ -91,7 +91,7 @@ void Box_constructor(Box this, SpatialObject owner)
 }
 
 // class's destructor
-void Box_destructor(Box this)
+void Box::destructor(Box this)
 {
 	ASSERT(this, "Box::destructor: null this");
 
@@ -103,10 +103,10 @@ void Box_destructor(Box this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
-void Box_position(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
+void Box::position(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
 {
 	ASSERT(this, "Box::position: null this");
 
@@ -313,13 +313,13 @@ void Box_position(Box this, const Vector3D* position, const Rotation* rotation, 
 
 	if(this->normals)
 	{
-		Box_projectOntoItself(this);
+		Box::projectOntoItself(this);
 	}
 
-	Base_position(this, position, rotation, scale, size);
+	Base::position(this, position, rotation, scale, size);
 }
 
-void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
+void Box::getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 {
 	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
 	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
@@ -381,13 +381,13 @@ void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 	vertexes[7] = rightBottomFar;
 }
 
-void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
+void Box::computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
 {
 /*
 	// generic way
-	normals[0] = Vector3D_getPlaneNormal(vertexes[6], vertexes[4], vertexes[0]);
-	normals[1] = Vector3D_getPlaneNormal(vertexes[0], vertexes[4], vertexes[5]);
-	normals[2] = Vector3D_getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
+	normals[0] = Vector3D::getPlaneNormal(vertexes[6], vertexes[4], vertexes[0]);
+	normals[1] = Vector3D::getPlaneNormal(vertexes[0], vertexes[4], vertexes[5]);
+	normals[2] = Vector3D::getPlaneNormal(vertexes[0], vertexes[1], vertexes[3]);
 */
 
 	if(!this->normals)
@@ -417,17 +417,17 @@ void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
 		vertexes[4].z - vertexes[0].z,
 	};
 
-	this->normals->vectors[0] = Vector3D_normalize(this->normals->vectors[0]);
-	this->normals->vectors[1] = Vector3D_normalize(this->normals->vectors[1]);
-	this->normals->vectors[2] = Vector3D_normalize(this->normals->vectors[2]);
+	this->normals->vectors[0] = Vector3D::normalize(this->normals->vectors[0]);
+	this->normals->vectors[1] = Vector3D::normalize(this->normals->vectors[1]);
+	this->normals->vectors[2] = Vector3D::normalize(this->normals->vectors[2]);
 }
 
-void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
+void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	int vertexIndex = 0;
 
 	// project this onto the current normal
-	fix10_6 dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
+	fix10_6 dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
 
 	fix10_6 finalMin = dotProduct;
 	fix10_6 finalMax = dotProduct;
@@ -435,7 +435,7 @@ void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* mi
 	// project this onto the current normal
 	for(; vertexIndex < __BOX_VERTEXES; vertexIndex++)
 	{
-		dotProduct = Vector3D_dotProduct(vector, vertexes[vertexIndex]);
+		dotProduct = Vector3D::dotProduct(vector, vertexes[vertexIndex]);
 
 		if(dotProduct < finalMin)
 		{
@@ -451,15 +451,15 @@ void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* mi
 	*max = finalMax;
 }
 
-void Box_projectOntoItself(Box this)
+void Box::projectOntoItself(Box this)
 {
 	ASSERT(this, "Box::projectOntoItself: null this");
 
 	Vector3D vertexes[__BOX_VERTEXES];
-	Box_getVertexes(this, vertexes);
+	Box::getVertexes(this, vertexes);
 
 	// compute normals
-	Box_computeNormals(this, vertexes);
+	Box::computeNormals(this, vertexes);
 
 	// has to project all points on all the normals of the tilted box
 	int normalIndex = 0;
@@ -467,12 +467,12 @@ void Box_projectOntoItself(Box this)
 	// initialize vertex projections
 	for(; normalIndex < __SHAPE_NORMALS; normalIndex++)
 	{
-		Box_project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
+		Box::project(vertexes, this->normals->vectors[normalIndex], &this->vertexProjections[normalIndex].min, &this->vertexProjections[normalIndex].max);
 	}
 }
 
 // test if collision with the entity give the displacement
-CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation Box::testForCollision(Box this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
 {
 	ASSERT(this, "Box::testForCollision: null this");
 
@@ -489,20 +489,20 @@ CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displa
 	this->rightBox.z0 += displacement.z - sizeIncrement;
 	this->rightBox.z1 += displacement.z + sizeIncrement;
 
-	Box_projectOntoItself(this);
+	Box::projectOntoItself(this);
 
 	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper_checkIfOverlap(CollisionHelper_getInstance(), __SAFE_CAST(Shape, this), shape);
+	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), __SAFE_CAST(Shape, this), shape);
 
 	// put back myself
 	this->rightBox = rightBox;
 
-	Box_projectOntoItself(this);
+	Box::projectOntoItself(this);
 
 	return collisionInformation;
 }
 
-Vector3D Box_getPosition(Box this)
+Vector3D Box::getPosition(Box this)
 {
 	ASSERT(this, "Box::getPosition: null this");
 
@@ -516,7 +516,7 @@ Vector3D Box_getPosition(Box this)
 	return position;
 }
 
-RightBox Box_getSurroundingRightBox(Box this)
+RightBox Box::getSurroundingRightBox(Box this)
 {
 	ASSERT(this, "Box::getSurroundingRightBox: null this");
 
@@ -524,7 +524,7 @@ RightBox Box_getSurroundingRightBox(Box this)
 }
 
 // configure Polyhedron
-void Box_configureWireframe(Box this)
+void Box::configureWireframe(Box this)
 {
 	ASSERT(this, "Box::draw: null this");
 
@@ -540,88 +540,88 @@ void Box_configureWireframe(Box this)
 	{
 		if(!this->rotationVertexDisplacement.z)
 		{
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z0);
 #ifdef __DRAW_COMPLETE_BOXES
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
 #endif
 		}
 
 		if(!this->rotationVertexDisplacement.y)
 		{
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y0, this->rightBox.z0);
 #ifdef __DRAW_COMPLETE_BOXES
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1 - this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0 + this->rotationVertexDisplacement.x, this->rightBox.y1, this->rightBox.z0);
 #endif
 		}
 
 		if(!this->rotationVertexDisplacement.x)
 		{
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 #ifdef __DRAW_COMPLETE_BOXES
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
-			Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0 + this->rotationVertexDisplacement.y, this->rightBox.z1);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z1 - this->rotationVertexDisplacement.z);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1 - this->rotationVertexDisplacement.y, this->rightBox.z0);
+			Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0 + this->rotationVertexDisplacement.z);
 #endif
 		}
 	}
 	else
 	{
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z0);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z0);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z0);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z0);
 #ifdef __DRAW_COMPLETE_BOXES
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
-		Polyhedron_addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y0, this->rightBox.z1);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x1, this->rightBox.y1, this->rightBox.z1);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y1, this->rightBox.z1);
+		Polyhedron::addVertex(__SAFE_CAST(Polyhedron, this->wireframe), this->rightBox.x0, this->rightBox.y0, this->rightBox.z1);
 #endif
 	}
 }
 
 // print debug data
-void Box_print(Box this, int x, int y)
+void Box::print(Box this, int x, int y)
 {
 	ASSERT(this, "Box::print: null this");
 
 	RightBox rightBox = this->rightBox;
 
-	Printing_text(Printing_getInstance(), "X:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.x0), x + 2, y, NULL);
-	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.x1), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "X:" , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.x0), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.x1), x + 7, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Y:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.y0), x + 2, y, NULL);
-	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.y1), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Y:" , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.y0), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.y1), x + 7, y++, NULL);
 
-	Printing_text(Printing_getInstance(), "Z:" , x, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.z0), x + 2, y, NULL);
-	Printing_text(Printing_getInstance(), "-" , x + 5, y, NULL);
-	Printing_int(Printing_getInstance(), __FIX10_6_TO_I(rightBox.z1), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Z:" , x, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.z0), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
+	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.z1), x + 7, y++, NULL);
 }

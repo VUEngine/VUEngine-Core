@@ -86,8 +86,8 @@ __CLASS_FRIEND_DEFINITION(Printing);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void OptionsSelector_flushPages(OptionsSelector this);
-static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark);
+static void OptionsSelector::flushPages(OptionsSelector this);
+static void OptionsSelector::printSelectorMark(OptionsSelector this, char* mark);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -109,7 +109,7 @@ __CLASS_NEW_END(OptionsSelector, cols, rows, font);
  * @param rows	Number of rows
  * @param font	Font to use for printing selector
  */
-void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* font)
+void OptionsSelector::constructor(OptionsSelector this, u8 cols, u8 rows, char* font)
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
@@ -138,15 +138,15 @@ void OptionsSelector_constructor(OptionsSelector this, u8 cols, u8 rows, char* f
  *
  * @param this	Function scope
  */
-void OptionsSelector_destructor(OptionsSelector this)
+void OptionsSelector::destructor(OptionsSelector this)
 {
 	ASSERT(this, "OptionsSelector::destructor: null this");
 
-	OptionsSelector_flushPages(this);
+	OptionsSelector::flushPages(this);
 
 	// allow a new construct
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -157,7 +157,7 @@ void OptionsSelector_destructor(OptionsSelector this)
  *
  * @param this	Function scope
  */
-static void OptionsSelector_flushPages(OptionsSelector this)
+static void OptionsSelector::flushPages(OptionsSelector this)
 {
 	ASSERT(this, "OptionsSelector::flushPages: null this");
 
@@ -194,7 +194,7 @@ static void OptionsSelector_flushPages(OptionsSelector this)
  * @param this	Function scope
  * @param mark	Selection mark character
  */
-void OptionsSelector_setMarkCharacter(OptionsSelector this, char* mark)
+void OptionsSelector::setMarkCharacter(OptionsSelector this, char* mark)
 {
 	this->mark = mark;
 }
@@ -208,9 +208,9 @@ void OptionsSelector_setMarkCharacter(OptionsSelector this, char* mark)
  * @param this	Function scope
  * @param width Width (in font chars)
  */
-void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width)
+void OptionsSelector::setColumnWidth(OptionsSelector this, u8 width)
 {
-	FontData* fontData = Printing_getFontByName(Printing_getInstance(), this->font);
+	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 	// add space for selection mark, consider font width
 	width = ((width + 1) * fontData->fontDefinition->fontSize.x);
@@ -231,7 +231,7 @@ void OptionsSelector_setColumnWidth(OptionsSelector this, u8 width)
  *
  * @return		Total width of options selector (in chars)
  */
-u8 OptionsSelector_getWidth(OptionsSelector this)
+u8 OptionsSelector::getWidth(OptionsSelector this)
 {
 	return this->columnWidth * this->cols;
 }
@@ -245,16 +245,16 @@ u8 OptionsSelector_getWidth(OptionsSelector this)
  * @param this		Function scope
  * @param options	List of options
  */
-void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
+void OptionsSelector::setOptions(OptionsSelector this, VirtualList options)
 {
 	ASSERT(this, "OptionsSelector::setOptions: null this");
 	ASSERT(options, "OptionsSelector::setOptions: null options");
 
-	OptionsSelector_flushPages(this);
+	OptionsSelector::flushPages(this);
 
 	this->pages = __NEW(VirtualList);
 
-	this->totalOptions = VirtualList_getSize(options);
+	this->totalOptions = VirtualList::getSize(options);
 
 	int optionsPerPage = this->cols * this->rows;
 	int numberOfPages = (int)(this->totalOptions / optionsPerPage);
@@ -262,9 +262,9 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
 
 	VirtualNode node = options->head;
 
-	ASSERT(VirtualList_getSize(options), "OptionsSelector::setOptions: empty options");
+	ASSERT(VirtualList::getSize(options), "OptionsSelector::setOptions: empty options");
 
-	if(0 < VirtualList_getSize(options))
+	if(0 < VirtualList::getSize(options))
 	{
 		int page = 0;
 
@@ -275,16 +275,16 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
 			int counter = 0;
 			for(; node && counter < optionsPerPage; counter++, node = node->next)
 			{
-				VirtualList_pushBack(pageOptions, node->data);
+				VirtualList::pushBack(pageOptions, node->data);
 			}
 
-			VirtualList_pushBack(this->pages, pageOptions);
+			VirtualList::pushBack(this->pages, pageOptions);
 		}
 
 		this->currentPage = this->pages->head;
-		ASSERT(VirtualList_getSize(this->pages), "OptionsSelector::setOptions: empty pages");
+		ASSERT(VirtualList::getSize(this->pages), "OptionsSelector::setOptions: empty pages");
 
-		this->currentOption = this->currentPage ? (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head : NULL;
+		this->currentOption = this->currentPage ? (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head : NULL;
 	}
 
 	this->currentPageIndex = 0;
@@ -299,14 +299,14 @@ void OptionsSelector_setOptions(OptionsSelector this, VirtualList options)
  *
  * @param this	Function scope
  */
-void OptionsSelector_selectNext(OptionsSelector this)
+void OptionsSelector::selectNext(OptionsSelector this)
 {
 	ASSERT(this, "OptionsSelector::selectNext: null this");
 
 	if(this->currentOption)
 	{
 		// remove previous selection mark
-		OptionsSelector_printSelectorMark(this, " ");
+		OptionsSelector::printSelectorMark(this, " ");
 
 		// get next option
 		this->currentOption = this->currentOption->next;
@@ -316,7 +316,7 @@ void OptionsSelector_selectNext(OptionsSelector this)
 		if(!this->currentOption)
 		{
 			// if there's more than 1 page, go to next page
-			if(VirtualList_getSize(this->pages) > 1)
+			if(VirtualList::getSize(this->pages) > 1)
 			{
 				// select next page
 				this->currentPage = this->currentPage->next;
@@ -331,22 +331,22 @@ void OptionsSelector_selectNext(OptionsSelector this)
 				}
 
 				// get new option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
+				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head;
 				ASSERT(this->currentOption, "selectNext: null current option");
 
 				// render new page
-				OptionsSelector_printOptions(this, this->x, this->y);
+				OptionsSelector::printOptions(this, this->x, this->y);
 			}
 			else
 			{
 				// wrap around and select first option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
+				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head;
 				this->currentOptionIndex = 0;
 			}
 		}
 
 		// print new selection mark
-		OptionsSelector_printSelectorMark(this, this->mark);
+		OptionsSelector::printSelectorMark(this, this->mark);
 	}
 }
 
@@ -358,54 +358,54 @@ void OptionsSelector_selectNext(OptionsSelector this)
  *
  * @param this	Function scope
  */
-void OptionsSelector_selectPrevious(OptionsSelector this)
+void OptionsSelector::selectPrevious(OptionsSelector this)
 {
 	ASSERT(this, "OptionsSelector::selectPrevious: null this");
 
 	if(this->currentOption)
 	{
 		// remove previous selection mark
-		OptionsSelector_printSelectorMark(this, " ");
+		OptionsSelector::printSelectorMark(this, " ");
 
 		// get previous option
-		this->currentOption = VirtualNode_getPrevious(this->currentOption);
+		this->currentOption = VirtualNode::getPrevious(this->currentOption);
 		this->currentOptionIndex--;
 
 		// if there's no previous option on the current page
 		if(!this->currentOption)
 		{
 			// if there's more than 1 page
-			if(VirtualList_getSize(this->pages) > 1)
+			if(VirtualList::getSize(this->pages) > 1)
 			{
 				// select previous page
-				this->currentPage = VirtualNode_getPrevious(this->currentPage);
+				this->currentPage = VirtualNode::getPrevious(this->currentPage);
 				this->currentPageIndex--;
 
 				// if previous page does not exist, go to last page
 				if(!this->currentPage)
 				{
 					this->currentPage = this->pages->tail;
-					this->currentPageIndex = VirtualList_getSize(this->pages) - 1;
+					this->currentPageIndex = VirtualList::getSize(this->pages) - 1;
 					this->currentOptionIndex = this->totalOptions - 1;
 				}
 
 				// get new option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->tail;
+				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->tail;
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
 				// render new page
-				OptionsSelector_printOptions(this, this->x, this->y);
+				OptionsSelector::printOptions(this, this->x, this->y);
 			}
 			else
 			{
 				// wrap around and select last option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->tail;
+				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->tail;
 				this->currentOptionIndex = this->totalOptions - 1;
 			}
 		}
 
 		// print new selection mark
-		OptionsSelector_printSelectorMark(this, this->mark);
+		OptionsSelector::printSelectorMark(this, this->mark);
 	}
 }
 
@@ -420,7 +420,7 @@ void OptionsSelector_selectPrevious(OptionsSelector this)
  *
  * @return				Boolean that indicated whether a new option was selected
  */
-bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
+bool OptionsSelector::setSelectedOption(OptionsSelector this, int optionIndex)
 {
 	bool changed = false;
 
@@ -432,7 +432,7 @@ bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
 			// if desired option index is smaller than the current one, select previous until desired option is set
 			while(this->currentOptionIndex != optionIndex)
 			{
-				OptionsSelector_selectNext(this);
+				OptionsSelector::selectNext(this);
 				changed = true;
 			}
 		}
@@ -441,7 +441,7 @@ bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
 			// if desired option index is larger than the current one, select next until desired option is set
 			while(this->currentOptionIndex != optionIndex)
 			{
-				OptionsSelector_selectPrevious(this);
+				OptionsSelector::selectPrevious(this);
 				changed = true;
 			}
 		}
@@ -460,7 +460,7 @@ bool OptionsSelector_setSelectedOption(OptionsSelector this, int optionIndex)
  *
  * @return				Index of selected option
  */
-int OptionsSelector_getSelectedOption(OptionsSelector this)
+int OptionsSelector::getSelectedOption(OptionsSelector this)
 {
 	return this->currentOptionIndex;
 }
@@ -475,19 +475,19 @@ int OptionsSelector_getSelectedOption(OptionsSelector this)
  * @param x	 X coordinate to start printing at (in chars)
  * @param y	 Y coordinate to start printing at (in chars)
  */
-void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
+void OptionsSelector::printOptions(OptionsSelector this, u8 x, u8 y)
 {
 	ASSERT(this, "OptionsSelector::printOptions: null this");
 
-	if(this->currentPage && 0 < VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage))))
+	if(this->currentPage && 0 < VirtualList::getSize(__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage))))
 	{
-		FontData* fontData = Printing_getFontByName(Printing_getInstance(), this->font);
+		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
 		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
 
 		ASSERT(this->currentPage, "printOptions: currentPage");
-		VirtualNode node = (__SAFE_CAST(VirtualList, VirtualNode_getData(this->currentPage)))->head;
+		VirtualNode node = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head;
 
 		int i = 0;
 		for(; i < (this->rows * fontData->fontDefinition->fontSize.y); i++)
@@ -495,7 +495,7 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 			int j = 0;
 			for(; (this->columnWidth * this->cols) > j; j++)
 			{
-				Printing_text(Printing_getInstance(), " ", x + j, y + i, this->font);
+				Printing::text(Printing::getInstance(), " ", x + j, y + i, this->font);
 			}
 		}
 
@@ -504,20 +504,20 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 			ASSERT(node, "printOptions: push null node");
 			ASSERT(node->data, "printOptions: push null node data");
 
-			Option* option = VirtualNode_getData(node);
+			Option* option = VirtualNode::getData(node);
 
 			switch(option->type)
 			{
 				case kString:
-					Printing_text(Printing_getInstance(), (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing::text(Printing::getInstance(), (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 
 				case kInt:
-					Printing_int(Printing_getInstance(), *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing::int(Printing::getInstance(), *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 
 				case kFloat:
-					Printing_float(Printing_getInstance(), *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing::float(Printing::getInstance(), *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 			}
 
@@ -529,7 +529,7 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
 			}
 		}
 
-		OptionsSelector_printSelectorMark(this, this->mark);
+		OptionsSelector::printSelectorMark(this, this->mark);
 	}
 }
 
@@ -542,24 +542,24 @@ void OptionsSelector_printOptions(OptionsSelector this, u8 x, u8 y)
  * @param this	Function scope
  * @param mark	The character to use
  */
-static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
+static void OptionsSelector::printSelectorMark(OptionsSelector this, char* mark)
 {
 	ASSERT(this, "OptionsSelector::printSelectorMark: null this");
 
 	if(this->currentPage)
 	{
-		FontData* fontData = Printing_getFontByName(Printing_getInstance(), this->font);
+		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 		ASSERT(this->currentPage, "printSelectorMark: current page");
-		ASSERT(VirtualNode_getData(this->currentPage), "printSelectorMark: null current data");
+		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
 
-		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList_getSize(__SAFE_CAST(VirtualList, VirtualList_front(this->pages)));
+		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getSize(__SAFE_CAST(VirtualList, VirtualList::front(this->pages)));
 		int optionColumn = (int)(indexOption / this->rows);
 		int optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;
 
-		Printing_text(
-			Printing_getInstance(),
+		Printing::text(
+			Printing::getInstance(),
 			mark,
 			this->x + optionColumn,
 			this->y + (optionRow * fontData->fontDefinition->fontSize.y),
@@ -576,11 +576,11 @@ static void OptionsSelector_printSelectorMark(OptionsSelector this, char* mark)
  *
  * @param this	Function scope
  */
-void OptionsSelector_doCurrentSelectionCallback(OptionsSelector this)
+void OptionsSelector::doCurrentSelectionCallback(OptionsSelector this)
 {
 	ASSERT(this, "OptionsSelector::doCurrentSelectionCallback: null this");
 
-	Option* option = VirtualNode_getData(this->currentOption);
+	Option* option = VirtualNode::getData(this->currentOption);
 
 	if(option->callback && option->callbackScope)
 	{
@@ -599,7 +599,7 @@ void OptionsSelector_doCurrentSelectionCallback(OptionsSelector this)
  *
  * @return		The number of options
  */
-int OptionsSelector_getNumberOfOptions(OptionsSelector this)
+int OptionsSelector::getNumberOfOptions(OptionsSelector this)
 {
 	ASSERT(this, "OptionsSelector::getNumberOfOptions(: null this");
 

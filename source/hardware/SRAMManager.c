@@ -62,8 +62,8 @@ __CLASS_DEFINITION(SRAMManager, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void SRAMManager_constructor(SRAMManager this);
-static void SRAMManager_initialize(SRAMManager this);
+static void SRAMManager::constructor(SRAMManager this);
+static void SRAMManager::initialize(SRAMManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ static void SRAMManager_initialize(SRAMManager this);
 /**
  * Get instance
  *
- * @fn			SRAMManager_getInstance()
+ * @fn			SRAMManager::getInstance()
  * @memberof	SRAMManager
  * @public
  *
@@ -89,7 +89,7 @@ __SINGLETON(SRAMManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
+static void __attribute__ ((noinline)) SRAMManager::constructor(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::constructor: null this");
 
@@ -97,7 +97,7 @@ static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
 
 	this->saveSpaceStartAddress = (u16*)&_sram_bss_end;
 
-	SRAMManager_initialize(this);
+	SRAMManager::initialize(this);
 }
 
 /**
@@ -108,7 +108,7 @@ static void __attribute__ ((noinline)) SRAMManager_constructor(SRAMManager this)
  *
  * @param this	Function scope
  */
-void SRAMManager_destructor(SRAMManager this)
+void SRAMManager::destructor(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::destructor: null this");
 
@@ -124,7 +124,7 @@ void SRAMManager_destructor(SRAMManager this)
  *
  * @param this	Function scope
  */
-static void SRAMManager_initialize(SRAMManager this)
+static void SRAMManager::initialize(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::initialize: null this");
 
@@ -132,7 +132,7 @@ static void SRAMManager_initialize(SRAMManager this)
 	for(; i--;)
 	{
 		u16 dummyChar[__SRAM_DUMMY_READ_LENGTH];
-		SRAMManager_read(this, (BYTE*)&dummyChar, i, sizeof(dummyChar));
+		SRAMManager::read(this, (BYTE*)&dummyChar, i, sizeof(dummyChar));
 	}
 }
 
@@ -146,7 +146,7 @@ static void SRAMManager_initialize(SRAMManager this)
  * @param startOffset		Start address of range to clear
  * @param endOffset			End address of range to clear
  */
-void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
+void SRAMManager::clear(SRAMManager this, int startOffset, int endOffset)
 {
 	ASSERT(this, "SRAMManager::clear: null this");
 
@@ -168,7 +168,7 @@ void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset)
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
-void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
+void SRAMManager::save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
 {
 	ASSERT(this, "SRAMManager::save: null this");
 
@@ -194,7 +194,7 @@ void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffs
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
-void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)
+void SRAMManager::read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)
 {
 	ASSERT(this, "SRAMManager::read: null this");
 

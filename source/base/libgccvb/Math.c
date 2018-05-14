@@ -41,7 +41,7 @@ extern float sqrtf (float);
 
 // retrieve the square root
 // this code was taken from the Doom engine
-float Math_squareRoot(float number)
+float Math::squareRoot(float number)
 {
 	if(0 >= (* ( long * ) &number))
     {
@@ -63,7 +63,7 @@ float Math_squareRoot(float number)
 	return number * y;
 }
 
-int Math_powerFast(int base, int power)
+int Math::powerFast(int base, int power)
 {
 	int i=0;
 	int j=0;
@@ -86,27 +86,27 @@ int Math_powerFast(int base, int power)
 	return 0 == power ? 1 : 1 == power ? base : result;
 }
 
-int Math_multiply(int a, int b)
+int Math::multiply(int a, int b)
 {
-	return (0 < b) ? a + Math_multiply(a, b - 1) : 0;
+	return (0 < b) ? a + Math::multiply(a, b - 1) : 0;
 }
 
-static int Math_doPower(int sum, int base, int power)
+static int Math::doPower(int sum, int base, int power)
 {
-	return (1 < power) ? Math_doPower(Math_multiply(sum, base), base, power - 1) : sum;
+	return (1 < power) ? Math::doPower(Math::multiply(sum, base), base, power - 1) : sum;
 }
 
-int Math_power(int base, int power)
+int Math::power(int base, int power)
 {
-	return 0 == power ? 1 : 1 == power ? base : Math_doPower(base, base, 0 > power ? -power : power);
+	return 0 == power ? 1 : 1 == power ? base : Math::doPower(base, base, 0 > power ? -power : power);
 }
 
-int Math_intInfinity()
+int Math::intInfinity()
 {
 	return 0x3FFFFFFF;
 }
 
-fix10_6 Math_fix10_6Infinity()
+fix10_6 Math::fix10_6Infinity()
 {
 	return 0x3FFF;
 }

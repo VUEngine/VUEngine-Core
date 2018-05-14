@@ -51,7 +51,7 @@ __CLASS_DEFINITION(DirectDraw, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void DirectDraw_constructor(DirectDraw this);
+static void DirectDraw::constructor(DirectDraw this);
 
 extern u32* _currentDrawingFrameBufferSet;
 
@@ -63,7 +63,7 @@ extern u32* _currentDrawingFrameBufferSet;
 /**
  * Get instance
  *
- * @fn			DirectDraw_getInstance()
+ * @fn			DirectDraw::getInstance()
  * @memberof	DirectDraw
  * @public
  *
@@ -79,7 +79,7 @@ __SINGLETON(DirectDraw);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
+static void __attribute__ ((noinline)) DirectDraw::constructor(DirectDraw this)
 {
 	ASSERT(this, "DirectDraw::constructor: null this");
 
@@ -94,7 +94,7 @@ static void __attribute__ ((noinline)) DirectDraw_constructor(DirectDraw this)
  *
  * @param this	Function scope
  */
-void DirectDraw_destructor(DirectDraw this)
+void DirectDraw::destructor(DirectDraw this)
 {
 	ASSERT(this, "DirectDraw::destructor: null this");
 
@@ -117,7 +117,7 @@ void DirectDraw_destructor(DirectDraw this)
  * @param y			Camera y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
-void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
+void DirectDraw::drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
 {
 	ASSERT(this, "DirectDraw::drawPixel: null this");
 
@@ -148,7 +148,7 @@ void DirectDraw_drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, 
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y)
+void DirectDraw::drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y)
 {
 	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
 
@@ -176,11 +176,11 @@ void DirectDraw_drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buf
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color __attribute__ ((unused)))
+static void DirectDraw::drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color __attribute__ ((unused)))
 {
 	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
 
-	DirectDraw_drawBlackPixel(this, buffer, x, y);
+	DirectDraw::drawBlackPixel(this, buffer, x, y);
 }
 
 
@@ -194,7 +194,7 @@ static void DirectDraw_drawBlackPixelWrapper(DirectDraw this __attribute__ ((unu
  * @param point 	Point to draw
  * @param color		The color to draw (0-3)
  */
-void DirectDraw_drawPoint(DirectDraw this, PixelVector point, int color)
+void DirectDraw::drawPoint(DirectDraw this, PixelVector point, int color)
 {
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
@@ -204,14 +204,14 @@ void DirectDraw_drawPoint(DirectDraw this, PixelVector point, int color)
 		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
 	)
 	{
-		DirectDraw_drawPixel(this, leftBuffer, (u16)(point.x - point.parallax), (u16)point.y, color);
+		DirectDraw::drawPixel(this, leftBuffer, (u16)(point.x - point.parallax), (u16)point.y, color);
 	}
 	if((unsigned)(point.x + point.parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
 		&&
 		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
 	)
 	{
-		DirectDraw_drawPixel(this, rightBuffer, (u16)(point.x + point.parallax), (u16)point.y, color);
+		DirectDraw::drawPixel(this, rightBuffer, (u16)(point.x + point.parallax), (u16)point.y, color);
 	}
 }
 
@@ -226,7 +226,7 @@ void DirectDraw_drawPoint(DirectDraw this, PixelVector point, int color)
  * @param toPoint	Point 2
  * @param color		The color to draw (0-3)
  */
-void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toPoint, int color)
+void DirectDraw::drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toPoint, int color)
 {
 	ASSERT(this, "DirectDraw::drawLine: null this");
 

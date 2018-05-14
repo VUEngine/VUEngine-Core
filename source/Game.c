@@ -201,40 +201,40 @@ __CLASS_DEFINITION(Game, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Game_constructor(Game this);
-static void Game_initialize(Game this);
-static void Game_setNextState(Game this, GameState state);
-static u32 Game_processUserInput(Game this);
-inline static u32 Game_dispatchDelayedMessages(Game this);
-inline static void Game_updateLogic(Game this);
-inline static void Game_updatePhysics(Game this);
-inline static void Game_updateTransformations(Game this);
-inline static u32 Game_updateCollisions(Game this);
-void Game_synchronizeGraphics(Game this);
-bool Game_stream(Game this);
-inline static void Game_checkForNewState(Game this);
-inline static void Game_run(Game this);
-void Game_checkFrameRate(Game thi);
-static void Game_autoPause(Game this);
+static void Game::constructor(Game this);
+static void Game::initialize(Game this);
+static void Game::setNextState(Game this, GameState state);
+static u32 Game::processUserInput(Game this);
+inline static u32 Game::dispatchDelayedMessages(Game this);
+inline static void Game::updateLogic(Game this);
+inline static void Game::updatePhysics(Game this);
+inline static void Game::updateTransformations(Game this);
+inline static u32 Game::updateCollisions(Game this);
+void Game::synchronizeGraphics(Game this);
+bool Game::stream(Game this);
+inline static void Game::checkForNewState(Game this);
+inline static void Game::run(Game this);
+void Game::checkFrameRate(Game thi);
+static void Game::autoPause(Game this);
 #ifdef __LOW_BATTERY_INDICATOR
-static void Game_checkLowBattery(Game this, u16 keyPressed);
-static void Game_printLowBatteryIndicator(Game this, bool showIndicator);
+static void Game::checkLowBattery(Game this, u16 keyPressed);
+static void Game::printLowBatteryIndicator(Game this, bool showIndicator);
 #endif
 
 #ifdef __SHOW_GAME_PROFILING
-void Game_showProfiling(Game this __attribute__ ((unused)), int x, int y);
+void Game::showProfiling(Game this __attribute__ ((unused)), int x, int y);
 #endif
 
-void SpriteManager_sortLayersProgressively(SpriteManager this);
-void MessageDispatcher_processDiscardedMessages(MessageDispatcher this);
-void HardwareManager_checkMemoryMap();
+void SpriteManager::sortLayersProgressively(SpriteManager this);
+void MessageDispatcher::processDiscardedMessages(MessageDispatcher this);
+void HardwareManager::checkMemoryMap();
 
-void VIPManager_allowDRAMAccess(VIPManager this, bool allowDRAMAccess);
-bool VIPManager_isRenderingPending(VIPManager this);
+void VIPManager::allowDRAMAccess(VIPManager this, bool allowDRAMAccess);
+bool VIPManager::isRenderingPending(VIPManager this);
 
 #ifdef __PROFILE_GAME
-void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
-void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)));
+void Game::showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
+void Game::resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)));
 #endif
 
 #ifdef __PROFILE_GAME
@@ -324,33 +324,33 @@ static s16 _previousGameFrameTotalTime = 0;
 __SINGLETON(Game);
 
 // class's constructor
-bool Game_isConstructed()
+bool Game::isConstructed()
 {
 	return 0 < _singletonConstructed;
 }
 
 // class's constructor
-static void __attribute__ ((noinline)) Game_constructor(Game this)
+static void __attribute__ ((noinline)) Game::constructor(Game this)
 {
 	ASSERT(this, "Game::constructor: null this");
 
 	// check memory map before anything else
-	HardwareManager_checkMemoryMap();
+	HardwareManager::checkMemoryMap();
 
 	// construct base object
 	__CONSTRUCT_BASE(Object);
 
 	// make sure the memory pool is initialized now
-	MemoryPool_getInstance();
+	MemoryPool::getInstance();
 
 	this->gameFrameTotalTime = 0;
 
 	// force construction now
-	this->clockManager = ClockManager_getInstance();
+	this->clockManager = ClockManager::getInstance();
 
 	// construct the general clock
 	this->clock = __NEW(Clock);
-	Utilities_setClock(this->clock);
+	Utilities::setClock(this->clock);
 
 	// construct the game's state machine
 	this->stateMachine = __NEW(StateMachine, this);
@@ -363,31 +363,31 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->currentFrameEnded = false;
 
 	// make sure all managers are initialized now
-	this->camera = Camera_getInstance();
-	this->keypadManager = KeypadManager_getInstance();
-	this->vipManager = VIPManager_getInstance();
-	this->timerManager = TimerManager_getInstance();
+	this->camera = Camera::getInstance();
+	this->keypadManager = KeypadManager::getInstance();
+	this->vipManager = VIPManager::getInstance();
+	this->timerManager = TimerManager::getInstance();
 
-	SoundManager_getInstance();
-	CharSetManager_getInstance();
-	BgmapTextureManager_getInstance();
-	FrameRate_getInstance();
-	HardwareManager_getInstance();
-	SpriteManager_getInstance();
-	DirectDraw_getInstance();
-	I18n_getInstance();
-	ParamTableManager_getInstance();
+	SoundManager::getInstance();
+	CharSetManager::getInstance();
+	BgmapTextureManager::getInstance();
+	FrameRate::getInstance();
+	HardwareManager::getInstance();
+	SpriteManager::getInstance();
+	DirectDraw::getInstance();
+	I18n::getInstance();
+	ParamTableManager::getInstance();
 
 #ifdef __DEBUG_TOOLS
-	DebugState_getInstance();
+	DebugState::getInstance();
 #endif
 
 #ifdef __STAGE_EDITOR
-	StageEditorState_getInstance();
+	StageEditorState::getInstance();
 #endif
 
 #ifdef __ANIMATION_INSPECTOR
-	AnimationInspectorState_getInstance();
+	AnimationInspectorState::getInstance();
 #endif
 
 	// to make debugging easier
@@ -396,16 +396,16 @@ static void __attribute__ ((noinline)) Game_constructor(Game this)
 	this->nextStateOperation = kSwapState;
 
 	// setup engine parameters
-	Game_initialize(this);
+	Game::initialize(this);
 }
 
 // class's destructor
-void Game_destructor(Game this)
+void Game::destructor(Game this)
 {
 	ASSERT(this, "Game::destructor: null this");
 
 	// destroy the clocks
-	Clock_destructor(this->clock);
+	Clock::destructor(this->clock);
 
 	__DELETE(this->stateMachine);
 
@@ -413,45 +413,45 @@ void Game_destructor(Game this)
 }
 
 // setup engine parameters
-void Game_initialize(Game this)
+void Game::initialize(Game this)
 {
 	ASSERT(this, "Game::initialize: null this");
 
 	// setup vectorInterrupts
-	HardwareManager_setInterruptVectors(HardwareManager_getInstance());
+	HardwareManager::setInterruptVectors(HardwareManager::getInstance());
 
 	// set waveform data
-	SoundManager_setWaveForm(SoundManager_getInstance());
+	SoundManager::setWaveForm(SoundManager::getInstance());
 
 	// clear sprite memory
-	HardwareManager_clearScreen(HardwareManager_getInstance());
+	HardwareManager::clearScreen(HardwareManager::getInstance());
 
 	// make sure timer interrupts are enable
-	HardwareManager_initializeTimer(HardwareManager_getInstance());
+	HardwareManager::initializeTimer(HardwareManager::getInstance());
 
 	// start the game's general clock
-	Clock_start(this->clock);
+	Clock::start(this->clock);
 }
 
 // set game's initial state
-void Game_start(Game this, GameState state)
+void Game::start(Game this, GameState state)
 {
 	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
 
 	// initialize SRAM
-	SRAMManager_getInstance();
+	SRAMManager::getInstance();
 
 	// initialize VPU and turn off the brightness
-	HardwareManager_lowerBrightness(HardwareManager_getInstance());
+	HardwareManager::lowerBrightness(HardwareManager::getInstance());
 
-	if(!StateMachine_getCurrentState(this->stateMachine))
+	if(!StateMachine::getCurrentState(this->stateMachine))
 	{
 		// register start time for auto pause check
-		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
+		this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
 
 		// set state
-		Game_setNextState(this, state);
+		Game::setNextState(this, state);
 
 		while(true)
 		{
@@ -460,7 +460,7 @@ void Game_start(Game this, GameState state)
 			this->currentFrameEnded = false;
 
 #ifdef __PROFILE_GAME
-			u32 elapsedTime = TimerManager_getMillisecondsElapsed(this->timerManager);
+			u32 elapsedTime = TimerManager::getMillisecondsElapsed(this->timerManager);
 
 			if(_updateProfiling)
 			{
@@ -475,11 +475,11 @@ void Game_start(Game this, GameState state)
 #endif
 
 #ifdef __PRINT_PROFILING_INFO
-			Game_checkFrameRate(this);
+			Game::checkFrameRate(this);
 #endif
 
 #ifdef __PRINT_WIREFRAME_MANAGER_STATUS
-			WireframeManager_print(WireframeManager_getInstance(), 1, 1);
+			WireframeManager::print(WireframeManager::getInstance(), 1, 1);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -487,18 +487,18 @@ void Game_start(Game this, GameState state)
 #endif
 
 #ifdef __PROFILE_GAME
-			_waitForFrameStartTotalTime += TimerManager_getMillisecondsElapsed(this->timerManager) - elapsedTime;
+			_waitForFrameStartTotalTime += TimerManager::getMillisecondsElapsed(this->timerManager) - elapsedTime;
 #endif
 
 			// execute game frame
-			Game_run(this);
+			Game::run(this);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "end frame";
 #endif
 
 			// increase the fps counter
-			FrameRate_increaseFps(FrameRate_getInstance());
+			FrameRate::increaseFps(FrameRate::getInstance());
 
 #ifdef __PROFILE_GAME
 
@@ -540,12 +540,12 @@ void Game_start(Game this, GameState state)
 			// skip the rest of the cycle if already late
 			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
 			{
-				Game_showCurrentGameFrameProfiling(this, 1, 0);
+				Game::showCurrentGameFrameProfiling(this, 1, 0);
 			}
 #endif
 
 #ifdef __PROFILE_GAME
-			_updateProfiling = !Game_isInSpecialMode(this);
+			_updateProfiling = !Game::isInSpecialMode(this);
 #endif
 		}
 	}
@@ -556,7 +556,7 @@ void Game_start(Game this, GameState state)
 }
 
 // set game's state
-void Game_changeState(Game this, GameState state)
+void Game::changeState(Game this, GameState state)
 {
 	ASSERT(this, "Game::changeState: null this");
 
@@ -567,7 +567,7 @@ void Game_changeState(Game this, GameState state)
 }
 
 // set game's state after cleaning the stack
-void Game_cleanAndChangeState(Game this, GameState state)
+void Game::cleanAndChangeState(Game this, GameState state)
 {
 	ASSERT(this, "Game::changeState: null this");
 
@@ -578,7 +578,7 @@ void Game_cleanAndChangeState(Game this, GameState state)
 }
 
 // add a state to the game's state machine's stack
-void Game_addState(Game this, GameState state)
+void Game::addState(Game this, GameState state)
 {
 	ASSERT(this, "Game::changeState: null this");
 
@@ -589,14 +589,14 @@ void Game_addState(Game this, GameState state)
 }
 
 // set game's state
-static void Game_setNextState(Game this, GameState state)
+static void Game::setNextState(Game this, GameState state)
 {
 	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
 	// prevent the VIPManager to modify the DRAM
 	// during the next state's setup
-	VIPManager_allowDRAMAccess(this->vipManager, false);
+	VIPManager::allowDRAMAccess(this->vipManager, false);
 
 	switch(this->nextStateOperation)
 	{
@@ -604,21 +604,21 @@ static void Game_setNextState(Game this, GameState state)
 
 			// clean the game's stack
 			// pop states until the stack is empty
-			while(StateMachine_getStackSize(this->stateMachine) > 0)
+			while(StateMachine::getStackSize(this->stateMachine) > 0)
 			{
-				State stateMachineCurrentState = StateMachine_getCurrentState(this->stateMachine);
+				State stateMachineCurrentState = StateMachine::getCurrentState(this->stateMachine);
 				if(stateMachineCurrentState)
 				{
 					// discard delayed messages from the current state
-					MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getMessagingClock(__SAFE_CAST(GameState, stateMachineCurrentState)));
-					MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
+					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(__SAFE_CAST(GameState, stateMachineCurrentState)));
+					MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 				}
 
-				StateMachine_popState(this->stateMachine);
+				StateMachine::popState(this->stateMachine);
 			}
 
 			// setup new state
-			StateMachine_pushState(this->stateMachine, (State)state);
+			StateMachine::pushState(this->stateMachine, (State)state);
 			break;
 
 		case kSwapState:
@@ -630,12 +630,12 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
-				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
+				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine))));
+				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 			}
 
 			// setup new state
-			StateMachine_swapState(this->stateMachine, (State)state);
+			StateMachine::swapState(this->stateMachine, (State)state);
 			break;
 
 		case kPushState:
@@ -644,7 +644,7 @@ static void Game_setNextState(Game this, GameState state)
 			this->lastProcessName = "pushing state";
 #endif
 			// setup new state
-			StateMachine_pushState(this->stateMachine, (State)state);
+			StateMachine::pushState(this->stateMachine, (State)state);
 			break;
 
 		case kPopState:
@@ -656,104 +656,104 @@ static void Game_setNextState(Game this, GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher_getInstance(), GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine))));
-				MessageDispatcher_processDiscardedMessages(MessageDispatcher_getInstance());
+				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine))));
+				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 			}
 
 			// setup new state
-			StateMachine_popState(this->stateMachine);
+			StateMachine::popState(this->stateMachine);
 			break;
 	}
 
 	// if automatic pause function is in place
 	if(this->automaticPauseState)
 	{
-		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock_getTime(this->clock) - this->lastAutoPauseCheckTime);
+		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock::getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
 
-		MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kAutoPause);
-		MessageDispatcher_dispatchMessage((u32)automaticPauseCheckDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
-		this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
+		MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), __SAFE_CAST(Object, this), kAutoPause);
+		MessageDispatcher::dispatchMessage((u32)automaticPauseCheckDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
+		this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
 	}
 
 	// no next state now
 	this->nextState = NULL;
 
 	// save current state
-	this->currentState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+	this->currentState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
 
 	// allow the VIPManager to modify the DRAM
-	VIPManager_allowDRAMAccess(this->vipManager, true);
+	VIPManager::allowDRAMAccess(this->vipManager, true);
 }
 
 // disable interrupts
-void Game_disableHardwareInterrupts(Game this __attribute__ ((unused)))
+void Game::disableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::disableHardwareInterrupts: null this");
 
-	HardwareManager_disableInterrupts();
+	HardwareManager::disableInterrupts();
 }
 
 // enable interrupts
-void Game_enableHardwareInterrupts(Game this __attribute__ ((unused)))
+void Game::enableHardwareInterrupts(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::enableHardwareInterrupts: null this");
 
-	HardwareManager_enableInterrupts();
+	HardwareManager::enableInterrupts();
 }
 
 // erase engine's current status
-void Game_reset(Game this)
+void Game::reset(Game this)
 {
 	ASSERT(this, "Game::reset: null this");
 
 #ifdef	__MEMORY_POOL_CLEAN_UP
-	MemoryPool_cleanUp(MemoryPool_getInstance());
+	MemoryPool::cleanUp(MemoryPool::getInstance());
 #endif
 
 	// disable rendering
-	HardwareManager_lowerBrightness(HardwareManager_getInstance());
-	HardwareManager_displayOff(HardwareManager_getInstance());
-	HardwareManager_disableRendering(HardwareManager_getInstance());
-	HardwareManager_clearScreen(HardwareManager_getInstance());
-	HardwareManager_setupColumnTable(HardwareManager_getInstance(), NULL);
-	VIPManager_removePostProcessingEffects(this->vipManager);
+	HardwareManager::lowerBrightness(HardwareManager::getInstance());
+	HardwareManager::displayOff(HardwareManager::getInstance());
+	HardwareManager::disableRendering(HardwareManager::getInstance());
+	HardwareManager::clearScreen(HardwareManager::getInstance());
+	HardwareManager::setupColumnTable(HardwareManager::getInstance(), NULL);
+	VIPManager::removePostProcessingEffects(this->vipManager);
 
 	// reset managers
-	WireframeManager_reset(WireframeManager_getInstance());
-	SoundManager_setWaveForm(SoundManager_getInstance());
-	TimerManager_resetMilliseconds(this->timerManager);
+	WireframeManager::reset(WireframeManager::getInstance());
+	SoundManager::setWaveForm(SoundManager::getInstance());
+	TimerManager::resetMilliseconds(this->timerManager);
 
 	// the order of reset for the graphics managers must not be changed!
-	SpriteManager_reset(SpriteManager_getInstance());
-	BgmapTextureManager_reset(BgmapTextureManager_getInstance());
-	CharSetManager_reset(CharSetManager_getInstance());
-	ParamTableManager_reset(ParamTableManager_getInstance());
-	AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory_getInstance());
-	Printing_reset(Printing_getInstance());
+	SpriteManager::reset(SpriteManager::getInstance());
+	BgmapTextureManager::reset(BgmapTextureManager::getInstance());
+	CharSetManager::reset(CharSetManager::getInstance());
+	ParamTableManager::reset(ParamTableManager::getInstance());
+	AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory::getInstance());
+	Printing::reset(Printing::getInstance());
 
 	// reset profiling
-	Game_resetProfiling(this);
+	Game::resetProfiling(this);
 
 	// turn on VIP
-	HardwareManager_displayOn(HardwareManager_getInstance());
-	HardwareManager_enableRendering(HardwareManager_getInstance());
-	HardwareManager_enableInterrupts();
+	HardwareManager::displayOn(HardwareManager::getInstance());
+	HardwareManager::enableRendering(HardwareManager::getInstance());
+	HardwareManager::enableInterrupts();
 }
 
 // process input data according to the actual game status
-static u32 Game_processUserInput(Game this)
+static u32 Game::processUserInput(Game this)
 {
 	ASSERT(this, "Game::processUserInput: null this");
 
-	if(!KeypadManager_isEnabled(this->keypadManager))
+	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 		return false;
 	}
 
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -761,30 +761,30 @@ static u32 Game_processUserInput(Game this)
 #endif
 
 	// poll the user's input
-	UserInput userInput = KeypadManager_read(this->keypadManager);
+	UserInput userInput = KeypadManager::read(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
 	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RL))
 	{
-		if(Game_isInDebugMode(this))
+		if(Game::isInDebugMode(this))
 		{
-			this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-			StateMachine_popState(this->stateMachine);
+			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+			StateMachine::popState(this->stateMachine);
 			this->nextState = NULL;
 		}
 		else
 		{
-			if(Game_isInSpecialMode(this))
+			if(Game::isInSpecialMode(this))
 			{
-				this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-				StateMachine_popState(this->stateMachine);
+				this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+				StateMachine::popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, DebugState_getInstance());
-			StateMachine_pushState(this->stateMachine, (State)this->nextState);
+			this->nextState = __SAFE_CAST(GameState, DebugState::getInstance());
+			StateMachine::pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
 
@@ -797,23 +797,23 @@ static u32 Game_processUserInput(Game this)
 	// check code to access special feature
 	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RD))
 	{
-		if(Game_isInStageEditor(this))
+		if(Game::isInStageEditor(this))
 		{
-			this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-			StateMachine_popState(this->stateMachine);
+			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+			StateMachine::popState(this->stateMachine);
 			this->nextState = NULL;
 		}
 		else
 		{
-			if(Game_isInSpecialMode(this))
+			if(Game::isInSpecialMode(this))
 			{
-				this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-				StateMachine_popState(this->stateMachine);
+				this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+				StateMachine::popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, StageEditorState_getInstance());
-			StateMachine_pushState(this->stateMachine, (State)this->nextState);
+			this->nextState = __SAFE_CAST(GameState, StageEditorState::getInstance());
+			StateMachine::pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
 
@@ -827,23 +827,23 @@ static u32 Game_processUserInput(Game this)
 	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RR))
 	{
 
-		if(Game_isInAnimationInspector(this))
+		if(Game::isInAnimationInspector(this))
 		{
-			this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-			StateMachine_popState(this->stateMachine);
+			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+			StateMachine::popState(this->stateMachine);
 			this->nextState = NULL;
 		}
 		else
 		{
-			if(Game_isInSpecialMode(this))
+			if(Game::isInSpecialMode(this))
 			{
-				this->nextState = __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
-				StateMachine_popState(this->stateMachine);
+				this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+				StateMachine::popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, AnimationInspectorState_getInstance());
-			StateMachine_pushState(this->stateMachine, (State)this->nextState);
+			this->nextState = __SAFE_CAST(GameState, AnimationInspectorState::getInstance());
+			StateMachine::pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
 
@@ -852,39 +852,39 @@ static u32 Game_processUserInput(Game this)
 #endif
 
 #ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
+	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
 		return true;
 	}
 #endif
 
 #ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
+	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
 		return true;
 	}
 #endif
 
 #ifdef __ANIMATION_INSPECTOR
-	if(!Game_isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
+	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
 		return true;
 	}
 #endif
 
 #ifdef __LOW_BATTERY_INDICATOR
-	Game_checkLowBattery(this, userInput.powerFlag);
+	Game::checkLowBattery(this, userInput.powerFlag);
 #endif
 
 	if(userInput.pressedKey | userInput.releasedKey | userInput.holdKey)
 	{
-		 GameState_processUserInput(Game_getCurrentState(this), userInput);
+		 GameState::processUserInput(Game::getCurrentState(this), userInput);
 	}
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_processUserInputProcessTime =  -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_processUserInputProcessTime =  -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_processUserInputTotalTime += _processUserInputProcessTime;
 		_processUserInputHighestTime = _processUserInputHighestTime < _processUserInputProcessTime ? _processUserInputProcessTime : _processUserInputHighestTime;
 	}
@@ -893,11 +893,11 @@ static u32 Game_processUserInput(Game this)
 	return userInput.pressedKey | userInput.releasedKey;
 }
 
-inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)))
+inline static u32 Game::dispatchDelayedMessages(Game this __attribute__ ((unused)))
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -912,18 +912,18 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
 #endif
 
 #ifdef __PROFILE_GAME
-		u32 dispatchedMessages = MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+		u32 dispatchedMessages = MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 
 		if(_updateProfiling)
 		{
-			_dispatchDelayedMessageProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+			_dispatchDelayedMessageProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 			_dispatchDelayedMessageTotalTime += _dispatchDelayedMessageProcessTime;
 			_dispatchDelayedMessageHighestTime = _dispatchDelayedMessageHighestTime < _dispatchDelayedMessageProcessTime ? _dispatchDelayedMessageProcessTime : _dispatchDelayedMessageHighestTime;
 		}
 
 		return dispatchedMessages;
 #else
-		return MessageDispatcher_dispatchDelayedMessages(MessageDispatcher_getInstance());
+		return MessageDispatcher::dispatchDelayedMessages(MessageDispatcher::getInstance());
 #endif
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
@@ -934,23 +934,23 @@ inline static u32 Game_dispatchDelayedMessages(Game this __attribute__ ((unused)
 }
 
 // update game's logic subsystem
-inline static void Game_updateLogic(Game this)
+inline static void Game::updateLogic(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __DEBUG_TOOLS
-	if(!Game_isInSpecialMode(this))
+	if(!Game::isInSpecialMode(this))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if(!Game_isInSpecialMode(this))
+	if(!Game::isInSpecialMode(this))
 	{
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	if(!Game_isInSpecialMode(this))
+	if(!Game::isInSpecialMode(this))
 	{
 #endif
 	// it is the update cycle
@@ -970,12 +970,12 @@ inline static void Game_updateLogic(Game this)
 #endif
 
 	// update the game's logic
-	StateMachine_update(this->stateMachine);
+	StateMachine::update(this->stateMachine);
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updateLogicProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_updateLogicProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateLogicTotalTime += _updateLogicProcessTime;
 		_updateLogicHighestTime = _updateLogicHighestTime < _updateLogicProcessTime ? _updateLogicProcessTime : _updateLogicHighestTime;
 	}
@@ -983,11 +983,11 @@ inline static void Game_updateLogic(Game this)
 }
 
 // update game's rendering subsystem
-void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
+void Game::synchronizeGraphics(Game this __attribute__ ((unused)))
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -997,27 +997,27 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 	// prevent the VIPManager to modify the DRAM
 	// during the synchronization of the entities'
 	// positions with their sprites
-	VIPManager_allowDRAMAccess(this->vipManager, false);
+	VIPManager::allowDRAMAccess(this->vipManager, false);
 
 	// apply transformations to graphics
-	GameState_synchronizeGraphics(this->currentState);
+	GameState::synchronizeGraphics(this->currentState);
 
-	if(VIPManager_isRenderingPending(this->vipManager))
+	if(VIPManager::isRenderingPending(this->vipManager))
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = "rendering sprites";
 #endif
 
-		SpriteManager_render(SpriteManager_getInstance());
+		SpriteManager::render(SpriteManager::getInstance());
 	}
 
 	// allow the VIPManager to modify the DRAM
-	VIPManager_allowDRAMAccess(this->vipManager, true);
+	VIPManager::allowDRAMAccess(this->vipManager, true);
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_synchronizeGraphicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_synchronizeGraphicsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_synchronizeGraphicsTotalTime += _synchronizeGraphicsProcessTime;
 		_synchronizeGraphicsHighestTime = _synchronizeGraphicsHighestTime < _synchronizeGraphicsProcessTime ? _synchronizeGraphicsProcessTime : _synchronizeGraphicsHighestTime;
 	}
@@ -1026,11 +1026,11 @@ void Game_synchronizeGraphics(Game this __attribute__ ((unused)))
 }
 
 // update game's physics subsystem
-inline static void Game_updatePhysics(Game this)
+inline static void Game::updatePhysics(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1038,53 +1038,53 @@ inline static void Game_updatePhysics(Game this)
 #endif
 
 	// simulate physics
-	GameState_updatePhysics(this->currentState);
+	GameState::updatePhysics(this->currentState);
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updatePhysicsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_updatePhysicsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updatePhysicsTotalTime += _updatePhysicsProcessTime;
 		_updatePhysicsHighestTime = _updatePhysicsHighestTime < _updatePhysicsProcessTime ? _updatePhysicsProcessTime : _updatePhysicsHighestTime;
 	}
 #endif
 }
 
-inline static void Game_updateTransformations(Game this)
+inline static void Game::updateTransformations(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "focusing camera";
 #endif
 	// position the camera
-	Camera_focus(this->camera, true);
+	Camera::focus(this->camera, true);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "updating transforms";
 #endif
 
 	// apply world transformations
-	GameState_transform(this->currentState);
+	GameState::transform(this->currentState);
 
 #ifdef __PROFILE_GAME
 	if(_updateProfiling)
 	{
-		_updateTransformationsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_updateTransformationsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_updateTransformationsTotalTime += _updateTransformationsProcessTime;
 		_updateTransformationsHighestTime = _updateTransformationsHighestTime < _updateTransformationsProcessTime ? _updateTransformationsProcessTime : _updateTransformationsHighestTime;
 	}
 #endif
 }
 
-inline static u32 Game_updateCollisions(Game this)
+inline static u32 Game::updateCollisions(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 	// process the collisions after the transformations have taken place
@@ -1094,26 +1094,26 @@ inline static u32 Game_updateCollisions(Game this)
 
 	// process collisions
 #ifdef __PROFILE_GAME
-	u32 processedCollisions = GameState_processCollisions(this->currentState);
+	u32 processedCollisions = GameState::processCollisions(this->currentState);
 
 	if(_updateProfiling)
 	{
-		_processingCollisionsProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_processingCollisionsProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_processingCollisionsTotalTime += _processingCollisionsProcessTime;
 		_processingCollisionsHighestTime = _processingCollisionsHighestTime < _processingCollisionsProcessTime ? _processingCollisionsProcessTime : _processingCollisionsHighestTime;
 	}
 
 	return processedCollisions;
 #else
-	return GameState_processCollisions(this->currentState);
+	return GameState::processCollisions(this->currentState);
 #endif
 }
 
-bool Game_stream(Game this)
+bool Game::stream(Game this)
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
-	s32 timeBeforeProcess = TimerManager_getMillisecondsElapsed(this->timerManager);
+	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1121,22 +1121,22 @@ bool Game_stream(Game this)
 #endif
 
 #ifdef __PROFILE_GAME
-	u32 streamProcessed = GameState_stream(this->currentState);
+	u32 streamProcessed = GameState::stream(this->currentState);
 
 	if(_updateProfiling)
 	{
-		_streamingProcessTime = -_renderingProcessTimeHelper + TimerManager_getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
+		_streamingProcessTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(this->timerManager) - timeBeforeProcess;
 		_streamingTotalTime += _streamingProcessTime;
 		_streamingHighestTime = _streamingHighestTime < _streamingProcessTime ? _streamingProcessTime : _streamingHighestTime;
 	}
 
 	return streamProcessed;
 #else
-	return GameState_stream(this->currentState);
+	return GameState::stream(this->currentState);
 #endif
 }
 
-inline static void Game_checkForNewState(Game this)
+inline static void Game::checkForNewState(Game this)
 {
 	ASSERT(this, "Game::checkForNewState: null this");
 
@@ -1145,7 +1145,7 @@ inline static void Game_checkForNewState(Game this)
 #ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = "checking for new state";
 #endif
-		Game_setNextState(this, this->nextState);
+		Game::setNextState(this, this->nextState);
 
 #undef __DIMM_FOR_PROFILING
 #ifdef __DIMM_FOR_PROFILING
@@ -1164,43 +1164,43 @@ inline static void Game_checkForNewState(Game this)
 	}
 }
 
-void Game_increaseGameFrameDuration(Game this, u32 gameFrameDuration)
+void Game::increaseGameFrameDuration(Game this, u32 gameFrameDuration)
 {
 	this->gameFrameTotalTime += gameFrameDuration;
 }
 
-void Game_checkFrameRate(Game this)
+void Game::checkFrameRate(Game this)
 {
-	if(Game_isInSpecialMode(this))
+	if(Game::isInSpecialMode(this))
 	{
 		return;
 	}
 
 	// this method "doesn't" exist
-	TimerManager_enable(this->timerManager, false);
+	TimerManager::enable(this->timerManager, false);
 
 	if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
 	{
 #ifdef __SHOW_GAME_PROFILING
 		if(_updateProfiling)
 		{
-			Game_showProfiling(this, 1, 0);
-			Game_resetProfiling(this);
-			FrameRate_print(FrameRate_getInstance(), 29, 0);
+			Game::showProfiling(this, 1, 0);
+			Game::resetProfiling(this);
+			FrameRate::print(FrameRate::getInstance(), 29, 0);
 		}
 #else
 #ifdef __PROFILE_GAME
 		if(_updateProfiling)
 		{
-			Game_resetProfiling(this);
+			Game::resetProfiling(this);
 		}
 #endif
 #ifdef __SHOW_STREAMING_PROFILING
 
-		if(!Game_isInSpecialMode(this))
+		if(!Game::isInSpecialMode(this))
 		{
-			Printing_resetWorldCoordinates(Printing_getInstance());
-			Stage_showStreamingProfiling(Game_getStage(this), 1, 1);
+			Printing::resetWorldCoordinates(Printing::getInstance());
+			Stage::showStreamingProfiling(Game::getStage(this), 1, 1);
 		}
 #endif
 
@@ -1208,98 +1208,98 @@ void Game_checkFrameRate(Game this)
 		this->gameFrameTotalTime = 0;
 
 #ifdef __DEBUG
-		Printing_text(Printing_getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
+		Printing::text(Printing::getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
 #endif
 
 #ifdef __PRINT_FRAMERATE
-		if(!Game_isInSpecialMode(this))
+		if(!Game::isInSpecialMode(this))
 		{
-			FrameRate_print(FrameRate_getInstance(), 21, 27);
+			FrameRate::print(FrameRate::getInstance(), 21, 27);
 		}
 #endif
 
 #ifdef __PRINT_MEMORY_POOL_STATUS
-		if(!Game_isInSpecialMode(this))
+		if(!Game::isInSpecialMode(this))
 		{
-			Printing_resetWorldCoordinates(Printing_getInstance());
+			Printing::resetWorldCoordinates(Printing::getInstance());
 
 #ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
-			MemoryPool_printDetailedUsage(MemoryPool_getInstance(), 30, 1);
+			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
 #else
-			MemoryPool_printResumedUsage(MemoryPool_getInstance(), 35, 1);
+			MemoryPool::printResumedUsage(MemoryPool::getInstance(), 35, 1);
 #endif
 		}
 #endif
 
 #ifdef __ALERT_STACK_OVERFLOW
-		if(!Game_isInSpecialMode(this))
+		if(!Game::isInSpecialMode(this))
 		{
-			Printing_resetWorldCoordinates(Printing_getInstance());
-			HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+			Printing::resetWorldCoordinates(Printing::getInstance());
+			HardwareManager::printStackStatus(HardwareManager::getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 		}
 #endif
 		//reset frame rate counters
-		FrameRate_reset(FrameRate_getInstance());
+		FrameRate::reset(FrameRate::getInstance());
 
 #ifdef __PROFILE_GAME
-		Game_resetCurrentFrameProfiling(this, TimerManager_getMillisecondsElapsed(this->timerManager));
+		Game::resetCurrentFrameProfiling(this, TimerManager::getMillisecondsElapsed(this->timerManager));
 #endif
 	}
 
 	// enable timer
-	TimerManager_enable(this->timerManager, true);
+	TimerManager::enable(this->timerManager, true);
 }
 
-void Game_currentFrameEnded(Game this)
+void Game::currentFrameEnded(Game this)
 {
 	// raise flag to allow the next frame to start
 	this->currentFrameEnded = true;
 }
 
-inline static void Game_run(Game this)
+inline static void Game::run(Game this)
 {
 	// reset timer
-	TimerManager_resetMilliseconds(this->timerManager);
+	TimerManager::resetMilliseconds(this->timerManager);
 
-	CommunicationManager_update(CommunicationManager_getInstance());
+	CommunicationManager::update(CommunicationManager::getInstance());
 
 	// sync entities with their sprites
-	Game_synchronizeGraphics(this);
+	Game::synchronizeGraphics(this);
 
 	// process user's input
-	bool skipNonCriticalProcesses = Game_processUserInput(this);
+	bool skipNonCriticalProcesses = Game::processUserInput(this);
 
 	// simulate physics
-	Game_updatePhysics(this);
+	Game::updatePhysics(this);
 
 	// apply transformations
-	Game_updateTransformations(this);
+	Game::updateTransformations(this);
 
 	// process collisions
-	skipNonCriticalProcesses |= Game_updateCollisions(this);
+	skipNonCriticalProcesses |= Game::updateCollisions(this);
 
 	// dispatch delayed messages
-	Game_dispatchDelayedMessages(this);
+	Game::dispatchDelayedMessages(this);
 
 #ifndef __DISABLE_STREAMING
 	// skip streaming if the game frame has been too busy
 	if(!skipNonCriticalProcesses)
 	{
 		// stream
-		Game_stream(this);
+		Game::stream(this);
 	}
 #endif
 
 	// update game's logic
-	Game_updateLogic(this);
+	Game::updateLogic(this);
 
 	// this is the moment to check if the game's state
 	// needs to be changed
-	Game_checkForNewState(this);
+	Game::checkForNewState(this);
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-void Game_setLastProcessName(Game this, char* processName)
+void Game::setLastProcessName(Game this, char* processName)
 {
 	ASSERT(this, "Game::setLastProcessName: null this");
 	this->lastProcessName = processName;
@@ -1307,41 +1307,41 @@ void Game_setLastProcessName(Game this, char* processName)
 #endif
 
 // process a telegram
-bool Game_handleMessage(Game this, Telegram telegram)
+bool Game::handleMessage(Game this, Telegram telegram)
 {
 	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
 
-	switch(Telegram_getMessage(telegram))
+	switch(Telegram::getMessage(telegram))
 	{
 		case kAutoPause:
 
-			Game_autoPause(this);
+			Game::autoPause(this);
 			return true;
 			break;
 
 #ifdef __LOW_BATTERY_INDICATOR
 		case kLowBatteryIndicator:
 
-			Game_printLowBatteryIndicator(this, Telegram_getExtraInfo(telegram) ? true : false);
+			Game::printLowBatteryIndicator(this, Telegram::getExtraInfo(telegram) ? true : false);
 			return true;
 			break;
 #endif
 	}
 
-	return StateMachine_handleMessage(this->stateMachine, telegram);
+	return StateMachine::handleMessage(this->stateMachine, telegram);
 }
 
 // retrieve time
-u32 Game_getTime(Game this)
+u32 Game::getTime(Game this)
 {
 	ASSERT(this, "Game::getTime: null this");
 
-	return Clock_getTime(this->clock);
+	return Clock::getTime(this->clock);
 }
 
 // retrieve clock
-Clock Game_getClock(Game this)
+Clock Game::getClock(Game this)
 {
 	ASSERT(this, "Game::getClock: null this");
 
@@ -1349,31 +1349,31 @@ Clock Game_getClock(Game this)
 }
 
 // retrieve in game clock
-Clock Game_getMessagingClock(Game this)
+Clock Game::getMessagingClock(Game this)
 {
 	ASSERT(this, "Game::getMessagingClock: null this");
 
-	return GameState_getMessagingClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve animations' clock
-Clock Game_getUpdateClock(Game this)
+Clock Game::getUpdateClock(Game this)
 {
 	ASSERT(this, "Game::getUpdateClock: null this");
 
-	return GameState_getUpdateClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState::getUpdateClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve in physics' clock
-Clock Game_getPhysicsClock(Game this)
+Clock Game::getPhysicsClock(Game this)
 {
 	ASSERT(this, "Game::getPhysicsClock: null this");
 
-	return GameState_getPhysicsClock(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState::getPhysicsClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve last process' name
-char* Game_getLastProcessName(Game this)
+char* Game::getLastProcessName(Game this)
 {
 	ASSERT(this, "Game::getLastProcessName: null this");
 
@@ -1381,92 +1381,92 @@ char* Game_getLastProcessName(Game this)
 }
 
 #ifdef __DEBUG_TOOLS
-bool Game_isInDebugMode(Game this)
+bool Game::isInDebugMode(Game this)
 {
 	ASSERT(this, "Game::isInDebugMode: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine) == (State)DebugState_getInstance();
+	return StateMachine::getCurrentState(this->stateMachine) == (State)DebugState::getInstance();
 }
 #endif
 
 #ifdef __STAGE_EDITOR
-bool Game_isInStageEditor(Game this)
+bool Game::isInStageEditor(Game this)
 {
 	ASSERT(this, "Game::isInStageEditor: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine) == (State)StageEditorState_getInstance();
+	return StateMachine::getCurrentState(this->stateMachine) == (State)StageEditorState::getInstance();
 }
 #endif
 
 #ifdef __ANIMATION_INSPECTOR
-bool Game_isInAnimationInspector(Game this)
+bool Game::isInAnimationInspector(Game this)
 {
 	ASSERT(this, "Game::isInAnimationInspector: null this");
 
-	return StateMachine_getCurrentState(this->stateMachine) == (State)AnimationInspectorState_getInstance();
+	return StateMachine::getCurrentState(this->stateMachine) == (State)AnimationInspectorState::getInstance();
 }
 #endif
 
 // whether if a special mode is active
-bool Game_isInSpecialMode(Game this __attribute__ ((unused)))
+bool Game::isInSpecialMode(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isInSpecialMode = false;
 
 #ifdef __DEBUG_TOOLS
-	isInSpecialMode |= Game_isInDebugMode(this);
+	isInSpecialMode |= Game::isInDebugMode(this);
 #endif
 #ifdef __STAGE_EDITOR
-	isInSpecialMode |= Game_isInStageEditor(this);
+	isInSpecialMode |= Game::isInStageEditor(this);
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isInSpecialMode |= Game_isInAnimationInspector(this);
+	isInSpecialMode |= Game::isInAnimationInspector(this);
 #endif
 
 	return isInSpecialMode;
 }
 
 // whether if a special mode is being started
-bool Game_isEnteringSpecialMode(Game this __attribute__ ((unused)))
+bool Game::isEnteringSpecialMode(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState::getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState::getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState::getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
 }
 
 // whether if a special mode is being started
-bool Game_isExitingSpecialMode(Game this __attribute__ ((unused)))
+bool Game::isExitingSpecialMode(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::isInSpecialMode: null this");
 
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState::getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState::getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState_getInstance()) == this->nextState;
+	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState::getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
 }
 
 // retrieve state machine, use with caution!!!
-StateMachine Game_getStateMachine(Game this)
+StateMachine Game::getStateMachine(Game this)
 {
 	ASSERT(this, "Game::getStateMachine: null this");
 
@@ -1474,53 +1474,53 @@ StateMachine Game_getStateMachine(Game this)
 }
 
 // retrieve the current level's stage
-Stage Game_getStage(Game this)
+Stage Game::getStage(Game this)
 {
 	ASSERT(this, "Game::getStage: null this");
 
-	if(Game_isInSpecialMode(this))
+	if(Game::isInSpecialMode(this))
 	{
-		return GameState_getStage(__SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine)));
+		return GameState::getStage(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState_getStage(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState::getStage(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve current state
-GameState Game_getCurrentState(Game this)
+GameState Game::getCurrentState(Game this)
 {
 	ASSERT(this, "Game::getCurrentState: null this");
 
-	return __SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine));
+	return __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
 }
 
-PhysicalWorld Game_getPhysicalWorld(Game this)
+PhysicalWorld Game::getPhysicalWorld(Game this)
 {
 	ASSERT(this, "Game::PhysicalWorld: null this");
 
-	if(Game_isInSpecialMode(this))
+	if(Game::isInSpecialMode(this))
 	{
-		return GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine)));
+		return GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState_getPhysicalWorld(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
-CollisionManager Game_getCollisionManager(Game this)
+CollisionManager Game::getCollisionManager(Game this)
 {
 	ASSERT(this, "Game::getCollisionManager: null this");
 
-	if(Game_isInSpecialMode(this))
+	if(Game::isInSpecialMode(this))
 	{
-		return GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getPreviousState(this->stateMachine)));
+		return GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState_getCollisionManager(__SAFE_CAST(GameState, StateMachine_getCurrentState(this->stateMachine)));
+	return GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 #ifdef __LOW_BATTERY_INDICATOR
 // low battery indicator check
-static void Game_checkLowBattery(Game this, u16 keypad)
+static void Game::checkLowBattery(Game this, u16 keypad)
 {
 	ASSERT(this, "Game::checkLowBatteryIndicator: null this");
 
@@ -1528,7 +1528,7 @@ static void Game_checkLowBattery(Game this, u16 keypad)
 	{
 		if(!this->isShowingLowBatteryIndicator)
 		{
-			MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)true);
+			MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)true);
 			this->isShowingLowBatteryIndicator = true;
 		}
 	}
@@ -1536,25 +1536,25 @@ static void Game_checkLowBattery(Game this, u16 keypad)
 	{
 		if(this->isShowingLowBatteryIndicator)
 		{
-			MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher_getInstance(), __SAFE_CAST(Object, this), kLowBatteryIndicator);
-			Printing_text(Printing_getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
+			MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), __SAFE_CAST(Object, this), kLowBatteryIndicator);
+			Printing::text(Printing::getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
 			this->isShowingLowBatteryIndicator = false;
 		}
 	}
 }
 
 // print low battery indicator
-static void Game_printLowBatteryIndicator(Game this, bool showIndicator)
+static void Game::printLowBatteryIndicator(Game this, bool showIndicator)
 {
 	ASSERT(this, "Game::printLowBatteryIndicator: null this");
 
-	Printing_text(Printing_getInstance(), (showIndicator) ? __CHAR_BATTERY : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
-	MessageDispatcher_dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
+	Printing::text(Printing::getInstance(), (showIndicator) ? __CHAR_BATTERY : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
+	MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
 }
 #endif
 
 // pause
-void Game_pause(Game this, GameState pauseState)
+void Game::pause(Game this, GameState pauseState)
 {
 	ASSERT(this, "Game::pause: null this");
 	ASSERT(pauseState, "Game::pause: null pauseState");
@@ -1567,7 +1567,7 @@ void Game_pause(Game this, GameState pauseState)
 }
 
 // resume game
-void Game_unpause(Game this, GameState pauseState)
+void Game::unpause(Game this, GameState pauseState)
 {
 	ASSERT(this, "Game::unpause: null this");
 	ASSERT(pauseState, "Game::unpause: null pauseState");
@@ -1580,21 +1580,21 @@ void Game_unpause(Game this, GameState pauseState)
 
 		if(this->currentState == this->automaticPauseState)
 		{
-			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
-			this->lastAutoPauseCheckTime = Clock_getTime(this->clock);
+			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
+			this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
 		}
 	}
 }
 
 // set auto pause state
-void Game_setAutomaticPauseState(Game this, GameState automaticPauseState)
+void Game::setAutomaticPauseState(Game this, GameState automaticPauseState)
 {
 	ASSERT(this, "Game::setAutomaticPauseState: null this");
 	this->automaticPauseState = automaticPauseState;
 }
 
 // get auto pause state
-GameState Game_getAutomaticPauseState(Game this)
+GameState Game::getAutomaticPauseState(Game this)
 {
 	ASSERT(this, "Game::getAutomaticPauseState: null this");
 
@@ -1602,77 +1602,77 @@ GameState Game_getAutomaticPauseState(Game this)
 }
 
 // show auto pause camera
-static void Game_autoPause(Game this)
+static void Game::autoPause(Game this)
 {
 	ASSERT(this, "Game::autoPause: null this");
 
 	if(this->automaticPauseState)
 	{
 		// only pause if no more than one state is active
-		if(1 == StateMachine_getStackSize(this->stateMachine))
+		if(1 == StateMachine::getStackSize(this->stateMachine))
 		{
-			Game_pause(this, this->automaticPauseState);
+			Game::pause(this, this->automaticPauseState);
 		}
 		else
 		{
 			// otherwise just wait a minute to check again
-			MessageDispatcher_dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
+			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
 		}
 	}
 }
 
-void Game_disableKeypad(Game this)
+void Game::disableKeypad(Game this)
 {
 	ASSERT(this, "Game::disableKeyPad: null this");
 
-	KeypadManager_disable(this->keypadManager);
+	KeypadManager::disable(this->keypadManager);
 }
 
-void Game_enableKeypad(Game this)
+void Game::enableKeypad(Game this)
 {
 	ASSERT(this, "Game::enableKeypad: null this");
 
-	KeypadManager_enable(this->keypadManager);
+	KeypadManager::enable(this->keypadManager);
 }
 
 
-void Game_pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void Game::pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	ASSERT(this, "Game::pushFrontPostProcessingEffect: null this");
 
-	VIPManager_pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game_pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void Game::pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	ASSERT(this, "Game::pushBackPostProcessingEffect: null this");
 
-	VIPManager_pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game_removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void Game::removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
 	ASSERT(this, "Game::removePostProcessingEffect: null this");
 
-	VIPManager_removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
+	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game_wait(Game this, u32 milliSeconds)
+void Game::wait(Game this, u32 milliSeconds)
 {
 	ASSERT(this, "Game::wait: this null");
 
-	TimerManager_wait(this->timerManager, milliSeconds);
+	TimerManager::wait(this->timerManager, milliSeconds);
 }
 
 #ifdef __PROFILE_GAME
-void Game_saveProcessNameDuringFRAMESTART(Game this __attribute__ ((unused)))
+void Game::saveProcessNameDuringFRAMESTART(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::saveProcessNameDuringFRAMESTART: this null");
 
 	_processNameDuringFRAMESTART = this->lastProcessName;
 }
 
-void Game_saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
+void Game::saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::saveProcessNameDuringXPEND: this null");
 
@@ -1681,7 +1681,7 @@ void Game_saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
 #endif
 
 #ifdef __SHOW_GAME_PROFILING
-void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game::showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
@@ -1689,241 +1689,241 @@ void Game_showProfiling(Game this __attribute__ ((unused)), int x __attribute__ 
 
 	int xDisplacement = 32;
 
-	Printing printing = Printing_getInstance();
+	Printing printing = Printing::getInstance();
 
-	Printing_resetWorldCoordinates(printing);
+	Printing::resetWorldCoordinates(printing);
 
-	Printing_text(printing, "PROFILING", x, y++, NULL);
+	Printing::text(printing, "PROFILING", x, y++, NULL);
 
-	Printing_text(printing, "Last game frame's info        (ms)", x, ++y, NULL);
-	Printing_text(printing, "Milliseconds elapsed:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, TimerManager_getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Last game frame's info        (ms)", x, ++y, NULL);
+	Printing::text(printing, "Milliseconds elapsed:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, TimerManager::getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Real duration:", x, ++y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _gameFrameRealDuration, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Average real duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _gameFrameDurationAverage, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Real duration:", x, ++y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _gameFrameRealDuration, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Average real duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _gameFrameDurationAverage, x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Effective duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Average effective duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Highest effective duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Torn frames count:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _tornGameFrameCount, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "                                                ", x, y, NULL);
+	Printing::text(printing, "Effective duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _gameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Average effective duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _gameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Highest effective duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _gameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Torn frames count:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _tornGameFrameCount, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "                                                ", x, y, NULL);
 	if(_processNameDuringFRAMESTART)
 	{
-		Printing_text(printing, "Process during FRAMESTART:", x, y, NULL);
-		Printing_text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
+		Printing::text(printing, "Process during FRAMESTART:", x, y, NULL);
+		Printing::text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
 	}
-	Printing_text(printing, "                                                ", x, y, NULL);
+	Printing::text(printing, "                                                ", x, y, NULL);
 	if(_processNameDuringXPEND)
 	{
-		Printing_text(printing, "Process during XPEND:", x, y, NULL);
-		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
+		Printing::text(printing, "Process during XPEND:", x, y, NULL);
+		Printing::text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
 	}
 
 	int xDisplacement2 = 7;
 
 #ifdef __SHOW_GAME_DETAILED_PROFILING
 
-	Printing_text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
+	Printing::text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
 
-	Printing_text(printing, "                              total highest", x, ++y, NULL);
+	Printing::text(printing, "                              total highest", x, ++y, NULL);
 
 	int processNumber = 1;
-	Printing_text(printing, "  Rendering:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _renderingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _renderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Rendering:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _renderingTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _renderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Updating visuals:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _synchronizeGraphicsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _synchronizeGraphicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Updating visuals:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _synchronizeGraphicsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _synchronizeGraphicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Handling input:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _processUserInputTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _processUserInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Handling input:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _processUserInputTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _processUserInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Updating physics:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _updatePhysicsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _updatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Updating physics:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _updatePhysicsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _updatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Transforming:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _updateTransformationsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _updateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Transforming:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _updateTransformationsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _updateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Processing collisions:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _processingCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _processingCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Processing collisions:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _processingCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _processingCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Updating logic:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _updateLogicTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _updateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Updating logic:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _updateLogicTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _updateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Processing messages:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _dispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Processing messages:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _dispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _dispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "  Streaming:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _streamingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _streamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "  Streaming:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _streamingTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _streamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
 #endif
 
-	Printing_text(printing, "Last second processing (ms)", x, ++y, NULL);
-	Printing_text(printing, "Real processing time:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _waitForFrameStartTotalTime + _renderingTotalTime + _synchronizeGraphicsTotalTime + _processUserInputTotalTime + _dispatchDelayedMessageTotalTime + _updateLogicTotalTime + _streamingTotalTime + _updatePhysicsTotalTime + _updateTransformationsTotalTime + _processingCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _renderingHighestTime + _synchronizeGraphicsHighestTime + _updateLogicHighestTime + _streamingHighestTime + _updatePhysicsHighestTime + _updateTransformationsHighestTime + _processUserInputHighestTime + _dispatchDelayedMessageHighestTime + _processingCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
+	Printing::text(printing, "Real processing time:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _waitForFrameStartTotalTime + _renderingTotalTime + _synchronizeGraphicsTotalTime + _processUserInputTotalTime + _dispatchDelayedMessageTotalTime + _updateLogicTotalTime + _streamingTotalTime + _updatePhysicsTotalTime + _updateTransformationsTotalTime + _processingCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _renderingHighestTime + _synchronizeGraphicsHighestTime + _updateLogicHighestTime + _streamingHighestTime + _updatePhysicsHighestTime + _updateTransformationsHighestTime + _processUserInputHighestTime + _dispatchDelayedMessageHighestTime + _processingCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
-	Printing_text(printing, "Effective processing time:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, this->gameFrameTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _gameFrameHighestEffectiveDuration, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing::text(printing, "Effective processing time:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, this->gameFrameTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _gameFrameHighestEffectiveDuration, x + xDisplacement + xDisplacement2, y, NULL);
 }
 #endif
 
 #ifdef __PROFILE_GAME
-void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game::showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showCurrentGameFrameProfiling: this null");
 
 	_updateProfiling = false;
 
-	Printing printing = Printing_getInstance();
+	Printing printing = Printing::getInstance();
 
 	int xDisplacement = 32;
 
-	Printing_resetWorldCoordinates(printing);
+	Printing::resetWorldCoordinates(printing);
 
-	Printing_text(printing, "PROFILING", x, y++, NULL);
+	Printing::text(printing, "PROFILING", x, y++, NULL);
 
-	Printing_text(printing, "Current game frame's info        (ms)", x, ++y, NULL);
-	Printing_text(printing, "Milliseconds elapsed:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, TimerManager_getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Current game frame's info        (ms)", x, ++y, NULL);
+	Printing::text(printing, "Milliseconds elapsed:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, TimerManager::getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Process during FRAMESTART:", x, y, NULL);
+	Printing::text(printing, "Process during FRAMESTART:", x, y, NULL);
 
 	if(_processNameDuringFRAMESTART)
 	{
-		Printing_text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
+		Printing::text(printing, _processNameDuringFRAMESTART, x + xDisplacement - 5, y++, NULL);
 	}
 	else
 	{
-		Printing_text(printing, "                      ", x + xDisplacement, y++, NULL);
+		Printing::text(printing, "                      ", x + xDisplacement, y++, NULL);
 	}
 
-	Printing_text(printing, "                                                ", x, y, NULL);
+	Printing::text(printing, "                                                ", x, y, NULL);
 
-	Printing_text(printing, "Process during XPEND:", x, y, NULL);
+	Printing::text(printing, "Process during XPEND:", x, y, NULL);
 
 	if(_processNameDuringXPEND)
 	{
-		Printing_text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
+		Printing::text(printing, _processNameDuringXPEND, x + xDisplacement - 5, y++, NULL);
 	}
 	else
 	{
-		Printing_text(printing, "                      ", x + xDisplacement, y++, NULL);
+		Printing::text(printing, "                      ", x + xDisplacement, y++, NULL);
 	}
 
-	Printing_text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
+	Printing::text(printing, "Processes' duration (ms/sec)", x, ++y, NULL);
 
 	int processNumber = 1;
-	Printing_text(printing, "  Rendering:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _renderingProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Rendering:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _renderingProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Updating visuals:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _synchronizeGraphicsProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Updating visuals:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _synchronizeGraphicsProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Handling input:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _processUserInputProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Handling input:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _processUserInputProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Updating physics:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _updatePhysicsProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Updating physics:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _updatePhysicsProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Transforming:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _updateTransformationsProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Transforming:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _updateTransformationsProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Processing collisions:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _processingCollisionsProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Processing collisions:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _processingCollisionsProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Updating logic:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _updateLogicProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Updating logic:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _updateLogicProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Processing messages:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _dispatchDelayedMessageProcessTime, x + xDisplacement, y, NULL);
+	Printing::text(printing, "  Processing messages:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _dispatchDelayedMessageProcessTime, x + xDisplacement, y, NULL);
 
-	Printing_text(printing, "  Streaming:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, processNumber, x, y, NULL);
-	Printing_int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
-	Printing_int(printing, _streamingProcessTime, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "  Streaming:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, processNumber, x, y, NULL);
+	Printing::int(printing, processNumber++, x + xDisplacement - 2, y, NULL);
+	Printing::int(printing, _streamingProcessTime, x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Last second processing (ms)", x, ++y, NULL);
-	Printing_text(printing, "Real processing time:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _renderingProcessTime +
+	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
+	Printing::text(printing, "Real processing time:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _renderingProcessTime +
 							_synchronizeGraphicsProcessTime +
 							_processUserInputProcessTime +
 							_updatePhysicsProcessTime +
@@ -1948,7 +1948,7 @@ void Game_showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int 
 }
 #endif
 
-void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game::showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showLastGameFrameProfiling: this null");
 
@@ -1956,100 +1956,100 @@ void Game_showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x _
 
 	int xDisplacement = 32;
 
-	Printing printing = Printing_getInstance();
+	Printing printing = Printing::getInstance();
 
-	Printing_text(printing, "PROFILING", x, y++, NULL);
+	Printing::text(printing, "PROFILING", x, y++, NULL);
 
-	Printing_text(printing, "Last game frame's info (ms)", x, ++y, NULL);
-	Printing_text(printing, "Milliseconds elapsed:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, TimerManager_getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Last game frame's info (ms)", x, ++y, NULL);
+	Printing::text(printing, "Milliseconds elapsed:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, TimerManager::getMillisecondsElapsed(this->timerManager), x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Real duration:", x, ++y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameRealDuration, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Average real duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Real duration:", x, ++y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameRealDuration, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Average real duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameDurationAverage, x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Effective duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Average effective duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Highest effective duration:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
-	Printing_text(printing, "Torn frames count:", x, y, NULL);
-	Printing_text(printing, "   ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousTornGameFrameCount, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Effective duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Average effective duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameEffectiveDurationAverage, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Highest effective duration:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameHighestEffectiveDuration, x + xDisplacement, y++, NULL);
+	Printing::text(printing, "Torn frames count:", x, y, NULL);
+	Printing::text(printing, "   ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousTornGameFrameCount, x + xDisplacement, y++, NULL);
 
-	Printing_text(printing, "Processes' duration (ms in sec)", x, ++y, NULL);
+	Printing::text(printing, "Processes' duration (ms in sec)", x, ++y, NULL);
 
 	int xDisplacement2 = 7;
 
-	Printing_text(printing, "                              total highest", x, ++y, NULL);
+	Printing::text(printing, "                              total highest", x, ++y, NULL);
 
-	Printing_text(printing, "Rendering:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousRenderingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousRenderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Rendering:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousRenderingTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousRenderingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Updating visuals:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdateVisualsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Updating visuals:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateVisualsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateVisualsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Handling input:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousHandleInputTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousHandleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Handling input:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousHandleInputTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousHandleInputHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Updating physics:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdatePhysicsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Updating physics:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdatePhysicsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdatePhysicsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Transforming:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdateTransformationsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Transforming:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateTransformationsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateTransformationsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Processing collisions:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Processing collisions:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Updating logic:     ", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Updating logic:     ", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateLogicTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousUpdateLogicHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Processing messages:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousDispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Processing messages:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousDispatchDelayedMessageTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousDispatchDelayedMessageHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Streaming:", x, y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousStreamingTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousStreamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
+	Printing::text(printing, "Streaming:", x, y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousStreamingTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousStreamingHighestTime, x + xDisplacement + xDisplacement2, y++, NULL);
 
-	Printing_text(printing, "Last second processing (ms)", x, ++y, NULL);
-	Printing_text(printing, "Real processing time:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousWaitForFrameStartTotalTime + _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousRenderingHighestTime + _previousUpdateVisualsHighestTime + _previousHandleInputHighestTime + _previousDispatchDelayedMessageHighestTime + _previousUpdateLogicHighestTime + _previousStreamingHighestTime + _previousUpdatePhysicsHighestTime + _previousUpdateTransformationsHighestTime + _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing::text(printing, "Last second processing (ms)", x, ++y, NULL);
+	Printing::text(printing, "Real processing time:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousWaitForFrameStartTotalTime + _previousRenderingTotalTime + _previousUpdateVisualsTotalTime + _previousHandleInputTotalTime + _previousDispatchDelayedMessageTotalTime + _previousUpdateLogicTotalTime + _previousStreamingTotalTime + _previousUpdatePhysicsTotalTime + _previousUpdateTransformationsTotalTime + _previousProcessCollisionsTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousRenderingHighestTime + _previousUpdateVisualsHighestTime + _previousHandleInputHighestTime + _previousDispatchDelayedMessageHighestTime + _previousUpdateLogicHighestTime + _previousStreamingHighestTime + _previousUpdatePhysicsHighestTime + _previousUpdateTransformationsHighestTime + _previousProcessCollisionsHighestTime, x + xDisplacement + xDisplacement2, y, NULL);
 
-	Printing_text(printing, "Effective processing time:", x, ++y, NULL);
-	Printing_text(printing, "          ", x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameTotalTime, x + xDisplacement, y, NULL);
-	Printing_int(printing, _previousGameFrameHighestEffectiveDuration, x + xDisplacement + xDisplacement2, y, NULL);
+	Printing::text(printing, "Effective processing time:", x, ++y, NULL);
+	Printing::text(printing, "          ", x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameTotalTime, x + xDisplacement, y, NULL);
+	Printing::int(printing, _previousGameFrameHighestEffectiveDuration, x + xDisplacement + xDisplacement2, y, NULL);
 #endif
 }
 
-void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)))
+void Game::resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
@@ -2082,7 +2082,7 @@ void Game_resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gam
 #endif
 }
 
-void Game_resetProfiling(Game this __attribute__ ((unused)))
+void Game::resetProfiling(Game this __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::resetProfiling: this null");
 
@@ -2153,3 +2153,4 @@ void Game_resetProfiling(Game this __attribute__ ((unused)))
 	_processNameDuringXPEND = NULL;
 #endif
 }
+

@@ -62,7 +62,7 @@ __CLASS_NEW_END(VirtualNode, data);
  * @param this	Function scope
  * @param data
  */
-void VirtualNode_constructor(VirtualNode this, const void* const data)
+void VirtualNode::constructor(VirtualNode this, const void* const data)
 {
 	ASSERT(this, "VirtualNode::constructor: null this");
 
@@ -82,13 +82,13 @@ void VirtualNode_constructor(VirtualNode this, const void* const data)
  *
  * @param this	Function scope
  */
-void VirtualNode_destructor(VirtualNode this)
+void VirtualNode::destructor(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::destructor: null this");
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -100,7 +100,7 @@ void VirtualNode_destructor(VirtualNode this)
  * @param this	Function scope
  * @param data
  */
-void VirtualNode_setData(VirtualNode this, const void* const data)
+void VirtualNode::setData(VirtualNode this, const void* const data)
 {
 	ASSERT(this, "VirtualNode::destructor: null this");
 
@@ -117,7 +117,7 @@ void VirtualNode_setData(VirtualNode this, const void* const data)
  *
  * @return		Data pointer
  */
-void* VirtualNode_getData(VirtualNode this)
+void* VirtualNode::getData(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::getData: null this");
 
@@ -134,7 +134,7 @@ void* VirtualNode_getData(VirtualNode this)
  *
  * @return		Node
  */
-VirtualNode VirtualNode_getNext(VirtualNode this)
+VirtualNode VirtualNode::getNext(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::getNext: null this");
 
@@ -150,7 +150,7 @@ VirtualNode VirtualNode_getNext(VirtualNode this)
  * @param this	Function scope
  * @param next
  */
-void VirtualNode_setNext(VirtualNode this, VirtualNode next)
+void VirtualNode::setNext(VirtualNode this, VirtualNode next)
 {
 	ASSERT(this, "VirtualNode::setNext: null this");
 
@@ -167,7 +167,7 @@ void VirtualNode_setNext(VirtualNode this, VirtualNode next)
  *
  * @return		Node
  */
-VirtualNode VirtualNode_getPrevious(VirtualNode this)
+VirtualNode VirtualNode::getPrevious(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::getPrevious: null this");
 
@@ -183,7 +183,7 @@ VirtualNode VirtualNode_getPrevious(VirtualNode this)
  * @param this		Function scope
  * @param previous
  */
-void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
+void VirtualNode::setPrevious(VirtualNode this, VirtualNode previous)
 {
 	ASSERT(this, "VirtualNode::setPrevious: null this");
 
@@ -199,7 +199,7 @@ void VirtualNode_setPrevious(VirtualNode this, VirtualNode previous)
  * @param this	Function scope
  * @param node
  */
-void VirtualNode_swapData(VirtualNode this, VirtualNode node)
+void VirtualNode::swapData(VirtualNode this, VirtualNode node)
 {
 	ASSERT(this, "VirtualNode::swapData: null this");
 

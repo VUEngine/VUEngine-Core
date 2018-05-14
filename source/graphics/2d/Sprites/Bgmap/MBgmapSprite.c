@@ -64,12 +64,12 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-static void MBgmapSprite_releaseTextures(MBgmapSprite this);
-static void MBgmapSprite_loadTextures(MBgmapSprite this);
-static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
-static void MBgmapSprite_calculateSize(MBgmapSprite this);
-//static void MBgmapSprite_calculateSizeMultiplier(MBgmapSprite this);
-//static void MBgmapSprite_calculateSize(MBgmapSprite this);
+static void MBgmapSprite::releaseTextures(MBgmapSprite this);
+static void MBgmapSprite::loadTextures(MBgmapSprite this);
+static void MBgmapSprite::loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
+static void MBgmapSprite::calculateSize(MBgmapSprite this);
+//static void MBgmapSprite::calculateSizeMultiplier(MBgmapSprite this);
+//static void MBgmapSprite::calculateSize(MBgmapSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -90,18 +90,18 @@ __CLASS_NEW_END(MBgmapSprite, mBgmapSpriteDefinition, owner);
  * @param mBgmapSpriteDefinition		Definition to use
  * @param owner							Sprite's owner
  */
-void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
+void MBgmapSprite::constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 {
 	ASSERT(this, "MBgmapSprite::constructor: null this");
 
-	Base_constructor(this, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
+	Base::constructor(this, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
 
 	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
 
 	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
 	this->textures = NULL;
-	MBgmapSprite_loadTextures(this);
-	MBgmapSprite_calculateSize(this);
+	MBgmapSprite::loadTextures(this);
+	MBgmapSprite::calculateSize(this);
 }
 
 /**
@@ -112,21 +112,21 @@ void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* m
  *
  * @param this		Function scope
  */
-void MBgmapSprite_destructor(MBgmapSprite this)
+void MBgmapSprite::destructor(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::destructor: null this");
 
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
-		ParamTableManager_free(ParamTableManager_getInstance(), __SAFE_CAST(BgmapSprite, this));
+		ParamTableManager::free(ParamTableManager::getInstance(), __SAFE_CAST(BgmapSprite, this));
 	}
 
-	MBgmapSprite_releaseTextures(this);
+	MBgmapSprite::releaseTextures(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -137,7 +137,7 @@ void MBgmapSprite_destructor(MBgmapSprite this)
  *
  * @param this		Function scope
  */
-static void MBgmapSprite_releaseTextures(MBgmapSprite this)
+static void MBgmapSprite::releaseTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::releaseTextures: null this");
 
@@ -148,7 +148,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
 		for(; node; node = node->next)
 		{
 			// free the texture
-			BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), __SAFE_CAST(BgmapTexture, node->data));
+			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
 
 		__DELETE(this->textures);
@@ -165,7 +165,7 @@ static void MBgmapSprite_releaseTextures(MBgmapSprite this)
  *
  * @param this		Function scope
  */
-static void MBgmapSprite_loadTextures(MBgmapSprite this)
+static void MBgmapSprite::loadTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::loadTextures: null this");
 
@@ -179,14 +179,14 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
 
 			for(; this->mBgmapSpriteDefinition->textureDefinitions[i]; i++)
 			{
-				MBgmapSprite_loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
+				MBgmapSprite::loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
 			}
 
-			this->texture = __SAFE_CAST(Texture, VirtualList_front(this->textures));
+			this->texture = __SAFE_CAST(Texture, VirtualList::front(this->textures));
 			ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
-			this->textureXOffset = BgmapTexture_getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-			this->textureYOffset = BgmapTexture_getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+			this->textureXOffset = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+			this->textureYOffset = BgmapTexture::getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
 		}
 		else
 		{
@@ -204,18 +204,18 @@ static void MBgmapSprite_loadTextures(MBgmapSprite this)
  * @param this					Function scope
  * @param textureDefinition		TextureDefinition to use
  */
-static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition)
+static void MBgmapSprite::loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition)
 {
 	ASSERT(this, "MBgmapSprite::loadTexture: null this");
 
 	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
 
-	BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition);
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureDefinition);
 
 	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
 
-	VirtualList_pushBack(this->textures, bgmapTexture);
+	VirtualList::pushBack(this->textures, bgmapTexture);
 }
 
 /**
@@ -227,13 +227,13 @@ static void MBgmapSprite_loadTexture(MBgmapSprite this, TextureDefinition* textu
  * @param this			Function scope
  * @param position		3D position
  */
-void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
+void MBgmapSprite::position(MBgmapSprite this, const Vector3D* position)
 {
 	ASSERT(this, "MBgmapSprite::position: null this");
 
-	Base_position(this, position);
+	Base::position(this, position);
 
-	MBgmapSprite_setPosition(this, &this->position);
+	MBgmapSprite::setPosition(this, &this->position);
 }
 
 /**
@@ -245,13 +245,13 @@ void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
+void MBgmapSprite::setPosition(MBgmapSprite this, const PixelVector* position)
 {
 	ASSERT(this, "MBgmapSprite::setPosition: null this");
 
 	PixelVector auxPosition = *position;
 
-	Base_setPosition(this, position);
+	Base::setPosition(this, position);
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -293,7 +293,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
 	if(previousZPosition != this->position.z)
 	{
 		// calculate sprite's parallax
-		 Sprite_calculateParallax(this, this->position.z);
+		 Sprite::calculateParallax(this, this->position.z);
 	}
 }
 
@@ -306,7 +306,7 @@ void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement)
+void MBgmapSprite::addDisplacement(MBgmapSprite this, const PixelVector* displacement)
 {
 	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
 	this->positioned = true;
@@ -358,11 +358,11 @@ void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displace
  * @param this		Function scope
  * @param evenFrame
  */
-void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
+void MBgmapSprite::render(MBgmapSprite this, bool evenFrame)
 {
 	ASSERT(this, "MBgmapSprite::render: null this");
 
-	Base_render(this, evenFrame);
+	Base::render(this, evenFrame);
 
 	if(!this->positioned)
 	{
@@ -492,7 +492,7 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
 		worldPointer->h = h;
 	}
 
-	BgmapSprite_processHbiasEffects(__SAFE_CAST(BgmapSprite, this));
+	BgmapSprite::processHbiasEffects(__SAFE_CAST(BgmapSprite, this));
 }
 
 /**
@@ -505,13 +505,13 @@ void MBgmapSprite_render(MBgmapSprite this, bool evenFrame)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z)
+void MBgmapSprite::resize(MBgmapSprite this, Scale scale, fix10_6 z)
 {
 	ASSERT(this, "MBgmapSprite::resize: null this");
 
-	Base_resize(this, scale, z);
+	Base::resize(this, scale, z);
 
-	MBgmapSprite_calculateSize(this);
+	MBgmapSprite::calculateSize(this);
 }
 
 /**
@@ -522,7 +522,7 @@ void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z)
  *
  * @param this			Function scope
  */
-static void MBgmapSprite_calculateSize(MBgmapSprite this)
+static void MBgmapSprite::calculateSize(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::calculateSize: null this");
 
@@ -562,7 +562,7 @@ static void MBgmapSprite_calculateSize(MBgmapSprite this)
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 display, u16 mode __attribute__ ((unused)))
+void MBgmapSprite::setMode(MBgmapSprite this __attribute__ ((unused)), u16 display, u16 mode __attribute__ ((unused)))
 {
 	ASSERT(this, "MBgmapSprite::setMode: null this");
 
@@ -579,7 +579,7 @@ void MBgmapSprite_setMode(MBgmapSprite this __attribute__ ((unused)), u16 displa
  *
  * @return			true it all textures are written
  */
-bool MBgmapSprite_writeTextures(MBgmapSprite this)
+bool MBgmapSprite::writeTextures(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::writeTextures: null this");
 	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
@@ -592,7 +592,7 @@ bool MBgmapSprite_writeTextures(MBgmapSprite this)
 
 		if(!texture->written)
 		{
-			 Texture_write(texture);
+			 Texture::write(texture);
 			break;
 		}
 	}
@@ -610,7 +610,7 @@ bool MBgmapSprite_writeTextures(MBgmapSprite this)
  *
  * @return			true it all textures are written
  */
-bool MBgmapSprite_areTexturesWritten(MBgmapSprite this)
+bool MBgmapSprite::areTexturesWritten(MBgmapSprite this)
 {
 	ASSERT(this, "MBgmapSprite::areTexturesWritten: null this");
 

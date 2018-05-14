@@ -48,7 +48,7 @@ __CLASS_DEFINITION(GameState, State);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void GameState_initialTransform(GameState this);
+static void GameState::initialTransform(GameState this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ static void GameState_initialTransform(GameState this);
  *
  * @param this		Function scope
  */
-void GameState_constructor(GameState this)
+void GameState::constructor(GameState this)
 {
 	ASSERT(this, "GameState::constructor: null this");
 
@@ -94,7 +94,7 @@ void GameState_constructor(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_destructor(GameState this)
+void GameState::destructor(GameState this)
 {
 	ASSERT(this, "GameState::destructor: null this");
 
@@ -120,7 +120,7 @@ void GameState_destructor(GameState this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -132,18 +132,18 @@ void GameState_destructor(GameState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
+void GameState::enter(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::enter: null this");
 
-	VIPManager_removePostProcessingEffects(VIPManager_getInstance());
-	Printing_resetWorldCoordinates(Printing_getInstance());
+	VIPManager::removePostProcessingEffects(VIPManager::getInstance());
+	Printing::resetWorldCoordinates(Printing::getInstance());
 
-	GameState_pauseClocks(this);
+	GameState::pauseClocks(this);
 
-	Clock_start(this->messagingClock);
+	Clock::start(this->messagingClock);
 
-	Game_enableHardwareInterrupts(Game_getInstance());
+	Game::enableHardwareInterrupts(Game::getInstance());
 }
 
 /**
@@ -155,17 +155,17 @@ void GameState_enter(GameState this, void* owner __attribute__ ((unused)))
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
+void GameState::execute(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::execute: null this");
 	ASSERT(this->stage, "GameState::execute: null stage");
 
-	if(!Clock_isPaused(this->messagingClock))
+	if(!Clock::isPaused(this->messagingClock))
 	{
 		// update the stage
-		 Container_update(this->stage, Clock_getTime(this->updateClock) - this->previousUpdateTime);
+		 Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
 
-		this->previousUpdateTime = Clock_getTime(this->updateClock);
+		this->previousUpdateTime = Clock::getTime(this->updateClock);
 	}
 }
 
@@ -178,11 +178,11 @@ void GameState_execute(GameState this, void* owner __attribute__ ((unused)))
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
+void GameState::exit(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::exit: null this");
 
-	Game_disableHardwareInterrupts(Game_getInstance());
+	Game::disableHardwareInterrupts(Game::getInstance());
 
 	// make sure to free the memory
 	if(this->stage)
@@ -194,11 +194,11 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
 	this->stage = NULL;
 
 	// stop my clocks
-	GameState_stopClocks(this);
+	GameState::stopClocks(this);
 
 	// make sure that all my bodies and colliders get deleted
-	PhysicalWorld_reset(this->physicalWorld);
-	CollisionManager_reset(this->collisionManager);
+	PhysicalWorld::reset(this->physicalWorld);
+	CollisionManager::reset(this->collisionManager);
 }
 
 /**
@@ -210,36 +210,36 @@ void GameState_exit(GameState this, void* owner __attribute__ ((unused)))
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
+void GameState::suspend(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::suspend: null this");
 
-	Game_disableHardwareInterrupts(Game_getInstance());
+	Game::disableHardwareInterrupts(Game::getInstance());
 
-	Clock_pause(this->messagingClock, true);
+	Clock::pause(this->messagingClock, true);
 
 #ifdef __DEBUG_TOOLS
-	if(!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game::isEnteringSpecialMode(Game::getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if(!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game::isEnteringSpecialMode(Game::getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	if(!Game_isEnteringSpecialMode(Game_getInstance()))
+	if(!Game::isEnteringSpecialMode(Game::getInstance()))
 	{
 #endif
 
 	// save the camera position for resume reconfiguration
-	this->cameraPosition = Camera_getPosition(Camera_getInstance());
+	this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
 	// make sure shapes are not drawn while suspended
-	CollisionManager_hideShapes(this->collisionManager);
+	CollisionManager::hideShapes(this->collisionManager);
 
 	if(this->stage)
 	{
-		 Container_suspend(this->stage);
+		 Container::suspend(this->stage);
 	}
 
 #ifdef __DEBUG_TOOLS
@@ -262,68 +262,68 @@ void GameState_suspend(GameState this, void* owner __attribute__ ((unused)))
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
+void GameState::resume(GameState this, void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::resume: null this");
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
 #ifdef __DEBUG_TOOLS
-	if(!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game::isExitingSpecialMode(Game::getInstance()))
 	{
 #endif
 #ifdef __STAGE_EDITOR
-	if(!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game::isExitingSpecialMode(Game::getInstance()))
 	{
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	if(!Game_isExitingSpecialMode(Game_getInstance()))
+	if(!Game::isExitingSpecialMode(Game::getInstance()))
 	{
 #endif
 
 	// set camera to its previous position
-	Camera_setStageSize(Camera_getInstance(), Stage_getSize(this->stage));
-	Camera_setPosition(Camera_getInstance(), this->cameraPosition);
-	Camera_setCameraFrustum(Camera_getInstance(), Stage_getCameraFrustum(this->stage));
+	Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
+	Camera::setPosition(Camera::getInstance(), this->cameraPosition);
+	Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
 
-	Game_reset(Game_getInstance());
+	Game::reset(Game::getInstance());
 
 	// must make sure that all textures are completely written
-	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
+	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 
 	// update the stage
-	 Container_resume(this->stage);
+	 Container::resume(this->stage);
 
 	// move the camera to its previous position
-	Camera_focus(Camera_getInstance(), false);
+	Camera::focus(Camera::getInstance(), false);
 
 	// force all transformations to take place again
-	GameState_initialTransform(this);
+	GameState::initialTransform(this);
 
 	// force all streaming right now
-	 Stage_streamAll(this->stage);
+	 Stage::streamAll(this->stage);
 
 	// force char memory defragmentation
-	CharSetManager_defragment(CharSetManager_getInstance());
+	CharSetManager::defragment(CharSetManager::getInstance());
 
 	// set up visual representation
-	GameState_synchronizeGraphics(this);
+	GameState::synchronizeGraphics(this);
 
 	// make sure all textures are written right now
-	SpriteManager_writeTextures(SpriteManager_getInstance());
+	SpriteManager::writeTextures(SpriteManager::getInstance());
 
 	// sort all sprites' layers
-	SpriteManager_sortLayers(SpriteManager_getInstance());
+	SpriteManager::sortLayers(SpriteManager::getInstance());
 
 	// render sprites as soon as possible
-	SpriteManager_render(SpriteManager_getInstance());
+	SpriteManager::render(SpriteManager::getInstance());
 
 	// sort all sprites' layers again
 	// don't remove me, some custom sprites depend on others
 	// to have been setup up before
-	SpriteManager_sortLayers(SpriteManager_getInstance());
+	SpriteManager::sortLayers(SpriteManager::getInstance());
 
 	// defer rendering again
-	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
+	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 #ifdef __DEBUG_TOOLS
 	}
 #endif
@@ -335,12 +335,12 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
 #endif
 
 	// load post processing effects
-	Stage_loadPostProcessingEffects(this->stage);
+	Stage::loadPostProcessingEffects(this->stage);
 
 	// unpause clock
-	Clock_pause(this->messagingClock, false);
+	Clock::pause(this->messagingClock, false);
 
-	Game_enableHardwareInterrupts(Game_getInstance());
+	Game::enableHardwareInterrupts(Game::getInstance());
 }
 
 /**
@@ -352,7 +352,7 @@ void GameState_resume(GameState this, void* owner __attribute__ ((unused)))
  * @param this			Function scope
  * @param userInput		User input
  */
-void GameState_processUserInput(GameState this __attribute__ ((unused)), UserInput userInput __attribute__ ((unused)))
+void GameState::processUserInput(GameState this __attribute__ ((unused)), UserInput userInput __attribute__ ((unused)))
 {
 	ASSERT(this, "GameState::processUserInput: null this");
 }
@@ -369,11 +369,11 @@ void GameState_processUserInput(GameState this __attribute__ ((unused)), UserInp
  *
  * @return 				True if no further processing of the message is required
  */
-bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused)), Telegram telegram)
+bool GameState::processMessage(GameState this, void* owner __attribute__ ((unused)), Telegram telegram)
 {
 	ASSERT(this, "GameState::handleMessage: null this");
 
-	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, Telegram_getMessage(telegram));
+	return Container::propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, Telegram::getMessage(telegram));
 }
 
 /**
@@ -387,9 +387,9 @@ bool GameState_processMessage(GameState this, void* owner __attribute__ ((unused
  *
  * @return			The result of the propagation of the message
  */
-int GameState_propagateMessage(GameState this, int message)
+int GameState::propagateMessage(GameState this, int message)
 {
-	return Container_propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, message);
+	return Container::propagateMessage(__SAFE_CAST(Container, this->stage), Container_onPropagatedMessage, message);
 }
 
 /**
@@ -400,11 +400,11 @@ int GameState_propagateMessage(GameState this, int message)
  *
  * @param this		Function scope
  */
-bool GameState_stream(GameState this)
+bool GameState::stream(GameState this)
 {
 	ASSERT(this, "GameState::stream: null this");
 
-	return  Stage_stream(this->stage);
+	return  Stage::stream(this->stage);
 }
 
 /**
@@ -415,7 +415,7 @@ bool GameState_stream(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_transform(GameState this)
+void GameState::transform(GameState this)
 {
 	ASSERT(this, "GameState::transform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
@@ -426,7 +426,7 @@ void GameState_transform(GameState this)
 	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
 
 	// then transformation loaded entities
-	 Container_transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
+	 Container::transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
 }
 
 /**
@@ -437,14 +437,14 @@ void GameState_transform(GameState this)
  *
  * @param this		Function scope
  */
-static void GameState_initialTransform(GameState this)
+static void GameState::initialTransform(GameState this)
 {
 	ASSERT(this, "GameState::initialTransform: null this");
 	ASSERT(this->stage, "GameState::transform: null stage");
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	 Container_initialTransform(this->stage, &neutralEnvironmentTransformation, true);
+	 Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
 }
 
 
@@ -456,13 +456,13 @@ static void GameState_initialTransform(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_synchronizeGraphics(GameState this)
+void GameState::synchronizeGraphics(GameState this)
 {
 	ASSERT(this, "GameState::synchronizeGraphics: null this");
 	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transformation loaded entities
-	 Container_synchronizeGraphics(this->stage);
+	 Container::synchronizeGraphics(this->stage);
 }
 
 /**
@@ -473,11 +473,11 @@ void GameState_synchronizeGraphics(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_updatePhysics(GameState this)
+void GameState::updatePhysics(GameState this)
 {
 	ASSERT(this, "GameState::updatePhysics: null this");
 
-	PhysicalWorld_update(this->physicalWorld, this->physicsClock);
+	PhysicalWorld::update(this->physicalWorld, this->physicsClock);
 }
 
 /**
@@ -490,11 +490,11 @@ void GameState_updatePhysics(GameState this)
  *
  * @return			The result of the collision processing
  */
-u32 GameState_processCollisions(GameState this)
+u32 GameState::processCollisions(GameState this)
 {
 	ASSERT(this, "GameState::processCollisions: null this");
 
-	return CollisionManager_update(this->collisionManager, this->physicsClock);
+	return CollisionManager::update(this->collisionManager, this->physicsClock);
 }
 
 /**
@@ -508,13 +508,13 @@ u32 GameState_processCollisions(GameState this)
  * @param positionedEntitiesToIgnore	List of entities from the definition to not load
  * @param overrideCameraPosition		Flag to override or not the Camera's current position
  */
-void GameState_loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void GameState::loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	ASSERT(this, "GameState::loadStage: null this");
 	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
 
 	// disable hardware interrupts
-	Game_disableHardwareInterrupts(Game_getInstance());
+	Game::disableHardwareInterrupts(Game::getInstance());
 
 	if(this->stage)
 	{
@@ -522,55 +522,55 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
 		__DELETE(this->stage);
 	}
 
-	PhysicalWorld_reset(this->physicalWorld);
-	CollisionManager_reset(this->collisionManager);
+	PhysicalWorld::reset(this->physicalWorld);
+	CollisionManager::reset(this->collisionManager);
 
 	// reset the engine state
-	Game_reset(Game_getInstance());
+	Game::reset(Game::getInstance());
 
 	// make sure no entity is set as focus for the camera
-	Camera_setFocusGameEntity(Camera_getInstance(), NULL);
+	Camera::setFocusGameEntity(Camera::getInstance(), NULL);
 
 	// must make sure that all textures are completely written
-	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), false);
+	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 
 	// construct the stage
 	this->stage = ((Stage (*)(StageDefinition*)) stageDefinition->allocator)((StageDefinition*)stageDefinition);
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	// load world entities
-	Stage_load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
+	Stage::load(this->stage, positionedEntitiesToIgnore, overrideCameraPosition);
 
 	// move the camera to its previous position
-	Camera_focus(Camera_getInstance(), false);
+	Camera::focus(Camera::getInstance(), false);
 
 	// transformation everything
-	GameState_initialTransform(this);
+	GameState::initialTransform(this);
 
 	// set up visual representation
-	GameState_synchronizeGraphics(this);
+	GameState::synchronizeGraphics(this);
 
 	// make sure all textures are written right now
-	SpriteManager_writeTextures(SpriteManager_getInstance());
+	SpriteManager::writeTextures(SpriteManager::getInstance());
 
 	// sort all sprites' layers
-	SpriteManager_sortLayers(SpriteManager_getInstance());
+	SpriteManager::sortLayers(SpriteManager::getInstance());
 
 	// render sprites as soon as possible
-	SpriteManager_render(SpriteManager_getInstance());
+	SpriteManager::render(SpriteManager::getInstance());
 
 	// sort all sprites' layers again
 	// don't remove me, some custom sprites depend on others
 	// to have been setup up before
-	SpriteManager_sortLayers(SpriteManager_getInstance());
+	SpriteManager::sortLayers(SpriteManager::getInstance());
 
 	// defer rendering again
-	SpriteManager_deferParamTableEffects(SpriteManager_getInstance(), true);
+	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 
 	// load post processing effects
-	Stage_loadPostProcessingEffects(this->stage);
+	Stage::loadPostProcessingEffects(this->stage);
 
-	Game_enableHardwareInterrupts(Game_getInstance());
+	Game::enableHardwareInterrupts(Game::getInstance());
 }
 
 /**
@@ -583,7 +583,7 @@ void GameState_loadStage(GameState this, StageDefinition* stageDefinition, Virtu
  *
  * @return			Stage
  */
-Stage GameState_getStage(GameState this)
+Stage GameState::getStage(GameState this)
 {
 	ASSERT(this, "GameState::getStage: null this");
 
@@ -600,7 +600,7 @@ Stage GameState_getStage(GameState this)
  *
  * @return			Clock
  */
-Clock GameState_getMessagingClock(GameState this)
+Clock GameState::getMessagingClock(GameState this)
 {
 	ASSERT(this, "GameState::getMessagingClock: null this");
 
@@ -617,7 +617,7 @@ Clock GameState_getMessagingClock(GameState this)
  *
  * @return			Clock
  */
-Clock GameState_getUpdateClock(GameState this)
+Clock GameState::getUpdateClock(GameState this)
 {
 	ASSERT(this, "GameState::getUpdateClock: null this");
 
@@ -634,7 +634,7 @@ Clock GameState_getUpdateClock(GameState this)
  *
  * @return			Clock
  */
-Clock GameState_getPhysicsClock(GameState this)
+Clock GameState::getPhysicsClock(GameState this)
 {
 	ASSERT(this, "GameState::getPhysicsClock: null this");
 
@@ -649,15 +649,15 @@ Clock GameState_getPhysicsClock(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_startClocks(GameState this)
+void GameState::startClocks(GameState this)
 {
 	ASSERT(this, "GameState::startClocks: null this");
 
-	Clock_start(this->messagingClock);
-	Clock_start(this->updateClock);
-	Clock_start(this->physicsClock);
+	Clock::start(this->messagingClock);
+	Clock::start(this->updateClock);
+	Clock::start(this->physicsClock);
 
-	this->previousUpdateTime = Clock_getTime(this->messagingClock);
+	this->previousUpdateTime = Clock::getTime(this->messagingClock);
 }
 
 /**
@@ -668,13 +668,13 @@ void GameState_startClocks(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_stopClocks(GameState this)
+void GameState::stopClocks(GameState this)
 {
 	ASSERT(this, "GameState::stopClocks: null this");
 
-	Clock_stop(this->messagingClock);
-	Clock_stop(this->updateClock);
-	Clock_stop(this->physicsClock);
+	Clock::stop(this->messagingClock);
+	Clock::stop(this->updateClock);
+	Clock::stop(this->physicsClock);
 }
 
 /**
@@ -685,13 +685,13 @@ void GameState_stopClocks(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_pauseClocks(GameState this)
+void GameState::pauseClocks(GameState this)
 {
 	ASSERT(this, "GameState::pauseClocks: null this");
 
-	Clock_pause(this->messagingClock, true);
-	Clock_pause(this->updateClock, true);
-	Clock_pause(this->physicsClock, true);
+	Clock::pause(this->messagingClock, true);
+	Clock::pause(this->updateClock, true);
+	Clock::pause(this->physicsClock, true);
 }
 
 /**
@@ -702,13 +702,13 @@ void GameState_pauseClocks(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_resumeClocks(GameState this)
+void GameState::resumeClocks(GameState this)
 {
 	ASSERT(this, "GameState::resumeClocks: null this");
 
-	Clock_pause(this->messagingClock, false);
-	Clock_pause(this->updateClock, false);
-	Clock_pause(this->physicsClock, false);
+	Clock::pause(this->messagingClock, false);
+	Clock::pause(this->updateClock, false);
+	Clock::pause(this->physicsClock, false);
 }
 
 /**
@@ -719,11 +719,11 @@ void GameState_resumeClocks(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_startDispatchingDelayedMessages(GameState this)
+void GameState::startDispatchingDelayedMessages(GameState this)
 {
 	ASSERT(this, "GameState::startInGameClock: null this");
 
-	Clock_start(this->messagingClock);
+	Clock::start(this->messagingClock);
 }
 
 /**
@@ -734,11 +734,11 @@ void GameState_startDispatchingDelayedMessages(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_startAnimations(GameState this)
+void GameState::startAnimations(GameState this)
 {
 	ASSERT(this, "GameState::startAnimations: null this");
 
-	Clock_start(this->updateClock);
+	Clock::start(this->updateClock);
 }
 
 /**
@@ -749,11 +749,11 @@ void GameState_startAnimations(GameState this)
  *
  * @param this		Function scope
  */
-void GameState_startPhysics(GameState this)
+void GameState::startPhysics(GameState this)
 {
 	ASSERT(this, "GameState::startPhysics: null this");
 
-	Clock_start(this->physicsClock);
+	Clock::start(this->physicsClock);
 }
 
 /**
@@ -765,11 +765,11 @@ void GameState_startPhysics(GameState this)
  * @param this		Function scope
  * @param pause		Pause flag
  */
-void GameState_pauseMessagingClock(GameState this, bool pause)
+void GameState::pauseMessagingClock(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pauseInGameClock: null this");
 
-	Clock_pause(this->messagingClock, pause);
+	Clock::pause(this->messagingClock, pause);
 }
 
 /**
@@ -781,11 +781,11 @@ void GameState_pauseMessagingClock(GameState this, bool pause)
  * @param this		Function scope
  * @param pause		Pause flag
  */
-void GameState_pauseAnimations(GameState this, bool pause)
+void GameState::pauseAnimations(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pauseAnimations: null this");
 
-	Clock_pause(this->updateClock, pause);
+	Clock::pause(this->updateClock, pause);
 }
 
 /**
@@ -797,11 +797,11 @@ void GameState_pauseAnimations(GameState this, bool pause)
  * @param this		Function scope
  * @param pause		Pause flag
  */
-void GameState_pausePhysics(GameState this, bool pause)
+void GameState::pausePhysics(GameState this, bool pause)
 {
 	ASSERT(this, "GameState::pausePhysics: null this");
 
-	Clock_pause(this->physicsClock, pause);
+	Clock::pause(this->physicsClock, pause);
 }
 
 /**
@@ -814,7 +814,7 @@ void GameState_pausePhysics(GameState this, bool pause)
  *
  * @return			PhysicalWorld
  */
-PhysicalWorld GameState_getPhysicalWorld(GameState this)
+PhysicalWorld GameState::getPhysicalWorld(GameState this)
 {
 	ASSERT(this, "GameState::getPhysicalWorld: null this");
 
@@ -831,7 +831,7 @@ PhysicalWorld GameState_getPhysicalWorld(GameState this)
  *
  * @return			CollisionManager
  */
-CollisionManager GameState_getCollisionManager(GameState this)
+CollisionManager GameState::getCollisionManager(GameState this)
 {
 	ASSERT(this, "GameState::getCollisionManager: null this");
 

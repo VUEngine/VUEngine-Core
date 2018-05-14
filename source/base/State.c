@@ -52,7 +52,7 @@ __CLASS_DEFINITION(State, Object);
  *
  * @param this	Function scope
  */
-void State_constructor(State this)
+void State::constructor(State this)
 {
 	ASSERT(this, "State::constructor: null this");
 
@@ -68,13 +68,13 @@ void State_constructor(State this)
  *
  * @param this	Function scope
  */
-void State_destructor(State this)
+void State::destructor(State this)
 {
 	ASSERT(this, "State::destructor: null this");
 
 	// free processor's memory
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -86,7 +86,7 @@ void State_destructor(State this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void State::enter(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::enter: null this");
 }
@@ -100,7 +100,7 @@ void State_enter(State this __attribute__ ((unused)), void* owner __attribute__ 
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void State_execute(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void State::execute(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::execute: null this");
 }
@@ -114,7 +114,7 @@ void State_execute(State this __attribute__ ((unused)), void* owner __attribute_
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void State_exit(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void State::exit(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::exit: null this");
 }
@@ -128,7 +128,7 @@ void State_exit(State this __attribute__ ((unused)), void* owner __attribute__ (
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void State_suspend(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void State::suspend(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::suspend: null this");
 }
@@ -142,7 +142,7 @@ void State_suspend(State this __attribute__ ((unused)), void* owner __attribute_
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void State_resume(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void State::resume(State this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "State::resume: null this");
 }

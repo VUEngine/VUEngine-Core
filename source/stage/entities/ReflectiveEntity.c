@@ -43,7 +43,7 @@ __CLASS_DEFINITION(ReflectiveEntity, Entity);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject);
+static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,12 +55,12 @@ __CLASS_NEW_DEFINITION(ReflectiveEntity, ReflectiveEntityDefinition* reflectiveE
 __CLASS_NEW_END(ReflectiveEntity, reflectiveEntityDefinition, id, internalId, name);
 
 // class's constructor
-void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
+void ReflectiveEntity::constructor(ReflectiveEntity this, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
 	ASSERT(this, "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	Base_constructor(this, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
+	Base::constructor(this, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
 	this->waveLutIndexIncrement = __FIX10_6_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, __FIX10_6_DIV(__I_TO_FIX10_6(reflectiveEntityDefinition->numberOfWaveLutEntries), __I_TO_FIX10_6(reflectiveEntityDefinition->width)));
@@ -68,63 +68,63 @@ void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinit
 }
 
 // class's destructor
-void ReflectiveEntity_destructor(ReflectiveEntity this)
+void ReflectiveEntity::destructor(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::destructor: null this");
 
 	// remove post processing effect
-	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 
 	// delete the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
-void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive)
+void ReflectiveEntity::ready(ReflectiveEntity this, bool recursive)
 {
 	ASSERT(this, "ReflectiveEntity::ready: null this");
 
 	// call base
-	Base_ready(this, recursive);
+	Base::ready(this, recursive);
 
 	// add post processing effect to make key emit rhombuses
-	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity_suspend(ReflectiveEntity this)
+void ReflectiveEntity::suspend(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::suspend: null this");
 
-	Base_suspend(this);
+	Base::suspend(this);
 
 	// remove post processing effect
-	Game_removePostProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity_resume(ReflectiveEntity this)
+void ReflectiveEntity::resume(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::resume: null this");
 
-	Base_resume(this);
+	Base::resume(this);
 
 	// add post processing effect to make key emit rhombuses
-	Game_pushFrontProcessingEffect(Game_getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this)
+void ReflectiveEntity::synchronizeGraphics(ReflectiveEntity this)
 {
 	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
 
-	Vector3D position3D = Vector3D_getRelativeToCamera(this->transformation.globalPosition);
+	Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
 
-	PixelVector position2D = Vector3D_projectToPixelVector(position3D, 0);
+	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
 
 	this->position2D = this->nextFramePosition2D;
 	this->nextFramePosition2D.x = position2D.x;
 	this->nextFramePosition2D.y = position2D.y;
 }
 
-static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
+static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject)
 {
 	ASSERT(spatialObject, "ReflectiveEntity::reflect: null this");
 
@@ -135,10 +135,10 @@ static void ReflectiveEntity_reflect(u32 currentDrawingFrameBufferSet, SpatialOb
 
 	ReflectiveEntity this = __SAFE_CAST(ReflectiveEntity, spatialObject);
 
-	 ReflectiveEntity_applyReflection(this, currentDrawingFrameBufferSet);
+	 ReflectiveEntity::applyReflection(this, currentDrawingFrameBufferSet);
 }
 
-void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet)
+void ReflectiveEntity::applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet)
 {
 	ASSERT(this, "ReflectiveEntity::applyReflection: null this");
 
@@ -163,7 +163,7 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 	}
 */
 
-	ReflectiveEntity_drawReflection(this, currentDrawingFrameBufferSet,
+	ReflectiveEntity::drawReflection(this, currentDrawingFrameBufferSet,
 								this->position2D.x + reflectiveEntityDefinition->sourceDisplacement.x,
 								this->position2D.y + reflectiveEntityDefinition->sourceDisplacement.y,
 								this->position2D.x + reflectiveEntityDefinition->outputDisplacement.x,
@@ -185,7 +185,7 @@ void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingF
 								reflectiveEntityDefinition->leftBorder, reflectiveEntityDefinition->rightBorder);
 }
 
-inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask)
+inline void ReflectiveEntity::shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask)
 {
 	*sourceValue &= reflectionMask;
 	*remainderValue &= reflectionMask;
@@ -208,7 +208,7 @@ inline void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceVal
 	}
 }
 
-void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
+void ReflectiveEntity::drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
 								s16 width, s16 height,
@@ -480,10 +480,10 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			if(__Y_AXIS & axisForReversing)
 			{
-				sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
-				sourceCurrentValueRight = Utilities_reverse(sourceCurrentValueRight, BITS_PER_STEP);
-				sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
-				sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
+				sourceCurrentValueLeft = Utilities::reverse(sourceCurrentValueLeft, BITS_PER_STEP);
+				sourceCurrentValueRight = Utilities::reverse(sourceCurrentValueRight, BITS_PER_STEP);
+				sourceNextValueLeft = Utilities::reverse(sourceNextValueLeft, BITS_PER_STEP);
+				sourceNextValueRight = Utilities::reverse(sourceNextValueRight, BITS_PER_STEP);
 			}
 
 			waveLutPixelDisplacement =  flattenBottom ? 0 : waveLutPixelDisplacement;
@@ -497,8 +497,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
 			{
-				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, overallMask, reflectionMask);
-				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, overallMask, reflectionMask);
+				ReflectiveEntity::shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, overallMask, reflectionMask);
+				ReflectiveEntity::shiftPixels(pixelShift, &sourceCurrentValueRight, sourceNextValueRight, &remainderRightValue, overallMask, reflectionMask);
 
 				sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
 				sourceCurrentValueRight |= appliedBackgroundMask & outputValueRight;
@@ -533,8 +533,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 				if(__Y_AXIS & axisForReversing)
 				{
-					sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
-					sourceNextValueRight = Utilities_reverse(sourceNextValueRight, BITS_PER_STEP);
+					sourceNextValueLeft = Utilities::reverse(sourceNextValueLeft, BITS_PER_STEP);
+					sourceNextValueRight = Utilities::reverse(sourceNextValueRight, BITS_PER_STEP);
 				}
 			}
 
@@ -638,8 +638,8 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			if(__Y_AXIS & axisForReversing)
 			{
-				sourceCurrentValueLeft = Utilities_reverse(sourceCurrentValueLeft, BITS_PER_STEP);
-				sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
+				sourceCurrentValueLeft = Utilities::reverse(sourceCurrentValueLeft, BITS_PER_STEP);
+				sourceNextValueLeft = Utilities::reverse(sourceNextValueLeft, BITS_PER_STEP);
 			}
 
 			waveLutPixelDisplacement =  flattenBottom ? 0 : waveLutPixelDisplacement;
@@ -652,7 +652,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 			for(; yOutput < yOutputLimit; yOutput++, ySource += ySourceIncrement)
 			{
-				ReflectiveEntity_shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, overallMask, reflectionMask);
+				ReflectiveEntity::shiftPixels(pixelShift, &sourceCurrentValueLeft, sourceNextValueLeft, &remainderLeftValue, overallMask, reflectionMask);
 
 				sourceCurrentValueLeft |= appliedBackgroundMask & outputValueLeft;
 				sourceCurrentValueLeft &= effectiveContentMask;
@@ -680,7 +680,7 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 
 				if(__Y_AXIS & axisForReversing)
 				{
-					sourceNextValueLeft = Utilities_reverse(sourceNextValueLeft, BITS_PER_STEP);
+					sourceNextValueLeft = Utilities::reverse(sourceNextValueLeft, BITS_PER_STEP);
 				}
 			}
 
@@ -709,58 +709,58 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 		}
 	}
 /*
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xOutputStartTemp),((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		(PixelVector) {(xOutputEndTemp),((yOutputStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xOutputStartTemp),((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		(PixelVector) {(xOutputEndTemp),((yOutputEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xSourceStartTemp),((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		(PixelVector) {(xSourceEndTemp),((ySourceStartTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xSourceStartTemp),((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		(PixelVector) {(xSourceEndTemp),((ySourceEndTemp / Y_STEP_SIZE) * Y_STEP_SIZE),0,0},
 		__COLOR_DARK_RED
 	);
 */
 /*
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xOutputStartTemp),(yOutputStartTemp),0,0},
 		(PixelVector) {(xOutputEndTemp),(yOutputStartTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xOutputStartTemp),(yOutputEndTemp),0,0},
 		(PixelVector) {(xOutputEndTemp),(yOutputEndTemp),0,0},
 		__COLOR_BRIGHT_RED
 	);
 
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xSourceStartTemp),(ySourceStartTemp),0,0},
 		(PixelVector) {(xSourceEndTemp),(ySourceStartTemp),0,0},
 		__COLOR_DARK_RED
 	);
 
-	DirectDraw_drawLine(
-		DirectDraw_getInstance(),
+	DirectDraw::drawLine(
+		DirectDraw::getInstance(),
 		(PixelVector) {(xSourceStartTemp),(ySourceEndTemp),0,0},
 		(PixelVector) {(xSourceEndTemp),(ySourceEndTemp),0,0},
 		__COLOR_DARK_RED

@@ -51,7 +51,7 @@ __CLASS_FRIEND_DEFINITION(Shape);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void SolidParticle_transformShape(SolidParticle this);
+static void SolidParticle::transformShape(SolidParticle this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,12 +74,12 @@ __CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSp
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
+void SolidParticle::constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 {
 	ASSERT(this, "SolidParticle::constructor: null this");
 
 	// construct base Container
-	Base_constructor(this, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
+	Base::constructor(this, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
 	this->solidParticleDefinition = solidParticleDefinition;
 
@@ -110,12 +110,12 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
 	};
 
 	// register a shape for collision detection
-	this->shape = CollisionManager_createShape(Game_getCollisionManager(Game_getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
-	CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
+	CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
-	Body_setBounciness(this->body, this->solidParticleDefinition->bounciness);
-	Body_setFrictionCoefficient(this->body, this->solidParticleDefinition->frictionCoefficient);
+	Body::setBounciness(this->body, this->solidParticleDefinition->bounciness);
+	Body::setFrictionCoefficient(this->body, this->solidParticleDefinition->frictionCoefficient);
 }
 
 /**
@@ -126,18 +126,18 @@ void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition
  *
  * @param this	Function scope
  */
-void SolidParticle_destructor(SolidParticle this)
+void SolidParticle::destructor(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::destructor: null this");
 
 	// unregister the shape for collision detection
-	CollisionManager_destroyShape(Game_getCollisionManager(Game_getInstance()), this->shape);
+	CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), this->shape);
 
 	this->shape = NULL;
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -152,19 +152,19 @@ void SolidParticle_destructor(SolidParticle this)
  *
  * @return				Boolean
  */
-u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
+u32 SolidParticle::update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
 {
 	ASSERT(this, "SolidParticle::update: null this");
 
-	u32 expired = Base_update(this, timeElapsed, behavior);
+	u32 expired = Base::update(this, timeElapsed, behavior);
 
 	if(0 <= this->lifeSpan)
 	{
-		SolidParticle_transformShape(this);
+		SolidParticle::transformShape(this);
 	}
 
-//	Body_print(this->body, 1, 1);
-//	Shape_print(this->shape, 21, 6);
+//	Body::print(this->body, 1, 1);
+//	Shape::print(this->shape, 21, 6);
 
 	return expired;
 }
@@ -177,13 +177,13 @@ u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(
  *
  * @param this	Function scope
  */
-static void SolidParticle_transformShape(SolidParticle this)
+static void SolidParticle::transformShape(SolidParticle this)
 {
 	const Rotation shapeRotation = {0, 0, 0};
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 	const Size shapeSize = {this->solidParticleDefinition->radius, this->solidParticleDefinition->radius, this->solidParticleDefinition->radius};
 
-	 Shape_position(this->shape, Body_getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
+	 Shape::position(this->shape, Body::getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
 
 /**
@@ -196,7 +196,7 @@ static void SolidParticle_transformShape(SolidParticle this)
  *
  * @return		Particle's shape
  */
-Shape SolidParticle_getShape(SolidParticle this)
+Shape SolidParticle::getShape(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getShape: null this");
 
@@ -213,7 +213,7 @@ Shape SolidParticle_getShape(SolidParticle this)
  *
  * @return		Width
  */
-u16 SolidParticle_getWidth(SolidParticle this)
+u16 SolidParticle::getWidth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getWidth: null this");
 
@@ -230,7 +230,7 @@ u16 SolidParticle_getWidth(SolidParticle this)
  *
  * @return		Height
  */
-u16 SolidParticle_getHeight(SolidParticle this)
+u16 SolidParticle::getHeight(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getHeight: null this");
 
@@ -247,7 +247,7 @@ u16 SolidParticle_getHeight(SolidParticle this)
  *
  * @return		Depth
  */
-u16 SolidParticle_getDepth(SolidParticle this)
+u16 SolidParticle::getDepth(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getDepth: null this");
 
@@ -266,7 +266,7 @@ u16 SolidParticle_getDepth(SolidParticle this)
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation* collisionInformation)
+bool SolidParticle::enterCollision(SolidParticle this, const CollisionInformation* collisionInformation)
 {
 	ASSERT(this, "SolidParticle::SolidParticle: null this");
 
@@ -281,12 +281,12 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
 	{
 		if(collisionInformation->solutionVector.magnitude)
 		{
-			Shape_resolveCollision(collisionInformation->shape, collisionInformation);
+			Shape::resolveCollision(collisionInformation->shape, collisionInformation);
 
-			fix10_6 frictionCoefficient =  SpatialObject_getFrictionCoefficient(Shape_getOwner(collisionInformation->collidingShape));
-			fix10_6 bounciness =  SpatialObject_getBounciness(Shape_getOwner(collisionInformation->collidingShape));
+			fix10_6 frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
+			fix10_6 bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
 
-			Body_bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			Body::bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
 		}
 	}
@@ -305,7 +305,7 @@ bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
+bool SolidParticle::isSubjectToGravity(SolidParticle this, Acceleration gravity)
 {
 	ASSERT(this, "Particle::isSubjectToGravity: null this");
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
@@ -319,7 +319,7 @@ bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
 		gravity.z ? 0 < gravity.z ? collisionCheckDistance : -collisionCheckDistance : 0
 	};
 
-	return Shape_canMoveTowards(this->shape, displacement, 0);
+	return Shape::canMoveTowards(this->shape, displacement, 0);
 }
 
 /**
@@ -333,23 +333,23 @@ bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity)
  *
  * @return			True if successfully processed, false otherwise
  */
-bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
+bool SolidParticle::handleMessage(SolidParticle this, Telegram telegram)
 {
 	ASSERT(this, "SolidParticle::handleMessage: null this");
 
-	switch(Telegram_getMessage(telegram))
+	switch(Telegram::getMessage(telegram))
 	{
 		case kBodyStartedMoving:
 
-			CollisionManager_shapeStartedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+			CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
 			return true;
 			break;
 
 		case kBodyStopped:
 
-			if(this->solidParticleDefinition->disableCollisionOnStop && !Body_getMovementOnAllAxes(this->body))
+			if(this->solidParticleDefinition->disableCollisionOnStop && !Body::getMovementOnAllAxes(this->body))
 			{
-				CollisionManager_shapeStoppedMoving(Game_getCollisionManager(Game_getInstance()), this->shape);
+				CollisionManager::shapeStoppedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
 			}
 			break;
 	}
@@ -365,11 +365,11 @@ bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram)
  *
  * @param this	Function scope
  */
-void SolidParticle_transform(SolidParticle this)
+void SolidParticle::transform(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::transform: null this");
 
-	SolidParticle_transformShape(this);
+	SolidParticle::transformShape(this);
 }
 
 
@@ -382,13 +382,13 @@ void SolidParticle_transform(SolidParticle this)
  * @param this		Function scope
  * @param position	Position to move particle to
  */
-void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
+void SolidParticle::setPosition(SolidParticle this, const Vector3D* position)
 {
 	ASSERT(this, "SolidParticle::position: null this");
 
-	Base_setPosition(this, position);
+	Base::setPosition(this, position);
 
-//	SolidParticle_transformShape(this);
+//	SolidParticle::transformShape(this);
 }
 
 /**
@@ -401,7 +401,7 @@ void SolidParticle_setPosition(SolidParticle this, const Vector3D* position)
  *
  * @return		SolidParticle's Shape list
  */
-VirtualList SolidParticle_getShapes(SolidParticle this)
+VirtualList SolidParticle::getShapes(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getShapes: null this");
 
@@ -412,9 +412,9 @@ VirtualList SolidParticle_getShapes(SolidParticle this)
 		shapesList = __NEW(VirtualList);
 	}
 
-	VirtualList_clear(shapesList);
+	VirtualList::clear(shapesList);
 
-	VirtualList_pushBack(shapesList, this->shape);
+	VirtualList::pushBack(shapesList, this->shape);
 
 	return shapesList;
 }
@@ -429,7 +429,7 @@ VirtualList SolidParticle_getShapes(SolidParticle this)
  *
  * @return		Type of entity within the game's logic
  */
-u32 SolidParticle_getInGameType(SolidParticle this)
+u32 SolidParticle::getInGameType(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getInGameType: null this");
 
@@ -446,11 +446,11 @@ u32 SolidParticle_getInGameType(SolidParticle this)
  *
  * @return		Velocity vector
  */
-Velocity SolidParticle_getVelocity(SolidParticle this)
+Velocity SolidParticle::getVelocity(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::getVelocity: null this");
 
-	return Body_getVelocity(this->body);
+	return Body::getVelocity(this->body);
 }
 
 /**
@@ -462,17 +462,17 @@ Velocity SolidParticle_getVelocity(SolidParticle this)
  * @param this					Function scope
  * @param shapeNotCollidingAnymore		Shape that is no longer colliding
  */
-void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void SolidParticle::exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
 	ASSERT(this, "SolidParticle::exitCollision: null this");
 	ASSERT(this->body, "SolidParticle::exitCollision: null this");
 
 	if(isShapeImpenetrable)
 	{
-		Body_clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
 	}
 
-	Body_setSurroundingFrictionCoefficient(this->body, Shape_getCollidingFrictionCoefficient(this->shape));
+	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));
 }
 
 
@@ -484,11 +484,11 @@ void SolidParticle_exitCollision(SolidParticle this, Shape shape __attribute__ (
  *
  * @param this	Function scope
  */
-void SolidParticle_reset(SolidParticle this)
+void SolidParticle::reset(SolidParticle this)
 {
 	ASSERT(this, "SolidParticle::reset: null this");
 
-	Base_reset(this);
+	Base::reset(this);
 
-	Shape_reset(this->shape);
+	Shape::reset(this->shape);
 }

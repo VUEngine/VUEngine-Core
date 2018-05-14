@@ -69,7 +69,7 @@ __CLASS_NEW_END(Polyhedron);
  *
  * @param this	Function scope
  */
-void Polyhedron_constructor(Polyhedron this)
+void Polyhedron::constructor(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::constructor: null this");
 
@@ -88,11 +88,11 @@ void Polyhedron_constructor(Polyhedron this)
  *
  * @param this	Function scope
  */
-void Polyhedron_destructor(Polyhedron this)
+void Polyhedron::destructor(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::destructor: null this");
 
-	Wireframe_hide(__SAFE_CAST(Wireframe, this));
+	Wireframe::hide(__SAFE_CAST(Wireframe, this));
 
 	// delete the vertices list
 	if(this->vertices)
@@ -111,7 +111,7 @@ void Polyhedron_destructor(Polyhedron this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -125,7 +125,7 @@ void Polyhedron_destructor(Polyhedron this)
  * @param y		Vertex' y coordinate
  * @param z		Vertex' x coordinate
  */
-void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
+void Polyhedron::addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
 {
 	ASSERT(this, "Polyhedron::addVertex: null this");
 
@@ -143,7 +143,7 @@ void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
 	}
 
 	// add vertex to the end of the list
-	VirtualList_pushBack(this->vertices, vertex);
+	VirtualList::pushBack(this->vertices, vertex);
 }
 
 /**
@@ -156,14 +156,14 @@ void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
  * @param this				Function scope
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Polyhedron_draw(Polyhedron this, bool calculateParallax)
+void Polyhedron::draw(Polyhedron this, bool calculateParallax)
 {
 	ASSERT(this, "Polyhedron::draw: null this");
 
 	int color = __COLOR_BRIGHT_RED;
 
 	// if I have some vertex, draw them
-	if(this->vertices && 2 < VirtualList_getSize(this->vertices))
+	if(this->vertices && 2 < VirtualList::getSize(this->vertices))
 	{
 		// the nodes which hold the vertices
 		VirtualNode fromNode = this->vertices->head;
@@ -181,22 +181,22 @@ void Polyhedron_draw(Polyhedron this, bool calculateParallax)
 		for(; toNode ; fromNode = fromNode->next, toNode = toNode->next)
 		{
 			// normalize vertex to screen coordinates
-			fromVertex3D = Vector3D_getRelativeToCamera(*((Vector3D*)fromNode->data));
-			toVertex3D = Vector3D_getRelativeToCamera(*((Vector3D*)toNode->data));
+			fromVertex3D = Vector3D::getRelativeToCamera(*((Vector3D*)fromNode->data));
+			toVertex3D = Vector3D::getRelativeToCamera(*((Vector3D*)toNode->data));
 
 			// project to 2d coordinates
-			fromVertex2D = Vector3D_projectToPixelVector(fromVertex3D, 0);
-			toVertex2D = Vector3D_projectToPixelVector(toVertex3D, 0);
+			fromVertex2D = Vector3D::projectToPixelVector(fromVertex3D, 0);
+			toVertex2D = Vector3D::projectToPixelVector(toVertex3D, 0);
 
 			// calculate parallax
 			if(calculateParallax)
 			{
-				fromVertex2D.parallax = Optics_calculateParallax(fromVertex3D.x, fromVertex3D.z);
-				toVertex2D.parallax = Optics_calculateParallax(toVertex3D.x, toVertex3D.z);
+				fromVertex2D.parallax = Optics::calculateParallax(fromVertex3D.x, fromVertex3D.z);
+				toVertex2D.parallax = Optics::calculateParallax(toVertex3D.x, toVertex3D.z);
 			}
 
 			// draw the line in both buffers
-			DirectDraw_drawLine(DirectDraw_getInstance(), fromVertex2D, toVertex2D, color);
+			DirectDraw::drawLine(DirectDraw::getInstance(), fromVertex2D, toVertex2D, color);
 		}
 	}
 }

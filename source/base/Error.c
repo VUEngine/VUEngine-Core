@@ -67,9 +67,9 @@ bool _triggeringException = false;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Error_constructor(Error this);
+static void Error::constructor(Error this);
 
-bool Game_isConstructed();
+bool Game::isConstructed();
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ bool Game_isConstructed();
 /**
  * Get instance
  *
- * @fn			Error_getInstance()
+ * @fn			Error::getInstance()
  * @memberof	Error
  * @public
  *
@@ -95,7 +95,7 @@ __SINGLETON(Error);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) Error_constructor(Error this)
+static void __attribute__ ((noinline)) Error::constructor(Error this)
 {
 	__CONSTRUCT_BASE(Object);
 }
@@ -108,7 +108,7 @@ static void __attribute__ ((noinline)) Error_constructor(Error this)
  *
  * @param this	Function scope
  */
-void Error_destructor(Error this)
+void Error::destructor(Error this)
 {
 	__SINGLETON_DESTROY;
 }
@@ -124,7 +124,7 @@ void Error_destructor(Error this)
  * @param detail
  */
 #ifndef __RELEASE
-int Error_triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
+int Error::triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
 {
 	int lp = _lp;
 	int sp = _sp;
@@ -150,27 +150,27 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 	_vipRegisters[__BRTC] = 32;
 
 	// make sure there are fonts to show the exception
-	Printing_setDebugMode(Printing_getInstance());
+	Printing::setDebugMode(Printing::getInstance());
 
 	//print error message to screen
 	if(0 < y)
 	{
-		Printing_text(Printing_getInstance(), "                                             ", x, y - 1, NULL);
+		Printing::text(Printing::getInstance(), "                                             ", x, y - 1, NULL);
 	}
 
-	Printing_text(Printing_getInstance(), "                   EXCEPTION                    " , x, y++, NULL);
-	Printing_text(Printing_getInstance(), "                                                " , x, y++, NULL);
-	Printing_text(Printing_getInstance(), " Last process:                                  ", x, y, NULL);
-	Printing_text(Printing_getInstance(), Game_isConstructed() ? Game_getLastProcessName(Game_getInstance()) : "constructor", x + 15, y++, NULL);
-	Printing_text(Printing_getInstance(), " LP:                                  " , x, y, NULL);
-	Printing_hex(Printing_getInstance(), lp, x + 5, y, 8, NULL);
-	Printing_text(Printing_getInstance(), " SP: 		                         " , x, ++y, NULL);
-	Printing_hex(Printing_getInstance(), sp, x + 5, y, 8, NULL);
+	Printing::text(Printing::getInstance(), "                   EXCEPTION                    " , x, y++, NULL);
+	Printing::text(Printing::getInstance(), "                                                " , x, y++, NULL);
+	Printing::text(Printing::getInstance(), " Last process:                                  ", x, y, NULL);
+	Printing::text(Printing::getInstance(), Game::isConstructed() ? Game::getLastProcessName(Game::getInstance()) : "constructor", x + 15, y++, NULL);
+	Printing::text(Printing::getInstance(), " LP:                                  " , x, y, NULL);
+	Printing::hex(Printing::getInstance(), lp, x + 5, y, 8, NULL);
+	Printing::text(Printing::getInstance(), " SP: 		                         " , x, ++y, NULL);
+	Printing::hex(Printing::getInstance(), sp, x + 5, y, 8, NULL);
 
 	if(message)
 	{
-		Printing_text(Printing_getInstance(), "                                                " , x, ++y + 1, NULL);
-		Printing_text(Printing_getInstance(), " Message:                                       " , x, ++y, NULL);
+		Printing::text(Printing::getInstance(), "                                                " , x, ++y + 1, NULL);
+		Printing::text(Printing::getInstance(), " Message:                                       " , x, ++y, NULL);
 
 		int stringMaxLenght = (__SCREEN_WIDTH_IN_CHARS) - 2;
 		int rowsAvailable  = (__SCREEN_HEIGHT_IN_CHARS) - y;
@@ -185,23 +185,23 @@ int Error_triggerException(Error this __attribute__ ((unused)), char* message, c
 
 			// TODO: fix me, termination character not working
 			messageLine[stringLength - 1] = (char)0;
-			Printing_text(Printing_getInstance(), "                                                " , x, ++y, NULL);
-			Printing_text(Printing_getInstance(), messageLine, x + 1, y, NULL);
+			Printing::text(Printing::getInstance(), "                                                " , x, ++y, NULL);
+			Printing::text(Printing::getInstance(), messageLine, x + 1, y, NULL);
 		}
 
 		if(detail)
 		{
-			Printing_text(Printing_getInstance(), detail, x + 1, ++y, NULL);
+			Printing::text(Printing::getInstance(), detail, x + 1, ++y, NULL);
 		}
 
 		if(y < (__SCREEN_HEIGHT_IN_CHARS) - 1)
 		{
-			Printing_text(Printing_getInstance(), "                                             ", x, y + 3, NULL);
+			Printing::text(Printing::getInstance(), "                                             ", x, y + 3, NULL);
 		}
 	}
 
 #ifdef __ALERT_STACK_OVERFLOW
-	HardwareManager_printStackStatus(HardwareManager_getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
+	HardwareManager::printStackStatus(HardwareManager::getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 #endif
 
 	// error display message

@@ -108,7 +108,7 @@ __CLASS_NEW_END(PhysicalWorld);
  *
  * @param this	Function scope
  */
-void PhysicalWorld_constructor(PhysicalWorld this)
+void PhysicalWorld::constructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::constructor: null this");
 
@@ -136,7 +136,7 @@ void PhysicalWorld_constructor(PhysicalWorld this)
  *
  * @param this	Function scope
  */
-void PhysicalWorld_destructor(PhysicalWorld this)
+void PhysicalWorld::destructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::destructor: null this");
 	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
@@ -160,7 +160,7 @@ void PhysicalWorld_destructor(PhysicalWorld this)
 
 	// destroy the super object
 	// must always be called at the end of the destructor
-	Base_destructor();
+	Base::destructor();
 }
 
 /**
@@ -176,12 +176,12 @@ void PhysicalWorld_destructor(PhysicalWorld this)
  *
  * @return				Registered Body
  */
-Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+Body PhysicalWorld::createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
 	ASSERT(this, "PhysicalWorld::createBody: null this");
 
 	// if the entity is already registered
-	Body body = PhysicalWorld_getBody(this, owner);
+	Body body = PhysicalWorld::getBody(this, owner);
 
 	if(body)
 	{
@@ -191,13 +191,13 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
 	if(bodyAllocator)
 	{
 		Body body = bodyAllocator(owner, physicalSpecification, axesSubjectToGravity);
-		VirtualList_pushFront(this->bodies, body);
-		ASSERT(__SAFE_CAST(Body, VirtualList_front(this->bodies)), "PhysicalWorld::createBody: bad class body");
+		VirtualList::pushFront(this->bodies, body);
+		ASSERT(__SAFE_CAST(Body, VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
 		this->bodyToCheckForGravityNode = NULL;
 
 		// return created shape
-		return __SAFE_CAST(Body, VirtualList_front(this->bodies));
+		return __SAFE_CAST(Body, VirtualList::front(this->bodies));
 	}
 
 	return NULL;
@@ -212,17 +212,17 @@ Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, S
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
+void PhysicalWorld::destroyBody(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::destroyBody: null this");
 	ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::destroyBody: dead body");
-	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
+	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 
-	if(__IS_OBJECT_ALIVE(body) && VirtualList_find(this->bodies, body))
+	if(__IS_OBJECT_ALIVE(body) && VirtualList::find(this->bodies, body))
 	{
 		// place in the removed bodies list
-		VirtualList_removeElement(this->bodies, body);
-		VirtualList_removeElement(this->activeBodies, body);
+		VirtualList::removeElement(this->bodies, body);
+		VirtualList::removeElement(this->activeBodies, body);
 
 		__DELETE(body);
 		this->bodyToCheckForGravityNode = NULL;
@@ -240,7 +240,7 @@ void PhysicalWorld_destroyBody(PhysicalWorld this, Body body)
  *
  * @return		Found Body
  */
-Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
+Body PhysicalWorld::getBody(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
@@ -271,7 +271,7 @@ Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner)
  *
  * @param this	Function scope
  */
-static void PhysicalWorld_checkForGravity(PhysicalWorld this)
+static void PhysicalWorld::checkForGravity(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
 	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
@@ -298,16 +298,16 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			u16 movingState = Body_getMovementOnAllAxes(body);
+			u16 movingState = Body::getMovementOnAllAxes(body);
 
 			u16 gravitySensibleAxis = body->axesSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
-			if(gravitySensibleAxis &&  SpatialObject_isSubjectToGravity(body->owner, gravityDirection))
+			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, gravityDirection))
 			{
 				// must account for the fps to avoid situations is which a collision is not detected
 				// when a body starts to fall and doesn't have enough time to detect a shape below
 				// when moving from one shape over another
-				Body_applyGravity(body, gravitySensibleAxis);
+				Body::applyGravity(body, gravitySensibleAxis);
 			}
 		}
 	}
@@ -324,7 +324,7 @@ static void PhysicalWorld_checkForGravity(PhysicalWorld this)
  * @param this	Function scope
  * @param clock
  */
-void PhysicalWorld_update(PhysicalWorld this, Clock clock)
+void PhysicalWorld::update(PhysicalWorld this, Clock clock)
 {
 	ASSERT(this, "PhysicalWorld::update: null this");
 
@@ -333,14 +333,14 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 		return;
 	}
 
-	PhysicalWorld_checkForGravity(this);
+	PhysicalWorld::checkForGravity(this);
 
 	// TODO: time scale
-	Body_setCurrentElapsedTime(__FIX10_6_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
-	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
-	Body_setCurrentGravity(&this->gravity);
+	Body::setCurrentElapsedTime(__FIX10_6_MULT(__PHYSICS_TIME_ELAPSED, this->timeScale));
+	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
+	Body::setCurrentGravity(&this->gravity);
 
-	NM_ASSERT(__TOTAL_USABLE_BODIES >= VirtualList_getSize(this->activeBodies), "PhysicalWorld::update: too many active bodies");
+	NM_ASSERT(__TOTAL_USABLE_BODIES >= VirtualList::getSize(this->activeBodies), "PhysicalWorld::update: too many active bodies");
 
 	Body activeBodies[__TOTAL_USABLE_BODIES];
 	int activeBodiesIndex = 0;
@@ -362,11 +362,11 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
 			continue;
 		}
 
-		 Body_update(activeBodies[activeBodiesIndex]);
+		 Body::update(activeBodies[activeBodiesIndex]);
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING
-	PhysicalWorld_print(this, 1, 1);
+	PhysicalWorld::print(this, 1, 1);
 #endif
 }
 
@@ -378,7 +378,7 @@ void PhysicalWorld_update(PhysicalWorld this, Clock clock)
  *
  * @param this	Function scope
  */
-void PhysicalWorld_reset(PhysicalWorld this)
+void PhysicalWorld::reset(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
@@ -392,8 +392,8 @@ void PhysicalWorld_reset(PhysicalWorld this)
 	}
 
 	// empty the lists
-	VirtualList_clear(this->bodies);
-	VirtualList_clear(this->activeBodies);
+	VirtualList::clear(this->bodies);
+	VirtualList::clear(this->activeBodies);
 
 	this->bodyToCheckForGravityNode = NULL;
 }
@@ -409,7 +409,7 @@ void PhysicalWorld_reset(PhysicalWorld this)
  *
  * @return		Whether the given SpatialObject has been registered
  */
-bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
+bool PhysicalWorld::isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
 {
 	ASSERT(this, "PhysicalWorld::isSpatialObjectRegistered: null this");
 	ASSERT(this->bodies, "PhysicalWorld::isSpatialObjectRegistered: null bodies");
@@ -427,7 +427,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
 			// check if body is active, maybe a body must be removed
 			// and a new entity has been loaded in the same memory location
 			// as the owner of the found body
-			return Body_isActive(body);
+			return Body::isActive(body);
 		}
 	}
 
@@ -444,7 +444,7 @@ bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject o
  *
  * @return		PhysicalWorld's frictionCoefficient
  */
-fix10_6 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this)
+fix10_6 PhysicalWorld::getFrictionCoefficient(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getFrictionCoefficient: null this");
 
@@ -460,12 +460,12 @@ fix10_6 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this)
  * @param this		Function scope
  * @param frictionCoefficient
  */
-void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient)
+void PhysicalWorld::setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient)
 {
 	ASSERT(this, "PhysicalWorld::setFrictionCoefficient: null this");
 
 	this->frictionCoefficient = frictionCoefficient;
-	Body_setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
+	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 }
 
 /**
@@ -477,7 +477,7 @@ void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCo
  * @param this		Function scope
  * @param 			timeScale
  */
-void PhysicalWorld_setTimeScale(PhysicalWorld this, fix10_6 timeScale)
+void PhysicalWorld::setTimeScale(PhysicalWorld this, fix10_6 timeScale)
 {
 	ASSERT(this, "PhysicalWorld::setTimeScale: null this");
 
@@ -494,7 +494,7 @@ void PhysicalWorld_setTimeScale(PhysicalWorld this, fix10_6 timeScale)
  *
  * @return 			timeScale
  */
-u32 PhysicalWorld_getTimeScale(PhysicalWorld this)
+u32 PhysicalWorld::getTimeScale(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getTimeScale: null this");
 
@@ -510,17 +510,17 @@ u32 PhysicalWorld_getTimeScale(PhysicalWorld this)
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
+void PhysicalWorld::bodyAwake(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
 	ASSERT(__SAFE_CAST(SpatialObject, body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
-	ASSERT(VirtualList_find(this->bodies, body), "PhysicalWorld::bodyAwake: body not found");
+	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::bodyAwake: body not found");
 
-	if(!VirtualList_find(this->activeBodies, body))
+	if(!VirtualList::find(this->activeBodies, body))
 	{
-		VirtualList_pushBack(this->activeBodies, body);
+		VirtualList::pushBack(this->activeBodies, body);
 	}
 }
 
@@ -533,13 +533,13 @@ void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body)
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
+void PhysicalWorld::bodySleep(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodySleep: null this");
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	VirtualList_removeElement(this->activeBodies, body);
+	VirtualList::removeElement(this->activeBodies, body);
 }
 
 /**
@@ -551,20 +551,20 @@ void PhysicalWorld_bodySleep(PhysicalWorld this, Body body)
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld_bodySetInactive(PhysicalWorld this, Body body)
+void PhysicalWorld::bodySetInactive(PhysicalWorld this, Body body)
 {
 	ASSERT(this, "PhysicalWorld::bodySetInactive: null this");
 	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
-	VirtualList_removeElement(this->activeBodies, body);
+	VirtualList::removeElement(this->activeBodies, body);
 }
 
 // set gravity
-void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
+void PhysicalWorld::setGravity(PhysicalWorld this, Acceleration gravity)
 {
 	this->gravity = gravity;
-	Body_setCurrentGravity(&this->gravity);
+	Body::setCurrentGravity(&this->gravity);
 }
 
 /**
@@ -577,7 +577,7 @@ void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity)
  *
  * @return		PhysicalWorld's gravity
  */
-const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this)
+const Vector3D* PhysicalWorld::getGravity(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::getGravity: null this");
 
@@ -594,7 +594,7 @@ const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this)
  *
  * @return		Elapsed time
  */
-fix10_6 PhysicalWorld_getElapsedTime(PhysicalWorld this __attribute__ ((unused)))
+fix10_6 PhysicalWorld::getElapsedTime(PhysicalWorld this __attribute__ ((unused)))
 {
 	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
 
@@ -611,18 +611,18 @@ fix10_6 PhysicalWorld_getElapsedTime(PhysicalWorld this __attribute__ ((unused))
  * @param x
  * @param y
  */
-void PhysicalWorld_print(PhysicalWorld this, int x, int y)
+void PhysicalWorld::print(PhysicalWorld this, int x, int y)
 {
 	ASSERT(this, "PhysicalWorld::print: null this");
 
-	Printing_resetWorldCoordinates(Printing_getInstance());
+	Printing::resetWorldCoordinates(Printing::getInstance());
 
-	Printing_text(Printing_getInstance(), "PHYSICS' STATUS", x, y++, NULL);
-	Printing_text(Printing_getInstance(), "Registered bodies:     ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->bodies), x + 19, y, NULL);
-	Printing_text(Printing_getInstance(), "Active bodies:         ", x, ++y, NULL);
-	Printing_int(Printing_getInstance(), VirtualList_getSize(this->activeBodies), x + 19, y, NULL);
+	Printing::text(Printing::getInstance(), "PHYSICS' STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
+	Printing::text(Printing::getInstance(), "Active bodies:         ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->activeBodies), x + 19, y, NULL);
 
-//	Printing_text(Printing_getInstance(), "Error:                 ", x, ++y, NULL);
-//	Printing_int(Printing_getInstance(), VirtualList_getSize(this->bodies) - (VirtualList_getSize(this->activeBodies)), x + 19, y, NULL);
+//	Printing::text(Printing::getInstance(), "Error:                 ", x, ++y, NULL);
+//	Printing::int(Printing::getInstance(), VirtualList::getSize(this->bodies) - (VirtualList::getSize(this->activeBodies)), x + 19, y, NULL);
 }
