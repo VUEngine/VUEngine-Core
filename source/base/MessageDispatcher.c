@@ -36,7 +36,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 static void MessageDispatcher_constructor(MessageDispatcher this);
-static void MessageDispatcher_destructor(MessageDispatcher this);
 void MessageDispatcher_dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay, Object sender,
 	Object receiver, int message, void* extraInfo);
 

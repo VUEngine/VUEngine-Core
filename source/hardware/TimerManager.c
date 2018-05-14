@@ -192,7 +192,7 @@ void TimerManager_enable(TimerManager this, bool flag)
  * @memberof		TimerManager
  * @public
  */
-void TimerManager_interruptHandler(void)
+void TimerManager_interruptHandler()
 {
 	//disable
 	TimerManager_enable(_timerManager, false);

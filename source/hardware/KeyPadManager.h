@@ -75,18 +75,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
-
-// declare the virtual methods
-#define KeypadManager_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define KeypadManager_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(KeypadManager);
-
 /**
  * User's input
  *
@@ -110,28 +98,24 @@ typedef struct UserInput
 	u16 powerFlag;
 } UserInput;
 
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-KeypadManager KeypadManager_getInstance();
-
-void KeypadManager_destructor(KeypadManager this);
-void KeypadManager_disable(KeypadManager this);
-void KeypadManager_disableInterrupt(KeypadManager this);
-void KeypadManager_enable(KeypadManager this);
-void KeypadManager_enableInterrupt(KeypadManager this);
-void KeypadManager_flush(KeypadManager this);
-u16 KeypadManager_getHoldKey(KeypadManager this);
-u32 KeypadManager_getHoldKeyDuration(KeypadManager this);
-u16 KeypadManager_getPressedKey(KeypadManager this);
-u16 KeypadManager_getPreviousKey(KeypadManager this);
-u16 KeypadManager_getReleasedKey(KeypadManager this);
-UserInput KeypadManager_getUserInput(KeypadManager this);
-int KeypadManager_isEnabled(KeypadManager this);
-UserInput KeypadManager_read(KeypadManager this);
-void KeypadManager_registerInput(KeypadManager this, u16 inputToRegister);
+singleton class KeypadManager : Object
+{
+	static KeypadManager getInstance();
+	void disable();
+	void disableInterrupt();
+	void enable();
+	void enableInterrupt();
+	void flush();
+	u16 getHoldKey();
+	u32 getHoldKeyDuration();
+	u16 getPressedKey();
+	u16 getPreviousKey();
+	u16 getReleasedKey();
+	UserInput getUserInput();
+	int isEnabled();
+	UserInput read();
+	void registerInput(u16 inputToRegister);
+}
 
 
 #endif

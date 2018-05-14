@@ -46,31 +46,15 @@ typedef struct Package
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-
-
-// declare the virtual methods
-#define CommunicationManager_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define CommunicationManager_SET_VTABLE(ClassName)														\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(CommunicationManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-CommunicationManager CommunicationManager_getInstance();
-
-void CommunicationManager_destructor(CommunicationManager this);
-void CommunicationManager_update(CommunicationManager this);
-bool CommunicationManager_sendPayload(CommunicationManager this, u8 payload);
-bool CommunicationManager_receivePayload(CommunicationManager this);
-Package CommunicationManager_getPackage(CommunicationManager this);
-void CommunicationManager_update(CommunicationManager this);
+singleton class CommunicationManager : Object
+{
+	static CommunicationManager getInstance();
+	void update();
+	bool sendPayload(u8 payload);
+	bool receivePayload();
+	Package getPackage();
+	void update();
+}
 
 
 #endif

@@ -64,6 +64,8 @@ enum HandshakeStatus
 	kWaitingKeepAlive,
 	kSendingMessage,
 	kWaitingMessage,
+	kWaitingToSendKeepAlive,
+	kWaitingToWaitKeepAlive
 };
 
 
@@ -256,7 +258,7 @@ void CommunicationManager_disableCommunications(CommunicationManager this __attr
  * @memberof		CommunicationManager
  * @public
  */
-void CommunicationManager_interruptHandler(void)
+void CommunicationManager_interruptHandler()
 {
 	// disable interrupts
 	CommunicationManager_disableInterrupts(_communicationManager);

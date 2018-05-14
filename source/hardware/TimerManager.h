@@ -48,37 +48,21 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
-
-// declare the virtual methods
-#define TimerManager_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define TimerManager_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(TimerManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-TimerManager TimerManager_getInstance();
-
-void TimerManager_destructor(TimerManager this);
-void TimerManager_enable(TimerManager this, bool flag);
-u32 TimerManager_getMillisecondsElapsed(TimerManager this);
-u32 TimerManager_getTotalMillisecondsElapsed(TimerManager this);
-u32 TimerManager_resetMilliseconds(TimerManager this);
-void TimerManager_setTime(TimerManager this, u16 time);
-void TimerManager_setFrequency(TimerManager this, int frequency);
-int TimerManager_getStat(TimerManager this);
-void TimerManager_clearStat(TimerManager this);
-void TimerManager_initialize(TimerManager this);
-void TimerManager_wait(TimerManager this, u32 milliSeconds);
-void TimerManager_repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32));
+singleton class TimerManager : Object
+{
+	static TimerManager getInstance();
+	void enable(bool flag);
+	u32 getMillisecondsElapsed();
+	u32 getTotalMillisecondsElapsed();
+	u32 resetMilliseconds();
+	void setTime(u16 time);
+	void setFrequency(int frequency);
+	int getStat();
+	void clearStat();
+	void initialize();
+	void wait(u32 milliSeconds);
+	void repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32));
+}
 
 
 #endif

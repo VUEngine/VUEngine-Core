@@ -41,8 +41,8 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-__FORWARD_CLASS(SpatialObject)
-__FORWARD_CLASS(Shape)
+class SpatialObject;
+class Shape;
 
 typedef enum CollisionResult
 {
@@ -178,120 +178,100 @@ typedef struct ShapeDefinition
 
 typedef const ShapeDefinition ShapeROMDef;
 
-#define Shape_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, setup, u32 layers, u32 layersToIgnore);							\
-		__VIRTUAL_DEC(ClassName, void, position, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);		\
-		__VIRTUAL_DEC(ClassName, CollisionInformation, testForCollision, Shape collidingShape, Vector3D displacement, fix10_6 sizeIncrement);	\
-		__VIRTUAL_DEC(ClassName, Vector3D, getPosition);												\
-		__VIRTUAL_DEC(ClassName, RightBox, getSurroundingRightBox);										\
-		__VIRTUAL_DEC(ClassName, void, configureWireframe);												\
-		__VIRTUAL_DEC(ClassName, void, print, int x, int y);											\
 
-#define Shape_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Shape, setup);															\
-		__VIRTUAL_SET(ClassName, Shape, position);														\
+abstract class Shape : Object
+{
+	/**
+	* @var SpatialObject 	owner
+	* @brief				the entity to which the shape belongs
+	* @memberof			Shape
+	*/
+	SpatialObject owner;
+	/**
+	* @var VirtualList 	collidingShapes
+	* @brief				colliding shapes list
+	* @memberof			CollisionSolver
+	*/
+	VirtualList collidingShapes;
+	/**
+	* @var 32 				layers
+	* @brief				layers on which this shape live
+	* @memberof			Shape
+	*/
+	u32 layers;
+	/**
+	* @var 32 				layersToIgnore
+	* @brief				layers to ignore when checking for collisions
+	* @memberof			Shape
+	*/
+	u32 layersToIgnore;
+	/**
+	* @var Sphere		wireframe
+	* @brief			for debugging purposes
+	* @memberof 		Ball
+	*/
+	Wireframe wireframe;
+	/**
+	* @var u8 				ready
+	* @brief				flag to know if setup is needed
+	* @memberof			Shape
+	*/
+	u8 ready;
+	/**
+	* @var u8 				moved
+	* @brief				flag to know if has moved
+	* @memberof			Shape
+	*/
+	u8 moved;
+	/**
+	* @var u8 				isActive
+	* @brief				flag to know if shape is reacting to collisions
+	* @memberof			Shape
+	*/
+	u8 isActive;
+	/**
+	* @var u8 				checkForCollisions
+	* @brief				flag to check against other shapes
+	* @memberof			Shape
+	*/
+	u8 checkForCollisions;
+	/**
+	* @var u8 				isVisible
+	* @brief				flag to cull off shapes outside the screen
+	* @memberof			Shape
+	*/
+	u8 isVisible;
 
-#define Shape_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var SpatialObject 	owner
-		 * @brief				the entity to which the shape belongs
-		 * @memberof			Shape
-		 */																								\
-		SpatialObject owner;																			\
-		/**
-		 * @var VirtualList 	collidingShapes
-		 * @brief				colliding shapes list
-		 * @memberof			CollisionSolver
-		 */																								\
-		VirtualList collidingShapes;																	\
-		/**
-		 * @var 32 				layers
-		 * @brief				layers on which this shape live
-		 * @memberof			Shape
-		 */																								\
-		u32 layers;																						\
-		/**
-		 * @var 32 				layersToIgnore
-		 * @brief				layers to ignore when checking for collisions
-		 * @memberof			Shape
-		 */																								\
-		u32 layersToIgnore;																				\
-		/**
-		 * @var Sphere		wireframe
-		 * @brief			for debugging purposes
-		 * @memberof 		Ball
-		 */																								\
-		Wireframe wireframe;																			\
-		/**
-		 * @var u8 				ready
-		 * @brief				flag to know if setup is needed
-		 * @memberof			Shape
-		 */																								\
-		u8 ready;																						\
-		/**
-		 * @var u8 				moved
-		 * @brief				flag to know if has moved
-		 * @memberof			Shape
-		 */																								\
-		u8 moved;																						\
-		/**
-		 * @var u8 				isActive
-		 * @brief				flag to know if shape is reacting to collisions
-		 * @memberof			Shape
-		 */																								\
-		u8 isActive;																					\
-		/**
-		 * @var u8 				checkForCollisions
-		 * @brief				flag to check against other shapes
-		 * @memberof			Shape
-		 */																								\
-		u8 checkForCollisions;																			\
-		/**
-		 * @var u8 				isVisible
-		 * @brief				flag to cull off shapes outside the screen
-		 * @memberof			Shape
-		 */																								\
-		u8 isVisible;																					\
-
-__CLASS(Shape);
-
-
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-void Shape_constructor(Shape this, SpatialObject owner);
-void Shape_destructor(Shape this);
-
-void Shape_enterCollision(Shape this, CollisionData* collisionData);
-void Shape_updateCollision(Shape this, CollisionData* collisionData);
-void Shape_exitCollision(Shape this, CollisionData* collisionData);
-CollisionData Shape_collides(Shape this, Shape shape);
-bool Shape_checkForCollisions(Shape this);
-SpatialObject Shape_getOwner(Shape this);
-void Shape_reset(Shape this);
-void Shape_setup(Shape this, u32 layers, u32 layersToIgnore);
-void Shape_position(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-bool Shape_isActive(Shape this);
-bool Shape_isReady(Shape this);
-void Shape_setActive(Shape this, bool active);
-void Shape_setCheckForCollisions(Shape this, bool checkForCollisions);
-void Shape_setReady(Shape this, bool ready);
-bool Shape_canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncrement);
-fix10_6 Shape_getCollidingFrictionCoefficient(Shape this);
-void Shape_resolveCollision(Shape this, const CollisionInformation* collisionInformation);
-u32 Shape_getLayers(Shape this);
-void Shape_setLayers(Shape this, u32 layers);
-u32 Shape_getLayersToIgnore(Shape this);
-void Shape_setLayersToIgnore(Shape this, u32 layersToIgnore);
-void Shape_show(Shape this);
-void Shape_hide(Shape this);
-void Shape_print(Shape this, int x, int y);
+	void constructor(SpatialObject owner);
+	void enterCollision(CollisionData* collisionData);
+	void updateCollision(CollisionData* collisionData);
+	void exitCollision(CollisionData* collisionData);
+	CollisionData collides(Shape shape);
+	bool checkForCollisions();
+	SpatialObject getOwner();
+	void reset();
+	bool isActive();
+	bool isReady();
+	void setActive(bool active);
+	void setCheckForCollisions(bool checkForCollisions);
+	void setReady(bool ready);
+	bool canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement);
+	fix10_6 getCollidingFrictionCoefficient();
+	void resolveCollision(const CollisionInformation* collisionInformation);
+	u32 getLayers();
+	void setLayers(u32 layers);
+	u32 getLayersToIgnore();
+	void setLayersToIgnore(u32 layersToIgnore);
+	void show();
+	void hide();
+	virtual void setup(u32 layers, u32 layersToIgnore);
+	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
+	virtual Vector3D getPosition() = 0;
+	virtual RightBox getSurroundingRightBox() = 0;
+	virtual void configureWireframe() = 0;
+	virtual void print(int x, int y) = 0;
+}
 
 
 #endif

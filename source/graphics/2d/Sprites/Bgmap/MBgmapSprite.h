@@ -34,62 +34,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define MBgmapSprite_METHODS(ClassName)																	\
-		BgmapSprite_METHODS(ClassName)																	\
-
-// declare the virtual methods which are redefined
-#define MBgmapSprite_SET_VTABLE(ClassName)																\
-		BgmapSprite_SET_VTABLE(ClassName)																\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, position);												\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, setPosition);											\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, render);													\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, addDisplacement);										\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, resize);													\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, setMode);												\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, writeTextures);											\
-		__VIRTUAL_SET(ClassName, MBgmapSprite, areTexturesWritten);										\
-
-#define MBgmapSprite_ATTRIBUTES																			\
-		BgmapSprite_ATTRIBUTES																			\
-		/**
-		 * @var VirtualList 			textures
-		 * @brief						this is our texture
-		 * @memberof 					MBgmapSprite
-		 */																								\
-		VirtualList textures;																			\
-		/**
-		 * @var MBgmapSpriteDefinition*	mBgmapSpriteDefinition
-		 * @brief						pinter to definition
-		 * @memberof 					MBgmapSprite
-		 */																								\
-		const MBgmapSpriteDefinition* mBgmapSpriteDefinition;											\
-		/**
-		 * @var u32 					textureXOffset
-		 * @brief						to speed up rendering
-		 * @memberof 					MBgmapSprite
-		 */																								\
-		u32 textureXOffset;																				\
-		/**
-		 * @var u32 					textureYOffset
-		 * @brief						to speed up rendering
-		 * @memberof 					MBgmapSprite
-		 */																								\
-		u32 textureYOffset;																				\
-		/**
-		 * @var Point 					sizeMultiplier
-		 * @brief						Multiple BGMAP expansion
-		 * @memberof 					MBgmapSprite
-		 */																								\
-		Point sizeMultiplier;
-
-__CLASS(MBgmapSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 typedef struct MBgmapSpriteDefinition
 {
 	// the normal sprite definition
@@ -112,23 +56,49 @@ typedef struct MBgmapSpriteDefinition
 typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class MBgmapSprite : BgmapSprite
+{
+	/**
+	* @var VirtualList 			textures
+	* @brief						this is our texture
+	* @memberof 					MBgmapSprite
+	*/
+	VirtualList textures;
+	/**
+	* @var MBgmapSpriteDefinition*	mBgmapSpriteDefinition
+	* @brief						pinter to definition
+	* @memberof 					MBgmapSprite
+	*/
+	const MBgmapSpriteDefinition* mBgmapSpriteDefinition;
+	/**
+	* @var u32 					textureXOffset
+	* @brief						to speed up rendering
+	* @memberof 					MBgmapSprite
+	*/
+	u32 textureXOffset;
+	/**
+	* @var u32 					textureYOffset
+	* @brief						to speed up rendering
+	* @memberof 					MBgmapSprite
+	*/
+	u32 textureYOffset;
+	/**
+	* @var Point 					sizeMultiplier
+	* @brief						Multiple BGMAP expansion
+	* @memberof 					MBgmapSprite
+	*/
+	Point sizeMultiplier;
 
-__CLASS_NEW_DECLARE(MBgmapSprite, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
-
-void MBgmapSprite_constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
-void MBgmapSprite_destructor(MBgmapSprite this);
-
-void MBgmapSprite_addDisplacement(MBgmapSprite this, const PixelVector* displacement);
-void MBgmapSprite_position(MBgmapSprite this, const Vector3D* position);
-void MBgmapSprite_render(MBgmapSprite this, bool evenFrame);
-void MBgmapSprite_resize(MBgmapSprite this, Scale scale, fix10_6 z);
-void MBgmapSprite_setPosition(MBgmapSprite this, const PixelVector* position);
-void MBgmapSprite_setMode(MBgmapSprite this, u16 display, u16 mode);
-bool MBgmapSprite_writeTextures(MBgmapSprite this);
-bool MBgmapSprite_areTexturesWritten(MBgmapSprite this);
+	void constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
+	override void position(const Vector3D* position);
+	override void setPosition(const PixelVector* position);
+	override void render(bool evenFrame);
+	override void addDisplacement(const PixelVector* displacement);
+	override void resize(Scale scale, fix10_6 z);
+	override void setMode(u16 display, u16 mode);
+	override bool writeTextures();
+	override bool areTexturesWritten();
+}
 
 
 #endif

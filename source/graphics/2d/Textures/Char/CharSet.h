@@ -60,48 +60,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
-
-#define CharSet_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-
-#define CharSet_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define CharSet_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var CharSetDefinition*  charSetDefinition
-		 * @brief					Charset definition
-		 * @memberof				CharSet
-		 */																								\
-		CharSetDefinition* charSetDefinition;															\
-		/**
-		 * @var u32 				charDefinitionDisplacement
-		 * @brief					Array definition of the charSet
-		 * @memberof				CharSet
-		 */																								\
-		u32 charDefinitionDisplacement;																	\
-		/**
-		 * @var u16 				offset
-		 * @brief					Memory displacement
-		 * @memberof				CharSet
-		 */																								\
-		u16 offset;																						\
-		/**
-		 * @var u8 					usageCount
-		 * @brief					How many textures are using me
-		 * @memberof				CharSet
-		 */																								\
-		u8 usageCount;																					\
-
-__CLASS(CharSet);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 typedef struct CharSetDefinition
 {
 	// number of chars, depending on allocation type:
@@ -123,26 +81,48 @@ typedef struct CharSetDefinition
 typedef const CharSetDefinition CharSetROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class CharSet : Object
+{
+	/**
+	* @var CharSetDefinition*  charSetDefinition
+	* @brief					Charset definition
+	* @memberof				CharSet
+	*/
+	CharSetDefinition* charSetDefinition;
+	/**
+	* @var u32 				charDefinitionDisplacement
+	* @brief					Array definition of the charSet
+	* @memberof				CharSet
+	*/
+	u32 charDefinitionDisplacement;
+	/**
+	* @var u16 				offset
+	* @brief					Memory displacement
+	* @memberof				CharSet
+	*/
+	u16 offset;
+	/**
+	* @var u8 					usageCount
+	* @brief					How many textures are using me
+	* @memberof				CharSet
+	*/
+	u8 usageCount;
 
-__CLASS_NEW_DECLARE(CharSet, CharSetDefinition* charSetDefinition, u16 offset);
-
-void CharSet_destructor(CharSet this);
-void CharSet_increaseUsageCount(CharSet this);
-bool CharSet_decreaseUsageCount(CharSet this);
-u32 CharSet_getAllocationType(CharSet this);
-u32 CharSet_getOffset(CharSet this);
-void CharSet_setOffset(CharSet this, u16 offset);
-void CharSet_setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition);
-CharSetDefinition* CharSet_getCharSetDefinition(CharSet this);
-u32 CharSet_getNumberOfChars(CharSet this);
-void CharSet_write(CharSet this);
-void CharSet_rewrite(CharSet this);
-void CharSet_setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement);
-void CharSet_putChar(CharSet this, u32 charToReplace, BYTE* newChar);
-void CharSet_putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
+	void constructor(CharSetDefinition* charSetDefinition, u16 offset);
+	void increaseUsageCount();
+	bool decreaseUsageCount();
+	u32 getAllocationType();
+	u32 getOffset();
+	void setOffset(u16 offset);
+	void setCharSetDefinition(CharSetDefinition* charSetDefinition);
+	CharSetDefinition* getCharSetDefinition();
+	u32 getNumberOfChars();
+	void write();
+	void rewrite();
+	void setCharDefinitionDisplacement(u32 charDefinitionDisplacement);
+	void putChar(u32 charToReplace, BYTE* newChar);
+	void putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
+}
 
 
 #endif

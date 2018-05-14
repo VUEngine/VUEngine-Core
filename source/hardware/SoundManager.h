@@ -190,29 +190,16 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define SoundManager_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
+singleton class SoundManager : Object
+{
+	static SoundManager getInstance();
+	void setWaveForm();
+	void playBGM(const u16 (*bgm)[]);
+	int playFxSound(const u16* fxSound, Vector3D position);
+	int playingSound(const u16* fxSound);
+	void stopAllSound();
+	void playSounds();
+}
 
-// declare the virtual methods which are redefined
-#define SoundManager_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(SoundManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-SoundManager SoundManager_getInstance();
-
-void SoundManager_destructor(SoundManager this);
-void SoundManager_setWaveForm(SoundManager this);
-void SoundManager_playBGM(SoundManager this, const u16 (*bgm)[]);
-int SoundManager_playFxSound(SoundManager this, const u16* fxSound, Vector3D position);
-int SoundManager_playingSound(SoundManager this, const u16* fxSound);
-void SoundManager_stopAllSound(SoundManager this);
-void SoundManager_playSounds(SoundManager this);
 
 #endif

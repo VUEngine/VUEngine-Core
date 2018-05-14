@@ -44,50 +44,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define ObjectSprite_METHODS(ClassName)																	\
-		Sprite_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define ObjectSprite_SET_VTABLE(ClassName)																\
-		Sprite_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, ObjectSprite, render);													\
-		__VIRTUAL_SET(ClassName, ObjectSprite, setPosition);											\
-		__VIRTUAL_SET(ClassName, ObjectSprite, position);												\
-		__VIRTUAL_SET(ClassName, ObjectSprite, rotate);													\
-		__VIRTUAL_SET(ClassName, ObjectSprite, calculateParallax);										\
-		__VIRTUAL_SET(ClassName, ObjectSprite, getWorldLayer);											\
-		__VIRTUAL_SET(ClassName, ObjectSprite, addDisplacement);										\
-		__VIRTUAL_SET(ClassName, ObjectSprite, setMode);												\
-
-#define ObjectSprite_ATTRIBUTES																			\
-		Sprite_ATTRIBUTES																				\
-		/**
-		 * @var ObjectSpriteContainer 	objectSpriteContainer
-		 * @brief						parent sprite
-		 * @memberof					ObjectSprite
-		 */																								\
-		ObjectSpriteContainer objectSpriteContainer;													\
-		/**
-		 * @var s16 					objectIndex
-		 * @brief						object index
-		 * @memberof					ObjectSprite
-		 */																								\
-		s16 objectIndex;																				\
-		/**
-		 * @var s16 					totalObjects
-		 * @brief						number of objects
-		 * @memberof					ObjectSprite
-		 */																								\
-		s16 totalObjects;																				\
-
-__CLASS(ObjectSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 typedef struct ObjectSpriteDefinition
 {
 	// it has a Sprite definition at the beginning
@@ -103,27 +59,40 @@ typedef struct ObjectSpriteDefinition
 
 typedef const ObjectSpriteDefinition ObjectSpriteROMDef;
 
+class ObjectSprite : Sprite
+{
+	/**
+	* @var ObjectSpriteContainer 	objectSpriteContainer
+	* @brief						parent sprite
+	* @memberof					ObjectSprite
+	*/
+	ObjectSpriteContainer objectSpriteContainer;
+	/**
+	* @var s16 					objectIndex
+	* @brief						object index
+	* @memberof					ObjectSprite
+	*/
+	s16 objectIndex;
+	/**
+	* @var s16 					totalObjects
+	* @brief						number of objects
+	* @memberof					ObjectSprite
+	*/
+	s16 totalObjects;
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(ObjectSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
-
-void ObjectSprite_constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
-void ObjectSprite_destructor(ObjectSprite this);
-
-void ObjectSprite_addDisplacement(ObjectSprite this, const PixelVector* displacement);
-void ObjectSprite_calculateParallax(ObjectSprite this, fix10_6 z);
-s16 ObjectSprite_getObjectIndex(ObjectSprite this);
-s16 ObjectSprite_getTotalObjects(ObjectSprite this);
-u8 ObjectSprite_getWorldLayer(ObjectSprite this);
-void ObjectSprite_position(ObjectSprite this, const Vector3D* position3D);
-void ObjectSprite_render(ObjectSprite this, bool evenFrame);
-void ObjectSprite_rotate(ObjectSprite this, const Rotation* rotation);
-void ObjectSprite_setObjectIndex(ObjectSprite this, s16 objectIndex);
-void ObjectSprite_setPosition(ObjectSprite this, const PixelVector* position);
-void ObjectSprite_setMode(ObjectSprite this, u16 display, u16 mode);
+	void constructor(const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
+	s16 getObjectIndex();
+	s16 getTotalObjects();
+	void setObjectIndex(s16 objectIndex);
+	override void render(bool evenFrame);
+	override void setPosition(const PixelVector* position);
+	override void position(const Vector3D* position3D);
+	override void rotate(const Rotation* rotation);
+	override void calculateParallax(fix10_6 z);
+	override u8 getWorldLayer();
+	override void addDisplacement(const PixelVector* displacement);
+	override void setMode(u16 display, u16 mode);
+}
 
 
 #endif

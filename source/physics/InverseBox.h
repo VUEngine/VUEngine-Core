@@ -34,25 +34,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define InverseBox_METHODS(ClassName)																\
-		Box_METHODS(ClassName)																		\
-
-#define InverseBox_SET_VTABLE(ClassName)															\
-		Box_SET_VTABLE(ClassName)																	\
-
-#define InverseBox_ATTRIBUTES																		\
-		Box_ATTRIBUTES																				\
-
-__CLASS(InverseBox);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(InverseBox, SpatialObject owner);
-
-void InverseBox_destructor(InverseBox this);
+class InverseBox : Box
+{
+	void constructor(SpatialObject owner);
+}
 
 
 #endif

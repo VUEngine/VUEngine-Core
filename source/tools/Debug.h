@@ -36,15 +36,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Debug_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define Debug_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-
-// declare a Debug
-__CLASS(Debug);
 
 /**
  * For debugging
@@ -61,18 +52,15 @@ typedef struct ClassSizeData
 } ClassSizeData;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-Debug Debug_getInstance();
-
-void Debug_destructor(Debug this);
-void Debug_update(Debug this);
-void Debug_render(Debug this);
-void Debug_show(Debug this, GameState gameState);
-void Debug_hide(Debug this);
-void Debug_processUserInput(Debug this, u16 pressedKey);
+singleton class Debug : Object
+{
+	static Debug getInstance();
+	void update();
+	void render();
+	void show(GameState gameState);
+	void hide();
+	void processUserInput(u16 pressedKey);
+}
 
 
 #endif

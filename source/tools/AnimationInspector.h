@@ -37,16 +37,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define AnimationInspector_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																					\
-
-
-// declare the virtual methods which are redefined
-#define AnimationInspector_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-// declare a AnimationInspector
-__CLASS(AnimationInspector);
 
 /**
  * For animation
@@ -63,17 +53,14 @@ typedef struct UserAnimatedEntity
 } UserAnimatedEntity;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-AnimationInspector AnimationInspector_getInstance();
-
-void AnimationInspector_destructor(AnimationInspector this);
-void AnimationInspector_update(AnimationInspector this);
-void AnimationInspector_show(AnimationInspector this, GameState gameState);
-void AnimationInspector_hide(AnimationInspector this);
-void AnimationInspector_processUserInput(AnimationInspector this, u16 pressedKey);
+singleton class AnimationInspector : Object
+{
+	static AnimationInspector getInstance();
+	void update();
+	void show(GameState gameState);
+	void hide();
+	void processUserInput(u16 pressedKey);
+}
 
 
 #endif

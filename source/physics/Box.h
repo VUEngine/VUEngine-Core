@@ -42,67 +42,45 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Box_METHODS(ClassName)																			\
-		Shape_METHODS(ClassName)																		\
+class Box : Shape
+{
+	/**
+	* @var Normals		normals
+	* @brief			the normals of the box
+	* @memberof 		Box
+	*/
+	VertexProjection vertexProjections[__SHAPE_NORMALS];
+	/**
+	* @var Normals*	normals
+	* @brief			for collision detection purposes
+	* @memberof 		Box
+	*/
+	Normals* normals;
+	/**
+	* @var Vector3D	rotationVertexDisplacement
+	* @brief			for rotation purposes
+	* @memberof 		Box
+	*/
+	Vector3D rotationVertexDisplacement;
+	/**
+	* @var RightBox	rightBox
+	* @brief			the rectangle
+	* @memberof 		Box
+	*/
+	RightBox rightBox;
 
-#define Box_SET_VTABLE(ClassName)																		\
-		Shape_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, Box, position);														\
-		__VIRTUAL_SET(ClassName, Box, testForCollision);												\
-		__VIRTUAL_SET(ClassName, Box, getPosition);														\
-		__VIRTUAL_SET(ClassName, Box, getSurroundingRightBox);											\
-		__VIRTUAL_SET(ClassName, Box, configureWireframe);												\
-		__VIRTUAL_SET(ClassName, Box, print);															\
-
-#define Box_ATTRIBUTES																					\
-		Shape_ATTRIBUTES																				\
-		/**
-		 * @var Normals		normals
-		 * @brief			the normals of the box
-		 * @memberof 		Box
-		 */																								\
-		VertexProjection vertexProjections[__SHAPE_NORMALS];											\
-		/**
-		 * @var Normals*	normals
-		 * @brief			for collision detection purposes
-		 * @memberof 		Box
-		 */																								\
-		Normals* normals;																				\
-		/**
-		 * @var Vector3D	rotationVertexDisplacement
-		 * @brief			for rotation purposes
-		 * @memberof 		Box
-		 */																								\
-		Vector3D rotationVertexDisplacement;															\
-		/**
-		 * @var RightBox	rightBox
-		 * @brief			the rectangle
-		 * @memberof 		Box
-		 */																								\
-		RightBox rightBox;																				\
-
-__CLASS(Box);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Box, SpatialObject owner);
-
-void Box_constructor(Box this, SpatialObject owner);
-void Box_destructor(Box this);
-
-void Box_position(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-void Box_getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES]);
-void Box_computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES]);
-void Box_project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max);
-void Box_projectOntoItself(Box this);
-CollisionInformation Box_testForCollision(Box this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
-Vector3D Box_getPosition(Box this);
-RightBox Box_getSurroundingRightBox(Box this);
-void Box_configureWireframe(Box this);
-void Box_print(Box this, int x, int y);
+	void constructor(SpatialObject owner);
+	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);
+	void computeNormals(Vector3D vertexes[__BOX_VERTEXES]);
+	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max);
+	void projectOntoItself();
+	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
+	override Vector3D getPosition();
+	override RightBox getSurroundingRightBox();
+	override void configureWireframe();
+	override void print(int x, int y);
+}
 
 
 #endif

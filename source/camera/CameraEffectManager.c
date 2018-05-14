@@ -50,6 +50,7 @@ __CLASS_FRIEND_DEFINITION(Camera);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
+static void CameraEffectManager_constructor(CameraEffectManager this);
 void CameraEffectManager_showCamera(CameraEffectManager this);
 void CameraEffectManager_hideCamera(CameraEffectManager this);
 void CameraEffectManager_FXFadeIn(CameraEffectManager this);
@@ -83,7 +84,7 @@ __SINGLETON(CameraEffectManager);
  *
  * @param this	Function scope
  */
-void CameraEffectManager_constructor(CameraEffectManager this)
+static void CameraEffectManager_constructor(CameraEffectManager this)
 {
 	ASSERT(this, "CameraEffectManager::constructor: null this");
 

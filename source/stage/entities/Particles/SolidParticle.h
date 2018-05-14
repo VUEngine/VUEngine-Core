@@ -30,61 +30,8 @@
 #include <Particle.h>
 #include <Shape.h>
 
-
-//---------------------------------------------------------------------------------------------------------
-//										MISC
-//---------------------------------------------------------------------------------------------------------
-
-// needed because of interdependency between Shape's and SpatialObject's headers
-Shape SpatialObject_getShape(SpatialObject this);
-
-
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
-#define SolidParticle_METHODS(ClassName)																\
-		Particle_METHODS(ClassName)																		\
-
-// define the virtual methods
-#define SolidParticle_SET_VTABLE(ClassName)																\
-		Particle_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, SolidParticle, update);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, getWidth);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, getHeight);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, getDepth);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, enterCollision);										\
-		__VIRTUAL_SET(ClassName, SolidParticle, isSubjectToGravity);										\
-		__VIRTUAL_SET(ClassName, SolidParticle, handleMessage);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, transform);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, setPosition);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, getShapes);												\
-		__VIRTUAL_SET(ClassName, SolidParticle, getInGameType);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, getVelocity);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, exitCollision);											\
-		__VIRTUAL_SET(ClassName, SolidParticle, reset);													\
-
-#define SolidParticle_ATTRIBUTES																		\
-		Particle_ATTRIBUTES																				\
-		/*
-		 * @var Shape 						shape
-		 * @brief							Particle's shape for collision detection
-		 * @memberof						SolidParticle
-		 */																								\
-		Shape shape;																					\
-		/*
-		 * @var SolidParticleDefinition*	shapeParticleDefinition
-		 * @brief
-		 * @memberof						SolidParticle
-		 */																								\
-		const SolidParticleDefinition* solidParticleDefinition;											\
-
-__CLASS(SolidParticle);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -128,30 +75,38 @@ typedef struct SolidParticleDefinition
 typedef const SolidParticleDefinition SolidParticleROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class SolidParticle : Particle
+{
+	/*
+	* @var Shape 						shape
+	* @brief							Particle's shape for collision detection
+	* @memberof						SolidParticle
+	*/
+	Shape shape;
+	/*
+	* @var SolidParticleDefinition*	shapeParticleDefinition
+	* @brief
+	* @memberof						SolidParticle
+	*/
+	const SolidParticleDefinition* solidParticleDefinition;
 
-__CLASS_NEW_DECLARE(SolidParticle, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
-
-void SolidParticle_constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
-void SolidParticle_destructor(SolidParticle this);
-
-u16 SolidParticle_getWidth(SolidParticle this);
-u16 SolidParticle_getHeight(SolidParticle this);
-u16 SolidParticle_getDepth(SolidParticle this);
-Shape SolidParticle_getShape(SolidParticle this);
-bool SolidParticle_enterCollision(SolidParticle this, const CollisionInformation* collisionInformation);
-bool SolidParticle_isSubjectToGravity(SolidParticle this, Acceleration gravity);
-bool SolidParticle_handleMessage(SolidParticle this, Telegram telegram);
-void SolidParticle_transform(SolidParticle this);
-void SolidParticle_setPosition(SolidParticle this, const Vector3D* position);
-u32 SolidParticle_update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
-VirtualList SolidParticle_getShapes(SolidParticle this);
-u32 SolidParticle_getInGameType(SolidParticle this);
-Velocity SolidParticle_getVelocity(SolidParticle this);
-void SolidParticle_exitCollision(SolidParticle this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-void SolidParticle_reset(SolidParticle this);
+	void constructor(const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
+	Shape getShape();
+	override u32 update(int timeElapsed, void (* behavior)(Particle particle));
+	override u16 getWidth();
+	override u16 getHeight();
+	override u16 getDepth();
+	override bool enterCollision(const CollisionInformation* collisionInformation);
+	override bool isSubjectToGravity(Acceleration gravity);
+	override bool handleMessage(Telegram telegram);
+	override void transform();
+	override void setPosition(const Vector3D* position);
+	override VirtualList getShapes();
+	override u32 getInGameType();
+	override Velocity getVelocity();
+	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	override void reset();
+}
 
 
 #endif

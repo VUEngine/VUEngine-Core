@@ -35,27 +35,15 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define WireframeManager_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-#define WireframeManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(WireframeManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-WireframeManager WireframeManager_getInstance();
-
-void WireframeManager_destructor(WireframeManager this);
-void WireframeManager_drawWireframes(WireframeManager this);
-void WireframeManager_print(WireframeManager this, int x, int y);
-void WireframeManager_register(WireframeManager this, Wireframe wireframe);
-void WireframeManager_remove(WireframeManager this, Wireframe wireframe);
-void WireframeManager_reset(WireframeManager this);
+singleton class WireframeManager : Object
+{
+	static WireframeManager getInstance();
+	void drawWireframes();
+	void print(int x, int y);
+	void register(Wireframe wireframe);
+	void remove(Wireframe wireframe);
+	void reset();
+}
 
 
 #endif

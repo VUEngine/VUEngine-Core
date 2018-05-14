@@ -34,29 +34,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define FrameRate_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define FrameRate_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(FrameRate);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-FrameRate FrameRate_getInstance();
-
-void FrameRate_destructor(FrameRate this);
-
-u16 FrameRate_getFps(FrameRate this);
-void FrameRate_increaseFps(FrameRate this);
-void FrameRate_print(FrameRate this, int col, int row);
-void FrameRate_reset(FrameRate this);
+singleton class FrameRate : Object
+{
+	static FrameRate getInstance();
+	u16 getFps();
+	void increaseFps();
+	void print(int col, int row);
+	void reset();
+}
 
 
 #endif

@@ -52,7 +52,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 
 // globals
 
-static void Polyhedron_constructor(Polyhedron this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -70,7 +69,7 @@ __CLASS_NEW_END(Polyhedron);
  *
  * @param this	Function scope
  */
-static void Polyhedron_constructor(Polyhedron this)
+void Polyhedron_constructor(Polyhedron this)
 {
 	ASSERT(this, "Polyhedron::constructor: null this");
 

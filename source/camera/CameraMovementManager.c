@@ -38,6 +38,9 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+#define CameraMovementManager_ATTRIBUTES																\
+		Object_ATTRIBUTES
+
 /**
  * @class	CameraMovementManager
  * @extends Object
@@ -46,6 +49,13 @@
 __CLASS_DEFINITION(CameraMovementManager, Object);
 __CLASS_FRIEND_DEFINITION(Camera);
 
+
+//---------------------------------------------------------------------------------------------------------
+//												CLASS'S PROTOTYPES
+//---------------------------------------------------------------------------------------------------------
+
+
+static void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovementManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -70,7 +80,7 @@ __SINGLETON(CameraMovementManager);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovementManager this)
+static void __attribute__ ((noinline)) CameraMovementManager_constructor(CameraMovementManager this)
 {
 	ASSERT(this, "CameraMovementManager::constructor: null this");
 

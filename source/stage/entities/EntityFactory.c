@@ -67,7 +67,6 @@ typedef struct PositionedEntityDescription
 //---------------------------------------------------------------------------------------------------------
 
 // global
-static void EntityFactory_constructor(EntityFactory this);
 u32 EntityFactory_instantiateEntities(EntityFactory this);
 u32 EntityFactory_initializeEntities(EntityFactory this);
 u32 EntityFactory_transformEntities(EntityFactory this);
@@ -96,7 +95,7 @@ __CLASS_NEW_DEFINITION(EntityFactory)
 __CLASS_NEW_END(EntityFactory);
 
 // class's constructor
-static void EntityFactory_constructor(EntityFactory this)
+void EntityFactory_constructor(EntityFactory this)
 {
 	ASSERT(this, "EntityFactory::constructor: null this");
 

@@ -35,26 +35,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define UiContainer_METHODS(ClassName)																	\
-		Container_METHODS(ClassName)																	\
-		__VIRTUAL_DEC(ClassName, void, addEntities, PositionedEntity* entities);						\
-
-// declare the virtual methods which are redefined
-#define UiContainer_SET_VTABLE(ClassName)																\
-		Container_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, UiContainer, addEntities);												\
-		__VIRTUAL_SET(ClassName, UiContainer, transform);												\
-		__VIRTUAL_SET(ClassName, UiContainer, initialTransform);										\
-
-// declare a UiContainer
-__CLASS(UiContainer);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 // defines a UI for ROM memory
 typedef struct UiContainerDefinition
 {
@@ -67,16 +47,13 @@ typedef struct UiContainerDefinition
 } UiContainerDefinition;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(UiContainer, UiContainerDefinition* uiContainerDefinition);
-
-void UiContainer_destructor(UiContainer this);
-void UiContainer_addEntities(UiContainer this, PositionedEntity* entities);
-void UiContainer_transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive);
+class UiContainer : Container
+{
+	void constructor(UiContainerDefinition* uiContainerDefinition);
+	virtual void addEntities(PositionedEntity* entities);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
+}
 
 
 #endif

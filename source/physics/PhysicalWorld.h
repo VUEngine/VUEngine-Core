@@ -37,48 +37,32 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define PhysicalWorld_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define PhysicalWorld_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(PhysicalWorld);
-
-
 typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, u16 axesSubjectToGravity);
 
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(PhysicalWorld);
-
-void PhysicalWorld_constructor(PhysicalWorld this);
-void PhysicalWorld_destructor(PhysicalWorld this);
-
-void PhysicalWorld_setTimeScale(PhysicalWorld this, fix10_6 timeScale);
-u32 PhysicalWorld_getTimeScale(PhysicalWorld this);
-void PhysicalWorld_bodyAwake(PhysicalWorld this, Body body);
-void PhysicalWorld_bodySleep(PhysicalWorld this, Body body);
-void PhysicalWorld_bodySetInactive(PhysicalWorld this, Body body);
-Body PhysicalWorld_getBody(PhysicalWorld this, SpatialObject owner);
-fix10_6 PhysicalWorld_getElapsedTime(PhysicalWorld this);
-fix10_6 PhysicalWorld_getFrictionCoefficient(PhysicalWorld this);
-const Vector3D* PhysicalWorld_getGravity(PhysicalWorld this);
-bool PhysicalWorld_isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
-void PhysicalWorld_print(PhysicalWorld this, int x, int y);
-void PhysicalWorld_purgeBodyLists(PhysicalWorld this);
-Body PhysicalWorld_createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
-void PhysicalWorld_destroyBody(PhysicalWorld this, Body body);
-void PhysicalWorld_reset(PhysicalWorld this);
-void PhysicalWorld_setGravity(PhysicalWorld this, Acceleration gravity);
-void PhysicalWorld_setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient);
-void PhysicalWorld_start(PhysicalWorld this);
-void PhysicalWorld_update(PhysicalWorld this, Clock clock);
+final class PhysicalWorld : Object
+{
+	void constructor();
+	void destructor();
+	void setTimeScale(fix10_6 timeScale);
+	u32 getTimeScale();
+	void bodyAwake(Body body);
+	void bodySleep(Body body);
+	void bodySetInactive(Body body);
+	Body getBody(SpatialObject owner);
+	fix10_6 getElapsedTime();
+	fix10_6 getFrictionCoefficient();
+	const Vector3D* getGravity();
+	bool isSpatialObjectRegistered(SpatialObject owner);
+	void print(int x, int y);
+	void purgeBodyLists();
+	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
+	void destroyBody(Body body);
+	void reset();
+	void setGravity(Acceleration gravity);
+	void setFrictionCoefficient(fix10_6 frictionCoefficient);
+	void start();
+	void update(Clock clock);
+}
 
 
 #endif

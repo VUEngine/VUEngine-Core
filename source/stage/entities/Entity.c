@@ -1460,7 +1460,7 @@ static void Entity_updateSprites(Entity this, u32 updatePosition, u32 updateScal
  * @param environmentTransform
  * @param recursive
  */
-void Entity_initialTransform(Entity this, Transformation* environmentTransform, u32 recursive)
+void Entity_initialTransform(Entity this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 

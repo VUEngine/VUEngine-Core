@@ -28,50 +28,24 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <Telegram.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+abstract class State : Object
+{
+	void constructor();
+	virtual void enter(void* owner);
+	virtual void execute(void* owner);
+	virtual void exit(void* owner);
+	virtual void suspend(void* owner);
+	virtual void resume(void* owner);
+	virtual bool processMessage(void* owner, Telegram telegram) = 0;
+}
 
-// declare the virtual methods
-#define State_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, enter, void* owner);												\
-		__VIRTUAL_DEC(ClassName, void, execute, void* owner);											\
-		__VIRTUAL_DEC(ClassName, void, exit, void* owner);												\
-		__VIRTUAL_DEC(ClassName, void, suspend, void* owner);											\
-		__VIRTUAL_DEC(ClassName, void, resume, void* owner);											\
-		__VIRTUAL_DEC(ClassName, bool, processMessage, void* owner, void* telegram);					\
-
-// declare the virtual methods which are redefined
-#define State_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, State, enter);															\
-		__VIRTUAL_SET(ClassName, State, execute);														\
-		__VIRTUAL_SET(ClassName, State, exit);															\
-		__VIRTUAL_SET(ClassName, State, suspend);														\
-		__VIRTUAL_SET(ClassName, State, resume);														\
-
-// a generic state
-#define State_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-
-__CLASS(State);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-void State_constructor(State this);
-void State_destructor(State this);
-void State_enter(State this, void* owner);
-void State_execute(State this, void* owner);
-void State_exit(State this, void* owner);
-void State_suspend(State this, void* owner);
-void State_resume(State this, void* owner);
 
 
 #endif

@@ -35,43 +35,28 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Sphere_METHODS(ClassName)																		\
-		Wireframe_METHODS(ClassName)																	\
+class Sphere : Wireframe
+{
+	/**
+	* @var Vector3D 	center
+	* @brief			Vertices
+	* @memberof		Sphere
+	*/
+	Vector3D center;
+	/**
+	* @var fix10_6 	radius
+	* @brief			Radious
+	* @memberof		Sphere
+	*/
+	fix10_6 radius;
 
-#define Sphere_SET_VTABLE(ClassName)																	\
-		Wireframe_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Sphere, draw);															\
-
-#define Sphere_ATTRIBUTES																				\
-		Wireframe_ATTRIBUTES																			\
-		/**
-		 * @var Vector3D 	center
-		 * @brief			Vertices
-		 * @memberof		Sphere
-		 */																								\
-		Vector3D center;																				\
-		/**
-		 * @var fix10_6 	radius
-		 * @brief			Radious
-		 * @memberof		Sphere
-		 */																								\
-		fix10_6 radius;																					\
-
-__CLASS(Sphere);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Sphere, Vector3D center, fix10_6 radius);
-
-void Sphere_destructor(Sphere this);
-void Sphere_draw(Sphere this, bool calculateParallax);
-Vector3D Sphere_getCenter(Sphere this);
-fix10_6 Sphere_getRadius(Sphere this);
-void Sphere_setCenter(Sphere this, Vector3D center);
-void Sphere_setRadius(Sphere this, fix10_6 radius);
+	void constructor(Vector3D center, fix10_6 radius);
+	Vector3D getCenter();
+	fix10_6 getRadius();
+	void setCenter(Vector3D center);
+	void setRadius(fix10_6 radius);
+	override void draw(bool calculateParallax);
+}
 
 
 #endif

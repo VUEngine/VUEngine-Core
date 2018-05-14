@@ -48,8 +48,6 @@ __CLASS_DEFINITION(ObjectTexture, Texture);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -69,7 +67,7 @@ __CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
  * @param objectTextureDefinition		Texture definition
  * @param id							Identifier
  */
-static void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
+void ObjectTexture_constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
 	ASSERT(this, "ObjectTexture::constructor: null this");
 

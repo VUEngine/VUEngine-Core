@@ -35,28 +35,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define DirectDraw_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define DirectDraw_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(DirectDraw);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-DirectDraw DirectDraw_getInstance();
-
-void DirectDraw_destructor(DirectDraw this);
-void DirectDraw_drawBlackPixel(DirectDraw this, u32 buffer, u16 x, u16 y);
-void DirectDraw_drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toPoint, int color);
-void DirectDraw_drawPixel(DirectDraw this, u32 buffer, u16 x, u16 y, int color);
-void DirectDraw_drawPoint(DirectDraw this, PixelVector point, int color);
+singleton class DirectDraw : Object
+{
+	static DirectDraw getInstance();
+	void drawBlackPixel(u32 buffer, u16 x, u16 y);
+	void drawLine(PixelVector fromPoint, PixelVector toPoint, int color);
+	void drawPixel(u32 buffer, u16 x, u16 y, int color);
+	void drawPoint(PixelVector point, int color);
+}
 
 
 #endif

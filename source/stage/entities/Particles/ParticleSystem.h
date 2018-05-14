@@ -36,81 +36,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleSystem_METHODS(ClassName)																\
-		Entity_METHODS(ClassName)																		\
-
-#define ParticleSystem_SET_VTABLE(ClassName)															\
-		Entity_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, ParticleSystem, update);												\
-		__VIRTUAL_SET(ClassName, ParticleSystem, transform);											\
-		__VIRTUAL_SET(ClassName, ParticleSystem, synchronizeGraphics);									\
-		__VIRTUAL_SET(ClassName, ParticleSystem, resume);												\
-		__VIRTUAL_SET(ClassName, ParticleSystem, suspend);												\
-		__VIRTUAL_SET(ClassName, ParticleSystem, hide);													\
-
-#define ParticleSystem_ATTRIBUTES																		\
-		Entity_ATTRIBUTES																				\
-		/*
-		 * @var ParticleSystemDefinition*	particleSystemDefinition
-		 * @brief							system's definition
-		 * @memberof						ParticleSystem
-		 */																								\
-		const ParticleSystemDefinition* particleSystemDefinition;										\
-		/*
-		 * @var VirtualList				 	particles
-		 * @brief							particle list
-		 * @memberof						ParticleSystem
-		 */																								\
-		VirtualList particles;																			\
-		/*
-		 * @var VirtualList				 	recyclableParticles
-		 * @brief							particle list
-		 * @memberof						ParticleSystem
-		 */																								\
-		VirtualList recyclableParticles;																\
-		/*
-		 * @var VirtualList				 	expiredParticles
-		 * @brief							particle list
-		 * @memberof						ParticleSystem
-		 */																								\
-		VirtualList expiredParticles;																	\
-		/*
-		 * @var int						 	nextSpawnTime
-		 * @brief							next spawn time
-		 * @memberof						ParticleSystem
-		 */																								\
-		int nextSpawnTime;																				\
-		/*
-		 * @var int						 	particleCount
-		 * @brief							particle count
-		 * @memberof						ParticleSystem
-		 */																								\
-		int particleCount;																				\
-		/*
-		 * @var s16						 	numberOfSpriteDefinitions
-		 * @brief							number of sprite definitions
-		 * @memberof						ParticleSystem
-		 */																								\
-		s16 numberOfSpriteDefinitions;																	\
-		/*
-		 * @var bool						paused
-		 * @brief							pause flag
-		 * @memberof						ParticleSystem
-		 */																								\
-		bool paused;																					\
-
-__CLASS(ParticleSystem);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Defines a ParticleSystem
- *
- * @memberof	ParticleSystem
- */
 typedef struct ParticleSystemDefinition
 {
 	/// it has an Entity at the beginning
@@ -162,26 +87,70 @@ typedef struct ParticleSystemDefinition
 typedef const ParticleSystemDefinition ParticleSystemROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class ParticleSystem : Entity
+{
+	/*
+	* @var ParticleSystemDefinition*	particleSystemDefinition
+	* @brief							system's definition
+	* @memberof						ParticleSystem
+	*/
+	const ParticleSystemDefinition* particleSystemDefinition;
+	/*
+	* @var VirtualList				 	particles
+	* @brief							particle list
+	* @memberof						ParticleSystem
+	*/
+	VirtualList particles;
+	/*
+	* @var VirtualList				 	recyclableParticles
+	* @brief							particle list
+	* @memberof						ParticleSystem
+	*/
+	VirtualList recyclableParticles;
+	/*
+	* @var VirtualList				 	expiredParticles
+	* @brief							particle list
+	* @memberof						ParticleSystem
+	*/
+	VirtualList expiredParticles;
+	/*
+	* @var int						 	nextSpawnTime
+	* @brief							next spawn time
+	* @memberof						ParticleSystem
+	*/
+	int nextSpawnTime;
+	/*
+	* @var int						 	particleCount
+	* @brief							particle count
+	* @memberof						ParticleSystem
+	*/
+	int particleCount;
+	/*
+	* @var s16						 	numberOfSpriteDefinitions
+	* @brief							number of sprite definitions
+	* @memberof						ParticleSystem
+	*/
+	s16 numberOfSpriteDefinitions;
+	/*
+	* @var bool						paused
+	* @brief							pause flag
+	* @memberof						ParticleSystem
+	*/
+	bool paused;
 
-__CLASS_NEW_DECLARE(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name);
-
-void ParticleSystem_constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
-void ParticleSystem_destructor(ParticleSystem this);
-
-bool ParticleSystem_handleMessage(ParticleSystem this, Telegram telegram);
-void ParticleSystem_hide(ParticleSystem this);
-void ParticleSystem_pause(ParticleSystem this);
-void ParticleSystem_resume(ParticleSystem this);
-void ParticleSystem_show(ParticleSystem this);
-void ParticleSystem_spawnAllParticles(ParticleSystem this);
-void ParticleSystem_start(ParticleSystem this);
-void ParticleSystem_suspend(ParticleSystem this);
-void ParticleSystem_transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void ParticleSystem_update(ParticleSystem this, u32 elapsedTime);
-void ParticleSystem_synchronizeGraphics(ParticleSystem this);
+	void constructor(ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
+	bool handleMessage(Telegram telegram);
+	void pause();
+	void show();
+	void spawnAllParticles();
+	void start();
+	override void update(u32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void synchronizeGraphics();
+	override void resume();
+	override void suspend();
+	override void hide();
+}
 
 
 #endif

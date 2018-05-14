@@ -282,7 +282,7 @@ bool __attribute__ ((noinline)) VIPManager_isRenderingPending(VIPManager this)
  * @memberof		VIPManager
  * @public
  */
-void VIPManager_interruptHandler(void)
+void VIPManager_interruptHandler()
 {
 	// save the interrupt event
 	u16 interrupt = _vipRegisters[__INTPND];

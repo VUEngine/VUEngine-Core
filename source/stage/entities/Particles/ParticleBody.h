@@ -34,29 +34,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleBody_METHODS(ClassName)																	\
-		Body_METHODS(ClassName)																			\
-
-#define ParticleBody_SET_VTABLE(ClassName)																\
-		Body_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, ParticleBody, update);													\
-
-#define ParticleBody_ATTRIBUTES																			\
-		Body_ATTRIBUTES																					\
-
-__CLASS(ParticleBody);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
-
-void ParticleBody_constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
-void ParticleBody_destructor(ParticleBody this);
-
-void ParticleBody_update(ParticleBody this);
+class ParticleBody : Body
+{
+	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
+	override void update();
+}
 
 
 #endif

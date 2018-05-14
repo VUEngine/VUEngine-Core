@@ -34,27 +34,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define AnimationInspectorState_METHODS(ClassName)															\
-	GameState_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define AnimationInspectorState_SET_VTABLE(ClassName)														\
-	GameState_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, AnimationInspectorState, enter);												\
-	__VIRTUAL_SET(ClassName, AnimationInspectorState, execute);											\
-	__VIRTUAL_SET(ClassName, AnimationInspectorState, exit);												\
-	__VIRTUAL_SET(ClassName, AnimationInspectorState, processUserInput);									\
-
-__CLASS(AnimationInspectorState);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-AnimationInspectorState AnimationInspectorState_getInstance(void);
-void AnimationInspectorState_processUserInput(AnimationInspectorState this, UserInput userInput);
+singleton class AnimationInspectorState : GameState
+{
+	static AnimationInspectorState getInstance();
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void processUserInput(UserInput userInput);
+}
 
 
 #endif

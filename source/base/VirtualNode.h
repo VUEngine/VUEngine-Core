@@ -34,46 +34,33 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define VirtualNode_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
+class VirtualNode : Object
+{
+	/**
+	* @var VirtualNode next
+	* @brief			pointer to next node
+	* @memberof		VirtualNode
+	*/
+	VirtualNode next;
+	/**
+	* @var VirtualNode previous
+	* @brief			pointer to previous node
+	* @memberof		VirtualNode
+	*/
+	VirtualNode previous;
+	/**
+	* @var void*		data
+	* @brief			pointer to the data
+	* @memberof		VirtualNode
+	*/
+	void* data;
 
-#define VirtualNode_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define VirtualNode_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualNode next
-		 * @brief			pointer to next node
-		 * @memberof		VirtualNode
-		 */																								\
-		VirtualNode next;																				\
-		/**
-		 * @var VirtualNode previous
-		 * @brief			pointer to previous node
-		 * @memberof		VirtualNode
-		 */																								\
-		VirtualNode previous;																			\
-		/**
-		 * @var void*		data
-		 * @brief			pointer to the data
-		 * @memberof		VirtualNode
-		 */																								\
-		void* data;																						\
-
-__CLASS(VirtualNode);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(VirtualNode, const void* const data);
-
-void* VirtualNode_getData(VirtualNode this);
-VirtualNode VirtualNode_getNext(VirtualNode this);
-VirtualNode VirtualNode_getPrevious(VirtualNode this);
-void VirtualNode_swapData(VirtualNode this, VirtualNode node);
+	void constructor(const void* const data);
+	void* getData();
+	VirtualNode getNext();
+	VirtualNode getPrevious();
+	void swapData(VirtualNode node);
+}
 
 
 #endif

@@ -46,8 +46,6 @@ __CLASS_DEFINITION(Clock, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Clock_constructor(Clock this);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -65,7 +63,7 @@ __CLASS_NEW_END(Clock);
  *
  * @param this	Function scope
  */
-static void Clock_constructor(Clock this)
+void Clock_constructor(Clock this)
 {
 	ASSERT(this, "Clock::constructor: null this");
 

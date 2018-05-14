@@ -36,36 +36,18 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define BgmapAnimatedSprite_METHODS(ClassName)															\
-	    BgmapSprite_METHODS(ClassName)																	\
+class BgmapAnimatedSprite : BgmapSprite
+{
+	/**
+	* @var TextureSource	originalTextureSource
+	* @brief				bgmap's source coordinates
+	* @memberof 			BgmapAnimatedSprite
+	*/
+	TextureSource originalTextureSource;
 
-// declare the virtual methods which are redefined
-#define BgmapAnimatedSprite_SET_VTABLE(ClassName)														\
-        BgmapSprite_SET_VTABLE(ClassName)																\
-        __VIRTUAL_SET(ClassName, BgmapAnimatedSprite, writeAnimation);									\
-
-#define BgmapAnimatedSprite_ATTRIBUTES																	\
-        BgmapSprite_ATTRIBUTES																			\
-        /**
-         * @var TextureSource	originalTextureSource
-         * @brief				bgmap's source coordinates
-         * @memberof 			BgmapAnimatedSprite
-         */																								\
-        TextureSource originalTextureSource;															\
-
-__CLASS(BgmapAnimatedSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(BgmapAnimatedSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-
-void BgmapAnimatedSprite_constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-void BgmapAnimatedSprite_destructor(BgmapAnimatedSprite this);
-void BgmapAnimatedSprite_writeAnimation(BgmapAnimatedSprite this);
+	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
+	override void writeAnimation();
+}
 
 
 #endif

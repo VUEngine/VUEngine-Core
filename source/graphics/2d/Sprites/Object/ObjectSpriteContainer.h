@@ -41,113 +41,90 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define ObjectSpriteContainer_METHODS(ClassName)														\
-		Sprite_METHODS(ClassName)																		\
+class ObjectSpriteContainer : Sprite
+{
+	/**
+	* @var VirtualList	objectSprites
+	* @brief			object sprites
+	* @memberof		ObjectSpriteContainer
+	*/
+	VirtualList objectSprites;
+	/**
+	* @var VirtualNode	node
+	* @brief			for z sorting
+	* @memberof		ObjectSpriteContainer
+	*/
+	VirtualNode node;
+	/**
+	* @var VirtualNode	previousNode
+	* @brief			for z sorting
+	* @memberof		ObjectSpriteContainer
+	*/
+	VirtualNode previousNode;
+	/**
+	* @var VirtualNode	objectSpriteNodeToDefragment
+	* @brief			next object sprite node to defragment
+	* @memberof		ObjectSpriteContainer
+	*/
+	VirtualNode objectSpriteNodeToDefragment;
+	/**
+	* @var int			freedObjectIndex
+	* @brief			used for defragmentation
+	* @memberof		ObjectSpriteContainer
+	*/
+	int freedObjectIndex;
+	/**
+	* @var int			firstObjectIndex
+	* @brief			first object index
+	* @memberof		ObjectSpriteContainer
+	*/
+	int firstObjectIndex;
+	/**
+	* @var int			totalObjects
+	* @brief			total objects
+	* @memberof		ObjectSpriteContainer
+	*/
+	int totalObjects;
+	/**
+	* @var int			availableObjects
+	* @brief			OBJs available
+	* @memberof		ObjectSpriteContainer
+	*/
+	int availableObjects;
+	/**
+	* @var int			spt
+	* @brief			spt index
+	* @memberof		ObjectSpriteContainer
+	*/
+	int spt;
+	/**
+	* @var bool		removingObjectSprite
+	* @brief			flag to halt defragmentation while sprite removal is taking place
+	* @memberof		ObjectSpriteContainer
+	*/
+	bool removingObjectSprite;
 
-// declare the virtual methods which are redefined
-#define ObjectSpriteContainer_SET_VTABLE(ClassName)														\
-		Sprite_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, render);										\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setPosition);									\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, show);											\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, hide);											\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, addDisplacement);								\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, setMode);										\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, writeTextures);									\
-		__VIRTUAL_SET(ClassName, ObjectSpriteContainer, areTexturesWritten);							\
-
-#define ObjectSpriteContainer_ATTRIBUTES																\
-		Sprite_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList	objectSprites
-		 * @brief			object sprites
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		VirtualList objectSprites;																		\
-		/**
-		 * @var VirtualNode	node
-		 * @brief			for z sorting
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		VirtualNode node;																				\
-		/**
-		 * @var VirtualNode	previousNode
-		 * @brief			for z sorting
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		VirtualNode previousNode;																		\
-		/**
-		 * @var VirtualNode	objectSpriteNodeToDefragment
-		 * @brief			next object sprite node to defragment
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		VirtualNode objectSpriteNodeToDefragment;														\
-		/**
-		 * @var int			freedObjectIndex
-		 * @brief			used for defragmentation
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		int freedObjectIndex;																			\
-		/**
-		 * @var int			firstObjectIndex
-		 * @brief			first object index
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		int firstObjectIndex;																			\
-		/**
-		 * @var int			totalObjects
-		 * @brief			total objects
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		int totalObjects;																				\
-		/**
-		 * @var int			availableObjects
-		 * @brief			OBJs available
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		int availableObjects;																			\
-		/**
-		 * @var int			spt
-		 * @brief			spt index
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		int spt;																						\
-		/**
-		 * @var bool		removingObjectSprite
-		 * @brief			flag to halt defragmentation while sprite removal is taking place
-		 * @memberof		ObjectSpriteContainer
-		 */																								\
-		bool removingObjectSprite;																		\
-
-__CLASS(ObjectSpriteContainer);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-void ObjectSpriteContainer_addDisplacement(ObjectSpriteContainer this, const PixelVector* displacement);
-s32 ObjectSpriteContainer_addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
-void ObjectSpriteContainer_calculateParallax(ObjectSpriteContainer this, fix10_6 z);
-void ObjectSpriteContainer_constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
-void ObjectSpriteContainer_destructor(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getAvailableObjects(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getFirstObjectIndex(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getLastObjectIndex(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getNextFreeObjectIndex(ObjectSpriteContainer this);
-int ObjectSpriteContainer_getTotalUsedObjects(ObjectSpriteContainer this);
-bool ObjectSpriteContainer_hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);
-void ObjectSpriteContainer_hide(ObjectSpriteContainer this);
-void ObjectSpriteContainer_position(ObjectSpriteContainer this, const Vector3D* position);
-void ObjectSpriteContainer_print(ObjectSpriteContainer this, int x, int y);
-void ObjectSpriteContainer_removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
-void ObjectSpriteContainer_render(ObjectSpriteContainer this, bool evenFrame);
-void ObjectSpriteContainer_setPosition(ObjectSpriteContainer this, const PixelVector* position);
-void ObjectSpriteContainer_show(ObjectSpriteContainer this);
-void ObjectSpriteContainer_setMode(ObjectSpriteContainer this, u16 display, u16 mode);
-bool ObjectSpriteContainer_writeTextures(ObjectSpriteContainer this);
-bool ObjectSpriteContainer_areTexturesWritten(ObjectSpriteContainer this);
+	void constructor(int spt, int totalObjects, int firstObjectIndex);
+	s32 addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
+	void calculateParallax(fix10_6 z);
+	int getAvailableObjects();
+	int getFirstObjectIndex();
+	int getLastObjectIndex();
+	int getNextFreeObjectIndex();
+	int getTotalUsedObjects();
+	bool hasRoomFor(s32 numberOfObjects);
+	void position(const Vector3D* position);
+	void print(int x, int y);
+	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
+	override void render(bool evenFrame);
+	override void setPosition(const PixelVector* position);
+	override void show();
+	override void hide();
+	override void addDisplacement(const PixelVector* displacement);
+	override void setMode(u16 display, u16 mode);
+	override bool writeTextures();
+	override bool areTexturesWritten();
+}
 
 
 #endif

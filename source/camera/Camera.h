@@ -47,91 +47,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Camera_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define Camera_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define Camera_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var Optical					optical
-		 * @brief						Optical values used in projection values
-		 * @memberof					Camera
-		 */																								\
-		Optical optical;																				\
-		/**
-		 * @var Vector3D				position
-		 * @brief						Camera position
-		 * @memberof					Camera
-		 */																								\
-		Vector3D position;																				\
-		/**
-		 * @var Vector3D				previousPosition
-		 * @brief						Backup of Camera position
-		 * @memberof					Camera
-		 */																								\
-		Vector3D previousPosition;																		\
-		/**
-		 * @var Vector3D				positionBackup
-		 * @brief						Backup of Camera position
-		 * @memberof					Camera
-		 */																								\
-		Vector3D positionBackup;																		\
-		/**
-		 * @var CameraMovementManager	cameraMovementManager
-		 * @brief						Camera position displacement manager
-		 * @memberof					Camera
-		 */																								\
-		CameraMovementManager cameraMovementManager;													\
-		/**
-		 * @var CameraEffectManager		cameraEffectManager
-		 * @brief						Camera effect manager
-		 * @memberof					Camera
-		 */																								\
-		CameraEffectManager cameraEffectManager;														\
-		/**
-		 * @var Vector3D				focusEntityPositionDisplacement
-		 * @brief						Camera position displacement
-		 * @memberof					Camera
-		 */																								\
-		Vector3D focusEntityPositionDisplacement;														\
-		/**
-		 * @var Entity					focusEntity
-		 * @brief						Actor to center the camera around
-		 * @memberof					Camera
-		 */																								\
-		Entity focusEntity;																				\
-		/**
-		 * @var const					focusEntityPosition
-		 * @brief						Position of actor to center the camera around
-		 * @memberof					Camera
-		 */																								\
-		const Vector3D* focusEntityPosition;															\
-		/**
-		 * @var Vector3D				lastDisplacement
-		 * @brief						World's camera's last displacement
-		 * @memberof					Camera
-		 */																								\
-		Vector3D lastDisplacement;																		\
-		/**
-		 * @var Size					stageSize
-		 * @brief						Stage's size in pixels
-		 * @memberof					Camera
-		 */																								\
-		Size stageSize;																					\
-		/**
-		 * @var CameraFrustum			cameraFrustum
-		 * @brief						Camera frustum
-		 * @memberof					Camera
-		 */																								\
-		CameraFrustum cameraFrustum;																	\
-
-__CLASS(Camera);
-
 /**
  * Camera frustum
  *
@@ -155,47 +70,119 @@ typedef struct CameraFrustum
 } CameraFrustum;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
 extern const Vector3D* _cameraPosition;
 extern const Vector3D* _cameraPreviousPosition;
 extern const Vector3D* _cameraDisplacement;
 extern const CameraFrustum* _cameraFrustum;
 extern const Optical* _optical;
 
-Camera Camera_getInstance();
 
-void Camera_capPosition(Camera this);
-void Camera_destructor(Camera this);
-void Camera_doneUITransform(Camera this);
-void Camera_focus(Camera this, u32 checkIfFocusEntityIsMoving);
-void Camera_forceDisplacement(Camera this, int flag);
-CameraFrustum Camera_getCameraFrustum(Camera this);
-Entity Camera_getFocusEntity(Camera this);
-Vector3D Camera_getLastDisplacement(Camera this);
-Optical Camera_getOptical(Camera this);
-Vector3D Camera_getPosition(Camera this);
-Size Camera_getStageSize(Camera this);
-void Camera_move(Camera this, Vector3D translation, int cap);
-void Camera_onFocusEntityDeleted(Camera this, Entity actor);
-void Camera_prepareForUITransform(Camera this);
-void Camera_reset(Camera this);
-void Camera_resetCameraFrustum(Camera this);
-void Camera_setCameraEffectManager(Camera this, CameraEffectManager cameraEffectManager);
-void Camera_setCameraFrustum(Camera this, CameraFrustum cameraFrustum);
-void Camera_setCameraMovementManager(Camera this, CameraMovementManager cameraMovementManager);
-void Camera_setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntityPositionDisplacement);
-void Camera_setFocusGameEntity(Camera this, Entity focusEntity);
-void Camera_setOptical(Camera this, Optical optical);
-void Camera_setPosition(Camera this, Vector3D position);
-void Camera_setStageSize(Camera this, Size size);
-void Camera_startEffect(Camera this, int effect, ...);
-void Camera_stopEffect(Camera this, int effect);
-void Camera_unsetFocusEntity(Camera this);
-Vector3D Camera_getFocusEntityPosition(Camera this);
-Vector3D Camera_getFocusEntityPositionDisplacement(Camera this);
-void Camera_print(Camera this, int x, int y);
+singleton class Camera : Object
+{
+	/**
+	* @var Optical					optical
+	* @brief						Optical values used in projection values
+	* @memberof					Camera
+	*/
+	Optical optical;
+	/**
+	* @var Vector3D				position
+	* @brief						Camera position
+	* @memberof					Camera
+	*/
+	Vector3D position;
+	/**
+	* @var Vector3D				previousPosition
+	* @brief						Backup of Camera position
+	* @memberof					Camera
+	*/
+	Vector3D previousPosition;
+	/**
+	* @var Vector3D				positionBackup
+	* @brief						Backup of Camera position
+	* @memberof					Camera
+	*/
+	Vector3D positionBackup;
+	/**
+	* @var CameraMovementManager	cameraMovementManager
+	* @brief						Camera position displacement manager
+	* @memberof					Camera
+	*/
+	CameraMovementManager cameraMovementManager;
+	/**
+	* @var CameraEffectManager		cameraEffectManager
+	* @brief						Camera effect manager
+	* @memberof					Camera
+	*/
+	CameraEffectManager cameraEffectManager;
+	/**
+	* @var Vector3D				focusEntityPositionDisplacement
+	* @brief						Camera position displacement
+	* @memberof					Camera
+	*/
+	Vector3D focusEntityPositionDisplacement;
+	/**
+	* @var Entity					focusEntity
+	* @brief						Actor to center the camera around
+	* @memberof					Camera
+	*/
+	Entity focusEntity;
+	/**
+	* @var const					focusEntityPosition
+	* @brief						Position of actor to center the camera around
+	* @memberof					Camera
+	*/
+	const Vector3D* focusEntityPosition;
+	/**
+	* @var Vector3D				lastDisplacement
+	* @brief						World's camera's last displacement
+	* @memberof					Camera
+	*/
+	Vector3D lastDisplacement;
+	/**
+	* @var Size					stageSize
+	* @brief						Stage's size in pixels
+	* @memberof					Camera
+	*/
+	Size stageSize;
+	/**
+	* @var CameraFrustum			cameraFrustum
+	* @brief						Camera frustum
+	* @memberof					Camera
+	*/
+	CameraFrustum cameraFrustum;
+
+	static Camera getInstance();
+	void capPosition();
+	void doneUITransform();
+	void focus(u32 checkIfFocusEntityIsMoving);
+	void forceDisplacement(int flag);
+	CameraFrustum getCameraFrustum();
+	Entity getFocusEntity();
+	Vector3D getLastDisplacement();
+	Optical getOptical();
+	Vector3D getPosition();
+	Size getStageSize();
+	void move(Vector3D translation, int cap);
+	void onFocusEntityDeleted(Entity actor);
+	void prepareForUITransform();
+	void reset();
+	void resetCameraFrustum();
+	void setCameraEffectManager(CameraEffectManager cameraEffectManager);
+	void setCameraFrustum(CameraFrustum cameraFrustum);
+	void setCameraMovementManager(CameraMovementManager cameraMovementManager);
+	void setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement);
+	void setFocusGameEntity(Entity focusEntity);
+	void setOptical(Optical optical);
+	void setPosition(Vector3D position);
+	void setStageSize(Size size);
+	void startEffect(int effect, ...);
+	void stopEffect(int effect);
+	void unsetFocusEntity();
+	Vector3D getFocusEntityPosition();
+	Vector3D getFocusEntityPositionDisplacement();
+	void print(int x, int y);
+}
+
 
 #endif

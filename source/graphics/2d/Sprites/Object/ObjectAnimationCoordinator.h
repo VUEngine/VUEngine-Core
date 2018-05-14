@@ -34,30 +34,12 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ObjectAnimationCoordinator_METHODS(ClassName)													\
-		AnimationCoordinator_METHODS(ClassName) 														\
-
-#define ObjectAnimationCoordinator_SET_VTABLE(ClassName)												\
-		AnimationCoordinator_SET_VTABLE(ClassName)														\
-		__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, addAnimationController);					\
-		__VIRTUAL_SET(ClassName, ObjectAnimationCoordinator, removeAnimationController);				\
-
-#define ObjectAnimationCoordinator_ATTRIBUTES															\
-		AnimationCoordinator_ATTRIBUTES																	\
-
-__CLASS(ObjectAnimationCoordinator);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(ObjectAnimationCoordinator, const CharSetDefinition* charSetDefinition);
-
-void ObjectAnimationCoordinator_constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition);
-void ObjectAnimationCoordinator_destructor(ObjectAnimationCoordinator this);
-void ObjectAnimationCoordinator_addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController);
-void ObjectAnimationCoordinator_removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController);
+class ObjectAnimationCoordinator : AnimationCoordinator
+{
+	void constructor(const CharSetDefinition* charSetDefinition);
+	override void addAnimationController(AnimationController animationController);
+	override void removeAnimationController(AnimationController animationController);
+}
 
 
 #endif

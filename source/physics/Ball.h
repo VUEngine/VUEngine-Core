@@ -32,60 +32,33 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Ball_METHODS(ClassName)																			\
-		Shape_METHODS(ClassName)																		\
+class Ball : Shape
+{
+	/**
+	* @var fix10_6*	radius
+	* @brief			the radius of the ball
+	* @memberof 		Box
+	*/
+	fix10_6 radius;
+	/**
+	* @var Vector3D		center
+	* @brief			the center of the ball
+	* @memberof 		Box
+	*/
+	Vector3D center;
 
-#define Ball_SET_VTABLE(ClassName)																		\
-		Shape_SET_VTABLE(ClassName)																		\
-		__VIRTUAL_SET(ClassName, Ball, position);														\
-		__VIRTUAL_SET(ClassName, Ball, testForCollision);												\
-		__VIRTUAL_SET(ClassName, Ball, getPosition);													\
-		__VIRTUAL_SET(ClassName, Ball, getSurroundingRightBox);											\
-		__VIRTUAL_SET(ClassName, Ball, configureWireframe);												\
-		__VIRTUAL_SET(ClassName, Ball, print);															\
+	void constructor(SpatialObject owner);
+	static void project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
+	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
+	override Vector3D getPosition();
+	override RightBox getSurroundingRightBox();
+	override void configureWireframe();
+	override void print(int x, int y);
+}
 
-#define Ball_ATTRIBUTES																					\
-		Shape_ATTRIBUTES																				\
-		/**
-		 * @var fix10_6*	radius
-		 * @brief			the radius of the ball
-		 * @memberof 		Box
-		 */																								\
-		fix10_6 radius;																					\
-		/**
-		 * @var Vector3D		center
-		 * @brief			the center of the ball
-		 * @memberof 		Box
-		 */																								\
-		Vector3D center;																				\
-
-__CLASS(Ball);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Ball, SpatialObject owner);
-
-void Ball_constructor(Ball this, SpatialObject owner);
-void Ball_destructor(Ball this);
-
-void Ball_position(Ball this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-void Ball_project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
-CollisionInformation Ball_testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
-Vector3D Ball_getPosition(Ball this);
-RightBox Ball_getSurroundingRightBox(Ball this);
-void Ball_configureWireframe(Ball this);
-void Ball_print(Ball this, int x, int y);
 
 #endif

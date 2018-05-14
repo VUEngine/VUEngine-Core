@@ -36,38 +36,22 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define StateMachine_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define StateMachine_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, StateMachine, handleMessage);											\
-
-__CLASS(StateMachine);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(StateMachine, void* owner);
-
-void StateMachine_constructor(StateMachine this, void* owner);
-void StateMachine_destructor(StateMachine this);
-void StateMachine_update(StateMachine this);
-void StateMachine_swapState(StateMachine this, State newState);
-u32 StateMachine_pushState(StateMachine this, State newState);
-u32 StateMachine_popState(StateMachine this);
-void StateMachine_returnToPreviousState(StateMachine this);
-void StateMachine_changeToGlobal(StateMachine this, State globalState);
-bool StateMachine_handleMessage(StateMachine this, Telegram telegram);
-bool StateMachine_isInState(StateMachine this, State state);
-void StateMachine_setOwner(StateMachine this, void* owner);
-State StateMachine_getCurrentState(StateMachine this);
-State StateMachine_getPreviousState(StateMachine this);
-int StateMachine_getStackSize(StateMachine this);
+final class StateMachine : Object
+{
+	void constructor(void* owner);
+	void update();
+	void swapState(State newState);
+	u32 pushState(State newState);
+	u32 popState();
+	void returnToPreviousState();
+	void changeToGlobal(State globalState);
+	bool isInState(State state);
+	void setOwner(void* owner);
+	State getCurrentState();
+	State getPreviousState();
+	int getStackSize();
+	override bool handleMessage(Telegram telegram);
+}
 
 
 #endif

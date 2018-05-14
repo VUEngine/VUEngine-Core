@@ -34,30 +34,16 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define MemoryPool_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define MemoryPool_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(MemoryPool);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-MemoryPool MemoryPool_getInstance();
-
-void MemoryPool_destructor(MemoryPool this);
-void MemoryPool_cleanUp(MemoryPool this);
-BYTE* MemoryPool_allocate(MemoryPool this, int numBytes);
-void MemoryPool_free(MemoryPool this, BYTE* object);
-void MemoryPool_printDirectory(MemoryPool this, int x, int y, int pool);
-void MemoryPool_printDetailedUsage(MemoryPool this, int x, int y);
-void MemoryPool_printResumedUsage(MemoryPool this, int x, int y);
+singleton class MemoryPool : Object
+{
+	static MemoryPool getInstance();
+	void cleanUp();
+	BYTE* allocate(int numBytes);
+	void free(BYTE* object);
+	void printDirectory(int x, int y, int pool);
+	void printDetailedUsage(int x, int y);
+	void printResumedUsage(int x, int y);
+}
 
 
 #endif

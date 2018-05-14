@@ -34,30 +34,16 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define SRAMManager_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define SRAMManager_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(SRAMManager);
-
 // forward declare game's custom save data struct
 struct SaveData;
 
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-SRAMManager SRAMManager_getInstance();
-
-void SRAMManager_destructor(SRAMManager this);
-void SRAMManager_clear(SRAMManager this, int startOffset, int endOffset);
-void SRAMManager_save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize);
-void SRAMManager_read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize);
+singleton class SRAMManager : Object
+{
+	static SRAMManager getInstance();
+	void clear(int startOffset, int endOffset);
+	void save(const BYTE* const source, int memberOffset, int dataSize);
+	void read(BYTE* destination, int memberOffset, int dataSize);
+}
 
 
 #endif

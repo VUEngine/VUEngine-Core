@@ -38,58 +38,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Actor_METHODS(ClassName)																		\
-		AnimatedEntity_METHODS(ClassName)																\
-		__VIRTUAL_DEC(ClassName, void, takeHitFrom, Actor other);										\
-		__VIRTUAL_DEC(ClassName, void, syncPositionWithBody);											\
-		__VIRTUAL_DEC(ClassName, void, syncRotationWithBody);											\
-		__VIRTUAL_DEC(ClassName, fix10_6, getBouncinessOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
-		__VIRTUAL_DEC(ClassName, fix10_6, getFrictionOnCollision, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);					\
-		__VIRTUAL_DEC(ClassName, fix10_6, getSurroundingFrictionCoefficient);							\
-		__VIRTUAL_DEC(ClassName, bool, mustBounce);														\
-
-#define Actor_SET_VTABLE(ClassName)																		\
-		AnimatedEntity_SET_VTABLE(ClassName)															\
-		__VIRTUAL_SET(ClassName, Actor, iAmDeletingMyself);												\
-		__VIRTUAL_SET(ClassName, Actor, update);														\
-		__VIRTUAL_SET(ClassName, Actor, transform);														\
-		__VIRTUAL_SET(ClassName, Actor, initialTransform);												\
-		__VIRTUAL_SET(ClassName, Actor, resume);														\
-		__VIRTUAL_SET(ClassName, Actor, handleMessage);													\
-		__VIRTUAL_SET(ClassName, Actor, isMoving);														\
-		__VIRTUAL_SET(ClassName, Actor, getMovementState);												\
-		__VIRTUAL_SET(ClassName, Actor, setLocalPosition);												\
-		__VIRTUAL_SET(ClassName, Actor, takeHitFrom);													\
-		__VIRTUAL_SET(ClassName, Actor, getBounciness);													\
-		__VIRTUAL_SET(ClassName, Actor, getPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, setPosition);													\
-		__VIRTUAL_SET(ClassName, Actor, isSubjectToGravity);											\
-		__VIRTUAL_SET(ClassName, Actor, getVelocity);													\
-		__VIRTUAL_SET(ClassName, Actor, exitCollision);													\
-		__VIRTUAL_SET(ClassName, Actor, collidingShapeOwnerDestroyed);									\
-		__VIRTUAL_SET(ClassName, Actor, changeEnvironment);												\
-		__VIRTUAL_SET(ClassName, Actor, setDefinition);													\
-		__VIRTUAL_SET(ClassName, Actor, getBouncinessOnCollision);										\
-		__VIRTUAL_SET(ClassName, Actor, getFrictionOnCollision);										\
-		__VIRTUAL_SET(ClassName, Actor, enterCollision);												\
-		__VIRTUAL_SET(ClassName, Actor, syncPositionWithBody);											\
-		__VIRTUAL_SET(ClassName, Actor, syncRotationWithBody);											\
-		__VIRTUAL_SET(ClassName, Actor, getSurroundingFrictionCoefficient);								\
-		__VIRTUAL_SET(ClassName, Actor, mustBounce);													\
-
-#define Actor_ATTRIBUTES																				\
-		/* super's attributes */																		\
-		AnimatedEntity_ATTRIBUTES																		\
-		/* definition */																				\
-		const ActorDefinition* actorDefinition;															\
-		/* a state machine to handle entity's logic	*/													\
-		StateMachine stateMachine;																		\
-		/* a physical body	*/																			\
-		Body body;																						\
-		/* previous velocity */																			\
-		Rotation previousRotation;																		\
-
-__CLASS(Actor);
 
 typedef struct ActorDefinition
 {
@@ -107,52 +55,56 @@ typedef struct ActorDefinition
 typedef const ActorDefinition ActorROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class Actor : AnimatedEntity
+{
+	/* definition */
+	const ActorDefinition* actorDefinition;
+	/* a state machine to handle entity's logic	*/
+	StateMachine stateMachine;
+	/* a physical body	*/
+	Body body;
+	/* previous velocity */
+	Rotation previousRotation;
 
-__CLASS_NEW_DECLARE(Actor, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
-
-void Actor_constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
-void Actor_destructor(Actor this);
-void Actor_iAmDeletingMyself(Actor this);
-void Actor_setDefinition(Actor this, void* actorDefinition);
-void Actor_setLocalPosition(Actor this, const Vector3D* position);
-void Actor_initialTransform(Actor this, Transformation* environmentTransform, u32 recursive);
-void Actor_transform(Actor this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void Actor_resume(Actor this);
-void Actor_update(Actor this, u32 elapsedTime);
-bool Actor_hasChangedDirection(Actor this, u16 axis);
-void Actor_changeDirectionOnAxis(Actor this, u16 axis);
-bool Actor_isInsideGame(Actor this);
-bool Actor_isSubjectToGravity(Actor this, Acceleration gravity);
-bool Actor_canMoveTowards(Actor this, Vector3D direction);
-fix10_6 Actor_getBouncinessOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
-fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this);
-fix10_6 Actor_getFrictionOnCollision(Actor this, SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
-bool Actor_handleMessage(Actor this, Telegram telegram);
-StateMachine Actor_getStateMachine(Actor this);
-bool Actor_isMoving(Actor this);
-u16 Actor_getMovementState(Actor this);
-void Actor_changeEnvironment(Actor this, Transformation* environmentTransform);
-const Vector3D* Actor_getPosition(Actor this);
-void Actor_setPosition(Actor this, const Vector3D* position);
-void Actor_takeHitFrom(Actor this, Actor other);
-fix10_6 Actor_getBounciness(Actor this);
-void Actor_addForce(Actor this, const Force* force);
-void Actor_moveUniformly(Actor this, Velocity* velocity);
-void Actor_stopAllMovement(Actor this);
-void Actor_stopMovement(Actor this, u16 axis);
-void Actor_resetCollisionStatus(Actor this);
-Velocity Actor_getVelocity(Actor this);
-bool Actor_enterCollision(Actor this, const CollisionInformation* collisionInformation);
-void Actor_exitCollision(Actor this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-void Actor_collidingShapeOwnerDestroyed(Actor this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-void Actor_syncPositionWithBody(Actor this);
-void Actor_syncRotationWithBody(Actor this);
-Body Actor_getBody(Actor this);
-fix10_6 Actor_getSurroundingFrictionCoefficient(Actor this);
-bool Actor_mustBounce(Actor this);
+	void constructor(const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
+	bool hasChangedDirection(u16 axis);
+	void changeDirectionOnAxis(u16 axis);
+	bool isInsideGame();
+	bool canMoveTowards(Vector3D direction);
+	StateMachine getStateMachine();
+	void addForce(const Force* force);
+	void moveUniformly(Velocity* velocity);
+	void stopAllMovement();
+	void stopMovement(u16 axis);
+	void resetCollisionStatus();
+	Body getBody();
+	virtual void takeHitFrom(Actor other);
+	virtual void syncPositionWithBody();
+	virtual void syncRotationWithBody();
+	virtual fix10_6 getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+	virtual fix10_6 getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
+	virtual fix10_6 getSurroundingFrictionCoefficient();
+	virtual bool mustBounce();
+	override void iAmDeletingMyself();
+	override void update(u32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
+	override void resume();
+	override bool handleMessage(Telegram telegram);
+	override bool isMoving();
+	override u16 getMovementState();
+	override void setLocalPosition(const Vector3D* position);
+	override fix10_6 getBounciness();
+	override const Vector3D* getPosition();
+	override void setPosition(const Vector3D* position);
+	override bool isSubjectToGravity(Acceleration gravity);
+	override Velocity getVelocity();
+	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	override void changeEnvironment(Transformation* environmentTransform);
+	override void setDefinition(void* actorDefinition);
+	override bool enterCollision(const CollisionInformation* collisionInformation);
+}
 
 
 #endif

@@ -42,30 +42,16 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define ObjectSpriteContainerManager_METHODS(ClassName)													\
-		Object_METHODS(ClassName)																		\
+singleton class ObjectSpriteContainerManager : Object
+{
+	static ObjectSpriteContainerManager getInstance();
+	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
+	void print(int x, int y);
+	void reset();
+	const ObjectSpriteContainer* setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS]);
+	void setZPosition(int spt, fix10_6 z);
+}
 
-// declare the virtual methods which are redefined
-#define ObjectSpriteContainerManager_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)																	\
-
-
-// declare a ObjectSpriteContainerManager, which holds a texture and a drawing specification
-__CLASS(ObjectSpriteContainerManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-ObjectSpriteContainerManager ObjectSpriteContainerManager_getInstance();
-void ObjectSpriteContainerManager_destructor(ObjectSpriteContainerManager this);
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z);
-ObjectSpriteContainer ObjectSpriteContainerManager_getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment);
-void ObjectSpriteContainerManager_print(ObjectSpriteContainerManager this, int x, int y);
-void ObjectSpriteContainerManager_reset(ObjectSpriteContainerManager this);
-const ObjectSpriteContainer* ObjectSpriteContainerManager_setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS]);
-void ObjectSpriteContainerManager_setZPosition(ObjectSpriteContainerManager this, int spt, fix10_6 z);
 
 #endif

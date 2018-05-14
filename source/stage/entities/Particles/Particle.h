@@ -36,76 +36,8 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Particle_METHODS(ClassName)																		\
-		SpatialObject_METHODS(ClassName)																\
-		__VIRTUAL_DEC(ClassName, u32, update, int elapsedTime, void (* behavior)(Particle particle));	\
-		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics, bool updateSpritePosition);					\
-		__VIRTUAL_DEC(ClassName, void, transform);														\
-		__VIRTUAL_DEC(ClassName, void, resume);															\
-		__VIRTUAL_DEC(ClassName, void, suspend);														\
-		__VIRTUAL_DEC(ClassName, void, reset);															\
+class Particle;
 
-
-// define the virtual methods
-#define Particle_SET_VTABLE(ClassName)																	\
-		SpatialObject_SET_VTABLE(ClassName)																\
-		__VIRTUAL_SET(ClassName, Particle, update);														\
-		__VIRTUAL_SET(ClassName, Particle, synchronizeGraphics);										\
-		__VIRTUAL_SET(ClassName, Particle, isSubjectToGravity);											\
-		__VIRTUAL_SET(ClassName, Particle, transform);													\
-		__VIRTUAL_SET(ClassName, Particle, resume);														\
-		__VIRTUAL_SET(ClassName, Particle, suspend);													\
-		__VIRTUAL_SET(ClassName, Particle, setPosition);												\
-		__VIRTUAL_SET(ClassName, Particle, getPosition);												\
-		__VIRTUAL_SET(ClassName, Particle, reset);														\
-
-
-#define Particle_ATTRIBUTES																				\
-		SpatialObject_ATTRIBUTES																		\
-		/*
-		 * @var ParticleDefinition* particleDefinition
-		 * @brief					Particle's definition
-		 * @memberof				Particle
-		 */																								\
-		const ParticleDefinition* particleDefinition;													\
-		/*
-		 * @var SpriteDefinition* 	spriteDefinition
-		 * @brief					Particle's SpriteDefinition
-		 * @memberof				Particle
-		 */																								\
-		const SpriteDefinition* spriteDefinition;														\
-		/*
-		 * @var ObjectSprite 		objectSprite
-		 * @brief					OBJ based sprite
-		 * @memberof				Particle
-		 */																								\
-		ObjectSprite objectSprite;																		\
-		/*
-		 * @var Body 				body
-		 * @brief					Particle's physical body
-		 * @memberof				Particle
-		 */																								\
-		Body body;																						\
-		/*
-		 * @var int 				lifeSpan
-		 * @brief					Particle's life span in milliseconds
-		 * @memberof				Particle
-		 */																								\
-		int lifeSpan;																					\
-
-__CLASS(Particle);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * Defines a Particle
- *
- * @memberof	Particle
- */
 typedef struct ParticleDefinition
 {
 	/// class allocator
@@ -145,32 +77,58 @@ typedef struct ParticleDefinition
 typedef const ParticleDefinition ParticleROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class Particle : SpatialObject
+{
+	/*
+	* @var ParticleDefinition* particleDefinition
+	* @brief					Particle's definition
+	* @memberof				Particle
+	*/
+	const ParticleDefinition* particleDefinition;
+	/*
+	* @var SpriteDefinition* 	spriteDefinition
+	* @brief					Particle's SpriteDefinition
+	* @memberof				Particle
+	*/
+	const SpriteDefinition* spriteDefinition;
+	/*
+	* @var ObjectSprite 		objectSprite
+	* @brief					OBJ based sprite
+	* @memberof				Particle
+	*/
+	ObjectSprite objectSprite;
+	/*
+	* @var Body 				body
+	* @brief					Particle's physical body
+	* @memberof				Particle
+	*/
+	Body body;
+	/*
+	* @var int 				lifeSpan
+	* @brief					Particle's life span in milliseconds
+	* @memberof				Particle
+	*/
+	int lifeSpan;
 
-__CLASS_NEW_DECLARE(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
-
-void Particle_constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
-void Particle_destructor(Particle this);
-
-void Particle_addForce(Particle this, const Force* force, u32 movementType);
-bool Particle_isSubjectToGravity(Particle this, Acceleration gravity);
-u16 Particle_getDepth(Particle this);
-u16 Particle_getHeight(Particle this);
-const Vector3D* Particle_getPosition(Particle this);
-void Particle_hide(Particle this);
-void Particle_transform(Particle this);
-void Particle_resume(Particle this);
-void Particle_setLifeSpan(Particle this, int lifeSpan);
-void Particle_setMass(Particle this, fix10_6 mass);
-void Particle_setPosition(Particle this, const Vector3D* position);
-void Particle_show(Particle this);
-void Particle_suspend(Particle this);
-u32 Particle_update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
-void Particle_synchronizeGraphics(Particle this, bool updateSpritePosition);
-void Particle_reset(Particle this);
-bool Particle_isVisible(Particle this);
+	void constructor(const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
+	void addForce(const Force* force, u32 movementType);
+	u16 getDepth();
+	u16 getHeight();
+	void hide();
+	void setLifeSpan(int lifeSpan);
+	void setMass(fix10_6 mass);
+	void show();
+	bool isVisible();
+	virtual u32 update(u32 elapsedTime, void (* behavior)(Particle particle));
+	virtual void synchronizeGraphics(bool updateSpritePosition);
+	virtual void transform();
+	virtual void resume();
+	virtual void suspend();
+	virtual void reset();
+	override bool isSubjectToGravity(Acceleration gravity);
+	override void setPosition(const Vector3D* position);
+	override const Vector3D* getPosition();
+}
 
 
 #endif

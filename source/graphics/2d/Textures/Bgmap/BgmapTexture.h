@@ -36,63 +36,43 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define BgmapTexture_METHODS(ClassName)																	\
-		Texture_METHODS(ClassName)																		\
-
-#define BgmapTexture_SET_VTABLE(ClassName)																\
-		Texture_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, BgmapTexture, write);													\
-		__VIRTUAL_SET(ClassName, BgmapTexture, rewrite);												\
-
-#define BgmapTexture_ATTRIBUTES																			\
-		Texture_ATTRIBUTES																				\
-		/**
-		 * @var s8 		segment
-		 * @brief		Segment
-		 * @memberof	BgmapTexture
-		 */																								\
-		s8 segment;																						\
-		/**
-		 * @var u8 		usageCount
-		 * @brief		How many textures are using me
-		 * @memberof	BgmapTexture
-		 */																								\
-		u8 usageCount;																					\
-		/**
-		 * @var s8 		remainingRowsToBeWritten
-		 * @brief		Remaining rows to be written
-		 * @memberof	BgmapTexture
-		 */																								\
-		s8 remainingRowsToBeWritten;																	\
-
-__CLASS(BgmapTexture);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 typedef const TextureDefinition BgmapTextureDefinition;
 typedef const BgmapTextureDefinition BgmapTextureROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class BgmapTexture : Texture
+{
+	/**
+	* @var s8 		segment
+	* @brief		Segment
+	* @memberof	BgmapTexture
+	*/
+	s8 segment;
+	/**
+	* @var u8 		usageCount
+	* @brief		How many textures are using me
+	* @memberof	BgmapTexture
+	*/
+	u8 usageCount;
+	/**
+	* @var s8 		remainingRowsToBeWritten
+	* @brief		Remaining rows to be written
+	* @memberof	BgmapTexture
+	*/
+	s8 remainingRowsToBeWritten;
 
-__CLASS_NEW_DECLARE(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
-
-void BgmapTexture_destructor(BgmapTexture this);
-void BgmapTexture_write(BgmapTexture this);
-void BgmapTexture_rewrite(BgmapTexture this);
-s8 BgmapTexture_getRemainingRowsToBeWritten(BgmapTexture this);
-s16 BgmapTexture_getXOffset(BgmapTexture this);
-s16 BgmapTexture_getYOffset(BgmapTexture this);
-s8 BgmapTexture_getSegment(BgmapTexture this);
-void BgmapTexture_setSegment(BgmapTexture this, s8 segment);
-u8 BgmapTexture_getUsageCount(BgmapTexture this);
-void BgmapTexture_increaseUsageCount(BgmapTexture this);
-bool BgmapTexture_decreaseUsageCount(BgmapTexture this);
+	void constructor(BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
+	s8 getRemainingRowsToBeWritten();
+	s16 getXOffset();
+	s16 getYOffset();
+	s8 getSegment();
+	void setSegment(s8 segment);
+	u8 getUsageCount();
+	void increaseUsageCount();
+	bool decreaseUsageCount();
+	override void write();
+	override void rewrite();
+}
 
 
 #endif

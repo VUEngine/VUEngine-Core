@@ -43,24 +43,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define I18n_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define I18n_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define I18n_ATTRIBUTES																					\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var u8		activeLanguage
-		 * @brief		Currently active language
-		 * @memberof	I18n
-		 */																								\
-		u8 activeLanguage;																				\
-
-// declare a I18n
-__CLASS(I18n);
 
 /**
  * A language
@@ -85,19 +67,22 @@ typedef struct LangDefinition
 typedef const LangDefinition LangROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+singleton class I18n : Object
+{
+	/**
+	* @var u8		activeLanguage
+	* @brief		Currently active language
+	* @memberof	I18n
+	*/
+	u8 activeLanguage;
 
-I18n I18n_getInstance();
-
-void I18n_destructor(I18n this);
-
-u8 I18n_getActiveLanguage(I18n this);
-char* I18n_getActiveLanguageName(I18n this);
-LangDefinition * I18n_getLanguages(I18n this);
-const char* I18n_getText(I18n this, int string);
-void I18n_setActiveLanguage(I18n this, u8 languageId);
+	static I18n getInstance();
+	u8 getActiveLanguage();
+	char* getActiveLanguageName();
+	LangDefinition * getLanguages();
+	const char* getText(int string);
+	void setActiveLanguage(u8 languageId);
+}
 
 
 #endif

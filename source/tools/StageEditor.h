@@ -37,15 +37,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define StageEditor_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define StageEditor_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-// declare a StageEditor
-__CLASS(StageEditor);
 
 /**
  * For level editing
@@ -62,18 +53,14 @@ typedef struct UserObject
 } UserObject;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-StageEditor StageEditor_getInstance();
-
-void StageEditor_destructor(StageEditor this);
-
-void StageEditor_show(StageEditor this, GameState gameState);
-void StageEditor_hide(StageEditor this);
-void StageEditor_update(StageEditor this);
-void StageEditor_processUserInput(StageEditor this, u16 pressedKey);
+singleton class StageEditor : Object
+{
+	static StageEditor getInstance();
+	void show(GameState gameState);
+	void hide();
+	void update();
+	void processUserInput(u16 pressedKey);
+}
 
 
 #endif

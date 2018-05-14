@@ -109,31 +109,17 @@ typedef struct HbiasEntry
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define ParamTableManager_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define ParamTableManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(ParamTableManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-ParamTableManager ParamTableManager_getInstance();
-void ParamTableManager_destructor(ParamTableManager this);
-
-u32 ParamTableManager_allocate(ParamTableManager this, BgmapSprite bsprite);
-void ParamTableManager_calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable);
-bool ParamTableManager_defragmentProgressively(ParamTableManager this);
-void ParamTableManager_free(ParamTableManager this, BgmapSprite bsprite);
-u32 ParamTableManager_getParamTableBase(ParamTableManager this);
-void ParamTableManager_print(ParamTableManager this,int x, int y);
-void ParamTableManager_reset(ParamTableManager this);
+singleton class ParamTableManager : Object
+{
+	static ParamTableManager getInstance();
+	u32 allocate(BgmapSprite bsprite);
+	void calculateParamTableBase(int availableBgmapSegmentsForParamTable);
+	bool defragmentProgressively();
+	void free(BgmapSprite bsprite);
+	u32 getParamTableBase();
+	void print(int x, int y);
+	void reset();
+}
 
 
 #endif

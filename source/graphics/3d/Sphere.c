@@ -49,7 +49,6 @@ __CLASS_DEFINITION(Sphere, Wireframe);
 //---------------------------------------------------------------------------------------------------------
 
 // globals
-static void Sphere_constructor(Sphere this, Vector3D center, fix10_6 radius);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,7 +66,7 @@ __CLASS_NEW_END(Sphere, center, radius);
  *
  * @param this	Function scope
  */
-static void Sphere_constructor(Sphere this, Vector3D center, fix10_6 radius)
+void Sphere_constructor(Sphere this, Vector3D center, fix10_6 radius)
 {
 	ASSERT(this, "Sphere::constructor: null this");
 

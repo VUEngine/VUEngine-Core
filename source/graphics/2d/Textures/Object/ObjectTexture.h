@@ -36,42 +36,23 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ObjectTexture_METHODS(ClassName)																\
-		Texture_METHODS(ClassName)																		\
-
-#define ObjectTexture_SET_VTABLE(ClassName)																\
-		Texture_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, ObjectTexture, write);													\
-
-#define ObjectTexture_ATTRIBUTES																		\
-		Texture_ATTRIBUTES																				\
-		/**
-		 * @var int 	objectIndex
-		 * @brief		Object index
-		 * @memberof	ObjectTexture
-		 */																								\
-		int objectIndex;																				\
-
-__CLASS(ObjectTexture);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 typedef const TextureDefinition ObjectTextureDefinition;
 typedef const ObjectTextureDefinition ObjectTextureROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class ObjectTexture : Texture
+{
+	/**
+	* @var int 	objectIndex
+	* @brief		Object index
+	* @memberof	ObjectTexture
+	*/
+	int objectIndex;
 
-__CLASS_NEW_DECLARE(ObjectTexture, ObjectTextureDefinition* objectTextureDefinition, u16 id);
-
-void ObjectTexture_destructor(ObjectTexture this);
-void ObjectTexture_write(ObjectTexture this);
-void ObjectTexture_setObjectIndex(ObjectTexture this, int objectIndex);
+	void constructor(ObjectTextureDefinition* objectTextureDefinition, u16 id);
+	void setObjectIndex(int objectIndex);
+	override void write();
+}
 
 
 #endif

@@ -54,7 +54,6 @@ __CLASS_FRIEND_DEFINITION(VirtualNode);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VirtualList_constructor(VirtualList this);
 static void VirtualList_checkThatNodeIsPresent(VirtualList this, VirtualNode node);
 
 
@@ -73,7 +72,7 @@ __CLASS_NEW_END(VirtualList);
  *
  * @param this	Function scope
  */
-static void VirtualList_constructor(VirtualList this)
+void VirtualList_constructor(VirtualList this)
 {
 	ASSERT(this, "VirtualList::constructor: null this");
 

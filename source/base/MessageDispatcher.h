@@ -37,31 +37,18 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define MessageDispatcher_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define MessageDispatcher_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(MessageDispatcher);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-MessageDispatcher MessageDispatcher_getInstance();
-
-bool MessageDispatcher_dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
-u32 MessageDispatcher_dispatchDelayedMessages(MessageDispatcher this);
-void MessageDispatcher_discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock);
-void MessageDispatcher_discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);
-void MessageDispatcher_discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message);
-void MessageDispatcher_discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender);
-void MessageDispatcher_discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver);
-void MessageDispatcher_print(MessageDispatcher this, int x, int y);
+singleton class MessageDispatcher : Object
+{
+	static MessageDispatcher getInstance();
+	static bool dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
+	u32 dispatchDelayedMessages();
+	void discardDelayedMessagesWithClock(Clock clock);
+	void discardDelayedMessagesFromSender(Object sender, int message);
+	void discardDelayedMessagesForReceiver(Object receiver, int message);
+	void discardAllDelayedMessagesFromSender(Object sender);
+	void discardAllDelayedMessagesForReceiver(Object receiver);
+	void print(int x, int y);
+}
 
 
 #endif

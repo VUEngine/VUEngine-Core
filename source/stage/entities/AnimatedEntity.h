@@ -33,10 +33,9 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines an AnimatedEntity
 typedef struct AnimatedEntityDefinition
 {
 	// it has an Entity at the beginning
@@ -53,59 +52,33 @@ typedef struct AnimatedEntityDefinition
 typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+class AnimatedEntity : Entity
+{
+	/* Pointer to the ROM definition */
+	AnimatedEntityDefinition* animatedEntityDefinition;
+	/* Pointer to the animation description */
+	AnimationDescription* animationDescription;
+	/* direction */
+	Direction direction;
+	/* need to save for pausing */
+	char* currentAnimationName;
 
-// declare the virtual methods
-#define AnimatedEntity_METHODS(ClassName)																\
-		Entity_METHODS(ClassName)																		\
-
-#define AnimatedEntity_SET_VTABLE(ClassName)															\
-		Entity_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, AnimatedEntity, ready);												\
-		__VIRTUAL_SET(ClassName, AnimatedEntity, update);												\
-		__VIRTUAL_SET(ClassName, AnimatedEntity, resume);												\
-		__VIRTUAL_SET(ClassName, AnimatedEntity, setDefinition);										\
-
-#define AnimatedEntity_ATTRIBUTES																		\
-		/* super's attributes */																		\
-		Entity_ATTRIBUTES																				\
-		/* Pointer to the ROM definition */																\
-		AnimatedEntityDefinition* animatedEntityDefinition;												\
-		/* Pointer to the animation description */														\
-		AnimationDescription* animationDescription;														\
-		/* direction */																					\
-		Direction direction;																			\
-		/* need to save for pausing */																	\
-		char* currentAnimationName;																		\
-
-__CLASS(AnimatedEntity);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(AnimatedEntity, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
-
-void AnimatedEntity_constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
-void AnimatedEntity_destructor(AnimatedEntity this);
-
-AnimationDescription* AnimatedEntity_getAnimationDescription(AnimatedEntity this);
-s8 AnimatedEntity_getActualFrame(AnimatedEntity this);
-int AnimatedEntity_getNumberOfFrames(AnimatedEntity this);
-bool AnimatedEntity_isAnimationLoaded(AnimatedEntity this, char* functionName);
-bool AnimatedEntity_isPlayingAnimation(AnimatedEntity this);
-void AnimatedEntity_nextFrame(AnimatedEntity this);
-void AnimatedEntity_pauseAnimation(AnimatedEntity this, int pause);
-void AnimatedEntity_playAnimation(AnimatedEntity this, char* animationName);
-void AnimatedEntity_previousFrame(AnimatedEntity this);
-void AnimatedEntity_ready(AnimatedEntity this, bool recursive);
-void AnimatedEntity_resume(AnimatedEntity this);
-void AnimatedEntity_setAnimationDescription(AnimatedEntity this, AnimationDescription* animationDescription);
-void AnimatedEntity_setDefinition(AnimatedEntity this, void* animatedEntityDefinition);
-void AnimatedEntity_update(AnimatedEntity this, u32 elapsedTime);
+	void constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
+	AnimationDescription* getAnimationDescription();
+	s8 getActualFrame();
+	int getNumberOfFrames();
+	bool isAnimationLoaded(char* functionName);
+	bool isPlayingAnimation();
+	void nextFrame();
+	void pauseAnimation(int pause);
+	void playAnimation(char* animationName);
+	void previousFrame();
+	void setAnimationDescription(AnimationDescription* animationDescription);
+	override void ready(bool recursive);
+	override void update(u32 elapsedTime);
+	override void resume();
+	override void setDefinition(void* animatedEntityDefinition);
+}
 
 
 #endif

@@ -35,71 +35,51 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Clock_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, update, u32 millisecondsElapsed);								\
+class Clock : Object
+{
+	/**
+	* @var u32	 	milliSeconds
+	* @brief		time elapsed
+	* @memberof	Clock
+	*/
+	u32 milliSeconds;
+	/**
+	* @var u32	 	previousSecond
+	* @brief		register
+	* @memberof	Clock
+	*/
+	u32 previousSecond;
+	/**
+	* @var u32	 	previousMinute
+	* @brief		register
+	* @memberof	Clock
+	*/
+	u32 previousMinute;
+	/**
+	* @var bool	paused
+	* @brief		flag to pause the clock
+	* @memberof	Clock
+	*/
+	bool paused;
 
-// declare the virtual methods which are redefined
-#define Clock_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Clock, update);														\
-
-#define Clock_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var u32	 	milliSeconds
-		 * @brief		time elapsed
-		 * @memberof	Clock
-		 */																								\
-		u32 milliSeconds;																				\
-		/**
-		 * @var u32	 	previousSecond
-		 * @brief		register
-		 * @memberof	Clock
-		 */																								\
-		u32 previousSecond;																				\
-		/**
-		 * @var u32	 	previousMinute
-		 * @brief		register
-		 * @memberof	Clock
-		 */																								\
-		u32 previousMinute;																				\
-		/**
-		 * @var bool	paused
-		 * @brief		flag to pause the clock
-		 * @memberof	Clock
-		 */																								\
-		bool paused;																					\
-
-// declare a Clock
-__CLASS(Clock);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Clock);
-
-void Clock_destructor(Clock this);
-
-u32 Clock_getElapsedTime(Clock this);
-u32 Clock_getMilliSeconds(Clock this);
-u32 Clock_getMinutes(Clock this);
-u32 Clock_getSeconds(Clock this);
-u32 Clock_getTime(Clock this);
-int Clock_getTimeInCurrentSecond(Clock this);
-bool Clock_isPaused(Clock this);
-void Clock_pause(Clock this, bool paused);
-void Clock_print(Clock this, int col, int row, const char* font);
-void Clock_reset(Clock this);
-void Clock_setTime(Clock this, int hours, int minutes, int seconds);
-void Clock_setTimeInMilliSeconds(Clock this, u32 milliSeconds);
-void Clock_setTimeInSeconds(Clock this, float totalSeconds);
-void Clock_start(Clock this);
-void Clock_stop(Clock this);
-void Clock_update(Clock this, u32 millisecondsElapsed);
+	void constructor();
+	u32 getElapsedTime();
+	u32 getMilliSeconds();
+	u32 getMinutes();
+	u32 getSeconds();
+	u32 getTime();
+	int getTimeInCurrentSecond();
+	bool isPaused();
+	void pause(bool paused);
+	void print(int col, int row, const char* font);
+	void reset();
+	void setTime(int hours, int minutes, int seconds);
+	void setTimeInMilliSeconds(u32 milliSeconds);
+	void setTimeInSeconds(float totalSeconds);
+	void start();
+	void stop();
+	virtual void update(u32 millisecondsElapsed);
+}
 
 
 #endif

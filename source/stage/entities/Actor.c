@@ -664,7 +664,7 @@ void Actor_changeEnvironment(Actor this, Transformation* environmentTransform)
  * @param environmentTransform
  * @param recursive
  */
-void Actor_initialTransform(Actor this, Transformation* environmentTransform, u32 recursive)
+void Actor_initialTransform(Actor this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Entity::initialTransform: null this");
 

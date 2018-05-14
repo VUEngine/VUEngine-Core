@@ -53,58 +53,7 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define BgmapSprite_METHODS(ClassName)																	\
-		Sprite_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define BgmapSprite_SET_VTABLE(ClassName)																\
-		Sprite_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, BgmapSprite, render);													\
-		__VIRTUAL_SET(ClassName, BgmapSprite, rotate);													\
-		__VIRTUAL_SET(ClassName, BgmapSprite, getScale);												\
-		__VIRTUAL_SET(ClassName, BgmapSprite, applyAffineTransformations);								\
-		__VIRTUAL_SET(ClassName, BgmapSprite, applyHbiasEffects);										\
-		__VIRTUAL_SET(ClassName, BgmapSprite, resize);													\
-		__VIRTUAL_SET(ClassName, BgmapSprite, calculateParallax);										\
-		__VIRTUAL_SET(ClassName, BgmapSprite, addDisplacement);											\
-		__VIRTUAL_SET(ClassName, BgmapSprite, setMode);													\
-
-
-#define BgmapSprite_ATTRIBUTES																			\
-		Sprite_ATTRIBUTES																				\
-		/**
-		 * @var DrawSpec 				drawSpec
-		 * @brief						3d world position
-		 * @memberof					BgmapSprite
-		 */																								\
-		DrawSpec drawSpec;																				\
-		/**
-		 * @var u32 					param
-		 * @brief						param table offset
-		 * @memberof					BgmapSprite
-		 */																								\
-		u32 param;																						\
-		/**
-		 * @var s16 					paramTableRow
-		 * @brief						param table offset
-		 * @memberof					BgmapSprite
-		 */																								\
-		s16 paramTableRow;																				\
-		/**
-		 * @var void(*)(BgmapSprite) 	paramTableEffect
-		 * @brief						pointer to function that implements the param table based effects
-		 * @memberof					BgmapSprite
-		 */																								\
-		s16 (*applyParamTableEffect)(BgmapSprite);
-
-// declare a BgmapSprite, which holds a texture and a drawing specification
-__CLASS(BgmapSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
+class BgmapSprite;
 
 typedef struct BgmapSpriteDefinition
 {
@@ -120,46 +69,60 @@ typedef struct BgmapSpriteDefinition
 	// flag to indicate in which display to show the bg texture
 	u16 display;
 
+
 } BgmapSpriteDefinition;
 
 typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
-
 typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class BgmapSprite : Sprite
+{
+	/**
+	* @var DrawSpec 				drawSpec
+	* @brief						3d world position
+	* @memberof					BgmapSprite
+	*/
+	DrawSpec drawSpec;
+	/**
+	* @var u32 					param
+	* @brief						param table offset
+	* @memberof					BgmapSprite
+	*/
+	u32 param;
+	/**
+	* @var s16 					paramTableRow
+	* @brief						param table offset
+	* @memberof					BgmapSprite
+	*/
+	s16 paramTableRow;
+	/**
+	* @var void(*)(BgmapSprite) 	paramTableEffect
+	* @brief						pointer to function that implements the param table based effects
+	* @memberof					BgmapSprite
+	*/
+	s16 (*applyParamTableEffect)(BgmapSprite);
 
-__CLASS_NEW_DECLARE(BgmapSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-
-void BgmapSprite_constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-void BgmapSprite_destructor(BgmapSprite this);
-
-// general
-Scale BgmapSprite_getScale(BgmapSprite this);
-void BgmapSprite_resize(BgmapSprite this, Scale scale, fix10_6 z);
-void BgmapSprite_setPosition(BgmapSprite this, const PixelVector* position);
-void BgmapSprite_rotate(BgmapSprite this, const Rotation* rotation);
-void BgmapSprite_calculateParallax(BgmapSprite this, fix10_6 z);
-DrawSpec BgmapSprite_getDrawSpec(BgmapSprite this);
-void BgmapSprite_invalidateParamTable(BgmapSprite this);
-void BgmapSprite_setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec);
-s16 BgmapSprite_getParamTableRow(BgmapSprite this);
-u32 BgmapSprite_getParam(BgmapSprite this);
-void BgmapSprite_setParam(BgmapSprite this, u32 param);
-void BgmapSprite_render(BgmapSprite this, bool evenFrame);
-void BgmapSprite_addDisplacement(BgmapSprite this, const PixelVector* displacement);
-void BgmapSprite_setMode(BgmapSprite this, u16 display, u16 mode);
-
-// direct draw
-void BgmapSprite_putChar(BgmapSprite this, Point* texturePixel, BYTE* newChar);
-void BgmapSprite_putPixel(BgmapSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
-
-// affine & hbias fx
-void BgmapSprite_applyAffineTransformations(BgmapSprite this);
-void BgmapSprite_applyHbiasEffects(BgmapSprite this);
-void BgmapSprite_processAffineEffects(BgmapSprite this, int gx, int width, int myDisplacement);
-void BgmapSprite_processHbiasEffects(BgmapSprite this);
+	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
+	DrawSpec getDrawSpec();
+	void invalidateParamTable();
+	void setDrawSpec(const DrawSpec* const drawSpec);
+	s16 getParamTableRow();
+	u32 getParam();
+	void setParam(u32 param);
+	void putChar(Point* texturePixel, BYTE* newChar);
+	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
+	void processAffineEffects(int gx, int width, int myDisplacement);
+	void processHbiasEffects();
+	override void render(bool evenFrame);
+	override void rotate(const Rotation* rotation);
+	override Scale getScale();
+	override void applyAffineTransformations();
+	override void applyHbiasEffects();
+	override void resize(Scale scale, fix10_6 z);
+	override void calculateParallax(fix10_6 z);
+	override void addDisplacement(const PixelVector* displacement);
+	override void setMode(u16 display, u16 mode);
+}
 
 
 #endif

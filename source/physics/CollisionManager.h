@@ -37,35 +37,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define CollisionManager_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define CollisionManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(CollisionManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(CollisionManager);
-
-void CollisionManager_constructor(CollisionManager this);
-void CollisionManager_destructor(CollisionManager this);
-
-void CollisionManager_hideShapes(CollisionManager this);
-void CollisionManager_print(CollisionManager this, int x, int y);
-Shape CollisionManager_createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition);
-void CollisionManager_destroyShape(CollisionManager this, Shape shape);
-void CollisionManager_reset(CollisionManager this);
-void CollisionManager_shapeStartedMoving(CollisionManager this, Shape shape);
-void CollisionManager_shapeStoppedMoving(CollisionManager this, Shape shape);
-void CollisionManager_showShapes(CollisionManager this);
-u32 CollisionManager_update(CollisionManager this, Clock clock);
+final class CollisionManager : Object
+{
+	void constructor();
+	void hideShapes();
+	void print(int x, int y);
+	Shape createShape(SpatialObject owner, const ShapeDefinition* shapeDefinition);
+	void destroyShape(Shape shape);
+	void reset();
+	void shapeStartedMoving(Shape shape);
+	void shapeStoppedMoving(Shape shape);
+	void showShapes();
+	u32 update(Clock clock);
+}
 
 
 #endif

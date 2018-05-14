@@ -49,8 +49,6 @@ __CLASS_DEFINITION(CharSet, Object);
 
 // globals
 
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -70,7 +68,7 @@ __CLASS_NEW_END(CharSet, charSetDefinition, offset);
  * @param charSetDefinition				CharSet definition
  * @param offset						Displacement within the CHAR segment
  */
-static void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
+void CharSet_constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
 {
 	ASSERT(this, "CharSet::constructor: null this");
 

@@ -36,11 +36,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimationInspectorState_destructor(AnimationInspectorState this);
 static void AnimationInspectorState_constructor(AnimationInspectorState this);
-static void AnimationInspectorState_enter(AnimationInspectorState this, void* owner);
-static void AnimationInspectorState_execute(AnimationInspectorState this, void* owner);
-static void AnimationInspectorState_exit(AnimationInspectorState this, void* owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,7 +77,7 @@ __SINGLETON(AnimationInspectorState);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) AnimationInspectorState_constructor(AnimationInspectorState this)
+void __attribute__ ((noinline)) AnimationInspectorState_constructor(AnimationInspectorState this)
 {
 	ASSERT(this, "AnimationInspectorState::constructor: null this");
 
@@ -96,7 +92,7 @@ static void __attribute__ ((noinline)) AnimationInspectorState_constructor(Anima
  *
  * @param this	Function scope
  */
-static void AnimationInspectorState_destructor(AnimationInspectorState this)
+void AnimationInspectorState_destructor(AnimationInspectorState this)
 {
 	ASSERT(this, "AnimationInspectorState::destructor: null this");
 
@@ -113,7 +109,7 @@ static void AnimationInspectorState_destructor(AnimationInspectorState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void AnimationInspectorState_enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState_enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "AnimationInspectorState::enter: null this");
 
@@ -131,7 +127,7 @@ static void AnimationInspectorState_enter(AnimationInspectorState this __attribu
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void AnimationInspectorState_execute(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState_execute(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "AnimationInspectorState::execute: null this");
 
@@ -147,7 +143,7 @@ static void AnimationInspectorState_execute(AnimationInspectorState this __attri
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void AnimationInspectorState_exit(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState_exit(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "AnimationInspectorState::exit: null this");
 

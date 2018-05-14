@@ -96,10 +96,10 @@ extern u32 _dram_data_start;
 int _lp = 0;
 int _sp = 0;
 
-void TimerManager_interruptHandler(void);
-void KeypadManager_interruptHandler(void);
-void VIPManager_interruptHandler(void);
-void CommunicationManager_interruptHandler(void);
+void TimerManager_interruptHandler();
+void KeypadManager_interruptHandler();
+void VIPManager_interruptHandler();
+void CommunicationManager_interruptHandler();
 static void HardwareManager_constructor(HardwareManager this);
 
 
@@ -208,7 +208,7 @@ void HardwareManager_checkMemoryMap()
  * @memberof	HardwareManager
  * @public
  */
-void HardwareManager_croInterruptHandler(void)
+void HardwareManager_croInterruptHandler()
 {
 	Printing_resetWorldCoordinates(Printing_getInstance());
 	Printing_text(Printing_getInstance(), "EXP cron", 48 - 13, 0, NULL);
@@ -220,7 +220,7 @@ void HardwareManager_croInterruptHandler(void)
  * @memberof	HardwareManager
  * @public
  */
-void HardwareManager_communicationInterruptHandler(void)
+void HardwareManager_communicationInterruptHandler()
 {
 	Printing_resetWorldCoordinates(Printing_getInstance());
 	Printing_text(Printing_getInstance(), "COM interrupt", 48 - 13, 0, NULL);
@@ -495,7 +495,7 @@ void HardwareManager_print(HardwareManager this, int x, int y)
 
 	// print registries' status to know the call source
 	Printing_text(Printing_getInstance(), "PSW:" , x, ++auxY, NULL);
-	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(this), x + xDisplacement, auxY, 4, NULL);
+	Printing_hex(Printing_getInstance(), HardwareManager_getPSW(), x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "SP:" , x, ++auxY, NULL);
 	Printing_hex(Printing_getInstance(), HardwareManager_getStackPointer(this), x + xDisplacement, auxY, 4, NULL);
 	Printing_text(Printing_getInstance(), "LP:" , x, ++auxY, NULL);

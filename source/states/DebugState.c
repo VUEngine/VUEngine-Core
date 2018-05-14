@@ -35,11 +35,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void DebugState_destructor(DebugState this);
 static void DebugState_constructor(DebugState this);
-static void DebugState_enter(DebugState this, void* owner);
-static void DebugState_execute(DebugState this, void* owner);
-static void DebugState_exit(DebugState this, void* owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -95,7 +91,7 @@ static void __attribute__ ((noinline)) DebugState_constructor(DebugState this)
  *
  * @param this	Function scope
  */
-static void DebugState_destructor(DebugState this)
+void DebugState_destructor(DebugState this)
 {
 	ASSERT(this, "DebugState::destructor: null this");
 
@@ -112,7 +108,7 @@ static void DebugState_destructor(DebugState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void DebugState_enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "DebugState::enter: null this");
 
@@ -130,7 +126,7 @@ static void DebugState_enter(DebugState this __attribute__ ((unused)), void* own
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void DebugState_execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "DebugState::execute: null this");
 
@@ -146,7 +142,7 @@ static void DebugState_execute(DebugState this __attribute__ ((unused)), void* o
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void DebugState_exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "DebugState::exit: null this");
 

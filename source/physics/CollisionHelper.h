@@ -35,23 +35,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionHelper_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-#define CollisionHelper_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(CollisionHelper);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-CollisionHelper CollisionHelper_getInstance();
-
-void CollisionHelper_destructor(CollisionHelper this);
-CollisionInformation CollisionHelper_checkIfOverlap(CollisionHelper this, Shape shapeA, Shape shapeB);
+singleton class CollisionHelper : Object
+{
+	static CollisionHelper getInstance();
+	CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);
+}
 
 
 #endif

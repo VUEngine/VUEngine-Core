@@ -51,53 +51,35 @@ static u8* const _hardwareRegisters =			(u8*)0x02000000;
 #define	__SCR		0x28	// Serial Control Register			(0x0200 0028)
 
 // cache management
-#define CACHE_ENABLE	asm("mov 2,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 #define CACHE_DISABLE	asm("ldsr r0,sr24")
-#define CACHE_CLEAR		asm("mov 1,r1 \n  ldsr r1,sr24": /* No Output */: /* No Input */: "r1" /* Reg r1 Used */)
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
-
-// declare the virtual methods
-#define HardwareManager_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define HardwareManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(HardwareManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-HardwareManager HardwareManager_getInstance();
-
-void HardwareManager_clearScreen(HardwareManager this);
-void HardwareManager_destructor(HardwareManager this);
-void HardwareManager_disableKeypad(HardwareManager this);
-void HardwareManager_disableRendering(HardwareManager this);
-void HardwareManager_displayOff(HardwareManager this);
-void HardwareManager_displayOn(HardwareManager this);
-void HardwareManager_enableKeypad(HardwareManager this);
-void HardwareManager_enableRendering(HardwareManager this);
-void HardwareManager_initializeTimer(HardwareManager this);
-void HardwareManager_lowerBrightness(HardwareManager this);
-void HardwareManager_print(HardwareManager this, int x, int y);
-void HardwareManager_setInterruptLevel(HardwareManager this, u8 level);
-void HardwareManager_setInterruptVectors(HardwareManager this);
-void HardwareManager_setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition);
-void HardwareManager_upBrightness(HardwareManager this);
+singleton class HardwareManager : Object
+{
+	static HardwareManager getInstance();
+	void clearScreen();
+	void disableKeypad();
+	void disableRendering();
+	void displayOff();
+	void displayOn();
+	void enableKeypad();
+	void enableRendering();
+	void initializeTimer();
+	void lowerBrightness();
+	void print(int x, int y);
+	void setInterruptLevel(u8 level);
+	void setInterruptVectors();
+	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
+	void upBrightness();
 #ifdef __ALERT_STACK_OVERFLOW
-void HardwareManager_checkStackStatus(HardwareManager this);
-void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
+	void checkStackStatus();
+	void printStackStatus(int x, int y, bool resumed);
 #endif
+}
 
 /**
  * Enable interrupts
@@ -105,7 +87,6 @@ void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool r
  * @memberof					HardwareManager
  * @public
  *
- * @param this					Function scope
  */
 inline void HardwareManager_enableInterrupts()
 {
@@ -118,7 +99,6 @@ inline void HardwareManager_enableInterrupts()
  * @memberof					HardwareManager
  * @public
  *
- * @param this					Function scope
  */
 inline void HardwareManager_disableInterrupts()
 {
@@ -131,7 +111,6 @@ inline void HardwareManager_disableInterrupts()
  * @memberof					VIPManager
  * @public
  *
- * @param this					Function scope
  */
 inline void HardwareManager_enableMultiplexedInterrupts()
 {
@@ -161,7 +140,6 @@ inline void HardwareManager_enableMultiplexedInterrupts()
  * @memberof					VIPManager
  * @public
  *
- * @param this					Function scope
  */
 inline void HardwareManager_disableMultiplexedInterrupts()
 {
@@ -182,12 +160,9 @@ inline void HardwareManager_disableMultiplexedInterrupts()
  *
  * @param this		Function scope
  *
- * @return		 	Stack Pointer's value
  */
-inline int HardwareManager_getStackPointer(HardwareManager this __attribute__ ((unused)))
+inline int HardwareManager_getStackPointer()
 {
-	ASSERT(this, "HardwareManager::getStackPointer: null this");
-
 	int sp;
 
 	asm(" 			\n\
@@ -207,12 +182,9 @@ inline int HardwareManager_getStackPointer(HardwareManager this __attribute__ ((
  *
  * @param this		Function scope
  *
- * @return		 	Link Pointer's value
  */
-inline int HardwareManager_getLinkPointer(HardwareManager this __attribute__ ((unused)))
+inline int HardwareManager_getLinkPointer()
 {
-	ASSERT(this, "HardwareManager::getLinkPointer: null this");
-
 	int lp;
 
 	asm(" 			\n\
@@ -230,13 +202,10 @@ inline int HardwareManager_getLinkPointer(HardwareManager this __attribute__ ((u
  * @memberof		HardwareManager
  * @public
  *
- * @param this		Function scope
  * @return		 	PSW
  */
-inline int HardwareManager_getPSW(HardwareManager this __attribute__ ((unused)))
+inline int HardwareManager_getPSW()
 {
-	ASSERT(this, "HardwareManager::getPSW: null this");
-
 	int psw;
 
 	asm("			\n\
@@ -246,6 +215,5 @@ inline int HardwareManager_getPSW(HardwareManager this __attribute__ ((unused)))
 	);
 	return psw;
 }
-
 
 #endif

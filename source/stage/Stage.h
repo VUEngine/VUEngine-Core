@@ -44,55 +44,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 // declare the virtual methods
-#define Stage_METHODS(ClassName)																		\
-		Container_METHODS(ClassName)																	\
-		__VIRTUAL_DEC(ClassName, bool, stream);															\
-		__VIRTUAL_DEC(ClassName, void, streamAll);														\
-
-// declare the virtual methods which are redefined
-#define Stage_SET_VTABLE(ClassName)																		\
-		Container_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Stage, update);														\
-		__VIRTUAL_SET(ClassName, Stage, transform);														\
-		__VIRTUAL_SET(ClassName, Stage, synchronizeGraphics);											\
-		__VIRTUAL_SET(ClassName, Stage, suspend);														\
-		__VIRTUAL_SET(ClassName, Stage, resume);														\
-		__VIRTUAL_SET(ClassName, Stage, removeChild);													\
-		__VIRTUAL_SET(ClassName, Stage, handlePropagatedMessage);										\
-		__VIRTUAL_SET(ClassName, Stage, stream);														\
-		__VIRTUAL_SET(ClassName, Stage, streamAll);														\
-
-#define Stage_ATTRIBUTES																				\
-		/* super's attributes */																		\
-		Container_ATTRIBUTES																			\
-		/* world's definition pointer */																\
-		StageDefinition* stageDefinition;																\
-		/* entity factory */																			\
-		EntityFactory entityFactory;																	\
-		/* particle remover */																			\
-		ParticleRemover particleRemover;																\
-		/* the stage entities */ 																		\
-		VirtualList stageEntities;																		\
-		/* the pivot node for streaming */ 																\
-		VirtualNode streamingHeadNode;																	\
-		/* the stage entities to test for streaming */ 													\
-		VirtualList loadedStageEntities;																\
-		/* counter to control the streaming phses */													\
-		int streamingCycleCounter;																		\
-		/* index for method to execute */																\
-		int streamingPhase;																				\
-		/* flag to control streaming */ 																\
-		u32 hasRemovedChildren;																			\
-		/* the ui container */ 																			\
-		UiContainer uiContainer;																		\
-		/* focus entity: needed for streaming */														\
-		Entity focusEntity;																				\
-		/* camera's previous distance. Used for the streaming */										\
-		u32 cameraPreviousDistance;																		\
-		/* next entity's id */																			\
-		s16 nextEntityId;																				\
-
-__CLASS(Stage);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -207,35 +158,58 @@ typedef struct StageDefinition
 typedef const StageDefinition StageROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class Stage : Container
+{
+	/* world's definition pointer */
+	StageDefinition* stageDefinition;
+	/* entity factory */
+	EntityFactory entityFactory;
+	/* particle remover */
+	ParticleRemover particleRemover;
+	/* the stage entities */
+	VirtualList stageEntities;
+	/* the pivot node for streaming */
+	VirtualNode streamingHeadNode;
+	/* the stage entities to test for streaming */
+	VirtualList loadedStageEntities;
+	/* counter to control the streaming phses */
+	int streamingCycleCounter;
+	/* index for method to execute */
+	int streamingPhase;
+	/* flag to control streaming */
+	u32 hasRemovedChildren;
+	/* the ui container */
+	UiContainer uiContainer;
+	/* focus entity: needed for streaming */
+	Entity focusEntity;
+	/* camera's previous distance. Used for the streaming */
+	u32 cameraPreviousDistance;
+	/* next entity's id */
+	s16 nextEntityId;
 
-__CLASS_NEW_DECLARE(Stage, StageDefinition* stageDefinition);
-
-void Stage_constructor(Stage this, StageDefinition* stageDefinition);
-void Stage_destructor(Stage this);
-void Stage_setupPalettes(Stage this);
-void Stage_load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
-void Stage_loadPostProcessingEffects(Stage this);
-Size Stage_getSize(Stage this);
-CameraFrustum Stage_getCameraFrustum(Stage this);
-bool Stage_registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);
-void Stage_spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
-Entity Stage_addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
-void Stage_removeChild(Stage this, Container child, bool deleteChild);
-void Stage_update(Stage this, u32 elapsedTime);
-void Stage_transform(Stage this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void Stage_synchronizeGraphics(Stage this);
-bool Stage_stream(Stage this);
-void Stage_streamAll(Stage this);
-UiContainer Stage_getUiContainer(Stage this);
-void Stage_suspend(Stage this);
-void Stage_resume(Stage this);
-bool Stage_handlePropagatedMessage(Stage this, int message);
-StageDefinition* Stage_getStageDefinition(Stage this);
-ParticleRemover Stage_getParticleRemover(Stage this);
-void Stage_showStreamingProfiling(Stage this, int x, int y);
+	void constructor(StageDefinition* stageDefinition);
+	void setupPalettes();
+	void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
+	void loadPostProcessingEffects();
+	Size getSize();
+	CameraFrustum getCameraFrustum();
+	bool registerEntityId(s16 internalId, EntityDefinition* entityDefinition);
+	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
+	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
+	UiContainer getUiContainer();
+	StageDefinition* getStageDefinition();
+	ParticleRemover getParticleRemover();
+	void showStreamingProfiling(int x, int y);
+	virtual bool stream();
+	virtual void streamAll();
+	override void update(u32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void synchronizeGraphics();
+	override void suspend();
+	override void resume();
+	override void removeChild(Container child, bool deleteChild);
+	override bool handlePropagatedMessage(int message);
+}
 
 
 #endif

@@ -36,35 +36,18 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define ObjectAnimatedSprite_METHODS(ClassName)															\
-		ObjectSprite_METHODS(ClassName)																	\
+class ObjectAnimatedSprite : ObjectSprite
+{
+	/**
+	* @var TextureSource 	originalTextureSource
+	* @brief				object's source coordinates
+	* @memberof			ObjectAnimatedSprite
+	*/
+	TextureSource originalTextureSource;
 
-// declare the virtual methods which are redefined
-#define ObjectAnimatedSprite_SET_VTABLE(ClassName)														\
-		ObjectSprite_SET_VTABLE(ClassName)																\
-		__VIRTUAL_SET(ClassName, ObjectAnimatedSprite, writeAnimation);									\
-
-#define ObjectAnimatedSprite_ATTRIBUTES																	\
-		ObjectSprite_ATTRIBUTES																		    \
-		/**
-		 * @var TextureSource 	originalTextureSource
-		 * @brief				object's source coordinates
-		 * @memberof			ObjectAnimatedSprite
-		 */																								\
-		TextureSource originalTextureSource;															\
-
-__CLASS(ObjectAnimatedSprite);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(ObjectAnimatedSprite, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
-
-void ObjectAnimatedSprite_destructor(ObjectAnimatedSprite this);
-void ObjectAnimatedSprite_writeAnimation(ObjectAnimatedSprite this);
+	void constructor(const ObjectSpriteDefinition* objectSpriteDefinition, Object owner);
+	override void writeAnimation();
+}
 
 
 #endif

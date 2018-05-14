@@ -35,8 +35,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-
-/* Defines for __INTPND\__INTENB\__INTCLR */
 #define	__TIMEERR		0x8000
 #define	__XPEND			0x4000
 #define	__SBHIT			0x2000
@@ -46,7 +44,6 @@
 #define	__LFBEND		0x0002
 #define	__SCANERR		0x0001
 
-/* Defines for __DPSTTS\__DPCTRL */
 #define	__LOCK			0x0400	// VPU SELECT __CTA
 #define	__SYNCE			0x0200	// L,R_SYNC TO VPU
 #define	__RE			0x0100	// MEMORY REFLASH CYCLE ON
@@ -55,7 +52,6 @@
 #define	__DISP			0x0002	// DISPLAY ON
 #define	__DPRST			0x0001	// RESET VPU COUNTER AND WAIT __FCLK
 
-/* Defines for __XPSTTS\__XPCTRL */
 #define	__SBOUT			0x8000	// In FrameBuffer drawing included
 #define	__OVERTIME		0x0010	// Processing
 #define	__XPBSYR		0x000C	// In the midst of drawing processing reset
@@ -259,47 +255,31 @@ typedef void (*PostProcessingEffect) (u32, SpatialObject);
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a struct that is not defined here and so is not accessible to the outside world
-
-// declare the virtual methods
-#define VIPManager_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define VIPManager_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(VIPManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-VIPManager VIPManager_getInstance();
-
-void VIPManager_destructor(VIPManager this);
-void VIPManager_enableDrawing(VIPManager this);
-void VIPManager_disableDrawing(VIPManager this);
-void VIPManager_enableInterrupt(VIPManager this, u16 interruptCode);
-void VIPManager_disableInterrupts(VIPManager this);
-void VIPManager_displayOn(VIPManager this);
-void VIPManager_displayOff(VIPManager this);
-void VIPManager_setupPalettes(VIPManager this, PaletteConfig* paletteConfig);
-void VIPManager_upBrightness(VIPManager this);
-void VIPManager_lowerBrightness(VIPManager this);
-void VIPManager_displayHide(VIPManager this);
-void VIPManager_clearScreen(VIPManager this);
-void VIPManager_clearBgmapSegment(VIPManager this, int segment, int size);
-void VIPManager_setupColumnTable(VIPManager this, ColumnTableDefinition* columnTableDefinition);
-void VIPManager_useInternalColumnTable(VIPManager this, bool internal);
-void VIPManager_setupBrightnessRepeat(VIPManager this, BrightnessRepeatDefinition* brightnessRepeat);
-void VIPManager_setBackgroundColor(VIPManager this, u8 color);
-void VIPManager_pushFrontPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-void VIPManager_pushBackPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-void VIPManager_removePostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-void VIPManager_removePostProcessingEffects(VIPManager this);
-void VIPManager_registerCurrentDrawingFrameBufferSet(VIPManager this);
+singleton class VIPManager : Object
+{
+	static VIPManager getInstance();
+	void enableDrawing();
+	void disableDrawing();
+	void enableInterrupt(u16 interruptCode);
+	void disableInterrupts();
+	void displayOn();
+	void displayOff();
+	void setupPalettes(PaletteConfig* paletteConfig);
+	void upBrightness();
+	void lowerBrightness();
+	void displayHide();
+	void clearScreen();
+	void clearBgmapSegment(int segment, int size);
+	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
+	void useInternalColumnTable(bool internal);
+	void setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRepeat);
+	void setBackgroundColor(u8 color);
+	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void removePostProcessingEffects();
+	void registerCurrentDrawingFrameBufferSet();
+}
 
 
 #endif

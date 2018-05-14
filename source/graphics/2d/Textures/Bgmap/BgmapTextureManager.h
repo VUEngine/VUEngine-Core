@@ -42,37 +42,21 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
-
-// declare the virtual methods
-#define BgmapTextureManager_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define BgmapTextureManager_SET_VTABLE(ClassName)														\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(BgmapTextureManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-BgmapTextureManager BgmapTextureManager_getInstance();
-
-void BgmapTextureManager_allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture);
-void BgmapTextureManager_calculateAvailableBgmapSegments(BgmapTextureManager this);
-void BgmapTextureManager_destructor(BgmapTextureManager this);
-s16 BgmapTextureManager_getAvailableBgmapSegmentsForTextures(BgmapTextureManager this);
-s16 BgmapTextureManager_getPrintingBgmapSegment(BgmapTextureManager this);
-BgmapTexture BgmapTextureManager_getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
-s16 BgmapTextureManager_getXOffset(BgmapTextureManager this, int id);
-s16 BgmapTextureManager_getYOffset(BgmapTextureManager this, int id);
-void BgmapTextureManager_print(BgmapTextureManager this, int x, int y);
-void BgmapTextureManager_releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture);
-void BgmapTextureManager_reset(BgmapTextureManager this);
-void BgmapTextureManager_setSpareBgmapSegments(BgmapTextureManager this, u8 paramTableSegments);
+singleton class BgmapTextureManager : Object
+{
+	static BgmapTextureManager getInstance();
+	void allocateText(BgmapTexture bgmapTexture);
+	void calculateAvailableBgmapSegments();
+	s16 getAvailableBgmapSegmentsForTextures();
+	s16 getPrintingBgmapSegment();
+	BgmapTexture getTexture(BgmapTextureDefinition* bgmapTextureDefinition);
+	s16 getXOffset(int id);
+	s16 getYOffset(int id);
+	void print(int x, int y);
+	void releaseTexture(BgmapTexture bgmapTexture);
+	void reset();
+	void setSpareBgmapSegments(u8 paramTableSegments);
+}
 
 
 #endif

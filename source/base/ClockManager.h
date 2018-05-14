@@ -35,29 +35,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define ClockManager_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define ClockManager_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(ClockManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-ClockManager ClockManager_getInstance();
-
-void ClockManager_destructor(ClockManager this);
-
-void ClockManager_register(ClockManager this, Clock clock);
-void ClockManager_reset(ClockManager this);
-void ClockManager_unregister(ClockManager this, Clock clock);
-void ClockManager_update(ClockManager this, u32 millisecondsElapsed);
+singleton class ClockManager : Object
+{
+	static ClockManager getInstance();
+	void register(Clock clock);
+	void reset();
+	void unregister(Clock clock);
+	void update(u32 millisecondsElapsed);
+}
 
 
 #endif

@@ -36,63 +36,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Texture_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, write);															\
-		__VIRTUAL_DEC(ClassName, void, rewrite);														\
-
-#define Texture_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Texture, write);														\
-		__VIRTUAL_SET(ClassName, Texture, rewrite);														\
-
-#define Texture_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var CharSet				charSet
-		 * @brief					Char group to use int this texture
-		 * @memberof				Texture
-		 */																								\
-		CharSet charSet;																				\
-		/**
-		 * @var TextureDefinition*	textureDefinition
-		 * @brief					Pointer to ROM definition
-		 * @memberof				Texture
-		 */																								\
-		TextureDefinition* textureDefinition;															\
-		/**
-		 * @var u32					mapDisplacement
-		 * @brief					Array definition of the map
-		 * @memberof				Texture
-		 */																								\
-		u32 mapDisplacement;																			\
-		/**
-		 * @var u16					id
-		 * @brief					Texture's id
-		 * @memberof				Texture
-		 */																								\
-		u16 id;																							\
-		/**
-		 * @var u8					palette
-		 * @brief					Color palette
-		 * @memberof				Texture
-		 */																								\
-		u8 palette;																						\
-		/**
-		 * @var u8					written
-		 * @brief					Written flag
-		 * @memberof				Texture
-		 */																								\
-		u8 written;																						\
-
-// A texture which has the logic to be allocated in graphic memory
-__CLASS(Texture);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 // defines a background in ROM memory
 typedef struct TextureDefinition
 {
@@ -125,34 +68,70 @@ typedef struct TextureDefinition
 typedef const TextureDefinition TextureROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+abstract class Texture : Object
+{
+	/**
+	* @var CharSet				charSet
+	* @brief					Char group to use int this texture
+	* @memberof				Texture
+	*/
+	CharSet charSet;
+	/**
+	* @var TextureDefinition*	textureDefinition
+	* @brief					Pointer to ROM definition
+	* @memberof				Texture
+	*/
+	TextureDefinition* textureDefinition;
+	/**
+	* @var u32					mapDisplacement
+	* @brief					Array definition of the map
+	* @memberof				Texture
+	*/
+	u32 mapDisplacement;
+	/**
+	* @var u16					id
+	* @brief					Texture's id
+	* @memberof				Texture
+	*/
+	u16 id;
+	/**
+	* @var u8					palette
+	* @brief					Color palette
+	* @memberof				Texture
+	*/
+	u8 palette;
+	/**
+	* @var u8					written
+	* @brief					Written flag
+	* @memberof				Texture
+	*/
+	u8 written;
 
-void Texture_constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
-void Texture_destructor(Texture this);
-void Texture_setDefinition(Texture this, TextureDefinition* textureDefinition);
-TextureDefinition* Texture_getDefinition(Texture this);
-void Texture_releaseCharSet(Texture this);
-void Texture_write(Texture this);
-void Texture_rewrite(Texture this);
-void Texture_writeHBiasMode(Texture this);
-int Texture_getNumberOfChars(Texture this);
-TextureDefinition* Texture_getTextureDefinition(Texture this);
-u32 Texture_getTotalCols(Texture this);
-u32 Texture_getTotalRows(Texture this);
-u32 Texture_getNumberOfFrames(Texture this);
-CharSet Texture_getCharSet(Texture this, u32 loadIfNeeded);
-BYTE* Texture_getMapDefinition(Texture this);
-void Texture_setPalette(Texture this, u8 palette);
-u8 Texture_getPalette(Texture this);
-u32 Texture_getRows(Texture this);
-u32 Texture_getCols(Texture this);
-u16 Texture_getId(Texture this);
-void Texture_putChar(Texture this, Point* texturePixel, BYTE* newChar);
-void Texture_putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
-bool Texture_isWritten(Texture this);
-void Texture_setMapDisplacement(Texture this, u32 mapDisplacement);
+	// A texture which has the logic to be allocated in graphic memory
+	void constructor(TextureDefinition* textureDefinition, u16 id);
+	void setDefinition(TextureDefinition* textureDefinition);
+	TextureDefinition* getDefinition();
+	void releaseCharSet();
+	void writeHBiasMode();
+	int getNumberOfChars();
+	TextureDefinition* getTextureDefinition();
+	u32 getTotalCols();
+	u32 getTotalRows();
+	u32 getNumberOfFrames();
+	CharSet getCharSet(u32 loadIfNeeded);
+	BYTE* getMapDefinition();
+	void setPalette(u8 palette);
+	u8 getPalette();
+	u32 getRows();
+	u32 getCols();
+	u16 getId();
+	void putChar(Point* texturePixel, BYTE* newChar);
+	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
+	bool isWritten();
+	void setMapDisplacement(u32 mapDisplacement);
+	virtual void write();
+	virtual void rewrite();
+}
 
 
 #endif

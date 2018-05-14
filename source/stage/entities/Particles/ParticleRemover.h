@@ -35,28 +35,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleRemover_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-#define ParticleRemover_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-
-__CLASS(ParticleRemover);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(ParticleRemover);
-
-void ParticleRemover_destructor(ParticleRemover this);
-
-void ParticleRemover_deleteParticles(ParticleRemover this, VirtualList particles);
-void ParticleRemover_reset(ParticleRemover this);
-void ParticleRemover_setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles);
-void ParticleRemover_update(ParticleRemover this);
+class ParticleRemover : Object
+{
+	void constructor();
+	void deleteParticles(VirtualList particles);
+	void reset();
+	void setRemovalDelayCycles(int removalDelayCycles);
+	void update();
+}
 
 
 #endif

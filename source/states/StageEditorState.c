@@ -36,11 +36,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void StageEditorState_destructor(StageEditorState this);
 static void StageEditorState_constructor(StageEditorState this);
-static void StageEditorState_enter(StageEditorState this, void* owner);
-static void StageEditorState_execute(StageEditorState this, void* owner);
-static void StageEditorState_exit(StageEditorState this, void* owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -96,7 +92,7 @@ static void __attribute__ ((noinline)) StageEditorState_constructor(StageEditorS
  *
  * @param this	Function scope
  */
-static void StageEditorState_destructor(StageEditorState this)
+void StageEditorState_destructor(StageEditorState this)
 {
 	ASSERT(this, "StageEditorState::destructor: null this");
 
@@ -113,7 +109,7 @@ static void StageEditorState_destructor(StageEditorState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void StageEditorState_enter(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditorState::enter: null this");
 
@@ -131,7 +127,7 @@ static void StageEditorState_enter(StageEditorState this __attribute__ ((unused)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void StageEditorState_execute(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditorState::execute: null this");
 
@@ -147,7 +143,7 @@ static void StageEditorState_execute(StageEditorState this __attribute__ ((unuse
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-static void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void StageEditorState_exit(StageEditorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
 {
 	ASSERT(this, "StageEditorState::exit: null this");
 

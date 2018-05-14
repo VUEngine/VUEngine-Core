@@ -40,76 +40,51 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Game_METHODS(ClassName)																			\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define Game_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Game, handleMessage);													\
-
-__CLASS(Game);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-Game Game_getInstance();
-void Game_destructor(Game this);
-
-void Game_pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-void Game_pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-void Game_addState(Game this, GameState state);
-void Game_changeState(Game this, GameState state);
-void Game_cleanAndChangeState(Game this, GameState state);
-void Game_disableHardwareInterrupts(Game this);
-void Game_disableKeypad(Game this);
-void Game_enableHardwareInterrupts(Game this);
-void Game_enableKeypad(Game this);
-GameState Game_getAutomaticPauseState(Game this);
-Clock Game_getClock(Game this);
-CollisionManager Game_getCollisionManager(Game this);
-char* Game_getLastProcessName(Game this);
-Clock Game_getMessagingClock(Game this);
-Optical Game_getOptical(Game this);
-Clock Game_getPhysicsClock(Game this);
-PhysicalWorld Game_getPhysicalWorld(Game this);
-u32 Game_getTime(Game this);
-StateMachine Game_getStateMachine(Game this);
-Stage Game_getStage(Game this);
-GameState Game_getCurrentState(Game this);
-Clock Game_getUpdateClock(Game this);
-bool Game_handleMessage(Game this, Telegram telegram);
-bool Game_isEnteringSpecialMode(Game this);
-bool Game_isExitingSpecialMode(Game this);
-bool Game_isInSpecialMode(Game this);
-void Game_pause(Game this, GameState pauseState);
-void Game_printClassSizes(int x, int y);
-void Game_removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-void Game_reset(Game this);
-void Game_resetProfiling(Game this);
-void Game_setAutomaticPauseState(Game this, GameState automaticPauseState);
-void Game_setOptical(Game this, Optical optical);
-void Game_showLastGameFrameProfiling(Game this, int x, int y);
-void Game_start(Game this, GameState state);
-void Game_unpause(Game this, GameState pauseState);
-void Game_wait(Game this, u32 milliSeconds);
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-void Game_setLastProcessName(Game this, char* processName);
-#endif
-
-#ifdef __DEBUG_TOOLS
-bool Game_isInDebugMode(Game this);
-#endif
-#ifdef __STAGE_EDITOR
-bool Game_isInStageEditor(Game this);
-#endif
-#ifdef __ANIMATION_INSPECTOR
-bool Game_isInAnimationInspector(Game this);
-#endif
+singleton class Game : Object
+{
+	static Game getInstance();
+	void pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void addState(GameState state);
+	void changeState(GameState state);
+	void cleanAndChangeState(GameState state);
+	void disableHardwareInterrupts();
+	void disableKeypad();
+	void enableHardwareInterrupts();
+	void enableKeypad();
+	GameState getAutomaticPauseState();
+	Clock getClock();
+	CollisionManager getCollisionManager();
+	char* getLastProcessName();
+	Clock getMessagingClock();
+	Optical getOptical();
+	Clock getPhysicsClock();
+	PhysicalWorld getPhysicalWorld();
+	u32 getTime();
+	StateMachine getStateMachine();
+	Stage getStage();
+	GameState getCurrentState();
+	Clock getUpdateClock();
+	bool isEnteringSpecialMode();
+	bool isExitingSpecialMode();
+	bool isInSpecialMode();
+	void pause(GameState pauseState);
+	void printClassSizes(int x, int y);
+	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void reset();
+	void resetProfiling();
+	void setAutomaticPauseState(GameState automaticPauseState);
+	void setOptical(Optical optical);
+	void showLastGameFrameProfiling(int x, int y);
+	void start(GameState state);
+	void unpause(GameState pauseState);
+	void wait(u32 milliSeconds);
+	void setLastProcessName(char* processName);
+	bool isInDebugMode();
+	bool isInStageEditor();
+	bool isInAnimationInspector();
+	override bool handleMessage(Telegram telegram);
+}
 
 
 #endif

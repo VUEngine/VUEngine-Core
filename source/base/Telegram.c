@@ -71,8 +71,6 @@ __CLASS_DEFINITION(Telegram, Object);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Telegram_constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -94,7 +92,7 @@ __CLASS_NEW_END(Telegram, sender, receiver, message, extraInfo);
  * @param message		Message code
  * @param extraInfo		Pointer to any attachment to the message
  */
-static void Telegram_constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo)
+void Telegram_constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo)
 {
 	ASSERT(this, "Telegram::constructor: null this");
 

@@ -52,56 +52,34 @@ enum CameraFX
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define CameraEffectManager_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, startEffect, int effect, va_list args);							\
-		__VIRTUAL_DEC(ClassName, void, stopEffect, int effect);											\
+singleton class CameraEffectManager : Object
+{
+	/**
+	* @var Brightness	fxFadeTargetBrightness
+	* @brief			Target brightness for current fade effect
+	* @memberof		CameraEffectManager
+	*/
+	Brightness fxFadeTargetBrightness;
+	/**
+	* @var u8			fxFadeDelay
+	* @brief			Delay for current fade effect
+	* @memberof		CameraEffectManager
+	*/
+	u8 fxFadeDelay;
+	/**
+	* @var Object		fxFadeCallbackScope
+	* @brief			Callback scope for current fade effect
+	* @memberof		CameraEffectManager
+	*/
+	Object fxFadeCallbackScope;
 
-// declare the virtual methods which are redefined
-#define CameraEffectManager_SET_VTABLE(ClassName)														\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, CameraEffectManager, startEffect);										\
-		__VIRTUAL_SET(ClassName, CameraEffectManager, stopEffect);										\
-		__VIRTUAL_SET(ClassName, CameraEffectManager, handleMessage);									\
+	static CameraEffectManager getInstance();
+	Brightness getDefaultBrightness();
+	virtual void startEffect(int effect, va_list args);
+	virtual void stopEffect(int effect);
+	override bool handleMessage(Telegram telegram);
+}
 
-#define CameraEffectManager_ATTRIBUTES																	\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var Brightness	fxFadeTargetBrightness
-		 * @brief			Target brightness for current fade effect
-		 * @memberof		CameraEffectManager
-		 */																								\
-		Brightness fxFadeTargetBrightness;																\
-		/**
-		 * @var u8			fxFadeDelay
-		 * @brief			Delay for current fade effect
-		 * @memberof		CameraEffectManager
-		 */																								\
-		u8 fxFadeDelay;																					\
-		/**
-		 * @var Object		fxFadeCallbackScope
-		 * @brief			Callback scope for current fade effect
-		 * @memberof		CameraEffectManager
-		 */																								\
-		Object fxFadeCallbackScope;
-
-// declare a CameraEffectManager
-__CLASS(CameraEffectManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-CameraEffectManager CameraEffectManager_getInstance();
-
-void CameraEffectManager_constructor(CameraEffectManager this);
-void CameraEffectManager_destructor(CameraEffectManager this);
-Brightness CameraEffectManager_getDefaultBrightness(CameraEffectManager this);
-bool CameraEffectManager_handleMessage(CameraEffectManager this, Telegram telegram);
-void CameraEffectManager_startEffect(CameraEffectManager this, int effect, va_list args);
-void CameraEffectManager_stopEffect(CameraEffectManager this, int effect);
 
 
 #endif

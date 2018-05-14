@@ -36,24 +36,12 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinatorFactory_METHODS(ClassName)													\
-		Object_METHODS(ClassName)																		\
-
-#define AnimationCoordinatorFactory_SET_VTABLE(ClassName)												\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(AnimationCoordinatorFactory);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-AnimationCoordinatorFactory AnimationCoordinatorFactory_getInstance();
-
-void AnimationCoordinatorFactory_destructor(AnimationCoordinatorFactory this);
-AnimationCoordinator AnimationCoordinatorFactory_getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
-void AnimationCoordinatorFactory_reset(AnimationCoordinatorFactory this);
+singleton class AnimationCoordinatorFactory : Object
+{
+	static AnimationCoordinatorFactory getInstance();
+	AnimationCoordinator getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
+	void reset();
+}
 
 
 #endif

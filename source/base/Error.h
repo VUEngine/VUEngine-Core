@@ -34,27 +34,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// error handling class
-// declare the virtual methods
-#define Error_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define Error_SET_VTABLE(ClassName)																		\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(Error);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-Error Error_getInstance();
-
-void Error_destructor(Error this);
-
-int Error_triggerException(Error this, char* message, char* detail);
+singleton class Error : Object
+{
+	static Error getInstance();
+	int triggerException(char* message, char* detail);
+}
 
 
 #endif

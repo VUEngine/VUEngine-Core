@@ -36,31 +36,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define CameraMovementManager_METHODS(ClassName)														\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, focus, u32 checkIfFocusEntityIsMoving);							\
-
-// declare the virtual methods which are redefined
-#define CameraMovementManager_SET_VTABLE(ClassName)														\
-		Object_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, CameraMovementManager, focus); 										\
-
-#define CameraMovementManager_ATTRIBUTES																\
-		Object_ATTRIBUTES																				\
-
-__CLASS(CameraMovementManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-CameraMovementManager CameraMovementManager_getInstance();
-
-void CameraMovementManager_constructor(CameraMovementManager this);
-void CameraMovementManager_destructor(CameraMovementManager this);
-void CameraMovementManager_focus(CameraMovementManager this, u32 checkIfFocusEntityIsMoving);
+singleton class CameraMovementManager : Object
+{
+	static CameraMovementManager getInstance();
+	virtual void focus(u32 checkIfFocusEntityIsMoving);
+}
 
 
 #endif

@@ -36,10 +36,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some handy macros
-#define PRINT_TEXT(string, x, y)		Printing_text(Printing_getInstance(), string, x, y, NULL)
-#define PRINT_INT(number, x, y)			Printing_int(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)		Printing_float(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_HEX(number, x, y)			Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
+#define PRINT_TEXT(string, x, y)		text(Printing_getInstance(), string, x, y, NULL)
+#define PRINT_INT(number, x, y)			int(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)		float(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_HEX(number, x, y)			hex(Printing_getInstance(), number, x, y, 8, NULL)
 
 
 // max length of a font's name
@@ -163,76 +163,59 @@ typedef struct FontData
  */
 typedef const FontData FontROMData;
 
-// declare the virtual methods
-#define Printing_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
 
-// declare the virtual methods which are redefined
-#define Printing_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
+singleton class Printing : Object
+{
+	/*
+	* @var VirtualList fonts
+	* @brief			A list of loaded fonts and their respective CharSets
+	* @memberof		Printing
+	*/
+	VirtualList fonts;
+	/*
+	* @var u16			gx
+	* @brief			x coordinate for printing WORLD
+	* @memberof		Printing
+	*/
+	u16 gx;
+	/*
+	* @var u16			gy
+	* @brief			y coordinate for printing WORLD
+	* @memberof		Printing
+	*/
+	u16 gy;
+	/*
+	* @var u8			mode
+	* @brief			Printing mode (Default or Debug)
+	* @memberof		Printing
+	*/
+	u8 mode;
+	/*
+	* @var u8			palette
+	* @brief			Palette to use for printing
+	* @memberof		Printing
+	*/
+	u8 palette;
 
-// declare class attributes
-#define Printing_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/*
-		 * @var VirtualList fonts
-		 * @brief			A list of loaded fonts and their respective CharSets
-		 * @memberof		Printing
-		 */																								\
-		VirtualList fonts;																				\
-		/*
-		 * @var u16			gx
-		 * @brief			x coordinate for printing WORLD
-		 * @memberof		Printing
-		 */																								\
-		u16 gx;																							\
-		/*
-		 * @var u16			gy
-		 * @brief			y coordinate for printing WORLD
-		 * @memberof		Printing
-		 */																								\
-		u16 gy;																							\
-		/*
-		 * @var u8			mode
-		 * @brief			Printing mode (Default or Debug)
-		 * @memberof		Printing
-		 */																								\
-		u8 mode;																						\
-		/*
-		 * @var u8			palette
-		 * @brief			Palette to use for printing
-		 * @memberof		Printing
-		 */																								\
-		u8 palette;																						\
-
-// declare class
-__CLASS(Printing);
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-Printing Printing_getInstance();
-
-void Printing_destructor(Printing this);
-
-void Printing_clear(Printing this);
-FontData* Printing_getFontByName(Printing this, const char* font);
-FontSize Printing_getTextSize(Printing this, const char* string, const char* font);
-void Printing_loadDebugFont(Printing this);
-void Printing_loadFonts(Printing this, FontDefinition** fontDefinitions);
-void Printing_render(Printing this, int textLayer);
-void Printing_reset(Printing this);
-void Printing_setDebugMode(Printing this);
-void Printing_setPalette(Printing this, u8 palette);
-void Printing_setWorldCoordinates(Printing this, u16 gx, u16 gy);
-void Printing_resetWorldCoordinates(Printing this);
-int Printing_getPixelCount(Printing this);
-void Printing_text(Printing this, const char *string, int x, int y, const char* font);
-void Printing_int(Printing this, int value, u8 x, u8 y, const char* font);
-void Printing_float(Printing this, float value, u8 x, u8 y, const char* font);
-void Printing_hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
+	// declare class
+	static Printing getInstance();
+	void clear();
+	FontData* getFontByName(const char* font);
+	FontSize getTextSize(const char* string, const char* font);
+	void loadDebugFont();
+	void loadFonts(FontDefinition** fontDefinitions);
+	void render(int textLayer);
+	void reset();
+	void setDebugMode();
+	void setPalette(u8 palette);
+	void setWorldCoordinates(u16 gx, u16 gy);
+	void resetWorldCoordinates();
+	int getPixelCount();
+	void text(const char *string, int x, int y, const char* font);
+	void int(int value, u8 x, u8 y, const char* font);
+	void float(float value, u8 x, u8 y, const char* font);
+	void hex(WORD value, u8 x, u8 y, u8 length, const char* font);
+}
 
 
 #endif

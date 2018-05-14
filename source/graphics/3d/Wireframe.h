@@ -34,29 +34,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Wireframe_METHODS(ClassName)																	\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, draw, bool calculateParallax);									\
-
-#define Wireframe_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define Wireframe_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-
-__CLASS(Wireframe);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-void Wireframe_addVertex(Wireframe this, fix10_6 x, fix10_6 y, fix10_6 z);
-void Wireframe_constructor(Wireframe this);
-void Wireframe_destructor(Wireframe this);
-void Wireframe_draw(Wireframe this, bool calculateParallax);
-void Wireframe_hide(Wireframe this);
-void Wireframe_show(Wireframe this);
+abstract class Wireframe : Object
+{
+	void constructor();
+	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
+	void hide();
+	void show();
+	virtual void draw(bool calculateParallax) = 0;
+}
 
 
 #endif

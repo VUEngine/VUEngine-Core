@@ -67,160 +67,105 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Container_METHODS(ClassName)																	\
-		SpatialObject_METHODS(ClassName)																\
-		__VIRTUAL_DEC(ClassName, void, iAmDeletingMyself);												\
-		__VIRTUAL_DEC(ClassName, void, update, u32);													\
-		__VIRTUAL_DEC(ClassName, void, setupGraphics);													\
-		__VIRTUAL_DEC(ClassName, void, releaseGraphics);												\
-		__VIRTUAL_DEC(ClassName, void, transform, const Transformation*, u8);							\
-		__VIRTUAL_DEC(ClassName, void, synchronizeGraphics);											\
-		__VIRTUAL_DEC(ClassName, void, initialTransform, const Transformation*, u32);					\
-		__VIRTUAL_DEC(ClassName, void, setLocalPosition, const Vector3D* position);						\
-		__VIRTUAL_DEC(ClassName, void, setLocalRotation, const Rotation* rotation);						\
-		__VIRTUAL_DEC(ClassName, bool, handlePropagatedMessage, int message);							\
-		__VIRTUAL_DEC(ClassName, void, addChild, Container child);										\
-		__VIRTUAL_DEC(ClassName, void, removeChild, Container child, bool deleteChild);					\
-		__VIRTUAL_DEC(ClassName, void, changeEnvironment, Transformation* environmentTransform);		\
-		__VIRTUAL_DEC(ClassName, void, suspend);														\
-		__VIRTUAL_DEC(ClassName, void, resume);															\
-		__VIRTUAL_DEC(ClassName, void, show);															\
-		__VIRTUAL_DEC(ClassName, void, hide);															\
-		__VIRTUAL_DEC(ClassName, int, passMessage, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);\
+class Container : SpatialObject
+{
+	/**
+	* @var Transformation 	transformation
+	* @brief				3D transformation
+	* @memberof			Container
+	*/
+	Transformation transformation;
+	/**
+	* @var VirtualList 	children
+	* @brief				Children list
+	* @memberof			Container
+	*/
+	VirtualList children;
+	/**
+	* @var VirtualList 	removedChildren
+	* @brief				Removed children list
+	* @memberof			Container
+	*/
+	VirtualList removedChildren;
+	/**
+	* @var Container 		parent
+	* @brief				Parent
+	* @memberof			Container
+	*/
+	Container parent;
+	/**
+	* @var char* 			name
+	* @brief				Name
+	* @memberof			Container
+	*/
+	char* name;
+	/**
+	* @var u8 				deleteMe
+	* @brief				Flag for parent to know to delete it
+	* @memberof			Container
+	*/
+	u8 deleteMe;
+	/**
+	* @var u8 				hidden
+	* @brief				Flag to hide the entity
+	* @memberof			Container
+	*/
+	u8 hidden;
+	/**
+	* @var u8 				invalidateGlobalTransformation
+	* @brief				Flag to recalculate global transformations
+	* @memberof			Container
+	*/
+	u8 invalidateGlobalTransformation;
 
-
-// define the virtual methods
-#define Container_SET_VTABLE(ClassName)																	\
-		SpatialObject_SET_VTABLE(ClassName)																\
-		__VIRTUAL_SET(ClassName, Container, iAmDeletingMyself);											\
-		__VIRTUAL_SET(ClassName, Container, update);													\
-		__VIRTUAL_SET(ClassName, Container, setupGraphics);												\
-		__VIRTUAL_SET(ClassName, Container, releaseGraphics);											\
-		__VIRTUAL_SET(ClassName, Container, transform);													\
-		__VIRTUAL_SET(ClassName, Container, synchronizeGraphics);										\
-		__VIRTUAL_SET(ClassName, Container, initialTransform);											\
-		__VIRTUAL_SET(ClassName, Container, setLocalPosition);											\
-		__VIRTUAL_SET(ClassName, Container, setLocalRotation);											\
-		__VIRTUAL_SET(ClassName, Container, handlePropagatedMessage);									\
-		__VIRTUAL_SET(ClassName, Container, addChild);													\
-		__VIRTUAL_SET(ClassName, Container, changeEnvironment);											\
-		__VIRTUAL_SET(ClassName, Container, removeChild);												\
-		__VIRTUAL_SET(ClassName, Container, suspend);													\
-		__VIRTUAL_SET(ClassName, Container, resume);													\
-		__VIRTUAL_SET(ClassName, Container, show);														\
-		__VIRTUAL_SET(ClassName, Container, hide);														\
-		__VIRTUAL_SET(ClassName, Container, passMessage);												\
-
-#define Container_ATTRIBUTES																			\
-		SpatialObject_ATTRIBUTES																		\
-		/**
-		 * @var Transformation 	transformation
-		 * @brief				3D transformation
-		 * @memberof			Container
-		 */																								\
-		Transformation transformation;																	\
-		/**
-		 * @var VirtualList 	children
-		 * @brief				Children list
-		 * @memberof			Container
-		 */																								\
-		VirtualList children;																			\
-		/**
-		 * @var VirtualList 	removedChildren
-		 * @brief				Removed children list
-		 * @memberof			Container
-		 */																								\
-		VirtualList removedChildren;																	\
-		/**
-		 * @var Container 		parent
-		 * @brief				Parent
-		 * @memberof			Container
-		 */																								\
-		Container parent;																				\
-		/**
-		 * @var char* 			name
-		 * @brief				Name
-		 * @memberof			Container
-		 */																								\
-		char* name;																						\
-		/**
-		 * @var u8 				deleteMe
-		 * @brief				Flag for parent to know to delete it
-		 * @memberof			Container
-		 */																								\
-		u8 deleteMe;																					\
-		/**
-		 * @var u8 				hidden
-		 * @brief				Flag to hide the entity
-		 * @memberof			Container
-		 */																								\
-		u8 hidden;																						\
-		/**
-		 * @var u8 				invalidateGlobalTransformation
-		 * @brief				Flag to recalculate global transformations
-		 * @memberof			Container
-		 */																								\
-		u8 invalidateGlobalTransformation;																\
-
-__CLASS(Container);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Container, const char* const name);
-
-void Container_constructor(Container this, const char* const name);
-void Container_destructor(Container this);
-
-void Container_addChild(Container this, Container child);
-void Container_applyEnvironmentToTransformation(Container this, const Transformation* environmentTransform);
-void Container_changeEnvironment(Container this, Transformation* environmentTransform);
-void Container_concatenateTransform(Container this, Transformation *environmentTransform, Transformation* transformation);
-void Container_deleteMyself(Container this);
-int Container_doKeyHold(Container this, int pressedKey);
-int Container_doKeyPressed(Container this, int pressedKey);
-int Container_doKeyUp(Container this, int pressedKey);
-Container Container_getChildByName(Container this, char* childName, bool recursive);
-int Container_getChildCount(Container this);
-Transformation Container_getEnvironmentTransform(Container this);
-const Vector3D* Container_getGlobalPosition(Container this);
-s16 Container_getId(Container this);
-const Vector3D* Container_getLocalPosition(Container this);
-const Rotation* Container_getLocalRotation(Container this);
-const Scale* Container_getLocalScale(Container this);
-char* Container_getName(Container this);
-Container Container_getParent(Container this);
-Transformation* Container_getTransform(Container this);
-bool Container_handlePropagatedMessage(Container this, int message);
-void Container_hide(Container this);
-void Container_iAmDeletingMyself(Container this);
-void Container_initialTransform(Container this, Transformation* environmentTransform, u32 recursive);
-void Container_invalidateGlobalPosition(Container this);
-void Container_invalidateGlobalRotation(Container this);
-void Container_invalidateGlobalScale(Container this);
-void Container_invalidateGlobalTransformation(Container this);
-bool Container_isHidden(Container this);
-int Container_onPropagatedMessage(Container this, va_list args);
-int Container_passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args);
-int Container_propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...);
-void Container_purgeChildren(Container this);
-void Container_releaseGraphics(Container this);
-void Container_removeChild(Container this, Container child, bool deleteChild);
-void Container_resume(Container this);
-void Container_setLocalPosition(Container this, const Vector3D* position);
-void Container_setLocalRotation(Container this, const Rotation* rotation);
-void Container_setLocalScale(Container this, const Scale* scale);
-void Container_setName(Container this, const char* const name);
-void Container_setupGraphics(Container this);
-void Container_show(Container this);
-void Container_suspend(Container this);
-void Container_synchronizeGraphics(Container this);
-void Container_transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-void Container_transformNonVirtual(Container this, const Transformation* environmentTransform);
-void Container_update(Container this, u32 elapsedTime);
+	void constructor(const char* const name);
+	void applyEnvironmentToTransformation(const Transformation* environmentTransform);
+	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
+	void deleteMyself();
+	int doKeyHold(int pressedKey);
+	int doKeyPressed(int pressedKey);
+	int doKeyUp(int pressedKey);
+	Container getChildByName(char* childName, bool recursive);
+	int getChildCount();
+	Transformation getEnvironmentTransform();
+	const Vector3D* getGlobalPosition();
+	s16 getId();
+	const Vector3D* getLocalPosition();
+	const Rotation* getLocalRotation();
+	const Scale* getLocalScale();
+	char* getName();
+	Container getParent();
+	Transformation* getTransform();
+	void invalidateGlobalPosition();
+	void invalidateGlobalRotation();
+	void invalidateGlobalScale();
+	void invalidateGlobalTransformation();
+	bool isHidden();
+	int onPropagatedMessage(va_list args);
+	int propagateMessage(int (*propagatedMessageHandler)(Container, va_list), ...);
+	void purgeChildren();
+	void setLocalScale(const Scale* scale);
+	void setName(const char* const name);
+	void transformNonVirtual(const Transformation* environmentTransform);
+	virtual void iAmDeletingMyself();
+	virtual void update(u32 elapsedTime);
+	virtual void setupGraphics();
+	virtual void releaseGraphics();
+	virtual void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	virtual void synchronizeGraphics();
+	virtual void initialTransform(const Transformation* environmentTransform, u32 recursive);
+	virtual void setLocalPosition(const Vector3D* position);
+	virtual void setLocalRotation(const Rotation* rotation);
+	virtual bool handlePropagatedMessage(int message);
+	virtual void addChild(Container child);
+	virtual void removeChild(Container child, bool deleteChild);
+	virtual void changeEnvironment(Transformation* environmentTransform);
+	virtual void suspend();
+	virtual void resume();
+	virtual void show();
+	virtual void hide();
+	virtual int passMessage(int (*propagatedMessageHandler)(Container, va_list), va_list args);
+}
 
 
 #endif

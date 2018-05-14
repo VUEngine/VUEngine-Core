@@ -32,8 +32,6 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void VirtualNode_constructor(VirtualNode this, const void* const data);
-static void VirtualNode_destructor(VirtualNode this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,7 +62,7 @@ __CLASS_NEW_END(VirtualNode, data);
  * @param this	Function scope
  * @param data
  */
-static void VirtualNode_constructor(VirtualNode this, const void* const data)
+void VirtualNode_constructor(VirtualNode this, const void* const data)
 {
 	ASSERT(this, "VirtualNode::constructor: null this");
 
@@ -84,7 +82,7 @@ static void VirtualNode_constructor(VirtualNode this, const void* const data)
  *
  * @param this	Function scope
  */
-__attribute__((unused)) static void VirtualNode_destructor(VirtualNode this)
+void VirtualNode_destructor(VirtualNode this)
 {
 	ASSERT(this, "VirtualNode::destructor: null this");
 

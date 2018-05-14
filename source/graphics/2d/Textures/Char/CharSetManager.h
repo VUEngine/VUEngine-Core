@@ -35,36 +35,20 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// Defines as a pointer to a structure that's not defined here and so is not accessible to the outside world
-
-// declare the virtual methods
-#define CharSetManager_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define CharSetManager_SET_VTABLE(ClassName)															\
-		Object_SET_VTABLE(ClassName)																	\
-
-__CLASS(CharSetManager);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-CharSetManager CharSetManager_getInstance();
-
-void CharSetManager_destructor(CharSetManager this);
-void CharSetManager_reset(CharSetManager this);
-CharSet CharSetManager_getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-void CharSetManager_releaseCharSet(CharSetManager this, CharSet charSet);
-void CharSetManager_defragment(CharSetManager this);
-void CharSetManager_writeCharSets(CharSetManager this);
-bool CharSetManager_writeCharSetsProgressively(CharSetManager this);
-int CharSetManager_getTotalUsedChars(CharSetManager this);
-int CharSetManager_getTotalFreeChars(CharSetManager this);
-int CharSetManager_getTotalCharSets(CharSetManager this);
-void CharSetManager_print(CharSetManager this, int x, int y);
+singleton class CharSetManager : Object
+{
+	static CharSetManager getInstance();
+	void reset();
+	CharSet getCharSet(CharSetDefinition* charSetDefinition);
+	void releaseCharSet(CharSet charSet);
+	void defragment();
+	void writeCharSets();
+	bool writeCharSetsProgressively();
+	int getTotalUsedChars();
+	int getTotalFreeChars();
+	int getTotalCharSets();
+	void print(int x, int y);
+}
 
 
 #endif

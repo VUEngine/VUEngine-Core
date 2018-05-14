@@ -47,38 +47,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define EntityFactory_METHODS(ClassName)																\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define EntityFactory_SET_VTABLE(ClassName)																\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define EntityFactory_ATTRIBUTES																		\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* the EntityFactory entities to test for streaming */ 											\
-		VirtualList entitiesToInstantiate;																\
-		/* streaming's uninitialized entities */ 														\
-		VirtualList entitiesToInitialize;																\
-		/* streaming's non yet transformed entities */ 													\
-		VirtualList entitiesToTransform;																\
-		/* streaming's non yet transformed entities */ 													\
-		VirtualList entitiesToMakeReady;																\
-		/* entities loaded */ 																			\
-		VirtualList spawnedEntities;																	\
-		/* index for method to execute */																\
-		int streamingPhase;																				\
-
-// declare a EntityFactory, which holds the objects in a game world
-__CLASS(EntityFactory);
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
 // defines an entity in ROM memory
 typedef struct EntityDefinition
 {
@@ -135,17 +103,27 @@ typedef const struct PositionedEntity
 typedef const PositionedEntity PositionedEntityROMDef;
 
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+class EntityFactory : Object
+{
+	/* the EntityFactory entities to test for streaming */
+	VirtualList entitiesToInstantiate;
+	/* streaming's uninitialized entities */
+	VirtualList entitiesToInitialize;
+	/* streaming's non yet transformed entities */
+	VirtualList entitiesToTransform;
+	/* streaming's non yet transformed entities */
+	VirtualList entitiesToMakeReady;
+	/* entities loaded */
+	VirtualList spawnedEntities;
+	/* index for method to execute */
+	int streamingPhase;
 
-__CLASS_NEW_DECLARE(EntityFactory);
-
-void EntityFactory_destructor(EntityFactory this);
-u32 EntityFactory_prepareEntities(EntityFactory this);
-void EntityFactory_prepareAllEntities(EntityFactory this);
-void EntityFactory_spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
-u32 EntityFactory_hasEntitiesPending(EntityFactory this);
+	void constructor();
+	u32 prepareEntities();
+	void prepareAllEntities();
+	void spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
+	u32 hasEntitiesPending();
+}
 
 
 #endif

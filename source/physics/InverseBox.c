@@ -49,7 +49,6 @@ __CLASS_FRIEND_DEFINITION(Box);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void InverseBox_constructor(InverseBox this, SpatialObject owner);
 bool InverseBox_collidesWithRightBoxs(RightBox* first, RightBox* second);
 bool InverseBox_collidesBox(InverseBox this, Box other);
 
@@ -70,7 +69,7 @@ __CLASS_NEW_END(InverseBox, owner);
  * @param this	Function scope
  * @param owner
  */
-static void InverseBox_constructor(InverseBox this, SpatialObject owner)
+void InverseBox_constructor(InverseBox this, SpatialObject owner)
 {
 	ASSERT(this, "InverseBox::constructor: null this");
 

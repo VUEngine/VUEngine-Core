@@ -34,34 +34,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define Polyhedron_METHODS(ClassName)																	\
-		Wireframe_METHODS(ClassName)																	\
+class Polyhedron : Wireframe
+{
+	/**
+	* @var VirtualList vertices
+	* @brief			Vertices
+	* @memberof		Polyhedron
+	*/
+	VirtualList vertices;
 
-#define Polyhedron_SET_VTABLE(ClassName)																\
-		Wireframe_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, Polyhedron, draw);														\
-
-#define Polyhedron_ATTRIBUTES																			\
-		Wireframe_ATTRIBUTES																			\
-		/**
-		 * @var VirtualList vertices
-		 * @brief			Vertices
-		 * @memberof		Polyhedron
-		 */																								\
-		VirtualList vertices;																			\
-
-__CLASS(Polyhedron);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Polyhedron);
-
-void Polyhedron_addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z);
-void Polyhedron_destructor(Polyhedron this);
-void Polyhedron_draw(Polyhedron this, bool calculateParallax);
+	void constructor();
+	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
+	override void draw(bool calculateParallax);
+}
 
 
 #endif

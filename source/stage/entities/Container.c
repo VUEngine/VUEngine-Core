@@ -573,7 +573,7 @@ void Container_changeEnvironment(Container this, Transformation* environmentTran
  * @param environmentTransform
  * @param recursive
  */
-void Container_initialTransform(Container this, Transformation* environmentTransform, u32 recursive)
+void Container_initialTransform(Container this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "Container::initialTransform: null this");
 

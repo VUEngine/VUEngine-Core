@@ -68,8 +68,6 @@ __CLASS_FRIEND_DEFINITION(VirtualList);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -87,7 +85,7 @@ __CLASS_NEW_END(ParticleRemover);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this)
+void __attribute__ ((noinline)) ParticleRemover_constructor(ParticleRemover this)
 {
 	ASSERT(this, "ParticleRemover::constructor: null this");
 

@@ -34,29 +34,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define Telegram_METHODS(ClassName)																		\
-		Object_METHODS(ClassName)																		\
-
-// declare the virtual methods which are redefined
-#define Telegram_SET_VTABLE(ClassName)																	\
-		Object_SET_VTABLE(ClassName)																	\
-
-// declare a Telegram
-__CLASS(Telegram);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(Telegram, void* sender, void* receiver, int message, void* extraInfo);
-
-void Telegram_destructor(Telegram this);
-void* Telegram_getSender(Telegram this);
-void* Telegram_getReceiver(Telegram this);
-int Telegram_getMessage(Telegram this);
-void* Telegram_getExtraInfo(Telegram this);
+class Telegram : Object
+{
+	void constructor(void* sender, void* receiver, int message, void* extraInfo);
+	void* getSender();
+	void* getReceiver();
+	int getMessage();
+	void* getExtraInfo();
+}
 
 
 #endif

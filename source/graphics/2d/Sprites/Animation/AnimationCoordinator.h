@@ -37,42 +37,27 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinator_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, addAnimationController, AnimationController animationController);\
-		__VIRTUAL_DEC(ClassName, void, removeAnimationController, AnimationController animationController);\
+class AnimationCoordinator : Object
+{
+	/**
+	* @var VirtualList 		animationControllers
+	* @brief					Controllers to sync
+	* @memberof				AnimationController
+	*/
+	VirtualList animationControllers;
+	/**
+	* @var CharSetDefinition 	charSetDefinition
+	* @brief					Charset definition shared among entities
+	* @memberof				AnimationController
+	*/
+	const CharSetDefinition* charSetDefinition;
 
-#define AnimationCoordinator_SET_VTABLE(ClassName)														\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define AnimationCoordinator_ATTRIBUTES																	\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList 		animationControllers
-		 * @brief					Controllers to sync
-		 * @memberof				AnimationController
-		 */																								\
-		VirtualList animationControllers;																\
-		/**
-		 * @var CharSetDefinition 	charSetDefinition
-		 * @brief					Charset definition shared among entities
-		 * @memberof				AnimationController
-		 */																								\
-		const CharSetDefinition* charSetDefinition;														\
-
-__CLASS(AnimationCoordinator);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-void AnimationCoordinator_addAnimationController(AnimationCoordinator this, AnimationController animationController);
-void AnimationCoordinator_constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition);
-void AnimationCoordinator_destructor(AnimationCoordinator this);
-const CharSetDefinition* AnimationCoordinator_getCharSetDefinition(AnimationCoordinator this);
-bool AnimationCoordinator_playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
-void AnimationCoordinator_removeAnimationController(AnimationCoordinator this, AnimationController animationController);
+	void constructor(const CharSetDefinition* charSetDefinition);
+	const CharSetDefinition* getCharSetDefinition();
+	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
+	virtual void addAnimationController(AnimationController animationController);
+	virtual void removeAnimationController(AnimationController animationController);
+}
 
 
 #endif

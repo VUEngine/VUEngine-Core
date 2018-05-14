@@ -48,29 +48,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-#define ReflectiveEntity_METHODS(ClassName)																\
-		Entity_METHODS(ClassName)																		\
-		__VIRTUAL_DEC(ClassName, void, applyReflection, u32 currentDrawingFrameBufferSet);				\
-
-#define ReflectiveEntity_SET_VTABLE(ClassName)															\
-		Entity_SET_VTABLE(ClassName)																	\
-		__VIRTUAL_SET(ClassName, ReflectiveEntity, ready);												\
-		__VIRTUAL_SET(ClassName, ReflectiveEntity, suspend);											\
-		__VIRTUAL_SET(ClassName, ReflectiveEntity, resume);												\
-		__VIRTUAL_SET(ClassName, ReflectiveEntity, applyReflection);									\
-		__VIRTUAL_SET(ClassName, ReflectiveEntity, synchronizeGraphics);								\
-
-#define ReflectiveEntity_ATTRIBUTES																		\
-		/* it is derived from */																		\
-		Entity_ATTRIBUTES																		\
-		fix10_6 waveLutIndex;																			\
-		fix10_6 waveLutIndexIncrement;																	\
-		Point position2D;																				\
-		Point nextFramePosition2D;																		\
-
-__CLASS(ReflectiveEntity);
-
-
 typedef struct ReflectiveEntityDefinition
 {
 	EntityDefinition entityDefinition;
@@ -133,21 +110,17 @@ typedef struct ReflectiveEntityDefinition
 // defines a Scrolling background in ROM memory
 typedef const ReflectiveEntityDefinition ReflectiveEntityROMDef;
 
+class ReflectiveEntity : Entity
+{
+	fix10_6 waveLutIndex;
+	fix10_6 waveLutIndexIncrement;
+	Point position2D;
+	Point nextFramePosition2D;
 
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
+	static void shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask);
 
-__CLASS_NEW_DECLARE(ReflectiveEntity, ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name);
-
-void ReflectiveEntity_constructor(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name);
-void ReflectiveEntity_destructor(ReflectiveEntity this);
-void ReflectiveEntity_ready(ReflectiveEntity this, bool recursive);
-void ReflectiveEntity_suspend(ReflectiveEntity this);
-void ReflectiveEntity_resume(ReflectiveEntity this);
-void ReflectiveEntity_synchronizeGraphics(ReflectiveEntity this);
-void ReflectiveEntity_applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet);
-void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
+	void constructor(ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name);
+	void drawReflection(u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
 								s16 width, s16 height,
@@ -160,6 +133,12 @@ void ReflectiveEntity_drawReflection(ReflectiveEntity this, u32 currentDrawingFr
 								u32 bottomBorderMask,
 								u32 leftBorderMask __attribute__ ((unused)),
 								u32 rightBorderMask __attribute__ ((unused)));
-void ReflectiveEntity_shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask);
+	virtual void applyReflection(u32 currentDrawingFrameBufferSet);
+	override void ready(bool recursive);
+	override void suspend();
+	override void resume();
+	override void synchronizeGraphics();
+}
+
 
 #endif

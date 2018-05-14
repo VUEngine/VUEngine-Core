@@ -50,7 +50,6 @@ __CLASS_DEFINITION(BgmapTexture, Texture);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
 static void BgmapTexture_writeAnimatedMulti(BgmapTexture this);
 static void BgmapTexture_doWrite(BgmapTexture this);
 
@@ -77,7 +76,7 @@ __CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
  * @param bgmapTextureDefinition		Texture definition
  * @param id							Identifier
  */
-static void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
+void BgmapTexture_constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
 {
 	ASSERT(this, "BgmapTexture::constructor: null this");
 

@@ -49,7 +49,6 @@ __CLASS_DEFINITION(UiContainer, Container);
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,7 +60,7 @@ __CLASS_NEW_DEFINITION(UiContainer, UiContainerDefinition* uiContainerDefinition
 __CLASS_NEW_END(UiContainer, uiContainerDefinition);
 
 // class's constructor
-static void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
+void UiContainer_constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
 {
 	ASSERT(this, "UiContainer::constructor: null this");
 
@@ -128,7 +127,7 @@ void UiContainer_transform(UiContainer this, const Transformation* environmentTr
 }
 
 // transformation
-void UiContainer_initialTransform(UiContainer this, Transformation* environmentTransform, u32 recursive)
+void UiContainer_initialTransform(UiContainer this, const Transformation* environmentTransform, u32 recursive)
 {
 	ASSERT(this, "UiContainer::initialTransform: null this");
 

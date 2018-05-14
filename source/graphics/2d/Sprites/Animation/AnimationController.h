@@ -37,108 +37,90 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define AnimationController_METHODS(ClassName)															\
-		Object_METHODS(ClassName)																		\
+class AnimationController : Object
+{
+	/**
+	* @var Object 						owner
+	* @brief							who owns the animated sprite
+	* @memberof						AnimationController
+	*/
+	Object owner;
+	/**
+	* @var AnimationCoordinator 		animationCoordinator
+	* @brief							who owns the animated sprite
+	* @memberof						AnimationController
+	*/
+	AnimationCoordinator animationCoordinator;
+	/**
+	* @var s8 							actualFrame
+	* @brief							actual animation's frame to show
+	* @memberof						AnimationController
+	*/
+	s8 actualFrame;
+	/**
+	* @var s8 							previousFrame
+	* @brief							previous animation's frame shown
+	* @memberof						AnimationController
+	*/
+	s8 previousFrame;
+	/**
+	* @var s8 							frameDuration
+	* @brief							the number of game cycles that an animation frame is show
+	* @memberof						AnimationController
+	*/
+	s8 frameDuration;
+	/**
+	* @var s8 							frameCycleDecrement
+	* @brief							frame delay decrement update cycle
+	* @memberof						AnimationController
+	*/
+	s8 frameCycleDecrement;
+	/**
+	* @var const AnimationFunction*	animationFunction
+	* @brief							a pointer to the animation function being played
+	* @memberof						AnimationController
+	*/
+	const AnimationFunction* animationFunction;
+	/**
+	* @var u8 							playing
+	* @brief							flag to know if playing an animation
+	* @memberof						AnimationController
+	*/
+	u8 playing;
+	/**
+	* @var u8 							animationFrameChanged
+	* @brief							frame changed flag
+	* @memberof						AnimationController
+	*/
+	u8 animationFrameChanged;
 
-// declare the virtual methods which are redefined
-#define AnimationController_SET_VTABLE(ClassName)														\
-		Object_SET_VTABLE(ClassName)																	\
-
-#define AnimationController_ATTRIBUTES																	\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var Object 						owner
-		 * @brief							who owns the animated sprite
-		 * @memberof						AnimationController
-		 */																								\
-		Object owner;																					\
-		/**
-		 * @var AnimationCoordinator 		animationCoordinator
-		 * @brief							who owns the animated sprite
-		 * @memberof						AnimationController
-		 */																								\
-		AnimationCoordinator animationCoordinator;														\
-		/**
-		 * @var s8 							actualFrame
-		 * @brief							actual animation's frame to show
-		 * @memberof						AnimationController
-		 */																								\
-		s8 actualFrame;																					\
-		/**
-		 * @var s8 							previousFrame
-		 * @brief							previous animation's frame shown
-		 * @memberof						AnimationController
-		 */																								\
-		s8 previousFrame;																				\
-		/**
-		 * @var s8 							frameDuration
-		 * @brief							the number of game cycles that an animation frame is show
-		 * @memberof						AnimationController
-		 */																								\
-		s8 frameDuration;																				\
-		/**
-		 * @var s8 							frameCycleDecrement
-		 * @brief							frame delay decrement update cycle
-		 * @memberof						AnimationController
-		 */																								\
-		s8 frameCycleDecrement;																			\
-		/**
-		 * @var const AnimationFunction*	animationFunction
-		 * @brief							a pointer to the animation function being played
-		 * @memberof						AnimationController
-		 */																								\
-		const AnimationFunction* animationFunction;														\
-		/**
-		 * @var u8 							playing
-		 * @brief							flag to know if playing an animation
-		 * @memberof						AnimationController
-		 */																								\
-		u8 playing;																						\
-		/**
-		 * @var u8 							animationFrameChanged
-		 * @brief							frame changed flag
-		 * @memberof						AnimationController
-		 */																								\
-		u8 animationFrameChanged;																		\
-
-__CLASS(AnimationController);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-__CLASS_NEW_DECLARE(AnimationController, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
-
-void AnimationController_constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
-void AnimationController_destructor(AnimationController this);
-
-s8 AnimationController_getActualFrame(AnimationController this);
-s8 AnimationController_getActualFrameIndex(AnimationController this);
-u8 AnimationController_getCols(AnimationController this);
-u8 AnimationController_getFrameCycleDecrement(AnimationController this);
-s8 AnimationController_getFrameDuration(AnimationController this);
-int AnimationController_getMapType(AnimationController this);
-int AnimationController_getNumberOfFrames(AnimationController this);
-const AnimationFunction* AnimationController_getPlayingAnimationFunction(AnimationController this);
-s8 AnimationController_getPreviousFrame(AnimationController this);
-u8 AnimationController_getRows(AnimationController this);
-bool AnimationController_isPlaying(AnimationController this);
-bool AnimationController_isPlayingFunction(AnimationController this, const char* functionName);
-void AnimationController_nextFrame(AnimationController this);
-void AnimationController_pause(AnimationController this, bool pause);
-bool AnimationController_play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
-void AnimationController_playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction);
-void AnimationController_previousFrame(AnimationController this);
-void AnimationController_setActualFrame(AnimationController this, s8 actualFrame);
-void AnimationController_setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement);
-void AnimationController_setFrameDuration(AnimationController this, u8 frameDuration);
-void AnimationController_stop(AnimationController this);
-bool AnimationController_update(AnimationController this, Clock clock);
-bool AnimationController_updateAnimation(AnimationController this);
-void AnimationController_write(AnimationController this);
-void AnimationController_writeAnimation(AnimationController this);
+	void constructor(Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
+	s8 getActualFrame();
+	s8 getActualFrameIndex();
+	u8 getCols();
+	u8 getFrameCycleDecrement();
+	s8 getFrameDuration();
+	int getMapType();
+	int getNumberOfFrames();
+	const AnimationFunction* getPlayingAnimationFunction();
+	s8 getPreviousFrame();
+	u8 getRows();
+	bool isPlaying();
+	bool isPlayingFunction(const char* functionName);
+	void nextFrame();
+	void pause(bool pause);
+	bool play(const AnimationDescription* animationDescription, const char* functionName);
+	void playAnimationFunction(const AnimationFunction* animationFunction);
+	void previousFrame();
+	void setActualFrame(s8 actualFrame);
+	void setFrameCycleDecrement(u8 frameCycleDecrement);
+	void setFrameDuration(u8 frameDuration);
+	void stop();
+	bool update(Clock clock);
+	bool updateAnimation();
+	void write();
+	void writeAnimation();
+}
 
 
 #endif

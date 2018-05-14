@@ -34,26 +34,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-#define StageEditorState_METHODS(ClassName)																\
-	GameState_METHODS(ClassName)																		\
+singleton class StageEditorState : GameState
+{
+	static StageEditorState getInstance();
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void processUserInput(UserInput userInput);
+}
 
-// declare the virtual methods which are redefined
-#define StageEditorState_SET_VTABLE(ClassName)															\
-	GameState_SET_VTABLE(ClassName)																		\
-	__VIRTUAL_SET(ClassName, StageEditorState, enter);													\
-	__VIRTUAL_SET(ClassName, StageEditorState, execute);												\
-	__VIRTUAL_SET(ClassName, StageEditorState, exit);													\
-	__VIRTUAL_SET(ClassName, StageEditorState, processUserInput);										\
-
-__CLASS(StageEditorState);
-
-
-//---------------------------------------------------------------------------------------------------------
-//										PUBLIC INTERFACE
-//---------------------------------------------------------------------------------------------------------
-
-StageEditorState StageEditorState_getInstance(void);
-void StageEditorState_processUserInput(StageEditorState this, UserInput userInput);
 
 #endif

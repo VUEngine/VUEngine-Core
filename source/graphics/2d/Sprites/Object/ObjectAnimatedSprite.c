@@ -51,7 +51,6 @@ __CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
 
 extern int strcmp(const char *, const char *);
 
-static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,7 +71,7 @@ __CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
  * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
-static void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+void ObjectAnimatedSprite_constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
 
