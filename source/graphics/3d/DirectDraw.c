@@ -48,7 +48,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void DirectDraw::constructor(DirectDraw this);
+void DirectDraw::constructor(DirectDraw this);
 
 extern u32* _currentDrawingFrameBufferSet;
 
@@ -66,7 +66,7 @@ extern u32* _currentDrawingFrameBufferSet;
  *
  * @return		DirectDraw instance
  */
-__SINGLETON(DirectDraw);
+
 
 /**
  * Class constructor
@@ -76,7 +76,7 @@ __SINGLETON(DirectDraw);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) DirectDraw::constructor(DirectDraw this)
+void __attribute__ ((noinline)) DirectDraw::constructor(DirectDraw this)
 {
 	ASSERT(this, "DirectDraw::constructor: null this");
 

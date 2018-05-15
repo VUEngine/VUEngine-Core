@@ -35,7 +35,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MessageDispatcher::constructor(MessageDispatcher this);
+void MessageDispatcher::constructor(MessageDispatcher this);
 void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay, Object sender,
 	Object receiver, int message, void* extraInfo);
 
@@ -83,7 +83,7 @@ typedef struct DelayedMessage
  *
  * @return		MessageDispatcher instance
  */
- __SINGLETON(MessageDispatcher);
+
 
 /**
  * Class constructor
@@ -93,7 +93,7 @@ typedef struct DelayedMessage
  *
  * @param this		Function scope
  */
- static void __attribute__ ((noinline)) MessageDispatcher::constructor(MessageDispatcher this)
+ void __attribute__ ((noinline)) MessageDispatcher::constructor(MessageDispatcher this)
 {
 	ASSERT(this, "MessageDispatcher::constructor: null this");
 

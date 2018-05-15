@@ -76,7 +76,7 @@ friend class VirtualList;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void SpriteManager::constructor(SpriteManager this);
+void SpriteManager::constructor(SpriteManager this);
 static void SpriteManager::selectSpritePendingTextureWriting(SpriteManager this);
 static bool SpriteManager::disposeSpritesProgressively(SpriteManager this);
 static void SpriteManager::registerSprite(SpriteManager this, Sprite sprite);
@@ -102,7 +102,7 @@ void ObjectSprite::checkForContainer(ObjectSprite this);
  *
  * @return		SpriteManager instance
  */
-__SINGLETON(SpriteManager);
+
 
 /**
  * Class constructor
@@ -112,7 +112,7 @@ __SINGLETON(SpriteManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) SpriteManager::constructor(SpriteManager this)
+void __attribute__ ((noinline)) SpriteManager::constructor(SpriteManager this)
 {
 	ASSERT(this, "SpriteManager::constructor: null this");
 

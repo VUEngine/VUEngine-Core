@@ -44,7 +44,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void FrameRate::constructor(FrameRate this);
+void FrameRate::constructor(FrameRate this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ static void FrameRate::constructor(FrameRate this);
  *
  * @return		FrameRate instance
  */
-__SINGLETON(FrameRate);
+
 
 /**
  * Class constructor
@@ -70,7 +70,7 @@ __SINGLETON(FrameRate);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) FrameRate::constructor(FrameRate this)
+void __attribute__ ((noinline)) FrameRate::constructor(FrameRate this)
 {
 	ASSERT(this, "FrameRate::constructor: null this");
 

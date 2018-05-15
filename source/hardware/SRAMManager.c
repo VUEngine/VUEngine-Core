@@ -56,7 +56,7 @@ extern u32 _sram_bss_end;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void SRAMManager::constructor(SRAMManager this);
+void SRAMManager::constructor(SRAMManager this);
 static void SRAMManager::initialize(SRAMManager this);
 
 
@@ -73,7 +73,7 @@ static void SRAMManager::initialize(SRAMManager this);
  *
  * @return		SRAMManager instance
  */
-__SINGLETON(SRAMManager);
+
 
 /**
  * Class constructor
@@ -83,7 +83,7 @@ __SINGLETON(SRAMManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) SRAMManager::constructor(SRAMManager this)
+void __attribute__ ((noinline)) SRAMManager::constructor(SRAMManager this)
 {
 	ASSERT(this, "SRAMManager::constructor: null this");
 

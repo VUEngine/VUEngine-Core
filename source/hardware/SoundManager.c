@@ -161,7 +161,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 
 // globals
 
-static void SoundManager::constructor(SoundManager this);
+void SoundManager::constructor(SoundManager this);
 static void SoundManager::continuePlayingBGM(SoundManager this);
 static void SoundManager::continuePlayingFxSounds(SoundManager this);
 
@@ -179,7 +179,7 @@ static void SoundManager::continuePlayingFxSounds(SoundManager this);
  *
  * @return		SoundManager instance
  */
-__SINGLETON(SoundManager);
+
 
 /**
  * Class constructor
@@ -189,7 +189,7 @@ __SINGLETON(SoundManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) SoundManager::constructor(SoundManager this)
+void __attribute__ ((noinline)) SoundManager::constructor(SoundManager this)
 {
 	ASSERT(this, "SoundManager::constructor: null this");
 

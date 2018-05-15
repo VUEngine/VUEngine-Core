@@ -64,7 +64,7 @@ bool _triggeringException = false;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Error::constructor(Error this);
+void Error::constructor(Error this);
 
 bool Game::isConstructed();
 
@@ -82,7 +82,7 @@ bool Game::isConstructed();
  *
  * @return		Error instance
  */
-__SINGLETON(Error);
+
 
 /**
  * Class constructor
@@ -92,7 +92,7 @@ __SINGLETON(Error);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) Error::constructor(Error this)
+void __attribute__ ((noinline)) Error::constructor(Error this)
 {
 	Base::constructor();
 }

@@ -74,6 +74,8 @@ singleton class CameraEffectManager : Object
 	Object fxFadeCallbackScope;
 
 	static CameraEffectManager getInstance();
+
+	void constructor(CameraEffectManager this);
 	Brightness getDefaultBrightness(CameraEffectManager this);
 	virtual void startEffect(CameraEffectManager this, int effect, va_list args);
 	virtual void stopEffect(CameraEffectManager this, int effect);

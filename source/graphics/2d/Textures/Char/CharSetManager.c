@@ -49,7 +49,7 @@ friend class VirtualList;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void CharSetManager::constructor(CharSetManager this);
+void CharSetManager::constructor(CharSetManager this);
 static CharSet CharSetManager::findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
 static CharSet CharSetManager::allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
 static bool CharSetManager::defragmentProgressively(CharSetManager this);
@@ -67,7 +67,7 @@ static bool CharSetManager::defragmentProgressively(CharSetManager this);
  *
  * @return		CharSetManager instance
  */
-__SINGLETON(CharSetManager);
+
 
 /**
  * Class constructor
@@ -77,7 +77,7 @@ __SINGLETON(CharSetManager);
  *
  * @param this			Function scope
  */
-static void __attribute__ ((noinline)) CharSetManager::constructor(CharSetManager this)
+void __attribute__ ((noinline)) CharSetManager::constructor(CharSetManager this)
 {
 	ASSERT(this, "CharSetManager::constructor: null this");
 

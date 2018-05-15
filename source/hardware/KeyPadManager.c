@@ -45,7 +45,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void KeypadManager::constructor(KeypadManager this);
+void KeypadManager::constructor(KeypadManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ static unsigned int volatile* _readingStatus = NULL;
  *
  * @return		KeypadManager instance
  */
-__SINGLETON(KeypadManager);
+
 
 /**
  * Class constructor
@@ -73,7 +73,7 @@ __SINGLETON(KeypadManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) KeypadManager::constructor(KeypadManager this)
+void __attribute__ ((noinline)) KeypadManager::constructor(KeypadManager this)
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
 

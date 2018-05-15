@@ -100,7 +100,7 @@ enum Modes
 // globals
 extern UserObject _userObjects[];
 
-static void StageEditor::constructor(StageEditor this);
+void StageEditor::constructor(StageEditor this);
 static void StageEditor::setupMode(StageEditor this);
 static void StageEditor::releaseShape(StageEditor this);
 static void StageEditor::getShape(StageEditor this);
@@ -136,7 +136,7 @@ static void StageEditor::showSelectedUserObject(StageEditor this);
  *
  * @return		StageEditor instance
  */
-__SINGLETON(StageEditor);
+
 
 /**
  * Class constructor
@@ -146,7 +146,7 @@ __SINGLETON(StageEditor);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) StageEditor::constructor(StageEditor this)
+void __attribute__ ((noinline)) StageEditor::constructor(StageEditor this)
 {
 	ASSERT(this, "StageEditor::constructor: null this");
 

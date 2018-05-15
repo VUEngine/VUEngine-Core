@@ -47,7 +47,7 @@ friend class VirtualList;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void WireframeManager::constructor(WireframeManager this);
+void WireframeManager::constructor(WireframeManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ static void WireframeManager::constructor(WireframeManager this);
  *
  * @return		WireframeManager instance
  */
-__SINGLETON(WireframeManager);
+
 
 /**
  * Class constructor
@@ -73,7 +73,7 @@ __SINGLETON(WireframeManager);
  *
  * @param this	Function scope
  */
-static void WireframeManager::constructor(WireframeManager this)
+void WireframeManager::constructor(WireframeManager this)
 {
 	ASSERT(this, "WireframeManager::constructor: null this");
 

@@ -100,7 +100,7 @@ extern UserAnimatedEntity _userAnimatedEntities[];
 
 AnimationController Sprite::getAnimationController(Sprite this);
 
-static void AnimationInspector::constructor(AnimationInspector this);
+void AnimationInspector::constructor(AnimationInspector this);
 static void AnimationInspector::setupMode(AnimationInspector this);
 static void AnimationInspector::printUserAnimatedEntities(AnimationInspector this);
 static void AnimationInspector::printSprites(AnimationInspector this);
@@ -133,7 +133,7 @@ static void AnimationInspector::onAnimationComplete(AnimationInspector this, Obj
  *
  * @return		AnimationInspector instance
  */
-__SINGLETON(AnimationInspector);
+
 
 /**
  * Class constructor
@@ -143,7 +143,7 @@ __SINGLETON(AnimationInspector);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) AnimationInspector::constructor(AnimationInspector this)
+void __attribute__ ((noinline)) AnimationInspector::constructor(AnimationInspector this)
 {
 	ASSERT(this, "AnimationInspector::constructor: null this");
 

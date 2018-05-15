@@ -136,7 +136,7 @@ friend class VirtualList;
 extern ClassSizeData _userClassesSizeData[];
 #endif
 
-static void Debug::constructor(Debug this);
+void Debug::constructor(Debug this);
 static void Debug::showCollisionShapes(Debug this);
 static void Debug::showDebugBgmap(Debug this);
 static void Debug::showBgmapSegment(Debug this);
@@ -209,7 +209,7 @@ static void Debug::showSramPage(Debug this, int increment, int x, int y);
  *
  * @return		Debug instance
  */
-__SINGLETON(Debug);
+
 
 /**
  * Class constructor
@@ -219,7 +219,7 @@ __SINGLETON(Debug);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) Debug::constructor(Debug this)
+void __attribute__ ((noinline)) Debug::constructor(Debug this)
 {
 	ASSERT(this, "Debug::constructor: null this");
 

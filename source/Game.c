@@ -101,7 +101,7 @@ enum StateOperations
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Game::constructor(Game this);
+void Game::constructor(Game this);
 static void Game::initialize(Game this);
 static void Game::setNextState(Game this, GameState state);
 static u32 Game::processUserInput(Game this);
@@ -220,9 +220,6 @@ static s16 _previousGameFrameTotalTime = 0;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-// a singleton
-__SINGLETON(Game);
-
 // class's constructor
 bool Game::isConstructed()
 {
@@ -230,7 +227,7 @@ bool Game::isConstructed()
 }
 
 // class's constructor
-static void __attribute__ ((noinline)) Game::constructor(Game this)
+void __attribute__ ((noinline)) Game::constructor(Game this)
 {
 	ASSERT(this, "Game::constructor: null this");
 

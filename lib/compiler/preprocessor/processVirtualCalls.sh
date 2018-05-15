@@ -49,7 +49,7 @@ echo Class: $className
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^[ 	]*[^\*//]*[ 	]\+[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(.*)" $OUTPUT_FILE | cut -d ":" -f1`
 
-sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)[ 	]*(#\1_\2(#g' $OUTPUT_FILE
+sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 
 if [ -z "$className" ];then
 	exit 0
@@ -81,6 +81,18 @@ then
 	else
 		classDefinition=$classDefinition"\n__CLASS_NEW_DEFINITION($className, $allocatorParameters)"
 		classDefinition=$classDefinition"\n__CLASS_NEW_END($className, $allocatorArguments);"
+	fi
+else
+	if [[ $classModifiers = *"singleton "* ]] ;
+	then
+		classDefinition=$classDefinition"\n void "$className"_constructor("$className" this);"
+
+		hasCustomSingletonDefinition=`grep -e '#define .*SINGLETON(' $OUTPUT_FILE`
+
+		if [ -z "$hasCustomSingletonDefinition" ];
+		then
+			classDefinition=$classDefinition"\n __SINGLETON($className);"
+		fi
 	fi
 fi
 
@@ -129,6 +141,11 @@ do
 	touch $TEMPORAL_METHOD_LIST
 
 	#echo "Processing source $INPUT_FILE"
+	virtualMethodsInFile=`grep -o -n -e "$virtualMethods" $OUTPUT_FILE`
+
+	if [ -z "$virtualMethodsInFile" ] ; then
+		continue;
+	fi
 
 	while : ; do
 
@@ -136,17 +153,18 @@ do
 		do
 			if [ -z "$methodCall" ];
 			then
+			echo "Checking empty"
 				continue;
 			fi
 
-			#echo "Checking $methodCall"
+#			echo "Checking $methodCall"
 			pureMethodCall=`echo $methodCall | cut -d: -f2 | cut -d\( -f1`
 			#echo pureMethodCall $pureMethodCall
 
 			line=`cut -d: -f1 <<< "$methodCall"`
 			class=`cut -d_ -f1 <<< "$pureMethodCall"`
 			method=`cut -d_ -f2 <<< "$pureMethodCall"`
-			#echo "$pureMethodCall is going to be virtualized into $class and $method at $line"
+#			echo "$pureMethodCall is going to be virtualized into $class and $method at $line"
 			anyMethodVirtualized=true
 
 			# replace virtual method calls

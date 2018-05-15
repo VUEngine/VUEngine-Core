@@ -36,10 +36,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some handy macros
-#define PRINT_TEXT(string, x, y)		text(Printing_getInstance(), string, x, y, NULL)
-#define PRINT_INT(number, x, y)			int(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)		float(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_HEX(number, x, y)			hex(Printing_getInstance(), number, x, y, 8, NULL)
+#define PRINT_TEXT(string, x, y)		Printing_text(Printing_getInstance(), string, x, y, NULL)
+#define PRINT_INT(number, x, y)			Printing_int(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)		Printing_float(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_HEX(number, x, y)			Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
 
 
 // max length of a font's name

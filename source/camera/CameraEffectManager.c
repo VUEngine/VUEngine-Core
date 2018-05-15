@@ -50,7 +50,7 @@ friend class Camera;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void CameraEffectManager::constructor(CameraEffectManager this);
+
 void CameraEffectManager::showCamera(CameraEffectManager this);
 void CameraEffectManager::hideCamera(CameraEffectManager this);
 void CameraEffectManager_FXFadeIn(CameraEffectManager this);
@@ -74,7 +74,7 @@ void CameraEffectManager_FXFadeAsyncStop(CameraEffectManager this);
  *
  * @return		CameraEffectManager instance
  */
-__SINGLETON(CameraEffectManager);
+
 
 /**
  * Class constructor
@@ -84,7 +84,7 @@ __SINGLETON(CameraEffectManager);
  *
  * @param this	Function scope
  */
-static void CameraEffectManager::constructor(CameraEffectManager this)
+void CameraEffectManager::constructor(CameraEffectManager this)
 {
 	ASSERT(this, "CameraEffectManager::constructor: null this");
 

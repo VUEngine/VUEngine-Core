@@ -53,7 +53,7 @@ extern LangROMDef* __LANGUAGES[];
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void I18n::constructor(I18n this);
+void I18n::constructor(I18n this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ static void I18n::constructor(I18n this);
  *
  * @return		I18n instance
  */
-__SINGLETON(I18n);
+
 
 /**
  * Class constructor
@@ -79,7 +79,7 @@ __SINGLETON(I18n);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) I18n::constructor(I18n this)
+void __attribute__ ((noinline)) I18n::constructor(I18n this)
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::constructor: null this");
 

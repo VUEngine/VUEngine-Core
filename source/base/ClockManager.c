@@ -53,7 +53,7 @@ friend class VirtualList;
 
 
 //class's constructor
-static void ClockManager::constructor(ClockManager this);
+void ClockManager::constructor(ClockManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ static void ClockManager::constructor(ClockManager this);
  *
  * @return		ClockManager instance
  */
-__SINGLETON(ClockManager);
+
 
 /**
  * Class constructor
@@ -79,7 +79,7 @@ __SINGLETON(ClockManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) ClockManager::constructor(ClockManager this)
+void __attribute__ ((noinline)) ClockManager::constructor(ClockManager this)
 {
 	ASSERT(this, "ClockManager::constructor: null this");
 

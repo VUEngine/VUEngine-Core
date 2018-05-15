@@ -35,7 +35,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void DebugState::constructor(DebugState this);
+void DebugState::constructor(DebugState this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ static void DebugState::constructor(DebugState this);
  *
  * @return		DebugState instance
  */
-__SINGLETON(DebugState);
+
 
 /**
  * Class constructor
@@ -73,7 +73,7 @@ __SINGLETON(DebugState);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) DebugState::constructor(DebugState this)
+void __attribute__ ((noinline)) DebugState::constructor(DebugState this)
 {
 	ASSERT(this, "DebugState::constructor: null this");
 

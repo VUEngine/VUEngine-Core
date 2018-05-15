@@ -5,6 +5,11 @@ INPUT_FILE=$1
 BACKUP_FILE=$1.txt
 OUTPUT_FILE=$1.new
 
+if [ ! -f $BACKUP_FILE ];
+then
+	cp $INPUT_FILE $BACKUP_FILE
+fi
+
 WORKING_FOLDER=$2
 rm -f $WORKING_FOLDER/*.txt
 
@@ -12,7 +17,7 @@ CLEAN_INPUT_FILE=$WORKING_FOLDER/Clean.txt
 ONLY_METHODS_INPUT_FILE=$WORKING_FOLDER/OnlyMethods.txt
 
 sed -e "s#\\\##g" $INPUT_FILE > $CLEAN_INPUT_FILE
-sed -e "s#.*\\\##g" $INPUT_FILE > $ONLY_METHODS_INPUT_FILE
+sed -e "s#.*\\\##g" $INPUT_FILE | grep -v 'destructor' > $ONLY_METHODS_INPUT_FILE
 
 classDeclarationBlockStartLine=`grep -n -m 1 "_METHODS(" $CLEAN_INPUT_FILE | cut -d: -f1`
 classDeclaration=`grep -n "__CLASS(" $INPUT_FILE | sed -e "s#__CLASS(\(.*\));#\1#"`
@@ -27,7 +32,7 @@ then
 fi
 echo Class $className
 echo Base Class $baseClassName
-echo Class declared betwee lines $classDeclarationBlockStartLine and $classDeclarationBlockEndLine
+echo Class declared between lines $classDeclarationBlockStartLine and $classDeclarationBlockEndLine
 
 # PROCESS METHODS
 #echo attributes $attributes
@@ -125,15 +130,24 @@ then
 
     totalLines=`wc -l < $CLEAN_INPUT_FILE`
     tail -$((totalLines - attributesBlockStartLine)) $CLEAN_INPUT_FILE > $HELPER_FILE
+    attributesBlockEndLine=`grep -n "CLASS(" $CLEAN_INPUT_FILE | cut -d: -f1`
+    attributesBlockEndLine=$((attributesBlockEndLine - 1))
+
+    if [ "$attributesBlockStartLine" -gt "$attributesBlockEndLine" ]; then
+        echo "Cannot port, CLASS must be after ATTRIBUTES"
+        exit 0
+    fi
+
     attributesBlockEndLine=`grep -n "CLASS(" $HELPER_FILE | cut -d: -f1`
     attributesBlockEndLine=$((attributesBlockEndLine - 1))
+
     attributes=`head -${attributesBlockEndLine} $HELPER_FILE | sed -e 's#^[ 	]*#	#'`
 fi
 
 #echo attributes
 #echo "$attributes"
 
-# DO THE INJETION
+# DO THE INJECTION
 
 READY_FOR_INJECTION_HELPER_FILE=$WORKING_FOLDER/ReadyForInjectionHelper.txt
 READY_FOR_INJECTION_FILE=$WORKING_FOLDER/ReadyForInjection.txt
@@ -153,8 +167,15 @@ prelude=$((lastEndIf - 1))
 
 head -${prelude} $READY_FOR_INJECTION_FILE > $OUTPUT_FILE
 
+hasGetInstance=`grep 'getInstance(' $INPUT_FILE`
 echo >> $OUTPUT_FILE
-echo class $className : $baseClassName  >> $OUTPUT_FILE
+if [ -z "$hasGetInstance" ];
+then
+	echo class $className : $baseClassName  >> $OUTPUT_FILE
+else
+	echo singleton class $className : $baseClassName  >> $OUTPUT_FILE
+fi
+
 echo "{" >> $OUTPUT_FILE
 if [ ! -z "$attributes" ];
 then
@@ -168,8 +189,6 @@ echo >> $OUTPUT_FILE
 echo "#endif" >> $OUTPUT_FILE
 
 className=`sed -e "s#[  ]*##g" <<< "$className"`
-sed -i -e "s#$className this[ ]*,[ ]*##g" $OUTPUT_FILE
-sed -i -e "s#$className this[ ]*##g" $OUTPUT_FILE
 sed -i -e "s#$className\_##g" $OUTPUT_FILE
 
 

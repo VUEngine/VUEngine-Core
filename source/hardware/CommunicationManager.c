@@ -124,7 +124,7 @@ static CommunicationManager _communicationManager;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void CommunicationManager::constructor(CommunicationManager this);
+void CommunicationManager::constructor(CommunicationManager this);
 static void CommunicationManager::processInterrupt(CommunicationManager this);
 static void CommunicationManager::enableInterrupts(CommunicationManager this __attribute__ ((unused)));
 static void CommunicationManager::disableInterrupts(CommunicationManager this __attribute__ ((unused)));
@@ -144,7 +144,7 @@ static void CommunicationManager::handleMessageToSelf(CommunicationManager this)
  *
  * @return		CommunicationManager instance
  */
-__SINGLETON(CommunicationManager);
+
 
 /**
  * Class constructor
@@ -154,7 +154,7 @@ __SINGLETON(CommunicationManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) CommunicationManager::constructor(CommunicationManager this)
+void __attribute__ ((noinline)) CommunicationManager::constructor(CommunicationManager this)
 {
 	ASSERT(this, "CommunicationManager::constructor: null this");
 

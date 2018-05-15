@@ -52,7 +52,6 @@ friend class Camera;
 //---------------------------------------------------------------------------------------------------------
 
 
-static void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovementManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -67,7 +66,7 @@ static void __attribute__ ((noinline)) CameraMovementManager::constructor(Camera
  *
  * @return		CameraMovementManager instance
  */
-__SINGLETON(CameraMovementManager);
+
 
 /**
  * Class constructor
@@ -77,7 +76,7 @@ __SINGLETON(CameraMovementManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovementManager this)
+void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovementManager this)
 {
 	ASSERT(this, "CameraMovementManager::constructor: null this");
 

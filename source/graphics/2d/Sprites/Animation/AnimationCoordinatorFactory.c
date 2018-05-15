@@ -49,7 +49,7 @@ friend class VirtualList;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this);
+void AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ static void AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory
  *
  * @return		AnimationCoordinatorFactory instance
  */
-__SINGLETON(AnimationCoordinatorFactory);
+
 
 /**
  * Class constructor
@@ -75,7 +75,7 @@ __SINGLETON(AnimationCoordinatorFactory);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this)
+void __attribute__ ((noinline)) AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this)
 {
 	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
 

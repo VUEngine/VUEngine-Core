@@ -48,7 +48,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Camera::constructor(Camera this);
+void Camera::constructor(Camera this);
 static Vector3D Camera::getCappedPosition(Camera this, Vector3D position);
 
 
@@ -76,7 +76,7 @@ const CameraFrustum* _cameraFrustum = NULL;
  *
  * @return		Camera instance
  */
-__SINGLETON(Camera);
+
 
 /**
  * Class constructor
@@ -86,7 +86,7 @@ __SINGLETON(Camera);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) Camera::constructor(Camera this)
+void __attribute__ ((noinline)) Camera::constructor(Camera this)
 {
 	ASSERT(this, "Camera::constructor: null this");
 

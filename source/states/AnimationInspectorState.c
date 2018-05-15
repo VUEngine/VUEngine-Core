@@ -36,7 +36,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void AnimationInspectorState::constructor(AnimationInspectorState this);
+void AnimationInspectorState::constructor(AnimationInspectorState this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ static void AnimationInspectorState::constructor(AnimationInspectorState this);
  *
  * @return		AnimationInspectorState instance
  */
-__SINGLETON(AnimationInspectorState);
+
 
 /**
  * Class constructor

@@ -73,7 +73,7 @@ void TimerManager::interruptHandler();
 void KeypadManager::interruptHandler();
 void VIPManager::interruptHandler();
 void CommunicationManager::interruptHandler();
-static void HardwareManager::constructor(HardwareManager this);
+void HardwareManager::constructor(HardwareManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ static void HardwareManager::constructor(HardwareManager this);
  *
  * @return		HardwareManager instance
  */
-__SINGLETON(HardwareManager);
+
 
 /**
  * Class constructor
@@ -99,7 +99,7 @@ __SINGLETON(HardwareManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) HardwareManager::constructor(HardwareManager this)
+void __attribute__ ((noinline)) HardwareManager::constructor(HardwareManager this)
 {
 	ASSERT(this, "HardwareManager::constructor: null this");
 

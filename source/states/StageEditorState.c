@@ -36,7 +36,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void StageEditorState::constructor(StageEditorState this);
+void StageEditorState::constructor(StageEditorState this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,7 +64,7 @@ static void StageEditorState::constructor(StageEditorState this);
  *
  * @return		StageEditorState instance
  */
-__SINGLETON(StageEditorState);
+
 
 /**
  * Class constructor
@@ -74,7 +74,7 @@ __SINGLETON(StageEditorState);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) StageEditorState::constructor(StageEditorState this)
+void __attribute__ ((noinline)) StageEditorState::constructor(StageEditorState this)
 {
 	ASSERT(this, "StageEditorState::constructor: null this");
 

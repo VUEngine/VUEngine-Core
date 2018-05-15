@@ -98,7 +98,7 @@ static WireframeManager _wireframeManager;
 static SpriteManager _spriteManager;
 static HardwareManager _hardwareManager;
 
-static void VIPManager::constructor(VIPManager this);
+void VIPManager::constructor(VIPManager this);
 static void VIPManager::processFrameBuffers(VIPManager this);
 static void VIPManager::processInterrupt(VIPManager this, u16 interrupt);
 
@@ -116,7 +116,7 @@ static void VIPManager::processInterrupt(VIPManager this, u16 interrupt);
  *
  * @return		VIPManager instance
  */
-__SINGLETON(VIPManager);
+
 
 /**
  * Class constructor
@@ -126,7 +126,7 @@ __SINGLETON(VIPManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) VIPManager::constructor(VIPManager this)
+void __attribute__ ((noinline)) VIPManager::constructor(VIPManager this)
 {
 	ASSERT(this, "VIPManager::constructor: null this");
 

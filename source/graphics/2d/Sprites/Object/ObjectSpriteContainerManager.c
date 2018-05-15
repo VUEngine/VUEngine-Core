@@ -46,7 +46,7 @@
 
 __CLASS_NEW_DECLARE(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex);
 
-static void ObjectSpriteContainerManager::constructor(ObjectSpriteContainerManager this);
+void ObjectSpriteContainerManager::constructor(ObjectSpriteContainerManager this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ static void ObjectSpriteContainerManager::constructor(ObjectSpriteContainerManag
  *
  * @return		ObjectSpriteContainerManager instance
  */
-__SINGLETON(ObjectSpriteContainerManager);
+
 
 /**
  * Class constructor

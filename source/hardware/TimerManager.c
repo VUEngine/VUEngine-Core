@@ -47,7 +47,7 @@
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void TimerManager::constructor(TimerManager this);
+void TimerManager::constructor(TimerManager this);
 static void TimerManager::enableInterrupt(TimerManager this, bool flag);
 
 // use static globals instead of class' members to avoid dereferencing
@@ -67,7 +67,7 @@ static SoundManager _soundManager;
  *
  * @return		TimerManager instance
  */
-__SINGLETON(TimerManager);
+
 
 /**
  * Class constructor
@@ -77,7 +77,7 @@ __SINGLETON(TimerManager);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) TimerManager::constructor(TimerManager this)
+void __attribute__ ((noinline)) TimerManager::constructor(TimerManager this)
 {
 	ASSERT(this, "TimerManager::constructor: null this");
 

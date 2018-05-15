@@ -55,7 +55,7 @@ enum OffsetIndex
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void BgmapTextureManager::constructor(BgmapTextureManager this);
+void BgmapTextureManager::constructor(BgmapTextureManager this);
 static int BgmapTextureManager::doAllocate(BgmapTextureManager this, BgmapTexture bgmapTexture);
 static BgmapTexture BgmapTextureManager::findTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
 static BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
@@ -74,7 +74,7 @@ static BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureManager thi
  *
  * @return		BgmapTextureManager instance
  */
-__SINGLETON(BgmapTextureManager);
+
 
 /**
  * Class constructor
@@ -84,7 +84,7 @@ __SINGLETON(BgmapTextureManager);
  *
  * @param this			Function scope
  */
-static void __attribute__ ((noinline)) BgmapTextureManager::constructor(BgmapTextureManager this)
+void __attribute__ ((noinline)) BgmapTextureManager::constructor(BgmapTextureManager this)
 {
 	ASSERT(this, "BgmapTextureManager::constructor: null this");
 

@@ -79,7 +79,7 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void Printing::constructor(Printing this);
+void Printing::constructor(Printing this);
 static void Printing::out(Printing this, u8 x, u8 y, const char* string, const char* font);
 void Printing::loadDebugFont(Printing this);
 
@@ -97,7 +97,7 @@ void Printing::loadDebugFont(Printing this);
  *
  * @return		Printing instance
  */
-__SINGLETON(Printing);
+
 
 /**
  * Class constructor
@@ -107,7 +107,7 @@ __SINGLETON(Printing);
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) Printing::constructor(Printing this)
+void __attribute__ ((noinline)) Printing::constructor(Printing this)
 {
 	ASSERT(this, "Printing::constructor: null this");
 

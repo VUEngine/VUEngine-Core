@@ -53,7 +53,7 @@ friend class Ball;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void CollisionHelper::constructor(CollisionHelper this);
+void CollisionHelper::constructor(CollisionHelper this);
 static CollisionInformation CollisionHelper::checkIfBoxOverlapsBox(CollisionHelper this __attribute__ ((unused)), Box boxA, Box boxB);
 static CollisionInformation CollisionHelper::checkIfBoxOverlapsInverseBox(CollisionHelper this __attribute__ ((unused)), Box boxA, InverseBox inverseBoxB);
 static CollisionInformation CollisionHelper::checkIfBoxOverlapsBall(CollisionHelper this __attribute__ ((unused)), Box boxA, Ball ballB);
@@ -81,7 +81,7 @@ static SolutionVector CollisionHelper::getSolutionVectorBetweenBallAndBall(Colli
  *
  * @return		CollisionHelper instance
  */
-__SINGLETON(CollisionHelper);
+
 
 /**
  * Class constructor
@@ -91,7 +91,7 @@ __SINGLETON(CollisionHelper);
  *
  * @param this	Function scope
  */
-static void CollisionHelper::constructor(CollisionHelper this)
+void CollisionHelper::constructor(CollisionHelper this)
 {
 	ASSERT(this, "CollisionHelper::constructor: null this");
 

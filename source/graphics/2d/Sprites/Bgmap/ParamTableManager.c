@@ -80,7 +80,7 @@ static u32 ParamTableManager::calculateSpriteParamTableSize(ParamTableManager th
  *
  * @return		ParamTableManager instance
  */
-__SINGLETON(ParamTableManager);
+
 
 /**
  * Class constructor

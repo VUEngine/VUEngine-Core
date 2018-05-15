@@ -55,7 +55,7 @@ enum MemoryPoolSizes
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-static void MemoryPool::constructor(MemoryPool this);
+void MemoryPool::constructor(MemoryPool this);
 static void MemoryPool::reset(MemoryPool this);
 
 
@@ -130,7 +130,7 @@ __MEMORY_POOL_SINGLETON(MemoryPool)
  *
  * @param this	Function scope
  */
-static void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
+void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::constructor: null this");
 
