@@ -4,7 +4,7 @@ then
 	SOURCE_FOLDER=$2
 	WORKING_FOLDER=$3
 	echo "Cleaning $SOURCE_FOLDER"
-#	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__VIRTUAL_CALL(\([A-z0-9]*\), *\([A-z0-9]*\), *\(.*\)*:\1_\2(\3:g" {} \;
+	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__VIRTUAL_CALL(\([A-z0-9]*\), *\([A-z0-9]*\), *\(.*\)*:\1_\2(\3:g" {} \;
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__CALL_BASE_METHOD([A-z0-9]*, *\([A-z0-9]* *\), *\([A-z0-9]*\), *:Base_\1(\2, :g" {} \;
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s#__CONSTRUCT_BASE(\(.*\)#Base::constructor(\1)#" {} \;
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__DESTROY_BASE:Base_destructor():g" {} \;
