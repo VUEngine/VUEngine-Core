@@ -37,7 +37,7 @@
  * @extends Object
  * @ingroup graphics-2d-sprites-object
  */
-implements ObjectSpriteContainerManager : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------

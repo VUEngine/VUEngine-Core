@@ -47,7 +47,7 @@
  * @extends	Container
  * @ingroup stage-entities
  */
-implements Entity : Container;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -72,10 +72,6 @@ static void Entity::destroyShapes(Entity this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Entity, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(Entity, entityDefinition, id, internalId, name);
 
 /**
  * Class constructor

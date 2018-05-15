@@ -37,7 +37,7 @@
  * @extends Object
  * @ingroup base
  */
-implements Telegram : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,10 +48,6 @@ implements Telegram : Object;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Telegram, void* sender, void* receiver, int message, void* extraInfo)
-__CLASS_NEW_END(Telegram, sender, receiver, message, extraInfo);
 
 /**
  * Class constructor

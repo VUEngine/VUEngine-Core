@@ -41,7 +41,7 @@
  * @extends Box
  * @ingroup physics
  */
-implements InverseBox : Box;
+
 friend class Box;
 
 
@@ -57,8 +57,8 @@ bool InverseBox::collidesBox(InverseBox this, Box other);
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(InverseBox, SpatialObject owner)
-__CLASS_NEW_END(InverseBox, owner);
+
+
 
 /**
  * Class constructor

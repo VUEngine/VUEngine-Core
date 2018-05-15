@@ -36,7 +36,7 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-implements ReflectiveEntity : Entity;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -49,10 +49,6 @@ static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialO
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ReflectiveEntity, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ReflectiveEntity, reflectiveEntityDefinition, id, internalId, name);
 
 // class's constructor
 void ReflectiveEntity::constructor(ReflectiveEntity this, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)

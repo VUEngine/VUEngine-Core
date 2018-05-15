@@ -113,7 +113,7 @@ enum HandshakeStatus
  * @extends Object
  * @ingroup hardware
  */
-implements CommunicationManager : Object;
+
 
 
 

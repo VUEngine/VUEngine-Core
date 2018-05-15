@@ -42,7 +42,7 @@
  * @extends Object
  * @ingroup camera
  */
-implements CameraEffectManager : Object;
+
 friend class Camera;
 
 

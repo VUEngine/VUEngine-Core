@@ -42,7 +42,7 @@
  * @extends Object
  * @ingroup base
  */
-implements ClockManager : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

@@ -39,7 +39,7 @@
  * @extends Object
  * @ingroup graphics-2d-textures-bgmap
  */
-implements BgmapTextureManager : Object;
+
 
 enum OffsetIndex
 {

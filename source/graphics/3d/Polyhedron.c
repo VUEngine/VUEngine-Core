@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-implements Polyhedron : Wireframe;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -58,8 +58,8 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(Polyhedron)
-__CLASS_NEW_END(Polyhedron);
+
+
 
 /**
  * Class constructor

@@ -38,7 +38,7 @@
  * @extends Object
  * @ingroup stage-entities-particles
  */
-implements ParticleRemover : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -51,10 +51,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleRemover)
-__CLASS_NEW_END(ParticleRemover);
 
 /**
  * Class constructor

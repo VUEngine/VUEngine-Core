@@ -43,7 +43,7 @@
  * @extends Object
  * @ingroup camera
  */
-implements CameraMovementManager : Object;
+
 friend class Camera;
 
 

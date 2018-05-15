@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-implements Sphere : Wireframe;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,8 +55,8 @@ implements Sphere : Wireframe;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(Sphere, Vector3D center, fix10_6 radius)
-__CLASS_NEW_END(Sphere, center, radius);
+
+
 
 /**
  * Class constructor

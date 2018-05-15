@@ -43,7 +43,7 @@
  * @ingroup graphics-2d-textures-bgmap
  * @brief 	A texture which has the logic to be allocated in graphic memory
  */
-implements BgmapTexture : Texture;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,10 +61,6 @@ static SpriteManager _spriteManager = NULL;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapTexture, BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
-__CLASS_NEW_END(BgmapTexture, bgmapTextureDefinition, id);
 
 /**
  * Class constructor

@@ -38,7 +38,7 @@
  * @extends Object
  * @ingroup hardware
  */
-implements KeypadManager : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------

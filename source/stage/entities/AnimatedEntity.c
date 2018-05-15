@@ -46,7 +46,7 @@
  * @extends Entity
  * @ingroup stage-entities
  */
-implements AnimatedEntity : Entity;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -63,10 +63,6 @@ AnimationController Sprite::getAnimationController(Sprite this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimatedEntity, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(AnimatedEntity, animatedEntityDefinition, id, internalId, name);
 
 // class's constructor
 void AnimatedEntity::constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)

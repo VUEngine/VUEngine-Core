@@ -42,7 +42,7 @@
  * @extends Entity
  * @ingroup stage-entities-particles
  */
-implements ParticleSystem : Entity;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -63,10 +63,6 @@ static const Force* ParticleSystem::getParticleSpawnForce(ParticleSystem this, l
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleSystem, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(ParticleSystem, particleSystemDefinition, id, internalId, name);
 
 /**
  * Class constructor

@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup graphics-2d-sprites-animation
  */
-implements AnimationCoordinatorFactory : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

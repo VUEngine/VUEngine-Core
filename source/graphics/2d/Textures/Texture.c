@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup graphics-2d-textures
  */
-implements Texture : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,10 +55,6 @@ static void Texture::loadCharSet(Texture this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Texture, TextureDefinition* textureDefinition, u16 id)
-__CLASS_NEW_END(Texture, textureDefinition, id);
 
 /**
  * Class constructor

@@ -47,7 +47,7 @@
  * @extends Object
  * @ingroup physics
  */
-implements PhysicalWorld : Object;
+
 friend class Body;
 friend class Clock;
 friend class VirtualNode;
@@ -58,8 +58,8 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(PhysicalWorld)
-__CLASS_NEW_END(PhysicalWorld);
+
+
 
 /**
  * Class constructor

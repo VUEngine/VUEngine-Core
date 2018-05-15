@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup graphics-2d-textures-char
  */
-implements CharSet : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -53,10 +53,6 @@ implements CharSet : Object;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(CharSet, CharSetDefinition* charSetDefinition, u16 offset)
-__CLASS_NEW_END(CharSet, charSetDefinition, offset);
 
 /**
  * Class constructor

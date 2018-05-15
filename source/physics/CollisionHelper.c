@@ -43,7 +43,7 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-implements CollisionHelper : Object;
+
 friend class Box;
 friend class InverseBox;
 friend class Ball;

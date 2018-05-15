@@ -47,7 +47,7 @@
  * @extends Object
  * @ingroup physics
  */
-implements CollisionManager : Object;
+
 friend class Shape;
 friend class Clock;
 friend class VirtualNode;
@@ -64,8 +64,8 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(CollisionManager)
-__CLASS_NEW_END(CollisionManager);
+
+
 
 // class's constructor
 void CollisionManager::constructor(CollisionManager this)

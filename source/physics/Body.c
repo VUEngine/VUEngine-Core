@@ -42,7 +42,7 @@
  * @extends Object
  * @ingroup physics
  */
-implements Body : Object;
+
 friend class VirtualList;
 friend class VirtualNode;
 
@@ -133,10 +133,6 @@ static void Body::capVelocity(Body this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Body, SpatialObject owner, const PhysicalSpecification* physicalSpecification,  u16 axesSubjectToGravity)
-__CLASS_NEW_END(Body, owner, physicalSpecification,  axesSubjectToGravity);
 
 // class's constructor
 void Body::constructor(Body this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)

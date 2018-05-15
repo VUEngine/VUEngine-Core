@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-2d-sprites
  */
-implements Sprite : Object;
+
 friend class Texture;
 
 

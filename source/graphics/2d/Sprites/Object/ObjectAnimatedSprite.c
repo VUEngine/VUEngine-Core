@@ -42,7 +42,7 @@
  * @extends ObjectSprite
  * @ingroup graphics-2d-sprites-object
  */
-implements ObjectAnimatedSprite : ObjectSprite;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,10 +56,6 @@ extern int strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectAnimatedSprite, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
-__CLASS_NEW_END(ObjectAnimatedSprite, objectSpriteDefinition, owner);
 
 /**
  * Class constructor

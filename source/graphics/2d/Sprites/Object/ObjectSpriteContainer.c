@@ -44,7 +44,7 @@
  * @extends Sprite
  * @ingroup graphics-2d-sprites-object
  */
-implements ObjectSpriteContainer : Sprite;
+
 friend class Sprite;
 friend class Texture;
 friend class ObjectSprite;
@@ -68,10 +68,6 @@ static void ObjectSpriteContainer::sortProgressively(ObjectSpriteContainer this)
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectSpriteContainer, int spt, int totalObjects, int firstObjectIndex)
-__CLASS_NEW_END(ObjectSpriteContainer, spt, totalObjects, firstObjectIndex);
 
 /**
  * Class constructor

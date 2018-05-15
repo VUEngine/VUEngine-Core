@@ -39,7 +39,7 @@
  * @extends Container
  * @ingroup stage
  */
-implements UiContainer : Container;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,10 +51,6 @@ implements UiContainer : Container;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(UiContainer, UiContainerDefinition* uiContainerDefinition)
-__CLASS_NEW_END(UiContainer, uiContainerDefinition);
 
 // class's constructor
 void UiContainer::constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)

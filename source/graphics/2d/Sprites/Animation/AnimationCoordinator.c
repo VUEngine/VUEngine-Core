@@ -37,7 +37,7 @@
  * @extends Object
  * @ingroup graphics-2d-sprites-animation
  */
-implements AnimationCoordinator : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

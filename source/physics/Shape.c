@@ -47,7 +47,7 @@
  * @extends Object
  * @ingroup physics
  */
-implements Shape : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

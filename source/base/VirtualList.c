@@ -46,7 +46,7 @@
  * @extends Object
  * @ingroup base
  */
-implements VirtualList : Object;
+
 friend class VirtualNode;
 
 
@@ -61,8 +61,8 @@ static void VirtualList::checkThatNodeIsPresent(VirtualList this, VirtualNode no
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(VirtualList)
-__CLASS_NEW_END(VirtualList);
+
+
 
 /**
  * Class constructor

@@ -45,7 +45,7 @@
  * @extends Object
  * @ingroup hardware
  */
-implements HardwareManager : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------

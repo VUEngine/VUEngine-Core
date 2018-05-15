@@ -49,7 +49,7 @@ extern u32 _sram_bss_end;
  * @extends Object
  * @ingroup hardware
  */
-implements SRAMManager : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------

@@ -46,7 +46,7 @@
  * @ingroup graphics-2d-sprites-bgmap
  * @brief	Sprite which holds a texture and a drawing specification.
  */
-implements BgmapSprite : Sprite;
+
 friend class Texture;
 friend class BgmapTexture;
 
@@ -65,10 +65,6 @@ static void BgmapSprite::computeDimensions(BgmapSprite this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
-__CLASS_NEW_END(BgmapSprite, bgmapSpriteDefinition, owner);
 
 /**
  * Class constructor

@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup stage-entities
  */
-implements EntityFactory : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -89,10 +89,6 @@ static int _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPh
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(EntityFactory)
-__CLASS_NEW_END(EntityFactory);
 
 // class's constructor
 void EntityFactory::constructor(EntityFactory this)

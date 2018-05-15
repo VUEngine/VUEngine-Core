@@ -49,7 +49,7 @@ void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clo
  * @extends Object
  * @ingroup base
  */
-implements MessageDispatcher : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

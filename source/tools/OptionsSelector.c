@@ -76,7 +76,7 @@
  * @ingroup tools
  * @brief	Utility class to render a menu
  */
-implements OptionsSelector : Object;
+
 friend class VirtualList;
 friend class VirtualNode;
 friend class Printing;
@@ -93,10 +93,6 @@ static void OptionsSelector::printSelectorMark(OptionsSelector this, char* mark)
 //---------------------------------------------------------------------------------------------------------
 //												CLASS' METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(OptionsSelector, u8 cols, u8 rows, char* font)
-__CLASS_NEW_END(OptionsSelector, cols, rows, font);
 
 /**
  * Class constructor

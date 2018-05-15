@@ -6,6 +6,7 @@ OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
 HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
+CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
 while [[ $# -gt 1 ]]
 do
@@ -30,6 +31,10 @@ do
 		-d|-output)
 		PRINT_DEBUG_OUTPUT="true"
 		;;
+		-c|-output)
+		CLASSES_HIERARCHY_FILE="$2"
+		shift # past argument
+		;;
 	esac
 
 	shift
@@ -47,6 +52,8 @@ then
 	cat $INPUT_FILE >> $OUTPUT_FILE
     exit 0
 fi
+
+echo "$className:$baseClassName:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 
 if [ "$className" = "Object" ];
 then
@@ -254,8 +261,6 @@ then
 	fi
 fi
 
-
-
 TEMPORAL_FILE=$WORKING_FOLDER/temporal.txt
 echo "" > $TEMPORAL_FILE
 echo "$virtualMethodDeclarations" >> $TEMPORAL_FILE
@@ -294,7 +299,4 @@ cat $TEMPORAL_FILE >> $OUTPUT_FILE
 tail -${remaining} $INPUT_FILE >> $OUTPUT_FILE
 sed -i -e 's#^[ 	]*class[ 	]\+\([A-Z[A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1)#' $OUTPUT_FILE
 
-rm -f $WORKING_FOLDER/*.txt
-echo
-
-
+rm -f $TEMPORAL_FILE

@@ -60,7 +60,7 @@
  * @extends Object
  * @ingroup tools
  */
-implements AnimationInspector : Object;
+
 friend class Sprite;
 
 /**

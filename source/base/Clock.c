@@ -39,7 +39,7 @@
  * @extends Object
  * @ingroup base
  */
-implements Clock : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,10 +50,6 @@ implements Clock : Object;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Clock)
-__CLASS_NEW_END(Clock);
 
 /**
  * Class constructor

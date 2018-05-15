@@ -1,2 +1,0 @@
-The G3d class is a port of Greg Stevens' Wireframe library
-http://www.planetvb.com/modules/news/article.php?storyid=377

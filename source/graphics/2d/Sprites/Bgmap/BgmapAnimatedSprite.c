@@ -41,7 +41,7 @@
  * @extends BgmapSprite
  * @ingroup graphics-2d-sprites-bgmap
  */
-implements BgmapAnimatedSprite : BgmapSprite;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,10 +54,6 @@ extern int strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapAnimatedSprite, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
-__CLASS_NEW_END(BgmapAnimatedSprite, bgmapSpriteDefinition, owner);
 
 /**
  * Class constructor

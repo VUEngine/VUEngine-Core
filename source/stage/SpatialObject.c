@@ -45,16 +45,12 @@
  * @extends Object
  * @ingroup stage
  */
-implements SpatialObject : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(SpatialObject)
-__CLASS_NEW_END(SpatialObject);
 
 // class's constructor
 void SpatialObject::constructor(SpatialObject this)

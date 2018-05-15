@@ -38,7 +38,7 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-implements WireframeManager : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

@@ -48,7 +48,7 @@ static void AnimationInspectorState::constructor(AnimationInspectorState this);
  * @extends GameState
  * @ingroup states
  */
-implements AnimationInspectorState : GameState;
+
 
 
 //---------------------------------------------------------------------------------------------------------

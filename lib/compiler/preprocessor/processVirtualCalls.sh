@@ -5,6 +5,7 @@ OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
 HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
+CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
 while [[ $# -gt 1 ]]
 do
@@ -26,6 +27,10 @@ do
 		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $2"
 		shift # past argument
 		;;
+		-c|-output)
+		CLASSES_HIERARCHY_FILE="$2"
+		shift # past argument
+		;;
 		-d|-output)
 		PRINT_DEBUG_OUTPUT="true"
 		;;
@@ -38,10 +43,66 @@ done
 #echo INPUT_FILE $INPUT_FILE
 #echo OUTPUT_FILE $OUTPUT_FILE
 cat $INPUT_FILE > $OUTPUT_FILE
+
+className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	]\+\([A-Z][A-z0-9]*\)::.*#\1#'`
+echo Class: $className
+
+firstMethodDeclarationLine=`grep -m1 -n -e "^[ 	]*[^\*//]*[ 	]\+[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(.*)" $OUTPUT_FILE | cut -d ":" -f1`
+
 sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)[ 	]*(#\1_\2(#g' $OUTPUT_FILE
 
-if [[ ${INPUT_FILE} != *"source/"* ]];then
+if [ -z "$className" ];then
+	exit 0
+fi
 
+baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
+if [ -z "$baseClassName" ];then
+	exit 0
+fi
+
+classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f3`
+
+classDefinition="__CLASS_DEFINITION("$className", "$baseClassName");"
+# Add allocator if it is not abstract nor a singleton class
+if [[ ! $classModifiers = *"singleton "* ]] && [[ ! $classModifiers = *"abstract "* ]] ;
+then
+#	echo "Adding allocator"
+	constructor=`grep -m 1 -e $className"_constructor[ 	]*(.*)" $OUTPUT_FILE`
+	constructorParameters=`sed -e 's#^.*(\(.*\))[ 	]*$#\1#' <<< "$constructor"`
+#	echo "constructorParameters $constructorParameters"
+	allocatorParameters=`cut -d "," -f2- <<< "$constructorParameters,"`
+#	echo "allocatorParameters $allocatorParameters"
+	allocatorArguments=`sed -e 's#[ 	*]\+\([A-z0-9]\+[ 	]*,\)#<\1>\n#g' <<< "$allocatorParameters" | sed -e 's#.*<\(.*\)>.*#\1#g' | tr -d '\n' | sed -e 's#\(.*\),#\1#'`
+	allocatorParameters=`sed -e 's#\(.*\),#\1#' <<< "$allocatorParameters"`
+
+	if [ -z "$allocatorParameters" ];then
+		classDefinition=$classDefinition"\n__CLASS_NEW_DEFINITION($className)"
+		classDefinition=$classDefinition"\n__CLASS_NEW_END($className);"
+	else
+		classDefinition=$classDefinition"\n__CLASS_NEW_DEFINITION($className, $allocatorParameters)"
+		classDefinition=$classDefinition"\n__CLASS_NEW_END($className, $allocatorArguments);"
+	fi
+fi
+
+echo "Base: $baseClassName"
+
+if [ ! -z "$firstMethodDeclarationLine" ];then
+	firstMethodDeclarationLine=$((firstMethodDeclarationLine - 1))
+	sed -i -e "${firstMethodDeclarationLine}s#.*#&\n$classDefinition#" $OUTPUT_FILE
+fi
+
+sed -i -e 's#[ 	]*friend[ 	]\+class[ 	]\+\([A-z0-9]\+\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
+
+# replace base method calls
+sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g" -e 's#,[ 	]*);#);#' $OUTPUT_FILE
+sed -i -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
+
+# replace base method calls
+sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
+
+
+
+if [[ ${INPUT_FILE} != *"source/"* ]];then
 	exit 0
 fi
 
@@ -58,28 +119,14 @@ do
 	VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
 	virtualMethods=`cat $VIRTUAL_METHODS_FILE`
-	implementationDefinition=`grep -m 1 -e "^[ \t]*implements[ \t]\+" $OUTPUT_FILE | sed -e 's#implements##'`
-	fileClass=`cut -d ":" -f1 <<< "$implementationDefinition" `
-	fileBaseClass=`cut -d ":" -f2 <<< "$implementationDefinition" | cut -d ";" -f1`
-	echo fileClass $fileClass
-	echo fileBaseClass $fileBaseClass
 	TEMPORAL_METHOD_LIST=$WORKING_FOLDER/processedMethods.txt
 
-	sed -i -e 's#implements.*#__CLASS_DEFINITION('"$fileClass"', '"$fileBaseClass"');#' $OUTPUT_FILE
-	sed -i -e 's#[ 	]*friend[ 	]\+class[ 	]\+\([A-z0-9]\+\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
 
 	if [ -f $TEMPORAL_METHOD_LIST ] ; then
 		rm $TEMPORAL_METHOD_LIST
 	fi
 
 	touch $TEMPORAL_METHOD_LIST
-
-	# replace base method calls
-	sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($fileBaseClass,\1#g" -e 's#,[ 	]*);#);#' $OUTPUT_FILE
-	sed -i -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
-
-	# replace base method calls
-	sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($fileBaseClass,\1, #g" $OUTPUT_FILE
 
 	#echo "Processing source $INPUT_FILE"
 

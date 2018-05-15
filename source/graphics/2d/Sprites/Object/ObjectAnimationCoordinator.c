@@ -36,7 +36,7 @@
  * @extends AnimationCoordinator
  * @ingroup graphics-2d-sprites-object
  */
-implements ObjectAnimationCoordinator : AnimationCoordinator;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -44,10 +44,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectAnimationCoordinator, const CharSetDefinition* charSetDefinition)
-__CLASS_NEW_END(ObjectAnimationCoordinator, charSetDefinition);
 
 /**
  * Class constructor

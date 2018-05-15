@@ -46,7 +46,7 @@
  * @extends Shape
  * @ingroup physics
  */
-implements Ball : Shape;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,10 +66,6 @@ implements Ball : Shape;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Ball, SpatialObject owner)
-__CLASS_NEW_END(Ball, owner);
 
 
 // class's constructor

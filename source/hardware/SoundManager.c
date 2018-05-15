@@ -152,7 +152,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
  * @extends Object
  * @ingroup hardware
  */
-implements SoundManager : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------

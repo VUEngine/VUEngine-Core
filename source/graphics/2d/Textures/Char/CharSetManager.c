@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup graphics-2d-textures-char
  */
-implements CharSetManager : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

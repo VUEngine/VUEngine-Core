@@ -47,7 +47,7 @@
  * @extends AnimatedEntity
  * @ingroup stage-entities
  */
-implements Actor : AnimatedEntity;
+
 
 friend class VirtualList;
 friend class VirtualNode;
@@ -62,10 +62,6 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Actor, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
-__CLASS_NEW_END(Actor, actorDefinition, id, internalId, name);
 
 // class's constructor
 void Actor::constructor(Actor this, const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)

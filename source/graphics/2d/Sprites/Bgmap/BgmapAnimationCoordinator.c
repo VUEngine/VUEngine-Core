@@ -36,16 +36,12 @@
  * @extends AnimationCoordinator
  * @ingroup graphics-2d-sprites-bgmap
  */
-implements BgmapAnimationCoordinator : AnimationCoordinator;
+
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(BgmapAnimationCoordinator, const CharSetDefinition* charSetDefinition)
-__CLASS_NEW_END(BgmapAnimationCoordinator, charSetDefinition);
 
 /**
  * Class constructor

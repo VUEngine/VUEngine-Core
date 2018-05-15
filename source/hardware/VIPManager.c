@@ -75,7 +75,7 @@ typedef struct PostProcessingEffectRegistry
  * @extends Object
  * @ingroup hardware
  */
-implements VIPManager : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

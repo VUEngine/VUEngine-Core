@@ -54,7 +54,7 @@
  * @extends Object
  * @ingroup base
  */
-implements Error : Object;
+
 
 
 bool _triggeringException = false;

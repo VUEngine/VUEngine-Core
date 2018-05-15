@@ -48,7 +48,7 @@ static void StageEditorState::constructor(StageEditorState this);
  * @extends GameState
  * @ingroup states
  */
-implements StageEditorState : GameState;
+
 
 
 //---------------------------------------------------------------------------------------------------------

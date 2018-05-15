@@ -41,7 +41,7 @@
  * @extends Particle
  * @ingroup stage-entities-particles
  */
-implements SolidParticle : Particle;
+
 friend class VirtualNode;
 friend class VirtualList;
 friend class Shape;
@@ -57,10 +57,6 @@ static void SolidParticle::transformShape(SolidParticle this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(SolidParticle, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
-__CLASS_NEW_END(SolidParticle, solidParticleDefinition, spriteDefinition, lifeSpan, mass);
 
 /**
  * Class constructor

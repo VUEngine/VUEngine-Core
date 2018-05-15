@@ -47,7 +47,7 @@ static void DebugState::constructor(DebugState this);
  * @extends GameState
  * @ingroup states
  */
-implements DebugState : GameState;
+
 
 
 //---------------------------------------------------------------------------------------------------------

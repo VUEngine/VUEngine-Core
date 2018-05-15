@@ -51,7 +51,7 @@
  * @ingroup graphics-2d-sprites-object
  * @brief	Sprite which holds a texture and a drawing specification.
  */
-implements ObjectSprite : Sprite;
+
 friend class Texture;
 
 
@@ -66,10 +66,6 @@ static void ObjectSprite::checkForContainer(ObjectSprite this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectSprite, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
-__CLASS_NEW_END(ObjectSprite, objectSpriteDefinition, owner);
 
 /**
  * Class constructor

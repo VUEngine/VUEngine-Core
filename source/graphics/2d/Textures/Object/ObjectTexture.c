@@ -40,7 +40,7 @@
  * @ingroup graphics-2d-textures-object
  * @brief	A texture which has the logic to be allocated in graphic memory
  */
-implements ObjectTexture : Texture;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,10 +52,6 @@ implements ObjectTexture : Texture;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ObjectTexture, ObjectTextureDefinition* objectTextureDefinition, u16 id)
-__CLASS_NEW_END(ObjectTexture, objectTextureDefinition, id);
 
 /**
  * Class constructor

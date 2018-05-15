@@ -95,7 +95,6 @@ enum StateOperations
  * @extends Object
  * @ingroup base
  */
-implements Game : Object;
 
 
 //---------------------------------------------------------------------------------------------------------

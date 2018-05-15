@@ -41,7 +41,7 @@
  * @extends SpatialObject
  * @ingroup stage-entities-particles
  */
-implements Particle : SpatialObject;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -61,10 +61,6 @@ static void Particle::addSprite(Particle this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Particle, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
-__CLASS_NEW_END(Particle, particleDefinition, spriteDefinition, lifeSpan, mass);
 
 /**
  * Class constructor

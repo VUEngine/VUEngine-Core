@@ -38,7 +38,7 @@
  * @extends Body
  * @ingroup stage-entities-particles
  */
-implements ParticleBody : Body;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,10 +56,6 @@ Acceleration Body::getGravity(Body this);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(ParticleBody, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
-__CLASS_NEW_END(ParticleBody, owner, physicalSpecification, axesSubjectToGravity);
 
 /**
  * Class constructor

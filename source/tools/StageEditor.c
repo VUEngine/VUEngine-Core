@@ -70,7 +70,7 @@
  * @ingroup tools
  * @brief	In-game stage editor for debug and productivity purposes
  */
-implements StageEditor : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 friend class Sprite;

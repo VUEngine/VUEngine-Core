@@ -38,7 +38,7 @@
  * @extends SpatialObject
  * @ingroup stage-entities
  */
-implements Container : SpatialObject;
+
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -55,10 +55,6 @@ static void Container::applyEnvironmentToScale(Container this, const Transformat
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Container, const char* const name)
-__CLASS_NEW_END(Container, name);
 
 
 /**

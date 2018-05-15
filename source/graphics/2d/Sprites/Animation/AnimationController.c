@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-2d-sprites-animation
  */
-implements AnimationController : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,10 +54,6 @@ extern int strcmp(const char *, const char *);
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(AnimationController, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
-__CLASS_NEW_END(AnimationController, owner, sprite, charSetDefinition);
 
 /**
  * Class constructor

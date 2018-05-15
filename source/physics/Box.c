@@ -45,7 +45,7 @@
  * @extends Shape
  * @ingroup physics
  */
-implements Box : Shape;
+
 friend class InverseBox;
 
 
@@ -65,10 +65,6 @@ friend class InverseBox;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Box, SpatialObject owner)
-__CLASS_NEW_END(Box, owner);
 
 
 // class's constructor

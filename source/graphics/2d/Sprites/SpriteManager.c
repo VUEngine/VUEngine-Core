@@ -64,7 +64,7 @@ typedef struct SpritesList
  * @extends Object
  * @ingroup graphics-2d-sprites
  */
-implements SpriteManager : Object;
+
 friend class Sprite;
 friend class ObjectSpriteContainer;
 friend class Texture;

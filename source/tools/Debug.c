@@ -123,7 +123,7 @@
  * @extends Object
  * @ingroup tools
  */
-implements Debug : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

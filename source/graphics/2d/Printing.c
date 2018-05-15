@@ -72,7 +72,7 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
  * @ingroup graphics-2d
  * @brief 	Manages printing layer and offers various functions to write to it.
  */
-implements Printing : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------

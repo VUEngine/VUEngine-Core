@@ -43,15 +43,15 @@
  * @extends Object
  * @ingroup base
  */
-implements VirtualNode : Object;
+
 
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_NEW_DEFINITION(VirtualNode, const void* const data)
-__CLASS_NEW_END(VirtualNode, data);
+
+
 
 /**
  * Class constructor

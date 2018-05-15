@@ -54,7 +54,7 @@ typedef struct ParamTableFreeData
  * @extends Object
  * @ingroup graphics-2d-sprites-bgmap
  */
-implements ParamTableManager : Object;
+
 friend class VirtualNode;
 friend class VirtualList;
 

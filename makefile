@@ -175,6 +175,9 @@ SETUP_CLASSES_OBJECT = $(STORE)/$(SETUP_CLASSES)
 # Virtual methods preprocessor file
 VIRTUAL_METHODS_HELPER=$(WORKING_FOLDER)/preprocessor/$(HELPERS_PREFIX)VirtualMethods.txt
 
+# File that holds the classes hierarchy
+CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/preprocessor/$(HELPERS_PREFIX)ClassesHierarchy.txt
+
 # the target file
 TARGET_FILE = libvuengine
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
@@ -214,6 +217,7 @@ $(WORKING_FOLDER)/preprocessor/$(SETUP_CLASSES).c: setupClasses
 
 $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 	@echo "Preparing virtual methods in engine"
+#	@rm -f $(CLASSES_HIERARCHY_FILE)
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/prepareVirtualMethods.sh -d -w $(WORKING_FOLDER)/preprocessor -h $(WORKING_FOLDER)/source/$(VUENGINE_HOME)/source -p $(HELPERS_PREFIX)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
@@ -227,7 +231,7 @@ $(STORE)/%.o: $(WORKING_FOLDER)/source/%.c
 $(WORKING_FOLDER)/source/%.c: %.c
 	@echo -n "Compiling "
 	@echo $<
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
 
 $(STORE)/%.o: %.s
 	@echo Creating object file for $*
@@ -235,7 +239,7 @@ $(STORE)/%.o: %.s
 
 $(WORKING_FOLDER)/source/%.h: %.h
 	@echo Analysing $<
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeader.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeader.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor -c $(CLASSES_HIERARCHY_FILE)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;

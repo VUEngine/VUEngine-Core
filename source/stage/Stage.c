@@ -73,7 +73,7 @@
  * @extends Container
  * @ingroup stage
  */
-implements Stage : Container;
+
 friend class Container;
 friend class Entity;
 friend class VirtualNode;
@@ -163,10 +163,6 @@ static u32 timeBeforeProcess = 0;
 //---------------------------------------------------------------------------------------------------------
 // 												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-// always call these two macros next to each other
-__CLASS_NEW_DEFINITION(Stage, StageDefinition *stageDefinition)
-__CLASS_NEW_END(Stage, stageDefinition);
 
 // class's constructor
 void Stage::constructor(Stage this, StageDefinition *stageDefinition)

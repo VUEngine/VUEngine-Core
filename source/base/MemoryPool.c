@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup base
  */
-implements MemoryPool : Object;
+
 
 enum MemoryPoolSizes
 {
