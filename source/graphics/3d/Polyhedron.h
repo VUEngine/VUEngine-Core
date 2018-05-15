@@ -43,9 +43,9 @@ class Polyhedron : Wireframe
 	*/
 	VirtualList vertices;
 
-	void constructor();
-	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
-	override void draw(bool calculateParallax);
+	void constructor(Polyhedron this);
+	void addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z);
+	override void draw(Polyhedron this, bool calculateParallax);
 }
 
 

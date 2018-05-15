@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup camera
  */
-__CLASS_DEFINITION(Camera, Object);
+implements Camera : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,7 +91,7 @@ static void __attribute__ ((noinline)) Camera::constructor(Camera this)
 	ASSERT(this, "Camera::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// initialize world's camera's position
 	this->position = (Vector3D){0, 0, 0};

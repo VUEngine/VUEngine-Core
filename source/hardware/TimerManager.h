@@ -50,18 +50,22 @@
 
 singleton class TimerManager : Object
 {
+	u32 milliseconds;
+	u32 totalMilliseconds;
+	u8 tcrValue;
+
 	static TimerManager getInstance();
-	void enable(bool flag);
-	u32 getMillisecondsElapsed();
-	u32 getTotalMillisecondsElapsed();
-	u32 resetMilliseconds();
-	void setTime(u16 time);
-	void setFrequency(int frequency);
-	int getStat();
-	void clearStat();
-	void initialize();
-	void wait(u32 milliSeconds);
-	void repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32));
+	void enable(TimerManager this, bool flag);
+	u32 getMillisecondsElapsed(TimerManager this);
+	u32 getTotalMillisecondsElapsed(TimerManager this);
+	u32 resetMilliseconds(TimerManager this);
+	void setTime(TimerManager this, u16 time);
+	void setFrequency(TimerManager this, int frequency);
+	int getStat(TimerManager this);
+	void clearStat(TimerManager this);
+	void initialize(TimerManager this);
+	void wait(TimerManager this, u32 milliSeconds);
+	void repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32));
 }
 
 

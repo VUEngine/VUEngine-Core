@@ -44,18 +44,67 @@
 
 singleton class BgmapTextureManager : Object
 {
+	/**
+	 * @var u16 			numberOfChars
+	 * @brief				Number of chars occupied
+	 * @memberof			BgmapTextureManager
+	 */
+	u16 numberOfChars[__MAX_NUMBER_OF_BGMAPS_SEGMENTS];
+	/**
+	 * @var s8 				xOffset
+	 * @brief				Current x offset to set the next bgmap
+	 * @memberof			BgmapTextureManager
+	 */
+	s8 xOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];
+	/**
+	 * @var s8 				yOffset
+	 * @brief				Current y offset to set the next bgmap
+	 * @memberof			BgmapTextureManager
+	 */
+	s8 yOffset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS][__NUM_BGMAPS_PER_SEGMENT];
+	/**
+	 * @var s8 				offset
+	 * @brief				12 segments, 28 maps, 2 indexes (x,y) and bgmap segment
+	 * @memberof			BgmapTextureManager
+	 */
+	s8 offset[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT][4];
+	/**
+	 * @var s16 			freeBgmapSegment
+	 * @brief				Next free bgmap used for text printing
+	 * @memberof			BgmapTextureManager
+	 */
+	s16 freeBgmapSegment;
+	/**
+	 * @var BgmapTexture 	bgmapTextures
+	 * @brief				The textures allocated
+	 * @memberof			BgmapTextureManager
+	 */
+	BgmapTexture bgmapTextures[__MAX_NUMBER_OF_BGMAPS_SEGMENTS * __NUM_BGMAPS_PER_SEGMENT];
+	/**
+	 * @var s16 			availableBgmapSegmentsForTextures
+	 * @brief				Number of available bgmap segments
+	 * @memberof			BgmapTextureManager
+	 */
+	s16 availableBgmapSegmentsForTextures;
+	/**
+	 * @var s16 			printingBgmapSegment
+	 * @brief				Segment for printing
+	 * @memberof			BgmapTextureManager
+	 */
+	s16 printingBgmapSegment;
+
 	static BgmapTextureManager getInstance();
-	void allocateText(BgmapTexture bgmapTexture);
-	void calculateAvailableBgmapSegments();
-	s16 getAvailableBgmapSegmentsForTextures();
-	s16 getPrintingBgmapSegment();
-	BgmapTexture getTexture(BgmapTextureDefinition* bgmapTextureDefinition);
-	s16 getXOffset(int id);
-	s16 getYOffset(int id);
-	void print(int x, int y);
-	void releaseTexture(BgmapTexture bgmapTexture);
-	void reset();
-	void setSpareBgmapSegments(u8 paramTableSegments);
+	void allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture);
+	void calculateAvailableBgmapSegments(BgmapTextureManager this);
+	s16 getAvailableBgmapSegmentsForTextures(BgmapTextureManager this);
+	s16 getPrintingBgmapSegment(BgmapTextureManager this);
+	BgmapTexture getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
+	s16 getXOffset(BgmapTextureManager this, int id);
+	s16 getYOffset(BgmapTextureManager this, int id);
+	void print(BgmapTextureManager this, int x, int y);
+	void releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture);
+	void reset(BgmapTextureManager this);
+	void setSpareBgmapSegments(BgmapTextureManager this, u8 paramTableSegments);
 }
 
 

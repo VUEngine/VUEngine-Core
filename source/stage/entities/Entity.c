@@ -47,9 +47,9 @@
  * @extends	Container
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(Entity, Container);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Entity : Container;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void Entity::constructor(Entity this, EntityDefinition* entityDefinition, s16 id
 	ASSERT(this, "Entity::constructor: null this");
 
 	// construct base Container
-	Base::constructor(this, name);
+	Base::constructor(name);
 
 	// set the ids
 	this->id = id;

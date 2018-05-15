@@ -46,9 +46,9 @@
  * @extends Entity
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(AnimatedEntity, Entity);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements AnimatedEntity : Entity;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void AnimatedEntity::constructor(AnimatedEntity this, AnimatedEntityDefinition* 
 	ASSERT(this, "AnimatedEntity::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, &animatedEntityDefinition->entityDefinition, id, internalId, name);
+	Base::constructor(&animatedEntityDefinition->entityDefinition, id, internalId, name);
 
 	// save ROM definition
 	this->animatedEntityDefinition = animatedEntityDefinition;

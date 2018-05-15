@@ -34,15 +34,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define UiContainer_ATTRIBUTES								    		    		        			\
-        Container_ATTRIBUTES								    		    			        	    \
-
 /**
  * @class	UiContainer
  * @extends Container
  * @ingroup stage
  */
-__CLASS_DEFINITION(UiContainer, Container);
+implements UiContainer : Container;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,7 +62,7 @@ void UiContainer::constructor(UiContainer this, UiContainerDefinition* uiContain
 	ASSERT(this, "UiContainer::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, NULL);
+	Base::constructor(NULL);
 
 	// add entities in the definition
 	 UiContainer::addEntities(this, uiContainerDefinition->entities);

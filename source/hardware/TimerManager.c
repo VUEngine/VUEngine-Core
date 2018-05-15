@@ -35,22 +35,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define TimerManager_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/*  */																							\
-		u32 milliseconds;																				\
-		/*  */																							\
-		u32 totalMilliseconds;																				\
-		/*  */																							\
-		u8 tcrValue;																					\
-
 /**
  * @class	TimerManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(TimerManager, Object);
+implements TimerManager : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,7 +81,7 @@ static void __attribute__ ((noinline)) TimerManager::constructor(TimerManager th
 {
 	ASSERT(this, "TimerManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->tcrValue = 0;
 	this->milliseconds = 0;

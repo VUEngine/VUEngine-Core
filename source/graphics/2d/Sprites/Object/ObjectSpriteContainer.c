@@ -44,12 +44,12 @@
  * @extends Sprite
  * @ingroup graphics-2d-sprites-object
  */
-__CLASS_DEFINITION(ObjectSpriteContainer, Sprite);
-__CLASS_FRIEND_DEFINITION(Sprite);
-__CLASS_FRIEND_DEFINITION(Texture);
-__CLASS_FRIEND_DEFINITION(ObjectSprite);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements ObjectSpriteContainer : Sprite;
+friend class Sprite;
+friend class Texture;
+friend class ObjectSprite;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ void ObjectSpriteContainer::constructor(ObjectSpriteContainer this, int spt, int
 	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
-	Base::constructor(this, NULL, NULL);
+	Base::constructor(NULL, NULL);
 
 	this->head = __WORLD_ON | __WORLD_OBJECT | __WORLD_OVR;
 	this->spt = spt;

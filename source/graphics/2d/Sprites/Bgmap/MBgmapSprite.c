@@ -52,11 +52,11 @@
  * @ingroup graphics-2d-sprites-bgmap
  * @brief	Sprite which holds a texture and a drawing specification.
  */
-__CLASS_DEFINITION(MBgmapSprite, BgmapSprite);
-__CLASS_FRIEND_DEFINITION(Texture);
-__CLASS_FRIEND_DEFINITION(BgmapTexture);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements MBgmapSprite : BgmapSprite;
+friend class Texture;
+friend class BgmapTexture;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ void MBgmapSprite::constructor(MBgmapSprite this, const MBgmapSpriteDefinition* 
 {
 	ASSERT(this, "MBgmapSprite::constructor: null this");
 
-	Base::constructor(this, &mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
+	Base::constructor(&mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
 
 	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
 

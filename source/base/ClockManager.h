@@ -37,11 +37,18 @@
 
 singleton class ClockManager : Object
 {
+	/**
+	 * @var VirtualList	clocks
+	 * @brief			registered clocks
+	 * @memberof		ClockManager
+	 */
+	VirtualList clocks;
+
 	static ClockManager getInstance();
-	void register(Clock clock);
-	void reset();
-	void unregister(Clock clock);
-	void update(u32 millisecondsElapsed);
+	void register(ClockManager this, Clock clock);
+	void reset(ClockManager this);
+	void unregister(ClockManager this, Clock clock);
+	void update(ClockManager this, u32 millisecondsElapsed);
 }
 
 

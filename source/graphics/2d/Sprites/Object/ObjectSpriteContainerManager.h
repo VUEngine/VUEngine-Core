@@ -44,13 +44,20 @@
 
 singleton class ObjectSpriteContainerManager : Object
 {
+	/**
+	 * @var ObjectSpriteContainer 	objectSpriteContainers
+	 * @brief						object groups
+	 * @memberof					ObjectSpriteContainerManager
+	 */
+	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];
+
 	static ObjectSpriteContainerManager getInstance();
-	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
-	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
-	void print(int x, int y);
-	void reset();
-	const ObjectSpriteContainer* setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS]);
-	void setZPosition(int spt, fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainer(ObjectSpriteContainerManager this, int numberOfObjects, fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainerBySegment(ObjectSpriteContainerManager this, int segment);
+	void print(ObjectSpriteContainerManager this, int x, int y);
+	void reset(ObjectSpriteContainerManager this);
+	const ObjectSpriteContainer* setupObjectSpriteContainers(ObjectSpriteContainerManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], fix10_6 z[__TOTAL_OBJECT_SEGMENTS]);
+	void setZPosition(ObjectSpriteContainerManager this, int spt, fix10_6 z);
 }
 
 

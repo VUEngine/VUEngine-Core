@@ -63,21 +63,21 @@ class AnimatedEntity : Entity
 	/* need to save for pausing */
 	char* currentAnimationName;
 
-	void constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
-	AnimationDescription* getAnimationDescription();
-	s8 getActualFrame();
-	int getNumberOfFrames();
-	bool isAnimationLoaded(char* functionName);
-	bool isPlayingAnimation();
-	void nextFrame();
-	void pauseAnimation(int pause);
-	void playAnimation(char* animationName);
-	void previousFrame();
-	void setAnimationDescription(AnimationDescription* animationDescription);
-	override void ready(bool recursive);
-	override void update(u32 elapsedTime);
-	override void resume();
-	override void setDefinition(void* animatedEntityDefinition);
+	void constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
+	AnimationDescription* getAnimationDescription(AnimatedEntity this);
+	s8 getActualFrame(AnimatedEntity this);
+	int getNumberOfFrames(AnimatedEntity this);
+	bool isAnimationLoaded(AnimatedEntity this, char* functionName);
+	bool isPlayingAnimation(AnimatedEntity this);
+	void nextFrame(AnimatedEntity this);
+	void pauseAnimation(AnimatedEntity this, int pause);
+	void playAnimation(AnimatedEntity this, char* animationName);
+	void previousFrame(AnimatedEntity this);
+	void setAnimationDescription(AnimatedEntity this, AnimationDescription* animationDescription);
+	override void ready(AnimatedEntity this, bool recursive);
+	override void update(AnimatedEntity this, u32 elapsedTime);
+	override void resume(AnimatedEntity this);
+	override void setDefinition(AnimatedEntity this, void* animatedEntityDefinition);
 }
 
 

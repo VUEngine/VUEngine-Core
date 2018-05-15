@@ -45,8 +45,8 @@
  * @extends Shape
  * @ingroup physics
  */
-__CLASS_DEFINITION(Box, Shape);
-__CLASS_FRIEND_DEFINITION(InverseBox);
+implements Box : Shape;
+friend class InverseBox;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void Box::constructor(Box this, SpatialObject owner)
 {
 	ASSERT(this, "Box::constructor: null this");
 
-	Base::constructor(this, owner);
+	Base::constructor(owner);
 
 	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
 

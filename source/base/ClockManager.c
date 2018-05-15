@@ -37,23 +37,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define ClockManager_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList	clocks
-		 * @brief			registered clocks
-		 * @memberof		ClockManager
-		 */																								\
-		VirtualList clocks;																				\
-
 /**
  * @class	ClockManager
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(ClockManager, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements ClockManager : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,7 +83,7 @@ static void __attribute__ ((noinline)) ClockManager::constructor(ClockManager th
 {
 	ASSERT(this, "ClockManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// create the clock list
 	this->clocks = __NEW(VirtualList);

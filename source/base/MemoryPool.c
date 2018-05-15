@@ -33,43 +33,15 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											 CLASS' MACROS
-//---------------------------------------------------------------------------------------------------------
-
-
-// MemoryPool's defines
-#define __BLOCK_DEFINITION(BlockSize, Elements)															\
-	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
-
-#define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
-	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
-	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
-	this->poolSizes[pool][eBlockSize] = BlockSize;														\
-	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
-
-#define MemoryPool_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* dynamic memory area */																		\
-		/* must always put together the pools! */														\
-		/* first byte is used as a usage flag */														\
-		__MEMORY_POOL_ARRAYS																			\
-		/* pointer to the beginning of each memory pool */												\
-		BYTE* poolLocation[__MEMORY_POOLS];																\
-		/* pool's size and pool's block size */															\
-		u16 poolSizes[__MEMORY_POOLS][3];																\
 
 /**
  * @class 	MemoryPool
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(MemoryPool, Object);
+implements MemoryPool : Object;
 
 enum MemoryPoolSizes
 {
@@ -162,7 +134,7 @@ static void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	MemoryPool::reset(this);
 	MemoryPool::cleanUp(this);

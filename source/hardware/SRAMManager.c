@@ -44,18 +44,12 @@ extern u32 _sram_bss_end;
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define SRAMManager_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* save space start address */																	\
-		u16* saveSpaceStartAddress;																		\
-
 /**
  * @class	SRAMManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(SRAMManager, Object);
+implements SRAMManager : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -93,7 +87,7 @@ static void __attribute__ ((noinline)) SRAMManager::constructor(SRAMManager this
 {
 	ASSERT(this, "SRAMManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->saveSpaceStartAddress = (u16*)&_sram_bss_end;
 

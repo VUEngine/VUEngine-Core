@@ -41,8 +41,8 @@
  * @extends Object
  * @ingroup graphics-2d-sprites
  */
-__CLASS_DEFINITION(Sprite, Object);
-__CLASS_FRIEND_DEFINITION(Texture);
+implements Sprite : Object;
+friend class Texture;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -70,7 +70,7 @@ void Sprite::constructor(Sprite this, const SpriteDefinition* spriteDefinition _
 {
 	ASSERT(this, "Sprite::destructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// clear values
 	this->worldLayer = 0;

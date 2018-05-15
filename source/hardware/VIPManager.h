@@ -257,28 +257,35 @@ typedef void (*PostProcessingEffect) (u32, SpatialObject);
 
 singleton class VIPManager : Object
 {
+	VirtualList postProcessingEffects;
+	u32 currentDrawingFrameBufferSet;
+	bool processingXPEND;
+	bool drawingEnded;
+	bool renderingCompleted;
+	bool allowDRAMAccess;
+
 	static VIPManager getInstance();
-	void enableDrawing();
-	void disableDrawing();
-	void enableInterrupt(u16 interruptCode);
-	void disableInterrupts();
-	void displayOn();
-	void displayOff();
-	void setupPalettes(PaletteConfig* paletteConfig);
-	void upBrightness();
-	void lowerBrightness();
-	void displayHide();
-	void clearScreen();
-	void clearBgmapSegment(int segment, int size);
-	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
-	void useInternalColumnTable(bool internal);
-	void setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRepeat);
-	void setBackgroundColor(u8 color);
-	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void removePostProcessingEffects();
-	void registerCurrentDrawingFrameBufferSet();
+	void enableDrawing(VIPManager this);
+	void disableDrawing(VIPManager this);
+	void enableInterrupt(VIPManager this, u16 interruptCode);
+	void disableInterrupts(VIPManager this);
+	void displayOn(VIPManager this);
+	void displayOff(VIPManager this);
+	void setupPalettes(VIPManager this, PaletteConfig* paletteConfig);
+	void upBrightness(VIPManager this);
+	void lowerBrightness(VIPManager this);
+	void displayHide(VIPManager this);
+	void clearScreen(VIPManager this);
+	void clearBgmapSegment(VIPManager this, int segment, int size);
+	void setupColumnTable(VIPManager this, ColumnTableDefinition* columnTableDefinition);
+	void useInternalColumnTable(VIPManager this, bool internal);
+	void setupBrightnessRepeat(VIPManager this, BrightnessRepeatDefinition* brightnessRepeat);
+	void setBackgroundColor(VIPManager this, u8 color);
+	void pushFrontPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackPostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void removePostProcessingEffect(VIPManager this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void removePostProcessingEffects(VIPManager this);
+	void registerCurrentDrawingFrameBufferSet(VIPManager this);
 }
 
 

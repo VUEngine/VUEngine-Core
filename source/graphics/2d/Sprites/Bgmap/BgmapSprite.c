@@ -46,9 +46,9 @@
  * @ingroup graphics-2d-sprites-bgmap
  * @brief	Sprite which holds a texture and a drawing specification.
  */
-__CLASS_DEFINITION(BgmapSprite, Sprite);
-__CLASS_FRIEND_DEFINITION(Texture);
-__CLASS_FRIEND_DEFINITION(BgmapTexture);
+implements BgmapSprite : Sprite;
+friend class Texture;
+friend class BgmapTexture;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -84,7 +84,7 @@ void BgmapSprite::constructor(BgmapSprite this, const BgmapSpriteDefinition* bgm
 {
 	ASSERT(this, "BgmapSprite::constructor: null this");
 
-	Base::constructor(this, (SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
+	Base::constructor((SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
 
 	// create the texture
 	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)

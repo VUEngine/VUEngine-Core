@@ -90,22 +90,22 @@ class SolidParticle : Particle
 	*/
 	const SolidParticleDefinition* solidParticleDefinition;
 
-	void constructor(const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
-	Shape getShape();
-	override u32 update(int timeElapsed, void (* behavior)(Particle particle));
-	override u16 getWidth();
-	override u16 getHeight();
-	override u16 getDepth();
-	override bool enterCollision(const CollisionInformation* collisionInformation);
-	override bool isSubjectToGravity(Acceleration gravity);
-	override bool handleMessage(Telegram telegram);
-	override void transform();
-	override void setPosition(const Vector3D* position);
-	override VirtualList getShapes();
-	override u32 getInGameType();
-	override Velocity getVelocity();
-	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-	override void reset();
+	void constructor(SolidParticle this, const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
+	Shape getShape(SolidParticle this);
+	override u32 update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle));
+	override u16 getWidth(SolidParticle this);
+	override u16 getHeight(SolidParticle this);
+	override u16 getDepth(SolidParticle this);
+	override bool enterCollision(SolidParticle this, const CollisionInformation* collisionInformation);
+	override bool isSubjectToGravity(SolidParticle this, Acceleration gravity);
+	override bool handleMessage(SolidParticle this, Telegram telegram);
+	override void transform(SolidParticle this);
+	override void setPosition(SolidParticle this, const Vector3D* position);
+	override VirtualList getShapes(SolidParticle this);
+	override u32 getInGameType(SolidParticle this);
+	override Velocity getVelocity(SolidParticle this);
+	override void exitCollision(SolidParticle this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	override void reset(SolidParticle this);
 }
 
 

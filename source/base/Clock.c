@@ -39,7 +39,7 @@
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(Clock, Object);
+implements Clock : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void Clock::constructor(Clock this)
 {
 	ASSERT(this, "Clock::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// initialize time
 	this->milliSeconds = 0;

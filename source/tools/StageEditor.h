@@ -55,11 +55,54 @@ typedef struct UserObject
 
 singleton class StageEditor : Object
 {
+	/**
+	 * @var GameState		gameState
+	 * @brief				Current game state
+	 * @memberof			StageEditor
+	 */
+	GameState gameState;
+	/**
+	 * @var VirtualNode		currentEntityNode
+	 * @brief				Current in game entity
+	 * @memberof			StageEditor
+	 */
+	VirtualNode currentEntityNode;
+	/**
+	 * @var Shape			shape
+	 * @brief				Current entity's shape
+	 * @memberof			StageEditor
+	 */
+	Shape shape;
+	/**
+	 * @var int				mode
+	 * @brief				Mode
+	 * @memberof			StageEditor
+	 */
+	int mode;
+	/**
+	 * @var OptionsSelector userObjectsSelector
+	 * @brief				Actors selector
+	 * @memberof			StageEditor
+	 */
+	OptionsSelector userObjectsSelector;
+	/**
+	 * @var int				translationStepSize
+	 * @brief				Translation step size
+	 * @memberof			StageEditor
+	 */
+	int translationStepSize;
+	/**
+	 * @var Sprite			userObjectSprite
+	 * @brief				Current user's object's sprite
+	 * @memberof			StageEditor
+	 */
+	Sprite userObjectSprite;
+
 	static StageEditor getInstance();
-	void show(GameState gameState);
-	void hide();
-	void update();
-	void processUserInput(u16 pressedKey);
+	void show(StageEditor this, GameState gameState);
+	void hide(StageEditor this);
+	void update(StageEditor this);
+	void processUserInput(StageEditor this, u16 pressedKey);
 }
 
 

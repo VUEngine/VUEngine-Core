@@ -42,8 +42,8 @@
  * @extends Object
  * @ingroup camera
  */
-__CLASS_DEFINITION(CameraEffectManager, Object);
-__CLASS_FRIEND_DEFINITION(Camera);
+implements CameraEffectManager : Object;
+friend class Camera;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ static void CameraEffectManager::constructor(CameraEffectManager this)
 	this->fxFadeCallbackScope = NULL;
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

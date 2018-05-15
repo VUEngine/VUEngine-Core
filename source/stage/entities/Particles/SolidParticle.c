@@ -41,10 +41,10 @@
  * @extends Particle
  * @ingroup stage-entities-particles
  */
-__CLASS_DEFINITION(SolidParticle, Particle);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
-__CLASS_FRIEND_DEFINITION(Shape);
+implements SolidParticle : Particle;
+friend class VirtualNode;
+friend class VirtualList;
+friend class Shape;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -79,7 +79,7 @@ void SolidParticle::constructor(SolidParticle this, const SolidParticleDefinitio
 	ASSERT(this, "SolidParticle::constructor: null this");
 
 	// construct base Container
-	Base::constructor(this, &solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
+	Base::constructor(&solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
 	this->solidParticleDefinition = solidParticleDefinition;
 

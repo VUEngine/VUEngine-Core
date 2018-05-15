@@ -38,7 +38,7 @@
 singleton class CollisionHelper : Object
 {
 	static CollisionHelper getInstance();
-	CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);
+	CollisionInformation checkIfOverlap(CollisionHelper this, Shape shapeA, Shape shapeB);
 }
 
 

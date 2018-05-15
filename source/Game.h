@@ -42,48 +42,145 @@
 
 singleton class Game : Object
 {
+	/**
+	 * @var StateMachine	stateMachine
+	 * @brief				game's state machine
+	 * @memberof			Game
+	 */
+	StateMachine stateMachine;
+	/**
+	 * @var GameState		currentState
+	 * @brief				game's current state
+	 * @memberof			Game
+	 */
+	GameState currentState;
+	/**
+	 * @var Clock			clock
+	 * @brief				engine's global timer
+	 * @memberof			Game
+	 */
+	Clock clock;
+	/**
+	 * @var ClockManager	clockManager
+	 * @brief				managers
+	 * @memberof			Game
+	 */
+	ClockManager clockManager;
+	/**
+	 * @var KeypadManager 	keypadManager
+	 * @brief
+	 * @memberof			Game
+	 */
+	KeypadManager keypadManager;
+	/**
+	 * @var VIPManager 		vipManager
+	 * @brief
+	 * @memberof			Game
+	 */
+	VIPManager vipManager;
+	/**
+	 * @var TimerManager 	timerManager
+	 * @brief
+	 * @memberof			Game
+	 */
+	TimerManager timerManager;
+	/**
+	 * @var Camera 			camera
+	 * @brief
+	 * @memberof			Game
+	 */
+	Camera camera;
+	/**
+	 * @var GameState		nextState
+	 * @brief				game's next state
+	 * @memberof			Game
+	 */
+	GameState nextState;
+	/**
+	 * @var int				nextStateOperation
+	 * @brief				game's next state operation
+	 * @memberof			Game
+	 */
+	int nextStateOperation;
+	/**
+	 * @var char*			lastProcessName
+	 * @brief				last process' name
+	 * @memberof			Game
+	 */
+	char* lastProcessName;
+	/**
+	 * @var GameState		automaticPauseState
+	 * @brief				auto pause state
+	 * @memberof			Game
+	 */
+	GameState automaticPauseState;
+	/**
+	 * @var u32				lastAutoPauseCheckTime
+	 * @brief				auto pause last checked time
+	 * @memberof			Game
+	 */
+	u32 lastAutoPauseCheckTime;
+	/**
+	 * @var u32				gameFrameTotalTime
+	 * @brief				elapsed time in current 50hz cycle
+	 * @memberof			Game
+	 */
+	u32 gameFrameTotalTime;
+	/**
+	 * @var bool			isShowingLowBatteryIndicator
+	 * @brief				low battery indicator showing flag
+	 * @memberof			Game
+	 */
+	bool isShowingLowBatteryIndicator;
+	/**
+	 * @var bool			currentFrameEnded
+	 * @brief				frame ended flag
+	 * @memberof			Game
+	 */
+	volatile bool currentFrameEnded;
+
 	static Game getInstance();
-	void pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void addState(GameState state);
-	void changeState(GameState state);
-	void cleanAndChangeState(GameState state);
-	void disableHardwareInterrupts();
-	void disableKeypad();
-	void enableHardwareInterrupts();
-	void enableKeypad();
-	GameState getAutomaticPauseState();
-	Clock getClock();
-	CollisionManager getCollisionManager();
-	char* getLastProcessName();
-	Clock getMessagingClock();
-	Optical getOptical();
-	Clock getPhysicsClock();
-	PhysicalWorld getPhysicalWorld();
-	u32 getTime();
-	StateMachine getStateMachine();
-	Stage getStage();
-	GameState getCurrentState();
-	Clock getUpdateClock();
-	bool isEnteringSpecialMode();
-	bool isExitingSpecialMode();
-	bool isInSpecialMode();
-	void pause(GameState pauseState);
-	void printClassSizes(int x, int y);
-	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
-	void reset();
-	void resetProfiling();
-	void setAutomaticPauseState(GameState automaticPauseState);
-	void setOptical(Optical optical);
-	void showLastGameFrameProfiling(int x, int y);
-	void start(GameState state);
-	void unpause(GameState pauseState);
-	void wait(u32 milliSeconds);
-	void setLastProcessName(char* processName);
-	bool isInDebugMode();
-	bool isInStageEditor();
-	bool isInAnimationInspector();
-	override bool handleMessage(Telegram telegram);
+	void pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void addState(Game this, GameState state);
+	void changeState(Game this, GameState state);
+	void cleanAndChangeState(Game this, GameState state);
+	void disableHardwareInterrupts(Game this);
+	void disableKeypad(Game this);
+	void enableHardwareInterrupts(Game this);
+	void enableKeypad(Game this);
+	GameState getAutomaticPauseState(Game this);
+	Clock getClock(Game this);
+	CollisionManager getCollisionManager(Game this);
+	char* getLastProcessName(Game this);
+	Clock getMessagingClock(Game this);
+	Optical getOptical(Game this);
+	Clock getPhysicsClock(Game this);
+	PhysicalWorld getPhysicalWorld(Game this);
+	u32 getTime(Game this);
+	StateMachine getStateMachine(Game this);
+	Stage getStage(Game this);
+	GameState getCurrentState(Game this);
+	Clock getUpdateClock(Game this);
+	bool isEnteringSpecialMode(Game this);
+	bool isExitingSpecialMode(Game this);
+	bool isInSpecialMode(Game this);
+	void pause(Game this, GameState pauseState);
+	void printClassSizes(Game this, int x, int y);
+	void removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
+	void reset(Game this);
+	void resetProfiling(Game this);
+	void setAutomaticPauseState(Game this, GameState automaticPauseState);
+	void setOptical(Game this, Optical optical);
+	void showLastGameFrameProfiling(Game this, int x, int y);
+	void start(Game this, GameState state);
+	void unpause(Game this, GameState pauseState);
+	void wait(Game this, u32 milliSeconds);
+	void setLastProcessName(Game this, char* processName);
+	bool isInDebugMode(Game this);
+	bool isInStageEditor(Game this);
+	bool isInAnimationInspector(Game this);
+	override bool handleMessage(Game this, Telegram telegram);
 }
 
 

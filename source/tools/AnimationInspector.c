@@ -55,76 +55,13 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationInspector_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var GameState 				gameState
-		 * @brief						current in game gameState
-		 * @memberof					AnimationInspector
-		 */																								\
-		GameState gameState;																			\
-		/**
-		 * @var Sprite 					animatedSprite
-		 * @brief						current animated sprite
-		 * @memberof					AnimationInspector
-		 */																								\
-		Sprite animatedSprite;																			\
-		/**
-		 * @var AnimationDescription* 	animationDescription
-		 * @brief						current animation description
-		 * @memberof					AnimationInspector
-		 */																								\
-		AnimationDescription* animationDescription;														\
-		/**
-		 * @var AnimationFunction 		animationFunction
-		 * @brief						current animation function
-		 * @memberof					AnimationInspector
-		 */																								\
-		AnimationFunction animationFunction;															\
-		/**
-		 * @var OptionsSelector 		animatedEntitySelector
-		 * @brief						animated in game entity selector
-		 * @memberof					AnimationInspector
-		 */																								\
-		OptionsSelector animatedEntitySelector;													\
-		/**
-		 * @var OptionsSelector 		spriteSelector
-		 * @brief						animated sprite selector
-		 * @memberof					AnimationInspector
-		 */																								\
-		OptionsSelector spriteSelector;																	\
-		/**
-		 * @var OptionsSelector 		animationsSelector
-		 * @brief						animations selector
-		 * @memberof					AnimationInspector
-		 */																								\
-		OptionsSelector animationsSelector;																\
-		/**
-		 * @var OptionsSelector 		animationEditionSelector
-		 * @brief						animation edition selector
-		 * @memberof					AnimationInspector
-		 */																								\
-		OptionsSelector animationEditionSelector;														\
-		/**
-		 * @var OptionsSelector 		frameEditionSelector
-		 * @brief						frame edition selector
-		 * @memberof					AnimationInspector
-		 */																								\
-		OptionsSelector frameEditionSelector;															\
-		/**
-		 * @var int mode
-		 * @brief						mode
-		 * @memberof					AnimationInspector
-		 */																								\
-		int mode;																						\
-
 /**
  * @class	AnimationInspector
  * @extends Object
  * @ingroup tools
  */
-__CLASS_DEFINITION(AnimationInspector, Object);
-__CLASS_FRIEND_DEFINITION(Sprite);
+implements AnimationInspector : Object;
+friend class Sprite;
 
 /**
  * The different modes of the AnimationInspector
@@ -210,7 +147,7 @@ static void __attribute__ ((noinline)) AnimationInspector::constructor(Animation
 {
 	ASSERT(this, "AnimationInspector::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->animatedSprite = NULL;
 	this->gameState = NULL;

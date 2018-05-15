@@ -100,21 +100,40 @@ typedef struct UserInput
 
 singleton class KeypadManager : Object
 {
+	/**
+	 * @var UserInput 	userInput
+	 * @brief			User's Input
+	 * @memberof		KeypadManager
+	 */
+	UserInput userInput;
+	/**
+	 * @var UserInput 	userInputToRegister
+	 * @brief			User's Input to be registered
+	 * @memberof		KeypadManager
+	 */
+	UserInput userInputToRegister;
+	/**
+	 * @var bool 		enabled
+	 * @brief			Enabled
+	 * @memberof		KeypadManager
+	 */
+	bool enabled;
+
 	static KeypadManager getInstance();
-	void disable();
-	void disableInterrupt();
-	void enable();
-	void enableInterrupt();
-	void flush();
-	u16 getHoldKey();
-	u32 getHoldKeyDuration();
-	u16 getPressedKey();
-	u16 getPreviousKey();
-	u16 getReleasedKey();
-	UserInput getUserInput();
-	int isEnabled();
-	UserInput read();
-	void registerInput(u16 inputToRegister);
+	void disable(KeypadManager this);
+	void disableInterrupt(KeypadManager this);
+	void enable(KeypadManager this);
+	void enableInterrupt(KeypadManager this);
+	void flush(KeypadManager this);
+	u16 getHoldKey(KeypadManager this);
+	u32 getHoldKeyDuration(KeypadManager this);
+	u16 getPressedKey(KeypadManager this);
+	u16 getPreviousKey(KeypadManager this);
+	u16 getReleasedKey(KeypadManager this);
+	UserInput getUserInput(KeypadManager this);
+	int isEnabled(KeypadManager this);
+	UserInput read(KeypadManager this);
+	void registerInput(KeypadManager this, u16 inputToRegister);
 }
 
 

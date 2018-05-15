@@ -45,8 +45,8 @@ class BgmapAnimatedSprite : BgmapSprite
 	*/
 	TextureSource originalTextureSource;
 
-	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-	override void writeAnimation();
+	void constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
+	override void writeAnimation(BgmapAnimatedSprite this);
 }
 
 

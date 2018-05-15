@@ -31,18 +31,44 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											 CLASS' MACROS
+//---------------------------------------------------------------------------------------------------------
+
+
+// MemoryPool's defines
+#define __BLOCK_DEFINITION(BlockSize, Elements)															\
+	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
+
+#define __SET_MEMORY_POOL_ARRAY(BlockSize)																\
+	this->poolLocation[pool] = &this->pool ## BlockSize ## B[0];										\
+	this->poolSizes[pool][ePoolSize] = sizeof(this->pool ## BlockSize ## B);							\
+	this->poolSizes[pool][eBlockSize] = BlockSize;														\
+	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
+
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
 singleton class MemoryPool : Object
 {
+	/* dynamic memory area */
+	/* must always put together the pools! */
+	/* first byte is used as a usage flag */
+	__MEMORY_POOL_ARRAYS
+	/* pointer to the beginning of each memory pool */
+	BYTE* poolLocation[__MEMORY_POOLS];
+	/* pool's size and pool's block size */
+	u16 poolSizes[__MEMORY_POOLS][3];
+
 	static MemoryPool getInstance();
-	void cleanUp();
-	BYTE* allocate(int numBytes);
-	void free(BYTE* object);
-	void printDirectory(int x, int y, int pool);
-	void printDetailedUsage(int x, int y);
-	void printResumedUsage(int x, int y);
+	void cleanUp(MemoryPool this);
+	BYTE* allocate(MemoryPool this, int numBytes);
+	void free(MemoryPool this, BYTE* object);
+	void printDirectory(MemoryPool this, int x, int y, int pool);
+	void printDetailedUsage(MemoryPool this, int x, int y);
+	void printResumedUsage(MemoryPool this, int x, int y);
 }
 
 

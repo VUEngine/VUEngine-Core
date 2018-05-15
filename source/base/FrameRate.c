@@ -32,21 +32,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define FrameRate_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var u16	 	fps
-		 * @brief		Frames per second
-		 * @memberof	FrameRate
-		 */																								\
-		u16 fps;																						\
-
 /**
  * @class	FrameRate
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(FrameRate, Object);
+implements FrameRate : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,7 +74,7 @@ static void __attribute__ ((noinline)) FrameRate::constructor(FrameRate this)
 {
 	ASSERT(this, "FrameRate::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->fps = 0;
 }

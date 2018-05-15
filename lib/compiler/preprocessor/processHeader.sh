@@ -65,18 +65,18 @@ echo "$className inherits from $baseClassName"
 end=`tail -n +$line $INPUT_FILE | grep -m 1 -n "}" | cut -d: -f1`
 end=$((line + end))
 line=$((line + 1))
-classDeclarationBlock=`sed ''"$line"','"$end"'!d' $INPUT_FILE | grep -v -e '^[ 	][\*/]' | sed -e 's#[{}]#\n#' | tr -d '\n' | sed -e 's#;#;\n#g'`
 
+classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e '^[ 	]*[\*//]\+.*' | sed -e 's#[{}]#\n#' | tr -d '\n' | sed -e 's#;#;\n#g' `
 #echo "$classDeclarationBlock"
 methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*$'`
-attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -v -e '^[ 	][\*/]' | grep -e ';' | sed -e 's#.*;#&\\\#' `
+attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#.*;#&\\\#' `
 
 
 #echo
-#echo "methods 
+#echo "methods
 #$methods"
 #echo
-#echo "attributes 
+#echo "attributes
 #$attributes"
 
 isSingletonClass=false
@@ -92,7 +92,7 @@ then
 	virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
 	virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
 fi
-	
+
 #echo
 #echo methods
 #echo $methods
@@ -108,26 +108,34 @@ do
 	methodPrelude=`cut -d "(" -f1 <<< "$method"`
     methodType=`sed -e 's#\(^.*\)[ \t]\+[a-z][A-z0-9]\+[ \t]*$#\1#' <<< "$methodPrelude"`
     methodName=`sed -e 's#^.*[ \t]\+\([a-z][A-z0-9]\+[ \t]*$\)#\1#' <<< "$methodPrelude"`
-    methodParamenters=`cut -d "(" -f2- <<< "$method" | rev | cut -d ")" -f2- | rev`
+    methodParameters=`cut -d "(" -f2- <<< "$method" | rev | cut -d ")" -f2- | rev`
 
-	
+	# Remove the reference to this pointer
+	if [[ ! $methodType = *"static "* ]]; then
+		if [[ $methodParameters = *","* ]]; then
+			methodParameters=`cut -d "," -f2- <<< "$methodParameters"`
+		else
+			methodParameters=
+		fi
+	fi
+
 #   echo
 #   echo "method $method"
 #   echo "methodType $methodType"
 #   echo "methodName $methodName"
-#   echo "methodParamenters $methodParamenters"
+#   echo "methodParameters $methodParameters"
 
     nonModifiedMethodType=`sed -e 's#virtual##' -e 's#override##' -e 's#static##' <<< "$methodType"`
 	methodIsAbstract=false
-	
+
     if [[ $methodType = *"virtual "* ]]; then
 
-        if [ ! -z "$methodParamenters" ];
+        if [ ! -z "$methodParameters" ];
         then
-			#echo "method $method"
-			#echo "methodParamenters $methodParamenters"
+#			echo "method $method"
+#			echo "methodParameters $methodParameters"
             virtualMethodDeclarations=$virtualMethodDeclarations"\\
-__VIRTUAL_DEC(ClassName, "$nonModifiedMethodType", "$methodName", "$methodParamenters");"
+__VIRTUAL_DEC(ClassName, "$nonModifiedMethodType", "$methodName", "$methodParameters");"
         else
             virtualMethodDeclarations=$virtualMethodDeclarations"\\
 __VIRTUAL_DEC(ClassName, "$nonModifiedMethodType", "$methodName");"
@@ -157,12 +165,12 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
     if [ ! "$methodIsAbstract" = true ];
     then
 		methodDeclaration=
-        if [ ! -z "$methodParamenters" ];
+        if [ ! -z "$methodParameters" ];
         then
 			if [[ $methodType = *"static "* ]]; then
-				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$methodParamenters");"				
+				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$methodParameters");"
 			else
-				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$className" this, "$methodParamenters");"
+				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$className" this, "$methodParameters");"
 			fi
         else
 
@@ -189,7 +197,7 @@ do
 
 		isAbstractClass=true
 	fi
-    
+
 	if [[ $classModifier = *"final "* ]]; then
 
 		isFinal=true;
@@ -198,13 +206,8 @@ do
 	if [[ $classModifier = *"singleton "* ]]; then
 
 		isSingletonClass=true
-		
-		if [ -z "$attributes" ];
-		then
-			isFinal=true;
-		fi
 	fi
-	
+
 
 done <<< "$classModifiers"
 
@@ -273,7 +276,7 @@ then
 		attributes="#define "$className"_ATTRIBUTES \\
 	$attributes"
 	fi
-	
+
 	echo "$attributes" >> $TEMPORAL_FILE
 fi
 echo "" >> $TEMPORAL_FILE

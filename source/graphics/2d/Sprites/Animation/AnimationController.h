@@ -94,32 +94,32 @@ class AnimationController : Object
 	*/
 	u8 animationFrameChanged;
 
-	void constructor(Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
-	s8 getActualFrame();
-	s8 getActualFrameIndex();
-	u8 getCols();
-	u8 getFrameCycleDecrement();
-	s8 getFrameDuration();
-	int getMapType();
-	int getNumberOfFrames();
-	const AnimationFunction* getPlayingAnimationFunction();
-	s8 getPreviousFrame();
-	u8 getRows();
-	bool isPlaying();
-	bool isPlayingFunction(const char* functionName);
-	void nextFrame();
-	void pause(bool pause);
-	bool play(const AnimationDescription* animationDescription, const char* functionName);
-	void playAnimationFunction(const AnimationFunction* animationFunction);
-	void previousFrame();
-	void setActualFrame(s8 actualFrame);
-	void setFrameCycleDecrement(u8 frameCycleDecrement);
-	void setFrameDuration(u8 frameDuration);
-	void stop();
-	bool update(Clock clock);
-	bool updateAnimation();
-	void write();
-	void writeAnimation();
+	void constructor(AnimationController this, Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
+	s8 getActualFrame(AnimationController this);
+	s8 getActualFrameIndex(AnimationController this);
+	u8 getCols(AnimationController this);
+	u8 getFrameCycleDecrement(AnimationController this);
+	s8 getFrameDuration(AnimationController this);
+	int getMapType(AnimationController this);
+	int getNumberOfFrames(AnimationController this);
+	const AnimationFunction* getPlayingAnimationFunction(AnimationController this);
+	s8 getPreviousFrame(AnimationController this);
+	u8 getRows(AnimationController this);
+	bool isPlaying(AnimationController this);
+	bool isPlayingFunction(AnimationController this, const char* functionName);
+	void nextFrame(AnimationController this);
+	void pause(AnimationController this, bool pause);
+	bool play(AnimationController this, const AnimationDescription* animationDescription, const char* functionName);
+	void playAnimationFunction(AnimationController this, const AnimationFunction* animationFunction);
+	void previousFrame(AnimationController this);
+	void setActualFrame(AnimationController this, s8 actualFrame);
+	void setFrameCycleDecrement(AnimationController this, u8 frameCycleDecrement);
+	void setFrameDuration(AnimationController this, u8 frameDuration);
+	void stop(AnimationController this);
+	bool update(AnimationController this, Clock clock);
+	bool updateAnimation(AnimationController this);
+	void write(AnimationController this);
+	void writeAnimation(AnimationController this);
 }
 
 

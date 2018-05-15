@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(Sphere, Wireframe);
+implements Sphere : Wireframe;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void Sphere::constructor(Sphere this, Vector3D center, fix10_6 radius)
 	ASSERT(this, "Sphere::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Wireframe);
+	Base::constructor();
 
 	this->center = center;
 	this->radius = __ABS(radius);

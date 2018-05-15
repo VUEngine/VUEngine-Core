@@ -37,7 +37,7 @@
 singleton class Error : Object
 {
 	static Error getInstance();
-	int triggerException(char* message, char* detail);
+	int triggerException(Error this, char* message, char* detail);
 }
 
 

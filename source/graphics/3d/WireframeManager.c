@@ -33,23 +33,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define WireframeManager_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList wireframes
-		 * @brief			Wireframes
-		 * @memberof		WireframeManager
-		 */																								\
-		VirtualList wireframes;																			\
-
 /**
  * @class	WireframeManager
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(WireframeManager, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements WireframeManager : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -86,7 +77,7 @@ static void WireframeManager::constructor(WireframeManager this)
 {
 	ASSERT(this, "WireframeManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->wireframes = __NEW(VirtualList);
 }

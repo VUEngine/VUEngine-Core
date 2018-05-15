@@ -90,111 +90,12 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Game_ATTRIBUTES																					\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var StateMachine	stateMachine
-		 * @brief				game's state machine
-		 * @memberof			Game
-		 */																								\
-		StateMachine stateMachine;																		\
-		/**
-		 * @var GameState		currentState
-		 * @brief				game's current state
-		 * @memberof			Game
-		 */																								\
-		GameState currentState;																			\
-		/**
-		 * @var Clock			clock
-		 * @brief				engine's global timer
-		 * @memberof			Game
-		 */																								\
-		Clock clock;																					\
-		/**
-		 * @var ClockManager	clockManager
-		 * @brief				managers
-		 * @memberof			Game
-		 */																								\
-		ClockManager clockManager;																		\
-		/**
-		 * @var KeypadManager 	keypadManager
-		 * @brief
-		 * @memberof			Game
-		 */																								\
-		KeypadManager keypadManager;																	\
-		/**
-		 * @var VIPManager 		vipManager
-		 * @brief
-		 * @memberof			Game
-		 */																								\
-		VIPManager vipManager;																			\
-		/**
-		 * @var TimerManager 	timerManager
-		 * @brief
-		 * @memberof			Game
-		 */																								\
-		TimerManager timerManager;																		\
-		/**
-		 * @var Camera 			camera
-		 * @brief
-		 * @memberof			Game
-		 */																								\
-		Camera camera;																					\
-		/**
-		 * @var GameState		nextState
-		 * @brief				game's next state
-		 * @memberof			Game
-		 */																								\
-		GameState nextState;																			\
-		/**
-		 * @var int				nextStateOperation
-		 * @brief				game's next state operation
-		 * @memberof			Game
-		 */																								\
-		int nextStateOperation; 																		\
-		/**
-		 * @var char*			lastProcessName
-		 * @brief				last process' name
-		 * @memberof			Game
-		 */																								\
-		char* lastProcessName;																			\
-		/**
-		 * @var GameState		automaticPauseState
-		 * @brief				auto pause state
-		 * @memberof			Game
-		 */																								\
-		GameState automaticPauseState;																	\
-		/**
-		 * @var u32				lastAutoPauseCheckTime
-		 * @brief				auto pause last checked time
-		 * @memberof			Game
-		 */																								\
-		u32 lastAutoPauseCheckTime;																		\
-		/**
-		 * @var u32				gameFrameTotalTime
-		 * @brief				elapsed time in current 50hz cycle
-		 * @memberof			Game
-		 */																								\
-		u32 gameFrameTotalTime;																			\
-		/**
-		 * @var bool			isShowingLowBatteryIndicator
-		 * @brief				low battery indicator showing flag
-		 * @memberof			Game
-		 */																								\
-		bool isShowingLowBatteryIndicator;																\
-		/**
-		 * @var bool			currentFrameEnded
-		 * @brief				frame ended flag
-		 * @memberof			Game
-		 */																								\
-		volatile bool currentFrameEnded;																\
-
 /**
  * @class	Game
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(Game, Object);
+implements Game : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -338,7 +239,7 @@ static void __attribute__ ((noinline)) Game::constructor(Game this)
 	HardwareManager::checkMemoryMap();
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// make sure the memory pool is initialized now
 	MemoryPool::getInstance();

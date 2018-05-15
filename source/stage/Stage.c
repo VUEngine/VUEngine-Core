@@ -73,11 +73,11 @@
  * @extends Container
  * @ingroup stage
  */
-__CLASS_DEFINITION(Stage, Container);
-__CLASS_FRIEND_DEFINITION(Container);
-__CLASS_FRIEND_DEFINITION(Entity);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Stage : Container;
+friend class Container;
+friend class Entity;
+friend class VirtualNode;
+friend class VirtualList;
 
 /**
  * Stage Entity Description
@@ -174,7 +174,7 @@ void Stage::constructor(Stage this, StageDefinition *stageDefinition)
 	ASSERT(this, "Stage::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, NULL);
+	Base::constructor(NULL);
 
 	this->entityFactory = __NEW(EntityFactory);
 	this->particleRemover = __NEW(ParticleRemover);

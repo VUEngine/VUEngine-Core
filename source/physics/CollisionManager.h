@@ -37,18 +37,29 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-final class CollisionManager : Object
+class CollisionManager : Object
 {
-	void constructor();
-	void hideShapes();
-	void print(int x, int y);
-	Shape createShape(SpatialObject owner, const ShapeDefinition* shapeDefinition);
-	void destroyShape(Shape shape);
-	void reset();
-	void shapeStartedMoving(Shape shape);
-	void shapeStoppedMoving(Shape shape);
-	void showShapes();
-	u32 update(Clock clock);
+	/* a list of registered shapes */
+	VirtualList	shapes;
+	/* a list of moving shapes */
+	VirtualList	movingShapes;
+	/* counters for statistics */
+	u32 lastCycleCollisionChecks;
+	u32 lastCycleCollisions;
+	u32 collisionChecks;
+	u32 collisions;
+	u32 checkCycles;
+
+	void constructor(CollisionManager this);
+	void hideShapes(CollisionManager this);
+	void print(CollisionManager this, int x, int y);
+	Shape createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition);
+	void destroyShape(CollisionManager this, Shape shape);
+	void reset(CollisionManager this);
+	void shapeStartedMoving(CollisionManager this, Shape shape);
+	void shapeStoppedMoving(CollisionManager this, Shape shape);
+	void showShapes(CollisionManager this);
+	u32 update(CollisionManager this, Clock clock);
 }
 
 

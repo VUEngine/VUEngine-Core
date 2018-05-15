@@ -43,15 +43,12 @@ static void StageEditorState::constructor(StageEditorState this);
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define StageEditorState_ATTRIBUTES																		\
-		GameState_ATTRIBUTES																			\
-
 /**
  * @class	StageEditorState
  * @extends GameState
  * @ingroup states
  */
-__CLASS_DEFINITION(StageEditorState, GameState);
+implements StageEditorState : GameState;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,7 +78,7 @@ static void __attribute__ ((noinline)) StageEditorState::constructor(StageEditor
 {
 	ASSERT(this, "StageEditorState::constructor: null this");
 
-	__CONSTRUCT_BASE(GameState);
+	Base::constructor();
 }
 
 /**

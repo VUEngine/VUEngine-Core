@@ -46,8 +46,8 @@
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(VirtualList, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
+implements VirtualList : Object;
+friend class VirtualNode;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void VirtualList::constructor(VirtualList this)
 {
 	ASSERT(this, "VirtualList::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set members' default values
 	this->head = NULL;

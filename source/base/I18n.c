@@ -46,7 +46,7 @@ extern LangROMDef* __LANGUAGES[];
  * @ingroup base
  * @brief	Handles internationalization of text output and thus allows multiple selectable languages.
  */
-__CLASS_DEFINITION(I18n, Object);
+implements I18n : Object
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ static void __attribute__ ((noinline)) I18n::constructor(I18n this)
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->activeLanguage = 0;
 }

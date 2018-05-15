@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup graphics-2d-textures
  */
-__CLASS_DEFINITION(Texture, Object);
+implements Texture : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void Texture::constructor(Texture this, TextureDefinition* textureDefinition, u1
 	ASSERT(this, "Texture::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set id
 	this->id = id;

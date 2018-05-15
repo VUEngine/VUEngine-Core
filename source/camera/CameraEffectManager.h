@@ -74,10 +74,10 @@ singleton class CameraEffectManager : Object
 	Object fxFadeCallbackScope;
 
 	static CameraEffectManager getInstance();
-	Brightness getDefaultBrightness();
-	virtual void startEffect(int effect, va_list args);
-	virtual void stopEffect(int effect);
-	override bool handleMessage(Telegram telegram);
+	Brightness getDefaultBrightness(CameraEffectManager this);
+	virtual void startEffect(CameraEffectManager this, int effect, va_list args);
+	virtual void stopEffect(CameraEffectManager this, int effect);
+	override bool handleMessage(CameraEffectManager this, Telegram telegram);
 }
 
 

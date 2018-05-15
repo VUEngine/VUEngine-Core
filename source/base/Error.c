@@ -49,15 +49,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Error_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-
 /**
  * @class	Error
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(Error, Object);
+implements Error : Object;
 
 
 bool _triggeringException = false;
@@ -97,7 +94,7 @@ __SINGLETON(Error);
  */
 static void __attribute__ ((noinline)) Error::constructor(Error this)
 {
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

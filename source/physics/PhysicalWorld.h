@@ -39,29 +39,66 @@
 
 typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, u16 axesSubjectToGravity);
 
-final class PhysicalWorld : Object
+class PhysicalWorld : Object
 {
-	void constructor();
-	void destructor();
-	void setTimeScale(fix10_6 timeScale);
-	u32 getTimeScale();
-	void bodyAwake(Body body);
-	void bodySleep(Body body);
-	void bodySetInactive(Body body);
-	Body getBody(SpatialObject owner);
-	fix10_6 getElapsedTime();
-	fix10_6 getFrictionCoefficient();
-	const Vector3D* getGravity();
-	bool isSpatialObjectRegistered(SpatialObject owner);
-	void print(int x, int y);
-	void purgeBodyLists();
-	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
-	void destroyBody(Body body);
-	void reset();
-	void setGravity(Acceleration gravity);
-	void setFrictionCoefficient(fix10_6 frictionCoefficient);
-	void start();
-	void update(Clock clock);
+	/**
+	 * @var VirtualList		bodies
+	 * @brief				registered of bodies
+	 * @memberof 			PhysicalWorld
+	 */
+	VirtualList	bodies;
+	/**
+	 * @var VirtualList		activeBodies
+	 * @brief				a list of bodies which must detect collisions
+	 * @memberof 			PhysicalWorld
+	 */
+	VirtualList	activeBodies;
+	/**
+	 * @var Acceleration	gravity
+	 * @brief				gravity
+	 * @memberof 			PhysicalWorld
+	 */
+	Acceleration gravity;
+	/**
+	 * @var fix10_6		frictionCoefficient
+	 * @brief				frictionCoefficient
+	 * @memberof 			PhysicalWorld
+	 */
+	fix10_6 frictionCoefficient;
+	/**
+	 * @var fix10_6		timeScale
+	 * @brief				time scale
+	 * @memberof 			PhysicalWorld
+	 */
+	fix10_6 timeScale;
+	/**
+	 * @var VirtualNode		bodyToCheckForGravityNode
+	 * @brief				body to check for gravity
+	 * @memberof 			PhysicalWorld
+	 */
+	VirtualNode bodyToCheckForGravityNode;
+
+	void constructor(PhysicalWorld this);
+	void destructor(PhysicalWorld this);
+	void setTimeScale(PhysicalWorld this, fix10_6 timeScale);
+	u32 getTimeScale(PhysicalWorld this);
+	void bodyAwake(PhysicalWorld this, Body body);
+	void bodySleep(PhysicalWorld this, Body body);
+	void bodySetInactive(PhysicalWorld this, Body body);
+	Body getBody(PhysicalWorld this, SpatialObject owner);
+	fix10_6 getElapsedTime(PhysicalWorld this);
+	fix10_6 getFrictionCoefficient(PhysicalWorld this);
+	const Vector3D* getGravity(PhysicalWorld this);
+	bool isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
+	void print(PhysicalWorld this, int x, int y);
+	void purgeBodyLists(PhysicalWorld this);
+	Body createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
+	void destroyBody(PhysicalWorld this, Body body);
+	void reset(PhysicalWorld this);
+	void setGravity(PhysicalWorld this, Acceleration gravity);
+	void setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient);
+	void start(PhysicalWorld this);
+	void update(PhysicalWorld this, Clock clock);
 }
 
 

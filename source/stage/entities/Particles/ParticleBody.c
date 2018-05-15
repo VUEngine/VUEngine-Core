@@ -38,7 +38,7 @@
  * @extends Body
  * @ingroup stage-entities-particles
  */
-__CLASS_DEFINITION(ParticleBody, Body);
+implements ParticleBody : Body;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void ParticleBody::constructor(ParticleBody this, SpatialObject owner, const Phy
 {
 	ASSERT(this, "ParticleBody::constructor: null this");
 
-	Base::constructor(this, owner, physicalSpecification, axesSubjectToGravity);
+	Base::constructor(owner, physicalSpecification, axesSubjectToGravity);
 }
 
 /**

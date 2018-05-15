@@ -51,8 +51,8 @@
  * @ingroup graphics-2d-sprites-object
  * @brief	Sprite which holds a texture and a drawing specification.
  */
-__CLASS_DEFINITION(ObjectSprite, Sprite);
-__CLASS_FRIEND_DEFINITION(Texture);
+implements ObjectSprite : Sprite;
+friend class Texture;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void ObjectSprite::constructor(ObjectSprite this, const ObjectSpriteDefinition* 
 {
 	ASSERT(this, "ObjectSprite::constructor: null this");
 
-	Base::constructor(this, (SpriteDefinition*)objectSpriteDefinition, owner);
+	Base::constructor((SpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->head = objectSpriteDefinition->display;
 	this->objectIndex = -1;

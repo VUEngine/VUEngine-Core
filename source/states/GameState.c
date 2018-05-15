@@ -41,7 +41,7 @@
  * @extends State
  * @ingroup states
  */
-__CLASS_DEFINITION(GameState, State);
+implements GameState : State;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ void GameState::constructor(GameState this)
 {
 	ASSERT(this, "GameState::constructor: null this");
 
-	__CONSTRUCT_BASE(State);
+	Base::constructor();
 
 	this->stage = NULL;
 

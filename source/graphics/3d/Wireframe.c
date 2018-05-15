@@ -38,9 +38,9 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(Wireframe, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Wireframe : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void Wireframe::constructor(Wireframe this)
 	ASSERT(this, "Wireframe::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

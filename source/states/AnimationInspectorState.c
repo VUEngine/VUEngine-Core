@@ -43,15 +43,12 @@ static void AnimationInspectorState::constructor(AnimationInspectorState this);
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationInspectorState_ATTRIBUTES																	\
-		GameState_ATTRIBUTES																			\
-
 /**
  * @class	AnimationInspectorState
  * @extends GameState
  * @ingroup states
  */
-__CLASS_DEFINITION(AnimationInspectorState, GameState);
+implements AnimationInspectorState : GameState;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,7 +78,7 @@ void __attribute__ ((noinline)) AnimationInspectorState::constructor(AnimationIn
 {
 	ASSERT(this, "AnimationInspectorState::constructor: null this");
 
-	__CONSTRUCT_BASE(GameState);
+	Base::constructor();
 }
 
 /**

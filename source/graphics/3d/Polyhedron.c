@@ -41,9 +41,9 @@
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(Polyhedron, Wireframe);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Polyhedron : Wireframe;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void Polyhedron::constructor(Polyhedron this)
 	ASSERT(this, "Polyhedron::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Wireframe);
+	Base::constructor();
 
 	// don't create the list yet
 	this->vertices = NULL;

@@ -37,11 +37,30 @@
 
 class ParticleRemover : Object
 {
-	void constructor();
-	void deleteParticles(VirtualList particles);
-	void reset();
-	void setRemovalDelayCycles(int removalDelayCycles);
-	void update();
+	/**
+	 * @var VirtualList particlesLists
+	 * @brief			List of Particles
+	 * @memberof		ParticleRemover
+	 */
+	VirtualList particlesLists;
+	/**
+	 * @var int 		removalDelayCycles
+	 * @brief			Removal delay
+	 * @memberof		ParticleRemover
+	 */
+	int removalDelayCycles;
+	/**
+	 * @var int 		remainingRemoveDelayCycles
+	 * @brief			Removal delay
+	 * @memberof		ParticleRemover
+	 */
+	int remainingRemoveDelayCycles;
+
+	void constructor(ParticleRemover this);
+	void deleteParticles(ParticleRemover this, VirtualList particles);
+	void reset(ParticleRemover this);
+	void setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles);
+	void update(ParticleRemover this);
 }
 
 

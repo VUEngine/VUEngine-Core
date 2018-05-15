@@ -46,7 +46,7 @@
  * @extends Shape
  * @ingroup physics
  */
-__CLASS_DEFINITION(Ball, Shape);
+implements Ball : Shape;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -77,7 +77,7 @@ void Ball::constructor(Ball this, SpatialObject owner)
 {
 	ASSERT(this, "Ball::constructor: null this");
 
-	Base::constructor(this, owner);
+	Base::constructor(owner);
 
 	this->center = (Vector3D){0, 0, 0};
 	this->radius = 0;

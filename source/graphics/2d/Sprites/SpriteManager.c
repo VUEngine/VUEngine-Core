@@ -59,99 +59,17 @@ typedef struct SpritesList
 
 } SpritesList;
 
-#define SpriteManager_ATTRIBUTES																		\
-	Object_ATTRIBUTES																					\
-	/**
-	 * @var VirtualList	sprites
-	 * @brief 			list of sprites to render
-	 * @memberof		SpriteManager
-	 */																									\
-	VirtualList sprites;																				\
-	/**
-	 * @var VirtualList	spritesToDispose
-	 * @brief 			list of sprites to delete
-	 * @memberof		SpriteManager
-	 */																									\
-	VirtualList spritesToDispose;																		\
-	/**
-	 * @var VirtualNode	node
-	 * @brief 			sorting nodes
-	 * @memberof		SpriteManager
-	 */																									\
-	VirtualNode zSortingFirstNode;																		\
-	/**
-	 * @var VirtualNode	nextNode
-	 * @brief
-	 * @memberof		SpriteManager
-	 */																									\
-	VirtualNode zSortingSecondNode;																		\
-	/**
-	 * @var Sprite		spritePendingTextureWriting
-	 * @brief 			sprite's texture writing
-	 * @memberof		SpriteManager
-	 */																									\
-	Sprite spritePendingTextureWriting;																	\
-	/**
-	 * @var bool		lockSpritesLists
-	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
-	 * @memberof		SpriteManager
-	 */																									\
-	bool lockSpritesLists;																				\
-	/**
-	 * @var bool		evenFrame
-	 * @brief 			Flag to distinguish between even and odd game frames, needed for sprite transparency.
-	 * @memberof		SpriteManager
-	 */																									\
-	bool evenFrame;																						\
-	/**
-	 * @var u8			freeLayer
-	 * @brief 			next world layer
-	 * @memberof		SpriteManager
-	 */																									\
-	u8 freeLayer;																						\
-	/**
-	 * @var s8			cyclesToWaitForSpriteTextureWriting
-	 * @brief 			number of cycles that the texture writing is idle
-	 * @memberof		SpriteManager
-	 */																									\
-	s8 cyclesToWaitForSpriteTextureWriting;																\
-	/**
-	 * @var s8			texturesMaximumRowsToWrite
-	 * @brief 			number of rows to write in texture's writing
-	 * @memberof		SpriteManager
-	 */																									\
-	s8 texturesMaximumRowsToWrite;																		\
-	/**
-	 * @var s8			maximumParamTableRowsToComputePerCall
-	 * @brief 			number of rows to write in affine transformations
-	 * @memberof		SpriteManager
-	 */																									\
-	s8 maximumParamTableRowsToComputePerCall;															\
-	/**
-	 * @var s8			deferParamTableEffects
-	 * @brief 			flag to control texture's writing deferring
-	 * @memberof		SpriteManager
-	 */																									\
-	s8 deferParamTableEffects;																			\
-	/**
-	 * @var s8			waitToWriteSpriteTextures
-	 * @brief 			delay before writing again
-	 * @memberof		SpriteManager
-	 */																									\
-	s8 waitToWriteSpriteTextures;																		\
-
-
 /**
  * @class 	SpriteManager
  * @extends Object
  * @ingroup graphics-2d-sprites
  */
-__CLASS_DEFINITION(SpriteManager, Object);
-__CLASS_FRIEND_DEFINITION(Sprite);
-__CLASS_FRIEND_DEFINITION(ObjectSpriteContainer);
-__CLASS_FRIEND_DEFINITION(Texture);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements SpriteManager : Object;
+friend class Sprite;
+friend class ObjectSpriteContainer;
+friend class Texture;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -199,7 +117,7 @@ static void __attribute__ ((noinline)) SpriteManager::constructor(SpriteManager 
 	ASSERT(this, "SpriteManager::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->zSortingFirstNode = NULL;
 	this->zSortingSecondNode = NULL;

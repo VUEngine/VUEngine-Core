@@ -43,7 +43,7 @@
  * @ingroup graphics-2d-textures-bgmap
  * @brief 	A texture which has the logic to be allocated in graphic memory
  */
-__CLASS_DEFINITION(BgmapTexture, Texture);
+implements BgmapTexture : Texture;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ void BgmapTexture::constructor(BgmapTexture this, BgmapTextureDefinition* bgmapT
 	ASSERT(this, "BgmapTexture::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, (TextureDefinition*)bgmapTextureDefinition, id);
+	Base::constructor((TextureDefinition*)bgmapTextureDefinition, id);
 
 	this->segment = -1;
 	this->usageCount = 1;

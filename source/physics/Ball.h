@@ -50,14 +50,14 @@ class Ball : Shape
 	*/
 	Vector3D center;
 
-	void constructor(SpatialObject owner);
 	static void project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
-	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	override CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
-	override Vector3D getPosition();
-	override RightBox getSurroundingRightBox();
-	override void configureWireframe();
-	override void print(int x, int y);
+	void constructor(Ball this, SpatialObject owner);
+	override void position(Ball this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	override CollisionInformation testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement);
+	override Vector3D getPosition(Ball this);
+	override RightBox getSurroundingRightBox(Ball this);
+	override void configureWireframe(Ball this);
+	override void print(Ball this, int x, int y);
 }
 
 

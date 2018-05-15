@@ -33,33 +33,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define KeypadManager_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var UserInput 	userInput
-		 * @brief			User's Input
-		 * @memberof		KeypadManager
-		 */																								\
-		UserInput userInput;																			\
-		/**
-		 * @var UserInput 	userInputToRegister
-		 * @brief			User's Input to be registered
-		 * @memberof		KeypadManager
-		 */																								\
-		UserInput userInputToRegister;																	\
-		/**
-		 * @var bool 		enabled
-		 * @brief			Enabled
-		 * @memberof		KeypadManager
-		 */																								\
-		bool enabled;																					\
-
 /**
  * @class	KeypadManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(KeypadManager, Object);
+implements KeypadManager : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -98,7 +77,7 @@ static void __attribute__ ((noinline)) KeypadManager::constructor(KeypadManager 
 {
 	ASSERT(this, "KeypadManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	KeypadManager::flush(this);
 	this->enabled = false;

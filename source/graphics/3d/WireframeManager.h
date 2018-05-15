@@ -29,6 +29,7 @@
 
 #include <Object.h>
 #include <Wireframe.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -37,12 +38,19 @@
 
 singleton class WireframeManager : Object
 {
+	/**
+	 * @var VirtualList wireframes
+	 * @brief			Wireframes
+	 * @memberof		WireframeManager
+	 */
+	VirtualList wireframes;
+
 	static WireframeManager getInstance();
-	void drawWireframes();
-	void print(int x, int y);
-	void register(Wireframe wireframe);
-	void remove(Wireframe wireframe);
-	void reset();
+	void drawWireframes(WireframeManager this);
+	void print(WireframeManager this, int x, int y);
+	void register(WireframeManager this, Wireframe wireframe);
+	void remove(WireframeManager this, Wireframe wireframe);
+	void reset(WireframeManager this);
 }
 
 

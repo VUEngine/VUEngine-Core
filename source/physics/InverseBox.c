@@ -41,8 +41,8 @@
  * @extends Box
  * @ingroup physics
  */
-__CLASS_DEFINITION(InverseBox, Box);
-__CLASS_FRIEND_DEFINITION(Box);
+implements InverseBox : Box;
+friend class Box;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -73,7 +73,7 @@ void InverseBox::constructor(InverseBox this, SpatialObject owner)
 {
 	ASSERT(this, "InverseBox::constructor: null this");
 
-	Base::constructor(this, owner);
+	Base::constructor(owner);
 }
 
 /**

@@ -40,39 +40,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define HardwareManager_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var TimerManager 	timerManager
-		 * @brief				Timer manager
-		 * @memberof			HardwareManager
-		 */																								\
-		TimerManager timerManager;																		\
-		/**
-		 * @var VIPManager 		vipManager
-		 * @brief				VPU manager
-		 * @memberof			HardwareManager
-		 */																								\
-		VIPManager vipManager;																			\
-		/**
-		 * @var KeypadManager 	keypadManager
-		 * @brief				VPU manager
-		 * @memberof			HardwareManager
-		 */																								\
-		KeypadManager keypadManager;																	\
-		/**
-		 * @var u8*  			hwRegisters
-		 * @brief				HW registry
-		 * @memberof			HardwareManager
-		 */																								\
-		u8*  hwRegisters;																				\
-
 /**
  * @class	HardwareManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(HardwareManager, Object);
+implements HardwareManager : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -130,7 +103,7 @@ static void __attribute__ ((noinline)) HardwareManager::constructor(HardwareMana
 {
 	ASSERT(this, "HardwareManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set ROM waiting to 1 cycle
 	_hardwareRegisters[__WCR] |= 0x0001;

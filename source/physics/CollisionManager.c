@@ -42,30 +42,16 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionManager_ATTRIBUTES																		\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* a list of registered shapes */																\
-		VirtualList	shapes;																				\
-		/* a list of moving shapes */																	\
-		VirtualList	movingShapes;																		\
-		/* counters for statistics */																	\
-		u32 lastCycleCollisionChecks;																	\
-		u32 lastCycleCollisions;																		\
-		u32 collisionChecks;																			\
-		u32 collisions;																					\
-		u32 checkCycles;																				\
-
 /**
  * @class	CollisionManager
  * @extends Object
  * @ingroup physics
  */
-__CLASS_DEFINITION(CollisionManager, Object);
-__CLASS_FRIEND_DEFINITION(Shape);
-__CLASS_FRIEND_DEFINITION(Clock);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements CollisionManager : Object;
+friend class Shape;
+friend class Clock;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -86,7 +72,7 @@ void CollisionManager::constructor(CollisionManager this)
 {
 	ASSERT(this, "CollisionManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// create the shape list
 	this->shapes = __NEW(VirtualList);

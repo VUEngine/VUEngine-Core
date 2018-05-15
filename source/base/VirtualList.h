@@ -50,30 +50,30 @@ class VirtualList : Object
 	*/
 	VirtualNode tail;
 
-	void constructor();
-	void* back();
-	VirtualNode begin();
-	void clear();
-	void copy(VirtualList sourceList);
-	VirtualNode end();
-	VirtualNode find(const void* const dataPointer);
-	void* front();
-	int getDataPosition(const void* const dataPointer);
-	VirtualNode getNode(int item);
-	void* getNodeData(int item);
-	int getNodePosition(VirtualNode node);
-	void* getObject(void* const dataPointer);
-	void* getObjectAtPosition(int position);
-	int getSize();
-	VirtualNode insertAfter(VirtualNode node, const void* const data);
-	VirtualNode insertBefore(VirtualNode node, const void* const data);
-	void* popFront();
-	void* popBack();
-	int pushBack(const void* const data);
-	int pushFront(const void* const data);
-	bool removeNode(VirtualNode node);
-	bool removeElement(const void* const dataPointer);
-	void swap(VirtualList secondList);
+	void constructor(VirtualList this);
+	void* back(VirtualList this);
+	VirtualNode begin(VirtualList this);
+	void clear(VirtualList this);
+	void copy(VirtualList this, VirtualList sourceList);
+	VirtualNode end(VirtualList this);
+	VirtualNode find(VirtualList this, const void* const dataPointer);
+	void* front(VirtualList this);
+	int getDataPosition(VirtualList this, const void* const dataPointer);
+	VirtualNode getNode(VirtualList this, int item);
+	void* getNodeData(VirtualList this, int item);
+	int getNodePosition(VirtualList this, VirtualNode node);
+	void* getObject(VirtualList this, void* const dataPointer);
+	void* getObjectAtPosition(VirtualList this, int position);
+	int getSize(VirtualList this);
+	VirtualNode insertAfter(VirtualList this, VirtualNode node, const void* const data);
+	VirtualNode insertBefore(VirtualList this, VirtualNode node, const void* const data);
+	void* popFront(VirtualList this);
+	void* popBack(VirtualList this);
+	int pushBack(VirtualList this, const void* const data);
+	int pushFront(VirtualList this, const void* const data);
+	bool removeNode(VirtualList this, VirtualNode node);
+	bool removeElement(VirtualList this, const void* const dataPointer);
+	void swap(VirtualList this, VirtualList secondList);
 }
 
 

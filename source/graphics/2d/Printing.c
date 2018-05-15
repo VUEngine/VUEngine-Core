@@ -72,7 +72,7 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
  * @ingroup graphics-2d
  * @brief 	Manages printing layer and offers various functions to write to it.
  */
-__CLASS_DEFINITION(Printing, Object);
+implements Printing : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -111,7 +111,7 @@ static void __attribute__ ((noinline)) Printing::constructor(Printing this)
 {
 	ASSERT(this, "Printing::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// initialize members
 	this->fonts = __NEW(VirtualList);

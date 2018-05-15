@@ -55,11 +55,72 @@ typedef struct UserAnimatedEntity
 
 singleton class AnimationInspector : Object
 {
+	/**
+	 * @var GameState 				gameState
+	 * @brief						current in game gameState
+	 * @memberof					AnimationInspector
+	 */
+	GameState gameState;
+	/**
+	 * @var Sprite 					animatedSprite
+	 * @brief						current animated sprite
+	 * @memberof					AnimationInspector
+	 */
+	Sprite animatedSprite;
+	/**
+	 * @var AnimationDescription* 	animationDescription
+	 * @brief						current animation description
+	 * @memberof					AnimationInspector
+	 */
+	AnimationDescription* animationDescription;
+	/**
+	 * @var AnimationFunction 		animationFunction
+	 * @brief						current animation function
+	 * @memberof					AnimationInspector
+	 */
+	AnimationFunction animationFunction;
+	/**
+	 * @var OptionsSelector 		animatedEntitySelector
+	 * @brief						animated in game entity selector
+	 * @memberof					AnimationInspector
+	 */
+	OptionsSelector animatedEntitySelector;
+	/**
+	 * @var OptionsSelector 		spriteSelector
+	 * @brief						animated sprite selector
+	 * @memberof					AnimationInspector
+	 */
+	OptionsSelector spriteSelector;
+	/**
+	 * @var OptionsSelector 		animationsSelector
+	 * @brief						animations selector
+	 * @memberof					AnimationInspector
+	 */
+	OptionsSelector animationsSelector;
+	/**
+	 * @var OptionsSelector 		animationEditionSelector
+	 * @brief						animation edition selector
+	 * @memberof					AnimationInspector
+	 */
+	OptionsSelector animationEditionSelector;
+	/**
+	 * @var OptionsSelector 		frameEditionSelector
+	 * @brief						frame edition selector
+	 * @memberof					AnimationInspector
+	 */
+	OptionsSelector frameEditionSelector;
+	/**
+	 * @var int mode
+	 * @brief						mode
+	 * @memberof					AnimationInspector
+	 */
+	int mode;
+
 	static AnimationInspector getInstance();
-	void update();
-	void show(GameState gameState);
-	void hide();
-	void processUserInput(u16 pressedKey);
+	void update(AnimationInspector this);
+	void show(AnimationInspector this, GameState gameState);
+	void hide(AnimationInspector this);
+	void processUserInput(AnimationInspector this, u16 pressedKey);
 }
 
 

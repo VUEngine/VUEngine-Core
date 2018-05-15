@@ -41,7 +41,7 @@
  * @extends SpatialObject
  * @ingroup stage-entities-particles
  */
-__CLASS_DEFINITION(Particle, SpatialObject);
+implements Particle : SpatialObject;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,7 +83,7 @@ void Particle::constructor(Particle this, const ParticleDefinition* particleDefi
 	ASSERT(this, "Particle::constructor: null this");
 
 	// construct base Container
-	__CONSTRUCT_BASE(SpatialObject);
+	Base::constructor();
 
 	this->particleDefinition = particleDefinition;
 	this->spriteDefinition = spriteDefinition;

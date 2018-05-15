@@ -52,11 +52,11 @@ class AnimationCoordinator : Object
 	*/
 	const CharSetDefinition* charSetDefinition;
 
-	void constructor(const CharSetDefinition* charSetDefinition);
-	const CharSetDefinition* getCharSetDefinition();
-	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
-	virtual void addAnimationController(AnimationController animationController);
-	virtual void removeAnimationController(AnimationController animationController);
+	void constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition);
+	const CharSetDefinition* getCharSetDefinition(AnimationCoordinator this);
+	bool playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
+	virtual void addAnimationController(AnimationCoordinator this, AnimationController animationController);
+	virtual void removeAnimationController(AnimationCoordinator this, AnimationController animationController);
 }
 
 

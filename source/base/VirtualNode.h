@@ -55,11 +55,11 @@ class VirtualNode : Object
 	*/
 	void* data;
 
-	void constructor(const void* const data);
-	void* getData();
-	VirtualNode getNext();
-	VirtualNode getPrevious();
-	void swapData(VirtualNode node);
+	void constructor(VirtualNode this, const void* const data);
+	void* getData(VirtualNode this);
+	VirtualNode getNext(VirtualNode this);
+	VirtualNode getPrevious(VirtualNode this);
+	void swapData(VirtualNode this, VirtualNode node);
 }
 
 

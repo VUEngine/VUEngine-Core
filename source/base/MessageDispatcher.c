@@ -44,35 +44,14 @@ void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clo
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define MessageDispatcher_ATTRIBUTES																	\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList	delayedMessages
-		 * @brief			Delayed messages
-		 * @memberof		MessageDispatcher
-		 */																								\
-		VirtualList delayedMessages;																	\
-		/**
-		 * @var VirtualList	delayedMessagesToDiscard
-		 * @brief			Delayed messages to discard
-		 * @memberof		MessageDispatcher
-		 */																								\
-		VirtualList delayedMessagesToDiscard;															\
-		/**
-		 * @var VirtualList	delayedMessagesToDispatch
-		 * @brief			Delayed messages to dispatch
-		 * @memberof		MessageDispatcher
-		 */																								\
-		VirtualList delayedMessagesToDispatch;															\
-
 /**
  * @class 	MessageDispatcher
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(MessageDispatcher, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements MessageDispatcher : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 /**
  * Delayed Message
@@ -118,7 +97,7 @@ typedef struct DelayedMessage
 {
 	ASSERT(this, "MessageDispatcher::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->delayedMessages = __NEW(VirtualList);
 	this->delayedMessagesToDiscard = __NEW(VirtualList);

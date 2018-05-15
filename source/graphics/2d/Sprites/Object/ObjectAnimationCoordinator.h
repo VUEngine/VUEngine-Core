@@ -36,9 +36,9 @@
 
 class ObjectAnimationCoordinator : AnimationCoordinator
 {
-	void constructor(const CharSetDefinition* charSetDefinition);
-	override void addAnimationController(AnimationController animationController);
-	override void removeAnimationController(AnimationController animationController);
+	void constructor(ObjectAnimationCoordinator this, const CharSetDefinition* charSetDefinition);
+	override void addAnimationController(ObjectAnimationCoordinator this, AnimationController animationController);
+	override void removeAnimationController(ObjectAnimationCoordinator this, AnimationController animationController);
 }
 
 

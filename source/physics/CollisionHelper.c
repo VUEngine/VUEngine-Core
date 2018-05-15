@@ -38,19 +38,15 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CollisionHelper_ATTRIBUTES																		\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-
 /**
  * @class	CollisionHelper
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(CollisionHelper, Object);
-__CLASS_FRIEND_DEFINITION(Box);
-__CLASS_FRIEND_DEFINITION(InverseBox);
-__CLASS_FRIEND_DEFINITION(Ball);
+implements CollisionHelper : Object;
+friend class Box;
+friend class InverseBox;
+friend class Ball;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -99,7 +95,7 @@ static void CollisionHelper::constructor(CollisionHelper this)
 {
 	ASSERT(this, "CollisionHelper::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

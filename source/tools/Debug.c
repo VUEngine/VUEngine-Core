@@ -118,89 +118,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Debug_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var GameState	gameState
-		 * @brief			current in game state
-		 * @memberof		Debug
-		 */																								\
-		GameState gameState;																			\
-		/**
-		 * @var VirtualList	pages
-		 * @brief			pages
-		 * @memberof		Debug
-		 */																								\
-		VirtualList pages;																				\
-		/**
-		 * @var VirtualList	subPages
-		 * @brief			sub pages
-		 * @memberof		Debug
-		 */																								\
-		VirtualList subPages;																			\
-		/**
-		 * @var VirtualNode	currentPage
-		 * @brief			current page
-		 * @memberof		Debug
-		 */																								\
-		VirtualNode currentPage;																		\
-		/**
-		 * @var VirtualNode	currentSubPage
-		 * @brief			current sub page
-		 * @memberof		Debug
-		 */																								\
-		VirtualNode currentSubPage;																		\
-		/**
-		 * @var u8			currentLayer
-		 * @brief			current layer
-		 * @memberof		Debug
-		 */																								\
-		u8 currentLayer;																				\
-		/**
-		 * @var int			bgmapSegment
-		 * @brief			current bgmap
-		 * @memberof		Debug
-		 */																								\
-		int bgmapSegment;																				\
-		/**
-		 * @var int			objectSegment
-		 * @brief			current obj segment
-		 * @memberof		Debug
-		 */																								\
-		int objectSegment;																				\
-		/**
-		 * @var int			charSegment
-		 * @brief			current char segment
-		 * @memberof		Debug
-		 */																								\
-		int charSegment;																				\
-		/**
-		 * @var int			sramPage
-		 * @brief			current page in sram inspector
-		 * @memberof		Debug
-		 */																								\
-		int sramPage;																					\
-		/**
-		 * @var PixelVector		mapDisplacement
-		 * @brief			window to look into bgmap memory
-		 * @memberof		Debug
-		 */																								\
-		PixelVector mapDisplacement;																		\
-		/**
-		 * @var void 		(*update)(void	*)
-		 * @brief			update function pointer
-		 * @memberof		Debug
-		 */																								\
-		void (*update)(void *);																			\
-
 /**
  * @class	Debug
  * @extends Object
  * @ingroup tools
  */
-__CLASS_DEFINITION(Debug, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Debug : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -298,7 +223,7 @@ static void __attribute__ ((noinline)) Debug::constructor(Debug this)
 {
 	ASSERT(this, "Debug::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->pages = __NEW(VirtualList);
 	this->subPages = __NEW(VirtualList);

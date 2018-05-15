@@ -118,11 +118,11 @@ class EntityFactory : Object
 	/* index for method to execute */
 	int streamingPhase;
 
-	void constructor();
-	u32 prepareEntities();
-	void prepareAllEntities();
-	void spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
-	u32 hasEntitiesPending();
+	void constructor(EntityFactory this);
+	u32 prepareEntities(EntityFactory this);
+	void prepareAllEntities(EntityFactory this);
+	void spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id);
+	u32 hasEntitiesPending(EntityFactory this);
 }
 
 

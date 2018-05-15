@@ -37,9 +37,9 @@
  * @ingroup base
  * @brief	Base class for all other classes in the engine, it derives from nothing but itself
  */
-__CLASS_DEFINITION(Object, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Object : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 /**
  * An Event

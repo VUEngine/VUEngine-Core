@@ -39,15 +39,34 @@
 
 singleton class MessageDispatcher : Object
 {
+	/**
+	 * @var VirtualList	delayedMessages
+	 * @brief			Delayed messages
+	 * @memberof		MessageDispatcher
+	 */
+	VirtualList delayedMessages;
+	/**
+	 * @var VirtualList	delayedMessagesToDiscard
+	 * @brief			Delayed messages to discard
+	 * @memberof		MessageDispatcher
+	 */
+	VirtualList delayedMessagesToDiscard;
+	/**
+	 * @var VirtualList	delayedMessagesToDispatch
+	 * @brief			Delayed messages to dispatch
+	 * @memberof		MessageDispatcher
+	 */
+	VirtualList delayedMessagesToDispatch;
+
 	static MessageDispatcher getInstance();
 	static bool dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
-	u32 dispatchDelayedMessages();
-	void discardDelayedMessagesWithClock(Clock clock);
-	void discardDelayedMessagesFromSender(Object sender, int message);
-	void discardDelayedMessagesForReceiver(Object receiver, int message);
-	void discardAllDelayedMessagesFromSender(Object sender);
-	void discardAllDelayedMessagesForReceiver(Object receiver);
-	void print(int x, int y);
+	u32 dispatchDelayedMessages(MessageDispatcher this);
+	void discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock);
+	void discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message);
+	void discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message);
+	void discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender);
+	void discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver);
+	void print(MessageDispatcher this, int x, int y);
 }
 
 

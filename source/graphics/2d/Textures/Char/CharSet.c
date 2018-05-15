@@ -40,7 +40,7 @@
  * @extends Object
  * @ingroup graphics-2d-textures-char
  */
-__CLASS_DEFINITION(CharSet, Object);
+implements CharSet : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void CharSet::constructor(CharSet this, CharSetDefinition* charSetDefinition, u1
 {
 	ASSERT(this, "CharSet::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// save definition
 	this->charSetDefinition = charSetDefinition;

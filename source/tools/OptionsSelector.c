@@ -76,10 +76,10 @@
  * @ingroup tools
  * @brief	Utility class to render a menu
  */
-__CLASS_DEFINITION(OptionsSelector, Object);
-__CLASS_FRIEND_DEFINITION(VirtualList);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(Printing);
+implements OptionsSelector : Object;
+friend class VirtualList;
+friend class VirtualNode;
+friend class Printing;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -113,7 +113,7 @@ void OptionsSelector::constructor(OptionsSelector this, u8 cols, u8 rows, char* 
 {
 	ASSERT(this, "OptionsSelector::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->pages = NULL;
 	this->currentPage = NULL;

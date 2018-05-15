@@ -64,62 +64,17 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define StageEditor_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var GameState		gameState
-		 * @brief				Current game state
-		 * @memberof			StageEditor
-		 */																								\
-		GameState gameState;																			\
-		/**
-		 * @var VirtualNode		currentEntityNode
-		 * @brief				Current in game entity
-		 * @memberof			StageEditor
-		 */																								\
-		VirtualNode currentEntityNode;																	\
-		/**
-		 * @var Shape			shape
-		 * @brief				Current entity's shape
-		 * @memberof			StageEditor
-		 */																								\
-		Shape shape;																					\
-		/**
-		 * @var int				mode
-		 * @brief				Mode
-		 * @memberof			StageEditor
-		 */																								\
-		int mode;																						\
-		/**
-		 * @var OptionsSelector userObjectsSelector
-		 * @brief				Actors selector
-		 * @memberof			StageEditor
-		 */																								\
-		OptionsSelector userObjectsSelector;															\
-		/**
-		 * @var int				translationStepSize
-		 * @brief				Translation step size
-		 * @memberof			StageEditor
-		 */																								\
-		int translationStepSize;																		\
-		/**
-		 * @var Sprite			userObjectSprite
-		 * @brief				Current user's object's sprite
-		 * @memberof			StageEditor
-		 */																								\
-		Sprite userObjectSprite;																		\
-
 /**
  * @class	StageEditor
  * @extends Object
  * @ingroup tools
  * @brief	In-game stage editor for debug and productivity purposes
  */
-__CLASS_DEFINITION(StageEditor, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
-__CLASS_FRIEND_DEFINITION(Sprite);
-__CLASS_FRIEND_DEFINITION(Container);
+implements StageEditor : Object;
+friend class VirtualNode;
+friend class VirtualList;
+friend class Sprite;
+friend class Container;
 
 /**
  * The different modes of the StageEditor
@@ -195,7 +150,7 @@ static void __attribute__ ((noinline)) StageEditor::constructor(StageEditor this
 {
 	ASSERT(this, "StageEditor::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->currentEntityNode = NULL;
 	this->gameState = NULL;

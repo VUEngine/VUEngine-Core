@@ -36,15 +36,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define DirectDraw_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-
 /**
  * @class	DirectDraw
  * @extends Object
  * @ingroup graphics-3d
  */
-__CLASS_DEFINITION(DirectDraw, Object);
+implements DirectDraw : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -83,7 +80,7 @@ static void __attribute__ ((noinline)) DirectDraw::constructor(DirectDraw this)
 {
 	ASSERT(this, "DirectDraw::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

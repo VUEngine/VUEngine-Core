@@ -49,59 +49,14 @@ typedef struct ParamTableFreeData
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParamTableManager_ATTRIBUTES																	\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var int 				size
-		 * @brief 					total size of param table
-		 * @memberof				ParamTableManager
-		 */																								\
-		u32 size;																						\
-		/**
-		 * @var u32 				used
-		 * @brief 					number of used bytes
-		 * @memberof				ParamTableManager
-		 */																								\
-		u32 used;																						\
-		/**
-		 * @var VirtualList 		bgmapSprites
-		 * @brief 					allocated bgmapSprites
-		 * @memberof				ParamTableManager
-		 */																								\
-		VirtualList bgmapSprites;																		\
-		/**
-		 * @var VirtualList 		removedBgmapSpritesSizes
-		 * @brief 					removed bgmapSprites' sizes
-		 * @memberof				ParamTableManager
-		 */																								\
-		VirtualList removedBgmapSpritesSizes;															\
-		/**
-		 * @var ParamTableFreeData 	paramTableFreeData
-		 * @brief 					used for defragmentation
-		 * @memberof				ParamTableManager
-		 */																								\
-		ParamTableFreeData paramTableFreeData;															\
-		/**
-		 * @var BgmapSprite 		previouslyMovedBgmapSprite
-		 * @brief 					used for defragmentation
-		 * @memberof				ParamTableManager
-		 */																								\
-		BgmapSprite previouslyMovedBgmapSprite;															\
-		/**
-		 * @var u32 				paramTableBase
-		 * @brief 					used for defragmentation
-		 * @memberof				ParamTableManager
-		 */																								\
-		u32 paramTableBase;																				\
-
 /**
  * @class 	ParamTableManager
  * @extends Object
  * @ingroup graphics-2d-sprites-bgmap
  */
-__CLASS_DEFINITION(ParamTableManager, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements ParamTableManager : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -139,7 +94,7 @@ void __attribute__ ((noinline)) ParamTableManager::constructor(ParamTableManager
 {
 	ASSERT(this, "ParamTableManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->bgmapSprites = __NEW(VirtualList);
 	this->removedBgmapSpritesSizes = __NEW(VirtualList);

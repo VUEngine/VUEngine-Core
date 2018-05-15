@@ -32,39 +32,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define Telegram_ATTRIBUTES																				\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var int		message
-		 * @brief		The message itself. These are all enumerated in a file.
-		 * @memberof	Telegram
-		 */																								\
-		int message;																					\
-		/**
-		 * @var void*	extraInfo
-		 * @brief		Any additional information that may accompany the message
-		 * @memberof	Telegram
-		 */																								\
-		void* extraInfo;																				\
-		/**
-		 * @var void*	sender
-		 * @brief		Who sent this telegram
-		 * @memberof	Telegram
-		 */																								\
-		void* sender;																					\
-		/**
-		 * @var void*	receiver
-		 * @brief		Who is to receive this telegram
-		 * @memberof	Telegram
-		 */																								\
-		void* receiver;																					\
-
 /**
  * @class 	Telegram
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(Telegram, Object);
+implements Telegram : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -97,7 +70,7 @@ void Telegram::constructor(Telegram this, void* sender, void* receiver, int mess
 	ASSERT(this, "Telegram::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set the attributes
 	this->sender = sender;

@@ -199,22 +199,22 @@ singleton class Printing : Object
 
 	// declare class
 	static Printing getInstance();
-	void clear();
-	FontData* getFontByName(const char* font);
-	FontSize getTextSize(const char* string, const char* font);
-	void loadDebugFont();
-	void loadFonts(FontDefinition** fontDefinitions);
-	void render(int textLayer);
-	void reset();
-	void setDebugMode();
-	void setPalette(u8 palette);
-	void setWorldCoordinates(u16 gx, u16 gy);
-	void resetWorldCoordinates();
-	int getPixelCount();
-	void text(const char *string, int x, int y, const char* font);
-	void int(int value, u8 x, u8 y, const char* font);
-	void float(float value, u8 x, u8 y, const char* font);
-	void hex(WORD value, u8 x, u8 y, u8 length, const char* font);
+	void clear(Printing this);
+	FontData* getFontByName(Printing this, const char* font);
+	FontSize getTextSize(Printing this, const char* string, const char* font);
+	void loadDebugFont(Printing this);
+	void loadFonts(Printing this, FontDefinition** fontDefinitions);
+	void render(Printing this, int textLayer);
+	void reset(Printing this);
+	void setDebugMode(Printing this);
+	void setPalette(Printing this, u8 palette);
+	void setWorldCoordinates(Printing this, u16 gx, u16 gy);
+	void resetWorldCoordinates(Printing this);
+	int getPixelCount(Printing this);
+	void text(Printing this, const char *string, int x, int y, const char* font);
+	void int(Printing this, int value, u8 x, u8 y, const char* font);
+	void float(Printing this, float value, u8 x, u8 y, const char* font);
+	void hex(Printing this, WORD value, u8 x, u8 y, u8 length, const char* font);
 }
 
 

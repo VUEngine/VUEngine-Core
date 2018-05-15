@@ -37,10 +37,10 @@
 singleton class AnimationInspectorState : GameState
 {
 	static AnimationInspectorState getInstance();
-	override void enter(void* owner);
-	override void execute(void* owner);
-	override void exit(void* owner);
-	override void processUserInput(UserInput userInput);
+	override void enter(AnimationInspectorState this, void* owner);
+	override void execute(AnimationInspectorState this, void* owner);
+	override void exit(AnimationInspectorState this, void* owner);
+	override void processUserInput(AnimationInspectorState this, UserInput userInput);
 }
 
 

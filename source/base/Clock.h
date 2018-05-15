@@ -62,23 +62,23 @@ class Clock : Object
 	*/
 	bool paused;
 
-	void constructor();
-	u32 getElapsedTime();
-	u32 getMilliSeconds();
-	u32 getMinutes();
-	u32 getSeconds();
-	u32 getTime();
-	int getTimeInCurrentSecond();
-	bool isPaused();
-	void pause(bool paused);
-	void print(int col, int row, const char* font);
-	void reset();
-	void setTime(int hours, int minutes, int seconds);
-	void setTimeInMilliSeconds(u32 milliSeconds);
-	void setTimeInSeconds(float totalSeconds);
-	void start();
-	void stop();
-	virtual void update(u32 millisecondsElapsed);
+	void constructor(Clock this);
+	u32 getElapsedTime(Clock this);
+	u32 getMilliSeconds(Clock this);
+	u32 getMinutes(Clock this);
+	u32 getSeconds(Clock this);
+	u32 getTime(Clock this);
+	int getTimeInCurrentSecond(Clock this);
+	bool isPaused(Clock this);
+	void pause(Clock this, bool paused);
+	void print(Clock this, int col, int row, const char* font);
+	void reset(Clock this);
+	void setTime(Clock this, int hours, int minutes, int seconds);
+	void setTimeInMilliSeconds(Clock this, u32 milliSeconds);
+	void setTimeInSeconds(Clock this, float totalSeconds);
+	void start(Clock this);
+	void stop(Clock this);
+	virtual void update(Clock this, u32 millisecondsElapsed);
 }
 
 

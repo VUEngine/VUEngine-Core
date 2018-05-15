@@ -161,20 +161,20 @@ class OptionsSelector : Object
 	char* font;
 
 	// declare the optionsselector class
-	void constructor(u8 cols, u8 rows, char* font);
-	void doCurrentSelectionCallback();
-	void setColumnWidth(u8 width);
-	void setMarkCharacter(char* mark);
-	u8 getWidth();
-	void setOptions(VirtualList options);
-	void selectNext();
-	void selectPrevious();
-	bool selectNextColumn();
-	bool selectPreviousColumn();
-	bool setSelectedOption(int optionIndex);
-	int getSelectedOption();
-	void printOptions(u8 x, u8 y);
-	int getNumberOfOptions();
+	void constructor(OptionsSelector this, u8 cols, u8 rows, char* font);
+	void doCurrentSelectionCallback(OptionsSelector this);
+	void setColumnWidth(OptionsSelector this, u8 width);
+	void setMarkCharacter(OptionsSelector this, char* mark);
+	u8 getWidth(OptionsSelector this);
+	void setOptions(OptionsSelector this, VirtualList options);
+	void selectNext(OptionsSelector this);
+	void selectPrevious(OptionsSelector this);
+	bool selectNextColumn(OptionsSelector this);
+	bool selectPreviousColumn(OptionsSelector this);
+	bool setSelectedOption(OptionsSelector this, int optionIndex);
+	int getSelectedOption(OptionsSelector this);
+	void printOptions(OptionsSelector this, u8 x, u8 y);
+	int getNumberOfOptions(OptionsSelector this);
 }
 
 

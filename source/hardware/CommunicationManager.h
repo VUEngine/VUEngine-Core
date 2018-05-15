@@ -48,12 +48,20 @@ typedef struct Package
 
 singleton class CommunicationManager : Object
 {
+	/* super's attributes */
+	u8 communicationMode;
+	u8 sequenceNumber;
+	int handshake;
+	int status;
+	int messageToSelf;
+	int waitCycles;
+
 	static CommunicationManager getInstance();
-	void update();
-	bool sendPayload(u8 payload);
-	bool receivePayload();
-	Package getPackage();
-	void update();
+	void update(CommunicationManager this);
+	bool sendPayload(CommunicationManager this, u8 payload);
+	bool receivePayload(CommunicationManager this);
+	Package getPackage(CommunicationManager this);
+	void update(CommunicationManager this);
 }
 
 

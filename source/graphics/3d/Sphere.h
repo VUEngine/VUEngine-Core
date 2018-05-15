@@ -50,12 +50,12 @@ class Sphere : Wireframe
 	*/
 	fix10_6 radius;
 
-	void constructor(Vector3D center, fix10_6 radius);
-	Vector3D getCenter();
-	fix10_6 getRadius();
-	void setCenter(Vector3D center);
-	void setRadius(fix10_6 radius);
-	override void draw(bool calculateParallax);
+	void constructor(Sphere this, Vector3D center, fix10_6 radius);
+	Vector3D getCenter(Sphere this);
+	fix10_6 getRadius(Sphere this);
+	void setCenter(Sphere this, Vector3D center);
+	void setRadius(Sphere this, fix10_6 radius);
+	override void draw(Sphere this, bool calculateParallax);
 }
 
 

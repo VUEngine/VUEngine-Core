@@ -35,35 +35,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CharSetManager_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList charSets
-		 * @brief			Charsets defined
-		 * @memberof		CharSetManager
-		 */																								\
-		VirtualList charSets;																			\
-		/**
-		 * @var VirtualList charSetsPendingWriting
-		 * @brief			Charsets pending writing
-		 * @memberof		CharSetManager
-		 */																								\
-		VirtualList charSetsPendingWriting;																\
-		/**
-		 * @var u16 		freedOffset
-		 * @brief			Next offset to be reclaimed
-		 * @memberof		CharSetManager
-		 */																								\
-		u16 freedOffset;																				\
-
 /**
  * @class 	CharSetManager
  * @extends Object
  * @ingroup graphics-2d-textures-char
  */
-__CLASS_DEFINITION(CharSetManager, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements CharSetManager : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -102,7 +81,7 @@ static void __attribute__ ((noinline)) CharSetManager::constructor(CharSetManage
 {
 	ASSERT(this, "CharSetManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->charSets = __NEW(VirtualList);
 	this->charSetsPendingWriting = __NEW(VirtualList);

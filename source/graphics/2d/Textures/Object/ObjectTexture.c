@@ -40,7 +40,7 @@
  * @ingroup graphics-2d-textures-object
  * @brief	A texture which has the logic to be allocated in graphic memory
  */
-__CLASS_DEFINITION(ObjectTexture, Texture);
+implements ObjectTexture : Texture;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -72,7 +72,7 @@ void ObjectTexture::constructor(ObjectTexture this, ObjectTextureDefinition* obj
 	ASSERT(this, "ObjectTexture::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, (TextureDefinition*)objectTextureDefinition, id);
+	Base::constructor((TextureDefinition*)objectTextureDefinition, id);
 
 	this->objectIndex = -1;
 	this->mapDisplacement = 0;

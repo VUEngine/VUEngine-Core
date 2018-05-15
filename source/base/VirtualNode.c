@@ -43,7 +43,7 @@
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(VirtualNode, Object);
+implements VirtualNode : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,7 +66,7 @@ void VirtualNode::constructor(VirtualNode this, const void* const data)
 {
 	ASSERT(this, "VirtualNode::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// initialize members
 	this->next = NULL;

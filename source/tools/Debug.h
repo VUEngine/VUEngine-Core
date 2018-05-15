@@ -54,12 +54,85 @@ typedef struct ClassSizeData
 
 singleton class Debug : Object
 {
+	/**
+	 * @var GameState	gameState
+	 * @brief			current in game state
+	 * @memberof		Debug
+	 */
+	GameState gameState;
+	/**
+	 * @var VirtualList	pages
+	 * @brief			pages
+	 * @memberof		Debug
+	 */
+	VirtualList pages;
+	/**
+	 * @var VirtualList	subPages
+	 * @brief			sub pages
+	 * @memberof		Debug
+	 */
+	VirtualList subPages;
+	/**
+	 * @var VirtualNode	currentPage
+	 * @brief			current page
+	 * @memberof		Debug
+	 */
+	VirtualNode currentPage;
+	/**
+	 * @var VirtualNode	currentSubPage
+	 * @brief			current sub page
+	 * @memberof		Debug
+	 */
+	VirtualNode currentSubPage;
+	/**
+	 * @var u8			currentLayer
+	 * @brief			current layer
+	 * @memberof		Debug
+	 */
+	u8 currentLayer;
+	/**
+	 * @var int			bgmapSegment
+	 * @brief			current bgmap
+	 * @memberof		Debug
+	 */
+	int bgmapSegment;
+	/**
+	 * @var int			objectSegment
+	 * @brief			current obj segment
+	 * @memberof		Debug
+	 */
+	int objectSegment;
+	/**
+	 * @var int			charSegment
+	 * @brief			current char segment
+	 * @memberof		Debug
+	 */
+	int charSegment;
+	/**
+	 * @var int			sramPage
+	 * @brief			current page in sram inspector
+	 * @memberof		Debug
+	 */
+	int sramPage;
+	/**
+	 * @var PixelVector		mapDisplacement
+	 * @brief			window to look into bgmap memory
+	 * @memberof		Debug
+	 */
+	PixelVector mapDisplacement;
+	/**
+	 * @var void 		(*update)(void	*)
+	 * @brief			update function pointer
+	 * @memberof		Debug
+	 */
+	void (*update)(void *);
+
 	static Debug getInstance();
-	void update();
-	void render();
-	void show(GameState gameState);
-	void hide();
-	void processUserInput(u16 pressedKey);
+	void update(Debug this);
+	void render(Debug this);
+	void show(Debug this, GameState gameState);
+	void hide(Debug this);
+	void processUserInput(Debug this, u16 pressedKey);
 }
 
 

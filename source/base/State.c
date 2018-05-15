@@ -37,7 +37,7 @@
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(State, Object);
+implements State : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ void State::constructor(State this)
 	ASSERT(this, "State::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

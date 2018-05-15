@@ -32,42 +32,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-// a state machine
-#define StateMachine_ATTRIBUTES																			\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var void*		owner
-		 * @brief			Object which owns this instance
-		 * @memberof		StateMachine
-		 */																								\
-		void* owner;																					\
-		/**
-		 * @var State		currentState
-		 * @brief			Pointer to the current state
-		 * @memberof		StateMachine
-		 */																								\
-		State currentState;																				\
-		/**
-		 * @var State		previousState
-		 * @brief			Pointer to the previous state
-		 * @memberof		StateMachine
-		 */																								\
-		State previousState;																			\
-		/**
-		 * @var VirtualList	stateStack
-		 * @brief			Stack of states
-		 * @memberof		StateMachine
-		 */																								\
-		VirtualList stateStack;																			\
-
 /**
  * @class 	StateMachine
  * @extends Object
  * @ingroup base
  */
-__CLASS_DEFINITION(StateMachine, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements StateMachine : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -93,7 +65,7 @@ void StateMachine::constructor(StateMachine this, void* owner)
 	ASSERT(this, "StateMachine::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set pointers
 	this->owner = owner;

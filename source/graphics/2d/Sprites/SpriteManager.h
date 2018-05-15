@@ -38,31 +38,110 @@
 
 singleton class SpriteManager : Object
 {
+	/**
+	 * @var VirtualList	sprites
+	 * @brief 			list of sprites to render
+	 * @memberof		SpriteManager
+	 */
+	VirtualList sprites;
+	/**
+	 * @var VirtualList	spritesToDispose
+	 * @brief 			list of sprites to delete
+	 * @memberof		SpriteManager
+	 */
+	VirtualList spritesToDispose;
+	/**
+	 * @var VirtualNode	node
+	 * @brief 			sorting nodes
+	 * @memberof		SpriteManager
+	 */
+	VirtualNode zSortingFirstNode;
+	/**
+	 * @var VirtualNode	nextNode
+	 * @brief
+	 * @memberof		SpriteManager
+	 */
+	VirtualNode zSortingSecondNode;
+	/**
+	 * @var Sprite		spritePendingTextureWriting
+	 * @brief 			sprite's texture writing
+	 * @memberof		SpriteManager
+	 */
+	Sprite spritePendingTextureWriting;
+	/**
+	 * @var bool		lockSpritesLists
+	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
+	 * @memberof		SpriteManager
+	 */
+	bool lockSpritesLists;
+	/**
+	 * @var bool		evenFrame
+	 * @brief 			Flag to distinguish between even and odd game frames, needed for sprite transparency.
+	 * @memberof		SpriteManager
+	 */
+	bool evenFrame;
+	/**
+	 * @var u8			freeLayer
+	 * @brief 			next world layer
+	 * @memberof		SpriteManager
+	 */
+	u8 freeLayer;
+	/**
+	 * @var s8			cyclesToWaitForSpriteTextureWriting
+	 * @brief 			number of cycles that the texture writing is idle
+	 * @memberof		SpriteManager
+	 */
+	s8 cyclesToWaitForSpriteTextureWriting;
+	/**
+	 * @var s8			texturesMaximumRowsToWrite
+	 * @brief 			number of rows to write in texture's writing
+	 * @memberof		SpriteManager
+	 */
+	s8 texturesMaximumRowsToWrite;
+	/**
+	 * @var s8			maximumParamTableRowsToComputePerCall
+	 * @brief 			number of rows to write in affine transformations
+	 * @memberof		SpriteManager
+	 */
+	s8 maximumParamTableRowsToComputePerCall;
+	/**
+	 * @var s8			deferParamTableEffects
+	 * @brief 			flag to control texture's writing deferring
+	 * @memberof		SpriteManager
+	 */
+	s8 deferParamTableEffects;
+	/**
+	 * @var s8			waitToWriteSpriteTextures
+	 * @brief 			delay before writing again
+	 * @memberof		SpriteManager
+	 */
+	s8 waitToWriteSpriteTextures;
+
 	static SpriteManager getInstance();
-	Sprite createSprite(SpriteDefinition* spriteDefinition, Object owner);
-	void deferParamTableEffects(bool deferAffineTransformations);
-	void deferTextureWriting(bool deferTextureWriting);
-	void destructor();
-	void disposeSprite(Sprite sprite);
-	void disposeSprites();
-	u8 getFreeLayer();
-	int getMaximumParamTableRowsToComputePerCall();
-	Sprite getSpriteAtLayer(u8 layer);
-	s8 getTexturesMaximumRowsToWrite();
-	void print(int x, int y, bool resumed);
-	void processFreedLayers();
-	void processLayers();
-	void recoverLayers();
-	void render();
-	void renderLastLayer();
-	void reset();
-	void setCyclesToWaitForTextureWriting(u8 cyclesToWaitForTextureWriting);
-	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
-	void setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite);
-	void setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
-	void showLayer(u8 layer);
-	void sortLayers();
-	void writeTextures();
+	Sprite createSprite(SpriteManager this, SpriteDefinition* spriteDefinition, Object owner);
+	void deferParamTableEffects(SpriteManager this, bool deferAffineTransformations);
+	void deferTextureWriting(SpriteManager this, bool deferTextureWriting);
+	void destructor(SpriteManager this);
+	void disposeSprite(SpriteManager this, Sprite sprite);
+	void disposeSprites(SpriteManager this);
+	u8 getFreeLayer(SpriteManager this);
+	int getMaximumParamTableRowsToComputePerCall(SpriteManager this);
+	Sprite getSpriteAtLayer(SpriteManager this, u8 layer);
+	s8 getTexturesMaximumRowsToWrite(SpriteManager this);
+	void print(SpriteManager this, int x, int y, bool resumed);
+	void processFreedLayers(SpriteManager this);
+	void processLayers(SpriteManager this);
+	void recoverLayers(SpriteManager this);
+	void render(SpriteManager this);
+	void renderLastLayer(SpriteManager this);
+	void reset(SpriteManager this);
+	void setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
+	void setMaximumParamTableRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);
+	void setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
+	void setupObjectSpriteContainers(SpriteManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
+	void showLayer(SpriteManager this, u8 layer);
+	void sortLayers(SpriteManager this);
+	void writeTextures(SpriteManager this);
 }
 
 

@@ -147,27 +147,12 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define SoundManager_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* actual note of each sound being played*/														\
-		int actualNote[__TOTAL_SOUNDS];																	\
-		/* note delay for each sound being played */													\
-		BYTE noteWait[__TOTAL_SOUNDS];																	\
-		/* background music */																			\
-		const u16 (*bgm)[__BGM_CHANNELS];																\
-		/* fx sound */																					\
-		const u16* fxSound[__FXS];																		\
-		/* output level based on sound position of each fx */											\
-		s16 fxLeftOutput[__FXS];																		\
-		s16 fxRightOutput[__FXS];																		\
-
 /**
  * @class	SoundManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(SoundManager, Object);
+implements SoundManager : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -208,7 +193,7 @@ static void __attribute__ ((noinline)) SoundManager::constructor(SoundManager th
 {
 	ASSERT(this, "SoundManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	{
 		int i = 0;

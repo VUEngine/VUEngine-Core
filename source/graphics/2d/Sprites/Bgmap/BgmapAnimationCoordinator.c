@@ -36,7 +36,7 @@
  * @extends AnimationCoordinator
  * @ingroup graphics-2d-sprites-bgmap
  */
-__CLASS_DEFINITION(BgmapAnimationCoordinator, AnimationCoordinator);
+implements BgmapAnimationCoordinator : AnimationCoordinator;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void BgmapAnimationCoordinator::constructor(BgmapAnimationCoordinator this, cons
 {
 	ASSERT(this, "BgmapAnimationCoordinator::constructor: null this");
 
-	Base::constructor(this, charSetDefinition);
+	Base::constructor(charSetDefinition);
 }
 
 /**

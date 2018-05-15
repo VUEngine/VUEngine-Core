@@ -111,14 +111,57 @@ typedef struct HbiasEntry
 
 singleton class ParamTableManager : Object
 {
+	/**
+	 * @var int 				size
+	 * @brief 					total size of param table
+	 * @memberof				ParamTableManager
+	 */
+	u32 size;
+	/**
+	 * @var u32 				used
+	 * @brief 					number of used bytes
+	 * @memberof				ParamTableManager
+	 */
+	u32 used;
+	/**
+	 * @var VirtualList 		bgmapSprites
+	 * @brief 					allocated bgmapSprites
+	 * @memberof				ParamTableManager
+	 */
+	VirtualList bgmapSprites;
+	/**
+	 * @var VirtualList 		removedBgmapSpritesSizes
+	 * @brief 					removed bgmapSprites' sizes
+	 * @memberof				ParamTableManager
+	 */
+	VirtualList removedBgmapSpritesSizes;
+	/**
+	 * @var ParamTableFreeData 	paramTableFreeData
+	 * @brief 					used for defragmentation
+	 * @memberof				ParamTableManager
+	 */
+	ParamTableFreeData paramTableFreeData;
+	/**
+	 * @var BgmapSprite 		previouslyMovedBgmapSprite
+	 * @brief 					used for defragmentation
+	 * @memberof				ParamTableManager
+	 */
+	BgmapSprite previouslyMovedBgmapSprite;
+	/**
+	 * @var u32 				paramTableBase
+	 * @brief 					used for defragmentation
+	 * @memberof				ParamTableManager
+	 */
+	u32 paramTableBase;
+
 	static ParamTableManager getInstance();
-	u32 allocate(BgmapSprite bsprite);
-	void calculateParamTableBase(int availableBgmapSegmentsForParamTable);
-	bool defragmentProgressively();
-	void free(BgmapSprite bsprite);
-	u32 getParamTableBase();
-	void print(int x, int y);
-	void reset();
+	u32 allocate(ParamTableManager this, BgmapSprite bsprite);
+	void calculateParamTableBase(ParamTableManager this, int availableBgmapSegmentsForParamTable);
+	bool defragmentProgressively(ParamTableManager this);
+	void free(ParamTableManager this, BgmapSprite bsprite);
+	u32 getParamTableBase(ParamTableManager this);
+	void print(ParamTableManager this, int x, int y);
+	void reset(ParamTableManager this);
 }
 
 

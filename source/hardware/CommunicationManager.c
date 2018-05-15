@@ -108,22 +108,12 @@ enum HandshakeStatus
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CommunicationManager_ATTRIBUTES																	\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		u8 communicationMode;																			\
-		u8 sequenceNumber;																				\
-		int handshake;																					\
-		int status;																						\
-		int messageToSelf;																				\
-		int waitCycles;
-
 /**
  * @class	CommunicationManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(CommunicationManager, Object);
+implements CommunicationManager : Object;
 
 
 
@@ -168,7 +158,7 @@ static void __attribute__ ((noinline)) CommunicationManager::constructor(Communi
 {
 	ASSERT(this, "CommunicationManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	CommunicationManager::resetCommunications(this);
 

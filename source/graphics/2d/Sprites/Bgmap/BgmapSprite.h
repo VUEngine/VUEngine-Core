@@ -102,26 +102,26 @@ class BgmapSprite : Sprite
 	*/
 	s16 (*applyParamTableEffect)(BgmapSprite);
 
-	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
-	DrawSpec getDrawSpec();
-	void invalidateParamTable();
-	void setDrawSpec(const DrawSpec* const drawSpec);
-	s16 getParamTableRow();
-	u32 getParam();
-	void setParam(u32 param);
-	void putChar(Point* texturePixel, BYTE* newChar);
-	void putPixel(Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
-	void processAffineEffects(int gx, int width, int myDisplacement);
-	void processHbiasEffects();
-	override void render(bool evenFrame);
-	override void rotate(const Rotation* rotation);
-	override Scale getScale();
-	override void applyAffineTransformations();
-	override void applyHbiasEffects();
-	override void resize(Scale scale, fix10_6 z);
-	override void calculateParallax(fix10_6 z);
-	override void addDisplacement(const PixelVector* displacement);
-	override void setMode(u16 display, u16 mode);
+	void constructor(BgmapSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
+	DrawSpec getDrawSpec(BgmapSprite this);
+	void invalidateParamTable(BgmapSprite this);
+	void setDrawSpec(BgmapSprite this, const DrawSpec* const drawSpec);
+	s16 getParamTableRow(BgmapSprite this);
+	u32 getParam(BgmapSprite this);
+	void setParam(BgmapSprite this, u32 param);
+	void putChar(BgmapSprite this, Point* texturePixel, BYTE* newChar);
+	void putPixel(BgmapSprite this, Point* texturePixel, Point* charSetPixel, BYTE newPixelColor);
+	void processAffineEffects(BgmapSprite this, int gx, int width, int myDisplacement);
+	void processHbiasEffects(BgmapSprite this);
+	override void render(BgmapSprite this, bool evenFrame);
+	override void rotate(BgmapSprite this, const Rotation* rotation);
+	override Scale getScale(BgmapSprite this);
+	override void applyAffineTransformations(BgmapSprite this);
+	override void applyHbiasEffects(BgmapSprite this);
+	override void resize(BgmapSprite this, Scale scale, fix10_6 z);
+	override void calculateParallax(BgmapSprite this, fix10_6 z);
+	override void addDisplacement(BgmapSprite this, const PixelVector* displacement);
+	override void setMode(BgmapSprite this, u16 display, u16 mode);
 }
 
 

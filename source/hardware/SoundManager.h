@@ -192,13 +192,25 @@
 
 singleton class SoundManager : Object
 {
+	/* actual note of each sound being played*/
+	int actualNote[__TOTAL_SOUNDS];
+	/* note delay for each sound being played */
+	BYTE noteWait[__TOTAL_SOUNDS];
+	/* background music */
+	const u16 (*bgm)[__BGM_CHANNELS];
+	/* fx sound */
+	const u16* fxSound[__FXS];
+	/* output level based on sound position of each fx */
+	s16 fxLeftOutput[__FXS];
+	s16 fxRightOutput[__FXS];
+
 	static SoundManager getInstance();
-	void setWaveForm();
-	void playBGM(const u16 (*bgm)[]);
-	int playFxSound(const u16* fxSound, Vector3D position);
-	int playingSound(const u16* fxSound);
-	void stopAllSound();
-	void playSounds();
+	void setWaveForm(SoundManager this);
+	void playBGM(SoundManager this, const u16 (*bgm)[]);
+	int playFxSound(SoundManager this, const u16* fxSound, Vector3D position);
+	int playingSound(SoundManager this, const u16* fxSound);
+	void stopAllSound(SoundManager this);
+	void playSounds(SoundManager this);
 }
 
 

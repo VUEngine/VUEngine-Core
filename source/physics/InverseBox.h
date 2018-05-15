@@ -36,7 +36,7 @@
 
 class InverseBox : Box
 {
-	void constructor(SpatialObject owner);
+	void constructor(InverseBox this, SpatialObject owner);
 }
 
 

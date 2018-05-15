@@ -36,9 +36,9 @@
  * @extends AnimationCoordinator
  * @ingroup graphics-2d-sprites-object
  */
-__CLASS_DEFINITION(ObjectAnimationCoordinator, AnimationCoordinator);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements ObjectAnimationCoordinator : AnimationCoordinator;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void ObjectAnimationCoordinator::constructor(ObjectAnimationCoordinator this, co
 {
 	ASSERT(this, "ObjectAnimationCoordinator::constructor: null this");
 
-	Base::constructor(this, charSetDefinition);
+	Base::constructor(charSetDefinition);
 }
 
 /**

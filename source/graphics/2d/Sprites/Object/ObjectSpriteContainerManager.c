@@ -32,21 +32,12 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define ObjectSpriteContainerManager_ATTRIBUTES															\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var ObjectSpriteContainer 	objectSpriteContainers
-		 * @brief						object groups
-		 * @memberof					ObjectSpriteContainerManager
-		 */																								\
-		ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];							\
-
 /**
  * @class 	ObjectSpriteContainerManager
  * @extends Object
  * @ingroup graphics-2d-sprites-object
  */
-__CLASS_DEFINITION(ObjectSpriteContainerManager, Object);
+implements ObjectSpriteContainerManager : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +76,7 @@ void __attribute__ ((noinline)) ObjectSpriteContainerManager::constructor(Object
 {
 	ASSERT(this, "ObjectSpriteContainerManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	int i = 0;
 	for(; i < __TOTAL_OBJECT_SEGMENTS; i++)

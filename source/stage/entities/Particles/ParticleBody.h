@@ -36,8 +36,8 @@
 
 class ParticleBody : Body
 {
-	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
-	override void update();
+	void constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
+	override void update(ParticleBody this);
 }
 
 

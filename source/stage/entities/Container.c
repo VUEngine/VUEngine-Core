@@ -38,9 +38,9 @@
  * @extends SpatialObject
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(Container, SpatialObject);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Container : SpatialObject;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,7 +75,7 @@ void Container::constructor(Container this, const char* const name)
 	ASSERT(this, "Container::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(SpatialObject);
+	Base::constructor();
 
 	// set position
 	this->transformation.localPosition = (Vector3D){0, 0, 0};

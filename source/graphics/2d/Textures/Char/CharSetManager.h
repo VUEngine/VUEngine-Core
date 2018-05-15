@@ -37,17 +37,36 @@
 
 singleton class CharSetManager : Object
 {
+	/**
+	 * @var VirtualList charSets
+	 * @brief			Charsets defined
+	 * @memberof		CharSetManager
+	 */
+	VirtualList charSets;
+	/**
+	 * @var VirtualList charSetsPendingWriting
+	 * @brief			Charsets pending writing
+	 * @memberof		CharSetManager
+	 */
+	VirtualList charSetsPendingWriting;
+	/**
+	 * @var u16 		freedOffset
+	 * @brief			Next offset to be reclaimed
+	 * @memberof		CharSetManager
+	 */
+	u16 freedOffset;
+
 	static CharSetManager getInstance();
-	void reset();
-	CharSet getCharSet(CharSetDefinition* charSetDefinition);
-	void releaseCharSet(CharSet charSet);
-	void defragment();
-	void writeCharSets();
-	bool writeCharSetsProgressively();
-	int getTotalUsedChars();
-	int getTotalFreeChars();
-	int getTotalCharSets();
-	void print(int x, int y);
+	void reset(CharSetManager this);
+	CharSet getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
+	void releaseCharSet(CharSetManager this, CharSet charSet);
+	void defragment(CharSetManager this);
+	void writeCharSets(CharSetManager this);
+	bool writeCharSetsProgressively(CharSetManager this);
+	int getTotalUsedChars(CharSetManager this);
+	int getTotalFreeChars(CharSetManager this);
+	int getTotalCharSets(CharSetManager this);
+	void print(CharSetManager this, int x, int y);
 }
 
 

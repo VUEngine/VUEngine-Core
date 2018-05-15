@@ -47,10 +47,10 @@
  * @extends AnimatedEntity
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(Actor, AnimatedEntity);
+implements Actor : AnimatedEntity;
 
-__CLASS_FRIEND_DEFINITION(VirtualList);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
+friend class VirtualList;
+friend class VirtualNode;
 
 //---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
@@ -73,7 +73,7 @@ void Actor::constructor(Actor this, const ActorDefinition* actorDefinition, s16 
 	ASSERT(this, "Actor::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, (AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
+	Base::constructor((AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
 
 	// save definition
 	this->actorDefinition = actorDefinition;

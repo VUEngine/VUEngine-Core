@@ -40,9 +40,9 @@
  * @extends Object
  * @ingroup stage-entities
  */
-__CLASS_DEFINITION(EntityFactory, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements EntityFactory : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 /**
  * Positioned Entity Description
@@ -100,7 +100,7 @@ void EntityFactory::constructor(EntityFactory this)
 	ASSERT(this, "EntityFactory::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->entitiesToInstantiate = __NEW(VirtualList);
 	this->entitiesToInitialize = __NEW(VirtualList);

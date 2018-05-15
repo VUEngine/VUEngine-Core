@@ -41,7 +41,7 @@
  * @extends BgmapSprite
  * @ingroup graphics-2d-sprites-bgmap
  */
-__CLASS_DEFINITION(BgmapAnimatedSprite, BgmapSprite);
+implements BgmapAnimatedSprite : BgmapSprite;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void BgmapAnimatedSprite::constructor(BgmapAnimatedSprite this, const BgmapSprit
 	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, bgmapSpriteDefinition, owner);
+	Base::constructor(bgmapSpriteDefinition, owner);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 

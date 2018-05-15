@@ -38,8 +38,11 @@
 
 singleton class AnimationCoordinatorFactory : Object
 {
+	/* entities that use bgmap sprites */
+	VirtualList animationCoordinators;
+
 	static AnimationCoordinatorFactory getInstance();
-	AnimationCoordinator getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
+	AnimationCoordinator getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
 	void reset();
 }
 

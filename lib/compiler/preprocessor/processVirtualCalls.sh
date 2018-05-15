@@ -58,9 +58,15 @@ do
 	VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
 	virtualMethods=`cat $VIRTUAL_METHODS_FILE`
-	fileClass=`grep "__CLASS_DEFINITION(" $OUTPUT_FILE | cut -d, -f1 | cut -d\( -f2 `
-	fileBaseClass=`grep "__CLASS_DEFINITION(" $OUTPUT_FILE | cut -d, -f2  | cut -d\) -f1 `
+	implementationDefinition=`grep -m 1 -e "^[ \t]*implements[ \t]\+" $OUTPUT_FILE | sed -e 's#implements##'`
+	fileClass=`cut -d ":" -f1 <<< "$implementationDefinition" `
+	fileBaseClass=`cut -d ":" -f2 <<< "$implementationDefinition" | cut -d ";" -f1`
+	echo fileClass $fileClass
+	echo fileBaseClass $fileBaseClass
 	TEMPORAL_METHOD_LIST=$WORKING_FOLDER/processedMethods.txt
+
+	sed -i -e 's#implements.*#__CLASS_DEFINITION('"$fileClass"', '"$fileBaseClass"');#' $OUTPUT_FILE
+	sed -i -e 's#[ 	]*friend[ 	]\+class[ 	]\+\([A-z0-9]\+\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
 
 	if [ -f $TEMPORAL_METHOD_LIST ] ; then
 		rm $TEMPORAL_METHOD_LIST
@@ -69,7 +75,7 @@ do
 	touch $TEMPORAL_METHOD_LIST
 
 	# replace base method calls
-	sed -i -e "s#Base_constructor(this,\(.*\)#__CONSTRUCT_BASE($fileBaseClass,\1#g" $OUTPUT_FILE
+	sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($fileBaseClass,\1#g" -e 's#,[ 	]*);#);#' $OUTPUT_FILE
 	sed -i -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
 
 	# replace base method calls

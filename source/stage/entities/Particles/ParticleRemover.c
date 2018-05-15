@@ -33,35 +33,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define ParticleRemover_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList particlesLists
-		 * @brief			List of Particles
-		 * @memberof		ParticleRemover
-		 */																								\
-		VirtualList particlesLists;																		\
-		/**
-		 * @var int 		removalDelayCycles
-		 * @brief			Removal delay
-		 * @memberof		ParticleRemover
-		 */																								\
-		int removalDelayCycles;																			\
-		/**
-		 * @var int 		remainingRemoveDelayCycles
-		 * @brief			Removal delay
-		 * @memberof		ParticleRemover
-		 */																								\
-		int remainingRemoveDelayCycles;																		\
-
 /**
  * @class	ParticleRemover
  * @extends Object
  * @ingroup stage-entities-particles
  */
-__CLASS_DEFINITION(ParticleRemover, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements ParticleRemover : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -90,7 +69,7 @@ void __attribute__ ((noinline)) ParticleRemover::constructor(ParticleRemover thi
 	ASSERT(this, "ParticleRemover::constructor: null this");
 
 	// construct base
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->particlesLists = __NEW(VirtualList);
 	this->removalDelayCycles = 0;

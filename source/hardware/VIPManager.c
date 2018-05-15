@@ -70,27 +70,14 @@ typedef struct PostProcessingEffectRegistry
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define VIPManager_ATTRIBUTES																			\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* dram managers */																				\
-		/* post processing effects */																	\
-		VirtualList postProcessingEffects;																\
-		u32 currentDrawingFrameBufferSet;																\
-		bool processingXPEND;																			\
-		bool drawingEnded;																				\
-		bool renderingCompleted;																		\
-		bool allowDRAMAccess;																			\
-
-
 /**
  * @class	VIPManager
  * @extends Object
  * @ingroup hardware
  */
-__CLASS_DEFINITION(VIPManager, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements VIPManager : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -143,7 +130,7 @@ static void __attribute__ ((noinline)) VIPManager::constructor(VIPManager this)
 {
 	ASSERT(this, "VIPManager::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->postProcessingEffects = __NEW(VirtualList);
 	this->currentDrawingFrameBufferSet = 0;

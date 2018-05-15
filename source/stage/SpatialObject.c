@@ -45,7 +45,7 @@
  * @extends Object
  * @ingroup stage
  */
-__CLASS_DEFINITION(SpatialObject, Object);
+implements SpatialObject : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ void SpatialObject::constructor(SpatialObject this)
 	ASSERT(this, "SpatialObject::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 // class's destructor

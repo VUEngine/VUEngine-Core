@@ -36,7 +36,7 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-__CLASS_DEFINITION(ReflectiveEntity, Entity);
+implements ReflectiveEntity : Entity;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,7 +60,7 @@ void ReflectiveEntity::constructor(ReflectiveEntity this, ReflectiveEntityDefini
 	ASSERT(this, "ReflectiveEntity::constructor: null this");
 
 	// construct base
-	Base::constructor(this, &reflectiveEntityDefinition->entityDefinition, id, internalId, name);
+	Base::constructor(&reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
 	this->waveLutIndex = 0;
 	this->waveLutIndexIncrement = __FIX10_6_MULT(reflectiveEntityDefinition->waveLutThrottleFactor, __FIX10_6_DIV(__I_TO_FIX10_6(reflectiveEntityDefinition->numberOfWaveLutEntries), __I_TO_FIX10_6(reflectiveEntityDefinition->width)));

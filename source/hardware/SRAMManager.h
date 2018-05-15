@@ -39,10 +39,13 @@ struct SaveData;
 
 singleton class SRAMManager : Object
 {
+	/* save space start address */
+	u16* saveSpaceStartAddress;
+
 	static SRAMManager getInstance();
-	void clear(int startOffset, int endOffset);
-	void save(const BYTE* const source, int memberOffset, int dataSize);
-	void read(BYTE* destination, int memberOffset, int dataSize);
+	void clear(SRAMManager this, int startOffset, int endOffset);
+	void save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize);
+	void read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize);
 }
 
 

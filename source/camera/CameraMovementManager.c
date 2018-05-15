@@ -38,16 +38,13 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define CameraMovementManager_ATTRIBUTES																\
-		Object_ATTRIBUTES
-
 /**
  * @class	CameraMovementManager
  * @extends Object
  * @ingroup camera
  */
-__CLASS_DEFINITION(CameraMovementManager, Object);
-__CLASS_FRIEND_DEFINITION(Camera);
+implements CameraMovementManager : Object;
+friend class Camera;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +82,7 @@ static void __attribute__ ((noinline)) CameraMovementManager::constructor(Camera
 	ASSERT(this, "CameraMovementManager::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 }
 
 /**

@@ -34,13 +34,38 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-final class Telegram : Object
+class Telegram : Object
 {
-	void constructor(void* sender, void* receiver, int message, void* extraInfo);
-	void* getSender();
-	void* getReceiver();
-	int getMessage();
-	void* getExtraInfo();
+	/**
+	 * @var int		message
+	 * @brief		The message itself. These are all enumerated in a file.
+	 * @memberof	Telegram
+	 */
+	int message;
+	/**
+	 * @var void*	extraInfo
+	 * @brief		Any additional information that may accompany the message
+	 * @memberof	Telegram
+	 */
+	void* extraInfo;
+	/**
+	 * @var void*	sender
+	 * @brief		Who sent this telegram
+	 * @memberof	Telegram
+	 */
+	void* sender;
+	/**
+	 * @var void*	receiver
+	 * @brief		Who is to receive this telegram
+	 * @memberof	Telegram
+	 */
+	void* receiver;
+
+	void constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo);
+	void* getSender(Telegram this);
+	void* getReceiver(Telegram this);
+	int getMessage(Telegram this);
+	void* getExtraInfo(Telegram this);
 }
 
 

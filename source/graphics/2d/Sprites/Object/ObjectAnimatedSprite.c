@@ -42,7 +42,7 @@
  * @extends ObjectSprite
  * @ingroup graphics-2d-sprites-object
  */
-__CLASS_DEFINITION(ObjectAnimatedSprite, ObjectSprite);
+implements ObjectAnimatedSprite : ObjectSprite;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ void ObjectAnimatedSprite::constructor(ObjectAnimatedSprite this, const ObjectSp
 	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
 
 	// construct base object
-	Base::constructor(this, (const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
+	Base::constructor((const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }

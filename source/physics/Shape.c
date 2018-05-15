@@ -47,9 +47,9 @@
  * @extends Object
  * @ingroup physics
  */
-__CLASS_DEFINITION(Shape, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements Shape : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -82,7 +82,7 @@ void Shape::constructor(Shape this, SpatialObject owner)
 	ASSERT(this, "Shape::constructor: null this");
 
 	// construct base object
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set the owner
 	this->owner = owner;

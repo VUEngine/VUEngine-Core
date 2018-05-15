@@ -42,15 +42,12 @@ static void DebugState::constructor(DebugState this);
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define DebugState_ATTRIBUTES																			\
-		GameState_ATTRIBUTES																			\
-
 /**
  * @class	DebugState
  * @extends GameState
  * @ingroup states
  */
-__CLASS_DEFINITION(DebugState, GameState);
+implements DebugState : GameState;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -80,7 +77,7 @@ static void __attribute__ ((noinline)) DebugState::constructor(DebugState this)
 {
 	ASSERT(this, "DebugState::constructor: null this");
 
-	__CONSTRUCT_BASE(GameState);
+	Base::constructor();
 }
 
 /**

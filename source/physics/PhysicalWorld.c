@@ -42,55 +42,16 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define PhysicalWorld_ATTRIBUTES																		\
-		Object_ATTRIBUTES																				\
-		/**
-		 * @var VirtualList		bodies
-		 * @brief				registered of bodies
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		VirtualList	bodies;																				\
-		/**
-		 * @var VirtualList		activeBodies
-		 * @brief				a list of bodies which must detect collisions
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		VirtualList	activeBodies;																		\
-		/**
-		 * @var Acceleration	gravity
-		 * @brief				gravity
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		Acceleration gravity;																			\
-		/**
-		 * @var fix10_6		frictionCoefficient
-		 * @brief				frictionCoefficient
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		fix10_6 frictionCoefficient;																	\
-		/**
-		 * @var fix10_6		timeScale
-		 * @brief				time scale
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		fix10_6 timeScale;																				\
-		/**
-		 * @var VirtualNode		bodyToCheckForGravityNode
-		 * @brief				body to check for gravity
-		 * @memberof 			PhysicalWorld
-		 */																								\
-		VirtualNode bodyToCheckForGravityNode;															\
-
 /**
  * @class	PhysicalWorld
  * @extends Object
  * @ingroup physics
  */
-__CLASS_DEFINITION(PhysicalWorld, Object);
-__CLASS_FRIEND_DEFINITION(Body);
-__CLASS_FRIEND_DEFINITION(Clock);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements PhysicalWorld : Object;
+friend class Body;
+friend class Clock;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,7 +73,7 @@ void PhysicalWorld::constructor(PhysicalWorld this)
 {
 	ASSERT(this, "PhysicalWorld::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// create the shape list
 	this->bodies = __NEW(VirtualList);

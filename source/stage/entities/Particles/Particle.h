@@ -110,24 +110,24 @@ class Particle : SpatialObject
 	*/
 	int lifeSpan;
 
-	void constructor(const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
-	void addForce(const Force* force, u32 movementType);
-	u16 getDepth();
-	u16 getHeight();
-	void hide();
-	void setLifeSpan(int lifeSpan);
-	void setMass(fix10_6 mass);
-	void show();
-	bool isVisible();
-	virtual u32 update(u32 elapsedTime, void (* behavior)(Particle particle));
-	virtual void synchronizeGraphics(bool updateSpritePosition);
-	virtual void transform();
-	virtual void resume();
-	virtual void suspend();
-	virtual void reset();
-	override bool isSubjectToGravity(Acceleration gravity);
-	override void setPosition(const Vector3D* position);
-	override const Vector3D* getPosition();
+	void constructor(Particle this, const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
+	void addForce(Particle this, const Force* force, u32 movementType);
+	u16 getDepth(Particle this);
+	u16 getHeight(Particle this);
+	void hide(Particle this);
+	void setLifeSpan(Particle this, int lifeSpan);
+	void setMass(Particle this, fix10_6 mass);
+	void show(Particle this);
+	bool isVisible(Particle this);
+	virtual u32 update(Particle this, u32 elapsedTime, void (* behavior)(Particle particle));
+	virtual void synchronizeGraphics(Particle this, bool updateSpritePosition);
+	virtual void transform(Particle this);
+	virtual void resume(Particle this);
+	virtual void suspend(Particle this);
+	virtual void reset(Particle this);
+	override bool isSubjectToGravity(Particle this, Acceleration gravity);
+	override void setPosition(Particle this, const Vector3D* position);
+	override const Vector3D* getPosition(Particle this);
 }
 
 

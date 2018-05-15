@@ -35,20 +35,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-#define AnimationCoordinatorFactory_ATTRIBUTES															\
-		/* super's attributes */																		\
-		Object_ATTRIBUTES																				\
-		/* entities that use bgmap sprites */															\
-		VirtualList animationCoordinators;																\
-
 /**
  * @class 	AnimationCoordinatorFactory
  * @extends Object
  * @ingroup graphics-2d-sprites-animation
  */
-__CLASS_DEFINITION(AnimationCoordinatorFactory, Object);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements AnimationCoordinatorFactory : Object;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +79,7 @@ static void __attribute__ ((noinline)) AnimationCoordinatorFactory::constructor(
 {
 	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->animationCoordinators = __NEW(VirtualList);
 }

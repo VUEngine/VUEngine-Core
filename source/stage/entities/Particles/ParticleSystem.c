@@ -42,9 +42,9 @@
  * @extends Entity
  * @ingroup stage-entities-particles
  */
-__CLASS_DEFINITION(ParticleSystem, Entity);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
-__CLASS_FRIEND_DEFINITION(VirtualList);
+implements ParticleSystem : Entity;
+friend class VirtualNode;
+friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ void ParticleSystem::constructor(ParticleSystem this, ParticleSystemDefinition* 
 	ASSERT(this, "ParticleSystem::constructor: null this");
 
 	// construct base
-	Base::constructor(this, &particleSystemDefinition->entityDefinition, id, internalId, name);
+	Base::constructor(&particleSystemDefinition->entityDefinition, id, internalId, name);
 
 	// save definition
 	this->particleSystemDefinition = particleSystemDefinition;

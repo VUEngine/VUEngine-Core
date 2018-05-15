@@ -42,9 +42,9 @@
  * @extends Object
  * @ingroup physics
  */
-__CLASS_DEFINITION(Body, Object);
-__CLASS_FRIEND_DEFINITION(VirtualList);
-__CLASS_FRIEND_DEFINITION(VirtualNode);
+implements Body : Object;
+friend class VirtualList;
+friend class VirtualNode;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -143,7 +143,7 @@ void Body::constructor(Body this, SpatialObject owner, const PhysicalSpecificati
 {
 	ASSERT(this, "Body::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	this->owner = owner;
 	this->normals = NULL;

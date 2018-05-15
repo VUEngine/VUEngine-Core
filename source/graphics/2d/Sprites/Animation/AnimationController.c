@@ -41,7 +41,7 @@
  * @extends Object
  * @ingroup graphics-2d-sprites-animation
  */
-__CLASS_DEFINITION(AnimationController, Object);
+implements AnimationController : Object;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ void AnimationController::constructor(AnimationController this, Object owner, Sp
 {
 	ASSERT(this, "AnimationController::constructor: null this");
 
-	__CONSTRUCT_BASE(Object);
+	Base::constructor();
 
 	// set the owner
 	this->owner = owner;

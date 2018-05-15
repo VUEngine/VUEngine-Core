@@ -36,11 +36,18 @@
 
 singleton class FrameRate : Object
 {
+	/**
+	 * @var u16	 	fps
+	 * @brief		Frames per second
+	 * @memberof	FrameRate
+	 */
+	u16 fps;
+
 	static FrameRate getInstance();
-	u16 getFps();
-	void increaseFps();
-	void print(int col, int row);
-	void reset();
+	u16 getFps(FrameRate this);
+	void increaseFps(FrameRate this);
+	void print(FrameRate this, int col, int row);
+	void reset(FrameRate this);
 }
 
 
