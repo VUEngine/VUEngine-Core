@@ -470,9 +470,9 @@ void HardwareManager::print(HardwareManager this, int x, int y)
 	Printing::text(Printing::getInstance(), "PSW:" , x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), HardwareManager::getPSW(), x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "SP:" , x, ++auxY, NULL);
-	Printing::hex(Printing::getInstance(), HardwareManager::getStackPointer(this), x + xDisplacement, auxY, 4, NULL);
+	Printing::hex(Printing::getInstance(), HardwareManager::getStackPointer(), x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "LP:" , x, ++auxY, NULL);
-	Printing::hex(Printing::getInstance(), HardwareManager::getLinkPointer(this), x + xDisplacement, auxY++, 4, NULL);
+	Printing::hex(Printing::getInstance(), HardwareManager::getLinkPointer(), x + xDisplacement, auxY++, 4, NULL);
 
 	Printing::text(Printing::getInstance(), "_hardwareRegisters", x, ++auxY, NULL);
 	auxY++;

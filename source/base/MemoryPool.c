@@ -171,7 +171,7 @@ void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
 {
 	ASSERT(this, "MemoryPool::allocate: null this");
 
-	int lp = HardwareManager::getLinkPointer(HardwareManager::getInstance());
+	int lp = HardwareManager::getLinkPointer();
 
 	int i = 0;
 	int j = 0;
