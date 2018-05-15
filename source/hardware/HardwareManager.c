@@ -448,6 +448,142 @@ void HardwareManager::disableKeypad(HardwareManager this)
 }
 
 /**
+ * Enable interrupts
+ *
+ * @memberof					HardwareManager
+ * @public
+ *
+ */
+void HardwareManager::enableInterrupts()
+{
+	asm("cli");
+}
+
+/**
+ * Disable interrupts
+ *
+ * @memberof					HardwareManager
+ * @public
+ *
+ */
+void HardwareManager::disableInterrupts()
+{
+	asm("sei");
+}
+
+/**
+ * Enable multiplexed interrupts
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ */
+void HardwareManager::enableMultiplexedInterrupts()
+{
+	u32 psw;
+
+	asm("			\n\
+		stsr psw,%0	\n\
+		"
+		: "=r" (psw) // Output
+	);
+
+	psw &= 0xFFF0BFFF;
+
+	asm(" 			\n\
+		ldsr %0,psw	\n\
+		cli			\n\
+		"
+		: // Output
+		: "r" (psw) // Input
+		: // Clobber
+	);
+}
+
+/**
+ * Disable multiplexed interrupts
+ *
+ * @memberof					VIPManager
+ * @public
+ *
+ */
+void HardwareManager::disableMultiplexedInterrupts()
+{
+	asm(" 			\n\
+		sei			\n\
+		"
+		: // Output
+		: // Input
+		: // Clobber
+	);
+}
+
+/**
+ * Retrieve the Stack Pointer's value
+ *
+ * @memberof		HardwareManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ */
+int HardwareManager::getStackPointer()
+{
+	int sp;
+
+	asm(" 			\n\
+		mov sp,%0	\n\
+		"
+	: "=r" (sp) // Output
+	);
+
+	return sp;
+}
+
+/**
+ * Retrieve the Link Pointer's value
+ *
+ * @memberof		HardwareManager
+ * @public
+ *
+ * @param this		Function scope
+ *
+ */
+int HardwareManager::getLinkPointer()
+{
+	int lp;
+
+	asm(" 			\n\
+		mov lp,%0	\n\
+		"
+	: "=r" (lp) // Output
+	);
+
+	return lp;
+}
+
+/**
+ * Retrieve PSW
+ *
+ * @memberof		HardwareManager
+ * @public
+ *
+ * @return		 	PSW
+ */
+int HardwareManager::getPSW()
+{
+	int psw;
+
+	asm("			\n\
+		stsr psw,%0	\n\
+		"
+	: "=r" (psw) // Output
+	);
+	return psw;
+}
+
+
+/**
  * Print manager's state
  *
  * @memberof		HardwareManager

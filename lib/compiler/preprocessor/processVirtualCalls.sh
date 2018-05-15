@@ -87,11 +87,16 @@ else
 	then
 		classDefinition=$classDefinition"\n void "$className"_constructor("$className" this);"
 
-		hasCustomSingletonDefinition=`grep -e '#define .*SINGLETON(' $OUTPUT_FILE`
+		hasCustomSingletonDefinition=`grep -e '#define[ 	]\+.*SINGLETON.*(' $OUTPUT_FILE`
 
 		if [ -z "$hasCustomSingletonDefinition" ];
 		then
-			classDefinition=$classDefinition"\n __SINGLETON($className);"
+			if [[ $classModifiers = *"dynamic_singleton "* ]] ;
+			then
+				classDefinition=$classDefinition"\n __SINGLETON_DYNAMIC($className);"
+			else
+				classDefinition=$classDefinition"\n __SINGLETON($className);"
+			fi
 		fi
 	fi
 fi

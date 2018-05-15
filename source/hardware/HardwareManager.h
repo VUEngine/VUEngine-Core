@@ -86,6 +86,14 @@ singleton class HardwareManager : Object
 	u8*  hwRegisters;
 
 	static HardwareManager getInstance();
+	static void enableInterrupts();
+    static void disableInterrupts();
+    static void enableMultiplexedInterrupts();
+    static void disableMultiplexedInterrupts();
+    static int getStackPointer();
+    static int getLinkPointer();
+    static int getPSW();
+
 	void clearScreen(HardwareManager this);
 	void disableKeypad(HardwareManager this);
 	void disableRendering(HardwareManager this);
@@ -104,139 +112,5 @@ singleton class HardwareManager : Object
 	void printStackStatus(HardwareManager this, int x, int y, bool resumed);
 }
 
-/**
- * Enable interrupts
- *
- * @memberof					HardwareManager
- * @public
- *
- */
-inline void HardwareManager_enableInterrupts()
-{
-	asm("cli");
-}
-
-/**
- * Disable interrupts
- *
- * @memberof					HardwareManager
- * @public
- *
- */
-inline void HardwareManager_disableInterrupts()
-{
-	asm("sei");
-}
-
-/**
- * Enable multiplexed interrupts
- *
- * @memberof					VIPManager
- * @public
- *
- */
-inline void HardwareManager_enableMultiplexedInterrupts()
-{
-	u32 psw;
-
-	asm("			\n\
-		stsr psw,%0	\n\
-		"
-		: "=r" (psw) // Output
-	);
-
-	psw &= 0xFFF0BFFF;
-
-	asm(" 			\n\
-		ldsr %0,psw	\n\
-		cli			\n\
-		"
-		: // Output
-		: "r" (psw) // Input
-		: // Clobber
-	);
-}
-
-/**
- * Disable multiplexed interrupts
- *
- * @memberof					VIPManager
- * @public
- *
- */
-inline void HardwareManager_disableMultiplexedInterrupts()
-{
-	asm(" 			\n\
-		sei			\n\
-		"
-		: // Output
-		: // Input
-		: // Clobber
-	);
-}
-
-/**
- * Retrieve the Stack Pointer's value
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
- */
-inline int HardwareManager_getStackPointer()
-{
-	int sp;
-
-	asm(" 			\n\
-		mov sp,%0	\n\
-		"
-	: "=r" (sp) // Output
-	);
-
-	return sp;
-}
-
-/**
- * Retrieve the Link Pointer's value
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
- */
-inline int HardwareManager_getLinkPointer()
-{
-	int lp;
-
-	asm(" 			\n\
-		mov lp,%0	\n\
-		"
-	: "=r" (lp) // Output
-	);
-
-	return lp;
-}
-
-/**
- * Retrieve PSW
- *
- * @memberof		HardwareManager
- * @public
- *
- * @return		 	PSW
- */
-inline int HardwareManager_getPSW()
-{
-	int psw;
-
-	asm("			\n\
-		stsr psw,%0	\n\
-		"
-	: "=r" (psw) // Output
-	);
-	return psw;
-}
 
 #endif
