@@ -88,7 +88,8 @@ attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationB
 
 isSingletonClass=false
 isAbstractClass=false
-isFinal=false
+isStaticClass=false
+isFinalClass=false
 
 
 virtualMethodDeclarations="#define "$className"_METHODS(ClassName)"
@@ -207,7 +208,7 @@ do
 
 	if [[ $classModifier = *"final "* ]]; then
 
-		isFinal=true;
+		isFinalClass=true;
 	fi
 
 	if [[ $classModifier = *"singleton "* ]]; then
@@ -215,6 +216,10 @@ do
 		isSingletonClass=true
 	fi
 
+	if [[ $classModifier = *"static "* ]]; then
+
+		isStaticClass=true
+	fi
 
 done <<< "$classModifiers"
 
@@ -228,17 +233,26 @@ then
 	echo $className is singleton
 fi
 
-if [ "$isFinal" = true ];
+if [ "$isStaticClass" = true ];
+then
+	echo $className is static
+fi
+
+if [ "$isFinalClass" = true ];
 then
 	echo $className is final
 fi
 
 # Add destructor declaration
-methodDeclarations="	void "$className"_destructor("$className" this);
+if [ ! "$isStaticClass" = true ];
+then
+	methodDeclarations="	void "$className"_destructor("$className" this);
 "$methodDeclarations
+fi
+
 
 # Add allocator if it is not abstract nor a singleton class
-if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] ;
+if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] ;
 then
 
 	constructor=`grep -m 1 -e "void[ 	]\+"$className"_constructor[ 	]*(.*);" <<< "$methodDeclarations"`
@@ -263,29 +277,38 @@ fi
 
 TEMPORAL_FILE=$WORKING_FOLDER/temporal.txt
 echo "" > $TEMPORAL_FILE
-echo "$virtualMethodDeclarations" >> $TEMPORAL_FILE
-echo "" >> $TEMPORAL_FILE
-echo "$virtualMethodOverrides" >> $TEMPORAL_FILE
-echo "" >> $TEMPORAL_FILE
-if [ ! "$isFinal" = true ];
+if [ ! "$isStaticClass" = true ];
 then
-	if [ ! -z "$baseClassName" ];
+	echo "$virtualMethodDeclarations" >> $TEMPORAL_FILE
+	echo "" >> $TEMPORAL_FILE
+	echo "$virtualMethodOverrides" >> $TEMPORAL_FILE
+	echo "" >> $TEMPORAL_FILE
+
+	if [ ! "$isFinalClass" = true ];
 	then
-		attributes="#define "$className"_ATTRIBUTES \\
-	"$baseClassName"_ATTRIBUTES \\
-	$attributes"
+		if [ ! -z "$baseClassName" ];
+		then
+			attributes="#define "$className"_ATTRIBUTES \\
+		"$baseClassName"_ATTRIBUTES \\
+		$attributes"
 
-		virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
-		virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
-	else
-		attributes="#define "$className"_ATTRIBUTES \\
-	$attributes"
+			virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
+			virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
+		else
+			attributes="#define "$className"_ATTRIBUTES \\
+		$attributes"
+		fi
+
+		echo "$attributes" >> $TEMPORAL_FILE
 	fi
-
-	echo "$attributes" >> $TEMPORAL_FILE
 fi
+
 echo "" >> $TEMPORAL_FILE
-echo "__CLASS($className);" >> $TEMPORAL_FILE
+if [ ! "$isStaticClass" = true ];
+then
+	echo "__CLASS($className);" >> $TEMPORAL_FILE
+fi
+
 echo "" >> $TEMPORAL_FILE
 echo "$methodDeclarations" >> $TEMPORAL_FILE
 echo >> $TEMPORAL_FILE
