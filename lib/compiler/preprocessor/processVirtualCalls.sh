@@ -159,7 +159,6 @@ do
 		do
 			if [ -z "$methodCall" ];
 			then
-			echo "Checking empty"
 				continue;
 			fi
 
