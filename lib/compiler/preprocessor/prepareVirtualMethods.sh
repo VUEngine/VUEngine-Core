@@ -67,6 +67,7 @@ else
 fi
 
 # if the header files list was populated, generate the helper files
+#echo "$HEADER_FILES $HEADER_FILES"
 if [ -n "$HEADER_FILES" ]; then
 
 	for headerFile in $HEADER_FILES; do

@@ -53,6 +53,12 @@ then
     exit 0
 fi
 
+# replace any previous entry
+if [ -f $CLASSES_HIERARCHY_FILE ];
+then
+	sed -i -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
+fi
+# save new hierarchy
 echo "$className:$baseClassName:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 
 if [ "$className" = "Object" ];
@@ -170,28 +176,26 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
         fi
     fi
 
-    if [ ! "$methodIsAbstract" = true ];
-    then
-		methodDeclaration=
-        if [ ! -z "$methodParameters" ];
-        then
-			if [[ $methodType = *"static "* ]]; then
-				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$methodParameters");"
-			else
-				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$className" this, "$methodParameters");"
-			fi
-        else
+	methodDeclaration=
+	if [ ! -z "$methodParameters" ];
+	then
+		if [[ $methodType = *"static "* ]]; then
+			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$methodParameters");"
+		else
+			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$className" this, "$methodParameters");"
+		fi
+	else
 
-			if [[ $methodType = *"static "* ]]; then
-				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"();"
-			else
-				methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$className" this);"
-			fi
-        fi
+		if [[ $methodType = *"static "* ]]; then
+			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"();"
+		else
+			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$className" this);"
+		fi
+	fi
 
-		methodDeclarations=$methodDeclarations"
+	methodDeclarations=$methodDeclarations"
 "$methodDeclaration
-    fi
+
 done <<< "$methods"
 
 while IFS= read -r classModifier;

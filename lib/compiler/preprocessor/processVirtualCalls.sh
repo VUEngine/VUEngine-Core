@@ -45,7 +45,6 @@ done
 cat $INPUT_FILE > $OUTPUT_FILE
 
 className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	]\+\([A-Z][A-z0-9]*\)::.*#\1#'`
-echo Class: $className
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^[ 	]*[^\*//]*[ 	]\+[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(.*)" $OUTPUT_FILE | cut -d ":" -f1`
 
@@ -54,6 +53,8 @@ sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 if [ -z "$className" ];then
 	exit 0
 fi
+
+echo Class: $className
 
 baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
 if [ -z "$baseClassName" ];then
