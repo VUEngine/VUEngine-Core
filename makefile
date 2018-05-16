@@ -229,7 +229,7 @@ $(STORE)/%.o: $(WORKING_FOLDER)/source/%.c
 
 $(WORKING_FOLDER)/source/%.c: %.c
 	@echo "Compiling "$<
-	@echo into $@
+#	@echo into $@
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
 
 $(STORE)/%.o: %.s
