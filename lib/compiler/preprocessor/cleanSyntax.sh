@@ -10,7 +10,8 @@ then
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__DESTROY_BASE:Base_destructor():g" {} \;
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__CLASS_DEFINITION.*::g" {} \;
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__CLASS_NEW_.*::g" {} \;
-#	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__SINGLETON.*::g" {} \;
+	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__SINGLETON(.*::g" {} \;
+	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s:__SINGLETON_.*(.*::g" {} \;
 	find $SOURCE_FOLDER -name "*.c" -exec sed -i -e "s#\([A-Z][A-z0-9]*\)_\([a-z][A-z0-9]*\)#\1::\2#g" {} \;
 	find $SOURCE_FOLDER -name "*.h" -exec $VUENGINE_HOME/lib/compiler/preprocessor/portHeader.sh {} $WORKING_FOLDER \;
 #	find $SOURCE_FOLDER -name "*.h" -exec cp -f {}.txt {} \;

@@ -9,7 +9,7 @@ TYPE = debug
 
 # output dir
 BUILD_DIR = build
-WORKING_FOLDER = $(GAME_HOME)/./$(BUILD_DIR)/compiler
+WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/compiler
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -139,7 +139,7 @@ MACROS = $(COMMON_MACROS)
 endif
 
 # Add directories to the include and library paths
-VUENGINE_INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/source/ -type d -print)
+VUENGINE_INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/source/$(VUENGINE_HOME) -type d -print)
 
 # Where to store object and dependency files.
 STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
@@ -217,7 +217,6 @@ $(WORKING_FOLDER)/preprocessor/$(SETUP_CLASSES).c: setupClasses
 
 $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 	@echo "Preparing virtual methods in engine"
-#	@rm -f $(CLASSES_HIERARCHY_FILE)
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/prepareVirtualMethods.sh -d -w $(WORKING_FOLDER)/preprocessor -h $(WORKING_FOLDER)/source/$(VUENGINE_HOME)/source -p $(HELPERS_PREFIX)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
@@ -229,8 +228,8 @@ $(STORE)/%.o: $(WORKING_FOLDER)/source/%.c
 	@rm -f $(STORE)/$*.dd
 
 $(WORKING_FOLDER)/source/%.c: %.c
-	@echo -n "Compiling "
-	@echo $<
+	@echo "Compiling "$<
+	@echo into $@
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
 
 $(STORE)/%.o: %.s
