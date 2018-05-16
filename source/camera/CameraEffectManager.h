@@ -57,19 +57,19 @@ singleton class CameraEffectManager : Object
 	/**
 	* @var Brightness	fxFadeTargetBrightness
 	* @brief			Target brightness for current fade effect
-	* @memberof		CameraEffectManager
+	* @memberof			CameraEffectManager
 	*/
 	Brightness fxFadeTargetBrightness;
 	/**
 	* @var u8			fxFadeDelay
 	* @brief			Delay for current fade effect
-	* @memberof		CameraEffectManager
+	* @memberof			CameraEffectManager
 	*/
 	u8 fxFadeDelay;
 	/**
 	* @var Object		fxFadeCallbackScope
 	* @brief			Callback scope for current fade effect
-	* @memberof		CameraEffectManager
+	* @memberof			CameraEffectManager
 	*/
 	Object fxFadeCallbackScope;
 
@@ -81,7 +81,6 @@ singleton class CameraEffectManager : Object
 	virtual void stopEffect(CameraEffectManager this, int effect);
 	override bool handleMessage(CameraEffectManager this, Telegram telegram);
 }
-
 
 
 #endif
