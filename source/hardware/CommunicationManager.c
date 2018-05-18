@@ -223,7 +223,7 @@ void CommunicationManager::disableCommunications()
  * @memberof		CommunicationManager
  * @public
  */
-void CommunicationManager::interruptHandler()
+static void CommunicationManager::interruptHandler()
 {
 	// disable interrupts
 	CommunicationManager::disableInterrupts(_communicationManager);

@@ -324,7 +324,7 @@ void KeypadManager::registerInput(u16 inputToRegister)
  * @memberof	KeypadManager
  * @public
  */
-void KeypadManager::interruptHandler()
+static void KeypadManager::interruptHandler()
 {
 	Printing::resetWorldCoordinates(Printing::getInstance());
 	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);

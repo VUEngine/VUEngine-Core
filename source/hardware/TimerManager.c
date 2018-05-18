@@ -164,7 +164,7 @@ void TimerManager::enable(bool flag)
  * @memberof		TimerManager
  * @public
  */
-void TimerManager::interruptHandler()
+static void TimerManager::interruptHandler()
 {
 	//disable
 	TimerManager::enable(_timerManager, false);

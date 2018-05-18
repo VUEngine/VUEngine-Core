@@ -172,22 +172,10 @@ void HardwareManager::checkMemoryMap()
  * @memberof	HardwareManager
  * @public
  */
-void HardwareManager::croInterruptHandler()
+static void HardwareManager::croInterruptHandler()
 {
 	Printing::resetWorldCoordinates(Printing::getInstance());
 	Printing::text(Printing::getInstance(), "EXP cron", 48 - 13, 0, NULL);
-}
-
-/**
- * Communication port interrupt handle
- *
- * @memberof	HardwareManager
- * @public
- */
-void HardwareManager::communicationInterruptHandler()
-{
-	Printing::resetWorldCoordinates(Printing::getInstance());
-	Printing::text(Printing::getInstance(), "COM interrupt", 48 - 13, 0, NULL);
 }
 
 /**
