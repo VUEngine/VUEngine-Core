@@ -59,13 +59,13 @@ abstract class Object : Object
 	*/
 	VirtualList events;
 
+	static Object getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
 	void constructor();
 	void addEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListeners(Object listener, u32 eventCode);
 	void removeAllEventListeners(u32 eventCode);
 	void fireEvent(u32 eventCode);
-	Object getCast(ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
 	const void* getVTable();
 	virtual bool handleMessage(Telegram telegram);
 }

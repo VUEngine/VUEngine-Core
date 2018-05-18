@@ -383,7 +383,7 @@ void Object::fireEvent(u32 eventCode)
  *
  * @return								Casted Object
  */
-Object Object::getCast(ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
+static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
 	static int lp = -1;
 	static int sp = -1;
@@ -394,42 +394,40 @@ Object Object::getCast(ObjectBaseClassPointer targetClassGetClassMethod, ObjectB
 		asm(" mov lp,%0  ": "=r" (lp));
 	}
 
-
-
-	if(!this)
+	if(!object)
 	{
 		lp = -1;
 		sp = -1;
 		return NULL;
 	}
 
-	if(!__IS_OBJECT_ALIVE(this))
+	if(!__IS_OBJECT_ALIVE(object))
 	{
 	/*
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
-		Printing::hex(Printing::getInstance(), (u32)this, 18, 15, 8, NULL);
+		Printing::hex(Printing::getInstance(), (u32)object, 18, 15, 8, NULL);
 */
 		_lp = lp;
 		_sp = sp;
-		NM_CAST_ASSERT(false, "Object::getCast: deleted this");
+		NM_CAST_ASSERT(false, "Object::getCast: deleted object");
 	}
 
-	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, this), "Object::getCast: null getClassName");
-	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this), "Object::getCast: null getBaseClass");
+	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getClassName, object), "Object::getCast: null getClassName");
+	ASSERT(__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object), "Object::getCast: null getBaseClass");
 
 	if(!baseClassGetClassMethod)
 	{
-		if(targetClassGetClassMethod == (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this))
+		if(targetClassGetClassMethod == (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 		{
 			lp = -1;
 			sp = -1;
-			return this;
+			return object;
 		}
 
 		// make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
 		// __SAFE_CAST check
-		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, this)(this);
+		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
 	}
 
 	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
@@ -443,10 +441,10 @@ Object Object::getCast(ObjectBaseClassPointer targetClassGetClassMethod, ObjectB
 	{
 		lp = -1;
 		sp = -1;
-		return this;
+		return object;
 	}
 
-	return Object::getCast((Object)this, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(this));
+	return Object::getCast((Object)object, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(object));
 }
 
 /**
