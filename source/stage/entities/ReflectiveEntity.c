@@ -38,23 +38,13 @@
 
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialObject spatialObject);
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void ReflectiveEntity::constructor(ReflectiveEntity this, ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
+void ReflectiveEntity::constructor(ReflectiveEntityDefinition* reflectiveEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ReflectiveEntity::constructor: null this");
-
 	// construct base
 	Base::constructor(&reflectiveEntityDefinition->entityDefinition, id, internalId, name);
 
@@ -64,53 +54,43 @@ void ReflectiveEntity::constructor(ReflectiveEntity this, ReflectiveEntityDefini
 }
 
 // class's destructor
-void ReflectiveEntity::destructor(ReflectiveEntity this)
+void ReflectiveEntity::destructor()
 {
-	ASSERT(this, "ReflectiveEntity::destructor: null this");
-
 	// remove post processing effect
-	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
 
 	// delete the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
-void ReflectiveEntity::ready(ReflectiveEntity this, bool recursive)
+void ReflectiveEntity::ready(bool recursive)
 {
-	ASSERT(this, "ReflectiveEntity::ready: null this");
-
 	// call base
 	Base::ready(this, recursive);
 
 	// add post processing effect to make key emit rhombuses
-	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity::suspend(ReflectiveEntity this)
+void ReflectiveEntity::suspend()
 {
-	ASSERT(this, "ReflectiveEntity::suspend: null this");
-
 	Base::suspend(this);
 
 	// remove post processing effect
-	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity::resume(ReflectiveEntity this)
+void ReflectiveEntity::resume()
 {
-	ASSERT(this, "ReflectiveEntity::resume: null this");
-
 	Base::resume(this);
 
 	// add post processing effect to make key emit rhombuses
-	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity_reflect, __SAFE_CAST(SpatialObject, this));
+	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
 }
 
-void ReflectiveEntity::synchronizeGraphics(ReflectiveEntity this)
+void ReflectiveEntity::synchronizeGraphics()
 {
-	ASSERT(this, "ReflectiveEntity::synchronizeGraphics: null this");
-
 	Vector3D position3D = Vector3D::getRelativeToCamera(this->transformation.globalPosition);
 
 	PixelVector position2D = Vector3D::projectToPixelVector(position3D, 0);
@@ -134,10 +114,8 @@ static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialO
 	 ReflectiveEntity::applyReflection(this, currentDrawingFrameBufferSet);
 }
 
-void ReflectiveEntity::applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet)
+void ReflectiveEntity::applyReflection(u32 currentDrawingFrameBufferSet)
 {
-	ASSERT(this, "ReflectiveEntity::applyReflection: null this");
-
 	ReflectiveEntityDefinition* reflectiveEntityDefinition = (ReflectiveEntityDefinition*)this->entityDefinition;
 
 /*
@@ -181,7 +159,7 @@ void ReflectiveEntity::applyReflection(ReflectiveEntity this, u32 currentDrawing
 								reflectiveEntityDefinition->leftBorder, reflectiveEntityDefinition->rightBorder);
 }
 
-inline void ReflectiveEntity::shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask)
+static void ReflectiveEntity::shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask)
 {
 	*sourceValue &= reflectionMask;
 	*remainderValue &= reflectionMask;
@@ -204,7 +182,7 @@ inline void ReflectiveEntity::shiftPixels(int pixelShift, POINTER_TYPE* sourceVa
 	}
 }
 
-void ReflectiveEntity::drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
+void ReflectiveEntity::drawReflection(u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
 								s16 width, s16 height,
@@ -218,8 +196,6 @@ void ReflectiveEntity::drawReflection(ReflectiveEntity this, u32 currentDrawingF
 								u32 leftBorderMask __attribute__ ((unused)),
 								u32 rightBorderMask __attribute__ ((unused)))
 {
-	ASSERT(this, "ReflectiveEntity::drawReflection: null this");
-
     s16 xSourceEnd = xSourceStart + width;
     s16 ySourceEnd = ySourceStart + height;
 	s16 xOutputEnd = xOutputStart + width;

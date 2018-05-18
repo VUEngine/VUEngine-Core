@@ -44,15 +44,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static void Container::applyEnvironmentToPosition(Container this, const Transformation* environmentTransform);
-static void Container::applyEnvironmentToRotation(Container this, const Transformation* environmentTransform);
-static void Container::applyEnvironmentToScale(Container this, const Transformation* environmentTransform);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -66,10 +57,8 @@ static void Container::applyEnvironmentToScale(Container this, const Transformat
  * @param this	Function scope
  * @param name
  */
-void Container::constructor(Container this, const char* const name)
+void Container::constructor(const char* const name)
 {
-	ASSERT(this, "Container::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -106,10 +95,8 @@ void Container::constructor(Container this, const char* const name)
  *
  * @param this	Function scope
  */
-void Container::destructor(Container this)
+void Container::destructor()
 {
-	ASSERT(this, "Container::destructor: null this");
-
 	// first remove any children removed
 	if(this->removedChildren)
 	{
@@ -181,9 +168,8 @@ void Container::destructor(Container this)
  *
  * @param this	Function scope
  */
-void Container::deleteMyself(Container this)
+void Container::deleteMyself()
 {
-	ASSERT(this, "Container::deleteMyself: null this");
 	ASSERT(__IS_OBJECT_ALIVE(this), "Container::deleteMyself: deleted this");
 	ASSERT(__IS_OBJECT_ALIVE(this->parent), "Container::deleteMyself: deleted parent");
 
@@ -208,10 +194,8 @@ void Container::deleteMyself(Container this)
  *
  * @param this	Function scope
  */
-void Container::iAmDeletingMyself(Container this __attribute__ ((unused)))
-{
-	ASSERT(this, "Container::iAmDeletingMyself: null this");
-}
+void Container::iAmDeletingMyself()
+{}
 
 /**
  * Add a child Container
@@ -222,10 +206,8 @@ void Container::iAmDeletingMyself(Container this __attribute__ ((unused)))
  * @param this	Function scope
  * @param child	Child Container to add
  */
-void Container::addChild(Container this, Container child)
+void Container::addChild(Container child)
 {
-	ASSERT(this, "Container::addChild: null this");
-
 	// check if child is valid
 	if(!child)
 	{
@@ -276,9 +258,8 @@ void Container::addChild(Container this, Container child)
  * @param child			Child Container to remove
  * @param deleteChild
  */
-void Container::removeChild(Container this, Container child, bool deleteChild)
+void Container::removeChild(Container child, bool deleteChild)
 {
-	ASSERT(this, "Container::removeChild: null this");
 	ASSERT(this == child->parent, "Container::removeChild: not my child");
 
 	// check if child is valid and if I'm its parent
@@ -325,10 +306,8 @@ void Container::removeChild(Container this, Container child, bool deleteChild)
  *
  * @param this	Function scope
  */
-void Container::setupGraphics(Container this __attribute__ ((unused)))
+void Container::setupGraphics()
 {
-	ASSERT(this, "Container::setupGraphics: null this");
-
 	// if I have children
 	if(this->children)
 	{
@@ -350,10 +329,8 @@ void Container::setupGraphics(Container this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void Container::releaseGraphics(Container this)
+void Container::releaseGraphics()
 {
-	ASSERT(this, "Container::releaseGraphics: null this");
-
 	// if I have children
 	if(this->children)
 	{
@@ -375,10 +352,8 @@ void Container::releaseGraphics(Container this)
  *
  * @param this	Function scope
  */
-void Container::purgeChildren(Container this)
+void Container::purgeChildren()
 {
-	ASSERT(this, "Container::processRemovedChildren: null this");
-
 	if(!this->removedChildren)
 	{
 		return;
@@ -427,10 +402,8 @@ void Container::purgeChildren(Container this)
  * @param this			Function scope
  * @param elapsedTime
  */
-void Container::update(Container this, u32 elapsedTime)
+void Container::update(u32 elapsedTime)
 {
-	ASSERT(this, "Container::update: null this");
-
 	// if I have children
 	if(this->children)
 	{
@@ -458,10 +431,8 @@ void Container::update(Container this, u32 elapsedTime)
  *
  * @return				Environment Transformation
  */
-Transformation Container::getEnvironmentTransform(Container this)
+Transformation Container::getEnvironmentTransform()
 {
-	ASSERT(this, "Container::getEnvironmentTransform: null this");
-
 	if(!this->parent)
 	{
 		Transformation environmentTransform =
@@ -496,7 +467,7 @@ Transformation Container::getEnvironmentTransform(Container this)
  * @param concatenatedTransformation
  * @param transformation
  */
-void Container::concatenateTransform(Container this __attribute__ ((unused)), Transformation* concatenatedTransformation, Transformation* transformation)
+void Container::concatenateTransform(Transformation* concatenatedTransformation, Transformation* transformation)
 {
 	ASSERT(concatenatedTransformation, "Container::concatenateTransform: null concatenatedTransformation");
 	ASSERT(transformation, "Container::concatenateTransform: null transformation");
@@ -526,10 +497,8 @@ void Container::concatenateTransform(Container this __attribute__ ((unused)), Tr
  * @param this					Function scope
  * @param environmentTransform
  */
-void Container::changeEnvironment(Container this, Transformation* environmentTransform)
+void Container::changeEnvironment(Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::changeEnvironment: null this");
-
 	Vector3D localPosition =
 	{
 		this->transformation.globalPosition.x - environmentTransform->globalPosition.x,
@@ -569,10 +538,8 @@ void Container::changeEnvironment(Container this, Transformation* environmentTra
  * @param environmentTransform
  * @param recursive
  */
-void Container::initialTransform(Container this, const Transformation* environmentTransform, u32 recursive)
+void Container::initialTransform(const Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "Container::initialTransform: null this");
-
 	// concatenate transformation
 	Container::applyEnvironmentToPosition(this, environmentTransform);
 	Container::applyEnvironmentToRotation(this, environmentTransform);
@@ -606,10 +573,8 @@ void Container::initialTransform(Container this, const Transformation* environme
  * @param this					Function scope
  * @param environmentTransform
  */
-void Container::applyEnvironmentToTransformation(Container this, const Transformation* environmentTransform)
+void Container::applyEnvironmentToTransformation(const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
-
 	Container::applyEnvironmentToPosition(this, environmentTransform);
 	Container::applyEnvironmentToRotation(this, environmentTransform);
 	Container::applyEnvironmentToScale(this, environmentTransform);
@@ -624,10 +589,8 @@ void Container::applyEnvironmentToTransformation(Container this, const Transform
  * @param this					Function scope
  * @param environmentTransform
  */
-inline static void Container::applyEnvironmentToPosition(Container this, const Transformation* environmentTransform)
+inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToTranformation: null this");
-
 	Vector3D globalPosition = environmentTransform->globalPosition;
 	Vector3D localPosition = this->transformation.localPosition;
 
@@ -649,10 +612,8 @@ inline static void Container::applyEnvironmentToPosition(Container this, const T
  * @param this					Function scope
  * @param environmentTransform
  */
-inline static void Container::applyEnvironmentToRotation(Container this, const Transformation* environmentTransform)
+inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToRotation: null this");
-
 	Rotation globalRotation = environmentTransform->globalRotation;
 	Rotation localRotation = this->transformation.localRotation;
 
@@ -674,10 +635,8 @@ inline static void Container::applyEnvironmentToRotation(Container this, const T
  * @param this					Function scope
  * @param environmentTransform
  */
-inline static void Container::applyEnvironmentToScale(Container this, const Transformation* environmentTransform)
+inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::applyEnvironmentToScale: null this");
-
 	Scale globalScale = environmentTransform->globalScale;
 	Scale localScale = this->transformation.localScale;
 
@@ -698,10 +657,8 @@ inline static void Container::applyEnvironmentToScale(Container this, const Tran
  * @param this					Function scope
  * @param environmentTransform
  */
-void Container::transformNonVirtual(Container this, const Transformation* environmentTransform)
+void Container::transformNonVirtual(const Transformation* environmentTransform)
 {
-	ASSERT(this, "Container::transformNonVirtual: null this");
-
 	// apply environment transformation
 	if(__INVALIDATE_POSITION & this->invalidateGlobalTransformation)
 	{
@@ -748,9 +705,8 @@ void Container::transformNonVirtual(Container this, const Transformation* enviro
  * @param environmentTransform
  * @param invalidateTransformationFlag
  */
-void Container::transform(Container this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Container::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "Container::transform: null this");
 	ASSERT(environmentTransform, "Container::transform: null environmentTransform");
 
 	// apply environment transformation
@@ -797,10 +753,8 @@ void Container::transform(Container this, const Transformation* environmentTrans
  *
  * @param this	Function scope
  */
-void Container::synchronizeGraphics(Container this)
+void Container::synchronizeGraphics()
 {
-	ASSERT(this, "Container::synchronizeGraphics: null this");
-
 	// if I have children
 	if(this->children)
 	{
@@ -824,10 +778,8 @@ void Container::synchronizeGraphics(Container this)
  *
  * @return		Pointer to Transformation
  */
-Transformation* Container::getTransform(Container this)
+Transformation* Container::getTransform()
 {
-	ASSERT(this, "Container::getTransform: null this");
-
 	return &this->transformation;
 }
 
@@ -841,10 +793,8 @@ Transformation* Container::getTransform(Container this)
  *
  * @return		Pointer to global position
  */
-const Vector3D* Container::getGlobalPosition(Container this)
+const Vector3D* Container::getGlobalPosition()
 {
-	ASSERT(this, "Container::getGlobalPosition: null this");
-
 	return &this->transformation.globalPosition;
 }
 
@@ -858,10 +808,8 @@ const Vector3D* Container::getGlobalPosition(Container this)
  *
  * @return		Pointer to local position
  */
-const Vector3D* Container::getLocalPosition(Container this)
+const Vector3D* Container::getLocalPosition()
 {
-	ASSERT(this, "Container::getLocalPosition: null this");
-
 	return &this->transformation.localPosition;
 }
 
@@ -874,10 +822,8 @@ const Vector3D* Container::getLocalPosition(Container this)
  * @param this		Function scope
  * @param position	Pointer to position
  */
-void Container::setLocalPosition(Container this, const Vector3D* position)
+void Container::setLocalPosition(const Vector3D* position)
 {
-	ASSERT(this, "Container::setLocalPosition: null this");
-
 	// force global position calculation on the next transformation cycle
 	if(this->transformation.localPosition.z != position->z)
 	{
@@ -906,10 +852,8 @@ void Container::setLocalPosition(Container this, const Vector3D* position)
  *
  * @return		Pointer to local Rotation
  */
-const Rotation* Container::getLocalRotation(Container this)
+const Rotation* Container::getLocalRotation()
 {
-	ASSERT(this, "Container::getLocalRotation: null this");
-
 	return &this->transformation.localRotation;
 }
 
@@ -922,10 +866,8 @@ const Rotation* Container::getLocalRotation(Container this)
  * @param this		Function scope
  * @param rotation	Pointer to Rotation
  */
-void Container::setLocalRotation(Container this, const Rotation* rotation)
+void Container::setLocalRotation(const Rotation* rotation)
 {
-	ASSERT(this, "Container::setLocalRotation: null this");
-
 	this->transformation.localRotation = *rotation;
 
 	Container::invalidateGlobalRotation(this);
@@ -941,10 +883,8 @@ void Container::setLocalRotation(Container this, const Rotation* rotation)
  *
  * @return		Pointer to local Scale
  */
-const Scale* Container::getLocalScale(Container this)
+const Scale* Container::getLocalScale()
 {
-	ASSERT(this, "Container::getLocalScale: null this");
-
 	return &this->transformation.localScale;
 }
 
@@ -957,10 +897,8 @@ const Scale* Container::getLocalScale(Container this)
  * @param this	Function scope
  * @param scale	Pointer to Scale
  */
-void Container::setLocalScale(Container this, const Scale* scale)
+void Container::setLocalScale(const Scale* scale)
 {
-	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
-
 	this->transformation.localScale = *scale;
 
 	Container::invalidateGlobalScale(this);
@@ -974,10 +912,8 @@ void Container::setLocalScale(Container this, const Scale* scale)
  *
  * @param this	Function scope
  */
-void Container::invalidateGlobalTransformation(Container this)
+void Container::invalidateGlobalTransformation()
 {
-	ASSERT(this, "Container::invalidateGlobalTransformation: null this");
-
 	this->invalidateGlobalTransformation = __INVALIDATE_TRANSFORMATION;
 
 	if(this->children)
@@ -1001,10 +937,8 @@ void Container::invalidateGlobalTransformation(Container this)
  *
  * @param this	Function scope
  */
-void Container::invalidateGlobalPosition(Container this)
+void Container::invalidateGlobalPosition()
 {
-	ASSERT(this, "Container::invalidateGlobalPosition: null this");
-
 	this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
 	if(this->children)
@@ -1028,10 +962,8 @@ void Container::invalidateGlobalPosition(Container this)
  *
  * @param this	Function scope
  */
-void Container::invalidateGlobalRotation(Container this)
+void Container::invalidateGlobalRotation()
 {
-	ASSERT(this, "Container::invalidateGlobalRotation: null this");
-
 	this->invalidateGlobalTransformation |= __INVALIDATE_ROTATION;
 
 	if(this->children)
@@ -1055,10 +987,8 @@ void Container::invalidateGlobalRotation(Container this)
  *
  * @param this	Function scope
  */
-void Container::invalidateGlobalScale(Container this)
+void Container::invalidateGlobalScale()
 {
-	ASSERT(this, "Container::invalidateGlobalScale: null this");
-
 	this->invalidateGlobalTransformation |= __INVALIDATE_SCALE;
 
 	if(this->children)
@@ -1086,9 +1016,8 @@ void Container::invalidateGlobalScale(Container this)
 
  * @return							Result
  */
-int Container::propagateMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), ...)
+int Container::propagateMessage(int (*propagatedMessageHandler)(void*, va_list), ...)
 {
-	ASSERT(this, "Container::propagateMessage: null this");
 	ASSERT(propagatedMessageHandler, "Container::propagateMessage: null propagatedMessageHandler");
 
 	va_list args;
@@ -1111,10 +1040,8 @@ int Container::propagateMessage(Container this, int (*propagatedMessageHandler)(
 
  * @return							Result
  */
-int Container::passMessage(Container this, int (*propagatedMessageHandler)(Container this, va_list args), va_list args)
+int Container::passMessage(int (*propagatedMessageHandler)(void*, va_list), va_list args)
 {
-	ASSERT(this, "Container::passMessage: null this");
-
 	// if message is valid
 	if(!propagatedMessageHandler)
 	{
@@ -1152,10 +1079,8 @@ int Container::passMessage(Container this, int (*propagatedMessageHandler)(Conta
 
  * @return		Result
  */
-int Container::onPropagatedMessage(Container this, va_list args)
+int Container::onPropagatedMessage(va_list args)
 {
-	ASSERT(this, "Container::onPropagatedMessage: null this");
-
 	int message = va_arg(args, int);
 	return  Container::handlePropagatedMessage(this, message);
 }
@@ -1171,10 +1096,8 @@ int Container::onPropagatedMessage(Container this, va_list args)
 
  * @return			Result
  */
-bool Container::handlePropagatedMessage(Container this __attribute__ ((unused)), int message __attribute__ ((unused)))
+bool Container::handlePropagatedMessage(int message __attribute__ ((unused)))
 {
-	ASSERT(this, "Container::handlePropagatedMessage: null this");
-
 	return false;
 }
 
@@ -1188,10 +1111,8 @@ bool Container::handlePropagatedMessage(Container this __attribute__ ((unused)),
 
  * @return		Parent Container
  */
-Container Container::getParent(Container this)
+Container Container::getParent()
 {
-	ASSERT(this, "Container::getParent: null this");
-
 	return this->parent;
 }
 
@@ -1205,10 +1126,8 @@ Container Container::getParent(Container this)
 
  * @return		Children count
  */
-int Container::getChildCount(Container this)
+int Container::getChildCount()
 {
-	ASSERT(this, "Container::getChildCount: null this");
-
 	return this->children ? VirtualList::getSize(this->children) : 0;
 }
 
@@ -1221,10 +1140,8 @@ int Container::getChildCount(Container this)
  * @param this	Function scope
  * @param name	Name
  */
-void Container::setName(Container this, const char* const name)
+void Container::setName(const char* const name)
 {
-	ASSERT(this, "Container::setName: null this");
-
 	if(this->name)
 	{
 		__DELETE_BASIC(this->name);
@@ -1257,10 +1174,8 @@ void Container::setName(Container this, const char* const name)
  *
  * @return		Name
  */
-char* Container::getName(Container this)
+char* Container::getName()
 {
-	ASSERT(this, "Container::getName: null this");
-
 	return this->name;
 }
 
@@ -1277,10 +1192,8 @@ char* Container::getName(Container this)
  *
  * @return			Child Container
  */
-static Container Container::findChildByName(Container this, VirtualList children, char* childName, bool recursive)
+Container Container::findChildByName(VirtualList children, char* childName, bool recursive)
 {
-	ASSERT(this, "Container::findChildByName: null this");
-
 	if(this->deleteMe)
 	{
 		return NULL;
@@ -1323,10 +1236,8 @@ static Container Container::findChildByName(Container this, VirtualList children
  *
  * @return			Child Container
  */
-Container Container::getChildByName(Container this, char* childName, bool recursive)
+Container Container::getChildByName(char* childName, bool recursive)
 {
-	ASSERT(this, "Container::getChildByName: null this");
-
 	Container foundChild = NULL;
 
 	if(!this->deleteMe && childName && this->children)
@@ -1352,10 +1263,8 @@ Container Container::getChildByName(Container this, char* childName, bool recurs
  *
  * @param this	Function scope
  */
-void Container::suspend(Container this)
+void Container::suspend()
 {
-	ASSERT(this, "Container::suspend: null this");
-
 	if(this->children)
 	{
 		Container::purgeChildren(this);
@@ -1379,10 +1288,8 @@ void Container::suspend(Container this)
  *
  * @param this	Function scope
  */
-void Container::resume(Container this)
+void Container::resume()
 {
-	ASSERT(this, "Container::resume: null this");
-
 	if(this->children)
 	{
 		VirtualNode node = this->children->head;
@@ -1407,10 +1314,8 @@ void Container::resume(Container this)
  *
  * @param this	Function scope
  */
-void Container::show(Container this)
+void Container::show()
 {
-	ASSERT(this, "Container::show: null this");
-
 	this->hidden = false;
 
 	if(this->children)
@@ -1434,10 +1339,8 @@ void Container::show(Container this)
  *
  * @param this	Function scope
  */
-void Container::hide(Container this)
+void Container::hide()
 {
-	ASSERT(this, "Container::hide: null this");
-
 	this->hidden = true;
 
 	if(this->children)
@@ -1461,9 +1364,7 @@ void Container::hide(Container this)
  *
  * @return		Where Container is hidden
  */
-bool Container::isHidden(Container this)
+bool Container::isHidden()
 {
-	ASSERT(this, "Container::isHidden: null this");
-
 	return this->hidden;
 }

@@ -96,47 +96,6 @@ enum StateOperations
  * @ingroup base
  */
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void Game::constructor(Game this);
-static void Game::initialize(Game this);
-static void Game::setNextState(Game this, GameState state);
-static u32 Game::processUserInput(Game this);
-inline static u32 Game::dispatchDelayedMessages(Game this);
-inline static void Game::updateLogic(Game this);
-inline static void Game::updatePhysics(Game this);
-inline static void Game::updateTransformations(Game this);
-inline static u32 Game::updateCollisions(Game this);
-void Game::synchronizeGraphics(Game this);
-bool Game::stream(Game this);
-inline static void Game::checkForNewState(Game this);
-inline static void Game::run(Game this);
-void Game::checkFrameRate(Game thi);
-static void Game::autoPause(Game this);
-#ifdef __LOW_BATTERY_INDICATOR
-static void Game::checkLowBattery(Game this, u16 keyPressed);
-static void Game::printLowBatteryIndicator(Game this, bool showIndicator);
-#endif
-
-#ifdef __SHOW_GAME_PROFILING
-void Game::showProfiling(Game this __attribute__ ((unused)), int x, int y);
-#endif
-
-void SpriteManager::sortLayersProgressively(SpriteManager this);
-void MessageDispatcher::processDiscardedMessages(MessageDispatcher this);
-void HardwareManager::checkMemoryMap();
-
-void VIPManager::allowDRAMAccess(VIPManager this, bool allowDRAMAccess);
-bool VIPManager::isRenderingPending(VIPManager this);
-
-#ifdef __PROFILE_GAME
-void Game::showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)));
-void Game::resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)));
-#endif
-
 #ifdef __PROFILE_GAME
 
 bool _updateProfiling = false;
@@ -221,16 +180,15 @@ static s16 _previousGameFrameTotalTime = 0;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-bool Game::isConstructed()
+static bool Game::isConstructed()
 {
 	return 0 < _singletonConstructed;
 }
 
-// class's constructor
-void __attribute__ ((noinline)) Game::constructor(Game this)
-{
-	ASSERT(this, "Game::constructor: null this");
 
+// class's constructor
+void Game::constructor()
+{
 	// check memory map before anything else
 	HardwareManager::checkMemoryMap();
 
@@ -275,6 +233,7 @@ void __attribute__ ((noinline)) Game::constructor(Game this)
 	I18n::getInstance();
 	ParamTableManager::getInstance();
 
+
 #ifdef __DEBUG_TOOLS
 	DebugState::getInstance();
 #endif
@@ -297,23 +256,19 @@ void __attribute__ ((noinline)) Game::constructor(Game this)
 }
 
 // class's destructor
-void Game::destructor(Game this)
+void Game::destructor()
 {
-	ASSERT(this, "Game::destructor: null this");
-
 	// destroy the clocks
 	Clock::destructor(this->clock);
 
 	__DELETE(this->stateMachine);
 
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 // setup engine parameters
-void Game::initialize(Game this)
+void Game::initialize()
 {
-	ASSERT(this, "Game::initialize: null this");
-
 	// setup vectorInterrupts
 	HardwareManager::setInterruptVectors(HardwareManager::getInstance());
 
@@ -331,9 +286,8 @@ void Game::initialize(Game this)
 }
 
 // set game's initial state
-void Game::start(Game this, GameState state)
+void Game::start(GameState state)
 {
-	ASSERT(this, "Game::start: null this");
 	ASSERT(state, "Game::start: initial state is NULL");
 
 	// initialize SRAM
@@ -453,10 +407,8 @@ void Game::start(Game this, GameState state)
 }
 
 // set game's state
-void Game::changeState(Game this, GameState state)
+void Game::changeState(GameState state)
 {
-	ASSERT(this, "Game::changeState: null this");
-
 	// state changing must be done when no other process
 	// may be affecting the game's general state
 	this->nextState = state;
@@ -464,10 +416,8 @@ void Game::changeState(Game this, GameState state)
 }
 
 // set game's state after cleaning the stack
-void Game::cleanAndChangeState(Game this, GameState state)
+void Game::cleanAndChangeState(GameState state)
 {
-	ASSERT(this, "Game::changeState: null this");
-
 	// state changing must be done when no other process
 	// may be affecting the game's general state
 	this->nextState = state;
@@ -475,10 +425,8 @@ void Game::cleanAndChangeState(Game this, GameState state)
 }
 
 // add a state to the game's state machine's stack
-void Game::addState(Game this, GameState state)
+void Game::addState(GameState state)
 {
-	ASSERT(this, "Game::changeState: null this");
-
 	// state changing must be done when no other process
 	// may be affecting the game's general state
 	this->nextState = state;
@@ -486,9 +434,8 @@ void Game::addState(Game this, GameState state)
 }
 
 // set game's state
-static void Game::setNextState(Game this, GameState state)
+void Game::setNextState(GameState state)
 {
-	ASSERT(this, "Game::setState: null this");
 	ASSERT(state, "Game::setState: setting NULL state");
 
 	// prevent the VIPManager to modify the DRAM
@@ -584,26 +531,20 @@ static void Game::setNextState(Game this, GameState state)
 }
 
 // disable interrupts
-void Game::disableHardwareInterrupts(Game this __attribute__ ((unused)))
+void Game::disableHardwareInterrupts()
 {
-	ASSERT(this, "Game::disableHardwareInterrupts: null this");
-
 	HardwareManager::disableInterrupts();
 }
 
 // enable interrupts
-void Game::enableHardwareInterrupts(Game this __attribute__ ((unused)))
+void Game::enableHardwareInterrupts()
 {
-	ASSERT(this, "Game::enableHardwareInterrupts: null this");
-
 	HardwareManager::enableInterrupts();
 }
 
 // erase engine's current status
-void Game::reset(Game this)
+void Game::reset()
 {
-	ASSERT(this, "Game::reset: null this");
-
 #ifdef	__MEMORY_POOL_CLEAN_UP
 	MemoryPool::cleanUp(MemoryPool::getInstance());
 #endif
@@ -639,10 +580,8 @@ void Game::reset(Game this)
 }
 
 // process input data according to the actual game status
-static u32 Game::processUserInput(Game this)
+u32 Game::processUserInput()
 {
-	ASSERT(this, "Game::processUserInput: null this");
-
 	if(!KeypadManager::isEnabled(this->keypadManager))
 	{
 		return false;
@@ -722,9 +661,7 @@ static u32 Game::processUserInput(Game this)
 
 	// check code to access special feature
 	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RR))
-	{
-
-		if(Game::isInAnimationInspector(this))
+	{		if(Game::isInAnimationInspector(this))
 		{
 			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
 			StateMachine::popState(this->stateMachine);
@@ -790,7 +727,7 @@ static u32 Game::processUserInput(Game this)
 	return userInput.pressedKey | userInput.releasedKey;
 }
 
-inline static u32 Game::dispatchDelayedMessages(Game this __attribute__ ((unused)))
+u32 Game::dispatchDelayedMessages()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -831,7 +768,7 @@ inline static u32 Game::dispatchDelayedMessages(Game this __attribute__ ((unused
 }
 
 // update game's logic subsystem
-inline static void Game::updateLogic(Game this)
+void Game::updateLogic()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -880,7 +817,7 @@ inline static void Game::updateLogic(Game this)
 }
 
 // update game's rendering subsystem
-void Game::synchronizeGraphics(Game this __attribute__ ((unused)))
+void Game::synchronizeGraphics()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -923,7 +860,7 @@ void Game::synchronizeGraphics(Game this __attribute__ ((unused)))
 }
 
 // update game's physics subsystem
-inline static void Game::updatePhysics(Game this)
+void Game::updatePhysics()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -947,7 +884,8 @@ inline static void Game::updatePhysics(Game this)
 #endif
 }
 
-inline static void Game::updateTransformations(Game this)
+
+void Game::updateTransformations()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -977,7 +915,7 @@ inline static void Game::updateTransformations(Game this)
 #endif
 }
 
-inline static u32 Game::updateCollisions(Game this)
+u32 Game::updateCollisions()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -1006,7 +944,7 @@ inline static u32 Game::updateCollisions(Game this)
 #endif
 }
 
-bool Game::stream(Game this)
+bool Game::stream()
 {
 #ifdef __PROFILE_GAME
 	_renderingProcessTimeHelper = 0;
@@ -1033,10 +971,8 @@ bool Game::stream(Game this)
 #endif
 }
 
-inline static void Game::checkForNewState(Game this)
+void Game::checkForNewState()
 {
-	ASSERT(this, "Game::checkForNewState: null this");
-
 	if(this->nextState)
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
@@ -1061,12 +997,12 @@ inline static void Game::checkForNewState(Game this)
 	}
 }
 
-void Game::increaseGameFrameDuration(Game this, u32 gameFrameDuration)
+void Game::increaseGameFrameDuration(u32 gameFrameDuration)
 {
 	this->gameFrameTotalTime += gameFrameDuration;
 }
 
-void Game::checkFrameRate(Game this)
+void Game::checkFrameRate()
 {
 	if(Game::isInSpecialMode(this))
 	{
@@ -1147,13 +1083,13 @@ void Game::checkFrameRate(Game this)
 	TimerManager::enable(this->timerManager, true);
 }
 
-void Game::currentFrameEnded(Game this)
+void Game::currentFrameEnded()
 {
 	// raise flag to allow the next frame to start
 	this->currentFrameEnded = true;
 }
 
-inline static void Game::run(Game this)
+void Game::run()
 {
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
@@ -1196,17 +1132,16 @@ inline static void Game::run(Game this)
 }
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-void Game::setLastProcessName(Game this, char* processName)
-{
-	ASSERT(this, "Game::setLastProcessName: null this");
-	this->lastProcessName = processName;
+void Game::setLastProcessName(char* processName)
+{	this->lastProcessName = processName;
 }
 #endif
 
+
+
 // process a telegram
-bool Game::handleMessage(Game this, Telegram telegram)
+bool Game::handleMessage(Telegram telegram)
 {
-	ASSERT(this, "Game::handleMessage: null this");
 	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
 
 	switch(Telegram::getMessage(telegram))
@@ -1230,85 +1165,65 @@ bool Game::handleMessage(Game this, Telegram telegram)
 }
 
 // retrieve time
-u32 Game::getTime(Game this)
+u32 Game::getTime()
 {
-	ASSERT(this, "Game::getTime: null this");
-
 	return Clock::getTime(this->clock);
 }
 
 // retrieve clock
-Clock Game::getClock(Game this)
+Clock Game::getClock()
 {
-	ASSERT(this, "Game::getClock: null this");
-
 	return this->clock;
 }
 
 // retrieve in game clock
-Clock Game::getMessagingClock(Game this)
+Clock Game::getMessagingClock()
 {
-	ASSERT(this, "Game::getMessagingClock: null this");
-
 	return GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve animations' clock
-Clock Game::getUpdateClock(Game this)
+Clock Game::getUpdateClock()
 {
-	ASSERT(this, "Game::getUpdateClock: null this");
-
 	return GameState::getUpdateClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve in physics' clock
-Clock Game::getPhysicsClock(Game this)
+Clock Game::getPhysicsClock()
 {
-	ASSERT(this, "Game::getPhysicsClock: null this");
-
 	return GameState::getPhysicsClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve last process' name
-char* Game::getLastProcessName(Game this)
+char* Game::getLastProcessName()
 {
-	ASSERT(this, "Game::getLastProcessName: null this");
-
 	return this->lastProcessName;
 }
 
 #ifdef __DEBUG_TOOLS
-bool Game::isInDebugMode(Game this)
+bool Game::isInDebugMode()
 {
-	ASSERT(this, "Game::isInDebugMode: null this");
-
 	return StateMachine::getCurrentState(this->stateMachine) == (State)DebugState::getInstance();
 }
 #endif
 
 #ifdef __STAGE_EDITOR
-bool Game::isInStageEditor(Game this)
+bool Game::isInStageEditor()
 {
-	ASSERT(this, "Game::isInStageEditor: null this");
-
 	return StateMachine::getCurrentState(this->stateMachine) == (State)StageEditorState::getInstance();
 }
 #endif
 
 #ifdef __ANIMATION_INSPECTOR
-bool Game::isInAnimationInspector(Game this)
+bool Game::isInAnimationInspector()
 {
-	ASSERT(this, "Game::isInAnimationInspector: null this");
-
 	return StateMachine::getCurrentState(this->stateMachine) == (State)AnimationInspectorState::getInstance();
 }
 #endif
 
 // whether if a special mode is active
-bool Game::isInSpecialMode(Game this __attribute__ ((unused)))
+bool Game::isInSpecialMode()
 {
-	ASSERT(this, "Game::isInSpecialMode: null this");
-
 	int isInSpecialMode = false;
 
 #ifdef __DEBUG_TOOLS
@@ -1325,10 +1240,8 @@ bool Game::isInSpecialMode(Game this __attribute__ ((unused)))
 }
 
 // whether if a special mode is being started
-bool Game::isEnteringSpecialMode(Game this __attribute__ ((unused)))
+bool Game::isEnteringSpecialMode()
 {
-	ASSERT(this, "Game::isInSpecialMode: null this");
-
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
 	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState::getInstance()) == this->nextState;
@@ -1344,10 +1257,8 @@ bool Game::isEnteringSpecialMode(Game this __attribute__ ((unused)))
 }
 
 // whether if a special mode is being started
-bool Game::isExitingSpecialMode(Game this __attribute__ ((unused)))
+bool Game::isExitingSpecialMode()
 {
-	ASSERT(this, "Game::isInSpecialMode: null this");
-
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
 	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState::getInstance()) == this->nextState;
@@ -1363,18 +1274,14 @@ bool Game::isExitingSpecialMode(Game this __attribute__ ((unused)))
 }
 
 // retrieve state machine, use with caution!!!
-StateMachine Game::getStateMachine(Game this)
+StateMachine Game::getStateMachine()
 {
-	ASSERT(this, "Game::getStateMachine: null this");
-
 	return this->stateMachine;
 }
 
 // retrieve the current level's stage
-Stage Game::getStage(Game this)
+Stage Game::getStage()
 {
-	ASSERT(this, "Game::getStage: null this");
-
 	if(Game::isInSpecialMode(this))
 	{
 		return GameState::getStage(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
@@ -1384,17 +1291,13 @@ Stage Game::getStage(Game this)
 }
 
 // retrieve current state
-GameState Game::getCurrentState(Game this)
+GameState Game::getCurrentState()
 {
-	ASSERT(this, "Game::getCurrentState: null this");
-
 	return __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
 }
 
-PhysicalWorld Game::getPhysicalWorld(Game this)
+PhysicalWorld Game::getPhysicalWorld()
 {
-	ASSERT(this, "Game::PhysicalWorld: null this");
-
 	if(Game::isInSpecialMode(this))
 	{
 		return GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
@@ -1403,10 +1306,8 @@ PhysicalWorld Game::getPhysicalWorld(Game this)
 	return GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
 }
 
-CollisionManager Game::getCollisionManager(Game this)
+CollisionManager Game::getCollisionManager()
 {
-	ASSERT(this, "Game::getCollisionManager: null this");
-
 	if(Game::isInSpecialMode(this))
 	{
 		return GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
@@ -1417,10 +1318,8 @@ CollisionManager Game::getCollisionManager(Game this)
 
 #ifdef __LOW_BATTERY_INDICATOR
 // low battery indicator check
-static void Game::checkLowBattery(Game this, u16 keypad)
+void Game::checkLowBattery(u16 keypad)
 {
-	ASSERT(this, "Game::checkLowBatteryIndicator: null this");
-
 	if(keypad & K_PWR)
 	{
 		if(!this->isShowingLowBatteryIndicator)
@@ -1441,19 +1340,16 @@ static void Game::checkLowBattery(Game this, u16 keypad)
 }
 
 // print low battery indicator
-static void Game::printLowBatteryIndicator(Game this, bool showIndicator)
+void Game::printLowBatteryIndicator(bool showIndicator)
 {
-	ASSERT(this, "Game::printLowBatteryIndicator: null this");
-
 	Printing::text(Printing::getInstance(), (showIndicator) ? __CHAR_BATTERY : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
 	MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
 }
 #endif
 
 // pause
-void Game::pause(Game this, GameState pauseState)
+void Game::pause(GameState pauseState)
 {
-	ASSERT(this, "Game::pause: null this");
 	ASSERT(pauseState, "Game::pause: null pauseState");
 
 	if(pauseState)
@@ -1464,9 +1360,8 @@ void Game::pause(Game this, GameState pauseState)
 }
 
 // resume game
-void Game::unpause(Game this, GameState pauseState)
+void Game::unpause(GameState pauseState)
 {
-	ASSERT(this, "Game::unpause: null this");
 	ASSERT(pauseState, "Game::unpause: null pauseState");
 	ASSERT(pauseState == this->currentState, "Game::unpause: null pauseState sent is not the current one");
 
@@ -1484,25 +1379,19 @@ void Game::unpause(Game this, GameState pauseState)
 }
 
 // set auto pause state
-void Game::setAutomaticPauseState(Game this, GameState automaticPauseState)
-{
-	ASSERT(this, "Game::setAutomaticPauseState: null this");
-	this->automaticPauseState = automaticPauseState;
+void Game::setAutomaticPauseState(GameState automaticPauseState)
+{	this->automaticPauseState = automaticPauseState;
 }
 
 // get auto pause state
-GameState Game::getAutomaticPauseState(Game this)
+GameState Game::getAutomaticPauseState()
 {
-	ASSERT(this, "Game::getAutomaticPauseState: null this");
-
 	return this->automaticPauseState;
 }
 
 // show auto pause camera
-static void Game::autoPause(Game this)
+void Game::autoPause()
 {
-	ASSERT(this, "Game::autoPause: null this");
-
 	if(this->automaticPauseState)
 	{
 		// only pause if no more than one state is active
@@ -1518,43 +1407,33 @@ static void Game::autoPause(Game this)
 	}
 }
 
-void Game::disableKeypad(Game this)
+void Game::disableKeypad()
 {
-	ASSERT(this, "Game::disableKeyPad: null this");
-
 	KeypadManager::disable(this->keypadManager);
 }
 
-void Game::enableKeypad(Game this)
+void Game::enableKeypad()
 {
-	ASSERT(this, "Game::enableKeypad: null this");
-
 	KeypadManager::enable(this->keypadManager);
 }
 
 
-void Game::pushFrontProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void Game::pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "Game::pushFrontPostProcessingEffect: null this");
-
 	VIPManager::pushFrontPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::pushBackProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void Game::pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "Game::pushBackPostProcessingEffect: null this");
-
 	VIPManager::pushBackPostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::removePostProcessingEffect(Game this, PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
+void Game::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
-	ASSERT(this, "Game::removePostProcessingEffect: null this");
-
 	VIPManager::removePostProcessingEffect(this->vipManager, postProcessingEffect, spatialObject);
 }
 
-void Game::wait(Game this, u32 milliSeconds)
+void Game::wait(u32 milliSeconds)
 {
 	ASSERT(this, "Game::wait: this null");
 
@@ -1562,14 +1441,14 @@ void Game::wait(Game this, u32 milliSeconds)
 }
 
 #ifdef __PROFILE_GAME
-void Game::saveProcessNameDuringFRAMESTART(Game this __attribute__ ((unused)))
+void Game::saveProcessNameDuringFRAMESTART()
 {
 	ASSERT(this, "Game::saveProcessNameDuringFRAMESTART: this null");
 
 	_processNameDuringFRAMESTART = this->lastProcessName;
 }
 
-void Game::saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
+void Game::saveProcessNameDuringXPEND()
 {
 	ASSERT(this, "Game::saveProcessNameDuringXPEND: this null");
 
@@ -1578,7 +1457,7 @@ void Game::saveProcessNameDuringXPEND(Game this __attribute__ ((unused)))
 #endif
 
 #ifdef __SHOW_GAME_PROFILING
-void Game::showProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game::showProfiling(int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
@@ -1717,7 +1596,7 @@ void Game::showProfiling(Game this __attribute__ ((unused)), int x __attribute__
 #endif
 
 #ifdef __PROFILE_GAME
-void Game::showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game::showCurrentGameFrameProfiling(int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showCurrentGameFrameProfiling: this null");
 
@@ -1845,7 +1724,7 @@ void Game::showCurrentGameFrameProfiling(Game this __attribute__ ((unused)), int
 }
 #endif
 
-void Game::showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Game::showLastGameFrameProfiling(int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showLastGameFrameProfiling: this null");
 
@@ -1946,7 +1825,7 @@ void Game::showLastGameFrameProfiling(Game this __attribute__ ((unused)), int x 
 #endif
 }
 
-void Game::resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 gameFrameDuration __attribute__ ((unused)))
+void Game::resetCurrentFrameProfiling(s32 gameFrameDuration __attribute__ ((unused)))
 {
 	ASSERT(this, "Game::showProfiling: this null");
 
@@ -1979,7 +1858,7 @@ void Game::resetCurrentFrameProfiling(Game this __attribute__ ((unused)), s32 ga
 #endif
 }
 
-void Game::resetProfiling(Game this __attribute__ ((unused)))
+void Game::resetProfiling()
 {
 	ASSERT(this, "Game::resetProfiling: this null");
 
@@ -2050,4 +1929,3 @@ void Game::resetProfiling(Game this __attribute__ ((unused)))
 	_processNameDuringXPEND = NULL;
 #endif
 }
-

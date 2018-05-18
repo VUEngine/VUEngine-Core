@@ -93,23 +93,24 @@ singleton class HardwareManager : Object
     static int getStackPointer();
     static int getLinkPointer();
     static int getPSW();
+	static void checkMemoryMap();
 
-	void clearScreen(HardwareManager this);
-	void disableKeypad(HardwareManager this);
-	void disableRendering(HardwareManager this);
-	void displayOff(HardwareManager this);
-	void displayOn(HardwareManager this);
-	void enableKeypad(HardwareManager this);
-	void enableRendering(HardwareManager this);
-	void initializeTimer(HardwareManager this);
-	void lowerBrightness(HardwareManager this);
-	void print(HardwareManager this, int x, int y);
-	void setInterruptLevel(HardwareManager this, u8 level);
-	void setInterruptVectors(HardwareManager this);
-	void setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition);
-	void upBrightness(HardwareManager this);
-	void checkStackStatus(HardwareManager this);
-	void printStackStatus(HardwareManager this, int x, int y, bool resumed);
+	void clearScreen();
+	void disableKeypad();
+	void disableRendering();
+	void displayOff();
+	void displayOn();
+	void enableKeypad();
+	void enableRendering();
+	void initializeTimer();
+	void lowerBrightness();
+	void print(int x, int y);
+	void setInterruptLevel(u8 level);
+	void setInterruptVectors();
+	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
+	void upBrightness();
+	void checkStackStatus();
+	void printStackStatus(int x, int y, bool resumed);
 }
 
 

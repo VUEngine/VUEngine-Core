@@ -94,17 +94,17 @@ singleton class BgmapTextureManager : Object
 	s16 printingBgmapSegment;
 
 	static BgmapTextureManager getInstance();
-	void allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture);
-	void calculateAvailableBgmapSegments(BgmapTextureManager this);
-	s16 getAvailableBgmapSegmentsForTextures(BgmapTextureManager this);
-	s16 getPrintingBgmapSegment(BgmapTextureManager this);
-	BgmapTexture getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
-	s16 getXOffset(BgmapTextureManager this, int id);
-	s16 getYOffset(BgmapTextureManager this, int id);
-	void print(BgmapTextureManager this, int x, int y);
-	void releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture);
-	void reset(BgmapTextureManager this);
-	void setSpareBgmapSegments(BgmapTextureManager this, u8 paramTableSegments);
+	void allocateText(BgmapTexture bgmapTexture);
+	void calculateAvailableBgmapSegments();
+	s16 getAvailableBgmapSegmentsForTextures();
+	s16 getPrintingBgmapSegment();
+	BgmapTexture getTexture(BgmapTextureDefinition* bgmapTextureDefinition);
+	s16 getXOffset(int id);
+	s16 getYOffset(int id);
+	void print(int x, int y);
+	void releaseTexture(BgmapTexture bgmapTexture);
+	void reset();
+	void setSpareBgmapSegments(u8 paramTableSegments);
 }
 
 

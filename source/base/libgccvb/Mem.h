@@ -41,12 +41,14 @@
 //											FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-void Mem_clear(BYTE* destination, u32 numberOfBYTES);
-void Mem_copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES);
-void Mem_copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
-void Mem_copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
-void Mem_addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
-void Mem_addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
-
+static class Mem : Object
+{
+	static void clear(BYTE* destination, u32 numberOfBYTES);
+	static void copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES);
+	static void copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
+	static void copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS);
+	static void addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
+	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
+}
 
 #endif

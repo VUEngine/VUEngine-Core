@@ -41,22 +41,13 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void UiContainer::constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition)
+void UiContainer::constructor(UiContainerDefinition* uiContainerDefinition)
 {
-	ASSERT(this, "UiContainer::constructor: null this");
-
 	// construct base object
 	Base::constructor(NULL);
 
@@ -65,19 +56,16 @@ void UiContainer::constructor(UiContainer this, UiContainerDefinition* uiContain
 }
 
 // class's destructor
-void UiContainer::destructor(UiContainer this)
+void UiContainer::destructor()
 {
-	ASSERT(this, "UiContainer::destructor: null this");
-
 	// destroy base
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
 // add entities
-void UiContainer::addEntities(UiContainer this, PositionedEntity* entities)
+void UiContainer::addEntities(PositionedEntity* entities)
 {
-	ASSERT(this, "UiContainer::addEntities: null this");
 	ASSERT(entities, "UiContainer::addEntities: null entities");
 
 	static int internalId = 0;
@@ -105,10 +93,8 @@ void UiContainer::addEntities(UiContainer this, PositionedEntity* entities)
 }
 
 // transformation
-void UiContainer::transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void UiContainer::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "UiContainer::transform: null this");
-
 	Camera camera = Camera::getInstance();
 	ASSERT(camera, "UiContainer::transform: null camera");
 
@@ -120,10 +106,8 @@ void UiContainer::transform(UiContainer this, const Transformation* environmentT
 }
 
 // transformation
-void UiContainer::initialTransform(UiContainer this, const Transformation* environmentTransform, u32 recursive)
+void UiContainer::initialTransform(const Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "UiContainer::initialTransform: null this");
-
 	Camera camera = Camera::getInstance();
 	ASSERT(camera, "UiContainer::initialTransform: null camera");
 

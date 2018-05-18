@@ -38,10 +38,8 @@
 singleton class DirectDraw : Object
 {
 	static DirectDraw getInstance();
-	void drawBlackPixel(DirectDraw this, u32 buffer, u16 x, u16 y);
-	void drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toPoint, int color);
-	void drawPixel(DirectDraw this, u32 buffer, u16 x, u16 y, int color);
-	void drawPoint(DirectDraw this, PixelVector point, int color);
+	void drawLine(PixelVector fromPoint, PixelVector toPoint, int color);
+	void drawPoint(PixelVector point, int color);
 }
 
 

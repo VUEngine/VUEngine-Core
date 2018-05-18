@@ -44,10 +44,10 @@ singleton class FrameRate : Object
 	u16 fps;
 
 	static FrameRate getInstance();
-	u16 getFps(FrameRate this);
-	void increaseFps(FrameRate this);
-	void print(FrameRate this, int col, int row);
-	void reset(FrameRate this);
+	u16 getFps();
+	void increaseFps();
+	void print(int col, int row);
+	void reset();
 }
 
 

@@ -37,10 +37,10 @@
 singleton class StageEditorState : GameState
 {
 	static StageEditorState getInstance();
-	override void enter(StageEditorState this, void* owner);
-	override void execute(StageEditorState this, void* owner);
-	override void exit(StageEditorState this, void* owner);
-	override void processUserInput(StageEditorState this, UserInput userInput);
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void processUserInput(UserInput userInput);
 }
 
 

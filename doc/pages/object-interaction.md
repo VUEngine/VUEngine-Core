@@ -48,10 +48,10 @@ Message propagation
 
 The Container implements a passMessage method that allows the propagation of a message to all its descendants. For example, to propagate a message through all the descendants of a Stage use the following call:
 
-	Container_propagateMessage(stage, Container_onPropagatedMessage, message);
+	Container_propagateMessage(stage, Container::onPropagatedMessage, message);
  
 Then, to react to the message, override the following method in your class:
 
-	bool Container_handlePropagatedMessage(Container this, int message);
+	bool Container_handlePropagatedMessage(int message);
 
 Message propagation stops when handlePropagatedMessage returns true.

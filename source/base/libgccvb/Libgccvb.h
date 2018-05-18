@@ -23,7 +23,11 @@
 
 #include <Types.h>
 #include <Math.h>
-#include <SpaceMath.h>
+#include <Vector3D.h>
+#include <Size.h>
+#include <Optical.h>
+#include <PixelVector.h>
+#include <PixelSize.h>
 
 
 #endif

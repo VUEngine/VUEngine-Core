@@ -66,10 +66,8 @@
  *
  * @param this	Function scope
  */
-void Sphere::constructor(Sphere this, Vector3D center, fix10_6 radius)
+void Sphere::constructor(Vector3D center, fix10_6 radius)
 {
-	ASSERT(this, "Sphere::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -85,10 +83,8 @@ void Sphere::constructor(Sphere this, Vector3D center, fix10_6 radius)
  *
  * @param this	Function scope
  */
-void Sphere::destructor(Sphere this)
+void Sphere::destructor()
 {
-	ASSERT(this, "Sphere::destructor: null this");
-
 	Wireframe::hide(__SAFE_CAST(Wireframe, this));
 
 	// destroy the super object
@@ -105,10 +101,8 @@ void Sphere::destructor(Sphere this)
  * @param this					Function scope
  * @return 						Sphere's center
  */
-Vector3D Sphere::getCenter(Sphere this)
+Vector3D Sphere::getCenter()
 {
-	ASSERT(this, "Sphere::getCenter: null this");
-
 	return this->center;
 }
 
@@ -121,10 +115,8 @@ Vector3D Sphere::getCenter(Sphere this)
  * @param this					Function scope
  * @param center 				New value
  */
-void Sphere::setCenter(Sphere this, Vector3D center)
+void Sphere::setCenter(Vector3D center)
 {
-	ASSERT(this, "Sphere::destructor: null this");
-
 	this->center = center;
 }
 
@@ -137,10 +129,8 @@ void Sphere::setCenter(Sphere this, Vector3D center)
  * @param this					Function scope
  * @return 						Sphere's radius
  */
-fix10_6 Sphere::getRadius(Sphere this)
+fix10_6 Sphere::getRadius()
 {
-	ASSERT(this, "Sphere::destructor: null this");
-
 	return this->radius;
 }
 
@@ -153,10 +143,8 @@ fix10_6 Sphere::getRadius(Sphere this)
  * @param this					Function scope
  * @param radius 				New value
  */
-void Sphere::setRadius(Sphere this, fix10_6 radius)
+void Sphere::setRadius(fix10_6 radius)
 {
-	ASSERT(this, "Sphere::destructor: null this");
-
 	this->radius = __ABS(radius);
 }
 
@@ -170,10 +158,8 @@ void Sphere::setRadius(Sphere this, fix10_6 radius)
  * @param this					Function scope
  * @param calculateParallax		Tru to compute the parallax displacement for each pixel
  */
-void Sphere::draw(Sphere this, bool calculateParallax)
+void Sphere::draw(bool calculateParallax)
 {
-	ASSERT(this, "Sphere::draw: null this");
-
 	int color = __COLOR_BRIGHT_RED;
 
 	Vector3D normalizedCenter3D = Vector3D::getRelativeToCamera(this->center);

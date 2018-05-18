@@ -58,10 +58,6 @@ typedef struct Event
 } Event;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 // to speed things up
 extern MemoryPool _memoryPool;
 
@@ -78,10 +74,8 @@ extern MemoryPool _memoryPool;
  *
  * @param this	Function scope
  */
-void Object::constructor(Object this)
+void Object::constructor()
 {
-	ASSERT(this, "Object::destructor: null this");
-
 	this->events = NULL;
 }
 
@@ -93,9 +87,8 @@ void Object::constructor(Object this)
  *
  * @param this	Function scope
  */
-void Object::destructor(Object this)
+void Object::destructor()
 {
-	ASSERT(this, "Object::destructor: null this");
 	ASSERT(__IS_OBJECT_ALIVE(this), "Object::destructor: already deleted this");
 
 	if(this->events)
@@ -130,10 +123,8 @@ void Object::destructor(Object this)
  *
  * @return			Always returns false, this is meant to be used only in derived classes
  */
-bool Object::handleMessage(Object this __attribute__ ((unused)), void* telegram __attribute__ ((unused)))
+bool Object::handleMessage(Telegram telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "Object::handleMessage: null this");
-
 	return false;
 }
 
@@ -148,10 +139,8 @@ bool Object::handleMessage(Object this __attribute__ ((unused)), void* telegram 
  * @param method		The method to execute on event
  * @param eventCode		The code of the event to listen to
  */
-void Object::addEventListener(Object this, Object listener, EventListener method, u32 eventCode)
+void Object::addEventListener(Object listener, EventListener method, u32 eventCode)
 {
-	ASSERT(this, "Object::addEventListener: null this");
-
 	if(!listener || !method)
 	{
 		return;
@@ -196,10 +185,8 @@ void Object::addEventListener(Object this, Object listener, EventListener method
  * @param method		The method attached to event listener
  * @param eventCode		The code of the event
  */
-void Object::removeEventListener(Object this, Object listener, EventListener method, u32 eventCode)
+void Object::removeEventListener(Object listener, EventListener method, u32 eventCode)
 {
-	ASSERT(this, "Object::removeEventListener: null this");
-
 	if(this->events)
 	{
 		VirtualNode node = this->events->head;
@@ -229,10 +216,8 @@ void Object::removeEventListener(Object this, Object listener, EventListener met
  * @param listener		Object where event listener is registered at
  * @param eventCode		The code of the event
  */
-void Object::removeEventListeners(Object this, Object listener, u32 eventCode)
+void Object::removeEventListeners(Object listener, u32 eventCode)
 {
-	ASSERT(this, "Object::removeEventListeners: null this");
-
 	if(this->events)
 	{
 		VirtualList eventsToRemove = __NEW(VirtualList);
@@ -277,10 +262,8 @@ void Object::removeEventListeners(Object this, Object listener, u32 eventCode)
  * @param this			Function scope
  * @param eventCode		The code of the event
  */
-void Object::removeAllEventListeners(Object this, u32 eventCode)
+void Object::removeAllEventListeners(u32 eventCode)
 {
-	ASSERT(this, "Object::removeEventListeners: null this");
-
 	if(this->events)
 	{
 		VirtualList eventsToRemove = __NEW(VirtualList);
@@ -325,10 +308,8 @@ void Object::removeAllEventListeners(Object this, u32 eventCode)
  * @param this			Function scope
  * @param eventCode		The code of the event
  */
-void Object::fireEvent(Object this, u32 eventCode)
+void Object::fireEvent(u32 eventCode)
 {
-	ASSERT(this, "Object::fireEvent: null this");
-
 	if(this->events)
 	{
 		// temporal lists to being able to modify the event lists while firing them
@@ -402,7 +383,7 @@ void Object::fireEvent(Object this, u32 eventCode)
  *
  * @return								Casted Object
  */
-Object Object::getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
+Object Object::getCast(ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
 {
 	static int lp = -1;
 	static int sp = -1;
@@ -413,7 +394,7 @@ Object Object::getCast(Object this, ObjectBaseClassPointer targetClassGetClassMe
 		asm(" mov lp,%0  ": "=r" (lp));
 	}
 
-	ASSERT(this, "Object::getCast: null this");
+
 
 	if(!this)
 	{
@@ -478,10 +459,8 @@ Object Object::getCast(Object this, ObjectBaseClassPointer targetClassGetClassMe
  *
  * @return		vTable pointer
  */
-const void* Object::getVTable(Object this)
+const void* Object::getVTable()
 {
-	ASSERT(this, "Object::getVTable: null this");
-
 	return this->vTable;
 }
 

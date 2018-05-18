@@ -47,18 +47,6 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static Particle ParticleSystem::recycleParticle(ParticleSystem this);
-static Particle ParticleSystem::spawnParticle(ParticleSystem this);
-static void ParticleSystem::processExpiredParticles(ParticleSystem this);
-static void ParticleSystem::particleExpired(ParticleSystem this, Particle particle);
-static int ParticleSystem::computeNextSpawnTime(ParticleSystem this);
-static const Vector3D* ParticleSystem::getParticleSpawnPosition(ParticleSystem this, long seed);
-static const Force* ParticleSystem::getParticleSpawnForce(ParticleSystem this, long seed);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -76,10 +64,8 @@ static const Force* ParticleSystem::getParticleSpawnForce(ParticleSystem this, l
  * @param internalId
  * @param name
  */
-void ParticleSystem::constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
+void ParticleSystem::constructor(ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "ParticleSystem::constructor: null this");
-
 	// construct base
 	Base::constructor(&particleSystemDefinition->entityDefinition, id, internalId, name);
 
@@ -114,10 +100,8 @@ void ParticleSystem::constructor(ParticleSystem this, ParticleSystemDefinition* 
  *
  * @param this	Function scope
  */
-void ParticleSystem::destructor(ParticleSystem this)
+void ParticleSystem::destructor()
 {
-	ASSERT(this, "ParticleSystem::destructor: null this");
-
 	ParticleSystem::processExpiredParticles(this);
 
 	ParticleRemover particleRemover = Stage::getParticleRemover(Game::getStage(Game::getInstance()));
@@ -185,10 +169,8 @@ void ParticleSystem::destructor(ParticleSystem this)
  *
  * @param this	Function scope
  */
-static void ParticleSystem::processExpiredParticles(ParticleSystem this)
+void ParticleSystem::processExpiredParticles()
 {
-	ASSERT(this, "ParticleSystem::processExpiredParticles: null this");
-
 	VirtualNode node = this->expiredParticles->head;
 
 	if(this->particleSystemDefinition->recycleParticles)
@@ -225,10 +207,8 @@ static void ParticleSystem::processExpiredParticles(ParticleSystem this)
  * @param this			Function scope
  * @param elapsedTime
  */
-void ParticleSystem::update(ParticleSystem this, u32 elapsedTime)
+void ParticleSystem::update(u32 elapsedTime)
 {
-	ASSERT(this, "ParticleSystem::update: null this");
-
 	Base::update(this, elapsedTime);
 
 	ParticleSystem::processExpiredParticles(this);
@@ -282,10 +262,8 @@ void ParticleSystem::update(ParticleSystem this, u32 elapsedTime)
  *
  * @return		Particle
  */
-static Particle ParticleSystem::recycleParticle(ParticleSystem this)
+Particle ParticleSystem::recycleParticle()
 {
-	ASSERT(this, "ParticleSystem::recycleParticle: null this");
-
 	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemDefinition->maximumNumberOfAliveParticles))
 	{
 		long seed = Utilities::randomSeed();
@@ -320,10 +298,8 @@ static Particle ParticleSystem::recycleParticle(ParticleSystem this)
  *
  * @return		Spawn position
  */
-static const Vector3D* ParticleSystem::getParticleSpawnPosition(ParticleSystem this, long seed)
+const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
 {
-	ASSERT(this, "ParticleSystem::getParticleSpawnPosition: null this");
-
 	static Vector3D position =
 	{
 		0, 0, 0
@@ -345,10 +321,8 @@ static const Vector3D* ParticleSystem::getParticleSpawnPosition(ParticleSystem t
  *
  * @return		Force
  */
-static const Force* ParticleSystem::getParticleSpawnForce(ParticleSystem this, long seed)
+const Force* ParticleSystem::getParticleSpawnForce(long seed)
 {
-	ASSERT(this, "ParticleSystem::getParticleSpawnForce: null this");
-
 	static Force force =
 	{
 		0, 0, 0
@@ -369,10 +343,8 @@ static const Force* ParticleSystem::getParticleSpawnForce(ParticleSystem this, l
  *
  * @param this	Function scope
  */
-void ParticleSystem::spawnAllParticles(ParticleSystem this)
+void ParticleSystem::spawnAllParticles()
 {
-	ASSERT(this, "ParticleSystem::spawnAllParticles: null this");
-
 	while(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 	{
 		if(this->particleSystemDefinition->recycleParticles)
@@ -396,10 +368,8 @@ void ParticleSystem::spawnAllParticles(ParticleSystem this)
  *
  * @param this	Function scope
  */
-static Particle ParticleSystem::spawnParticle(ParticleSystem this)
+Particle ParticleSystem::spawnParticle()
 {
-	ASSERT(this, "ParticleSystem::spawnParticle: null this");
-
 	long seed = Utilities::randomSeed();
 
 	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities::random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
@@ -427,10 +397,8 @@ static Particle ParticleSystem::spawnParticle(ParticleSystem this)
  * @param this					Function scope
  * @param environmentTransform
  */
-void ParticleSystem::transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "ParticleSystem::transform: null this");
-
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	ParticleSystem::processExpiredParticles(this);
@@ -452,10 +420,8 @@ void ParticleSystem::transform(ParticleSystem this, const Transformation* enviro
  *
  * @param this	Function scope
  */
-void ParticleSystem::synchronizeGraphics(ParticleSystem this)
+void ParticleSystem::synchronizeGraphics()
 {
-	ASSERT(this, "ParticleSystem::synchronizeGraphics: null this");
-
 	VirtualNode node = this->particles->head;
 
 	bool updateSprites = this->invalidateSprites ? true : false;
@@ -479,10 +445,8 @@ void ParticleSystem::synchronizeGraphics(ParticleSystem this)
  *
  * @return			Always returns false
  */
-bool ParticleSystem::handleMessage(ParticleSystem this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
+bool ParticleSystem::handleMessage(Telegram telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "ParticleSystem::handleMessage: null this");
-
 	return false;
 }
 
@@ -492,10 +456,8 @@ bool ParticleSystem::handleMessage(ParticleSystem this __attribute__ ((unused)),
  *
  * @param this	Function scope
  */
-void ParticleSystem::show(ParticleSystem this)
+void ParticleSystem::show()
 {
-	ASSERT(this, "ParticleSystem::show: null this");
-
 	Base::show(this);
 
 	VirtualNode node = this->particles->head;
@@ -512,10 +474,8 @@ void ParticleSystem::show(ParticleSystem this)
  *
  * @param this	Function scope
  */
-void ParticleSystem::hide(ParticleSystem this)
+void ParticleSystem::hide()
 {
-	ASSERT(this, "ParticleSystem::hide: null this");
-
 	Base::hide(this);
 
 	VirtualNode node = this->particles->head;
@@ -532,10 +492,8 @@ void ParticleSystem::hide(ParticleSystem this)
  *
  * @param this	Function scope
  */
-void ParticleSystem::resume(ParticleSystem this)
+void ParticleSystem::resume()
 {
-	ASSERT(this, "ParticleSystem::resume: null this");
-
 	Base::resume(this);
 
 	VirtualNode node = this->particles->head;
@@ -572,10 +530,8 @@ void ParticleSystem::resume(ParticleSystem this)
  *
  * @param this	Function scope
  */
-void ParticleSystem::suspend(ParticleSystem this)
+void ParticleSystem::suspend()
 {
-	ASSERT(this, "ParticleSystem::suspend: null this");
-
 	Base::suspend(this);
 
 	ParticleSystem::processExpiredParticles(this);
@@ -605,10 +561,8 @@ void ParticleSystem::suspend(ParticleSystem this)
  * @param this		Function scope
  * @param particle
  */
-static void ParticleSystem::particleExpired(ParticleSystem this, Particle particle)
+void ParticleSystem::particleExpired(Particle particle)
 {
-	ASSERT(this, "ParticleSystem::particleExpired: null this");
-
 	VirtualList::pushBack(this->expiredParticles, particle);
 	Particle::hide(particle);
 }
@@ -621,10 +575,8 @@ static void ParticleSystem::particleExpired(ParticleSystem this, Particle partic
  *
  * @return		Time
  */
-static int ParticleSystem::computeNextSpawnTime(ParticleSystem this)
+int ParticleSystem::computeNextSpawnTime()
 {
-	ASSERT(this, "ParticleSystem::computeNextSpawnTime: null this");
-
 	return this->particleSystemDefinition->minimumSpawnDelay +
 			Utilities::random(Utilities::randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
 }
@@ -635,10 +587,8 @@ static int ParticleSystem::computeNextSpawnTime(ParticleSystem this)
  *
  * @param this	Function scope
  */
-void ParticleSystem::start(ParticleSystem this)
+void ParticleSystem::start()
 {
-	ASSERT(this, "ParticleSystem::start: null this");
-
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 
 	this->paused = false;
@@ -650,9 +600,7 @@ void ParticleSystem::start(ParticleSystem this)
  *
  * @param this	Function scope
  */
-void ParticleSystem::pause(ParticleSystem this)
+void ParticleSystem::pause()
 {
-	ASSERT(this, "ParticleSystem::pause: null this");
-
 	this->paused = true;
 }

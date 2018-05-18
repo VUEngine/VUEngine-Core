@@ -29,6 +29,7 @@
 #include <KeyPadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
+#include <CommunicationManager.h>
 #include <VIPManager.h>
 #include <ClockManager.h>
 #include <SpriteManager.h>
@@ -69,12 +70,6 @@ extern u32 _dram_data_start;
 int _lp = 0;
 int _sp = 0;
 
-void TimerManager::interruptHandler();
-void KeypadManager::interruptHandler();
-void VIPManager::interruptHandler();
-void CommunicationManager::interruptHandler();
-void HardwareManager::constructor(HardwareManager this);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -99,10 +94,8 @@ void HardwareManager::constructor(HardwareManager this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) HardwareManager::constructor(HardwareManager this)
+void HardwareManager::constructor()
 {
-	ASSERT(this, "HardwareManager::constructor: null this");
-
 	Base::constructor();
 
 	// set ROM waiting to 1 cycle
@@ -126,12 +119,10 @@ void __attribute__ ((noinline)) HardwareManager::constructor(HardwareManager thi
  *
  * @param this	Function scope
  */
-void HardwareManager::destructor(HardwareManager this)
+void HardwareManager::destructor()
 {
-	ASSERT(this, "HardwareManager::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 
@@ -207,13 +198,13 @@ void HardwareManager::communicationInterruptHandler()
  *
  * @param this	Function scope
  */
-void HardwareManager::setInterruptVectors(HardwareManager this __attribute__ ((unused)))
+void HardwareManager::setInterruptVectors()
 {
-	keyVector = (u32)KeypadManager_interruptHandler;
-	timVector = (u32)TimerManager_interruptHandler;
-	croVector = (u32)HardwareManager_croInterruptHandler;
-	comVector = (u32)CommunicationManager_interruptHandler;
-	vipVector = (u32)VIPManager_interruptHandler;
+	keyVector = (u32)KeypadManager::interruptHandler;
+	timVector = (u32)TimerManager::interruptHandler;
+	croVector = (u32)HardwareManager::croInterruptHandler;
+	comVector = (u32)CommunicationManager::interruptHandler;
+	vipVector = (u32)VIPManager::interruptHandler;
 }
 
 /**
@@ -225,10 +216,8 @@ void HardwareManager::setInterruptVectors(HardwareManager this __attribute__ ((u
  * @param this		Function scope
  * @param level	 	Interrupt level
  */
-void HardwareManager::setInterruptLevel(HardwareManager this __attribute__ ((unused)), u8 level)
+void HardwareManager::setInterruptLevel(u8 level)
 {
-	ASSERT(this, "HardwareManager::setInterruptLevel: null this");
-
 	asm(" \n\
 		stsr	sr5,r6 \n\
 		movhi	0xFFF1,r0,r7 \n\
@@ -256,10 +245,8 @@ void HardwareManager::setInterruptLevel(HardwareManager this __attribute__ ((unu
  *
  * @return		 	Interrupt level
  */
-int HardwareManager::getInterruptLevel(HardwareManager this __attribute__ ((unused)))
+int HardwareManager::getInterruptLevel()
 {
-	ASSERT(this, "HardwareManager::geInterruptLevel: null this");
-
 	int level;
 
 	asm(" \n\
@@ -284,10 +271,8 @@ int HardwareManager::getInterruptLevel(HardwareManager this __attribute__ ((unus
  *
  * @param this		Function scope
  */
-void HardwareManager::initializeTimer(HardwareManager this)
+void HardwareManager::initializeTimer()
 {
-	ASSERT(this, "HardwareManager::initializeTimer: null this");
-
 	TimerManager::initialize(this->timerManager);
 }
 
@@ -299,10 +284,8 @@ void HardwareManager::initializeTimer(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::clearScreen(HardwareManager this)
+void HardwareManager::clearScreen()
 {
-	ASSERT(this, "HardwareManager::clearScreen: null this");
-
 	VIPManager::clearScreen(this->vipManager);
 }
 
@@ -314,10 +297,8 @@ void HardwareManager::clearScreen(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::displayOn(HardwareManager this)
+void HardwareManager::displayOn()
 {
-	ASSERT(this, "HardwareManager::displayOn: null this");
-
 	VIPManager::displayOn(this->vipManager);
 }
 
@@ -329,10 +310,8 @@ void HardwareManager::displayOn(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::displayOff(HardwareManager this)
+void HardwareManager::displayOff()
 {
-	ASSERT(this, "HardwareManager::displayOff: null this");
-
 	VIPManager::displayOff(this->vipManager);
 }
 
@@ -344,10 +323,8 @@ void HardwareManager::displayOff(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::disableRendering(HardwareManager this)
+void HardwareManager::disableRendering()
 {
-	ASSERT(this, "HardwareManager::disableRendering: null this");
-
 	// disable interrupt
 	VIPManager::disableInterrupts(this->vipManager);
 	VIPManager::disableDrawing(this->vipManager);
@@ -361,10 +338,8 @@ void HardwareManager::disableRendering(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::enableRendering(HardwareManager this)
+void HardwareManager::enableRendering()
 {
-	ASSERT(this, "HardwareManager::enableRendering: null this");
-
 	// turn on display
 	VIPManager::displayOn(this->vipManager);
 	VIPManager::enableInterrupt(this->vipManager, __FRAMESTART | __XPEND);
@@ -379,10 +354,8 @@ void HardwareManager::enableRendering(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::upBrightness(HardwareManager this)
+void HardwareManager::upBrightness()
 {
-	ASSERT(this, "HardwareManager::upBrightness: null this");
-
 	VIPManager::upBrightness(this->vipManager);
 }
 
@@ -394,10 +367,8 @@ void HardwareManager::upBrightness(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::lowerBrightness(HardwareManager this)
+void HardwareManager::lowerBrightness()
 {
-	ASSERT(this, "HardwareManager::lowerBrightness: null this");
-
 	VIPManager::lowerBrightness(this->vipManager);
 }
 
@@ -410,10 +381,8 @@ void HardwareManager::lowerBrightness(HardwareManager this)
  * @param this						Function scope
  * @param columnTableDefinition		Definition to use
  */
-void HardwareManager::setupColumnTable(HardwareManager this, ColumnTableDefinition* columnTableDefinition)
+void HardwareManager::setupColumnTable(ColumnTableDefinition* columnTableDefinition)
 {
-	ASSERT(this, "HardwareManager::setupColumnTable: null this");
-
 	VIPManager::setupColumnTable(this->vipManager, columnTableDefinition);
 }
 
@@ -425,10 +394,8 @@ void HardwareManager::setupColumnTable(HardwareManager this, ColumnTableDefiniti
  *
  * @param this		Function scope
  */
-void HardwareManager::enableKeypad(HardwareManager this)
+void HardwareManager::enableKeypad()
 {
-	ASSERT(this, "HardwareManager::enableKeypad: null this");
-
 	KeypadManager::enable(this->keypadManager);
 }
 
@@ -440,10 +407,8 @@ void HardwareManager::enableKeypad(HardwareManager this)
  *
  * @param this		Function scope
  */
-void HardwareManager::disableKeypad(HardwareManager this)
+void HardwareManager::disableKeypad()
 {
-	ASSERT(this, "HardwareManager::disableKeypad: null this");
-
 	KeypadManager::disable(this->keypadManager);
 }
 
@@ -454,7 +419,7 @@ void HardwareManager::disableKeypad(HardwareManager this)
  * @public
  *
  */
-void HardwareManager::enableInterrupts()
+static void HardwareManager::enableInterrupts()
 {
 	asm("cli");
 }
@@ -466,7 +431,7 @@ void HardwareManager::enableInterrupts()
  * @public
  *
  */
-void HardwareManager::disableInterrupts()
+static void HardwareManager::disableInterrupts()
 {
 	asm("sei");
 }
@@ -478,7 +443,7 @@ void HardwareManager::disableInterrupts()
  * @public
  *
  */
-void HardwareManager::enableMultiplexedInterrupts()
+static void HardwareManager::enableMultiplexedInterrupts()
 {
 	u32 psw;
 
@@ -507,7 +472,7 @@ void HardwareManager::enableMultiplexedInterrupts()
  * @public
  *
  */
-void HardwareManager::disableMultiplexedInterrupts()
+static void HardwareManager::disableMultiplexedInterrupts()
 {
 	asm(" 			\n\
 		sei			\n\
@@ -527,7 +492,7 @@ void HardwareManager::disableMultiplexedInterrupts()
  * @param this		Function scope
  *
  */
-int HardwareManager::getStackPointer()
+static int HardwareManager::getStackPointer()
 {
 	int sp;
 
@@ -549,7 +514,7 @@ int HardwareManager::getStackPointer()
  * @param this		Function scope
  *
  */
-int HardwareManager::getLinkPointer()
+static int HardwareManager::getLinkPointer()
 {
 	int lp;
 
@@ -570,7 +535,7 @@ int HardwareManager::getLinkPointer()
  *
  * @return		 	PSW
  */
-int HardwareManager::getPSW()
+static int HardwareManager::getPSW()
 {
 	int psw;
 
@@ -593,10 +558,8 @@ int HardwareManager::getPSW()
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
-void HardwareManager::print(HardwareManager this, int x, int y)
+void HardwareManager::print(int x, int y)
 {
-	ASSERT(this, "HardwareManager::print: null this");
-
 	Printing::text(Printing::getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
 	int auxY = y;
@@ -685,10 +648,8 @@ void HardwareManager::print(HardwareManager this, int x, int y)
  *
  * @param this		Function scope
  */
-void HardwareManager::checkStackStatus(HardwareManager this __attribute__ ((unused)))
+static void HardwareManager::checkStackStatus()
 {
-	ASSERT(this, "HardwareManager::checkStackStatus: null this");
-
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 
@@ -710,10 +671,8 @@ void HardwareManager::checkStackStatus(HardwareManager this __attribute__ ((unus
  * @param y			Camera's y coordinate
  * @param resumed	Flag to print resumed or detailed info
  */
-void HardwareManager::printStackStatus(HardwareManager this __attribute__ ((unused)), int x, int y, bool resumed)
+void HardwareManager::printStackStatus(int x, int y, bool resumed)
 {
-	ASSERT(this, "HardwareManager::print: null this");
-
 	int sp;
 	asm(" mov sp,%0  ": "=r" (sp));
 

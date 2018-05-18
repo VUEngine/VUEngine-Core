@@ -35,6 +35,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 class Object;
+class Telegram;
 typedef void (*EventListener)(Object, Object);
 typedef Object (*AllocatorPointer)();
 
@@ -59,14 +60,14 @@ abstract class Object : Object
 	VirtualList events;
 
 	void constructor();
-	void addEventListener(Object this, Object listener, EventListener method, u32 eventCode);
-	void removeEventListener(Object this, Object listener, EventListener method, u32 eventCode);
-	void removeEventListeners(Object this, Object listener, u32 eventCode);
-	void removeAllEventListeners(Object this, u32 eventCode);
-	void fireEvent(Object this, u32 eventCode);
-	Object getCast(Object this, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
-	const void* getVTable(Object this);
-	virtual bool handleMessage(Object this, void* telegram);
+	void addEventListener(Object listener, EventListener method, u32 eventCode);
+	void removeEventListener(Object listener, EventListener method, u32 eventCode);
+	void removeEventListeners(Object listener, u32 eventCode);
+	void removeAllEventListeners(u32 eventCode);
+	void fireEvent(u32 eventCode);
+	Object getCast(ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
+	const void* getVTable();
+	virtual bool handleMessage(Telegram telegram);
 }
 
 

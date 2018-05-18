@@ -41,16 +41,9 @@
 
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 extern fix10_6 _currentWorldFriction;
 extern fix10_6 _currentElapsedTime;
 extern const Acceleration* _currentGravity;
-
-MovementResult Body::updateMovement(Body this);
-Acceleration Body::getGravity(Body this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,10 +60,8 @@ Acceleration Body::getGravity(Body this);
  * @param owner
  * @param mass
  */
-void ParticleBody::constructor(ParticleBody this, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+void ParticleBody::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
-	ASSERT(this, "ParticleBody::constructor: null this");
-
 	Base::constructor(owner, physicalSpecification, axesSubjectToGravity);
 }
 
@@ -82,10 +73,8 @@ void ParticleBody::constructor(ParticleBody this, SpatialObject owner, const Phy
  *
  * @param this	Function scope
  */
-void ParticleBody::destructor(ParticleBody this)
+void ParticleBody::destructor()
 {
-	ASSERT(this, "ParticleBody::destructor: null this");
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
@@ -99,10 +88,8 @@ void ParticleBody::destructor(ParticleBody this)
  *
  * @param this	Function scope
  */
-void ParticleBody::update(ParticleBody this)
+void ParticleBody::update()
 {
-	ASSERT(this, "ParticleBody::update: null this");
-
 	if(this->active)
 	{
 		if(this->awake)

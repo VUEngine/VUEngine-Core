@@ -4,9 +4,6 @@
 #include <debugUtilities.h>
 
 // avoid declaration warnings
-#include <HardwareManager.h>
-void HardwareManager_checkStackStatus(HardwareManager this);
-void HardwareManager_printStackStatus(HardwareManager this, int x, int y, bool resumed);
 
 
 // define / undefine as you see fit

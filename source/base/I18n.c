@@ -50,13 +50,6 @@ extern LangROMDef* __LANGUAGES[];
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void I18n::constructor(I18n this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -79,7 +72,7 @@ void I18n::constructor(I18n this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) I18n::constructor(I18n this)
+void I18n::constructor()
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::constructor: null this");
 
@@ -96,12 +89,12 @@ void __attribute__ ((noinline)) I18n::constructor(I18n this)
  *
  * @param this	Function scope
  */
-void I18n::destructor(I18n this)
+void I18n::destructor()
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::destructor: null this");
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -115,7 +108,7 @@ void I18n::destructor(I18n this)
  *
  * @return localized string or NULL if no translation could be found
  */
-const char* I18n::getText(I18n this, int string)
+const char* I18n::getText(int string)
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::getText: null this");
 
@@ -131,7 +124,7 @@ const char* I18n::getText(I18n this, int string)
  * @param this			Function scope
  * @param languageId	ID of the language to make active
  */
-void I18n::setActiveLanguage(I18n this, u8 languageId)
+void I18n::setActiveLanguage(u8 languageId)
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::setActiveLanguage: null this");
 
@@ -148,7 +141,7 @@ void I18n::setActiveLanguage(I18n this, u8 languageId)
  *
  * @return		Array of LangDefinition pointers
  */
-LangDefinition * I18n::getLanguages(I18n this __attribute__ ((unused)))
+LangDefinition * I18n::getLanguages()
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::getLanguages: null this");
 
@@ -165,7 +158,7 @@ LangDefinition * I18n::getLanguages(I18n this __attribute__ ((unused)))
  *
  * @return		ID of currently active language
  */
-u8 I18n::getActiveLanguage(I18n this)
+u8 I18n::getActiveLanguage()
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::getActiveLanguage: null this");
 
@@ -182,7 +175,7 @@ u8 I18n::getActiveLanguage(I18n this)
  *
  * @return		Name of currently active language
  */
-char* I18n::getActiveLanguageName(I18n this)
+char* I18n::getActiveLanguageName()
 {
 	ASSERT(__SAFE_CAST(I18n, this), "I18n::getActiveLanguageName: null this");
 

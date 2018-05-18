@@ -55,10 +55,8 @@ friend class VirtualList;
  * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition
  */
-void AnimationCoordinator::constructor(AnimationCoordinator this, const CharSetDefinition* charSetDefinition)
+void AnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "AnimationCoordinator::constructor: null this");
-
 	Base::constructor();
 
 	this->animationControllers = __NEW(VirtualList);
@@ -73,9 +71,8 @@ void AnimationCoordinator::constructor(AnimationCoordinator this, const CharSetD
  *
  * @param this			Function scope
  */
-void AnimationCoordinator::destructor(AnimationCoordinator this)
+void AnimationCoordinator::destructor()
 {
-	ASSERT(this, "AnimationCoordinator::destructor: null this");
 	ASSERT(this->animationControllers, "AnimationCoordinator::destructor: null animationControllers");
 
 	__DELETE(this->animationControllers);
@@ -96,10 +93,8 @@ void AnimationCoordinator::destructor(AnimationCoordinator this)
  *
  * @return 				CharSetDefinition
  */
-const CharSetDefinition* AnimationCoordinator::getCharSetDefinition(AnimationCoordinator this)
+const CharSetDefinition* AnimationCoordinator::getCharSetDefinition()
 {
-	ASSERT(this, "AnimationCoordinator::getCharSetDefinition: null this");
-
 	return this->charSetDefinition;
 }
 
@@ -116,10 +111,8 @@ const CharSetDefinition* AnimationCoordinator::getCharSetDefinition(AnimationCoo
  *
  * @return 							True if the animation started playing
  */
-bool AnimationCoordinator::playAnimation(AnimationCoordinator this, AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
+bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)
 {
-	ASSERT(this, "AnimationCoordinator::playAnimation: null this");
-
 	if(this->animationControllers->head)
 	{
 		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));

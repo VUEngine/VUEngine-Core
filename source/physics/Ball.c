@@ -28,7 +28,6 @@
 #include <Box.h>
 #include <InverseBox.h>
 #include <CollisionHelper.h>
-#include <SpaceMath.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <Math.h>
@@ -58,21 +57,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 
 // class's constructor
-void Ball::constructor(Ball this, SpatialObject owner)
+void Ball::constructor(SpatialObject owner)
 {
-	ASSERT(this, "Ball::constructor: null this");
-
 	Base::constructor(owner);
 
 	this->center = (Vector3D){0, 0, 0};
@@ -80,19 +71,15 @@ void Ball::constructor(Ball this, SpatialObject owner)
 }
 
 // class's destructor
-void Ball::destructor(Ball this)
+void Ball::destructor()
 {
-	ASSERT(this, "Ball::destructor: null this");
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
-void Ball::position(Ball this, const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
+void Ball::position(const Vector3D* position, const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size)
 {
-	ASSERT(this, "Ball::position: null this");
-
 	this->center = *position;
 	this->radius = size->z >> 1;
 
@@ -111,7 +98,7 @@ void Ball::position(Ball this, const Vector3D* position, const Rotation* rotatio
 	Base::position(this, position, rotation, scale, size);
 }
 
-void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
+static void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	// project this onto the current normal
 	fix10_6 dotProduct = Vector3D::dotProduct(vector, center);
@@ -127,10 +114,8 @@ void Ball::project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* mi
 	}
 }
 
-CollisionInformation Ball::testForCollision(Ball this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
 {
-	ASSERT(this, "Ball::testForCollision: null this");
-
 	// save state
 	Vector3D center = this->center;
 	fix10_6 radius = this->radius;
@@ -151,17 +136,13 @@ CollisionInformation Ball::testForCollision(Ball this, Shape shape, Vector3D dis
 	return collisionInformation;
 }
 
-Vector3D Ball::getPosition(Ball this)
+Vector3D Ball::getPosition()
 {
-	ASSERT(this, "Ball::getPosition: null this");
-
 	return this->center;
 }
 
-RightBox Ball::getSurroundingRightBox(Ball this)
+RightBox Ball::getSurroundingRightBox()
 {
-	ASSERT(this, "Ball::getSurroundingRightBox: null this");
-
 	return (RightBox)
 	{
 		this->center.x - this->radius,
@@ -175,10 +156,8 @@ RightBox Ball::getSurroundingRightBox(Ball this)
 }
 
 // configure Polyhedron
-void Ball::configureWireframe(Ball this)
+void Ball::configureWireframe()
 {
-	ASSERT(this, "Ball::draw: null this");
-
 	if(this->wireframe)
 	{
 		Sphere::setCenter(__SAFE_CAST(Sphere, this->wireframe), this->center);
@@ -190,10 +169,8 @@ void Ball::configureWireframe(Ball this)
 }
 
 // print debug data
-void Ball::print(Ball this, int x, int y)
+void Ball::print(int x, int y)
 {
-	ASSERT(this, "Ball::print: null this");
-
 	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
 	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x), x + 2, y, NULL);
 	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y), x + 6, y, NULL);

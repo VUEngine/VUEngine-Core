@@ -93,34 +93,9 @@ enum Modes
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 // globals
 extern UserObject _userObjects[];
 
-void StageEditor::constructor(StageEditor this);
-static void StageEditor::setupMode(StageEditor this);
-static void StageEditor::releaseShape(StageEditor this);
-static void StageEditor::getShape(StageEditor this);
-static void StageEditor::positionShape(StageEditor this);
-static void StageEditor::highLightEntity(StageEditor this);
-static void StageEditor::selectPreviousEntity(StageEditor this);
-static void StageEditor::selectNextEntity(StageEditor this);
-static void StageEditor::translateEntity(StageEditor this, u32 pressedKey);
-static void StageEditor::moveCamera(StageEditor this, u32 pressedKey);
-static void StageEditor::changeProjection(StageEditor this, u32 pressedKey);
-static void StageEditor::applyTranslationToEntity(StageEditor this, Vector3D translation);
-static void StageEditor::applyTranslationToCamera(StageEditor this, Vector3D translation);
-static void StageEditor::printEntityPosition(StageEditor this);
-static void StageEditor::printCameraPosition(StageEditor this);
-static void StageEditor::printProjectionValues(StageEditor this);
-static void StageEditor::printUserObjects(StageEditor this);
-static void StageEditor::selectUserObject(StageEditor this, u32 pressedKey);
-static void StageEditor::printTranslationStepSize(StageEditor this);
-static void StageEditor::removePreviousSprite(StageEditor this);
-static void StageEditor::showSelectedUserObject(StageEditor this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -146,10 +121,8 @@ static void StageEditor::showSelectedUserObject(StageEditor this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) StageEditor::constructor(StageEditor this)
+void StageEditor::constructor()
 {
-	ASSERT(this, "StageEditor::constructor: null this");
-
 	Base::constructor();
 
 	this->currentEntityNode = NULL;
@@ -188,17 +161,15 @@ void __attribute__ ((noinline)) StageEditor::constructor(StageEditor this)
  *
  * @param this	Function scope
  */
-void StageEditor::destructor(StageEditor this)
+void StageEditor::destructor()
 {
-	ASSERT(this, "StageEditor::destructor: null this");
-
 	if(this->userObjectsSelector)
 	{
 		__DELETE(this->userObjectsSelector);
 	}
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -209,10 +180,8 @@ void StageEditor::destructor(StageEditor this)
  *
  * @param this	Function scope
  */
-void StageEditor::update(StageEditor this __attribute__ ((unused)))
-{
-	ASSERT(this, "StageEditor::update: null this");
-}
+void StageEditor::update()
+{}
 
 /**
  * Show editor
@@ -223,9 +192,8 @@ void StageEditor::update(StageEditor this __attribute__ ((unused)))
  * @param this		Function scope
  * @param gameState Current game state
  */
-void StageEditor::show(StageEditor this, GameState gameState)
+void StageEditor::show(GameState gameState)
 {
-	ASSERT(this, "StageEditor::start: null this");
 	ASSERT(gameState, "StageEditor::start: gameState this");
 
 	this->gameState = gameState;
@@ -244,10 +212,8 @@ void StageEditor::show(StageEditor this, GameState gameState)
  *
  * @param this	Function scope
  */
-void StageEditor::hide(StageEditor this)
+void StageEditor::hide()
 {
-	ASSERT(this, "StageEditor::stop: null this");
-
 	CollisionManager::hideShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	StageEditor::removePreviousSprite(this);
@@ -264,10 +230,8 @@ void StageEditor::hide(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	User input
  */
-void StageEditor::processUserInput(StageEditor this, u16 pressedKey)
+void StageEditor::processUserInput(u16 pressedKey)
 {
-	ASSERT(this, "StageEditor::handleMessage: null this");
-
 	if(!this->gameState)
 	{
 		return;
@@ -318,7 +282,7 @@ void StageEditor::processUserInput(StageEditor this, u16 pressedKey)
  *
  * @param this	Function scope
  */
-static void StageEditor::printHeader(StageEditor this)
+void StageEditor::printHeader()
 {
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing::text(Printing::getInstance(), " LEVEL EDITOR ", 1, 0, NULL);
@@ -335,7 +299,7 @@ static void StageEditor::printHeader(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::setupMode(StageEditor this)
+void StageEditor::setupMode()
 {
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	StageEditor::printHeader(this);
@@ -393,7 +357,7 @@ static void StageEditor::setupMode(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::releaseShape(StageEditor this)
+void StageEditor::releaseShape()
 {
 	if(this->currentEntityNode)
 	{
@@ -439,7 +403,7 @@ static void StageEditor::releaseShape(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::getShape(StageEditor this)
+void StageEditor::getShape()
 {
 	if(!this->currentEntityNode)
 	{
@@ -472,7 +436,7 @@ static void StageEditor::getShape(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::positionShape(StageEditor this)
+void StageEditor::positionShape()
 {
 	if(!this->currentEntityNode || !this->shape)
 	{
@@ -498,7 +462,7 @@ static void StageEditor::positionShape(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::highLightEntity(StageEditor this)
+void StageEditor::highLightEntity()
 {
 	if(this->currentEntityNode)
 	{
@@ -519,7 +483,7 @@ static void StageEditor::highLightEntity(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::selectPreviousEntity(StageEditor this)
+void StageEditor::selectPreviousEntity()
 {
 	StageEditor::releaseShape(this);
 
@@ -554,7 +518,7 @@ static void StageEditor::selectPreviousEntity(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::selectNextEntity(StageEditor this)
+void StageEditor::selectNextEntity()
 {
 	StageEditor::releaseShape(this);
 
@@ -590,7 +554,7 @@ static void StageEditor::selectNextEntity(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor::moveCamera(StageEditor this, u32 pressedKey)
+void StageEditor::moveCamera(u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -669,7 +633,7 @@ static void StageEditor::moveCamera(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor::changeProjection(StageEditor this, u32 pressedKey)
+void StageEditor::changeProjection(u32 pressedKey)
 {
 	Optical optical = *_optical;
 
@@ -747,7 +711,7 @@ static void StageEditor::changeProjection(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor::translateEntity(StageEditor this, u32 pressedKey)
+void StageEditor::translateEntity(u32 pressedKey)
 {
 	if(pressedKey & K_LL)
 	{
@@ -852,7 +816,7 @@ static void StageEditor::translateEntity(StageEditor this, u32 pressedKey)
  * @param this			Function scope
  * @param translation	Translation vector
  */
-static void StageEditor::applyTranslationToEntity(StageEditor this, Vector3D translation)
+void StageEditor::applyTranslationToEntity(Vector3D translation)
 {
 	if(this->currentEntityNode && this->shape)
 	{
@@ -892,7 +856,7 @@ static void StageEditor::applyTranslationToEntity(StageEditor this, Vector3D tra
  *
  * @param this	Function scope
  */
-static void StageEditor::removePreviousSprite(StageEditor this)
+void StageEditor::removePreviousSprite()
 {
 	if(this->userObjectSprite)
 	{
@@ -911,7 +875,7 @@ static void StageEditor::removePreviousSprite(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::showSelectedUserObject(StageEditor this)
+void StageEditor::showSelectedUserObject()
 {
 	StageEditor::removePreviousSprite(this);
 
@@ -952,7 +916,7 @@ static void StageEditor::showSelectedUserObject(StageEditor this)
  * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
-static void StageEditor::selectUserObject(StageEditor this, u32 pressedKey)
+void StageEditor::selectUserObject(u32 pressedKey)
 {
 	if(pressedKey & K_LU)
 	{
@@ -1021,7 +985,7 @@ static void StageEditor::selectUserObject(StageEditor this, u32 pressedKey)
  *
  * @param this	Function scope
  */
-static void StageEditor::printEntityPosition(StageEditor this)
+void StageEditor::printEntityPosition()
 {
 	int x = 1;
 	int y = 2;
@@ -1078,7 +1042,7 @@ static void StageEditor::printEntityPosition(StageEditor this)
  * @param this			Function scope
  * @param translation   Translation vector
  */
-static void StageEditor::applyTranslationToCamera(StageEditor this, Vector3D translation)
+void StageEditor::applyTranslationToCamera(Vector3D translation)
 {
 	Camera::move(Camera::getInstance(), translation, true);
 	GameState::transform(this->gameState);
@@ -1095,7 +1059,7 @@ static void StageEditor::applyTranslationToCamera(StageEditor this, Vector3D tra
  *
  * @param this	Function scope
  */
-static void StageEditor::printCameraPosition(StageEditor this __attribute__ ((unused)))
+void StageEditor::printCameraPosition()
 {
 	Camera::print(Camera::getInstance(), 1, 2);
 }
@@ -1108,7 +1072,7 @@ static void StageEditor::printCameraPosition(StageEditor this __attribute__ ((un
  *
  * @param this	Function scope
  */
-static void StageEditor::printProjectionValues(StageEditor this __attribute__ ((unused)))
+void StageEditor::printProjectionValues()
 {
 	int x = 1;
 	int y = 2;
@@ -1143,7 +1107,7 @@ static void StageEditor::printProjectionValues(StageEditor this __attribute__ ((
  *
  * @param this	Function scope
  */
-static void StageEditor::printUserObjects(StageEditor this)
+void StageEditor::printUserObjects()
 {
 	Printing::text(Printing::getInstance(), "ADD OBJECTS", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
@@ -1161,7 +1125,7 @@ static void StageEditor::printUserObjects(StageEditor this)
  *
  * @param this	Function scope
  */
-static void StageEditor::printTranslationStepSize(StageEditor this)
+void StageEditor::printTranslationStepSize()
 {
 	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", 38, 5, NULL);
 	Printing::text(Printing::getInstance(), "+     ", 38, 6, NULL);

@@ -42,21 +42,12 @@
  * @ingroup base
  */
 
-
 enum MemoryPoolSizes
 {
 	ePoolSize = 0,
 	eBlockSize,
 	eLastFreeBlockIndex,
 };
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void MemoryPool::constructor(MemoryPool this);
-static void MemoryPool::reset(MemoryPool this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -77,7 +68,7 @@ static void MemoryPool::reset(MemoryPool this);
 									= __SINGLETON_NOT_CONSTRUCTED;										\
 																										\
 	/* define get instance method */																	\
-	static void __attribute__ ((noinline)) ClassName ## _instantiate()									\
+	static void ClassName ## _instantiate()																\
 	{																									\
 		NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,								\
 			ClassName get instance during construction);												\
@@ -110,18 +101,6 @@ static void MemoryPool::reset(MemoryPool this);
 		return &_instance ## ClassName;																	\
 	}
 
-
-/**
- * Get instance
- *
- * @fn			MemoryPool::getInstance()
- * @memberof	MemoryPool
- * @public
- *
- * @return		MemoryPool instance
- */
-__MEMORY_POOL_SINGLETON(MemoryPool)
-
 /**
  * Class constructor
  *
@@ -130,10 +109,8 @@ __MEMORY_POOL_SINGLETON(MemoryPool)
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
+void MemoryPool::constructor()
 {
-	ASSERT(this, "MemoryPool::constructor: null this");
-
 	Base::constructor();
 
 	MemoryPool::reset(this);
@@ -148,12 +125,10 @@ void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
  *
  * @param this	Function scope
  */
- void MemoryPool::destructor(MemoryPool this)
+ void MemoryPool::destructor()
 {
-	ASSERT(this, "MemoryPool::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -167,10 +142,8 @@ void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
  *
  * @return					Pointer to the memory pool entry allocated
  */
- BYTE* MemoryPool::allocate(MemoryPool this, int numberOfBytes)
+ BYTE* MemoryPool::allocate(int numberOfBytes)
 {
-	ASSERT(this, "MemoryPool::allocate: null this");
-
 	int lp = HardwareManager::getLinkPointer();
 
 	int i = 0;
@@ -262,10 +235,8 @@ void __attribute__ ((noinline)) MemoryPool::constructor(MemoryPool this)
  * @param this		Function scope
  * @param object	Pointer to the memory pool entry to free
  */
-void MemoryPool::free(MemoryPool this, BYTE* object)
+void MemoryPool::free(BYTE* object)
 {
-	ASSERT(this, "MemoryPool::free: null this");
-
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
 		return;
@@ -327,10 +298,8 @@ void MemoryPool::free(MemoryPool this, BYTE* object)
  *
  * @param this		Function scope
  */
-static void MemoryPool::reset(MemoryPool this)
+void MemoryPool::reset()
 {
-	ASSERT(this, "MemoryPool::reset: null this");
-
 	int pool = 0;
 	int i;
 
@@ -355,10 +324,8 @@ static void MemoryPool::reset(MemoryPool this)
  *
  * @param this		Function scope
  */
-void MemoryPool::cleanUp(MemoryPool this)
+void MemoryPool::cleanUp()
 {
-	ASSERT(this, "MemoryPool::reset: null this");
-
 	int pool = 0;
 
 	// clear all memory pool entries
@@ -389,10 +356,8 @@ void MemoryPool::cleanUp(MemoryPool this)
  *
  * @return			Total size of the memory pool
  */
-int MemoryPool::getPoolSize(MemoryPool this)
+int MemoryPool::getPoolSize()
 {
-	ASSERT(this, "MemoryPool::reset: null this");
-
 	int size = 0;
 	int pool = 0;
 
@@ -415,10 +380,8 @@ int MemoryPool::getPoolSize(MemoryPool this)
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
-void MemoryPool::printDetailedUsage(MemoryPool this, int x, int y)
+void MemoryPool::printDetailedUsage(int x, int y)
 {
-	ASSERT(this, "MemoryPool::printMemUsage: null this");
-
 	int i;
 	int totalUsedBlocks = 0;
 	int totalUsedBytes = 0;
@@ -483,10 +446,8 @@ void MemoryPool::printDetailedUsage(MemoryPool this, int x, int y)
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
-void MemoryPool::printResumedUsage(MemoryPool this, int x, int y)
+void MemoryPool::printResumedUsage(int x, int y)
 {
-	ASSERT(this, "MemoryPool::printMemUsage: null this");
-
 	int originalY = y;
 	int i;
 	int totalUsedBlocks = 0;
@@ -535,3 +496,4 @@ void MemoryPool::printResumedUsage(MemoryPool this, int x, int y)
 	Printing::text(printing, "Used: ", x, ++y, NULL);
 	Printing::int(printing, totalUsedBytes, x + 12 - Utilities::intLength(totalUsedBytes), y++, NULL);
 }
+

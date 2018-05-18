@@ -38,30 +38,30 @@
 
 class SpatialObject : Object
 {
-	void constructor(SpatialObject this);
-	void destructor(SpatialObject this);
-	virtual VirtualList getShapes(SpatialObject this);
-	virtual bool isMoving(SpatialObject this);
-	virtual bool isSubjectToGravity(SpatialObject this, Acceleration gravity);
-	virtual fix10_6 getWidth(SpatialObject this);
-	virtual fix10_6 getHeight(SpatialObject this);
-	virtual fix10_6 getDepth(SpatialObject this);
-	virtual const Vector3D* getPosition(SpatialObject this);
-	virtual void setPosition(SpatialObject this, const Vector3D* position);
-	virtual const Rotation* getRotation(SpatialObject this);
-	virtual void setRotation(SpatialObject this, const Rotation* rotation);
-	virtual const Scale* getScale(SpatialObject this);
-	virtual void setScale(SpatialObject this, const Scale* scale);
-	virtual fix10_6 getBounciness(SpatialObject this);
-	virtual fix10_6 getFrictionCoefficient(SpatialObject this);
-	virtual Velocity getVelocity(SpatialObject this);
-	virtual bool isAffectedByRelativity(SpatialObject this);
-	virtual bool enterCollision(SpatialObject this, const CollisionInformation* collisionInformation);
-	virtual bool updateCollision(SpatialObject this, const CollisionInformation* collisionInformation);
-	virtual void exitCollision(SpatialObject this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-	virtual void collidingShapeOwnerDestroyed(SpatialObject this, Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
-	virtual u16 getMovementState(SpatialObject this);
-	virtual u32 getInGameType(SpatialObject this);
+	void constructor();
+	void destructor();
+	virtual VirtualList getShapes();
+	virtual bool isMoving();
+	virtual bool isSubjectToGravity(Acceleration gravity);
+	virtual fix10_6 getWidth();
+	virtual fix10_6 getHeight();
+	virtual fix10_6 getDepth();
+	virtual const Vector3D* getPosition();
+	virtual void setPosition(const Vector3D* position);
+	virtual const Rotation* getRotation();
+	virtual void setRotation(const Rotation* rotation);
+	virtual const Scale* getScale();
+	virtual void setScale(const Scale* scale);
+	virtual fix10_6 getBounciness();
+	virtual fix10_6 getFrictionCoefficient();
+	virtual Velocity getVelocity();
+	virtual bool isAffectedByRelativity();
+	virtual bool enterCollision(const CollisionInformation* collisionInformation);
+	virtual bool updateCollision(const CollisionInformation* collisionInformation);
+	virtual void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	virtual void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	virtual u16 getMovementState();
+	virtual u32 getInGameType();
 }
 
 

@@ -32,15 +32,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void MessageDispatcher::constructor(MessageDispatcher this);
-void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay, Object sender,
-	Object receiver, int message, void* extraInfo);
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -93,10 +84,8 @@ typedef struct DelayedMessage
  *
  * @param this		Function scope
  */
- void __attribute__ ((noinline)) MessageDispatcher::constructor(MessageDispatcher this)
+ void MessageDispatcher::constructor()
 {
-	ASSERT(this, "MessageDispatcher::constructor: null this");
-
 	Base::constructor();
 
 	this->delayedMessages = __NEW(VirtualList);
@@ -112,15 +101,13 @@ typedef struct DelayedMessage
  *
  * @param this		Function scope
  */
-__attribute__((unused)) void MessageDispatcher::destructor(MessageDispatcher this)
+void MessageDispatcher::destructor()
 {
-	ASSERT(this, "MessageDispatcher::destructor: null this");
-
 	__DELETE(this->delayedMessages);
 	__DELETE(this->delayedMessagesToDiscard);
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -137,7 +124,7 @@ __attribute__((unused)) void MessageDispatcher::destructor(MessageDispatcher thi
  *
  * @return			a flag indicating the status of the processing of the message
  */
-bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
+static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
 {
 	// make sure the receiver is valid
 	ASSERT(sender, "MessageDispatcher::dispatchMessage: null sender");
@@ -175,11 +162,9 @@ bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object receive
  * @param message	the actual message code
  * @param extraInfo	pointer to any extra data that must accompany the message
  */
-void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clock, u32 delay,
+void MessageDispatcher::dispatchDelayedMessage(Clock clock, u32 delay,
  	Object sender, Object receiver, int message, void* extraInfo)
 {
-	ASSERT(this, "MessageDispatcher::dispatchDelayedMessage: null this");
-
 	// create the telegram
 	Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
 
@@ -200,9 +185,8 @@ void MessageDispatcher::dispatchDelayedMessage(MessageDispatcher this, Clock clo
  *
  * @param this		Function scope
  */
-void MessageDispatcher::processDiscardedMessages(MessageDispatcher this)
+void MessageDispatcher::processDiscardedMessages()
 {
-	ASSERT(this, "MessageDispatcher::processDiscardedMessages: null this");
 	ASSERT(this->delayedMessagesToDiscard, "MessageDispatcher::processDiscardedMessages: null delayedMessagesToDiscard");
 
 	if(this->delayedMessagesToDiscard->head)
@@ -242,9 +226,8 @@ void MessageDispatcher::processDiscardedMessages(MessageDispatcher this)
  *
  * @param this		Function scope
  */
-u32 MessageDispatcher::dispatchDelayedMessages(MessageDispatcher this)
+u32 MessageDispatcher::dispatchDelayedMessages()
 {
-	ASSERT(this, "MessageDispatcher::dispatchDelayedMessages: null this");
 	ASSERT(this->delayedMessages, "MessageDispatcher::dispatchDelayedMessages: null delayedMessages");
 
 	u32 messagesDispatched = false;
@@ -312,10 +295,8 @@ u32 MessageDispatcher::dispatchDelayedMessages(MessageDispatcher this)
  * @param this		Function scope
  * @param clock		the clock against which the message's delay is measured
  */
-void MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher this, Clock clock)
+void MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {
-	ASSERT(this, "MessageDispatcher::discardDelayedMessagesWithClock: null this");
-
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -339,10 +320,8 @@ void MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher this, 
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
-void MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher this, Object sender, int message)
+void MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int message)
 {
-	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
-
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -367,10 +346,8 @@ void MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher this,
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
-void MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher this, Object receiver, int message)
+void MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int message)
 {
-	ASSERT(this, "MessageDispatcher::discardDelayedMessagesFromSender: null this");
-
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -397,10 +374,8 @@ void MessageDispatcher::discardDelayedMessagesForReceiver(MessageDispatcher this
  * @param this		Function scope
  * @param sender	the object that originally sent the message
  */
-void MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher this, Object sender)
+void MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 {
-	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesFromSender: null this");
-
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -427,10 +402,8 @@ void MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher th
  * @param this		Function scope
  * @param sender	the object that the message was originally sent to
  */
-void MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher this, Object receiver)
+void MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
 {
-	ASSERT(this, "MessageDispatcher::discardAllDelayedMessagesForReceiver: null this");
-
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -458,13 +431,13 @@ void MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher t
  * @param x			x screen coordinate
  * @param y			y screen coordinate
  */
-void MessageDispatcher::print(MessageDispatcher this, int x, int y)
+void MessageDispatcher::print(int x, int y)
 {
-	ASSERT(this, "MessageDispatcher::print: null this");
-
 	Printing::text(Printing::getInstance(), "MESSAGE DISPATCHER' STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Delayed messages:     ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessages), x + 19, y, NULL);
 	Printing::text(Printing::getInstance(), "Discarded messages:         ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
 }
+
+

@@ -36,11 +36,11 @@
 
 abstract class Wireframe : Object
 {
-	void constructor(Wireframe this);
-	void addVertex(Wireframe this, fix10_6 x, fix10_6 y, fix10_6 z);
-	void hide(Wireframe this);
-	void show(Wireframe this);
-	virtual void draw(Wireframe this, bool calculateParallax) = 0;
+	void constructor();
+	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
+	void hide();
+	void show();
+	virtual void draw(bool calculateParallax) = 0;
 }
 
 

@@ -77,11 +77,11 @@ singleton class I18n : Object
 	u8 activeLanguage;
 
 	static I18n getInstance();
-	u8 getActiveLanguage(I18n this);
-	char* getActiveLanguageName(I18n this);
-	LangDefinition * getLanguages(I18n this);
-	const char* getText(I18n this, int string);
-	void setActiveLanguage(I18n this, u8 languageId);
+	u8 getActiveLanguage();
+	char* getActiveLanguageName();
+	LangDefinition * getLanguages();
+	const char* getText(int string);
+	void setActiveLanguage(u8 languageId);
 }
 
 

@@ -56,14 +56,6 @@ friend class Texture;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-static void ObjectSprite::checkForContainer(ObjectSprite this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -77,10 +69,8 @@ static void ObjectSprite::checkForContainer(ObjectSprite this);
  * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
-void ObjectSprite::constructor(ObjectSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+void ObjectSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
-	ASSERT(this, "ObjectSprite::constructor: null this");
-
 	Base::constructor((SpriteDefinition*)objectSpriteDefinition, owner);
 
 	this->head = objectSpriteDefinition->display;
@@ -113,10 +103,8 @@ void ObjectSprite::constructor(ObjectSprite this, const ObjectSpriteDefinition* 
  *
  * @param this						Function scope
  */
-void ObjectSprite::destructor(ObjectSprite this)
+void ObjectSprite::destructor()
 {
-	ASSERT(this, "ObjectSprite::destructor: null this");
-
 	// remove from sprite container before I become invalid
 	// and the VPU triggers a new render cycle
 	if(this->objectSpriteContainer)
@@ -145,10 +133,8 @@ void ObjectSprite::destructor(ObjectSprite this)
  * @param this			Function scope
  * @param rotation		The rotation
  */
-void ObjectSprite::rotate(ObjectSprite this, const Rotation* rotation)
+void ObjectSprite::rotate(const Rotation* rotation)
 {
-	ASSERT(this, "ObjectSprite::setDirection: null this");
-
 	Direction direction =
 	{
 		(__QUARTER_ROTATION_DEGREES) < __ABS(rotation->y) || (__QUARTER_ROTATION_DEGREES) < __ABS(rotation->z)  ? __LEFT : __RIGHT,
@@ -186,10 +172,8 @@ void ObjectSprite::rotate(ObjectSprite this, const Rotation* rotation)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void ObjectSprite::setPosition(ObjectSprite this, const PixelVector* position)
+void ObjectSprite::setPosition(const PixelVector* position)
 {
-	ASSERT(this, "ObjectSprite::setPosition: null this");
-
 	Base::setPosition(this, position);
 
 	ObjectSprite::checkForContainer(this);
@@ -204,9 +188,8 @@ void ObjectSprite::setPosition(ObjectSprite this, const PixelVector* position)
  * @param this			Function scope
  * @param position		3D position
  */
-void ObjectSprite::position(ObjectSprite this, const Vector3D* position)
+void ObjectSprite::position(const Vector3D* position)
 {
-	ASSERT(this, "ObjectSprite::position: null this");
 	ASSERT(this->texture, "ObjectSprite::position: null texture");
 
 	Base::position(this, position);
@@ -222,10 +205,8 @@ void ObjectSprite::position(ObjectSprite this, const Vector3D* position)
  *
  * @param this			Function scope
  */
-static void ObjectSprite::checkForContainer(ObjectSprite this)
+void ObjectSprite::checkForContainer()
 {
-	ASSERT(this, "ObjectSprite::checkForContainer: null this");
-
 	if(0 > this->objectIndex)
 	{
 		this->objectSpriteContainer = ObjectSpriteContainerManager::getObjectSpriteContainer(ObjectSpriteContainerManager::getInstance(), this->totalObjects, this->position.z);
@@ -243,10 +224,8 @@ static void ObjectSprite::checkForContainer(ObjectSprite this)
  * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
-void ObjectSprite::calculateParallax(ObjectSprite this, fix10_6 z)
+void ObjectSprite::calculateParallax(fix10_6 z)
 {
-	ASSERT(this, "ObjectSprite::calculateParallax: null this");
-
 	this->position.z = z - _cameraPosition->z;
 	this->position.parallax = Optics::calculateParallax(__PIXELS_TO_METERS(this->position.x), z);
 }
@@ -260,9 +239,8 @@ void ObjectSprite::calculateParallax(ObjectSprite this, fix10_6 z)
  * @param this		Function scope
  * @param evenFrame
  */
-void ObjectSprite::render(ObjectSprite this, bool evenFrame)
+void ObjectSprite::render(bool evenFrame)
 {
-	ASSERT(this, "ObjectSprite::render: null this");
 	ASSERT(this->texture, "ObjectSprite::render: null texture");
 
 	Base::render(this, evenFrame);
@@ -338,9 +316,8 @@ void ObjectSprite::render(ObjectSprite this, bool evenFrame)
  * @param this			Function scope
  * @return				Number of used OBJECTs
  */
-s16 ObjectSprite::getTotalObjects(ObjectSprite this)
+s16 ObjectSprite::getTotalObjects()
 {
-	ASSERT(this, "ObjectSprite::getTotalObjects: null this");
 	ASSERT(0 < this->totalObjects, "ObjectSprite::getTotalObjects: null totalObjects");
 
 	return this->totalObjects;
@@ -356,10 +333,8 @@ s16 ObjectSprite::getTotalObjects(ObjectSprite this)
  *
  * @return				Number of used OBJECTs
  */
-s16 ObjectSprite::getObjectIndex(ObjectSprite this)
+s16 ObjectSprite::getObjectIndex()
 {
-	ASSERT(this, "ObjectSprite::getObjectIndex: null this");
-
 	return this->objectIndex;
 }
 
@@ -372,9 +347,8 @@ s16 ObjectSprite::getObjectIndex(ObjectSprite this)
  * @param this				Function scope
  * @param objectIndex		Set the OBJECT index
  */
-void ObjectSprite::setObjectIndex(ObjectSprite this, s16 objectIndex)
+void ObjectSprite::setObjectIndex(s16 objectIndex)
 {
-	ASSERT(this, "ObjectSprite::setObjectIndex: null this");
 	ASSERT(this->texture, "ObjectSprite::setObjectIndex: null texture");
 
 	int previousObjectIndex = this->objectIndex;
@@ -426,9 +400,8 @@ void ObjectSprite::setObjectIndex(ObjectSprite this, s16 objectIndex)
  *
  * @return 		World layer
  */
-u8 ObjectSprite::getWorldLayer(ObjectSprite this)
+u8 ObjectSprite::getWorldLayer()
 {
-	ASSERT(this, "ObjectSprite::getWorldLayer: null this");
 	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
 	return this->objectSpriteContainer ?  Sprite::getWorldLayer(__SAFE_CAST(Sprite, this->objectSpriteContainer)) : 0;
@@ -443,10 +416,8 @@ u8 ObjectSprite::getWorldLayer(ObjectSprite this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void ObjectSprite::addDisplacement(ObjectSprite this, const PixelVector* displacement)
+void ObjectSprite::addDisplacement(const PixelVector* displacement)
 {
-	ASSERT(this, "ObjectSprite::addDisplacement: null this");
-
 	this->position.x += displacement->x;
 	this->position.y += displacement->y;
 	this->position.z += displacement->z;
@@ -463,10 +434,8 @@ void ObjectSprite::addDisplacement(ObjectSprite this, const PixelVector* displac
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void ObjectSprite::setMode(ObjectSprite this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
-{
-	ASSERT(this, "ObjectSprite::setMode: null this");
-}
+void ObjectSprite::setMode(u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+{}
 
 /**
  * Set ObjectSpriteContainer to NULL
@@ -476,9 +445,7 @@ void ObjectSprite::setMode(ObjectSprite this __attribute__ ((unused)), u16 displ
  *
  * @param this				Function scope
  */
-void ObjectSprite::invalidateObjectSpriteContainer(ObjectSprite this)
+void ObjectSprite::invalidateObjectSpriteContainer()
 {
-	ASSERT(this, "ObjectSprite::invalidateObjectSpriteContainer: null this");
-
 	this->objectSpriteContainer = NULL;
 }

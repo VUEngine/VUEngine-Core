@@ -97,37 +97,37 @@ class GameState : State
 	*/
 	u32 previousUpdateTime;
 
-	void constructor(GameState this);
-	CollisionManager getCollisionManager(GameState this);
-	Clock getMessagingClock(GameState this);
-	PhysicalWorld getPhysicalWorld(GameState this);
-	Clock getPhysicsClock(GameState this);
-	Stage getStage(GameState this);
-	Clock getUpdateClock(GameState this);
-	void loadStage(GameState this, StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
-	void pauseAnimations(GameState this, bool pause);
-	void pauseClocks(GameState this);
-	void pauseMessagingClock(GameState this, bool pause);
-	u32 processCollisions(GameState this);
-	void pausePhysics(GameState this, bool pause);
-	int propagateMessage(GameState this, int message);
-	void resumeClocks(GameState this);
-	void startAnimations(GameState this);
-	void startClocks(GameState this);
-	void startDispatchingDelayedMessages(GameState this);
-	void startPhysics(GameState this);
-	void stopClocks(GameState this);
-	bool stream(GameState this);
-	void updatePhysics(GameState this);
-	void synchronizeGraphics(GameState this);
-	virtual void processUserInput(GameState this, UserInput userInput);
-	virtual void transform(GameState this);
-	override void enter(GameState this, void* owner);
-	override void execute(GameState this, void* owner);
-	override void exit(GameState this, void* owner);
-	override void suspend(GameState this, void* owner);
-	override void resume(GameState this, void* owner);
-	override bool processMessage(GameState this, void* owner, Telegram telegram);
+	void constructor();
+	CollisionManager getCollisionManager();
+	Clock getMessagingClock();
+	PhysicalWorld getPhysicalWorld();
+	Clock getPhysicsClock();
+	Stage getStage();
+	Clock getUpdateClock();
+	void loadStage(StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
+	void pauseAnimations(bool pause);
+	void pauseClocks();
+	void pauseMessagingClock(bool pause);
+	u32 processCollisions();
+	void pausePhysics(bool pause);
+	int propagateMessage(int message);
+	void resumeClocks();
+	void startAnimations();
+	void startClocks();
+	void startDispatchingDelayedMessages();
+	void startPhysics();
+	void stopClocks();
+	bool stream();
+	void updatePhysics();
+	void synchronizeGraphics();
+	virtual void processUserInput(UserInput userInput);
+	virtual void transform();
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void suspend(void* owner);
+	override void resume(void* owner);
+	override bool processMessage(void* owner, Telegram telegram);
 }
 
 

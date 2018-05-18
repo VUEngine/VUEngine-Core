@@ -56,17 +56,7 @@
  */
 
 
-
 bool _triggeringException = false;
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void Error::constructor(Error this);
-
-bool Game::isConstructed();
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -92,7 +82,7 @@ bool Game::isConstructed();
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) Error::constructor(Error this)
+void Error::constructor()
 {
 	Base::constructor();
 }
@@ -105,9 +95,9 @@ void __attribute__ ((noinline)) Error::constructor(Error this)
  *
  * @param this	Function scope
  */
-void Error::destructor(Error this)
+void Error::destructor()
 {
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -121,7 +111,7 @@ void Error::destructor(Error this)
  * @param detail
  */
 #ifndef __RELEASE
-int Error::triggerException(Error this __attribute__ ((unused)), char* message, char* detail)
+int Error::triggerException(char* message, char* detail)
 {
 	int lp = _lp;
 	int sp = _sp;

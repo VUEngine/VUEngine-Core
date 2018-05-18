@@ -37,10 +37,10 @@
 singleton class DebugState : GameState
 {
 	static DebugState getInstance();
-	override void enter(DebugState this, void* owner);
-	override void execute(DebugState this, void* owner);
-	override void exit(DebugState this, void* owner);
-	override void processUserInput(DebugState this, UserInput userInput);
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void processUserInput(UserInput userInput);
 }
 
 

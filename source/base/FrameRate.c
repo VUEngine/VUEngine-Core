@@ -41,13 +41,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void FrameRate::constructor(FrameRate this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -70,10 +63,8 @@ void FrameRate::constructor(FrameRate this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) FrameRate::constructor(FrameRate this)
+void FrameRate::constructor()
 {
-	ASSERT(this, "FrameRate::constructor: null this");
-
 	Base::constructor();
 
 	this->fps = 0;
@@ -87,12 +78,10 @@ void __attribute__ ((noinline)) FrameRate::constructor(FrameRate this)
  *
  * @param this	Function scope
  */
-void FrameRate::destructor(FrameRate this)
+void FrameRate::destructor()
 {
-	ASSERT(this, "FrameRate::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -103,10 +92,8 @@ void FrameRate::destructor(FrameRate this)
  *
  * @param this	Function scope
  */
-void FrameRate::reset(FrameRate this)
+void FrameRate::reset()
 {
-	ASSERT(this, "FrameRate::reset: null this");
-
 	this->fps = 0;
 }
 
@@ -118,10 +105,8 @@ void FrameRate::reset(FrameRate this)
  *
  * @param this	Function scope
  */
-u16 FrameRate::getFps(FrameRate this)
+u16 FrameRate::getFps()
 {
-	ASSERT(this, "FrameRate::getFps: null this");
-
 	return this->fps;
 }
 
@@ -133,10 +118,8 @@ u16 FrameRate::getFps(FrameRate this)
  *
  * @param this	Function scope
  */
-void FrameRate::increaseFps(FrameRate this)
+void FrameRate::increaseFps()
 {
-	ASSERT(this, "FrameRate::increaseFps: null this");
-
 	this->fps++;
 }
 
@@ -150,10 +133,8 @@ void FrameRate::increaseFps(FrameRate this)
  * @param col	Column to start printing at
  * @param row	Row to start printing at
  */
-void FrameRate::print(FrameRate this, int col, int row)
+void FrameRate::print(int col, int row)
 {
-	ASSERT(this, "FrameRate::print: null this");
-
 	Printing printing = Printing::getInstance();
 	Printing::text(printing, "FPS      ", col, row, NULL);
 	Printing::int(printing, this->fps, col + 4, row++, NULL);

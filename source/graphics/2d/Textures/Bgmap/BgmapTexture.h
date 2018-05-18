@@ -61,17 +61,17 @@ class BgmapTexture : Texture
 	*/
 	s8 remainingRowsToBeWritten;
 
-	void constructor(BgmapTexture this, BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
-	s8 getRemainingRowsToBeWritten(BgmapTexture this);
-	s16 getXOffset(BgmapTexture this);
-	s16 getYOffset(BgmapTexture this);
-	s8 getSegment(BgmapTexture this);
-	void setSegment(BgmapTexture this, s8 segment);
-	u8 getUsageCount(BgmapTexture this);
-	void increaseUsageCount(BgmapTexture this);
-	bool decreaseUsageCount(BgmapTexture this);
-	override void write(BgmapTexture this);
-	override void rewrite(BgmapTexture this);
+	void constructor(BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
+	s8 getRemainingRowsToBeWritten();
+	s16 getXOffset();
+	s16 getYOffset();
+	s8 getSegment();
+	void setSegment(s8 segment);
+	u8 getUsageCount();
+	void increaseUsageCount();
+	bool decreaseUsageCount();
+	override void write();
+	override void rewrite();
 }
 
 

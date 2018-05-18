@@ -72,21 +72,10 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void SpriteManager::constructor(SpriteManager this);
-static void SpriteManager::selectSpritePendingTextureWriting(SpriteManager this);
-static bool SpriteManager::disposeSpritesProgressively(SpriteManager this);
-static void SpriteManager::registerSprite(SpriteManager this, Sprite sprite);
-static void SpriteManager::unregisterSprite(SpriteManager this, Sprite sprite);
-
 #ifdef __PROFILE_GAME
 int _totalPixelsToDraw = 0;
 #endif
 
-void ObjectSprite::checkForContainer(ObjectSprite this);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -112,10 +101,8 @@ void ObjectSprite::checkForContainer(ObjectSprite this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) SpriteManager::constructor(SpriteManager this)
+void SpriteManager::constructor()
 {
-	ASSERT(this, "SpriteManager::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -145,10 +132,8 @@ void __attribute__ ((noinline)) SpriteManager::constructor(SpriteManager this)
  *
  * @param this	Function scope
  */
-void SpriteManager::destructor(SpriteManager this)
+void SpriteManager::destructor()
 {
-	ASSERT(this, "SpriteManager::destructor: null this");
-
 	if(this->sprites)
 	{
 		__DELETE(this->sprites);
@@ -164,7 +149,7 @@ void SpriteManager::destructor(SpriteManager this)
 	}
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -175,10 +160,8 @@ void SpriteManager::destructor(SpriteManager this)
  *
  * @param this	Function scope
  */
-void SpriteManager::reset(SpriteManager this)
+void SpriteManager::reset()
 {
-	ASSERT(this, "SpriteManager::reset: null this");
-
 	this->lockSpritesLists = true;
 
 	// must reset the ObjectSpriteContainerManager before the SpriteManager!
@@ -231,7 +214,7 @@ void SpriteManager::reset(SpriteManager this)
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
-void SpriteManager::setupObjectSpriteContainers(SpriteManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
+void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
 {
 	const ObjectSpriteContainer* objectSpriteContainers = ObjectSpriteContainerManager::setupObjectSpriteContainers(ObjectSpriteContainerManager::getInstance(), size, z);
 
@@ -256,9 +239,8 @@ void SpriteManager::setupObjectSpriteContainers(SpriteManager this, s16 size[__T
  * @param this		Function scope
  * @param sprite	Sprite to dispose
  */
-Sprite SpriteManager::createSprite(SpriteManager this, SpriteDefinition* spriteDefinition, Object owner)
+Sprite SpriteManager::createSprite(SpriteDefinition* spriteDefinition, Object owner)
 {
-	ASSERT(this, "SpriteManager::createSprite: null this");
 	ASSERT(spriteDefinition, "SpriteManager::createSprite: null spriteDefinition");
 
 	this->lockSpritesLists = true;
@@ -282,9 +264,8 @@ Sprite SpriteManager::createSprite(SpriteManager this, SpriteDefinition* spriteD
  * @param this		Function scope
  * @param sprite	Sprite to dispose
  */
-void SpriteManager::disposeSprite(SpriteManager this, Sprite sprite)
+void SpriteManager::disposeSprite(Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::disposeSprite: null this");
 	ASSERT(__IS_OBJECT_ALIVE(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
 	this->lockSpritesLists = true;
@@ -309,10 +290,8 @@ void SpriteManager::disposeSprite(SpriteManager this, Sprite sprite)
  *
  * @return 		True if there were a sprite to delete
  */
-static bool SpriteManager::disposeSpritesProgressively(SpriteManager this)
+bool SpriteManager::disposeSpritesProgressively()
 {
-	ASSERT(this, "SpriteManager::disposeSprites: null this");
-
 	if(!this->lockSpritesLists && this->spritesToDispose->head)
 	{
 		this->lockSpritesLists = true;
@@ -343,10 +322,8 @@ static bool SpriteManager::disposeSpritesProgressively(SpriteManager this)
  *
  * @return 		True if there were a sprite to delete
  */
-void SpriteManager::disposeSprites(SpriteManager this)
+void SpriteManager::disposeSprites()
 {
-	ASSERT(this, "SpriteManager::disposeSprites: null this");
-
 	if(this->spritesToDispose)
 	{
 		this->lockSpritesLists = false;
@@ -362,10 +339,8 @@ void SpriteManager::disposeSprites(SpriteManager this)
  *
  * @param this	Function scope
  */
-void SpriteManager::sortLayers(SpriteManager this)
+void SpriteManager::sortLayers()
 {
-	ASSERT(this, "SpriteManager::sortLayers: null this");
-
 	bool swap = false;
 
 	do
@@ -414,10 +389,8 @@ void SpriteManager::sortLayers(SpriteManager this)
  *
  * @param this	Function scope
  */
-void SpriteManager::sortLayersProgressively(SpriteManager this)
+void SpriteManager::sortLayersProgressively()
 {
-	ASSERT(this, "SpriteManager::sortLayersProgressively: null this");
-
 	this->zSortingFirstNode = this->zSortingFirstNode ? this->zSortingSecondNode ? this->zSortingFirstNode : this->zSortingFirstNode->next: this->sprites->head;
 
 	for(; this->zSortingFirstNode; this->zSortingFirstNode = this->zSortingFirstNode->next)
@@ -461,9 +434,8 @@ void SpriteManager::sortLayersProgressively(SpriteManager this)
  * @param this		Function scope
  * @param sprite	Sprite to assign the WORLD layer
  */
-static void SpriteManager::registerSprite(SpriteManager this, Sprite sprite)
+void SpriteManager::registerSprite(Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::registerSprite: null this");
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::registerSprite: adding no sprite");
 
 	if(!__GET_CAST(ObjectSprite, sprite))
@@ -514,9 +486,8 @@ static void SpriteManager::registerSprite(SpriteManager this, Sprite sprite)
  * @param this		Function scope
  * @param sprite	Sprite to assign the WORLD layer
  */
-static void SpriteManager::unregisterSprite(SpriteManager this, Sprite sprite)
+void SpriteManager::unregisterSprite(Sprite sprite)
 {
-	ASSERT(this, "SpriteManager::unregisterSprite: null this");
 	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
 	if(!__GET_CAST(ObjectSprite, sprite))
@@ -572,10 +543,8 @@ static void SpriteManager::unregisterSprite(SpriteManager this, Sprite sprite)
  *
  * @param this		Function scope
  */
-void SpriteManager::renderLastLayer(SpriteManager this)
+void SpriteManager::renderLastLayer()
 {
-	ASSERT(this, "SpriteManager::renderLastLayer: null this");
-
 	ASSERT(0 <= (s8)this->freeLayer, "SpriteManager::renderLastLayer: no more layers");
 	ASSERT(__TOTAL_LAYERS > VirtualList::getSize(this->sprites), "SpriteManager::renderLastLayer: no more free layers");
 
@@ -597,10 +566,8 @@ void SpriteManager::renderLastLayer(SpriteManager this)
  *
  * @param this		Function scope
  */
-static void SpriteManager::selectSpritePendingTextureWriting(SpriteManager this)
+void SpriteManager::selectSpritePendingTextureWriting()
 {
-	ASSERT(this, "SpriteManager::selectSpritePendingTextureWriting: null this");
-
 	VirtualNode node = this->sprites->head;
 
 	for(; node; node = node->next)
@@ -626,10 +593,8 @@ static void SpriteManager::selectSpritePendingTextureWriting(SpriteManager this)
  *
  * @param this		Function scope
  */
-void SpriteManager::writeTextures(SpriteManager this)
+void SpriteManager::writeTextures()
 {
-	ASSERT(this, "SpriteManager::writeTextures: null this");
-
 	CharSetManager::writeCharSets(CharSetManager::getInstance());
 
 	s8 texturesMaximumRowsToWrite = this->texturesMaximumRowsToWrite;
@@ -655,10 +620,8 @@ void SpriteManager::writeTextures(SpriteManager this)
  *
  * @param this		Function scope
  */
-static bool SpriteManager::writeSelectedSprite(SpriteManager this)
+bool SpriteManager::writeSelectedSprite()
 {
-	ASSERT(this, "SpriteManager::writeSelectedSprite: null this");
-
 	bool textureWritten = false;
 
 	if(!this->waitToWriteSpriteTextures)
@@ -698,10 +661,8 @@ static bool SpriteManager::writeSelectedSprite(SpriteManager this)
  * @param this		Function scope
  */
 
-void SpriteManager::render(SpriteManager this)
+void SpriteManager::render()
 {
-	ASSERT(this, "SpriteManager::render: null this");
-
 	// switch between even and odd frame
 	this->evenFrame = !this->evenFrame;
 
@@ -804,10 +765,8 @@ void SpriteManager::render(SpriteManager this)
  *
  * @return			Free WORLD layer
  */
-u8 SpriteManager::getFreeLayer(SpriteManager this)
+u8 SpriteManager::getFreeLayer()
 {
-	ASSERT(this, "SpriteManager::getFreeLayer: null this");
-
 	return this->freeLayer;
 }
 
@@ -820,10 +779,8 @@ u8 SpriteManager::getFreeLayer(SpriteManager this)
  * @param this		Function scope
  * @param layer		WORLD layer to show
  */
-void SpriteManager::showLayer(SpriteManager this, u8 layer)
+void SpriteManager::showLayer(u8 layer)
 {
-	ASSERT(this, "SpriteManager::showLayer: null this");
-
 	VirtualNode node = this->sprites->tail;
 
 	for(; node; node = node->previous)
@@ -853,10 +810,8 @@ void SpriteManager::showLayer(SpriteManager this, u8 layer)
  *
  * @param this		Function scope
  */
-void SpriteManager::recoverLayers(SpriteManager this)
+void SpriteManager::recoverLayers()
 {
-	ASSERT(this, "SpriteManager::recoverLayers: null this");
-
 	VirtualNode node = this->sprites->tail;
 	for(; node; node = node->previous)
 	{
@@ -883,9 +838,8 @@ void SpriteManager::recoverLayers(SpriteManager this)
  *
  * @return			Sprite with the given WORLD layer
  */
-Sprite SpriteManager::getSpriteAtLayer(SpriteManager this, u8 layer)
+Sprite SpriteManager::getSpriteAtLayer(u8 layer)
 {
-	ASSERT(this, "SpriteManager::getSpriteAtLayer: null this");
 	ASSERT((unsigned)layer < __TOTAL_LAYERS, "SpriteManager::getSpriteAtLayer: invalid layer");
 
 	VirtualNode node = this->sprites->head;
@@ -911,10 +865,8 @@ Sprite SpriteManager::getSpriteAtLayer(SpriteManager this, u8 layer)
  *
  * @return 			Maximum number of texture rows to write
  */
-s8 SpriteManager::getTexturesMaximumRowsToWrite(SpriteManager this)
+s8 SpriteManager::getTexturesMaximumRowsToWrite()
 {
-	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
-
 	return this->texturesMaximumRowsToWrite;
 }
 
@@ -927,10 +879,8 @@ s8 SpriteManager::getTexturesMaximumRowsToWrite(SpriteManager this)
  * @param this								Function scope
  * @param cyclesToWaitForSpriteTextureWriting		Number of idle cycles
  */
-void SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForSpriteTextureWriting)
+void SpriteManager::setCyclesToWaitForTextureWriting(u8 cyclesToWaitForSpriteTextureWriting)
 {
-	ASSERT(this, "SpriteManager::getTextureMaximumRowsToWrite: null this");
-
 	this->cyclesToWaitForSpriteTextureWriting = cyclesToWaitForSpriteTextureWriting;
 }
 
@@ -943,10 +893,8 @@ void SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager this, u8 cycl
  * @param this								Function scope
  * @param texturesMaximumRowsToWrite		Number of texture rows allowed to be written
  */
-void SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite)
+void SpriteManager::setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite)
 {
-	ASSERT(this, "SpriteManager::setMaximumTextureRowsToWrite: null this");
-
 	this->texturesMaximumRowsToWrite = 2 > (s8)texturesMaximumRowsToWrite ? 2 : texturesMaximumRowsToWrite;
 }
 
@@ -959,10 +907,8 @@ void SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager this, u8 texture
  * @param this							Function scope
  * @param deferParamTableEffects	Flag
  */
-void SpriteManager::deferParamTableEffects(SpriteManager this, bool deferParamTableEffects)
+void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
 {
-	ASSERT(this, "SpriteManager::deferParamTableEffects: null this");
-
 	this->deferParamTableEffects = deferParamTableEffects;
 }
 
@@ -976,10 +922,8 @@ void SpriteManager::deferParamTableEffects(SpriteManager this, bool deferParamTa
  *
  * @return			Number of affine transformation rows to compute
  */
-int SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager this)
+int SpriteManager::getMaximumParamTableRowsToComputePerCall()
 {
-	ASSERT(this, "SpriteManager::getMaximumAffineRowsPerCall: null this");
-
 	return this->deferParamTableEffects ? this->maximumParamTableRowsToComputePerCall : -1;
 }
 
@@ -992,10 +936,8 @@ int SpriteManager::getMaximumParamTableRowsToComputePerCall(SpriteManager this)
  * @param this										Function scope
  * @param maximumParamTableRowsToComputePerCall		Number of affine transformation rows to compute per render cycle
  */
-void SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager this, int maximumParamTableRowsToComputePerCall)
+void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTableRowsToComputePerCall)
 {
-	ASSERT(this, "SpriteManager::setMaximumAffineRowsToComputePerCall: null this");
-
 	this->maximumParamTableRowsToComputePerCall = maximumParamTableRowsToComputePerCall;
 }
 
@@ -1010,10 +952,8 @@ void SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager this,
  * @param y			Camera y coordinate
  * @param resumed	If true prints info about all the Sprites in the list
  */
-void SpriteManager::print(SpriteManager this, int x, int y, bool resumed)
+void SpriteManager::print(int x, int y, bool resumed)
 {
-	ASSERT(this, "SpriteManager::print: null this");
-
 	Printing::text(Printing::getInstance(), "SPRITES' USAGE", x, y++, NULL);
 #ifdef __PROFILE_GAME
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);

@@ -49,7 +49,6 @@ friend class Texture;
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-void Sprite::onTextureRewritten(Sprite this, Object eventFirer);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -66,10 +65,8 @@ void Sprite::onTextureRewritten(Sprite this, Object eventFirer);
  * @param spriteDefinition	Definition of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(Sprite this, const SpriteDefinition* spriteDefinition __attribute__ ((unused)), Object owner __attribute__ ((unused)))
+void Sprite::constructor(const SpriteDefinition* spriteDefinition __attribute__ ((unused)), Object owner __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::destructor: null this");
-
 	Base::constructor();
 
 	// clear values
@@ -96,7 +93,7 @@ void Sprite::constructor(Sprite this, const SpriteDefinition* spriteDefinition _
  *
  * @param this	Function scope
  */
-void Sprite::destructor(Sprite this)
+void Sprite::destructor()
 {
 	ASSERT(this, "Sprite::destructor: null cast");
 
@@ -115,10 +112,8 @@ void Sprite::destructor(Sprite this)
  *
  * @return		Scale struct
  */
-Scale Sprite::getScale(Sprite this __attribute__ ((unused)))
+Scale Sprite::getScale()
 {
-	ASSERT(this, "Sprite::getScale: null this");
-
 	Scale scale =
 	{
 		__1I_FIX7_9,
@@ -140,10 +135,8 @@ Scale Sprite::getScale(Sprite this __attribute__ ((unused)))
  * @param scale	Scale struct to apply
  * @param z
  */
-void Sprite::resize(Sprite this, Scale scale __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
+void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::resize: null this");
-
 	this->halfWidth = Texture::getCols(this->texture) << 2;
 	this->halfHeight = Texture::getRows(this->texture) << 2;
 }
@@ -158,10 +151,8 @@ void Sprite::resize(Sprite this, Scale scale __attribute__ ((unused)), fix10_6 z
  *
  * @return 		Texture struct
  */
-Texture Sprite::getTexture(Sprite this)
+Texture Sprite::getTexture()
 {
-	ASSERT(this, "Sprite::getTexture: null this");
-
 	return this->texture;
 }
 
@@ -173,10 +164,8 @@ Texture Sprite::getTexture(Sprite this)
  *
  * @param this	Function scope
  */
-void Sprite::show(Sprite this)
+void Sprite::show()
 {
-	ASSERT(this, "Sprite::show: null this");
-
 	this->hidden = false;
 }
 
@@ -188,10 +177,8 @@ void Sprite::show(Sprite this)
  *
  * @param this	Function scope
  */
-void Sprite::hide(Sprite this)
+void Sprite::hide()
 {
-	ASSERT(this, "Sprite::hide: null this");
-
 	this->hidden = true;
 }
 
@@ -205,10 +192,8 @@ void Sprite::hide(Sprite this)
  *
  * @return		Boolean telling whether the sprite is hidden
  */
-bool Sprite::isHidden(Sprite this)
+bool Sprite::isHidden()
 {
-	ASSERT(this, "Sprite::isHidden: null this");
-
 	return this->hidden;
 }
 
@@ -221,10 +206,8 @@ bool Sprite::isHidden(Sprite this)
  * @param this			Function scope
  * @param position		3D position
  */
-void Sprite::position(Sprite this __attribute__ ((unused)), const Vector3D* position)
+void Sprite::position(const Vector3D* position)
 {
-	ASSERT(this, "Sprite::position: null this");
-
 	this->position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(*position), this->position.parallax);
 
 	this->positioned = true;
@@ -239,10 +222,8 @@ void Sprite::position(Sprite this __attribute__ ((unused)), const Vector3D* posi
  * @param this			Function scope
  * @param position		Pixel position
  */
-void Sprite::setPosition(Sprite this, const PixelVector* position)
+void Sprite::setPosition(const PixelVector* position)
 {
-	ASSERT(this, "Sprite::setPosition: null this");
-
 	this->positioned = true;
 
 	this->position = *position;
@@ -257,10 +238,8 @@ void Sprite::setPosition(Sprite this, const PixelVector* position)
  * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
-void Sprite::calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z __attribute__ ((unused)))
-{
-	ASSERT(this, "Sprite::calculateParallax: null this");
-}
+void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
+{}
 
 /**
  * Get position relative to the camera
@@ -272,7 +251,7 @@ void Sprite::calculateParallax(Sprite this __attribute__ ((unused)), fix10_6 z _
  *
  * @return			Position relative to camera
  */
-PixelVector Sprite::getPosition(Sprite this)
+PixelVector Sprite::getPosition()
 {
 	return this->position;
 }
@@ -288,7 +267,7 @@ PixelVector Sprite::getPosition(Sprite this)
  *
  * @return			Displaced position relative to camera
  */
-PixelVector Sprite::getDisplacedPosition(Sprite this)
+PixelVector Sprite::getDisplacedPosition()
 {
 	PixelVector position =
 	{
@@ -311,10 +290,8 @@ PixelVector Sprite::getDisplacedPosition(Sprite this)
  *
  * @return		Sprite's AnimationController
  */
-AnimationController Sprite::getAnimationController(Sprite this)
+AnimationController Sprite::getAnimationController()
 {
-	ASSERT(this, "Sprite::getAnimationController: null this");
-
 	return this->animationController;
 }
 
@@ -327,10 +304,8 @@ AnimationController Sprite::getAnimationController(Sprite this)
  * @param this			Function scope
  * @param worldLayer	World layer
  */
-void Sprite::setWorldLayer(Sprite this, u8 worldLayer)
+void Sprite::setWorldLayer(u8 worldLayer)
 {
-	ASSERT(this, "Sprite::setWorldLayer: null this");
-
 	this->worldLayer = worldLayer;
 
 	if(0 <= (s8)this->worldLayer)
@@ -349,10 +324,8 @@ void Sprite::setWorldLayer(Sprite this, u8 worldLayer)
  *
  * @return 		World layer
  */
-u8 Sprite::getWorldLayer(Sprite this)
+u8 Sprite::getWorldLayer()
 {
-	ASSERT(this, "Sprite::getWorldLayer: null this");
-
 	return this->worldLayer;
 }
 
@@ -366,10 +339,8 @@ u8 Sprite::getWorldLayer(Sprite this)
  *
  * @return			true it all textures are written
  */
-bool Sprite::writeTextures(Sprite this __attribute__ ((unused)))
+bool Sprite::writeTextures()
 {
-	ASSERT(this, "Sprite::writeTextures: null this");
-
 	if(!this->texture)
 	{
 		return true;
@@ -393,10 +364,8 @@ bool Sprite::writeTextures(Sprite this __attribute__ ((unused)))
  *
  * @return			true it all textures are written
  */
-bool Sprite::areTexturesWritten(Sprite this __attribute__ ((unused)))
+bool Sprite::areTexturesWritten()
 {
-	ASSERT(this, "Sprite::areTexturesWritten: null this");
-
 	return !this->texture ? true : this->texture->written;
 }
 
@@ -410,10 +379,8 @@ bool Sprite::areTexturesWritten(Sprite this __attribute__ ((unused)))
  *
  * @return
  */
-u16 Sprite::getHead(Sprite this)
+u16 Sprite::getHead()
 {
-	ASSERT(this, "Sprite::getHead: null this");
-
 	return this->head;
 }
 
@@ -427,10 +394,8 @@ u16 Sprite::getHead(Sprite this)
  *
  * @return 		Mode
  */
-u16 Sprite::getMode(Sprite this)
+u16 Sprite::getMode()
 {
-	ASSERT(this, "Sprite::getMode: null this");
-
 	return this->head & 0x3000;
 }
 
@@ -444,10 +409,8 @@ u16 Sprite::getMode(Sprite this)
  *
  * @return
  */
-u32 Sprite::getWorldHead(Sprite this)
+u32 Sprite::getWorldHead()
 {
-	ASSERT(this, "Sprite::getWorldHead: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->head;
 }
@@ -462,10 +425,8 @@ u32 Sprite::getWorldHead(Sprite this)
  *
  * @return
  */
-s16 Sprite::getWorldGX(Sprite this)
+s16 Sprite::getWorldGX()
 {
-	ASSERT(this, "Sprite::getWorldGX: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gx;
 }
@@ -480,10 +441,8 @@ s16 Sprite::getWorldGX(Sprite this)
  *
  * @return
  */
-s16 Sprite::getWorldGY(Sprite this)
+s16 Sprite::getWorldGY()
 {
-	ASSERT(this, "Sprite::getWorldGY: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gy;
 }
@@ -498,10 +457,8 @@ s16 Sprite::getWorldGY(Sprite this)
  *
  * @return
  */
-s16 Sprite::getWorldGP(Sprite this)
+s16 Sprite::getWorldGP()
 {
-	ASSERT(this, "Sprite::getWorldGP: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->gp;
 }
@@ -516,10 +473,8 @@ s16 Sprite::getWorldGP(Sprite this)
  *
  * @return
  */
-s16 Sprite::getWorldMX(Sprite this)
+s16 Sprite::getWorldMX()
 {
-	ASSERT(this, "Sprite::getWorldMX: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->mx;
 }
@@ -534,10 +489,8 @@ s16 Sprite::getWorldMX(Sprite this)
  *
  * @return
  */
-s16 Sprite::getWorldMY(Sprite this)
+s16 Sprite::getWorldMY()
 {
-	ASSERT(this, "Sprite::getWorldMY: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->my;
 }
@@ -552,10 +505,8 @@ s16 Sprite::getWorldMY(Sprite this)
  *
  * @return
  */
-s16 Sprite::getWorldMP(Sprite this)
+s16 Sprite::getWorldMP()
 {
-	ASSERT(this, "Sprite::getWorldMP: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->mp;
 }
@@ -570,10 +521,8 @@ s16 Sprite::getWorldMP(Sprite this)
  *
  * @return 		Width
  */
-u16 Sprite::getWorldWidth(Sprite this)
+u16 Sprite::getWorldWidth()
 {
-	ASSERT(this, "Sprite::getWorldWidth: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->w;
 }
@@ -588,10 +537,8 @@ u16 Sprite::getWorldWidth(Sprite this)
  *
  * @return 		Width
  */
-u16 Sprite::getWorldHeight(Sprite this)
+u16 Sprite::getWorldHeight()
 {
-	ASSERT(this, "Sprite::getWorldHeight: null this");
-
 	WorldAttributes* worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 	return worldPointer->h;
 }
@@ -604,10 +551,8 @@ u16 Sprite::getWorldHeight(Sprite this)
  *
  * @param this	Function scope
  */
-void Sprite::rewrite(Sprite this)
+void Sprite::rewrite()
 {
-	ASSERT(this, "Sprite::rewrite: null this");
-
 	if(this->texture)
 	{
 		// write it in graphical memory
@@ -624,10 +569,8 @@ void Sprite::rewrite(Sprite this)
  * @param this			Function scope
  * @param eventFirer
  */
-void Sprite::onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((unused)))
+void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
 {
-	ASSERT(this, "Sprite::onTextureRewritten: null this");
-
 	 Sprite::applyAffineTransformations(this);
 	 Sprite::applyHbiasEffects(this);
 }
@@ -642,10 +585,8 @@ void Sprite::onTextureRewritten(Sprite this, Object eventFirer __attribute__ ((u
  *
  * @return
  */
-PixelVector Sprite::getDisplacement(Sprite this)
+PixelVector Sprite::getDisplacement()
 {
-	ASSERT(this, "Sprite::getDisplacement: null this");
-
 	return this->displacement;
 }
 
@@ -658,10 +599,8 @@ PixelVector Sprite::getDisplacement(Sprite this)
  * @param this	Function scope
  * @param displacement 	PixelVector
  */
-void Sprite::setDisplacement(Sprite this, PixelVector displacement)
+void Sprite::setDisplacement(PixelVector displacement)
 {
-	ASSERT(this, "Sprite::setDisplacement: null this");
-
 	this->displacement = displacement;
 }
 
@@ -674,10 +613,8 @@ void Sprite::setDisplacement(Sprite this, PixelVector displacement)
  * @param this		Function scope
  * @param rotation	Rotation struct
  */
-void Sprite::rotate(Sprite this __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)))
-{
-	ASSERT(this, "Sprite::rotate: null this");
-}
+void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
+{}
 
 /**
  * Get half width
@@ -689,10 +626,8 @@ void Sprite::rotate(Sprite this __attribute__ ((unused)), const Rotation* rotati
  *
  * @return
  */
-int Sprite::getHalfWidth(Sprite this)
+int Sprite::getHalfWidth()
 {
-	ASSERT(this, "Sprite::getHalfWidth: null this");
-
 	return this->halfWidth;
 }
 
@@ -706,10 +641,8 @@ int Sprite::getHalfWidth(Sprite this)
  *
  * @return
  */
-int Sprite::getHalfHeight(Sprite this)
+int Sprite::getHalfHeight()
 {
-	ASSERT(this, "Sprite::getHalfHeight: null this");
-
 	return this->halfHeight;
 }
 
@@ -726,10 +659,8 @@ int Sprite::getHalfHeight(Sprite this)
  *
  * @param this		Function scope
  */
-void Sprite::update(Sprite this)
+void Sprite::update()
 {
-	ASSERT(this, "Sprite::update: null this");
-
 	if(this->animationController && this->texture)
 	{
 		// first animate the frame
@@ -750,10 +681,8 @@ void Sprite::update(Sprite this)
  * @param this		Function scope
  * @param evenFrame
  */
-void Sprite::render(Sprite this, bool evenFrame)
+void Sprite::render(bool evenFrame)
 {
-	ASSERT(this, "Sprite::update: null this");
-
 	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
 					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
 					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
@@ -769,10 +698,8 @@ void Sprite::render(Sprite this, bool evenFrame)
  *
  * @return		Transparency mode
  */
-u8 Sprite::getTransparent(Sprite this)
+u8 Sprite::getTransparent()
 {
-	ASSERT(this, "Sprite::isTransparent: null this");
-
 	return this->transparent;
 }
 
@@ -785,10 +712,8 @@ u8 Sprite::getTransparent(Sprite this)
  * @param this	Function scope
  * @param value	Transparency mode
  */
-void Sprite::setTransparent(Sprite this, u8 value)
+void Sprite::setTransparent(u8 value)
 {
-	ASSERT(this, "Sprite::setTransparent: null this");
-
 	this->transparent = value;
 	this->visible = true;
 }
@@ -801,10 +726,8 @@ void Sprite::setTransparent(Sprite this, u8 value)
  *
  * @param this	Function scope
  */
-void Sprite::updateAnimation(Sprite this)
+void Sprite::updateAnimation()
 {
-	ASSERT(this, "Sprite::updateAnimation: null this");
-
 	if(this->animationController)
 	{
 		// first animate the frame
@@ -821,10 +744,8 @@ void Sprite::updateAnimation(Sprite this)
  * @param this	Function scope
  * @param pause	Boolean
  */
-void Sprite::pause(Sprite this, bool pause)
+void Sprite::pause(bool pause)
 {
-	ASSERT(this, "Sprite::pause: null this");
-
 	if(this->animationController)
 	{
 		// first animate the frame
@@ -842,9 +763,8 @@ void Sprite::pause(Sprite this, bool pause)
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
-void Sprite::play(Sprite this, AnimationDescription* animationDescription, char* functionName)
+void Sprite::play(AnimationDescription* animationDescription, char* functionName)
 {
-	ASSERT(this, "Sprite::play: null this");
 	ASSERT(animationDescription, "Sprite::play: null animationDescription");
 	ASSERT(functionName, "Sprite::play: null functionName");
 
@@ -864,10 +784,8 @@ void Sprite::play(Sprite this, AnimationDescription* animationDescription, char*
  *
  * @return		Boolean whether Sprite is playing an animation
  */
-bool Sprite::isPlaying(Sprite this)
+bool Sprite::isPlaying()
 {
-	ASSERT(this, "Sprite::isPlaying: null this");
-
 	if(this->animationController)
 	{
 		// first animate the frame
@@ -888,10 +806,8 @@ bool Sprite::isPlaying(Sprite this)
  *
  * @return				Boolean whether Sprite is playing a function
  */
-bool Sprite::isPlayingFunction(Sprite this, char* functionName)
+bool Sprite::isPlayingFunction(char* functionName)
 {
-	ASSERT(this, "Sprite::isPlayingFunction: null this");
-
 	if(this->animationController)
 	{
 		return AnimationController::isPlayingFunction(this->animationController, functionName);
@@ -909,10 +825,8 @@ bool Sprite::isPlayingFunction(Sprite this, char* functionName)
  * @param this					Function scope
  * @param frameCycleDecrement	Frame cycle decrement
  */
-void Sprite::setFrameCycleDecrement(Sprite this, u8 frameCycleDecrement)
+void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
 {
-	ASSERT(this, "Sprite::setFrameCycleDecrement: null this");
-
 	if(this->animationController)
 	{
 		AnimationController::setFrameCycleDecrement(this->animationController, frameCycleDecrement);
@@ -929,10 +843,8 @@ void Sprite::setFrameCycleDecrement(Sprite this, u8 frameCycleDecrement)
  *
  * @return		Frame number
  */
-s8 Sprite::getActualFrame(Sprite this)
+s8 Sprite::getActualFrame()
 {
-	ASSERT(this, "Sprite::getActualFrame: null this");
-
 	if(this->animationController)
 	{
 		return AnimationController::getActualFrame(this->animationController);
@@ -950,10 +862,8 @@ s8 Sprite::getActualFrame(Sprite this)
  * @param this			Function scope
  * @param actualFrame	Frame number
  */
-void Sprite::setActualFrame(Sprite this, s8 actualFrame)
+void Sprite::setActualFrame(s8 actualFrame)
 {
-	ASSERT(this, "Sprite::setActualFrame: null this");
-
 	if(this->animationController)
 	{
 		AnimationController::setActualFrame(this->animationController, actualFrame);
@@ -968,10 +878,8 @@ void Sprite::setActualFrame(Sprite this, s8 actualFrame)
  *
  * @param this	Function scope
  */
-void Sprite::nextFrame(Sprite this)
+void Sprite::nextFrame()
 {
-	ASSERT(this, "Sprite::nextFrame: null this");
-
 	if(this->animationController)
 	{
 		AnimationController::nextFrame(this->animationController);
@@ -987,10 +895,8 @@ void Sprite::nextFrame(Sprite this)
  *
  * @param this	Function scope
  */
-void Sprite::previousFrame(Sprite this)
+void Sprite::previousFrame()
 {
-	ASSERT(this, "Sprite::previousFrame: null this");
-
 	if(this->animationController)
 	{
 		AnimationController::previousFrame(this->animationController);
@@ -1008,10 +914,8 @@ void Sprite::previousFrame(Sprite this)
  *
  * @return		Frame delay
  */
-s8 Sprite::getFrameDuration(Sprite this)
+s8 Sprite::getFrameDuration()
 {
-	ASSERT(this, "Sprite::getFrameDuration: null this");
-
 	if(this->animationController)
 	{
 		return AnimationController::getFrameDuration(this->animationController);
@@ -1029,10 +933,8 @@ s8 Sprite::getFrameDuration(Sprite this)
  * @param this			Function scope
  * @param frameDuration	Frame delay
  */
-void Sprite::setFrameDuration(Sprite this, u8 frameDuration)
+void Sprite::setFrameDuration(u8 frameDuration)
 {
-	ASSERT(this, "Sprite::setFrameDuration: null this");
-
 	if(this->animationController)
 	{
 		AnimationController::setFrameDuration(this->animationController, frameDuration);
@@ -1047,10 +949,8 @@ void Sprite::setFrameDuration(Sprite this, u8 frameDuration)
  *
  * @param this	Function scope
  */
-void Sprite::writeAnimation(Sprite this __attribute__ ((unused)))
-{
-	ASSERT(this, "Sprite::writeAnimation: null this");
-}
+void Sprite::writeAnimation()
+{}
 
 /**
  * Check if uses affine mode
@@ -1062,10 +962,8 @@ void Sprite::writeAnimation(Sprite this __attribute__ ((unused)))
  *
  * @return		True if it does
  */
-bool Sprite::isAffine(Sprite this)
+bool Sprite::isAffine()
 {
-	ASSERT(this, "Sprite::isAffine: null this");
-
 	return __WORLD_AFFINE == (this->head & __WORLD_AFFINE);
 }
 
@@ -1079,10 +977,8 @@ bool Sprite::isAffine(Sprite this)
  *
  * @return		True if it does
  */
-bool Sprite::isHBias(Sprite this)
+bool Sprite::isHBias()
 {
-	ASSERT(this, "Sprite::isHBias: null this");
-
 	return __WORLD_HBIAS == (this->head & __WORLD_HBIAS);
 }
 
@@ -1096,10 +992,8 @@ bool Sprite::isHBias(Sprite this)
  *
  * @return		True if it does
  */
-bool Sprite::isObject(Sprite this)
+bool Sprite::isObject()
 {
-	ASSERT(this, "Sprite::isObject: null this");
-
 	return __WORLD_OBJECT == (this->head & __WORLD_OBJECT);
 }
 
@@ -1113,10 +1007,8 @@ bool Sprite::isObject(Sprite this)
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
-void Sprite::print(Sprite this, int x, int y)
+void Sprite::print(int x, int y)
 {
-	ASSERT(this, "Sprite::print: null this");
-
 	Printing::text(Printing::getInstance(), "Layer: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->worldLayer, x + 14, y, NULL);
 	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
@@ -1200,10 +1092,8 @@ void Sprite::print(Sprite this, int x, int y)
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
-void Sprite::putChar(Sprite this, Point* texturePixel, BYTE* newChar)
+void Sprite::putChar(Point* texturePixel, BYTE* newChar)
 {
-	ASSERT(this, "Sprite::putChar: null this");
-
 	if(this->texture && newChar && texturePixel)
 	{
 		Texture::putChar(this->texture, texturePixel, newChar);
@@ -1221,10 +1111,8 @@ void Sprite::putChar(Sprite this, Point* texturePixel, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void Sprite::putPixel(Sprite this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
+void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "Sprite::putPixel: null this");
-
 	if(this->texture)
 	{
 		Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
@@ -1244,10 +1132,8 @@ void Sprite::putPixel(Sprite this, Point* texturePixel, Pixel* charSetPixel, BYT
  *
  * @param this	Function scope
  */
-void Sprite::applyAffineTransformations(Sprite this __attribute__ ((unused)))
-{
-	ASSERT(this, "Sprite::applyAffineTransformations: null this");
-}
+void Sprite::applyAffineTransformations()
+{}
 
 /**
  * Apply HBias effects to Sprite
@@ -1257,7 +1143,5 @@ void Sprite::applyAffineTransformations(Sprite this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void Sprite::applyHbiasEffects(Sprite this __attribute__ ((unused)))
-{
-	ASSERT(this, "Sprite::applyHbiasEffects: null this");
-}
+void Sprite::applyHbiasEffects()
+{}

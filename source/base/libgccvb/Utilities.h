@@ -45,16 +45,19 @@
 //											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-void Utilities_setClock(Clock clock);
-long Utilities_randomSeed();
-int Utilities_random(long seed, int randnums);
-char* Utilities_itoa(u32 num, u32 base, u32 digits);
-const char* Utilities_toUppercase(const char* string);
-const char* Utilities_toLowercase(const char* string);
-int Utilities_equalSign(int a, int b);
-int Utilities_getDigitCount(int value);
-int Utilities_intLength(int value);
-u32 Utilities_reverse(u32 x, int bits);
+static class Utilities : Object
+{
+	static void setClock(Clock clock);
+	static long randomSeed();
+	static int random(long seed, int randnums);
+	static char* itoa(u32 num, u32 base, u32 digits);
+	static const char* toUppercase(const char* string);
+	static const char* toLowercase(const char* string);
+	static int equalSign(int a, int b);
+	static int getDigitCount(int value);
+	static int intLength(int value);
+	static u32 reverse(u32 x, int bits);
+}
 
 
 #endif

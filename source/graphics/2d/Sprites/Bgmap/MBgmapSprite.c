@@ -60,19 +60,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-static void MBgmapSprite::releaseTextures(MBgmapSprite this);
-static void MBgmapSprite::loadTextures(MBgmapSprite this);
-static void MBgmapSprite::loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition);
-static void MBgmapSprite::calculateSize(MBgmapSprite this);
-//static void MBgmapSprite::calculateSizeMultiplier(MBgmapSprite this);
-//static void MBgmapSprite::calculateSize(MBgmapSprite this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -86,10 +73,8 @@ static void MBgmapSprite::calculateSize(MBgmapSprite this);
  * @param mBgmapSpriteDefinition		Definition to use
  * @param owner							Sprite's owner
  */
-void MBgmapSprite::constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
+void MBgmapSprite::constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
 {
-	ASSERT(this, "MBgmapSprite::constructor: null this");
-
 	Base::constructor(&mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
 
 	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
@@ -108,10 +93,8 @@ void MBgmapSprite::constructor(MBgmapSprite this, const MBgmapSpriteDefinition* 
  *
  * @param this		Function scope
  */
-void MBgmapSprite::destructor(MBgmapSprite this)
+void MBgmapSprite::destructor()
 {
-	ASSERT(this, "MBgmapSprite::destructor: null this");
-
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
@@ -133,10 +116,8 @@ void MBgmapSprite::destructor(MBgmapSprite this)
  *
  * @param this		Function scope
  */
-static void MBgmapSprite::releaseTextures(MBgmapSprite this)
+void MBgmapSprite::releaseTextures()
 {
-	ASSERT(this, "MBgmapSprite::releaseTextures: null this");
-
 	if(this->textures)
 	{
 		VirtualNode node = this->textures->head;
@@ -161,10 +142,8 @@ static void MBgmapSprite::releaseTextures(MBgmapSprite this)
  *
  * @param this		Function scope
  */
-static void MBgmapSprite::loadTextures(MBgmapSprite this)
+void MBgmapSprite::loadTextures()
 {
-	ASSERT(this, "MBgmapSprite::loadTextures: null this");
-
 	if(this->mBgmapSpriteDefinition)
 	{
 		if(!this->texture && !this->textures)
@@ -200,10 +179,8 @@ static void MBgmapSprite::loadTextures(MBgmapSprite this)
  * @param this					Function scope
  * @param textureDefinition		TextureDefinition to use
  */
-static void MBgmapSprite::loadTexture(MBgmapSprite this, TextureDefinition* textureDefinition)
+void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "MBgmapSprite::loadTexture: null this");
-
 	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
 
 	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureDefinition);
@@ -223,10 +200,8 @@ static void MBgmapSprite::loadTexture(MBgmapSprite this, TextureDefinition* text
  * @param this			Function scope
  * @param position		3D position
  */
-void MBgmapSprite::position(MBgmapSprite this, const Vector3D* position)
+void MBgmapSprite::position(const Vector3D* position)
 {
-	ASSERT(this, "MBgmapSprite::position: null this");
-
 	Base::position(this, position);
 
 	MBgmapSprite::setPosition(this, &this->position);
@@ -241,10 +216,8 @@ void MBgmapSprite::position(MBgmapSprite this, const Vector3D* position)
  * @param this			Function scope
  * @param position		New 2D position
  */
-void MBgmapSprite::setPosition(MBgmapSprite this, const PixelVector* position)
+void MBgmapSprite::setPosition(const PixelVector* position)
 {
-	ASSERT(this, "MBgmapSprite::setPosition: null this");
-
 	PixelVector auxPosition = *position;
 
 	Base::setPosition(this, position);
@@ -302,10 +275,8 @@ void MBgmapSprite::setPosition(MBgmapSprite this, const PixelVector* position)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void MBgmapSprite::addDisplacement(MBgmapSprite this, const PixelVector* displacement)
-{
-	ASSERT(this, "MBgmapSprite::addDisplacement: null this");
-	this->positioned = true;
+void MBgmapSprite::addDisplacement(const PixelVector* displacement)
+{	this->positioned = true;
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{
@@ -354,10 +325,8 @@ void MBgmapSprite::addDisplacement(MBgmapSprite this, const PixelVector* displac
  * @param this		Function scope
  * @param evenFrame
  */
-void MBgmapSprite::render(MBgmapSprite this, bool evenFrame)
+void MBgmapSprite::render(bool evenFrame)
 {
-	ASSERT(this, "MBgmapSprite::render: null this");
-
 	Base::render(this, evenFrame);
 
 	if(!this->positioned)
@@ -501,10 +470,8 @@ void MBgmapSprite::render(MBgmapSprite this, bool evenFrame)
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
-void MBgmapSprite::resize(MBgmapSprite this, Scale scale, fix10_6 z)
+void MBgmapSprite::resize(Scale scale, fix10_6 z)
 {
-	ASSERT(this, "MBgmapSprite::resize: null this");
-
 	Base::resize(this, scale, z);
 
 	MBgmapSprite::calculateSize(this);
@@ -518,10 +485,8 @@ void MBgmapSprite::resize(MBgmapSprite this, Scale scale, fix10_6 z)
  *
  * @param this			Function scope
  */
-static void MBgmapSprite::calculateSize(MBgmapSprite this)
+void MBgmapSprite::calculateSize()
 {
-	ASSERT(this, "MBgmapSprite::calculateSize: null this");
-
 	VirtualNode node = this->textures->head;
 
 	int cols = 0;
@@ -558,10 +523,8 @@ static void MBgmapSprite::calculateSize(MBgmapSprite this)
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void MBgmapSprite::setMode(MBgmapSprite this __attribute__ ((unused)), u16 display, u16 mode __attribute__ ((unused)))
+void MBgmapSprite::setMode(u16 display, u16 mode __attribute__ ((unused)))
 {
-	ASSERT(this, "MBgmapSprite::setMode: null this");
-
 	this->head = display | __WORLD_BGMAP;
 }
 
@@ -575,9 +538,8 @@ void MBgmapSprite::setMode(MBgmapSprite this __attribute__ ((unused)), u16 displ
  *
  * @return			true it all textures are written
  */
-bool MBgmapSprite::writeTextures(MBgmapSprite this)
+bool MBgmapSprite::writeTextures()
 {
-	ASSERT(this, "MBgmapSprite::writeTextures: null this");
 	ASSERT(this->texture, "MBgmapSprite::writeTextures: null texture");
 
 	VirtualNode node = this->textures->head;
@@ -606,10 +568,8 @@ bool MBgmapSprite::writeTextures(MBgmapSprite this)
  *
  * @return			true it all textures are written
  */
-bool MBgmapSprite::areTexturesWritten(MBgmapSprite this)
+bool MBgmapSprite::areTexturesWritten()
 {
-	ASSERT(this, "MBgmapSprite::areTexturesWritten: null this");
-
 	if(!this->textures)
 	{
 		return true;

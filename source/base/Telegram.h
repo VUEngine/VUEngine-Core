@@ -61,11 +61,11 @@ class Telegram : Object
 	 */
 	void* receiver;
 
-	void constructor(Telegram this, void* sender, void* receiver, int message, void* extraInfo);
-	void* getSender(Telegram this);
-	void* getReceiver(Telegram this);
-	int getMessage(Telegram this);
-	void* getExtraInfo(Telegram this);
+	void constructor(void* sender, void* receiver, int message, void* extraInfo);
+	void* getSender();
+	void* getReceiver();
+	int getMessage();
+	void* getExtraInfo();
 }
 
 

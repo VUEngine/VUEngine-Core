@@ -42,13 +42,6 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -63,10 +56,8 @@
  * @param objectTextureDefinition		Texture definition
  * @param id							Identifier
  */
-void ObjectTexture::constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id)
+void ObjectTexture::constructor(ObjectTextureDefinition* objectTextureDefinition, u16 id)
 {
-	ASSERT(this, "ObjectTexture::constructor: null this");
-
 	// construct base object
 	Base::constructor((TextureDefinition*)objectTextureDefinition, id);
 
@@ -82,10 +73,8 @@ void ObjectTexture::constructor(ObjectTexture this, ObjectTextureDefinition* obj
  *
  * @param this			Function scope
  */
-void ObjectTexture::destructor(ObjectTexture this)
+void ObjectTexture::destructor()
 {
-	ASSERT(this, "ObjectTexture::destructor: null this");
-
 	this->objectIndex = -1;
 
 	// destroy the super object
@@ -101,10 +90,8 @@ void ObjectTexture::destructor(ObjectTexture this)
  *
  * @param this			Function scope
  */
-void ObjectTexture::write(ObjectTexture this)
+void ObjectTexture::write()
 {
-	ASSERT(this, "ObjectTexture::write: null this");
-
 	if(0 > this->objectIndex)
 	{
 		return;
@@ -147,10 +134,8 @@ void ObjectTexture::write(ObjectTexture this)
  * @param this				Function scope
  * @param objectIndex		OBJECT index
  */
-void ObjectTexture::setObjectIndex(ObjectTexture this, int objectIndex)
+void ObjectTexture::setObjectIndex(int objectIndex)
 {
-	ASSERT(this, "ObjectTexture::setObjectIndex: null this");
-
 	if(0 <= objectIndex && objectIndex < 1024)
 	{
 		this->objectIndex = objectIndex;

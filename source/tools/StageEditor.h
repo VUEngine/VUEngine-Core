@@ -99,10 +99,10 @@ singleton class StageEditor : Object
 	Sprite userObjectSprite;
 
 	static StageEditor getInstance();
-	void show(StageEditor this, GameState gameState);
-	void hide(StageEditor this);
-	void update(StageEditor this);
-	void processUserInput(StageEditor this, u16 pressedKey);
+	void show(GameState gameState);
+	void hide();
+	void update();
+	void processUserInput(u16 pressedKey);
 }
 
 

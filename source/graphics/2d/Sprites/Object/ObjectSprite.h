@@ -80,18 +80,19 @@ class ObjectSprite : Sprite
 	*/
 	s16 totalObjects;
 
-	void constructor(ObjectSprite this, const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
-	s16 getObjectIndex(ObjectSprite this);
-	s16 getTotalObjects(ObjectSprite this);
-	void setObjectIndex(ObjectSprite this, s16 objectIndex);
-	override void render(ObjectSprite this, bool evenFrame);
-	override void setPosition(ObjectSprite this, const PixelVector* position);
-	override void position(ObjectSprite this, const Vector3D* position3D);
-	override void rotate(ObjectSprite this, const Rotation* rotation);
-	override void calculateParallax(ObjectSprite this, fix10_6 z);
-	override u8 getWorldLayer(ObjectSprite this);
-	override void addDisplacement(ObjectSprite this, const PixelVector* displacement);
-	override void setMode(ObjectSprite this, u16 display, u16 mode);
+	void constructor(const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
+	s16 getObjectIndex();
+	s16 getTotalObjects();
+	void setObjectIndex(s16 objectIndex);
+	void invalidateObjectSpriteContainer();
+	override void render(bool evenFrame);
+	override void setPosition(const PixelVector* position);
+	override void position(const Vector3D* position3D);
+	override void rotate(const Rotation* rotation);
+	override void calculateParallax(fix10_6 z);
+	override u8 getWorldLayer();
+	override void addDisplacement(const PixelVector* displacement);
+	override void setMode(u16 display, u16 mode);
 }
 
 

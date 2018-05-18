@@ -63,19 +63,19 @@ class StateMachine : Object
 	 */
 	VirtualList stateStack;
 
-	void constructor(StateMachine this, void* owner);
-	void update(StateMachine this);
-	void swapState(StateMachine this, State newState);
-	u32 pushState(StateMachine this, State newState);
-	u32 popState(StateMachine this);
-	void returnToPreviousState(StateMachine this);
-	void changeToGlobal(StateMachine this, State globalState);
-	bool isInState(StateMachine this, State state);
-	void setOwner(StateMachine this, void* owner);
-	State getCurrentState(StateMachine this);
-	State getPreviousState(StateMachine this);
-	int getStackSize(StateMachine this);
-	override bool handleMessage(StateMachine this, Telegram telegram);
+	void constructor(void* owner);
+	void update();
+	void swapState(State newState);
+	u32 pushState(State newState);
+	u32 popState();
+	void returnToPreviousState();
+	void changeToGlobal(State globalState);
+	bool isInState(State state);
+	void setOwner(void* owner);
+	State getCurrentState();
+	State getPreviousState();
+	int getStackSize();
+	override bool handleMessage(Telegram telegram);
 }
 
 

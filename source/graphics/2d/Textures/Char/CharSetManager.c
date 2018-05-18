@@ -46,15 +46,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void CharSetManager::constructor(CharSetManager this);
-static CharSet CharSetManager::findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-static CharSet CharSetManager::allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-static bool CharSetManager::defragmentProgressively(CharSetManager this);
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -77,10 +68,8 @@ static bool CharSetManager::defragmentProgressively(CharSetManager this);
  *
  * @param this			Function scope
  */
-void __attribute__ ((noinline)) CharSetManager::constructor(CharSetManager this)
+void CharSetManager::constructor()
 {
-	ASSERT(this, "CharSetManager::constructor: null this");
-
 	Base::constructor();
 
 	this->charSets = __NEW(VirtualList);
@@ -96,10 +85,8 @@ void __attribute__ ((noinline)) CharSetManager::constructor(CharSetManager this)
  *
  * @param this			Function scope
  */
-void CharSetManager::destructor(CharSetManager this)
+void CharSetManager::destructor()
 {
-	ASSERT(this, "CharSetManager::destructor: null this");
-
 	CharSetManager::reset(this);
 
 	__DELETE(this->charSets);
@@ -109,7 +96,7 @@ void CharSetManager::destructor(CharSetManager this)
 	this->charSetsPendingWriting = NULL;
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -120,10 +107,8 @@ void CharSetManager::destructor(CharSetManager this)
  *
  * @param this			Function scope
  */
-void CharSetManager::reset(CharSetManager this)
+void CharSetManager::reset()
 {
-	ASSERT(this, "CharSetManager::reset: null this");
-
 	if(this->charSets)
 	{
 		VirtualNode node = this->charSets->head;
@@ -150,10 +135,8 @@ void CharSetManager::reset(CharSetManager this)
  * @param this					Function scope
  * @param charSetDefinition		CharSet definition
  */
-static CharSet CharSetManager::findCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
+CharSet CharSetManager::findCharSet(CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "CharSetManager::findCharSet: null this");
-
 	// try to find a charset with the same char definition
 	VirtualNode node = this->charSets->head;
 
@@ -181,10 +164,8 @@ static CharSet CharSetManager::findCharSet(CharSetManager this, CharSetDefinitio
  *
  * @return 								Allocated CharSet
  */
-CharSet CharSetManager::getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
+CharSet CharSetManager::getCharSet(CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "CharSetManager::loadCharSet: null this");
-
 	CharSet charSet = NULL;
 
 	switch(charSetDefinition->allocationType)
@@ -233,10 +214,8 @@ CharSet CharSetManager::getCharSet(CharSetManager this, CharSetDefinition* charS
  * @param this				Function scope
  * @param charSet			CharSet to release
  */
-void CharSetManager::releaseCharSet(CharSetManager this, CharSet charSet)
+void CharSetManager::releaseCharSet(CharSet charSet)
 {
-	ASSERT(this, "CharSetManager::releaseCharSet: null this");
-
 	if(CharSet::decreaseUsageCount(charSet))
 	{
 		u32 offset = CharSet::getOffset(charSet);
@@ -264,10 +243,8 @@ void CharSetManager::releaseCharSet(CharSetManager this, CharSet charSet)
  *
  * @return 						Allocated CharSet
  */
-static CharSet CharSetManager::allocateCharSet(CharSetManager this, CharSetDefinition* charSetDefinition)
-{
-	ASSERT(this, "CharSetManager::allocateCharSet: null this");
-	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
+CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
+{	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
 	NM_ASSERT(charSetDefinition, "CharSetManager::allocateCharSet: null charSetDefinition");
 	NM_ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in definition");
@@ -320,10 +297,8 @@ static CharSet CharSetManager::allocateCharSet(CharSetManager this, CharSetDefin
  *
  * @param this		Function scope
  */
-void CharSetManager::writeCharSets(CharSetManager this)
+void CharSetManager::writeCharSets()
 {
-	ASSERT(this, "CharSetManager::writeCharSets: null this");
-
 	VirtualNode node = this->charSetsPendingWriting->head;
 
 	for(; node; node = node->next)
@@ -342,10 +317,8 @@ void CharSetManager::writeCharSets(CharSetManager this)
  *
  * @param this		Function scope
  */
-bool CharSetManager::writeCharSetsProgressively(CharSetManager this)
+bool CharSetManager::writeCharSetsProgressively()
 {
-	ASSERT(this, "CharSetManager::writeCharSetsProgressively: null this");
-
 	CharSet charSet = VirtualList::front(this->charSetsPendingWriting);
 
 	if(charSet)
@@ -367,10 +340,8 @@ bool CharSetManager::writeCharSetsProgressively(CharSetManager this)
  *
  * @param this		Function scope
  */
-void CharSetManager::defragment(CharSetManager this)
+void CharSetManager::defragment()
 {
-	ASSERT(this, "CharSetManager::defragment: null this");
-
 	while(1 < this->freedOffset)
 	{
 		CharSetManager::defragmentProgressively(this);
@@ -385,10 +356,8 @@ void CharSetManager::defragment(CharSetManager this)
  *
  * @param this		Function scope
  */
-static bool CharSetManager::defragmentProgressively(CharSetManager this)
+bool CharSetManager::defragmentProgressively()
 {
-	ASSERT(this, "CharSetManager::defragmentProgressively: null this");
-
 	if(this->freedOffset)
 	{
 		VirtualNode node = this->charSets->head;
@@ -435,9 +404,8 @@ static bool CharSetManager::defragmentProgressively(CharSetManager this)
  *
  * @return 				Total number of used CHARs
  */
-int CharSetManager::getTotalUsedChars(CharSetManager this)
+int CharSetManager::getTotalUsedChars()
 {
-	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
 	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
 	CharSet lastCharSet = VirtualList::back(this->charSets);
@@ -454,10 +422,8 @@ int CharSetManager::getTotalUsedChars(CharSetManager this)
  *
  * @return 				Total number of free CHARs
  */
-int CharSetManager::getTotalFreeChars(CharSetManager this)
+int CharSetManager::getTotalFreeChars()
 {
-	ASSERT(this, "CharSetManager::getTotalFreeChars: null this");
-
 	return __CHAR_MEMORY_TOTAL_CHARS - CharSetManager::getTotalUsedChars(this);
 }
 
@@ -471,10 +437,8 @@ int CharSetManager::getTotalFreeChars(CharSetManager this)
  *
  * @return 				Total number of registered char sets
  */
-int CharSetManager::getTotalCharSets(CharSetManager this)
+int CharSetManager::getTotalCharSets()
 {
-	ASSERT(this, "CharSetManager::getTotalCharSets: null this");
-
 	return VirtualList::getSize(this->charSets);
 }
 
@@ -488,10 +452,8 @@ int CharSetManager::getTotalCharSets(CharSetManager this)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-void CharSetManager::print(CharSetManager this, int x, int y)
+void CharSetManager::print(int x, int y)
 {
-	ASSERT(this, "CharSetManager::print: null this");
-
 	Printing::text(Printing::getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);

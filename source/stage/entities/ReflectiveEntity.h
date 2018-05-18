@@ -119,8 +119,8 @@ class ReflectiveEntity : Entity
 
 	static void shiftPixels(int pixelShift, POINTER_TYPE* sourceValue, u32 nextSourceValue, POINTER_TYPE* remainderValue, u32 overallMask, u32 reflectionMask);
 
-	void constructor(ReflectiveEntity this, ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name);
-	void drawReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet,
+	void constructor(ReflectiveEntityDefinition* mirrorDefinition, s16 id, s16 internalId, const char* const name);
+	void drawReflection(u32 currentDrawingFrameBufferSet,
 								s16 xSourceStart, s16 ySourceStart,
 								s16 xOutputStart, s16 yOutputStart,
 								s16 width, s16 height,
@@ -133,11 +133,11 @@ class ReflectiveEntity : Entity
 								u32 bottomBorderMask,
 								u32 leftBorderMask __attribute__ ((unused)),
 								u32 rightBorderMask __attribute__ ((unused)));
-	virtual void applyReflection(ReflectiveEntity this, u32 currentDrawingFrameBufferSet);
-	override void ready(ReflectiveEntity this, bool recursive);
-	override void suspend(ReflectiveEntity this);
-	override void resume(ReflectiveEntity this);
-	override void synchronizeGraphics(ReflectiveEntity this);
+	virtual void applyReflection(u32 currentDrawingFrameBufferSet);
+	override void ready(bool recursive);
+	override void suspend();
+	override void resume();
+	override void synchronizeGraphics();
 }
 
 

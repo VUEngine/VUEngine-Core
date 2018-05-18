@@ -91,34 +91,7 @@ enum AnimationProperties
 	kFrames
 };
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 extern UserAnimatedEntity _userAnimatedEntities[];
-
-AnimationController Sprite::getAnimationController(Sprite this);
-
-void AnimationInspector::constructor(AnimationInspector this);
-static void AnimationInspector::setupMode(AnimationInspector this);
-static void AnimationInspector::printUserAnimatedEntities(AnimationInspector this);
-static void AnimationInspector::printSprites(AnimationInspector this);
-static void AnimationInspector::printAnimatedEntityAnimations(AnimationInspector this);
-static void AnimationInspector::printAnimationConfig(AnimationInspector this);
-static void AnimationInspector::selectAnimatedEntity(AnimationInspector this, u32 pressedKey);
-static void AnimationInspector::selectSprite(AnimationInspector this, u32 pressedKey);
-static void AnimationInspector::removePreviousSprite(AnimationInspector this);
-static void AnimationInspector::selectAnimation(AnimationInspector this, u32 pressedKey);
-static void AnimationInspector::editAnimation(AnimationInspector this, u32 pressedKey);
-static void AnimationInspector::loadAnimationFunction(AnimationInspector this);
-static void AnimationInspector::createSprite(AnimationInspector this);
-static void AnimationInspector::createSpriteSelector(AnimationInspector this);
-static void AnimationInspector::createAnimationsSelector(AnimationInspector this);
-static void AnimationInspector::createAnimationEditionSelector(AnimationInspector this);
-static void AnimationInspector::createFrameEditionSelector(AnimationInspector this);
-static void AnimationInspector::onAnimationComplete(AnimationInspector this, Object eventFirer);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -143,10 +116,8 @@ static void AnimationInspector::onAnimationComplete(AnimationInspector this, Obj
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) AnimationInspector::constructor(AnimationInspector this)
+void AnimationInspector::constructor()
 {
-	ASSERT(this, "AnimationInspector::constructor: null this");
-
 	Base::constructor();
 
 	this->animatedSprite = NULL;
@@ -168,10 +139,8 @@ void __attribute__ ((noinline)) AnimationInspector::constructor(AnimationInspect
  *
  * @param this	Function scope
  */
-void AnimationInspector::destructor(AnimationInspector this)
+void AnimationInspector::destructor()
 {
-	ASSERT(this, "AnimationInspector::destructor: null this");
-
 	if(this->animatedEntitySelector)
 	{
 		__DELETE(this->animatedEntitySelector);
@@ -198,7 +167,7 @@ void AnimationInspector::destructor(AnimationInspector this)
 	}
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -209,10 +178,8 @@ void AnimationInspector::destructor(AnimationInspector this)
  *
  * @param this	Function scope
  */
-void AnimationInspector::update(AnimationInspector this)
+void AnimationInspector::update()
 {
-	ASSERT(this, "AnimationInspector::update: null this");
-
 	if(this->gameState && this->animatedSprite)
 	{
 		Sprite::updateAnimation(this->animatedSprite);
@@ -231,9 +198,8 @@ void AnimationInspector::update(AnimationInspector this)
  * @param this		Function scope
  * @param gameState Current game state
  */
-void AnimationInspector::show(AnimationInspector this, GameState gameState)
+void AnimationInspector::show(GameState gameState)
 {
-	ASSERT(this, "AnimationInspector::start: null this");
 	ASSERT(gameState, "AnimationInspector::start: null gameState");
 
 	this->gameState = gameState;
@@ -281,10 +247,8 @@ void AnimationInspector::show(AnimationInspector this, GameState gameState)
  *
  * @param this		Function scope
  */
-void AnimationInspector::hide(AnimationInspector this)
+void AnimationInspector::hide()
 {
-	ASSERT(this, "AnimationInspector::stop: null this");
-
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 
 	AnimationInspector::removePreviousSprite(this);
@@ -327,7 +291,7 @@ void AnimationInspector::hide(AnimationInspector this)
  *
  * @param this		Function scope
  */
-static void AnimationInspector::setupMode(AnimationInspector this)
+void AnimationInspector::setupMode()
 {
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
@@ -380,10 +344,8 @@ static void AnimationInspector::setupMode(AnimationInspector this)
  * @param this			Function scope
  * @param pressedKey	User input
  */
-void AnimationInspector::processUserInput(AnimationInspector this, u16 pressedKey)
+void AnimationInspector::processUserInput(u16 pressedKey)
 {
-	ASSERT(this, "AnimationInspector::processUserInput: null this");
-
 	if(!this->gameState)
 	{
 		return;
@@ -438,7 +400,7 @@ void AnimationInspector::processUserInput(AnimationInspector this, u16 pressedKe
  * @param this				Function scope
  * @param pressedKey		User input
  */
-static void AnimationInspector::selectAnimatedEntity(AnimationInspector this, u32 pressedKey)
+void AnimationInspector::selectAnimatedEntity(u32 pressedKey)
 {
 	int userAnimatedEntitiesCount = 0;
 	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntityDefinition; userAnimatedEntitiesCount++);
@@ -468,7 +430,7 @@ static void AnimationInspector::selectAnimatedEntity(AnimationInspector this, u3
  * @param this				Function scope
  * @param pressedKey		User input
  */
-static void AnimationInspector::selectSprite(AnimationInspector this, u32 pressedKey)
+void AnimationInspector::selectSprite(u32 pressedKey)
 {
 	int userAnimatedEntitiesCount = 0;
 	for(; _userAnimatedEntities[userAnimatedEntitiesCount].animatedEntityDefinition; userAnimatedEntitiesCount++);
@@ -499,7 +461,7 @@ static void AnimationInspector::selectSprite(AnimationInspector this, u32 presse
  *
  * @param this				Function scope
  */
-static void AnimationInspector::removePreviousSprite(AnimationInspector this)
+void AnimationInspector::removePreviousSprite()
 {
 	if(this->animatedSprite)
 	{
@@ -517,7 +479,7 @@ static void AnimationInspector::removePreviousSprite(AnimationInspector this)
  * @param this				Function scope
  * @param pressedKey		User input
  */
-static void AnimationInspector::selectAnimation(AnimationInspector this, u32 pressedKey)
+void AnimationInspector::selectAnimation(u32 pressedKey)
 {
 	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->animationDescription;
 
@@ -548,7 +510,7 @@ static void AnimationInspector::selectAnimation(AnimationInspector this, u32 pre
  * @param this				Function scope
  * @param pressedKey		User input
  */
-static void AnimationInspector::editAnimation(AnimationInspector this, u32 pressedKey)
+void AnimationInspector::editAnimation(u32 pressedKey)
 {
 	if(pressedKey & K_A)
 	{
@@ -717,7 +679,7 @@ static void AnimationInspector::editAnimation(AnimationInspector this, u32 press
  *
  * @param this				Function scope
  */
-static void AnimationInspector::printUserAnimatedEntities(AnimationInspector this)
+void AnimationInspector::printUserAnimatedEntities()
 {
 	Printing::text(Printing::getInstance(), "ACTORS", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
@@ -732,7 +694,7 @@ static void AnimationInspector::printUserAnimatedEntities(AnimationInspector thi
  *
  * @param this				Function scope
  */
-static void AnimationInspector::printSprites(AnimationInspector this)
+void AnimationInspector::printSprites()
 {
 	Printing::text(Printing::getInstance(), "SPRITES", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
@@ -747,7 +709,7 @@ static void AnimationInspector::printSprites(AnimationInspector this)
  *
  * @param this				Function scope
  */
-static void AnimationInspector::printAnimatedEntityAnimations(AnimationInspector this)
+void AnimationInspector::printAnimatedEntityAnimations()
 {
 	Printing::text(Printing::getInstance(), "AVAILABLE ANIMATIONS", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
@@ -762,7 +724,7 @@ static void AnimationInspector::printAnimatedEntityAnimations(AnimationInspector
  *
  * @param this				Function scope
  */
-static void AnimationInspector::printAnimationConfig(AnimationInspector this)
+void AnimationInspector::printAnimationConfig()
 {
 	int x = 1;
 	int y = 2;
@@ -811,7 +773,7 @@ static void AnimationInspector::printAnimationConfig(AnimationInspector this)
  *
  * @param this				Function scope
  */
-static void AnimationInspector::loadAnimationFunction(AnimationInspector this)
+void AnimationInspector::loadAnimationFunction()
 {
 	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->animationDescription;
 
@@ -838,7 +800,7 @@ static void AnimationInspector::loadAnimationFunction(AnimationInspector this)
  *
  * @param this				Function scope
  */
-static void AnimationInspector::createSprite(AnimationInspector this)
+void AnimationInspector::createSprite()
 {
 	AnimationInspector::removePreviousSprite(this);
 
@@ -885,7 +847,7 @@ static void AnimationInspector::createSprite(AnimationInspector this)
  *
  * @param this				Function scope
  */
-static void AnimationInspector::createSpriteSelector(AnimationInspector this)
+void AnimationInspector::createSpriteSelector()
 {
 	if(this->spriteSelector)
 	{
@@ -919,7 +881,7 @@ static void AnimationInspector::createSpriteSelector(AnimationInspector this)
  *
  * @param this				Function scope
  */
-static void AnimationInspector::createAnimationsSelector(AnimationInspector this)
+void AnimationInspector::createAnimationsSelector()
 {
 	this->animationDescription = _userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->animationDescription;
 
@@ -960,7 +922,7 @@ static void AnimationInspector::createAnimationsSelector(AnimationInspector this
  *
  * @param this				Function scope
  */
-static void AnimationInspector::createAnimationEditionSelector(AnimationInspector this)
+void AnimationInspector::createAnimationEditionSelector()
 {
 	if(this->animationEditionSelector)
 	{
@@ -1006,7 +968,7 @@ static void AnimationInspector::createAnimationEditionSelector(AnimationInspecto
  *
  * @param this				Function scope
  */
-static void AnimationInspector::createFrameEditionSelector(AnimationInspector this)
+void AnimationInspector::createFrameEditionSelector()
 {
 	if(this->frameEditionSelector)
 	{
@@ -1040,7 +1002,7 @@ static void AnimationInspector::createFrameEditionSelector(AnimationInspector th
  * @param this				Function scope
  * @param eventFirer		AnimationController
  */
-static void AnimationInspector::onAnimationComplete(AnimationInspector this, Object eventFirer __attribute__ ((unused)))
+void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((unused)))
 {
 	if(!this->animationFunction.loop)
 	{

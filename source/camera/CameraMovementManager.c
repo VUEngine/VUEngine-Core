@@ -48,12 +48,6 @@ friend class Camera;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -76,10 +70,8 @@ friend class Camera;
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovementManager this)
+void CameraMovementManager::constructor()
 {
-	ASSERT(this, "CameraMovementManager::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 }
@@ -92,12 +84,10 @@ void __attribute__ ((noinline)) CameraMovementManager::constructor(CameraMovemen
  *
  * @param this	Function scope
  */
-void CameraMovementManager::destructor(CameraMovementManager this)
+void CameraMovementManager::destructor()
 {
-	ASSERT(this, "CameraMovementManager::destructor: null this");
-
 	// destroy base
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -109,10 +99,8 @@ void CameraMovementManager::destructor(CameraMovementManager this)
  * @param this							Function scope
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager::focus(CameraMovementManager this __attribute__ ((unused)), u32 checkIfFocusEntityIsMoving)
+void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving)
 {
-	ASSERT(this, "CameraMovementManager::update: null this");
-
 	Camera camera = Camera::getInstance();
 
 	// if focusEntity is defined

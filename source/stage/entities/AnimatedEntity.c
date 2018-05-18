@@ -52,23 +52,12 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static void AnimatedEntity::animate(AnimatedEntity this);
-
-AnimationController Sprite::getAnimationController(Sprite this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void AnimatedEntity::constructor(AnimatedEntity this, AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
+void AnimatedEntity::constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "AnimatedEntity::constructor: null this");
-
 	// construct base object
 	Base::constructor(&animatedEntityDefinition->entityDefinition, id, internalId, name);
 
@@ -80,19 +69,16 @@ void AnimatedEntity::constructor(AnimatedEntity this, AnimatedEntityDefinition* 
 }
 
 // class's destructor
-void AnimatedEntity::destructor(AnimatedEntity this)
+void AnimatedEntity::destructor()
 {
-	ASSERT(this, "AnimatedEntity::destructor: null this");
-
 	// destroy the super object
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
 
 // set definition
-void AnimatedEntity::setDefinition(AnimatedEntity this, void* animatedEntityDefinition)
+void AnimatedEntity::setDefinition(void* animatedEntityDefinition)
 {
-	ASSERT(this, "AnimatedEntity::setDefinition: null this");
 	ASSERT(animatedEntityDefinition, "AnimatedEntity::setDefinition: null definition");
 
 	// save definition
@@ -102,9 +88,8 @@ void AnimatedEntity::setDefinition(AnimatedEntity this, void* animatedEntityDefi
 }
 
 // ready method
-void AnimatedEntity::ready(AnimatedEntity this, bool recursive)
+void AnimatedEntity::ready(bool recursive)
 {
-	ASSERT(this, "AnimatedEntity::ready: null this");
 	ASSERT(this->animatedEntityDefinition, "AnimatedEntity::ready: null animatedEntityDefinition");
 
 	Base::ready(this, recursive);
@@ -114,10 +99,8 @@ void AnimatedEntity::ready(AnimatedEntity this, bool recursive)
 
 
 // execute character's logic
-void AnimatedEntity::update(AnimatedEntity this, u32 elapsedTime)
+void AnimatedEntity::update(u32 elapsedTime)
 {
-	ASSERT(this, "AnimatedEntity::update: null this");
-
 	// call base
 	Base::update(this, elapsedTime);
 
@@ -130,10 +113,8 @@ void AnimatedEntity::update(AnimatedEntity this, u32 elapsedTime)
 }
 
 // update animations
-static void AnimatedEntity::animate(AnimatedEntity this)
+void AnimatedEntity::animate()
 {
-	ASSERT(this, "AnimatedEntity::animate: null this");
-
 	if(!this->sprites)
 	{
 		return;
@@ -150,9 +131,8 @@ static void AnimatedEntity::animate(AnimatedEntity this)
 }
 
 // pause animation
-void AnimatedEntity::pauseAnimation(AnimatedEntity this, int pause)
+void AnimatedEntity::pauseAnimation(int pause)
 {
-	ASSERT(this, "AnimatedEntity::pauseAnimation: null this");
 	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
 	if(!this->sprites)
@@ -170,10 +150,8 @@ void AnimatedEntity::pauseAnimation(AnimatedEntity this, int pause)
 }
 
 // play an animation
-void AnimatedEntity::playAnimation(AnimatedEntity this, char* animationName)
+void AnimatedEntity::playAnimation(char* animationName)
 {
-	ASSERT(this, "AnimatedEntity::playAnimation: null this");
-
 	if(!this->sprites | !animationName)
 	{
 		return;
@@ -191,10 +169,8 @@ void AnimatedEntity::playAnimation(AnimatedEntity this, char* animationName)
 }
 
 // skip to next frame
-void AnimatedEntity::nextFrame(AnimatedEntity this)
+void AnimatedEntity::nextFrame()
 {
-	ASSERT(this, "AnimatedEntity::nextFrame: null this");
-
 	if(!this->sprites)
 	{
 		return;
@@ -210,10 +186,8 @@ void AnimatedEntity::nextFrame(AnimatedEntity this)
 }
 
 // rewind to previous frame
-void AnimatedEntity::previousFrame(AnimatedEntity this)
+void AnimatedEntity::previousFrame()
 {
-	ASSERT(this, "AnimatedEntity::previousFrame: null this");
-
 	if(!this->sprites)
 	{
 		return;
@@ -229,19 +203,16 @@ void AnimatedEntity::previousFrame(AnimatedEntity this)
 }
 
 // is playing an animation
-bool AnimatedEntity::isPlayingAnimation(AnimatedEntity this)
+bool AnimatedEntity::isPlayingAnimation()
 {
-	ASSERT(this, "AnimatedEntity::isPlayingAnimation: null this");
 	ASSERT(this->sprites, "AnimatedEntity::isPlayingAnimation: null sprites");
 
 	return Sprite::isPlaying(__SAFE_CAST(Sprite, VirtualNode::getData(this->sprites->head)));
 }
 
 // is animation selected
-bool AnimatedEntity::isAnimationLoaded(AnimatedEntity this, char* functionName)
+bool AnimatedEntity::isAnimationLoaded(char* functionName)
 {
-	ASSERT(this, "AnimatedEntity::isAnimationLoaded: null this");
-
 	if(!this->sprites)
 	{
 		return false;
@@ -253,35 +224,27 @@ bool AnimatedEntity::isAnimationLoaded(AnimatedEntity this, char* functionName)
 }
 
 // get animation definition
-AnimationDescription* AnimatedEntity::getAnimationDescription(AnimatedEntity this)
+AnimationDescription* AnimatedEntity::getAnimationDescription()
 {
-	ASSERT(this, "AnimatedEntity::getAnimationDescription: null this");
-
 	return this->animationDescription;
 }
 
 // set animation description
-void AnimatedEntity::setAnimationDescription(AnimatedEntity this, AnimationDescription* animationDescription)
+void AnimatedEntity::setAnimationDescription(AnimationDescription* animationDescription)
 {
-	ASSERT(this, "AnimatedEntity::setAnimationDescription: null this");
-
 	this->animationDescription = animationDescription;
 }
 
 // resume method
-void AnimatedEntity::resume(AnimatedEntity this)
+void AnimatedEntity::resume()
 {
-	ASSERT(this, "AnimatedEntity::resume: null this");
-
 	Base::resume(this);
 
 	AnimatedEntity::playAnimation(this, this->currentAnimationName);
 }
 
-s8 AnimatedEntity::getActualFrame(AnimatedEntity this)
+s8 AnimatedEntity::getActualFrame()
 {
-	ASSERT(this, "AnimatedEntity::getActualFrame: null this");
-
 	if(!this->sprites)
 	{
 		return -1;
@@ -297,7 +260,7 @@ s8 AnimatedEntity::getActualFrame(AnimatedEntity this)
 	return -1;
 }
 
-int AnimatedEntity::getNumberOfFrames(AnimatedEntity this)
+int AnimatedEntity::getNumberOfFrames()
 {
 	if(!this->sprites)
 	{

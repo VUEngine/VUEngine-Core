@@ -29,10 +29,6 @@
 #include <Game.h>
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 Clock _gameClock = NULL;
 
 
@@ -42,12 +38,12 @@ Clock _gameClock = NULL;
 
 static const char numbers[17] = "0123456789ABCDEF";
 
-void Utilities::setClock(Clock clock)
+static void Utilities::setClock(Clock clock)
 {
 	_gameClock = clock;
 }
 
-int Utilities::intLength(int value)
+static int Utilities::intLength(int value)
 {
 	int length = 0;
 
@@ -62,7 +58,8 @@ int Utilities::intLength(int value)
 	return length;
 }
 
-char* Utilities::itoa(u32 num, u32 base, u32 digits)
+
+static char* Utilities::itoa(u32 num, u32 base, u32 digits)
 {
 #define __CHAR_HOLDER_SIZE		11
 	int i = 0;
@@ -97,7 +94,7 @@ char* Utilities::itoa(u32 num, u32 base, u32 digits)
 	return rev + i;
 }
 
-const char* Utilities::toUppercase(const char* string)
+static const char* Utilities::toUppercase(const char* string)
 {
 	int i = 0;
 	char* result = NULL;
@@ -111,7 +108,7 @@ const char* Utilities::toUppercase(const char* string)
 	return result;
 }
 
-const char* Utilities::toLowercase(const char* string)
+static const char* Utilities::toLowercase(const char* string)
 {
 	int i = 0;
 	char* result = NULL;
@@ -128,7 +125,7 @@ const char* Utilities::toLowercase(const char* string)
 /*
  * Taken from Shokwav's N64 demo
  */
-long Utilities::randomSeed()
+static long Utilities::randomSeed()
 {
 	ASSERT(_gameClock, "Utilities::randomSeed: null _gameClock");
 
@@ -146,7 +143,7 @@ long Utilities::randomSeed()
 }
 
 // These real versions are due to Isaku Wada, 2002/01/09 added
-int Utilities::random(long seed, int randnums)
+static int Utilities::random(long seed, int randnums)
 {
 	return seed & randnums ? __ABS((int)(seed % randnums)) : 0;
 }
@@ -158,12 +155,12 @@ int Utilities::random(long seed, int randnums)
 /*
  * Check if 2 numbers have an equal sign
  */
-int Utilities::equalSign(int a, int b)
+static int Utilities::equalSign(int a, int b)
 {
 	return ((a & (1 << sizeof(int))) ==	(b & (1 << sizeof(int))));
 }
 
-int Utilities::getDigitCount(int value)
+static int Utilities::getDigitCount(int value)
 {
 	int size = 0;
 
@@ -177,7 +174,7 @@ int Utilities::getDigitCount(int value)
 	return (size) ? size : 1;
 }
 
-u32 Utilities::reverse(u32 x, int bits)
+static u32 Utilities::reverse(u32 x, int bits)
 {
     x = ((x & 0x55555555) << 1) | ((x & 0xAAAAAAAA) >> 1);
     x = ((x & 0x33333333) << 2) | ((x & 0xCCCCCCCC) >> 2);

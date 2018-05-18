@@ -48,13 +48,6 @@ friend class Shape;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static void SolidParticle::transformShape(SolidParticle this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -70,10 +63,8 @@ static void SolidParticle::transformShape(SolidParticle this);
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle::constructor(SolidParticle this, const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
+void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
 {
-	ASSERT(this, "SolidParticle::constructor: null this");
-
 	// construct base Container
 	Base::constructor(&solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
 
@@ -122,10 +113,8 @@ void SolidParticle::constructor(SolidParticle this, const SolidParticleDefinitio
  *
  * @param this	Function scope
  */
-void SolidParticle::destructor(SolidParticle this)
+void SolidParticle::destructor()
 {
-	ASSERT(this, "SolidParticle::destructor: null this");
-
 	// unregister the shape for collision detection
 	CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), this->shape);
 
@@ -148,10 +137,8 @@ void SolidParticle::destructor(SolidParticle this)
  *
  * @return				Boolean
  */
-u32 SolidParticle::update(SolidParticle this, int timeElapsed, void (* behavior)(Particle particle))
+u32 SolidParticle::update(int timeElapsed, void (* behavior)(Particle particle))
 {
-	ASSERT(this, "SolidParticle::update: null this");
-
 	u32 expired = Base::update(this, timeElapsed, behavior);
 
 	if(0 <= this->lifeSpan)
@@ -173,7 +160,7 @@ u32 SolidParticle::update(SolidParticle this, int timeElapsed, void (* behavior)
  *
  * @param this	Function scope
  */
-static void SolidParticle::transformShape(SolidParticle this)
+void SolidParticle::transformShape()
 {
 	const Rotation shapeRotation = {0, 0, 0};
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
@@ -192,10 +179,8 @@ static void SolidParticle::transformShape(SolidParticle this)
  *
  * @return		Particle's shape
  */
-Shape SolidParticle::getShape(SolidParticle this)
+Shape SolidParticle::getShape()
 {
-	ASSERT(this, "SolidParticle::getShape: null this");
-
 	return this->shape;
 }
 
@@ -209,10 +194,8 @@ Shape SolidParticle::getShape(SolidParticle this)
  *
  * @return		Width
  */
-u16 SolidParticle::getWidth(SolidParticle this)
+u16 SolidParticle::getWidth()
 {
-	ASSERT(this, "SolidParticle::getWidth: null this");
-
 	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
 }
 
@@ -226,10 +209,8 @@ u16 SolidParticle::getWidth(SolidParticle this)
  *
  * @return		Height
  */
-u16 SolidParticle::getHeight(SolidParticle this)
+u16 SolidParticle::getHeight()
 {
-	ASSERT(this, "SolidParticle::getHeight: null this");
-
 	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
 }
 
@@ -243,10 +224,8 @@ u16 SolidParticle::getHeight(SolidParticle this)
  *
  * @return		Depth
  */
-u16 SolidParticle::getDepth(SolidParticle this)
+u16 SolidParticle::getDepth()
 {
-	ASSERT(this, "SolidParticle::getDepth: null this");
-
 	// must calculate based on the scale because not affine object must be enlarged
 	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
 }
@@ -262,10 +241,8 @@ u16 SolidParticle::getDepth(SolidParticle this)
  *
  * @return								True if successfully processed, false otherwise
  */
-bool SolidParticle::enterCollision(SolidParticle this, const CollisionInformation* collisionInformation)
+bool SolidParticle::enterCollision(const CollisionInformation* collisionInformation)
 {
-	ASSERT(this, "SolidParticle::SolidParticle: null this");
-
 	ASSERT(this->body, "SolidParticle::resolveCollision: null body");
 	ASSERT(collisionInformation->collidingShape, "SolidParticle::resolveCollision: collidingShapes");
 
@@ -301,9 +278,8 @@ bool SolidParticle::enterCollision(SolidParticle this, const CollisionInformatio
  *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
-bool SolidParticle::isSubjectToGravity(SolidParticle this, Acceleration gravity)
+bool SolidParticle::isSubjectToGravity(Acceleration gravity)
 {
-	ASSERT(this, "Particle::isSubjectToGravity: null this");
 	ASSERT(this->shape, "Particle::isSubjectToGravity: null shape");
 
 	fix10_6 collisionCheckDistance = __I_TO_FIX10_6(1);
@@ -329,10 +305,8 @@ bool SolidParticle::isSubjectToGravity(SolidParticle this, Acceleration gravity)
  *
  * @return			True if successfully processed, false otherwise
  */
-bool SolidParticle::handleMessage(SolidParticle this, Telegram telegram)
+bool SolidParticle::handleMessage(Telegram telegram)
 {
-	ASSERT(this, "SolidParticle::handleMessage: null this");
-
 	switch(Telegram::getMessage(telegram))
 	{
 		case kBodyStartedMoving:
@@ -361,10 +335,8 @@ bool SolidParticle::handleMessage(SolidParticle this, Telegram telegram)
  *
  * @param this	Function scope
  */
-void SolidParticle::transform(SolidParticle this)
+void SolidParticle::transform()
 {
-	ASSERT(this, "SolidParticle::transform: null this");
-
 	SolidParticle::transformShape(this);
 }
 
@@ -378,10 +350,8 @@ void SolidParticle::transform(SolidParticle this)
  * @param this		Function scope
  * @param position	Position to move particle to
  */
-void SolidParticle::setPosition(SolidParticle this, const Vector3D* position)
+void SolidParticle::setPosition(const Vector3D* position)
 {
-	ASSERT(this, "SolidParticle::position: null this");
-
 	Base::setPosition(this, position);
 
 //	SolidParticle::transformShape(this);
@@ -397,10 +367,8 @@ void SolidParticle::setPosition(SolidParticle this, const Vector3D* position)
  *
  * @return		SolidParticle's Shape list
  */
-VirtualList SolidParticle::getShapes(SolidParticle this)
+VirtualList SolidParticle::getShapes()
 {
-	ASSERT(this, "SolidParticle::getShapes: null this");
-
 	static VirtualList shapesList = NULL;
 
 	if(!shapesList)
@@ -425,10 +393,8 @@ VirtualList SolidParticle::getShapes(SolidParticle this)
  *
  * @return		Type of entity within the game's logic
  */
-u32 SolidParticle::getInGameType(SolidParticle this)
+u32 SolidParticle::getInGameType()
 {
-	ASSERT(this, "SolidParticle::getInGameType: null this");
-
 	return this->solidParticleDefinition->inGameType;
 }
 
@@ -442,10 +408,8 @@ u32 SolidParticle::getInGameType(SolidParticle this)
  *
  * @return		Velocity vector
  */
-Velocity SolidParticle::getVelocity(SolidParticle this)
+Velocity SolidParticle::getVelocity()
 {
-	ASSERT(this, "SolidParticle::getVelocity: null this");
-
 	return Body::getVelocity(this->body);
 }
 
@@ -458,9 +422,8 @@ Velocity SolidParticle::getVelocity(SolidParticle this)
  * @param this					Function scope
  * @param shapeNotCollidingAnymore		Shape that is no longer colliding
  */
-void SolidParticle::exitCollision(SolidParticle this, Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
+void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
 {
-	ASSERT(this, "SolidParticle::exitCollision: null this");
 	ASSERT(this->body, "SolidParticle::exitCollision: null this");
 
 	if(isShapeImpenetrable)
@@ -480,10 +443,8 @@ void SolidParticle::exitCollision(SolidParticle this, Shape shape __attribute__ 
  *
  * @param this	Function scope
  */
-void SolidParticle::reset(SolidParticle this)
+void SolidParticle::reset()
 {
-	ASSERT(this, "SolidParticle::reset: null this");
-
 	Base::reset(this);
 
 	Shape::reset(this->shape);

@@ -34,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // redefine memcpy
-void *memcpy(void *destination, const void *source, size_t numberOfBytes)
+static void *memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes;
 
@@ -56,7 +56,7 @@ void *memcpy(void *destination, const void *source, size_t numberOfBytes)
 	return destination;
 }
 
-void Mem::clear(BYTE* destination, u32 numberOfBYTES)
+static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 {
 	u32 i;
 
@@ -67,7 +67,7 @@ void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 }
 
 // Copy a block of data from one area in memory to another.
-void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
+static void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
 {
 	asm("          \n\t"      \
 		"mov r29,r1\n\t"      \
@@ -102,7 +102,7 @@ void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
 */
 }
 
-void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
+static void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 
@@ -122,7 +122,7 @@ void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)
 	);
 }
 
-void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
+static void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
 {
 	const WORD* finalSource = source + numberOfWORDS;
 
@@ -142,7 +142,7 @@ void Mem::copyWORD(WORD* destination, const WORD* source, u32 numberOfWORDS)
 	);
 }
 
-void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
+static void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset)
 {
 	const BYTE* finalSource = source + numberOfBYTES;
 
@@ -163,7 +163,7 @@ void Mem::addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 
     );
 }
 
-void Mem::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
+static void Mem::addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset)
 {
 	const HWORD* finalSource = source + numberOfHWORDS;
 

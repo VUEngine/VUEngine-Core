@@ -65,10 +65,8 @@ extern int strcmp(const char *, const char *);
  * @param bgmapSpriteDefinition		Sprite definition
  * @param owner						Owner
  */
-void BgmapAnimatedSprite::constructor(BgmapAnimatedSprite this, const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+void BgmapAnimatedSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
 {
-	ASSERT(this, "BgmapAnimatedSprite::constructor: null this");
-
 	// construct base object
 	Base::constructor(bgmapSpriteDefinition, owner);
 
@@ -89,10 +87,8 @@ void BgmapAnimatedSprite::constructor(BgmapAnimatedSprite this, const BgmapSprit
  *
  * @param this						Function scope
  */
-void BgmapAnimatedSprite::destructor(BgmapAnimatedSprite this)
+void BgmapAnimatedSprite::destructor()
 {
-	ASSERT(this, "BgmapAnimatedSprite::destructor: null this");
-
 	if(this->animationController)
 	{
 		__DELETE(this->animationController);
@@ -112,10 +108,8 @@ void BgmapAnimatedSprite::destructor(BgmapAnimatedSprite this)
  *
  * @param this		Function scope
  */
-void BgmapAnimatedSprite::writeAnimation(BgmapAnimatedSprite this)
+void BgmapAnimatedSprite::writeAnimation()
 {
-	ASSERT(this, "BgmapAnimatedSprite::writeAnimation: null this");
-
 	CharSet charSet = Texture::getCharSet(this->texture, true);
 
 	ASSERT(charSet, "BgmapAnimatedSprite::writeAnimation: null charset");

@@ -117,10 +117,10 @@ singleton class AnimationInspector : Object
 	int mode;
 
 	static AnimationInspector getInstance();
-	void update(AnimationInspector this);
-	void show(AnimationInspector this, GameState gameState);
-	void hide(AnimationInspector this);
-	void processUserInput(AnimationInspector this, u16 pressedKey);
+	void update();
+	void show(GameState gameState);
+	void hide();
+	void processUserInput(u16 pressedKey);
 }
 
 

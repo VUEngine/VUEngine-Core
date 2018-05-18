@@ -104,26 +104,26 @@ class ObjectSpriteContainer : Sprite
 	*/
 	bool removingObjectSprite;
 
-	void constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex);
-	s32 addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects);
-	void calculateParallax(ObjectSpriteContainer this, fix10_6 z);
-	int getAvailableObjects(ObjectSpriteContainer this);
-	int getFirstObjectIndex(ObjectSpriteContainer this);
-	int getLastObjectIndex(ObjectSpriteContainer this);
-	int getNextFreeObjectIndex(ObjectSpriteContainer this);
-	int getTotalUsedObjects(ObjectSpriteContainer this);
-	bool hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects);
-	void position(ObjectSpriteContainer this, const Vector3D* position);
-	void print(ObjectSpriteContainer this, int x, int y);
-	void removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects);
-	override void render(ObjectSpriteContainer this, bool evenFrame);
-	override void setPosition(ObjectSpriteContainer this, const PixelVector* position);
-	override void show(ObjectSpriteContainer this);
-	override void hide(ObjectSpriteContainer this);
-	override void addDisplacement(ObjectSpriteContainer this, const PixelVector* displacement);
-	override void setMode(ObjectSpriteContainer this, u16 display, u16 mode);
-	override bool writeTextures(ObjectSpriteContainer this);
-	override bool areTexturesWritten(ObjectSpriteContainer this);
+	void constructor(int spt, int totalObjects, int firstObjectIndex);
+	s32 addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
+	void calculateParallax(fix10_6 z);
+	int getAvailableObjects();
+	int getFirstObjectIndex();
+	int getLastObjectIndex();
+	int getNextFreeObjectIndex();
+	int getTotalUsedObjects();
+	bool hasRoomFor(s32 numberOfObjects);
+	void position(const Vector3D* position);
+	void print(int x, int y);
+	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
+	override void render(bool evenFrame);
+	override void setPosition(const PixelVector* position);
+	override void show();
+	override void hide();
+	override void addDisplacement(const PixelVector* displacement);
+	override void setMode(u16 display, u16 mode);
+	override bool writeTextures();
+	override bool areTexturesWritten();
 }
 
 

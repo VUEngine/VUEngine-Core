@@ -28,7 +28,6 @@
 #include <InverseBox.h>
 #include <Ball.h>
 #include <CollisionHelper.h>
-#include <SpaceMath.h>
 #include <Optics.h>
 #include <Polyhedron.h>
 #include <HardwareManager.h>
@@ -58,20 +57,13 @@ friend class InverseBox;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 
 // class's constructor
-void Box::constructor(Box this, SpatialObject owner)
+void Box::constructor(SpatialObject owner)
 {
-	ASSERT(this, "Box::constructor: null this");
-
 	Base::constructor(owner);
 
 	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
@@ -87,10 +79,8 @@ void Box::constructor(Box this, SpatialObject owner)
 }
 
 // class's destructor
-void Box::destructor(Box this)
+void Box::destructor()
 {
-	ASSERT(this, "Box::destructor: null this");
-
 	if(this->normals)
 	{
 		__DELETE_BASIC(this->normals);
@@ -102,10 +92,8 @@ void Box::destructor(Box this)
 	Base::destructor();
 }
 
-void Box::position(Box this, const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
+void Box::position(const Vector3D* position, const Rotation* rotation, const Scale* scale __attribute__ ((unused)), const Size* size)
 {
-	ASSERT(this, "Box::position: null this");
-
 	this->rotationVertexDisplacement.x = 0;
 	this->rotationVertexDisplacement.y = 0;
 	this->rotationVertexDisplacement.z = 0;
@@ -315,7 +303,7 @@ void Box::position(Box this, const Vector3D* position, const Rotation* rotation,
 	Base::position(this, position, rotation, scale, size);
 }
 
-void Box::getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
+void Box::getVertexes(Vector3D vertexes[__BOX_VERTEXES])
 {
 	Vector3D leftTopNear 		= {this->rightBox.x0, this->rightBox.y0, this->rightBox.z0};
 	Vector3D rightTopNear 		= {this->rightBox.x1, this->rightBox.y0, this->rightBox.z0};
@@ -377,7 +365,7 @@ void Box::getVertexes(Box this, Vector3D vertexes[__BOX_VERTEXES])
 	vertexes[7] = rightBottomFar;
 }
 
-void Box::computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
+void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 {
 /*
 	// generic way
@@ -418,7 +406,7 @@ void Box::computeNormals(Box this, Vector3D vertexes[__BOX_VERTEXES])
 	this->normals->vectors[2] = Vector3D::normalize(this->normals->vectors[2]);
 }
 
-void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
+static void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max)
 {
 	int vertexIndex = 0;
 
@@ -447,10 +435,8 @@ void Box::project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* m
 	*max = finalMax;
 }
 
-void Box::projectOntoItself(Box this)
+void Box::projectOntoItself()
 {
-	ASSERT(this, "Box::projectOntoItself: null this");
-
 	Vector3D vertexes[__BOX_VERTEXES];
 	Box::getVertexes(this, vertexes);
 
@@ -468,10 +454,8 @@ void Box::projectOntoItself(Box this)
 }
 
 // test if collision with the entity give the displacement
-CollisionInformation Box::testForCollision(Box this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
+CollisionInformation Box::testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement)
 {
-	ASSERT(this, "Box::testForCollision: null this");
-
 	// save position
 	RightBox rightBox = this->rightBox;
 
@@ -498,10 +482,8 @@ CollisionInformation Box::testForCollision(Box this, Shape shape, Vector3D displ
 	return collisionInformation;
 }
 
-Vector3D Box::getPosition(Box this)
+Vector3D Box::getPosition()
 {
-	ASSERT(this, "Box::getPosition: null this");
-
 	Vector3D position =
 	{
 		this->rightBox.x0 + ((this->rightBox.x1 - this->rightBox.x0) >> 1),
@@ -512,18 +494,14 @@ Vector3D Box::getPosition(Box this)
 	return position;
 }
 
-RightBox Box::getSurroundingRightBox(Box this)
+RightBox Box::getSurroundingRightBox()
 {
-	ASSERT(this, "Box::getSurroundingRightBox: null this");
-
 	return this->rightBox;
 }
 
 // configure Polyhedron
-void Box::configureWireframe(Box this)
+void Box::configureWireframe()
 {
-	ASSERT(this, "Box::draw: null this");
-
 	if(this->wireframe)
 	{
 		return;
@@ -600,10 +578,8 @@ void Box::configureWireframe(Box this)
 }
 
 // print debug data
-void Box::print(Box this, int x, int y)
+void Box::print(int x, int y)
 {
-	ASSERT(this, "Box::print: null this");
-
 	RightBox rightBox = this->rightBox;
 
 	Printing::text(Printing::getInstance(), "X:" , x, y, NULL);

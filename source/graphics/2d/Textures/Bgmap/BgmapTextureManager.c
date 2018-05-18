@@ -51,15 +51,6 @@ enum OffsetIndex
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void BgmapTextureManager::constructor(BgmapTextureManager this);
-static int BgmapTextureManager::doAllocate(BgmapTextureManager this, BgmapTexture bgmapTexture);
-static BgmapTexture BgmapTextureManager::findTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
-static BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -84,10 +75,8 @@ static BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureManager thi
  *
  * @param this			Function scope
  */
-void __attribute__ ((noinline)) BgmapTextureManager::constructor(BgmapTextureManager this)
+void BgmapTextureManager::constructor()
 {
-	ASSERT(this, "BgmapTextureManager::constructor: null this");
-
 	Base::constructor();
 
 	BgmapTextureManager::reset(this);
@@ -101,12 +90,10 @@ void __attribute__ ((noinline)) BgmapTextureManager::constructor(BgmapTextureMan
  *
  * @param this			Function scope
  */
-void BgmapTextureManager::destructor(BgmapTextureManager this)
+void BgmapTextureManager::destructor()
 {
-	ASSERT(this, "BgmapTextureManager::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -117,10 +104,8 @@ void BgmapTextureManager::destructor(BgmapTextureManager this)
  *
  * @param this			Function scope
  */
-void BgmapTextureManager::reset(BgmapTextureManager this)
-{
-	ASSERT(this, "BgmapTextureManager::reset: null this");
-	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
+void BgmapTextureManager::reset()
+{	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
 
 	this->availableBgmapSegmentsForTextures = (u32)((__PARAM_TABLE_END - __BGMAP_SPACE_BASE_ADDRESS) / __BGMAP_SEGMENT_SIZE);
 
@@ -176,10 +161,8 @@ void BgmapTextureManager::reset(BgmapTextureManager this)
  *
  * @return 					True if the required space was successfully allocated
  */
-static int BgmapTextureManager::doAllocate(BgmapTextureManager this, BgmapTexture bgmapTexture)
+int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::doAllocate: null this");
-
 	int i = 0;
 	int j = 0;
 	int aux = 0;
@@ -301,10 +284,8 @@ static int BgmapTextureManager::doAllocate(BgmapTextureManager this, BgmapTextur
  * @param bgmapTexture		Texture to allocate space for
  */
 /*
-void BgmapTextureManager::allocateText(BgmapTextureManager this, BgmapTexture bgmapTexture)
+void BgmapTextureManager::allocateText(BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::allocateText: null this");
-
 	//int xDisplacement = 0;
 	int yDisplacement = 0;
 
@@ -341,10 +322,8 @@ void BgmapTextureManager::allocateText(BgmapTextureManager this, BgmapTexture bg
  * @param this				Function scope
  * @param bgmapTexture		Texture to release
  */
-void BgmapTextureManager::releaseTexture(BgmapTextureManager this, BgmapTexture bgmapTexture)
+void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
-	ASSERT(this, "BgmapTextureManager::free: null this");
-
 	// if no one is using the texture anymore
 	if(__IS_OBJECT_ALIVE(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
 	{
@@ -383,10 +362,8 @@ void BgmapTextureManager::releaseTexture(BgmapTextureManager this, BgmapTexture 
  *
  * @return								Allocated Texture
  */
-static BgmapTexture BgmapTextureManager::findTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
+BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::findTexture: null this");
-
 	int i = 0;
 	TextureDefinition* textureDefinition = (TextureDefinition*)bgmapTextureDefinition;
 
@@ -476,10 +453,8 @@ static BgmapTexture BgmapTextureManager::findTexture(BgmapTextureManager this, B
  *
  * @return 								True if the required space was successfully allocated
  */
-static BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
+BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::allocateTexture: null this");
-
 	int i = 0;
 
 	// find an empty slot
@@ -511,10 +486,8 @@ static BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureManager thi
  *
  * @return 								Allocated Texture
  */
-BgmapTexture BgmapTextureManager::getTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition)
+BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextureDefinition)
 {
-	ASSERT(this, "BgmapTextureManager::getTexture: null this");
-
 	BgmapTexture bgmapTexture = NULL;
 
 	//determine the allocation type
@@ -571,10 +544,8 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureManager this, BgmapText
  *
  * @return 			X offset within a BGMAP segment
  */
-s16 BgmapTextureManager::getXOffset(BgmapTextureManager this, int id)
+s16 BgmapTextureManager::getXOffset(int id)
 {
-	ASSERT(this, "BgmapTextureManager::getXOffset: null this");
-
 	return this->offset[id][kXOffset];
 }
 
@@ -589,10 +560,8 @@ s16 BgmapTextureManager::getXOffset(BgmapTextureManager this, int id)
  *
  * @return 			Y offset within a BGMAP segment
  */
-s16 BgmapTextureManager::getYOffset(BgmapTextureManager this, int id)
+s16 BgmapTextureManager::getYOffset(int id)
 {
-	ASSERT(this, "BgmapTextureManager::getYOffset: null this");
-
 	return this->offset[id][kYOffset];
 }
 
@@ -606,10 +575,8 @@ s16 BgmapTextureManager::getYOffset(BgmapTextureManager this, int id)
  *
  * @return 			Number of non used BGMAP segments for texture allocation
  */
-s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager this)
+s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 {
-	ASSERT(this, "BgmapTextureManager::getAvailableBgmapSegmentsForTextures: null this");
-
 	return this->availableBgmapSegmentsForTextures;
 }
 
@@ -623,10 +590,8 @@ s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManage
  *
  * @return 			BGMAP segment available for printing
  */
-s16 BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager this)
+s16 BgmapTextureManager::getPrintingBgmapSegment()
 {
-	ASSERT(this, "BgmapTextureManager::getPrintingBgmapSegment: null this");
-
 	return this->printingBgmapSegment;
 }
 
@@ -638,10 +603,8 @@ s16 BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager this)
  *
  * @param this		Function scope
  */
-void BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager this)
+void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
-	ASSERT(this, "BgmapTextureManager::calculateAvailableBgmapSegments: null this");
-
 	u32 paramTableBase = ParamTableManager::getParamTableBase(ParamTableManager::getInstance());
 
 	this->availableBgmapSegmentsForTextures = this->printingBgmapSegment = (u32)((paramTableBase - __BGMAP_SPACE_BASE_ADDRESS - (__PRINTABLE_BGMAP_AREA << 1)) / __BGMAP_SEGMENT_SIZE);
@@ -662,10 +625,8 @@ void BgmapTextureManager::calculateAvailableBgmapSegments(BgmapTextureManager th
  * @param x			Camera's x coocrinate
  * @param y			Camera's y coocrinate
  */
-void BgmapTextureManager::print(BgmapTextureManager this, int x, int y)
+void BgmapTextureManager::print(int x, int y)
 {
-	ASSERT(this, "BgmapTextureManager::print: null this");
-
 	int index = 0;
 	int textureCount = 0;
 	for(;index < this->availableBgmapSegmentsForTextures * __NUM_BGMAPS_PER_SEGMENT; index++)

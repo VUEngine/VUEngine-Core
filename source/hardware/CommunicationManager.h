@@ -53,11 +53,13 @@ singleton class CommunicationManager : Object
 	int waitCycles;
 
 	static CommunicationManager getInstance();
-	void update(CommunicationManager this);
-	bool sendPayload(CommunicationManager this, u8 payload);
-	bool receivePayload(CommunicationManager this);
-	Package getPackage(CommunicationManager this);
-	void update(CommunicationManager this);
+	static void interruptHandler();
+
+	void update();
+	bool sendPayload(u8 payload);
+	bool receivePayload();
+	Package getPackage();
+	void update();
 }
 
 

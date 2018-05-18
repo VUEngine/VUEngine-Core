@@ -29,6 +29,7 @@
 #include <Optics.h>
 #include <VirtualList.h>
 #include <WireframeManager.h>
+#include <VIPManager.h>
 #include <debugConfig.h>
 
 
@@ -44,13 +45,6 @@
 
 friend class VirtualNode;
 friend class VirtualList;
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
 
 
 
@@ -69,10 +63,8 @@ friend class VirtualList;
  *
  * @param this	Function scope
  */
-void Polyhedron::constructor(Polyhedron this)
+void Polyhedron::constructor()
 {
-	ASSERT(this, "Polyhedron::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -88,10 +80,8 @@ void Polyhedron::constructor(Polyhedron this)
  *
  * @param this	Function scope
  */
-void Polyhedron::destructor(Polyhedron this)
+void Polyhedron::destructor()
 {
-	ASSERT(this, "Polyhedron::destructor: null this");
-
 	Wireframe::hide(__SAFE_CAST(Wireframe, this));
 
 	// delete the vertices list
@@ -125,10 +115,8 @@ void Polyhedron::destructor(Polyhedron this)
  * @param y		Vertex' y coordinate
  * @param z		Vertex' x coordinate
  */
-void Polyhedron::addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
+void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
 {
-	ASSERT(this, "Polyhedron::addVertex: null this");
-
 	// create the vertex
 	Vector3D* vertex = __NEW_BASIC(Vector3D);
 	vertex->x = x;
@@ -156,10 +144,8 @@ void Polyhedron::addVertex(Polyhedron this, fix10_6 x, fix10_6 y, fix10_6 z)
  * @param this				Function scope
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
-void Polyhedron::draw(Polyhedron this, bool calculateParallax)
+void Polyhedron::draw(bool calculateParallax)
 {
-	ASSERT(this, "Polyhedron::draw: null this");
-
 	int color = __COLOR_BRIGHT_RED;
 
 	// if I have some vertex, draw them

@@ -35,44 +35,44 @@
 //											PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
-inline Vector3D Vector3D_get(Vector3D from, Vector3D to);
-inline fix10_6 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB);
-inline Vector3D Vector3D_scalarProduct(Vector3D vector, fix10_6 scalar);
-inline Vector3D Vector3D_normalize(Vector3D vector);
-inline Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
-inline fix10_6 Vector3D_length(Vector3D vector);
-inline fix10_6_ext Vector3D_squareLength(Vector3D vector);
-inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB);
-inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D);
-inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax);
-inline Vector3D Vector3D_getFromPixelVector(PixelVector screenVector);
-inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
-inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D, s16 parallax);
-inline Size Size_getFromPixelSize(PixelSize pixelSize);
-
+static class Vector3D : Object
+{
+	static inline Vector3D get(Vector3D from, Vector3D to);
+	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
+	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
+	static inline Vector3D normalize(Vector3D vector);
+	static inline Vector3D getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
+	static inline fix10_6 length(Vector3D vector);
+	static inline fix10_6_ext squareLength(Vector3D vector);
+	static inline fix10_6 lengthProduct(Vector3D vectorA, Vector3D vectorB);
+	static inline Vector3D getRelativeToCamera(Vector3D vector3D);
+	static inline PixelVector projectToPixelVector(Vector3D vector3D, s16 parallax);
+	static inline Vector3D getFromPixelVector(PixelVector screenVector);
+	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
+}
 
 //---------------------------------------------------------------------------------------------------------
 //											IMPLEMENTATIONS
 //---------------------------------------------------------------------------------------------------------
 
-inline Vector3D Vector3D_get(Vector3D from, Vector3D to)
+static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 {
 	return (Vector3D){to.x - from.x, to.y - from.y, to.z - from.z};
 }
 
-inline fix10_6 Vector3D_dotProduct(Vector3D vectorA, Vector3D vectorB)
+static inline fix10_6 Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
 {
 	return __FIX10_6_MULT(vectorA.x, vectorB.x) + __FIX10_6_MULT(vectorA.y, vectorB.y) + __FIX10_6_MULT(vectorA.z, vectorB.z);
 }
 
-inline Vector3D Vector3D_scalarProduct(Vector3D vector, fix10_6 scalar)
+static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fix10_6 scalar)
 {
 	return (Vector3D){__FIX10_6_MULT(vector.x, scalar), __FIX10_6_MULT(vector.y, scalar), __FIX10_6_MULT(vector.z, scalar)};
 }
 
-inline Vector3D Vector3D_normalize(Vector3D vector)
+static inline Vector3D Vector3D::normalize(Vector3D vector)
 {
-	fix10_6 length = Vector3D_length(vector);
+	fix10_6 length = Vector3D::length(vector);
 
 	if(length)
 	{
@@ -82,7 +82,7 @@ inline Vector3D Vector3D_normalize(Vector3D vector)
 	return (Vector3D){0, 0, 0};
 }
 
-inline Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC)
+static inline Vector3D Vector3D::getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC)
 {
 	Vector3D u =
 	{
@@ -106,19 +106,19 @@ inline Vector3D Vector3D_getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vect
 	};
 }
 
-inline fix10_6 Vector3D_length(Vector3D vector)
+static inline fix10_6 Vector3D::length(Vector3D vector)
 {
 	fix10_6_ext lengthSquare = __FIX10_6_EXT_MULT(vector.x, vector.x) + __FIX10_6_EXT_MULT(vector.y, vector.y) + __FIX10_6_EXT_MULT(vector.z, vector.z);
 
 	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(lengthSquare)));
 }
 
-inline fix10_6_ext Vector3D_squareLength(Vector3D vector)
+static inline fix10_6_ext Vector3D::squareLength(Vector3D vector)
 {
 	return __FIX10_6_EXT_MULT(vector.x, vector.x) + __FIX10_6_EXT_MULT(vector.y, vector.y) + __FIX10_6_EXT_MULT(vector.z, vector.z);
 }
 
-inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB)
+static inline fix10_6 Vector3D::lengthProduct(Vector3D vectorA, Vector3D vectorB)
 {
 	fix10_6_ext lengthSquareA = __FIX10_6_EXT_MULT(vectorA.x, vectorA.x) + __FIX10_6_EXT_MULT(vectorA.y, vectorA.y) + __FIX10_6_EXT_MULT(vectorA.z, vectorA.z);
 	fix10_6_ext lengthSquareB = __FIX10_6_EXT_MULT(vectorB.x, vectorB.x) + __FIX10_6_EXT_MULT(vectorB.y, vectorB.y) + __FIX10_6_EXT_MULT(vectorB.z, vectorB.z);
@@ -128,7 +128,7 @@ inline fix10_6 Vector3D_lengthProduct(Vector3D vectorA, Vector3D vectorB)
 	return __F_TO_FIX10_6(Math_squareRoot(__FIX10_6_EXT_TO_F(product)));
 }
 
-inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D)
+static inline Vector3D Vector3D::getRelativeToCamera(Vector3D vector3D)
 {
 	extern const Vector3D* _cameraPosition;
 
@@ -139,7 +139,7 @@ inline Vector3D Vector3D_getRelativeToCamera(Vector3D vector3D)
 	return vector3D;
 }
 
-inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax)
+static inline PixelVector Vector3D::projectToPixelVector(Vector3D vector3D, s16 parallax)
 {
 	extern const Optical* _optical;
 
@@ -158,7 +158,7 @@ inline PixelVector Vector3D_projectToPixelVector(Vector3D vector3D, s16 parallax
 	return projection;
 }
 
-inline Vector3D Vector3D_getFromPixelVector(PixelVector pixelVector)
+static inline Vector3D Vector3D::getFromPixelVector(PixelVector pixelVector)
 {
 	return (Vector3D)
 	{
@@ -168,7 +168,7 @@ inline Vector3D Vector3D_getFromPixelVector(PixelVector pixelVector)
 	};
 }
 
-inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelVector)
+static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector screenPixelVector)
 {
 	return (Vector3D)
 	{
@@ -178,68 +178,5 @@ inline Vector3D Vector3D_getFromScreenPixelVector(ScreenPixelVector screenPixelV
 	};
 }
 
-
-inline PixelVector PixelVector_getFromVector3D(Vector3D vector3D, s16 parallax)
-{
-	return (PixelVector)
-	{
-		__METERS_TO_PIXELS(vector3D.x),
-		__METERS_TO_PIXELS(vector3D.y),
-		__METERS_TO_PIXELS(vector3D.z),
-		parallax
-	};
-}
-
-inline Size Size_getFromPixelSize(PixelSize pixelSize)
-{
-	return (Size)
-	{
-		__PIXELS_TO_METERS(pixelSize.x),
-		__PIXELS_TO_METERS(pixelSize.y),
-		__PIXELS_TO_METERS(pixelSize.z)
-	};
-}
-
-inline PixelSize PixelSize_getFromSize(Size size)
-{
-	return (PixelSize)
-	{
-		__METERS_TO_PIXELS(size.x),
-		__METERS_TO_PIXELS(size.y),
-		__METERS_TO_PIXELS(size.z)
-	};
-}
-
-inline Optical Optical_getFromPixelOptical(PixelOptical pixelOptical)
-{
-	s16 maximumXViewDistancePower = 0;
-	s16 maximumYViewDistancePower = 0;
-
-	pixelOptical.maximumXViewDistance >>= __PIXELS_PER_METER_2_POWER;
-	pixelOptical.maximumYViewDistance >>= __PIXELS_PER_METER_2_POWER;
-
-	while(pixelOptical.maximumXViewDistance)
-	{
-		pixelOptical.maximumXViewDistance >>= 1;
-		maximumXViewDistancePower++;
-	}
-
-	while(pixelOptical.maximumYViewDistance)
-	{
-		pixelOptical.maximumYViewDistance >>= 1;
-		maximumYViewDistancePower++;
-	}
-
-	return (Optical)
-	{
-		__MINIMUM_X_VIEW_DISTANCE_POWER <= maximumXViewDistancePower ? maximumXViewDistancePower - 1 : __MINIMUM_X_VIEW_DISTANCE_POWER,
-		__MINIMUM_Y_VIEW_DISTANCE_POWER <= maximumYViewDistancePower ? maximumYViewDistancePower - 1 : __MINIMUM_Y_VIEW_DISTANCE_POWER,
-		__PIXELS_TO_METERS(pixelOptical.distanceEyeScreen),
-		__PIXELS_TO_METERS(pixelOptical.baseDistance),
-		__PIXELS_TO_METERS(pixelOptical.horizontalViewPointCenter),
-		__PIXELS_TO_METERS(pixelOptical.verticalViewPointCenter),
-		__F_TO_FIX10_6(pixelOptical.scalingFactor) << maximumXViewDistancePower
-	};
-}
 
 #endif

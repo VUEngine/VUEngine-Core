@@ -225,10 +225,12 @@ static const s16 _sinLut[] =
  -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6  //64
 };
 
-float Math_squareRoot(float number);
-int Math_powerFast(int base, int power);
-int Math_intInfinity();
-fix10_6 Math_fix10_6Infinity();
-
-
+static class Math : Object
+{
+	static float squareRoot(float number);
+	static int powerFast(int base, int power);
+	static int intInfinity();
+	static fix10_6 fix10_6Infinity();
+}
 #endif
+

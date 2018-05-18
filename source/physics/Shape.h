@@ -242,35 +242,35 @@ abstract class Shape : Object
 	*/
 	u8 isVisible;
 
-	void constructor(Shape this, SpatialObject owner);
-	void enterCollision(Shape this, CollisionData* collisionData);
-	void updateCollision(Shape this, CollisionData* collisionData);
-	void exitCollision(Shape this, CollisionData* collisionData);
-	CollisionData collides(Shape this, Shape shape);
-	bool checkForCollisions(Shape this);
-	SpatialObject getOwner(Shape this);
-	void reset(Shape this);
-	bool isActive(Shape this);
-	bool isReady(Shape this);
-	void setActive(Shape this, bool active);
-	void setCheckForCollisions(Shape this, bool checkForCollisions);
-	void setReady(Shape this, bool ready);
-	bool canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncrement);
-	fix10_6 getCollidingFrictionCoefficient(Shape this);
-	void resolveCollision(Shape this, const CollisionInformation* collisionInformation);
-	u32 getLayers(Shape this);
-	void setLayers(Shape this, u32 layers);
-	u32 getLayersToIgnore(Shape this);
-	void setLayersToIgnore(Shape this, u32 layersToIgnore);
-	void show(Shape this);
-	void hide(Shape this);
-	virtual void setup(Shape this, u32 layers, u32 layersToIgnore);
-	virtual void position(Shape this, const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
-	virtual CollisionInformation testForCollision(Shape this, Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
-	virtual Vector3D getPosition(Shape this) = 0;
-	virtual RightBox getSurroundingRightBox(Shape this) = 0;
-	virtual void configureWireframe(Shape this) = 0;
-	virtual void print(Shape this, int x, int y) = 0;
+	void constructor(SpatialObject owner);
+	void enterCollision(CollisionData* collisionData);
+	void updateCollision(CollisionData* collisionData);
+	void exitCollision(CollisionData* collisionData);
+	CollisionData collides(Shape shape);
+	bool checkForCollisions();
+	SpatialObject getOwner();
+	void reset();
+	bool isActive();
+	bool isReady();
+	void setActive(bool active);
+	void setCheckForCollisions(bool checkForCollisions);
+	void setReady(bool ready);
+	bool canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement);
+	fix10_6 getCollidingFrictionCoefficient();
+	void resolveCollision(const CollisionInformation* collisionInformation);
+	u32 getLayers();
+	void setLayers(u32 layers);
+	u32 getLayersToIgnore();
+	void setLayersToIgnore(u32 layersToIgnore);
+	void show();
+	void hide();
+	virtual void setup(u32 layers, u32 layersToIgnore);
+	virtual void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);
+	virtual CollisionInformation testForCollision(Shape shape, Vector3D displacement, fix10_6 sizeIncrement) = 0;
+	virtual Vector3D getPosition() = 0;
+	virtual RightBox getSurroundingRightBox() = 0;
+	virtual void configureWireframe() = 0;
+	virtual void print(int x, int y) = 0;
 }
 
 

@@ -138,18 +138,18 @@ class ParticleSystem : Entity
 	*/
 	bool paused;
 
-	void constructor(ParticleSystem this, ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
-	bool handleMessage(ParticleSystem this, Telegram telegram);
-	void pause(ParticleSystem this);
-	void show(ParticleSystem this);
-	void spawnAllParticles(ParticleSystem this);
-	void start(ParticleSystem this);
-	override void update(ParticleSystem this, u32 elapsedTime);
-	override void transform(ParticleSystem this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-	override void synchronizeGraphics(ParticleSystem this);
-	override void resume(ParticleSystem this);
-	override void suspend(ParticleSystem this);
-	override void hide(ParticleSystem this);
+	void constructor(ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
+	bool handleMessage(Telegram telegram);
+	void pause();
+	void show();
+	void spawnAllParticles();
+	void start();
+	override void update(u32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void synchronizeGraphics();
+	override void resume();
+	override void suspend();
+	override void hide();
 }
 
 

@@ -128,72 +128,10 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
 
 #ifdef __DEBUG_TOOLS
 extern ClassSizeData _userClassesSizeData[];
 #endif
-
-void Debug::constructor(Debug this);
-static void Debug::showCollisionShapes(Debug this);
-static void Debug::showDebugBgmap(Debug this);
-static void Debug::showBgmapSegment(Debug this);
-static void Debug::setupPages(Debug this);
-static void Debug::showPage(Debug this, int increment);
-static void Debug::showSubPage(Debug this, int increment);
-static void Debug::removeSubPages(Debug this);
-static void Debug::dimmGame(Debug this);
-static void Debug::lightUpGame(Debug this);
-
-// pages
-static void Debug::generalStatusPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusPage(Debug this, int increment, int x, int y);
-static void Debug::gameProfilingPage(Debug this, int increment, int x, int y);
-static void Debug::streamingPage(Debug this, int increment, int x, int y);
-static void Debug::spritesPage(Debug this, int increment, int x, int y);
-static void Debug::texturesPage(Debug this, int increment, int x, int y);
-static void Debug::objectsPage(Debug this, int increment, int x, int y);
-static void Debug::charMemoryPage(Debug this, int increment, int x, int y);
-static void Debug::physicsPage(Debug this, int increment, int x, int y);
-static void Debug::hardwareRegistersPage(Debug this, int increment, int x, int y);
-static void Debug::sramPage(Debug this, int increment, int x, int y);
-
-// sub pages
-static void Debug::streamingShowStatus(Debug this, int increment, int x, int y);
-static void Debug::spritesShowStatus(Debug this, int increment, int x, int y);
-static void Debug::texturesShowStatus(Debug this, int increment, int x, int y);
-static void Debug::objectsShowStatus(Debug this, int increment, int x, int y);
-static void Debug::charMemoryShowStatus(Debug this, int increment, int x, int y);
-static void Debug::charMemoryShowMemory(Debug this, int increment, int x, int y);
-static void Debug::physicStatusShowStatistics(Debug this, int increment, int x, int y);
-static void Debug::physicStatusShowShapes(Debug this, int increment, int x, int y);
-
-#ifdef __DEBUG_TOOLS
-static void Debug::printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message);
-
-static void Debug::memoryStatusShowZeroPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowFirstPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowSecondPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowThirdPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowFourthPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowFifthPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowSixthPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowSeventhPage(Debug this, int increment, int x, int y);
-static void Debug::memoryStatusShowUserDefinedClassesSizes(Debug this, int increment, int x, int y);
-#endif
-
-static void Debug::showPreviousPage(Debug this);
-static void Debug::showNextPage(Debug this);
-static void Debug::showPreviousSubPage(Debug this);
-static void Debug::showNextSubPage(Debug this);
-static void Debug::displaceLeft(Debug this);
-static void Debug::displaceRight(Debug this);
-static void Debug::displaceUp(Debug this);
-static void Debug::displaceDown(Debug this);
-
-static void Debug::showSramPage(Debug this, int increment, int x, int y);
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -219,10 +157,8 @@ static void Debug::showSramPage(Debug this, int increment, int x, int y);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) Debug::constructor(Debug this)
+void Debug::constructor()
 {
-	ASSERT(this, "Debug::constructor: null this");
-
 	Base::constructor();
 
 	this->pages = __NEW(VirtualList);
@@ -254,19 +190,17 @@ void __attribute__ ((noinline)) Debug::constructor(Debug this)
  *
  * @param this	Function scope
  */
-void Debug::destructor(Debug this)
+void Debug::destructor()
 {
-	ASSERT(this, "Debug::destructor: null this");
-
 	__DELETE(this->pages);
 	__DELETE(this->subPages);
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 // setup pages
-static void Debug::setupPages(Debug this)
+void Debug::setupPages()
 {
 	VirtualList::pushBack(this->pages, &Debug_generalStatusPage);
 	VirtualList::pushBack(this->pages, &Debug_memoryStatusPage);
@@ -291,7 +225,7 @@ static void Debug::setupPages(Debug this)
  *
  * @param this	Function scope
  */
-void Debug::update(Debug this)
+void Debug::update()
 {
 	if(this->update)
 	{
@@ -307,7 +241,7 @@ void Debug::update(Debug this)
  *
  * @param this	Function scope
  */
-void Debug::render(Debug this)
+void Debug::render()
 {
 	if(this->currentPage->data == &Debug_texturesPage && 0 <= this->bgmapSegment)
 	{
@@ -324,7 +258,7 @@ void Debug::render(Debug this)
  * @param this		Function scope
  * @param gameState Current game state
  */
-void Debug::show(Debug this, GameState gameState)
+void Debug::show(GameState gameState)
 {
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
@@ -343,7 +277,7 @@ void Debug::show(Debug this, GameState gameState)
  *
  * @param this		Function scope
  */
-void Debug::hide(Debug this)
+void Debug::hide()
 {
 	CollisionManager::hideShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
@@ -362,7 +296,7 @@ void Debug::hide(Debug this)
  *
  * @return 			Current page's node's position
  */
-u8 Debug::getCurrentPageNumber(Debug this)
+u8 Debug::getCurrentPageNumber()
 {
 	return VirtualList::getNodePosition(this->pages, this->currentPage) + 1;
 }
@@ -375,7 +309,7 @@ u8 Debug::getCurrentPageNumber(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::dimmGame(Debug this __attribute__ ((unused)))
+void Debug::dimmGame()
 {
 	_vipRegisters[__GPLT0] = 0x50;
 	_vipRegisters[__GPLT1] = 0x50;
@@ -397,7 +331,7 @@ static void Debug::dimmGame(Debug this __attribute__ ((unused)))
  *
  * @param this		Function scope
  */
-static void Debug::lightUpGame(Debug this)
+void Debug::lightUpGame()
 {
 	Stage::setupPalettes(GameState::getStage(this->gameState));
 }
@@ -411,10 +345,8 @@ static void Debug::lightUpGame(Debug this)
  * @param this			Function scope
  * @param pressedKey	User input
  */
-void Debug::processUserInput(Debug this __attribute__ ((unused)), u16 pressedKey)
+void Debug::processUserInput(u16 pressedKey)
 {
-	ASSERT(this, "Debug::processUserInput: null this");
-
 	if(pressedKey & K_LL)
 	{
 		Debug::showPreviousPage(this);
@@ -457,7 +389,7 @@ void Debug::processUserInput(Debug this __attribute__ ((unused)), u16 pressedKey
  *
  * @param this		Function scope
  */
-static void Debug::showPreviousPage(Debug this)
+void Debug::showPreviousPage()
 {
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
 	Debug::dimmGame(this);
@@ -480,7 +412,7 @@ static void Debug::showPreviousPage(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::showNextPage(Debug this)
+void Debug::showNextPage()
 {
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
 	Debug::dimmGame(this);
@@ -503,7 +435,7 @@ static void Debug::showNextPage(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::showPreviousSubPage(Debug this)
+void Debug::showPreviousSubPage()
 {
 	if(!this->currentSubPage)
 	{
@@ -528,7 +460,7 @@ static void Debug::showPreviousSubPage(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::showNextSubPage(Debug this)
+void Debug::showNextSubPage()
 {
 	if(!this->currentSubPage)
 	{
@@ -553,7 +485,7 @@ static void Debug::showNextSubPage(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::printHeader(Debug this)
+void Debug::printHeader()
 {
 	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 	Printing::text(Printing::getInstance(), " DEBUG SYSTEM ", 1, 0, NULL);
@@ -571,7 +503,7 @@ static void Debug::printHeader(Debug this)
  * @param this			Function scope
  * @param increment		Increment
  */
-static void Debug::showPage(Debug this, int increment)
+void Debug::showPage(int increment)
 {
 	if(this->currentPage && this->currentPage->data)
 	{
@@ -600,7 +532,7 @@ static void Debug::showPage(Debug this, int increment)
  * @param this			Function scope
  * @param increment		Increment
  */
-static void Debug::showSubPage(Debug this, int increment)
+void Debug::showSubPage(int increment)
 {
 	if(this->currentSubPage && VirtualNode::getData(this->currentSubPage))
 	{
@@ -623,7 +555,7 @@ static void Debug::showSubPage(Debug this, int increment)
  *
  * @param this		Function scope
  */
-static void Debug::displaceLeft(Debug this)
+void Debug::displaceLeft()
 {
 	this->mapDisplacement.x = 0;
 	Debug::showDebugBgmap(this);
@@ -637,7 +569,7 @@ static void Debug::displaceLeft(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::displaceRight(Debug this)
+void Debug::displaceRight()
 {
 	this->mapDisplacement.x = DISPLACEMENT_STEP_X;
 	Debug::showDebugBgmap(this);
@@ -651,7 +583,7 @@ static void Debug::displaceRight(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::displaceUp(Debug this)
+void Debug::displaceUp()
 {
 	this->mapDisplacement.y = 0;
 	Debug::showDebugBgmap(this);
@@ -665,7 +597,7 @@ static void Debug::displaceUp(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::displaceDown(Debug this)
+void Debug::displaceDown()
 {
 	this->mapDisplacement.y = DISPLACEMENT_STEP_Y;
 	Debug::showDebugBgmap(this);
@@ -679,7 +611,7 @@ static void Debug::displaceDown(Debug this)
  *
  * @param this		Function scope
  */
-static void Debug::removeSubPages(Debug this)
+void Debug::removeSubPages()
 {
 	VirtualList::clear(this->subPages);
 	this->currentSubPage = NULL;
@@ -696,7 +628,7 @@ static void Debug::removeSubPages(Debug this)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::generalStatusPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	Debug::removeSubPages(this);
 
@@ -739,7 +671,7 @@ static void Debug::generalStatusPage(Debug this, int increment __attribute__ ((u
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::memoryStatusPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -775,7 +707,7 @@ static void Debug::memoryStatusPage(Debug this, int increment __attribute__ ((un
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowZeroPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowZeroPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -806,7 +738,7 @@ static void Debug::memoryStatusShowZeroPage(Debug this __attribute__ ((unused)),
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowFirstPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowFirstPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -842,7 +774,7 @@ static void Debug::memoryStatusShowFirstPage(Debug this __attribute__ ((unused))
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowSecondPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowSecondPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -871,7 +803,7 @@ static void Debug::memoryStatusShowSecondPage(Debug this __attribute__ ((unused)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowThirdPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowThirdPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -909,7 +841,7 @@ static void Debug::memoryStatusShowThirdPage(Debug this __attribute__ ((unused))
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowFourthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowFourthPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -940,7 +872,7 @@ static void Debug::memoryStatusShowFourthPage(Debug this __attribute__ ((unused)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowFifthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowFifthPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -969,7 +901,7 @@ static void Debug::memoryStatusShowFifthPage(Debug this __attribute__ ((unused))
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowSixthPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowSixthPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -999,7 +931,7 @@ static void Debug::memoryStatusShowSixthPage(Debug this __attribute__ ((unused))
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowSeventhPage(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowSeventhPage(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 
@@ -1029,7 +961,7 @@ static void Debug::memoryStatusShowSeventhPage(Debug this __attribute__ ((unused
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::memoryStatusShowUserDefinedClassesSizes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::memoryStatusShowUserDefinedClassesSizes(int increment __attribute__ ((unused)), int x, int y)
 {
 	MemoryPool::printDetailedUsage(MemoryPool::getInstance(), x, y);
 	Debug::printClassSizes(this, _userClassesSizeData, 0, x + 21, y, "User defined classes:");
@@ -1048,7 +980,7 @@ static void Debug::memoryStatusShowUserDefinedClassesSizes(Debug this __attribut
  * @param y						Camera's y coordinate
  * @param message				Message to add to the output
  */
-static void Debug::printClassSizes(Debug this __attribute__ ((unused)), ClassSizeData* classesSizeData, int count, int x, int y, char* message)
+void Debug::printClassSizes(ClassSizeData* classesSizeData, int count, int x, int y, char* message)
 {
 	int columnIncrement = 20;
 
@@ -1083,7 +1015,7 @@ static void Debug::printClassSizes(Debug this __attribute__ ((unused)), ClassSiz
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::gameProfilingPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+void Debug::gameProfilingPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	Debug::removeSubPages(this);
 
@@ -1101,7 +1033,7 @@ static void Debug::gameProfilingPage(Debug this, int increment __attribute__ ((u
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::streamingPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::streamingPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1122,7 +1054,7 @@ static void Debug::streamingPage(Debug this, int increment __attribute__ ((unuse
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::streamingShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::streamingShowStatus(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Stage::showStreamingProfiling(GameState::getStage(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
 }
@@ -1138,7 +1070,7 @@ static void Debug::streamingShowStatus(Debug this __attribute__ ((unused)), int 
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::charMemoryPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::charMemoryPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1162,7 +1094,7 @@ static void Debug::charMemoryPage(Debug this, int increment __attribute__ ((unus
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::charMemoryShowStatus(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, int y)
 {
 	this->charSegment += increment;
 
@@ -1209,7 +1141,7 @@ static void Debug::charMemoryShowStatus(Debug this __attribute__ ((unused)), int
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::charMemoryShowMemory(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+void Debug::charMemoryShowMemory(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
 
@@ -1257,7 +1189,7 @@ static void Debug::charMemoryShowMemory(Debug this, int increment __attribute__ 
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::texturesPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::texturesPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1280,7 +1212,7 @@ static void Debug::texturesPage(Debug this, int increment __attribute__ ((unused
  *
  * @param this			Function scope
  */
-static void Debug::showDebugBgmap(Debug this)
+void Debug::showDebugBgmap()
 {
 	if(this->currentPage->data != &Debug_texturesPage ||
 		0 > this->bgmapSegment
@@ -1301,7 +1233,7 @@ static void Debug::showDebugBgmap(Debug this)
  *
  * @param this			Function scope
  */
-static void Debug::showBgmapSegment(Debug this)
+void Debug::showBgmapSegment()
 {
 	// write the head
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
@@ -1326,7 +1258,7 @@ static void Debug::showBgmapSegment(Debug this)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::texturesShowStatus(Debug this, int increment, int x, int y)
+void Debug::texturesShowStatus(int increment, int x, int y)
 {
 	this->bgmapSegment += increment;
 
@@ -1377,7 +1309,7 @@ static void Debug::texturesShowStatus(Debug this, int increment, int x, int y)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::objectsPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::objectsPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1401,7 +1333,7 @@ static void Debug::objectsPage(Debug this, int increment __attribute__ ((unused)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::objectsShowStatus(Debug this, int increment, int x, int y)
+void Debug::objectsShowStatus(int increment, int x, int y)
 {
 	this->objectSegment += increment;
 
@@ -1445,7 +1377,7 @@ static void Debug::objectsShowStatus(Debug this, int increment, int x, int y)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::spritesPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::spritesPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1469,7 +1401,7 @@ static void Debug::spritesPage(Debug this, int increment __attribute__ ((unused)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::spritesShowStatus(Debug this, int increment, int x, int y)
+void Debug::spritesShowStatus(int increment, int x, int y)
 {
 	this->currentLayer -= increment;
 
@@ -1512,7 +1444,7 @@ static void Debug::spritesShowStatus(Debug this, int increment, int x, int y)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::physicsPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::physicsPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1534,7 +1466,7 @@ static void Debug::physicsPage(Debug this, int increment __attribute__ ((unused)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::physicStatusShowStatistics(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::physicStatusShowStatistics(int increment __attribute__ ((unused)), int x, int y)
 {
 	PhysicalWorld::print(GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
 	CollisionManager::print(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y + 6);
@@ -1551,7 +1483,7 @@ static void Debug::physicStatusShowStatistics(Debug this __attribute__ ((unused)
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::physicStatusShowShapes(Debug this __attribute__ ((unused)), int increment __attribute__ ((unused)), int x, int y)
+void Debug::physicStatusShowShapes(int increment __attribute__ ((unused)), int x, int y)
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	this->update = (void (*)(void *))&Debug_showCollisionShapes;
@@ -1565,7 +1497,7 @@ static void Debug::physicStatusShowShapes(Debug this __attribute__ ((unused)), i
  *
  * @param this			Function scope
  */
-static void Debug::showCollisionShapes(Debug this __attribute__ ((unused)))
+void Debug::showCollisionShapes()
 {
 	CollisionManager::showShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 }
@@ -1581,7 +1513,7 @@ static void Debug::showCollisionShapes(Debug this __attribute__ ((unused)))
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::hardwareRegistersPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+void Debug::hardwareRegistersPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	Debug::removeSubPages(this);
 
@@ -1599,7 +1531,7 @@ static void Debug::hardwareRegistersPage(Debug this, int increment __attribute__
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::sramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
+void Debug::sramPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
 	Debug::removeSubPages(this);
 
@@ -1623,7 +1555,7 @@ static void Debug::sramPage(Debug this, int increment __attribute__ ((unused)), 
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */
-static void Debug::showSramPage(Debug this, int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
+void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
 	u8 value;
 	int i, j, totalPages;

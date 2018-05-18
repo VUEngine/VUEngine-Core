@@ -32,13 +32,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void DebugState::constructor(DebugState this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -73,10 +66,8 @@ void DebugState::constructor(DebugState this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) DebugState::constructor(DebugState this)
+void DebugState::constructor()
 {
-	ASSERT(this, "DebugState::constructor: null this");
-
 	Base::constructor();
 }
 
@@ -88,12 +79,10 @@ void __attribute__ ((noinline)) DebugState::constructor(DebugState this)
  *
  * @param this	Function scope
  */
-void DebugState::destructor(DebugState this)
+void DebugState::destructor()
 {
-	ASSERT(this, "DebugState::destructor: null this");
-
 	// destroy base
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -105,10 +94,8 @@ void DebugState::destructor(DebugState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void DebugState::enter(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void DebugState::enter(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "DebugState::enter: null this");
-
 	Base::enter(this, owner);
 	GameState::pauseClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 	Debug::show(Debug::getInstance(), __SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
@@ -123,10 +110,8 @@ void DebugState::enter(DebugState this __attribute__ ((unused)), void* owner __a
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void DebugState::execute(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void DebugState::execute(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "DebugState::execute: null this");
-
 	Debug::update(Debug::getInstance());
 }
 
@@ -139,10 +124,8 @@ void DebugState::execute(DebugState this __attribute__ ((unused)), void* owner _
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void DebugState::exit(DebugState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void DebugState::exit(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "DebugState::exit: null this");
-
 	Debug::hide(Debug::getInstance());
 	GameState::resumeClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 	Base::exit(this, owner);
@@ -157,9 +140,7 @@ void DebugState::exit(DebugState this __attribute__ ((unused)), void* owner __at
  * @param this			Function scope
  * @param userInput		User input
  */
-void DebugState::processUserInput(DebugState this __attribute__ ((unused)), UserInput userInput)
+void DebugState::processUserInput(UserInput userInput)
 {
-	ASSERT(this, "DebugState::processUserInput: null this");
-
 	Debug::processUserInput(Debug::getInstance(), userInput.pressedKey);
 }

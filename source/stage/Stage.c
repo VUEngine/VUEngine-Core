@@ -116,39 +116,16 @@ const Transformation neutralEnvironmentTransformation =
 };
 
 
-//---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// global
-BgmapTexture BgmapTextureManager::loadTexture(BgmapTextureManager this, BgmapTextureDefinition* bgmapTextureDefinition, int isPreload);
-
-static void Stage::setupUI(Stage this);
-static StageEntityDescription* Stage::registerEntity(Stage this, PositionedEntity* positionedEntity);
-static void Stage::registerEntities(Stage this, VirtualList positionedEntitiesToIgnore);
-static void Stage::setObjectSpritesContainers(Stage this);
-static void Stage::preloadAssets(Stage this);
-static void Stage::unloadChild(Stage this, Container child);
-static void Stage::setFocusEntity(Stage this, Entity focusEntity);
-static void Stage::loadInitialEntities(Stage this);
-static bool Stage::unloadOutOfRangeEntities(Stage this, int defer);
-static bool Stage::loadInRangeEntities(Stage this, int defer);
-static bool Stage::purgeChildrenProgressively(Stage this);
-static bool Stage::updateEntityFactory(Stage this);
-static Entity Stage::doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady);
-static void Stage::makeChildReady(Stage this, Entity entity);
-
 #ifdef __PROFILE_STREAMING
 extern s16 _renderingProcessTimeHelper;
-void EntityFactory::showStatus(EntityFactory this __attribute__ ((unused)), int x, int y);
 #endif
 
-typedef bool (*StreamingPhase)(Stage, int);
+typedef bool (*StreamingPhase)(void*, int);
 
 static const StreamingPhase _streamingPhases[] =
 {
-	&Stage_unloadOutOfRangeEntities,
-	&Stage_loadInRangeEntities
+	&Stage::unloadOutOfRangeEntities,
+	&Stage::loadInRangeEntities
 };
 
 #ifdef __PROFILE_STREAMING
@@ -165,10 +142,8 @@ static u32 timeBeforeProcess = 0;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Stage::constructor(Stage this, StageDefinition *stageDefinition)
+void Stage::constructor(StageDefinition *stageDefinition)
 {
-	ASSERT(this, "Stage::constructor: null this");
-
 	// construct base object
 	Base::constructor(NULL);
 
@@ -189,10 +164,8 @@ void Stage::constructor(Stage this, StageDefinition *stageDefinition)
 }
 
 // class's destructor
-void Stage::destructor(Stage this)
+void Stage::destructor()
 {
-	ASSERT(this, "Stage::destructor: null this");
-
 	Stage::setFocusEntity(this, NULL);
 
 	__DELETE(this->particleRemover);
@@ -232,10 +205,8 @@ void Stage::destructor(Stage this)
 }
 
 // determine if a point is visible
-static int Stage::isEntityInLoadRange(Stage this, ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)
+int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRightBox* pixelRightBox)
 {
-	ASSERT(this, "Stage::isEntityInLoadRange: null this");
-
 	Vector3D spatialPosition = Vector3D::getFromScreenPixelVector(onScreenPosition);
 
 	PixelVector position = Vector3D::projectToPixelVector(Vector3D::getRelativeToCamera(spatialPosition), 0);
@@ -261,25 +232,19 @@ static int Stage::isEntityInLoadRange(Stage this, ScreenPixelVector onScreenPosi
 	return true;
 }
 
-static void Stage::setObjectSpritesContainers(Stage this)
+void Stage::setObjectSpritesContainers()
 {
-	ASSERT(this, "Stage::setObjectSpritesContainers: null this");
-
 	SpriteManager::setupObjectSpriteContainers(SpriteManager::getInstance(), this->stageDefinition->rendering.objectSpritesContainersSize, this->stageDefinition->rendering.objectSpritesContainersZPosition);
 }
 
-void Stage::setupPalettes(Stage this)
+void Stage::setupPalettes()
 {
-	ASSERT(this, "Stage::setupPalettes: null this");
-
 	VIPManager::setupPalettes(VIPManager::getInstance(), &this->stageDefinition->rendering.paletteConfig);
 }
 
 // load stage's entites
-void Stage::load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
-	ASSERT(this, "Stage::load: null this");
-
 	// set optical values
 	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
 
@@ -344,10 +309,8 @@ void Stage::load(Stage this, VirtualList positionedEntitiesToIgnore, bool overri
 	}
 }
 
-void Stage::loadPostProcessingEffects(Stage this)
+void Stage::loadPostProcessingEffects()
 {
-	ASSERT(this, "Stage::loadPostProcessingEffects: null this");
-
 	if(this->stageDefinition->postProcessingEffects)
 	{
 		int i = 0;
@@ -359,27 +322,24 @@ void Stage::loadPostProcessingEffects(Stage this)
 }
 
 // retrieve size
-Size Stage::getSize(Stage this)
+Size Stage::getSize()
 {
-	ASSERT(this, "Stage::getSize: null this");
 	ASSERT(this->stageDefinition, "Stage::getSize: null stageDefinition");
 
 	// set world's limits
 	return Size::getFromPixelSize(this->stageDefinition->level.pixelSize);
 }
 
-CameraFrustum Stage::getCameraFrustum(Stage this)
+CameraFrustum Stage::getCameraFrustum()
 {
-	ASSERT(this, "Stage::getCameraFrustum: null this");
 	ASSERT(this->stageDefinition, "Stage::getCameraFrustum: null stageDefinition");
 
 	// set world's limits
 	return this->stageDefinition->level.cameraFrustum;
 }
 // setup ui
-static void Stage::setupUI(Stage this)
+void Stage::setupUI()
 {
-	ASSERT(this, "Stage::setupUI: null this");
 	ASSERT(!this->uiContainer, "Stage::setupUI: UI already exists");
 
 	if(this->uiContainer)
@@ -404,18 +364,14 @@ static void Stage::setupUI(Stage this)
 }
 
 // add entity to the stage
-Entity Stage::addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent)
+Entity Stage::addChildEntity(const PositionedEntity* const positionedEntity, bool permanent)
 {
-	ASSERT(this, "Stage::addEntity: null this");
-
 	return Stage::doAddChildEntity(this, positionedEntity, permanent, this->nextEntityId++, true);
 }
 
 // add entity to the stage
-static Entity Stage::doAddChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady)
+Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, bool permanent __attribute__ ((unused)), s16 internalId, bool makeReady)
 {
-	ASSERT(this, "Stage::doAddChildEntity: null this");
-
 	if(positionedEntity)
 	{
 		Entity entity = Entity::loadEntity(positionedEntity, internalId);
@@ -452,9 +408,8 @@ static Entity Stage::doAddChildEntity(Stage this, const PositionedEntity* const 
 }
 
 // initialize child
-static void Stage::makeChildReady(Stage this, Entity entity)
+void Stage::makeChildReady(Entity entity)
 {
-	ASSERT(this, "Stage::setChildReady: null this");
 	ASSERT(entity, "Stage::setChildReady: null entity");
 	ASSERT(entity->parent == __SAFE_CAST(Container, this), "Stage::setChildReady: I'm not its parent");
 
@@ -464,10 +419,8 @@ static void Stage::makeChildReady(Stage this, Entity entity)
 	}
 }
 
-bool Stage::registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition)
+bool Stage::registerEntityId(s16 internalId, EntityDefinition* entityDefinition)
 {
-	ASSERT(this, "Stage::registerEntityId: null this");
-
 	VirtualNode node = this->stageEntities->head;
 
 	for(; node; node = node->next)
@@ -484,17 +437,14 @@ bool Stage::registerEntityId(Stage this, s16 internalId, EntityDefinition* entit
 	return false;
 }
 
-void Stage::spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback)
+void Stage::spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback)
 {
-	ASSERT(this, "Stage::spawnEntity: null this");
-
 	EntityFactory::spawnEntity(this->entityFactory, positionedEntity, requester, callback, this->nextEntityId++);
 }
 
 // remove entity from the stage
-void Stage::removeChild(Stage this, Container child, bool deleteChild)
+void Stage::removeChild(Container child, bool deleteChild)
 {
-	ASSERT(this, "Stage::removeEntity: null this");
 	ASSERT(child, "Stage::removeEntity: null child");
 
 	if(!child)
@@ -533,9 +483,8 @@ void Stage::removeChild(Stage this, Container child, bool deleteChild)
 }
 
 // unload entity from the stage
-static void Stage::unloadChild(Stage this, Container child)
+void Stage::unloadChild(Container child)
 {
-	ASSERT(this, "Stage::unloadChild: null this");
 	ASSERT(child, "Stage::unloadChild: null child");
 
 	if(!child)
@@ -574,10 +523,8 @@ static void Stage::unloadChild(Stage this, Container child)
 }
 
 // preload fonts, charsets and textures
-static void Stage::preloadAssets(Stage this)
+void Stage::preloadAssets()
 {
-	ASSERT(this, "Stage::preloadAssets: null this");
-
 	// fonts
 	Printing::loadFonts(Printing::getInstance(), this->stageDefinition->assets.fontDefinitions);
 
@@ -643,9 +590,8 @@ static void Stage::preloadAssets(Stage this)
 }
 
 // register an entity in the streaming list
-static StageEntityDescription* Stage::registerEntity(Stage this __attribute__ ((unused)), PositionedEntity* positionedEntity)
+StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity)
 {
-	ASSERT(this, "Stage::registerEntities: null this");
 	ASSERT(positionedEntity, "Stage::registerEntities: null positionedEntity");
 
 	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
@@ -666,10 +612,8 @@ static StageEntityDescription* Stage::registerEntity(Stage this __attribute__ ((
 }
 
 // register the stage's definition entities in the streaming list
-static void Stage::registerEntities(Stage this, VirtualList positionedEntitiesToIgnore)
+void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
-	ASSERT(this, "Stage::registerEntities: null this");
-
 	if(this->stageEntities)
 	{
 		__DELETE(this->stageEntities);
@@ -732,10 +676,8 @@ static void Stage::registerEntities(Stage this, VirtualList positionedEntitiesTo
 }
 
 // load all visible entities
-static void Stage::loadInitialEntities(Stage this)
+void Stage::loadInitialEntities()
 {
-	ASSERT(this, "Stage::loadInRangeEntities: null this");
-
 	// need a temporal list to remove and delete entities
 	VirtualNode node = this->stageEntities->head;
 
@@ -773,10 +715,8 @@ static void Stage::loadInitialEntities(Stage this)
 }
 
 // unload non visible entities
-static bool Stage::unloadOutOfRangeEntities(Stage this, int defer)
+bool Stage::unloadOutOfRangeEntities(int defer)
 {
-	ASSERT(this, "Stage::unloadOutOfRangeEntities: null this");
-
 	if(!this->children)
 	{
 		return false;
@@ -855,10 +795,8 @@ static bool Stage::unloadOutOfRangeEntities(Stage this, int defer)
 	return true;
 }
 
-static bool Stage::loadInRangeEntities(Stage this, int defer __attribute__ ((unused)))
+bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 {
-	ASSERT(this, "Stage::selectEntitiesInLoadRange: null this");
-
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
@@ -989,10 +927,8 @@ static bool Stage::loadInRangeEntities(Stage this, int defer __attribute__ ((unu
 }
 
 // process removed children
-static bool Stage::purgeChildrenProgressively(Stage this)
+bool Stage::purgeChildrenProgressively()
 {
-	ASSERT(this, "Stage::processRemovedChildrenProgressively: null this");
-
 	if(!this->removedChildren || !this->removedChildren->head)
 	{
 		return false;
@@ -1031,10 +967,8 @@ static bool Stage::purgeChildrenProgressively(Stage this)
 }
 
 //
-static bool Stage::updateEntityFactory(Stage this)
+bool Stage::updateEntityFactory()
 {
-	ASSERT(this, "Stage::updateEntityFactory: null this");
-
 #ifdef __PROFILE_STREAMING
 	_renderingProcessTimeHelper = 0;
 	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
@@ -1050,10 +984,8 @@ static bool Stage::updateEntityFactory(Stage this)
 	return preparingEntities;
 }
 
-bool Stage::stream(Stage this)
+bool Stage::stream()
 {
-	ASSERT(this, "Stage::stream: null this");
-
 #ifdef __SHOW_STREAMING_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
 	{
@@ -1081,10 +1013,8 @@ bool Stage::stream(Stage this)
 	return _streamingPhases[this->streamingPhase](this, this->stageDefinition->streaming.deferred);
 }
 
-void Stage::streamAll(Stage this)
+void Stage::streamAll()
 {
-	ASSERT(this, "Stage::streamAll: null this");
-
 	// must make sure there are not pending entities for removal
 	Container::purgeChildren(__SAFE_CAST(Container, this));
 
@@ -1098,10 +1028,8 @@ void Stage::streamAll(Stage this)
 }
 
 // execute stage's logic
-void Stage::update(Stage this, u32 elapsedTime)
+void Stage::update(u32 elapsedTime)
 {
-	ASSERT(this, "Stage::update: null this");
-
 	Base::update(this, elapsedTime);
 
 	if(this->uiContainer)
@@ -1113,10 +1041,8 @@ void Stage::update(Stage this, u32 elapsedTime)
 }
 
 // transformation state
-void Stage::transform(Stage this, const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag)
+void Stage::transform(const Transformation* environmentTransform __attribute__ ((unused)), u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "Stage::transform: null this");
-
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	if(this->uiContainer)
@@ -1125,26 +1051,20 @@ void Stage::transform(Stage this, const Transformation* environmentTransform __a
 	}
 }
 
-void Stage::synchronizeGraphics(Stage this)
+void Stage::synchronizeGraphics()
 {
-	ASSERT(this, "Stage::synchronizeGraphics: null this");
-
 	Base::synchronizeGraphics(this);
 }
 
 // retrieve ui
-UiContainer Stage::getUiContainer(Stage this)
+UiContainer Stage::getUiContainer()
 {
-	ASSERT(this, "Stage::getUiContainer: null this");
-
 	return this->uiContainer;
 }
 
 // suspend for pause
-void Stage::suspend(Stage this)
+void Stage::suspend()
 {
-	ASSERT(this, "Stage::suspend: null this");
-
 	// stream all pending entities to avoid having manually recover
 	// the stage entity registries
 	EntityFactory::prepareAllEntities(this->entityFactory);
@@ -1175,10 +1095,8 @@ void Stage::suspend(Stage this)
 }
 
 // resume after pause
-void Stage::resume(Stage this)
+void Stage::resume()
 {
-	ASSERT(this, "Stage::resume: null this");
-
 	// set back optical values
 	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
 
@@ -1224,23 +1142,19 @@ void Stage::resume(Stage this)
 	this->entityFactory = __NEW(EntityFactory);
 }
 
-bool Stage::handlePropagatedMessage(Stage this, int message)
+bool Stage::handlePropagatedMessage(int message)
 {
-	ASSERT(this, "Stage::handlePropagatedMessage: null this");
-
 	if(this->uiContainer)
 	{
 		// propagate message to ui
-		return Container::propagateMessage(__SAFE_CAST(Container, this->uiContainer), Container_onPropagatedMessage, message);
+		return Container::propagateMessage(__SAFE_CAST(Container, this->uiContainer), Container::onPropagatedMessage, message);
 	}
 
 	return false;
 }
 
-void Stage::onFocusEntityDeleted(Stage this, Object eventFirer __attribute__ ((unused)))
+void Stage::onFocusEntityDeleted(Object eventFirer __attribute__ ((unused)))
 {
-	ASSERT(this, "Stage::onFocusEntityDeleted: null this");
-
 	this->focusEntity = NULL;
 
 	if(this->focusEntity && Camera::getFocusEntity(Camera::getInstance()))
@@ -1252,10 +1166,8 @@ void Stage::onFocusEntityDeleted(Stage this, Object eventFirer __attribute__ ((u
 	}
 }
 
-static void Stage::setFocusEntity(Stage this, Entity focusEntity)
+void Stage::setFocusEntity(Entity focusEntity)
 {
-	ASSERT(this, "Stage::setFocusEntity: null this");
-
 	if(this->focusEntity)
 	{
 		Object::removeEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
@@ -1279,24 +1191,18 @@ static void Stage::setFocusEntity(Stage this, Entity focusEntity)
 }
 
 // get stage definition
-StageDefinition* Stage::getStageDefinition(Stage this)
+StageDefinition* Stage::getStageDefinition()
 {
-	ASSERT(this, "Stage::getStageDefinition: null this");
-
 	return this->stageDefinition;
 }
 
-ParticleRemover Stage::getParticleRemover(Stage this)
+ParticleRemover Stage::getParticleRemover()
 {
-	ASSERT(this, "Stage::getParticleRemover: null this");
-
 	return this->particleRemover;
 }
 
-void Stage::showStreamingProfiling(Stage this __attribute__ ((unused)), int x, int y)
+void Stage::showStreamingProfiling(int x, int y)
 {
-	ASSERT(this, "Stage::showStreamingProfiling: null this");
-
 	Printing::text(Printing::getInstance(), "STREAMING'S STATUS", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Stage's status", x, ++y, NULL);

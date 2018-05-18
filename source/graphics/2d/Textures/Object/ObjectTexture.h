@@ -49,9 +49,9 @@ class ObjectTexture : Texture
 	*/
 	int objectIndex;
 
-	void constructor(ObjectTexture this, ObjectTextureDefinition* objectTextureDefinition, u16 id);
-	void setObjectIndex(ObjectTexture this, int objectIndex);
-	override void write(ObjectTexture this);
+	void constructor(ObjectTextureDefinition* objectTextureDefinition, u16 id);
+	void setObjectIndex(int objectIndex);
+	override void write();
 }
 
 

@@ -37,13 +37,13 @@
 
 abstract class State : Object
 {
-	void constructor(State this);
-	virtual void enter(State this, void* owner);
-	virtual void execute(State this, void* owner);
-	virtual void exit(State this, void* owner);
-	virtual void suspend(State this, void* owner);
-	virtual void resume(State this, void* owner);
-	virtual bool processMessage(State this, void* owner, Telegram telegram) = 0;
+	void constructor();
+	virtual void enter(void* owner);
+	virtual void execute(void* owner);
+	virtual void exit(void* owner);
+	virtual void suspend(void* owner);
+	virtual void resume(void* owner);
+	virtual bool processMessage(void* owner, Telegram telegram) = 0;
 }
 
 

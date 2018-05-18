@@ -205,12 +205,12 @@ singleton class SoundManager : Object
 	s16 fxRightOutput[__FXS];
 
 	static SoundManager getInstance();
-	void setWaveForm(SoundManager this);
-	void playBGM(SoundManager this, const u16 (*bgm)[]);
-	int playFxSound(SoundManager this, const u16* fxSound, Vector3D position);
-	int playingSound(SoundManager this, const u16* fxSound);
-	void stopAllSound(SoundManager this);
-	void playSounds(SoundManager this);
+	void setWaveForm();
+	void playBGM(const u16 (*bgm)[]);
+	int playFxSound(const u16* fxSound, Vector3D position);
+	int playingSound(const u16* fxSound);
+	void stopAllSound();
+	void playSounds();
 }
 
 

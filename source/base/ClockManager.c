@@ -47,14 +47,6 @@ friend class VirtualNode;
 friend class VirtualList;
 
 
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-//class's constructor
-void ClockManager::constructor(ClockManager this);
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -79,10 +71,8 @@ void ClockManager::constructor(ClockManager this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) ClockManager::constructor(ClockManager this)
+void ClockManager::constructor()
 {
-	ASSERT(this, "ClockManager::constructor: null this");
-
 	Base::constructor();
 
 	// create the clock list
@@ -97,10 +87,8 @@ void __attribute__ ((noinline)) ClockManager::constructor(ClockManager this)
  *
  * @param this	Function scope
  */
-void ClockManager::destructor(ClockManager this)
+void ClockManager::destructor()
 {
-	ASSERT(this, "ClockManager::destructor: null this");
-
 	VirtualNode node = this->clocks->head;
 
 	// destroy all registered clocks
@@ -113,7 +101,7 @@ void ClockManager::destructor(ClockManager this)
 	__DELETE(this->clocks);
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -125,10 +113,8 @@ void ClockManager::destructor(ClockManager this)
  * @param this	Function scope
  * @param clock Clock to register
  */
-void ClockManager::register(ClockManager this, Clock clock)
+void ClockManager::register(Clock clock)
 {
-	ASSERT(this, "ClockManager::register: null this");
-
 	if(!VirtualList::find(this->clocks, clock))
 	{
 		VirtualList::pushFront(this->clocks, clock);
@@ -144,10 +130,8 @@ void ClockManager::register(ClockManager this, Clock clock)
  * @param this	Function scope
  * @param clock Clock to un-register
  */
-void ClockManager::unregister(ClockManager this, Clock clock)
+void ClockManager::unregister(Clock clock)
 {
-	ASSERT(this, "ClockManager::unregister: null this");
-
 	VirtualList::removeElement(this->clocks, clock);
 }
 
@@ -160,9 +144,8 @@ void ClockManager::unregister(ClockManager this, Clock clock)
  * @param this					Function scope
  * @param millisecondsElapsed	Milliseconds elapsed between calls
  */
-void ClockManager::update(ClockManager this, u32 millisecondsElapsed)
+void ClockManager::update(u32 millisecondsElapsed)
 {
-	ASSERT(this, "ClockManager::update: null this");
 	ASSERT(this->clocks, "ClockManager::update: null clocks list");
 
 	VirtualNode node = this->clocks->head;
@@ -182,9 +165,8 @@ void ClockManager::update(ClockManager this, u32 millisecondsElapsed)
  *
  * @param this			Function scope
  */
-void ClockManager::reset(ClockManager this)
+void ClockManager::reset()
 {
-	ASSERT(this, "ClockManager::reset: null this");
 	ASSERT(this->clocks, "ClockManager::reset: null clocks list");
 
 	VirtualNode node = this->clocks->head;

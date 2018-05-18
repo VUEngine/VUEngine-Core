@@ -128,11 +128,11 @@ singleton class Debug : Object
 	void (*update)(void *);
 
 	static Debug getInstance();
-	void update(Debug this);
-	void render(Debug this);
-	void show(Debug this, GameState gameState);
-	void hide(Debug this);
-	void processUserInput(Debug this, u16 pressedKey);
+	void update();
+	void render();
+	void show(GameState gameState);
+	void hide();
+	void processUserInput(u16 pressedKey);
 }
 
 

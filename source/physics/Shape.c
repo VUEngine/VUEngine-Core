@@ -53,18 +53,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static CollidingShapeRegistry* Shape::registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable);
-static void Shape::displaceOwner(Shape this, Vector3D displacement);
-static bool Shape::unregisterCollidingShape(Shape this, Shape collidingShape);
-static CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape this, Shape shape);
-static void Shape::onCollidingShapeDestroyed(Shape this, Object eventFirer);
-static void Shape::onCollidingShapeChanged(Shape this, Object eventFirer);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -77,10 +65,8 @@ static void Shape::onCollidingShapeChanged(Shape this, Object eventFirer);
  * @param this	Function scope
  * @param owner
  */
-void Shape::constructor(Shape this, SpatialObject owner)
+void Shape::constructor(SpatialObject owner)
 {
-	ASSERT(this, "Shape::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -110,10 +96,8 @@ void Shape::constructor(Shape this, SpatialObject owner)
  *
  * @param this	Function scope
  */
-void Shape::destructor(Shape this)
+void Shape::destructor()
 {
-	ASSERT(this, "Shape::destructor: null this");
-
 	// unset owner now
 	this->owner = NULL;
 
@@ -160,10 +144,8 @@ void Shape::destructor(Shape this)
  *
  * @param this					Function scope
  */
-void Shape::reset(Shape this)
+void Shape::reset()
 {
-	ASSERT(this, "Shape::reset: null this");
-
 	if(this->collidingShapes)
 	{
 		VirtualNode node = this->collidingShapes->head;
@@ -198,10 +180,8 @@ void Shape::reset(Shape this)
  * @param layers				u32
  * @param layersToIgnore		u32
  */
-void Shape::setup(Shape this, u32 layers, u32 layersToIgnore)
+void Shape::setup(u32 layers, u32 layersToIgnore)
 {
-	ASSERT(this, "Shape::setup: null this");
-
 	this->layers = layers;
 	this->layersToIgnore = layersToIgnore;
 
@@ -223,7 +203,7 @@ void Shape::setup(Shape this, u32 layers, u32 layersToIgnore)
  * @param scale					Scale*
  * @param size					Size*
  */
-void Shape::position(Shape this, const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
+void Shape::position(const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
 	if(this->isActive && this->events)
 	{
@@ -243,7 +223,7 @@ void Shape::position(Shape this, const Vector3D* position __attribute__ ((unused
  * @param this					Function scope
  * @param collisionData			Collision data
  */
-void Shape::enterCollision(Shape this, CollisionData* collisionData)
+void Shape::enterCollision(CollisionData* collisionData)
 {
 	if( SpatialObject::enterCollision(this->owner, &collisionData->collisionInformation))
 	{
@@ -265,7 +245,7 @@ void Shape::enterCollision(Shape this, CollisionData* collisionData)
  * @param this					Function scope
  * @param collisionData			Collision data
  */
-void Shape::updateCollision(Shape this, CollisionData* collisionData)
+void Shape::updateCollision(CollisionData* collisionData)
 {
 	if(collisionData->isImpenetrableCollidingShape)
 	{
@@ -289,10 +269,8 @@ void Shape::updateCollision(Shape this, CollisionData* collisionData)
  * @param this					Function scope
  * @param collisionData			Collision data
  */
-void Shape::exitCollision(Shape this, CollisionData* collisionData)
+void Shape::exitCollision(CollisionData* collisionData)
 {
-	ASSERT(this, "Shape::exitCollision: null this");
-
 	SpatialObject::exitCollision(this->owner, collisionData->collisionInformation.shape, collisionData->shapeNotCollidingAnymore, collisionData->isImpenetrableCollidingShape);
 	Shape::unregisterCollidingShape(this, collisionData->shapeNotCollidingAnymore);
 }
@@ -309,10 +287,8 @@ void Shape::exitCollision(Shape this, CollisionData* collisionData)
   * @return						CollisionData
  */
 // check if two rectangles overlap
-CollisionData Shape::collides(Shape this, Shape shape)
+CollisionData Shape::collides(Shape shape)
 {
-	ASSERT(this, "Shape::collides: null this");
-
 	CollisionData collisionData =
 	{
 		// result
@@ -432,10 +408,8 @@ CollisionData Shape::collides(Shape this, Shape shape)
  * @param this				Function scope
  * @param displacement		shape displacement
  */
-bool Shape::canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncrement __attribute__ ((unused)))
+bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attribute__ ((unused)))
 {
-	ASSERT(this, "Shape::canMoveTowards: null this");
-
 	if(!this->collidingShapes)
 	{
 		return true;
@@ -469,10 +443,8 @@ bool Shape::canMoveTowards(Shape this, Vector3D displacement, fix10_6 sizeIncrem
 }
 
 /*
-static void Shape::checkPreviousCollisions(Shape this, Shape collidingShape)
+void Shape::checkPreviousCollisions(Shape collidingShape)
 {
-	ASSERT(this, "Shape::invalidateSolutionVectors: null this");
-
 	if(!this->collidingShapes)
 	{
 		return;
@@ -524,10 +496,8 @@ static void Shape::checkPreviousCollisions(Shape this, Shape collidingShape)
  * @param this				Function scope
  * @param displacement		Displacement to apply to owner
  */
-static void Shape::displaceOwner(Shape this, Vector3D displacement)
+void Shape::displaceOwner(Vector3D displacement)
 {
-	ASSERT(this, "Shape::displaceOwner: null this");
-
 	// retrieve the colliding spatialObject's position and gap
 	Vector3D ownerPosition = * SpatialObject::getPosition(this->owner);
 
@@ -546,9 +516,8 @@ static void Shape::displaceOwner(Shape this, Vector3D displacement)
  *
  * @param this			Function scope
  */
-void Shape::resolveCollision(Shape this, const CollisionInformation* collisionInformation)
+void Shape::resolveCollision(const CollisionInformation* collisionInformation)
 {
-	ASSERT(this, "Shape::resolveCollision: null this");
 	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
 	ASSERT(collisionInformation->collidingShape, "Shape::resolveCollision: null collidingEntities");
 
@@ -582,10 +551,8 @@ void Shape::resolveCollision(Shape this, const CollisionInformation* collisionIn
  *
  * @return		Owning SpatialObject
  */
-SpatialObject Shape::getOwner(Shape this)
+SpatialObject Shape::getOwner()
 {
-	ASSERT(this, "Shape::getOwner: null this");
-
 	return this->owner;
 }
 
@@ -599,10 +566,8 @@ SpatialObject Shape::getOwner(Shape this)
  *
  * @return		Active status
  */
-bool Shape::isActive(Shape this)
+bool Shape::isActive()
 {
-	ASSERT(this, "Shape::isActive: null this");
-
 	return this->isActive;
 }
 
@@ -616,10 +581,8 @@ bool Shape::isActive(Shape this)
  * @param this		Function scope
  * @param active
  */
-void Shape::setActive(Shape this, bool active)
+void Shape::setActive(bool active)
 {
-	ASSERT(this, "Shape::setActive: null this");
-
 	this->isActive = active;
 }
 
@@ -633,7 +596,7 @@ void Shape::setActive(Shape this, bool active)
  *
  * @return		Configured status
  */
-bool Shape::isReady(Shape this)
+bool Shape::isReady()
 {
 	return this->ready;
 }
@@ -647,10 +610,8 @@ bool Shape::isReady(Shape this)
  * @param this	Function scope
  * @param ready
  */
-void Shape::setReady(Shape this, bool ready)
+void Shape::setReady(bool ready)
 {
-	ASSERT(this, "Shape::setReady: null this");
-
 	this->ready = ready;
 }
 
@@ -663,10 +624,8 @@ void Shape::setReady(Shape this, bool ready)
  * @param this					Function scope
  * @param checkForCollisions
  */
-void Shape::setCheckForCollisions(Shape this, bool checkForCollisions)
+void Shape::setCheckForCollisions(bool checkForCollisions)
 {
-	ASSERT(this, "Shape::setCheckForCollisions: null this");
-
 	this->checkForCollisions = checkForCollisions;
 }
 
@@ -680,10 +639,8 @@ void Shape::setCheckForCollisions(Shape this, bool checkForCollisions)
  *
  * @return		Collision check status
  */
-bool Shape::checkForCollisions(Shape this)
+bool Shape::checkForCollisions()
 {
-	ASSERT(this, "Shape::checkForCollisions: null this");
-
 	return this->checkForCollisions;
 }
 
@@ -696,10 +653,8 @@ bool Shape::checkForCollisions(Shape this)
  * @param this				Function scope
  * @param collidingShape	Colliding shape to register
  */
-static CollidingShapeRegistry* Shape::registerCollidingShape(Shape this, Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable)
+CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable)
 {
-	ASSERT(this, "Shape::registerCollidingShape: null this");
-
 	if(!this->collidingShapes)
 	{
 		this->collidingShapes = __NEW(VirtualList);
@@ -739,9 +694,8 @@ static CollidingShapeRegistry* Shape::registerCollidingShape(Shape this, Shape c
  * @param this				Function scope
  * @param collidingShape	Colliding shape to remove
  */
-static bool Shape::unregisterCollidingShape(Shape this, Shape collidingShape)
+bool Shape::unregisterCollidingShape(Shape collidingShape)
 {
-	ASSERT(this, "Shape::removeCollidingShape: null this");
 	ASSERT(__IS_OBJECT_ALIVE(collidingShape), "Shape::removeCollidingShape: dead collidingShape");
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, __SAFE_CAST(Shape, collidingShape));
@@ -773,10 +727,8 @@ static bool Shape::unregisterCollidingShape(Shape this, Shape collidingShape)
  * @param this				Function scope
  * @param eventFirer		Destroyed shape
  */
-static void Shape::onCollidingShapeDestroyed(Shape this, Object eventFirer)
+void Shape::onCollidingShapeDestroyed(Object eventFirer)
 {
-	ASSERT(this, "Shape::onCollidingShapeDestroyed: null this");
-
 	if(!__IS_OBJECT_ALIVE(this->owner))
 	{
 		return;
@@ -809,10 +761,8 @@ static void Shape::onCollidingShapeDestroyed(Shape this, Object eventFirer)
  * @param this				Function scope
  * @param eventFirer		Changed shape
  */
-static void Shape::onCollidingShapeChanged(Shape this, Object eventFirer)
+void Shape::onCollidingShapeChanged(Object eventFirer)
 {
-	ASSERT(this, "Shape::onCollidingShapeChanged: null this");
-
 	if(!__IS_OBJECT_ALIVE(this->owner))
 	{
 		return;
@@ -844,9 +794,8 @@ static void Shape::onCollidingShapeChanged(Shape this, Object eventFirer)
  *
  * @return		CollidingShapeRegistry*
  */
-static CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape this, Shape shape)
+CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 {
-	ASSERT(this, "Shape::findCollidingShapeRegistry: null this");
 	ASSERT(shape, "Shape::findCollidingShapeRegistry: null shape");
 
 	if(!this->collidingShapes || !shape)
@@ -879,10 +828,8 @@ static CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape this, Sha
  *
  * @return				The sum of friction coefficients
  */
-fix10_6 Shape::getCollidingFrictionCoefficient(Shape this)
+fix10_6 Shape::getCollidingFrictionCoefficient()
 {
-	ASSERT(this, "Shape::getCollidingFriction: null this");
-
 	if(!this->collidingShapes)
 	{
 		return 0;
@@ -908,10 +855,8 @@ fix10_6 Shape::getCollidingFrictionCoefficient(Shape this)
 	return totalFrictionCoefficient;
 }
 
-int Shape::getNumberOfImpenetrableCollidingShapes(Shape this)
+int Shape::getNumberOfImpenetrableCollidingShapes()
 {
-	ASSERT(this, "Shape::getNumberOfImpenetrableCollidingShapes: null this");
-
 	if(!this->collidingShapes)
 	{
 		return 0;
@@ -929,40 +874,30 @@ int Shape::getNumberOfImpenetrableCollidingShapes(Shape this)
 	return count;
 }
 
-u32 Shape::getLayers(Shape this)
+u32 Shape::getLayers()
 {
-	ASSERT(this, "Shape::getLayers: null this");
-
 	return this->layers;
 }
 
-void Shape::setLayers(Shape this, u32 layers)
+void Shape::setLayers(u32 layers)
 {
-	ASSERT(this, "Shape::setLayers: null this");
-
 	this->layers = layers;
 }
 
-u32 Shape::getLayersToIgnore(Shape this)
+u32 Shape::getLayersToIgnore()
 {
-	ASSERT(this, "Shape::getLayersToIgnore: null this");
-
 	return this->layersToIgnore;
 }
 
-void Shape::setLayersToIgnore(Shape this, u32 layersToIgnore)
+void Shape::setLayersToIgnore(u32 layersToIgnore)
 {
-	ASSERT(this, "Shape::setLayersToIgnore: null this");
-
 	this->layersToIgnore = layersToIgnore;
 }
 
 
 // show me
-void Shape::show(Shape this)
+void Shape::show()
 {
-	ASSERT(this, "Shape::draw: null this");
-
 	if(this->moved)
 	{
 		Shape::hide(this);
@@ -975,7 +910,7 @@ void Shape::show(Shape this)
 }
 
 // hide polyhedron
-void Shape::hide(Shape this)
+void Shape::hide()
 {
 	if(this->wireframe)
 	{
@@ -985,10 +920,8 @@ void Shape::hide(Shape this)
 	}
 }
 
-void Shape::print(Shape this, int x, int y)
+void Shape::print(int x, int y)
 {
-	ASSERT(this, "Shape::print: null this");
-
 	Printing::text(Printing::getInstance(), "SHAPE ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Owner:            ", x, y, NULL);
 	Printing::text(Printing::getInstance(), this->owner ? __GET_CLASS_NAME(this->owner) : "No owner", x + 7, y++, NULL);

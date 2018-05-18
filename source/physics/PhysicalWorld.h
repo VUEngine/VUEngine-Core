@@ -78,27 +78,27 @@ class PhysicalWorld : Object
 	 */
 	VirtualNode bodyToCheckForGravityNode;
 
-	void constructor(PhysicalWorld this);
-	void destructor(PhysicalWorld this);
-	void setTimeScale(PhysicalWorld this, fix10_6 timeScale);
-	u32 getTimeScale(PhysicalWorld this);
-	void bodyAwake(PhysicalWorld this, Body body);
-	void bodySleep(PhysicalWorld this, Body body);
-	void bodySetInactive(PhysicalWorld this, Body body);
-	Body getBody(PhysicalWorld this, SpatialObject owner);
-	fix10_6 getElapsedTime(PhysicalWorld this);
-	fix10_6 getFrictionCoefficient(PhysicalWorld this);
-	const Vector3D* getGravity(PhysicalWorld this);
-	bool isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner);
-	void print(PhysicalWorld this, int x, int y);
-	void purgeBodyLists(PhysicalWorld this);
-	Body createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
-	void destroyBody(PhysicalWorld this, Body body);
-	void reset(PhysicalWorld this);
-	void setGravity(PhysicalWorld this, Acceleration gravity);
-	void setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient);
-	void start(PhysicalWorld this);
-	void update(PhysicalWorld this, Clock clock);
+	void constructor();
+	void destructor();
+	void setTimeScale(fix10_6 timeScale);
+	u32 getTimeScale();
+	void bodyAwake(Body body);
+	void bodySleep(Body body);
+	void bodySetInactive(Body body);
+	Body getBody(SpatialObject owner);
+	fix10_6 getElapsedTime();
+	fix10_6 getFrictionCoefficient();
+	const Vector3D* getGravity();
+	bool isSpatialObjectRegistered(SpatialObject owner);
+	void print(int x, int y);
+	void purgeBodyLists();
+	Body createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
+	void destroyBody(Body body);
+	void reset();
+	void setGravity(Acceleration gravity);
+	void setFrictionCoefficient(fix10_6 frictionCoefficient);
+	void start();
+	void update(Clock clock);
 }
 
 

@@ -108,20 +108,20 @@ class CharSet : Object
 	*/
 	u8 usageCount;
 
-	void constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset);
-	void increaseUsageCount(CharSet this);
-	bool decreaseUsageCount(CharSet this);
-	u32 getAllocationType(CharSet this);
-	u32 getOffset(CharSet this);
-	void setOffset(CharSet this, u16 offset);
-	void setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition);
-	CharSetDefinition* getCharSetDefinition(CharSet this);
-	u32 getNumberOfChars(CharSet this);
-	void write(CharSet this);
-	void rewrite(CharSet this);
-	void setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement);
-	void putChar(CharSet this, u32 charToReplace, BYTE* newChar);
-	void putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
+	void constructor(CharSetDefinition* charSetDefinition, u16 offset);
+	void increaseUsageCount();
+	bool decreaseUsageCount();
+	u32 getAllocationType();
+	u32 getOffset();
+	void setOffset(u16 offset);
+	void setCharSetDefinition(CharSetDefinition* charSetDefinition);
+	CharSetDefinition* getCharSetDefinition();
+	u32 getNumberOfChars();
+	void write();
+	void rewrite();
+	void setCharDefinitionDisplacement(u32 charDefinitionDisplacement);
+	void putChar(u32 charToReplace, BYTE* newChar);
+	void putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
 }
 
 

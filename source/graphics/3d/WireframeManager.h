@@ -46,11 +46,11 @@ singleton class WireframeManager : Object
 	VirtualList wireframes;
 
 	static WireframeManager getInstance();
-	void drawWireframes(WireframeManager this);
-	void print(WireframeManager this, int x, int y);
-	void register(WireframeManager this, Wireframe wireframe);
-	void remove(WireframeManager this, Wireframe wireframe);
-	void reset(WireframeManager this);
+	void drawWireframes();
+	void print(int x, int y);
+	void register(Wireframe wireframe);
+	void remove(Wireframe wireframe);
+	void reset();
 }
 
 

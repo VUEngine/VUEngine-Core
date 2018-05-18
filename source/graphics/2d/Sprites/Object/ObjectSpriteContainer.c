@@ -53,19 +53,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-
-// external
-void ObjectSprite::invalidateObjectSpriteContainer(ObjectSprite this);
-
-static void ObjectSpriteContainer::defragment(ObjectSpriteContainer this);
-static void ObjectSpriteContainer::sortProgressively(ObjectSpriteContainer this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -80,9 +67,8 @@ static void ObjectSpriteContainer::sortProgressively(ObjectSpriteContainer this)
  * @param totalObjects			Total number of OBJECTs that manages by this container
  * @param firstObjectIndex		The index of the first OBJECT managed by this container
  */
-void ObjectSpriteContainer::constructor(ObjectSpriteContainer this, int spt, int totalObjects, int firstObjectIndex)
+void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObjectIndex)
 {
-	ASSERT(this, "ObjectSpriteContainer::constructor: null this");
 	ASSERT(0 <= spt && spt < __TOTAL_OBJECT_SEGMENTS, "ObjectSpriteContainer::constructor: bad spt");
 
 	Base::constructor(NULL, NULL);
@@ -126,9 +112,8 @@ void ObjectSpriteContainer::constructor(ObjectSpriteContainer this, int spt, int
  *
  * @param this				Function scope
  */
-void ObjectSpriteContainer::destructor(ObjectSpriteContainer this)
+void ObjectSpriteContainer::destructor()
 {
-	ASSERT(this, "ObjectSpriteContainer::destructor: null this");
 	ASSERT(this->objectSprites, "ObjectSpriteContainer::destructor: null objectSprites");
 
 	VirtualNode node = this->objectSprites->head;
@@ -157,9 +142,8 @@ void ObjectSpriteContainer::destructor(ObjectSpriteContainer this)
  * @param objectSprite		Sprite to add
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-s32 ObjectSpriteContainer::addObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, int numberOfObjects)
+s32 ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int numberOfObjects)
 {
-	ASSERT(this, "ObjectSpriteContainer::addObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::addObjectSprite: null objectSprite");
 
 	if(objectSprite)
@@ -199,9 +183,8 @@ s32 ObjectSpriteContainer::addObjectSprite(ObjectSpriteContainer this, ObjectSpr
  * @param objectSprite		Sprite to remove
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
-void ObjectSpriteContainer::removeObjectSprite(ObjectSpriteContainer this, ObjectSprite objectSprite, s32 numberOfObjects)
+void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects)
 {
-	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
 	ASSERT(objectSprite, "ObjectSpriteContainer::removeObjectSprite: not objectSprite");
 	ASSERT(VirtualList::find(this->objectSprites, objectSprite), "ObjectSpriteContainer::removeObjectSprite: not found");
 
@@ -276,10 +259,8 @@ void ObjectSpriteContainer::removeObjectSprite(ObjectSpriteContainer this, Objec
  *
  * @return 					True if there is enough OBJECT space in this container
  */
-bool ObjectSpriteContainer::hasRoomFor(ObjectSpriteContainer this, s32 numberOfObjects)
+bool ObjectSpriteContainer::hasRoomFor(s32 numberOfObjects)
 {
-	ASSERT(this, "ObjectSpriteContainer::removeObjectSprite: null this");
-
 	return this->availableObjects >= numberOfObjects;
 }
 
@@ -292,10 +273,8 @@ bool ObjectSpriteContainer::hasRoomFor(ObjectSpriteContainer this, s32 numberOfO
  * @param this			Function scope
  * @param position		New 2D position
  */
-void ObjectSpriteContainer::setPosition(ObjectSpriteContainer this, const PixelVector* position)
+void ObjectSpriteContainer::setPosition(const PixelVector* position)
 {
-	ASSERT(this, "ObjectSpriteContainer::setPosition: null this");
-
 	if(this->objectSprites)
 	{
 		VirtualNode node = this->objectSprites->head;
@@ -319,9 +298,8 @@ void ObjectSpriteContainer::setPosition(ObjectSpriteContainer this, const PixelV
  *
  * @param this		Function scope
  */
-static void ObjectSpriteContainer::defragment(ObjectSpriteContainer this)
+void ObjectSpriteContainer::defragment()
 {
-	ASSERT(this, "ObjectSpriteContainer::defragment: null this");
 	ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteNodeToDefragment");
 	NM_ASSERT(__IS_OBJECT_ALIVE(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
 
@@ -365,10 +343,8 @@ static void ObjectSpriteContainer::defragment(ObjectSpriteContainer this)
  *
  * @param this		Function scope
  */
-static void ObjectSpriteContainer::sortProgressively(ObjectSpriteContainer this)
+void ObjectSpriteContainer::sortProgressively()
 {
-	ASSERT(this, "ObjectSpriteContainer::sort: null this");
-
 	this->node = this->node ? this->previousNode ? this->node : VirtualNode::getPrevious(this->node) : this->objectSprites->tail;
 
 	for(; this->node; )
@@ -424,10 +400,8 @@ static void ObjectSpriteContainer::sortProgressively(ObjectSpriteContainer this)
  * @param this		Function scope
  * @param evenFrame
  */
-void ObjectSpriteContainer::render(ObjectSpriteContainer this, bool evenFrame)
+void ObjectSpriteContainer::render(bool evenFrame)
 {
-	ASSERT(this, "ObjectSpriteContainer::render: null this");
-
 	// if render flag is set
 	if(!this->worldLayer)
 	{
@@ -484,10 +458,8 @@ void ObjectSpriteContainer::render(ObjectSpriteContainer this, bool evenFrame)
  *
  * @param this	Function scope
  */
-void ObjectSpriteContainer::show(ObjectSpriteContainer this)
+void ObjectSpriteContainer::show()
 {
-	ASSERT(this, "ObjectSpriteContainer::show: null this");
-
 	VirtualNode node = this->objectSprites->head;
 
 	for(; node; node = node->next)
@@ -506,10 +478,8 @@ void ObjectSpriteContainer::show(ObjectSpriteContainer this)
  *
  * @param this	Function scope
  */
-void ObjectSpriteContainer::hide(ObjectSpriteContainer this)
+void ObjectSpriteContainer::hide()
 {
-	ASSERT(this, "ObjectSpriteContainer::hide: null this");
-
 	// must check list, because the Sprite's destructor calls this method
 	if(this->objectSprites)
 	{
@@ -535,10 +505,8 @@ void ObjectSpriteContainer::hide(ObjectSpriteContainer this)
  *
  * @return 		Number of free OBJECTs
  */
-int ObjectSpriteContainer::getAvailableObjects(ObjectSpriteContainer this)
+int ObjectSpriteContainer::getAvailableObjects()
 {
-	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
-
 	return this->availableObjects;
 }
 
@@ -552,10 +520,8 @@ int ObjectSpriteContainer::getAvailableObjects(ObjectSpriteContainer this)
  *
  * @return 		Number of used OBJECTs
  */
-int ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer this)
+int ObjectSpriteContainer::getTotalUsedObjects()
 {
-	ASSERT(this, "ObjectSpriteContainer::getTotalUsedObjects: null this");
-
 	int totalUsedObjects = 0;
 	if(this->objectSprites)
 	{
@@ -580,10 +546,8 @@ int ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer this)
  *
  * @return 		Index of the next free OBJECT
  */
-int ObjectSpriteContainer::getNextFreeObjectIndex(ObjectSpriteContainer this)
+int ObjectSpriteContainer::getNextFreeObjectIndex()
 {
-	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
-
 	if(this->objectSprites->head)
 	{
 		ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList::back(this->objectSprites));
@@ -606,10 +570,8 @@ int ObjectSpriteContainer::getNextFreeObjectIndex(ObjectSpriteContainer this)
  *
  * @return 		Index of the first OBJECT
  */
-int ObjectSpriteContainer::getFirstObjectIndex(ObjectSpriteContainer this)
+int ObjectSpriteContainer::getFirstObjectIndex()
 {
-	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
-
 	return this->firstObjectIndex;
 }
 
@@ -623,10 +585,8 @@ int ObjectSpriteContainer::getFirstObjectIndex(ObjectSpriteContainer this)
  *
  * @return 		Index of the last OBJECT
  */
-int ObjectSpriteContainer::getLastObjectIndex(ObjectSpriteContainer this)
+int ObjectSpriteContainer::getLastObjectIndex()
 {
-	ASSERT(this, "ObjectSpriteContainer::getAvailableObjects: null this");
-
 	return this->firstObjectIndex + this->totalObjects;
 }
 
@@ -639,10 +599,8 @@ int ObjectSpriteContainer::getLastObjectIndex(ObjectSpriteContainer this)
  * @param this				Function scope
  * @param displacement		2D position displacement
  */
-void ObjectSpriteContainer::addDisplacement(ObjectSpriteContainer this, const PixelVector* displacement)
+void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
 {
-	ASSERT(this, "BgmapSprite::addDisplacement: null this");
-
 	if(this->objectSprites)
 	{
 		VirtualNode node = this->objectSprites->head;
@@ -664,10 +622,8 @@ void ObjectSpriteContainer::addDisplacement(ObjectSpriteContainer this, const Pi
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-void ObjectSpriteContainer::print(ObjectSpriteContainer this, int x, int y)
+void ObjectSpriteContainer::print(int x, int y)
 {
-	ASSERT(this, "ObjectSpriteContainer::print: null this");
-
 	Printing::text(Printing::getInstance(), "Segment:                ", x, y, NULL);
 	Printing::int(Printing::getInstance(), this->spt, x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "STP value:                ", x, y, NULL);
@@ -702,10 +658,8 @@ void ObjectSpriteContainer::print(ObjectSpriteContainer this, int x, int y)
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
-void ObjectSpriteContainer::setMode(ObjectSpriteContainer this __attribute__ ((unused)), u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
-{
-	ASSERT(this, "ObjectSpriteContainer::setMode: null this");
-}
+void ObjectSpriteContainer::setMode(u16 display __attribute__ ((unused)), u16 mode __attribute__ ((unused)))
+{}
 
 /**
  * Write textures
@@ -717,10 +671,8 @@ void ObjectSpriteContainer::setMode(ObjectSpriteContainer this __attribute__ ((u
  *
  * @return			true it all textures are written
  */
-bool ObjectSpriteContainer::writeTextures(ObjectSpriteContainer this __attribute__ ((unused)))
+bool ObjectSpriteContainer::writeTextures()
 {
-	ASSERT(this, "ObjectSpriteContainer::writeTextures: null this");
-
 	return true;
 }
 
@@ -734,9 +686,7 @@ bool ObjectSpriteContainer::writeTextures(ObjectSpriteContainer this __attribute
  *
  * @return			true it all textures are written
  */
-bool ObjectSpriteContainer::areTexturesWritten(ObjectSpriteContainer this __attribute__ ((unused)))
+bool ObjectSpriteContainer::areTexturesWritten()
 {
-	ASSERT(this, "ObjectSpriteContainer::areTexturesWritten: null this");
-
 	return true;
 }

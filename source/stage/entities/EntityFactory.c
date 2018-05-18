@@ -62,25 +62,15 @@ typedef struct PositionedEntityDescription
 } PositionedEntityDescription;
 
 
-//---------------------------------------------------------------------------------------------------------
-// 												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
 
-// global
-u32 EntityFactory::instantiateEntities(EntityFactory this);
-u32 EntityFactory::initializeEntities(EntityFactory this);
-u32 EntityFactory::transformEntities(EntityFactory this);
-u32 EntityFactory::makeReadyEntities(EntityFactory this);
-u32 EntityFactory::spawnEntities(EntityFactory this);
-
-typedef u32 (*StreamingPhase)(EntityFactory);
+typedef u32 (*StreamingPhase)(void*);
 
 static const StreamingPhase _streamingPhases[] =
 {
-	&EntityFactory_instantiateEntities,
-	&EntityFactory_initializeEntities,
-	&EntityFactory_transformEntities,
-	&EntityFactory_makeReadyEntities
+	&EntityFactory::instantiateEntities,
+	&EntityFactory::initializeEntities,
+	&EntityFactory::transformEntities,
+	&EntityFactory::makeReadyEntities
 };
 
 static int _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPhase);
@@ -91,10 +81,8 @@ static int _streamingPhasesCount = sizeof(_streamingPhases) / sizeof(StreamingPh
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void EntityFactory::constructor(EntityFactory this)
+void EntityFactory::constructor()
 {
-	ASSERT(this, "EntityFactory::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -108,10 +96,8 @@ void EntityFactory::constructor(EntityFactory this)
 }
 
 // class's destructor
-void EntityFactory::destructor(EntityFactory this)
+void EntityFactory::destructor()
 {
-	ASSERT(this, "EntityFactory::destructor: null this");
-
 	VirtualNode node = this->entitiesToInstantiate->head;
 
 	for(; node; node = node->next)
@@ -198,10 +184,8 @@ void EntityFactory::destructor(EntityFactory this)
 	Base::destructor();
 }
 
-void EntityFactory::spawnEntity(EntityFactory this, PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id)
+void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id)
 {
-	ASSERT(this, "EntityFactory::spawnEntity: null this");
-
 	if(!positionedEntity || !parent)
 	{
 		return;
@@ -222,7 +206,7 @@ void EntityFactory::spawnEntity(EntityFactory this, PositionedEntity* positioned
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
 
-u32 EntityFactory::instantiateEntities(EntityFactory this)
+u32 EntityFactory::instantiateEntities()
 {
 	ASSERT(this, "EntityFactory::spawnEntities: null spawnEntities");
 
@@ -268,10 +252,8 @@ u32 EntityFactory::instantiateEntities(EntityFactory this)
 }
 
 // initialize loaded entities
-u32 EntityFactory::initializeEntities(EntityFactory this)
+u32 EntityFactory::initializeEntities()
 {
-	ASSERT(this, "EntityFactory::initializeEntities: null this");
-
 	if(!this->entitiesToInitialize->head)
 	{
 		return __LIST_EMPTY;
@@ -324,10 +306,8 @@ u32 EntityFactory::initializeEntities(EntityFactory this)
 }
 
 // transformation spawned entities
-u32 EntityFactory::transformEntities(EntityFactory this)
+u32 EntityFactory::transformEntities()
 {
-	ASSERT(this, "EntityFactory::transformEntities: null this");
-
 	if(!this->entitiesToTransform->head)
 	{
 		return __LIST_EMPTY;
@@ -375,10 +355,8 @@ u32 EntityFactory::transformEntities(EntityFactory this)
 	return __ENTITY_PROCESSED;
 }
 
-u32 EntityFactory::makeReadyEntities(EntityFactory this)
+u32 EntityFactory::makeReadyEntities()
 {
-	ASSERT(this, "EntityFactory::makeReadyEntities: null this");
-
 	if(!this->entitiesToMakeReady->head)
 	{
 		return __LIST_EMPTY;
@@ -413,10 +391,8 @@ u32 EntityFactory::makeReadyEntities(EntityFactory this)
 	return __ENTITY_PROCESSED;
 }
 
-u32 EntityFactory::cleanUp(EntityFactory this)
+u32 EntityFactory::cleanUp()
 {
-	ASSERT(this, "EntityFactory::cleanUp: null this");
-
 	if(!this->spawnedEntities->head)
 	{
 		return __LIST_EMPTY;
@@ -447,10 +423,8 @@ u32 EntityFactory::cleanUp(EntityFactory this)
 	return __ENTITY_PROCESSED;
 }
 
-u32 EntityFactory::prepareEntities(EntityFactory this)
+u32 EntityFactory::prepareEntities()
 {
-	ASSERT(this, "EntityFactory::prepareEntities: null this");
-
 	EntityFactory::cleanUp(this);
 
 	if(this->streamingPhase >= _streamingPhasesCount)
@@ -484,25 +458,21 @@ u32 EntityFactory::prepareEntities(EntityFactory this)
 	return __LIST_EMPTY != result;
 }
 
-u32 EntityFactory::hasEntitiesPending(EntityFactory this)
+u32 EntityFactory::hasEntitiesPending()
 {
-	ASSERT(this, "EntityFactory::hasEntitiesPending: null this");
-
 	return VirtualList::getSize(this->entitiesToInstantiate) ||
 			VirtualList::getSize(this->entitiesToInitialize) ||
 			VirtualList::getSize(this->entitiesToTransform) ||
 			VirtualList::getSize(this->entitiesToMakeReady);
 }
 
-int EntityFactory::getPhase(EntityFactory this)
+int EntityFactory::getPhase()
 {
 	return this->streamingPhase >= _streamingPhasesCount ? 0 : this->streamingPhase;
 }
 
-void EntityFactory::prepareAllEntities(EntityFactory this)
+void EntityFactory::prepareAllEntities()
 {
-	ASSERT(this, "EntityFactory::prepareAllEntities: null this");
-
 	while(this->entitiesToInstantiate->head)
 	{
 		EntityFactory::instantiateEntities(this);
@@ -525,10 +495,8 @@ void EntityFactory::prepareAllEntities(EntityFactory this)
 }
 
 #ifdef __PROFILE_STREAMING
-void EntityFactory::showStatus(EntityFactory this __attribute__ ((unused)), int x, int y)
-{
-	ASSERT(this, "EntityFactory::showStreamingProfiling: null this");
-	int xDisplacement = 18;
+void EntityFactory::showStatus(int x, int y)
+{	int xDisplacement = 18;
 
 	Printing::text(Printing::getInstance(), "Factory's status", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "", x, y++, NULL);

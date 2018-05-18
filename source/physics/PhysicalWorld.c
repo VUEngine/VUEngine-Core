@@ -69,10 +69,8 @@ friend class VirtualList;
  *
  * @param this	Function scope
  */
-void PhysicalWorld::constructor(PhysicalWorld this)
+void PhysicalWorld::constructor()
 {
-	ASSERT(this, "PhysicalWorld::constructor: null this");
-
 	Base::constructor();
 
 	// create the shape list
@@ -97,9 +95,8 @@ void PhysicalWorld::constructor(PhysicalWorld this)
  *
  * @param this	Function scope
  */
-void PhysicalWorld::destructor(PhysicalWorld this)
+void PhysicalWorld::destructor()
 {
-	ASSERT(this, "PhysicalWorld::destructor: null this");
 	ASSERT(this->bodies, "PhysicalWorld::destructor: null bodies");
 
 	// delete the bodies
@@ -137,10 +134,8 @@ void PhysicalWorld::destructor(PhysicalWorld this)
  *
  * @return				Registered Body
  */
-Body PhysicalWorld::createBody(PhysicalWorld this, BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
 {
-	ASSERT(this, "PhysicalWorld::createBody: null this");
-
 	// if the entity is already registered
 	Body body = PhysicalWorld::getBody(this, owner);
 
@@ -173,9 +168,8 @@ Body PhysicalWorld::createBody(PhysicalWorld this, BodyAllocator bodyAllocator, 
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld::destroyBody(PhysicalWorld this, Body body)
+void PhysicalWorld::destroyBody(Body body)
 {
-	ASSERT(this, "PhysicalWorld::destroyBody: null this");
 	ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::destroyBody: dead body");
 	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 
@@ -201,9 +195,8 @@ void PhysicalWorld::destroyBody(PhysicalWorld this, Body body)
  *
  * @return		Found Body
  */
-Body PhysicalWorld::getBody(PhysicalWorld this, SpatialObject owner)
+Body PhysicalWorld::getBody(SpatialObject owner)
 {
-	ASSERT(this, "PhysicalWorld::getBody: null this");
 	ASSERT(this->bodies, "PhysicalWorld::getBody: null bodies");
 
 	VirtualNode node = this->bodies->head;
@@ -232,9 +225,8 @@ Body PhysicalWorld::getBody(PhysicalWorld this, SpatialObject owner)
  *
  * @param this	Function scope
  */
-static void PhysicalWorld::checkForGravity(PhysicalWorld this)
+void PhysicalWorld::checkForGravity()
 {
-	ASSERT(this, "PhysicalWorld::checkForGravity: null this");
 	ASSERT(this->bodies, "PhysicalWorld::checkForGravity: null bodies");
 
 	// give preference to the last body in the list
@@ -285,10 +277,8 @@ static void PhysicalWorld::checkForGravity(PhysicalWorld this)
  * @param this	Function scope
  * @param clock
  */
-void PhysicalWorld::update(PhysicalWorld this, Clock clock)
+void PhysicalWorld::update(Clock clock)
 {
-	ASSERT(this, "PhysicalWorld::update: null this");
-
 	if(clock->paused)
 	{
 		return;
@@ -339,9 +329,8 @@ void PhysicalWorld::update(PhysicalWorld this, Clock clock)
  *
  * @param this	Function scope
  */
-void PhysicalWorld::reset(PhysicalWorld this)
+void PhysicalWorld::reset()
 {
-	ASSERT(this, "PhysicalWorld::reset: null this");
 	ASSERT(this->bodies, "PhysicalWorld::reset: null bodies");
 
 	VirtualNode node = this->bodies->head;
@@ -370,9 +359,8 @@ void PhysicalWorld::reset(PhysicalWorld this)
  *
  * @return		Whether the given SpatialObject has been registered
  */
-bool PhysicalWorld::isSpatialObjectRegistered(PhysicalWorld this, SpatialObject owner)
+bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 {
-	ASSERT(this, "PhysicalWorld::isSpatialObjectRegistered: null this");
 	ASSERT(this->bodies, "PhysicalWorld::isSpatialObjectRegistered: null bodies");
 
 	VirtualNode node = this->bodies->head;
@@ -405,10 +393,8 @@ bool PhysicalWorld::isSpatialObjectRegistered(PhysicalWorld this, SpatialObject 
  *
  * @return		PhysicalWorld's frictionCoefficient
  */
-fix10_6 PhysicalWorld::getFrictionCoefficient(PhysicalWorld this)
+fix10_6 PhysicalWorld::getFrictionCoefficient()
 {
-	ASSERT(this, "PhysicalWorld::getFrictionCoefficient: null this");
-
 	return this->frictionCoefficient;
 }
 
@@ -421,10 +407,8 @@ fix10_6 PhysicalWorld::getFrictionCoefficient(PhysicalWorld this)
  * @param this		Function scope
  * @param frictionCoefficient
  */
-void PhysicalWorld::setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionCoefficient)
+void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
 {
-	ASSERT(this, "PhysicalWorld::setFrictionCoefficient: null this");
-
 	this->frictionCoefficient = frictionCoefficient;
 	Body::setCurrentWorldFrictionCoefficient(this->frictionCoefficient);
 }
@@ -438,10 +422,8 @@ void PhysicalWorld::setFrictionCoefficient(PhysicalWorld this, fix10_6 frictionC
  * @param this		Function scope
  * @param 			timeScale
  */
-void PhysicalWorld::setTimeScale(PhysicalWorld this, fix10_6 timeScale)
+void PhysicalWorld::setTimeScale(fix10_6 timeScale)
 {
-	ASSERT(this, "PhysicalWorld::setTimeScale: null this");
-
 	this->timeScale = timeScale;
 }
 
@@ -455,10 +437,8 @@ void PhysicalWorld::setTimeScale(PhysicalWorld this, fix10_6 timeScale)
  *
  * @return 			timeScale
  */
-u32 PhysicalWorld::getTimeScale(PhysicalWorld this)
+u32 PhysicalWorld::getTimeScale()
 {
-	ASSERT(this, "PhysicalWorld::getTimeScale: null this");
-
 	return this->timeScale;
 }
 
@@ -471,9 +451,8 @@ u32 PhysicalWorld::getTimeScale(PhysicalWorld this)
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld::bodyAwake(PhysicalWorld this, Body body)
+void PhysicalWorld::bodyAwake(Body body)
 {
-	ASSERT(this, "PhysicalWorld::bodyAwake: null this");
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
 	ASSERT(__SAFE_CAST(SpatialObject, body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
@@ -494,9 +473,8 @@ void PhysicalWorld::bodyAwake(PhysicalWorld this, Body body)
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld::bodySleep(PhysicalWorld this, Body body)
+void PhysicalWorld::bodySleep(Body body)
 {
-	ASSERT(this, "PhysicalWorld::bodySleep: null this");
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
@@ -512,9 +490,8 @@ void PhysicalWorld::bodySleep(PhysicalWorld this, Body body)
  * @param this	Function scope
  * @param body
  */
-void PhysicalWorld::bodySetInactive(PhysicalWorld this, Body body)
+void PhysicalWorld::bodySetInactive(Body body)
 {
-	ASSERT(this, "PhysicalWorld::bodySetInactive: null this");
 	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
 	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
 
@@ -522,7 +499,7 @@ void PhysicalWorld::bodySetInactive(PhysicalWorld this, Body body)
 }
 
 // set gravity
-void PhysicalWorld::setGravity(PhysicalWorld this, Acceleration gravity)
+void PhysicalWorld::setGravity(Acceleration gravity)
 {
 	this->gravity = gravity;
 	Body::setCurrentGravity(&this->gravity);
@@ -538,10 +515,8 @@ void PhysicalWorld::setGravity(PhysicalWorld this, Acceleration gravity)
  *
  * @return		PhysicalWorld's gravity
  */
-const Vector3D* PhysicalWorld::getGravity(PhysicalWorld this)
+const Vector3D* PhysicalWorld::getGravity()
 {
-	ASSERT(this, "PhysicalWorld::getGravity: null this");
-
 	return (const Vector3D*)&this->gravity;
 }
 
@@ -555,10 +530,8 @@ const Vector3D* PhysicalWorld::getGravity(PhysicalWorld this)
  *
  * @return		Elapsed time
  */
-fix10_6 PhysicalWorld::getElapsedTime(PhysicalWorld this __attribute__ ((unused)))
+fix10_6 PhysicalWorld::getElapsedTime()
 {
-	ASSERT(this, "PhysicalWorld::getElapsedTime: null this");
-
 	return __PHYSICS_TIME_ELAPSED;
 }
 
@@ -572,10 +545,8 @@ fix10_6 PhysicalWorld::getElapsedTime(PhysicalWorld this __attribute__ ((unused)
  * @param x
  * @param y
  */
-void PhysicalWorld::print(PhysicalWorld this, int x, int y)
+void PhysicalWorld::print(int x, int y)
 {
-	ASSERT(this, "PhysicalWorld::print: null this");
-
 	Printing::resetWorldCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "PHYSICS' STATUS", x, y++, NULL);

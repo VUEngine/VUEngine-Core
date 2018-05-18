@@ -115,21 +115,8 @@ enum HandshakeStatus
  */
 
 
-
-
 static CommunicationManager _communicationManager;
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void CommunicationManager::constructor(CommunicationManager this);
-static void CommunicationManager::processInterrupt(CommunicationManager this);
-static void CommunicationManager::enableInterrupts(CommunicationManager this __attribute__ ((unused)));
-static void CommunicationManager::disableInterrupts(CommunicationManager this __attribute__ ((unused)));
-static void CommunicationManager::resetCommunications(CommunicationManager this);
-static void CommunicationManager::handleMessageToSelf(CommunicationManager this);
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -154,10 +141,8 @@ static void CommunicationManager::handleMessageToSelf(CommunicationManager this)
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) CommunicationManager::constructor(CommunicationManager this)
+void CommunicationManager::constructor()
 {
-	ASSERT(this, "CommunicationManager::constructor: null this");
-
 	Base::constructor();
 
 	CommunicationManager::resetCommunications(this);
@@ -173,12 +158,10 @@ void __attribute__ ((noinline)) CommunicationManager::constructor(CommunicationM
  *
  * @param this	Function scope
  */
-void CommunicationManager::destructor(CommunicationManager this)
+void CommunicationManager::destructor()
 {
-	ASSERT(this, "CommunicationManager::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -189,10 +172,8 @@ void CommunicationManager::destructor(CommunicationManager this)
  *
  * @param this	Function scope
  */
-static void CommunicationManager::enableInterrupts(CommunicationManager this __attribute__ ((unused)))
+void CommunicationManager::enableInterrupts()
 {
-	ASSERT(this, "CommunicationManager::enableInterrupts: null this");
-
 	_communicationRegisters[__CCR] &= ~__COM_DISABLE_INTERRUPT;
 }
 
@@ -204,10 +185,8 @@ static void CommunicationManager::enableInterrupts(CommunicationManager this __a
  *
  * @param this	Function scope
  */
-static void CommunicationManager::disableInterrupts(CommunicationManager this __attribute__ ((unused)))
+void CommunicationManager::disableInterrupts()
 {
-	ASSERT(this, "CommunicationManager::disableInterrupts: null this");
-
 	// disable interrupts to allow sends without affecting unready receiver
 //	_communicationRegisters[__CCSR] = 0xFF;
 	_communicationRegisters[__CCR] |= __COM_DISABLE_INTERRUPT;
@@ -221,10 +200,8 @@ static void CommunicationManager::disableInterrupts(CommunicationManager this __
  *
  * @param this	Function scope
  */
-void CommunicationManager::enableCommunications(CommunicationManager this __attribute__ ((unused)))
+void CommunicationManager::enableCommunications()
 {
-	ASSERT(this, "CommunicationManager::enableCommunications: null this");
-
 
 }
 
@@ -236,10 +213,8 @@ void CommunicationManager::enableCommunications(CommunicationManager this __attr
  *
  * @param this	Function scope
  */
-void CommunicationManager::disableCommunications(CommunicationManager this __attribute__ ((unused)))
+void CommunicationManager::disableCommunications()
 {
-	ASSERT(this, "CommunicationManager::disableCommunications: null this");
-
 }
 
 /**
@@ -260,7 +235,7 @@ void CommunicationManager::interruptHandler()
 //	CommunicationManager::enableInterrupts(_communicationManager);
 }
 
-static void CommunicationManager::resetCommunications(CommunicationManager this)
+void CommunicationManager::resetCommunications()
 {
 	// reset
 	this->communicationMode = __COM_AS_REMOTE;
@@ -272,7 +247,7 @@ static void CommunicationManager::resetCommunications(CommunicationManager this)
 	CommunicationManager::disableInterrupts(this);
 }
 
-static bool CommunicationManager::sendHandshake(CommunicationManager this, u8 handshakePayload)
+bool CommunicationManager::sendHandshake(u8 handshakePayload)
 {
 	//CommunicationManager::disableInterrupts(this);
 
@@ -299,7 +274,7 @@ static bool CommunicationManager::sendHandshake(CommunicationManager this, u8 ha
 	return true;
 }
 
-static bool CommunicationManager::waitHandshake(CommunicationManager this, u8 handshakePayload, bool sendMessage)
+bool CommunicationManager::waitHandshake(u8 handshakePayload, bool sendMessage)
 {
 	this->messageToSelf = sendMessage ? kCommunicationsReset : this->messageToSelf;
 
@@ -338,9 +313,10 @@ static bool CommunicationManager::waitHandshake(CommunicationManager this, u8 ha
  * @memberof		CommunicationManager
  * @public
  */
-inline static void CommunicationManager::processInterrupt(CommunicationManager this)
+static void CommunicationManager::processInterrupt()
 {
 //	CommunicationManager::printStatus(this, 25, 5);
+	CommunicationManager this = _communicationManager;
 
 	switch(this->status)
 	{
@@ -453,7 +429,7 @@ inline static void CommunicationManager::processInterrupt(CommunicationManager t
 //	CommunicationManager::printStatus(this, 25, 15);
 }
 
-static void CommunicationManager::handleMessageToSelf(CommunicationManager this)
+void CommunicationManager::handleMessageToSelf()
 {
 	switch(this->messageToSelf)
 	{
@@ -493,7 +469,7 @@ static void CommunicationManager::handleMessageToSelf(CommunicationManager this)
 	}
 }
 
-bool CommunicationManager::sendPayload(CommunicationManager this, u8 payload)
+bool CommunicationManager::sendPayload(u8 payload)
 {
 	if(kStatusIdle == this->status)
 	{
@@ -507,7 +483,7 @@ bool CommunicationManager::sendPayload(CommunicationManager this, u8 payload)
 	return false;
 }
 
-bool CommunicationManager::receivePayload(CommunicationManager this)
+bool CommunicationManager::receivePayload()
 {
 	if(kStatusIdle == this->status)
 	{
@@ -520,7 +496,7 @@ bool CommunicationManager::receivePayload(CommunicationManager this)
 	return false;
 }
 
-Package CommunicationManager::getPackage(CommunicationManager this)
+Package CommunicationManager::getPackage()
 {
 	if(kStatusIdle == this->status)
 	{
@@ -530,7 +506,7 @@ Package CommunicationManager::getPackage(CommunicationManager this)
 	return (Package){0, false};
 }
 
-void CommunicationManager::update(CommunicationManager this)
+void CommunicationManager::update()
 {
 	CommunicationManager::printStatus(this, 1, 5);
 //	_communicationRegisters[__CCSR] = 0xFF;
@@ -548,7 +524,7 @@ void CommunicationManager::update(CommunicationManager this)
 	*/
 }
 
-void CommunicationManager::printStatus(CommunicationManager this, int x, int y)
+void CommunicationManager::printStatus(int x, int y)
 {
 	PRINT_TIME(x, y++);
 	PRINT_TEXT("Status:", x, y);

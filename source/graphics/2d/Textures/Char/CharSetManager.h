@@ -57,16 +57,16 @@ singleton class CharSetManager : Object
 	u16 freedOffset;
 
 	static CharSetManager getInstance();
-	void reset(CharSetManager this);
-	CharSet getCharSet(CharSetManager this, CharSetDefinition* charSetDefinition);
-	void releaseCharSet(CharSetManager this, CharSet charSet);
-	void defragment(CharSetManager this);
-	void writeCharSets(CharSetManager this);
-	bool writeCharSetsProgressively(CharSetManager this);
-	int getTotalUsedChars(CharSetManager this);
-	int getTotalFreeChars(CharSetManager this);
-	int getTotalCharSets(CharSetManager this);
-	void print(CharSetManager this, int x, int y);
+	void reset();
+	CharSet getCharSet(CharSetDefinition* charSetDefinition);
+	void releaseCharSet(CharSet charSet);
+	void defragment();
+	void writeCharSets();
+	bool writeCharSetsProgressively();
+	int getTotalUsedChars();
+	int getTotalFreeChars();
+	int getTotalCharSets();
+	void print(int x, int y);
 }
 
 

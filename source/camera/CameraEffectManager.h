@@ -75,11 +75,11 @@ singleton class CameraEffectManager : Object
 
 	static CameraEffectManager getInstance();
 
-	void constructor(CameraEffectManager this);
-	Brightness getDefaultBrightness(CameraEffectManager this);
-	virtual void startEffect(CameraEffectManager this, int effect, va_list args);
-	virtual void stopEffect(CameraEffectManager this, int effect);
-	override bool handleMessage(CameraEffectManager this, Telegram telegram);
+	void constructor();
+	Brightness getDefaultBrightness();
+	virtual void startEffect(int effect, va_list args);
+	virtual void stopEffect(int effect);
+	override bool handleMessage(Telegram telegram);
 }
 
 

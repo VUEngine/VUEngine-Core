@@ -310,7 +310,7 @@
 		typedef struct ClassName ## _str* ClassName;													\
 																										\
 		/* typedef for RTTI */																			\
-		typedef void* (*(*ClassName ## BaseClassPointer)(Object))(Object);								\
+		typedef void* (*(*ClassName ## BaseClassPointer)(void*))(void*);								\
 																										\
 		/* declare vtable */																			\
 		__VTABLE(ClassName);																			\
@@ -322,7 +322,7 @@
 		int ClassName ## _getObjectSize();																\
 																										\
 		/* declare getBaseClass method */																\
-		ObjectBaseClassPointer ClassName ## _getBaseClass(Object);										\
+		ObjectBaseClassPointer ClassName ## _getBaseClass(void*);										\
 																										\
 		/* declare getClass name method */																\
 		const char* ClassName ## _getClassName(ClassName)												\
@@ -373,7 +373,7 @@
 		__GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
 																										\
 		/* define class's getBaseClass method */														\
-		ObjectBaseClassPointer ClassName ## _getBaseClass(Object this __attribute__ ((unused)))			\
+		ObjectBaseClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))			\
 		{																								\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
 					"Wrong class definition: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "			\

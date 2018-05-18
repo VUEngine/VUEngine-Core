@@ -60,10 +60,8 @@ friend class VirtualList;
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) ParticleRemover::constructor(ParticleRemover this)
+void ParticleRemover::constructor()
 {
-	ASSERT(this, "ParticleRemover::constructor: null this");
-
 	// construct base
 	Base::constructor();
 
@@ -80,10 +78,8 @@ void __attribute__ ((noinline)) ParticleRemover::constructor(ParticleRemover thi
  *
  * @param this	Function scope
  */
-void ParticleRemover::destructor(ParticleRemover this)
+void ParticleRemover::destructor()
 {
-	ASSERT(this, "ParticleRemover::destructor: null this");
-
 	ParticleRemover::reset(this);
 
 	__DELETE(this->particlesLists);
@@ -101,10 +97,8 @@ void ParticleRemover::destructor(ParticleRemover this)
  *
  * @param this	Function scope
  */
-void ParticleRemover::reset(ParticleRemover this)
+void ParticleRemover::reset()
 {
-	ASSERT(this, "ParticleRemover::reset: null this");
-
 	VirtualNode node = this->particlesLists->head;
 
 	for(; node; node = node->next)
@@ -136,10 +130,8 @@ void ParticleRemover::reset(ParticleRemover this)
  *
  * @param this	Function scope
  */
-void ParticleRemover::update(ParticleRemover this)
+void ParticleRemover::update()
 {
-	ASSERT(this, "ParticleRemover::update: null this");
-
 	if(!this->particlesLists->head)
 	{
 		return;
@@ -183,10 +175,8 @@ void ParticleRemover::update(ParticleRemover this)
  * @param this		Function scope
  * @param particles	List of Particles to delete
  */
-void ParticleRemover::deleteParticles(ParticleRemover this, VirtualList particles)
+void ParticleRemover::deleteParticles(VirtualList particles)
 {
-	ASSERT(this, "ParticleRemover::registerParticles: null this");
-
 	if(__SAFE_CAST(VirtualList, particles))
 	{
 		VirtualList particlesList = __NEW(VirtualList);
@@ -212,9 +202,7 @@ void ParticleRemover::deleteParticles(ParticleRemover this, VirtualList particle
  * @param this					Function scope
  * @param removalDelayCycles	New value
  */
-void ParticleRemover::setRemovalDelayCycles(ParticleRemover this, int removalDelayCycles)
+void ParticleRemover::setRemovalDelayCycles(int removalDelayCycles)
 {
-	ASSERT(this, "ParticleRemover::registerParticle: null this");
-
 	this->removalDelayCycles = removalDelayCycles;
 }

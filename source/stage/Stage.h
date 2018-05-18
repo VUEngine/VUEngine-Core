@@ -187,28 +187,31 @@ class Stage : Container
 	/* next entity's id */
 	s16 nextEntityId;
 
-	void constructor(Stage this, StageDefinition* stageDefinition);
-	void setupPalettes(Stage this);
-	void load(Stage this, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
-	void loadPostProcessingEffects(Stage this);
-	Size getSize(Stage this);
-	CameraFrustum getCameraFrustum(Stage this);
-	bool registerEntityId(Stage this, s16 internalId, EntityDefinition* entityDefinition);
-	void spawnEntity(Stage this, PositionedEntity* positionedEntity, Container requester, EventListener callback);
-	Entity addChildEntity(Stage this, const PositionedEntity* const positionedEntity, bool permanent);
-	UiContainer getUiContainer(Stage this);
-	StageDefinition* getStageDefinition(Stage this);
-	ParticleRemover getParticleRemover(Stage this);
-	void showStreamingProfiling(Stage this, int x, int y);
-	virtual bool stream(Stage this);
-	virtual void streamAll(Stage this);
-	override void update(Stage this, u32 elapsedTime);
-	override void transform(Stage this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-	override void synchronizeGraphics(Stage this);
-	override void suspend(Stage this);
-	override void resume(Stage this);
-	override void removeChild(Stage this, Container child, bool deleteChild);
-	override bool handlePropagatedMessage(Stage this, int message);
+	void constructor(StageDefinition* stageDefinition);
+	void setupPalettes();
+	void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
+	void loadPostProcessingEffects();
+	Size getSize();
+	CameraFrustum getCameraFrustum();
+	bool registerEntityId(s16 internalId, EntityDefinition* entityDefinition);
+	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
+	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
+	UiContainer getUiContainer();
+	StageDefinition* getStageDefinition();
+	ParticleRemover getParticleRemover();
+	void showStreamingProfiling(int x, int y);
+	bool unloadOutOfRangeEntities(int defer);
+    bool loadInRangeEntities(int defer);
+
+	virtual bool stream();
+	virtual void streamAll();
+	override void update(u32 elapsedTime);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void synchronizeGraphics();
+	override void suspend();
+	override void resume();
+	override void removeChild(Container child, bool deleteChild);
+	override bool handlePropagatedMessage(int message);
 }
 
 

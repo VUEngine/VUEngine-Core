@@ -47,21 +47,6 @@ friend class Camera;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-void CameraEffectManager::showCamera(CameraEffectManager this);
-void CameraEffectManager::hideCamera(CameraEffectManager this);
-void CameraEffectManager::fxFadeIn(CameraEffectManager this);
-void CameraEffectManager::fxFadeOut(CameraEffectManager this);
-void CameraEffectManager::fxFadeStart(CameraEffectManager this, int effect, int delay);
-void CameraEffectManager::fxFadeAsync(CameraEffectManager this);
-void CameraEffectManager::fxFadeAsyncStart(CameraEffectManager this, int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope);
-void CameraEffectManager::fxFadeAsyncStop(CameraEffectManager this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -84,10 +69,8 @@ void CameraEffectManager::fxFadeAsyncStop(CameraEffectManager this);
  *
  * @param this	Function scope
  */
-void CameraEffectManager::constructor(CameraEffectManager this)
+void CameraEffectManager::constructor()
 {
-	ASSERT(this, "CameraEffectManager::constructor: null this");
-
 	// init class variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
 	this->fxFadeDelay = 0;
@@ -105,15 +88,13 @@ void CameraEffectManager::constructor(CameraEffectManager this)
  *
  * @param this	Function scope
  */
-void CameraEffectManager::destructor(CameraEffectManager this)
+void CameraEffectManager::destructor()
 {
-	ASSERT(this, "CameraEffectManager::destructor: null this");
-
 	// stop any effects
 	CameraEffectManager::stopEffect(this, kFadeTo);
 
 	// destroy base
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -126,10 +107,8 @@ void CameraEffectManager::destructor(CameraEffectManager this)
  *
  * @return		Brightness
  */
-Brightness CameraEffectManager::getDefaultBrightness(CameraEffectManager this __attribute__ ((unused)))
+Brightness CameraEffectManager::getDefaultBrightness()
 {
-	ASSERT(this, "CameraEffectManager::getDefaultBrightness: null this");
-
 	// default brightness settings
 	Brightness brightness = (Brightness)
 	{
@@ -162,10 +141,8 @@ Brightness CameraEffectManager::getDefaultBrightness(CameraEffectManager this __
  * @param effect	Effect Id
  * @param args		va_list of effect parameters
  */
-void CameraEffectManager::startEffect(CameraEffectManager this, int effect, va_list args)
+void CameraEffectManager::startEffect(int effect, va_list args)
 {
-	ASSERT(this, "CameraEffectManager::startEffect: null this");
-
 	switch(effect)
 	{
 		case kShow:
@@ -206,10 +183,8 @@ void CameraEffectManager::startEffect(CameraEffectManager this, int effect, va_l
  * @param this		Function scope
  * @param effect	Effect Id
  */
-void CameraEffectManager::stopEffect(CameraEffectManager this, int effect)
+void CameraEffectManager::stopEffect(int effect)
 {
-	ASSERT(this, "CameraEffectManager::stopEffect: null this");
-
 	switch(effect)
 	{
 		case kFadeTo:
@@ -230,10 +205,8 @@ void CameraEffectManager::stopEffect(CameraEffectManager this, int effect)
  *
  * @return			True if successfully processed, false otherwise
  */
-bool CameraEffectManager::handleMessage(CameraEffectManager this, Telegram telegram)
+bool CameraEffectManager::handleMessage(Telegram telegram)
 {
-	ASSERT(this, "CameraEffectManager::handleMessage: null this");
-
 	switch(Telegram::getMessage(telegram))
 	{
 		case kFadeTo:
@@ -253,10 +226,8 @@ bool CameraEffectManager::handleMessage(CameraEffectManager this, Telegram teleg
  * @param effect	Effect ID
  * @param delay		Start effect after this delay
  */
-void CameraEffectManager::fxFadeStart(CameraEffectManager this, int effect, int delay)
+void CameraEffectManager::fxFadeStart(int effect, int delay)
 {
-	ASSERT(this, "CameraEffectManager::fxFadeStart: null this");
-
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 
 	switch(effect)
@@ -303,10 +274,8 @@ void CameraEffectManager::fxFadeStart(CameraEffectManager this, int effect, int 
  * @param callback			Callback to execute after the fading is complete
  * @param callbackScope		Scope (class) of the callback to execute
  */
-void CameraEffectManager::fxFadeAsyncStart(CameraEffectManager this, int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope)
+void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* targetBrightness, int delayBetweenSteps, void (*callback)(Object, Object), Object callbackScope)
 {
-	ASSERT(this, "CameraEffectManager::fxFadeAsyncStart: null this");
-
 	// stop previous effect
 	CameraEffectManager::stopEffect(this, kFadeTo);
 
@@ -354,10 +323,8 @@ void CameraEffectManager::fxFadeAsyncStart(CameraEffectManager this, int initial
  *
  * @param this	Function scope
  */
-void CameraEffectManager::fxFadeAsyncStop(CameraEffectManager this)
+void CameraEffectManager::fxFadeAsyncStop()
 {
-	ASSERT(this, "CameraEffectManager::fxFadeAsyncStop: null this");
-
 	// remove event listener
 	if(this->fxFadeCallbackScope)
 	{
@@ -384,10 +351,8 @@ void CameraEffectManager::fxFadeAsyncStop(CameraEffectManager this)
  *
  * @param this	Function scope
  */
-void CameraEffectManager::showCamera(CameraEffectManager this)
+void CameraEffectManager::showCamera()
 {
-	ASSERT(this, "CameraEffectManager::showCamera: null this");
-
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
 
 	__SET_BRIGHT(
@@ -405,10 +370,8 @@ void CameraEffectManager::showCamera(CameraEffectManager this)
  *
  * @param this	Function scope
  */
-void CameraEffectManager::hideCamera(CameraEffectManager this __attribute__ ((unused)))
+void CameraEffectManager::hideCamera()
 {
-	ASSERT(this, "CameraEffectManager::hideCamera: null this");
-
 	__SET_BRIGHT(0, 0, 0);
 }
 
@@ -420,10 +383,8 @@ void CameraEffectManager::hideCamera(CameraEffectManager this __attribute__ ((un
  *
  * @param this	Function scope
  */
-void CameraEffectManager::fxFadeIn(CameraEffectManager this __attribute__ ((unused)))
+void CameraEffectManager::fxFadeIn()
 {
-	ASSERT(this, "CameraEffectManager::fxFadeIn: null this");
-
 	__SET_BRIGHT(
 		_vipRegisters[__BRTA] + 1,
 		_vipRegisters[__BRTB] + 2,
@@ -453,10 +414,8 @@ void CameraEffectManager::fxFadeIn(CameraEffectManager this __attribute__ ((unus
  *
  * @param this	Function scope
  */
-void CameraEffectManager::fxFadeOut(CameraEffectManager this __attribute__ ((unused)))
+void CameraEffectManager::fxFadeOut()
 {
-	ASSERT(this, "CameraEffectManager::fxFadeOut: null this");
-
 	// decrease brightness
 	__SET_BRIGHT(
 		_vipRegisters[__BRTA] - 1,
@@ -473,9 +432,8 @@ void CameraEffectManager::fxFadeOut(CameraEffectManager this __attribute__ ((unu
  *
  * @param this	Function scope
  */
-void CameraEffectManager::fxFadeAsync(CameraEffectManager this)
+void CameraEffectManager::fxFadeAsync()
 {
-	ASSERT(this, "CameraEffectManager::fxFadeAsync: null this");
 	ASSERT(this, "CameraEffectManager::fxFadeAsync: invalid this");
 
 	bool lightRedDone = false;

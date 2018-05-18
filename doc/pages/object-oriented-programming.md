@@ -59,13 +59,13 @@ All classes must follow the following format (the arguments are optional).
  
 The first argument is mandatory.
 
-    void Hero_constructor(Hero this, CharacterDefinition* definition, int ID);
+    void Hero_constructor(CharacterDefinition* definition, int ID);
 
 **Destructor:**
  
 The argument is mandatory and must only be one in all cases.
 
-    void Hero_destructor(Hero this);
+    void Hero_destructor();
 
 Now it is time to define the class. In the source file Hero.c do as follows.
 Include the header file which holds the class's declaration:
@@ -86,7 +86,7 @@ Define the allocator:
 Define the constructor: must always call the parent class's constructor to properly initialize the object.
 
     // class's constructor
-    void Hero_constructor(Hero this, ActorDefinition* actorDefinition, int ID)
+    void Hero_constructor(ActorDefinition* actorDefinition, int ID)
     {
         __CONSTRUCT_BASE(this, actorDefinition, ID);
     
@@ -98,7 +98,7 @@ Define the constructor: must always call the parent class's constructor to prope
 Define the destructor: must always destroy the parent class at the end of the method.
 
     // class's destructor
-    void Hero_destructor(Hero this)
+    void Hero_destructor()
     {
         // free space allocated here
     
@@ -116,7 +116,7 @@ The purpose of having OOP features is to allow generic programming through the u
 - The other way is to use virtual calls to virtual methods, as shown below:
 
       // update each entity's internal state
-      void Stage_update(Stage this)
+      void Stage_update()
       {
           VirtualNode node = VirtualList_begin(this->entities);
     

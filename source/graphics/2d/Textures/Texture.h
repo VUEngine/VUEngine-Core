@@ -108,29 +108,29 @@ abstract class Texture : Object
 	u8 written;
 
 	// A texture which has the logic to be allocated in graphic memory
-	void constructor(Texture this, TextureDefinition* textureDefinition, u16 id);
-	void setDefinition(Texture this, TextureDefinition* textureDefinition);
-	TextureDefinition* getDefinition(Texture this);
-	void releaseCharSet(Texture this);
-	void writeHBiasMode(Texture this);
-	int getNumberOfChars(Texture this);
-	TextureDefinition* getTextureDefinition(Texture this);
-	u32 getTotalCols(Texture this);
-	u32 getTotalRows(Texture this);
-	u32 getNumberOfFrames(Texture this);
-	CharSet getCharSet(Texture this, u32 loadIfNeeded);
-	BYTE* getMapDefinition(Texture this);
-	void setPalette(Texture this, u8 palette);
-	u8 getPalette(Texture this);
-	u32 getRows(Texture this);
-	u32 getCols(Texture this);
-	u16 getId(Texture this);
-	void putChar(Texture this, Point* texturePixel, BYTE* newChar);
-	void putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
-	bool isWritten(Texture this);
-	void setMapDisplacement(Texture this, u32 mapDisplacement);
-	virtual void write(Texture this);
-	virtual void rewrite(Texture this);
+	void constructor(TextureDefinition* textureDefinition, u16 id);
+	void setDefinition(TextureDefinition* textureDefinition);
+	TextureDefinition* getDefinition();
+	void releaseCharSet();
+	void writeHBiasMode();
+	int getNumberOfChars();
+	TextureDefinition* getTextureDefinition();
+	u32 getTotalCols();
+	u32 getTotalRows();
+	u32 getNumberOfFrames();
+	CharSet getCharSet(u32 loadIfNeeded);
+	BYTE* getMapDefinition();
+	void setPalette(u8 palette);
+	u8 getPalette();
+	u32 getRows();
+	u32 getCols();
+	u16 getId();
+	void putChar(Point* texturePixel, BYTE* newChar);
+	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
+	bool isWritten();
+	void setMapDisplacement(u32 mapDisplacement);
+	virtual void write();
+	virtual void rewrite();
 }
 
 

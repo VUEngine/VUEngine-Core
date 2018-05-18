@@ -42,14 +42,6 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void TimerManager::constructor(TimerManager this);
-static void TimerManager::enableInterrupt(TimerManager this, bool flag);
-
 // use static globals instead of class' members to avoid dereferencing
 static TimerManager _timerManager;
 static SoundManager _soundManager;
@@ -77,10 +69,8 @@ static SoundManager _soundManager;
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) TimerManager::constructor(TimerManager this)
+void TimerManager::constructor()
 {
-	ASSERT(this, "TimerManager::constructor: null this");
-
 	Base::constructor();
 
 	this->tcrValue = 0;
@@ -99,12 +89,10 @@ void __attribute__ ((noinline)) TimerManager::constructor(TimerManager this)
  *
  * @param this	Function scope
  */
-void TimerManager::destructor(TimerManager this)
+void TimerManager::destructor()
 {
-	ASSERT(this, "TimerManager::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -115,10 +103,8 @@ void TimerManager::destructor(TimerManager this)
  *
  * @param this		Function scope
  */
-void TimerManager::initialize(TimerManager this)
+void TimerManager::initialize()
 {
-	ASSERT(this, "TimerManager::initialize: null this");
-
 	TimerManager::setFrequency(this, __TIMER_100US);
 	TimerManager::setTime(this, __TIME_MS(__TIMER_RESOLUTION));
 	TimerManager::clearStat(this);
@@ -135,10 +121,8 @@ void TimerManager::initialize(TimerManager this)
  * @param this		Function scope
  * @param flag		Bool to enable or disable
  */
-static void TimerManager::enableInterrupt(TimerManager this, bool flag)
+void TimerManager::enableInterrupt(bool flag)
 {
-	ASSERT(this, "TimerManager::enable: null this");
-
 	if(flag)
 	{
 		this->tcrValue |= __TIMER_INT;
@@ -160,10 +144,8 @@ static void TimerManager::enableInterrupt(TimerManager this, bool flag)
  * @param this		Function scope
  * @param flag		Bool to enable or disable
  */
-void TimerManager::enable(TimerManager this, bool flag)
+void TimerManager::enable(bool flag)
 {
-	ASSERT(this, "TimerManager::enable: null this");
-
 	if(flag)
 	{
 		this->tcrValue |= __TIMER_ENB | __TIMER_INT;
@@ -222,10 +204,8 @@ void TimerManager::interruptHandler()
  *
  * @return			Milliseconds elapsed during the current game frame
  */
-u32 TimerManager::getMillisecondsElapsed(TimerManager this)
+u32 TimerManager::getMillisecondsElapsed()
 {
-	ASSERT(this, "TimerManager::getMillisecondsElapsed: null this");
-
 	return this->milliseconds;
 }
 
@@ -239,10 +219,8 @@ u32 TimerManager::getMillisecondsElapsed(TimerManager this)
  *
  * @return			Total elapsed milliseconds
  */
-u32 TimerManager::getTotalMillisecondsElapsed(TimerManager this)
+u32 TimerManager::getTotalMillisecondsElapsed()
 {
-	ASSERT(this, "TimerManager::getTotalMillisecondsElapsed: null this");
-
 	return this->totalMilliseconds;
 }
 
@@ -254,10 +232,8 @@ u32 TimerManager::getTotalMillisecondsElapsed(TimerManager this)
  *
  * @param this		Function scope
  */
-u32 TimerManager::resetMilliseconds(TimerManager this)
+u32 TimerManager::resetMilliseconds()
 {
-	ASSERT(this, "TimerManager::resetMilliseconds: null this");
-
 	u32 milliseconds = this->milliseconds;
 
 	this->milliseconds = 0;
@@ -274,10 +250,8 @@ u32 TimerManager::resetMilliseconds(TimerManager this)
  * @param this		Function scope
  * @param time		New time
  */
-void TimerManager::setTime(TimerManager this __attribute__ ((unused)), u16 time)
+void TimerManager::setTime(u16 time)
 {
-	ASSERT(this, "TimerManager::setTime: null this");
-
 	_hardwareRegisters[__TLR] = (time & 0xFF);
 	_hardwareRegisters[__THR] = (time >> 8);
 }
@@ -291,10 +265,8 @@ void TimerManager::setTime(TimerManager this __attribute__ ((unused)), u16 time)
  * @param this				Function scope
  * @param frequency			New frequency
  */
-void TimerManager::setFrequency(TimerManager this, int frequency)
+void TimerManager::setFrequency(int frequency)
 {
-	ASSERT(this, "TimerManager::setFrequency: null this");
-
 	this->tcrValue = (this->tcrValue & 0x0F) | frequency;
 
 	_hardwareRegisters[__TCR] = this->tcrValue;
@@ -310,10 +282,8 @@ void TimerManager::setFrequency(TimerManager this, int frequency)
  *
  * @return			ZSTAT
  */
-int TimerManager::getStat(TimerManager this __attribute__ ((unused)))
+int TimerManager::getStat()
 {
-	ASSERT(this, "TimerManager::getStat: null this");
-
 	return (_hardwareRegisters[__TCR] & __TIMER_ZSTAT);
 }
 
@@ -325,10 +295,8 @@ int TimerManager::getStat(TimerManager this __attribute__ ((unused)))
  *
  * @param this		Function scope
  */
-void TimerManager::clearStat(TimerManager this)
+void TimerManager::clearStat()
 {
-	ASSERT(this, "TimerManager::clearStat: null this");
-
 	_hardwareRegisters[__TCR] = (this->tcrValue | __TIMER_ZCLR);
 }
 
@@ -341,10 +309,8 @@ void TimerManager::clearStat(TimerManager this)
  * @param this				Function scope
  * @param milliSeconds		Time to wait
  */
-void TimerManager::wait(TimerManager this, u32 milliSeconds)
+void TimerManager::wait(u32 milliSeconds)
 {
-	ASSERT(this, "ClockManager::wait: null this");
-
 	// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 	// making the last assignment invalid
 	volatile u32 currentMilliseconds = this->milliseconds;
@@ -368,7 +334,7 @@ void TimerManager::wait(TimerManager this, u32 milliSeconds)
  * @param object			Called method's scope
  * @param method			Method to call
  */
-void TimerManager::repeatMethodCall(TimerManager this, u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
+void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
 {
 	if(object && method)
 	{

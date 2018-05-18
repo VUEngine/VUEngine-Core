@@ -51,15 +51,6 @@ extern u32 _sram_bss_end;
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void SRAMManager::constructor(SRAMManager this);
-static void SRAMManager::initialize(SRAMManager this);
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -83,10 +74,8 @@ static void SRAMManager::initialize(SRAMManager this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) SRAMManager::constructor(SRAMManager this)
+void SRAMManager::constructor()
 {
-	ASSERT(this, "SRAMManager::constructor: null this");
-
 	Base::constructor();
 
 	this->saveSpaceStartAddress = (u16*)&_sram_bss_end;
@@ -102,12 +91,10 @@ void __attribute__ ((noinline)) SRAMManager::constructor(SRAMManager this)
  *
  * @param this	Function scope
  */
-void SRAMManager::destructor(SRAMManager this)
+void SRAMManager::destructor()
 {
-	ASSERT(this, "SRAMManager::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -118,10 +105,8 @@ void SRAMManager::destructor(SRAMManager this)
  *
  * @param this	Function scope
  */
-static void SRAMManager::initialize(SRAMManager this)
+void SRAMManager::initialize()
 {
-	ASSERT(this, "SRAMManager::initialize: null this");
-
 	int i = __SRAM_DUMMY_READ_CYCLES;
 	for(; i--;)
 	{
@@ -140,10 +125,8 @@ static void SRAMManager::initialize(SRAMManager this)
  * @param startOffset		Start address of range to clear
  * @param endOffset			End address of range to clear
  */
-void SRAMManager::clear(SRAMManager this, int startOffset, int endOffset)
+void SRAMManager::clear(int startOffset, int endOffset)
 {
-	ASSERT(this, "SRAMManager::clear: null this");
-
 	int i = startOffset;
 	for(; i < endOffset; i++)
 	{
@@ -162,10 +145,8 @@ void SRAMManager::clear(SRAMManager this, int startOffset, int endOffset)
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
-void SRAMManager::save(SRAMManager this, const BYTE* const source, int memberOffset, int dataSize)
+void SRAMManager::save(const BYTE* const source, int memberOffset, int dataSize)
 {
-	ASSERT(this, "SRAMManager::save: null this");
-
 	int i = 0;
 
 	u16* destination = this->saveSpaceStartAddress + memberOffset;
@@ -188,10 +169,8 @@ void SRAMManager::save(SRAMManager this, const BYTE* const source, int memberOff
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
  */
-void SRAMManager::read(SRAMManager this, BYTE* destination, int memberOffset, int dataSize)
+void SRAMManager::read(BYTE* destination, int memberOffset, int dataSize)
 {
-	ASSERT(this, "SRAMManager::read: null this");
-
 	int i = 0;
 
 	u16* source = this->saveSpaceStartAddress + memberOffset;

@@ -89,15 +89,15 @@ class MBgmapSprite : BgmapSprite
 	*/
 	Point sizeMultiplier;
 
-	void constructor(MBgmapSprite this, const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
-	override void position(MBgmapSprite this, const Vector3D* position);
-	override void setPosition(MBgmapSprite this, const PixelVector* position);
-	override void render(MBgmapSprite this, bool evenFrame);
-	override void addDisplacement(MBgmapSprite this, const PixelVector* displacement);
-	override void resize(MBgmapSprite this, Scale scale, fix10_6 z);
-	override void setMode(MBgmapSprite this, u16 display, u16 mode);
-	override bool writeTextures(MBgmapSprite this);
-	override bool areTexturesWritten(MBgmapSprite this);
+	void constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
+	override void position(const Vector3D* position);
+	override void setPosition(const PixelVector* position);
+	override void render(bool evenFrame);
+	override void addDisplacement(const PixelVector* displacement);
+	override void resize(Scale scale, fix10_6 z);
+	override void setMode(u16 display, u16 mode);
+	override bool writeTextures();
+	override bool areTexturesWritten();
 }
 
 

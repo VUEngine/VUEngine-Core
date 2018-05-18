@@ -40,14 +40,6 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void KeypadManager::constructor(KeypadManager this);
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -73,10 +65,8 @@ static unsigned int volatile* _readingStatus = NULL;
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) KeypadManager::constructor(KeypadManager this)
+void KeypadManager::constructor()
 {
-	ASSERT(this, "KeypadManager::constructor: null this");
-
 	Base::constructor();
 
 	KeypadManager::flush(this);
@@ -96,12 +86,10 @@ void __attribute__ ((noinline)) KeypadManager::constructor(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager::destructor(KeypadManager this)
+void KeypadManager::destructor()
 {
-	ASSERT(this, "KeypadManager::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -112,10 +100,8 @@ void KeypadManager::destructor(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager::enableInterrupt(KeypadManager this __attribute__ ((unused)))
+void KeypadManager::enableInterrupt()
 {
-	ASSERT(this, "KeypadManager::enable: null this");
-
 	KeypadManager::flush(this);
 
 	_hardwareRegisters[__SCR] = 0;
@@ -131,10 +117,8 @@ void KeypadManager::enableInterrupt(KeypadManager this __attribute__ ((unused)))
  *
  * @param this	Function scope
  */
-void KeypadManager::disableInterrupt(KeypadManager this __attribute__ ((unused)))
+void KeypadManager::disableInterrupt()
 {
-	ASSERT(this, "KeypadManager::disable: null this");
-
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 }
 
@@ -146,10 +130,8 @@ void KeypadManager::disableInterrupt(KeypadManager this __attribute__ ((unused))
  *
  * @param this	Function scope
  */
-void KeypadManager::enable(KeypadManager this)
+void KeypadManager::enable()
 {
-	ASSERT(this, "KeypadManager::enable: null this");
-
 	this->enabled = true;
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
@@ -164,10 +146,8 @@ void KeypadManager::enable(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager::disable(KeypadManager this)
+void KeypadManager::disable()
 {
-	ASSERT(this, "KeypadManager::disable: null this");
-
 	this->enabled = false;
 }
 
@@ -181,10 +161,8 @@ void KeypadManager::disable(KeypadManager this)
  *
  * @return			True if user input is enabled
  */
-int KeypadManager::isEnabled(KeypadManager this)
+int KeypadManager::isEnabled()
 {
-	ASSERT(this, "KeypadManager::disable: null this");
-
 	return this->enabled;
 }
 
@@ -196,10 +174,8 @@ int KeypadManager::isEnabled(KeypadManager this)
  *
  * @param this	Function scope
  */
-UserInput KeypadManager::read(KeypadManager this)
+UserInput KeypadManager::read()
 {
-	ASSERT(this, "KeypadManager::read: null this");
-
 	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
 
@@ -233,10 +209,8 @@ UserInput KeypadManager::read(KeypadManager this)
  *
  * @return		User input
  */
-UserInput KeypadManager::getUserInput(KeypadManager this)
+UserInput KeypadManager::getUserInput()
 {
-	ASSERT(this, "KeypadManager::getUserInput: null this");
-
 	return this->userInput;
 }
 
@@ -248,10 +222,8 @@ UserInput KeypadManager::getUserInput(KeypadManager this)
  *
  * @param this	Function scope
  */
-void KeypadManager::flush(KeypadManager this)
+void KeypadManager::flush()
 {
-	ASSERT(this, "KeypadManager::flush: null this");
-
 	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
 }
 
@@ -265,10 +237,8 @@ void KeypadManager::flush(KeypadManager this)
  *
  * @return 		Currently pressed keys
  */
-u16 KeypadManager::getPressedKey(KeypadManager this)
+u16 KeypadManager::getPressedKey()
 {
-	ASSERT(this, "KeypadManager::getPressedKey: null this");
-
 	return this->userInput.allKeys & ~this->userInput.previousKey;
 }
 
@@ -282,10 +252,8 @@ u16 KeypadManager::getPressedKey(KeypadManager this)
  *
  * @return 		Currently released keys
  */
-u16 KeypadManager::getReleasedKey(KeypadManager this)
+u16 KeypadManager::getReleasedKey()
 {
-	ASSERT(this, "KeypadManager::read: null this");
-
 	return ~this->userInput.allKeys & this->userInput.previousKey;
 }
 
@@ -299,10 +267,8 @@ u16 KeypadManager::getReleasedKey(KeypadManager this)
  *
  * @return 		Currently held keys
  */
-u16 KeypadManager::getHoldKey(KeypadManager this)
+u16 KeypadManager::getHoldKey()
 {
-	ASSERT(this, "KeypadManager::getHoldKey: null this");
-
 	return this->userInput.allKeys & this->userInput.previousKey;
 }
 
@@ -316,10 +282,8 @@ u16 KeypadManager::getHoldKey(KeypadManager this)
  *
  * @return 		Duration of currently held keys
  */
-u32 KeypadManager::getHoldKeyDuration(KeypadManager this)
+u32 KeypadManager::getHoldKeyDuration()
 {
-	ASSERT(this, "KeypadManager::getHoldKeyDuration: null this");
-
 	return this->userInput.holdKeyDuration;
 }
 
@@ -333,10 +297,8 @@ u32 KeypadManager::getHoldKeyDuration(KeypadManager this)
  *
  * @return 		Previously pressed keys
  */
-u16 KeypadManager::getPreviousKey(KeypadManager this)
+u16 KeypadManager::getPreviousKey()
 {
-	ASSERT(this, "KeypadManager::getPreviousKey: null this");
-
 	return this->userInput.previousKey;
 }
 
@@ -349,10 +311,8 @@ u16 KeypadManager::getPreviousKey(KeypadManager this)
  * @param this				Function scope
  * @param inputToRegister	Flag
  */
-void KeypadManager::registerInput(KeypadManager this, u16 inputToRegister)
+void KeypadManager::registerInput(u16 inputToRegister)
 {
-	ASSERT(this, "KeypadManager::registerInput: null this");
-
 	this->userInputToRegister.pressedKey = __KEY_PRESSED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;

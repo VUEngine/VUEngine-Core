@@ -42,14 +42,6 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -64,10 +56,8 @@
  * @param charSetDefinition				CharSet definition
  * @param offset						Displacement within the CHAR segment
  */
-void CharSet::constructor(CharSet this, CharSetDefinition* charSetDefinition, u16 offset)
+void CharSet::constructor(CharSetDefinition* charSetDefinition, u16 offset)
 {
-	ASSERT(this, "CharSet::constructor: null this");
-
 	Base::constructor();
 
 	// save definition
@@ -87,10 +77,8 @@ void CharSet::constructor(CharSet this, CharSetDefinition* charSetDefinition, u1
  *
  * @param this							Function scope
  */
-void CharSet::destructor(CharSet this)
+void CharSet::destructor()
 {
-	ASSERT(this, "CharSet::destructor: null this");
-
 	Object::fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
 
 	// make sure that I'm not destroyed again
@@ -109,10 +97,8 @@ void CharSet::destructor(CharSet this)
  *
  * @param this							Function scope
  */
-void CharSet::increaseUsageCount(CharSet this)
+void CharSet::increaseUsageCount()
 {
-	ASSERT(this, "CharSet::increaseUsageCoung: null this");
-
 	this->usageCount++;
 }
 
@@ -126,10 +112,8 @@ void CharSet::increaseUsageCount(CharSet this)
  *
  * @return								True if usage count is zero
  */
-bool CharSet::decreaseUsageCount(CharSet this)
+bool CharSet::decreaseUsageCount()
 {
-	ASSERT(this, "CharSet::getAllocationType: null this");
-
 	if(this->usageCount)
 	{
 		this->usageCount--;
@@ -148,10 +132,8 @@ bool CharSet::decreaseUsageCount(CharSet this)
  *
  * @return								Usage count
  */
-u8 CharSet::getUsageCount(CharSet this)
+u8 CharSet::getUsageCount()
 {
-	ASSERT(this, "CharSet::getUsageCount: null this");
-
 	return this->usageCount;
 }
 
@@ -165,10 +147,8 @@ u8 CharSet::getUsageCount(CharSet this)
  *
  * @return				Allocation type
  */
-u32 CharSet::getAllocationType(CharSet this)
+u32 CharSet::getAllocationType()
 {
-	ASSERT(this, "CharSet::getAllocationType: null this");
-
 	return this->charSetDefinition->allocationType;
 }
 
@@ -182,10 +162,8 @@ u32 CharSet::getAllocationType(CharSet this)
  *
  * @return				Offset within CHAR memory
  */
-u32 CharSet::getOffset(CharSet this)
+u32 CharSet::getOffset()
 {
-	ASSERT(this, "CharSet::getOffset: null this");
-
 	return this->offset;
 }
 
@@ -198,9 +176,8 @@ u32 CharSet::getOffset(CharSet this)
  * @param this			Function scope
  * @param offset		Offset within CHAR memory
  */
-void CharSet::setOffset(CharSet this, u16 offset)
+void CharSet::setOffset(u16 offset)
 {
-	ASSERT(this, "CharSet::setOffset: null this");
 	ASSERT(offset < 2048, "CharSet::setOffset: offset out of bounds");
 
 	this->offset = offset;
@@ -216,10 +193,8 @@ void CharSet::setOffset(CharSet this, u16 offset)
  *
  * @return				CharSetDefinition
  */
-CharSetDefinition* CharSet::getCharSetDefinition(CharSet this)
+CharSetDefinition* CharSet::getCharSetDefinition()
 {
-	ASSERT(this, "CharSet::getCharDefinition: null this");
-
 	return this->charSetDefinition;
 }
 
@@ -232,10 +207,8 @@ CharSetDefinition* CharSet::getCharSetDefinition(CharSet this)
  * @param this						Function scope
  * @param charSetDefinition			CharSetDefinition
  */
-void CharSet::setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefinition)
+void CharSet::setCharSetDefinition(CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "CharSet::setCharDefinition: null this");
-
 	this->charSetDefinition = charSetDefinition;
 }
 
@@ -249,10 +222,8 @@ void CharSet::setCharSetDefinition(CharSet this, CharSetDefinition* charSetDefin
  *
  * @return 			Number of CHARS in the definition
  */
-u32 CharSet::getNumberOfChars(CharSet this)
+u32 CharSet::getNumberOfChars()
 {
-	ASSERT(this, "CharSet::getNumberOfChars: null this");
-
 	return this->charSetDefinition->numberOfChars;
 }
 
@@ -264,10 +235,8 @@ u32 CharSet::getNumberOfChars(CharSet this)
  *
  * @param this		Function scope
  */
-void CharSet::write(CharSet this)
+void CharSet::write()
 {
-	ASSERT(this, "CharSet::write: null this");
-
 	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
 		(WORD*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
@@ -283,10 +252,8 @@ void CharSet::write(CharSet this)
  *
  * @param this		Function scope
  */
-void CharSet::rewrite(CharSet this)
+void CharSet::rewrite()
 {
-	ASSERT(this, "CharSet::rewrite: null this");
-
 	// write again
 	CharSet::write(this);
 
@@ -303,10 +270,8 @@ void CharSet::rewrite(CharSet this)
  * @param this								Function scope
  * @param charDefinitionDisplacement		Displacement
  */
-void CharSet::setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisplacement)
+void CharSet::setCharDefinitionDisplacement(u32 charDefinitionDisplacement)
 {
-	ASSERT(this, "CharSet::setCharDefinitionDisplacement: null this");
-
 	this->charDefinitionDisplacement = charDefinitionDisplacement;
 }
 
@@ -320,10 +285,8 @@ void CharSet::setCharDefinitionDisplacement(CharSet this, u32 charDefinitionDisp
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
-void CharSet::putChar(CharSet this, u32 charToReplace, BYTE* newChar)
+void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 {
-	ASSERT(this, "CharSet::putChar: null this");
-
 	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
 	{
 		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 3));
@@ -341,10 +304,8 @@ void CharSet::putChar(CharSet this, u32 charToReplace, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void CharSet::putPixel(CharSet this, u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
+void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "CharSet::putPixel: null this");
-
 	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
 		static BYTE auxChar[] =

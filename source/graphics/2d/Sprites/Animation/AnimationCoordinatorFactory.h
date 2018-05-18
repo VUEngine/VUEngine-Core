@@ -42,7 +42,7 @@ singleton class AnimationCoordinatorFactory : Object
 	VirtualList animationCoordinators;
 
 	static AnimationCoordinatorFactory getInstance();
-	AnimationCoordinator getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
+	AnimationCoordinator getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
 	void reset();
 }
 

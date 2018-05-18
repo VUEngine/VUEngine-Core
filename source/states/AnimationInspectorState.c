@@ -33,13 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void AnimationInspectorState::constructor(AnimationInspectorState this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -74,10 +67,8 @@ void AnimationInspectorState::constructor(AnimationInspectorState this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) AnimationInspectorState::constructor(AnimationInspectorState this)
+void AnimationInspectorState::constructor()
 {
-	ASSERT(this, "AnimationInspectorState::constructor: null this");
-
 	Base::constructor();
 }
 
@@ -89,12 +80,10 @@ void __attribute__ ((noinline)) AnimationInspectorState::constructor(AnimationIn
  *
  * @param this	Function scope
  */
-void AnimationInspectorState::destructor(AnimationInspectorState this)
+void AnimationInspectorState::destructor()
 {
-	ASSERT(this, "AnimationInspectorState::destructor: null this");
-
 	// destroy base
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -106,10 +95,8 @@ void AnimationInspectorState::destructor(AnimationInspectorState this)
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void AnimationInspectorState::enter(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState::enter(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "AnimationInspectorState::enter: null this");
-
 	Base::enter(this, owner);
 	GameState::pauseClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 	AnimationInspector::show(AnimationInspector::getInstance(), __SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
@@ -124,10 +111,8 @@ void AnimationInspectorState::enter(AnimationInspectorState this __attribute__ (
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void AnimationInspectorState::execute(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState::execute(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "AnimationInspectorState::execute: null this");
-
 	AnimationInspector::update(AnimationInspector::getInstance());
 }
 
@@ -140,10 +125,8 @@ void AnimationInspectorState::execute(AnimationInspectorState this __attribute__
  * @param this		Function scope
  * @param owner		StateMachine's owner
  */
-void AnimationInspectorState::exit(AnimationInspectorState this __attribute__ ((unused)), void* owner __attribute__ ((unused)))
+void AnimationInspectorState::exit(void* owner __attribute__ ((unused)))
 {
-	ASSERT(this, "AnimationInspectorState::exit: null this");
-
 	AnimationInspector::hide(AnimationInspector::getInstance());
 	GameState::resumeClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 	Base::exit(this, owner);
@@ -158,9 +141,7 @@ void AnimationInspectorState::exit(AnimationInspectorState this __attribute__ ((
  * @param this			Function scope
  * @param userInput		User input
  */
-void AnimationInspectorState::processUserInput(AnimationInspectorState this __attribute__ ((unused)), UserInput userInput)
+void AnimationInspectorState::processUserInput(UserInput userInput)
 {
-	ASSERT(this, "AnimationInspectorState::processUserInput: null this");
-
 	AnimationInspector::processUserInput(AnimationInspector::getInstance(), userInput.pressedKey);
 }

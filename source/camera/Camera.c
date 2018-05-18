@@ -43,15 +43,6 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void Camera::constructor(Camera this);
-static Vector3D Camera::getCappedPosition(Camera this, Vector3D position);
-
-
 //---------------------------------------------------------------------------------------------------------
 //												GLOBALS
 //---------------------------------------------------------------------------------------------------------
@@ -86,10 +77,8 @@ const CameraFrustum* _cameraFrustum = NULL;
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) Camera::constructor(Camera this)
+void Camera::constructor()
 {
-	ASSERT(this, "Camera::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -149,12 +138,10 @@ void __attribute__ ((noinline)) Camera::constructor(Camera this)
  *
  * @param this	Function scope
  */
-void Camera::destructor(Camera this)
+void Camera::destructor()
 {
-	ASSERT(this, "Camera::destructor: null this");
-
 	// destroy base
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -166,10 +153,8 @@ void Camera::destructor(Camera this)
  * @param this					Function scope
  * @param cameraMovementManager	The CameraMovementManager
  */
-void Camera::setCameraMovementManager(Camera this, CameraMovementManager cameraMovementManager)
+void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
 {
-	ASSERT(this, "Camera::setCameraMovementManager: null this");
-
 	if(this->cameraMovementManager != cameraMovementManager)
 	{
 		if(this->cameraMovementManager)
@@ -190,10 +175,8 @@ void Camera::setCameraMovementManager(Camera this, CameraMovementManager cameraM
  * @param this					Function scope
  * @param cameraEffectManager	The CameraEffectManager
  */
-void Camera::setCameraEffectManager(Camera this, CameraEffectManager cameraEffectManager)
+void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 {
-	ASSERT(this, "Camera::setCameraEffectManager: null this");
-
 	if(this->cameraEffectManager != cameraEffectManager)
 	{
 		if(this->cameraEffectManager)
@@ -214,9 +197,8 @@ void Camera::setCameraEffectManager(Camera this, CameraEffectManager cameraEffec
  * @param this							Function scope
  * @param checkIfFocusEntityIsMoving	The CameraEffectManager
  */
-void Camera::focus(Camera this, u32 checkIfFocusEntityIsMoving)
+void Camera::focus(u32 checkIfFocusEntityIsMoving)
 {
-	ASSERT(this, "Camera::focus: null this");
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
 #ifdef __DEBUG_TOOLS
@@ -245,10 +227,8 @@ void Camera::focus(Camera this, u32 checkIfFocusEntityIsMoving)
  * @param this			Function scope
  * @param focusEntity	The CameraEffectManager
  */
-void Camera::setFocusGameEntity(Camera this, Entity focusEntity)
+void Camera::setFocusGameEntity(Entity focusEntity)
 {
-	ASSERT(this, "Camera::setFocusEntity: null this");
-
 	this->focusEntity = focusEntity;
 	this->focusEntityPosition = NULL;
 
@@ -269,10 +249,8 @@ void Camera::setFocusGameEntity(Camera this, Entity focusEntity)
  *
  * @param this	Function scope
  */
-void Camera::unsetFocusEntity(Camera this)
+void Camera::unsetFocusEntity()
 {
-	ASSERT(this, "Camera::unsetFocusEntity: null this");
-
 	this->focusEntity = NULL;
 
 	this->lastDisplacement.x = 0;
@@ -290,10 +268,8 @@ void Camera::unsetFocusEntity(Camera this)
  *
  * @return		Focus Entity
  */
-Entity Camera::getFocusEntity(Camera this)
+Entity Camera::getFocusEntity()
 {
-	ASSERT(this, "Camera::getFocusEntity: null this");
-
 	return this->focusEntity;
 }
 
@@ -306,10 +282,8 @@ Entity Camera::getFocusEntity(Camera this)
  * @param this	Function scope
  * @param actor	Entity that has been deleted
  */
-void Camera::onFocusEntityDeleted(Camera this, Entity actor)
+void Camera::onFocusEntityDeleted(Entity actor)
 {
-	ASSERT(this, "Camera::focusEntityDeleted: null this");
-
 	if(this->focusEntity == actor)
 	{
 		Camera::unsetFocusEntity(this);
@@ -326,10 +300,8 @@ void Camera::onFocusEntityDeleted(Camera this, Entity actor)
  * @param translation
  * @param cap
  */
-void Camera::move(Camera this, Vector3D translation, int cap)
+void Camera::move(Vector3D translation, int cap)
 {
-	ASSERT(this, "Camera::move: null this");
-
 	this->lastDisplacement = translation;
 
 	this->position.x += translation.x;
@@ -352,10 +324,8 @@ void Camera::move(Camera this, Vector3D translation, int cap)
  *
  * @return position	Capped Vector3d
  */
-static Vector3D Camera::getCappedPosition(Camera this, Vector3D position)
+Vector3D Camera::getCappedPosition(Vector3D position)
 {
-	ASSERT(this, "Camera::getCappedPosition: null this");
-
 	if(position.x < 0)
 	{
 		position.x = 0;
@@ -397,10 +367,8 @@ static Vector3D Camera::getCappedPosition(Camera this, Vector3D position)
  *
  * @param this	Function scope
  */
-void Camera::capPosition(Camera this)
+void Camera::capPosition()
 {
-	ASSERT(this, "Camera::capPosition: null this");
-
 	this->position = Camera::getCappedPosition(this, this->position);
 }
 
@@ -414,10 +382,8 @@ void Camera::capPosition(Camera this)
  *
  * @return		Camera position
  */
-Vector3D Camera::getPosition(Camera this)
+Vector3D Camera::getPosition()
 {
-	ASSERT(this, "Camera::getPosition: null this");
-
 	return this->position;
 }
 
@@ -430,10 +396,8 @@ Vector3D Camera::getPosition(Camera this)
  * @param this		Function scope
  * @param position	Camera position
  */
-void Camera::setPosition(Camera this, Vector3D position)
+void Camera::setPosition(Vector3D position)
 {
-	ASSERT(this, "Camera::setPosition: null this");
-
 	position = Camera::getCappedPosition(this, position);
 
 	this->lastDisplacement.x = position.x - this->position.x;
@@ -452,10 +416,8 @@ void Camera::setPosition(Camera this, Vector3D position)
  *
  * @param this	Function scope
  */
-void Camera::prepareForUITransform(Camera this)
+void Camera::prepareForUITransform()
 {
-	ASSERT(this, "Camera::prepareForUITransform: null this");
-
 	this->positionBackup = this->position;
 
 	this->position.x = 0;
@@ -471,10 +433,8 @@ void Camera::prepareForUITransform(Camera this)
  *
  * @param this	Function scope
  */
-void Camera::doneUITransform(Camera this)
+void Camera::doneUITransform()
 {
-	ASSERT(this, "Camera::doneUITransform: null this");
-
 	this->position = this->positionBackup;
 }
 
@@ -488,10 +448,8 @@ void Camera::doneUITransform(Camera this)
  *
  * @return 		Optical config structure
  */
-Optical Camera::getOptical(Camera this)
+Optical Camera::getOptical()
 {
-	ASSERT(this, "Camera::getOptical: null this");
-
 	return this->optical;
 }
 
@@ -504,10 +462,8 @@ Optical Camera::getOptical(Camera this)
  * @param this		Function scope
  * @param optical
  */
-void Camera::setOptical(Camera this, Optical optical)
+void Camera::setOptical(Optical optical)
 {
-	ASSERT(this, "Camera::setOptical: null this");
-
 	this->optical = optical;
 }
 
@@ -520,10 +476,8 @@ void Camera::setOptical(Camera this, Optical optical)
  * @param this								Function scope
  * @param focusEntityPositionDisplacement
  */
-void Camera::setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntityPositionDisplacement)
+void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
 {
-	ASSERT(this, "Camera::setPosition: null this");
-
 	this->focusEntityPositionDisplacement = focusEntityPositionDisplacement;
 
 	// focus now
@@ -543,10 +497,8 @@ void Camera::setFocusEntityPositionDisplacement(Camera this, Vector3D focusEntit
  *
  * @return		Last displacement vector
  */
-Vector3D Camera::getLastDisplacement(Camera this)
+Vector3D Camera::getLastDisplacement()
 {
-	ASSERT(this, "Camera::getLastDisplacement: null this");
-
 	return this->lastDisplacement;
 }
 
@@ -560,10 +512,8 @@ Vector3D Camera::getLastDisplacement(Camera this)
  *
  * @return		Stage size
  */
-Size Camera::getStageSize(Camera this)
+Size Camera::getStageSize()
 {
-	ASSERT(this, "Camera::getStageSize: null this");
-
 	return this->stageSize;
 }
 
@@ -576,10 +526,8 @@ Size Camera::getStageSize(Camera this)
  * @param this	Function scope
  * @param size	Stage size
  */
-void Camera::setStageSize(Camera this, Size size)
+void Camera::setStageSize(Size size)
 {
-	ASSERT(this, "Camera::setStageSize: null this");
-
 	this->stageSize = size;
 }
 
@@ -592,10 +540,8 @@ void Camera::setStageSize(Camera this, Size size)
  * @param this	Function scope
  * @param flag
  */
-void Camera::forceDisplacement(Camera this, int flag)
+void Camera::forceDisplacement(int flag)
 {
-	ASSERT(this, "Camera::forceDisplacement: null this");
-
 	this->lastDisplacement.x = flag ? __1I_FIX10_6 : 0;
 	this->lastDisplacement.y = flag ? __1I_FIX10_6 : 0;
 	this->lastDisplacement.z = flag ? __1I_FIX10_6 : 0;
@@ -611,10 +557,8 @@ void Camera::forceDisplacement(Camera this, int flag)
  * @param effect	Effect reference ID
  * @param args		Various effect parameters
  */
-void Camera::startEffect(Camera this, int effect, ...)
+void Camera::startEffect(int effect, ...)
 {
-	ASSERT(this, "Camera::startEffect: null this");
-
 	va_list args;
 	va_start(args, effect);
 	 CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
@@ -630,10 +574,8 @@ void Camera::startEffect(Camera this, int effect, ...)
  * @param this		Function scope
  * @param effect	Effect reference ID
  */
-void Camera::stopEffect(Camera this, int effect)
+void Camera::stopEffect(int effect)
 {
-	ASSERT(this, "Camera::stopEffect: null this");
-
 	 CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
 }
 
@@ -645,10 +587,8 @@ void Camera::stopEffect(Camera this, int effect)
  *
  * @param this	Function scope
  */
-void Camera::reset(Camera this)
+void Camera::reset()
 {
-	ASSERT(this, "Camera::reset: null this");
-
 	Camera::setFocusGameEntity(this, NULL);
 
 	this->position = (Vector3D){0, 0, 0};
@@ -666,10 +606,8 @@ void Camera::reset(Camera this)
  *
  * @param this	Function scope
  */
-void Camera::resetCameraFrustum(Camera this)
+void Camera::resetCameraFrustum()
 {
-	ASSERT(this, "Camera::resetCameraFrustum: null this");
-
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
 	this->cameraFrustum.z0 = 0;
@@ -687,10 +625,8 @@ void Camera::resetCameraFrustum(Camera this)
  * @param this			Function scope
  * @param cameraFrustum	Camera frustum
  */
-void Camera::setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
+void Camera::setCameraFrustum(CameraFrustum cameraFrustum)
 {
-	ASSERT(this, "Camera::setCameraFrustum: null this");
-
 	this->cameraFrustum = cameraFrustum;
 
 	if(this->cameraFrustum.x1 > __SCREEN_WIDTH)
@@ -735,10 +671,8 @@ void Camera::setCameraFrustum(Camera this, CameraFrustum cameraFrustum)
  *
  * @return		Camera frustum
  */
-CameraFrustum Camera::getCameraFrustum(Camera this)
+CameraFrustum Camera::getCameraFrustum()
 {
-	ASSERT(this, "Camera::getCameraFrustum: null this");
-
 	return this->cameraFrustum;
 }
 
@@ -752,10 +686,8 @@ CameraFrustum Camera::getCameraFrustum(Camera this)
  *
  * @return		Focus entity position vector
  */
-Vector3D Camera::getFocusEntityPosition(Camera this)
+Vector3D Camera::getFocusEntityPosition()
 {
-	ASSERT(this, "Camera::getLastDisplacement: null this");
-
 	return this->focusEntityPosition ? *this->focusEntityPosition : (Vector3D){0, 0, 0};
 }
 
@@ -769,10 +701,8 @@ Vector3D Camera::getFocusEntityPosition(Camera this)
  *
  * @return		Focus entity position displacement vector
  */
-Vector3D Camera::getFocusEntityPositionDisplacement(Camera this)
+Vector3D Camera::getFocusEntityPositionDisplacement()
 {
-	ASSERT(this, "Camera::getFocusEntityPositionDisplacement: null this");
-
 	return this->focusEntityPositionDisplacement;
 }
 
@@ -787,10 +717,8 @@ Vector3D Camera::getFocusEntityPositionDisplacement(Camera this)
  * @param x				Column
  * @param y				Row
  */
-void Camera::print(Camera this, int x, int y)
+void Camera::print(int x, int y)
 {
-	ASSERT(this, "Camera::print: null this");
-
 	Printing::text(Printing::getInstance(), "MOVE SCREEN", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
 	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);

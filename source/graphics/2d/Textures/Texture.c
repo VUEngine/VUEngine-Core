@@ -42,16 +42,6 @@
  */
 
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-static void Texture::onCharSetRewritten(Texture this, Object eventFirer);
-static void Texture::onCharSetDeleted(Texture this, Object eventFirer);
-static void Texture::loadCharSet(Texture this);
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -66,10 +56,8 @@ static void Texture::loadCharSet(Texture this);
  * @param textureDefinition		Definition to use
  * @param id					Texture's identification
  */
-void Texture::constructor(Texture this, TextureDefinition* textureDefinition, u16 id)
+void Texture::constructor(TextureDefinition* textureDefinition, u16 id)
 {
-	ASSERT(this, "Texture::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -94,10 +82,8 @@ void Texture::constructor(Texture this, TextureDefinition* textureDefinition, u1
  *
  * @param this	Function scope
  */
-void Texture::destructor(Texture this)
+void Texture::destructor()
 {
-	ASSERT(this, "Texture::destructor: null this");
-
 	Texture::releaseCharSet(this);
 
 	// destroy the super object
@@ -113,10 +99,8 @@ void Texture::destructor(Texture this)
  *
  * @param this	Function scope
  */
-static void Texture::loadCharSet(Texture this)
+void Texture::loadCharSet()
 {
-	ASSERT(this, "Texture::getCharSet: null this");
-
 	Texture::releaseCharSet(this);
 
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureDefinition->charSetDefinition);
@@ -135,9 +119,8 @@ static void Texture::loadCharSet(Texture this)
  * @param this					Function scope
  * @param textureDefinition		New TextureDefinition
  */
-void Texture::setDefinition(Texture this, TextureDefinition* textureDefinition)
+void Texture::setDefinition(TextureDefinition* textureDefinition)
 {
-	ASSERT(this, "Texture::setDefinition: null this");
 	ASSERT(textureDefinition, "Texture::setDefinition: null textureDefinition");
 
 	this->textureDefinition = textureDefinition;
@@ -155,10 +138,8 @@ void Texture::setDefinition(Texture this, TextureDefinition* textureDefinition)
  *
  * @return				TextureDefinition
  */
-TextureDefinition* Texture::getDefinition(Texture this)
+TextureDefinition* Texture::getDefinition()
 {
-	ASSERT(this, "Texture::getDefinition: null this");
-
 	return this->textureDefinition;
 }
 
@@ -170,10 +151,8 @@ TextureDefinition* Texture::getDefinition(Texture this)
  *
  * @param this					Function scope
  */
-void Texture::releaseCharSet(Texture this)
+void Texture::releaseCharSet()
 {
-	ASSERT(this, "Texture::releaseCharSet: null this");
-
 	if(this->charSet)
 	{
 		Object::removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
@@ -195,9 +174,8 @@ void Texture::releaseCharSet(Texture this)
  *
  * @param this		Function scope
  */
-void Texture::write(Texture this)
+void Texture::write()
 {
-	ASSERT(this, "Texture::write: null this");
 	ASSERT(this->textureDefinition, "Texture::write: null textureDefinition");
 	ASSERT(this->textureDefinition->charSetDefinition, "Texture::write: null charSetDefinition");
 
@@ -217,10 +195,8 @@ void Texture::write(Texture this)
  *
  * @param this		Function scope
  */
-void Texture::rewrite(Texture this)
+void Texture::rewrite()
 {
-	ASSERT(this, "Texture::rewrite: null this");
-
 	this->written = false;
 
 	Texture::write(this);
@@ -234,10 +210,8 @@ void Texture::rewrite(Texture this)
  *
  * @param this					Function scope
  */
-void Texture::writeHBiasMode(Texture this __attribute__ ((unused)))
+void Texture::writeHBiasMode()
 {
-	ASSERT(this, "Texture::writeHBiasMode: null this");
-
 	// TODO
 	/*
 	int i;
@@ -262,10 +236,8 @@ void Texture::writeHBiasMode(Texture this __attribute__ ((unused)))
  *
  * @return			Number of CHARs
  */
-int Texture::getNumberOfChars(Texture this)
+int Texture::getNumberOfChars()
 {
-	ASSERT(this, "Texture::getNumberOfChars: null this");
-
 	return this->textureDefinition->charSetDefinition->numberOfChars;
 }
 
@@ -279,10 +251,8 @@ int Texture::getNumberOfChars(Texture this)
  *
  * @return			TextureDefinition
  */
-TextureDefinition* Texture::getTextureDefinition(Texture this)
+TextureDefinition* Texture::getTextureDefinition()
 {
-	ASSERT(this, "Texture::getTextureDefinition: null this");
-
 	return this->textureDefinition;
 }
 
@@ -296,10 +266,8 @@ TextureDefinition* Texture::getTextureDefinition(Texture this)
  *
  * @return			Number of total columns
  */
-u32 Texture::getTotalCols(Texture this)
+u32 Texture::getTotalCols()
 {
-	ASSERT(this, "Texture::getTotalCols: null this");
-
 	// determine the allocation type
 	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
@@ -345,10 +313,8 @@ u32 Texture::getTotalCols(Texture this)
  *
  * @return			Number of total rows
  */
-u32 Texture::getTotalRows(Texture this)
+u32 Texture::getTotalRows()
 {
-	ASSERT(this, "Texture::getTotalRows: null this");
-
 	// determine the allocation type
 	switch(this->textureDefinition->charSetDefinition->allocationType)
 	{
@@ -393,10 +359,8 @@ u32 Texture::getTotalRows(Texture this)
  *
  * @return			Number of frames for animation
  */
-u32 Texture::getNumberOfFrames(Texture this)
+u32 Texture::getNumberOfFrames()
 {
-	ASSERT(this, "Texture::getNumberOfFrames: null this");
-
 	return this->textureDefinition->numberOfFrames;
 }
 
@@ -411,10 +375,8 @@ u32 Texture::getNumberOfFrames(Texture this)
  *
  * @return					CharSet
  */
-CharSet Texture::getCharSet(Texture this, u32 loadIfNeeded)
+CharSet Texture::getCharSet(u32 loadIfNeeded)
 {
-	ASSERT(this, "Texture::getCharSet: null this");
-
 	if(!this->charSet && loadIfNeeded)
 	{
 		Texture::loadCharSet(this);
@@ -433,10 +395,8 @@ CharSet Texture::getCharSet(Texture this, u32 loadIfNeeded)
  *
  * @return			Pointer to the map definition
  */
-BYTE* Texture::getMapDefinition(Texture this)
+BYTE* Texture::getMapDefinition()
 {
-	ASSERT(this, "Texture::getBgmapDef: null this");
-
 	return this->textureDefinition ? this->textureDefinition->mapDefinition : NULL;
 }
 
@@ -449,10 +409,8 @@ BYTE* Texture::getMapDefinition(Texture this)
  * @param this			Function scope
  * @param palette		New palette
  */
-void Texture::setPalette(Texture this, u8 palette)
+void Texture::setPalette(u8 palette)
 {
-	ASSERT(this, "Texture::setPalette: null this");
-
 	this->palette = palette;
 }
 
@@ -466,10 +424,8 @@ void Texture::setPalette(Texture this, u8 palette)
  *
  * @return			Palette
  */
-u8 Texture::getPalette(Texture this)
+u8 Texture::getPalette()
 {
-	ASSERT(this, "Texture::getPalette: null this");
-
 	return this->palette;
 }
 
@@ -483,10 +439,8 @@ u8 Texture::getPalette(Texture this)
  *
  * @return			Number of rows
  */
-u32 Texture::getRows(Texture this)
-{
-	ASSERT(this, "Texture::getRows: null this");
-	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
+u32 Texture::getRows()
+{	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
 
 	return this->textureDefinition->rows;
 }
@@ -501,10 +455,8 @@ u32 Texture::getRows(Texture this)
  *
  * @return			Number of columns
  */
-u32 Texture::getCols(Texture this)
+u32 Texture::getCols()
 {
-	ASSERT(this, "Texture::getCols: null this");
-
 	return this->textureDefinition->cols;
 }
 
@@ -518,10 +470,8 @@ u32 Texture::getCols(Texture this)
  *
  * @return			Identification number
  */
-u16 Texture::getId(Texture this)
+u16 Texture::getId()
 {
-	ASSERT(this, "Texture::getId: null this");
-
 	return this->id;
 }
 
@@ -534,10 +484,8 @@ u16 Texture::getId(Texture this)
  * @param this				Function scope
  * @param eventFirer		CharSet
  */
-static void Texture::onCharSetRewritten(Texture this, Object eventFirer __attribute__ ((unused)))
+void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
 {
-	ASSERT(this, "Texture::onCharSetRewritten: null this");
-
 	 Texture::rewrite(this);
 
 	// propagate event
@@ -553,10 +501,8 @@ static void Texture::onCharSetRewritten(Texture this, Object eventFirer __attrib
  * @param this				Function scope
  * @param eventFirer		CharSet
  */
-static void Texture::onCharSetDeleted(Texture this, Object eventFirer)
+void Texture::onCharSetDeleted(Object eventFirer)
 {
-	ASSERT(this, "Texture::onCharSetRewritten: null this");
-
 	this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
 }
 
@@ -570,10 +516,8 @@ static void Texture::onCharSetDeleted(Texture this, Object eventFirer)
  * @param texturePixel		Coordinates within the map definition to write
  * @param newChar			CHAR data to write
  */
-void Texture::putChar(Texture this, Point* texturePixel, BYTE* newChar)
+void Texture::putChar(Point* texturePixel, BYTE* newChar)
 {
-	ASSERT(this, "Texture::putChar: null this");
-
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
 		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
@@ -593,10 +537,8 @@ void Texture::putChar(Texture this, Point* texturePixel, BYTE* newChar)
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
  */
-void Texture::putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
+void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	ASSERT(this, "Texture::putPixel: null this");
-
 	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
 	{
 		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
@@ -615,10 +557,8 @@ void Texture::putPixel(Texture this, Point* texturePixel, Pixel* charSetPixel, B
  *
  * @return			True if completely written to DRAM
  */
-bool Texture::isWritten(Texture this)
+bool Texture::isWritten()
 {
-	ASSERT(this, "Texture::isWritten: null this");
-
 	return this->written;
 }
 
@@ -631,9 +571,7 @@ bool Texture::isWritten(Texture this)
  * @param this								Function scope
  * @param mapDefinitionDisplacement			Displacement
  */
-void Texture::setMapDisplacement(Texture this, u32 mapDisplacement)
+void Texture::setMapDisplacement(u32 mapDisplacement)
 {
-	ASSERT(this, "Texture::setMapDisplacement: null this");
-
 	this->mapDisplacement = mapDisplacement;
 }

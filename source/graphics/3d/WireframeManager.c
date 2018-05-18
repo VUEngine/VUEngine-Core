@@ -42,14 +42,6 @@
 friend class VirtualNode;
 friend class VirtualList;
 
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void WireframeManager::constructor(WireframeManager this);
-
-
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
@@ -73,10 +65,8 @@ void WireframeManager::constructor(WireframeManager this);
  *
  * @param this	Function scope
  */
-void WireframeManager::constructor(WireframeManager this)
+void WireframeManager::constructor()
 {
-	ASSERT(this, "WireframeManager::constructor: null this");
-
 	Base::constructor();
 
 	this->wireframes = __NEW(VirtualList);
@@ -90,9 +80,8 @@ void WireframeManager::constructor(WireframeManager this)
  *
  * @param this	Function scope
  */
-void WireframeManager::destructor(WireframeManager this)
+void WireframeManager::destructor()
 {
-	ASSERT(this, "WireframeManager::destructor: null this");
 	ASSERT(this->wireframes, "WireframeManager::destructor: null wireframes");
 
 	VirtualNode node = this->wireframes->head;
@@ -107,7 +96,7 @@ void WireframeManager::destructor(WireframeManager this)
 	this->wireframes = NULL;
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -119,9 +108,8 @@ void WireframeManager::destructor(WireframeManager this)
  * @param this		Function scope
  * @param wireframe	Wireframe to register
  */
-void WireframeManager::register(WireframeManager this, Wireframe wireframe)
+void WireframeManager::register(Wireframe wireframe)
 {
-	ASSERT(this, "WireframeManager::register: null this");
 	ASSERT(wireframe, "WireframeManager::register: null wireframe");
 
 	if(!VirtualList::find(this->wireframes, wireframe))
@@ -139,9 +127,8 @@ void WireframeManager::register(WireframeManager this, Wireframe wireframe)
  * @param this		Function scope
  * @param wireframe	Wireframe to remove
  */
-void WireframeManager::remove(WireframeManager this, Wireframe wireframe)
+void WireframeManager::remove(Wireframe wireframe)
 {
-	ASSERT(this, "WireframeManager::remove: null this");
 	ASSERT(wireframe, "WireframeManager::remove: null wireframe");
 
 	VirtualList::removeElement(this->wireframes, wireframe);
@@ -155,10 +142,8 @@ void WireframeManager::remove(WireframeManager this, Wireframe wireframe)
  *
  * @param this	Function scope
  */
-void WireframeManager::reset(WireframeManager this)
+void WireframeManager::reset()
 {
-	ASSERT(this, "WireframeManager::reset: null this");
-
 	VirtualList::clear(this->wireframes);
 }
 
@@ -170,10 +155,8 @@ void WireframeManager::reset(WireframeManager this)
  *
  * @param this	Function scope
  */
-void WireframeManager::drawWireframes(WireframeManager this)
+void WireframeManager::drawWireframes()
 {
-	ASSERT(this, "WireframeManager::draw: null this");
-
 	// comparing against the other shapes
 	VirtualNode node = this->wireframes->head;
 
@@ -194,7 +177,7 @@ void WireframeManager::drawWireframes(WireframeManager this)
  * @param x		Camera's x coordinate
  * @param y		Camera's y coordinate
  */
-void WireframeManager::print(WireframeManager this, int x, int y)
+void WireframeManager::print(int x, int y)
 {
 	Printing::text(Printing::getInstance(), "WireframeManager's status", x, y++, NULL);
 	y++;

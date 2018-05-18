@@ -55,10 +55,8 @@ friend class VirtualList;
  *
  * @param this	Function scope
  */
-void Wireframe::constructor(Wireframe this)
+void Wireframe::constructor()
 {
-	ASSERT(this, "Wireframe::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 }
@@ -71,10 +69,8 @@ void Wireframe::constructor(Wireframe this)
  *
  * @param this	Function scope
  */
-void Wireframe::destructor(Wireframe this)
+void Wireframe::destructor()
 {
-	ASSERT(this, "Wireframe::destructor: null this");
-
 	Wireframe::hide(this);
 
 	// destroy the super object
@@ -90,10 +86,8 @@ void Wireframe::destructor(Wireframe this)
  *
  * @param this	Function scope
  */
-void Wireframe::show(Wireframe this)
+void Wireframe::show()
 {
-	ASSERT(this, "Wireframe::show: null this");
-
 	WireframeManager::register(WireframeManager::getInstance(), this);
 }
 
@@ -105,9 +99,7 @@ void Wireframe::show(Wireframe this)
  *
  * @param this	Function scope
  */
-void Wireframe::hide(Wireframe this)
+void Wireframe::hide()
 {
-	ASSERT(this, "Wireframe::hide: null this");
-
 	WireframeManager::remove(WireframeManager::getInstance(), this);
 }

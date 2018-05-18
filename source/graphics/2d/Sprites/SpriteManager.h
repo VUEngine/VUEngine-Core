@@ -118,30 +118,31 @@ singleton class SpriteManager : Object
 	s8 waitToWriteSpriteTextures;
 
 	static SpriteManager getInstance();
-	Sprite createSprite(SpriteManager this, SpriteDefinition* spriteDefinition, Object owner);
-	void deferParamTableEffects(SpriteManager this, bool deferAffineTransformations);
-	void deferTextureWriting(SpriteManager this, bool deferTextureWriting);
-	void destructor(SpriteManager this);
-	void disposeSprite(SpriteManager this, Sprite sprite);
-	void disposeSprites(SpriteManager this);
-	u8 getFreeLayer(SpriteManager this);
-	int getMaximumParamTableRowsToComputePerCall(SpriteManager this);
-	Sprite getSpriteAtLayer(SpriteManager this, u8 layer);
-	s8 getTexturesMaximumRowsToWrite(SpriteManager this);
-	void print(SpriteManager this, int x, int y, bool resumed);
-	void processFreedLayers(SpriteManager this);
-	void processLayers(SpriteManager this);
-	void recoverLayers(SpriteManager this);
-	void render(SpriteManager this);
-	void renderLastLayer(SpriteManager this);
-	void reset(SpriteManager this);
-	void setCyclesToWaitForTextureWriting(SpriteManager this, u8 cyclesToWaitForTextureWriting);
-	void setMaximumParamTableRowsToComputePerCall(SpriteManager this, int maximumAffineRowsToComputePerCall);
-	void setTexturesMaximumRowsToWrite(SpriteManager this, u8 texturesMaximumRowsToWrite);
-	void setupObjectSpriteContainers(SpriteManager this, s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
-	void showLayer(SpriteManager this, u8 layer);
-	void sortLayers(SpriteManager this);
-	void writeTextures(SpriteManager this);
+	Sprite createSprite(SpriteDefinition* spriteDefinition, Object owner);
+	void deferParamTableEffects(bool deferAffineTransformations);
+	void deferTextureWriting(bool deferTextureWriting);
+	void destructor();
+	void disposeSprite(Sprite sprite);
+	void disposeSprites();
+	u8 getFreeLayer();
+	int getMaximumParamTableRowsToComputePerCall();
+	Sprite getSpriteAtLayer(u8 layer);
+	s8 getTexturesMaximumRowsToWrite();
+	void print(int x, int y, bool resumed);
+	void processFreedLayers();
+	void processLayers();
+	void recoverLayers();
+	void render();
+	void renderLastLayer();
+	void reset();
+	void setCyclesToWaitForTextureWriting(u8 cyclesToWaitForTextureWriting);
+	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
+	void setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite);
+	void setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
+	void showLayer(u8 layer);
+	void sortLayers();
+	void sortLayersProgressively();
+	void writeTextures();
 }
 
 

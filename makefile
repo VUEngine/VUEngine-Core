@@ -109,7 +109,7 @@ COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
 # The next blocks changes some variables depending on the build type
 ifeq ($(TYPE),debug)
 LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
 MACROS = __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
@@ -217,7 +217,7 @@ $(WORKING_FOLDER)/preprocessor/$(SETUP_CLASSES).c: setupClasses
 
 $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 	@echo "Preparing virtual methods in engine"
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/prepareVirtualMethods.sh -d -w $(WORKING_FOLDER)/preprocessor -h $(WORKING_FOLDER)/source/$(VUENGINE_HOME)/source -p $(HELPERS_PREFIX)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/analyzeHeaderFile.sh -d -w $(WORKING_FOLDER)/preprocessor -h $(WORKING_FOLDER)/source/$(VUENGINE_HOME)/source -p $(HELPERS_PREFIX)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
@@ -230,7 +230,10 @@ $(STORE)/%.o: $(WORKING_FOLDER)/source/%.c
 $(WORKING_FOLDER)/source/%.c: %.c
 	@echo "Compiling "$<
 #	@echo into $@
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processVirtualCalls.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
+#	@$(GCC) -fpreprocessed -dD -E $< > $@.clean
+#	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $@.clean -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
+#	@rm $@.clean
 
 $(STORE)/%.o: %.s
 	@echo Creating object file for $*
@@ -238,7 +241,7 @@ $(STORE)/%.o: %.s
 
 $(WORKING_FOLDER)/source/%.h: %.h
 	@echo Analysing $<
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeader.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor -c $(CLASSES_HIERARCHY_FILE)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor -c $(CLASSES_HIERARCHY_FILE)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;

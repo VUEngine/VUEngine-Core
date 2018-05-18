@@ -46,7 +46,6 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 /**
  * Class constructor
  *
@@ -56,10 +55,8 @@ friend class VirtualList;
  * @param this		Function scope
  * @param owner		the StateMachine's owner
  */
-void StateMachine::constructor(StateMachine this, void* owner)
+void StateMachine::constructor(void* owner)
 {
-	ASSERT(this, "StateMachine::constructor: null this");
-
 	// construct base object
 	Base::constructor();
 
@@ -78,9 +75,8 @@ void StateMachine::constructor(StateMachine this, void* owner)
  *
  * @param this		Function scope
  */
-void StateMachine::destructor(StateMachine this)
+void StateMachine::destructor()
 {
-	ASSERT(this, "StateMachine::destructor: null this");
 	ASSERT(this->stateStack, "StateMachine::destructor: null stateStack");
 
 	// delete the stack
@@ -107,10 +103,8 @@ void StateMachine::destructor(StateMachine this)
  *
  * @param this		Function scope
  */
-void StateMachine::update(StateMachine this)
+void StateMachine::update()
 {
-	ASSERT(this, "StateMachine::update: null this");
-
 	if(this->currentState)
 	{
 		 State::execute(this->currentState, this->owner);
@@ -126,9 +120,8 @@ void StateMachine::update(StateMachine this)
  * @param this		Function scope
  * @param newState	State to switch to
  */
-void StateMachine::swapState(StateMachine this, State newState)
+void StateMachine::swapState(State newState)
 {
-	ASSERT(this, "StateMachine::swapState: null this");
 	ASSERT(newState, "StateMachine::swapState: null newState");
 
 	// update the stack
@@ -165,10 +158,8 @@ void StateMachine::swapState(StateMachine this, State newState)
  *
  * @return 			Resulting stack's size
  */
-u32 StateMachine::pushState(StateMachine this, State newState)
+u32 StateMachine::pushState(State newState)
 {
-	ASSERT(this, "StateMachine::pushState: null this");
-
 	if(!newState)
 	{
 		return StateMachine::getStackSize(this);
@@ -206,10 +197,8 @@ u32 StateMachine::pushState(StateMachine this, State newState)
  *
  * @return 			Resulting stack's size
  */
-u32 StateMachine::popState(StateMachine this)
+u32 StateMachine::popState()
 {
-	ASSERT(this, "StateMachine::popState: null this");
-
 	// return in case the stack is empty
 	if(StateMachine::getStackSize(this) == 0)
 	{
@@ -248,10 +237,8 @@ u32 StateMachine::popState(StateMachine this)
  *
  * @param this		Function scope
  */
-void StateMachine::returnToPreviousState(StateMachine this)
+void StateMachine::returnToPreviousState()
 {
-	ASSERT(this, "StateMachine::returnToPreviousState: null this");
-
 	if(this->previousState)
 	{
 		if(this->currentState)
@@ -274,10 +261,8 @@ void StateMachine::returnToPreviousState(StateMachine this)
  * @param this			Function scope
  * @param globalState	State to switch to
  */
-void StateMachine::changeToGlobal(StateMachine this, State globalState)
+void StateMachine::changeToGlobal(State globalState)
 {
-	ASSERT(this, "StateMachine::changeToGlobal: null this");
-
 	if(!globalState)
 	{
 		return;
@@ -305,10 +290,8 @@ void StateMachine::changeToGlobal(StateMachine this, State globalState)
  *
  * @return				True if successfully processed, false otherwise
  */
-bool StateMachine::handleMessage(StateMachine this, Telegram telegram)
+bool StateMachine::handleMessage(Telegram telegram)
 {
-	ASSERT(this, "StateMachine::handleMessage: null this");
-
 	if(this->currentState )
 	{
 		return  State::processMessage(this->currentState, this->owner, telegram);
@@ -328,10 +311,8 @@ bool StateMachine::handleMessage(StateMachine this, Telegram telegram)
  *
  * @return				True if the given state is the current one
  */
-bool StateMachine::isInState(StateMachine this, const State state)
+bool StateMachine::isInState(const State state)
 {
-	ASSERT(this, "StateMachine::isInState: null this");
-
 	return (this->currentState == state) ? true : false;
 }
 
@@ -344,10 +325,8 @@ bool StateMachine::isInState(StateMachine this, const State state)
  * @param this			Function scope
  * @param owner			New owner
  */
-void StateMachine::setOwner(StateMachine this, void* owner)
+void StateMachine::setOwner(void* owner)
 {
-	ASSERT(this, "StateMachine::setOwner: null this");
-
 	this->owner = owner;
 }
 
@@ -361,10 +340,8 @@ void StateMachine::setOwner(StateMachine this, void* owner)
  *
  * @return				Current state
  */
-State StateMachine::getCurrentState(StateMachine this)
+State StateMachine::getCurrentState()
 {
-	ASSERT(this, "StateMachine::getCurrentState: null this");
-
 	return this->currentState;
 }
 
@@ -378,10 +355,8 @@ State StateMachine::getCurrentState(StateMachine this)
  *
  * @return				Second state in the stack
  */
-State StateMachine::getPreviousState(StateMachine this)
+State StateMachine::getPreviousState()
 {
-	ASSERT(this, "StateMachine::getPreviousState: null this");
-
 	VirtualNode node = this->stateStack->head;
 
 	if(node)
@@ -404,9 +379,7 @@ State StateMachine::getPreviousState(StateMachine this)
  *
  * @return				The size of the stack
  */
-int StateMachine::getStackSize(StateMachine this)
+int StateMachine::getStackSize()
 {
-	ASSERT(this, "StateMachine::getStackSize: null this");
-
 	return VirtualList::getSize(this->stateStack);
 }

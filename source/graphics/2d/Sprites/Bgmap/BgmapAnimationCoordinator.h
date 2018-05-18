@@ -36,9 +36,9 @@
 
 class BgmapAnimationCoordinator : AnimationCoordinator
 {
-	void constructor(BgmapAnimationCoordinator this, const CharSetDefinition* charSetDefinition);
-	override void addAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
-	override void removeAnimationController(BgmapAnimationCoordinator this, AnimationController animationController);
+	void constructor(const CharSetDefinition* charSetDefinition);
+	override void addAnimationController(AnimationController animationController);
+	override void removeAnimationController(AnimationController animationController);
 }
 
 

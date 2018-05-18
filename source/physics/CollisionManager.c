@@ -55,23 +55,13 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 
-
-
 // class's constructor
-void CollisionManager::constructor(CollisionManager this)
+void CollisionManager::constructor()
 {
-	ASSERT(this, "CollisionManager::constructor: null this");
-
 	Base::constructor();
 
 	// create the shape list
@@ -86,9 +76,8 @@ void CollisionManager::constructor(CollisionManager this)
 }
 
 // class's destructor
-void CollisionManager::destructor(CollisionManager this)
+void CollisionManager::destructor()
 {
-	ASSERT(this, "CollisionManager::destructor: null this");
 	ASSERT(this->shapes, "CollisionManager::destructor: null shapes");
 
 	CollisionManager::reset(this);
@@ -103,10 +92,8 @@ void CollisionManager::destructor(CollisionManager this)
 }
 
 // register a shape
-Shape CollisionManager::createShape(CollisionManager this, SpatialObject owner, const ShapeDefinition* shapeDefinition)
+Shape CollisionManager::createShape(SpatialObject owner, const ShapeDefinition* shapeDefinition)
 {
-	ASSERT(this, "CollisionManager::createShape: null this");
-
 	// create the shape
 	Shape shape = ((Shape (*)(SpatialObject)) shapeDefinition->allocator)(owner);
 	Shape::setup(shape, shapeDefinition->layers, shapeDefinition->layersToIgnore);
@@ -120,10 +107,8 @@ Shape CollisionManager::createShape(CollisionManager this, SpatialObject owner, 
 }
 
 // remove a shape
-void CollisionManager::destroyShape(CollisionManager this, Shape shape)
+void CollisionManager::destroyShape(Shape shape)
 {
-	ASSERT(this, "CollisionManager::destroyShape: null this");
-
 	if(shape && VirtualList::find(this->shapes, shape))
 	{
 		VirtualList::removeElement(this->shapes, shape);
@@ -135,10 +120,8 @@ void CollisionManager::destroyShape(CollisionManager this, Shape shape)
 }
 
 // calculate collisions
-u32 CollisionManager::update(CollisionManager this, Clock clock)
+u32 CollisionManager::update(Clock clock)
 {
-	ASSERT(this, "CollisionManager::update: null this");
-
 	if(clock->paused)
 	{
 		return false;
@@ -281,9 +264,8 @@ u32 CollisionManager::update(CollisionManager this, Clock clock)
 }
 
 // unregister all shapes
-void CollisionManager::reset(CollisionManager this)
+void CollisionManager::reset()
 {
-	ASSERT(this, "CollisionManager::reset: null this");
 	ASSERT(this->shapes, "CollisionManager::reset: null shapes");
 
 	VirtualNode node = this->shapes->head;
@@ -306,9 +288,8 @@ void CollisionManager::reset(CollisionManager this)
 }
 
 // inform of a change in the shape
-void CollisionManager::shapeStartedMoving(CollisionManager this, Shape shape)
+void CollisionManager::shapeStartedMoving(Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeStartedMoving: null this");
 	ASSERT(shape, "CollisionManager::shapeStartedMoving: null shape");
 
 	if(!VirtualList::find(this->movingShapes, shape))
@@ -318,19 +299,16 @@ void CollisionManager::shapeStartedMoving(CollisionManager this, Shape shape)
 }
 
 // inform of a change in the shape
-void CollisionManager::shapeStoppedMoving(CollisionManager this, Shape shape)
+void CollisionManager::shapeStoppedMoving(Shape shape)
 {
-	ASSERT(this, "CollisionManager::shapeStoppedMoving: null this");
 	ASSERT(shape, "CollisionManager::shapeStoppedMoving: null shape");
 
 	VirtualList::removeElement(this->movingShapes, shape);
 }
 
 // draw shapes
-void CollisionManager::showShapes(CollisionManager this)
+void CollisionManager::showShapes()
 {
-	ASSERT(this, "CollisionManager::drawShapes: null this");
-
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
 
@@ -342,10 +320,8 @@ void CollisionManager::showShapes(CollisionManager this)
 }
 
 // free memory by deleting direct draw Polyhedrons
-void CollisionManager::hideShapes(CollisionManager this)
-{
-	ASSERT(this, "CollisionManager::drawShapes: null this");
-//	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
+void CollisionManager::hideShapes()
+{//	ASSERT(this->shapes, "CollisionManager::drawShapes: null shapes");
 
 	// comparing against the other shapes
 	VirtualNode node = this->shapes->head;
@@ -357,10 +333,8 @@ void CollisionManager::hideShapes(CollisionManager this)
 	}
 }
 
-int CollisionManager::getNumberOfActiveShapes(CollisionManager this)
+int CollisionManager::getNumberOfActiveShapes()
 {
-	ASSERT(this, "CollisionManager::getNumberOfActiveShapes: null this");
-
 	int count = 0;
 
 	// comparing against the other shapes
@@ -381,10 +355,8 @@ int CollisionManager::getNumberOfActiveShapes(CollisionManager this)
 }
 
 // print status
-void CollisionManager::print(CollisionManager this, int x, int y)
+void CollisionManager::print(int x, int y)
 {
-	ASSERT(this, "CollisionManager::print: null this");
-
 	Printing::resetWorldCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "COLLISION MANAGER", x, y++, NULL);

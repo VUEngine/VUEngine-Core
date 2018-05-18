@@ -46,17 +46,19 @@ extern const Optical* _optical;
 //											3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Calculate parallax based on the x and z coordinates
- *
- * @fn				Optics_calculateParallax()
- * @public
- *
- * @param x			X parameter for the calculation of the parallax displacement
- * @param x			Z parameter for the calculation of the parallax displacement
- */
-extern s16 Optics_calculateParallax(fix10_6 x, fix10_6 z);
-
+static class Optics : Object
+{
+	/**
+	 * Calculate parallax based on the x and z coordinates
+	 *
+	 * @fn				Optics_calculateParallax()
+	 * @public
+	 *
+	 * @param x			X parameter for the calculation of the parallax displacement
+	 * @param x			Z parameter for the calculation of the parallax displacement
+	 */
+	static s16 calculateParallax(fix10_6 x, fix10_6 z);
+}
 
 
 #endif

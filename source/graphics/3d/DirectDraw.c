@@ -42,14 +42,6 @@
  * @ingroup graphics-3d
  */
 
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void DirectDraw::constructor(DirectDraw this);
-
 extern u32* _currentDrawingFrameBufferSet;
 
 
@@ -76,10 +68,8 @@ extern u32* _currentDrawingFrameBufferSet;
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) DirectDraw::constructor(DirectDraw this)
+void DirectDraw::constructor()
 {
-	ASSERT(this, "DirectDraw::constructor: null this");
-
 	Base::constructor();
 }
 
@@ -91,12 +81,10 @@ void __attribute__ ((noinline)) DirectDraw::constructor(DirectDraw this)
  *
  * @param this	Function scope
  */
-void DirectDraw::destructor(DirectDraw this)
+void DirectDraw::destructor()
 {
-	ASSERT(this, "DirectDraw::destructor: null this");
-
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -114,10 +102,8 @@ void DirectDraw::destructor(DirectDraw this)
  * @param y			Camera y coordinate
  * @param color		The color to draw (__COLOR_BRIGHT_RED, __COLOR_MEDIUM_RED or __COLOR_DARK_RED)
  */
-void DirectDraw::drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color)
+static void DirectDraw::drawPixel(u32 buffer, u16 x, u16 y, int color)
 {
-	ASSERT(this, "DirectDraw::drawPixel: null this");
-
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
@@ -145,10 +131,8 @@ void DirectDraw::drawPixel(DirectDraw this __attribute__ ((unused)), u32 buffer,
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-void DirectDraw::drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y)
+static void DirectDraw::drawBlackPixel(u32 buffer, u16 x, u16 y)
 {
-	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
-
 	// a pointer to the buffer
 	//int* pointer = (int*)buffer;
 	BYTE* pointer = (BYTE*)buffer;
@@ -173,13 +157,10 @@ void DirectDraw::drawBlackPixel(DirectDraw this __attribute__ ((unused)), u32 bu
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
-static void DirectDraw::drawBlackPixelWrapper(DirectDraw this __attribute__ ((unused)), u32 buffer, u16 x, u16 y, int color __attribute__ ((unused)))
+static void DirectDraw::drawBlackPixelWrapper(u32 buffer, u16 x, u16 y, int color __attribute__ ((unused)))
 {
-	ASSERT(this, "DirectDraw::drawBlackPixel: null this");
-
-	DirectDraw::drawBlackPixel(this, buffer, x, y);
+	DirectDraw::drawBlackPixel(buffer, x, y);
 }
-
 
 /**
  * Draws a point between two given 2D points
@@ -191,7 +172,7 @@ static void DirectDraw::drawBlackPixelWrapper(DirectDraw this __attribute__ ((un
  * @param point 	Point to draw
  * @param color		The color to draw (0-3)
  */
-void DirectDraw::drawPoint(DirectDraw this, PixelVector point, int color)
+void DirectDraw::drawPoint(PixelVector point, int color)
 {
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
@@ -201,14 +182,14 @@ void DirectDraw::drawPoint(DirectDraw this, PixelVector point, int color)
 		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
 	)
 	{
-		DirectDraw::drawPixel(this, leftBuffer, (u16)(point.x - point.parallax), (u16)point.y, color);
+		DirectDraw::drawPixel(leftBuffer, (u16)(point.x - point.parallax), (u16)point.y, color);
 	}
 	if((unsigned)(point.x + point.parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
 		&&
 		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
 	)
 	{
-		DirectDraw::drawPixel(this, rightBuffer, (u16)(point.x + point.parallax), (u16)point.y, color);
+		DirectDraw::drawPixel(rightBuffer, (u16)(point.x + point.parallax), (u16)point.y, color);
 	}
 }
 
@@ -223,10 +204,8 @@ void DirectDraw::drawPoint(DirectDraw this, PixelVector point, int color)
  * @param toPoint	Point 2
  * @param color		The color to draw (0-3)
  */
-void DirectDraw::drawLine(DirectDraw this, PixelVector fromPoint, PixelVector toPoint, int color)
+void DirectDraw::drawLine(PixelVector fromPoint, PixelVector toPoint, int color)
 {
-	ASSERT(this, "DirectDraw::drawLine: null this");
-
 	u32 leftBuffer = *_currentDrawingFrameBufferSet | __LEFT_FRAME_BUFFER_0;
 	u32 rightBuffer = *_currentDrawingFrameBufferSet | __RIGHT_FRAME_BUFFER_0;
 
@@ -249,12 +228,12 @@ void DirectDraw::drawLine(DirectDraw this, PixelVector fromPoint, PixelVector to
 	fix19_13 parallax = __I_TO_FIX19_13(fromPoint.parallax);
 	fix19_13 parallaxDelta = __I_TO_FIX19_13(toPoint.parallax - fromPoint.parallax);
 
-	void (*drawPixelMethod)(DirectDraw this, u32 buffer, u16 x, u16 y, int color) = DirectDraw_drawPixel;
+	void (*drawPixelMethod)(u32 buffer, u16 x, u16 y, int color) = DirectDraw::drawPixel;
 	// duplicating code here since it is much lighter on the cpu
 
 	if(color == __COLOR_BLACK)
 	{
-		drawPixelMethod = DirectDraw_drawBlackPixelWrapper;
+		drawPixelMethod = DirectDraw::drawBlackPixelWrapper;
 	}
 
 	fix19_13* fromCoordinate = NULL;
@@ -325,12 +304,12 @@ void DirectDraw::drawLine(DirectDraw this, PixelVector fromPoint, PixelVector to
 		{
 			if((unsigned)(fromPointX - parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 			{
-				drawPixelMethod(this, leftBuffer, (u16)__FIX19_13_TO_I(fromPointX - parallax), (u16)__FIX19_13_TO_I(fromPointY), color);
+				drawPixelMethod(leftBuffer, (u16)__FIX19_13_TO_I(fromPointX - parallax), (u16)__FIX19_13_TO_I(fromPointY), color);
 			}
 
 			if((unsigned)(fromPointX + parallax - __I_TO_FIX19_13(_cameraFrustum->x0)) < (unsigned)(__I_TO_FIX19_13(_cameraFrustum->x1) - __I_TO_FIX19_13(_cameraFrustum->x0)))
 			{
-				drawPixelMethod(this, rightBuffer, (u16)__FIX19_13_TO_I(fromPointX + parallax), (u16)__FIX19_13_TO_I(fromPointY), color);
+				drawPixelMethod(rightBuffer, (u16)__FIX19_13_TO_I(fromPointX + parallax), (u16)__FIX19_13_TO_I(fromPointY), color);
 			}
 		}
 

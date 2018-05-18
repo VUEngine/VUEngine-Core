@@ -67,10 +67,8 @@ extern int strcmp(const char *, const char *);
  * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
-void ObjectAnimatedSprite::constructor(ObjectAnimatedSprite this, const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+void ObjectAnimatedSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
 {
-	ASSERT(this, "ObjectAnimatedSprite::constructor: null this");
-
 	// construct base object
 	Base::constructor((const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
@@ -85,10 +83,8 @@ void ObjectAnimatedSprite::constructor(ObjectAnimatedSprite this, const ObjectSp
  *
  * @param this		Function scope
  */
-void ObjectAnimatedSprite::destructor(ObjectAnimatedSprite this)
+void ObjectAnimatedSprite::destructor()
 {
-	ASSERT(this, "ObjectAnimatedSprite::destructor: null this");
-
 	if(this->animationController)
 	{
 		__DELETE(this->animationController);
@@ -108,10 +104,8 @@ void ObjectAnimatedSprite::destructor(ObjectAnimatedSprite this)
  *
  * @param this		Function scope
  */
-void ObjectAnimatedSprite::writeAnimation(ObjectAnimatedSprite this)
+void ObjectAnimatedSprite::writeAnimation()
 {
-	ASSERT(this, "ObjectAnimatedSprite::writeAnimation: null this");
-
 	if(0 > this->objectIndex)
 	{
 		return;

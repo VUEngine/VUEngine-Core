@@ -46,13 +46,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-void AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -75,10 +68,8 @@ void AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this);
  *
  * @param this	Function scope
  */
-void __attribute__ ((noinline)) AnimationCoordinatorFactory::constructor(AnimationCoordinatorFactory this)
+void AnimationCoordinatorFactory::constructor()
 {
-	ASSERT(this, "AnimationCoordinatorFactory::constructor: null this");
-
 	Base::constructor();
 
 	this->animationCoordinators = __NEW(VirtualList);
@@ -92,9 +83,8 @@ void __attribute__ ((noinline)) AnimationCoordinatorFactory::constructor(Animati
  *
  * @param this	Function scope
  */
-void AnimationCoordinatorFactory::destructor(AnimationCoordinatorFactory this)
+void AnimationCoordinatorFactory::destructor()
 {
-	ASSERT(this, "AnimationCoordinatorFactory::destructor: null this");
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
 
 	AnimationCoordinatorFactory::reset(this);
@@ -102,7 +92,7 @@ void AnimationCoordinatorFactory::destructor(AnimationCoordinatorFactory this)
 	this->animationCoordinators = NULL;
 
 	// allow a new construct
-	__SINGLETON_DESTROY;
+	Base::destructor();
 }
 
 /**
@@ -113,10 +103,8 @@ void AnimationCoordinatorFactory::destructor(AnimationCoordinatorFactory this)
  *
  * @param this	Function scope
  */
-void AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory this)
+void AnimationCoordinatorFactory::reset()
 {
-	ASSERT(this, "AnimationCoordinatorFactory::reset: null this");
-
 	VirtualNode node = this->animationCoordinators->head;
 
 	for(; node; node = node->next)
@@ -140,9 +128,8 @@ void AnimationCoordinatorFactory::reset(AnimationCoordinatorFactory this)
  *
  * @return						AnimationCoordinator instance
  */
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationCoordinatorFactory this, AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
 {
-	ASSERT(this, "AnimationCoordinatorFactory::getCoordinator: null this");
 	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
 	ASSERT(charSetDefinition, "AnimationCoordinatorFactory::getCoordinator: null charSetDefinition");
 

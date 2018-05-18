@@ -49,10 +49,10 @@ typedef struct UiContainerDefinition
 
 class UiContainer : Container
 {
-	void constructor(UiContainer this, UiContainerDefinition* uiContainerDefinition);
-	virtual void addEntities(UiContainer this, PositionedEntity* entities);
-	override void transform(UiContainer this, const Transformation* environmentTransform, u8 invalidateTransformationFlag);
-	override void initialTransform(UiContainer this, const Transformation* environmentTransform, u32 recursive);
+	void constructor(UiContainerDefinition* uiContainerDefinition);
+	virtual void addEntities(PositionedEntity* entities);
+	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
+	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
 }
 
 

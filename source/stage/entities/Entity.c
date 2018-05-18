@@ -53,23 +53,6 @@ friend class VirtualList;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// global
-
-u32 EntityFactory::instantiateEntities(EntityFactory this);
-u32 EntityFactory::initializeEntities(EntityFactory this);
-u32 EntityFactory::transformEntities(EntityFactory this);
-u32 EntityFactory::makeReadyEntities(EntityFactory this);
-u32 EntityFactory::callLoadedEntities(EntityFactory this);
-
-static void Entity::updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection);
-static void Entity::addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes);
-static void Entity::destroyShapes(Entity this);
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -85,10 +68,8 @@ static void Entity::destroyShapes(Entity this);
  * @param internalId
  * @param name
  */
-void Entity::constructor(Entity this, EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
+void Entity::constructor(EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
 {
-	ASSERT(this, "Entity::constructor: null this");
-
 	// construct base Container
 	Base::constructor(name);
 
@@ -119,10 +100,8 @@ void Entity::constructor(Entity this, EntityDefinition* entityDefinition, s16 id
  *
  * @param this	Function scope
  */
-void Entity::destructor(Entity this)
+void Entity::destructor()
 {
-	ASSERT(this, "Entity::destructor: null this");
-
 	Entity::destroyShapes(this);
 
 	if(this->centerDisplacement)
@@ -150,10 +129,8 @@ void Entity::destructor(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::iAmDeletingMyself(Entity this)
+void Entity::iAmDeletingMyself()
 {
-	ASSERT(this, "Entity::iAmDeletingMyself: null this");
-
 	Base::iAmDeletingMyself(this);
 
 	// destroy collision shapes
@@ -171,10 +148,8 @@ void Entity::iAmDeletingMyself(Entity this)
  *
  * @return		Internal ID
  */
-s16 Entity::getInternalId(Entity this)
+s16 Entity::getInternalId()
 {
-	ASSERT(this, "Entity::getInternalId: null this");
-
 	return this->internalId;
 }
 
@@ -188,10 +163,8 @@ s16 Entity::getInternalId(Entity this)
  *
  * @return		ID
  */
-s16 Entity::getId(Entity this)
+s16 Entity::getId()
 {
-	ASSERT(this, "Entity::getId: null this");
-
 	return this->id;
 }
 
@@ -206,10 +179,8 @@ s16 Entity::getId(Entity this)
  *
  * @return		Child Entity
  */
-Entity Entity::getChildById(Entity this, s16 id)
+Entity Entity::getChildById(s16 id)
 {
-	ASSERT(this, "Entity::getChildById: null this");
-
 	if(this->children)
 	{
 		VirtualNode node = this->children->head;
@@ -238,10 +209,8 @@ Entity Entity::getChildById(Entity this, s16 id)
  * @param this				Function scope
  * @param entityDefinition	EntityDefinition
  */
-void Entity::setDefinition(Entity this, void* entityDefinition)
+void Entity::setDefinition(void* entityDefinition)
 {
-	ASSERT(this, "Entity::setDefinition: null this");
-
 	// save definition
 	this->entityDefinition = entityDefinition;
 }
@@ -254,10 +223,8 @@ void Entity::setDefinition(Entity this, void* entityDefinition)
  *
  * @param this	Function scope
  */
-static void Entity::destroyShapes(Entity this)
+void Entity::destroyShapes()
 {
-	ASSERT(this, "Entity::setDefinition: null this");
-
 	if(this->shapes)
 	{
 		ASSERT(__IS_OBJECT_ALIVE(this->shapes), "Entity::setDefinition: dead shapes");
@@ -282,10 +249,8 @@ static void Entity::destroyShapes(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::setupGraphics(Entity this)
+void Entity::setupGraphics()
 {
-	ASSERT(this, "Entity::setupGraphics: null this");
-
 	Base::setupGraphics(this);
 
 	Entity::addSprites(this, this->entityDefinition->spriteDefinitions);
@@ -299,10 +264,8 @@ void Entity::setupGraphics(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::releaseGraphics(Entity this)
+void Entity::releaseGraphics()
 {
-	ASSERT(this, "Entity::releaseGraphics: null this");
-
 	Base::releaseGraphics(this);
 
 	Entity::releaseSprites(this);
@@ -316,10 +279,8 @@ void Entity::releaseGraphics(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::releaseSprites(Entity this)
+void Entity::releaseSprites()
 {
-	ASSERT(this, "Entity::releaseSprites: null this");
-
 	if(this->sprites)
 	{
 		VirtualNode node = this->sprites->head;
@@ -347,10 +308,8 @@ void Entity::releaseSprites(Entity this)
  * @param pixelRightBox
  * @param environmentPosition
  */
-static void Entity::calculateSizeFromChildren(Entity this, PixelRightBox* pixelRightBox, Vector3D environmentPosition)
+void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D environmentPosition)
 {
-	ASSERT(this, "Entity::calculateSizeFromChildren: null this");
-
 	PixelVector pixelGlobalPosition = PixelVector::getFromVector3D(environmentPosition, 0);
 
 	pixelGlobalPosition.x += __METERS_TO_PIXELS(this->transformation.localPosition.x);
@@ -473,10 +432,8 @@ static void Entity::calculateSizeFromChildren(Entity this, PixelRightBox* pixelR
  *
  * @param this	Function scope
  */
-void Entity::calculateSize(Entity this)
+void Entity::calculateSize()
 {
-	ASSERT(this, "Entity::calculateSize: null this");
-
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
 	Entity::calculateSizeFromChildren(this, &pixelRightBox, (Vector3D){0, 0, 0});
@@ -700,7 +657,7 @@ static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEnti
  *
  * @return						PixelRightBox
  */
-PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
+static PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
@@ -728,7 +685,7 @@ PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* positio
  *
  * @return						Entity's global position
  */
-Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
+static Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
 {
 	ASSERT(childrenDefinitions, "Entity::calculateGlobalPositionFromDefinitionByName: null positionedEntity");
 
@@ -783,7 +740,7 @@ Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struct Posit
  *
  * @return					Entity instance
  */
-Entity Entity::instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
+static Entity Entity::instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
 {
 	ASSERT(entityDefinition, "Entity::load: null definition");
 	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
@@ -814,10 +771,8 @@ Entity Entity::instantiate(const EntityDefinition* const entityDefinition, s16 i
  * @param this					Function scope
  * @param childrenDefinitions
  */
-void Entity::addChildEntities(Entity this, const PositionedEntity* childrenDefinitions)
+void Entity::addChildEntities(const PositionedEntity* childrenDefinitions)
 {
-	ASSERT(this, "Entity::loadChildren: null this");
-
 	if(!childrenDefinitions)
 	{
 		return;
@@ -847,7 +802,7 @@ void Entity::addChildEntities(Entity this, const PositionedEntity* childrenDefin
  *
  * @return					Entity
  */
-Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
+static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
 
@@ -882,9 +837,8 @@ Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 in
  * @param this					Function scope
  * @param childrenDefinitions
  */
-void Entity::addChildEntitiesDeferred(Entity this, const PositionedEntity* childrenDefinitions)
+void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinitions)
 {
-	ASSERT(this, "Entity::addChildEntitiesDeferred: null this");
 	ASSERT(childrenDefinitions, "Entity::addChildEntitiesDeferred: null childrenDefinitions");
 
 	if(!childrenDefinitions)
@@ -917,7 +871,7 @@ void Entity::addChildEntitiesDeferred(Entity this, const PositionedEntity* child
  *
  * @return					Entity
  */
-Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
+static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
 {
 	ASSERT(positionedEntity, "Entity::loadEntityDeferred: null positionedEntity");
 
@@ -963,9 +917,8 @@ Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity
  *
  * @return					Entity
  */
-Entity Entity::addChildEntity(Entity this, const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
 {
-	ASSERT(this, "Entity::addChildEntity: null this");
 	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
 
 	if(!entityDefinition)
@@ -1027,10 +980,8 @@ Entity Entity::addChildEntity(Entity this, const EntityDefinition* entityDefinit
  *
  * @return		Boolean whether all children are instantiated
  */
-u32 Entity::areAllChildrenInstantiated(Entity this)
+u32 Entity::areAllChildrenInstantiated()
 {
-	ASSERT(this, "Entity::areAllChildrenInstantiated: null this");
-
 	if(this->entityFactory)
 	{
 		return __LIST_EMPTY == EntityFactory::instantiateEntities(this->entityFactory);
@@ -1049,10 +1000,8 @@ u32 Entity::areAllChildrenInstantiated(Entity this)
  *
  * @return		Boolean whether all children are initialized
  */
-u32 Entity::areAllChildrenInitialized(Entity this)
+u32 Entity::areAllChildrenInitialized()
 {
-	ASSERT(this, "Entity::areAllChildrenInitialized: null this");
-
 	if(this->entityFactory)
 	{
 		return __LIST_EMPTY == EntityFactory::initializeEntities(this->entityFactory);
@@ -1071,10 +1020,8 @@ u32 Entity::areAllChildrenInitialized(Entity this)
  *
  * @return		Boolean whether all children are transformed
  */
-u32 Entity::areAllChildrenTransformed(Entity this)
+u32 Entity::areAllChildrenTransformed()
 {
-	ASSERT(this, "Entity::areAllChildrenTransformed: null this");
-
 	if(this->entityFactory)
 	{
 		return __LIST_EMPTY == EntityFactory::transformEntities(this->entityFactory);
@@ -1093,10 +1040,8 @@ u32 Entity::areAllChildrenTransformed(Entity this)
  *
  * @return		Boolean whether all children are ready
  */
-u32 Entity::areAllChildrenReady(Entity this)
+u32 Entity::areAllChildrenReady()
 {
-	ASSERT(this, "Entity::areAllChildrenReady: null this");
-
 	if(this->entityFactory)
 	{
 		u32 returnValue = __LIST_EMPTY == EntityFactory::makeReadyEntities(this->entityFactory);
@@ -1126,10 +1071,8 @@ u32 Entity::areAllChildrenReady(Entity this)
  *
  * @param this					Function scope
  */
-void Entity::transformShapes(Entity this)
+void Entity::transformShapes()
 {
-	ASSERT(this, "Entity::transformShapes: null this");
-
 	if(this->shapes && this->entityDefinition->shapeDefinitions)
 	{
 		const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
@@ -1188,10 +1131,8 @@ void Entity::transformShapes(Entity this)
  * @param this					Function scope
  * @param shapeDefinitions		List of shapes
  */
-static void Entity::addShapes(Entity this, const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
+void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
 {
-	ASSERT(this, "Entity::addShapes: null this");
-
 	if(!shapeDefinitions)
 	{
 		return;
@@ -1229,10 +1170,8 @@ static void Entity::addShapes(Entity this, const ShapeDefinition* shapeDefinitio
  * @param this		Function scope
  * @param recursive
  */
-void Entity::initialize(Entity this, bool recursive)
+void Entity::initialize(bool recursive)
 {
-	ASSERT(this, "Entity::initialize: null this");
-
 	if(recursive && this->children)
 	{
 		// call ready method on children
@@ -1254,10 +1193,8 @@ void Entity::initialize(Entity this, bool recursive)
  * @param this		Function scope
  * @param recursive
  */
-void Entity::ready(Entity this, bool recursive)
+void Entity::ready(bool recursive)
 {
-	ASSERT(this, "Entity::ready: null this");
-
 	if(recursive && this->children)
 	{
 		// call ready method on children
@@ -1279,9 +1216,8 @@ void Entity::ready(Entity this, bool recursive)
  * @param this		Function scope
  * @param extraInfo
  */
-void Entity::setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo __attribute__ ((unused)))
+void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 {
-	ASSERT(this, "Entity::setExtraInfo: null this");
 }
 
 /**
@@ -1293,10 +1229,8 @@ void Entity::setExtraInfo(Entity this __attribute__ ((unused)), void* extraInfo 
  * @param this					Function scope
  * @param spriteDefinitions
  */
-void Entity::addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
+void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 {
-	ASSERT(this, "Entity::addSprites: null this");
-
 	if(!spriteDefinitions)
 	{
 		return;
@@ -1332,10 +1266,8 @@ void Entity::addSprites(Entity this, const SpriteDefinition** spriteDefinitions)
  *
  * @return							True if a sprite was created
  */
-bool Entity::addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionIndex)
+bool Entity::addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex)
 {
-	ASSERT(this, "Entity::addSprite: null this");
-
 	if(!this->entityDefinition->spriteDefinitions)
 	{
 		return false;
@@ -1359,10 +1291,8 @@ bool Entity::addSpriteFromDefinitionAtIndex(Entity this, int spriteDefinitionInd
 	return true;
 }
 
-static void Entity::updateSprites(Entity this, u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
+void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
 {
-	ASSERT(this, "Entity::transform: null this");
-
 	if(!this->sprites)
 	{
 		return;
@@ -1456,10 +1386,8 @@ static void Entity::updateSprites(Entity this, u32 updatePosition, u32 updateSca
  * @param environmentTransform
  * @param recursive
  */
-void Entity::initialTransform(Entity this, const Transformation* environmentTransform, u32 recursive)
+void Entity::initialTransform(const Transformation* environmentTransform, u32 recursive)
 {
-	ASSERT(this, "Entity::initialTransform: null this");
-
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);
 
@@ -1494,10 +1422,8 @@ void Entity::initialTransform(Entity this, const Transformation* environmentTran
  * @param this					Function scope
  * @param environmentTransform
  */
-void Entity::transform(Entity this, const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void Entity::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
-	ASSERT(this, "Entity::transform: null this");
-
 	if(this->sprites)
 	{
 		this->invalidateSprites = invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
@@ -1524,10 +1450,8 @@ void Entity::transform(Entity this, const Transformation* environmentTransform, 
  *
  * @param this	Function scope
  */
-void Entity::setLocalPosition(Entity this, const Vector3D* position)
+void Entity::setLocalPosition(const Vector3D* position)
 {
-	ASSERT(this, "Entity::setLocalPosition: null this");
-
 	Base::setLocalPosition(this, position);
 
 	Entity::transformShapes(this);
@@ -1541,10 +1465,8 @@ void Entity::setLocalPosition(Entity this, const Vector3D* position)
  *
  * @param this	Function scope
  */
-void Entity::setLocalRotation(Entity this, const Rotation* rotation)
+void Entity::setLocalRotation(const Rotation* rotation)
 {
-	ASSERT(this, "Entity::setLocalRotation: null this");
-
 	Base::setLocalRotation(this, rotation);
 
 	Entity::transformShapes(this);
@@ -1558,10 +1480,8 @@ void Entity::setLocalRotation(Entity this, const Rotation* rotation)
  *
  * @param this	Function scope
  */
-void Entity::synchronizeGraphics(Entity this)
+void Entity::synchronizeGraphics()
 {
-	ASSERT(this, "Entity::synchronizeGraphics: null this");
-
 	if(this->children)
 	{
 		Base::synchronizeGraphics(this);
@@ -1582,10 +1502,8 @@ void Entity::synchronizeGraphics(Entity this)
  *
  * @return		EntityDefinition
  */
-EntityDefinition* Entity::getEntityDefinition(Entity this)
+EntityDefinition* Entity::getEntityDefinition()
 {
-	ASSERT(this, "Entity::getEntityDefinition: null this");
-
 	return this->entityDefinition;
 }
 
@@ -1599,10 +1517,8 @@ EntityDefinition* Entity::getEntityDefinition(Entity this)
  *
  * @return		Global position
  */
-const Vector3D* Entity::getPosition(Entity this)
+const Vector3D* Entity::getPosition()
 {
-	ASSERT(this, "Entity::getPosition: null this");
-
 	return &this->transformation.globalPosition;
 }
 
@@ -1616,10 +1532,8 @@ const Vector3D* Entity::getPosition(Entity this)
  *
  * @return		Global rotation
  */
-const Rotation* Entity::getRotation(Entity this)
+const Rotation* Entity::getRotation()
 {
-	ASSERT(this, "Entity::getRotation: null this");
-
 	return &this->transformation.globalRotation;
 }
 
@@ -1633,10 +1547,8 @@ const Rotation* Entity::getRotation(Entity this)
  *
  * @return		Global position
  */
-const Scale* Entity::getScale(Entity this)
+const Scale* Entity::getScale()
 {
-	ASSERT(this, "Entity::getScale: null this");
-
 	return &this->transformation.globalScale;
 }
 
@@ -1650,10 +1562,8 @@ const Scale* Entity::getScale(Entity this)
  *
  * @return		VirtualList of Entity's sprites
  */
-VirtualList Entity::getSprites(Entity this)
+VirtualList Entity::getSprites()
 {
-	ASSERT(this, "Entity::getSprites: null this");
-
 	return this->sprites;
 }
 
@@ -1668,10 +1578,8 @@ VirtualList Entity::getSprites(Entity this)
  *
  * @return			True if successfully processed, false otherwise
  */
-bool Entity::handleMessage(Entity this __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
+bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
 {
-	ASSERT(this, "Entity::handleMessage: null this");
-
 	return false;
 }
 
@@ -1685,10 +1593,8 @@ bool Entity::handleMessage(Entity this __attribute__ ((unused)), Telegram telegr
  *
  * @return		Entity's width
  */
-fix10_6 Entity::getWidth(Entity this)
+fix10_6 Entity::getWidth()
 {
-	ASSERT(this, "Entity::getWidth: null this");
-
 	if(!this->size.x)
 	{
 		Entity::calculateSize(this);
@@ -1708,10 +1614,8 @@ fix10_6 Entity::getWidth(Entity this)
  *
  * @return		Entity's height
  */
-fix10_6 Entity::getHeight(Entity this)
+fix10_6 Entity::getHeight()
 {
-	ASSERT(this, "Entity::getHeight: null this");
-
 	if(!this->size.y)
 	{
 		Entity::calculateSize(this);
@@ -1730,10 +1634,8 @@ fix10_6 Entity::getHeight(Entity this)
  *
  * @return		Entity's depth
  */
-fix10_6 Entity::getDepth(Entity this)
+fix10_6 Entity::getDepth()
 {
-	ASSERT(this, "Entity::getDepth: null this");
-
 	if(!this->size.z)
 	{
 		Entity::calculateSize(this);
@@ -1755,10 +1657,8 @@ fix10_6 Entity::getDepth(Entity this)
  *
  * @return			Boolean if visible
  */
-bool Entity::isVisible(Entity this, int pad, bool recursive)
+bool Entity::isVisible(int pad, bool recursive)
 {
-	ASSERT(this, "Entity::isVisible: null this");
-
 	int x = 0;
 	int y = 0;
 	int z = 0;
@@ -1873,10 +1773,8 @@ bool Entity::isVisible(Entity this, int pad, bool recursive)
  *
  * @return		Boolean if necessary
  */
-bool Entity::updateSpritePosition(Entity this)
+bool Entity::updateSpritePosition()
 {
-	ASSERT(this, "Entity::updateSpritePosition: null this");
-
 	return __INVALIDATE_POSITION & this->invalidateGlobalTransformation;
 }
 
@@ -1890,10 +1788,8 @@ bool Entity::updateSpritePosition(Entity this)
  *
  * @return		Boolean if necessary
  */
-bool Entity::updateSpriteRotation(Entity this)
+bool Entity::updateSpriteRotation()
 {
-	ASSERT(this, "Entity::updateSpriteRotation: null this");
-
 	return __INVALIDATE_ROTATION & this->invalidateGlobalTransformation;
 }
 
@@ -1907,10 +1803,8 @@ bool Entity::updateSpriteRotation(Entity this)
  *
  * @return		Boolean if necessary
  */
-bool Entity::updateSpriteScale(Entity this)
+bool Entity::updateSpriteScale()
 {
-	ASSERT(this, "Entity::updateSpriteScale: null this");
-
 	return __INVALIDATE_SCALE & this->invalidateGlobalTransformation;
 }
 
@@ -1924,10 +1818,8 @@ bool Entity::updateSpriteScale(Entity this)
  *
  * @return		Entity's Shape list
  */
-VirtualList Entity::getShapes(Entity this)
+VirtualList Entity::getShapes()
 {
-	ASSERT(this, "Entity::getShapes: null this");
-
 	return this->shapes;
 }
 
@@ -1939,10 +1831,8 @@ VirtualList Entity::getShapes(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::show(Entity this)
+void Entity::show()
 {
-	ASSERT(this, "Entity::show: null this");
-
 	// update transformation before hiding
 	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
 	 Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
@@ -1975,10 +1865,8 @@ void Entity::show(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::hide(Entity this)
+void Entity::hide()
 {
-	ASSERT(this, "Entity::hide: null this");
-
 	// update transformation before hiding
 	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
 	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
@@ -2008,10 +1896,8 @@ void Entity::hide(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::suspend(Entity this)
+void Entity::suspend()
 {
-	ASSERT(this, "Entity::suspend: null this");
-
 	Base::suspend(this);
 
 	Entity::releaseSprites(this);
@@ -2025,10 +1911,8 @@ void Entity::suspend(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::resume(Entity this)
+void Entity::resume()
 {
-	ASSERT(this, "Entity::resume: null this");
-
 	Base::resume(this);
 
 	// initialize sprites
@@ -2057,10 +1941,8 @@ void Entity::resume(Entity this)
  *
  * @return				Defaults to true
  */
-bool Entity::isSubjectToGravity(Entity this __attribute__ ((unused)), Acceleration gravity __attribute__ ((unused)))
+bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 {
-	ASSERT(this, "Entity::isSubjectToGravity: null this");
-
 	return true;
 }
 
@@ -2074,10 +1956,8 @@ bool Entity::isSubjectToGravity(Entity this __attribute__ ((unused)), Accelerati
  *
  * @return		Defaults to true
  */
-u16 Entity::getAxisForFlipping(Entity this __attribute__ ((unused)))
+u16 Entity::getAxisForFlipping()
 {
-	ASSERT(this, "Entity::getAxisForFlipping: null this");
-
 	return __X_AXIS | __Y_AXIS;
 }
 
@@ -2091,10 +1971,8 @@ u16 Entity::getAxisForFlipping(Entity this __attribute__ ((unused)))
  *
  * @return		Type of entity within the game's logic
  */
-u32 Entity::getInGameType(Entity this)
+u32 Entity::getInGameType()
 {
-	ASSERT(this, "Entity::getInGameType: null this");
-
 	return this->entityDefinition->inGameType;
 }
 
@@ -2108,10 +1986,8 @@ u32 Entity::getInGameType(Entity this)
  *
  * @return		Bounciness
  */
-fix10_6 Entity::getBounciness(Entity this)
+fix10_6 Entity::getBounciness()
 {
-	ASSERT(this, "Entity::getBounciness: null this");
-
 	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->bounciness : 0;
 }
 
@@ -2125,10 +2001,8 @@ fix10_6 Entity::getBounciness(Entity this)
  *
  * @return		Friction
  */
-fix10_6 Entity::getFrictionCoefficient(Entity this)
+fix10_6 Entity::getFrictionCoefficient()
 {
-	ASSERT(this, "Entity::getFrictionCoefficient: null this");
-
 	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->frictionCoefficient : 0;
 }
 
@@ -2140,10 +2014,8 @@ fix10_6 Entity::getFrictionCoefficient(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::informShapesThatStartedMoving(Entity this)
+void Entity::informShapesThatStartedMoving()
 {
-	ASSERT(this, "Entity::informShapesThatStartedMoving: null this");
-
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
@@ -2165,10 +2037,8 @@ void Entity::informShapesThatStartedMoving(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::informShapesThatStoppedMoving(Entity this)
+void Entity::informShapesThatStoppedMoving()
 {
-	ASSERT(this, "Entity::informShapesThatStoppedMoving: null this");
-
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
@@ -2188,10 +2058,8 @@ void Entity::informShapesThatStoppedMoving(Entity this)
  *
  * @param this	Function scope
  */
-void Entity::activateShapes(Entity this, bool value)
+void Entity::activateShapes(bool value)
 {
-	ASSERT(this, "Entity::activateShapes: null this");
-
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
@@ -2212,10 +2080,8 @@ void Entity::activateShapes(Entity this, bool value)
  * @param this			Function scope
  * @param direction		Direction
  */
-void Entity::setDirection(Entity this, Direction direction)
+void Entity::setDirection(Direction direction)
 {
-	ASSERT(this, "Entity::setDirection: null this");
-
 	Direction currentDirection = Entity::getDirection(this);
 
 	// if directions XOR is 0, they are equal
@@ -2252,10 +2118,8 @@ void Entity::setDirection(Entity this, Direction direction)
  *
  * @return		Direction
  */
-Direction Entity::getDirection(Entity this)
+Direction Entity::getDirection()
 {
-	ASSERT(this, "Entity::getDirection: null this");
-
 	Direction direction =
 	{
 		__RIGHT, __DOWN, __FAR
@@ -2289,10 +2153,8 @@ Direction Entity::getDirection(Entity this)
  *
  * @return		Shape layers
  */
-u32 Entity::getShapesLayers(Entity this)
+u32 Entity::getShapesLayers()
 {
-	ASSERT(this, "Entity::getShapesLayers: null this");
-
 	u32 shapesLayers = 0;
 
 	if(this->shapes)
@@ -2319,10 +2181,8 @@ u32 Entity::getShapesLayers(Entity this)
  * @param this	Function scope
  * @param u32	Shape layers
  */
-void Entity::setShapesLayers(Entity this, u32 layers)
+void Entity::setShapesLayers(u32 layers)
 {
-	ASSERT(this, "Entity::setShapesLayers: null this");
-
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
@@ -2346,10 +2206,8 @@ void Entity::setShapesLayers(Entity this, u32 layers)
  *
  * @return		Shape layers to ignore
  */
-u32 Entity::getShapesLayersToIgnore(Entity this)
+u32 Entity::getShapesLayersToIgnore()
 {
-	ASSERT(this, "Entity::getShapesLayersToIgnore: null this");
-
 	u32 shapesLayersToIgnore = 0;
 
 	if(this->shapes)
@@ -2376,10 +2234,8 @@ u32 Entity::getShapesLayersToIgnore(Entity this)
  * @param this	Function scope
  * @param u32	Shape layers to ignore
  */
-void Entity::setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
+void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
 {
-	ASSERT(this, "Entity::setShapesLayersToIgnore: null this");
-
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
@@ -2403,10 +2259,8 @@ void Entity::setShapesLayersToIgnore(Entity this, u32 layersToIgnore)
  *
  * @return		Axes
  */
-u16 Entity::getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused)))
+u16 Entity::getAxesForShapeSyncWithDirection()
 {
-	ASSERT(this, "Entity::getAxesForShapeSyncWithDirection: null this");
-
 	return __ALL_AXES;
 }
 
@@ -2420,9 +2274,7 @@ u16 Entity::getAxesForShapeSyncWithDirection(Entity this __attribute__ ((unused)
  *
  * @return		Boolean whether to respawn this Entity
  */
-bool Entity::respawn(Entity this __attribute__ ((unused)))
+bool Entity::respawn()
 {
-	ASSERT(this, "Entity::respawn: null this");
-
 	return true;
 }

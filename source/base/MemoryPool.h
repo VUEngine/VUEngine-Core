@@ -63,12 +63,12 @@ singleton class MemoryPool : Object
 	u16 poolSizes[__MEMORY_POOLS][3];
 
 	static MemoryPool getInstance();
-	void cleanUp(MemoryPool this);
-	BYTE* allocate(MemoryPool this, int numBytes);
-	void free(MemoryPool this, BYTE* object);
-	void printDirectory(MemoryPool this, int x, int y, int pool);
-	void printDetailedUsage(MemoryPool this, int x, int y);
-	void printResumedUsage(MemoryPool this, int x, int y);
+	void cleanUp();
+	BYTE* allocate(int numBytes);
+	void free(BYTE* object);
+	void printDirectory(int x, int y, int pool);
+	void printDetailedUsage(int x, int y);
+	void printResumedUsage(int x, int y);
 }
 
 
