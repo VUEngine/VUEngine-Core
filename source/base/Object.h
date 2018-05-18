@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Oop.h>
+#include <Constants.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,6 +37,8 @@
 
 class Object;
 class Telegram;
+class Error;
+
 typedef void (*EventListener)(Object, Object);
 typedef Object (*AllocatorPointer)();
 
@@ -60,6 +63,7 @@ abstract class Object : Object
 	VirtualList events;
 
 	static Object getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
+
 	void constructor();
 	void addEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListener(Object listener, EventListener method, u32 eventCode);

@@ -69,7 +69,7 @@ void WireframeManager::constructor()
 {
 	Base::constructor();
 
-	this->wireframes = __NEW(VirtualList);
+	this->wireframes = new VirtualList();
 }
 
 /**
@@ -91,7 +91,7 @@ void WireframeManager::destructor()
 		__DELETE_BASIC(node->next);
 	}
 
-	__DELETE(this->wireframes);
+	delete this->wireframes;
 
 	this->wireframes = NULL;
 

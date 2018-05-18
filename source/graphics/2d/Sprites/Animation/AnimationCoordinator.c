@@ -59,7 +59,7 @@ void AnimationCoordinator::constructor(const CharSetDefinition* charSetDefinitio
 {
 	Base::constructor();
 
-	this->animationControllers = __NEW(VirtualList);
+	this->animationControllers = new VirtualList();
 	this->charSetDefinition = charSetDefinition;
 }
 
@@ -75,7 +75,7 @@ void AnimationCoordinator::destructor()
 {
 	ASSERT(this->animationControllers, "AnimationCoordinator::destructor: null animationControllers");
 
-	__DELETE(this->animationControllers);
+	delete this->animationControllers;
 	this->animationControllers = NULL;
 
 	// destroy the super object

@@ -204,11 +204,11 @@ void Game::constructor()
 	this->clockManager = ClockManager::getInstance();
 
 	// construct the general clock
-	this->clock = __NEW(Clock);
+	this->clock = new Clock();
 	Utilities::setClock(this->clock);
 
 	// construct the game's state machine
-	this->stateMachine = __NEW(StateMachine, this);
+	this->stateMachine = new StateMachine(this);
 
 	this->currentState = NULL;
 	this->nextState = NULL;
@@ -261,7 +261,7 @@ void Game::destructor()
 	// destroy the clocks
 	Clock::destructor(this->clock);
 
-	__DELETE(this->stateMachine);
+	delete this->stateMachine;
 
 	Base::destructor();
 }

@@ -78,7 +78,7 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 	this->totalObjects = totalObjects;
 	this->availableObjects = this->totalObjects;
 	this->firstObjectIndex = firstObjectIndex;
-	this->objectSprites = __NEW(VirtualList);
+	this->objectSprites = new VirtualList();
 	this->objectSpriteNodeToDefragment = NULL;
 	this->freedObjectIndex = 0;
 	this->removingObjectSprite = false;
@@ -121,10 +121,10 @@ void ObjectSpriteContainer::destructor()
 	for(; node; node = node->next)
 	{
 		ObjectSprite::invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, node->data));
-		__DELETE(node->data);
+		delete node->data;
 	}
 
-	__DELETE(this->objectSprites);
+	delete this->objectSprites;
 	this->objectSprites = NULL;
 
 	// destroy the super object

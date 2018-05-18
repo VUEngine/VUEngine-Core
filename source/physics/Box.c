@@ -508,7 +508,7 @@ void Box::configureWireframe()
 	}
 
 	// create a wireframe
-	this->wireframe = __SAFE_CAST(Wireframe, __NEW(Polyhedron));
+	this->wireframe = __SAFE_CAST(Wireframe, new Polyhedron());
 
 	if(this->rotationVertexDisplacement.x | this->rotationVertexDisplacement.y | this->rotationVertexDisplacement.z)
 	{

@@ -111,7 +111,7 @@ void Entity::destructor()
 
 	if(this->entityFactory)
 	{
-		__DELETE(this->entityFactory);
+		delete this->entityFactory;
 	}
 
 	Entity::releaseSprites(this);
@@ -236,7 +236,7 @@ void Entity::destroyShapes()
 			CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(Shape, node->data));
 		}
 
-		__DELETE(this->shapes);
+		delete this->shapes;
 		this->shapes = NULL;
 	}
 }
@@ -293,7 +293,7 @@ void Entity::releaseSprites()
 		}
 
 		// delete the sprites
-		__DELETE(this->sprites);
+		delete this->sprites;
 		this->sprites = NULL;
 	}
 }
@@ -848,7 +848,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinition
 
 	if(!this->entityFactory)
 	{
-		this->entityFactory = __NEW(EntityFactory);
+		this->entityFactory = new EntityFactory();
 	}
 
 	int i = 0;
@@ -1048,7 +1048,7 @@ u32 Entity::areAllChildrenReady()
 
 		if(!EntityFactory::hasEntitiesPending(this->entityFactory))
 		{
-			__DELETE(this->entityFactory);
+			delete this->entityFactory;
 			this->entityFactory = NULL;
 
 			// must force size calculation now that all children are loaded
@@ -1147,7 +1147,7 @@ void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPrev
 
 	if(!this->shapes)
 	{
-		this->shapes = __NEW(VirtualList);
+		this->shapes = new VirtualList();
 	}
 
 	// go through n sprites in entity's definition
@@ -1238,7 +1238,7 @@ void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 
 	if(!this->sprites)
 	{
-		this->sprites = __NEW(VirtualList);
+		this->sprites = new VirtualList();
 	}
 
 	SpriteManager spriteManager = SpriteManager::getInstance();
@@ -1282,7 +1282,7 @@ bool Entity::addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex)
 
 	if(!this->sprites)
 	{
-		this->sprites = __NEW(VirtualList);
+		this->sprites = new VirtualList();
 	}
 
 	// call the appropriate allocator to support inheritance

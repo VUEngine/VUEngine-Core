@@ -92,7 +92,7 @@
 #define __DELETE(object)																				\
 																										\
 		/* since the destructor is the first element in the virtual table */							\
-		ASSERT(object && *(u32*)object, "Deleting null object");										\
+		ASSERT(object && *(u32*)object, "Deleting null object");											\
 		/* ((void (*)(void*))((void***)object)[0][0])(object); */										\
 		((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object)				\
 

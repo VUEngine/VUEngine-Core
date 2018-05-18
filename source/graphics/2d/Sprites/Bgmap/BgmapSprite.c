@@ -751,31 +751,31 @@ s16 BgmapSprite::getParamTableRow()
  * @param this			Function scope
  * @return 				last computed row
  */
-s16 BgmapSprite::doApplyAffineTransformations()
+static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 {
-	ASSERT(this->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
+	ASSERT(bgmapSprite->texture, "BgmapSprite::doApplyAffineTransformations: null texture");
 
-	if(this->param)
+	if(bgmapSprite->param)
 	{
 		return Affine::applyAll(
-			this->param,
-			this->paramTableRow,
+			bgmapSprite->param,
+			bgmapSprite->paramTableRow,
 			// geometrically accurate, but kills the CPU
-			// (0 > this->position.x? this->position.x : 0) + this->halfWidth,
-			// (0 > this->position.y? this->position.y : 0) + this->halfHeight,
+			// (0 > bgmapSprite->position.x? bgmapSprite->position.x : 0) + bgmapSprite->halfWidth,
+			// (0 > bgmapSprite->position.y? bgmapSprite->position.y : 0) + bgmapSprite->halfHeight,
 			// don't do translations
-			__I_TO_FIX10_6(this->halfWidth),
-			__I_TO_FIX10_6(this->halfHeight),
-			__I_TO_FIX13_3(this->drawSpec.textureSource.mx),
-			__I_TO_FIX13_3(this->drawSpec.textureSource.my),
-			__I_TO_FIX10_6(this->texture->textureDefinition->cols << 2),
-			__I_TO_FIX10_6(this->texture->textureDefinition->rows << 2),
-			&this->drawSpec.scale,
-			&this->drawSpec.rotation
+			__I_TO_FIX10_6(bgmapSprite->halfWidth),
+			__I_TO_FIX10_6(bgmapSprite->halfHeight),
+			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.mx),
+			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.my),
+			__I_TO_FIX10_6(bgmapSprite->texture->textureDefinition->cols << 2),
+			__I_TO_FIX10_6(bgmapSprite->texture->textureDefinition->rows << 2),
+			&bgmapSprite->drawSpec.scale,
+			&bgmapSprite->drawSpec.rotation
 		);
 	}
 
-	return this->paramTableRow;
+	return bgmapSprite->paramTableRow;
 }
 
 /**

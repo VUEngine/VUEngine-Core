@@ -76,7 +76,7 @@ void ClockManager::constructor()
 	Base::constructor();
 
 	// create the clock list
-	this->clocks = __NEW(VirtualList);
+	this->clocks = new VirtualList();
 }
 
 /**
@@ -98,7 +98,7 @@ void ClockManager::destructor()
 	}
 
 	// clear my list
-	__DELETE(this->clocks);
+	delete this->clocks;
 
 	// allow a new construct
 	Base::destructor();

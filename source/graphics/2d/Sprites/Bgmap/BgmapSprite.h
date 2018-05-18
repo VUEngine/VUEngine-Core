@@ -55,6 +55,9 @@
 
 class BgmapSprite;
 
+typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
+
+
 typedef struct BgmapSpriteDefinition
 {
 	// it has a Sprite definition at the beginning
@@ -64,7 +67,7 @@ typedef struct BgmapSpriteDefinition
 	u16 bgmapMode;
 
 	// pointer to affine/hbias manipulation function
-	s16 (*applyParamTableEffect)(void*);
+	ParamTableEffectMethod applyParamTableEffect;
 
 	// flag to indicate in which display to show the bg texture
 	u16 display;
@@ -73,7 +76,6 @@ typedef struct BgmapSpriteDefinition
 } BgmapSpriteDefinition;
 
 typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
-typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
 
 class BgmapSprite : Sprite
 {
@@ -100,7 +102,7 @@ class BgmapSprite : Sprite
 	* @brief						pointer to function that implements the param table based effects
 	* @memberof					BgmapSprite
 	*/
-	s16 (*applyParamTableEffect)(void*);
+	ParamTableEffectMethod applyParamTableEffect;
 
 	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 	DrawSpec getDrawSpec();

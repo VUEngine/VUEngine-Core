@@ -159,7 +159,7 @@ void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManage
 	{
 		if(this->cameraMovementManager)
 		{
-			__DELETE(this->cameraMovementManager);
+			delete this->cameraMovementManager;
 		}
 
 		this->cameraMovementManager = cameraMovementManager;
@@ -181,7 +181,7 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 	{
 		if(this->cameraEffectManager)
 		{
-			__DELETE(this->cameraEffectManager);
+			delete this->cameraEffectManager;
 		}
 
 		this->cameraEffectManager = cameraEffectManager;

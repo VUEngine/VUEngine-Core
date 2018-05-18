@@ -100,7 +100,7 @@ void Object::destructor()
 			__DELETE_BASIC(node->data);
 		}
 
-		__DELETE(this->events);
+		delete this->events;
 		this->events = NULL;
 	}
 
@@ -148,7 +148,7 @@ void Object::addEventListener(Object listener, EventListener method, u32 eventCo
 
 	if(NULL == this->events)
 	{
-		this->events = __NEW(VirtualList);
+		this->events = new VirtualList();
 	}
 	else
 	{
@@ -220,7 +220,7 @@ void Object::removeEventListeners(Object listener, u32 eventCode)
 {
 	if(this->events)
 	{
-		VirtualList eventsToRemove = __NEW(VirtualList);
+		VirtualList eventsToRemove = new VirtualList();
 
 		VirtualNode node = this->events->head;
 
@@ -243,11 +243,11 @@ void Object::removeEventListeners(Object listener, u32 eventCode)
 			__DELETE_BASIC(event);
 		}
 
-		__DELETE(eventsToRemove);
+		delete eventsToRemove;
 
 		if(!this->events->head)
 		{
-			__DELETE(this->events);
+			delete this->events;
 			this->events = NULL;
 		}
 	}
@@ -266,7 +266,7 @@ void Object::removeAllEventListeners(u32 eventCode)
 {
 	if(this->events)
 	{
-		VirtualList eventsToRemove = __NEW(VirtualList);
+		VirtualList eventsToRemove = new VirtualList();
 
 		VirtualNode node = this->events->head;
 
@@ -289,11 +289,11 @@ void Object::removeAllEventListeners(u32 eventCode)
 			__DELETE_BASIC(event);
 		}
 
-		__DELETE(eventsToRemove);
+		delete eventsToRemove;
 
 		if(!this->events->head)
 		{
-			__DELETE(this->events);
+			delete this->events;
 			this->events = NULL;
 		}
 	}
@@ -313,8 +313,8 @@ void Object::fireEvent(u32 eventCode)
 	if(this->events)
 	{
 		// temporal lists to being able to modify the event lists while firing them
-		VirtualList eventsToFire = __NEW(VirtualList);
-		VirtualList eventsToRemove = __NEW(VirtualList);
+		VirtualList eventsToFire = new VirtualList();
+		VirtualList eventsToRemove = new VirtualList();
 
 		VirtualNode node = this->events->head;
 
@@ -346,7 +346,7 @@ void Object::fireEvent(u32 eventCode)
 			}
 		}
 
-		__DELETE(eventsToRemove);
+		delete eventsToRemove;
 
 		node = eventsToFire->head;
 
@@ -367,7 +367,7 @@ void Object::fireEvent(u32 eventCode)
 			}
 		}
 
-		__DELETE(eventsToFire);
+		delete eventsToFire;
 	}
 }
 

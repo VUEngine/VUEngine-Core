@@ -115,7 +115,7 @@ void VirtualList::clear()
 		while(node)
 		{
 			// call destructor
-			__DELETE(node);
+			delete node;
 
 			// move the node to the head
 			node = this->head;
@@ -144,7 +144,7 @@ void VirtualList::clear()
  */
 int VirtualList::pushFront(const void* const data)
 {
-	VirtualNode newNode = __NEW(VirtualNode, data);
+	VirtualNode newNode = new VirtualNode(data);
 
 	// set previous if list isn't empty
 	if(this->head)
@@ -200,7 +200,7 @@ void* VirtualList::popFront()
 		}
 
 		// free dynamic memory
-		__DELETE(node);
+		delete node;
 
 		return data;
 	}
@@ -241,7 +241,7 @@ void* VirtualList::popBack()
 		}
 
 		// free dynamic memory
-		__DELETE(node);
+		delete node;
 
 		return data;
 	}
@@ -260,7 +260,7 @@ void* VirtualList::popBack()
  */
 int VirtualList::pushBack(const void* const data)
 {
-	VirtualNode newNode = __NEW(VirtualNode, data);
+	VirtualNode newNode = new VirtualNode(data);
 
 	ASSERT(data, "VirtualList::pushBack: null data");
 
@@ -477,7 +477,7 @@ bool VirtualList::removeNode(VirtualNode node)
 		}
 
 		// free dynamic memory
-		__DELETE(node);
+		delete node;
 
 		return true;
 	}
@@ -710,7 +710,7 @@ VirtualNode VirtualList::insertAfter(VirtualNode node, const void* const data)
 	}
 	else
 	{
-		newNode = __NEW(VirtualNode, data);
+		newNode = new VirtualNode(data);
 
 		if(!newNode)
 		{
@@ -761,7 +761,7 @@ VirtualNode VirtualList::insertBefore(VirtualNode node, const void* const data)
 	}
 	else
 	{
-		newNode = __NEW(VirtualNode, data);
+		newNode = new VirtualNode(data);
 
 		if(!newNode)
 		{

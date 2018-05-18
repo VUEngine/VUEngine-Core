@@ -88,7 +88,7 @@ void ObjectSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinit
 
 	ASSERT(objectSpriteDefinition->spriteDefinition.textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
-	this->texture = __SAFE_CAST(Texture, __NEW(ObjectTexture, objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
+	this->texture = __SAFE_CAST(Texture, new ObjectTexture(objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
 	this->halfWidth = this->texture->textureDefinition->cols << 2;
 	this->halfHeight = this->texture->textureDefinition->rows << 2;
 	this->totalObjects = objectSpriteDefinition->spriteDefinition.textureDefinition->cols * objectSpriteDefinition->spriteDefinition.textureDefinition->rows;
@@ -114,7 +114,7 @@ void ObjectSprite::destructor()
 
 	if(__IS_OBJECT_ALIVE(this->texture))
 	{
-		__DELETE(this->texture);
+		delete this->texture;
 	}
 
 	this->texture = NULL;

@@ -65,7 +65,7 @@ void ParticleRemover::constructor()
 	// construct base
 	Base::constructor();
 
-	this->particlesLists = __NEW(VirtualList);
+	this->particlesLists = new VirtualList();
 	this->removalDelayCycles = 0;
 	this->remainingRemoveDelayCycles = this->removalDelayCycles;
 }
@@ -82,7 +82,7 @@ void ParticleRemover::destructor()
 {
 	ParticleRemover::reset(this);
 
-	__DELETE(this->particlesLists);
+	delete this->particlesLists;
 	this->particlesLists = NULL;
 
 	// destroy the super object
@@ -110,11 +110,11 @@ void ParticleRemover::reset()
 		{
 			if(__IS_OBJECT_ALIVE(particleNode->data))
 			{
-				__DELETE(particleNode->data);
+				delete particleNode->data;
 			}
 		}
 
-		__DELETE(particlesList);
+		delete particlesList;
 	}
 
 	VirtualList::clear(this->particlesLists);
@@ -147,18 +147,18 @@ void ParticleRemover::update()
 
 		if(particlesList->head)
 		{
-			__DELETE(VirtualList::front(particlesList));
+			delete VirtualList::front(particlesList);
 			VirtualList::popFront(particlesList);
 
 			if(!VirtualList::getSize(particlesList))
 			{
-				__DELETE(particlesList);
+				delete particlesList;
 				VirtualList::popFront(this->particlesLists);
 			}
 		}
 		else
 		{
-			__DELETE(particlesList);
+			delete particlesList;
 			VirtualList::popFront(this->particlesLists);
 		}
 
@@ -179,7 +179,7 @@ void ParticleRemover::deleteParticles(VirtualList particles)
 {
 	if(__SAFE_CAST(VirtualList, particles))
 	{
-		VirtualList particlesList = __NEW(VirtualList);
+		VirtualList particlesList = new VirtualList();
 
 		particlesList->head = particles->head;
 		particlesList->tail = particles->tail;
@@ -187,7 +187,7 @@ void ParticleRemover::deleteParticles(VirtualList particles)
 		particles->head = NULL;
 		particles->tail = NULL;
 
-		__DELETE(particles);
+		delete particles;
 
 		VirtualList::pushBack(this->particlesLists, particlesList);
 	}

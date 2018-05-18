@@ -158,10 +158,10 @@ void OptionsSelector::flushPages()
 				__DELETE_BASIC(optionsNode->data);
 			}
 
-			__DELETE(node->data);
+			delete node->data;
 		}
 
-		__DELETE(this->pages);
+		delete this->pages;
 	}
 
 	this->pages = NULL;
@@ -233,7 +233,7 @@ void OptionsSelector::setOptions(VirtualList options)
 
 	OptionsSelector::flushPages(this);
 
-	this->pages = __NEW(VirtualList);
+	this->pages = new VirtualList();
 
 	this->totalOptions = VirtualList::getSize(options);
 
@@ -251,7 +251,7 @@ void OptionsSelector::setOptions(VirtualList options)
 
 		for(; page < numberOfPages && node; page++)
 		{
-			VirtualList pageOptions = __NEW(VirtualList);
+			VirtualList pageOptions = new VirtualList();
 
 			int counter = 0;
 			for(; node && counter < optionsPerPage; counter++, node = node->next)

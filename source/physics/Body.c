@@ -168,7 +168,7 @@ void Body::destructor()
 			__DELETE_BASIC(node->data);
 		}
 
-		__DELETE(this->normals);
+		delete this->normals;
 		this->normals = NULL;
 	}
 
@@ -747,7 +747,7 @@ void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
 
 	if(!this->normals)
 	{
-		this->normals = __NEW(VirtualList);
+		this->normals = new VirtualList();
 	}
 
 	VirtualNode node = this->normals->head;
@@ -808,7 +808,7 @@ void Body::reset()
 			__DELETE_BASIC(node->data);
 		}
 
-		__DELETE(this->normals);
+		delete this->normals;
 		this->normals = NULL;
 	}
 
@@ -828,7 +828,7 @@ void Body::clearNormalOnAxes(u16 axes __attribute__ ((unused))) __attribute__ ((
 {
 	if(this->normals)
 	{
-		VirtualList normalsToRemove = __NEW(VirtualList);
+		VirtualList normalsToRemove = new VirtualList();
 
 		VirtualNode node = this->normals->head;
 
@@ -864,7 +864,7 @@ void Body::clearNormalOnAxes(u16 axes __attribute__ ((unused))) __attribute__ ((
 
 		}
 
-		__DELETE(normalsToRemove);
+		delete normalsToRemove;
 	}
 
 	Body::computeTotalNormal(this);

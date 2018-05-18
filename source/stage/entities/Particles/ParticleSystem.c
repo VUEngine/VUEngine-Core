@@ -72,9 +72,9 @@ void ParticleSystem::constructor(ParticleSystemDefinition* particleSystemDefinit
 	// save definition
 	this->particleSystemDefinition = particleSystemDefinition;
 
-	this->particles = __NEW(VirtualList);
-	this->recyclableParticles = this->particleSystemDefinition->recycleParticles ? __NEW(VirtualList) : NULL;
-	this->expiredParticles = __NEW(VirtualList);
+	this->particles = new VirtualList();
+	this->recyclableParticles = this->particleSystemDefinition->recycleParticles ? new VirtualList() : NULL;
+	this->expiredParticles = new VirtualList();
 
 	this->particleCount = 0;
 	this->paused = !this->particleSystemDefinition->autoStart;
@@ -119,10 +119,10 @@ void ParticleSystem::destructor()
 
 			for(; node; node = node->next)
 			{
-				__DELETE(node->data);
+				delete node->data;
 			}
 
-			__DELETE(this->particles);
+			delete this->particles;
 		}
 
 		this->particles = NULL;
@@ -141,10 +141,10 @@ void ParticleSystem::destructor()
 
 			for(; node; node = node->next)
 			{
-				__DELETE(node->data);
+				delete node->data;
 			}
 
-			__DELETE(this->recyclableParticles);
+			delete this->recyclableParticles;
 		}
 
 		this->recyclableParticles = NULL;
@@ -154,7 +154,7 @@ void ParticleSystem::destructor()
 	{
 		ASSERT(!VirtualList::getSize(this->expiredParticles), "ParticleSystem::destructor: expiredParticles not clean");
 
-		__DELETE(this->expiredParticles);
+		delete this->expiredParticles;
 		this->expiredParticles = NULL;
 	}
 
@@ -192,7 +192,7 @@ void ParticleSystem::processExpiredParticles()
 			Particle particle = __SAFE_CAST(Particle, node->data);
 			VirtualList::removeElement(this->particles, particle);
 
-			__DELETE(particle);
+			delete particle;
 			this->particleCount--;
 		}
 

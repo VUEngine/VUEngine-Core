@@ -64,7 +64,7 @@ void StateMachine::constructor(void* owner)
 	this->owner = owner;
 	this->currentState = NULL;
 	this->previousState = NULL;
-	this->stateStack = __NEW(VirtualList);
+	this->stateStack = new VirtualList();
 }
 
 /**
@@ -84,11 +84,11 @@ void StateMachine::destructor()
 
 	for(; node; node = node->next)
 	{
-		__DELETE(node->data);
+		delete node->data;
 	}
 
 	// deallocate the list
-	__DELETE(this->stateStack);
+	delete this->stateStack;
 
 	// free processor memory
 	// must always be called at the end of the destructor

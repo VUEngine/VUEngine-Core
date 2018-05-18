@@ -72,8 +72,8 @@ void CharSetManager::constructor()
 {
 	Base::constructor();
 
-	this->charSets = __NEW(VirtualList);
-	this->charSetsPendingWriting = __NEW(VirtualList);
+	this->charSets = new VirtualList();
+	this->charSetsPendingWriting = new VirtualList();
 	this->freedOffset = 1;
 }
 
@@ -89,10 +89,10 @@ void CharSetManager::destructor()
 {
 	CharSetManager::reset(this);
 
-	__DELETE(this->charSets);
+	delete this->charSets;
 	this->charSets = NULL;
 
-	__DELETE(this->charSetsPendingWriting);
+	delete this->charSetsPendingWriting;
 	this->charSetsPendingWriting = NULL;
 
 	// allow a new construct
@@ -115,7 +115,7 @@ void CharSetManager::reset()
 
 		for(; node; node = node->next)
 		{
-			__DELETE(node->data);
+			delete node->data;
 		}
 
 		VirtualList::clear(this->charSets);
@@ -228,7 +228,7 @@ void CharSetManager::releaseCharSet(CharSet charSet)
 		VirtualList::removeElement(this->charSets, charSet);
 		VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 
-		__DELETE(charSet);
+		delete charSet;
 	}
 }
 
@@ -259,7 +259,7 @@ CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
 
 	if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
 	{
-		CharSet charSet = __NEW(CharSet, charSetDefinition, offset);
+		CharSet charSet = new CharSet(charSetDefinition, offset);
 
 		VirtualList::pushBack(this->charSets, charSet);
 		VirtualList::pushBack(this->charSetsPendingWriting, charSet);

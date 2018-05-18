@@ -102,7 +102,7 @@ void Printing::constructor()
 	Base::constructor();
 
 	// initialize members
-	this->fonts = __NEW(VirtualList);
+	this->fonts = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
@@ -119,7 +119,7 @@ void Printing::constructor()
  */
 void Printing::destructor()
 {
-	__DELETE(this->fonts);
+	delete this->fonts;
 
 	// allow a new construct
 	Base::destructor();

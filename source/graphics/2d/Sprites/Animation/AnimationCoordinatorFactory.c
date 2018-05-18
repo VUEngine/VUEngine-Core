@@ -72,7 +72,7 @@ void AnimationCoordinatorFactory::constructor()
 {
 	Base::constructor();
 
-	this->animationCoordinators = __NEW(VirtualList);
+	this->animationCoordinators = new VirtualList();
 }
 
 /**
@@ -88,7 +88,7 @@ void AnimationCoordinatorFactory::destructor()
 	ASSERT(this->animationCoordinators, "AnimationCoordinatorFactory::destructor: null animationCoordinators");
 
 	AnimationCoordinatorFactory::reset(this);
-	__DELETE(this->animationCoordinators);
+	delete this->animationCoordinators;
 	this->animationCoordinators = NULL;
 
 	// allow a new construct
@@ -109,7 +109,7 @@ void AnimationCoordinatorFactory::reset()
 
 	for(; node; node = node->next)
 	{
-		__DELETE(node->data);
+		delete node->data;
 	}
 
 	VirtualList::clear(this->animationCoordinators);
@@ -154,11 +154,11 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 				if(__GET_CAST(BgmapAnimatedSprite, sprite))
 				{
-					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(BgmapAnimationCoordinator, charSetDefinition));
+					animationCoordinator = __SAFE_CAST(AnimationCoordinator, new BgmapAnimationCoordinator(charSetDefinition));
 				}
 				else if(__GET_CAST(ObjectAnimatedSprite, sprite))
 				{
-					animationCoordinator = __SAFE_CAST(AnimationCoordinator, __NEW(ObjectAnimationCoordinator, charSetDefinition));
+					animationCoordinator = __SAFE_CAST(AnimationCoordinator, new ObjectAnimationCoordinator(charSetDefinition));
 				}
 				else
 				{

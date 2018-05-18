@@ -88,9 +88,9 @@ typedef struct DelayedMessage
 {
 	Base::constructor();
 
-	this->delayedMessages = __NEW(VirtualList);
-	this->delayedMessagesToDiscard = __NEW(VirtualList);
-	this->delayedMessagesToDispatch = __NEW(VirtualList);
+	this->delayedMessages = new VirtualList();
+	this->delayedMessagesToDiscard = new VirtualList();
+	this->delayedMessagesToDispatch = new VirtualList();
 }
 
 /**
@@ -103,8 +103,8 @@ typedef struct DelayedMessage
  */
 void MessageDispatcher::destructor()
 {
-	__DELETE(this->delayedMessages);
-	__DELETE(this->delayedMessagesToDiscard);
+	delete this->delayedMessages;
+	delete this->delayedMessagesToDiscard;
 
 	// allow a new construct
 	Base::destructor();
@@ -133,12 +133,12 @@ static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object 
 	if(0 >= delay)
 	{
 		// create the telegram
-		Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
+		Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
 		// send the telegram to the recipient
 		bool result =  Object::handleMessage(receiver, telegram);
 
-		__DELETE(telegram);
+		delete telegram;
 		return result;
 	}
 	else
@@ -166,7 +166,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, u32 delay,
  	Object sender, Object receiver, int message, void* extraInfo)
 {
 	// create the telegram
-	Telegram telegram = __NEW(Telegram, sender, receiver, message, extraInfo);
+	Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
 	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
 
@@ -209,7 +209,7 @@ void MessageDispatcher::processDiscardedMessages()
 
 			if(__IS_OBJECT_ALIVE(telegram))
 			{
-				__DELETE(telegram);
+				delete telegram;
 			}
 		}
 
@@ -270,7 +270,7 @@ u32 MessageDispatcher::dispatchDelayedMessages()
 
 				if(__IS_OBJECT_ALIVE(telegram))
 				{
-					__DELETE(telegram);
+					delete telegram;
 				}
 
 				if(__IS_BASIC_OBJECT_ALIVE(delayedMessage))

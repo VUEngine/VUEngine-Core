@@ -62,13 +62,13 @@ void GameState::constructor()
 	this->stage = NULL;
 
 	// clocks
-	this->messagingClock = __NEW(Clock);
-	this->updateClock = __NEW(Clock);
-	this->physicsClock = __NEW(Clock);
+	this->messagingClock = new Clock();
+	this->updateClock = new Clock();
+	this->physicsClock = new Clock();
 
 	// construct the physical world and collision manager
-	this->physicalWorld = __NEW(PhysicalWorld, this->physicsClock);
-	this->collisionManager = __NEW(CollisionManager);
+	this->physicalWorld = new PhysicalWorld(this->physicsClock);
+	this->collisionManager = new CollisionManager();
 
 	this->cameraPosition.x = 0;
 	this->cameraPosition.y = 0;
@@ -86,22 +86,22 @@ void GameState::constructor()
  */
 void GameState::destructor()
 {
-	__DELETE(this->messagingClock);
-	__DELETE(this->updateClock);
-	__DELETE(this->physicsClock);
+	delete this->messagingClock;
+	delete this->updateClock;
+	delete this->physicsClock;
 
 	// destroy the stage
 	if(this->stage)
 	{
 		// destroy the stage
-		__DELETE(this->stage);
+		delete this->stage;
 
 		this->stage = NULL;
 	}
 
 	// must delete these after deleting the stage
-	__DELETE(this->physicalWorld);
-	__DELETE(this->collisionManager);
+	delete this->physicalWorld;
+	delete this->collisionManager;
 
 	this->physicalWorld = NULL;
 	this->collisionManager = NULL;
@@ -171,7 +171,7 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 	if(this->stage)
 	{
 		// destroy the stage
-		__DELETE(this->stage);
+		delete this->stage;
 	}
 
 	this->stage = NULL;
@@ -484,7 +484,7 @@ void GameState::loadStage(StageDefinition* stageDefinition, VirtualList position
 	if(this->stage)
 	{
 		// destroy the stage
-		__DELETE(this->stage);
+		delete this->stage;
 	}
 
 	PhysicalWorld::reset(this->physicalWorld);

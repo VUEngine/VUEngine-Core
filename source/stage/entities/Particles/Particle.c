@@ -101,7 +101,7 @@ void Particle::destructor()
 
 	if(this->objectSprite)
 	{
-		__DELETE(this->objectSprite);
+		delete this->objectSprite;
 		this->objectSprite = NULL;
 	}
 
@@ -399,7 +399,7 @@ void Particle::resume()
  */
 void Particle::suspend()
 {
-	__DELETE(this->objectSprite);
+	delete this->objectSprite;
 
 	this->objectSprite = NULL;
 }

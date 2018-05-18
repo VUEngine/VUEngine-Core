@@ -127,7 +127,7 @@ void Shape::destructor()
 			__DELETE_BASIC(collidingShapeRegistry);
 		}
 
-		__DELETE(this->collidingShapes);
+		delete this->collidingShapes;
 		this->collidingShapes = NULL;
 	}
 
@@ -165,7 +165,7 @@ void Shape::reset()
 			__DELETE_BASIC(collidingShapeRegistry);
 		}
 
-		__DELETE(this->collidingShapes);
+		delete this->collidingShapes;
 		this->collidingShapes = NULL;
 	}
 }
@@ -657,7 +657,7 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
 {
 	if(!this->collidingShapes)
 	{
-		this->collidingShapes = __NEW(VirtualList);
+		this->collidingShapes = new VirtualList();
 	}
 
 	bool newEntry = false;
@@ -915,7 +915,7 @@ void Shape::hide()
 	if(this->wireframe)
 	{
 		// delete the Polyhedron
-		__DELETE(this->wireframe);
+		delete this->wireframe;
 		this->wireframe = NULL;
 	}
 }

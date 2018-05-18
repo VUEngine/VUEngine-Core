@@ -96,7 +96,7 @@ void Polyhedron::destructor()
 		}
 
 		// delete the list
-		__DELETE(this->vertices);
+		delete this->vertices;
 	}
 
 	// destroy the super object
@@ -127,7 +127,7 @@ void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
 	// delete the vertices list
 	if(!this->vertices)
 	{
-		this->vertices = __NEW(VirtualList);
+		this->vertices = new VirtualList();
 	}
 
 	// add vertex to the end of the list

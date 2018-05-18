@@ -74,8 +74,8 @@ void PhysicalWorld::constructor()
 	Base::constructor();
 
 	// create the shape list
-	this->bodies = __NEW(VirtualList);
-	this->activeBodies = __NEW(VirtualList);
+	this->bodies = new VirtualList();
+	this->activeBodies = new VirtualList();
 
 	this->bodyToCheckForGravityNode = NULL;
 
@@ -105,12 +105,12 @@ void PhysicalWorld::destructor()
 	// delete all bodies registered
 	for(;node; node = node->next)
 	{
-		__DELETE(node->data);
+		delete node->data;
 	}
 
 	// delete lists
-	__DELETE(this->bodies);
-	__DELETE(this->activeBodies);
+	delete this->bodies;
+	delete this->activeBodies;
 
 
 	this->bodies = NULL;
@@ -179,7 +179,7 @@ void PhysicalWorld::destroyBody(Body body)
 		VirtualList::removeElement(this->bodies, body);
 		VirtualList::removeElement(this->activeBodies, body);
 
-		__DELETE(body);
+		delete body;
 		this->bodyToCheckForGravityNode = NULL;
 	}
 }
@@ -338,7 +338,7 @@ void PhysicalWorld::reset()
 	for(; node; node = node->next)
 	{
 		// delete it
-		__DELETE(node->data);
+		delete node->data;
 	}
 
 	// empty the lists

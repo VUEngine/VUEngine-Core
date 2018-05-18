@@ -109,7 +109,7 @@ void Actor::destructor()
 	// destroy state machine
 	if(this->stateMachine)
 	{
-		__DELETE(this->stateMachine);
+		delete this->stateMachine;
 		this->stateMachine = NULL;
 	}
 

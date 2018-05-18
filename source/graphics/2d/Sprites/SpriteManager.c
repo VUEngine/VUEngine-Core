@@ -136,7 +136,7 @@ void SpriteManager::destructor()
 {
 	if(this->sprites)
 	{
-		__DELETE(this->sprites);
+		delete this->sprites;
 		this->sprites = NULL;
 	}
 
@@ -144,7 +144,7 @@ void SpriteManager::destructor()
 	{
 		while(SpriteManager::disposeSpritesProgressively(this));
 
-		__DELETE(this->spritesToDispose);
+		delete this->spritesToDispose;
 		this->spritesToDispose = NULL;
 	}
 
@@ -169,7 +169,7 @@ void SpriteManager::reset()
 
 	if(this->spritesToDispose)
 	{
-		__DELETE(this->spritesToDispose);
+		delete this->spritesToDispose;
 		this->spritesToDispose = NULL;
 	}
 
@@ -179,15 +179,15 @@ void SpriteManager::reset()
 
 		for(; node; node = node->next)
 		{
-			__DELETE(node->data);
+			delete node->data;
 		}
 
-		__DELETE(this->sprites);
+		delete this->sprites;
 		this->sprites = NULL;
 	}
 
-	this->sprites = __NEW(VirtualList);
-	this->spritesToDispose = __NEW(VirtualList);
+	this->sprites = new VirtualList();
+	this->spritesToDispose = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -300,7 +300,7 @@ bool SpriteManager::disposeSpritesProgressively()
 
 		SpriteManager::unregisterSprite(SpriteManager::getInstance(), sprite);
 
-		__DELETE(sprite);
+		delete sprite;
 
 		this->spritePendingTextureWriting = __IS_OBJECT_ALIVE(this->spritePendingTextureWriting)? this->spritePendingTextureWriting : NULL;
 

@@ -137,7 +137,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainer(int
 	{
 		if(!this->objectSpriteContainers[i])
 		{
-			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i, __AVAILABLE_CHAR_OBJECTS >> 2, __AVAILABLE_CHAR_OBJECTS - (__TOTAL_OBJECT_SEGMENTS - (i + 1)) * (__TOTAL_OBJECT_SEGMENTS >> 2));
+			this->objectSpriteContainers[i] = new ObjectSpriteContainer(i, __AVAILABLE_CHAR_OBJECTS >> 2, __AVAILABLE_CHAR_OBJECTS - (__TOTAL_OBJECT_SEGMENTS - (i + 1)) * (__TOTAL_OBJECT_SEGMENTS >> 2));
 		}
 	}
 
@@ -214,7 +214,7 @@ const ObjectSpriteContainer* ObjectSpriteContainerManager::setupObjectSpriteCont
 		{
 			availableObjects -= size[i];
 			NM_ASSERT(0 <= availableObjects, "ObjectSpriteContainerManager::setupObjectSpriteContainers: OBJs depleted");
-			this->objectSpriteContainers[i] = __NEW(ObjectSpriteContainer, i, size[i], availableObjects);
+			this->objectSpriteContainers[i] = new ObjectSpriteContainer(i, size[i], availableObjects);
 		}
 
 		if(this->objectSpriteContainers[i])

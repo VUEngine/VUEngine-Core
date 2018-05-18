@@ -141,7 +141,7 @@ void BgmapTextureManager::reset()
 
 		if(this->bgmapTextures[i])
 		{
-			__DELETE(this->bgmapTextures[i]);
+			delete this->bgmapTextures[i];
 		}
 
 		this->bgmapTextures[i] = NULL;
@@ -336,7 +336,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 			case __ANIMATED_SINGLE:
 			case __ANIMATED_SINGLE_OPTIMIZED:
 
-				__DELETE(bgmapTexture);
+				delete bgmapTexture;
 				this->bgmapTextures[i] = NULL;
 				break;
 
@@ -463,7 +463,7 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapT
 		if(!this->bgmapTextures[i])
 		{
 			// create new texture and register it
-			this->bgmapTextures[i] = __NEW(BgmapTexture, bgmapTextureDefinition, i);
+			this->bgmapTextures[i] = new BgmapTexture(bgmapTextureDefinition, i);
 
 			//if not, then allocate
 			BgmapTextureManager::doAllocate(this, this->bgmapTextures[i]);

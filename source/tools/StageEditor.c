@@ -130,9 +130,9 @@ void StageEditor::constructor()
 	this->userObjectSprite = NULL;
 	this->mode = kFirstMode + 1;
 	this->shape = NULL;
-	this->userObjectsSelector = __NEW(OptionsSelector, 2, 12, NULL);
+	this->userObjectsSelector = new OptionsSelector(2, 12, NULL);
 
-	VirtualList userObjects = __NEW(VirtualList);
+	VirtualList userObjects = new VirtualList();
 
 	int i = 0;
 	for(;  _userObjects[i].entityDefinition; i++)
@@ -148,7 +148,7 @@ void StageEditor::constructor()
 		OptionsSelector::setOptions(this->userObjectsSelector, userObjects);
 	}
 
-	__DELETE(userObjects);
+	delete userObjects;
 
 	this->translationStepSize = 1;
 }
@@ -165,7 +165,7 @@ void StageEditor::destructor()
 {
 	if(this->userObjectsSelector)
 	{
-		__DELETE(this->userObjectsSelector);
+		delete this->userObjectsSelector;
 	}
 
 	// allow a new construct
@@ -379,7 +379,7 @@ void StageEditor::releaseShape()
 
 			if(this->shape && !node)
 			{
-				__DELETE(this->shape);
+				delete this->shape;
 			}
 			else if(this->shape)
 			{
@@ -388,7 +388,7 @@ void StageEditor::releaseShape()
 		}
 		else if(this->shape)
 		{
-			__DELETE(this->shape);
+			delete this->shape;
 		}
 
 		this->shape = NULL;
@@ -417,7 +417,7 @@ void StageEditor::getShape()
 
 	if(!this->shape)
 	{
-		this->shape = __SAFE_CAST(Shape, __NEW(Box, __SAFE_CAST(SpatialObject, entity)));
+		this->shape = __SAFE_CAST(Shape, new Box(__SAFE_CAST(SpatialObject, entity)));
 
 		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
@@ -860,7 +860,7 @@ void StageEditor::removePreviousSprite()
 {
 	if(this->userObjectSprite)
 	{
-		__DELETE(this->userObjectSprite);
+		delete this->userObjectSprite;
 		this->userObjectSprite = NULL;
 	}
 

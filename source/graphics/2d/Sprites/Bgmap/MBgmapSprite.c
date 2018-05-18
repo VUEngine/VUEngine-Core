@@ -128,7 +128,7 @@ void MBgmapSprite::releaseTextures()
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
 
-		__DELETE(this->textures);
+		delete this->textures;
 		this->textures = NULL;
 		this->texture = NULL;
 	}
@@ -148,7 +148,7 @@ void MBgmapSprite::loadTextures()
 	{
 		if(!this->texture && !this->textures)
 		{
-			this->textures = __NEW(VirtualList);
+			this->textures = new VirtualList();
 
 			int i = 0;
 

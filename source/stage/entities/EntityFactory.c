@@ -86,11 +86,11 @@ void EntityFactory::constructor()
 	// construct base object
 	Base::constructor();
 
-	this->entitiesToInstantiate = __NEW(VirtualList);
-	this->entitiesToInitialize = __NEW(VirtualList);
-	this->entitiesToTransform = __NEW(VirtualList);
-	this->entitiesToMakeReady = __NEW(VirtualList);
-	this->spawnedEntities = __NEW(VirtualList);
+	this->entitiesToInstantiate = new VirtualList();
+	this->entitiesToInitialize = new VirtualList();
+	this->entitiesToTransform = new VirtualList();
+	this->entitiesToMakeReady = new VirtualList();
+	this->spawnedEntities = new VirtualList();
 
 	this->streamingPhase = 0;
 }
@@ -106,13 +106,13 @@ void EntityFactory::destructor()
 
 		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
-			__DELETE(positionedEntityDescription->entity);
+			delete positionedEntityDescription->entity;
 		}
 
 		__DELETE_BASIC(positionedEntityDescription);
 	}
 
-	__DELETE(this->entitiesToInstantiate);
+	delete this->entitiesToInstantiate;
 	this->entitiesToInstantiate = NULL;
 
 	node = this->entitiesToInitialize->head;
@@ -123,13 +123,13 @@ void EntityFactory::destructor()
 
 		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
-			__DELETE(positionedEntityDescription->entity);
+			delete positionedEntityDescription->entity;
 		}
 
 		__DELETE_BASIC(positionedEntityDescription);
 	}
 
-	__DELETE(this->entitiesToInitialize);
+	delete this->entitiesToInitialize;
 	this->entitiesToInitialize = NULL;
 
 	node = this->entitiesToTransform->head;
@@ -140,13 +140,13 @@ void EntityFactory::destructor()
 
 		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
-			__DELETE(positionedEntityDescription->entity);
+			delete positionedEntityDescription->entity;
 		}
 
 		__DELETE_BASIC(positionedEntityDescription);
 	}
 
-	__DELETE(this->entitiesToTransform);
+	delete this->entitiesToTransform;
 	this->entitiesToTransform = NULL;
 
 	node = this->entitiesToMakeReady->head;
@@ -157,13 +157,13 @@ void EntityFactory::destructor()
 
 		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
-			__DELETE(positionedEntityDescription->entity);
+			delete positionedEntityDescription->entity;
 		}
 
 		__DELETE_BASIC(positionedEntityDescription);
 	}
 
-	__DELETE(this->entitiesToMakeReady);
+	delete this->entitiesToMakeReady;
 	this->entitiesToMakeReady = NULL;
 
 
@@ -176,7 +176,7 @@ void EntityFactory::destructor()
 		__DELETE_BASIC(positionedEntityDescription);
 	}
 
-	__DELETE(this->spawnedEntities);
+	delete this->spawnedEntities;
 	this->spawnedEntities = NULL;
 
 	// destroy the super object
@@ -296,7 +296,7 @@ u32 EntityFactory::initializeEntities()
 
 		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
-			__DELETE(positionedEntityDescription->entity);
+			delete positionedEntityDescription->entity;
 		}
 
 		__DELETE_BASIC(positionedEntityDescription);
@@ -346,7 +346,7 @@ u32 EntityFactory::transformEntities()
 
 		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
 		{
-			__DELETE(positionedEntityDescription->entity);
+			delete positionedEntityDescription->entity;
 		}
 
 		__DELETE_BASIC(positionedEntityDescription);

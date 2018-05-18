@@ -72,7 +72,7 @@ void BgmapAnimatedSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDe
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+    this->animationController = new AnimationController(owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 
     // since the offset will be moved during animation, must save it
     this->originalTextureSource.mx = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
@@ -91,7 +91,7 @@ void BgmapAnimatedSprite::destructor()
 {
 	if(this->animationController)
 	{
-		__DELETE(this->animationController);
+		delete this->animationController;
 		this->animationController = NULL;
 	}
 

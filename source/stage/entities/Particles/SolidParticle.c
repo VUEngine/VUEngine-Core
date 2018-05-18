@@ -373,7 +373,7 @@ VirtualList SolidParticle::getShapes()
 
 	if(!shapesList)
 	{
-		shapesList = __NEW(VirtualList);
+		shapesList = new VirtualList();
 	}
 
 	VirtualList::clear(shapesList);

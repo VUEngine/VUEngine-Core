@@ -72,7 +72,7 @@ void ObjectAnimatedSprite::constructor(const ObjectSpriteDefinition* objectSprit
 	// construct base object
 	Base::constructor((const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
-	this->animationController = __NEW(AnimationController, owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+	this->animationController = new AnimationController(owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
 
 /**
@@ -87,7 +87,7 @@ void ObjectAnimatedSprite::destructor()
 {
 	if(this->animationController)
 	{
-		__DELETE(this->animationController);
+		delete this->animationController;
 		this->animationController = NULL;
 	}
 

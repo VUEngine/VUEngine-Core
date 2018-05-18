@@ -143,27 +143,27 @@ void AnimationInspector::destructor()
 {
 	if(this->animatedEntitySelector)
 	{
-		__DELETE(this->animatedEntitySelector);
+		delete this->animatedEntitySelector;
 	}
 
 	if(this->animatedEntitySelector)
 	{
-		__DELETE(this->spriteSelector);
+		delete this->spriteSelector;
 	}
 
 	if(this->animationsSelector)
 	{
-		__DELETE(this->animationsSelector);
+		delete this->animationsSelector;
 	}
 
 	if(this->animationEditionSelector)
 	{
-		__DELETE(this->animationEditionSelector);
+		delete this->animationEditionSelector;
 	}
 
 	if(this->frameEditionSelector)
 	{
-		__DELETE(this->frameEditionSelector);
+		delete this->frameEditionSelector;
 	}
 
 	// allow a new construct
@@ -209,9 +209,9 @@ void AnimationInspector::show(GameState gameState)
 	this->animationEditionSelector = NULL;
 	this->frameEditionSelector = NULL;
 
-	this->animatedEntitySelector = __NEW(OptionsSelector, 2, 16, NULL);
+	this->animatedEntitySelector = new OptionsSelector(2, 16, NULL);
 
-	VirtualList animatedEntitiesNames = __NEW(VirtualList);
+	VirtualList animatedEntitiesNames = new VirtualList();
 
 	int i = 0;
 	for(; _userAnimatedEntities[i].animatedEntityDefinition; i++)
@@ -228,7 +228,7 @@ void AnimationInspector::show(GameState gameState)
 	ASSERT(VirtualList::getSize(animatedEntitiesNames), "AnimationInspector::start: empty animatedEntitiesNames");
 
 	OptionsSelector::setOptions(this->animatedEntitySelector, animatedEntitiesNames);
-	__DELETE(animatedEntitiesNames);
+	delete animatedEntitiesNames;
 
 	this->mode = kFirstMode + 1;
 	AnimationInspector::setupMode(this);
@@ -255,25 +255,25 @@ void AnimationInspector::hide()
 
 	if(this->animatedEntitySelector)
 	{
-		__DELETE(this->animatedEntitySelector);
+		delete this->animatedEntitySelector;
 		this->animatedEntitySelector = NULL;
 	}
 
 	if(this->animationsSelector)
 	{
-		__DELETE(this->animationsSelector);
+		delete this->animationsSelector;
 		this->animationsSelector = NULL;
 	}
 
 	if(this->animationEditionSelector)
 	{
-		__DELETE(this->animationEditionSelector);
+		delete this->animationEditionSelector;
 		this->animationEditionSelector = NULL;
 	}
 
 	if(this->frameEditionSelector)
 	{
-		__DELETE(this->frameEditionSelector);
+		delete this->frameEditionSelector;
 		this->frameEditionSelector = NULL;
 	}
 
@@ -851,12 +851,12 @@ void AnimationInspector::createSpriteSelector()
 {
 	if(this->spriteSelector)
 	{
-		__DELETE(this->spriteSelector);
+		delete this->spriteSelector;
 	}
 
-	this->spriteSelector = __NEW(OptionsSelector, (__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL);
+	this->spriteSelector = new OptionsSelector((__SCREEN_WIDTH_IN_CHARS) / 3, __MAX_FRAMES_PER_ANIMATION_FUNCTION >> 1, NULL);
 
-	VirtualList spriteIndexes = __NEW(VirtualList);
+	VirtualList spriteIndexes = new VirtualList();
 
 	int i = 0;
 	while(_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->entityDefinition.spriteDefinitions[i])
@@ -870,7 +870,7 @@ void AnimationInspector::createSpriteSelector()
 	}
 
 	OptionsSelector::setOptions(this->spriteSelector, spriteIndexes);
-	__DELETE(spriteIndexes);
+	delete spriteIndexes;
 }
 
 /**
@@ -889,12 +889,12 @@ void AnimationInspector::createAnimationsSelector()
 	{
 		if(this->animationsSelector)
 		{
-			__DELETE(this->animationsSelector);
+			delete this->animationsSelector;
 		}
 
-		this->animationsSelector = __NEW(OptionsSelector, 2, 16, NULL);
+		this->animationsSelector = new OptionsSelector(2, 16, NULL);
 
-		VirtualList animationsNames = __NEW(VirtualList);
+		VirtualList animationsNames = new VirtualList();
 
 		int i = 0;
 		for(i = 0; this->animationDescription->animationFunctions[i]; i++)
@@ -906,7 +906,7 @@ void AnimationInspector::createAnimationsSelector()
 		}
 
 		OptionsSelector::setOptions(this->animationsSelector, animationsNames);
-		__DELETE(animationsNames);
+		delete animationsNames;
 	}
 	else
 	{
@@ -926,12 +926,12 @@ void AnimationInspector::createAnimationEditionSelector()
 {
 	if(this->animationEditionSelector)
 	{
-		__DELETE(this->animationEditionSelector);
+		delete this->animationEditionSelector;
 	}
 
-	this->animationEditionSelector = __NEW(OptionsSelector, 1, 4, NULL);
+	this->animationEditionSelector = new OptionsSelector(1, 4, NULL);
 
-	VirtualList optionsNames = __NEW(VirtualList);
+	VirtualList optionsNames = new VirtualList();
 	Option* option = NULL;
 
 	option = __NEW_BASIC(Option);
@@ -955,7 +955,7 @@ void AnimationInspector::createAnimationEditionSelector()
 	VirtualList::pushBack(optionsNames, option);
 
 	OptionsSelector::setOptions(this->animationEditionSelector, optionsNames);
-	__DELETE(optionsNames);
+	delete optionsNames;
 
 	this->mode = kEditAnimation;
 }
@@ -972,13 +972,13 @@ void AnimationInspector::createFrameEditionSelector()
 {
 	if(this->frameEditionSelector)
 	{
-		__DELETE(this->frameEditionSelector);
+		delete this->frameEditionSelector;
 	}
 
-	this->frameEditionSelector = __NEW(OptionsSelector, 4, 16, NULL);
+	this->frameEditionSelector = new OptionsSelector(4, 16, NULL);
 	OptionsSelector::setColumnWidth(this->frameEditionSelector, 2);
 
-	VirtualList framesIndexes = __NEW(VirtualList);
+	VirtualList framesIndexes = new VirtualList();
 
 	int i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++)
@@ -990,7 +990,7 @@ void AnimationInspector::createFrameEditionSelector()
 	}
 
 	OptionsSelector::setOptions(this->frameEditionSelector, framesIndexes);
-	__DELETE(framesIndexes);
+	delete framesIndexes;
 }
 
 /**

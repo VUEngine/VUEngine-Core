@@ -161,8 +161,8 @@ void Debug::constructor()
 {
 	Base::constructor();
 
-	this->pages = __NEW(VirtualList);
-	this->subPages = __NEW(VirtualList);
+	this->pages = new VirtualList();
+	this->subPages = new VirtualList();
 	this->currentPage = NULL;
 	this->currentSubPage = NULL;
 
@@ -192,8 +192,8 @@ void Debug::constructor()
  */
 void Debug::destructor()
 {
-	__DELETE(this->pages);
-	__DELETE(this->subPages);
+	delete this->pages;
+	delete this->subPages;
 
 	// allow a new construct
 	Base::destructor();

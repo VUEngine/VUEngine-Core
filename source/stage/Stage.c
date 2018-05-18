@@ -147,9 +147,9 @@ void Stage::constructor(StageDefinition *stageDefinition)
 	// construct base object
 	Base::constructor(NULL);
 
-	this->entityFactory = __NEW(EntityFactory);
-	this->particleRemover = __NEW(ParticleRemover);
-	this->children = __NEW(VirtualList);
+	this->entityFactory = new EntityFactory();
+	this->particleRemover = new ParticleRemover();
+	this->children = new VirtualList();
 
 	this->stageDefinition = stageDefinition;
 	this->stageEntities = NULL;
@@ -168,14 +168,14 @@ void Stage::destructor()
 {
 	Stage::setFocusEntity(this, NULL);
 
-	__DELETE(this->particleRemover);
+	delete this->particleRemover;
 	this->particleRemover = NULL;
 
-	__DELETE(this->entityFactory);
+	delete this->entityFactory;
 
 	if(this->uiContainer)
 	{
-		__DELETE(this->uiContainer);
+		delete this->uiContainer;
 		this->uiContainer = NULL;
 	}
 
@@ -188,14 +188,14 @@ void Stage::destructor()
 			__DELETE_BASIC(node->data);
 		}
 
-		__DELETE(this->stageEntities);
+		delete this->stageEntities;
 
 		this->stageEntities = NULL;
 	}
 
 	if(this->loadedStageEntities)
 	{
-		__DELETE(this->loadedStageEntities);
+		delete this->loadedStageEntities;
 		this->loadedStageEntities = NULL;
 	}
 
@@ -344,7 +344,7 @@ void Stage::setupUI()
 
 	if(this->uiContainer)
 	{
-		__DELETE(this->uiContainer);
+		delete this->uiContainer;
 		this->uiContainer = NULL;
 	}
 
@@ -550,7 +550,7 @@ void Stage::preloadAssets()
 	// textures
 	if(this->stageDefinition->assets.textureDefinitions)
 	{
-		VirtualList recyclableTextures = __NEW(VirtualList);
+		VirtualList recyclableTextures = new VirtualList();
 		int i = 0;
 
 		for(; this->stageDefinition->assets.textureDefinitions[i]; i++)
@@ -583,7 +583,7 @@ void Stage::preloadAssets()
 			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, node->data));
 		}
 
-		__DELETE(recyclableTextures);
+		delete recyclableTextures;
 	}
 
 	ParamTableManager::calculateParamTableBase(ParamTableManager::getInstance(), this->stageDefinition->rendering.paramTableSegments);
@@ -616,17 +616,17 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
 	if(this->stageEntities)
 	{
-		__DELETE(this->stageEntities);
+		delete this->stageEntities;
 	}
 
-	this->stageEntities = __NEW(VirtualList);
+	this->stageEntities = new VirtualList();
 
 	if(this->loadedStageEntities)
 	{
-		__DELETE(this->loadedStageEntities);
+		delete this->loadedStageEntities;
 	}
 
-	this->loadedStageEntities = __NEW(VirtualList);
+	this->loadedStageEntities = new VirtualList();
 
 	// register entities ordering them according to their distances to the origin
 	int i = 0;
@@ -948,7 +948,7 @@ bool Stage::purgeChildrenProgressively()
 	{
 		if(child->deleteMe)
 		{
-			__DELETE(child);
+			delete child;
 
 #ifdef __PROFILE_STREAMING
 			u32 processTime = -_renderingProcessTimeHelper + TimerManager::getMillisecondsElapsed(TimerManager::getInstance()) - timeBeforeProcess;
@@ -1090,7 +1090,7 @@ void Stage::suspend()
 		Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
 	}
 
-	__DELETE(this->entityFactory);
+	delete this->entityFactory;
 	ParticleRemover::reset(this->particleRemover);
 }
 
@@ -1139,7 +1139,7 @@ void Stage::resume()
 		 Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 
-	this->entityFactory = __NEW(EntityFactory);
+	this->entityFactory = new EntityFactory();
 }
 
 bool Stage::handlePropagatedMessage(int message)

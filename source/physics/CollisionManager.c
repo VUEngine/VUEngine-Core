@@ -65,8 +65,8 @@ void CollisionManager::constructor()
 	Base::constructor();
 
 	// create the shape list
-	this->shapes = __NEW(VirtualList);
-	this->movingShapes = __NEW(VirtualList);
+	this->shapes = new VirtualList();
+	this->movingShapes = new VirtualList();
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -83,8 +83,8 @@ void CollisionManager::destructor()
 	CollisionManager::reset(this);
 
 	// delete lists
-	__DELETE(this->shapes);
-	__DELETE(this->movingShapes);
+	delete this->shapes;
+	delete this->movingShapes;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -115,7 +115,7 @@ void CollisionManager::destroyShape(Shape shape)
 		VirtualList::removeElement(this->movingShapes, shape);
 
 		// delete it
-		__DELETE(shape);
+		delete shape;
 	}
 }
 
@@ -273,7 +273,7 @@ void CollisionManager::reset()
 	for(; node; node = node->next)
 	{
 		// delete it
-		__DELETE(node->data);
+		delete node->data;
 	}
 
 	// empty the lists

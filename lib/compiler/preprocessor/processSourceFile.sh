@@ -261,11 +261,9 @@ fi
 sed -i -e 's#[ 	]*friend[ 	]\+class[ 	]\+\([A-z0-9]\+\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
 
 # replace base method calls
-sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g" -e 's#,[ 	]*);#);#' $OUTPUT_FILE
-sed -i -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
-
-# replace base method calls
+sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g" -e 's#,[ 	]*);#);#' -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
 sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
+
 
 # clean up
 sed -i -e 's/<%>//g' $OUTPUT_FILE
@@ -273,6 +271,10 @@ sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	]\+/ /g' $OUTPUT_FILE
 sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
 sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
 sed -i -e 's/,<·>/,\n/g' $OUTPUT_FILE
+
+# Replace news and deletes
+sed -i -e "s/[^A-z0-9]new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*(/\1_new(/g" -e "s/[^A-z0-9]delete[ 	]\+\(.*\);/__DELETE(\1);/g"  $OUTPUT_FILE
+#sed -i -e "s/[^A-z0-9]new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*(/\1_new(/g" -e "s/[^A-z0-9]delete[ 	]\+\(.*\)[ 	]*\)/__DELETE(\1);/g" $OUTPUT_FILE
 
 if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt

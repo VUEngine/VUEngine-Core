@@ -115,7 +115,7 @@ void VIPManager::constructor()
 {
 	Base::constructor();
 
-	this->postProcessingEffects = __NEW(VirtualList);
+	this->postProcessingEffects = new VirtualList();
 	this->currentDrawingFrameBufferSet = 0;
 	this->drawingEnded = false;
 	this->processingXPEND = false;
@@ -141,7 +141,7 @@ void VIPManager::constructor()
  */
 void VIPManager::destructor()
 {
-	__DELETE(this->postProcessingEffects);
+	delete this->postProcessingEffects;
 
 	// allow a new construct
 	Base::destructor();

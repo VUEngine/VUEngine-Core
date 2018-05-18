@@ -100,7 +100,7 @@ void Container::destructor()
 	// first remove any children removed
 	if(this->removedChildren)
 	{
-		__DELETE(this->removedChildren);
+		delete this->removedChildren;
 		this->removedChildren = NULL;
 	}
 
@@ -127,11 +127,11 @@ void Container::destructor()
 			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
 */
 			child->parent = NULL;
-			__DELETE(child);
+			delete child;
 		}
 
 		// delete children list
-		__DELETE(this->children);
+		delete this->children;
 		this->children = NULL;
 
 	}
@@ -219,7 +219,7 @@ void Container::addChild(Container child)
 	if(!this->children)
 	{
 		// create children list
-		this->children = __NEW(VirtualList);
+		this->children = new VirtualList();
 	}
 
 	// first remove from previous parent
@@ -272,7 +272,7 @@ void Container::removeChild(Container child, bool deleteChild)
 	if(!this->removedChildren)
 	{
 		// create children list
-		this->removedChildren = __NEW(VirtualList);
+		this->removedChildren = new VirtualList();
 	}
 
 	if(!VirtualList::find(this->removedChildren, child))
@@ -385,11 +385,11 @@ void Container::purgeChildren()
 		if(child->deleteMe)
 		{
 			child->parent = NULL;
-			__DELETE(child);
+			delete child;
 		}
 	}
 
-	__DELETE(this->removedChildren);
+	delete this->removedChildren;
 	this->removedChildren = NULL;
 }
 

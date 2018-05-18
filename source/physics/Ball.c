@@ -165,7 +165,7 @@ void Ball::configureWireframe()
 	}
 
 	// create a wireframe
-	this->wireframe = __SAFE_CAST(Wireframe, __NEW(Sphere, this->center, this->radius));
+	this->wireframe = __SAFE_CAST(Wireframe, new Sphere(this->center, this->radius));
 }
 
 // print debug data
