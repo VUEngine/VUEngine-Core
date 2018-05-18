@@ -101,7 +101,7 @@ sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 prototypes=`grep -e '^<DECLARATION>.*)' $OUTPUT_FILE | sed -e 's#)$#);#' | tr -d '\n'`
-prototypes=`grep -e '^<DECLARATION>.*)' $OUTPUT_FILE | sed -e 's#)$#);#'`
+#prototypes=`grep -e '^<DECLARATION>.*)' $OUTPUT_FILE | sed -e 's#)$#);#'`
 
 #echo "prototypes $prototypes"
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
