@@ -758,7 +758,7 @@ void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
 	//	ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
 	}
 
-	NormalRegistry* normalRegistry = __NEW_BASIC(NormalRegistry);
+	NormalRegistry* normalRegistry = new NormalRegistry;
 	normalRegistry->referent = referent;
 	normalRegistry->direction = direction;
 	normalRegistry->magnitude = magnitude;

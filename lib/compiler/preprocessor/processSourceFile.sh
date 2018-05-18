@@ -273,8 +273,8 @@ sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
 sed -i -e 's/,<·>/,\n/g' $OUTPUT_FILE
 
 # Replace news and deletes
-sed -i -e "s/[^A-z0-9]new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*(/\1_new(/g" -e "s/[^A-z0-9]delete[ 	]\+\(.*\);/__DELETE(\1);/g"  $OUTPUT_FILE
-#sed -i -e "s/[^A-z0-9]new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*(/\1_new(/g" -e "s/[^A-z0-9]delete[ 	]\+\(.*\)[ 	]*\)/__DELETE(\1);/g" $OUTPUT_FILE
+sed -i -e "s/\([^A-z0-9]\)new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*(/\1\2_new(/g" -e "s/\([^A-z0-9]\)delete[ 	]\+\(.*\);/\1__DELETE(\2);/g"  $OUTPUT_FILE
+sed -i -e "s/\([^A-z0-9]\)new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*;/\1__NEW_BASIC(\2);/g" $OUTPUT_FILE
 
 if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt

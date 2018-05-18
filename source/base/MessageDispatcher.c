@@ -168,7 +168,7 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, u32 delay,
 	// create the telegram
 	Telegram telegram = new Telegram(sender, receiver, message, extraInfo);
 
-	DelayedMessage* delayMessage = __NEW_BASIC(DelayedMessage);
+	DelayedMessage* delayMessage = new DelayedMessage;
 
 	delayMessage->telegram = telegram;
 	delayMessage->clock = clock ? clock : Game::getMessagingClock(Game::getInstance());

@@ -118,7 +118,7 @@ void Polyhedron::destructor()
 void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
 {
 	// create the vertex
-	Vector3D* vertex = __NEW_BASIC(Vector3D);
+	Vector3D* vertex = new Vector3D;
 	vertex->x = x;
 	vertex->y = y;
 	vertex->z = z;

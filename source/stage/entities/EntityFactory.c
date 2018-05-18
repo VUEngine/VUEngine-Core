@@ -191,7 +191,7 @@ void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container pa
 		return;
 	}
 
-	PositionedEntityDescription* positionedEntityDescription = __NEW_BASIC(PositionedEntityDescription);
+	PositionedEntityDescription* positionedEntityDescription = new PositionedEntityDescription;
 
 	positionedEntityDescription->positionedEntity = positionedEntity;
 	positionedEntityDescription->parent = parent;

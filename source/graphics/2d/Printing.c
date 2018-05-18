@@ -191,7 +191,7 @@ void Printing::loadFonts(FontDefinition** fontDefinitions)
 	for(i = 0; __FONTS[i]; i++)
 	{
 		// instance and initialize a new fontdata instance
-		FontData* fontData = __NEW_BASIC(FontData);
+		FontData* fontData = new FontData;
 		fontData->fontDefinition = __FONTS[i];
 		fontData->offset = 0;
 

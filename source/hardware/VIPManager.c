@@ -703,7 +703,7 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 //		return;
 	}
 
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
 	postProcessingEffectRegistry->spatialObject = spatialObject;
 
@@ -727,7 +727,7 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
 		return;
 	}
 
-	PostProcessingEffectRegistry* postProcessingEffectRegistry = __NEW_BASIC(PostProcessingEffectRegistry);
+	PostProcessingEffectRegistry* postProcessingEffectRegistry = new PostProcessingEffectRegistry;
 	postProcessingEffectRegistry->postProcessingEffect = postProcessingEffect;
 	postProcessingEffectRegistry->spatialObject = spatialObject;
 

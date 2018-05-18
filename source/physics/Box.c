@@ -376,7 +376,7 @@ void Box::computeNormals(Vector3D vertexes[__BOX_VERTEXES])
 
 	if(!this->normals)
 	{
-		this->normals = __NEW_BASIC(Normals);
+		this->normals = new Normals;
 	}
 
 	// fast way given that the cubes are regular

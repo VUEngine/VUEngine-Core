@@ -1158,7 +1158,7 @@ void Container::setName(const char* const name)
 
 	} NameWrapper;
 
-	NameWrapper* nameWrapper = (NameWrapper*)__NEW_BASIC(NameWrapper);
+	NameWrapper* nameWrapper = (NameWrapper*)new NameWrapper;
 	this->name = nameWrapper->name;
 
 	strncpy(this->name, name, __MAX_CONTAINER_NAME_LENGTH);

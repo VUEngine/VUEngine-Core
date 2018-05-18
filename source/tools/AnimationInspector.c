@@ -218,7 +218,7 @@ void AnimationInspector::show(GameState gameState)
 	{
 		ASSERT(_userAnimatedEntities[i].name, "AnimationInspector::start: push null name");
 
-		Option* option = __NEW_BASIC(Option);
+		Option* option = new Option;
 		option->value = (char*)(_userAnimatedEntities[i].name);
 		option->type = kString;
 		VirtualList::pushBack(animatedEntitiesNames, option);
@@ -861,7 +861,7 @@ void AnimationInspector::createSpriteSelector()
 	int i = 0;
 	while(_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->entityDefinition.spriteDefinitions[i])
 	{
-		Option* option = __NEW_BASIC(Option);
+		Option* option = new Option;
 		option->value = &i;
 		option->type = kInt;
 		VirtualList::pushBack(spriteIndexes, option);
@@ -899,7 +899,7 @@ void AnimationInspector::createAnimationsSelector()
 		int i = 0;
 		for(i = 0; this->animationDescription->animationFunctions[i]; i++)
 		{
-			Option* option = __NEW_BASIC(Option);
+			Option* option = new Option;
 			option->value = this->animationDescription->animationFunctions[i]->name;
 			option->type = kString;
 			VirtualList::pushBack(animationsNames, option);
@@ -934,22 +934,22 @@ void AnimationInspector::createAnimationEditionSelector()
 	VirtualList optionsNames = new VirtualList();
 	Option* option = NULL;
 
-	option = __NEW_BASIC(Option);
+	option = new Option;
 	option->value = "Number of frames:";
 	option->type = kString;
 	VirtualList::pushBack(optionsNames, option);
 
-	option = __NEW_BASIC(Option);
+	option = new Option;
 	option->value = "Cycle delay:";
 	option->type = kString;
 	VirtualList::pushBack(optionsNames, option);
 
-	option = __NEW_BASIC(Option);
+	option = new Option;
 	option->value = "Loop:";
 	option->type = kString;
 	VirtualList::pushBack(optionsNames, option);
 
-	option = __NEW_BASIC(Option);
+	option = new Option;
 	option->value = "Frames:";
 	option->type = kString;
 	VirtualList::pushBack(optionsNames, option);
@@ -983,7 +983,7 @@ void AnimationInspector::createFrameEditionSelector()
 	int i = 0;
 	for(; i < __MAX_FRAMES_PER_ANIMATION_FUNCTION && i < this->animationFunction.numberOfFrames; i++)
 	{
-		Option* option = __NEW_BASIC(Option);
+		Option* option = new Option;
 		option->value = &this->animationFunction.frames[i];
 		option->type = kInt;
 		VirtualList::pushBack(framesIndexes, option);

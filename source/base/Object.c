@@ -166,7 +166,7 @@ void Object::addEventListener(Object listener, EventListener method, u32 eventCo
 		}
 	}
 
-	Event* event = __NEW_BASIC(Event);
+	Event* event = new Event;
 	event->listener = listener;
 	event->method = method;
 	event->code = eventCode;

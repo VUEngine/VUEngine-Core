@@ -594,7 +594,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 {
 	ASSERT(positionedEntity, "Stage::registerEntities: null positionedEntity");
 
-	StageEntityDescription* stageEntityDescription = __NEW_BASIC(StageEntityDescription);
+	StageEntityDescription* stageEntityDescription = new StageEntityDescription;
 
 	stageEntityDescription->internalId = -1;
 	stageEntityDescription->positionedEntity = positionedEntity;

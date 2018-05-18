@@ -137,7 +137,7 @@ void StageEditor::constructor()
 	int i = 0;
 	for(;  _userObjects[i].entityDefinition; i++)
 	{
-		Option* option = __NEW_BASIC(Option);
+		Option* option = new Option;
 		option->value = _userObjects[i].name;
 		option->type = kString;
 		VirtualList::pushBack(userObjects, option);

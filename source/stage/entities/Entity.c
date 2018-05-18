@@ -452,7 +452,7 @@ void Entity::calculateSize()
 			__DELETE_BASIC(this->centerDisplacement);
 		}
 
-		this->centerDisplacement = __NEW_BASIC(Vector3D);
+		this->centerDisplacement = new Vector3D;
 		*this->centerDisplacement = centerDisplacement;
 	}
 

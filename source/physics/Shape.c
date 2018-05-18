@@ -666,7 +666,7 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
 	if(!collidingShapeRegistry)
 	{
 		newEntry = true;
-		collidingShapeRegistry = __NEW_BASIC(CollidingShapeRegistry);
+		collidingShapeRegistry = new CollidingShapeRegistry;
 	}
 
 	collidingShapeRegistry->shape = collidingShape;
