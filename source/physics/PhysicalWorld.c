@@ -170,10 +170,10 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
  */
 void PhysicalWorld::destroyBody(Body body)
 {
-	ASSERT(__IS_OBJECT_ALIVE(body), "PhysicalWorld::destroyBody: dead body");
+	ASSERT(!isDeleted(body), "PhysicalWorld::destroyBody: dead body");
 	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::destroyBody: body not registered");
 
-	if(__IS_OBJECT_ALIVE(body) && VirtualList::find(this->bodies, body))
+	if(!isDeleted(body) && VirtualList::find(this->bodies, body))
 	{
 		// place in the removed bodies list
 		VirtualList::removeElement(this->bodies, body);
@@ -308,7 +308,7 @@ void PhysicalWorld::update(Clock clock)
 
 	for(activeBodiesIndex = 0; activeBodies[activeBodiesIndex]; activeBodiesIndex++)
 	{
-		if(!__IS_OBJECT_ALIVE(activeBodies[activeBodiesIndex]))
+		if(isDeleted(activeBodies[activeBodiesIndex]))
 		{
 			continue;
 		}

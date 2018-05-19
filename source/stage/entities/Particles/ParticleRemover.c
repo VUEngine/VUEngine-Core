@@ -108,7 +108,7 @@ void ParticleRemover::reset()
 
 		for(; particleNode; particleNode = particleNode->next)
 		{
-			if(__IS_OBJECT_ALIVE(particleNode->data))
+			if(!isDeleted(particleNode->data))
 			{
 				delete particleNode->data;
 			}

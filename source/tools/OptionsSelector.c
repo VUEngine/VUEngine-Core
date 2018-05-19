@@ -155,7 +155,7 @@ void OptionsSelector::flushPages()
 
 			for(; optionsNode; optionsNode = optionsNode->next)
 			{
-				__DELETE_BASIC(optionsNode->data);
+				delete optionsNode->data;
 			}
 
 			delete node->data;

@@ -147,7 +147,7 @@ void Container::destructor()
 	// delete name
 	if(this->name)
 	{
-		__DELETE_BASIC(this->name);
+		delete this->name;
 	}
 
 	if(this->events)
@@ -170,10 +170,10 @@ void Container::destructor()
  */
 void Container::deleteMyself()
 {
-	ASSERT(__IS_OBJECT_ALIVE(this), "Container::deleteMyself: deleted this");
-	ASSERT(__IS_OBJECT_ALIVE(this->parent), "Container::deleteMyself: deleted parent");
+	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
+	ASSERT(!isDeleted(this->parent), "Container::deleteMyself: deleted parent");
 
-	if(__IS_OBJECT_ALIVE(this->parent))
+	if(!isDeleted(this->parent))
 	{
 		 Container::removeChild(this->parent, this, true);
 		 Container::iAmDeletingMyself(this);
@@ -367,7 +367,7 @@ void Container::purgeChildren()
 	for(; node ; node = node->next)
 	{
 #ifndef __RELEASE
-		if(!__IS_OBJECT_ALIVE(node->data))
+		if(isDeleted(node->data))
 		{
 			Printing::setDebugMode(Printing::getInstance());
 			Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
@@ -1144,7 +1144,7 @@ void Container::setName(const char* const name)
 {
 	if(this->name)
 	{
-		__DELETE_BASIC(this->name);
+		delete this->name;
 	}
 
 	if(!name)

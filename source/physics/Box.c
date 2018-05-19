@@ -83,7 +83,7 @@ void Box::destructor()
 {
 	if(this->normals)
 	{
-		__DELETE_BASIC(this->normals);
+		delete this->normals;
 		this->normals = NULL;
 	}
 

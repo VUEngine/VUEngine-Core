@@ -39,6 +39,8 @@
 		ClassName ClassName ## _new(__VA_ARGS__)
 
 
+#define __OBJECT_MEMORY_FOOT_PRINT		(__MEMORY_USED_BLOCK_FLAG + sizeof(u16) * 8)
+
 // define the class's allocator
 #define __CLASS_NEW_DEFINITION(ClassName, ...)															\
 																										\
@@ -52,9 +54,14 @@
 			extern MemoryPool _memoryPool;																\
 																										\
 			/* allocate object */																		\
-			ClassName this = (ClassName) 																\
-							MemoryPool_allocate(_memoryPool, 											\
-							sizeof(ClassName ## _str));													\
+			u32* memoryBlock = (u32*)MemoryPool_allocate(_memoryPool, 									\
+							sizeof(ClassName ## _str) + __DYNAMIC_STRUCT_PAD);							\
+																										\
+			/* mark memory block as used by an object */												\
+			*memoryBlock = __OBJECT_MEMORY_FOOT_PRINT;													\
+																										\
+			/* this pointer lives __DYNAMIC_STRUCT_PAD ahead */											\
+			ClassName this = (ClassName)((u32)memoryBlock + __DYNAMIC_STRUCT_PAD);						\
 																										\
 			/* check if properly created */																\
 			ASSERT(this, __MAKE_STRING(ClassName) "::new: not allocated");								\
@@ -64,7 +71,7 @@
 #define __CLASS_NEW_END(ClassName, ...)																	\
 																										\
 			/* set the vtable pointer */																\
-			this->vTable = (void*)&ClassName ## _vTable;												\
+			this->vTable = (void*)&ClassName ## _vTable;													\
 																										\
 			/* construct the object */																	\
 			ClassName ## _constructor(this, ##__VA_ARGS__);												\
@@ -87,15 +94,6 @@
 		/* call class's new implementation */															\
 		ClassName ## _new(__VA_ARGS__)																	\
 
-
-// like delete in C++ (calls virtual destructor)
-#define __DELETE(object)																				\
-																										\
-		/* since the destructor is the first element in the virtual table */							\
-		ASSERT(object && *(u32*)object, "Deleting null object");											\
-		/* ((void (*)(void*))((void***)object)[0][0])(object); */										\
-		((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object)				\
-
 // like new in C++
 #define __NEW_BASIC(ClassName)																			\
 																										\
@@ -103,23 +101,36 @@
 		(ClassName*)((u32)MemoryPool_allocate(MemoryPool_getInstance(),									\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
-#ifdef __DEBUG
 // like delete in C++ (calls virtual destructor)
-#define __DELETE_BASIC(object)																			\
+#ifdef __DEBUG
+#define __DELETE(object)																				\
 																										\
-		/* free the memory */																			\
-		ASSERT(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD), 									\
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))					\
+		{																								\
+			/* since the destructor is the first element in the virtual table */						\
+			ASSERT(object && *(u32*)object, "Deleting null object");										\
+			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
+		}																								\
+		else																							\
+		{																								\
+			ASSERT(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD), 								\
 				"Oop: deleting null basic object");														\
-																										\
-		/* to speed things up */																		\
-		extern MemoryPool _memoryPool;																	\
-		MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD))
+			extern MemoryPool _memoryPool;																\
+			MemoryPool_free(_memoryPool, (BYTE*)((u32)object - __DYNAMIC_STRUCT_PAD));					\
+		}
 #else
-#define __DELETE_BASIC(object)																			\
+#define __DELETE(object)																				\
 																										\
-		/* free the memory */																			\
-		*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;
+		if(__OBJECT_MEMORY_FOOT_PRINT == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))					\
+		{																								\
+			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
+		}																								\
+		else																							\
+		{																								\
+			*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;						\
+		}
 #endif
+
 
 // construct the base object
 #define __CONSTRUCT_BASE(BaseClass, ...)																\
@@ -170,13 +181,10 @@
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
 		/* test if object has not been deleted */														\
-		(object && *(u32*)object)																		\
+		(object && *(u32*)object - __DYNAMIC_STRUCT_PAD)													\
 
 
-#define __IS_BASIC_OBJECT_ALIVE(object)																	\
-																										\
-		/* test if object has not been deleted */														\
-		(object && *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))											\
+#define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
 
 
 #define __GET_CAST(ClassName, object)																	\
@@ -188,7 +196,7 @@
 #define __IS_INSTANCE_OF(ClassName, object)																\
 																										\
 		/* try to up cast object */																		\
-		(void*)&ClassName ## _vTable == (void*)*((void**)object)										\
+		(void*)&ClassName ## _vTable == (void*)*((void**)object)											\
 
 // declare a virtual method
 #define __VIRTUAL_DEC(ClassName, ReturnType, MethodName, ...)											\

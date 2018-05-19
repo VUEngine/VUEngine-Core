@@ -92,7 +92,7 @@ void Polyhedron::destructor()
 		// delete each vertex
 		for(; node ; node = node->next)
 		{
-			__DELETE_BASIC(node->data);
+			delete node->data;
 		}
 
 		// delete the list

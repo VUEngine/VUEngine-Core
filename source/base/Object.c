@@ -89,7 +89,7 @@ void Object::constructor()
  */
 void Object::destructor()
 {
-	ASSERT(__IS_OBJECT_ALIVE(this), "Object::destructor: already deleted this");
+	ASSERT(!isDeleted(this), "Object::destructor: already deleted this");
 
 	if(this->events)
 	{
@@ -97,7 +97,7 @@ void Object::destructor()
 
 		for(; node; node = node->next)
 		{
-			__DELETE_BASIC(node->data);
+			delete node->data;
 		}
 
 		delete this->events;
@@ -106,9 +106,9 @@ void Object::destructor()
 
 	// free the memory
 #ifdef __DEBUG
-	MemoryPool::free(_memoryPool, (void*)this);
+	MemoryPool::free(_memoryPool, (void*)((u32)this - __DYNAMIC_STRUCT_PAD));
 #else
-	*((u32*)this) = __MEMORY_FREE_BLOCK_FLAG;
+	*((u32*)((u32)this - __DYNAMIC_STRUCT_PAD)) = __MEMORY_FREE_BLOCK_FLAG;
 #endif
 }
 
@@ -199,7 +199,7 @@ void Object::removeEventListener(Object listener, EventListener method, u32 even
 			{
 				VirtualList::removeNode(this->events, node);
 
-				__DELETE_BASIC(event);
+				delete event;
 				break;
 			}
 		}
@@ -240,7 +240,7 @@ void Object::removeEventListeners(Object listener, u32 eventCode)
 
 			VirtualList::removeElement(this->events, event);
 
-			__DELETE_BASIC(event);
+			delete event;
 		}
 
 		delete eventsToRemove;
@@ -286,7 +286,7 @@ void Object::removeAllEventListeners(u32 eventCode)
 
 			VirtualList::removeElement(this->events, event);
 
-			__DELETE_BASIC(event);
+			delete event;
 		}
 
 		delete eventsToRemove;
@@ -323,7 +323,7 @@ void Object::fireEvent(u32 eventCode)
 			Event* event = (Event*)node->data;
 
 			// safe check in case that the there is a stacking up of firings within firings
-			if(!__IS_BASIC_OBJECT_ALIVE(event) || !__IS_OBJECT_ALIVE(event->listener))
+			if(isDeleted(event) || isDeleted(event->listener))
 			{
 				VirtualList::pushBack(eventsToRemove, event);
 			}
@@ -340,9 +340,9 @@ void Object::fireEvent(u32 eventCode)
 			VirtualList::removeElement(this->events, event);
 
 			// safe check in case that the there is a stacking up of firings within firings
-			if(__IS_BASIC_OBJECT_ALIVE(event))
+			if(!isDeleted(event))
 			{
-				__DELETE_BASIC(event);
+				delete event;
 			}
 		}
 
@@ -355,13 +355,13 @@ void Object::fireEvent(u32 eventCode)
 			Event* event = (Event*)node->data;
 
 			// safe check in case that the event have been deleted during the previous call to method
-			if(__IS_BASIC_OBJECT_ALIVE(event))
+			if(!isDeleted(event))
 			{
 				event->method(event->listener, this);
 			}
 
 			// safe check in case that I have been deleted during the previous event
-			if(!__IS_OBJECT_ALIVE(this))
+			if(isDeleted(this))
 			{
 				break;
 			}
@@ -401,7 +401,7 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 		return NULL;
 	}
 
-	if(!__IS_OBJECT_ALIVE(object))
+	if(isDeleted(object))
 	{
 	/*
 		Printing::setDebugMode(Printing::getInstance());

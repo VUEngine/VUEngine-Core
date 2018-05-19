@@ -325,7 +325,7 @@ void BgmapTextureManager::allocateText(BgmapTexture bgmapTexture)
 void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 {
 	// if no one is using the texture anymore
-	if(__IS_OBJECT_ALIVE(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
+	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
 	{
 		int i = Texture::getId(__SAFE_CAST(Texture, bgmapTexture));
 

@@ -246,7 +246,7 @@ Sprite SpriteManager::createSprite(SpriteDefinition* spriteDefinition, Object ow
 	this->lockSpritesLists = true;
 
 	Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, owner);
-	ASSERT(__IS_OBJECT_ALIVE(sprite), "SpriteManager::createSprite: failed creating sprite");
+	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
 	SpriteManager::registerSprite(this, sprite);
 
@@ -266,7 +266,7 @@ Sprite SpriteManager::createSprite(SpriteDefinition* spriteDefinition, Object ow
  */
 void SpriteManager::disposeSprite(Sprite sprite)
 {
-	ASSERT(__IS_OBJECT_ALIVE(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
+	ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
 	this->lockSpritesLists = true;
 
@@ -302,7 +302,7 @@ bool SpriteManager::disposeSpritesProgressively()
 
 		delete sprite;
 
-		this->spritePendingTextureWriting = __IS_OBJECT_ALIVE(this->spritePendingTextureWriting)? this->spritePendingTextureWriting : NULL;
+		this->spritePendingTextureWriting = !isDeleted(this->spritePendingTextureWriting)? this->spritePendingTextureWriting : NULL;
 
 		this->lockSpritesLists = false;
 
@@ -574,7 +574,7 @@ void SpriteManager::selectSpritePendingTextureWriting()
 	{
 		Sprite sprite = __SAFE_CAST(Sprite, node->data);
 
-		if(__IS_OBJECT_ALIVE(sprite) && ! Sprite::areTexturesWritten(sprite))
+		if(!isDeleted(sprite) && ! Sprite::areTexturesWritten(sprite))
 		{
 			bool areTexturesWritten =  Sprite::writeTextures(sprite);
 
@@ -628,7 +628,7 @@ bool SpriteManager::writeSelectedSprite()
 	{
 		if(this->spritePendingTextureWriting)
 		{
-			if(__IS_OBJECT_ALIVE(this->spritePendingTextureWriting) && ! Sprite::areTexturesWritten(this->spritePendingTextureWriting))
+			if(!isDeleted(this->spritePendingTextureWriting) && ! Sprite::areTexturesWritten(this->spritePendingTextureWriting))
 			{
 				this->spritePendingTextureWriting =  Sprite::writeTextures(this->spritePendingTextureWriting) ? this->spritePendingTextureWriting : NULL;
 				this->waitToWriteSpriteTextures = this->cyclesToWaitForSpriteTextureWriting;

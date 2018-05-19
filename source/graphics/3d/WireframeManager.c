@@ -88,7 +88,7 @@ void WireframeManager::destructor()
 
 	for(; node; node = node->next)
 	{
-		__DELETE_BASIC(node->next);
+		delete node->next;
 	}
 
 	delete this->wireframes;

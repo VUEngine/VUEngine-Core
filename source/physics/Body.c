@@ -165,7 +165,7 @@ void Body::destructor()
 
 		for(; node; node = node->next)
 		{
-			__DELETE_BASIC(node->data);
+			delete node->data;
 		}
 
 		delete this->normals;
@@ -718,7 +718,7 @@ void Body::computeTotalNormal()
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
-			if(__IS_OBJECT_ALIVE(normalRegistry->referent))
+			if(!isDeleted(normalRegistry->referent))
 			{
 				Vector3D normal = Vector3D::scalarProduct(normalRegistry->direction, normalRegistry->magnitude);
 
@@ -754,7 +754,7 @@ void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
 
 	for(; node; node = node->next)
 	{
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(node->data), "DEAD");
+		ASSERT(!isDeleted(node->data), "DEAD");
 	//	ASSERT(((NormalRegistry*)node->data)->referent != referent, "ERRR");
 	}
 
@@ -780,11 +780,11 @@ Force Body::getLastNormalDirection()
 		return (Force){0, 0, 0};
 	}
 
-	while(this->normals->head && !__IS_OBJECT_ALIVE(((NormalRegistry*)VirtualList::back(this->normals))->referent))
+	while(this->normals->head && isDeleted(((NormalRegistry*)VirtualList::back(this->normals))->referent))
 	{
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(VirtualList::back(this->normals)), "Body::getLastNormalDirection: dead normal registry");
+		ASSERT(!isDeleted(VirtualList::back(this->normals)), "Body::getLastNormalDirection: dead normal registry");
 
-		__DELETE_BASIC(VirtualList::popBack(this->normals));
+		delete VirtualList::popBack(this->normals);
 	}
 
 	Body::computeTotalNormal(this);
@@ -805,7 +805,7 @@ void Body::reset()
 
 		for(; node; node = node->next)
 		{
-			__DELETE_BASIC(node->data);
+			delete node->data;
 		}
 
 		delete this->normals;
@@ -836,7 +836,7 @@ void Body::clearNormalOnAxes(u16 axes __attribute__ ((unused))) __attribute__ ((
 		{
 			NormalRegistry* normalRegistry = (NormalRegistry*)node->data;
 
-			if(!__IS_OBJECT_ALIVE(normalRegistry->referent) ||
+			if(isDeleted(normalRegistry->referent) ||
 				((__X_AXIS & axes) && normalRegistry->direction.x) ||
 				((__Y_AXIS & axes) && normalRegistry->direction.y) ||
 				((__Z_AXIS & axes) && normalRegistry->direction.z)
@@ -852,9 +852,9 @@ void Body::clearNormalOnAxes(u16 axes __attribute__ ((unused))) __attribute__ ((
 		{
 			VirtualList::removeElement(this->normals, node->data);
 
-			if(__IS_BASIC_OBJECT_ALIVE(node->data))
+			if(!isDeleted(node->data))
 			{
-			__DELETE_BASIC(node->data);
+			delete node->data;
 			}
 			else
 			{
@@ -873,7 +873,7 @@ void Body::clearNormalOnAxes(u16 axes __attribute__ ((unused))) __attribute__ ((
 
 void Body::clearNormal(Object referent)
 {
-	ASSERT(__IS_OBJECT_ALIVE(referent), "Body::clearNormal: dead referent");
+	ASSERT(!isDeleted(referent), "Body::clearNormal: dead referent");
 
 	if(this->normals)
 	{
@@ -887,9 +887,9 @@ void Body::clearNormal(Object referent)
 			// it is Ok if it doesn't exist
 			if(normalRegistry->referent == referent)
 			{
-				ASSERT(__IS_BASIC_OBJECT_ALIVE(normalRegistry), "Body::clearNormal: dead normal registry");
+				ASSERT(!isDeleted(normalRegistry), "Body::clearNormal: dead normal registry");
 				VirtualList::removeElement(this->normals, normalRegistry);
-				__DELETE_BASIC(normalRegistry);
+				delete normalRegistry;
 				break;
 			}
 		}

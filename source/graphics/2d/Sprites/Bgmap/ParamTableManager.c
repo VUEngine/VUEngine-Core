@@ -131,7 +131,7 @@ void ParamTableManager::reset()
 
 	for(; node; node = node->next)
 	{
-		__DELETE_BASIC(node->data);
+		delete node->data;
 	}
 
 	VirtualList::clear(this->removedBgmapSpritesSizes);
@@ -357,7 +357,7 @@ bool ParamTableManager::defragmentProgressively()
 					break;
 				}
 
-				if(__IS_OBJECT_ALIVE(this->previouslyMovedBgmapSprite) && 0 < BgmapSprite::getParamTableRow(this->previouslyMovedBgmapSprite))
+				if(!isDeleted(this->previouslyMovedBgmapSprite) && 0 < BgmapSprite::getParamTableRow(this->previouslyMovedBgmapSprite))
 				{
 					break;
 				}

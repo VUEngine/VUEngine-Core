@@ -49,7 +49,7 @@ baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's#[  ]##g'`
 
 if [ -z "$className" ];
 then
-	cat $INPUT_FILE >> $OUTPUT_FILE
+	cp -f $INPUT_FILE $OUTPUT_FILE
     exit 0
 fi
 

@@ -112,7 +112,7 @@ void ObjectSprite::destructor()
 		ObjectSpriteContainer::removeObjectSprite(this->objectSpriteContainer, this, this->totalObjects);
 	}
 
-	if(__IS_OBJECT_ALIVE(this->texture))
+	if(!isDeleted(this->texture))
 	{
 		delete this->texture;
 	}

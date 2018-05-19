@@ -55,8 +55,6 @@ isStatic=false
 if [ -z "$className" ];then
 # Maybe it is a static class
 	isStatic=false
-
-	grep -o -m 1 -e '^.*[ 	]\+[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE
 	className=`grep -o -m 1 -e '^.*[ 	]\+[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 fi
 # INJECTION OF ClassName _this into method declarations

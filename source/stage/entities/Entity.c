@@ -106,7 +106,7 @@ void Entity::destructor()
 
 	if(this->centerDisplacement)
 	{
-		__DELETE_BASIC(this->centerDisplacement);
+		delete this->centerDisplacement;
 	}
 
 	if(this->entityFactory)
@@ -227,7 +227,7 @@ void Entity::destroyShapes()
 {
 	if(this->shapes)
 	{
-		ASSERT(__IS_OBJECT_ALIVE(this->shapes), "Entity::setDefinition: dead shapes");
+		ASSERT(!isDeleted(this->shapes), "Entity::setDefinition: dead shapes");
 
 		VirtualNode node = this->shapes->head;
 
@@ -449,7 +449,7 @@ void Entity::calculateSize()
 	{
 		if(this->centerDisplacement)
 		{
-			__DELETE_BASIC(this->centerDisplacement);
+			delete this->centerDisplacement;
 		}
 
 		this->centerDisplacement = new Vector3D;

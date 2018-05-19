@@ -104,12 +104,12 @@ void EntityFactory::destructor()
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			delete positionedEntityDescription->entity;
 		}
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	delete this->entitiesToInstantiate;
@@ -121,12 +121,12 @@ void EntityFactory::destructor()
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			delete positionedEntityDescription->entity;
 		}
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	delete this->entitiesToInitialize;
@@ -138,12 +138,12 @@ void EntityFactory::destructor()
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			delete positionedEntityDescription->entity;
 		}
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	delete this->entitiesToTransform;
@@ -155,12 +155,12 @@ void EntityFactory::destructor()
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			delete positionedEntityDescription->entity;
 		}
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	delete this->entitiesToMakeReady;
@@ -173,7 +173,7 @@ void EntityFactory::destructor()
 	{
 		PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)node->data;
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	delete this->spawnedEntities;
@@ -217,7 +217,7 @@ u32 EntityFactory::instantiateEntities()
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInstantiate->head->data;
 
-	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
+	if(!isDeleted(positionedEntityDescription->parent))
 	{
 		if(positionedEntityDescription->entity)
 		{
@@ -245,7 +245,7 @@ u32 EntityFactory::instantiateEntities()
 	else
 	{
 		VirtualList::removeElement(this->entitiesToInstantiate, positionedEntityDescription);
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	return __ENTITY_PROCESSED;
@@ -261,7 +261,7 @@ u32 EntityFactory::initializeEntities()
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInitialize->head->data;
 
-	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
+	if(!isDeleted(positionedEntityDescription->parent))
 	{
 		ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
 
@@ -294,12 +294,12 @@ u32 EntityFactory::initializeEntities()
 	{
 		VirtualList::removeElement(this->entitiesToInitialize, positionedEntityDescription);
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			delete positionedEntityDescription->entity;
 		}
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	return __ENTITY_PROCESSED;
@@ -317,7 +317,7 @@ u32 EntityFactory::transformEntities()
 	ASSERT(positionedEntityDescription->entity, "EntityFactory::transformEntities: null entity");
 	ASSERT(positionedEntityDescription->parent, "EntityFactory::transformEntities: null parent");
 
-	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
+	if(!isDeleted(positionedEntityDescription->parent))
 	{
 		if(!positionedEntityDescription->transformed)
 		{
@@ -344,12 +344,12 @@ u32 EntityFactory::transformEntities()
 	{
 		VirtualList::removeElement(this->entitiesToTransform, positionedEntityDescription);
 
-		if(__IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+		if(!isDeleted(positionedEntityDescription->entity))
 		{
 			delete positionedEntityDescription->entity;
 		}
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	return __ENTITY_PROCESSED;
@@ -364,7 +364,7 @@ u32 EntityFactory::makeReadyEntities()
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToMakeReady->head->data;
 
-	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent))
+	if(!isDeleted(positionedEntityDescription->parent))
 	{
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
@@ -385,7 +385,7 @@ u32 EntityFactory::makeReadyEntities()
 
 		// don't need to delete the created entity since the parent takes care of that at this point
 
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	return __ENTITY_PROCESSED;
@@ -400,7 +400,7 @@ u32 EntityFactory::cleanUp()
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->spawnedEntities->head->data;
 
-	if(__IS_OBJECT_ALIVE(positionedEntityDescription->parent) && __IS_OBJECT_ALIVE(positionedEntityDescription->entity))
+	if(!isDeleted(positionedEntityDescription->parent) && !isDeleted(positionedEntityDescription->entity))
 	{
 		if(positionedEntityDescription->callback)
 		{
@@ -410,14 +410,14 @@ u32 EntityFactory::cleanUp()
 		}
 
 		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 
 		return __ENTITY_PROCESSED;
 	}
 	else
 	{
 		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);
-		__DELETE_BASIC(positionedEntityDescription);
+		delete positionedEntityDescription;
 	}
 
 	return __ENTITY_PROCESSED;

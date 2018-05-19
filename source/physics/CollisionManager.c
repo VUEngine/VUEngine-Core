@@ -209,7 +209,7 @@ u32 CollisionManager::update(Clock clock)
 	// check the shapes
 	for(movingShapesIndex = 0; movingShapes[movingShapesIndex]; movingShapesIndex++)
 	{
-		if(!__IS_OBJECT_ALIVE(movingShapes[movingShapesIndex]))
+		if(isDeleted(movingShapes[movingShapesIndex]))
 		{
 			continue;
 		}
@@ -222,7 +222,7 @@ u32 CollisionManager::update(Clock clock)
 			// check the shapes
 			for(activeShapesIndex = 0; activeShapes[activeShapesIndex]; activeShapesIndex++)
 			{
-				if(!__IS_OBJECT_ALIVE(activeShapes[activeShapesIndex]))
+				if(isDeleted(activeShapes[activeShapesIndex]))
 				{
 					continue;
 				}

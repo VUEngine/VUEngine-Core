@@ -163,7 +163,7 @@ void Printing::reset()
 
 	for(; node; node = VirtualNode::getNext(node))
 	{
-		__DELETE_BASIC(VirtualNode::getData(node));
+		delete VirtualNode::getData(node);
 	}
 
 	VirtualList::clear(this->fonts);

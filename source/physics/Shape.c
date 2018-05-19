@@ -116,15 +116,15 @@ void Shape::destructor()
 		{
 			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
-			ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::destructor: dead collidingShapeRegistry");
+			ASSERT(!isDeleted(collidingShapeRegistry), "Shape::destructor: dead collidingShapeRegistry");
 
-			if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape))
+			if(!isDeleted(collidingShapeRegistry->shape))
 			{
 				Object::removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
 				Object::removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
 			}
 
-			__DELETE_BASIC(collidingShapeRegistry);
+			delete collidingShapeRegistry;
 		}
 
 		delete this->collidingShapes;
@@ -154,15 +154,15 @@ void Shape::reset()
 		{
 			CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
-			ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::reset: dead collidingShapeRegistry");
+			ASSERT(!isDeleted(collidingShapeRegistry), "Shape::reset: dead collidingShapeRegistry");
 
-			if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape))
+			if(!isDeleted(collidingShapeRegistry->shape))
 			{
 				Object::removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
 				Object::removeEventListener(__SAFE_CAST(Object, collidingShapeRegistry->shape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
 			}
 
-			__DELETE_BASIC(collidingShapeRegistry);
+			delete collidingShapeRegistry;
 		}
 
 		delete this->collidingShapes;
@@ -316,7 +316,7 @@ CollisionData Shape::collides(Shape shape)
 		false,
 	};
 
-	if(!__IS_OBJECT_ALIVE(this->owner))
+	if(isDeleted(this->owner))
 	{
 		return collisionData;
 	}
@@ -425,7 +425,7 @@ bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attrib
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::canMoveTowards: dead collidingShapeRegistry");
+		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::canMoveTowards: dead collidingShapeRegistry");
 
 		if(collidingShapeRegistry->isImpenetrable)
 		{
@@ -456,7 +456,7 @@ void Shape::checkPreviousCollisions(Shape collidingShape)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
 
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::invalidateSolutionVectors: dead collidingShapeRegistry");
+		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::invalidateSolutionVectors: dead collidingShapeRegistry");
 
 		if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->shape != collidingShape)
 		{
@@ -521,7 +521,7 @@ void Shape::resolveCollision(const CollisionInformation* collisionInformation)
 	ASSERT(collisionInformation->shape, "Shape::resolveCollision: null shape");
 	ASSERT(collisionInformation->collidingShape, "Shape::resolveCollision: null collidingEntities");
 
-	if(!__IS_OBJECT_ALIVE(this->owner))
+	if(isDeleted(this->owner))
 	{
 		return;
 	}
@@ -536,7 +536,7 @@ void Shape::resolveCollision(const CollisionInformation* collisionInformation)
 		//Shape::checkPreviousCollisions(this, collisionInformation->collidingShape);
 
 		CollidingShapeRegistry* collidingShapeRegistry = Shape::registerCollidingShape(this, collisionInformation->collidingShape, collisionInformation->solutionVector, true);
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::resolveCollision: dead collidingShapeRegistry");
+		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::resolveCollision: dead collidingShapeRegistry");
 		collidingShapeRegistry->frictionCoefficient =  SpatialObject::getFrictionCoefficient(collisionInformation->collidingShape->owner);
 	}
 }
@@ -696,7 +696,7 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
  */
 bool Shape::unregisterCollidingShape(Shape collidingShape)
 {
-	ASSERT(__IS_OBJECT_ALIVE(collidingShape), "Shape::removeCollidingShape: dead collidingShape");
+	ASSERT(!isDeleted(collidingShape), "Shape::removeCollidingShape: dead collidingShape");
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, __SAFE_CAST(Shape, collidingShape));
 
@@ -705,11 +705,11 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
 		return false;
 	}
 
-	ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::removeCollidingShape: dead collidingShapeRegistry");
+	ASSERT(!isDeleted(collidingShapeRegistry), "Shape::removeCollidingShape: dead collidingShapeRegistry");
 	VirtualList::removeElement(this->collidingShapes, collidingShapeRegistry);
-	__DELETE_BASIC(collidingShapeRegistry);
+	delete collidingShapeRegistry;
 
-	if(__IS_OBJECT_ALIVE(collidingShape))
+	if(!isDeleted(collidingShape))
 	{
 		Object::removeEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
 		Object::removeEventListener(__SAFE_CAST(Object, collidingShape), __SAFE_CAST(Object, this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
@@ -729,7 +729,7 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
  */
 void Shape::onCollidingShapeDestroyed(Object eventFirer)
 {
-	if(!__IS_OBJECT_ALIVE(this->owner))
+	if(isDeleted(this->owner))
 	{
 		return;
 	}
@@ -763,7 +763,7 @@ void Shape::onCollidingShapeDestroyed(Object eventFirer)
  */
 void Shape::onCollidingShapeChanged(Object eventFirer)
 {
-	if(!__IS_OBJECT_ALIVE(this->owner))
+	if(isDeleted(this->owner))
 	{
 		return;
 	}
@@ -773,7 +773,7 @@ void Shape::onCollidingShapeChanged(Object eventFirer)
 	Shape::registerCollidingShape(this, shapeNotCollidingAnymore, (SolutionVector){{0, 0, 0}, 0}, true);
 
 	CollidingShapeRegistry* collidingShapeRegistry = Shape::findCollidingShapeRegistry(this, shapeNotCollidingAnymore);
-	ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::removeCollidingShape: dead collidingShapeRegistry");
+	ASSERT(!isDeleted(collidingShapeRegistry), "Shape::removeCollidingShape: dead collidingShapeRegistry");
 
 	bool isImpenetrable = collidingShapeRegistry->isImpenetrable;
 
@@ -807,7 +807,7 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 
 	for(; node; node = node->next)
 	{
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(node->data), "Shape::findCollidingShapeRegistry: deleted registry");
+		ASSERT(!isDeleted(node->data), "Shape::findCollidingShapeRegistry: deleted registry");
 
 		if(shape == ((CollidingShapeRegistry*)node->data)->shape)
 		{
@@ -842,11 +842,11 @@ fix10_6 Shape::getCollidingFrictionCoefficient()
 	for(; node; node = node->next)
 	{
 		CollidingShapeRegistry* collidingShapeRegistry = (CollidingShapeRegistry*)node->data;
-		ASSERT(__IS_BASIC_OBJECT_ALIVE(collidingShapeRegistry), "Shape::getCollidingFriction: dead collidingShapeRegistry");
+		ASSERT(!isDeleted(collidingShapeRegistry), "Shape::getCollidingFriction: dead collidingShapeRegistry");
 
 		ASSERT(collidingShapeRegistry->shape, "Shape::getCollidingFriction: null collidingShape");
 
-		if(__IS_OBJECT_ALIVE(collidingShapeRegistry->shape->owner))
+		if(!isDeleted(collidingShapeRegistry->shape->owner))
 		{
 			totalFrictionCoefficient += collidingShapeRegistry->frictionCoefficient;
 		}

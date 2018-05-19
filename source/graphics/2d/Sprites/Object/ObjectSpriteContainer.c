@@ -243,7 +243,7 @@ void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 nu
 		this->freedObjectIndex = 0;
 	}
 
-	ASSERT(!this->objectSpriteNodeToDefragment || __IS_OBJECT_ALIVE(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::removeObjectSprite: deleted objectSpriteNodeToDefragment data");
+	ASSERT(!this->objectSpriteNodeToDefragment || !isDeleted(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::removeObjectSprite: deleted objectSpriteNodeToDefragment data");
 
 	this->removingObjectSprite = false;
 }
@@ -301,7 +301,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 void ObjectSpriteContainer::defragment()
 {
 	ASSERT(this->objectSpriteNodeToDefragment, "ObjectSpriteContainer::defragment: null objectSpriteNodeToDefragment");
-	NM_ASSERT(__IS_OBJECT_ALIVE(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
+	NM_ASSERT(!isDeleted(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
 
 	// get the next sprite to move
 	ObjectSprite objectSprite = __SAFE_CAST(ObjectSprite, VirtualNode::getData(this->objectSpriteNodeToDefragment));

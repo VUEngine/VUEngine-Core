@@ -132,7 +132,7 @@ void BgmapSprite::destructor()
 	}
 
 	// free the texture
-	if(__IS_OBJECT_ALIVE(this->texture))
+	if(!isDeleted(this->texture))
 	{
 		Object::removeEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
 		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, this->texture));

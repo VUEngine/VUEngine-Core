@@ -756,7 +756,7 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
 		{
 			VirtualList::removeElement(this->postProcessingEffects, postProcessingEffectRegistry);
 
-			__DELETE_BASIC(postProcessingEffectRegistry);
+			delete postProcessingEffectRegistry;
 			return;
 		}
 	}
@@ -776,7 +776,7 @@ void VIPManager::removePostProcessingEffects()
 
 	for(; node; node = node->next)
 	{
-		__DELETE_BASIC(node->data);
+		delete node->data;
 	}
 
 	VirtualList::clear(this->postProcessingEffects);

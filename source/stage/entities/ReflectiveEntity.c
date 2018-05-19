@@ -104,7 +104,7 @@ static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialO
 {
 	ASSERT(spatialObject, "ReflectiveEntity::reflect: null this");
 
-	if(!__IS_OBJECT_ALIVE(spatialObject))
+	if(isDeleted(spatialObject))
 	{
 		return;
 	}

@@ -185,7 +185,7 @@ void Stage::destructor()
 
 		for(; node; node = node->next)
 		{
-			__DELETE_BASIC(node->data);
+			delete node->data;
 		}
 
 		delete this->stageEntities;
@@ -478,7 +478,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 		VirtualList::removeElement(this->stageEntities, node->data);
 		VirtualList::removeElement(this->loadedStageEntities, node->data);
-		__DELETE_BASIC(node->data);
+		delete node->data;
 	}
 }
 
@@ -944,7 +944,7 @@ bool Stage::purgeChildrenProgressively()
 	VirtualList::popFront(this->removedChildren);
 	VirtualList::removeElement(this->children, child);
 
-	if(__IS_OBJECT_ALIVE(child))
+	if(!isDeleted(child))
 	{
 		if(child->deleteMe)
 		{
