@@ -222,18 +222,15 @@ $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/%.o: $(WORKING_FOLDER)/source/%.c
+	@echo -n "Compiling "
+	@sed -e 's#'"$(WORKING_FOLDER)"/source/'##g' <<< $<
 	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
 	@rm -f $(STORE)/$*.dd
 
 $(WORKING_FOLDER)/source/%.c: %.c
-	@echo "Compiling "$<
-#	@echo into $@
-#	@$(GCC) -fpreprocessed -dD -E $< > $@.clean
-#	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $@.clean -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
-#	@rm $@.clean
 
 $(STORE)/%.o: %.s
 	@echo Creating object file for $*
