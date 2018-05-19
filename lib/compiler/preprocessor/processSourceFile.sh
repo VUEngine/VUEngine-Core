@@ -1,5 +1,17 @@
 #!/bin/bash
 
+clean_up() {
+	# clean up
+	sed -i -e 's/<%>//g' $OUTPUT_FILE
+	sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	]\+/ /g' $OUTPUT_FILE
+	sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
+	sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
+	sed -i -e 's/,<·>/,\n/g' $OUTPUT_FILE
+
+	# Replace casts
+    sed -i -e 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
+}
+
 INPUT_FILE=
 OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
@@ -105,17 +117,13 @@ prototypes=`grep -e '^<DECLARATION>.*)' $OUTPUT_FILE | sed -e 's#)$#);#' | tr -d
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
 
 if [ -z "$className" ];then
-	sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
-	sed -i -e 's/<%>//g' $OUTPUT_FILE
-	sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	]\+/ /g' $OUTPUT_FILE
-	sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
-	sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
-	sed -i -e 's/,<·>/,\n/g' $OUTPUT_FILE
+	clean_up
 	exit 0
 fi
 
 baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
 if [ -z "$baseClassName" ];then
+	clean_up
 	exit 0
 fi
 
@@ -262,17 +270,12 @@ sed -i -e 's#[ 	]*friend[ 	]\+class[ 	]\+\([A-z0-9]\+\)#__CLASS_FRIEND_DEFINITIO
 sed -i -e "s#Base_constructor(\(.*\)#__CONSTRUCT_BASE($baseClassName,\1#g" -e 's#,[ 	]*);#);#' -e "s#Base_destructor()#__DESTROY_BASE#g" $OUTPUT_FILE
 sed -i -e "s#Base_\([A-z][A-z0-0]\+\)(#__CALL_BASE_METHOD($baseClassName,\1, #g" $OUTPUT_FILE
 
-
-# clean up
-sed -i -e 's/<%>//g' $OUTPUT_FILE
-sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	]\+/ /g' $OUTPUT_FILE
-sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
-sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
-sed -i -e 's/,<·>/,\n/g' $OUTPUT_FILE
+clean_up
 
 # Replace news and deletes
 sed -i -e "s/\([^A-z0-9]\)new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*(/\1\2_new(/g" -e "s/\([^A-z0-9]\)delete[ 	]\+\(.*\);/\1__DELETE(\2);/g"  $OUTPUT_FILE
 sed -i -e "s/\([^A-z0-9]\)new[ 	]\+\([A-Z][A-z0-9]*\)[ 	]*;/\1__NEW_BASIC(\2);/g" $OUTPUT_FILE
+
 
 if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt

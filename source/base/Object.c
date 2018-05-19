@@ -426,7 +426,7 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 		}
 
 		// make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
-		// __SAFE_CAST check
+		// ObjectClass::getCast check
 		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
 	}
 
