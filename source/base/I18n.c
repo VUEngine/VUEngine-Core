@@ -74,8 +74,6 @@ extern LangROMDef* __LANGUAGES[];
  */
 void I18n::constructor()
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::constructor: null this");
-
 	Base::constructor();
 
 	this->activeLanguage = 0;
@@ -91,8 +89,6 @@ void I18n::constructor()
  */
 void I18n::destructor()
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::destructor: null this");
-
 	// allow a new construct
 	Base::destructor();
 }
@@ -110,8 +106,6 @@ void I18n::destructor()
  */
 const char* I18n::getText(int string)
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::getText: null this");
-
 	return 0 <= string ? __LANGUAGES[this->activeLanguage]->language[string] : NULL;
 }
 
@@ -126,8 +120,6 @@ const char* I18n::getText(int string)
  */
 void I18n::setActiveLanguage(u8 languageId)
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::setActiveLanguage: null this");
-
 	this->activeLanguage = languageId;
 }
 
@@ -143,8 +135,6 @@ void I18n::setActiveLanguage(u8 languageId)
  */
 LangDefinition * I18n::getLanguages()
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::getLanguages: null this");
-
 	return (LangDefinition *)__LANGUAGES;
 }
 
@@ -160,8 +150,6 @@ LangDefinition * I18n::getLanguages()
  */
 u8 I18n::getActiveLanguage()
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::getActiveLanguage: null this");
-
 	return this->activeLanguage;
 }
 
@@ -177,7 +165,5 @@ u8 I18n::getActiveLanguage()
  */
 char* I18n::getActiveLanguageName()
 {
-	ASSERT(__SAFE_CAST(I18n, this), "I18n::getActiveLanguageName: null this");
-
 	return (char*)__LANGUAGES[this->activeLanguage]->name;
 }
