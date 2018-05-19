@@ -60,7 +60,6 @@ if [[ ${INPUT_FILE} = *"assets/"* ]];then
 	exit 0
 fi
 
-
 className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	]\+\([A-Z][A-z0-9]*\)::.*#\1#'`
 isStatic=false
 
@@ -203,6 +202,7 @@ sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	]\+/ /g' $OUTPUT_FILE
 sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
 sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
 
+
 classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f3`
 
 if [[ ! $classModifiers = *"static "* ]] ;
@@ -294,4 +294,8 @@ if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 fi
 
-
+#contents=`cat $OUTPUT_FILE`
+#if [[ -z "$contents" ]];then
+#	echo "Error processing file: $OUTPUT_FILE"
+#	exit 0
+#fi
