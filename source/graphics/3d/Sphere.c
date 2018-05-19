@@ -85,7 +85,7 @@ void Sphere::constructor(Vector3D center, fix10_6 radius)
  */
 void Sphere::destructor()
 {
-	Wireframe::hide(__SAFE_CAST(Wireframe, this));
+	Wireframe::hide(this);
 
 	// destroy the super object
 	// must always be called at the end of the destructor

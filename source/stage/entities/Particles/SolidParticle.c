@@ -97,7 +97,7 @@ void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefi
 	};
 
 	// register a shape for collision detection
-	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinition);
+	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeDefinition);
 	CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
@@ -259,7 +259,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 			fix10_6 frictionCoefficient =  SpatialObject::getFrictionCoefficient(Shape::getOwner(collisionInformation->collidingShape));
 			fix10_6 bounciness =  SpatialObject::getBounciness(Shape::getOwner(collisionInformation->collidingShape));
 
-			Body::bounce(this->body, __SAFE_CAST(Object, collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+			Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 			returnValue = true;
 		}
 	}
@@ -428,7 +428,7 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 	if(isShapeImpenetrable)
 	{
-		Body::clearNormal(this->body, __SAFE_CAST(Object, shapeNotCollidingAnymore));
+		Body::clearNormal(this->body, Object::safeCast(shapeNotCollidingAnymore));
 	}
 
 	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));

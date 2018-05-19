@@ -88,7 +88,7 @@ void BgmapAnimationCoordinator::addAnimationController(AnimationController anima
 
 	if(VirtualList::front(this->animationControllers))
 	{
-		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
+		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
 
 		ASSERT(firstAnimationController, "BgmapAnimationCoordinator::addAnimationController: null firstAnimationController");
 

@@ -58,7 +58,7 @@ void SpatialObject::destructor()
 {
 	if(this->events)
 	{
-		Object::fireEvent(__SAFE_CAST(Object, this), kEventSpatialObjectDeleted);
+		Object::fireEvent(this, kEventSpatialObjectDeleted);
 	}
 
 	// destroy the super SpatialObject

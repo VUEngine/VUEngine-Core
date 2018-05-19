@@ -72,11 +72,11 @@ void BgmapAnimatedSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDe
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController(owner, __SAFE_CAST(Sprite, this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+    this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 
     // since the offset will be moved during animation, must save it
-    this->originalTextureSource.mx = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-    this->originalTextureSource.my = BgmapTexture::getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+    this->originalTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+    this->originalTextureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
 }
 
 /**
@@ -128,7 +128,7 @@ void BgmapAnimatedSprite::writeAnimation()
 				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
 						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
 
-				BgmapTexture bgmapTexture = __SAFE_CAST(BgmapTexture, this->texture);
+				BgmapTexture bgmapTexture = BgmapTexture::safeCast(this->texture);
 
 				// move map definition to the next frame
 				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) *
@@ -160,7 +160,7 @@ void BgmapAnimatedSprite::writeAnimation()
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}
 
-			BgmapSprite::invalidateParamTable(__SAFE_CAST(BgmapSprite, this));
+			BgmapSprite::invalidateParamTable(this);
 			break;
 	}
 }

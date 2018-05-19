@@ -127,7 +127,7 @@ CollisionInformation Ball::testForCollision(Shape shape, Vector3D displacement, 
 	this->center.z += displacement.z;
 
 	// test for collision on displaced center
-	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), __SAFE_CAST(Shape, this), shape);
+	CollisionInformation collisionInformation = CollisionHelper::checkIfOverlap(CollisionHelper::getInstance(), Shape::safeCast(this), shape);
 
 	// restore state
 	this->center = center;
@@ -160,12 +160,12 @@ void Ball::configureWireframe()
 {
 	if(this->wireframe)
 	{
-		Sphere::setCenter(__SAFE_CAST(Sphere, this->wireframe), this->center);
+		Sphere::setCenter(this->wireframe, this->center);
 		return;
 	}
 
 	// create a wireframe
-	this->wireframe = __SAFE_CAST(Wireframe, new Sphere(this->center, this->radius));
+	this->wireframe = Wireframe::safeCast(new Sphere(this->center, this->radius));
 }
 
 // print debug data

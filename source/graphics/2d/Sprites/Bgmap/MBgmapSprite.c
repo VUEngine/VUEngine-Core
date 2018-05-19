@@ -98,7 +98,7 @@ void MBgmapSprite::destructor()
 	if(((__WORLD_AFFINE | __WORLD_HBIAS) & this->head) && this->param)
 	{
 		// free param table space
-		ParamTableManager::free(ParamTableManager::getInstance(), __SAFE_CAST(BgmapSprite, this));
+		ParamTableManager::free(ParamTableManager::getInstance(), BgmapSprite::safeCast(this));
 	}
 
 	MBgmapSprite::releaseTextures(this);
@@ -125,7 +125,7 @@ void MBgmapSprite::releaseTextures()
 		for(; node; node = node->next)
 		{
 			// free the texture
-			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, node->data));
+			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(node->data));
 		}
 
 		delete this->textures;
@@ -157,11 +157,11 @@ void MBgmapSprite::loadTextures()
 				MBgmapSprite::loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
 			}
 
-			this->texture = __SAFE_CAST(Texture, VirtualList::front(this->textures));
+			this->texture = Texture::safeCast(VirtualList::front(this->textures));
 			ASSERT(this->texture, "MBgmapSprite::loadTextures: null texture");
 
-			this->textureXOffset = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-			this->textureYOffset = BgmapTexture::getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+			this->textureXOffset = BgmapTexture::getXOffset(this->texture) << 3;
+			this->textureYOffset = BgmapTexture::getYOffset(this->texture) << 3;
 		}
 		else
 		{
@@ -354,7 +354,7 @@ void MBgmapSprite::render(bool evenFrame)
 */
 
 	// set the head
-	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
 
 	// get coordinates
 	int gx = this->position.x + this->displacement.x - this->halfWidth;
@@ -457,7 +457,7 @@ void MBgmapSprite::render(bool evenFrame)
 		worldPointer->h = h;
 	}
 
-	BgmapSprite::processHbiasEffects(__SAFE_CAST(BgmapSprite, this));
+	BgmapSprite::processHbiasEffects(this);
 }
 
 /**
@@ -495,8 +495,8 @@ void MBgmapSprite::calculateSize()
 	for(; node; node = node->next)
 	{
 		// free the texture
-		int textureCols = (__SAFE_CAST(Texture, node->data))->textureDefinition->cols;
-		int textureRows = (__SAFE_CAST(Texture, node->data))->textureDefinition->rows;
+		int textureCols = (Texture::safeCast(node->data))->textureDefinition->cols;
+		int textureRows = (Texture::safeCast(node->data))->textureDefinition->rows;
 
 		if(cols < textureCols)
 		{
@@ -546,7 +546,7 @@ bool MBgmapSprite::writeTextures()
 
 	for(; node; node = node->next)
 	{
-		Texture texture = __SAFE_CAST(Texture, node->data);
+		Texture texture = Texture::safeCast(node->data);
 
 		if(!texture->written)
 		{
@@ -579,7 +579,7 @@ bool MBgmapSprite::areTexturesWritten()
 
 	for(; node; node = node->next)
 	{
-		if(!(__SAFE_CAST(Texture, node->data))->written)
+		if(!(Texture::safeCast(node->data))->written)
 		{
 			return false;
 		}

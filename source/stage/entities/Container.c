@@ -113,7 +113,7 @@ void Container::destructor()
 		// destroy each child
 		for(; node ; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
+			Container child = Container::safeCast(node->data);
 /*
 #ifdef __DEBUG
 			if(child->parent != this)
@@ -152,7 +152,7 @@ void Container::destructor()
 
 	if(this->events)
 	{
-		Object::fireEvent(__SAFE_CAST(Object, this), kEventContainerDeleted);
+		Object::fireEvent(this, kEventContainerDeleted);
 	}
 
 	// destroy the super Container
@@ -378,7 +378,7 @@ void Container::purgeChildren()
 			NM_ASSERT(false, "Container::processRemovedChildren: deleted children");
 		}
 #endif
-		Container child = __SAFE_CAST(Container, node->data);
+		Container child = Container::safeCast(node->data);
 
 		VirtualList::removeElement(this->children, child);
 
@@ -555,7 +555,7 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
 		// update each child
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
+			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
@@ -683,7 +683,7 @@ void Container::transformNonVirtual(const Transformation* environmentTransform)
 		// update each child
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
+			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
@@ -733,7 +733,7 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 		// update each child
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
+			Container child = Container::safeCast(node->data);
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
@@ -924,7 +924,7 @@ void Container::invalidateGlobalTransformation()
 		for(; node; node = node->next)
 		{
 			// make sure child recalculates its global position
-			Container::invalidateGlobalTransformation(__SAFE_CAST(Container, node->data));
+			Container::invalidateGlobalTransformation(node->data);
 		}
 	}
 }
@@ -949,7 +949,7 @@ void Container::invalidateGlobalPosition()
 		for(; node; node = node->next)
 		{
 			// make sure child recalculates its global position
-			Container::invalidateGlobalPosition(__SAFE_CAST(Container, node->data));
+			Container::invalidateGlobalPosition(node->data);
 		}
 	}
 }
@@ -974,7 +974,7 @@ void Container::invalidateGlobalRotation()
 		for(; node; node = node->next)
 		{
 			// make sure child recalculates its global position
-			Container::invalidateGlobalRotation(__SAFE_CAST(Container, node->data));
+			Container::invalidateGlobalRotation(node->data);
 		}
 	}
 }
@@ -999,7 +999,7 @@ void Container::invalidateGlobalScale()
 		for(; node; node = node->next)
 		{
 			// make sure child recalculates its global position
-			Container::invalidateGlobalScale(__SAFE_CAST(Container, node->data));
+			Container::invalidateGlobalScale(node->data);
 		}
 	}
 }
@@ -1205,7 +1205,7 @@ Container Container::findChildByName(VirtualList children, char* childName, bool
 	// look through all children
 	for(; node ; node = node->next)
 	{
-		child = __SAFE_CAST(Container, node->data);
+		child = Container::safeCast(node->data);
 
 		if(child->name && !strncmp(childName, child->name, __MAX_CONTAINER_NAME_LENGTH))
 		{
@@ -1273,7 +1273,7 @@ void Container::suspend()
 
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
+			Container child = Container::safeCast(node->data);
 
 			 Container::suspend(child);
 		}
@@ -1296,7 +1296,7 @@ void Container::resume()
 
 		for(; node; node = node->next)
 		{
-			Container child = __SAFE_CAST(Container, node->data);
+			Container child = Container::safeCast(node->data);
 
 			 Container::resume(child);
 		}
@@ -1324,7 +1324,7 @@ void Container::show()
 
 		for(; node; node = node->next)
 		{
-			 Container::show(__SAFE_CAST(Container, node->data));
+			 Container::show(node->data);
 		}
 	}
 
@@ -1349,7 +1349,7 @@ void Container::hide()
 
 		for(; node; node = node->next)
 		{
-			 Container::hide(__SAFE_CAST(Container, node->data));
+			 Container::hide(node->data);
 		}
 	}
 }

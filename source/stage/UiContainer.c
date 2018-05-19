@@ -81,10 +81,10 @@ void UiContainer::addEntities(PositionedEntity* entities)
 			 Container::setupGraphics(entity);
 
 			// create the entity and add it to the world
-			Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+			Container::addChild(this, Container::safeCast(entity));
 
 			// apply transformations
-			Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+			Transformation environmentTransform = Container::getEnvironmentTransform(this);
 			 Container::initialTransform(entity, &environmentTransform, true);
 
 			 Entity::ready(entity, true);

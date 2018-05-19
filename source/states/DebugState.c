@@ -97,8 +97,8 @@ void DebugState::destructor()
 void DebugState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
-	GameState::pauseClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
-	Debug::show(Debug::getInstance(), __SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	Debug::show(Debug::getInstance(), GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 }
 
 /**
@@ -127,7 +127,7 @@ void DebugState::execute(void* owner __attribute__ ((unused)))
 void DebugState::exit(void* owner __attribute__ ((unused)))
 {
 	Debug::hide(Debug::getInstance());
-	GameState::resumeClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 	Base::exit(this, owner);
 }
 

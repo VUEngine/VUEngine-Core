@@ -109,12 +109,12 @@ void ObjectAnimationCoordinator::removeAnimationController(AnimationController a
 {
 	ASSERT(this->animationControllers->head, "ObjectAnimationCoordinator::removeAnimationController: null this");
 
-	bool mustChangeLeader = animationController == __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
+	bool mustChangeLeader = animationController == AnimationController::safeCast(VirtualList::front(this->animationControllers));
 	VirtualList::removeElement(this->animationControllers, animationController);
 
 	if(mustChangeLeader && this->animationControllers->head)
 	{
-		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
+		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
 
 		if(firstAnimationController)
 		{

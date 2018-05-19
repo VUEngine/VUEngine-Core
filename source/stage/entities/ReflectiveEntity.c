@@ -57,7 +57,7 @@ void ReflectiveEntity::constructor(ReflectiveEntityDefinition* reflectiveEntityD
 void ReflectiveEntity::destructor()
 {
 	// remove post processing effect
-	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
+	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, SpatialObject::safeCast(this));
 
 	// delete the super object
 	// must always be called at the end of the destructor
@@ -70,7 +70,7 @@ void ReflectiveEntity::ready(bool recursive)
 	Base::ready(this, recursive);
 
 	// add post processing effect to make key emit rhombuses
-	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
+	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, SpatialObject::safeCast(this));
 }
 
 void ReflectiveEntity::suspend()
@@ -78,7 +78,7 @@ void ReflectiveEntity::suspend()
 	Base::suspend(this);
 
 	// remove post processing effect
-	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
+	Game::removePostProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, SpatialObject::safeCast(this));
 }
 
 void ReflectiveEntity::resume()
@@ -86,7 +86,7 @@ void ReflectiveEntity::resume()
 	Base::resume(this);
 
 	// add post processing effect to make key emit rhombuses
-	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, __SAFE_CAST(SpatialObject, this));
+	Game::pushFrontProcessingEffect(Game::getInstance(), ReflectiveEntity::reflect, SpatialObject::safeCast(this));
 }
 
 void ReflectiveEntity::synchronizeGraphics()
@@ -109,7 +109,7 @@ static void ReflectiveEntity::reflect(u32 currentDrawingFrameBufferSet, SpatialO
 		return;
 	}
 
-	ReflectiveEntity this = __SAFE_CAST(ReflectiveEntity, spatialObject);
+	ReflectiveEntity this = ReflectiveEntity::safeCast(spatialObject);
 
 	 ReflectiveEntity::applyReflection(this, currentDrawingFrameBufferSet);
 }

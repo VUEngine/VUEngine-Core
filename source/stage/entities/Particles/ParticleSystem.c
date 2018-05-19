@@ -177,7 +177,7 @@ void ParticleSystem::processExpiredParticles()
 	{
 		for(; node; node = node->next)
 		{
-			Particle particle = __SAFE_CAST(Particle, node->data);
+			Particle particle = Particle::safeCast(node->data);
 			VirtualList::pushBack(this->recyclableParticles, particle);
 			VirtualList::removeElement(this->particles, particle);
 			this->particleCount--;
@@ -189,7 +189,7 @@ void ParticleSystem::processExpiredParticles()
 	{
 		for(; node; node = node->next)
 		{
-			Particle particle = __SAFE_CAST(Particle, node->data);
+			Particle particle = Particle::safeCast(node->data);
 			VirtualList::removeElement(this->particles, particle);
 
 			delete particle;
@@ -220,9 +220,9 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	for(; node; node = node->next)
 	{
-		if( Particle::update(node->data, elapsedTime, behavior) || !Particle::isVisible(__SAFE_CAST(Particle, node->data)))
+		if( Particle::update(node->data, elapsedTime, behavior) || !Particle::isVisible(node->data))
 		{
-			ParticleSystem::particleExpired(this, __SAFE_CAST(Particle, node->data));
+			ParticleSystem::particleExpired(this, Particle::safeCast(node->data));
 		}
 	}
 
@@ -272,7 +272,7 @@ Particle ParticleSystem::recycleParticle()
 		fix10_6 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities::random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
 
 		// call the appropriate allocator to support inheritance
-		Particle particle = __SAFE_CAST(Particle, VirtualList::front(this->recyclableParticles));
+		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
 
 		 Particle::reset(particle);
 		Particle::setLifeSpan(particle, lifeSpan);
@@ -403,7 +403,7 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 	ParticleSystem::processExpiredParticles(this);
 
-	this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(__SAFE_CAST(Entity, this));
+	this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this);
 
 	VirtualNode node = this->particles->head;
 
@@ -464,7 +464,7 @@ void ParticleSystem::show()
 
 	for(; node; node = node->next)
 	{
-		Particle::show(__SAFE_CAST(Particle, node->data));
+		Particle::show(node->data);
 	}
 }
 
@@ -482,7 +482,7 @@ void ParticleSystem::hide()
 
 	for(; node; node = node->next)
 	{
-		Particle::hide(__SAFE_CAST(Particle, node->data));
+		Particle::hide(node->data);
 	}
 }
 
@@ -518,7 +518,7 @@ void ParticleSystem::resume()
 	for(; node; node = node->next)
 	{
 		 Particle::resume(node->data);
-		Particle::hide(__SAFE_CAST(Particle, node->data));
+		Particle::hide(node->data);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);

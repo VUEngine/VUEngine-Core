@@ -155,7 +155,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainer(int
 			}
 			else
 			{
-				if(__ABS(__FIX10_6_TO_I(Sprite::getPosition(__SAFE_CAST(Sprite, this->objectSpriteContainers[i])).z - z)) < __ABS(__FIX10_6_TO_I(Sprite::getPosition(__SAFE_CAST(Sprite, suitableObjectSpriteContainer)).z - z)))
+				if(__ABS(__FIX10_6_TO_I(Sprite::getPosition(this->objectSpriteContainers[i]).z - z)) < __ABS(__FIX10_6_TO_I(Sprite::getPosition(suitableObjectSpriteContainer).z - z)))
 				{
 					suitableObjectSpriteContainer = this->objectSpriteContainers[i];
 				}

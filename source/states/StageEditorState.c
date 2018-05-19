@@ -98,8 +98,8 @@ void StageEditorState::destructor()
 void StageEditorState::enter(void* owner __attribute__ ((unused)))
 {
 	Base::enter(this, owner);
-	GameState::pauseClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
-	StageEditor::show(StageEditor::getInstance(), __SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	StageEditor::show(StageEditor::getInstance(), GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 }
 
 /**
@@ -128,7 +128,7 @@ void StageEditorState::execute(void* owner __attribute__ ((unused)))
 void StageEditorState::exit(void* owner __attribute__ ((unused)))
 {
 	StageEditor::hide(StageEditor::getInstance());
-	GameState::resumeClocks(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
 	Base::exit(this, owner);
 }
 

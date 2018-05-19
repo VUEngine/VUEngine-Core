@@ -140,7 +140,7 @@ void Clock::update(u32 millisecondsElapsed)
 	{
 		this->previousSecond = currentSecond;
 
-		Object::fireEvent(__SAFE_CAST(Object, this), kEventSecondChanged);
+		Object::fireEvent(this, kEventSecondChanged);
 
 		u32 currentMinute = Clock::getMinutes(this);
 
@@ -148,7 +148,7 @@ void Clock::update(u32 millisecondsElapsed)
 		{
 			this->previousMinute = currentMinute;
 
-			Object::fireEvent(__SAFE_CAST(Object, this), kEventMinuteChanged);
+			Object::fireEvent(this, kEventMinuteChanged);
 		}
 	}
 }

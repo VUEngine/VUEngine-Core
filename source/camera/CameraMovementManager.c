@@ -106,7 +106,7 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving)
 	// if focusEntity is defined
 	if(camera && camera->focusEntity)
 	{
-		Container focusEntityParent = Container::getParent(__SAFE_CAST(Container, camera->focusEntity));
+		Container focusEntityParent = Container::getParent(camera->focusEntity);
 
 		if(focusEntityParent)
 		{
@@ -117,7 +117,7 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving)
 				camera->lastDisplacement = camera->position;
 
 				// get focusEntity's position
-				camera->position = *Entity::getPosition(__SAFE_CAST(Entity, camera->focusEntity));
+				camera->position = *Entity::getPosition(camera->focusEntity);
 
 				camera->position.x += camera->focusEntityPositionDisplacement.x - __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
 				camera->position.y += camera->focusEntityPositionDisplacement.y - __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);

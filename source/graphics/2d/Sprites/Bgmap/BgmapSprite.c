@@ -72,17 +72,17 @@ void BgmapSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition
 	// create the texture
 	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
 	{
-		this->texture = __SAFE_CAST(Texture, BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition));
+		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
 
 	if(this->texture)
 	{
-		Object::addEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+		Object::addEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
 
 		// set texture position
-		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
-		this->drawSpec.textureSource.my = BgmapTexture::getYOffset(__SAFE_CAST(BgmapTexture, this->texture)) << 3;
+		this->drawSpec.textureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
+		this->drawSpec.textureSource.my = BgmapTexture::getYOffset(this->texture) << 3;
 		this->drawSpec.textureSource.mp = 0;
 
 		this->halfWidth = Texture::getCols(this->texture) << 2;
@@ -134,8 +134,8 @@ void BgmapSprite::destructor()
 	// free the texture
 	if(!isDeleted(this->texture))
 	{
-		Object::removeEventListener(__SAFE_CAST(Object, this->texture), __SAFE_CAST(Object, this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
-		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, this->texture));
+		Object::removeEventListener(this->texture, Object::safeCast(this), (EventListener)Sprite::onTextureRewritten, kEventTextureRewritten);
+		BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(this->texture));
 	}
 
 	this->texture = NULL;
@@ -326,7 +326,7 @@ void BgmapSprite::render(bool evenFrame)
 */
 
 	// set the head
-	worldPointer->head = this->head | (__SAFE_CAST(BgmapTexture, this->texture))->segment;
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment;
 
 	// get coordinates
 	int gx = this->position.x + this->displacement.x - this->halfWidth;
@@ -588,7 +588,7 @@ void BgmapSprite::render(bool evenFrame)
 			worldPointer->param = ((__PARAM_DISPLACEMENT(this->param) - 0x20000) >> 1) & 0xFFF0;
 		}
 
-		worldPointer->head = this->head | BgmapTexture::getSegment(__SAFE_CAST(BgmapTexture, this->texture));
+		worldPointer->head = this->head | BgmapTexture::getSegment(this->texture);
 	}
 }
 */

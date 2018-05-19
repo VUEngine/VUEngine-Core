@@ -188,7 +188,7 @@ Entity Entity::getChildById(s16 id)
 		// look through all children
 		for(; node ; node = node->next)
 		{
-			Entity child = __SAFE_CAST(Entity, node->data);
+			Entity child = Entity::safeCast(node->data);
 
 			if(Entity::getId(child) == id)
 			{
@@ -233,7 +233,7 @@ void Entity::destroyShapes()
 
 		for(; node; node = node->next)
 		{
-			CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(Shape, node->data));
+			CollisionManager::destroyShape(Game::getCollisionManager(Game::getInstance()), Shape::safeCast(node->data));
 		}
 
 		delete this->shapes;
@@ -289,7 +289,7 @@ void Entity::releaseSprites()
 
 		for(; node ; node = node->next)
 		{
-			SpriteManager::disposeSprite(spriteManager, __SAFE_CAST(Sprite, node->data));
+			SpriteManager::disposeSprite(spriteManager, Sprite::safeCast(node->data));
 		}
 
 		// delete the sprites
@@ -332,7 +332,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+			Sprite sprite = Sprite::safeCast(spriteNode->data);
 			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
 //			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
@@ -419,7 +419,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 
 		for(; childNode; childNode = childNode->next)
 		{
-			Entity::calculateSizeFromChildren(__SAFE_CAST(Entity, childNode->data), pixelRightBox, Vector3D::getFromPixelVector(pixelGlobalPosition));
+			Entity::calculateSizeFromChildren(childNode->data, pixelRightBox, Vector3D::getFromPixelVector(pixelGlobalPosition));
 		}
 	}
 }
@@ -783,11 +783,11 @@ void Entity::addChildEntities(const PositionedEntity* childrenDefinitions)
 	// go through n sprites in entity's definition
 	for(; childrenDefinitions[i].entityDefinition; i++)
 	{
-		Entity child = Entity::loadEntity(&childrenDefinitions[i], this->internalId + Container::getChildCount(__SAFE_CAST(Container, this)));
+		Entity child = Entity::loadEntity(&childrenDefinitions[i], this->internalId + Container::getChildCount(this));
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
-		Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, child));
+		Container::addChild(this, Container::safeCast(child));
 	}
 }
 
@@ -856,7 +856,7 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinition
 	// go through n sprites in entity's definition
 	for(; childrenDefinitions[i].entityDefinition; i++)
 	{
-		EntityFactory::spawnEntity(this->entityFactory, &childrenDefinitions[i], __SAFE_CAST(Container, this), NULL, this->internalId + Container::getChildCount(__SAFE_CAST(Container, this)));
+		EntityFactory::spawnEntity(this->entityFactory, &childrenDefinitions[i], Container::safeCast(this), NULL, this->internalId + Container::getChildCount(this));
 	}
 }
 
@@ -885,7 +885,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 
 	if(positionedEntity->name)
 	{
-		Container::setName(__SAFE_CAST(Container, entity), positionedEntity->name);
+		Container::setName(entity, positionedEntity->name);
 	}
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
@@ -940,7 +940,7 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 	{
 		(EntityDefinition*)entityDefinition,
 		screenPixelVector,
-		this->internalId + Container::getChildCount(__SAFE_CAST(Container, this)),
+		this->internalId + Container::getChildCount(this),
 		(char*)name,
 		NULL,
 		extraInfo,
@@ -956,10 +956,10 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 	 Entity::initialize(childEntity, true);
 
 	// create the entity and add it to the world
-	Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, childEntity));
+	Container::addChild(this, Container::safeCast(childEntity));
 
 	// apply transformations
-	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 
 	 // apply transformations
 	 Container::initialTransform(childEntity, &environmentTransform, true);
@@ -1089,7 +1089,7 @@ void Entity::transformShapes()
 
 		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
 		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+			Shape shape = Shape::safeCast(node->data);
 			u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
 
 			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeDefinitions[i].displacement);
@@ -1153,7 +1153,7 @@ void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPrev
 	// go through n sprites in entity's definition
 	for(; shapeDefinitions[i].allocator; i++)
 	{
-		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(SpatialObject, this), &shapeDefinitions[i]);
+		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeDefinitions[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
@@ -1250,8 +1250,8 @@ void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 	{
 		ASSERT(spriteDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
 
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], __SAFE_CAST(Object, this)));
-		ASSERT(__SAFE_CAST(Sprite, VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], Object::safeCast(this)));
+		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 }
 
@@ -1286,7 +1286,7 @@ bool Entity::addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex)
 	}
 
 	// call the appropriate allocator to support inheritance
-	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this)));
+	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteDefinition*)spriteDefinition, Object::safeCast(this)));
 
 	return true;
 }
@@ -1307,7 +1307,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 	{
 		for(; node ; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
 			 Sprite::position(sprite, &this->transformation.globalPosition);
@@ -1326,7 +1326,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 	{
 		for(; node ; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
 			 Sprite::position(sprite, &this->transformation.globalPosition);
@@ -1339,7 +1339,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 	{
 		for(; node ; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
 			 Sprite::position(sprite, &this->transformation.globalPosition);
@@ -1355,7 +1355,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 	{
 		for(; node ; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
 			 Sprite::position(sprite, &this->transformation.globalPosition);
@@ -1365,7 +1365,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 	{
 		for(; node ; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			// calculate the scale
 			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
@@ -1669,7 +1669,7 @@ bool Entity::isVisible(int pad, bool recursive)
 
 		for(; spriteNode; spriteNode = spriteNode->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, spriteNode->data);
+			Sprite sprite = Sprite::safeCast(spriteNode->data);
 			ASSERT(sprite, "Entity:isVisible: null sprite");
 
 			PixelVector spritePosition = Sprite::getDisplacedPosition(sprite);
@@ -1834,7 +1834,7 @@ VirtualList Entity::getShapes()
 void Entity::show()
 {
 	// update transformation before hiding
-	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	 Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
@@ -1849,12 +1849,12 @@ void Entity::show()
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			 Sprite::show(__SAFE_CAST(Sprite, node->data));
+			 Sprite::show(node->data);
 		}
 	}
 
 	// force invalid position to update sprites and children's sprites
-	Container::invalidateGlobalTransformation(__SAFE_CAST(Container, this));
+	Container::invalidateGlobalTransformation(this);
 }
 
 /**
@@ -1868,7 +1868,7 @@ void Entity::show()
 void Entity::hide()
 {
 	// update transformation before hiding
-	Transformation environmentTransform = Container::getEnvironmentTransform(__SAFE_CAST(Container, this));
+	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
@@ -1883,7 +1883,7 @@ void Entity::hide()
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			 Sprite::hide(__SAFE_CAST(Sprite, node->data));
+			 Sprite::hide(node->data);
 		}
 	}
 }
@@ -2022,7 +2022,7 @@ void Entity::informShapesThatStartedMoving()
 
 		for(; node; node = node->next)
 		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+			Shape shape = Shape::safeCast(node->data);
 
 			CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), shape);
 		}
@@ -2045,7 +2045,7 @@ void Entity::informShapesThatStoppedMoving()
 
 		for(; node; node = node->next)
 		{
-			CollisionManager::shapeStoppedMoving(Game::getCollisionManager(Game::getInstance()), __SAFE_CAST(Shape, node->data));
+			CollisionManager::shapeStoppedMoving(Game::getCollisionManager(Game::getInstance()), Shape::safeCast(node->data));
 		}
 	}
 }
@@ -2066,7 +2066,7 @@ void Entity::activateShapes(bool value)
 
 		for(; node; node = node->next)
 		{
-			Shape::setActive(__SAFE_CAST(Shape, node->data), value);
+			Shape::setActive(node->data, value);
 		}
 	}
 }
@@ -2105,7 +2105,7 @@ void Entity::setDirection(Direction direction)
 	};
 
 
-	Container::setLocalRotation(__SAFE_CAST(Container, this), &rotation);
+	Container::setLocalRotation(this, &rotation);
 }
 
 /**
@@ -2163,7 +2163,7 @@ u32 Entity::getShapesLayers()
 
 		for(; node; node = node->next)
 		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+			Shape shape = Shape::safeCast(node->data);
 
 			shapesLayers |= Shape::getLayers(shape);
 		}
@@ -2189,7 +2189,7 @@ void Entity::setShapesLayers(u32 layers)
 
 		for(; node; node = node->next)
 		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+			Shape shape = Shape::safeCast(node->data);
 
 			Shape::setLayers(shape, layers);
 		}
@@ -2216,7 +2216,7 @@ u32 Entity::getShapesLayersToIgnore()
 
 		for(; node; node = node->next)
 		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+			Shape shape = Shape::safeCast(node->data);
 
 			shapesLayersToIgnore |= Shape::getLayersToIgnore(shape);
 		}
@@ -2242,7 +2242,7 @@ void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
 
 		for(; node; node = node->next)
 		{
-			Shape shape = __SAFE_CAST(Shape, node->data);
+			Shape shape = Shape::safeCast(node->data);
 
 			Shape::setLayersToIgnore(shape, layersToIgnore);
 		}

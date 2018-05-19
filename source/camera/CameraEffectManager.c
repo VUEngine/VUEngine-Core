@@ -240,7 +240,7 @@ void CameraEffectManager::fxFadeStart(int effect, int delay)
 				TimerManager::getInstance(),
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),
-				__SAFE_CAST(Object, this),
+				Object::safeCast(this),
 				(void (*)(Object, u32))&CameraEffectManager::fxFadeIn
 			);
 			break;
@@ -253,7 +253,7 @@ void CameraEffectManager::fxFadeStart(int effect, int delay)
 				TimerManager::getInstance(),
 				defaultBrightness.darkRed,
 				(delay * defaultBrightness.darkRed),
-				__SAFE_CAST(Object, this),
+				Object::safeCast(this),
 				(void (*)(Object, u32))&CameraEffectManager::fxFadeOut
 			);
 
@@ -298,7 +298,7 @@ void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* t
 		if(callbackScope != NULL)
 		{
 			this->fxFadeCallbackScope = callbackScope;
-			Object::addEventListener(__SAFE_CAST(Object, this), callbackScope, callback, kEventEffectFadeComplete);
+			Object::addEventListener(this, callbackScope, callback, kEventEffectFadeComplete);
 		}
 		else
 		{
@@ -309,10 +309,10 @@ void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* t
 	// start effect
 	// TODO: check if the message really needs to be delayed.
 	initialDelay = 0 >= initialDelay ? 1 : initialDelay;
-	MessageDispatcher::dispatchMessage(initialDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
+	MessageDispatcher::dispatchMessage(initialDelay, Object::safeCast(this), Object::safeCast(this), kFadeTo, NULL);
 
 	// fire effect started event
-	Object::fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeStart);
+	Object::fireEvent(this, kEventEffectFadeStart);
 }
 
 /**
@@ -328,11 +328,11 @@ void CameraEffectManager::fxFadeAsyncStop()
 	// remove event listener
 	if(this->fxFadeCallbackScope)
 	{
-		Object::removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, kEventEffectFadeComplete);
+		Object::removeEventListeners(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
 	}
 
 	// discard pending delayed messages to stop effect
-	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), __SAFE_CAST(Object, this), kFadeTo);
+	MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), kFadeTo);
 
 	// reset effect variables
 	this->fxFadeTargetBrightness = (Brightness){0, 0, 0};
@@ -340,7 +340,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 	this->fxFadeCallbackScope = NULL;
 
 	// fire effect stopped event
-	Object::fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeStop);
+	Object::fireEvent(this, kEventEffectFadeStop);
 }
 
 /**
@@ -491,7 +491,7 @@ void CameraEffectManager::fxFadeAsync()
 	if(lightRedDone && mediumRedDone && darkRedDone)
 	{
 		// fire effect ended event
-		Object::fireEvent(__SAFE_CAST(Object, this), kEventEffectFadeComplete);
+		Object::fireEvent(this, kEventEffectFadeComplete);
 
 #ifdef __DIMM_FOR_PROFILING
 
@@ -510,11 +510,11 @@ void CameraEffectManager::fxFadeAsync()
 		// remove callback event listener
 		if(this->fxFadeCallbackScope)
 		{
-			Object::removeEventListeners(__SAFE_CAST(Object, this), this->fxFadeCallbackScope, kEventEffectFadeComplete);
+			Object::removeEventListeners(this, this->fxFadeCallbackScope, kEventEffectFadeComplete);
 		}
 	}
 	else
 	{
-		MessageDispatcher::dispatchMessage(this->fxFadeDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kFadeTo, NULL);
+		MessageDispatcher::dispatchMessage(this->fxFadeDelay, Object::safeCast(this), Object::safeCast(this), kFadeTo, NULL);
 	}
 }

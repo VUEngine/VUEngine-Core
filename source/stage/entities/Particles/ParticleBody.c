@@ -94,21 +94,21 @@ void ParticleBody::update()
 	{
 		if(this->awake)
 		{
-			MovementResult movementResult = Body::updateMovement(__SAFE_CAST(Body, this));
+			MovementResult movementResult = Body::updateMovement(this);
 
 			// if stopped on any axis
 			if(movementResult.axesStoppedMovement)
 			{
-				Body::stopMovement(__SAFE_CAST(Body, this), movementResult.axesStoppedMovement);
+				Body::stopMovement(this, movementResult.axesStoppedMovement);
 			}
-/*			else if(!Body::getMovementOnAllAxes(__SAFE_CAST(Body, this)))
+/*			else if(!Body::getMovementOnAllAxes(this))
 			{
-				Body::sleep(__SAFE_CAST(Body, this));
+				Body::sleep(this);
 			}
 			*/
 		}
 
 		// clear any force so the next update does not get influenced
-		Body::clearExternalForce(__SAFE_CAST(Body, this));
+		Body::clearExternalForce(this);
 	}
 }

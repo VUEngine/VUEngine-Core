@@ -106,8 +106,8 @@ void Texture::loadCharSet()
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureDefinition->charSetDefinition);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 	// if the char definition is NULL, it must be a text
-	Object::addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-	Object::addEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
+	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
+	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 }
 
 /**
@@ -155,8 +155,8 @@ void Texture::releaseCharSet()
 {
 	if(this->charSet)
 	{
-		Object::removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-		Object::removeEventListener(__SAFE_CAST(Object, this->charSet), __SAFE_CAST(Object, this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
+		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
+		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 
 		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
 
@@ -489,7 +489,7 @@ void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
 	 Texture::rewrite(this);
 
 	// propagate event
-	Object::fireEvent(__SAFE_CAST(Object, this), kEventTextureRewritten);
+	Object::fireEvent(this, kEventTextureRewritten);
 }
 
 /**
@@ -503,7 +503,7 @@ void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
  */
 void Texture::onCharSetDeleted(Object eventFirer)
 {
-	this->charSet = __SAFE_CAST(CharSet, eventFirer) == this->charSet ? NULL : this->charSet;
+	this->charSet = CharSet::safeCast(eventFirer) == this->charSet ? NULL : this->charSet;
 }
 
 /**

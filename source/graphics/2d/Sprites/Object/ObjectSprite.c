@@ -88,7 +88,7 @@ void ObjectSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinit
 
 	ASSERT(objectSpriteDefinition->spriteDefinition.textureDefinition, "ObjectSprite::constructor: null textureDefinition");
 
-	this->texture = __SAFE_CAST(Texture, new ObjectTexture(objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
+	this->texture = Texture::safeCast(new ObjectTexture(objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
 	this->halfWidth = this->texture->textureDefinition->cols << 2;
 	this->halfHeight = this->texture->textureDefinition->rows << 2;
 	this->totalObjects = objectSpriteDefinition->spriteDefinition.textureDefinition->cols * objectSpriteDefinition->spriteDefinition.textureDefinition->rows;
@@ -249,7 +249,7 @@ void ObjectSprite::render(bool evenFrame)
 
 	if(!this->texture->written)
 	{
-		ObjectTexture::write(__SAFE_CAST(ObjectTexture, this->texture));
+		ObjectTexture::write(this->texture);
 	}
 
 	int cols = this->texture->textureDefinition->cols;
@@ -357,7 +357,7 @@ void ObjectSprite::setObjectIndex(s16 objectIndex)
 	if(0 <= this->objectIndex)
 	{
 		// rewrite texture
-		ObjectTexture::setObjectIndex(__SAFE_CAST(ObjectTexture, this->texture), this->objectIndex);
+		ObjectTexture::setObjectIndex(this->texture, this->objectIndex);
 
 		if(0 <= previousObjectIndex)
 		{
@@ -404,7 +404,7 @@ u8 ObjectSprite::getWorldLayer()
 {
 	ASSERT(this->objectSpriteContainer, "ObjectSprite::getWorldLayer: null objectSpriteContainer");
 
-	return this->objectSpriteContainer ?  Sprite::getWorldLayer(__SAFE_CAST(Sprite, this->objectSpriteContainer)) : 0;
+	return this->objectSpriteContainer ?  Sprite::getWorldLayer(this->objectSpriteContainer) : 0;
 }
 
 /**

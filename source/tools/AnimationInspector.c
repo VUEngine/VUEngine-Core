@@ -653,7 +653,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 				{
 					NM_ASSERT(this->animatedSprite, "AnimationInspector::selectAnimation: null animatedSprite");
 
-					Texture texture = Sprite::getTexture(__SAFE_CAST(Sprite, this->animatedSprite));
+					Texture texture = Sprite::getTexture(this->animatedSprite);
 					NM_ASSERT(texture, "AnimationInspector::selectAnimation: null texture");
 
 					TextureDefinition* textureDefinition = Texture::getTextureDefinition(texture);
@@ -814,13 +814,13 @@ void AnimationInspector::createSprite()
 
 	NM_ASSERT(spriteDefinition, "AnimationInspector::createSprite: null spriteDefinition");
 
-	this->animatedSprite = __SAFE_CAST(Sprite, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this)));
+	this->animatedSprite = Sprite::safeCast(SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteDefinition*)spriteDefinition, Object::safeCast(this)));
 	ASSERT(this->animatedSprite, "AnimationInspector::createSprite: null animatedSprite");
-	ASSERT(Sprite::getTexture(__SAFE_CAST(Sprite, this->animatedSprite)), "AnimationInspector::createSprite: null texture");
+	ASSERT(Sprite::getTexture(this->animatedSprite), "AnimationInspector::createSprite: null texture");
 
-	PixelVector spritePosition = Sprite::getDisplacedPosition(__SAFE_CAST(Sprite, this->animatedSprite));
-	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
-	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(__SAFE_CAST(Sprite, this->animatedSprite))) << 2));
+	PixelVector spritePosition = Sprite::getDisplacedPosition(this->animatedSprite);
+	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
+	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
 
 	 Sprite::setPosition(this->animatedSprite, &spritePosition);
 	 Sprite::applyAffineTransformations(this->animatedSprite);

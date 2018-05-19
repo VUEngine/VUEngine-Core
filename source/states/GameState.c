@@ -348,7 +348,7 @@ void GameState::processUserInput(UserInput userInput __attribute__ ((unused)))
  */
 bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram)
 {
-	return Container::propagateMessage(__SAFE_CAST(Container, this->stage), Container::onPropagatedMessage, Telegram::getMessage(telegram));
+	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, Telegram::getMessage(telegram));
 }
 
 /**
@@ -364,7 +364,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
  */
 int GameState::propagateMessage(int message)
 {
-	return Container::propagateMessage(__SAFE_CAST(Container, this->stage), Container::onPropagatedMessage, message);
+	return Container::propagateMessage(this->stage, Container::onPropagatedMessage, message);
 }
 
 /**

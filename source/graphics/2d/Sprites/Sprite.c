@@ -1071,9 +1071,9 @@ void Sprite::print(int x, int y)
 		Printing::text(Printing::getInstance(), "Texture (segment):                         ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 24, y, NULL);
 		Printing::text(Printing::getInstance(), "Texture (definition):                         ", x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int)Texture::getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + 24, y, 8, NULL);
+		Printing::hex(Printing::getInstance(), (int)Texture::getTextureDefinition(bgmapTexture), x + 24, y, 8, NULL);
 		Printing::text(Printing::getInstance(), "Texture (written):                         ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), Texture::isWritten(__SAFE_CAST(Texture, bgmapTexture)) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 24, y, NULL);
+		Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 24, y, NULL);
 		Printing::text(Printing::getInstance(), "Texture (rows rem.):                         ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 24, y, NULL);
 	}

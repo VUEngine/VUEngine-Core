@@ -76,7 +76,7 @@ void Particle::constructor(const ParticleDefinition* particleDefinition, const S
 	this->spriteDefinition = spriteDefinition;
 	this->lifeSpan = lifeSpan;
 	PhysicalSpecification physicalSpecification = {mass, 0, 0, (Vector3D){0, 0, 0}};
-	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), __SAFE_CAST(SpatialObject, this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
+	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
 	this->objectSprite = NULL;
 	Particle::addSprite(this);
 }
@@ -123,11 +123,11 @@ void Particle::addSprite()
 	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator");
 
 	// call the appropriate allocator to support inheritance
-	this->objectSprite = __SAFE_CAST(ObjectSprite, ((Sprite (*)(const SpriteDefinition*, Object)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, __SAFE_CAST(Object, this)));
+	this->objectSprite = ObjectSprite::safeCast(((Sprite (*)(const SpriteDefinition*, Object)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, Object::safeCast(this)));
 
-	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
+	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
 	{
-		Sprite::play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite::play(this->objectSprite, this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
 	}
 
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
@@ -162,7 +162,7 @@ u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 			return true;
 		}
 
-		Sprite::updateAnimation(__SAFE_CAST(Sprite, this->objectSprite));
+		Sprite::updateAnimation(this->objectSprite);
 	}
 
 	return false;
@@ -284,7 +284,7 @@ void Particle::setPosition(const Vector3D* position)
 {
 	ASSERT(this->body, "Particle::setPosition: null body");
 
-	Body::setPosition(this->body, position, __SAFE_CAST(SpatialObject, this));
+	Body::setPosition(this->body, position, SpatialObject::safeCast(this));
 
 	// sync sprite
 	 Sprite::position(this->objectSprite, position);
@@ -322,11 +322,11 @@ void Particle::show()
 {
 	ASSERT(this->objectSprite, "Particle::show: null objectSprite");
 
-	Sprite::show(__SAFE_CAST(Sprite, this->objectSprite));
+	Sprite::show(this->objectSprite);
 
-	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && __SAFE_CAST(ObjectAnimatedSprite, this->objectSprite))
+	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
 	{
-		Sprite::play(__SAFE_CAST(Sprite, this->objectSprite), this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite::play(this->objectSprite, this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
 	}
 }
 
@@ -342,7 +342,7 @@ void Particle::hide()
 {
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
 
-	Sprite::hide(__SAFE_CAST(Sprite, this->objectSprite));
+	Sprite::hide(this->objectSprite);
 
 	Body::stopMovement(this->body, __ALL_AXES);
 }
@@ -430,7 +430,7 @@ void Particle::reset()
  */
 bool Particle::isVisible()
 {
-	PixelVector spritePosition = Sprite::getDisplacedPosition(__SAFE_CAST(Sprite, this->objectSprite));
+	PixelVector spritePosition = Sprite::getDisplacedPosition(this->objectSprite);
 
 	// check x visibility
 	if((unsigned)(spritePosition.x + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_WIDTH) + __PARTICLE_VISIBILITY_PADDING))

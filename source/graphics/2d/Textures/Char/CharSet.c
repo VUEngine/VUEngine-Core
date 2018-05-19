@@ -79,7 +79,7 @@ void CharSet::constructor(CharSetDefinition* charSetDefinition, u16 offset)
  */
 void CharSet::destructor()
 {
-	Object::fireEvent(__SAFE_CAST(Object, this), kEventCharSetDeleted);
+	Object::fireEvent(this, kEventCharSetDeleted);
 
 	// make sure that I'm not destroyed again
 	this->usageCount = 00;
@@ -258,7 +258,7 @@ void CharSet::rewrite()
 	CharSet::write(this);
 
 	// propagate event
-	Object::fireEvent(__SAFE_CAST(Object, this), kEventCharSetRewritten);
+	Object::fireEvent(this, kEventCharSetRewritten);
 }
 
 /**

@@ -120,7 +120,7 @@ void ObjectSpriteContainer::destructor()
 
 	for(; node; node = node->next)
 	{
-		ObjectSprite::invalidateObjectSpriteContainer(__SAFE_CAST(ObjectSprite, node->data));
+		ObjectSprite::invalidateObjectSpriteContainer(node->data);
 		delete node->data;
 	}
 
@@ -152,7 +152,7 @@ s32 ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int number
 
 		if(VirtualList::getSize(this->objectSprites))
 		{
-			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList::back(this->objectSprites));
+			ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
 
 			ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 
@@ -281,7 +281,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 
 		for(; node; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			 Sprite::setPosition(sprite, &sprite->position);
 		}
@@ -304,9 +304,9 @@ void ObjectSpriteContainer::defragment()
 	NM_ASSERT(!isDeleted(VirtualNode::getData(this->objectSpriteNodeToDefragment)), "ObjectSpriteContainer::defragment: deleted objectSpriteNodeToDefragment data");
 
 	// get the next sprite to move
-	ObjectSprite objectSprite = __SAFE_CAST(ObjectSprite, VirtualNode::getData(this->objectSpriteNodeToDefragment));
+	ObjectSprite objectSprite = ObjectSprite::safeCast(VirtualNode::getData(this->objectSpriteNodeToDefragment));
 
-	ASSERT(Sprite::getTexture(__SAFE_CAST(Sprite, objectSprite)), "ObjectSpriteContainer::defragment: null texture");
+	ASSERT(Sprite::getTexture(objectSprite), "ObjectSpriteContainer::defragment: null texture");
 
 	// move sprite back
 	ObjectSprite::setObjectIndex(objectSprite, this->freedObjectIndex);
@@ -325,7 +325,7 @@ void ObjectSpriteContainer::defragment()
 
 		if(node)
 		{
-			ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, node->data);
+			ObjectSprite lastObjectSprite = ObjectSprite::safeCast(node->data);
 			this->availableObjects = this->totalObjects - (-this->firstObjectIndex + lastObjectSprite->objectIndex + lastObjectSprite->totalObjects);
 		}
 		else
@@ -353,18 +353,18 @@ void ObjectSpriteContainer::sortProgressively()
 
 		if(this->previousNode)
 		{
-			ObjectSprite sprite = __SAFE_CAST(ObjectSprite, VirtualNode::getData(this->node));
-			ObjectSprite previousSprite = __SAFE_CAST(ObjectSprite, VirtualNode::getData(this->previousNode));
+			ObjectSprite sprite = ObjectSprite::safeCast(VirtualNode::getData(this->node));
+			ObjectSprite previousSprite = ObjectSprite::safeCast(VirtualNode::getData(this->previousNode));
 
 			// check if z positions are swapped
-			if(previousSprite->position.z + (__SAFE_CAST(Sprite, previousSprite))->displacement.z > sprite->position.z + (__SAFE_CAST(Sprite, sprite))->displacement.z)
+			if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
 			{
 				if(this->availableObjects >= sprite->totalObjects)
 				{
 					// swap
 					s16 previousObjectIndex = previousSprite->objectIndex;
 
-					ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList::back(this->objectSprites));
+					ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
 					s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
 
 //					ObjectSprite::setObjectIndex(previousSprite, nextFreeObjectIndex);
@@ -428,11 +428,11 @@ void ObjectSpriteContainer::render(bool evenFrame)
 
 	for(; node; node = node->next)
 	{
-		ObjectSprite sprite = __SAFE_CAST(ObjectSprite, node->data);
+		ObjectSprite sprite = ObjectSprite::safeCast(node->data);
 
 		if((sprite->texture && sprite->texture->written && sprite->animationController) || (sprite->transparent != __TRANSPARENCY_NONE))
 		{
-			Sprite::update(__SAFE_CAST(Sprite, sprite));
+			Sprite::update(sprite);
 		}
 
 		if((sprite->hidden | !sprite->visible) && 0 <= sprite->objectIndex)
@@ -529,7 +529,7 @@ int ObjectSpriteContainer::getTotalUsedObjects()
 
 		for(; node; node = node->next)
 		{
-			totalUsedObjects += (__SAFE_CAST(ObjectSprite, node->data))->totalObjects;
+			totalUsedObjects += (ObjectSprite::safeCast(node->data))->totalObjects;
 		}
 	}
 
@@ -550,7 +550,7 @@ int ObjectSpriteContainer::getNextFreeObjectIndex()
 {
 	if(this->objectSprites->head)
 	{
-		ObjectSprite lastObjectSprite = __SAFE_CAST(ObjectSprite, VirtualList::back(this->objectSprites));
+		ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
 
 		ASSERT(lastObjectSprite, "ObjectSpriteContainer::addObjectSprite: null lastObjectSprite");
 

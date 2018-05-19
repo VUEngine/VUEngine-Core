@@ -72,7 +72,7 @@ void ObjectAnimatedSprite::constructor(const ObjectSpriteDefinition* objectSprit
 	// construct base object
 	Base::constructor((const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
 
-	this->animationController = new AnimationController(owner, __SAFE_CAST(Sprite, this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
 }
 
 /**
@@ -129,7 +129,7 @@ void ObjectAnimatedSprite::writeAnimation()
 				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
 						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
 
-				ObjectTexture objectTexture = __SAFE_CAST(ObjectTexture, this->texture);
+				ObjectTexture objectTexture = ObjectTexture::safeCast(this->texture);
 
 				// move map definition to the next frame
 				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
@@ -157,7 +157,7 @@ void ObjectAnimatedSprite::writeAnimation()
 		case __ANIMATED_MULTI:
 
 			Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
-			ObjectTexture::write(__SAFE_CAST(ObjectTexture, this->texture));
+			ObjectTexture::write(this->texture);
 			break;
 	}
 }

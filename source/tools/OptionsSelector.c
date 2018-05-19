@@ -151,7 +151,7 @@ void OptionsSelector::flushPages()
 		{
 			ASSERT(node->data, "flushPages: null node data");
 
-			VirtualNode optionsNode = (__SAFE_CAST(VirtualList, node->data))->head;
+			VirtualNode optionsNode = (VirtualList::safeCast(node->data))->head;
 
 			for(; optionsNode; optionsNode = optionsNode->next)
 			{
@@ -265,7 +265,7 @@ void OptionsSelector::setOptions(VirtualList options)
 		this->currentPage = this->pages->head;
 		ASSERT(VirtualList::getSize(this->pages), "OptionsSelector::setOptions: empty pages");
 
-		this->currentOption = this->currentPage ? (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head : NULL;
+		this->currentOption = this->currentPage ? (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head : NULL;
 	}
 
 	this->currentPageIndex = 0;
@@ -310,7 +310,7 @@ void OptionsSelector::selectNext()
 				}
 
 				// get new option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head;
+				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 				ASSERT(this->currentOption, "selectNext: null current option");
 
 				// render new page
@@ -319,7 +319,7 @@ void OptionsSelector::selectNext()
 			else
 			{
 				// wrap around and select first option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head;
+				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 				this->currentOptionIndex = 0;
 			}
 		}
@@ -367,7 +367,7 @@ void OptionsSelector::selectPrevious()
 				}
 
 				// get new option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->tail;
+				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->tail;
 				ASSERT(this->currentOption, "selectPrevious: current option data");
 
 				// render new page
@@ -376,7 +376,7 @@ void OptionsSelector::selectPrevious()
 			else
 			{
 				// wrap around and select last option
-				this->currentOption = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->tail;
+				this->currentOption = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->tail;
 				this->currentOptionIndex = this->totalOptions - 1;
 			}
 		}
@@ -454,7 +454,7 @@ int OptionsSelector::getSelectedOption()
  */
 void OptionsSelector::printOptions(u8 x, u8 y)
 {
-	if(this->currentPage && 0 < VirtualList::getSize(__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage))))
+	if(this->currentPage && 0 < VirtualList::getSize(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
 	{
 		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
@@ -462,7 +462,7 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
 
 		ASSERT(this->currentPage, "printOptions: currentPage");
-		VirtualNode node = (__SAFE_CAST(VirtualList, VirtualNode::getData(this->currentPage)))->head;
+		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
 		int i = 0;
 		for(; i < (this->rows * fontData->fontDefinition->fontSize.y); i++)
@@ -526,7 +526,7 @@ void OptionsSelector::printSelectorMark(char* mark)
 		ASSERT(this->currentPage, "printSelectorMark: current page");
 		ASSERT(VirtualNode::getData(this->currentPage), "printSelectorMark: null current data");
 
-		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getSize(__SAFE_CAST(VirtualList, VirtualList::front(this->pages)));
+		int indexOption = this->currentOptionIndex - this->currentPageIndex * VirtualList::getSize(VirtualList::safeCast(VirtualList::front(this->pages)));
 		int optionColumn = (int)(indexOption / this->rows);
 		int optionRow = indexOption - optionColumn * this->rows;
 		optionColumn = this->columnWidth * optionColumn;

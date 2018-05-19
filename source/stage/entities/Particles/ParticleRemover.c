@@ -177,7 +177,7 @@ void ParticleRemover::update()
  */
 void ParticleRemover::deleteParticles(VirtualList particles)
 {
-	if(__SAFE_CAST(VirtualList, particles))
+	if(VirtualList::safeCast(particles))
 	{
 		VirtualList particlesList = new VirtualList();
 

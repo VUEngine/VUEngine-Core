@@ -212,8 +212,8 @@ u32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 {
 	ASSERT(bgmapSprite, "ParamTableManager::allocate: null sprite");
 
-	u16 spriteHead = Sprite::getHead(__SAFE_CAST(Sprite, bgmapSprite));
-	u32 textureRows = Texture::getRows(Sprite::getTexture(__SAFE_CAST(Sprite, bgmapSprite))) + __PARAM_TABLE_PADDING;
+	u16 spriteHead = Sprite::getHead(bgmapSprite);
+	u32 textureRows = Texture::getRows(Sprite::getTexture(bgmapSprite)) + __PARAM_TABLE_PADDING;
 	u32 size = 0;
 
 	if(__WORLD_AFFINE & spriteHead)
@@ -342,7 +342,7 @@ bool ParamTableManager::defragmentProgressively()
 
 		for(; node; node = node->next)
 		{
-			BgmapSprite sprite = __SAFE_CAST(BgmapSprite, node->data);
+			BgmapSprite sprite = BgmapSprite::safeCast(node->data);
 
 			u32 spriteParam = BgmapSprite::getParam(sprite);
 

@@ -225,7 +225,7 @@ void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS
 		if(objectSpriteContainers[i]->totalObjects)
 		{
 			// register to sprite manager
-			SpriteManager::registerSprite(this, __SAFE_CAST(Sprite, objectSpriteContainers[i]));
+			SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainers[i]));
 		}
 	}
 }
@@ -296,7 +296,7 @@ bool SpriteManager::disposeSpritesProgressively()
 	{
 		this->lockSpritesLists = true;
 
-		Sprite sprite = __SAFE_CAST(Sprite, VirtualList::popFront(this->spritesToDispose));
+		Sprite sprite = Sprite::safeCast(VirtualList::popFront(this->spritesToDispose));
 
 		SpriteManager::unregisterSprite(SpriteManager::getInstance(), sprite);
 
@@ -355,8 +355,8 @@ void SpriteManager::sortLayers()
 
 			for(; nextNode; node = node->next, nextNode = nextNode->next)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, node->data);
-				Sprite nextSprite = __SAFE_CAST(Sprite, nextNode->data);
+				Sprite sprite = Sprite::safeCast(node->data);
+				Sprite nextSprite = Sprite::safeCast(nextNode->data);
 
 				// check if z positions are swapped
 				if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
@@ -399,14 +399,14 @@ void SpriteManager::sortLayersProgressively()
 
 		if(this->zSortingSecondNode)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
-			Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
+			Sprite sprite = Sprite::safeCast(this->zSortingFirstNode->data);
+			Sprite nextSprite = Sprite::safeCast(this->zSortingSecondNode->data);
 
 			// check if z positions are swapped
 			if(nextSprite->position.z + nextSprite->displacement.z < sprite->position.z + sprite->displacement.z)
 			{
-				Sprite sprite = __SAFE_CAST(Sprite, this->zSortingFirstNode->data);
-				Sprite nextSprite = __SAFE_CAST(Sprite, this->zSortingSecondNode->data);
+				Sprite sprite = Sprite::safeCast(this->zSortingFirstNode->data);
+				Sprite nextSprite = Sprite::safeCast(this->zSortingSecondNode->data);
 
 				// get each entity's layer
 				u8 worldLayer1 = sprite->worldLayer;
@@ -436,7 +436,7 @@ void SpriteManager::sortLayersProgressively()
  */
 void SpriteManager::registerSprite(Sprite sprite)
 {
-	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::registerSprite: adding no sprite");
+	ASSERT(Sprite::safeCast(sprite), "SpriteManager::registerSprite: adding no sprite");
 
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
@@ -458,7 +458,7 @@ void SpriteManager::registerSprite(Sprite sprite)
 
 			if(head)
 			{
-				layer = (__SAFE_CAST(Sprite, head->data))->worldLayer - 1;
+				layer = (Sprite::safeCast(head->data))->worldLayer - 1;
 			}
 
 			NM_ASSERT(0 < layer, "SpriteManager::registerSprite: no more layers");
@@ -488,7 +488,7 @@ void SpriteManager::registerSprite(Sprite sprite)
  */
 void SpriteManager::unregisterSprite(Sprite sprite)
 {
-	ASSERT(__SAFE_CAST(Sprite, sprite), "SpriteManager::unregisterSprite: removing no sprite");
+	ASSERT(Sprite::safeCast(sprite), "SpriteManager::unregisterSprite: removing no sprite");
 
 	if(!__GET_CAST(ObjectSprite, sprite))
 	{
@@ -505,7 +505,7 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 		for(; node;)
 		{
 			// search for the next sprite with the closest layer to the freed layer
-			if(spriteLayer < (__SAFE_CAST(Sprite, node->data))->worldLayer)
+			if(spriteLayer < (Sprite::safeCast(node->data))->worldLayer)
 			{
 				node = node->previous;
 				break;
@@ -522,7 +522,7 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 
 		for(; node; node = node->previous)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 			ASSERT(spriteLayer-- == sprite->worldLayer + 1, "SpriteManager::unregisterSprite: wrong layers");
 
 			// move the sprite to the freed layer
@@ -572,7 +572,7 @@ void SpriteManager::selectSpritePendingTextureWriting()
 
 	for(; node; node = node->next)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(!isDeleted(sprite) && ! Sprite::areTexturesWritten(sprite))
 		{
@@ -691,17 +691,17 @@ void SpriteManager::render()
 	}
 	else
 	{
-		this->freeLayer = (__SAFE_CAST(Sprite, node->data))->worldLayer - 1;
+		this->freeLayer = (Sprite::safeCast(node->data))->worldLayer - 1;
 	}
 
 	for(; node; node = node->next)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		Sprite sprite = Sprite::safeCast(node->data);
 
 		// first update
 		if((u32)sprite->animationController)
 		{
-			Sprite::update(__SAFE_CAST(Sprite, sprite));
+			Sprite::update(sprite);
 		}
 
 		if(sprite->hidden)
@@ -728,7 +728,7 @@ void SpriteManager::render()
 
 		for(; node; node = node->next)
 		{
-			Sprite sprite = __SAFE_CAST(Sprite, node->data);
+			Sprite sprite = Sprite::safeCast(node->data);
 
 			if(__WORLD_OFF != _worldAttributesBaseAddress[sprite->worldLayer].head)
 			{
@@ -785,7 +785,7 @@ void SpriteManager::showLayer(u8 layer)
 
 	for(; node; node = node->previous)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		Sprite sprite = Sprite::safeCast(node->data);
 
 		if(sprite->worldLayer != layer)
 		{
@@ -815,7 +815,7 @@ void SpriteManager::recoverLayers()
 	VirtualNode node = this->sprites->tail;
 	for(; node; node = node->previous)
 	{
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		Sprite sprite = Sprite::safeCast(node->data);
 
 		 Sprite::show(sprite);
 
@@ -846,9 +846,9 @@ Sprite SpriteManager::getSpriteAtLayer(u8 layer)
 
 	for(; node; node = node->next)
 	{
-		if((__SAFE_CAST(Sprite, node->data))->worldLayer == layer)
+		if((Sprite::safeCast(node->data))->worldLayer == layer)
 		{
-			return __SAFE_CAST(Sprite, node->data);
+			return Sprite::safeCast(node->data);
 		}
 	}
 
@@ -981,7 +981,7 @@ void SpriteManager::print(int x, int y, bool resumed)
 	for(; node; node = node->next)
 	{
 		char spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE];
-		Sprite sprite = __SAFE_CAST(Sprite, node->data);
+		Sprite sprite = Sprite::safeCast(node->data);
 
 		strncpy(spriteClassName, __GET_CLASS_NAME_UNSAFE(sprite), __MAX_SPRITE_CLASS_NAME_SIZE);
 		spriteClassName[__MAX_SPRITE_CLASS_NAME_SIZE - 1] = 0;

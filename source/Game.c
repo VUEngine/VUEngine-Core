@@ -454,7 +454,7 @@ void Game::setNextState(GameState state)
 				if(stateMachineCurrentState)
 				{
 					// discard delayed messages from the current state
-					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(__SAFE_CAST(GameState, stateMachineCurrentState)));
+					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(stateMachineCurrentState));
 					MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 				}
 
@@ -474,7 +474,7 @@ void Game::setNextState(GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine))));
+				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine))));
 				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 			}
 
@@ -500,7 +500,7 @@ void Game::setNextState(GameState state)
 			if(this->currentState)
 			{
 				// discard delayed messages from the current state
-				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine))));
+				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine))));
 				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 			}
 
@@ -515,8 +515,8 @@ void Game::setNextState(GameState state)
 		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock::getTime(this->clock) - this->lastAutoPauseCheckTime);
 		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
 
-		MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), __SAFE_CAST(Object, this), kAutoPause);
-		MessageDispatcher::dispatchMessage((u32)automaticPauseCheckDelay, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
+		MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), kAutoPause);
+		MessageDispatcher::dispatchMessage((u32)automaticPauseCheckDelay, Object::safeCast(this), Object::safeCast(this), kAutoPause, NULL);
 		this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
 	}
 
@@ -524,7 +524,7 @@ void Game::setNextState(GameState state)
 	this->nextState = NULL;
 
 	// save current state
-	this->currentState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
 	// allow the VIPManager to modify the DRAM
 	VIPManager::allowDRAMAccess(this->vipManager, true);
@@ -606,7 +606,7 @@ u32 Game::processUserInput()
 	{
 		if(Game::isInDebugMode(this))
 		{
-			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 			StateMachine::popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -614,12 +614,12 @@ u32 Game::processUserInput()
 		{
 			if(Game::isInSpecialMode(this))
 			{
-				this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 				StateMachine::popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, DebugState::getInstance());
+			this->nextState = GameState::safeCast(DebugState::getInstance());
 			StateMachine::pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -635,7 +635,7 @@ u32 Game::processUserInput()
 	{
 		if(Game::isInStageEditor(this))
 		{
-			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 			StateMachine::popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -643,12 +643,12 @@ u32 Game::processUserInput()
 		{
 			if(Game::isInSpecialMode(this))
 			{
-				this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 				StateMachine::popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, StageEditorState::getInstance());
+			this->nextState = GameState::safeCast(StageEditorState::getInstance());
 			StateMachine::pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -663,7 +663,7 @@ u32 Game::processUserInput()
 	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RR))
 	{		if(Game::isInAnimationInspector(this))
 		{
-			this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 			StateMachine::popState(this->stateMachine);
 			this->nextState = NULL;
 		}
@@ -671,12 +671,12 @@ u32 Game::processUserInput()
 		{
 			if(Game::isInSpecialMode(this))
 			{
-				this->nextState = __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 				StateMachine::popState(this->stateMachine);
 				this->nextState = NULL;
 			}
 
-			this->nextState = __SAFE_CAST(GameState, AnimationInspectorState::getInstance());
+			this->nextState = GameState::safeCast(AnimationInspectorState::getInstance());
 			StateMachine::pushState(this->stateMachine, (State)this->nextState);
 			this->nextState = NULL;
 		}
@@ -1179,19 +1179,19 @@ Clock Game::getClock()
 // retrieve in game clock
 Clock Game::getMessagingClock()
 {
-	return GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
+	return GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve animations' clock
 Clock Game::getUpdateClock()
 {
-	return GameState::getUpdateClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
+	return GameState::getUpdateClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve in physics' clock
 Clock Game::getPhysicsClock()
 {
-	return GameState::getPhysicsClock(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
+	return GameState::getPhysicsClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve last process' name
@@ -1244,13 +1244,13 @@ bool Game::isEnteringSpecialMode()
 {
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState::getInstance()) == this->nextState;
+	isEnteringSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState::getInstance()) == this->nextState;
+	isEnteringSpecialMode |= GameState::safeCast(StageEditorState::getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState::getInstance()) == this->nextState;
+	isEnteringSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -1261,13 +1261,13 @@ bool Game::isExitingSpecialMode()
 {
 	int isEnteringSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, DebugState::getInstance()) == this->nextState;
+	isEnteringSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, StageEditorState::getInstance()) == this->nextState;
+	isEnteringSpecialMode |= GameState::safeCast(StageEditorState::getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isEnteringSpecialMode |= __SAFE_CAST(GameState, AnimationInspectorState::getInstance()) == this->nextState;
+	isEnteringSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
 #endif
 
 	return isEnteringSpecialMode;
@@ -1284,36 +1284,36 @@ Stage Game::getStage()
 {
 	if(Game::isInSpecialMode(this))
 	{
-		return GameState::getStage(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
+		return GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState::getStage(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
+	return GameState::getStage(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
 
 // retrieve current state
 GameState Game::getCurrentState()
 {
-	return __SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine));
+	return GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 }
 
 PhysicalWorld Game::getPhysicalWorld()
 {
 	if(Game::isInSpecialMode(this))
 	{
-		return GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
+		return GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
+	return GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
 
 CollisionManager Game::getCollisionManager()
 {
 	if(Game::isInSpecialMode(this))
 	{
-		return GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(this->stateMachine)));
+		return GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(this->stateMachine)));
 	}
 
-	return GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getCurrentState(this->stateMachine)));
+	return GameState::getCollisionManager(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
 
 #ifdef __LOW_BATTERY_INDICATOR
@@ -1324,7 +1324,7 @@ void Game::checkLowBattery(u16 keypad)
 	{
 		if(!this->isShowingLowBatteryIndicator)
 		{
-			MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)true);
+			MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, Object::safeCast(this), Object::safeCast(this), kLowBatteryIndicator, (bool*)true);
 			this->isShowingLowBatteryIndicator = true;
 		}
 	}
@@ -1332,7 +1332,7 @@ void Game::checkLowBattery(u16 keypad)
 	{
 		if(this->isShowingLowBatteryIndicator)
 		{
-			MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), __SAFE_CAST(Object, this), kLowBatteryIndicator);
+			MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), kLowBatteryIndicator);
 			Printing::text(Printing::getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
 			this->isShowingLowBatteryIndicator = false;
 		}
@@ -1343,7 +1343,7 @@ void Game::checkLowBattery(u16 keypad)
 void Game::printLowBatteryIndicator(bool showIndicator)
 {
 	Printing::text(Printing::getInstance(), (showIndicator) ? __CHAR_BATTERY : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
-	MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kLowBatteryIndicator, (bool*)(!showIndicator));
+	MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, Object::safeCast(this), Object::safeCast(this), kLowBatteryIndicator, (bool*)(!showIndicator));
 }
 #endif
 
@@ -1372,7 +1372,7 @@ void Game::unpause(GameState pauseState)
 
 		if(this->currentState == this->automaticPauseState)
 		{
-			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
+			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_DELAY, Object::safeCast(this), Object::safeCast(this), kAutoPause, NULL);
 			this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
 		}
 	}
@@ -1402,7 +1402,7 @@ void Game::autoPause()
 		else
 		{
 			// otherwise just wait a minute to check again
-			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this), kAutoPause, NULL);
+			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, Object::safeCast(this), Object::safeCast(this), kAutoPause, NULL);
 		}
 	}
 }
@@ -1929,3 +1929,4 @@ void Game::resetProfiling()
 	_processNameDuringXPEND = NULL;
 #endif
 }
+

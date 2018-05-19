@@ -111,45 +111,45 @@ CollisionInformation CollisionHelper::checkIfOverlap(Shape shapeA, Shape shapeB)
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			collisionInformation = CollisionHelper::checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(Ball, shapeA));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsBall(this, Box::safeCast(shapeB), Ball::safeCast(shapeA));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeB), __SAFE_CAST(Ball, shapeA));
+			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsBall(this, InverseBox::safeCast(shapeB), Ball::safeCast(shapeA));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			collisionInformation = CollisionHelper::checkIfBallOverlapsBall(this, __SAFE_CAST(Ball, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper::checkIfBallOverlapsBall(this, Ball::safeCast(shapeA), Ball::safeCast(shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(Box, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			collisionInformation = CollisionHelper::checkIfBoxOverlapsBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Box, shapeB));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsBox(this, Box::safeCast(shapeA), Box::safeCast(shapeB));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			collisionInformation = CollisionHelper::checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(InverseBox, shapeB));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsInverseBox(this, Box::safeCast(shapeA), InverseBox::safeCast(shapeB));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			collisionInformation = CollisionHelper::checkIfBoxOverlapsBall(this, __SAFE_CAST(Box, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsBall(this, Box::safeCast(shapeA), Ball::safeCast(shapeB));
 		}
 	}
 	else if(__IS_INSTANCE_OF(InverseBox, shapeA))
 	{
 		if(__IS_INSTANCE_OF(Box, shapeB))
     	{
-			collisionInformation = CollisionHelper::checkIfBoxOverlapsInverseBox(this, __SAFE_CAST(Box, shapeB), __SAFE_CAST(InverseBox, shapeA));
+			collisionInformation = CollisionHelper::checkIfBoxOverlapsInverseBox(this, Box::safeCast(shapeB), InverseBox::safeCast(shapeA));
 		}
 		else if(__IS_INSTANCE_OF(InverseBox, shapeB))
 		{
-			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsInverseBox(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(InverseBox, shapeB));
+			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsInverseBox(this, InverseBox::safeCast(shapeA), InverseBox::safeCast(shapeB));
 		}
 		else if(__IS_INSTANCE_OF(Ball, shapeB))
 		{
-			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsBall(this, __SAFE_CAST(InverseBox, shapeA), __SAFE_CAST(Ball, shapeB));
+			collisionInformation = CollisionHelper::checkIfInverseBoxOverlapsBall(this, InverseBox::safeCast(shapeA), Ball::safeCast(shapeB));
 		}
 	}
 
@@ -236,7 +236,7 @@ CollisionInformation CollisionHelper::checkIfBoxOverlapsBox(Box boxA, Box boxB)
 			}
 		}
 
-		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, boxB), solutionVector};
+		return (CollisionInformation){Shape::safeCast(boxA), Shape::safeCast(boxB), solutionVector};
 	}
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
@@ -250,7 +250,7 @@ CollisionInformation CollisionHelper::checkIfBoxOverlapsInverseBox(Box boxA, Inv
 	 (boxA->rightBox.z0 < inverseBoxB->rightBox.z0) | (boxA->rightBox.z1 > inverseBoxB->rightBox.z1)
 	)
 	{
-		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, inverseBoxB), {{0, 0, 0}, 0}};
+		return (CollisionInformation){Shape::safeCast(boxA), Shape::safeCast(inverseBoxB), {{0, 0, 0}, 0}};
 	}
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
@@ -319,7 +319,7 @@ CollisionInformation CollisionHelper::checkIfBoxOverlapsBall(Box boxA, Ball ball
 			}
 		}
 
-		return (CollisionInformation){__SAFE_CAST(Shape, boxA), __SAFE_CAST(Shape, ballB), solutionVector};
+		return (CollisionInformation){Shape::safeCast(boxA), Shape::safeCast(ballB), solutionVector};
 	}
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
@@ -385,7 +385,7 @@ CollisionInformation CollisionHelper::checkIfInverseBoxOverlapsBall(InverseBox i
 			solutionVector.direction = Vector3D::scalarProduct(solutionVector.direction, __I_TO_FIX10_6(-1));
 		}
 
-		return (CollisionInformation){__SAFE_CAST(Shape, inverseBoxA), __SAFE_CAST(Shape, ballB), solutionVector};
+		return (CollisionInformation){Shape::safeCast(inverseBoxA), Shape::safeCast(ballB), solutionVector};
 	}
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};
@@ -397,7 +397,7 @@ CollisionInformation CollisionHelper::checkIfBallOverlapsBall(Ball ballA __attri
 
 	if(solutionVector.magnitude)
 	{
-		return (CollisionInformation){__SAFE_CAST(Shape, ballA), __SAFE_CAST(Shape, ballB), solutionVector};
+		return (CollisionInformation){Shape::safeCast(ballA), Shape::safeCast(ballB), solutionVector};
 	}
 
 	return (CollisionInformation){NULL, NULL, {{0, 0, 0}, 0}};

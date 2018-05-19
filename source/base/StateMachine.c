@@ -363,7 +363,7 @@ State StateMachine::getPreviousState()
 	{
 		node = node->next;
 
-		return __SAFE_CAST(State, node->data);
+		return State::safeCast(node->data);
 	}
 
 	return NULL;

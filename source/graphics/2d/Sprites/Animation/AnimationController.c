@@ -265,7 +265,7 @@ bool AnimationController::updateAnimation()
 			// the last frame has been reached
 			if(this->animationFunction->onAnimationComplete)
 			{
-				Object::fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+				Object::fireEvent(this, kEventAnimationCompleted);
 			}
 
 			// rewind to first frame
@@ -318,7 +318,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// remove previous listeners
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object::removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		Object::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// setup animation frame
@@ -327,7 +327,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// register event callback
 	if(this->animationFunction && this->animationFunction->onAnimationComplete)
 	{
-		Object::addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+		Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 	}
 
 	// force frame writing in the next update
@@ -394,14 +394,14 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 			// remove previous listeners
 			if(this->animationFunction && this->animationFunction->onAnimationComplete)
 			{
-				Object::removeEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+				Object::removeEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 			}
 
 			// setup animation frame
 			this->animationFunction = animationDescription->animationFunctions[i];
 
 			// register event callback
-			Object::addEventListener(__SAFE_CAST(Object, this), this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
+			Object::addEventListener(this, this->owner, this->animationFunction->onAnimationComplete, kEventAnimationCompleted);
 
 			// force frame writing in the next update
 			this->previousFrame = 0;
@@ -463,7 +463,7 @@ void AnimationController::nextFrame()
 	}
 	else
 	{
-		Object::fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+		Object::fireEvent(this, kEventAnimationCompleted);
 	}
 }
 
@@ -493,7 +493,7 @@ void AnimationController::previousFrame()
 	}
 	else
 	{
-		Object::fireEvent(__SAFE_CAST(Object, this), kEventAnimationCompleted);
+		Object::fireEvent(this, kEventAnimationCompleted);
 	}
 }
 

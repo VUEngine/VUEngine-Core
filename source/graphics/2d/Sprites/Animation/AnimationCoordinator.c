@@ -115,7 +115,7 @@ bool AnimationCoordinator::playAnimation(AnimationController animationController
 {
 	if(this->animationControllers->head)
 	{
-		AnimationController firstAnimationController = __SAFE_CAST(AnimationController, VirtualList::front(this->animationControllers));
+		AnimationController firstAnimationController = AnimationController::safeCast(VirtualList::front(this->animationControllers));
 
 		if(animationController == firstAnimationController)
 		{

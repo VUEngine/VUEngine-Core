@@ -214,7 +214,7 @@ void StageEditor::show(GameState gameState)
  */
 void StageEditor::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseShape(this);
@@ -361,7 +361,7 @@ void StageEditor::releaseShape()
 {
 	if(this->currentEntityNode)
 	{
-		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 
 		VirtualList shapes =  Entity::getShapes(entity);
 
@@ -371,7 +371,7 @@ void StageEditor::releaseShape()
 
 			for(; node; node = node->next)
 			{
-				if(this->shape == __SAFE_CAST(Shape, node->data))
+				if(this->shape == Shape::safeCast(node->data))
 				{
 					break;
 				}
@@ -410,16 +410,16 @@ void StageEditor::getShape()
 		return;
 	}
 
-	Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 	VirtualList shapes =  Entity::getShapes(entity);
 
-	this->shape = shapes ? __SAFE_CAST(Shape, VirtualList::front(shapes)) : NULL;
+	this->shape = shapes ? Shape::safeCast(VirtualList::front(shapes)) : NULL;
 
 	if(!this->shape)
 	{
-		this->shape = __SAFE_CAST(Shape, new Box(__SAFE_CAST(SpatialObject, entity)));
+		this->shape = Shape::safeCast(new Box(SpatialObject::safeCast(entity)));
 
-		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
 		 Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
@@ -443,7 +443,7 @@ void StageEditor::positionShape()
 		return;
 	}
 
-	Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 	Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
 	 Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
@@ -487,7 +487,7 @@ void StageEditor::selectPreviousEntity()
 {
 	StageEditor::releaseShape(this);
 
-	VirtualList stageEntities = (__SAFE_CAST(Container, GameState::getStage(this->gameState)))->children;
+	VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
 
 	if(!this->currentEntityNode)
 	{
@@ -522,7 +522,7 @@ void StageEditor::selectNextEntity()
 {
 	StageEditor::releaseShape(this);
 
-	VirtualList stageEntities = (__SAFE_CAST(Container, GameState::getStage(this->gameState)))->children;
+	VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
 
 	if(!this->currentEntityNode)
 	{
@@ -820,7 +820,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 {
 	if(this->currentEntityNode && this->shape)
 	{
-		Container container = __SAFE_CAST(Container, this->currentEntityNode->data);
+		Container container = Container::safeCast(this->currentEntityNode->data);
 		Vector3D localPosition = *Container::getLocalPosition(container);
 
 		localPosition.x += translation.x;
@@ -883,13 +883,13 @@ void StageEditor::showSelectedUserObject()
 
 	if(spriteDefinition)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, __SAFE_CAST(Object, this));
+		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, Object::safeCast(this));
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
-		ASSERT(Sprite::getTexture(__SAFE_CAST(Sprite, this->userObjectSprite)), "AnimationInspector::createSprite: null texture");
+		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
 
-		PixelVector spritePosition = Sprite::getDisplacedPosition(__SAFE_CAST(Sprite, this->userObjectSprite));
-		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
-		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(__SAFE_CAST(Sprite, this->userObjectSprite))) << 2));
+		PixelVector spritePosition = Sprite::getDisplacedPosition(this->userObjectSprite);
+		spritePosition.x = __I_TO_FIX10_6((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->userObjectSprite)) << 2));
+		spritePosition.y = __I_TO_FIX10_6((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->userObjectSprite)) << 2));
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
@@ -961,7 +961,7 @@ void StageEditor::selectUserObject(u32 pressedKey)
 		Stage::addChildEntity(GameState::getStage(this->gameState), &DUMMY_ENTITY, false);
 		SpriteManager::sortLayers(SpriteManager::getInstance());
 
-		VirtualList stageEntities = (__SAFE_CAST(Container, GameState::getStage(this->gameState)))->children;
+		VirtualList stageEntities = (Container::safeCast(GameState::getStage(this->gameState)))->children;
 		this->currentEntityNode = stageEntities ? stageEntities->tail : NULL;
 
 		// select the added entity
@@ -998,14 +998,14 @@ void StageEditor::printEntityPosition()
 
 	if(this->currentEntityNode)
 	{
-		Entity entity = __SAFE_CAST(Entity, VirtualNode::getData(this->currentEntityNode));
+		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		const Vector3D* globalPosition =  SpatialObject::getPosition(entity);
 		const Rotation* globalRotation =  SpatialObject::getRotation(entity);
 		const Scale* globalScale =  SpatialObject::getScale(entity);
-		char* entityName = Container::getName(__SAFE_CAST(Container, entity));
+		char* entityName = Container::getName(entity);
 
 		Printing::text(Printing::getInstance(), "ID: ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), Entity::getInternalId(__SAFE_CAST(Entity, entity)), x + 6, y, NULL);
+		Printing::int(Printing::getInstance(), Entity::getInternalId(entity), x + 6, y, NULL);
 		Printing::text(Printing::getInstance(), "Type:                                  ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
 		Printing::text(Printing::getInstance(), "Name:                                  ", x, ++y, NULL);
@@ -1029,7 +1029,7 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(), "Is visible:                  ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 13, y, NULL);
 		Printing::text(Printing::getInstance(), "Children:                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), Container::getChildCount(__SAFE_CAST(Container, entity)), x + 13, y, NULL);
+		Printing::int(Printing::getInstance(), Container::getChildCount(entity), x + 13, y, NULL);
 	}
 }
 

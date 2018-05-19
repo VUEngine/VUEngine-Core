@@ -148,12 +148,12 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
 	{
 		Body body = bodyAllocator(owner, physicalSpecification, axesSubjectToGravity);
 		VirtualList::pushFront(this->bodies, body);
-		ASSERT(__SAFE_CAST(Body, VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
+		ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
 		this->bodyToCheckForGravityNode = NULL;
 
 		// return created shape
-		return __SAFE_CAST(Body, VirtualList::front(this->bodies));
+		return Body::safeCast(VirtualList::front(this->bodies));
 	}
 
 	return NULL;
@@ -204,7 +204,7 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 	for(; node; node = node->next)
 	{
 		// current body
-		Body body = __SAFE_CAST(Body, node->data);
+		Body body = Body::safeCast(node->data);
 		ASSERT(body, "PhysicalWorld::getBody: null body");
 
 		// check if current shape's owner is the same as the entity calling this method
@@ -246,7 +246,7 @@ void PhysicalWorld::checkForGravity()
 	for(; counter < __BODIES_TO_CHECK_FOR_GRAVITY && node; node = node->previous, counter++)
 	{
 		// load the current shape
-		Body body = __SAFE_CAST(Body, node->data);
+		Body body = Body::safeCast(node->data);
 
 		if(body->active)
 		{
@@ -301,7 +301,7 @@ void PhysicalWorld::update(Clock clock)
 	// check the shapes
 	for(activeBodiesIndex = 0, node = this->activeBodies->head; node; node = node->next, activeBodiesIndex++)
 	{
-		activeBodies[activeBodiesIndex] = __SAFE_CAST(Body, node->data);
+		activeBodies[activeBodiesIndex] = Body::safeCast(node->data);
 	}
 
 	activeBodies[activeBodiesIndex] = NULL;
@@ -368,10 +368,10 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 	for(; node; node = node->next)
 	{
 		// current body
-		Body body = __SAFE_CAST(Body, node->data);
+		Body body = Body::safeCast(node->data);
 
 		// check if current body's owner is the same as the entity calling this method
-		if(__SAFE_CAST(SpatialObject, owner) == body->owner)
+		if(SpatialObject::safeCast(owner) == body->owner)
 		{
 			// check if body is active, maybe a body must be removed
 			// and a new entity has been loaded in the same memory location
@@ -454,8 +454,8 @@ u32 PhysicalWorld::getTimeScale()
 void PhysicalWorld::bodyAwake(Body body)
 {
 	ASSERT(body, "PhysicalWorld::bodyAwake: null body");
-	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodyAwake: non body");
-	ASSERT(__SAFE_CAST(SpatialObject, body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
+	ASSERT(Body::safeCast(body), "PhysicalWorld::bodyAwake: non body");
+	ASSERT(SpatialObject::safeCast(body->owner), "PhysicalWorld::bodyAwake: body's owner is not an spatial object");
 	ASSERT(VirtualList::find(this->bodies, body), "PhysicalWorld::bodyAwake: body not found");
 
 	if(!VirtualList::find(this->activeBodies, body))
@@ -476,7 +476,7 @@ void PhysicalWorld::bodyAwake(Body body)
 void PhysicalWorld::bodySleep(Body body)
 {
 	ASSERT(body, "PhysicalWorld::bodySleep: null body");
-	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
+	ASSERT(Body::safeCast(body), "PhysicalWorld::bodySleep: non body");
 
 	VirtualList::removeElement(this->activeBodies, body);
 }
@@ -493,7 +493,7 @@ void PhysicalWorld::bodySleep(Body body)
 void PhysicalWorld::bodySetInactive(Body body)
 {
 	ASSERT(body, "PhysicalWorld::bodySetInactive: null body");
-	ASSERT(__SAFE_CAST(Body, body), "PhysicalWorld::bodySleep: non body");
+	ASSERT(Body::safeCast(body), "PhysicalWorld::bodySleep: non body");
 
 	VirtualList::removeElement(this->activeBodies, body);
 }

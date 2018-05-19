@@ -94,7 +94,7 @@ void ClockManager::destructor()
 	// destroy all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock::destructor(__SAFE_CAST(Clock, node->data));
+		Clock::destructor(node->data);
 	}
 
 	// clear my list
@@ -153,7 +153,7 @@ void ClockManager::update(u32 millisecondsElapsed)
 	// update all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock::update(__SAFE_CAST(Clock, node->data), millisecondsElapsed);
+		Clock::update(node->data, millisecondsElapsed);
 	}
 }
 
@@ -174,6 +174,6 @@ void ClockManager::reset()
 	// update all registered clocks
 	for(; node ; node = node->next)
 	{
-		Clock::reset(__SAFE_CAST(Clock, node->data));
+		Clock::reset(node->data);
 	}
 }

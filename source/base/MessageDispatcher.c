@@ -242,7 +242,7 @@ u32 MessageDispatcher::dispatchDelayedMessages()
 		{
 			DelayedMessage* delayedMessage = (DelayedMessage*)node->data;
 
-			ASSERT(__SAFE_CAST(Telegram, delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
+			ASSERT(Telegram::safeCast(delayedMessage->telegram), "MessageDispatcher::dispatchDelayedMessages: no telegram in queue")
 
 			if(!Clock::isPaused(delayedMessage->clock) && Clock::getTime(delayedMessage->clock) > delayedMessage->timeOfArrival)
 			{

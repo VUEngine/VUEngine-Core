@@ -385,14 +385,14 @@ void Body::update()
 
 				if(movementResult.axesStoppedMovement)
 				{
-					MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &movementResult.axesStoppedMovement);
+					MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kBodyStopped, &movementResult.axesStoppedMovement);
 				}
 			}
 
 			// no one uses this
 /*			if(movementResult.axesOfChangeOfMovement)
 			{
-				MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
+				MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kBodyChangedDirection, &movementResult.axesOfChangeOfMovement);
 			}
 */		}
 
@@ -995,7 +995,7 @@ void Body::awake(u16 axesOfAwakening)
 
 	if(dispatchMessage)
 	{
-		MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStartedMoving, &axesOfAwakening);
+		MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kBodyStartedMoving, &axesOfAwakening);
 	}
 }
 
@@ -1154,7 +1154,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 
 		if(axesOfStopping)
 		{
-			MessageDispatcher::dispatchMessage(0, __SAFE_CAST(Object, this), __SAFE_CAST(Object, this->owner), kBodyStopped, &axesOfStopping);
+			MessageDispatcher::dispatchMessage(0, Object::safeCast(this), Object::safeCast(this->owner), kBodyStopped, &axesOfStopping);
 		}
 	}
 
@@ -1164,9 +1164,9 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	//	Body::clearNormalOnAxes(this, movementResult.axesOfAcceleratedBouncing);
 	}
 
-	if(!Body::getMovementOnAllAxes(__SAFE_CAST(Body, this)))
+	if(!Body::getMovementOnAllAxes(this))
 	{
-		Body::sleep(__SAFE_CAST(Body, this));
+		Body::sleep(this);
 	}
 }
 

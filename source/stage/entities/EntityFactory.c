@@ -238,7 +238,7 @@ u32 EntityFactory::instantiateEntities()
 
 			if(positionedEntityDescription->callback)
 			{
-				Object::addEventListener(__SAFE_CAST(Object, positionedEntityDescription->entity), __SAFE_CAST(Object, positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
+				Object::addEventListener(positionedEntityDescription->entity, Object::safeCast(positionedEntityDescription->parent), positionedEntityDescription->callback, kEventEntityLoaded);
 			}
 		}
 	}
@@ -323,9 +323,9 @@ u32 EntityFactory::transformEntities()
 		{
 			positionedEntityDescription->transformed = true;
 
-			 Container::addChild(positionedEntityDescription->parent, __SAFE_CAST(Container, positionedEntityDescription->entity));
+			 Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
-			Transformation* environmentTransform = Container::getTransform(__SAFE_CAST(Container, positionedEntityDescription->parent));
+			Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
 
 			 Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
 		}
@@ -404,9 +404,9 @@ u32 EntityFactory::cleanUp()
 	{
 		if(positionedEntityDescription->callback)
 		{
-			Object::fireEvent(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
+			Object::fireEvent(positionedEntityDescription->entity, kEventEntityLoaded);
 
-			Object::removeAllEventListeners(__SAFE_CAST(Object, positionedEntityDescription->entity), kEventEntityLoaded);
+			Object::removeAllEventListeners(positionedEntityDescription->entity, kEventEntityLoaded);
 		}
 
 		VirtualList::removeElement(this->spawnedEntities, positionedEntityDescription);

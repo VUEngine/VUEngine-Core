@@ -126,7 +126,7 @@ void AnimatedEntity::animate()
 	for(; node ; node = node->next)
 	{
 		// first animate the frame
-		Sprite::updateAnimation(__SAFE_CAST(Sprite, node->data));
+		Sprite::updateAnimation(node->data);
 	}
 }
 
@@ -145,7 +145,7 @@ void AnimatedEntity::pauseAnimation(int pause)
 	// play animation on each sprite
 	for(; node ; node = node->next)
 	{
-		Sprite::pause(__SAFE_CAST(Sprite, node->data), pause);
+		Sprite::pause(node->data, pause);
 	}
 }
 
@@ -164,7 +164,7 @@ void AnimatedEntity::playAnimation(char* animationName)
 	// play animation on each sprite
 	for(; node ; node = node->next)
 	{
-		Sprite::play(__SAFE_CAST(Sprite, node->data), this->animationDescription, animationName);
+		Sprite::play(node->data, this->animationDescription, animationName);
 	}
 }
 
@@ -181,7 +181,7 @@ void AnimatedEntity::nextFrame()
 	// do on each sprite
 	for(; node ; node = node->next)
 	{
-		Sprite::nextFrame(__SAFE_CAST(Sprite, node->data));
+		Sprite::nextFrame(node->data);
 	}
 }
 
@@ -198,7 +198,7 @@ void AnimatedEntity::previousFrame()
 	// do on each sprite
 	for(; node ; node = node->next)
 	{
-		Sprite::previousFrame(__SAFE_CAST(Sprite, node->data));
+		Sprite::previousFrame(node->data);
 	}
 }
 
@@ -207,7 +207,7 @@ bool AnimatedEntity::isPlayingAnimation()
 {
 	ASSERT(this->sprites, "AnimatedEntity::isPlayingAnimation: null sprites");
 
-	return Sprite::isPlaying(__SAFE_CAST(Sprite, VirtualNode::getData(this->sprites->head)));
+	return Sprite::isPlaying(Sprite::safeCast(VirtualNode::getData(this->sprites->head)));
 }
 
 // is animation selected
@@ -218,9 +218,9 @@ bool AnimatedEntity::isAnimationLoaded(char* functionName)
 		return false;
 	}
 
-	Sprite sprite = __SAFE_CAST(Sprite, VirtualNode::getData(this->sprites->head));
+	Sprite sprite = Sprite::safeCast(VirtualNode::getData(this->sprites->head));
 
-	return Sprite::isPlayingFunction(__SAFE_CAST(Sprite, sprite), functionName);
+	return Sprite::isPlayingFunction(sprite, functionName);
 }
 
 // get animation definition

@@ -139,7 +139,7 @@ u32 CollisionManager::update(Clock clock)
 	for(; node; node = node->next)
 	{
 		// load the current shape
-		Shape shape = __SAFE_CAST(Shape, node->data);
+		Shape shape = Shape::safeCast(node->data);
 		shape->isVisible = true;
 
 		extern const Vector3D* _cameraPosition;
@@ -183,7 +183,7 @@ u32 CollisionManager::update(Clock clock)
 	// check the shapes
 	for(movingShapesIndex = 0, node = this->movingShapes->head; node; node = node->next)
 	{
-		Shape shape = __SAFE_CAST(Shape, node->data);
+		Shape shape = Shape::safeCast(node->data);
 
 		if(shape->isActive)
 		{
@@ -196,7 +196,7 @@ u32 CollisionManager::update(Clock clock)
 	// check the shapes
 	for(activeShapesIndex = 0, node = this->shapes->head; node; node = node->next)
 	{
-		Shape shape = __SAFE_CAST(Shape, node->data);
+		Shape shape = Shape::safeCast(node->data);
 
 		if(shape->isActive)
 		{
@@ -215,7 +215,7 @@ u32 CollisionManager::update(Clock clock)
 		}
 
 		// load the current shape
-		Shape shape = __SAFE_CAST(Shape, movingShapes[movingShapesIndex]);
+		Shape shape = Shape::safeCast(movingShapes[movingShapesIndex]);
 
 		if(shape->ready && shape->checkForCollisions && shape->isVisible)
 		{
@@ -228,7 +228,7 @@ u32 CollisionManager::update(Clock clock)
 				}
 
 				// load the current shape to check against
-				Shape shapeToCheck = __SAFE_CAST(Shape, activeShapes[activeShapesIndex]);
+				Shape shapeToCheck = Shape::safeCast(activeShapes[activeShapesIndex]);
 
 				if(!shapeToCheck->isActive)
 				{
@@ -315,7 +315,7 @@ void CollisionManager::showShapes()
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		Shape::show(__SAFE_CAST(Shape, node->data));
+		Shape::show(node->data);
 	}
 }
 
@@ -329,7 +329,7 @@ void CollisionManager::hideShapes()
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		Shape::hide(__SAFE_CAST(Shape, node->data));
+		Shape::hide(node->data);
 	}
 }
 
@@ -343,7 +343,7 @@ int CollisionManager::getNumberOfActiveShapes()
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		Shape shape = __SAFE_CAST(Shape, node->data);
+		Shape shape = Shape::safeCast(node->data);
 
 		if(shape->isActive)
 		{

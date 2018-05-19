@@ -279,7 +279,7 @@ void Debug::show(GameState gameState)
  */
 void Debug::hide()
 {
-	CollisionManager::hideShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
 
@@ -517,7 +517,7 @@ void Debug::showPage(int increment)
 
 		Debug::dimmGame(this);
 
-		CollisionManager::hideShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+		CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 
 		((void (*)(Debug, int, int, int))this->currentPage->data)(this, increment, 1, 2);
 	}
@@ -652,11 +652,11 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	Printing::text(Printing::getInstance(), "General clock time: ", 1, ++y, NULL);
 	Clock::print(Game::getClock(Game::getInstance()), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "In game clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getMessagingClock(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getMessagingClock(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Animations clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getUpdateClock(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getUpdateClock(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "Physics clock's time: ", 1, ++y, NULL);
-	Clock::print(GameState::getPhysicsClock(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
+	Clock::print(GameState::getPhysicsClock(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), 26, y, NULL);
 	y+=3;
 }
 
@@ -1056,7 +1056,7 @@ void Debug::streamingPage(int increment __attribute__ ((unused)), int x __attrib
  */
 void Debug::streamingShowStatus(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y __attribute__ ((unused)))
 {
-	Stage::showStreamingProfiling(GameState::getStage(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
+	Stage::showStreamingProfiling(GameState::getStage(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
 }
 
 /**
@@ -1353,7 +1353,7 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 		Printing::text(Printing::getInstance(), "OBJECTS' USAGE", x, y++, NULL);
 
 		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainerManager::getObjectSpriteContainerBySegment(ObjectSpriteContainerManager::getInstance(), this->objectSegment);
-		SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(__SAFE_CAST(Sprite, objectSpriteContainer)));
+		SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(objectSpriteContainer));
 		ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 		Debug::lightUpGame(this);
 	}
@@ -1468,8 +1468,8 @@ void Debug::physicsPage(int increment __attribute__ ((unused)), int x __attribut
  */
 void Debug::physicStatusShowStatistics(int increment __attribute__ ((unused)), int x, int y)
 {
-	PhysicalWorld::print(GameState::getPhysicalWorld(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
-	CollisionManager::print(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y + 6);
+	PhysicalWorld::print(GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
+	CollisionManager::print(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y + 6);
 }
 
 /**
@@ -1499,7 +1499,7 @@ void Debug::physicStatusShowShapes(int increment __attribute__ ((unused)), int x
  */
 void Debug::showCollisionShapes()
 {
-	CollisionManager::showShapes(GameState::getCollisionManager(__SAFE_CAST(GameState, StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+	CollisionManager::showShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 }
 
 /**

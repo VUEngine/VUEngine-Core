@@ -141,7 +141,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 				VirtualNode node = this->animationCoordinators->head;
 				for(;node; node = node->next)
 				{
-					AnimationCoordinator animationCoordinator = __SAFE_CAST(AnimationCoordinator, node->data);
+					AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 
 					if(AnimationCoordinator::getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
@@ -154,11 +154,11 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 				if(__GET_CAST(BgmapAnimatedSprite, sprite))
 				{
-					animationCoordinator = __SAFE_CAST(AnimationCoordinator, new BgmapAnimationCoordinator(charSetDefinition));
+					animationCoordinator = AnimationCoordinator::safeCast(new BgmapAnimationCoordinator(charSetDefinition));
 				}
 				else if(__GET_CAST(ObjectAnimatedSprite, sprite))
 				{
-					animationCoordinator = __SAFE_CAST(AnimationCoordinator, new ObjectAnimationCoordinator(charSetDefinition));
+					animationCoordinator = AnimationCoordinator::safeCast(new ObjectAnimationCoordinator(charSetDefinition));
 				}
 				else
 				{

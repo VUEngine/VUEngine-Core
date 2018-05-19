@@ -82,7 +82,7 @@ void Polyhedron::constructor()
  */
 void Polyhedron::destructor()
 {
-	Wireframe::hide(__SAFE_CAST(Wireframe, this));
+	Wireframe::hide(this);
 
 	// delete the vertices list
 	if(this->vertices)

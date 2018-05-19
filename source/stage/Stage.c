@@ -384,7 +384,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			 Entity::initialize(entity, true);
 
 			// create the entity and add it to the world
-			Container::addChild(__SAFE_CAST(Container, this), __SAFE_CAST(Container, entity));
+			Container::addChild(this, Container::safeCast(entity));
 
 			// apply transformations
 			 Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
@@ -411,9 +411,9 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 void Stage::makeChildReady(Entity entity)
 {
 	ASSERT(entity, "Stage::setChildReady: null entity");
-	ASSERT(entity->parent == __SAFE_CAST(Container, this), "Stage::setChildReady: I'm not its parent");
+	ASSERT(entity->parent == Container::safeCast(this), "Stage::setChildReady: I'm not its parent");
 
-	if(entity->parent == __SAFE_CAST(Container, this))
+	if(entity->parent == Container::safeCast(this))
 	{
 		 Entity::ready(entity, true);
 	}
@@ -454,7 +454,7 @@ void Stage::removeChild(Container child, bool deleteChild)
 
 	Base::removeChild(this, child, deleteChild);
 
-	s16 internalId = Entity::getInternalId(__SAFE_CAST(Entity, child));
+	s16 internalId = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -492,13 +492,13 @@ void Stage::unloadChild(Container child)
 		return;
 	}
 
-	Base::removeChild(__SAFE_CAST(Container, this), child, true);
-	Object::fireEvent(__SAFE_CAST(Object, child), kStageChildStreamedOut);
-	Object::removeAllEventListeners(__SAFE_CAST(Object, child), kStageChildStreamedOut);
-	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), __SAFE_CAST(Object, child));
-	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), __SAFE_CAST(Object, child));
+	Base::removeChild(this, child, true);
+	Object::fireEvent(child, kStageChildStreamedOut);
+	Object::removeAllEventListeners(child, kStageChildStreamedOut);
+	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
+	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
 
-	s16 internalId = Entity::getInternalId(__SAFE_CAST(Entity, child));
+	s16 internalId = Entity::getInternalId(child);
 
 	VirtualNode node = this->stageEntities->head;
 
@@ -580,7 +580,7 @@ void Stage::preloadAssets()
 
 		for(;node; node = node->next)
 		{
-			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), __SAFE_CAST(BgmapTexture, node->data));
+			BgmapTextureManager::releaseTexture(BgmapTextureManager::getInstance(), BgmapTexture::safeCast(node->data));
 		}
 
 		delete recyclableTextures;
@@ -710,7 +710,7 @@ void Stage::loadInitialEntities()
 
 	for(; node; node = node->next)
 	{
-		Stage::makeChildReady(this, __SAFE_CAST(Entity, node->data));
+		Stage::makeChildReady(this, Entity::safeCast(node->data));
 	}
 }
 
@@ -734,10 +734,10 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 	for(; node; node = node->next)
 	{
 		// get next entity
-		Entity entity = __SAFE_CAST(Entity, node->data);
+		Entity entity = Entity::safeCast(node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == __SAFE_CAST(Container, this) && !Entity::isVisible(entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity::getInternalId(entity);
 
@@ -761,7 +761,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 				if(!stageEntityDescription->positionedEntity->loadRegardlessOfPosition)
 				{
 					// unload it
-					Stage::unloadChild(this, __SAFE_CAST(Container, entity));
+					Stage::unloadChild(this, Container::safeCast(entity));
 					VirtualList::removeElement(this->loadedStageEntities, stageEntityDescription);
 
 					unloaded = true;
@@ -770,7 +770,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 			else
 			{
 				// unload it
-				Stage::unloadChild(this, __SAFE_CAST(Container, entity));
+				Stage::unloadChild(this, Container::safeCast(entity));
 
 				unloaded = true;
 			}
@@ -863,7 +863,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->internalId);
 					}
 					else
 					{
@@ -905,7 +905,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 
 					if(defer)
 					{
-						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, __SAFE_CAST(Container, this), NULL, stageEntityDescription->internalId);
+						EntityFactory::spawnEntity(this->entityFactory, stageEntityDescription->positionedEntity, Container::safeCast(this), NULL, stageEntityDescription->internalId);
 					}
 					else
 					{
@@ -939,7 +939,7 @@ bool Stage::purgeChildrenProgressively()
 	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
 #endif
 
-	Container child = __SAFE_CAST(Container, VirtualList::front(this->removedChildren));
+	Container child = Container::safeCast(VirtualList::front(this->removedChildren));
 
 	VirtualList::popFront(this->removedChildren);
 	VirtualList::removeElement(this->children, child);
@@ -1016,11 +1016,11 @@ bool Stage::stream()
 void Stage::streamAll()
 {
 	// must make sure there are not pending entities for removal
-	Container::purgeChildren(__SAFE_CAST(Container, this));
+	Container::purgeChildren(this);
 
 	Stage::unloadOutOfRangeEntities(this, false);
 	SpriteManager::disposeSprites(SpriteManager::getInstance());
-	Container::purgeChildren(__SAFE_CAST(Container, this));
+	Container::purgeChildren(this);
 	Stage::loadInRangeEntities(this, false);
 	EntityFactory::prepareAllEntities(this->entityFactory);
 	SpriteManager::writeTextures(SpriteManager::getInstance());
@@ -1034,7 +1034,7 @@ void Stage::update(u32 elapsedTime)
 
 	if(this->uiContainer)
 	{
-		Container::update(__SAFE_CAST(Container, this->uiContainer), elapsedTime);
+		Container::update(this->uiContainer, elapsedTime);
 	}
 
 	ParticleRemover::update(this->particleRemover);
@@ -1073,7 +1073,7 @@ void Stage::suspend()
 
 	if(this->uiContainer)
 	{
-		 Container::suspend(__SAFE_CAST(Container, this->uiContainer));
+		 Container::suspend(this->uiContainer);
 	}
 
 	// relinquish camera focus priority
@@ -1121,7 +1121,7 @@ void Stage::resume()
 	if(this->focusEntity)
 	{
 		// recover focus entity
-		Camera::setFocusGameEntity(Camera::getInstance(), __SAFE_CAST(Entity, this->focusEntity));
+		Camera::setFocusGameEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
 	}
 
 	// load background music
@@ -1134,7 +1134,7 @@ void Stage::resume()
 
 	if(this->uiContainer)
 	{
-		 Container::resume(__SAFE_CAST(Container, this->uiContainer));
+		 Container::resume(this->uiContainer);
 
 		 Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
@@ -1147,7 +1147,7 @@ bool Stage::handlePropagatedMessage(int message)
 	if(this->uiContainer)
 	{
 		// propagate message to ui
-		return Container::propagateMessage(__SAFE_CAST(Container, this->uiContainer), Container::onPropagatedMessage, message);
+		return Container::propagateMessage(this->uiContainer, Container::onPropagatedMessage, message);
 	}
 
 	return false;
@@ -1170,16 +1170,16 @@ void Stage::setFocusEntity(Entity focusEntity)
 {
 	if(this->focusEntity)
 	{
-		Object::removeEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Object::removeEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 	}
 
 	this->focusEntity = focusEntity;
 
 	if(this->focusEntity)
 	{
-		Object::addEventListener(__SAFE_CAST(Object, this->focusEntity), __SAFE_CAST(Object, this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
+		Object::addEventListener(this->focusEntity, Object::safeCast(this), (EventListener)Stage_onFocusEntityDeleted, kEventContainerDeleted);
 
-		Vector3D focusEntityPosition = *Container::getGlobalPosition(__SAFE_CAST(Container, this->focusEntity));
+		Vector3D focusEntityPosition = *Container::getGlobalPosition(this->focusEntity);
 		focusEntityPosition.x = __METERS_TO_PIXELS(focusEntityPosition.x);
 		focusEntityPosition.y = __METERS_TO_PIXELS(focusEntityPosition.y);
 		focusEntityPosition.z = __METERS_TO_PIXELS(focusEntityPosition.z);

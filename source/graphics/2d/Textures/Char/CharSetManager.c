@@ -142,7 +142,7 @@ CharSet CharSetManager::findCharSet(CharSetDefinition* charSetDefinition)
 
 	for(; node; node = node->next)
 	{
-		CharSet charSet = __SAFE_CAST(CharSet, node->data);
+		CharSet charSet = CharSet::safeCast(node->data);
 
 		if(charSet && CharSet::getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet::getAllocationType(charSet) == charSetDefinition->allocationType)
 		{
@@ -253,7 +253,7 @@ CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
 
 	if(this->charSets->head)
 	{
-		CharSet lastCharSet = __SAFE_CAST(CharSet, VirtualList::back(this->charSets));
+		CharSet lastCharSet = CharSet::safeCast(VirtualList::back(this->charSets));
 		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 	}
 
@@ -303,7 +303,7 @@ void CharSetManager::writeCharSets()
 
 	for(; node; node = node->next)
 	{
-		CharSet::write(__SAFE_CAST(CharSet, node->data));
+		CharSet::write(node->data);
 	}
 
 	VirtualList::clear(this->charSetsPendingWriting);
@@ -364,7 +364,7 @@ bool CharSetManager::defragmentProgressively()
 
 		for(; node; node = node->next)
 		{
-			CharSet charSet = __SAFE_CAST(CharSet, node->data);
+			CharSet charSet = CharSet::safeCast(node->data);
 
 			if(this->freedOffset == CharSet::getOffset(charSet))
 			{

@@ -167,10 +167,10 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
 	int j = 0;
 	int aux = 0;
 
-	int cols = Texture::getTotalCols(__SAFE_CAST(Texture, bgmapTexture));
-	int rows = Texture::getTotalRows(__SAFE_CAST(Texture, bgmapTexture));
+	int cols = Texture::getTotalCols(bgmapTexture);
+	int rows = Texture::getTotalRows(bgmapTexture);
 
-	TextureDefinition* textureDefinition = Texture::getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
+	TextureDefinition* textureDefinition = Texture::getTextureDefinition(bgmapTexture);
 
 	u16 colsPad = textureDefinition->padding.cols << 1;
 	u16 rowsPad = textureDefinition->padding.rows << 1;
@@ -178,7 +178,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
 	int area = (cols + colsPad) * (rows + rowsPad);
 
 	// if texture already defined, don't allocate
-	if(Texture::getNumberOfChars(__SAFE_CAST(Texture, bgmapTexture)))
+	if(Texture::getNumberOfChars(bgmapTexture))
 	{
 		for(i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i++)
 		{
@@ -207,7 +207,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
 						{
 							if(cols + colsPad <= 64 - this->xOffset[i][j])
 							{
-								u16 id = Texture::getId(__SAFE_CAST(Texture, bgmapTexture));
+								u16 id = Texture::getId(bgmapTexture);
 
 								// register bgmap definition
 								this->offset[id][kXOffset] = this->xOffset[i][j] + (colsPad >> 1);
@@ -289,7 +289,7 @@ void BgmapTextureManager::allocateText(BgmapTexture bgmapTexture)
 	//int xDisplacement = 0;
 	int yDisplacement = 0;
 
-	u32 length = Texture::getCols(__SAFE_CAST(Texture, bgmapTexture));
+	u32 length = Texture::getCols(bgmapTexture);
 
 	// if there is space in the first row
 	// calculate y displacement
@@ -327,9 +327,9 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 	// if no one is using the texture anymore
 	if(!isDeleted(bgmapTexture) && BgmapTexture::decreaseUsageCount(bgmapTexture))
 	{
-		int i = Texture::getId(__SAFE_CAST(Texture, bgmapTexture));
+		int i = Texture::getId(bgmapTexture);
 
-		TextureDefinition* textureDefinition = Texture::getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
+		TextureDefinition* textureDefinition = Texture::getTextureDefinition(bgmapTexture);
 
 		switch(textureDefinition->charSetDefinition->allocationType)
 		{
@@ -345,7 +345,7 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 			case __ANIMATED_MULTI:
 			case __NOT_ANIMATED:
 
-				Texture::releaseCharSet(__SAFE_CAST(Texture, bgmapTexture));
+				Texture::releaseCharSet(bgmapTexture);
 				break;
 		}
 	}
@@ -372,8 +372,8 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextu
 	{
 		if(this->bgmapTextures[i])
 		{
-			CharSet charSet = Texture::getCharSet(__SAFE_CAST(Texture, this->bgmapTextures[i]), false);
-			TextureDefinition* allocatedTextureDefinition = Texture::getTextureDefinition(__SAFE_CAST(Texture, this->bgmapTextures[i]));
+			CharSet charSet = Texture::getCharSet(this->bgmapTextures[i], false);
+			TextureDefinition* allocatedTextureDefinition = Texture::getTextureDefinition(this->bgmapTextures[i]);
 
 			if(allocatedTextureDefinition == (TextureDefinition*)textureDefinition &&
 				(!charSet || allocatedTextureDefinition->charSetDefinition->allocationType == bgmapTextureDefinition->charSetDefinition->allocationType) &&
@@ -401,11 +401,11 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextu
 
 		if(bgmapTexture && !BgmapTexture::getUsageCount(bgmapTexture))
 		{
-			u16 id = Texture::getId(__SAFE_CAST(Texture, bgmapTexture));
+			u16 id = Texture::getId(bgmapTexture);
 			u16 cols = this->offset[id][kCols];
 			u16 rows = this->offset[id][kRows];
 
-			TextureDefinition* allocatedTextureDefinition = Texture::getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
+			TextureDefinition* allocatedTextureDefinition = Texture::getTextureDefinition(bgmapTexture);
 
 			if(allocatedTextureDefinition->recyclable &&
 				textureDefinition->cols <= cols &&
@@ -434,8 +434,8 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextu
 
 	if(selectedBgmapTexture)
 	{
-		Texture::setDefinition(__SAFE_CAST(Texture, selectedBgmapTexture), textureDefinition);
-		Texture::setPalette(__SAFE_CAST(Texture, selectedBgmapTexture), textureDefinition->palette);
+		Texture::setDefinition(selectedBgmapTexture, textureDefinition);
+		Texture::setPalette(selectedBgmapTexture, textureDefinition->palette);
 		 Texture::rewrite(selectedBgmapTexture);
 	}
 
@@ -667,7 +667,7 @@ void BgmapTextureManager::print(int x, int y)
 
 		if(bgmapTexture)
 		{
-			TextureDefinition* allocatedTextureDefinition = Texture::getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture));
+			TextureDefinition* allocatedTextureDefinition = Texture::getTextureDefinition(bgmapTexture);
 
 			if(allocatedTextureDefinition->recyclable)
 			{
@@ -675,7 +675,7 @@ void BgmapTextureManager::print(int x, int y)
 				freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
 
 //				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture)? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
-				Printing::hex(Printing::getInstance(), (int)Texture::getTextureDefinition(__SAFE_CAST(Texture, bgmapTexture)), x + j, y + i, 8, NULL);
+				Printing::hex(Printing::getInstance(), (int)Texture::getTextureDefinition(bgmapTexture), x + j, y + i, 8, NULL);
 				Printing::int(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
 
 				if(++i + y > __SCREEN_HEIGHT / 8)
