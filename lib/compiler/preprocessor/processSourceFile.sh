@@ -54,7 +54,7 @@ done
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo INPUT_FILE $INPUT_FILE
 #echo OUTPUT_FILE $OUTPUT_FILE
-cat $INPUT_FILE > $OUTPUT_FILE
+cp $INPUT_FILE $OUTPUT_FILE
 
 if [[ ${INPUT_FILE} = *"assets/"* ]];then
 	exit 0
