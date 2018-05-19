@@ -572,7 +572,5 @@ void OptionsSelector::doCurrentSelectionCallback()
  */
 int OptionsSelector::getNumberOfOptions()
 {
-	ASSERT(this, "OptionsSelector::getNumberOfOptions(: null this");
-
 	return this->totalOptions;
 }
