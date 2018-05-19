@@ -254,8 +254,12 @@ else
 	classDefinition="$prototypes"
 fi
 
-echo "$classModifiers $className inherits from $baseClassName"
-
+#if [ -z "$classModifiers" ];
+#then
+#	echo "$className inherits from $baseClassName"
+#else
+#	echo "$className inherits from $baseClassName (is $classModifiers)"
+#fi
 
 if [ ! -z "$firstMethodDeclarationLine" ];then
 

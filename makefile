@@ -9,7 +9,7 @@ TYPE = debug
 
 # output dir
 BUILD_DIR = build
-WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/compiler
+GAME_HOME =.
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -95,6 +95,7 @@ VUENGINE_HOME = $(VBDE)libs/vuengine
 
 # Which directories contain source files
 DIRS = $(shell find $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets $(VUENGINE_HOME)/lib/compiler -type d -print)
+
 HEADER_DIRS = $(shell find $(VUENGINE_HOME)/source -type d -print)
 HEADER_DIRS := $(HEADER_DIRS) $(shell find $(VUENGINE_HOME)/assets -type d -print)
 
@@ -142,7 +143,10 @@ endif
 VUENGINE_INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/source/$(VUENGINE_HOME) -type d -print)
 
 # Where to store object and dependency files.
-STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
+STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
+
+# Where to preprocess source files
+WORKING_FOLDER = $(STORE)/compiler
 
 # Makes a list of the source (.c) files.
 C_SOURCE = $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.c))
@@ -157,11 +161,11 @@ HEADERS = $(foreach DIR,$(HEADER_DIRS),$(wildcard $(DIR)/*.h))
 H_FILES = $(addprefix $(WORKING_FOLDER)/source/, $(HEADERS:.h=.h))
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS = $(addprefix $(STORE)/, $(C_SOURCE:.c=.o))
+C_OBJECTS = $(addprefix $(STORE)/objects/, $(C_SOURCE:.c=.o))
 C_INTERMEDIATE_SOURCES = $(addprefix $(WORKING_FOLDER)/source/, $(C_SOURCE:.c=.c))
 
 # Makes a list of the object files that will have to be created.
-ASSEMBLY_OBJECTS = $(addprefix $(STORE)/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/, $(ASSEMBLY_SOURCE:.s=.o))
 
 # Same for the .d (dependency) files.
 D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
@@ -170,7 +174,7 @@ HELPERS_PREFIX=engine
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
-SETUP_CLASSES_OBJECT = $(STORE)/$(SETUP_CLASSES)
+SETUP_CLASSES_OBJECT = $(STORE)/objects/$(SETUP_CLASSES)
 
 # Virtual methods preprocessor file
 VIRTUAL_METHODS_HELPER=$(WORKING_FOLDER)/preprocessor/$(HELPERS_PREFIX)VirtualMethods.txt
@@ -190,7 +194,6 @@ printBuildingInfo:
 	@echo Build type: $(TYPE)
 	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 	@echo Compiler\'s output: $(COMPILER_OUTPUT)
-#	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/cleanSyntax.sh $(VUENGINE_HOME) $(VUENGINE_HOME)/source $(WORKING_FOLDER)/preprocessor
 
 START_TIME=`date +%s`
 elapsedTime=$$(( `date +%s` - $(START_TIME) ))
@@ -221,23 +224,23 @@ $(VIRTUAL_METHODS_HELPER): $(H_FILES)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(STORE)/%.o: $(WORKING_FOLDER)/source/%.c
+$(STORE)/objects/%.o: $(WORKING_FOLDER)/source/%.c
 	@echo -n "Compiling "
 	@sed -e 's#'"$(WORKING_FOLDER)"/source/'##g' <<< $<
-	@$(GCC) -Wp,-MD,$(STORE)/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
+	@$(GCC) -Wp,-MD,$(STORE)/objects/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/$*.dd > $(STORE)/$*.d
-	@rm -f $(STORE)/$*.dd
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$*.dd > $(STORE)/objects/$*.d
+	@rm -f $(STORE)/objects/$*.dd
 
 $(WORKING_FOLDER)/source/%.c: %.c
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER)/preprocessor -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
 
-$(STORE)/%.o: %.s
+$(STORE)/objects/%.o: %.s
 	@echo Creating object file for $*
 	@$(AS) -o $@ $<
 
 $(WORKING_FOLDER)/source/%.h: %.h
-	@echo Analysing $<
+#	@echo Analysing $<
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER)/preprocessor -c $(CLASSES_HIERARCHY_FILE)
 
 # Empty rule to prevent problems when a header is deleted.
@@ -247,7 +250,6 @@ $(WORKING_FOLDER)/source/%.h: %.h
 clean:
 	@echo Cleaning $(TYPE)...
 	@find $(BUILD_DIR) -maxdepth 1 -type f -exec rm -f {} \;
-	@rm -f $(foreach DIR,$(DIRS),$(STORE)/$(DIR)/*.d $(STORE)/$(DIR)/*.o)
 	@rm -Rf $(STORE)
 	@echo Cleaning done.
 
@@ -255,8 +257,8 @@ clean:
 dirs:
 	@echo Checking working dirs..
 	@-if [ ! -e $(STORE) ]; then mkdir -p $(STORE); fi;
-	@-$(foreach DIR,$(DIRS), if [ ! -e $(STORE)/$(DIR) ]; \
-         then mkdir -p $(STORE)/$(DIR); fi; )
+	@-$(foreach DIR,$(DIRS), if [ ! -e $(STORE)/objects/$(DIR) ]; \
+         then mkdir -p $(STORE)/objects/$(DIR); fi; )
 	@-if [ ! -e $(WORKING_FOLDER)/source ]; then mkdir -p $(WORKING_FOLDER)/source; fi;
 	@-$(foreach DIR,$(DIRS), if [ ! -e $(WORKING_FOLDER)/source/$(DIR) ]; \
          then mkdir -p $(WORKING_FOLDER)/source/$(DIR); fi; )

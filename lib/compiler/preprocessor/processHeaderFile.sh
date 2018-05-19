@@ -70,7 +70,13 @@ fi
 #echo "cleanClassDeclaration: $cleanClassDeclaration"
 #echo "line: $line"
 #echo "Modifiers: $classModifiers"
-echo "$classModifiers $className inherits from $baseClassName"
+
+if [ -z "$classModifiers" ];
+then
+	echo "$className inherits from $baseClassName"
+else
+	echo "$className inherits from $baseClassName (is $classModifiers)"
+fi
 
 #sed -e "s#$classDeclaration#__CLASS($className);#g" <<< "$classDeclaration"
 #echo attributes $attributes
