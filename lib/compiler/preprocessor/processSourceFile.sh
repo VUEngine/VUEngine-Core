@@ -56,6 +56,7 @@ done
 #echo OUTPUT_FILE $OUTPUT_FILE
 cp $INPUT_FILE $OUTPUT_FILE
 
+if [[ ${INPUT_FILE} = *"assets/"* ]];then
 	exit 0
 fi
 
@@ -293,7 +294,7 @@ if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 fi
 
-if [[ ! -s $OUTPUT_FILE ]];then
-	echo "Error processing file: $OUTPUT_FILE"
-	exit 0
-fi
+#if [[ ! -s $OUTPUT_FILE ]];then
+#	echo "Error processing file: $OUTPUT_FILE"
+#	exit 0
+#fi
