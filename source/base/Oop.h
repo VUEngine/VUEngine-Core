@@ -425,7 +425,16 @@
 #define __SINGLETON(ClassName, ...)																		\
 																										\
 		/* declare the static instance */																\
-		static ClassName ## _str _instance ## ClassName __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;		\
+		typedef struct SingletonWrapper ## ClassName													\
+		{																								\
+			/* footprint to differentiate between objects and structs */								\
+			u32 objectMemoryFootprint;																	\
+			/* declare the static instance */															\
+			ClassName ## _str instance;																	\
+		} SingletonWrapper ## ClassName;																	\
+																										\
+		static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 							\
+				__STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE;												\
 																										\
 		/* a flag to know when to allow construction */													\
 		static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
@@ -442,14 +451,18 @@
 			/* make sure that the class is properly set */												\
 			ClassName ## _checkVTable();																\
 																										\
+			/*  */																						\
+			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
+			_singletonWrapper ## ClassName.objectMemoryFootprint = __OBJECT_MEMORY_FOOT_PRINT;			\
+																										\
 			/* set the vtable pointer */																\
-			_instance ## ClassName.vTable = &ClassName ## _vTable;										\
+			instance->vTable = &ClassName ## _vTable;													\
 																										\
 			/* call constructor */																		\
-			ClassName ## _constructor(&_instance ## ClassName);											\
+			ClassName ## _constructor(instance);														\
 																										\
 			/* set the vtable pointer */																\
-			_instance ## ClassName.vTable = &ClassName ## _vTable;										\
+			instance->vTable = &ClassName ## _vTable;													\
 																										\
 			/* don't allow more constructs */															\
 			_singletonConstructed = __SINGLETON_CONSTRUCTED;											\
@@ -465,7 +478,7 @@
 			}																							\
 																										\
 			/* return the created singleton */															\
-			return &_instance ## ClassName;																\
+			return &_singletonWrapper ## ClassName.instance;											\
 		}																								\
 																										\
 		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
