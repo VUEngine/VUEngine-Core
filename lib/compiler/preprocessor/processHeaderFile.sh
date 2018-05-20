@@ -4,8 +4,8 @@
 INPUT_FILE=
 OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
-HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
+HELPER_FILES_PREFIX=engine
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
 while [[ $# -gt 1 ]]
@@ -25,7 +25,7 @@ do
 		shift # past argument
 		;;
 		-p|-output)
-		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $2"
+		HELPER_FILES_PREFIX="$2"
 		shift # past argument
 		;;
 		-d|-output)
@@ -58,6 +58,7 @@ if [ -f $CLASSES_HIERARCHY_FILE ];
 then
 	sed -i -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
 fi
+
 # save new hierarchy
 echo "$className:$baseClassName:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 
@@ -71,12 +72,12 @@ fi
 #echo "line: $line"
 #echo "Modifiers: $classModifiers"
 
-if [ -z "$classModifiers" ];
-then
-	echo "$className inherits from $baseClassName"
-else
-	echo "$className inherits from $baseClassName ( is $classModifiers)"
-fi
+#if [ -z "$classModifiers" ];
+#then
+#	echo "$className inherits from $baseClassName"
+#else
+#	echo "$className inherits from $baseClassName ( is $classModifiers)"
+#fi
 
 #sed -e "s#$classDeclaration#__CLASS($className);#g" <<< "$classDeclaration"
 #echo attributes $attributes
@@ -117,6 +118,13 @@ fi
 #echo methods
 #echo $methods
 
+VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethods.txt"
+
+# check if necessary files already exist
+if [ ! -f $VIRTUAL_METHODS_FILE ] ; then
+	touch $VIRTUAL_METHODS_FILE
+fi
+
 # Process each method to generate the final header
 while IFS= read -r method;
 do
@@ -140,6 +148,14 @@ do
 	methodIsAbstract=false
 
     if [[ $methodType = *"virtual "* ]]; then
+
+		methodCall="$className""_""$methodName"
+		hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
+		if [ -z "$hasMethod" ];
+		then
+			separator="\|"
+			echo -n "$separator\<$methodCall[ 	]*(.*" >> $VIRTUAL_METHODS_FILE
+		fi
 
         if [ ! -z "$methodParameters" ];
         then
@@ -170,6 +186,14 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
 
             virtualMethodOverrides=$virtualMethodOverrides"\\
 __VIRTUAL_SET(ClassName, "$className", "$methodName");"
+
+			methodCall="$className""_""$methodName"
+			hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
+			if [ -z "$hasMethod" ];
+			then
+				separator="\|"
+				echo -n "$separator\<$methodCall[ 	]*(.*" >> $VIRTUAL_METHODS_FILE
+			fi
         fi
     fi
 

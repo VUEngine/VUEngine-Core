@@ -112,11 +112,21 @@ firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -
 prototypes=`grep -e '^<DECLARATION>.*)' $OUTPUT_FILE | sed -e 's#)$#);#' | tr -d '\n'`
 #prototypes=`grep -e '^<DECLARATION>.*)' $OUTPUT_FILE | sed -e 's#)$#);#'`
 
+if [[ ! -s $OUTPUT_FILE ]];then
+	echo "1.5 Error processing file: $OUTPUT_FILE"
+	exit 0
+fi
+
 #echo "prototypes $prototypes"
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
 
 if [ -z "$className" ];then
 	clean_up
+	exit 0
+fi
+
+if [[ ! -s $OUTPUT_FILE ]];then
+	echo "2 Error processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -196,6 +206,11 @@ do
 	done
 done
 
+if [[ ! -s $OUTPUT_FILE ]];then
+	echo "3 Error processing file: $OUTPUT_FILE"
+	exit 0
+fi
+
 # clean up
 sed -i -e 's/<%>//g' $OUTPUT_FILE
 sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	]\+/ /g' $OUTPUT_FILE
@@ -254,6 +269,11 @@ else
 	classDefinition="$prototypes"
 fi
 
+if [[ ! -s $OUTPUT_FILE ]];then
+	echo "4 Error processing file: $OUTPUT_FILE"
+	exit 0
+fi
+
 #if [ -z "$classModifiers" ];
 #then
 #	echo "$className inherits from $baseClassName"
@@ -294,7 +314,7 @@ if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 fi
 
-#if [[ ! -s $OUTPUT_FILE ]];then
-#	echo "Error processing file: $OUTPUT_FILE"
-#	exit 0
-#fi
+if [[ ! -s $OUTPUT_FILE ]];then
+	echo "Error processing file: $OUTPUT_FILE"
+	exit 0
+fi

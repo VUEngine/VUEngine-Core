@@ -2,16 +2,13 @@
 
 OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
-WORKING_FOLDER=build/compiler/preprocessor
+WORKING_FOLDER=build/working
+CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
 while [[ $# -gt 1 ]]
 do
 	key="$1"
 	case $key in
-		-h|-output)
-		HEADER_FOLDERS="$HEADER_FOLDERS $2"
-		shift # past argument
-		;;
 		-o|-output)
 		OUTPUT_C_FILE="$2"
 		shift # past argument
@@ -20,64 +17,32 @@ do
 		WORKING_FOLDER="$2"
 		shift # past argument
 		;;
-		*)
-		HEADER_FOLDERS="$HEADER_FOLDERS $1"
+		-c|-output)
+		CLASSES_HIERARCHY_FILE="$2"
+		shift # past argument
 		;;
 	esac
 
 	shift
 done
 
-HEADER_FILES=
-SAVED_HEADERS_FILE=$WORKING_FOLDER/headerFilesFor-$OUTPUT_C_FILE.txt
-TEMPORAL_HEADERS_FILE=$WORKING_FOLDER/temporalHeaderFiles.txt
 SETUP_FUNCTION=`echo $OUTPUT_C_FILE | sed -e "s/.c//g"`
 OUTPUT_C_FILE="$WORKING_FOLDER/$OUTPUT_C_FILE"
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo OUTPUT_C_FILE $OUTPUT_C_FILE
 
-echo Preprocessing classes in:
-
-for headerFolder in $HEADER_FOLDERS; do
-
-	echo "	$headerFolder"
-	HEADER_FILES="$HEADER_FILES "`find $headerFolder/source/ -name "*.h"`
-done
-
 if [ ! -d $WORKING_FOLDER ]; then
-	mkdir -p $WORKING_FOLDER
+	exit 0
 fi
 
 CLASSES_FILE=$WORKING_FOLDER/classesFile.txt
 
-echo $HEADER_FILES > $TEMPORAL_HEADERS_FILE
 
-# check if necessary files already exist
-if [ ! -f $SAVED_HEADERS_FILE ] || [ ! -f $OUTPUT_C_FILE ] ; then
-	# if no, create them
-    echo $HEADER_FILES > $SAVED_HEADERS_FILE
-	HEADER_FILES=`cat $SAVED_HEADERS_FILE`
-else
-	SAVED_HEADER_FILES=`cat $SAVED_HEADERS_FILE`
-	TEMPORAL_HEADER_FILES=`cat $TEMPORAL_HEADERS_FILE`
-	# clean to not setup the classes if not needed
-	HEADER_FILES=
+# if the classes hierarchy files list was populated, generate the setupClass.c files
+if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 
-	# check for header files additions or deletions
-	if ! [ "$SAVED_HEADER_FILES" == "$TEMPORAL_HEADER_FILES" ]; then
-		echo "Files differ"
-		HEADER_FILES=$TEMPORAL_HEADERS_FILE
-		`cat $TEMPORAL_HEADERS_FILE > $SAVED_HEADERS_FILE`
-		HEADER_FILES=`cat $SAVED_HEADERS_FILE`
-    fi
-fi
-
-
-# if the header files list was populated, generate the setupClass.c files
-if [ -n "$HEADER_FILES" ]; then
-
-	echo -n "Generating "
-	echo $OUTPUT_C_FILE
+#	echo -n "Generating "
+#	echo $OUTPUT_C_FILE
 	rm -f $CLASSES_FILE
 	rm -f $OUTPUT_C_FILE
 	echo " " > $OUTPUT_C_FILE
@@ -85,17 +50,9 @@ if [ -n "$HEADER_FILES" ]; then
 
 	echo "// Do not modify this file, it is auto-generated" > $OUTPUT_C_FILE
 
-	for headerFile in $HEADER_FILES; do
-		className=`grep "__CLASS(" $headerFile`
-		className=`echo $className | sed 's/__CLASS(//' | sed 's/);//'`
-		if ! [[ "$className" =~ "define" ]]; then
-			if [ -n "$className" ]; then
-				echo $className >> $CLASSES_FILE
-			fi
-		fi
-	done
+	CLASSES_NAMES=`grep -v ':.*static.*' $CLASSES_HIERARCHY_FILE | sed -e 's/:.*//g'`
 
-	CLASSES_NAMES=`cat $CLASSES_FILE`
+#	echo "CLASSES_NAMES $CLASSES_NAMES"
 
 	echo " " >> $OUTPUT_C_FILE
 	echo "// includes" >> $OUTPUT_C_FILE
@@ -137,7 +94,7 @@ if [ -n "$HEADER_FILES" ]; then
 	for setupClassFile in $SETUP_CLASSES_FILES
 	do
 		setupFunction=`grep "SetupClasses" $setupClassFile | sed -e "s/.*void \+\(.*SetupClasses\)(.*/\1/g"`
-		echo setupFunction $setupFunction
+		#echo setupFunction $setupFunction
 
 		# add function setup call
 		echo "	"$setupFunction"();" >> $FINAL_SETUP_CLASSES_FILE
@@ -150,4 +107,3 @@ if [ -n "$HEADER_FILES" ]; then
 fi
 
 rm -f $CLASSES_FILE
-rm -f $TEMPORAL_HEADERS_FILE

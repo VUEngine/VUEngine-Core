@@ -167,17 +167,15 @@ C_INTERMEDIATE_SOURCES = $(addprefix $(STORE)/sources/vuengine/, $(C_SOURCE:.c=.
 # Makes a list of the object files that will have to be created.
 ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/vuengine/, $(ASSEMBLY_SOURCE:.s=.o))
 
-# Same for the .d (dependency) files.
-D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
-
 HELPERS_PREFIX=engine
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
 SETUP_CLASSES_OBJECT = $(STORE)/objects/vuengine/$(SETUP_CLASSES)
 
-# Virtual methods preprocessor file
-VIRTUAL_METHODS_HELPER=$(PREPROCESSOR_WORKING_FOLDER)/$(HELPERS_PREFIX)VirtualMethods.txt
+# Same for the .d (dependency) files.
+D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
+D_FILES := $(D_FILES) $(STORE)/objects/vuengine/$(SETUP_CLASSES).d
 
 # File that holds the classes hierarchy
 CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/$(HELPERS_PREFIX)ClassesHierarchy.txt
@@ -198,11 +196,7 @@ printBuildingInfo:
 START_TIME=`date +%s`
 elapsedTime=$$(( `date +%s` - $(START_TIME) ))
 
-setupClasses:
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -h $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/$(VUENGINE_HOME) $(ADDITIONAL_CLASSES_FOLDERS) -o $(SETUP_CLASSES).c -w $(PREPROCESSOR_WORKING_FOLDER)
-	@echo Classes processing done
-
-$(TARGET).a: $(VIRTUAL_METHODS_HELPER) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
+$(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
@@ -212,15 +206,15 @@ $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@echo "Time elapsed: $(elapsedTime) seconds"
 
 $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
-	@echo Compiling $<
-	@$(GCC) $(foreach INC,$(VUENGINE_INCLUDE_PATHS) $(GAME_INCLUDE_PATHS),-I$(INC))\
+	@echo -n "Compiling "
+	@sed -e 's#'"$(STORE)"/sources/game/'##g' <<< $<
+	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
+	@rm -f $*.dd
 
-$(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: setupClasses
-
-$(VIRTUAL_METHODS_HELPER): $(H_FILES)
-#	@echo "Preparing virtual methods in engine"
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/analyzeHeaderFile.sh -d -w $(PREPROCESSOR_WORKING_FOLDER) -h $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/$(VUENGINE_HOME)/source -p $(HELPERS_PREFIX)
+$(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES).c -w $(PREPROCESSOR_WORKING_FOLDER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
@@ -240,8 +234,8 @@ $(STORE)/objects/vuengine/%.o: %.s
 	@$(AS) -o $@ $<
 
 $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/%.h: %.h
-#	@echo Analysing $<
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
+	@echo Preprocessing $<
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(HELPERS_PREFIX)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
