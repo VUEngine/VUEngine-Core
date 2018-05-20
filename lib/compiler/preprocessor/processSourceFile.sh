@@ -56,7 +56,6 @@ done
 #echo OUTPUT_FILE $OUTPUT_FILE
 cp $INPUT_FILE $OUTPUT_FILE
 
-if [[ ${INPUT_FILE} = *"assets/"* ]];then
 	exit 0
 fi
 
@@ -88,7 +87,7 @@ sed -i -e 's/.*static.*/&<%>/g' $OUTPUT_FILE
 echo >> $OUTPUT_FILE
 
 # Find method declarations
-sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d '\n' | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*]\+[ 	]\+'"$className"'[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*([^@]*)[ 	<%>]*'"$mark"'[ 	]*{[ 	]*<START_BLOCK>[^@]*\)'"$mark"'/'"$mark"'<DECLARATION>\1<%DECLARATION>/g'  > $OUTPUT_FILE
+sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d '\n' | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*]\+[ 	]\+'"$className"'[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*([^@]*)[ 	<%>]*'"$mark"'[ 	]*{[ 	]*<START_BLOCK>[^@]*\)'"$mark"'/'"$mark"'<DECLARATION>\1<%DECLARATION>/g'  > $OUTPUT_FILE.tmp && mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Add static qualifier to static methods block start
 sed  -i -e 's/<%>@N@{/@N@<%>{/g' $OUTPUT_FILE
@@ -294,8 +293,7 @@ if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 fi
 
-#contents=`cat $OUTPUT_FILE`
-#if [[ -z "$contents" ]];then
-#	echo "Error processing file: $OUTPUT_FILE"
-#	exit 0
-#fi
+if [[ ! -s $OUTPUT_FILE ]];then
+	echo "Error processing file: $OUTPUT_FILE"
+	exit 0
+fi
