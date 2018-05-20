@@ -34,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // redefine memcpy
-static void *memcpy(void *destination, const void *source, size_t numberOfBytes)
+__attribute__ ((unused)) static void *memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes;
 
