@@ -4,7 +4,7 @@ GAME_HOME=
 OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
 DELETE_HELPER_FILES=false
-WORKING_FOLDER=build/compiler/preprocessor
+WORKING_FOLDER=build/working
 HELPER_FILES_PREFIX=engine
 
 while [[ $# -gt 1 ]]

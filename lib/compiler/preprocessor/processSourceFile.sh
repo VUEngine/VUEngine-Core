@@ -14,7 +14,7 @@ clean_up() {
 
 INPUT_FILE=
 OUTPUT_FILE=
-WORKING_FOLDER=build/compiler/preprocessor
+WORKING_FOLDER=build/preprocessor
 HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
