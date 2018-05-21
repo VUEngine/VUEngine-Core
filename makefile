@@ -9,8 +9,14 @@ TYPE = debug
 #TYPE = tools
 #TYPE = preprocessor
 
+# Which libraries are linked
+LIBRARIES = $(COMPONENTS)
+
 # Where the game lives
 GAME_HOME = .
+
+# My home
+MY_HOME = $(VBDE)libs/$(NAME)
 
 # output dir
 BUILD_DIR = build
@@ -21,11 +27,11 @@ STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
 # Where to preprocess source files
 PREPROCESSOR_WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/working
 
-# Add directories to the include and library paths
-MODULES = vuengine
-vuengine_DIRS = $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets
+# All the modules
+MODULES = $(NAME) $(LIBRARIES)
 
-INCLUDE_PATHS = $(foreach MODULE, $(MODULES), $(foreach DIR, $(shell find $($(MODULE)_DIRS) -type d -print), $(PREPROCESSOR_WORKING_FOLDER)/headers/$(MODULE)/$(DIR)))
+# Add directories to the include and library paths
+INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/headers -type d -print)
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -106,17 +112,14 @@ endif
 
 DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
 
-# engine's home
-VUENGINE_HOME = $(VBDE)libs/$(NAME)
-
 # Which directories contain source files
-SOURCES_DIRS = $(shell find $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets $(VUENGINE_HOME)/lib/compiler -type d -print)
-HEADERS_DIRS = $(shell find $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets -type d -print)
+SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets $(MY_HOME)/lib/compiler -type d -print)
+HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 
 # Obligatory headers
 CONFIG_FILE =       $(shell pwd)/source/config.h
 ESSENTIAL_HEADERS = -include $(CONFIG_FILE) \
-                    -include $(VUENGINE_HOME)/source/libvuengine.h
+                    -include $(MY_HOME)/source/libvuengine.h
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
@@ -219,7 +222,7 @@ $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
 	@rm -f $*.dd
 
 $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES).c -w $(PREPROCESSOR_WORKING_FOLDER)
+	@sh $(MY_HOME)/lib/compiler/preprocessor/setupClasses.sh -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES).c -w $(PREPROCESSOR_WORKING_FOLDER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
@@ -232,7 +235,7 @@ $(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
 $(STORE)/sources/$(NAME)/%.c: %.c
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(MODULES)
+	@sh $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(MODULES)
 
 $(STORE)/objects/$(NAME)/%.o: %.s
 	@echo Creating object file for $*
@@ -240,7 +243,7 @@ $(STORE)/objects/$(NAME)/%.o: %.s
 
 $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: %.h
 	@echo Preprocessing $<
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
+	@sh $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
