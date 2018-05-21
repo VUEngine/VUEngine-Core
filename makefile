@@ -22,10 +22,10 @@ STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
 PREPROCESSOR_WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/working
 
 # Add directories to the include and library paths
-LIBRARIES = vuengine
+MODULES = vuengine
 vuengine_DIRS = $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets
 
-INCLUDE_PATHS = $(foreach LIBRARY, $(LIBRARIES), $(foreach DIR, $(shell find $($(LIBRARY)_DIRS) -type d -print), $(PREPROCESSOR_WORKING_FOLDER)/headers/$(LIBRARY)/$(DIR)))
+INCLUDE_PATHS = $(foreach MODULE, $(MODULES), $(foreach DIR, $(shell find $($(MODULE)_DIRS) -type d -print), $(PREPROCESSOR_WORKING_FOLDER)/headers/$(MODULE)/$(DIR)))
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -232,7 +232,7 @@ $(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
 $(STORE)/sources/$(NAME)/%.c: %.c
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(MODULES)
 
 $(STORE)/objects/$(NAME)/%.o: %.s
 	@echo Creating object file for $*
