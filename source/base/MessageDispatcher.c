@@ -153,7 +153,7 @@ static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object 
  * Dispatch delayed message
  *
  * @memberof		MessageDispatcher
- * @private
+ * @public
  *
  * @param this		Function scope
  * @param delay		milliseconds to wait before dispatching the message

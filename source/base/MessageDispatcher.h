@@ -60,7 +60,9 @@ singleton class MessageDispatcher : Object
 
 	static MessageDispatcher getInstance();
 	static bool dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
-	u32 dispatchDelayedMessages();
+	void dispatchDelayedMessage(Clock clock, u32 delay, Object sender,
+		Object receiver, int message, void* extraInfo);
+ 	u32 dispatchDelayedMessages();
 	void discardDelayedMessagesWithClock(Clock clock);
 	void discardDelayedMessagesFromSender(Object sender, int message);
 	void discardDelayedMessagesForReceiver(Object receiver, int message);
