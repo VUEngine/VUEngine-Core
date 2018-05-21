@@ -19,7 +19,7 @@ HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
-while [[ $# -gt 1 ]]
+while [[ $# -gt 0 ]]
 do
 	key="$1"
 	case $key in
@@ -36,8 +36,6 @@ do
 		shift # past argument
 		;;
 		-p|-output)
-		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $2"
-		shift # past argument
 		;;
 		-c|-output)
 		CLASSES_HIERARCHY_FILE="$2"
@@ -46,11 +44,15 @@ do
 		-d|-output)
 		PRINT_DEBUG_OUTPUT="true"
 		;;
+		*)
+		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $1"
+		;;
 	esac
 
 	shift
 done
 
+#echo HELPER_FILES_PREFIXES $HELPER_FILES_PREFIXES
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo INPUT_FILE $INPUT_FILE
 #echo OUTPUT_FILE $OUTPUT_FILE
