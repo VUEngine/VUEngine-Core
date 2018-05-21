@@ -26,7 +26,7 @@ do
 	shift
 done
 
-SETUP_FUNCTION=`echo $OUTPUT_C_FILE | sed -e "s/.c//g"`
+SETUP_FUNCTION=`echo $OUTPUT_C_FILE | sed -e "s/.c$//g"`
 OUTPUT_C_FILE="$WORKING_FOLDER/$OUTPUT_C_FILE"
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo OUTPUT_C_FILE $OUTPUT_C_FILE

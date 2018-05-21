@@ -1,5 +1,7 @@
 # Makefile taken from Wikipedia.org
 
+NAME = vuengine
+
 # Default build type
 TYPE = debug
 #TYPE = release
@@ -7,7 +9,7 @@ TYPE = debug
 #TYPE = tools
 #TYPE = preprocessor
 
-# Where the game lices
+# Where the game lives
 GAME_HOME = .
 
 # output dir
@@ -20,7 +22,10 @@ STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
 PREPROCESSOR_WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/working
 
 # Add directories to the include and library paths
-VUENGINE_INCLUDE_PATHS = $(foreach DIR,$(HEADERS_DIRS), $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/$(DIR))
+LIBRARIES = vuengine
+vuengine_DIRS = $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets
+
+INCLUDE_PATHS = $(foreach LIBRARY, $(LIBRARIES), $(foreach DIR, $(shell find $($(LIBRARY)_DIRS) -type d -print), $(PREPROCESSOR_WORKING_FOLDER)/headers/$(LIBRARY)/$(DIR)))
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -102,7 +107,7 @@ endif
 DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
 
 # engine's home
-VUENGINE_HOME = $(VBDE)libs/vuengine
+VUENGINE_HOME = $(VBDE)libs/$(NAME)
 
 # Which directories contain source files
 SOURCES_DIRS = $(shell find $(VUENGINE_HOME)/source $(VUENGINE_HOME)/assets $(VUENGINE_HOME)/lib/compiler -type d -print)
@@ -158,24 +163,24 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/, $(HEADERS:.h=.h))
+H_FILES = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS = $(addprefix $(STORE)/objects/vuengine/, $(C_SOURCE:.c=.o))
-C_INTERMEDIATE_SOURCES = $(addprefix $(STORE)/sources/vuengine/, $(C_SOURCE:.c=.c))
+C_OBJECTS = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCE:.c=.o))
+C_INTERMEDIATE_SOURCES = $(addprefix $(STORE)/sources/$(NAME)/, $(C_SOURCE:.c=.c))
 
 # Makes a list of the object files that will have to be created.
-ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/vuengine/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 
-HELPERS_PREFIX=engine
+HELPERS_PREFIX = $(NAME)
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
-SETUP_CLASSES_OBJECT = $(STORE)/objects/vuengine/$(SETUP_CLASSES)
+SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
 D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
-D_FILES := $(D_FILES) $(STORE)/objects/vuengine/$(SETUP_CLASSES).d
+D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
 
 # File that holds the classes hierarchy
 CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/$(HELPERS_PREFIX)ClassesHierarchy.txt
@@ -207,8 +212,8 @@ $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 
 $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
 	@echo -n "Compiling "
-	@sed -e 's#'"$(STORE)"/sources/game/'##g' <<< $<
-	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
+	@sed -e 's#'"$(STORE)"/sources/$(NAME)/'##g' <<< $<
+	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
 	@rm -f $*.dd
@@ -218,22 +223,22 @@ $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(STORE)/objects/vuengine/%.o: $(STORE)/sources/vuengine/%.c
+$(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
 	@echo -n "Compiling "
-	@sed -e 's#'"$(STORE)"/sources/vuengine/'##g' <<< $<
-	@$(GCC) -Wp,-MD,$(STORE)/objects/vuengine/$*.dd $(foreach INC,$(VUENGINE_INCLUDE_PATHS),-I$(INC))\
+	@sed -e 's#'"$(STORE)"/sources/$(NAME)/'##g' <<< $<
+	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/vuengine/$*.dd > $(STORE)/objects/vuengine/$*.d
-	@rm -f $(STORE)/objects/vuengine/$*.dd
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d
+	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
-$(STORE)/sources/vuengine/%.c: %.c
+$(STORE)/sources/$(NAME)/%.c: %.c
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -p $(HELPERS_PREFIX) -c $(CLASSES_HIERARCHY_FILE)
 
-$(STORE)/objects/vuengine/%.o: %.s
+$(STORE)/objects/$(NAME)/%.o: %.s
 	@echo Creating object file for $*
 	@$(AS) -o $@ $<
 
-$(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/%.h: %.h
+$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: %.h
 	@echo Preprocessing $<
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(HELPERS_PREFIX)
 
@@ -249,14 +254,14 @@ clean:
 # Create necessary directories
 dirs:
 	@echo Checking working dirs..
-	@-$(foreach DIR,$(HEADERS_DIRS), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/$(DIR) ]; \
-         then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/headers/vuengine/$(DIR); fi; )
-	@-if [ ! -e $(STORE)/sources/vuengine ]; then mkdir -p $(STORE)/sources/vuengine; fi;
-	@-$(foreach DIR,$(SOURCES_DIRS), if [ ! -e $(STORE)/sources/vuengine/$(DIR) ]; \
-         then mkdir -p $(STORE)/sources/vuengine/$(DIR); fi; )
-	@-if [ ! -e $(STORE)/objects/vuengine ]; then mkdir -p $(STORE)/objects/vuengine; fi;
-	@-$(foreach DIR,$(SOURCES_DIRS), if [ ! -e $(STORE)/objects/vuengine/$(DIR) ]; \
-         then mkdir -p $(STORE)/objects/vuengine/$(DIR); fi; )
+	@-$(foreach DIR,$(HEADERS_DIRS), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR) ]; \
+         then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR); fi; )
+	@-if [ ! -e $(STORE)/sources/$(NAME) ]; then mkdir -p $(STORE)/sources/$(NAME); fi;
+	@-$(foreach DIR,$(SOURCES_DIRS), if [ ! -e $(STORE)/sources/$(NAME)/$(DIR) ]; \
+         then mkdir -p $(STORE)/sources/$(NAME)/$(DIR); fi; )
+	@-if [ ! -e $(STORE)/objects/$(NAME) ]; then mkdir -p $(STORE)/objects/$(NAME); fi;
+	@-$(foreach DIR,$(SOURCES_DIRS), if [ ! -e $(STORE)/objects/$(NAME)/$(DIR) ]; \
+         then mkdir -p $(STORE)/objects/$(NAME)/$(DIR); fi; )
 
 # Includes the .d files so it knows the exact dependencies for every source
 -include $(D_FILES)
