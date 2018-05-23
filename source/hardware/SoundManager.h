@@ -190,20 +190,22 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup hardware
 singleton class SoundManager : Object
 {
-	/* actual note of each sound being played*/
+	// actual note of each sound being played
 	int actualNote[__TOTAL_SOUNDS];
-	/* note delay for each sound being played */
+	// note delay for each sound being played
 	BYTE noteWait[__TOTAL_SOUNDS];
-	/* background music */
+	// background music
 	const u16 (*bgm)[__BGM_CHANNELS];
-	/* fx sound */
+	// fx sound
 	const u16* fxSound[__FXS];
-	/* output level based on sound position of each fx */
+	// output level based on sound position of each fx
 	s16 fxLeftOutput[__FXS];
 	s16 fxRightOutput[__FXS];
 
+	/// @publicsection
 	static SoundManager getInstance();
 	void setWaveForm();
 	void playBGM(const u16 (*bgm)[]);

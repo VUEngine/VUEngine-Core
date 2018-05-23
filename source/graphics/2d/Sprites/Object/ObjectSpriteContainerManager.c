@@ -29,17 +29,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	ObjectSpriteContainerManager
- * @extends Object
- * @ingroup graphics-2d-sprites-object
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -49,18 +38,12 @@
  * @fn			ObjectSpriteContainerManager::getInstance()
  * @memberof	ObjectSpriteContainerManager
  * @public
- *
  * @return		ObjectSpriteContainerManager instance
  */
 
 
 /**
  * Class constructor
- *
- * @memberof		ObjectSpriteContainerManager
- * @public
- *
- * @param this		Function scope
  */
 void ObjectSpriteContainerManager::constructor()
 {
@@ -76,11 +59,6 @@ void ObjectSpriteContainerManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof		ObjectSpriteContainerManager
- * @public
- *
- * @param this		Function scope
  */
 void ObjectSpriteContainerManager::destructor()
 {
@@ -92,11 +70,6 @@ void ObjectSpriteContainerManager::destructor()
 
 /**
  * Reset manager's status
- *
- * @memberof		ObjectSpriteContainerManager
- * @public
- *
- * @param this		Function scope
  */
 void ObjectSpriteContainerManager::reset()
 {
@@ -120,13 +93,8 @@ void ObjectSpriteContainerManager::reset()
 /**
  * Retrieve an ObjectSpriteContainer capable of allocating the given number of OBJECTs and close to the given z coordinate
  *
- * @memberof					ObjectSpriteContainerManager
- * @public
- *
- * @param this					Function scope
  * @param numberOfObjects		Number of OBJECTs required
  * @param z						Z coordinate
- *
  * @return 						ObjectSpriteContainer instance
  */
 ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainer(int numberOfObjects, fix10_6 z)
@@ -171,12 +139,7 @@ ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainer(int
 /**
  * Retrieve the ObjectSpriteContainer for the given segment
  *
- * @memberof			ObjectSpriteContainerManager
- * @public
- *
- * @param this			Function scope
  * @param segment		Spt segment
- *
  * @return 				ObjectSpriteContainer instance
  */
 ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainerBySegment(int segment)
@@ -189,10 +152,6 @@ ObjectSpriteContainer ObjectSpriteContainerManager::getObjectSpriteContainerBySe
 /**
  * Setup the object sprite containers
  *
- * @memberof			ObjectSpriteContainerManager
- * @public
- *
- * @param this			Function scope
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
@@ -238,10 +197,6 @@ const ObjectSpriteContainer* ObjectSpriteContainerManager::setupObjectSpriteCont
 /**
  * Set the z position of the ObjectSpriteContainer in the given segment
  *
- * @memberof		ObjectSpriteContainerManager
- * @public
- *
- * @param this		Function scope
  * @param spt		Spt segment of the ObjectSpriteContainer to modify
  * @param z			New z coordinate
  */
@@ -263,10 +218,6 @@ void ObjectSpriteContainerManager::setZPosition(int spt, fix10_6 z)
 /**
  * Print the manager's status
  *
- * @memberof		ObjectSpriteContainerManager
- * @public
- *
- * @param this		Function scope
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */

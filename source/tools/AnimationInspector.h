@@ -33,10 +33,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
 
 /**
  * For animation
@@ -53,69 +51,35 @@ typedef struct UserAnimatedEntity
 } UserAnimatedEntity;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup tools
 singleton class AnimationInspector : Object
 {
-	/**
-	 * @var GameState 				gameState
-	 * @brief						current in game gameState
-	 * @memberof					AnimationInspector
-	 */
+	// current in game gameState
 	GameState gameState;
-	/**
-	 * @var Sprite 					animatedSprite
-	 * @brief						current animated sprite
-	 * @memberof					AnimationInspector
-	 */
+	// current animated sprite
 	Sprite animatedSprite;
-	/**
-	 * @var AnimationDescription* 	animationDescription
-	 * @brief						current animation description
-	 * @memberof					AnimationInspector
-	 */
+	// current animation description
 	AnimationDescription* animationDescription;
-	/**
-	 * @var AnimationFunction 		animationFunction
-	 * @brief						current animation function
-	 * @memberof					AnimationInspector
-	 */
+	// current animation function
 	AnimationFunction animationFunction;
-	/**
-	 * @var OptionsSelector 		animatedEntitySelector
-	 * @brief						animated in game entity selector
-	 * @memberof					AnimationInspector
-	 */
+	// animated in game entity selector
 	OptionsSelector animatedEntitySelector;
-	/**
-	 * @var OptionsSelector 		spriteSelector
-	 * @brief						animated sprite selector
-	 * @memberof					AnimationInspector
-	 */
+	// animated sprite selector
 	OptionsSelector spriteSelector;
-	/**
-	 * @var OptionsSelector 		animationsSelector
-	 * @brief						animations selector
-	 * @memberof					AnimationInspector
-	 */
+	// animations selector
 	OptionsSelector animationsSelector;
-	/**
-	 * @var OptionsSelector 		animationEditionSelector
-	 * @brief						animation edition selector
-	 * @memberof					AnimationInspector
-	 */
+	// animation edition selector
 	OptionsSelector animationEditionSelector;
-	/**
-	 * @var OptionsSelector 		frameEditionSelector
-	 * @brief						frame edition selector
-	 * @memberof					AnimationInspector
-	 */
+	// frame edition selector
 	OptionsSelector frameEditionSelector;
-	/**
-	 * @var int mode
-	 * @brief						mode
-	 * @memberof					AnimationInspector
-	 */
+	// mode
 	int mode;
 
+	/// @publicsection
 	static AnimationInspector getInstance();
 	void update();
 	void show(GameState gameState);

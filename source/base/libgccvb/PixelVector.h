@@ -32,11 +32,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base-libgccvb
 static class PixelVector : Object
 {
+	/// @publicsection
 	static inline PixelVector getFromVector3D(Vector3D vector3D, s16 parallax);
 }
 

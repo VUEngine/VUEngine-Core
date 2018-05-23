@@ -33,10 +33,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS' DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
 
 /**
  * For level editing
@@ -53,51 +51,30 @@ typedef struct UserObject
 } UserObject;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS' DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// In-game stage editor for debug and productivity purposes
+/// @ingroup tools
 singleton class StageEditor : Object
 {
-	/**
-	 * @var GameState		gameState
-	 * @brief				Current game state
-	 * @memberof			StageEditor
-	 */
+	// Current game state
 	GameState gameState;
-	/**
-	 * @var VirtualNode		currentEntityNode
-	 * @brief				Current in game entity
-	 * @memberof			StageEditor
-	 */
+	// Current in game entity
 	VirtualNode currentEntityNode;
-	/**
-	 * @var Shape			shape
-	 * @brief				Current entity's shape
-	 * @memberof			StageEditor
-	 */
+	// Current entity's shape
 	Shape shape;
-	/**
-	 * @var int				mode
-	 * @brief				Mode
-	 * @memberof			StageEditor
-	 */
+	// Mode
 	int mode;
-	/**
-	 * @var OptionsSelector userObjectsSelector
-	 * @brief				Actors selector
-	 * @memberof			StageEditor
-	 */
+	// Actors selector
 	OptionsSelector userObjectsSelector;
-	/**
-	 * @var int				translationStepSize
-	 * @brief				Translation step size
-	 * @memberof			StageEditor
-	 */
+	// Translation step size
 	int translationStepSize;
-	/**
-	 * @var Sprite			userObjectSprite
-	 * @brief				Current user's object's sprite
-	 * @memberof			StageEditor
-	 */
+	// Current user's object's sprite
 	Sprite userObjectSprite;
 
+	/// @publicsection
 	static StageEditor getInstance();
 	void show(GameState gameState);
 	void hide();

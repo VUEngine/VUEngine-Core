@@ -36,19 +36,7 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	Sprite
- * @extends Object
- * @ingroup graphics-2d-sprites
- */
-
 friend class Texture;
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -58,10 +46,6 @@ friend class Texture;
 /**
  * Class constructor
  *
- * @memberof				Sprite
- * @public
- *
- * @param this				Function scope
  * @param spriteDefinition	Definition of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
@@ -87,11 +71,6 @@ void Sprite::constructor(const SpriteDefinition* spriteDefinition __attribute__ 
 
 /**
  * Class destructor
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::destructor()
 {
@@ -104,11 +83,6 @@ void Sprite::destructor()
 
 /**
  * Get scale
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return		Scale struct
  */
@@ -128,10 +102,6 @@ Scale Sprite::getScale()
 /**
  * Calculate zoom scaling factor
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  * @param scale	Scale struct to apply
  * @param z
  */
@@ -144,11 +114,6 @@ void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute_
 /**
  * Retrieve the texture
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Texture struct
  */
 Texture Sprite::getTexture()
@@ -158,11 +123,6 @@ Texture Sprite::getTexture()
 
 /**
  * Show
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::show()
 {
@@ -171,11 +131,6 @@ void Sprite::show()
 
 /**
  * Hide
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::hide()
 {
@@ -184,11 +139,6 @@ void Sprite::hide()
 
 /**
  * Is the Sprite hidden?
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return		Boolean telling whether the sprite is hidden
  */
@@ -200,10 +150,6 @@ bool Sprite::isHidden()
 /**
  * Calculate 2D position
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param position		3D position
  */
 void Sprite::position(const Vector3D* position)
@@ -216,10 +162,6 @@ void Sprite::position(const Vector3D* position)
 /**
  * Set position
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param position		Pixel position
  */
 void Sprite::setPosition(const PixelVector* position)
@@ -232,10 +174,6 @@ void Sprite::setPosition(const PixelVector* position)
 /**
  * Calculate parallax
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
 void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
@@ -243,11 +181,6 @@ void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
 
 /**
  * Get position relative to the camera
- *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  *
  * @return			Position relative to camera
  */
@@ -259,11 +192,6 @@ PixelVector Sprite::getPosition()
 
 /**
  * Get displaced position relative to the camera
- *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  *
  * @return			Displaced position relative to camera
  */
@@ -283,11 +211,7 @@ PixelVector Sprite::getDisplacedPosition()
 /**
  * Retrieve animation controller
  *
- * @memberof	Sprite
  * @private
- *
- * @param this	Function scope
- *
  * @return		Sprite's AnimationController
  */
 AnimationController Sprite::getAnimationController()
@@ -298,10 +222,6 @@ AnimationController Sprite::getAnimationController()
 /**
  * Set map's world layer
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param worldLayer	World layer
  */
 void Sprite::setWorldLayer(u8 worldLayer)
@@ -317,11 +237,6 @@ void Sprite::setWorldLayer(u8 worldLayer)
 /**
  * Get WORLD layer
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return 		World layer
  */
 u8 Sprite::getWorldLayer()
@@ -331,11 +246,6 @@ u8 Sprite::getWorldLayer()
 
 /**
  * Write textures
- *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  *
  * @return			true it all textures are written
  */
@@ -357,11 +267,6 @@ bool Sprite::writeTextures()
 /**
  * Check if all textures are written
  *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
- *
  * @return			true it all textures are written
  */
 bool Sprite::areTexturesWritten()
@@ -371,11 +276,6 @@ bool Sprite::areTexturesWritten()
 
 /**
  * Get sprite's render head
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -387,11 +287,6 @@ u16 Sprite::getHead()
 /**
  * Get sprite's render mode
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Mode
  */
 u16 Sprite::getMode()
@@ -401,11 +296,6 @@ u16 Sprite::getMode()
 
 /**
  * Get sprites's world head
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -418,11 +308,6 @@ u32 Sprite::getWorldHead()
 /**
  * Get sprites's layer's gx
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return
  */
 s16 Sprite::getWorldGX()
@@ -433,11 +318,6 @@ s16 Sprite::getWorldGX()
 
 /**
  * Get sprites's layer's gy
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -450,11 +330,6 @@ s16 Sprite::getWorldGY()
 /**
  * Get sprites's layer's gp
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return
  */
 s16 Sprite::getWorldGP()
@@ -465,11 +340,6 @@ s16 Sprite::getWorldGP()
 
 /**
  * Get sprites's layer's mx
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -482,11 +352,6 @@ s16 Sprite::getWorldMX()
 /**
  * Get sprites's layer's my
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return
  */
 s16 Sprite::getWorldMY()
@@ -497,11 +362,6 @@ s16 Sprite::getWorldMY()
 
 /**
  * Get sprites's layer's mp
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -514,11 +374,6 @@ s16 Sprite::getWorldMP()
 /**
  * Get sprites's layer's width
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Width
  */
 u16 Sprite::getWorldWidth()
@@ -530,11 +385,6 @@ u16 Sprite::getWorldWidth()
 /**
  * Get sprites's layer's height
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Width
  */
 u16 Sprite::getWorldHeight()
@@ -545,11 +395,6 @@ u16 Sprite::getWorldHeight()
 
 /**
  * Reload the sprite in BGMap memory
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::rewrite()
 {
@@ -563,10 +408,6 @@ void Sprite::rewrite()
 /**
  * Process event
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param eventFirer
  */
 void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
@@ -578,11 +419,6 @@ void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
 /**
  * Get displacement
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return
  */
 PixelVector Sprite::getDisplacement()
@@ -593,10 +429,6 @@ PixelVector Sprite::getDisplacement()
 /**
  * Set displacement
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  * @param displacement 	PixelVector
  */
 void Sprite::setDisplacement(PixelVector displacement)
@@ -607,10 +439,6 @@ void Sprite::setDisplacement(PixelVector displacement)
 /**
  * Rotate
  *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  * @param rotation	Rotation struct
  */
 void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
@@ -618,11 +446,6 @@ void Sprite::rotate(const Rotation* rotation __attribute__ ((unused)))
 
 /**
  * Get half width
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -633,11 +456,6 @@ int Sprite::getHalfWidth()
 
 /**
  * Get half height
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return
  */
@@ -653,11 +471,6 @@ int Sprite::getHalfHeight()
 
 /**
  * Update
- *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  */
 void Sprite::update()
 {
@@ -675,10 +488,6 @@ void Sprite::update()
 /**
  * Render
  *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  * @param evenFrame
  */
 void Sprite::render(bool evenFrame)
@@ -691,11 +500,6 @@ void Sprite::render(bool evenFrame)
 /**
  * Get Sprite's transparency mode
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return		Transparency mode
  */
 u8 Sprite::getTransparent()
@@ -706,10 +510,6 @@ u8 Sprite::getTransparent()
 /**
  * Set Sprite transparent
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  * @param value	Transparency mode
  */
 void Sprite::setTransparent(u8 value)
@@ -720,11 +520,6 @@ void Sprite::setTransparent(u8 value)
 
 /**
  * Animate the Sprite
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::updateAnimation()
 {
@@ -738,10 +533,6 @@ void Sprite::updateAnimation()
 /**
  * Pause animation
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  * @param pause	Boolean
  */
 void Sprite::pause(bool pause)
@@ -756,10 +547,6 @@ void Sprite::pause(bool pause)
 /**
  * Play a given animation
  *
- * @memberof					Sprite
- * @public
- *
- * @param this					Function scope
  * @param animationDescription	AnimationDescription
  * @param functionName			Name of animation function to play
  */
@@ -777,11 +564,6 @@ void Sprite::play(AnimationDescription* animationDescription, char* functionName
 /**
  * Is Sprite playing an animation?
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return		Boolean whether Sprite is playing an animation
  */
 bool Sprite::isPlaying()
@@ -798,12 +580,7 @@ bool Sprite::isPlaying()
 /**
  * Is Sprite playing a function?
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param functionName	Name of function to play
- *
  * @return				Boolean whether Sprite is playing a function
  */
 bool Sprite::isPlayingFunction(char* functionName)
@@ -819,10 +596,6 @@ bool Sprite::isPlayingFunction(char* functionName)
 /**
  * Set frame cycle decrement
  *
- * @memberof					Sprite
- * @public
- *
- * @param this					Function scope
  * @param frameCycleDecrement	Frame cycle decrement
  */
 void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
@@ -835,11 +608,6 @@ void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
 
 /**
  * Get actual frame
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return		Frame number
  */
@@ -856,10 +624,6 @@ s8 Sprite::getActualFrame()
 /**
  * Set actual frame
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param actualFrame	Frame number
  */
 void Sprite::setActualFrame(s8 actualFrame)
@@ -872,11 +636,6 @@ void Sprite::setActualFrame(s8 actualFrame)
 
 /**
  * Skip to next frame
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::nextFrame()
 {
@@ -889,11 +648,6 @@ void Sprite::nextFrame()
 
 /**
  * Rewind to previous frame
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::previousFrame()
 {
@@ -906,11 +660,6 @@ void Sprite::previousFrame()
 
 /**
  * Get frame delay
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return		Frame delay
  */
@@ -927,10 +676,6 @@ s8 Sprite::getFrameDuration()
 /**
  * Set frame delay
  *
- * @memberof			Sprite
- * @public
- *
- * @param this			Function scope
  * @param frameDuration	Frame delay
  */
 void Sprite::setFrameDuration(u8 frameDuration)
@@ -943,22 +688,12 @@ void Sprite::setFrameDuration(u8 frameDuration)
 
 /**
  * Write animation
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::writeAnimation()
 {}
 
 /**
  * Check if uses affine mode
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return		True if it does
  */
@@ -970,11 +705,6 @@ bool Sprite::isAffine()
 /**
  * Check if uses h-bias mode
  *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
- *
  * @return		True if it does
  */
 bool Sprite::isHBias()
@@ -984,11 +714,6 @@ bool Sprite::isHBias()
 
 /**
  * Check if uses OBJECT mode
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  *
  * @return		True if it does
  */
@@ -1000,10 +725,6 @@ bool Sprite::isObject()
 /**
  * Print status
  *
- * @memberof		Sprite
- * @public
- *
- * @param this		Function scope
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
@@ -1085,10 +806,6 @@ void Sprite::print(int x, int y)
 /**
  * Write a char directly to the Sprite's Texture
  *
- * @memberof				Sprite
- * @public
- *
- * @param this				Function scope
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param newChar			Char to write
  */
@@ -1103,10 +820,6 @@ void Sprite::putChar(Point* texturePixel, BYTE* newChar)
 /**
  * Write a single pixel directly to the Sprite's Texture
  *
- * @memberof				Sprite
- * @public
- *
- * @param this				Function scope
  * @param texturePixel		Point that defines the position of the char in the Sprite's texture
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel
@@ -1126,22 +839,12 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
 
 /**
  * Apply Affine transformations to Sprite
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::applyAffineTransformations()
 {}
 
 /**
  * Apply HBias effects to Sprite
- *
- * @memberof	Sprite
- * @public
- *
- * @param this	Function scope
  */
 void Sprite::applyHbiasEffects()
 {}

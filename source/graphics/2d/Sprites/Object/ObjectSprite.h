@@ -41,45 +41,50 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A ObjectSprite definition
+ *
+ * @memberof ObjectSprite
+ */
 typedef struct ObjectSpriteDefinition
 {
-	// it has a Sprite definition at the beginning
+	/// it has a Sprite definition at the beginning
 	SpriteDefinition spriteDefinition;
 
-	// the display mode (BGMAP, AFFINE, H-BIAS)
+	/// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
 
-	// flag to indicate in which display to show the bg texture
+	/// flag to indicate in which display to show the bg texture
 	u16 display;
 
 } ObjectSpriteDefinition;
 
+/**
+ * A ObjectSprite definition that is stored in ROM
+ *
+ * @memberof ObjectSprite
+ */
 typedef const ObjectSpriteDefinition ObjectSpriteROMDef;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup graphics-2d-sprites-object
 class ObjectSprite : Sprite
 {
-	/**
-	* @var ObjectSpriteContainer 	objectSpriteContainer
-	* @brief						parent sprite
-	* @memberof					ObjectSprite
-	*/
+	// parent sprite
 	ObjectSpriteContainer objectSpriteContainer;
-	/**
-	* @var s16 					objectIndex
-	* @brief						object index
-	* @memberof					ObjectSprite
-	*/
+	// object index
 	s16 objectIndex;
-	/**
-	* @var s16 					totalObjects
-	* @brief						number of objects
-	* @memberof					ObjectSprite
-	*/
+	// number of objects
 	s16 totalObjects;
 
+	/// @publicsection
 	void constructor(const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
 	s16 getObjectIndex();
 	s16 getTotalObjects();

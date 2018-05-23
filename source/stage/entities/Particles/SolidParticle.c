@@ -36,12 +36,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	SolidParticle
- * @extends Particle
- * @ingroup stage-entities-particles
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 friend class Shape;
@@ -54,10 +48,6 @@ friend class Shape;
 /**
  * Class constructor
  *
- * @memberof						SolidParticle
- * @public
- *
- * @param this						Function scope
  * @param solidParticleDefinition	Definition of the SolidParticle
  * @param spriteDefinition
  * @param lifeSpan
@@ -107,11 +97,6 @@ void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefi
 
 /**
  * Class destructor
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  */
 void SolidParticle::destructor()
 {
@@ -128,13 +113,8 @@ void SolidParticle::destructor()
 /**
  * Update
  *
- * @memberof			SolidParticle
- * @public
- *
- * @param this			Function scope
  * @param timeElapsed
  * @param behavior
- *
  * @return				Boolean
  */
 u32 SolidParticle::update(int timeElapsed, void (* behavior)(Particle particle))
@@ -154,11 +134,6 @@ u32 SolidParticle::update(int timeElapsed, void (* behavior)(Particle particle))
 
 /**
  * Transform shape
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  */
 void SolidParticle::transformShape()
 {
@@ -172,11 +147,6 @@ void SolidParticle::transformShape()
 /**
  * Retrieve shape
  *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
- *
  * @return		Particle's shape
  */
 Shape SolidParticle::getShape()
@@ -186,11 +156,6 @@ Shape SolidParticle::getShape()
 
 /**
  * Get width
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  *
  * @return		Width
  */
@@ -202,11 +167,6 @@ u16 SolidParticle::getWidth()
 /**
  * Get height
  *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
- *
  * @return		Height
  */
 u16 SolidParticle::getHeight()
@@ -216,11 +176,6 @@ u16 SolidParticle::getHeight()
 
 /**
  * Get depth
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  *
  * @return		Depth
  */
@@ -233,12 +188,7 @@ u16 SolidParticle::getDepth()
 /**
  * Process collisions
  *
- * @memberof							SolidParticle
- * @public
- *
- * @param this							Function scope
  * @param collisionInformation			Information about the collision
- *
  * @return								True if successfully processed, false otherwise
  */
 bool SolidParticle::enterCollision(const CollisionInformation* collisionInformation)
@@ -270,12 +220,7 @@ bool SolidParticle::enterCollision(const CollisionInformation* collisionInformat
 /**
  * Can move over axis?
  *
- * @memberof			Particle
- * @public
- *
- * @param this			Function scope
  * @param acceleration
- *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
 bool SolidParticle::isSubjectToGravity(Acceleration gravity)
@@ -297,12 +242,7 @@ bool SolidParticle::isSubjectToGravity(Acceleration gravity)
 /**
  * Handles incoming messages
  *
- * @memberof		SolidParticle
- * @public
- *
- * @param this		Function scope
  * @param telegram
- *
  * @return			True if successfully processed, false otherwise
  */
 bool SolidParticle::handleMessage(Telegram telegram)
@@ -329,11 +269,6 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 /**
  * Transform
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  */
 void SolidParticle::transform()
 {
@@ -344,10 +279,6 @@ void SolidParticle::transform()
 /**
  * Set position
  *
- * @memberof		SolidParticle
- * @public
- *
- * @param this		Function scope
  * @param position	Position to move particle to
  */
 void SolidParticle::setPosition(const Vector3D* position)
@@ -359,11 +290,6 @@ void SolidParticle::setPosition(const Vector3D* position)
 
 /**
  * Retrieve shapes list
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  *
  * @return		SolidParticle's Shape list
  */
@@ -386,11 +312,6 @@ VirtualList SolidParticle::getShapes()
 /**
  * Get in game type
  *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
- *
  * @return		Type of entity within the game's logic
  */
 u32 SolidParticle::getInGameType()
@@ -400,11 +321,6 @@ u32 SolidParticle::getInGameType()
 
 /**
  * Get velocity
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  *
  * @return		Velocity vector
  */
@@ -416,10 +332,6 @@ Velocity SolidParticle::getVelocity()
 /**
  * Inform me about not colliding shape
  *
- * @memberof					SolidParticle
- * @public
- *
- * @param this					Function scope
  * @param shapeNotCollidingAnymore		Shape that is no longer colliding
  */
 void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)
@@ -437,11 +349,6 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 /**
  * Reset
- *
- * @memberof	SolidParticle
- * @public
- *
- * @param this	Function scope
  */
 void SolidParticle::reset()
 {

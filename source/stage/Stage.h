@@ -40,14 +40,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S ROM DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 // defines a game world in ROM memory
@@ -157,36 +150,56 @@ typedef struct StageDefinition
 
 typedef const StageDefinition StageROMDef;
 
+/**
+ * Stage Entity Description
+ *
+ * @memberof Stage
+ */
+typedef struct StageEntityDescription
+{
+	PixelRightBox pixelRightBox;
+	PositionedEntity* positionedEntity;
+	u32 distance;
+	s16 internalId;
 
+} StageEntityDescription;
+
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage
 class Stage : Container
 {
-	/* world's definition pointer */
+	// world's definition pointer
 	StageDefinition* stageDefinition;
-	/* entity factory */
+	// entity factory
 	EntityFactory entityFactory;
-	/* particle remover */
+	// particle remover
 	ParticleRemover particleRemover;
-	/* the stage entities */
+	// the stage entities
 	VirtualList stageEntities;
-	/* the pivot node for streaming */
+	// the pivot node for streaming
 	VirtualNode streamingHeadNode;
-	/* the stage entities to test for streaming */
+	// the stage entities to test for streaming
 	VirtualList loadedStageEntities;
-	/* counter to control the streaming phses */
+	// counter to control the streaming phases
 	int streamingCycleCounter;
-	/* index for method to execute */
+	// index for method to execute
 	int streamingPhase;
-	/* flag to control streaming */
+	// flag to control streaming
 	u32 hasRemovedChildren;
-	/* the ui container */
+	// the ui container
 	UiContainer uiContainer;
-	/* focus entity: needed for streaming */
+	// focus entity: needed for streaming
 	Entity focusEntity;
-	/* camera's previous distance. Used for the streaming */
+	// camera's previous distance. Used for the streaming
 	u32 cameraPreviousDistance;
-	/* next entity's id */
+	// next entity's id
 	s16 nextEntityId;
 
+	/// @publicsection
 	void constructor(StageDefinition* stageDefinition);
 	void setupPalettes();
 	void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
@@ -202,7 +215,6 @@ class Stage : Container
 	void showStreamingProfiling(int x, int y);
 	bool unloadOutOfRangeEntities(int defer);
     bool loadInRangeEntities(int defer);
-
 	virtual bool stream();
 	virtual void streamAll();
 	override void update(u32 elapsedTime);

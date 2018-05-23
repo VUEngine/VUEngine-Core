@@ -70,13 +70,6 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	OptionsSelector
- * @extends Object
- * @ingroup tools
- * @brief	Utility class to render a menu
- */
-
 friend class VirtualList;
 friend class VirtualNode;
 friend class Printing;
@@ -89,10 +82,7 @@ friend class Printing;
 /**
  * Class constructor
  *
- * @memberof	OptionsSelector
  * @private
- *
- * @param this	Function scope
  * @param cols	Number of columns
  * @param rows	Number of rows
  * @param font	Font to use for printing selector
@@ -118,11 +108,6 @@ void OptionsSelector::constructor(u8 cols, u8 rows, char* font)
 
 /**
  * Class destructor
- *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  */
 void OptionsSelector::destructor()
 {
@@ -135,11 +120,6 @@ void OptionsSelector::destructor()
 
 /**
  * Flush internal list of pages and options
- *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  */
 void OptionsSelector::flushPages()
 {
@@ -170,10 +150,6 @@ void OptionsSelector::flushPages()
 /**
  * Set character to use as selection mark
  *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  * @param mark	Selection mark character
  */
 void OptionsSelector::setMarkCharacter(char* mark)
@@ -184,10 +160,6 @@ void OptionsSelector::setMarkCharacter(char* mark)
 /**
  * Set column width
  *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  * @param width Width (in font chars)
  */
 void OptionsSelector::setColumnWidth(u8 width)
@@ -206,11 +178,6 @@ void OptionsSelector::setColumnWidth(u8 width)
 /**
  * Get total width of options selector (in chars)
  *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
- *
  * @return		Total width of options selector (in chars)
  */
 u8 OptionsSelector::getWidth()
@@ -221,10 +188,6 @@ u8 OptionsSelector::getWidth()
 /**
  * Set options
  *
- * @memberof		OptionsSelector
- * @public
- *
- * @param this		Function scope
  * @param options	List of options
  */
 void OptionsSelector::setOptions(VirtualList options)
@@ -274,11 +237,6 @@ void OptionsSelector::setOptions(VirtualList options)
 
 /**
  * Select next option
- *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  */
 void OptionsSelector::selectNext()
 {
@@ -331,11 +289,6 @@ void OptionsSelector::selectNext()
 
 /**
  * Select previous option
- *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  */
 void OptionsSelector::selectPrevious()
 {
@@ -389,12 +342,7 @@ void OptionsSelector::selectPrevious()
 /**
  * Set selected option
  *
- * @memberof			OptionsSelector
- * @public
- *
- * @param this			Function scope
  * @param optionIndex	Index of desired option
- *
  * @return				Boolean that indicated whether a new option was selected
  */
 bool OptionsSelector::setSelectedOption(int optionIndex)
@@ -430,11 +378,6 @@ bool OptionsSelector::setSelectedOption(int optionIndex)
 /**
  * Retrieve selected options index
  *
- * @memberof			OptionsSelector
- * @public
- *
- * @param this			Function scope
- *
  * @return				Index of selected option
  */
 int OptionsSelector::getSelectedOption()
@@ -445,10 +388,6 @@ int OptionsSelector::getSelectedOption()
 /**
  * Print the list of options
  *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  * @param x	 X coordinate to start printing at (in chars)
  * @param y	 Y coordinate to start printing at (in chars)
  */
@@ -511,10 +450,7 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 /**
  * Print the selector mark
  *
- * @memberof	OptionsSelector
  * @private
- *
- * @param this	Function scope
  * @param mark	The character to use
  */
 void OptionsSelector::printSelectorMark(char* mark)
@@ -543,11 +479,6 @@ void OptionsSelector::printSelectorMark(char* mark)
 
 /**
  * Execute the callback of the currently selected option
- *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  */
 void OptionsSelector::doCurrentSelectionCallback()
 {
@@ -562,11 +493,6 @@ void OptionsSelector::doCurrentSelectionCallback()
 
 /**
  * Retrieve the total number of options
- *
- * @memberof	OptionsSelector
- * @public
- *
- * @param this	Function scope
  *
  * @return		The number of options
  */

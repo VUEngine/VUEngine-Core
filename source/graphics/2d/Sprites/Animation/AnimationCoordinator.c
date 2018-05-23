@@ -32,12 +32,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	AnimationCoordinator
- * @extends Object
- * @ingroup graphics-2d-sprites-animation
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -49,10 +43,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof					AnimationCoordinator
- * @public
- *
- * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition
  */
 void AnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
@@ -65,11 +55,6 @@ void AnimationCoordinator::constructor(const CharSetDefinition* charSetDefinitio
 
 /**
  * Class destructor
- *
- * @memberof			AnimationCoordinator
- * @public
- *
- * @param this			Function scope
  */
 void AnimationCoordinator::destructor()
 {
@@ -86,11 +71,6 @@ void AnimationCoordinator::destructor()
 /**
  * Class constructor
  *
- * @memberof			AnimationCoordinator
- * @public
- *
- * @param this			Function scope
- *
  * @return 				CharSetDefinition
  */
 const CharSetDefinition* AnimationCoordinator::getCharSetDefinition()
@@ -101,14 +81,9 @@ const CharSetDefinition* AnimationCoordinator::getCharSetDefinition()
 /**
  * Class constructor
  *
- * @memberof						AnimationCoordinator
- * @public
- *
- * @param this						Function scope
  * @param animationController		Animation controller
  * @param animationDescription		Animation description holding the animation function
  * @param functionName				Name of the animation function's to play
- *
  * @return 							True if the animation started playing
  */
 bool AnimationCoordinator::playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName)

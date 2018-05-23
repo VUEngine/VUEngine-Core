@@ -42,33 +42,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup physics
 class Box : Shape
 {
-	/**
-	* @var Normals		normals
-	* @brief			the normals of the box
-	* @memberof 		Box
-	*/
+	// the normals of the box
 	VertexProjection vertexProjections[__SHAPE_NORMALS];
-	/**
-	* @var Normals*	normals
-	* @brief			for collision detection purposes
-	* @memberof 		Box
-	*/
+	// for collision detection purposes
 	Normals* normals;
-	/**
-	* @var Vector3D	rotationVertexDisplacement
-	* @brief			for rotation purposes
-	* @memberof 		Box
-	*/
+	// for rotation purposes
 	Vector3D rotationVertexDisplacement;
-	/**
-	* @var RightBox	rightBox
-	* @brief			the rectangle
-	* @memberof 		Box
-	*/
+	// the rectangle
 	RightBox rightBox;
 
+	/// @publicsection
 	static void project(Vector3D vertexes[__BOX_VERTEXES], Vector3D vector, fix10_6* min, fix10_6* max);
 	void constructor(SpatialObject owner);
 	void getVertexes(Vector3D vertexes[__BOX_VERTEXES]);

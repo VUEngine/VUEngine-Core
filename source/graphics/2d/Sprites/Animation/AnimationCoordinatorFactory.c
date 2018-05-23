@@ -35,12 +35,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	AnimationCoordinatorFactory
- * @extends Object
- * @ingroup graphics-2d-sprites-animation
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -55,7 +49,6 @@ friend class VirtualList;
  * @fn			AnimationCoordinatorFactory::getInstance()
  * @memberof	AnimationCoordinatorFactory
  * @public
- *
  * @return		AnimationCoordinatorFactory instance
  */
 
@@ -63,10 +56,7 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof	AnimationCoordinatorFactory
  * @private
- *
- * @param this	Function scope
  */
 void AnimationCoordinatorFactory::constructor()
 {
@@ -77,11 +67,6 @@ void AnimationCoordinatorFactory::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	AnimationCoordinatorFactory
- * @public
- *
- * @param this	Function scope
  */
 void AnimationCoordinatorFactory::destructor()
 {
@@ -98,10 +83,7 @@ void AnimationCoordinatorFactory::destructor()
 /**
  * Reset
  *
- * @memberof	AnimationCoordinatorFactory
  * @private
- *
- * @param this	Function scope
  */
 void AnimationCoordinatorFactory::reset()
 {
@@ -118,14 +100,9 @@ void AnimationCoordinatorFactory::reset()
 /**
  * Get Coordinator
  *
- * @memberof					AnimationCoordinatorFactory
- * @public
- *
- * @param this					Function scope
  * @param animationController
  * @param sprite
  * @param charSetDefinition
- *
  * @return						AnimationCoordinator instance
  */
 AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)

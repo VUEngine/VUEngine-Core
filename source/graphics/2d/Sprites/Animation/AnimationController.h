@@ -37,63 +37,29 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-animation
 class AnimationController : Object
 {
-	/**
-	* @var Object 						owner
-	* @brief							who owns the animated sprite
-	* @memberof						AnimationController
-	*/
+	// who owns the animated sprite
 	Object owner;
-	/**
-	* @var AnimationCoordinator 		animationCoordinator
-	* @brief							who owns the animated sprite
-	* @memberof						AnimationController
-	*/
+	// who owns the animated sprite
 	AnimationCoordinator animationCoordinator;
-	/**
-	* @var s8 							actualFrame
-	* @brief							actual animation's frame to show
-	* @memberof						AnimationController
-	*/
+	// actual animation's frame to show
 	s8 actualFrame;
-	/**
-	* @var s8 							previousFrame
-	* @brief							previous animation's frame shown
-	* @memberof						AnimationController
-	*/
+	// previous animation's frame shown
 	s8 previousFrame;
-	/**
-	* @var s8 							frameDuration
-	* @brief							the number of game cycles that an animation frame is show
-	* @memberof						AnimationController
-	*/
+	// the number of game cycles that an animation frame is show
 	s8 frameDuration;
-	/**
-	* @var s8 							frameCycleDecrement
-	* @brief							frame delay decrement update cycle
-	* @memberof						AnimationController
-	*/
+	// frame delay decrement update cycle
 	s8 frameCycleDecrement;
-	/**
-	* @var const AnimationFunction*	animationFunction
-	* @brief							a pointer to the animation function being played
-	* @memberof						AnimationController
-	*/
+	// a pointer to the animation function being played
 	const AnimationFunction* animationFunction;
-	/**
-	* @var u8 							playing
-	* @brief							flag to know if playing an animation
-	* @memberof						AnimationController
-	*/
+	// flag to know if playing an animation
 	u8 playing;
-	/**
-	* @var u8 							animationFrameChanged
-	* @brief							frame changed flag
-	* @memberof						AnimationController
-	*/
+	// frame changed flag
 	u8 animationFrameChanged;
 
+	/// @publicsection
 	void constructor(Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
 	s8 getActualFrame();
 	s8 getActualFrameIndex();

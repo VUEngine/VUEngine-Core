@@ -42,11 +42,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											DECLARATIONS
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base-libgccvb
 static class Utilities : Object
 {
+	/// @publicsection
 	static void setClock(Clock clock);
 	static long randomSeed();
 	static int random(long seed, int randnums);

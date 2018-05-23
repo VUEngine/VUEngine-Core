@@ -34,32 +34,21 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//												GLOBALS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	BgmapTexture
- * @extends Texture
- * @ingroup graphics-2d-textures-bgmap
- * @brief 	A texture which has the logic to be allocated in graphic memory
- */
 
 static BgmapTextureManager _bgmapTextureManager = NULL;
 static SpriteManager _spriteManager = NULL;
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
 
 /**
  * Class constructor
  *
- * @memberof							BgmapTexture
  * @private
- *
- * @param this							Function scope
  * @param bgmapTextureDefinition		Texture definition
  * @param id							Identifier
  */
@@ -85,11 +74,6 @@ void BgmapTexture::constructor(BgmapTextureDefinition* bgmapTextureDefinition, u
 
 /**
  * Class destructor
- *
- * @memberof							BgmapTexture
- * @public
- *
- * @param this							Function scope
  */
 void BgmapTexture::destructor()
 {
@@ -103,11 +87,6 @@ void BgmapTexture::destructor()
 
 /**
  * Write again the texture to DRAM
- *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  */
 void BgmapTexture::rewrite()
 {
@@ -119,11 +98,6 @@ void BgmapTexture::rewrite()
 
 /**
  * Write the texture to DRAM
- *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  */
 void BgmapTexture::write()
 {
@@ -175,10 +149,7 @@ void BgmapTexture::write()
 /**
  * Write __ANIMATED_MULTI Texture to DRAM
  *
- * @memberof			BgmapTexture
  * @private
- *
- * @param this			Function scope
  */
 void BgmapTexture::writeAnimatedMulti()
 {
@@ -221,10 +192,7 @@ void BgmapTexture::writeAnimatedMulti()
 /**
  * Write Texture to DRAM
  *
- * @memberof			BgmapTexture
  * @private
- *
- * @param this			Function scope
  */
 void BgmapTexture::doWrite()
 {
@@ -282,11 +250,6 @@ void BgmapTexture::writeAnimatedSingleOptimized()
 /**
  * Retrieve the number of rows pending writing
  *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
- *
  * @return				Number of rows pending writing
  */
 s8 BgmapTexture::getRemainingRowsToBeWritten()
@@ -296,11 +259,6 @@ s8 BgmapTexture::getRemainingRowsToBeWritten()
 
 /**
  * Retrieve the Texture's x offset within the BGMAP segment where it is allocated
- *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  *
  * @return				Texture's x offset within BGMAP segment
  */
@@ -312,11 +270,6 @@ s16 BgmapTexture::getXOffset()
 /**
  * Retrieve the Texture's y offset within the BGMAP segment where it is allocated
  *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
- *
  * @return				Texture's y offset within BGMAP segment
  */
 s16 BgmapTexture::getYOffset()
@@ -327,10 +280,6 @@ s16 BgmapTexture::getYOffset()
 /**
  * Set the Texture's BGMAP segment where it is allocated
  *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  * @param segment		Texture's BGMAP segment
  */
 void BgmapTexture::setSegment(s8 segment)
@@ -340,11 +289,6 @@ void BgmapTexture::setSegment(s8 segment)
 
 /**
  * Retrieve the Texture's BGMAP segment where it is allocated
- *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  *
  * @return				Texture's BGMAP segment
  */
@@ -356,11 +300,6 @@ s8 BgmapTexture::getSegment()
 /**
  * Retrieve the count usage for this Texture
  *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
- *
  * @return				Texture's count usage
  */
 u8 BgmapTexture::getUsageCount()
@@ -370,11 +309,6 @@ u8 BgmapTexture::getUsageCount()
 
 /**
  * Increase the count usage for this Texture
- *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  */
 void BgmapTexture::increaseUsageCount()
 {
@@ -383,11 +317,6 @@ void BgmapTexture::increaseUsageCount()
 
 /**
  * Decrease the count usage for this Texture
- *
- * @memberof			BgmapTexture
- * @public
- *
- * @param this			Function scope
  *
  * @return				True if count usage reached zero
  */

@@ -37,41 +37,18 @@ extern LangROMDef* __LANGUAGES[];
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	I18n
- * @extends Object
- * @ingroup base
- * @brief	Handles internationalization of text output and thus allows multiple selectable languages.
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			I18n::getInstance()
- * @memberof	I18n
- * @public
- *
- * @return		I18n instance
- */
+/// Get instance
+/// @fn			I18n::getInstance()
+/// @memberof	I18n
+/// @public
+/// @return		I18n instance
 
 
-/**
- * Class constructor
- *
- * @memberof	I18n
- * @private
- *
- * @param this	Function scope
- */
+/// Class constructor
+/// @private
 void I18n::constructor()
 {
 	Base::constructor();
@@ -79,90 +56,44 @@ void I18n::constructor()
 	this->activeLanguage = 0;
 }
 
-/**
- * Class destructor
- *
- * @memberof	I18n
- * @public
- *
- * @param this	Function scope
- */
+/// Class destructor
 void I18n::destructor()
 {
 	// allow a new construct
 	Base::destructor();
 }
 
-/**
- * Get localized string
- *
- * @memberof		I18n
- * @public
- *
- * @param this		Function scope
- * @param string	The identifier of the string to localize
- *
- * @return localized string or NULL if no translation could be found
- */
+/// Get localized string
+/// @param string	The identifier of the string to localize
+/// @return 		localized string or NULL if no translation could be found
 const char* I18n::getText(int string)
 {
 	return 0 <= string ? __LANGUAGES[this->activeLanguage]->language[string] : NULL;
 }
 
-/**
- * Set the active language
- *
- * @memberof			I18n
- * @public
- *
- * @param this			Function scope
- * @param languageId	ID of the language to make active
- */
+/// Set the active language
+/// @param languageId	ID of the language to make active
 void I18n::setActiveLanguage(u8 languageId)
 {
 	this->activeLanguage = languageId;
 }
 
-/**
- * Get all registered languages
- *
- * @memberof	I18n
- * @public
- *
- * @param this	Function scope
- *
- * @return		Array of LangDefinition pointers
- */
+/// Get all registered languages
+/// @return		Array of LangDefinition pointers
 LangDefinition * I18n::getLanguages()
 {
 	return (LangDefinition *)__LANGUAGES;
 }
 
-/**
- * Retrieves ID of the currently active language
- *
- * @memberof	I18n
- * @public
- *
- * @param this	Function scope
- *
- * @return		ID of currently active language
- */
+/// Retrieves ID of the currently active language
+/// @return		ID of currently active language
 u8 I18n::getActiveLanguage()
 {
 	return this->activeLanguage;
 }
 
-/**
- * Retrieves name of the currently active language
- *
- * @memberof	I18n
- * @public
- *
- * @param this	Function scope
- *
- * @return		Name of currently active language
- */
+/// Retrieves name of the currently active language
+/// @return	Name of currently active language
 char* I18n::getActiveLanguageName()
 {
 	return (char*)__LANGUAGES[this->activeLanguage]->name;

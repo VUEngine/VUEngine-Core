@@ -46,22 +46,35 @@
 	this->poolSizes[pool++][eLastFreeBlockIndex] = 0;													\
 
 
+//---------------------------------------------------------------------------------------------------------
+//											ENUMS
+//---------------------------------------------------------------------------------------------------------
+
+enum MemoryPoolSizes
+{
+	ePoolSize = 0,
+	eBlockSize,
+	eLastFreeBlockIndex,
+};
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 singleton class MemoryPool : Object
 {
-	/* dynamic memory area */
-	/* must always put together the pools! */
-	/* first byte is used as a usage flag */
+	// dynamic memory area
+	// must always put together the pools!
+	// first byte is used as a usage flag
 	__MEMORY_POOL_ARRAYS
-	/* pointer to the beginning of each memory pool */
+	// pointer to the beginning of each memory pool
 	BYTE* poolLocation[__MEMORY_POOLS];
-	/* pool's size and pool's block size */
+	// pool's size and pool's block size
 	u16 poolSizes[__MEMORY_POOLS][3];
 
+	/// @publicsection
 	static MemoryPool getInstance();
 	void cleanUp();
 	BYTE* allocate(int numBytes);

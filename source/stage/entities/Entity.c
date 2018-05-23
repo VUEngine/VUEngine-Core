@@ -42,12 +42,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Entity
- * @extends	Container
- * @ingroup stage-entities
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -59,10 +53,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof				Entity
- * @public
- *
- * @param this				Function scope
  * @param entityDefinition
  * @param id
  * @param internalId
@@ -94,11 +84,6 @@ void Entity::constructor(EntityDefinition* entityDefinition, s16 id, s16 interna
 
 /**
  * Class destructor
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::destructor()
 {
@@ -123,11 +108,6 @@ void Entity::destructor()
 
 /**
  * Clean up method
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::iAmDeletingMyself()
 {
@@ -141,11 +121,6 @@ void Entity::iAmDeletingMyself()
 /**
  * Retrieve instance's in game id
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Internal ID
  */
 s16 Entity::getInternalId()
@@ -155,11 +130,6 @@ s16 Entity::getInternalId()
 
 /**
  * Retrieve instance's id as per its definition
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		ID
  */
@@ -171,12 +141,7 @@ s16 Entity::getId()
 /**
  * Get child by id
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  * @param id
- *
  * @return		Child Entity
  */
 Entity Entity::getChildById(s16 id)
@@ -203,10 +168,6 @@ Entity Entity::getChildById(s16 id)
 /**
  * Set definition
  *
- * @memberof				Entity
- * @public
- *
- * @param this				Function scope
  * @param entityDefinition	EntityDefinition
  */
 void Entity::setDefinition(void* entityDefinition)
@@ -218,10 +179,7 @@ void Entity::setDefinition(void* entityDefinition)
 /**
  * Destroy shapes
  *
- * @memberof	Entity
  * @private
- *
- * @param this	Function scope
  */
 void Entity::destroyShapes()
 {
@@ -243,11 +201,6 @@ void Entity::destroyShapes()
 
 /**
  * Add sprites
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::setupGraphics()
 {
@@ -258,11 +211,6 @@ void Entity::setupGraphics()
 
 /**
  * Release sprites
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::releaseGraphics()
 {
@@ -273,11 +221,6 @@ void Entity::releaseGraphics()
 
 /**
  * Delete all of the Entity's sprites
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::releaseSprites()
 {
@@ -301,10 +244,7 @@ void Entity::releaseSprites()
 /**
  * Calculate size from children
  *
- * @memberof					Entity
  * @private
- *
- * @param this					Function scope
  * @param pixelRightBox
  * @param environmentPosition
  */
@@ -427,10 +367,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 /**
  * Calculate my size based on me and my children
  *
- * @memberof	Entity
  * @private
- *
- * @param this	Function scope
  */
 void Entity::calculateSize()
 {
@@ -464,9 +401,7 @@ void Entity::calculateSize()
 /**
  * Get size from definition
  *
- * @memberof					Entity
  * @private
- *
  * @param positionedEntity		Function scope
  * @param environmentPosition
  * @param pixelRightBox
@@ -649,12 +584,8 @@ static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEnti
 /**
  * Calculate total size from definition
  *
- * @memberof					Entity
- * @public
- *
  * @param positionedEntity		Function scope
  * @param environmentPosition
- *
  * @return						PixelRightBox
  */
 static PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
@@ -676,13 +607,9 @@ static PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* 
 /**
  * Find child by name in given list
  *
- * @memberof					Entity
- * @public
- *
  * @param childrenDefinitions	Function scope
  * @param environmentPosition
  * @param childName
- *
  * @return						Entity's global position
  */
 static Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
@@ -729,15 +656,11 @@ static Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struc
 /**
  * Instantiate an Entity using the provided allocator
  *
- * @memberof				Entity
- * @public
- *
  * @param entityDefinition
  * @param id
  * @param internalId
  * @param name
  * @param extraInfo
- *
  * @return					Entity instance
  */
 static Entity Entity::instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
@@ -765,10 +688,6 @@ static Entity Entity::instantiate(const EntityDefinition* const entityDefinition
 /**
  * Add children to the instance from the definitions array
  *
- * @memberof					Entity
- * @public
- *
- * @param this					Function scope
  * @param childrenDefinitions
  */
 void Entity::addChildEntities(const PositionedEntity* childrenDefinitions)
@@ -794,12 +713,8 @@ void Entity::addChildEntities(const PositionedEntity* childrenDefinitions)
 /**
  * Load an entity and instantiate all its children
  *
- * @memberof				Entity
- * @public
- *
  * @param positionedEntity
  * @param internalId
- *
  * @return					Entity
  */
 static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
@@ -831,10 +746,6 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 /**
  * Add children to instance from the definitions array, but deferred
  *
- * @memberof					Entity
- * @public
- *
- * @param this					Function scope
  * @param childrenDefinitions
  */
 void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinitions)
@@ -863,12 +774,8 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinition
 /**
  * Load an entity and instantiate all its children, deferred
  *
- * @memberof				Entity
- * @public
- *
  * @param positionedEntity
  * @param internalId
- *
  * @return					Entity
  */
 static Entity Entity::loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId)
@@ -905,16 +812,11 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 /**
  * Add child entity from definition
  *
- * @memberof				Entity
- * @public
- *
- * @param this				Function scope
  * @param entityDefinition
  * @param internalId
  * @param name
  * @param position
  * @param extraInfo
- *
  * @return					Entity
  */
 Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
@@ -973,11 +875,6 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 /**
  * Are all children instantiated?
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Boolean whether all children are instantiated
  */
 u32 Entity::areAllChildrenInstantiated()
@@ -992,11 +889,6 @@ u32 Entity::areAllChildrenInstantiated()
 
 /**
  * Are all children initialized?
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Boolean whether all children are initialized
  */
@@ -1013,11 +905,6 @@ u32 Entity::areAllChildrenInitialized()
 /**
  * Are all children transformed?
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Boolean whether all children are transformed
  */
 u32 Entity::areAllChildrenTransformed()
@@ -1032,11 +919,6 @@ u32 Entity::areAllChildrenTransformed()
 
 /**
  * Are all children ready?
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Boolean whether all children are ready
  */
@@ -1066,10 +948,7 @@ u32 Entity::areAllChildrenReady()
 /**
  * Set shape's position
  *
- * @memberof					Entity
  * @private
- *
- * @param this					Function scope
  */
 void Entity::transformShapes()
 {
@@ -1125,10 +1004,7 @@ void Entity::transformShapes()
 /**
  * Setup shape
  *
- * @memberof					Entity
  * @private
- *
- * @param this					Function scope
  * @param shapeDefinitions		List of shapes
  */
 void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
@@ -1164,10 +1040,6 @@ void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPrev
 /**
  * Entity is initialized
  *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
  * @param recursive
  */
 void Entity::initialize(bool recursive)
@@ -1187,10 +1059,6 @@ void Entity::initialize(bool recursive)
 /**
  * Entity is ready
  *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
  * @param recursive
  */
 void Entity::ready(bool recursive)
@@ -1210,10 +1078,6 @@ void Entity::ready(bool recursive)
 /**
  * Process extra info in initialization
  *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
  * @param extraInfo
  */
 void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
@@ -1223,10 +1087,6 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 /**
  * Add sprites
  *
- * @memberof					Entity
- * @public
- *
- * @param this					Function scope
  * @param spriteDefinitions
  */
 void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
@@ -1258,12 +1118,7 @@ void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 /**
  * Add sprite
  *
- * @memberof						Entity
- * @public
- *
- * @param this						Function scope
  * @param spriteDefinitionIndex		Index in sprite definitions array
- *
  * @return							True if a sprite was created
  */
 bool Entity::addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex)
@@ -1379,10 +1234,6 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 /**
  * Initial transformation
  *
- * @memberof					Entity
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  * @param recursive
  */
@@ -1416,10 +1267,6 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 /**
  * Transform class
  *
- * @memberof					Entity
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 void Entity::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
@@ -1444,11 +1291,6 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 
 /**
  * Set local position
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::setLocalPosition(const Vector3D* position)
 {
@@ -1459,11 +1301,6 @@ void Entity::setLocalPosition(const Vector3D* position)
 
 /**
  * Set local rotation
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::setLocalRotation(const Rotation* rotation)
 {
@@ -1474,11 +1311,6 @@ void Entity::setLocalRotation(const Rotation* rotation)
 
 /**
  * Update visual representation
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::synchronizeGraphics()
 {
@@ -1495,11 +1327,6 @@ void Entity::synchronizeGraphics()
 /**
  * Retrieve EntityDefinition
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		EntityDefinition
  */
 EntityDefinition* Entity::getEntityDefinition()
@@ -1509,11 +1336,6 @@ EntityDefinition* Entity::getEntityDefinition()
 
 /**
  * Retrieve position
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Global position
  */
@@ -1525,11 +1347,6 @@ const Vector3D* Entity::getPosition()
 /**
  * Retrieve rotation
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Global rotation
  */
 const Rotation* Entity::getRotation()
@@ -1539,11 +1356,6 @@ const Rotation* Entity::getRotation()
 
 /**
  * Retrieve scale
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Global position
  */
@@ -1555,11 +1367,6 @@ const Scale* Entity::getScale()
 /**
  * Retrieve sprites
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		VirtualList of Entity's sprites
  */
 VirtualList Entity::getSprites()
@@ -1570,12 +1377,7 @@ VirtualList Entity::getSprites()
 /**
  * Handles incoming messages
  *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
  * @param telegram
- *
  * @return			True if successfully processed, false otherwise
  */
 bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
@@ -1585,11 +1387,6 @@ bool Entity::handleMessage(Telegram telegram __attribute__ ((unused)))
 
 /**
  * Get width
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Entity's width
  */
@@ -1607,11 +1404,6 @@ fix10_6 Entity::getWidth()
 /**
  * Get height
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Entity's height
  */
 fix10_6 Entity::getHeight()
@@ -1626,11 +1418,6 @@ fix10_6 Entity::getHeight()
 
 /**
  * Get depth
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Entity's depth
  */
@@ -1648,13 +1435,8 @@ fix10_6 Entity::getDepth()
 /**
  * Whether it is visible
  *
- * @memberof		Entity
- * @public
- *
- * @param this		Function scope
  * @param pad
  * @param recursive
- *
  * @return			Boolean if visible
  */
 bool Entity::isVisible(int pad, bool recursive)
@@ -1766,11 +1548,6 @@ bool Entity::isVisible(int pad, bool recursive)
 /**
  * Check if necessary to update sprite's position
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Boolean if necessary
  */
 bool Entity::updateSpritePosition()
@@ -1780,11 +1557,6 @@ bool Entity::updateSpritePosition()
 
 /**
  * Check if necessary to update sprite's rotation
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Boolean if necessary
  */
@@ -1796,11 +1568,6 @@ bool Entity::updateSpriteRotation()
 /**
  * Check if necessary to update sprite's scale
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Boolean if necessary
  */
 bool Entity::updateSpriteScale()
@@ -1811,11 +1578,6 @@ bool Entity::updateSpriteScale()
 /**
  * Retrieve shapes list
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Entity's Shape list
  */
 VirtualList Entity::getShapes()
@@ -1825,11 +1587,6 @@ VirtualList Entity::getShapes()
 
 /**
  * Make it visible
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::show()
 {
@@ -1859,11 +1616,6 @@ void Entity::show()
 
 /**
  * Make it invisible
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::hide()
 {
@@ -1890,11 +1642,6 @@ void Entity::hide()
 
 /**
  * Suspend for pause
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::suspend()
 {
@@ -1905,11 +1652,6 @@ void Entity::suspend()
 
 /**
  * Resume after pause
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::resume()
 {
@@ -1933,12 +1675,7 @@ void Entity::resume()
 /**
  * Defaults to true
  *
- * @memberof			Entity
- * @public
- *
- * @param this			Function scope
  * @param acceleration
- *
  * @return				Defaults to true
  */
 bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
@@ -1948,11 +1685,6 @@ bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 
 /**
  * Get axis for flipping
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Defaults to true
  */
@@ -1964,11 +1696,6 @@ u16 Entity::getAxisForFlipping()
 /**
  * Get in game type
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Type of entity within the game's logic
  */
 u32 Entity::getInGameType()
@@ -1978,11 +1705,6 @@ u32 Entity::getInGameType()
 
 /**
  * Get bounciness for physics
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Bounciness
  */
@@ -1994,11 +1716,6 @@ fix10_6 Entity::getBounciness()
 /**
  * Get friction
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Friction
  */
 fix10_6 Entity::getFrictionCoefficient()
@@ -2008,11 +1725,6 @@ fix10_6 Entity::getFrictionCoefficient()
 
 /**
  * Propagate that movement started to the shapes
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::informShapesThatStartedMoving()
 {
@@ -2031,11 +1743,6 @@ void Entity::informShapesThatStartedMoving()
 
 /**
  * Propagate that movement stopped to the shapes
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::informShapesThatStoppedMoving()
 {
@@ -2052,11 +1759,6 @@ void Entity::informShapesThatStoppedMoving()
 
 /**
  * Propagate active status to the shapes
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  */
 void Entity::activateShapes(bool value)
 {
@@ -2074,10 +1776,6 @@ void Entity::activateShapes(bool value)
 /**
  * Set direction
  *
- * @memberof			Entity
- * @public
- *
- * @param this			Function scope
  * @param direction		Direction
  */
 void Entity::setDirection(Direction direction)
@@ -2111,11 +1809,6 @@ void Entity::setDirection(Direction direction)
 /**
  * Get direction
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Direction
  */
 Direction Entity::getDirection()
@@ -2146,11 +1839,6 @@ Direction Entity::getDirection()
 /**
  * Get Shape layers
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Shape layers
  */
 u32 Entity::getShapesLayers()
@@ -2175,10 +1863,6 @@ u32 Entity::getShapesLayers()
 /**
  * Set Shape layers
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  * @param u32	Shape layers
  */
 void Entity::setShapesLayers(u32 layers)
@@ -2198,11 +1882,6 @@ void Entity::setShapesLayers(u32 layers)
 
 /**
  * Get Shape layers to ignore
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Shape layers to ignore
  */
@@ -2228,10 +1907,6 @@ u32 Entity::getShapesLayersToIgnore()
 /**
  * Set Shape layers to ignore
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  * @param u32	Shape layers to ignore
  */
 void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
@@ -2252,11 +1927,6 @@ void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
 /**
  * Get axes for Shape sync with direction
  *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
- *
  * @return		Axes
  */
 u16 Entity::getAxesForShapeSyncWithDirection()
@@ -2266,11 +1936,6 @@ u16 Entity::getAxesForShapeSyncWithDirection()
 
 /**
  * Whether to respawn this Entity after it has been streamed out
- *
- * @memberof	Entity
- * @public
- *
- * @param this	Function scope
  *
  * @return		Boolean whether to respawn this Entity
  */

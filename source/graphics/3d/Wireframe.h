@@ -34,8 +34,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-3d
 abstract class Wireframe : Object
 {
+	/// @publicsection
 	void constructor();
 	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
 	void hide();

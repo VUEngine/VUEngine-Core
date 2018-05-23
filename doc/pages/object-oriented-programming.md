@@ -163,7 +163,7 @@ That means that states which are used a lot during gameplay (for example the mai
 
 Rule of thumb: If the state is either used a lot during gameplay, or you need to keep a reference to it after the state has exited, use `__SINGLETON`, otherwise `__SINGLETON_DYNAMIC` should be the better choice.
   
-In any case, a singleton's instance can get retrieved through the `[ClassName]_getInstance();` method.
+In any case, a singleton's instance can get retrieved through the `[ClassName]::getInstance();` method.
 
 A singleton instance is destroyed with a call to `__SINGLETON_DESTROY` in the class' destructor. 
 In the case of a `__SINGLETON_DYNAMIC`, destroying the instance results in the next call to `getInstance()` to allocate a new instance in the memory pool. 

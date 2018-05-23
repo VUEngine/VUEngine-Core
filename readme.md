@@ -1,5 +1,5 @@
-VUEngine 5.2
-============
+VUEngine 6
+==========
 
 The VUEngine ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") 
 is an attempt to provide other indie developers the base functionality to facilitate the creation of 

@@ -34,33 +34,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 class Telegram : Object
 {
-	/**
-	 * @var int		message
-	 * @brief		The message itself. These are all enumerated in a file.
-	 * @memberof	Telegram
-	 */
+	// The message itself. These are all enumerated in a file.
 	int message;
-	/**
-	 * @var void*	extraInfo
-	 * @brief		Any additional information that may accompany the message
-	 * @memberof	Telegram
-	 */
+	// Any additional information that may accompany the message
 	void* extraInfo;
-	/**
-	 * @var void*	sender
-	 * @brief		Who sent this telegram
-	 * @memberof	Telegram
-	 */
+	// Who sent this telegram
 	void* sender;
-	/**
-	 * @var void*	receiver
-	 * @brief		Who is to receive this telegram
-	 * @memberof	Telegram
-	 */
+	// Who is to receive this telegram
 	void* receiver;
 
+	/// @publicsection
 	void constructor(void* sender, void* receiver, int message, void* extraInfo);
 	void* getSender();
 	void* getReceiver();

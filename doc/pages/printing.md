@@ -7,23 +7,22 @@ The Printing Layer
 Out of the Virtual Boy's 32 available Worlds, the VUEngine always uses the lowest available one for text 
 output. It provides methods to output different variable types to this so-called *Printing Layer*.
 
-- `Printing_text`
-- `Printing_int`
-- `Printing_float`
-- `Printing_hex`
+- `Printing::text`
+- `Printing::int`
+- `Printing::float`
+- `Printing::hex`
 
 Here's an example that outputs the string "Hello, World!" at position {10, 0} using a custom font
 registered under the name "CustomFont".
 
-    Printing_text(
-        Printing_getInstance(),		// Printing instance
+    Printing::text(
         "Hello, World!",			// text
         10,							// x position
         0,							// y position
         "CustomFont",				// font name
     );
 
-The whole printing layer can be cleared with the `Printing_clear` method.
+The whole printing layer can be cleared with the `Printing::clear` method.
 
 Some aspects of the Printing Layer can be modified in your projects's `config.h` file.
 

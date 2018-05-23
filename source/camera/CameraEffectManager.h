@@ -52,29 +52,18 @@ enum CameraFX
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup camera
 singleton class CameraEffectManager : Object
 {
-	/**
-	* @var Brightness	fxFadeTargetBrightness
-	* @brief			Target brightness for current fade effect
-	* @memberof			CameraEffectManager
-	*/
+	// Target brightness for current fade effect
 	Brightness fxFadeTargetBrightness;
-	/**
-	* @var u8			fxFadeDelay
-	* @brief			Delay for current fade effect
-	* @memberof			CameraEffectManager
-	*/
+	// Delay for current fade effect
 	u8 fxFadeDelay;
-	/**
-	* @var Object		fxFadeCallbackScope
-	* @brief			Callback scope for current fade effect
-	* @memberof			CameraEffectManager
-	*/
+	// Callback scope for current fade effect
 	Object fxFadeCallbackScope;
 
+	/// @publicsection
 	static CameraEffectManager getInstance();
-
 	void constructor();
 	Brightness getDefaultBrightness();
 	virtual void startEffect(int effect, va_list args);

@@ -44,8 +44,10 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
+
+class Entity;
 
 // defines an entity in ROM memory
 typedef struct EntityDefinition
@@ -102,22 +104,45 @@ typedef const struct PositionedEntity
 
 typedef const PositionedEntity PositionedEntityROMDef;
 
+/**
+ * Positioned Entity Description
+ *
+ * @memberof EntityFactory
+ */
+typedef struct PositionedEntityDescription
+{
+	PositionedEntity* positionedEntity;
+	Container parent;
+	Entity entity;
+	EventListener callback;
+	int spriteDefinitionIndex;
+	s16 id;
+	bool transformed;
+	bool initialized;
+} PositionedEntityDescription;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage-entities
 class EntityFactory : Object
 {
-	/* the EntityFactory entities to test for streaming */
+	// the EntityFactory entities to test for streaming
 	VirtualList entitiesToInstantiate;
-	/* streaming's uninitialized entities */
+	// streaming's uninitialized entities
 	VirtualList entitiesToInitialize;
-	/* streaming's non yet transformed entities */
+	// streaming's non yet transformed entities
 	VirtualList entitiesToTransform;
-	/* streaming's non yet transformed entities */
+	// streaming's non yet transformed entities
 	VirtualList entitiesToMakeReady;
-	/* entities loaded */
+	// entities loaded
 	VirtualList spawnedEntities;
-	/* index for method to execute */
+	// index for method to execute
 	int streamingPhase;
 
+	/// @publicsection
 	void constructor();
 	u32 prepareEntities();
 	void prepareAllEntities();
@@ -132,7 +157,6 @@ class EntityFactory : Object
     u32 initializeEntities();
     u32 transformEntities();
     u32 makeReadyEntities();
-
 	void showStatus(int x, int y);
 }
 

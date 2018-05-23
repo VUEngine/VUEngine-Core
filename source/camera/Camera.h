@@ -44,7 +44,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -77,81 +77,39 @@ extern const CameraFrustum* _cameraFrustum;
 extern const Optical* _optical;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup camera
 singleton class Camera : Object
 {
-	/**
-	* @var Optical					optical
-	* @brief						Optical values used in projection values
-	* @memberof					Camera
-	*/
+	// Optical values used in projection values
 	Optical optical;
-	/**
-	* @var Vector3D				position
-	* @brief						Camera position
-	* @memberof					Camera
-	*/
+	// Camera position
 	Vector3D position;
-	/**
-	* @var Vector3D				previousPosition
-	* @brief						Backup of Camera position
-	* @memberof					Camera
-	*/
+	// Backup of Camera position
 	Vector3D previousPosition;
-	/**
-	* @var Vector3D				positionBackup
-	* @brief						Backup of Camera position
-	* @memberof					Camera
-	*/
+	// Backup of Camera position
 	Vector3D positionBackup;
-	/**
-	* @var CameraMovementManager	cameraMovementManager
-	* @brief						Camera position displacement manager
-	* @memberof					Camera
-	*/
+	// Camera position displacement manager
 	CameraMovementManager cameraMovementManager;
-	/**
-	* @var CameraEffectManager		cameraEffectManager
-	* @brief						Camera effect manager
-	* @memberof					Camera
-	*/
+	// Camera effect manager
 	CameraEffectManager cameraEffectManager;
-	/**
-	* @var Vector3D				focusEntityPositionDisplacement
-	* @brief						Camera position displacement
-	* @memberof					Camera
-	*/
+	// Camera position displacement
 	Vector3D focusEntityPositionDisplacement;
-	/**
-	* @var Entity					focusEntity
-	* @brief						Actor to center the camera around
-	* @memberof					Camera
-	*/
+	// Actor to center the camera around
 	Entity focusEntity;
-	/**
-	* @var const					focusEntityPosition
-	* @brief						Position of actor to center the camera around
-	* @memberof					Camera
-	*/
+	// Position of actor to center the camera around
 	const Vector3D* focusEntityPosition;
-	/**
-	* @var Vector3D				lastDisplacement
-	* @brief						World's camera's last displacement
-	* @memberof					Camera
-	*/
+	// World's camera's last displacement
 	Vector3D lastDisplacement;
-	/**
-	* @var Size					stageSize
-	* @brief						Stage's size in pixels
-	* @memberof					Camera
-	*/
+	// Stage's size in pixels
 	Size stageSize;
-	/**
-	* @var CameraFrustum			cameraFrustum
-	* @brief						Camera frustum
-	* @memberof					Camera
-	*/
+	// Camera frustum
 	CameraFrustum cameraFrustum;
 
+	/// @publicsection
 	static Camera getInstance();
 	void capPosition();
 	void doneUITransform();

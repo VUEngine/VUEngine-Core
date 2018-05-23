@@ -32,11 +32,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base-libgccvb
 static class Vector3D : Object
 {
+	/// @publicsection
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);

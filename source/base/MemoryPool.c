@@ -33,24 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	MemoryPool
- * @extends Object
- * @ingroup base
- */
-
-enum MemoryPoolSizes
-{
-	ePoolSize = 0,
-	eBlockSize,
-	eLastFreeBlockIndex,
-};
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -104,10 +86,7 @@ enum MemoryPoolSizes
 /**
  * Class constructor
  *
- * @memberof	MemoryPool
  * @private
- *
- * @param this	Function scope
  */
 void MemoryPool::constructor()
 {
@@ -119,11 +98,6 @@ void MemoryPool::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	MemoryPool
- * @public
- *
- * @param this	Function scope
  */
  void MemoryPool::destructor()
 {
@@ -134,12 +108,7 @@ void MemoryPool::constructor()
 /**
  * Allocate a given amount of bytes in one of the memory pools
  *
- * @memberof				Error
- * @public
- *
- * @param this				Function scope
  * @param numberOfBytes		Number of bytes to allocate
- *
  * @return					Pointer to the memory pool entry allocated
  */
  BYTE* MemoryPool::allocate(int numberOfBytes)
@@ -229,10 +198,6 @@ void MemoryPool::constructor()
 /**
  * Free the memory pool entry were the given object is allocated
  *
- * @memberof		MemoryPool
- * @public
- *
- * @param this		Function scope
  * @param object	Pointer to the memory pool entry to free
  */
 void MemoryPool::free(BYTE* object)
@@ -293,10 +258,7 @@ void MemoryPool::free(BYTE* object)
 /**
  * Clear all memory pool
  *
- * @memberof		MemoryPool
  * @private
- *
- * @param this		Function scope
  */
 void MemoryPool::reset()
 {
@@ -318,11 +280,6 @@ void MemoryPool::reset()
 
 /**
  * Clear all memory pool
- *
- * @memberof		MemoryPool
- * @public
- *
- * @param this		Function scope
  */
 void MemoryPool::cleanUp()
 {
@@ -349,11 +306,6 @@ void MemoryPool::cleanUp()
 /**
  * Retrieve the pool's size
  *
- * @memberof		MemoryPool
- * @public
- *
- * @param this		Function scope
- *
  * @return			Total size of the memory pool
  */
 int MemoryPool::getPoolSize()
@@ -373,10 +325,6 @@ int MemoryPool::getPoolSize()
 /**
  * Print the pools' detailed usage
  *
- * @memberof		MemoryPool
- * @public
- *
- * @param this		Function scope
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */
@@ -439,10 +387,6 @@ void MemoryPool::printDetailedUsage(int x, int y)
 /**
  * Print the pools' resumed usage
  *
- * @memberof		MemoryPool
- * @public
- *
- * @param this		Function scope
  * @param x			Camera column for the output
  * @param y			Camera row for the output
  */

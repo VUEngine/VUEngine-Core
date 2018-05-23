@@ -118,16 +118,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Debug
- * @extends Object
- * @ingroup tools
- */
-
 friend class VirtualNode;
 friend class VirtualList;
-
-
 
 #ifdef __DEBUG_TOOLS
 extern ClassSizeData _userClassesSizeData[];
@@ -144,7 +136,6 @@ extern ClassSizeData _userClassesSizeData[];
  * @fn			Debug::getInstance()
  * @memberof	Debug
  * @public
- *
  * @return		Debug instance
  */
 
@@ -152,10 +143,7 @@ extern ClassSizeData _userClassesSizeData[];
 /**
  * Class constructor
  *
- * @memberof	Debug
  * @private
- *
- * @param this	Function scope
  */
 void Debug::constructor()
 {
@@ -184,11 +172,6 @@ void Debug::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Debug
- * @public
- *
- * @param this	Function scope
  */
 void Debug::destructor()
 {
@@ -219,11 +202,6 @@ void Debug::setupPages()
 
 /**
  * Update
- *
- * @memberof	Debug
- * @public
- *
- * @param this	Function scope
  */
 void Debug::update()
 {
@@ -235,11 +213,6 @@ void Debug::update()
 
 /**
  * Render
- *
- * @memberof	Debug
- * @public
- *
- * @param this	Function scope
  */
 void Debug::render()
 {
@@ -252,10 +225,6 @@ void Debug::render()
 /**
  * Show debugging screens
  *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  * @param gameState Current game state
  */
 void Debug::show(GameState gameState)
@@ -271,11 +240,6 @@ void Debug::show(GameState gameState)
 
 /**
  * Hide debugging screens
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::hide()
 {
@@ -289,11 +253,6 @@ void Debug::hide()
 /**
  * Get the position in the pages list of the current page
  *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
- *
  * @return 			Current page's node's position
  */
 u8 Debug::getCurrentPageNumber()
@@ -304,10 +263,7 @@ u8 Debug::getCurrentPageNumber()
 /**
  * Dimm game to make text easier to read
  *
- * @memberof		Debug
  * @private
- *
- * @param this		Function scope
  */
 void Debug::dimmGame()
 {
@@ -325,11 +281,6 @@ void Debug::dimmGame()
 
 /**
  * Recover game's colors
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::lightUpGame()
 {
@@ -339,10 +290,6 @@ void Debug::lightUpGame()
 /**
  * Process user input
  *
- * @memberof			Debug
- * @public
- *
- * @param this			Function scope
  * @param pressedKey	User input
  */
 void Debug::processUserInput(u16 pressedKey)
@@ -383,11 +330,6 @@ void Debug::processUserInput(u16 pressedKey)
 
 /**
  * Show previous debugging page
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::showPreviousPage()
 {
@@ -406,11 +348,6 @@ void Debug::showPreviousPage()
 
 /**
  * Show next debugging page
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::showNextPage()
 {
@@ -429,11 +366,6 @@ void Debug::showNextPage()
 
 /**
  * Show previous debugging sub-page
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::showPreviousSubPage()
 {
@@ -454,11 +386,6 @@ void Debug::showPreviousSubPage()
 
 /**
  * Show next debugging sub-page
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::showNextSubPage()
 {
@@ -480,10 +407,7 @@ void Debug::showNextSubPage()
 /**
  * Print header
  *
- * @memberof		Debug
  * @private
- *
- * @param this		Function scope
  */
 void Debug::printHeader()
 {
@@ -497,10 +421,6 @@ void Debug::printHeader()
 /**
  * Show current debugging page
  *
- * @memberof			Debug
- * @public
- *
- * @param this			Function scope
  * @param increment		Increment
  */
 void Debug::showPage(int increment)
@@ -526,10 +446,6 @@ void Debug::showPage(int increment)
 /**
  * Show current debugging sub-page
  *
- * @memberof			Debug
- * @public
- *
- * @param this			Function scope
  * @param increment		Increment
  */
 void Debug::showSubPage(int increment)
@@ -549,11 +465,6 @@ void Debug::showSubPage(int increment)
 
 /**
  * Displace window to the left
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::displaceLeft()
 {
@@ -563,11 +474,6 @@ void Debug::displaceLeft()
 
 /**
  * Displace window to the right
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::displaceRight()
 {
@@ -577,11 +483,6 @@ void Debug::displaceRight()
 
 /**
  * Displace window up
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::displaceUp()
 {
@@ -591,11 +492,6 @@ void Debug::displaceUp()
 
 /**
  * Displace window down
- *
- * @memberof		Debug
- * @public
- *
- * @param this		Function scope
  */
 void Debug::displaceDown()
 {
@@ -606,10 +502,7 @@ void Debug::displaceDown()
 /**
  * Remove sub-pages
  *
- * @memberof		Debug
  * @private
- *
- * @param this		Function scope
  */
 void Debug::removeSubPages()
 {
@@ -620,10 +513,7 @@ void Debug::removeSubPages()
 /**
  * Setup Game's general status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -663,10 +553,7 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 /**
  * Setup Memory Pool's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -699,10 +586,7 @@ void Debug::memoryStatusPage(int increment __attribute__ ((unused)), int x __att
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -730,10 +614,7 @@ void Debug::memoryStatusShowZeroPage(int increment __attribute__ ((unused)), int
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -766,10 +647,7 @@ void Debug::memoryStatusShowFirstPage(int increment __attribute__ ((unused)), in
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -795,10 +673,7 @@ void Debug::memoryStatusShowSecondPage(int increment __attribute__ ((unused)), i
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -833,10 +708,7 @@ void Debug::memoryStatusShowThirdPage(int increment __attribute__ ((unused)), in
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -864,10 +736,7 @@ void Debug::memoryStatusShowFourthPage(int increment __attribute__ ((unused)), i
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -893,10 +762,7 @@ void Debug::memoryStatusShowFifthPage(int increment __attribute__ ((unused)), in
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -923,10 +789,7 @@ void Debug::memoryStatusShowSixthPage(int increment __attribute__ ((unused)), in
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -953,10 +816,7 @@ void Debug::memoryStatusShowSeventhPage(int increment __attribute__ ((unused)), 
 /**
  * Show classes' memory footprint
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -970,10 +830,7 @@ void Debug::memoryStatusShowUserDefinedClassesSizes(int increment __attribute__ 
 /**
  * Print classes' sizes
  *
- * @memberof					Debug
  * @private
- *
- * @param this					Function scope
  * @param classesSizeData		Array with a class names and their sizes
  * @param count					Number of entries to print
  * @param x						Camera's x coordinate
@@ -1007,10 +864,7 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int count, int x, in
 /**
  * Show Game's profiling
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1025,10 +879,7 @@ void Debug::gameProfilingPage(int increment __attribute__ ((unused)), int x __at
 /**
  * Setup streaming's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1046,10 +897,7 @@ void Debug::streamingPage(int increment __attribute__ ((unused)), int x __attrib
 /**
  * Show State's streaming status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1062,10 +910,7 @@ void Debug::streamingShowStatus(int increment __attribute__ ((unused)), int x __
 /**
  * Setup CHAR memory's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1086,10 +931,7 @@ void Debug::charMemoryPage(int increment __attribute__ ((unused)), int x __attri
 /**
  * Show CHAR memory's state
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1133,10 +975,7 @@ void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, 
 /**
  * Show CHAR memory segments's state
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1181,10 +1020,7 @@ void Debug::charMemoryShowMemory(int increment __attribute__ ((unused)), int x _
 /**
  * Setup BGMAP memory's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1207,10 +1043,7 @@ void Debug::texturesPage(int increment __attribute__ ((unused)), int x __attribu
 /**
  * Show BGMAP memory's status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  */
 void Debug::showDebugBgmap()
 {
@@ -1228,10 +1061,7 @@ void Debug::showDebugBgmap()
 /**
  * Force display BGMAP memory's status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  */
 void Debug::showBgmapSegment()
 {
@@ -1250,10 +1080,7 @@ void Debug::showBgmapSegment()
 /**
  * Setup BGMAP segment's status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1301,10 +1128,7 @@ void Debug::texturesShowStatus(int increment, int x, int y)
 /**
  * Setup OBJECT memory's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1325,10 +1149,7 @@ void Debug::objectsPage(int increment __attribute__ ((unused)), int x __attribut
 /**
  * Show OBJECT memory's status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1369,10 +1190,7 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 /**
  * Setup WORLD memory's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1393,10 +1211,7 @@ void Debug::spritesPage(int increment __attribute__ ((unused)), int x __attribut
 /**
  * Show WORLD memory's status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1436,10 +1251,7 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 /**
  * Setup physics' status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1458,10 +1270,7 @@ void Debug::physicsPage(int increment __attribute__ ((unused)), int x __attribut
 /**
  * Show physics' status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1475,10 +1284,7 @@ void Debug::physicStatusShowStatistics(int increment __attribute__ ((unused)), i
 /**
  * Setup physics sub-pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1492,10 +1298,7 @@ void Debug::physicStatusShowShapes(int increment __attribute__ ((unused)), int x
 /**
  * Show collision boxes
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  */
 void Debug::showCollisionShapes()
 {
@@ -1505,10 +1308,7 @@ void Debug::showCollisionShapes()
 /**
  * Setup hardware register's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1523,10 +1323,7 @@ void Debug::hardwareRegistersPage(int increment __attribute__ ((unused)), int x 
 /**
  * Setup SRAM's status pages
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
@@ -1547,10 +1344,7 @@ void Debug::sramPage(int increment __attribute__ ((unused)), int x __attribute__
 /**
  * Show SRAM's status
  *
- * @memberof			Debug
  * @private
- *
- * @param this			Function scope
  * @param increment		Increment
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate

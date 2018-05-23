@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 class Particle;
@@ -77,39 +77,25 @@ typedef struct ParticleDefinition
 typedef const ParticleDefinition ParticleROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {
-	/*
-	* @var ParticleDefinition* particleDefinition
-	* @brief					Particle's definition
-	* @memberof				Particle
-	*/
+	// Particle's definition
 	const ParticleDefinition* particleDefinition;
-	/*
-	* @var SpriteDefinition* 	spriteDefinition
-	* @brief					Particle's SpriteDefinition
-	* @memberof				Particle
-	*/
+	// Particle's SpriteDefinition
 	const SpriteDefinition* spriteDefinition;
-	/*
-	* @var ObjectSprite 		objectSprite
-	* @brief					OBJ based sprite
-	* @memberof				Particle
-	*/
+	// OBJ based sprite
 	ObjectSprite objectSprite;
-	/*
-	* @var Body 				body
-	* @brief					Particle's physical body
-	* @memberof				Particle
-	*/
+	// Particle's physical body
 	Body body;
-	/*
-	* @var int 				lifeSpan
-	* @brief					Particle's life span in milliseconds
-	* @memberof				Particle
-	*/
+	// Particle's life span in milliseconds
 	int lifeSpan;
 
+	/// @publicsection
 	void constructor(const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
 	void addForce(const Force* force, u32 movementType);
 	u16 getDepth();

@@ -35,12 +35,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	CharSetManager
- * @extends Object
- * @ingroup graphics-2d-textures-char
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -55,7 +49,6 @@ friend class VirtualList;
  * @fn			CharSetManager::getInstance()
  * @memberof	CharSetManager
  * @public
- *
  * @return		CharSetManager instance
  */
 
@@ -63,10 +56,7 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof			CharSetManager
  * @private
- *
- * @param this			Function scope
  */
 void CharSetManager::constructor()
 {
@@ -79,11 +69,6 @@ void CharSetManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof			CharSetManager
- * @public
- *
- * @param this			Function scope
  */
 void CharSetManager::destructor()
 {
@@ -101,11 +86,6 @@ void CharSetManager::destructor()
 
 /**
  * Reset manager's state
- *
- * @memberof			CharSetManager
- * @public
- *
- * @param this			Function scope
  */
 void CharSetManager::reset()
 {
@@ -129,10 +109,7 @@ void CharSetManager::reset()
 /**
  * Find a previously registered CharSet with the given definition
  *
- * @memberof					CharSetManager
  * @private
- *
- * @param this					Function scope
  * @param charSetDefinition		CharSet definition
  */
 CharSet CharSetManager::findCharSet(CharSetDefinition* charSetDefinition)
@@ -156,12 +133,8 @@ CharSet CharSetManager::findCharSet(CharSetDefinition* charSetDefinition)
 /**
  * Retrieve a CharSet
  *
- * @memberof							CharSetManager
  * @private
- *
- * @param this							Function scope
  * @param charSetDefinition				CharSet definition to find o allocate a CharSet
- *
  * @return 								Allocated CharSet
  */
 CharSet CharSetManager::getCharSet(CharSetDefinition* charSetDefinition)
@@ -208,10 +181,6 @@ CharSet CharSetManager::getCharSet(CharSetDefinition* charSetDefinition)
 /**
  * Release a previously allocated CharSet
  *
- * @memberof				CharSetManager
- * @public
- *
- * @param this				Function scope
  * @param charSet			CharSet to release
  */
 void CharSetManager::releaseCharSet(CharSet charSet)
@@ -235,12 +204,8 @@ void CharSetManager::releaseCharSet(CharSet charSet)
 /**
  * Try to allocate a CHAR memory space for a new CharSet
  *
- * @memberof					CharSetManager
  * @private
- *
- * @param this					Function scope
  * @param charSetDefinition		CharSet definition to allocate space for
- *
  * @return 						Allocated CharSet
  */
 CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
@@ -291,11 +256,6 @@ CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
 
 /**
  * Write char sets pending writing
- *
- * @memberof		CharSetManager
- * @public
- *
- * @param this		Function scope
  */
 void CharSetManager::writeCharSets()
 {
@@ -311,11 +271,6 @@ void CharSetManager::writeCharSets()
 
 /**
  * Write char sets pending writing
- *
- * @memberof		CharSetManager
- * @public
- *
- * @param this		Function scope
  */
 bool CharSetManager::writeCharSetsProgressively()
 {
@@ -334,11 +289,6 @@ bool CharSetManager::writeCharSetsProgressively()
 
 /**
  * Deframent CHAR memory
- *
- * @memberof		CharSetManager
- * @public
- *
- * @param this		Function scope
  */
 void CharSetManager::defragment()
 {
@@ -350,11 +300,6 @@ void CharSetManager::defragment()
 
 /**
  * Deframent CHAR memory progressively
- *
- * @memberof		CharSetManager
- * @public
- *
- * @param this		Function scope
  */
 bool CharSetManager::defragmentProgressively()
 {
@@ -397,11 +342,6 @@ bool CharSetManager::defragmentProgressively()
 /**
  * Retrieve the total number of used CHARs
  *
- * @memberof			CharSetManager
- * @public
- *
- * @param this			Function scope
- *
  * @return 				Total number of used CHARs
  */
 int CharSetManager::getTotalUsedChars()
@@ -415,11 +355,6 @@ int CharSetManager::getTotalUsedChars()
 /**
  * Retrieve the total number of free CHARs
  *
- * @memberof			CharSetManager
- * @public
- *
- * @param this			Function scope
- *
  * @return 				Total number of free CHARs
  */
 int CharSetManager::getTotalFreeChars()
@@ -429,11 +364,6 @@ int CharSetManager::getTotalFreeChars()
 
 /**
  * Retrieve the total number of registered char sets
- *
- * @memberof			CharSetManager
- * @public
- *
- * @param this			Function scope
  *
  * @return 				Total number of registered char sets
  */
@@ -445,10 +375,6 @@ int CharSetManager::getTotalCharSets()
 /**
  * Print manager's state
  *
- * @memberof			CharSetManager
- * @public
- *
- * @param this			Function scope
  * @param x				Camera's x coordinate
  * @param y				Camera's y coordinate
  */

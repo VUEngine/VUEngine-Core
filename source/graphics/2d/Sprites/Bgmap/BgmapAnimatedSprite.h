@@ -36,15 +36,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-bgmap
 class BgmapAnimatedSprite : BgmapSprite
 {
-	/**
-	* @var TextureSource	originalTextureSource
-	* @brief				bgmap's source coordinates
-	* @memberof 			BgmapAnimatedSprite
-	*/
+	// bgmap's source coordinates
 	TextureSource originalTextureSource;
 
+	/// @publicsection
 	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 	override void writeAnimation();
 }

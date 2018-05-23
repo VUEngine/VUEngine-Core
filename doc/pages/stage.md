@@ -8,11 +8,11 @@ Adding entity containers to the stage
 
 There are two ways to add entities to the `Stage` during gameplay. The first is to add the entity directly into the `Stage`and must be done using the following interface:
  
-	Entity newEntity = Stage_addChildEntity(stagePointer, &positionedEntity, true);
+	Entity newEntity = Stage::addChildEntity(stagePointer, &positionedEntity, true);
 
 The second way to add an entity after the stage's initialization is to add the new entity as a child of another already added to the stage:
 
-	Entity newChildEntity = Entity_addChildEntity(__SAFE_CAST(Entity, this), entityDefinitionPointer, -1, "name", &position, NULL);
+	Entity newChildEntity = Entity::addChildEntity(__SAFE_CAST(Entity, this), entityDefinitionPointer, -1, "name", &position, NULL);
 
 In any case, it is never legal to call the Entity's allocator (or that of any class that inherits from `Container`) with __NEW(Entity, ...) since the process of memory allocation, instantiation and initialization is handled by the `EntityFactory`, and calling the allocator directly will never achieve the intended results. 
 

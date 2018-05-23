@@ -46,15 +46,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//												GLOBALS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	Error
- * @extends Object
- * @ingroup base
- */
-
 
 bool _triggeringException = false;
 
@@ -69,7 +62,6 @@ bool _triggeringException = false;
  * @fn			Error::getInstance()
  * @memberof	Error
  * @public
- *
  * @return		Error instance
  */
 
@@ -77,10 +69,7 @@ bool _triggeringException = false;
 /**
  * Class constructor
  *
- * @memberof	Error
  * @private
- *
- * @param this	Function scope
  */
 void Error::constructor()
 {
@@ -90,10 +79,7 @@ void Error::constructor()
 /**
  * Class destructor
  *
- * @memberof	Error
- * @public
- *
- * @param this	Function scope
+ * @private
  */
 void Error::destructor()
 {
@@ -103,10 +89,6 @@ void Error::destructor()
 /**
  * Setup the error message and lock program here
  *
- * @memberof		Error
- * @public
- *
- * @param this		Function scope
  * @param message
  * @param detail
  */

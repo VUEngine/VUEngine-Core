@@ -30,27 +30,6 @@
 #include <VIPManager.h>
 #include <VirtualList.h>
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	BgmapTextureManager
- * @extends Object
- * @ingroup graphics-2d-textures-bgmap
- */
-
-
-enum OffsetIndex
-{
-	kXOffset = 0,
-	kYOffset,
-	kCols,
-	kRows,
-	kBgmapSegment
-};
-
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -60,9 +39,7 @@ enum OffsetIndex
  * Get instance
  *
  * @fn			BgmapTextureManager::getInstance()
- * @memberof	BgmapTextureManager
  * @public
- *
  * @return		BgmapTextureManager instance
  */
 
@@ -70,10 +47,7 @@ enum OffsetIndex
 /**
  * Class constructor
  *
- * @memberof			BgmapTextureManager
  * @private
- *
- * @param this			Function scope
  */
 void BgmapTextureManager::constructor()
 {
@@ -84,11 +58,6 @@ void BgmapTextureManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof			BgmapTextureManager
- * @public
- *
- * @param this			Function scope
  */
 void BgmapTextureManager::destructor()
 {
@@ -98,11 +67,6 @@ void BgmapTextureManager::destructor()
 
 /**
  * Reset manager's state
- *
- * @memberof			BgmapTextureManager
- * @public
- *
- * @param this			Function scope
  */
 void BgmapTextureManager::reset()
 {	NM_ASSERT(__BGMAP_SPACE_BASE_ADDRESS < __PARAM_TABLE_END, "BgmapTextureManager::reset: bgmap address space is negative");
@@ -153,12 +117,8 @@ void BgmapTextureManager::reset()
 /**
  * Try to allocate a BGMAP memory space for a new Texture
  *
- * @memberof				BgmapTextureManager
  * @private
- *
- * @param this				Function scope
  * @param bgmapTexture		Texture to allocate space for
- *
  * @return 					True if the required space was successfully allocated
  */
 int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
@@ -277,10 +237,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
 /**
  * Allocate a BGMAP memory space for text
  *
- * @memberof				BgmapTextureManager
  * @private
- *
- * @param this				Function scope
  * @param bgmapTexture		Texture to allocate space for
  */
 /*
@@ -316,10 +273,6 @@ void BgmapTextureManager::allocateText(BgmapTexture bgmapTexture)
 /**
  * Release a previously allocated Texture
  *
- * @memberof				BgmapTextureManager
- * @public
- *
- * @param this				Function scope
  * @param bgmapTexture		Texture to release
  */
 void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
@@ -354,12 +307,8 @@ void BgmapTextureManager::releaseTexture(BgmapTexture bgmapTexture)
 /**
  * Retrieve a previously allocated Texture
  *
- * @memberof							BgmapTextureManager
  * @private
- *
- * @param this							Function scope
  * @param bgmapTextureDefinition		Texture definition
- *
  * @return								Allocated Texture
  */
 BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextureDefinition)
@@ -445,12 +394,8 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextu
 /**
  * Allocate a BGMAP memory space for a new Texture
  *
- * @memberof							BgmapTextureManager
  * @private
- *
- * @param this							Function scope
  * @param bgmapTextureDefinition		Texture to allocate space for
- *
  * @return 								True if the required space was successfully allocated
  */
 BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapTextureDefinition)
@@ -478,12 +423,8 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapT
 /**
  * Retrieve a Texture
  *
- * @memberof							BgmapTextureManager
  * @private
- *
- * @param this							Function scope
  * @param bgmapTextureDefinition		Texture definition to find o allocate a Texture
- *
  * @return 								Allocated Texture
  */
 BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextureDefinition)
@@ -536,12 +477,8 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextur
 /**
  * Retrieve the x offset within a BGMAP segment of the Texture with the given id
  *
- * @memberof		BgmapTextureManager
  * @private
- *
- * @param this		Function scope
  * @param id		Texture identification
- *
  * @return 			X offset within a BGMAP segment
  */
 s16 BgmapTextureManager::getXOffset(int id)
@@ -552,12 +489,8 @@ s16 BgmapTextureManager::getXOffset(int id)
 /**
  * Retrieve the y offset within a BGMAP segment of the Texture with the given id
  *
- * @memberof		BgmapTextureManager
  * @private
- *
- * @param this		Function scope
  * @param id		Texture identification
- *
  * @return 			Y offset within a BGMAP segment
  */
 s16 BgmapTextureManager::getYOffset(int id)
@@ -568,11 +501,7 @@ s16 BgmapTextureManager::getYOffset(int id)
 /**
  * Retrieve the number of non used BGMAP segments for texture allocation
  *
- * @memberof		BgmapTextureManager
  * @private
- *
- * @param this		Function scope
- *
  * @return 			Number of non used BGMAP segments for texture allocation
  */
 s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
@@ -583,11 +512,7 @@ s16 BgmapTextureManager::getAvailableBgmapSegmentsForTextures()
 /**
  * Retrieve the BGMAP segment available for printing
  *
- * @memberof		BgmapTextureManager
  * @private
- *
- * @param this		Function scope
- *
  * @return 			BGMAP segment available for printing
  */
 s16 BgmapTextureManager::getPrintingBgmapSegment()
@@ -598,10 +523,7 @@ s16 BgmapTextureManager::getPrintingBgmapSegment()
 /**
  * Compute the available BGMAP segments based on texture usage
  *
- * @memberof		BgmapTextureManager
  * @private
- *
- * @param this		Function scope
  */
 void BgmapTextureManager::calculateAvailableBgmapSegments()
 {
@@ -618,10 +540,7 @@ void BgmapTextureManager::calculateAvailableBgmapSegments()
 /**
  * Print manager's status
  *
- * @memberof		BgmapTextureManager
  * @private
- *
- * @param this		Function scope
  * @param x			Camera's x coocrinate
  * @param y			Camera's y coocrinate
  */

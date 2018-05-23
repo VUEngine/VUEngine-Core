@@ -46,13 +46,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	MBgmapSprite
- * @extends BgmapSprite
- * @ingroup graphics-2d-sprites-bgmap
- * @brief	Sprite which holds a texture and a drawing specification.
- */
-
 friend class Texture;
 friend class BgmapTexture;
 friend class VirtualNode;
@@ -69,7 +62,6 @@ friend class VirtualList;
  * @memberof							MBgmapSprite
  * @public
  *
- * @param this							Function scope
  * @param mBgmapSpriteDefinition		Definition to use
  * @param owner							Sprite's owner
  */
@@ -90,8 +82,6 @@ void MBgmapSprite::constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinit
  *
  * @memberof		MBgmapSprite
  * @public
- *
- * @param this		Function scope
  */
 void MBgmapSprite::destructor()
 {
@@ -113,8 +103,6 @@ void MBgmapSprite::destructor()
  *
  * @memberof		MBgmapSprite
  * @public
- *
- * @param this		Function scope
  */
 void MBgmapSprite::releaseTextures()
 {
@@ -139,8 +127,6 @@ void MBgmapSprite::releaseTextures()
  *
  * @memberof		MBgmapSprite
  * @public
- *
- * @param this		Function scope
  */
 void MBgmapSprite::loadTextures()
 {
@@ -176,7 +162,6 @@ void MBgmapSprite::loadTextures()
  * @memberof					MBgmapSprite
  * @public
  *
- * @param this					Function scope
  * @param textureDefinition		TextureDefinition to use
  */
 void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition)
@@ -197,7 +182,6 @@ void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition)
  * @memberof			MBgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param position		3D position
  */
 void MBgmapSprite::position(const Vector3D* position)
@@ -213,7 +197,6 @@ void MBgmapSprite::position(const Vector3D* position)
  * @memberof			BgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param position		New 2D position
  */
 void MBgmapSprite::setPosition(const PixelVector* position)
@@ -272,7 +255,6 @@ void MBgmapSprite::setPosition(const PixelVector* position)
  * @memberof				MBgmapSprite
  * @public
  *
- * @param this				Function scope
  * @param displacement		2D position displacement
  */
 void MBgmapSprite::addDisplacement(const PixelVector* displacement)
@@ -322,7 +304,6 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  * @memberof		MBgmapSprite
  * @public
  *
- * @param this		Function scope
  * @param evenFrame
  */
 void MBgmapSprite::render(bool evenFrame)
@@ -466,7 +447,6 @@ void MBgmapSprite::render(bool evenFrame)
  * @memberof			MBgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
@@ -482,8 +462,6 @@ void MBgmapSprite::resize(Scale scale, fix10_6 z)
  *
  * @memberof			MBgmapSprite
  * @public
- *
- * @param this			Function scope
  */
 void MBgmapSprite::calculateSize()
 {
@@ -519,7 +497,6 @@ void MBgmapSprite::calculateSize()
  * @memberof		MBgmapSprite
  * @public
  *
- * @param this		Function scope
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
@@ -533,8 +510,6 @@ void MBgmapSprite::setMode(u16 display, u16 mode __attribute__ ((unused)))
  *
  * @memberof		MBgmapSprite
  * @public
- *
- * @param this		Function scope
  *
  * @return			true it all textures are written
  */
@@ -563,8 +538,6 @@ bool MBgmapSprite::writeTextures()
  *
  * @memberof		MBgmapSprite
  * @public
- *
- * @param this		Function scope
  *
  * @return			true it all textures are written
  */

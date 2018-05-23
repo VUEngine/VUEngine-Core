@@ -24,18 +24,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												INCLUDES
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
-//												MACROS
-//---------------------------------------------------------------------------------------------------------
-
-// these improve performance in the real machine
-
-//---------------------------------------------------------------------------------------------------------
 //												EXTERNALS
 //---------------------------------------------------------------------------------------------------------
 
@@ -46,17 +34,10 @@ extern const Optical* _optical;
 //											3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 static class Optics : Object
 {
-	/**
-	 * Calculate parallax based on the x and z coordinates
-	 *
-	 * @fn				Optics_calculateParallax()
-	 * @public
-	 *
-	 * @param x			X parameter for the calculation of the parallax displacement
-	 * @param x			Z parameter for the calculation of the parallax displacement
-	 */
+	/// @publicsection
 	static s16 calculateParallax(fix10_6 x, fix10_6 z);
 }
 

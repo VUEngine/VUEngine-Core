@@ -34,50 +34,33 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 typedef Body (*BodyAllocator)(SpatialObject, const PhysicalSpecification*, u16 axesSubjectToGravity);
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup physics
 class PhysicalWorld : Object
 {
-	/**
-	 * @var VirtualList		bodies
-	 * @brief				registered of bodies
-	 * @memberof 			PhysicalWorld
-	 */
+	// list of registered bodies
 	VirtualList	bodies;
-	/**
-	 * @var VirtualList		activeBodies
-	 * @brief				a list of bodies which must detect collisions
-	 * @memberof 			PhysicalWorld
-	 */
+	// a list of bodies which must detect collisions
 	VirtualList	activeBodies;
-	/**
-	 * @var Acceleration	gravity
-	 * @brief				gravity
-	 * @memberof 			PhysicalWorld
-	 */
+	// gravity
 	Acceleration gravity;
-	/**
-	 * @var fix10_6		frictionCoefficient
-	 * @brief				frictionCoefficient
-	 * @memberof 			PhysicalWorld
-	 */
+	// frictionCoefficient
 	fix10_6 frictionCoefficient;
-	/**
-	 * @var fix10_6		timeScale
-	 * @brief				time scale
-	 * @memberof 			PhysicalWorld
-	 */
+	// time scale
 	fix10_6 timeScale;
-	/**
-	 * @var VirtualNode		bodyToCheckForGravityNode
-	 * @brief				body to check for gravity
-	 * @memberof 			PhysicalWorld
-	 */
+	// body to check for gravity
 	VirtualNode bodyToCheckForGravityNode;
 
+	/// @publicsection
 	void constructor();
 	void destructor();
 	void setTimeScale(fix10_6 timeScale);

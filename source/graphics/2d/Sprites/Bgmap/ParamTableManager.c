@@ -49,12 +49,6 @@ typedef struct ParamTableFreeData
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	ParamTableManager
- * @extends Object
- * @ingroup graphics-2d-sprites-bgmap
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -69,18 +63,12 @@ friend class VirtualList;
  * @fn			ParamTableManager::getInstance()
  * @memberof	ParamTableManager
  * @public
- *
  * @return		ParamTableManager instance
  */
 
 
 /**
  * Class constructor
- *
- * @memberof		ParamTableManager
- * @public
- *
- * @param this		Function scope
  */
 void ParamTableManager::constructor()
 {
@@ -95,11 +83,6 @@ void ParamTableManager::constructor()
 
 /**
  * Class denstructor
- *
- * @memberof		ParamTableManager
- * @public
- *
- * @param this		Function scope
  */
 void ParamTableManager::destructor()
 {
@@ -117,11 +100,6 @@ void ParamTableManager::destructor()
 
 /**
  * Reset management
- *
- * @memberof		ParamTableManager
- * @public
- *
- * @param this		Function scope
  */
 void ParamTableManager::reset()
 {
@@ -138,7 +116,7 @@ void ParamTableManager::reset()
 
 	this->paramTableBase = __PARAM_TABLE_END;
 
-	// set the size of the paramtable
+	// set the size of the param table
 	this->size = __PARAM_TABLE_END - this->paramTableBase;
 
 	NM_ASSERT(__PARAM_TABLE_END >= this->paramTableBase, "ParamTableManager::reset: param table size is negative");
@@ -154,11 +132,7 @@ void ParamTableManager::reset()
 /**
  * Calculate the param table's base address
  *
- * @memberof										ParamTableManager
- * @public
- *
- * @param this										Function scope
- * @param availableBgmapSegmentsForParamTable		Number of BGMAP segments for the param tables
+ * @param availableBgmapSegmentsForParamTable	Number of BGMAP segments for the param tables
  */
 void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForParamTable)
 {
@@ -185,12 +159,7 @@ void ParamTableManager::calculateParamTableBase(int availableBgmapSegmentsForPar
 /**
  * Retrieve the param table's base address
  *
- * @memberof		ParamTableManager
- * @public
- *
- * @param this		Function scope
- *
- * @return			The base address of the param table
+ * @return	The base address of the param table
  */
 u32 ParamTableManager::getParamTableBase()
 {
@@ -200,12 +169,7 @@ u32 ParamTableManager::getParamTableBase()
 /**
  * Calculate the param table'size for the given Sprite
  *
- * @memberof			ParamTableManager
- * @public
- *
- * @param this			Function scope
  * @param bgmapSprite	Sprite to base the calculation on
- *
  * @return				Param table's size for the Sprite
  */
 u32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
@@ -245,12 +209,7 @@ u32 ParamTableManager::calculateSpriteParamTableSize(BgmapSprite bgmapSprite)
 /**
  * Allocate param table space for the given Sprite
  *
- * @memberof			ParamTableManager
- * @public
- *
- * @param this			Function scope
  * @param bgmapSprite	Sprite for which the param table space will be allocated
- *
  * @return				True if param table space was allocated
  */
 u32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
@@ -295,10 +254,6 @@ u32 ParamTableManager::allocate(BgmapSprite bgmapSprite)
 /**
  * Free the param table space used by the Sprite
  *
- * @memberof			ParamTableManager
- * @public
- *
- * @param this			Function scope
  * @param bgmapSprite	Sprite of which param table space will be freed
  */
 void ParamTableManager::free(BgmapSprite bgmapSprite)
@@ -327,12 +282,7 @@ void ParamTableManager::free(BgmapSprite bgmapSprite)
 /**
  * Defragment the param table space
  *
- * @memberof		ParamTableManager
- * @public
- *
- * @param this		Function scope
- *
- * @return 			True if defragmentation took place
+ * @return 	True if defragmentation took place
  */
 bool ParamTableManager::defragmentProgressively()
 {
@@ -395,10 +345,6 @@ bool ParamTableManager::defragmentProgressively()
 /**
  * Print the manager's state
  *
- * @memberof			ParamTableManager
- * @public
- *
- * @param this			Function scope
  * @param x				Camera x coordinate
  * @param y				Camera y coordinate
  */

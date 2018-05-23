@@ -36,12 +36,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Body
- * @extends Object
- * @ingroup physics
- */
-
 friend class VirtualList;
 friend class VirtualNode;
 

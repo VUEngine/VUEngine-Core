@@ -34,15 +34,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-3d
 class Polyhedron : Wireframe
 {
-	/**
-	* @var VirtualList vertices
-	* @brief			Vertices
-	* @memberof		Polyhedron
-	*/
+	// Vertices
 	VirtualList vertices;
 
+	/// @publicsection
 	void constructor();
 	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
 	override void draw(bool calculateParallax);

@@ -40,13 +40,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	BgmapSprite
- * @extends Sprite
- * @ingroup graphics-2d-sprites-bgmap
- * @brief	Sprite which holds a texture and a drawing specification.
- */
-
 friend class Texture;
 friend class BgmapTexture;
 
@@ -61,7 +54,6 @@ friend class BgmapTexture;
  * @memberof						BgmapSprite
  * @public
  *
- * @param this						Function scope
  * @param bgmapSpriteDefinition		Sprite definition
  * @param owner						Owner
  */
@@ -117,8 +109,6 @@ void BgmapSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition
  *
  * @memberof			BgmapSprite
  * @public
- *
- * @param this			Function scope
  */
 void BgmapSprite::destructor()
 {
@@ -154,8 +144,6 @@ void BgmapSprite::destructor()
  * @memberof		BgmapSprite
  * @public
  *
- * @param this		Function scope
- *
  * @return			Scale
  */
 Scale BgmapSprite::getScale()
@@ -169,8 +157,6 @@ Scale BgmapSprite::getScale()
  *
  * @memberof			BgmapSprite
  * @private
- *
- * @param this			Function scope
  */
 void BgmapSprite::computeDimensions()
 {
@@ -197,7 +183,6 @@ void BgmapSprite::computeDimensions()
  * @memberof			BgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param rotation		Rotation
  */
 void BgmapSprite::rotate(const Rotation* rotation)
@@ -224,7 +209,6 @@ void BgmapSprite::rotate(const Rotation* rotation)
  * @memberof			BgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param scale			Scale to apply
  * @param z				Z coordinate to base on the size calculation
  */
@@ -264,7 +248,6 @@ void BgmapSprite::resize(Scale scale, fix10_6 z)
  * @memberof			BgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
 void BgmapSprite::calculateParallax(fix10_6 z)
@@ -279,8 +262,6 @@ void BgmapSprite::calculateParallax(fix10_6 z)
  * @memberof		BgmapSprite
  * @public
  *
- * @param this		Function scope
- *
  * @return			DrawSpec
  */
 DrawSpec BgmapSprite::getDrawSpec()
@@ -294,7 +275,6 @@ DrawSpec BgmapSprite::getDrawSpec()
  * @memberof		BgmapSprite
  * @public
  *
- * @param this		Function scope
  * @param evenFrame
  */
 void BgmapSprite::render(bool evenFrame)
@@ -599,7 +579,6 @@ void BgmapSprite::render(bool evenFrame)
  * @memberof				BgmapSprite
  * @public
  *
- * @param this				Function scope
  * @param displacement		2D position displacement
  */
 void BgmapSprite::addDisplacement(const PixelVector* displacement)
@@ -616,7 +595,6 @@ void BgmapSprite::addDisplacement(const PixelVector* displacement)
  * @memberof		BgmapSprite
  * @public
  *
- * @param this		Function scope
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
@@ -662,8 +640,6 @@ void BgmapSprite::setMode(u16 display, u16 mode)
  * @memberof		BgmapSprite
  * @public
  *
- * @param this		Function scope
- *
  * @return			Param table address
  */
 u32 BgmapSprite::getParam()
@@ -677,7 +653,6 @@ u32 BgmapSprite::getParam()
  * @memberof		BgmapSprite
  * @public
  *
- * @param this		Function scope
  * @param param		Net param table address
  */
 void BgmapSprite::setParam(u32 param)
@@ -693,8 +668,6 @@ void BgmapSprite::setParam(u32 param)
  *
  * @memberof		BgmapSprite
  * @public
- *
- * @param this		Function scope
  */
 void BgmapSprite::invalidateParamTable()
 {
@@ -714,7 +687,6 @@ void BgmapSprite::invalidateParamTable()
  * @memberof			BgmapSprite
  * @public
  *
- * @param this			Function scope
  * @param drawSpec		New drawSpec
  */
 void BgmapSprite::setDrawSpec(const DrawSpec* const drawSpec)
@@ -727,8 +699,6 @@ void BgmapSprite::setDrawSpec(const DrawSpec* const drawSpec)
  *
  * @memberof			BgmapSprite
  * @public
- *
- * @param this			Function scope
  *
  * @return				Next param table row to calculate
  */
@@ -747,8 +717,6 @@ s16 BgmapSprite::getParamTableRow()
  *
  * @memberof			BgmapSprite
  * @private
- *
- * @param this			Function scope
  * @return 				last computed row
  */
 static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
@@ -783,8 +751,6 @@ static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
  *
  * @memberof			BgmapSprite
  * @public
- *
- * @param this			Function scope
  */
 void BgmapSprite::applyAffineTransformations()
 {
@@ -798,8 +764,6 @@ void BgmapSprite::applyAffineTransformations()
  *
  * @memberof			BgmapSprite
  * @public
- *
- * @param this			Function scope
  */
 void BgmapSprite::applyHbiasEffects()
 {

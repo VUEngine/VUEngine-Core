@@ -33,27 +33,11 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	GameState
- * @extends State
- * @ingroup states
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::constructor()
 {
@@ -78,11 +62,6 @@ void GameState::constructor()
 
 /**
  * Class destructor
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::destructor()
 {
@@ -114,10 +93,6 @@ void GameState::destructor()
 /**
  * Method called when the Game's StateMachine enters to this state
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void GameState::enter(void* owner __attribute__ ((unused)))
@@ -135,10 +110,6 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 /**
  * Method called when by the StateMachine's update method
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void GameState::execute(void* owner __attribute__ ((unused)))
@@ -157,10 +128,6 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 /**
  * Method called when the Game's StateMachine exits from this state
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void GameState::exit(void* owner __attribute__ ((unused)))
@@ -187,10 +154,6 @@ void GameState::exit(void* owner __attribute__ ((unused)))
 /**
  * Method called when the StateMachine enters another state without exiting this one
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void GameState::suspend(void* owner __attribute__ ((unused)))
@@ -237,10 +200,6 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 /**
  * Method called when the StateMachine returns to this state from another
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void GameState::resume(void* owner __attribute__ ((unused)))
@@ -325,10 +284,6 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 /**
  * Process user input
  *
- * @memberof			GameState
- * @public
- *
- * @param this			Function scope
  * @param userInput		User input
  */
 void GameState::processUserInput(UserInput userInput __attribute__ ((unused)))
@@ -337,13 +292,8 @@ void GameState::processUserInput(UserInput userInput __attribute__ ((unused)))
 /**
  * Method called when the Game's StateMachine receives a message to be processed
  *
- * @memberof			GameState
- * @public
- *
- * @param this			Function scope
  * @param owner			StateMachine's owner
  * @param telegram		Message wrapper
- *
  * @return 				True if no further processing of the message is required
  */
 bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram telegram)
@@ -354,12 +304,7 @@ bool GameState::processMessage(void* owner __attribute__ ((unused)), Telegram te
 /**
  * Start pass a message to the Stage for it to forward to its children
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param message	Message code
- *
  * @return			The result of the propagation of the message
  */
 int GameState::propagateMessage(int message)
@@ -369,11 +314,6 @@ int GameState::propagateMessage(int message)
 
 /**
  * Start a streaming cycle on the Stage
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 bool GameState::stream()
 {
@@ -382,11 +322,6 @@ bool GameState::stream()
 
 /**
  * Start a transformation cycle on the Stage
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::transform()
 {
@@ -404,10 +339,7 @@ void GameState::transform()
 /**
  * Call the initial transformation on the Stage to setup its children
  *
- * @memberof		GameState
  * @private
- *
- * @param this		Function scope
  */
 void GameState::initialTransform()
 {
@@ -421,11 +353,6 @@ void GameState::initialTransform()
 
 /**
  * Start a cycle on the Stage that coordinates the entities with their sprites
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::synchronizeGraphics()
 {
@@ -437,11 +364,6 @@ void GameState::synchronizeGraphics()
 
 /**
  * Start a physics simulation cycle on the Stage
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::updatePhysics()
 {
@@ -450,11 +372,6 @@ void GameState::updatePhysics()
 
 /**
  * Start a cycle for collision processing
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  *
  * @return			The result of the collision processing
  */
@@ -466,10 +383,6 @@ u32 GameState::processCollisions()
 /**
  * Load the Stage with the give definition
  *
- * @memberof							GameState
- * @public
- *
- * @param this							Function scope
  * @param stageDefinition				Stage's configuration
  * @param positionedEntitiesToIgnore	List of entities from the definition to not load
  * @param overrideCameraPosition		Flag to override or not the Camera's current position
@@ -541,11 +454,6 @@ void GameState::loadStage(StageDefinition* stageDefinition, VirtualList position
 /**
  * Retrieve the Stage
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
- *
  * @return			Stage
  */
 Stage GameState::getStage()
@@ -555,11 +463,6 @@ Stage GameState::getStage()
 
 /**
  * Retrieve the Clock used for delayed messages
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  *
  * @return			Clock
  */
@@ -571,11 +474,6 @@ Clock GameState::getMessagingClock()
 /**
  * Retrieve the Clock passed to the Stage's update method (used for animations)
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
- *
  * @return			Clock
  */
 Clock GameState::getUpdateClock()
@@ -586,11 +484,6 @@ Clock GameState::getUpdateClock()
 /**
  * Retrieve the Clock used for physic calculations
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
- *
  * @return			Clock
  */
 Clock GameState::getPhysicsClock()
@@ -600,11 +493,6 @@ Clock GameState::getPhysicsClock()
 
 /**
  * Start all clocks
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::startClocks()
 {
@@ -617,11 +505,6 @@ void GameState::startClocks()
 
 /**
  * Stop all clocks
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::stopClocks()
 {
@@ -632,11 +515,6 @@ void GameState::stopClocks()
 
 /**
  * Pause all clocks
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::pauseClocks()
 {
@@ -647,11 +525,6 @@ void GameState::pauseClocks()
 
 /**
  * Resume all clocks
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::resumeClocks()
 {
@@ -662,11 +535,6 @@ void GameState::resumeClocks()
 
 /**
  * Start the Clock used for delayed messages
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::startDispatchingDelayedMessages()
 {
@@ -675,11 +543,6 @@ void GameState::startDispatchingDelayedMessages()
 
 /**
  * Start the Clock passed to the Stage's update method (used for animations)
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::startAnimations()
 {
@@ -688,11 +551,6 @@ void GameState::startAnimations()
 
 /**
  * Start the Clock used for physics simulations
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  */
 void GameState::startPhysics()
 {
@@ -702,10 +560,6 @@ void GameState::startPhysics()
 /**
  * Pause the Clock used for delayed messages
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param pause		Pause flag
  */
 void GameState::pauseMessagingClock(bool pause)
@@ -716,10 +570,6 @@ void GameState::pauseMessagingClock(bool pause)
 /**
  * Pause the Clock used for animations
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param pause		Pause flag
  */
 void GameState::pauseAnimations(bool pause)
@@ -730,10 +580,6 @@ void GameState::pauseAnimations(bool pause)
 /**
  * Pause the Clock used for physics simulations
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  * @param pause		Pause flag
  */
 void GameState::pausePhysics(bool pause)
@@ -744,11 +590,6 @@ void GameState::pausePhysics(bool pause)
 /**
  * Retrieve the PhysicalWorld
  *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
- *
  * @return			PhysicalWorld
  */
 PhysicalWorld GameState::getPhysicalWorld()
@@ -758,11 +599,6 @@ PhysicalWorld GameState::getPhysicalWorld()
 
 /**
  * Retrieve the CollisionManager
- *
- * @memberof		GameState
- * @public
- *
- * @param this		Function scope
  *
  * @return			CollisionManager
  */

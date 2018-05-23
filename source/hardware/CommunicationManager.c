@@ -108,13 +108,6 @@ enum HandshakeStatus
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	CommunicationManager
- * @extends Object
- * @ingroup hardware
- */
-
-
 static CommunicationManager _communicationManager;
 
 
@@ -128,7 +121,6 @@ static CommunicationManager _communicationManager;
  * @fn			CommunicationManager::getInstance()
  * @memberof	CommunicationManager
  * @public
- *
  * @return		CommunicationManager instance
  */
 
@@ -136,10 +128,7 @@ static CommunicationManager _communicationManager;
 /**
  * Class constructor
  *
- * @memberof	CommunicationManager
  * @private
- *
- * @param this	Function scope
  */
 void CommunicationManager::constructor()
 {
@@ -152,11 +141,6 @@ void CommunicationManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	CommunicationManager
- * @public
- *
- * @param this	Function scope
  */
 void CommunicationManager::destructor()
 {
@@ -166,11 +150,6 @@ void CommunicationManager::destructor()
 
 /**
  * Enable interrupts
- *
- * @memberof	CommunicationManager
- * @public
- *
- * @param this	Function scope
  */
 void CommunicationManager::enableInterrupts()
 {
@@ -179,11 +158,6 @@ void CommunicationManager::enableInterrupts()
 
 /**
  * Disable interrupts
- *
- * @memberof	CommunicationManager
- * @public
- *
- * @param this	Function scope
  */
 void CommunicationManager::disableInterrupts()
 {
@@ -194,11 +168,6 @@ void CommunicationManager::disableInterrupts()
 
 /**
  * Enable communications
- *
- * @memberof	CommunicationManager
- * @public
- *
- * @param this	Function scope
  */
 void CommunicationManager::enableCommunications()
 {
@@ -207,11 +176,6 @@ void CommunicationManager::enableCommunications()
 
 /**
  * Disable communications
- *
- * @memberof	CommunicationManager
- * @public
- *
- * @param this	Function scope
  */
 void CommunicationManager::disableCommunications()
 {
@@ -219,9 +183,6 @@ void CommunicationManager::disableCommunications()
 
 /**
  * Communication's interrupt handler
- *
- * @memberof		CommunicationManager
- * @public
  */
 static void CommunicationManager::interruptHandler()
 {
@@ -309,9 +270,6 @@ bool CommunicationManager::waitHandshake(u8 handshakePayload, bool sendMessage)
 
 /**
  * Process interrupt method
- *
- * @memberof		CommunicationManager
- * @public
  */
 static void CommunicationManager::processInterrupt()
 {

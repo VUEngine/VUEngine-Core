@@ -35,8 +35,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 abstract class State : Object
 {
+	/// @publicsection
 	void constructor();
 	virtual void enter(void* owner);
 	virtual void execute(void* owner);

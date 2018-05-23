@@ -42,12 +42,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Shape
- * @extends Object
- * @ingroup physics
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -59,10 +53,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
  * @param owner
  */
 void Shape::constructor(SpatialObject owner)
@@ -90,11 +80,6 @@ void Shape::constructor(SpatialObject owner)
 
 /**
  * Class destructor
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
  */
 void Shape::destructor()
 {
@@ -138,11 +123,6 @@ void Shape::destructor()
 
 /**
  * Reset
- *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  */
 void Shape::reset()
 {
@@ -173,10 +153,6 @@ void Shape::reset()
 /**
  * Setup
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param layers				u32
  * @param layersToIgnore		u32
  */
@@ -194,10 +170,6 @@ void Shape::setup(u32 layers, u32 layersToIgnore)
 /**
  * Position
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param position				Vector3d*
  * @param rotation				Rotation*
  * @param scale					Scale*
@@ -217,10 +189,6 @@ void Shape::position(const Vector3D* position __attribute__ ((unused)), const Ro
 /**
  * Process enter collision event
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param collisionData			Collision data
  */
 void Shape::enterCollision(CollisionData* collisionData)
@@ -239,10 +207,6 @@ void Shape::enterCollision(CollisionData* collisionData)
 /**
  * Process update collision event
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param collisionData			Collision data
  */
 void Shape::updateCollision(CollisionData* collisionData)
@@ -263,10 +227,6 @@ void Shape::updateCollision(CollisionData* collisionData)
 /**
  * Process exit collision event
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param collisionData			Collision data
  */
 void Shape::exitCollision(CollisionData* collisionData)
@@ -278,10 +238,6 @@ void Shape::exitCollision(CollisionData* collisionData)
 /**
  * Check if collides with other shape
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param shape					shape to check for overlapping
  *
   * @return						CollisionData
@@ -402,10 +358,6 @@ CollisionData Shape::collides(Shape shape)
 /**
  * Check if there is a collision in the magnitude
  *
- * @memberof				Shape
- * @public
- *
- * @param this				Function scope
  * @param displacement		shape displacement
  */
 bool Shape::canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement __attribute__ ((unused)))
@@ -490,10 +442,6 @@ void Shape::checkPreviousCollisions(Shape collidingShape)
 /**
  * Displace owner
  *
- * @memberof				Shape
- * @public
- *
- * @param this				Function scope
  * @param displacement		Displacement to apply to owner
  */
 void Shape::displaceOwner(Vector3D displacement)
@@ -510,11 +458,6 @@ void Shape::displaceOwner(Vector3D displacement)
 
 /**
  * Solve the collision by moving owner
- *
- * @memberof			Shape
- * @public
- *
- * @param this			Function scope
  */
 void Shape::resolveCollision(const CollisionInformation* collisionInformation)
 {
@@ -544,11 +487,6 @@ void Shape::resolveCollision(const CollisionInformation* collisionInformation)
 /**
  * Retrieve owner
  *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
- *
  * @return		Owning SpatialObject
  */
 SpatialObject Shape::getOwner()
@@ -558,11 +496,6 @@ SpatialObject Shape::getOwner()
 
 /**
  * Is active?
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
  *
  * @return		Active status
  */
@@ -575,10 +508,6 @@ bool Shape::isActive()
 /**
  * Set active
  *
- * @memberof		Shape
- * @public
- *
- * @param this		Function scope
  * @param active
  */
 void Shape::setActive(bool active)
@@ -588,11 +517,6 @@ void Shape::setActive(bool active)
 
 /**
  * Has been configured?
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
  *
  * @return		Configured status
  */
@@ -604,10 +528,6 @@ bool Shape::isReady()
 /**
  * Set configured flag
  *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
  * @param ready
  */
 void Shape::setReady(bool ready)
@@ -618,10 +538,6 @@ void Shape::setReady(bool ready)
 /**
  * Set flag
  *
- * @memberof					Shape
- * @public
- *
- * @param this					Function scope
  * @param checkForCollisions
  */
 void Shape::setCheckForCollisions(bool checkForCollisions)
@@ -631,11 +547,6 @@ void Shape::setCheckForCollisions(bool checkForCollisions)
 
 /**
  * Get flag
- *
- * @memberof	Shape
- * @public
- *
- * @param this	Function scope
  *
  * @return		Collision check status
  */
@@ -647,10 +558,7 @@ bool Shape::checkForCollisions()
 /**
  * Register colliding shape from the lists
  *
- * @memberof				Shape
  * @private
- *
- * @param this				Function scope
  * @param collidingShape	Colliding shape to register
  */
 CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, SolutionVector solutionVector, bool isImpenetrable)
@@ -688,10 +596,7 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
 /**
  * Remove colliding shape from the lists
  *
- * @memberof				Shape
  * @private
- *
- * @param this				Function scope
  * @param collidingShape	Colliding shape to remove
  */
 bool Shape::unregisterCollidingShape(Shape collidingShape)
@@ -721,10 +626,7 @@ bool Shape::unregisterCollidingShape(Shape collidingShape)
 /**
  * Shape destroying listener
  *
- * @memberof				Shape
  * @private
- *
- * @param this				Function scope
  * @param eventFirer		Destroyed shape
  */
 void Shape::onCollidingShapeDestroyed(Object eventFirer)
@@ -755,10 +657,7 @@ void Shape::onCollidingShapeDestroyed(Object eventFirer)
 /**
  * Shape changed listener
  *
- * @memberof				Shape
  * @private
- *
- * @param this				Function scope
  * @param eventFirer		Changed shape
  */
 void Shape::onCollidingShapeChanged(Object eventFirer)
@@ -786,12 +685,8 @@ void Shape::onCollidingShapeChanged(Object eventFirer)
 /**
  * Get CollidingShapeRegistry
  *
- * @memberof	Shape
  * @private
- *
- * @param this	Function scope
  * @param shape	Shape to find
- *
  * @return		CollidingShapeRegistry*
  */
 CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
@@ -820,11 +715,6 @@ CollidingShapeRegistry* Shape::findCollidingShapeRegistry(Shape shape)
 
 /**
  * Get total friction of colliding shapes
- *
- * @memberof			Shape
- * @public
- *
- * @param this			Function scope
  *
  * @return				The sum of friction coefficients
  */

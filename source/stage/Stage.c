@@ -68,30 +68,10 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Stage
- * @extends Container
- * @ingroup stage
- */
-
 friend class Container;
 friend class Entity;
 friend class VirtualNode;
 friend class VirtualList;
-
-/**
- * Stage Entity Description
- *
- * @memberof Stage
- */
-typedef struct StageEntityDescription
-{
-	PixelRightBox pixelRightBox;
-	PositionedEntity* positionedEntity;
-	u32 distance;
-	s16 internalId;
-
-} StageEntityDescription;
 
 const Transformation neutralEnvironmentTransformation =
 {

@@ -36,8 +36,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup stage
 class SpatialObject : Object
 {
+	/// @publicsection
 	void constructor();
 	void destructor();
 	virtual VirtualList getShapes();

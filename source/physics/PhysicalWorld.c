@@ -42,12 +42,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	PhysicalWorld
- * @extends Object
- * @ingroup physics
- */
-
 friend class Body;
 friend class Clock;
 friend class VirtualNode;
@@ -58,16 +52,8 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
-
-
 /**
  * Class constructor
- *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  */
 void PhysicalWorld::constructor()
 {
@@ -89,11 +75,6 @@ void PhysicalWorld::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  */
 void PhysicalWorld::destructor()
 {
@@ -124,14 +105,9 @@ void PhysicalWorld::destructor()
 /**
  * Register a body
  *
- * @memberof			PhysicalWorld
- * @public
- *
- * @param this			Function scope
  * @param bodyAllocator
  * @param owner
  * @param physicalSpecification
- *
  * @return				Registered Body
  */
 Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
@@ -162,10 +138,6 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
 /**
  * Remove a body
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param body
  */
 void PhysicalWorld::destroyBody(Body body)
@@ -187,12 +159,7 @@ void PhysicalWorld::destroyBody(Body body)
 /**
  * Find a body given an owner
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param owner
- *
  * @return		Found Body
  */
 Body PhysicalWorld::getBody(SpatialObject owner)
@@ -220,10 +187,7 @@ Body PhysicalWorld::getBody(SpatialObject owner)
 /**
  * Pre-calculate movable shape's position before doing collision detection on them
  *
- * @memberof	PhysicalWorld
  * @private
- *
- * @param this	Function scope
  */
 void PhysicalWorld::checkForGravity()
 {
@@ -271,10 +235,6 @@ void PhysicalWorld::checkForGravity()
 /**
  * Calculate collisions
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param clock
  */
 void PhysicalWorld::update(Clock clock)
@@ -323,11 +283,6 @@ void PhysicalWorld::update(Clock clock)
 
 /**
  * Unregister all bodies
- *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  */
 void PhysicalWorld::reset()
 {
@@ -351,12 +306,7 @@ void PhysicalWorld::reset()
 /**
  * Check if an entity has been registered
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param owner
- *
  * @return		Whether the given SpatialObject has been registered
  */
 bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
@@ -386,11 +336,6 @@ bool PhysicalWorld::isSpatialObjectRegistered(SpatialObject owner)
 /**
  * Retrieve frictionCoefficient
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
- *
  * @return		PhysicalWorld's frictionCoefficient
  */
 fix10_6 PhysicalWorld::getFrictionCoefficient()
@@ -401,10 +346,6 @@ fix10_6 PhysicalWorld::getFrictionCoefficient()
 /**
  * Set frictionCoefficient
  *
- * @memberof		PhysicalWorld
- * @public
- *
- * @param this		Function scope
  * @param frictionCoefficient
  */
 void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
@@ -416,10 +357,6 @@ void PhysicalWorld::setFrictionCoefficient(fix10_6 frictionCoefficient)
 /**
  * Set time scale
  *
- * @memberof		PhysicalWorld
- * @public
- *
- * @param this		Function scope
  * @param 			timeScale
  */
 void PhysicalWorld::setTimeScale(fix10_6 timeScale)
@@ -429,11 +366,6 @@ void PhysicalWorld::setTimeScale(fix10_6 timeScale)
 
 /**
  * Get time scale
- *
- * @memberof		PhysicalWorld
- * @public
- *
- * @param this		Function scope
  *
  * @return 			timeScale
  */
@@ -445,10 +377,6 @@ u32 PhysicalWorld::getTimeScale()
 /**
  * A body has awoken
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param body
  */
 void PhysicalWorld::bodyAwake(Body body)
@@ -467,10 +395,6 @@ void PhysicalWorld::bodyAwake(Body body)
 /**
  * Inform of a change in the body
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param body
  */
 void PhysicalWorld::bodySleep(Body body)
@@ -484,10 +408,6 @@ void PhysicalWorld::bodySleep(Body body)
 /**
  * Inform that body has been inactivated
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param body
  */
 void PhysicalWorld::bodySetInactive(Body body)
@@ -508,11 +428,6 @@ void PhysicalWorld::setGravity(Acceleration gravity)
 /**
  * Retrieve gravity
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
- *
  * @return		PhysicalWorld's gravity
  */
 const Vector3D* PhysicalWorld::getGravity()
@@ -522,11 +437,6 @@ const Vector3D* PhysicalWorld::getGravity()
 
 /**
  * Get last elapsed time
- *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  *
  * @return		Elapsed time
  */
@@ -538,10 +448,6 @@ fix10_6 PhysicalWorld::getElapsedTime()
 /**
  * Print status
  *
- * @memberof	PhysicalWorld
- * @public
- *
- * @param this	Function scope
  * @param x
  * @param y
  */

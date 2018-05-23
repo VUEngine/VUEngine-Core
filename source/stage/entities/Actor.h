@@ -34,10 +34,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
 
 typedef struct ActorDefinition
 {
@@ -55,17 +53,23 @@ typedef struct ActorDefinition
 typedef const ActorDefinition ActorROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage-entities
 class Actor : AnimatedEntity
 {
-	/* definition */
+	// definition
 	const ActorDefinition* actorDefinition;
-	/* a state machine to handle entity's logic	*/
+	// a state machine to handle entity's logic
 	StateMachine stateMachine;
-	/* a physical body	*/
+	// a physical body
 	Body body;
-	/* previous velocity */
+	// previous velocity
 	Rotation previousRotation;
 
+	/// @publicsection
 	void constructor(const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
 	bool hasChangedDirection(u16 axis);
 	void changeDirectionOnAxis(u16 axis);

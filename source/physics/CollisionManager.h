@@ -37,19 +37,21 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup physics
 class CollisionManager : Object
 {
-	/* a list of registered shapes */
+	// a list of registered shapes
 	VirtualList	shapes;
-	/* a list of moving shapes */
+	// a list of moving shapes
 	VirtualList	movingShapes;
-	/* counters for statistics */
+	// counters for statistics
 	u32 lastCycleCollisionChecks;
 	u32 lastCycleCollisions;
 	u32 collisionChecks;
 	u32 collisions;
 	u32 checkCycles;
 
+	/// @publicsection
 	void constructor();
 	void hideShapes();
 	void print(int x, int y);

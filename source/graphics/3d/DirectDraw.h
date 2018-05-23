@@ -35,8 +35,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-3d
 singleton class DirectDraw : Object
 {
+	/// @publicsection
 	static DirectDraw getInstance();
 	void drawLine(PixelVector fromPoint, PixelVector toPoint, int color);
 	void drawPoint(PixelVector point, int color);

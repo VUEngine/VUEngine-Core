@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												TYPEDEFS
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 class Object;
@@ -42,28 +42,37 @@ class Error;
 typedef void (*EventListener)(Object, Object);
 typedef Object (*AllocatorPointer)();
 
+/**
+ * An Event
+ * @memberof Object
+ */
+typedef struct Event
+{
+	/// object to register event listener at
+	Object listener;
+	/// the method to execute on event
+	EventListener method;
+	/// the code of the event to listen to
+	u32 code;
+
+} Event;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// Base class for all other classes in the engine, it derives from nothing but itself
+/// @ingroup base
 abstract class Object : Object
 {
-	/**
-	* @var void*		vTable
-	* @brief			Pointer to the class's virtual table.
-	* @memberof		Object
-	*/
+	// Pointer to the class's virtual table.
 	void* vTable;
-	/**
-	* @var VirtualList events
-	* @brief			List of registered events.
-	* @memberof		Object
-	*/
+	// List of registered events.
 	VirtualList events;
 
+	/// @publicsection
 	static Object getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
-
 	void constructor();
 	void addEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListener(Object listener, EventListener method, u32 eventCode);

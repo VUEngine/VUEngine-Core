@@ -45,13 +45,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	ObjectSprite
- * @extends Sprite
- * @ingroup graphics-2d-sprites-object
- * @brief	Sprite which holds a texture and a drawing specification.
- */
-
 friend class Texture;
 
 
@@ -65,7 +58,6 @@ friend class Texture;
  * @memberof						ObjectSprite
  * @public
  *
- * @param this						Function scope
  * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
@@ -100,8 +92,6 @@ void ObjectSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinit
  *
  * @memberof						ObjectSprite
  * @public
- *
- * @param this						Function scope
  */
 void ObjectSprite::destructor()
 {
@@ -130,7 +120,6 @@ void ObjectSprite::destructor()
  * @memberof			ObjectSprite
  * @public
  *
- * @param this			Function scope
  * @param rotation		The rotation
  */
 void ObjectSprite::rotate(const Rotation* rotation)
@@ -169,7 +158,6 @@ void ObjectSprite::rotate(const Rotation* rotation)
  * @memberof			ObjectSprite
  * @public
  *
- * @param this			Function scope
  * @param position		New 2D position
  */
 void ObjectSprite::setPosition(const PixelVector* position)
@@ -185,7 +173,6 @@ void ObjectSprite::setPosition(const PixelVector* position)
  * @memberof			ObjectSprite
  * @public
  *
- * @param this			Function scope
  * @param position		3D position
  */
 void ObjectSprite::position(const Vector3D* position)
@@ -202,8 +189,6 @@ void ObjectSprite::position(const Vector3D* position)
  *
  * @memberof			ObjectSprite
  * @private
- *
- * @param this			Function scope
  */
 void ObjectSprite::checkForContainer()
 {
@@ -221,7 +206,6 @@ void ObjectSprite::checkForContainer()
  * @memberof			ObjectSprite
  * @public
  *
- * @param this			Function scope
  * @param z				Z coordinate to base on the calculation
  */
 void ObjectSprite::calculateParallax(fix10_6 z)
@@ -236,7 +220,6 @@ void ObjectSprite::calculateParallax(fix10_6 z)
  * @memberof		ObjectSprite
  * @public
  *
- * @param this		Function scope
  * @param evenFrame
  */
 void ObjectSprite::render(bool evenFrame)
@@ -313,7 +296,6 @@ void ObjectSprite::render(bool evenFrame)
  * @memberof			ObjectSprite
  * @public
  *
- * @param this			Function scope
  * @return				Number of used OBJECTs
  */
 s16 ObjectSprite::getTotalObjects()
@@ -329,8 +311,6 @@ s16 ObjectSprite::getTotalObjects()
  * @memberof			ObjectSprite
  * @public
  *
- * @param this			Function scope
- *
  * @return				Number of used OBJECTs
  */
 s16 ObjectSprite::getObjectIndex()
@@ -344,7 +324,6 @@ s16 ObjectSprite::getObjectIndex()
  * @memberof				ObjectSprite
  * @public
  *
- * @param this				Function scope
  * @param objectIndex		Set the OBJECT index
  */
 void ObjectSprite::setObjectIndex(s16 objectIndex)
@@ -396,8 +375,6 @@ void ObjectSprite::setObjectIndex(s16 objectIndex)
  * @memberof	Sprite
  * @public
  *
- * @param this	Function scope
- *
  * @return 		World layer
  */
 u8 ObjectSprite::getWorldLayer()
@@ -413,7 +390,6 @@ u8 ObjectSprite::getWorldLayer()
  * @memberof				ObjectSprite
  * @public
  *
- * @param this				Function scope
  * @param displacement		2D position displacement
  */
 void ObjectSprite::addDisplacement(const PixelVector* displacement)
@@ -430,7 +406,6 @@ void ObjectSprite::addDisplacement(const PixelVector* displacement)
  * @memberof		ObjectSprite
  * @public
  *
- * @param this		Function scope
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
@@ -442,8 +417,6 @@ void ObjectSprite::setMode(u16 display __attribute__ ((unused)), u16 mode __attr
  *
  * @memberof				ObjectSprite
  * @public
- *
- * @param this				Function scope
  */
 void ObjectSprite::invalidateObjectSpriteContainer()
 {

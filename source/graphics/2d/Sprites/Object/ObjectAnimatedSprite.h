@@ -36,15 +36,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-object
 class ObjectAnimatedSprite : ObjectSprite
 {
-	/**
-	* @var TextureSource 	originalTextureSource
-	* @brief				object's source coordinates
-	* @memberof			ObjectAnimatedSprite
-	*/
+	// object's source coordinates
 	TextureSource originalTextureSource;
 
+	/// @publicsection
 	void constructor(const ObjectSpriteDefinition* objectSpriteDefinition, Object owner);
 	override void writeAnimation();
 }

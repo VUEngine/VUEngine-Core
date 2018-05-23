@@ -33,17 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	Camera
- * @extends Object
- * @ingroup camera
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
@@ -64,18 +53,12 @@ const CameraFrustum* _cameraFrustum = NULL;
  * @fn			Camera::getInstance()
  * @memberof	Camera
  * @public
- *
  * @return		Camera instance
  */
 
 
 /**
  * Class constructor
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::constructor()
 {
@@ -132,11 +115,6 @@ void Camera::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::destructor()
 {
@@ -147,10 +125,6 @@ void Camera::destructor()
 /**
  * Set the movement manager
  *
- * @memberof					Camera
- * @public
- *
- * @param this					Function scope
  * @param cameraMovementManager	The CameraMovementManager
  */
 void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManager)
@@ -169,10 +143,6 @@ void Camera::setCameraMovementManager(CameraMovementManager cameraMovementManage
 /**
  * Set the effect manager
  *
- * @memberof					Camera
- * @public
- *
- * @param this					Function scope
  * @param cameraEffectManager	The CameraEffectManager
  */
 void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
@@ -191,10 +161,6 @@ void Camera::setCameraEffectManager(CameraEffectManager cameraEffectManager)
 /**
  * Center world's camera in function of focus actor's position
  *
- * @memberof							Camera
- * @public
- *
- * @param this							Function scope
  * @param checkIfFocusEntityIsMoving	The CameraEffectManager
  */
 void Camera::focus(u32 checkIfFocusEntityIsMoving)
@@ -221,10 +187,6 @@ void Camera::focus(u32 checkIfFocusEntityIsMoving)
 /**
  * Set the focus entity
  *
- * @memberof			Camera
- * @public
- *
- * @param this			Function scope
  * @param focusEntity	The CameraEffectManager
  */
 void Camera::setFocusGameEntity(Entity focusEntity)
@@ -243,11 +205,6 @@ void Camera::setFocusGameEntity(Entity focusEntity)
 
 /**
  * Unset the focus entity
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::unsetFocusEntity()
 {
@@ -261,11 +218,6 @@ void Camera::unsetFocusEntity()
 /**
  * Retrieve focus entity
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
- *
  * @return		Focus Entity
  */
 Entity Camera::getFocusEntity()
@@ -276,10 +228,6 @@ Entity Camera::getFocusEntity()
 /**
  * An actor has been deleted
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  * @param actor	Entity that has been deleted
  */
 void Camera::onFocusEntityDeleted(Entity actor)
@@ -293,10 +241,6 @@ void Camera::onFocusEntityDeleted(Entity actor)
 /**
  * Translate camera
  *
- * @memberof			Camera
- * @public
- *
- * @param this			Function scope
  * @param translation
  * @param cap
  */
@@ -316,11 +260,6 @@ void Camera::move(Vector3D translation, int cap)
 
 /**
  * Cap position
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  *
  * @return position	Capped Vector3d
  */
@@ -361,11 +300,6 @@ Vector3D Camera::getCappedPosition(Vector3D position)
 
 /**
  * Translate camera
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::capPosition()
 {
@@ -374,11 +308,6 @@ void Camera::capPosition()
 
 /**
  * Get camera's position
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  *
  * @return		Camera position
  */
@@ -390,10 +319,6 @@ Vector3D Camera::getPosition()
 /**
  * Set camera's position
  *
- * @memberof		Camera
- * @public
- *
- * @param this		Function scope
  * @param position	Camera position
  */
 void Camera::setPosition(Vector3D position)
@@ -410,11 +335,6 @@ void Camera::setPosition(Vector3D position)
 
 /**
  * Set camera's position for UI transformation
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::prepareForUITransform()
 {
@@ -427,11 +347,6 @@ void Camera::prepareForUITransform()
 
 /**
  * Set camera's position after UI transformation
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::doneUITransform()
 {
@@ -440,11 +355,6 @@ void Camera::doneUITransform()
 
 /**
  * Retrieve optical config structure
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  *
  * @return 		Optical config structure
  */
@@ -456,10 +366,6 @@ Optical Camera::getOptical()
 /**
  * Set optical config structure
  *
- * @memberof		Camera
- * @public
- *
- * @param this		Function scope
  * @param optical
  */
 void Camera::setOptical(Optical optical)
@@ -470,10 +376,6 @@ void Camera::setOptical(Optical optical)
 /**
  * Set camera's position displacement
  *
- * @memberof								Camera
- * @public
- *
- * @param this								Function scope
  * @param focusEntityPositionDisplacement
  */
 void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisplacement)
@@ -490,11 +392,6 @@ void Camera::setFocusEntityPositionDisplacement(Vector3D focusEntityPositionDisp
 /**
  * Retrieve last displacement
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
- *
  * @return		Last displacement vector
  */
 Vector3D Camera::getLastDisplacement()
@@ -504,11 +401,6 @@ Vector3D Camera::getLastDisplacement()
 
 /**
  * Get current stage's size
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  *
  * @return		Stage size
  */
@@ -520,10 +412,6 @@ Size Camera::getStageSize()
 /**
  * Set current stage's size
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  * @param size	Stage size
  */
 void Camera::setStageSize(Size size)
@@ -534,10 +422,6 @@ void Camera::setStageSize(Size size)
 /**
  * Force values as if camera is moving
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  * @param flag
  */
 void Camera::forceDisplacement(int flag)
@@ -550,10 +434,6 @@ void Camera::forceDisplacement(int flag)
 /**
  * Start an effect
  *
- * @memberof		Camera
- * @public
- *
- * @param this		Function scope
  * @param effect	Effect reference ID
  * @param args		Various effect parameters
  */
@@ -568,10 +448,6 @@ void Camera::startEffect(int effect, ...)
 /**
  * Stop an effect
  *
- * @memberof		Camera
- * @public
- *
- * @param this		Function scope
  * @param effect	Effect reference ID
  */
 void Camera::stopEffect(int effect)
@@ -581,11 +457,6 @@ void Camera::stopEffect(int effect)
 
 /**
  * Reset the camera
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::reset()
 {
@@ -600,11 +471,6 @@ void Camera::reset()
 
 /**
  * Reset the camera frustum
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  */
 void Camera::resetCameraFrustum()
 {
@@ -619,10 +485,6 @@ void Camera::resetCameraFrustum()
 /**
  * Set the camera frustum
  *
- * @memberof			Camera
- * @public
- *
- * @param this			Function scope
  * @param cameraFrustum	Camera frustum
  */
 void Camera::setCameraFrustum(CameraFrustum cameraFrustum)
@@ -664,11 +526,6 @@ void Camera::setCameraFrustum(CameraFrustum cameraFrustum)
 /**
  * Get the camera frustum
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
- *
  * @return		Camera frustum
  */
 CameraFrustum Camera::getCameraFrustum()
@@ -679,11 +536,6 @@ CameraFrustum Camera::getCameraFrustum()
 /**
  * Retrieve focus entity position
  *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
- *
  * @return		Focus entity position vector
  */
 Vector3D Camera::getFocusEntityPosition()
@@ -693,11 +545,6 @@ Vector3D Camera::getFocusEntityPosition()
 
 /**
  * Retrieve focus entity position displacement
- *
- * @memberof	Camera
- * @public
- *
- * @param this	Function scope
  *
  * @return		Focus entity position displacement vector
  */
@@ -710,10 +557,6 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
 /**
  * Print status
  *
- * @memberof			Camera
- * @public
- *
- * @param this			Function scope
  * @param x				Column
  * @param y				Row
  */

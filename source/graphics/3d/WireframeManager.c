@@ -33,14 +33,9 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	WireframeManager
- * @extends Object
- * @ingroup graphics-3d
- */
-
 friend class VirtualNode;
 friend class VirtualList;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -52,7 +47,6 @@ friend class VirtualList;
  * @fn			WireframeManager::getInstance()
  * @memberof	WireframeManager
  * @public
- *
  * @return		WireframeManager instance
  */
 
@@ -60,10 +54,7 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof	WireframeManager
  * @private
- *
- * @param this	Function scope
  */
 void WireframeManager::constructor()
 {
@@ -74,11 +65,6 @@ void WireframeManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	WireframeManager
- * @public
- *
- * @param this	Function scope
  */
 void WireframeManager::destructor()
 {
@@ -102,10 +88,6 @@ void WireframeManager::destructor()
 /**
  * Register a Wireframe to be rendered
  *
- * @memberof		WireframeManager
- * @public
- *
- * @param this		Function scope
  * @param wireframe	Wireframe to register
  */
 void WireframeManager::register(Wireframe wireframe)
@@ -121,10 +103,6 @@ void WireframeManager::register(Wireframe wireframe)
 /**
  * Remove a registered Wireframe
  *
- * @memberof		WireframeManager
- * @public
- *
- * @param this		Function scope
  * @param wireframe	Wireframe to remove
  */
 void WireframeManager::remove(Wireframe wireframe)
@@ -136,11 +114,6 @@ void WireframeManager::remove(Wireframe wireframe)
 
 /**
  * Reset manager's state
- *
- * @memberof	WireframeManager
- * @public
- *
- * @param this	Function scope
  */
 void WireframeManager::reset()
 {
@@ -149,11 +122,6 @@ void WireframeManager::reset()
 
 /**
  * Draw the wireframes to the frame buffers
- *
- * @memberof	WireframeManager
- * @public
- *
- * @param this	Function scope
  */
 void WireframeManager::drawWireframes()
 {
@@ -170,10 +138,6 @@ void WireframeManager::drawWireframes()
 /**
  * Print manager's state
  *
- * @memberof	WireframeManager
- * @public
- *
- * @param this	Function scope
  * @param x		Camera's x coordinate
  * @param y		Camera's y coordinate
  */

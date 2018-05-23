@@ -35,27 +35,17 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-textures-char
 singleton class CharSetManager : Object
 {
-	/**
-	 * @var VirtualList charSets
-	 * @brief			Charsets defined
-	 * @memberof		CharSetManager
-	 */
+	// Charsets defined
 	VirtualList charSets;
-	/**
-	 * @var VirtualList charSetsPendingWriting
-	 * @brief			Charsets pending writing
-	 * @memberof		CharSetManager
-	 */
+	// Charsets pending writing
 	VirtualList charSetsPendingWriting;
-	/**
-	 * @var u16 		freedOffset
-	 * @brief			Next offset to be reclaimed
-	 * @memberof		CharSetManager
-	 */
+	// Next offset to be reclaimed
 	u16 freedOffset;
 
+	/// @publicsection
 	static CharSetManager getInstance();
 	void reset();
 	CharSet getCharSet(CharSetDefinition* charSetDefinition);

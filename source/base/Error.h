@@ -34,8 +34,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+
+/// @ingroup base
 singleton class Error : Object
 {
+	/// @publicsection
 	static Error getInstance();
 	int triggerException(char* message, char* detail);
 }

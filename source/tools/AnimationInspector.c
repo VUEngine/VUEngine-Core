@@ -55,13 +55,14 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	AnimationInspector
- * @extends Object
- * @ingroup tools
- */
-
 friend class Sprite;
+
+extern UserAnimatedEntity _userAnimatedEntities[];
+
+
+//---------------------------------------------------------------------------------------------------------
+//												ENUMS
+//---------------------------------------------------------------------------------------------------------
 
 /**
  * The different modes of the AnimationInspector
@@ -91,7 +92,6 @@ enum AnimationProperties
 	kFrames
 };
 
-extern UserAnimatedEntity _userAnimatedEntities[];
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -103,7 +103,6 @@ extern UserAnimatedEntity _userAnimatedEntities[];
  * @fn			AnimationInspector::getInstance()
  * @memberof	AnimationInspector
  * @public
- *
  * @return		AnimationInspector instance
  */
 
@@ -111,10 +110,7 @@ extern UserAnimatedEntity _userAnimatedEntities[];
 /**
  * Class constructor
  *
- * @memberof	AnimationInspector
  * @private
- *
- * @param this	Function scope
  */
 void AnimationInspector::constructor()
 {
@@ -133,11 +129,6 @@ void AnimationInspector::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	AnimationInspector
- * @public
- *
- * @param this	Function scope
  */
 void AnimationInspector::destructor()
 {
@@ -172,11 +163,6 @@ void AnimationInspector::destructor()
 
 /**
  * Update
- *
- * @memberof	AnimationInspector
- * @public
- *
- * @param this	Function scope
  */
 void AnimationInspector::update()
 {
@@ -192,10 +178,6 @@ void AnimationInspector::update()
 /**
  * Show editor
  *
- * @memberof		AnimationInspector
- * @public
- *
- * @param this		Function scope
  * @param gameState Current game state
  */
 void AnimationInspector::show(GameState gameState)
@@ -241,11 +223,6 @@ void AnimationInspector::show(GameState gameState)
 
 /**
  * Hide editor
- *
- * @memberof		AnimationInspector
- * @public
- *
- * @param this		Function scope
  */
 void AnimationInspector::hide()
 {
@@ -286,10 +263,7 @@ void AnimationInspector::hide()
 /**
  * Setup editor's current page
  *
- * @memberof		AnimationInspector
  * @private
- *
- * @param this		Function scope
  */
 void AnimationInspector::setupMode()
 {
@@ -338,10 +312,6 @@ void AnimationInspector::setupMode()
 /**
  * Process user input
  *
- * @memberof			AnimationInspector
- * @public
- *
- * @param this			Function scope
  * @param pressedKey	User input
  */
 void AnimationInspector::processUserInput(u16 pressedKey)
@@ -394,10 +364,7 @@ void AnimationInspector::processUserInput(u16 pressedKey)
 /**
  * Select AnimatedEntity to work on
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  * @param pressedKey		User input
  */
 void AnimationInspector::selectAnimatedEntity(u32 pressedKey)
@@ -424,10 +391,7 @@ void AnimationInspector::selectAnimatedEntity(u32 pressedKey)
 /**
  * Select the Sprite to work on
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  * @param pressedKey		User input
  */
 void AnimationInspector::selectSprite(u32 pressedKey)
@@ -456,10 +420,7 @@ void AnimationInspector::selectSprite(u32 pressedKey)
 /**
  * Discard previous selected Sprite
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::removePreviousSprite()
 {
@@ -473,10 +434,7 @@ void AnimationInspector::removePreviousSprite()
 /**
  * Select the animation to work on
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  * @param pressedKey		User input
  */
 void AnimationInspector::selectAnimation(u32 pressedKey)
@@ -504,10 +462,7 @@ void AnimationInspector::selectAnimation(u32 pressedKey)
 /**
  * Start editing the selected animation
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  * @param pressedKey		User input
  */
 void AnimationInspector::editAnimation(u32 pressedKey)
@@ -674,10 +629,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 /**
  * Print the list of user AnimatedEntities
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::printUserAnimatedEntities()
 {
@@ -689,10 +641,7 @@ void AnimationInspector::printUserAnimatedEntities()
 /**
  * Print available sprites for the selected AnimatedEntity
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::printSprites()
 {
@@ -704,10 +653,7 @@ void AnimationInspector::printSprites()
 /**
  * Print a list of animation for the selected AnimatedEntity
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::printAnimatedEntityAnimations()
 {
@@ -719,10 +665,7 @@ void AnimationInspector::printAnimatedEntityAnimations()
 /**
  * Print selected animation' values
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::printAnimationConfig()
 {
@@ -768,10 +711,7 @@ void AnimationInspector::printAnimationConfig()
 /**
  * Load the selected animation function to edit
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::loadAnimationFunction()
 {
@@ -795,10 +735,7 @@ void AnimationInspector::loadAnimationFunction()
 /**
  * Create a Sprite to work on
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::createSprite()
 {
@@ -842,10 +779,7 @@ void AnimationInspector::createSprite()
 /**
  * Create OptionSelector for sprites
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::createSpriteSelector()
 {
@@ -876,10 +810,7 @@ void AnimationInspector::createSpriteSelector()
 /**
  * Create OptionSelector for animations
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::createAnimationsSelector()
 {
@@ -917,10 +848,7 @@ void AnimationInspector::createAnimationsSelector()
 /**
  * Create OptionSelector for editing the animation
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::createAnimationEditionSelector()
 {
@@ -963,10 +891,7 @@ void AnimationInspector::createAnimationEditionSelector()
 /**
  * Create OptionSelector for the frames of the current animation
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  */
 void AnimationInspector::createFrameEditionSelector()
 {
@@ -996,10 +921,7 @@ void AnimationInspector::createFrameEditionSelector()
 /**
  * Callback for when animation completes its playback
  *
- * @memberof				AnimationInspector
  * @private
- *
- * @param this				Function scope
  * @param eventFirer		AnimationController
  */
 void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((unused)))

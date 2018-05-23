@@ -41,69 +41,31 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-object
 class ObjectSpriteContainer : Sprite
 {
-	/**
-	* @var VirtualList	objectSprites
-	* @brief			object sprites
-	* @memberof		ObjectSpriteContainer
-	*/
+	// object sprites
 	VirtualList objectSprites;
-	/**
-	* @var VirtualNode	node
-	* @brief			for z sorting
-	* @memberof		ObjectSpriteContainer
-	*/
+	// for z sorting
 	VirtualNode node;
-	/**
-	* @var VirtualNode	previousNode
-	* @brief			for z sorting
-	* @memberof		ObjectSpriteContainer
-	*/
+	// for z sorting
 	VirtualNode previousNode;
-	/**
-	* @var VirtualNode	objectSpriteNodeToDefragment
-	* @brief			next object sprite node to defragment
-	* @memberof		ObjectSpriteContainer
-	*/
+	// next object sprite node to defragment
 	VirtualNode objectSpriteNodeToDefragment;
-	/**
-	* @var int			freedObjectIndex
-	* @brief			used for defragmentation
-	* @memberof		ObjectSpriteContainer
-	*/
+	// used for defragmentation
 	int freedObjectIndex;
-	/**
-	* @var int			firstObjectIndex
-	* @brief			first object index
-	* @memberof		ObjectSpriteContainer
-	*/
+	// first object index
 	int firstObjectIndex;
-	/**
-	* @var int			totalObjects
-	* @brief			total objects
-	* @memberof		ObjectSpriteContainer
-	*/
+	// total objects
 	int totalObjects;
-	/**
-	* @var int			availableObjects
-	* @brief			OBJs available
-	* @memberof		ObjectSpriteContainer
-	*/
+	// OBJs available
 	int availableObjects;
-	/**
-	* @var int			spt
-	* @brief			spt index
-	* @memberof		ObjectSpriteContainer
-	*/
+	// spt index
 	int spt;
-	/**
-	* @var bool		removingObjectSprite
-	* @brief			flag to halt defragmentation while sprite removal is taking place
-	* @memberof		ObjectSpriteContainer
-	*/
+	// flag to halt defragmentation while sprite removal is taking place
 	bool removingObjectSprite;
 
+	/// @publicsection
 	void constructor(int spt, int totalObjects, int firstObjectIndex);
 	s32 addObjectSprite(ObjectSprite objectSprite, int numberOfObjects);
 	void calculateParallax(fix10_6 z);

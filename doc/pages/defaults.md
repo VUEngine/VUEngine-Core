@@ -31,6 +31,6 @@ An Automatic Pause screen is shown after approximately 30 minutes of gameplay.
 
 The amount of time after which the Automatic Pause screen is shown can be changed through the `__AUTO_PAUSE_DELAY` setting, to be made in your projects's `config.h` file.
 
-You can also set your own state to be used for the Automatic Pause screen using the `Game_setAutomaticPauseState` function. Here's an example:
+You can also set your own state to be used for the Automatic Pause screen using the `Game::setAutomaticPauseState` function. Here's an example:
 
-	Game_setAutomaticPauseState(Game_getInstance(), (GameState)CustomAutoPauseScreenState_getInstance());
+	Game::setAutomaticPauseState(Game::getInstance(), (GameState)CustomAutoPauseScreenState::getInstance());

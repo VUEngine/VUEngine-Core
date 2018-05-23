@@ -37,11 +37,18 @@
 // forward declare game's custom save data struct
 struct SaveData;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup hardware
 singleton class SRAMManager : Object
 {
-	/* save space start address */
+	// save space start address
 	u16* saveSpaceStartAddress;
 
+	/// @publicsection
 	static SRAMManager getInstance();
 	void clear(int startOffset, int endOffset);
 	void save(const BYTE* const source, int memberOffset, int dataSize);

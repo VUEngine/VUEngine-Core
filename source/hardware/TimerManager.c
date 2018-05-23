@@ -35,16 +35,10 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	TimerManager
- * @extends Object
- * @ingroup hardware
- */
-
-
 // use static globals instead of class' members to avoid dereferencing
 static TimerManager _timerManager;
 static SoundManager _soundManager;
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -56,7 +50,6 @@ static SoundManager _soundManager;
  * @fn			TimerManager::getInstance()
  * @memberof	TimerManager
  * @public
- *
  * @return		TimerManager instance
  */
 
@@ -64,10 +57,7 @@ static SoundManager _soundManager;
 /**
  * Class constructor
  *
- * @memberof	TimerManager
  * @private
- *
- * @param this	Function scope
  */
 void TimerManager::constructor()
 {
@@ -83,11 +73,6 @@ void TimerManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	TimerManager
- * @public
- *
- * @param this	Function scope
  */
 void TimerManager::destructor()
 {
@@ -97,11 +82,6 @@ void TimerManager::destructor()
 
 /**
  * Initialize manager
- *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
  */
 void TimerManager::initialize()
 {
@@ -115,10 +95,6 @@ void TimerManager::initialize()
 /**
  * Enable / disable interrupt
  *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
  * @param flag		Bool to enable or disable
  */
 void TimerManager::enableInterrupt(bool flag)
@@ -138,10 +114,6 @@ void TimerManager::enableInterrupt(bool flag)
 /**
  * Enable / disable timer
  *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
  * @param flag		Bool to enable or disable
  */
 void TimerManager::enable(bool flag)
@@ -160,9 +132,6 @@ void TimerManager::enable(bool flag)
 
 /**
  * Interrupt handler
- *
- * @memberof		TimerManager
- * @public
  */
 static void TimerManager::interruptHandler()
 {
@@ -197,11 +166,6 @@ static void TimerManager::interruptHandler()
 /**
  * Retrieve the elapsed milliseconds in the current game frame
  *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
- *
  * @return			Milliseconds elapsed during the current game frame
  */
 u32 TimerManager::getMillisecondsElapsed()
@@ -212,11 +176,6 @@ u32 TimerManager::getMillisecondsElapsed()
 /**
  * Retrieve the total elapsed milliseconds
  *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
- *
  * @return			Total elapsed milliseconds
  */
 u32 TimerManager::getTotalMillisecondsElapsed()
@@ -226,11 +185,6 @@ u32 TimerManager::getTotalMillisecondsElapsed()
 
 /**
  * Reset the total milliseconds elapsed
- *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
  */
 u32 TimerManager::resetMilliseconds()
 {
@@ -244,10 +198,6 @@ u32 TimerManager::resetMilliseconds()
 /**
  * Set Timer's time
  *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
  * @param time		New time
  */
 void TimerManager::setTime(u16 time)
@@ -259,10 +209,6 @@ void TimerManager::setTime(u16 time)
 /**
  * Set Timer's frequency
  *
- * @memberof				TimerManager
- * @public
- *
- * @param this				Function scope
  * @param frequency			New frequency
  */
 void TimerManager::setFrequency(int frequency)
@@ -275,11 +221,6 @@ void TimerManager::setFrequency(int frequency)
 /**
  * Retrieve Timer's ZSTAT
  *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
- *
  * @return			ZSTAT
  */
 int TimerManager::getStat()
@@ -289,11 +230,6 @@ int TimerManager::getStat()
 
 /**
  * Clear Timer's ZSTAT
- *
- * @memberof		TimerManager
- * @public
- *
- * @param this		Function scope
  */
 void TimerManager::clearStat()
 {
@@ -303,10 +239,6 @@ void TimerManager::clearStat()
 /**
  * Produce a wait
  *
- * @memberof				TimerManager
- * @public
- *
- * @param this				Function scope
  * @param milliSeconds		Time to wait
  */
 void TimerManager::wait(u32 milliSeconds)
@@ -325,10 +257,6 @@ void TimerManager::wait(u32 milliSeconds)
 /**
  * Call a method a number of times during a certain lapse
  *
- * @memberof				TimerManager
- * @public
- *
- * @param this				Function scope
  * @param callTimes			Number of calls to produce during the total duration
  * @param duration			Time that must take the callTimes
  * @param object			Called method's scope

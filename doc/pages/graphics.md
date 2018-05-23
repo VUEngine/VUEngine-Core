@@ -29,13 +29,13 @@ CharSets abstract the Virtual Boy's CHAR memory in order to optimize its usage. 
 
 They must not be instantiated manually, but instead a request to the manager for it allocate a new `CharSet` if needed:
 
-	CharSet charSet = CharSetManager_getCharSet(CharSetManager_getInstance(), charSetDefinition);
+	CharSet charSet = CharSetManager_getCharSet(CharSetManager::getInstance(), charSetDefinition);
 
 Whenever possible, the manager tries to return a previously allocated `CharSet` with the same CharSetDefinition as the one received on the request. That this happens depends on the allocation type used in the definition. For information about the different allocation types check the section about the animations.
 
 Similarly, they should never be deleted manually, but must be released calling the manager:
 
-	CharSetManager_releaseCharSet(CharSetManager_getInstance(), charSet);
+	CharSetManager_releaseCharSet(CharSetManager::getInstance(), charSet);
 
 When a released `CharSet`'s usage count is zero, the manager deletes it and starts defragmenting the CHAR memory.
 
@@ -50,13 +50,13 @@ This `Texture` type abstracts the Virtual Boy's BGMAP memory in order to optimiz
 
 They must not be instantiated manually, but instead a request to the manager for it allocate a new `BgmapTexture` if needed:
 
-	BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager_getInstance(), textureDefinition));
+	BgmapTexture bgmapTexture = BgmapTextureManager_getTexture(BgmapTextureManager::getInstance(), textureDefinition));
 
 Whenever possible, the manager tries to return a previously allocated `BgmapTexture` with the same TextureDefinition as the one received on the request. That this happens depends on the allocation type used in the CharSetDefinition referenced by the TextureDefinition. For information about the different `CharSet` allocation types check the section about the animations.
 
 Similarly, they should never be deleted manually, but must be released calling the manager:
 
-	BgmapTextureManager_releaseTexture(BgmapTextureManager_getInstance(), bgmapTexture);
+	BgmapTextureManager_releaseTexture(BgmapTextureManager::getInstance(), bgmapTexture);
 
 When a released `BgmapTexture`'s usage count is zero, the manager deletes it, but since there is no BGMAP memory defragmentation mechanism within the engine, only WRAM is freed, BGMAP VRAM remains used until the current `GameState` exits.
 

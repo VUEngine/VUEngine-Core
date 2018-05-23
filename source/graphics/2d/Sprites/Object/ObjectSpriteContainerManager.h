@@ -42,15 +42,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-object
 singleton class ObjectSpriteContainerManager : Object
 {
-	/**
-	 * @var ObjectSpriteContainer 	objectSpriteContainers
-	 * @brief						object groups
-	 * @memberof					ObjectSpriteContainerManager
-	 */
+	// object groups
 	ObjectSpriteContainer objectSpriteContainers[__TOTAL_OBJECT_SEGMENTS];
 
+	/// @publicsection
 	static ObjectSpriteContainerManager getInstance();
 	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
 	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);

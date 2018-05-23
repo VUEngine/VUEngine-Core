@@ -33,14 +33,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	ParticleBody
- * @extends Body
- * @ingroup stage-entities-particles
- */
-
-
-
 extern fix10_6 _currentWorldFriction;
 extern fix10_6 _currentElapsedTime;
 extern const Acceleration* _currentGravity;
@@ -53,10 +45,6 @@ extern const Acceleration* _currentGravity;
 /**
  * Class constructor
  *
- * @memberof	ParticleBody
- * @public
- *
- * @param this	Function scope
  * @param owner
  * @param mass
  */
@@ -67,11 +55,6 @@ void ParticleBody::constructor(SpatialObject owner, const PhysicalSpecification*
 
 /**
  * Class destructor
- *
- * @memberof	ParticleBody
- * @public
- *
- * @param this	Function scope
  */
 void ParticleBody::destructor()
 {
@@ -82,11 +65,6 @@ void ParticleBody::destructor()
 
 /**
  * Update movement
- *
- * @memberof	ParticleBody
- * @public
- *
- * @param this	Function scope
  */
 void ParticleBody::update()
 {

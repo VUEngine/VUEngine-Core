@@ -34,23 +34,10 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	ObjectAnimatedSprite
- * @extends ObjectSprite
- * @ingroup graphics-2d-sprites-object
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 extern int strcmp(const char *, const char *);
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,10 +47,6 @@ extern int strcmp(const char *, const char *);
 /**
  * Class constructor
  *
- * @memberof						ObjectAnimatedSprite
- * @public
- *
- * @param this						Function scope
  * @param objectSpriteDefinition	Sprite definition
  * @param owner						Owner
  */
@@ -78,10 +61,7 @@ void ObjectAnimatedSprite::constructor(const ObjectSpriteDefinition* objectSprit
 /**
  * Class destructor
  *
- * @memberof		ObjectAnimatedSprite
- * @public
- *
- * @param this		Function scope
+ * @private
  */
 void ObjectAnimatedSprite::destructor()
 {
@@ -98,11 +78,6 @@ void ObjectAnimatedSprite::destructor()
 
 /**
  * Write animation
- *
- * @memberof		ObjectAnimatedSprite
- * @public
- *
- * @param this		Function scope
  */
 void ObjectAnimatedSprite::writeAnimation()
 {

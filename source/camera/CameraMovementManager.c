@@ -38,12 +38,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	CameraMovementManager
- * @extends Object
- * @ingroup camera
- */
-
 friend class Camera;
 
 
@@ -57,18 +51,12 @@ friend class Camera;
  * @fn			CameraMovementManager::getInstance()
  * @memberof	CameraMovementManager
  * @public
- *
  * @return		CameraMovementManager instance
  */
 
 
 /**
  * Class constructor
- *
- * @memberof	CameraMovementManager
- * @public
- *
- * @param this	Function scope
  */
 void CameraMovementManager::constructor()
 {
@@ -78,11 +66,6 @@ void CameraMovementManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	CameraMovementManager
- * @public
- *
- * @param this	Function scope
  */
 void CameraMovementManager::destructor()
 {
@@ -93,10 +76,6 @@ void CameraMovementManager::destructor()
 /**
  * Center world's camera in function of focus actor's position
  *
- * @memberof							CameraMovementManager
- * @public
- *
- * @param this							Function scope
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
 void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving)

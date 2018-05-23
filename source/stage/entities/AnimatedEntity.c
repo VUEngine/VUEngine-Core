@@ -41,12 +41,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	AnimatedEntity
- * @extends Entity
- * @ingroup stage-entities
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 

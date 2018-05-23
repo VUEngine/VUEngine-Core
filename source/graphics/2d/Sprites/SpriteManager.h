@@ -33,90 +33,57 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											TYPE DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+/**
+ * Sprites List
+ *
+ * @memberof SpriteManager
+ */
+typedef struct SpritesList
+{
+	const void* spriteClassVTable;
+	VirtualList sprites;
+
+} SpritesList;
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites
 singleton class SpriteManager : Object
 {
-	/**
-	 * @var VirtualList	sprites
-	 * @brief 			list of sprites to render
-	 * @memberof		SpriteManager
-	 */
+	// list of sprites to render
 	VirtualList sprites;
-	/**
-	 * @var VirtualList	spritesToDispose
-	 * @brief 			list of sprites to delete
-	 * @memberof		SpriteManager
-	 */
+	// list of sprites to delete
 	VirtualList spritesToDispose;
-	/**
-	 * @var VirtualNode	node
-	 * @brief 			sorting nodes
-	 * @memberof		SpriteManager
-	 */
+	// sorting first node
 	VirtualNode zSortingFirstNode;
-	/**
-	 * @var VirtualNode	nextNode
-	 * @brief
-	 * @memberof		SpriteManager
-	 */
+	// sorting second node
 	VirtualNode zSortingSecondNode;
-	/**
-	 * @var Sprite		spritePendingTextureWriting
-	 * @brief 			sprite's texture writing
-	 * @memberof		SpriteManager
-	 */
+	// sprite's texture writing
 	Sprite spritePendingTextureWriting;
-	/**
-	 * @var bool		lockSpritesLists
-	 * @brief 			semaphore to prevent manipulation of VirtualList during interrupt
-	 * @memberof		SpriteManager
-	 */
+	// semaphore to prevent manipulation of VirtualList during interrupt
 	bool lockSpritesLists;
-	/**
-	 * @var bool		evenFrame
-	 * @brief 			Flag to distinguish between even and odd game frames, needed for sprite transparency.
-	 * @memberof		SpriteManager
-	 */
+	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
 	bool evenFrame;
-	/**
-	 * @var u8			freeLayer
-	 * @brief 			next world layer
-	 * @memberof		SpriteManager
-	 */
+	// next world layer
 	u8 freeLayer;
-	/**
-	 * @var s8			cyclesToWaitForSpriteTextureWriting
-	 * @brief 			number of cycles that the texture writing is idle
-	 * @memberof		SpriteManager
-	 */
+	// number of cycles that the texture writing is idle
 	s8 cyclesToWaitForSpriteTextureWriting;
-	/**
-	 * @var s8			texturesMaximumRowsToWrite
-	 * @brief 			number of rows to write in texture's writing
-	 * @memberof		SpriteManager
-	 */
+	// number of rows to write in texture's writing
 	s8 texturesMaximumRowsToWrite;
-	/**
-	 * @var s8			maximumParamTableRowsToComputePerCall
-	 * @brief 			number of rows to write in affine transformations
-	 * @memberof		SpriteManager
-	 */
+	// number of rows to write in affine transformations
 	s8 maximumParamTableRowsToComputePerCall;
-	/**
-	 * @var s8			deferParamTableEffects
-	 * @brief 			flag to control texture's writing deferring
-	 * @memberof		SpriteManager
-	 */
+	// flag to control texture's writing deferring
 	s8 deferParamTableEffects;
-	/**
-	 * @var s8			waitToWriteSpriteTextures
-	 * @brief 			delay before writing again
-	 * @memberof		SpriteManager
-	 */
+	// delay before writing again
 	s8 waitToWriteSpriteTextures;
 
+	/// @publicsection
 	static SpriteManager getInstance();
 	Sprite createSprite(SpriteDefinition* spriteDefinition, Object owner);
 	void deferParamTableEffects(bool deferAffineTransformations);

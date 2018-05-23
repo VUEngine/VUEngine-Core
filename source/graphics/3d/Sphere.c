@@ -33,38 +33,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	Sphere
- * @extends Object
- * @ingroup graphics-3d
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// globals
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-
-
 
 /**
  * Class constructor
  *
- * @memberof	Sphere
  * @private
- *
- * @param this	Function scope
  */
 void Sphere::constructor(Vector3D center, fix10_6 radius)
 {
@@ -77,11 +52,6 @@ void Sphere::constructor(Vector3D center, fix10_6 radius)
 
 /**
  * Class destructor
- *
- * @memberof	Sphere
- * @public
- *
- * @param this	Function scope
  */
 void Sphere::destructor()
 {
@@ -95,11 +65,7 @@ void Sphere::destructor()
 /**
  * Retrieve center
  *
- * @memberof					Sphere
- * @public
- *
- * @param this					Function scope
- * @return 						Sphere's center
+ * @return 	Sphere's center
  */
 Vector3D Sphere::getCenter()
 {
@@ -109,11 +75,7 @@ Vector3D Sphere::getCenter()
 /**
  * Set center
  *
- * @memberof					Sphere
- * @public
- *
- * @param this					Function scope
- * @param center 				New value
+ * @param center New value
  */
 void Sphere::setCenter(Vector3D center)
 {
@@ -123,11 +85,7 @@ void Sphere::setCenter(Vector3D center)
 /**
  * Retrieve radius
  *
- * @memberof					Sphere
- * @public
- *
- * @param this					Function scope
- * @return 						Sphere's radius
+ * @return 	Sphere's radius
  */
 fix10_6 Sphere::getRadius()
 {
@@ -137,11 +95,7 @@ fix10_6 Sphere::getRadius()
 /**
  * Set radius
  *
- * @memberof					Sphere
- * @public
- *
- * @param this					Function scope
- * @param radius 				New value
+ * @param radius New value
  */
 void Sphere::setRadius(fix10_6 radius)
 {
@@ -151,12 +105,7 @@ void Sphere::setRadius(fix10_6 radius)
 /**
  * Write to the frame buffers
  *
- * @memberof					Sphere
- * @public
- *
- * @param this					Function scope
- * @param this					Function scope
- * @param calculateParallax		Tru to compute the parallax displacement for each pixel
+ * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
 void Sphere::draw(bool calculateParallax)
 {

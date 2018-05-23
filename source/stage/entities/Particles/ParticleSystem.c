@@ -37,12 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	ParticleSystem
- * @extends Entity
- * @ingroup stage-entities-particles
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -55,10 +49,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof						ParticleSystem
- * @public
- *
- * @param this						Function scope
  * @param particleSystemDefinition	Definition of the ParticleSystem
  * @param id
  * @param internalId
@@ -94,11 +84,6 @@ void ParticleSystem::constructor(ParticleSystemDefinition* particleSystemDefinit
 
 /**
  * Class destructor
- *
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
  */
 void ParticleSystem::destructor()
 {
@@ -164,10 +149,7 @@ void ParticleSystem::destructor()
 }
 
 /**
- * @memberof	ParticleSystem
  * @private
- *
- * @param this	Function scope
  */
 void ParticleSystem::processExpiredParticles()
 {
@@ -201,10 +183,6 @@ void ParticleSystem::processExpiredParticles()
 }
 
 /**
- * @memberof			ParticleSystem
- * @public
- *
- * @param this			Function scope
  * @param elapsedTime
  */
 void ParticleSystem::update(u32 elapsedTime)
@@ -255,11 +233,7 @@ void ParticleSystem::update(u32 elapsedTime)
 }
 
 /**
- * @memberof	ParticleSystem
  * @private
- *
- * @param this	Function scope
- *
  * @return		Particle
  */
 Particle ParticleSystem::recycleParticle()
@@ -290,12 +264,8 @@ Particle ParticleSystem::recycleParticle()
 }
 
 /**
- * @memberof	ParticleSystem
  * @private
- *
- * @param this	Function scope
  * @param seed
- *
  * @return		Spawn position
  */
 const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
@@ -313,12 +283,8 @@ const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
 }
 
 /**
- * @memberof	ParticleSystem
  * @private
- *
- * @param this	Function scope
  * @param seed
- *
  * @return		Force
  */
 const Force* ParticleSystem::getParticleSpawnForce(long seed)
@@ -337,11 +303,6 @@ const Force* ParticleSystem::getParticleSpawnForce(long seed)
 
 /**
  * Spawn all particles at once. This function's intended use is for recyclable particles mainly.
- *
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
  */
 void ParticleSystem::spawnAllParticles()
 {
@@ -363,10 +324,7 @@ void ParticleSystem::spawnAllParticles()
 /**
  * Spawn a particle
  *
- * @memberof	ParticleSystem
  * @private
- *
- * @param this	Function scope
  */
 Particle ParticleSystem::spawnParticle()
 {
@@ -391,10 +349,6 @@ Particle ParticleSystem::spawnParticle()
 }
 
 /**
- * @memberof					ParticleSystem
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
@@ -414,12 +368,6 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::synchronizeGraphics()
 {
 	VirtualNode node = this->particles->head;
@@ -437,12 +385,7 @@ void ParticleSystem::synchronizeGraphics()
 /**
  * Handles incoming messages
  *
- * @memberof		ParticleSystem
- * @public
- *
- * @param this		Function scope
  * @param telegram	The received message
- *
  * @return			Always returns false
  */
 bool ParticleSystem::handleMessage(Telegram telegram __attribute__ ((unused)))
@@ -450,12 +393,6 @@ bool ParticleSystem::handleMessage(Telegram telegram __attribute__ ((unused)))
 	return false;
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::show()
 {
 	Base::show(this);
@@ -468,12 +405,6 @@ void ParticleSystem::show()
 	}
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::hide()
 {
 	Base::hide(this);
@@ -486,12 +417,6 @@ void ParticleSystem::hide()
 	}
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::resume()
 {
 	Base::resume(this);
@@ -524,12 +449,6 @@ void ParticleSystem::resume()
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::suspend()
 {
 	Base::suspend(this);
@@ -555,10 +474,7 @@ void ParticleSystem::suspend()
 }
 
 /**
- * @memberof		ParticleSystem
  * @private
- *
- * @param this		Function scope
  * @param particle
  */
 void ParticleSystem::particleExpired(Particle particle)
@@ -568,11 +484,7 @@ void ParticleSystem::particleExpired(Particle particle)
 }
 
 /**
- * @memberof	ParticleSystem
  * @private
- *
- * @param this	Function scope
- *
  * @return		Time
  */
 int ParticleSystem::computeNextSpawnTime()
@@ -581,12 +493,6 @@ int ParticleSystem::computeNextSpawnTime()
 			Utilities::random(Utilities::randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::start()
 {
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -594,12 +500,6 @@ void ParticleSystem::start()
 	this->paused = false;
 }
 
-/**
- * @memberof	ParticleSystem
- * @public
- *
- * @param this	Function scope
- */
 void ParticleSystem::pause()
 {
 	this->paused = true;

@@ -67,57 +67,27 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup stage-entities
 class Container : SpatialObject
 {
-	/**
-	* @var Transformation 	transformation
-	* @brief				3D transformation
-	* @memberof			Container
-	*/
+	// 3D transformation
 	Transformation transformation;
-	/**
-	* @var VirtualList 	children
-	* @brief				Children list
-	* @memberof			Container
-	*/
+	// Children list
 	VirtualList children;
-	/**
-	* @var VirtualList 	removedChildren
-	* @brief				Removed children list
-	* @memberof			Container
-	*/
+	// Removed children list
 	VirtualList removedChildren;
-	/**
-	* @var Container 		parent
-	* @brief				Parent
-	* @memberof			Container
-	*/
+	// Parent
 	Container parent;
-	/**
-	* @var char* 			name
-	* @brief				Name
-	* @memberof			Container
-	*/
+	// Name
 	char* name;
-	/**
-	* @var u8 				deleteMe
-	* @brief				Flag for parent to know to delete it
-	* @memberof			Container
-	*/
+	// Flag for parent to know to delete it
 	u8 deleteMe;
-	/**
-	* @var u8 				hidden
-	* @brief				Flag to hide the entity
-	* @memberof			Container
-	*/
+	// Flag to hide the entity
 	u8 hidden;
-	/**
-	* @var u8 				invalidateGlobalTransformation
-	* @brief				Flag to recalculate global transformations
-	* @memberof			Container
-	*/
+	// Flag to recalculate global transformations
 	u8 invalidateGlobalTransformation;
 
+	/// @publicsection
 	void constructor(const char* const name);
 	void applyEnvironmentToTransformation(const Transformation* environmentTransform);
 	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);

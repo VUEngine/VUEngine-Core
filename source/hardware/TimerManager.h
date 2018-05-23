@@ -48,15 +48,16 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup hardware
 singleton class TimerManager : Object
 {
 	u32 milliseconds;
 	u32 totalMilliseconds;
 	u8 tcrValue;
 
+	/// @publicsection
 	static TimerManager getInstance();
 	static void interruptHandler();
-
 	void enable(bool flag);
 	u32 getMillisecondsElapsed();
 	u32 getTotalMillisecondsElapsed();

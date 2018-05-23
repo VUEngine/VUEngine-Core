@@ -37,12 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	CameraEffectManager
- * @extends Object
- * @ingroup camera
- */
-
 friend class Camera;
 
 
@@ -56,18 +50,12 @@ friend class Camera;
  * @fn			CameraEffectManager::getInstance()
  * @memberof	CameraEffectManager
  * @public
- *
  * @return		CameraEffectManager instance
  */
 
 
 /**
  * Class constructor
- *
- * @memberof	CameraEffectManager
- * @public
- *
- * @param this	Function scope
  */
 void CameraEffectManager::constructor()
 {
@@ -82,11 +70,6 @@ void CameraEffectManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	CameraEffectManager
- * @public
- *
- * @param this	Function scope
  */
 void CameraEffectManager::destructor()
 {
@@ -99,11 +82,6 @@ void CameraEffectManager::destructor()
 
 /**
  * Get the current default brightness settings
- *
- * @memberof	CameraEffectManager
- * @public
- *
- * @param this	Function scope
  *
  * @return		Brightness
  */
@@ -134,10 +112,6 @@ Brightness CameraEffectManager::getDefaultBrightness()
 /**
  * Start an effect
  *
- * @memberof	CameraEffectManager
- * @public
- *
- * @param this		Function scope
  * @param effect	Effect Id
  * @param args		va_list of effect parameters
  */
@@ -177,10 +151,6 @@ void CameraEffectManager::startEffect(int effect, va_list args)
 /**
  * Stop an effect
  *
- * @memberof	CameraEffectManager
- * @public
- *
- * @param this		Function scope
  * @param effect	Effect Id
  */
 void CameraEffectManager::stopEffect(int effect)
@@ -197,12 +167,7 @@ void CameraEffectManager::stopEffect(int effect)
 /**
  * Process a telegram
  *
- * @memberof		CameraEffectManager
- * @public
- *
- * @param this		Function scope
  * @param telegram	Received telegram
- *
  * @return			True if successfully processed, false otherwise
  */
 bool CameraEffectManager::handleMessage(Telegram telegram)
@@ -219,10 +184,7 @@ bool CameraEffectManager::handleMessage(Telegram telegram)
 /**
  * Start a synchronous fade effect
  *
- * @memberof		CameraEffectManager
  * @private
- *
- * @param this		Function scope
  * @param effect	Effect ID
  * @param delay		Start effect after this delay
  */
@@ -264,10 +226,7 @@ void CameraEffectManager::fxFadeStart(int effect, int delay)
 /**
  * Start an asynchronous fade effect
  *
- * @memberof				CameraEffectManager
  * @private
- *
- * @param this				Function scope
  * @param initialDelay		Start effect after this initial delay
  * @param targetBrightness	Fade to this target brightness
  * @param delayBetweenSteps	Delay between the individual fading steps
@@ -318,10 +277,7 @@ void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* t
 /**
  * Stop the current asynchronous fade effect
  *
- * @memberof	CameraEffectManager
  * @private
- *
- * @param this	Function scope
  */
 void CameraEffectManager::fxFadeAsyncStop()
 {
@@ -346,10 +302,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 /**
  * Set the screen to the default brightness
  *
- * @memberof	CameraEffectManager
  * @private
- *
- * @param this	Function scope
  */
 void CameraEffectManager::showCamera()
 {
@@ -365,10 +318,7 @@ void CameraEffectManager::showCamera()
 /**
  * Set the screen to black
  *
- * @memberof	CameraEffectManager
  * @private
- *
- * @param this	Function scope
  */
 void CameraEffectManager::hideCamera()
 {
@@ -378,10 +328,7 @@ void CameraEffectManager::hideCamera()
 /**
  * Do a synchronous fade in step
  *
- * @memberof	CameraEffectManager
  * @private
- *
- * @param this	Function scope
  */
 void CameraEffectManager::fxFadeIn()
 {
@@ -409,10 +356,7 @@ void CameraEffectManager::fxFadeIn()
 /**
  * Do a synchronous fade out step
  *
- * @memberof	CameraEffectManager
  * @private
- *
- * @param this	Function scope
  */
 void CameraEffectManager::fxFadeOut()
 {
@@ -427,10 +371,7 @@ void CameraEffectManager::fxFadeOut()
 /**
  * Do an asynchronous fading step
  *
- * @memberof	CameraEffectManager
  * @private
- *
- * @param this	Function scope
  */
 void CameraEffectManager::fxFadeAsync()
 {

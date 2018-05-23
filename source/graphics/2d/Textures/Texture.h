@@ -33,81 +33,72 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-// defines a background in ROM memory
+/**
+ * A Texture definition
+ *
+ * @memberof Texture
+ */
 typedef struct TextureDefinition
 {
-	// pointer to the char definition
+	/// pointer to the char definition
 	CharSetDefinition* charSetDefinition;
 
-	// pointer to the bgtexture definition in ROM
+	/// pointer to the bgtexture definition in ROM
 	BYTE* mapDefinition;
 
-	// x size, 1 column represents 8 pixels
+	/// x size, 1 column represents 8 pixels
 	u32 cols;
 
-	// y size, 1 row represents 8 pixels
+	/// y size, 1 row represents 8 pixels
 	u32 rows;
 
-	// padding for affine/hbias transformations (cols, rows)
+	/// padding for affine/hbias transformations (cols, rows)
 	TexturePadding padding;
 
-	// number of frames
+	/// number of frames
 	u32 numberOfFrames;
 
-	// palette index to use
+	/// palette index to use
 	u32 palette;
 
-	// recyclable
+	/// recyclable
 	bool recyclable;
 
 } TextureDefinition;
 
+/**
+ * A Texture definition that is stored in ROM
+ *
+ * @memberof Texture
+ */
 typedef const TextureDefinition TextureROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// A texture which has the logic to be allocated in graphic memory
+/// @ingroup graphics-2d-textures
 abstract class Texture : Object
 {
-	/**
-	* @var CharSet				charSet
-	* @brief					Char group to use int this texture
-	* @memberof				Texture
-	*/
+	// Char group to use int this texture
 	CharSet charSet;
-	/**
-	* @var TextureDefinition*	textureDefinition
-	* @brief					Pointer to ROM definition
-	* @memberof				Texture
-	*/
+	// Pointer to ROM definition
 	TextureDefinition* textureDefinition;
-	/**
-	* @var u32					mapDisplacement
-	* @brief					Array definition of the map
-	* @memberof				Texture
-	*/
+	// Array definition of the map
 	u32 mapDisplacement;
-	/**
-	* @var u16					id
-	* @brief					Texture's id
-	* @memberof				Texture
-	*/
+	// Texture's id
 	u16 id;
-	/**
-	* @var u8					palette
-	* @brief					Color palette
-	* @memberof				Texture
-	*/
+	// Color palette
 	u8 palette;
-	/**
-	* @var u8					written
-	* @brief					Written flag
-	* @memberof				Texture
-	*/
+	// Written flag
 	u8 written;
 
-	// A texture which has the logic to be allocated in graphic memory
+	/// @publicsection
 	void constructor(TextureDefinition* textureDefinition, u16 id);
 	void setDefinition(TextureDefinition* textureDefinition);
 	TextureDefinition* getDefinition();

@@ -10,11 +10,11 @@ Messaging
 
 Message between objects are carried out by telegrams whose dispatching is managed by a singleton of the `MessageDispatcher` class.
 
-	MessageDispatcher_dispatchMessage(delayInMilliseconds, sender, receiver, messageEnum, extraInfoPointer);
+	MessageDispatcher::dispatchMessage(delayInMilliseconds, sender, receiver, messageEnum, extraInfoPointer);
 	
 If the delay argument is zero, the message is delivered at the moment of the dispatch request. If a value greater than zero is passed as the first argument, then the message will be delivered once the delay expires.
 
-Delayed messages must always be sent between objects that you know will be alive at the moment of delivery. Therefore you need to make sure to cancel any delayed messages in the destructor of each class that uses them. This is done with the `MessageDispatcher_discardDelayedMessages` method.
+Delayed messages must always be sent between objects that you know will be alive at the moment of delivery. Therefore you need to make sure to cancel any delayed messages in the destructor of each class that uses them. This is done with the `MessageDispatcher::discardDelayedMessages` method.
 
 The `Object`'s handleMessage method can be overrode to specify each class' behavior.
 
@@ -28,30 +28,30 @@ The engine supports event propagation at the `Object` level too.
 
 To listen for an event, add a listener with the following code:
 
-	Object_addEventListener(triggerObject,listener, eventListenerMethod, eventCode);
+	Object::addEventListener(triggerObject, listener, eventListenerMethod, eventCode);
 
 To fire an event, call the following code:
 
-	Object_fireEvent(triggerObject, eventCode);
+	Object::fireEvent(triggerObject, eventCode);
 	
 The removal of listeners is the responsibility of the client code. To remove a listener use one of the following:
 
-	Object_removeEventListener(triggerObject, listener, method, eventCode);
-	Object_removeEventListeners(triggerObject, listener, eventCode);
-	Object_removeAllEventListeners(triggerObject, eventCode);
+	Object::removeEventListener(triggerObject, listener, method, eventCode);
+	Object::removeEventListeners(triggerObject, listener, eventCode);
+	Object::removeAllEventListeners(triggerObject, eventCode);
 
 Beware: During the processing of an event it is illegal to modify the firer's event list by adding or removing event listeners to it, or by deleting the firer. If any of that happens, the engine will trigger an exception.
 
 
 Message propagation
-------
+-------------------
 
 The Container implements a passMessage method that allows the propagation of a message to all its descendants. For example, to propagate a message through all the descendants of a Stage use the following call:
 
-	Container_propagateMessage(stage, Container::onPropagatedMessage, message);
+	Container::propagateMessage(stage, Container::onPropagatedMessage, message);
  
 Then, to react to the message, override the following method in your class:
 
-	bool Container_handlePropagatedMessage(int message);
+	bool Container::handlePropagatedMessage(int message);
 
 Message propagation stops when handlePropagatedMessage returns true.

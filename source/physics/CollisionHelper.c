@@ -37,12 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	CollisionHelper
- * @extends Object
- * @ingroup graphics-3d
- */
-
 friend class Box;
 friend class InverseBox;
 friend class Ball;
@@ -58,7 +52,6 @@ friend class Ball;
  * @fn			CollisionHelper::getInstance()
  * @memberof	CollisionHelper
  * @public
- *
  * @return		CollisionHelper instance
  */
 
@@ -66,10 +59,7 @@ friend class Ball;
 /**
  * Class constructor
  *
- * @memberof	CollisionHelper
  * @private
- *
- * @param this	Function scope
  */
 void CollisionHelper::constructor()
 {
@@ -78,11 +68,6 @@ void CollisionHelper::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	CollisionHelper
- * @public
- *
- * @param this	Function scope
  */
 void CollisionHelper::destructor()
 {
@@ -93,12 +78,8 @@ void CollisionHelper::destructor()
 /**
  * Check if two shapes overlap
  *
- * @memberof			CollisionHelper
- * @public
- *
- * @param this			Function scope
- * @param shapeA		Shape
- * @param shapeB		Shape
+ * @param shapeA	Shape
+ * @param shapeB	Shape
  */
 CollisionInformation CollisionHelper::checkIfOverlap(Shape shapeA, Shape shapeB)
 {

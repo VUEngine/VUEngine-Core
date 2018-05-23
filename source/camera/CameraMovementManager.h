@@ -36,10 +36,11 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup camera
 singleton class CameraMovementManager : Object
 {
+	/// @publicsection
 	static CameraMovementManager getInstance();
-
 	void constructor();
 	virtual void focus(u32 checkIfFocusEntityIsMoving);
 }

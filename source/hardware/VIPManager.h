@@ -189,6 +189,11 @@ extern u32 _dram_data_start;
 #define	__COLOR_MEDIUM_RED		0x02
 #define	__COLOR_BRIGHT_RED		0x03
 
+
+//---------------------------------------------------------------------------------------------------------
+//											TYPE DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
 typedef struct ColumnTableDefinition
 {
 	// defines whether the definition's first half should be mirrored (true)
@@ -250,11 +255,24 @@ typedef struct PaletteConfig
 
 typedef void (*PostProcessingEffect) (u32, SpatialObject);
 
+/**
+ * Texture Post Processing Effect Registry
+ *
+ * @memberof VIPManager
+ */
+typedef struct PostProcessingEffectRegistry
+{
+	PostProcessingEffect postProcessingEffect;
+	SpatialObject spatialObject;
+
+} PostProcessingEffectRegistry;
+
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup hardware
 singleton class VIPManager : Object
 {
 	VirtualList postProcessingEffects;
@@ -264,9 +282,9 @@ singleton class VIPManager : Object
 	bool renderingCompleted;
 	bool allowDRAMAccess;
 
+	/// @publicsection
 	static VIPManager getInstance();
 	static void interruptHandler();
-
 	void enableDrawing();
 	void disableDrawing();
 	void enableInterrupt(u16 interruptCode);

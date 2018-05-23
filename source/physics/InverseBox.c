@@ -36,12 +36,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	InverseBox
- * @extends Box
- * @ingroup physics
- */
-
 friend class Box;
 
 
@@ -49,14 +43,9 @@ friend class Box;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 /**
  * Class constructor
  *
- * @memberof	InverseBox
- * @public
- *
- * @param this	Function scope
  * @param owner
  */
 void InverseBox::constructor(SpatialObject owner)
@@ -66,11 +55,6 @@ void InverseBox::constructor(SpatialObject owner)
 
 /**
  * Class destructor
- *
- * @memberof	InverseBox
- * @public
- *
- * @param this	Function scope
  */
  void InverseBox::destructor()
 {

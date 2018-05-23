@@ -37,9 +37,12 @@
 //											DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base-libgccvb
 static class Affine : Object
 {
+	/// @publicsection
 	static s16 applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, fix13_3 mx, fix13_3 my, fix10_6 halfWidth, fix10_6 halfHeight, const Scale* scale, const Rotation* rotation);
 }
+
 
 #endif

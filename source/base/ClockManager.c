@@ -37,12 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	ClockManager
- * @extends Object
- * @ingroup base
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -57,7 +51,6 @@ friend class VirtualList;
  *
  * @fn			ClockManager::getInstance()
  * @memberof	ClockManager
- * @public
  *
  * @return		ClockManager instance
  */
@@ -66,10 +59,7 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof	ClockManager
  * @private
- *
- * @param this	Function scope
  */
 void ClockManager::constructor()
 {
@@ -82,10 +72,7 @@ void ClockManager::constructor()
 /**
  * Class destructor
  *
- * @memberof	ClockManager
  * @private
- *
- * @param this	Function scope
  */
 void ClockManager::destructor()
 {
@@ -107,10 +94,7 @@ void ClockManager::destructor()
 /**
  * Register a clock
  *
- * @memberof	ClockManager
  * @private
- *
- * @param this	Function scope
  * @param clock Clock to register
  */
 void ClockManager::register(Clock clock)
@@ -124,10 +108,6 @@ void ClockManager::register(Clock clock)
 /**
  * Un-register a clock
  *
- * @memberof	ClockManager
- * @private
- *
- * @param this	Function scope
  * @param clock Clock to un-register
  */
 void ClockManager::unregister(Clock clock)
@@ -138,10 +118,6 @@ void ClockManager::unregister(Clock clock)
 /**
  * Update clocks
  *
- * @memberof					ClockManager
- * @private
- *
- * @param this					Function scope
  * @param millisecondsElapsed	Milliseconds elapsed between calls
  */
 void ClockManager::update(u32 millisecondsElapsed)
@@ -159,11 +135,6 @@ void ClockManager::update(u32 millisecondsElapsed)
 
 /**
  * Reset registered clocks
- *
- * @memberof			ClockManager
- * @private
- *
- * @param this			Function scope
  */
 void ClockManager::reset()
 {

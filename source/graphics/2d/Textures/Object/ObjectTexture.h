@@ -33,22 +33,35 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A ObjectTexture definition
+ *
+ * @memberof ObjectTexture
+ */
 typedef const TextureDefinition ObjectTextureDefinition;
+
+/**
+ * A ObjectTexture definition that is stored in ROM
+ *
+ * @memberof ObjectTexture
+ */
 typedef const ObjectTextureDefinition ObjectTextureROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup graphics-2d-textures-object
 class ObjectTexture : Texture
 {
-	/**
-	* @var int 	objectIndex
-	* @brief		Object index
-	* @memberof	ObjectTexture
-	*/
+	// Object index
 	int objectIndex;
 
+	/// @publicsection
 	void constructor(ObjectTextureDefinition* objectTextureDefinition, u16 id);
 	void setObjectIndex(int objectIndex);
 	override void write();

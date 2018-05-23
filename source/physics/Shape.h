@@ -38,7 +38,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 class SpatialObject;
@@ -134,19 +134,6 @@ typedef struct VertexProjection
 	fix10_6 max;
 } VertexProjection;
 
-/**
- * Possible types of a Shape
- *
- * @memberof Shape
- */
-enum ShapeTypes
-{
-	kNoShape = 0,
-	kBall,
-	kBox,
-	kInverseBox,
-};
-
 // defines a shape
 typedef struct ShapeDefinition
 {
@@ -179,69 +166,53 @@ typedef struct ShapeDefinition
 typedef const ShapeDefinition ShapeROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//												ENUMS
+//---------------------------------------------------------------------------------------------------------
+
+/**
+ * Possible types of a Shape
+ *
+ * @memberof Shape
+ */
+enum ShapeTypes
+{
+	kNoShape = 0,
+	kBall,
+	kBox,
+	kInverseBox,
+};
+
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup physics
 abstract class Shape : Object
 {
-	/**
-	* @var SpatialObject 	owner
-	* @brief				the entity to which the shape belongs
-	* @memberof			Shape
-	*/
+	// the entity to which the shape belongs
 	SpatialObject owner;
-	/**
-	* @var VirtualList 	collidingShapes
-	* @brief				colliding shapes list
-	* @memberof			CollisionSolver
-	*/
+	// colliding shapes list
 	VirtualList collidingShapes;
-	/**
-	* @var 32 				layers
-	* @brief				layers on which this shape live
-	* @memberof			Shape
-	*/
+	// layers on which this shape live
 	u32 layers;
-	/**
-	* @var 32 				layersToIgnore
-	* @brief				layers to ignore when checking for collisions
-	* @memberof			Shape
-	*/
+	// layers to ignore when checking for collisions
 	u32 layersToIgnore;
-	/**
-	* @var Sphere		wireframe
-	* @brief			for debugging purposes
-	* @memberof 		Ball
-	*/
+	// for debugging purposes
 	Wireframe wireframe;
-	/**
-	* @var u8 				ready
-	* @brief				flag to know if setup is needed
-	* @memberof			Shape
-	*/
+	// flag to know if setup is needed
 	u8 ready;
-	/**
-	* @var u8 				moved
-	* @brief				flag to know if has moved
-	* @memberof			Shape
-	*/
+	// flag to know if has moved
 	u8 moved;
-	/**
-	* @var u8 				isActive
-	* @brief				flag to know if shape is reacting to collisions
-	* @memberof			Shape
-	*/
+	// flag to know if shape is reacting to collisions
 	u8 isActive;
-	/**
-	* @var u8 				checkForCollisions
-	* @brief				flag to check against other shapes
-	* @memberof			Shape
-	*/
+	// flag to check against other shapes
 	u8 checkForCollisions;
-	/**
-	* @var u8 				isVisible
-	* @brief				flag to cull off shapes outside the screen
-	* @memberof			Shape
-	*/
+	// flag to cull off shapes outside the screen
 	u8 isVisible;
 
+	/// @publicsection
 	void constructor(SpatialObject owner);
 	void enterCollision(CollisionData* collisionData);
 	void updateCollision(CollisionData* collisionData);

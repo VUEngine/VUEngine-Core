@@ -32,19 +32,28 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct Package
+/**
+ * A Package
+ *
+ * @memberof I18n
+ */
+typedef struct CommunicationManager
 {
 	u8 payload;
 	bool isValid;
 } Package;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup hardware
 singleton class CommunicationManager : Object
 {
-	/* super's attributes */
 	u8 communicationMode;
 	u8 sequenceNumber;
 	int handshake;
@@ -52,9 +61,9 @@ singleton class CommunicationManager : Object
 	int messageToSelf;
 	int waitCycles;
 
+	/// @publicsection
 	static CommunicationManager getInstance();
 	static void interruptHandler();
-
 	void update();
 	bool sendPayload(u8 payload);
 	bool receivePayload();

@@ -58,33 +58,19 @@ static u8* const _hardwareRegisters =			(u8*)0x02000000;
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup hardware
 singleton class HardwareManager : Object
 {
-	/**
-	 * @var TimerManager 	timerManager
-	 * @brief				Timer manager
-	 * @memberof			HardwareManager
-	 */
+	// Timer manager
 	TimerManager timerManager;
-	/**
-	 * @var VIPManager 		vipManager
-	 * @brief				VPU manager
-	 * @memberof			HardwareManager
-	 */
+	// VPU manager
 	VIPManager vipManager;
-	/**
-	 * @var KeypadManager 	keypadManager
-	 * @brief				VPU manager
-	 * @memberof			HardwareManager
-	 */
+	// VPU manager
 	KeypadManager keypadManager;
-	/**
-	 * @var u8*  			hwRegisters
-	 * @brief				HW registry
-	 * @memberof			HardwareManager
-	 */
-	u8*  hwRegisters;
+	// HW registry
+	u8* hwRegisters;
 
+	/// @publicsection
 	static HardwareManager getInstance();
 	static void enableInterrupts();
     static void disableInterrupts();
@@ -94,7 +80,6 @@ singleton class HardwareManager : Object
     static int getLinkPointer();
     static int getPSW();
 	static void checkMemoryMap();
-
 	void clearScreen();
 	void disableKeypad();
 	void disableRendering();

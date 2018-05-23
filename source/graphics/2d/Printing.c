@@ -63,18 +63,6 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	Printing
- * @extends Object
- * @ingroup graphics-2d
- * @brief 	Manages printing layer and offers various functions to write to it.
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -84,7 +72,6 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
  * @fn			Printing::getInstance()
  * @memberof	Printing
  * @public
- *
  * @return		Printing instance
  */
 
@@ -92,10 +79,7 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 /**
  * Class constructor
  *
- * @memberof	Printing
  * @private
- *
- * @param this	Function scope
  */
 void Printing::constructor()
 {
@@ -111,11 +95,6 @@ void Printing::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  */
 void Printing::destructor()
 {
@@ -128,10 +107,6 @@ void Printing::destructor()
 /**
  * Render general print output layer
  *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  * @param textLayer	Number of layer (World) to set as printing layer
  */
 void Printing::render(int textLayer)
@@ -151,11 +126,6 @@ void Printing::render(int textLayer)
 
 /**
  * Empties internal virtual list of registered fonts
- *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  */
 void Printing::reset()
 {
@@ -175,10 +145,6 @@ void Printing::reset()
 /**
  * Add fonts to internal VirtualList and preload CharSets for specified fonts
  *
- * @memberof				Printing
- * @public
- *
- * @param this				Function scope
  * @param fontDefinitions	Array of font definitions whose charset should pre preloaded
  */
 void Printing::loadFonts(FontDefinition** fontDefinitions)
@@ -217,10 +183,7 @@ void Printing::loadFonts(FontDefinition** fontDefinitions)
 /**
  * Load engine's default font to end of char memory directly (for debug purposes)
  *
- * @memberof	Printing
  * @private
- *
- * @param this	Function scope
  */
 void Printing::loadDebugFont()
 {
@@ -233,11 +196,6 @@ void Printing::loadDebugFont()
 
 /**
  * Set mode to debug to bypass loading fonts through CharSets
- *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  */
 void Printing::setDebugMode()
 {
@@ -248,11 +206,6 @@ void Printing::setDebugMode()
 
 /**
  * Set palette
- *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  */
 void Printing::setPalette(u8 palette)
 {
@@ -264,11 +217,6 @@ void Printing::setPalette(u8 palette)
 
 /**
  * Clear printing area
- *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  */
 void Printing::clear()
 {
@@ -280,12 +228,8 @@ void Printing::clear()
 /**
  * Get font definition and starting position in character memory
  *
- * @memberof	Printing
  * @private
- *
- * @param this	Function scope
  * @param font	Name of font to get definition for
- *
  * @return		FontData of desired font or default font if NULL or none could be found matching the name
  */
 FontData* Printing::getFontByName(const char* font)
@@ -332,10 +276,7 @@ FontData* Printing::getFontByName(const char* font)
 /**
  * Direct printing out method
  *
- * @memberof		Printing
  * @private
- *
- * @param this		Function scope
  * @param x			Column to start printing at
  * @param y			Row to start printing at
  * @param string	String to print
@@ -432,10 +373,6 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 /**
  * Print an Integer value
  *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  * @param value	Integer to print
  * @param x		Column to start printing at
  * @param y		Row to start printing at
@@ -459,10 +396,6 @@ void Printing::int(int value, u8 x, u8 y, const char* font)
 /**
  * Print a hex value
  *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  * @param value		Hex value to print
  * @param x			Column to start printing at
  * @param y			Row to start printing at
@@ -477,10 +410,6 @@ void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 /**
  * Print a float value
  *
- * @memberof	Printing
- * @public
- *
- * @param this	Function scope
  * @param value	Float value to print
  * @param x		Column to start printing at
  * @param y		Row to start printing at
@@ -523,10 +452,6 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 /**
  * Print a string
  *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  * @param string	String to print
  * @param x			Column to start printing at
  * @param y			Row to start printing at
@@ -544,10 +469,6 @@ void Printing::text(const char* string, int x, int y, const char* font)
 /**
  * Set the coordinates of the WORLD used for printing
  *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  * @param gx		WORLD x coordinate
  * @param gy		WORLD y coordinate
  */
@@ -567,11 +488,6 @@ void Printing::setWorldCoordinates(u16 gx, u16 gy)
 
 /**
  * Reset the coordinates of the WORLD used for printing
- *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  */
 void Printing::resetWorldCoordinates()
 {
@@ -582,11 +498,6 @@ void Printing::resetWorldCoordinates()
 
 /**
  * Retrieve the pixels used by the WORLD for printing
- *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  *
  * @return			number of pixels
  */
@@ -599,10 +510,6 @@ int Printing::getPixelCount()
 /**
  * Get the size of a (block of) text so you can for example center it on screen
  *
- * @memberof		Printing
- * @public
- *
- * @param this		Function scope
  * @param string	String to compute size for
  * @param font		Name of font to use for size computation
  */

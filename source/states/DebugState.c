@@ -32,18 +32,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	DebugState
- * @extends GameState
- * @ingroup states
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -53,7 +41,6 @@
  * @fn			DebugState::getInstance()
  * @memberof	DebugState
  * @public
- *
  * @return		DebugState instance
  */
 
@@ -61,10 +48,7 @@
 /**
  * Class constructor
  *
- * @memberof	DebugState
  * @private
- *
- * @param this	Function scope
  */
 void DebugState::constructor()
 {
@@ -74,10 +58,7 @@ void DebugState::constructor()
 /**
  * Class destructor
  *
- * @memberof	DebugState
  * @private
- *
- * @param this	Function scope
  */
 void DebugState::destructor()
 {
@@ -88,10 +69,6 @@ void DebugState::destructor()
 /**
  * Method called when the Game's StateMachine enters to this state
  *
- * @memberof		DebugState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void DebugState::enter(void* owner __attribute__ ((unused)))
@@ -104,10 +81,6 @@ void DebugState::enter(void* owner __attribute__ ((unused)))
 /**
  * Method called when by the StateMachine's update method
  *
- * @memberof		DebugState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void DebugState::execute(void* owner __attribute__ ((unused)))
@@ -118,10 +91,6 @@ void DebugState::execute(void* owner __attribute__ ((unused)))
 /**
  * Method called when the Game's StateMachine exits from this state
  *
- * @memberof		DebugState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void DebugState::exit(void* owner __attribute__ ((unused)))
@@ -134,10 +103,6 @@ void DebugState::exit(void* owner __attribute__ ((unused)))
 /**
  * Process user input
  *
- * @memberof			DebugState
- * @private
- *
- * @param this			Function scope
  * @param userInput		User input
  */
 void DebugState::processUserInput(UserInput userInput)

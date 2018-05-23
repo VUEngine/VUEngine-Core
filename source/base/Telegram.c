@@ -29,33 +29,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	Telegram
- * @extends Object
- * @ingroup base
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
  *
- * @memberof			Telegram
- * @private
- *
- * @param this			Function scope
  * @param sender		Sender of the message
  * @param receiver		Intended receiver
  * @param message		Message code
@@ -75,11 +54,6 @@ void Telegram::constructor(void* sender, void* receiver, int message, void* extr
 
 /**
  * Class destructor
- *
- * @memberof			Telegram
- * @private
- *
- * @param this			Function scope
  */
 void Telegram::destructor()
 {
@@ -95,11 +69,6 @@ void Telegram::destructor()
 /**
  * Retrieve the sender
  *
- * @memberof			Telegram
- * @private
- *
- * @param this			Function scope
- *
  * @return				Sender of the message
  */
 void* Telegram::getSender()
@@ -109,11 +78,6 @@ void* Telegram::getSender()
 
 /**
  * Retrieve the receiver
- *
- * @memberof			Telegram
- * @private
- *
- * @param this			Function scope
  *
  * @return				Intended receiver
  */
@@ -125,11 +89,6 @@ void* Telegram::getReceiver()
 /**
  * Retrieve the message code
  *
- * @memberof			Telegram
- * @private
- *
- * @param this			Function scope
- *
  * @return				Message code
  */
 int Telegram::getMessage()
@@ -139,11 +98,6 @@ int Telegram::getMessage()
 
 /**
  * Retrieve the message's attachment
- *
- * @memberof			Telegram
- * @private
- *
- * @param this			Function scope
  *
  * @return				Pointer to any attachment to the message
  */

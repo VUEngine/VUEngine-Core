@@ -34,15 +34,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 singleton class FrameRate : Object
 {
-	/**
-	 * @var u16	 	fps
-	 * @brief		Frames per second
-	 * @memberof	FrameRate
-	 */
+	// Frames per second
 	u16 fps;
 
+	/// @publicsection
 	static FrameRate getInstance();
 	u16 getFps();
 	void increaseFps();

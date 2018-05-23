@@ -92,11 +92,10 @@ typedef struct AffineInfo
 	s16			parallax;
 } AffineInfo;
 
-
 /**
  * An Hbias Entry
  *
- * @memberof Hbias
+ * @memberof ParamTableManager
  */
 typedef struct HbiasEntry
 {
@@ -109,51 +108,25 @@ typedef struct HbiasEntry
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-bgmap
 singleton class ParamTableManager : Object
 {
-	/**
-	 * @var int 				size
-	 * @brief 					total size of param table
-	 * @memberof				ParamTableManager
-	 */
+	// total size of param table
 	u32 size;
-	/**
-	 * @var u32 				used
-	 * @brief 					number of used bytes
-	 * @memberof				ParamTableManager
-	 */
+	// number of used bytes
 	u32 used;
-	/**
-	 * @var VirtualList 		bgmapSprites
-	 * @brief 					allocated bgmapSprites
-	 * @memberof				ParamTableManager
-	 */
+	// allocated bgmapSprites
 	VirtualList bgmapSprites;
-	/**
-	 * @var VirtualList 		removedBgmapSpritesSizes
-	 * @brief 					removed bgmapSprites' sizes
-	 * @memberof				ParamTableManager
-	 */
+	// removed bgmapSprites' sizes
 	VirtualList removedBgmapSpritesSizes;
-	/**
-	 * @var ParamTableFreeData 	paramTableFreeData
-	 * @brief 					used for defragmentation
-	 * @memberof				ParamTableManager
-	 */
+	// used for defragmentation
 	ParamTableFreeData paramTableFreeData;
-	/**
-	 * @var BgmapSprite 		previouslyMovedBgmapSprite
-	 * @brief 					used for defragmentation
-	 * @memberof				ParamTableManager
-	 */
+	// used for defragmentation
 	BgmapSprite previouslyMovedBgmapSprite;
-	/**
-	 * @var u32 				paramTableBase
-	 * @brief 					used for defragmentation
-	 * @memberof				ParamTableManager
-	 */
+	// used for defragmentation
 	u32 paramTableBase;
 
+	/// @publicsection
 	static ParamTableManager getInstance();
 	u32 allocate(BgmapSprite bsprite);
 	void calculateParamTableBase(int availableBgmapSegmentsForParamTable);

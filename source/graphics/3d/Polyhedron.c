@@ -37,12 +37,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Polyhedron
- * @extends Object
- * @ingroup graphics-3d
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -52,16 +46,10 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
-
-
 /**
  * Class constructor
  *
- * @memberof	Polyhedron
  * @private
- *
- * @param this	Function scope
  */
 void Polyhedron::constructor()
 {
@@ -74,11 +62,6 @@ void Polyhedron::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Polyhedron
- * @public
- *
- * @param this	Function scope
  */
 void Polyhedron::destructor()
 {
@@ -107,10 +90,6 @@ void Polyhedron::destructor()
 /**
  * Add a vertex
  *
- * @memberof	Polyhedron
- * @public
- *
- * @param this	Function scope
  * @param x		Vertex' x coordinate
  * @param y		Vertex' y coordinate
  * @param z		Vertex' x coordinate
@@ -137,11 +116,6 @@ void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
 /**
  * Write to the frame buffers
  *
- * @memberof				Polyhedron
- * @public
- *
- * @param this				Function scope
- * @param this				Function scope
  * @param calculateParallax	True to compute the parallax displacement for each pixel
  */
 void Polyhedron::draw(bool calculateParallax)

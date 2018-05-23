@@ -47,35 +47,15 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Sprites List
- *
- * @memberof SpriteManager
- */
-typedef struct SpritesList
-{
-	const void* spriteClassVTable;
-	VirtualList sprites;
-
-} SpritesList;
-
-/**
- * @class 	SpriteManager
- * @extends Object
- * @ingroup graphics-2d-sprites
- */
-
 friend class Sprite;
 friend class ObjectSpriteContainer;
 friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
-
 #ifdef __PROFILE_GAME
 int _totalPixelsToDraw = 0;
 #endif
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -88,7 +68,6 @@ int _totalPixelsToDraw = 0;
  * @fn			SpriteManager::getInstance()
  * @memberof	SpriteManager
  * @public
- *
  * @return		SpriteManager instance
  */
 
@@ -96,10 +75,7 @@ int _totalPixelsToDraw = 0;
 /**
  * Class constructor
  *
- * @memberof	SpriteManager
  * @private
- *
- * @param this	Function scope
  */
 void SpriteManager::constructor()
 {
@@ -126,11 +102,6 @@ void SpriteManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	SpriteManager
- * @public
- *
- * @param this	Function scope
  */
 void SpriteManager::destructor()
 {
@@ -154,11 +125,6 @@ void SpriteManager::destructor()
 
 /**
  * Reset manager's state
- *
- * @memberof	SpriteManager
- * @public
- *
- * @param this	Function scope
  */
 void SpriteManager::reset()
 {
@@ -207,10 +173,6 @@ void SpriteManager::reset()
 /**
  * Setup object sprite containers
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  * @param size			Array with the number of OBJECTs per container
  * @param z				Z coordinate of each container
  */
@@ -233,10 +195,6 @@ void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS
 /**
  * Dispose sprite
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  * @param sprite	Sprite to dispose
  */
 Sprite SpriteManager::createSprite(SpriteDefinition* spriteDefinition, Object owner)
@@ -258,10 +216,6 @@ Sprite SpriteManager::createSprite(SpriteDefinition* spriteDefinition, Object ow
 /**
  * Dispose sprite
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  * @param sprite	Sprite to dispose
  */
 void SpriteManager::disposeSprite(Sprite sprite)
@@ -282,11 +236,6 @@ void SpriteManager::disposeSprite(Sprite sprite)
 
 /**
  * Delete disposable sprites progressively
- *
- * @memberof	SpriteManager
- * @public
- *
- * @param this	Function scope
  *
  * @return 		True if there were a sprite to delete
  */
@@ -315,11 +264,6 @@ bool SpriteManager::disposeSpritesProgressively()
 /**
  * Delete disposable sprites
  *
- * @memberof	SpriteManager
- * @public
- *
- * @param this	Function scope
- *
  * @return 		True if there were a sprite to delete
  */
 void SpriteManager::disposeSprites()
@@ -333,11 +277,6 @@ void SpriteManager::disposeSprites()
 
 /**
  * Sort sprites according to their z coordinate
- *
- * @memberof	SpriteManager
- * @public
- *
- * @param this	Function scope
  */
 void SpriteManager::sortLayers()
 {
@@ -383,11 +322,6 @@ void SpriteManager::sortLayers()
 // check if any entity must be assigned another world layer
 /**
  * Deferred sorting sprites according to their z coordinate
- *
- * @memberof	SpriteManager
- * @public
- *
- * @param this	Function scope
  */
 void SpriteManager::sortLayersProgressively()
 {
@@ -428,10 +362,7 @@ void SpriteManager::sortLayersProgressively()
 /**
  * Register a Sprite and assign a WORLD layer to it
  *
- * @memberof		SpriteManager
  * @private
- *
- * @param this		Function scope
  * @param sprite	Sprite to assign the WORLD layer
  */
 void SpriteManager::registerSprite(Sprite sprite)
@@ -480,10 +411,7 @@ void SpriteManager::registerSprite(Sprite sprite)
 /**
  * Remove a registered Sprite and get back the WORLD layer previously assigned to it
  *
- * @memberof		SpriteManager
  * @private
- *
- * @param this		Function scope
  * @param sprite	Sprite to assign the WORLD layer
  */
 void SpriteManager::unregisterSprite(Sprite sprite)
@@ -537,11 +465,6 @@ void SpriteManager::unregisterSprite(Sprite sprite)
 
 /**
  * Render the WORLD destined to printing output
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  */
 void SpriteManager::renderLastLayer()
 {
@@ -560,11 +483,6 @@ void SpriteManager::renderLastLayer()
 
 /**
  * Select the sprite to write
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  */
 void SpriteManager::selectSpritePendingTextureWriting()
 {
@@ -587,11 +505,6 @@ void SpriteManager::selectSpritePendingTextureWriting()
 
 /**
  * Write textures to DRAM
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  */
 void SpriteManager::writeTextures()
 {
@@ -614,11 +527,6 @@ void SpriteManager::writeTextures()
 
 /**
  * Write selected texture to DRAM
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  */
 bool SpriteManager::writeSelectedSprite()
 {
@@ -654,11 +562,6 @@ bool SpriteManager::writeSelectedSprite()
 
 /**
  * Write WORLD data to DRAM
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  */
 
 void SpriteManager::render()
@@ -758,11 +661,6 @@ void SpriteManager::render()
 /**
  * Retrieve the next free WORLD layer
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
- *
  * @return			Free WORLD layer
  */
 u8 SpriteManager::getFreeLayer()
@@ -773,10 +671,6 @@ u8 SpriteManager::getFreeLayer()
 /**
  * Show the Sprite in the given WORLD layer and hide the rest
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  * @param layer		WORLD layer to show
  */
 void SpriteManager::showLayer(u8 layer)
@@ -804,11 +698,6 @@ void SpriteManager::showLayer(u8 layer)
 
 /**
  * Show all WORLD layers
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  */
 void SpriteManager::recoverLayers()
 {
@@ -830,12 +719,7 @@ void SpriteManager::recoverLayers()
 /**
  * Retrieve the Sprite assigned to the given WORLD
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  * @param layer		WORLD layer to show
- *
  * @return			Sprite with the given WORLD layer
  */
 Sprite SpriteManager::getSpriteAtLayer(u8 layer)
@@ -858,11 +742,6 @@ Sprite SpriteManager::getSpriteAtLayer(u8 layer)
 /**
  * Retrieve the maximum number of texture rows allowed to be written on each render cycle
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
- *
  * @return 			Maximum number of texture rows to write
  */
 s8 SpriteManager::getTexturesMaximumRowsToWrite()
@@ -873,10 +752,6 @@ s8 SpriteManager::getTexturesMaximumRowsToWrite()
 /**
  * Set the number of idle cycles before allowing texture wrinting
  *
- * @memberof								SpriteManager
- * @public
- *
- * @param this								Function scope
  * @param cyclesToWaitForSpriteTextureWriting		Number of idle cycles
  */
 void SpriteManager::setCyclesToWaitForTextureWriting(u8 cyclesToWaitForSpriteTextureWriting)
@@ -887,10 +762,6 @@ void SpriteManager::setCyclesToWaitForTextureWriting(u8 cyclesToWaitForSpriteTex
 /**
  * Set the maximum number of texture rows allowed to be written on each render cycle
  *
- * @memberof								SpriteManager
- * @public
- *
- * @param this								Function scope
  * @param texturesMaximumRowsToWrite		Number of texture rows allowed to be written
  */
 void SpriteManager::setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite)
@@ -901,10 +772,6 @@ void SpriteManager::setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite)
 /**
  * Set the flag to defer affine transformation calculations
  *
- * @memberof							SpriteManager
- * @public
- *
- * @param this							Function scope
  * @param deferParamTableEffects	Flag
  */
 void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
@@ -914,11 +781,6 @@ void SpriteManager::deferParamTableEffects(bool deferParamTableEffects)
 
 /**
  * Retrieve the maximum number of rows to compute per render cycle
- *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  *
  * @return			Number of affine transformation rows to compute
  */
@@ -930,10 +792,6 @@ int SpriteManager::getMaximumParamTableRowsToComputePerCall()
 /**
  * Set the maximum number of affine transformation rows to compute per render cycle
  *
- * @memberof										SpriteManager
- * @public
- *
- * @param this										Function scope
  * @param maximumParamTableRowsToComputePerCall		Number of affine transformation rows to compute per render cycle
  */
 void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTableRowsToComputePerCall)
@@ -944,10 +802,6 @@ void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTab
 /**
  * Print manager's status
  *
- * @memberof		SpriteManager
- * @public
- *
- * @param this		Function scope
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  * @param resumed	If true prints info about all the Sprites in the list

@@ -32,7 +32,7 @@ The following gives an example for an English language definition.
             "Hello",
             
             // STR_VUENGINE_ROCKS
-            "The VUEngine rocks! :-)",
+            "VUEngine rocks! :-)",
         },
     };
 
@@ -40,26 +40,26 @@ The following gives an example for an English language definition.
 Registering languages
 ---------------------
 
-During the initialization phase of your game, inform the engine about available languages by registering each one using the `I18n_registerLanguage` method.
+During the initialization phase of your game, inform the engine about available languages by registering each one using the `I18n::registerLanguage` method.
 
-    I18n_registerLanguage(I18n_getInstance(), &LANGUAGE_EN);
+    I18n::registerLanguage(I18n::getInstance(), &LANGUAGE_EN);
 
 
 Setting active language
 -----------------------
 
-You can set the active language using the `I18n_setActiveLanguage` method. Each registered language is identified by an integer in the order they were registered, starting with 0. By default, the first registered language is used.
+You can set the active language using the `I18n::setActiveLanguage` method. Each registered language is identified by an integer in the order they were registered, starting with 0. By default, the first registered language is used.
 
-    I18n_setActiveLanguage(I18n_getInstance(), 0);
+    I18n::setActiveLanguage(I18n::getInstance(), 0);
 
-Alternatively, you can also use the `I18n_setActiveLanguageByName` method to set the active language by one of the language names defined in your LangROMDefs.
+Alternatively, you can also use the `I18n::setActiveLanguageByName` method to set the active language by one of the language names defined in your LangROMDefs.
 
-    I18n_setActiveLanguageByName(I18n_getInstance(), "English");
+    I18n::setActiveLanguageByName(I18n::getInstance(), "English");
 
 
 Getting a translated string
 ---------------------------
 
-The `I18n_getText` method retrieves a string by a given identifier in the currently active language.
+The `I18n::getText` method retrieves a string by a given identifier in the currently active language.
 
-    I18n_getText(I18n_getInstance(), STR_HELLO);
+    I18n::getText(I18n::getInstance(), STR_HELLO);

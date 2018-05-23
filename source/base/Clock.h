@@ -35,33 +35,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 class Clock : Object
 {
-	/**
-	* @var u32	 	milliSeconds
-	* @brief		time elapsed
-	* @memberof	Clock
-	*/
+	// time elapsed
 	u32 milliSeconds;
-	/**
-	* @var u32	 	previousSecond
-	* @brief		register
-	* @memberof	Clock
-	*/
+	// register
 	u32 previousSecond;
-	/**
-	* @var u32	 	previousMinute
-	* @brief		register
-	* @memberof	Clock
-	*/
+	// register
 	u32 previousMinute;
-	/**
-	* @var bool	paused
-	* @brief		flag to pause the clock
-	* @memberof	Clock
-	*/
+	// flag to pause the clock
 	bool paused;
 
+	/// @publicsection
 	void constructor();
 	u32 getElapsedTime();
 	u32 getMilliSeconds();

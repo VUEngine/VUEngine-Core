@@ -30,17 +30,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	KeypadManager
- * @extends Object
- * @ingroup hardware
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -52,7 +41,6 @@ static unsigned int volatile* _readingStatus = NULL;
  * @fn			KeypadManager::getInstance()
  * @memberof	KeypadManager
  * @public
- *
  * @return		KeypadManager instance
  */
 
@@ -60,10 +48,7 @@ static unsigned int volatile* _readingStatus = NULL;
 /**
  * Class constructor
  *
- * @memberof	KeypadManager
  * @private
- *
- * @param this	Function scope
  */
 void KeypadManager::constructor()
 {
@@ -80,11 +65,6 @@ void KeypadManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 void KeypadManager::destructor()
 {
@@ -94,11 +74,6 @@ void KeypadManager::destructor()
 
 /**
  * Enable user input interrupts
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 void KeypadManager::enableInterrupt()
 {
@@ -111,11 +86,6 @@ void KeypadManager::enableInterrupt()
 
 /**
  * Disable user input interrupts
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 void KeypadManager::disableInterrupt()
 {
@@ -124,11 +94,6 @@ void KeypadManager::disableInterrupt()
 
 /**
  * Enable user input
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 void KeypadManager::enable()
 {
@@ -140,11 +105,6 @@ void KeypadManager::enable()
 
 /**
  * Disable user input
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 void KeypadManager::disable()
 {
@@ -153,11 +113,6 @@ void KeypadManager::disable()
 
 /**
  * Check if user input is enabled
- *
- * @memberof		KeypadManager
- * @public
- *
- * @param this		Function scope
  *
  * @return			True if user input is enabled
  */
@@ -168,11 +123,6 @@ int KeypadManager::isEnabled()
 
 /**
  * Read user input
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 UserInput KeypadManager::read()
 {
@@ -186,8 +136,8 @@ UserInput KeypadManager::read()
 	_hardwareRegisters[__SCR] = (__S_INTDIS | __S_HW);
 
 	// store keys
-	this->userInput.powerFlag 	= this->userInput.allKeys & 0x0001;
-	this->userInput.allKeys 	&= 0xFFFC;
+	this->userInput.powerFlag 	= this->userInput.allKeys & K_PWR;
+	this->userInput.allKeys 	&= K_ANY;
 	this->userInput.pressedKey 	= KeypadManager::getPressedKey(this) & this->userInputToRegister.pressedKey;
 	this->userInput.releasedKey = KeypadManager::getReleasedKey(this) & this->userInputToRegister.releasedKey;
 	this->userInput.holdKey 	= KeypadManager::getHoldKey(this) & this->userInputToRegister.holdKey;
@@ -202,11 +152,6 @@ UserInput KeypadManager::read()
 /**
  * Retrieve user input
  *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
- *
  * @return		User input
  */
 UserInput KeypadManager::getUserInput()
@@ -216,11 +161,6 @@ UserInput KeypadManager::getUserInput()
 
 /**
  * Clear any user input previously registered
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  */
 void KeypadManager::flush()
 {
@@ -229,11 +169,6 @@ void KeypadManager::flush()
 
 /**
  * Retrieve the current pressed keys
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  *
  * @return 		Currently pressed keys
  */
@@ -245,11 +180,6 @@ u16 KeypadManager::getPressedKey()
 /**
  * Retrieve the current released keys
  *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Currently released keys
  */
 u16 KeypadManager::getReleasedKey()
@@ -259,11 +189,6 @@ u16 KeypadManager::getReleasedKey()
 
 /**
  * Retrieves the currently held key(s)
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  *
  * @return 		Currently held keys
  */
@@ -275,11 +200,6 @@ u16 KeypadManager::getHoldKey()
 /**
  * Retrieves the duration (in game frames) for which the current key(s) have been held.
  *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Duration of currently held keys
  */
 u32 KeypadManager::getHoldKeyDuration()
@@ -289,11 +209,6 @@ u32 KeypadManager::getHoldKeyDuration()
 
 /**
  * Retrieve the previously pressed keys
- *
- * @memberof	KeypadManager
- * @public
- *
- * @param this	Function scope
  *
  * @return 		Previously pressed keys
  */
@@ -305,10 +220,6 @@ u16 KeypadManager::getPreviousKey()
 /**
  * Set the user input to register
  *
- * @memberof				KeypadManager
- * @public
- *
- * @param this				Function scope
  * @param inputToRegister	Flag
  */
 void KeypadManager::registerInput(u16 inputToRegister)
@@ -320,9 +231,6 @@ void KeypadManager::registerInput(u16 inputToRegister)
 
 /**
  * Interrupt handler
- *
- * @memberof	KeypadManager
- * @public
  */
 static void KeypadManager::interruptHandler()
 {

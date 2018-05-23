@@ -33,15 +33,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
+//												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	AnimationController
- * @extends Object
- * @ingroup graphics-2d-sprites-animation
- */
-
 
 extern int strcmp(const char *, const char *);
 
@@ -53,10 +46,6 @@ extern int strcmp(const char *, const char *);
 /**
  * Class constructor
  *
- * @memberof					AnimationController
- * @public
- *
- * @param this					Function scope
  * @param owner					Controller's owner
  * @param sprite				Sprite to animate
  * @param charSetDefinition		CharSetDefinition used to decide the animation allocation type
@@ -90,11 +79,6 @@ void AnimationController::constructor(Object owner, Sprite sprite, const CharSet
 
 /**
  * Class destructor
- *
- * @memberof	AnimationController
- * @public
- *
- * @param this	Function scope
  */
 void AnimationController::destructor()
 {
@@ -112,11 +96,7 @@ void AnimationController::destructor()
 /**
  * Retrieve the actual frame of animation index
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
- *
  * @return 		Actual frame of animation index
  */
 s8 AnimationController::getActualFrameIndex()
@@ -127,11 +107,7 @@ s8 AnimationController::getActualFrameIndex()
 /**
  * Retrieve the actual frame of animation
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
- *
  * @return 		Actual frame of animation
  */
 s8 AnimationController::getActualFrame()
@@ -142,11 +118,7 @@ s8 AnimationController::getActualFrame()
 /**
  * Retrieve the previous frame of animation
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
- *
  * @return 		Previous frame of animation
  */
 s8 AnimationController::getPreviousFrame()
@@ -157,10 +129,7 @@ s8 AnimationController::getPreviousFrame()
 /**
  * Set the actual frame of animation
  *
- * @memberof			AnimationController
  * @private
- *
- * @param this			Function scope
  * @param actualFrame	The new frame of animation
  */
 void AnimationController::setActualFrame(s8 actualFrame)
@@ -171,11 +140,7 @@ void AnimationController::setActualFrame(s8 actualFrame)
 /**
  * Retrieve the number of cycles that each frame of animation is shown
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
- *
  * @return		Frame duration in game cycles
  */
 s8 AnimationController::getFrameDuration()
@@ -186,10 +151,7 @@ s8 AnimationController::getFrameDuration()
 /**
  * Set the number of cycles that each frame of animation is shown
  *
- * @memberof			AnimationController
  * @private
- *
- * @param this			Function scope
  * @param frameDuration	Number of cycles that each frame of animation is shown
  */
 void AnimationController::setFrameDuration(u8 frameDuration)
@@ -200,11 +162,7 @@ void AnimationController::setFrameDuration(u8 frameDuration)
 /**
  * Retrieve the frame duration decrement per cycle
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
- *
  * @return		Frame cycle decrement
  */
 u8 AnimationController::getFrameCycleDecrement()
@@ -215,10 +173,7 @@ u8 AnimationController::getFrameCycleDecrement()
 /**
  * Set the frame duration decrement per cycle
  *
- * @memberof					AnimationController
  * @private
- *
- * @param this					Function scope
  * @param frameCycleDecrement	Decrement value for the frame cycle on each game cycle
  */
 void AnimationController::setFrameCycleDecrement(u8 frameCycleDecrement)
@@ -229,11 +184,7 @@ void AnimationController::setFrameCycleDecrement(u8 frameCycleDecrement)
 /**
  * Update the animation
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
- *
  * @return		True if the animation frame changed
  */
 bool AnimationController::updateAnimation()
@@ -305,10 +256,7 @@ bool AnimationController::updateAnimation()
 /**
  * Play an animation given an AnimationFunction
  *
- * @memberof					AnimationController
  * @private
- *
- * @param this					Function scope
  * @param animationFunction		Animation function to play
  */
 void AnimationController::playAnimationFunction(const AnimationFunction* animationFunction)
@@ -346,11 +294,7 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 /**
  * Retrieve the currently playing AnimationFunction
  *
- * @memberof		AnimationController
  * @private
- *
- * @param this		Function scope
- *
  * @return			Animation function
  */
 const AnimationFunction* AnimationController::getPlayingAnimationFunction()
@@ -361,13 +305,9 @@ const AnimationFunction* AnimationController::getPlayingAnimationFunction()
 /**
  * Play an animation given an AnimationDescription and the name of an AnimationFunction
  *
- * @memberof					AnimationController
  * @private
- *
- * @param this						Function scope
  * @param animationDescription		Animation description holding the animation function
  * @param functionName				Name of the animation function's to play
- *
  * @return							True if the animation started playing
  */
 bool AnimationController::play(const AnimationDescription* animationDescription, const char* functionName)
@@ -425,10 +365,7 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 /**
  * Stop the currently playing animation
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
  */
 void AnimationController::stop()
 {
@@ -439,11 +376,6 @@ void AnimationController::stop()
 
 /**
  * Skip to next frame
- *
- * @memberof	AnimationController
- * @public
- *
- * @param this	Function scope
  */
 void AnimationController::nextFrame()
 {
@@ -469,11 +401,6 @@ void AnimationController::nextFrame()
 
 /**
  * Rewind to previous frame
- *
- * @memberof	AnimationController
- * @public
- *
- * @param this	Function scope
  */
 void AnimationController::previousFrame()
 {
@@ -500,12 +427,8 @@ void AnimationController::previousFrame()
 /**
  * Check if a given animation function is playing
  *
- * @memberof					AnimationController
  * @private
- *
- * @param this					Function scope
  * @param functionName			The animation function's name
- *
  * @return						True if the animation is playing
  */
 bool AnimationController::isPlayingFunction(const char* functionName)
@@ -517,11 +440,7 @@ bool AnimationController::isPlayingFunction(const char* functionName)
 /**
  * Check if any animation is playing
  *
- * @memberof						AnimationController
  * @private
- *
- * @param this						Function scope
- *
  * @return							True if there is an animation playing
  */
 bool AnimationController::isPlaying()
@@ -532,10 +451,7 @@ bool AnimationController::isPlaying()
 /**
  * Pause the currently playing animation
  *
- * @memberof			AnimationController
  * @private
- *
- * @param this			Function scope
  * @param pause			Flag to pause or to resume animation
  */
 void AnimationController::pause(bool pause)
@@ -550,10 +466,7 @@ void AnimationController::pause(bool pause)
 /**
  * Get the total number of frames of the current animation
  *
- * @memberof	AnimationController
  * @private
- *
- * @param this	Function scope
  */
 int AnimationController::getNumberOfFrames()
 {

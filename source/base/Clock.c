@@ -31,27 +31,11 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	Clock
- * @extends Object
- * @ingroup base
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
- *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
  */
 void Clock::constructor()
 {
@@ -72,11 +56,6 @@ void Clock::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
  */
 void Clock::destructor()
 {
@@ -91,10 +70,6 @@ void Clock::destructor()
 /**
  * Print formatted class' attributes's states
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
  * @param col
  * @param row
  * @param font
@@ -118,11 +93,7 @@ void Clock::print(int col, int row, const char* font)
 /**
  * Called on each timer interrupt
  *
- * @memberof						Clock
- * @public
- *
- * @param this						Function scope
- * @param millisecondsElapsed		Time elapsed between calls
+ * @param millisecondsElapsed	Time elapsed between calls
  */
 void Clock::update(u32 millisecondsElapsed)
 {
@@ -155,11 +126,6 @@ void Clock::update(u32 millisecondsElapsed)
 
 /**
  * Reset clock's attributes
- *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
  */
 void Clock::reset()
 {
@@ -171,12 +137,7 @@ void Clock::reset()
 /**
  * Retrieve clock's milliseconds
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
- *
- * @return		Current milliseconds
+ * @return	Current milliseconds
  */
 u32 Clock::getMilliSeconds()
 {
@@ -186,12 +147,7 @@ u32 Clock::getMilliSeconds()
 /**
  * Retrieve clock's seconds
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
- *
- * @return		Current seconds
+ * @return	Current seconds
  */
 u32 Clock::getSeconds()
 {
@@ -201,12 +157,7 @@ u32 Clock::getSeconds()
 /**
  * Retrieve clock's minutes
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
- *
- * @return		Current minutes
+ * @return	Current minutes
  */
 u32 Clock::getMinutes()
 {
@@ -216,12 +167,7 @@ u32 Clock::getMinutes()
 /**
  * Retrieve clock's total elapsed time in milliseconds
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
- *
- * @return		Current milliseconds
+ * @return	Current milliseconds
  */
 u32 Clock::getTime()
 {
@@ -231,12 +177,7 @@ u32 Clock::getTime()
 /**
  * Retrieve current elapsed milliseconds in the current second
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
- *
- * @return		Elapsed milliseconds in the current second
+ * @return	Elapsed milliseconds in the current second
  */
 int Clock::getTimeInCurrentSecond()
 {
@@ -246,10 +187,6 @@ int Clock::getTimeInCurrentSecond()
 /**
  * Set clock's total elapsed time from seconds parameters
  *
- * @memberof			Clock
- * @public
- *
- * @param this			Function scope
  * @param totalSeconds
  */
 void Clock::setTimeInSeconds(float totalSeconds)
@@ -260,10 +197,6 @@ void Clock::setTimeInSeconds(float totalSeconds)
 /**
  * Set clock's total elapsed time
  *
- * @memberof			Clock
- * @public
- *
- * @param this			Function scope
  * @param milliSeconds
  */
 void Clock::setTimeInMilliSeconds(u32 milliSeconds)
@@ -273,11 +206,6 @@ void Clock::setTimeInMilliSeconds(u32 milliSeconds)
 
 /**
  * Start the clock
- *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
  */
 void Clock::start()
 {	Clock::reset(this);
@@ -287,11 +215,6 @@ void Clock::start()
 
 /**
  * Stop the clock
- *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
  */
 void Clock::stop()
 {
@@ -302,10 +225,6 @@ void Clock::stop()
 /**
  * Pause the clock
  *
- * @memberof		Clock
- * @public
- *
- * @param this		Function scope
  * @param paused	Set to paused or unpaused?
  */
 void Clock::pause(bool paused)
@@ -316,12 +235,7 @@ void Clock::pause(bool paused)
 /**
  * Whether the clock is running or not
  *
- * @memberof	Clock
- * @public
- *
- * @param this	Function scope
- *
- * @return		Paused flag
+ * @return	Paused flag
  */
 bool Clock::isPaused()
 {

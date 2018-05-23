@@ -35,30 +35,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	MessageDispatcher
- * @extends Object
- * @ingroup base
- */
-
 friend class VirtualNode;
 friend class VirtualList;
-
-/**
- * Delayed Message
- *
- * @memberof MessageDispatcher
- */
-typedef struct DelayedMessage
-{
-	/// pointer to the telegram to dispatch
-	Telegram telegram;
-	/// time of arrival
-	u32 timeOfArrival;
-	/// reference to clock
-	Clock clock;
-
-} DelayedMessage;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -71,18 +49,12 @@ typedef struct DelayedMessage
  * @fn			MessageDispatcher::getInstance()
  * @memberof	MessageDispatcher
  * @public
- *
  * @return		MessageDispatcher instance
  */
 
 
 /**
  * Class constructor
- *
- * @memberof		MessageDispatcher
- * @public
- *
- * @param this		Function scope
  */
  void MessageDispatcher::constructor()
 {
@@ -95,11 +67,6 @@ typedef struct DelayedMessage
 
 /**
  * Class destructor
- *
- * @memberof		MessageDispatcher
- * @public
- *
- * @param this		Function scope
  */
 void MessageDispatcher::destructor()
 {
@@ -113,15 +80,11 @@ void MessageDispatcher::destructor()
 /**
  * Dispatch a message
  *
- * @memberof		MessageDispatcher
- * @public
- *
  * @param delay		milliseconds to wait before dispatching the message
  * @param sender	the object that sends the message
  * @param receiver	the object that receives the message
  * @param message	the actual message code
  * @param extraInfo	pointer to any extra data that must accompany the message
- *
  * @return			a flag indicating the status of the processing of the message
  */
 static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo)
@@ -152,10 +115,6 @@ static bool MessageDispatcher::dispatchMessage(u32 delay, Object sender, Object 
 /**
  * Dispatch delayed message
  *
- * @memberof		MessageDispatcher
- * @public
- *
- * @param this		Function scope
  * @param delay		milliseconds to wait before dispatching the message
  * @param sender	the object that sends the message
  * @param receiver	the object that receives the message
@@ -179,11 +138,6 @@ void MessageDispatcher::dispatchDelayedMessage(Clock clock, u32 delay,
 
 /**
  * Take care of any discarded message
- *
- * @memberof		MessageDispatcher
- * @public
- *
- * @param this		Function scope
  */
 void MessageDispatcher::processDiscardedMessages()
 {
@@ -220,11 +174,6 @@ void MessageDispatcher::processDiscardedMessages()
 
 /**
  * Dispatch the delayed messages whose delay has expired
- *
- * @memberof		MessageDispatcher
- * @public
- *
- * @param this		Function scope
  */
 u32 MessageDispatcher::dispatchDelayedMessages()
 {
@@ -289,10 +238,7 @@ u32 MessageDispatcher::dispatchDelayedMessages()
 /**
  * Discarded delayed messages associated to the given clock
  *
- * @memberof		MessageDispatcher
  * @private
- *
- * @param this		Function scope
  * @param clock		the clock against which the message's delay is measured
  */
 void MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
@@ -313,10 +259,7 @@ void MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 /**
  * Discarded delayed messages sent by an object
  *
- * @memberof		MessageDispatcher
  * @private
- *
- * @param this		Function scope
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
@@ -339,10 +282,7 @@ void MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int mess
 /**
  * Discarded delayed messages sent to an object
  *
- * @memberof		MessageDispatcher
  * @private
- *
- * @param this		Function scope
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
@@ -368,10 +308,7 @@ void MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int m
 /**
  * Discarded all delayed messages sent by an object
  *
- * @memberof		MessageDispatcher
  * @private
- *
- * @param this		Function scope
  * @param sender	the object that originally sent the message
  */
 void MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
@@ -396,10 +333,7 @@ void MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 /**
  * Discarded all delayed messages sent to an object
  *
- * @memberof		MessageDispatcher
  * @private
- *
- * @param this		Function scope
  * @param sender	the object that the message was originally sent to
  */
 void MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
@@ -424,10 +358,6 @@ void MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
 /**
  * Print status
  *
- * @memberof		MessageDispatcher
- * @public
- *
- * @param this		Function scope
  * @param x			x screen coordinate
  * @param y			y screen coordinate
  */

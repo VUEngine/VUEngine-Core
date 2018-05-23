@@ -31,12 +31,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	ObjectAnimationCoordinator
- * @extends AnimationCoordinator
- * @ingroup graphics-2d-sprites-object
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -48,10 +42,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof					ObjectAnimationCoordinator
- * @public
- *
- * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition
  */
 void ObjectAnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
@@ -61,11 +51,6 @@ void ObjectAnimationCoordinator::constructor(const CharSetDefinition* charSetDef
 
 /**
  * Class destructor
- *
- * @memberof					ObjectAnimationCoordinator
- * @public
- *
- * @param this					Function scope
  */
 void ObjectAnimationCoordinator::destructor()
 {
@@ -77,10 +62,6 @@ void ObjectAnimationCoordinator::destructor()
 /**
  * Add an AnimationController
  *
- * @memberof					ObjectAnimationCoordinator
- * @public
- *
- * @param this					Function scope
  * @param animationController		Animation controller to register
  */
 void ObjectAnimationCoordinator::addAnimationController(AnimationController animationController)
@@ -99,10 +80,6 @@ void ObjectAnimationCoordinator::addAnimationController(AnimationController anim
 /**
  * Remove an AnimationController
  *
- * @memberof						ObjectAnimationCoordinator
- * @public
- *
- * @param this						Function scope
  * @param animationController		Animation controller to unregister
  */
 void ObjectAnimationCoordinator::removeAnimationController(AnimationController animationController)
@@ -130,4 +107,3 @@ void ObjectAnimationCoordinator::removeAnimationController(AnimationController a
 		}
 	}
 }
-

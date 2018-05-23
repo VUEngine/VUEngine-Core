@@ -33,19 +33,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	ParticleRemover
- * @extends Object
- * @ingroup stage-entities-particles
- */
-
 friend class VirtualNode;
 friend class VirtualList;
-
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,10 +44,7 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof	ParticleRemover
  * @private
- *
- * @param this	Function scope
  */
 void ParticleRemover::constructor()
 {
@@ -72,11 +58,6 @@ void ParticleRemover::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	ParticleRemover
- * @public
- *
- * @param this	Function scope
  */
 void ParticleRemover::destructor()
 {
@@ -91,11 +72,6 @@ void ParticleRemover::destructor()
 }
 /**
  * Reset
- *
- * @memberof	ParticleRemover
- * @public
- *
- * @param this	Function scope
  */
 void ParticleRemover::reset()
 {
@@ -124,11 +100,6 @@ void ParticleRemover::reset()
 
 /**
  * Update
- *
- * @memberof	ParticleRemover
- * @public
- *
- * @param this	Function scope
  */
 void ParticleRemover::update()
 {
@@ -169,10 +140,6 @@ void ParticleRemover::update()
 /**
  * Delete given particles
  *
- * @memberof		ParticleRemover
- * @public
- *
- * @param this		Function scope
  * @param particles	List of Particles to delete
  */
 void ParticleRemover::deleteParticles(VirtualList particles)
@@ -196,10 +163,6 @@ void ParticleRemover::deleteParticles(VirtualList particles)
 /**
  * Set removal delay cycles
  *
- * @memberof					ParticleRemover
- * @public
- *
- * @param this					Function scope
  * @param removalDelayCycles	New value
  */
 void ParticleRemover::setRemovalDelayCycles(int removalDelayCycles)

@@ -36,12 +36,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	DirectDraw
- * @extends Object
- * @ingroup graphics-3d
- */
-
 extern u32* _currentDrawingFrameBufferSet;
 
 
@@ -53,9 +47,7 @@ extern u32* _currentDrawingFrameBufferSet;
  * Get instance
  *
  * @fn			DirectDraw::getInstance()
- * @memberof	DirectDraw
  * @public
- *
  * @return		DirectDraw instance
  */
 
@@ -63,10 +55,7 @@ extern u32* _currentDrawingFrameBufferSet;
 /**
  * Class constructor
  *
- * @memberof	DirectDraw
  * @private
- *
- * @param this	Function scope
  */
 void DirectDraw::constructor()
 {
@@ -75,11 +64,6 @@ void DirectDraw::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	DirectDraw
- * @public
- *
- * @param this	Function scope
  */
 void DirectDraw::destructor()
 {
@@ -92,11 +76,6 @@ void DirectDraw::destructor()
  * This will yield no result for color = 0, so for drawing a black pixel, use DirectDraw_drawBlackPixel
  * instead.
  *
- * @brief			Draws a pixel on the screen
- * @memberof		DirectDraw
- * @public
- *
- * @param this		Function scope
  * @param buffer	Buffer base address
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
@@ -122,11 +101,6 @@ static void DirectDraw::drawPixel(u32 buffer, u16 x, u16 y, int color)
  * simply writing 1's. Adding an if clause instead to the putPixel method instead would be too heavy on
  * the processor when used inside a loop due to the branching.
  *
- * @brief			Draws a black pixel on the screen
- * @memberof		DirectDraw
- * @public
- *
- * @param this		Function scope
  * @param buffer	Buffer base address
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
@@ -148,11 +122,7 @@ static void DirectDraw::drawBlackPixel(u32 buffer, u16 x, u16 y)
 /**
  * Draws a black pixel on the screen.
  *
- * @brief			Draws a black pixel on the screen
- * @memberof		DirectDraw
  * @private
- *
- * @param this		Function scope
  * @param buffer	Buffer base address
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
@@ -165,10 +135,6 @@ static void DirectDraw::drawBlackPixelWrapper(u32 buffer, u16 x, u16 y, int colo
 /**
  * Draws a point between two given 2D points
  *
- * @memberof		DirectDraw
- * @public
- *
- * @param this		Function scope
  * @param point 	Point to draw
  * @param color		The color to draw (0-3)
  */
@@ -196,10 +162,6 @@ void DirectDraw::drawPoint(PixelVector point, int color)
 /**
  * Draws a line between two given 2D points
  *
- * @memberof		DirectDraw
- * @public
- *
- * @param this		Function scope
  * @param fromPoint Point 1
  * @param toPoint	Point 2
  * @param color		The color to draw (0-3)

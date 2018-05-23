@@ -35,8 +35,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-3d
 singleton class CollisionHelper : Object
 {
+	/// @publicsection
 	static CollisionHelper getInstance();
 	CollisionInformation checkIfOverlap(Shape shapeA, Shape shapeB);
 }

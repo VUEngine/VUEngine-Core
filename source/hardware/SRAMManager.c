@@ -41,17 +41,6 @@ extern u32 _sram_bss_end;
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	SRAMManager
- * @extends Object
- * @ingroup hardware
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -61,7 +50,6 @@ extern u32 _sram_bss_end;
  * @fn			SRAMManager::getInstance()
  * @memberof	SRAMManager
  * @public
- *
  * @return		SRAMManager instance
  */
 
@@ -69,10 +57,7 @@ extern u32 _sram_bss_end;
 /**
  * Class constructor
  *
- * @memberof	SRAMManager
  * @private
- *
- * @param this	Function scope
  */
 void SRAMManager::constructor()
 {
@@ -85,11 +70,6 @@ void SRAMManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	SRAMManager
- * @public
- *
- * @param this	Function scope
  */
 void SRAMManager::destructor()
 {
@@ -100,10 +80,7 @@ void SRAMManager::destructor()
 /**
  * Initialize SRAM
  *
- * @memberof	SRAMManager
  * @private
- *
- * @param this	Function scope
  */
 void SRAMManager::initialize()
 {
@@ -118,10 +95,6 @@ void SRAMManager::initialize()
 /**
  * Delete all data in SRAM range
  *
- * @memberof				SRAMManager
- * @public
- *
- * @param this				Function scope
  * @param startOffset		Start address of range to clear
  * @param endOffset			End address of range to clear
  */
@@ -137,10 +110,6 @@ void SRAMManager::clear(int startOffset, int endOffset)
 /**
  * Save data from SRAM
  *
- * @memberof				SRAMManager
- * @public
- *
- * @param this				Function scope
  * @param source			WRAM address from were data will be copied
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read
@@ -161,10 +130,6 @@ void SRAMManager::save(const BYTE* const source, int memberOffset, int dataSize)
 /**
  * Retrieve data from SRAM
  *
- * @memberof				SRAMManager
- * @public
- *
- * @param this				Function scope
  * @param destination		WRAM address were data will be loaded
  * @param memberOffset		WRAM address offset
  * @param dataSize			Number of BYTES to read

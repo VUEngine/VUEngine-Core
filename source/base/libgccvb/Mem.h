@@ -38,11 +38,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											FUNCTIONS
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base-libgccvb
 static class Mem : Object
 {
+	/// @publicsection
 	static void clear(BYTE* destination, u32 numberOfBYTES);
 	static void copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES);
 	static void copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS);
@@ -50,5 +52,6 @@ static class Mem : Object
 	static void addBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES, u32 offset);
 	static void addHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS, u32 offset);
 }
+
 
 #endif

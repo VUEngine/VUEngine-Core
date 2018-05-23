@@ -28,28 +28,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	BgmapAnimationCoordinator
- * @extends AnimationCoordinator
- * @ingroup graphics-2d-sprites-bgmap
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
  *
- * @memberof					BgmapAnimationCoordinator
- * @public
- *
- * @param this					Function scope
  * @param charSetDefinition		CharSetDefinition used by the sprites to be coordinated
  */
 void BgmapAnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
@@ -59,11 +43,6 @@ void BgmapAnimationCoordinator::constructor(const CharSetDefinition* charSetDefi
 
 /**
  * Class destructor
- *
- * @memberof		BgmapAnimationCoordinator
- * @public
- *
- * @param this		Function scope
  */
 void BgmapAnimationCoordinator::destructor()
 {
@@ -75,10 +54,6 @@ void BgmapAnimationCoordinator::destructor()
 /**
  * Add an AnimationController
  *
- * @memberof						BgmapAnimationCoordinator
- * @public
- *
- * @param this						Function scope
  * @param animationController		Animation controller to register
  */
 void BgmapAnimationCoordinator::addAnimationController(AnimationController animationController)
@@ -108,10 +83,6 @@ void BgmapAnimationCoordinator::addAnimationController(AnimationController anima
 /**
  * Remove an AnimationController
  *
- * @memberof						BgmapAnimationCoordinator
- * @public
- *
- * @param this						Function scope
  * @param animationController		Animation controller to unregister
  */
 void BgmapAnimationCoordinator::removeAnimationController(AnimationController animationController)

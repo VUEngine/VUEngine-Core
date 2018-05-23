@@ -32,12 +32,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	StateMachine
- * @extends Object
- * @ingroup base
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -49,10 +43,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  * @param owner		the StateMachine's owner
  */
 void StateMachine::constructor(void* owner)
@@ -69,11 +59,6 @@ void StateMachine::constructor(void* owner)
 
 /**
  * Class destructor
- *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  */
 void StateMachine::destructor()
 {
@@ -97,11 +82,6 @@ void StateMachine::destructor()
 
 /**
  * Method to propagate the update process to the current state
- *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  */
 void StateMachine::update()
 {
@@ -114,10 +94,6 @@ void StateMachine::update()
 /**
  * Replace the current state for a new one
  *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  * @param newState	State to switch to
  */
 void StateMachine::swapState(State newState)
@@ -150,12 +126,7 @@ void StateMachine::swapState(State newState)
 /**
  * Push a new state at top of the stack, making it the current one
  *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  * @param newState	state to push
- *
  * @return 			Resulting stack's size
  */
 u32 StateMachine::pushState(State newState)
@@ -189,11 +160,6 @@ u32 StateMachine::pushState(State newState)
 
 /**
  * Remove the current state, the one at the top of the stack
- *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  *
  * @return 			Resulting stack's size
  */
@@ -231,11 +197,6 @@ u32 StateMachine::popState()
 
 /**
  * Return the state just below the current one at the top of the stack
- *
- * @memberof		StateMachine
- * @public
- *
- * @param this		Function scope
  */
 void StateMachine::returnToPreviousState()
 {
@@ -255,10 +216,6 @@ void StateMachine::returnToPreviousState()
 /**
  * Change the current state to a new one but don't push it into the stack
  *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
  * @param globalState	State to switch to
  */
 void StateMachine::changeToGlobal(State globalState)
@@ -282,12 +239,7 @@ void StateMachine::changeToGlobal(State globalState)
 /**
  * Method to forward a message to the current state
  *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
  * @param telegram		Telegram to forward
- *
  * @return				True if successfully processed, false otherwise
  */
 bool StateMachine::handleMessage(Telegram telegram)
@@ -303,12 +255,7 @@ bool StateMachine::handleMessage(Telegram telegram)
 /**
  * Check if a given state is the current one
  *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
  * @param state			State to check
- *
  * @return				True if the given state is the current one
  */
 bool StateMachine::isInState(const State state)
@@ -319,10 +266,6 @@ bool StateMachine::isInState(const State state)
 /**
  * Set the StageMachine's owner
  *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
  * @param owner			New owner
  */
 void StateMachine::setOwner(void* owner)
@@ -333,11 +276,6 @@ void StateMachine::setOwner(void* owner)
 /**
  * Retrieve the current state
  *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
- *
  * @return				Current state
  */
 State StateMachine::getCurrentState()
@@ -347,11 +285,6 @@ State StateMachine::getCurrentState()
 
 /**
  * Get the second state from the top of the stack
- *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
  *
  * @return				Second state in the stack
  */
@@ -371,11 +304,6 @@ State StateMachine::getPreviousState()
 
 /**
  * Get the StateMachine's stack's size
- *
- * @memberof			StateMachine
- * @public
- *
- * @param this			Function scope
  *
  * @return				The size of the stack
  */

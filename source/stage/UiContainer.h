@@ -32,7 +32,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 // defines a UI for ROM memory
@@ -47,8 +47,14 @@ typedef struct UiContainerDefinition
 } UiContainerDefinition;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage
 class UiContainer : Container
 {
+	/// @publicsection
 	void constructor(UiContainerDefinition* uiContainerDefinition);
 	virtual void addEntities(PositionedEntity* entities);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);

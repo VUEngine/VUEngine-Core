@@ -38,11 +38,11 @@
 //											 MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __UPDATE_HEAD	0x0F
-#define __UPDATE_G		0x01
-#define __UPDATE_PARAM	0x02
-#define __UPDATE_SIZE	0x04
-#define __UPDATE_M		0x08
+#define __UPDATE_HEAD		0x0F
+#define __UPDATE_G			0x01
+#define __UPDATE_PARAM		0x02
+#define __UPDATE_SIZE		0x04
+#define __UPDATE_M			0x08
 
 #define __TRANSPARENCY_NONE	0
 #define __TRANSPARENCY_EVEN	1
@@ -50,7 +50,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 class AnimationController;
@@ -82,7 +82,6 @@ typedef struct SpriteDefinition
  * @memberof	Sprite
  */
 typedef const SpriteDefinition SpriteROMDef;
-
 
 /**
  * A function which defines the frames to play
@@ -137,87 +136,42 @@ typedef struct AnimationDescription
  */
 typedef const AnimationDescription AnimationDescriptionROMDef;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup graphics-2d-sprites
 abstract class Sprite : Object
 {
-	/*
-	* @var PixelVector 		Position
-	* @brief					Projected position based on optics configuration
-	* @memberof				Sprite
-	*/
+	// Projected position based on optics configuration
 	PixelVector position;
-	/*
-	* @var PixelVector 		Displacement
-	* @brief					Displacement modifier to achieve better control over display
-	* @memberof				Sprite
-	*/
+	// Displacement modifier to achieve better control over display
 	PixelVector displacement;
-	/*
-	* @var AnimationController animationController
-	* @brief					AnimationController
-	* @memberof				Sprite
-	*/
+	// AnimationController
 	AnimationController animationController;
-	/*
-	* @var Texture 			texture
-	* @brief					Our texture
-	* @memberof				Sprite
-	*/
+	// Our texture
 	Texture texture;
-	/*
-	* @var s16 				halfWidth
-	* @brief					Texture's half width
-	* @memberof				Sprite
-	*/
+	// Texture's half width
 	s16 halfWidth;
-	/*
-	* @var s16		 			halfHeight
-	* @brief					Texture's half height
-	* @memberof				Sprite
-	*/
+	// Texture's half height
 	s16 halfHeight;
-	/*
-	* @var u16 				head
-	* @brief					Head definition for world entry setup
-	* @memberof				Sprite
-	*/
+	// Head definition for world entry setup
 	u16 head;
-	/*
-	* @var bool 				hidden
-	* @brief
-	* @memberof				Sprite
-	*/
+	//
 	bool hidden;
-	/*
-	* @var bool 				writeAnimationFrame
-	* @brief					Update animation
-	* @memberof				Sprite
-	*/
+	// Update animation
 	bool writeAnimationFrame : 2;
-	/*
-	* @var bool 				visible
-	* @brief					Flag for transparency control
-	* @memberof				Sprite
-	*/
+	// Flag for transparency control
 	bool visible : 2;
-	/*
-	* @var bool 				positioned
-	* @brief					Flag to allow rendering
-	* @memberof				Sprite
-	*/
+	// Flag to allow rendering
 	bool positioned : 2;
-	/*
-	* @var u8 					worldLayer
-	* @brief					World layer where to render the texture
-	* @memberof				Sprite
-	*/
+	// World layer where to render the texture
 	u8 worldLayer;
-	/*
-	* @var bool 				transparent
-	* @brief					Flag for making it transparent
-	* @memberof				Sprite
-	*/
+	// Flag for making it transparent
 	u8 transparent;
 
+	/// @publicsection
 	void constructor(const SpriteDefinition* spriteDefinition, Object owner);
 	PixelVector getPosition();
 	PixelVector getDisplacedPosition();

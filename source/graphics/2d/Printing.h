@@ -36,10 +36,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some handy macros
-#define PRINT_TEXT(string, x, y)		Printing_text(Printing_getInstance(), string, x, y, NULL)
-#define PRINT_INT(number, x, y)			Printing_int(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)		Printing_float(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_HEX(number, x, y)			Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
+#define PRINT_TEXT(string, x, y)	Printing_text(Printing_getInstance(), string, x, y, NULL)
+#define PRINT_INT(number, x, y)		Printing_int(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)	Printing_float(Printing_getInstance(), number, x, y, NULL)
+#define PRINT_HEX(number, x, y)		Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
 
 
 // max length of a font's name
@@ -101,17 +101,20 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-// size in pixels
+/**
+ * Size of a font's characters (in chars)
+ *
+ * @memberof 	Printing
+ */
 typedef struct FontSize
 {
 	u16 x;
 	u16 y;
 
 } FontSize;
-
 
 /**
  * A font
@@ -142,7 +145,7 @@ typedef struct FontDefinition
 typedef const FontDefinition FontROMDef;
 
 /**
- * A FontDefinition plus a the offset of its charset in memory
+ * A FontDefinition plus the offset of its charset in memory
  *
  * @memberof 	Printing
  */
@@ -164,40 +167,26 @@ typedef struct FontData
 typedef const FontData FontROMData;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// Manages printing layer and offers various functions to write to it.
+/// @ingroup graphics-2d
 singleton class Printing : Object
 {
-	/*
-	* @var VirtualList fonts
-	* @brief			A list of loaded fonts and their respective CharSets
-	* @memberof		Printing
-	*/
+	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
-	/*
-	* @var u16			gx
-	* @brief			x coordinate for printing WORLD
-	* @memberof		Printing
-	*/
+	// x coordinate for printing WORLD
 	u16 gx;
-	/*
-	* @var u16			gy
-	* @brief			y coordinate for printing WORLD
-	* @memberof		Printing
-	*/
+	// y coordinate for printing WORLD
 	u16 gy;
-	/*
-	* @var u8			mode
-	* @brief			Printing mode (Default or Debug)
-	* @memberof		Printing
-	*/
+	// Printing mode (Default or Debug)
 	u8 mode;
-	/*
-	* @var u8			palette
-	* @brief			Palette to use for printing
-	* @memberof		Printing
-	*/
+	// Palette to use for printing
 	u8 palette;
 
-	// declare class
+	/// @publicsection
 	static Printing getInstance();
 	void clear();
 	FontData* getFontByName(const char* font);

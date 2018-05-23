@@ -40,10 +40,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS' DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
 
 /**
  * An option of the OptionsSelector
@@ -63,6 +61,11 @@ typedef struct Option
 
 } Option;
 
+
+//---------------------------------------------------------------------------------------------------------
+//												ENUMS
+//---------------------------------------------------------------------------------------------------------
+
 /**
  * The types of an Option
  *
@@ -79,88 +82,42 @@ enum OptionTypes
 };
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS' DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// Utility class to render a menu
+/// @ingroup tools
 class OptionsSelector : Object
 {
-	/**
-	* @var VirtualList pages
-	* @brief			List of pages, each being a VirtualLists of Options
-	* @memberof		OptionsSelector
-	*/
+	// List of pages, each being a VirtualLists of Options
 	VirtualList pages;
-	/**
-	* @var VirtualNode currentPage
-	* @brief			Current page node
-	* @memberof		OptionsSelector
-	*/
+	// Current page node
 	VirtualNode currentPage;
-	/**
-	* @var VirtualNode currentOption
-	* @brief			Current option node
-	* @memberof		OptionsSelector
-	*/
+	// Current option node
 	VirtualNode currentOption;
-	/**
-	* @var u8			x
-	* @brief			Printing column
-	* @memberof		OptionsSelector
-	*/
+	// Printing column
 	u8 x;
-	/**
-	* @var u8			y
-	* @brief			Printing row
-	* @memberof		OptionsSelector
-	*/
+	// Printing row
 	u8 y;
-	/**
-	* @var u8			cols
-	* @brief			Number of columns per page
-	* @memberof		OptionsSelector
-	*/
+	// Number of columns per page
 	u8 cols;
-	/**
-	* @var u8			rows
-	* @brief			Number of rows per page
-	* @memberof		OptionsSelector
-	*/
+	// Number of rows per page
 	u8 rows;
-	/**
-	* @var u8			columnWidth
-	* @brief			Width of a column (in chars)
-	* @memberof		OptionsSelector
-	*/
+	// Width of a column (in chars)
 	u8 columnWidth;
-	/**
-	* @var int		 	totalOptions
-	* @brief			Total number of options
-	* @memberof		OptionsSelector
-	*/
+	// Total number of options
 	int totalOptions;
-	/**
-	* @var int		 	currentPageIndex
-	* @brief			Current page index
-	* @memberof		OptionsSelector
-	*/
+	// Current page index
 	int currentPageIndex;
-	/**
-	* @var int		 	currentOptionIndex
-	* @brief			Current option index
-	* @memberof		OptionsSelector
-	*/
+	// Current option index
 	int currentOptionIndex;
-	/**
-	* @var char*		mark
-	* @brief			Selection mark character
-	* @memberof		OptionsSelector
-	*/
+	// Selection mark character
 	char* mark;
-	/**
-	* @var char*		font
-	* @brief			Font to use for printing the OptionsSelector
-	* @memberof		OptionsSelector
-	*/
+	// Font to use for printing the OptionsSelector
 	char* font;
 
-	// declare the optionsselector class
+	/// @publicsection
 	void constructor(u8 cols, u8 rows, char* font);
 	void doCurrentSelectionCallback();
 	void setColumnWidth(u8 width);

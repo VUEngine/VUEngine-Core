@@ -29,18 +29,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	FrameRate
- * @extends Object
- * @ingroup base
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -50,7 +38,6 @@
  * @fn			FrameRate::getInstance()
  * @memberof	FrameRate
  * @public
- *
  * @return		FrameRate instance
  */
 
@@ -58,10 +45,7 @@
 /**
  * Class constructor
  *
- * @memberof	FrameRate
  * @private
- *
- * @param this	Function scope
  */
 void FrameRate::constructor()
 {
@@ -73,10 +57,7 @@ void FrameRate::constructor()
 /**
  * Class destructor
  *
- * @memberof	FrameRate
- * @public
- *
- * @param this	Function scope
+ * @private
  */
 void FrameRate::destructor()
 {
@@ -86,11 +67,6 @@ void FrameRate::destructor()
 
 /**
  * Reset internal values
- *
- * @memberof	FrameRate
- * @public
- *
- * @param this	Function scope
  */
 void FrameRate::reset()
 {
@@ -99,11 +75,6 @@ void FrameRate::reset()
 
 /**
  * Retrieve FPS
- *
- * @memberof	FrameRate
- * @public
- *
- * @param this	Function scope
  */
 u16 FrameRate::getFps()
 {
@@ -112,11 +83,6 @@ u16 FrameRate::getFps()
 
 /**
  * Increase the FPS count
- *
- * @memberof	FrameRate
- * @public
- *
- * @param this	Function scope
  */
 void FrameRate::increaseFps()
 {
@@ -126,10 +92,6 @@ void FrameRate::increaseFps()
 /**
  * Print FPS
  *
- * @memberof	FrameRate
- * @public
- *
- * @param this	Function scope
  * @param col	Column to start printing at
  * @param row	Row to start printing at
  */

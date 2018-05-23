@@ -40,108 +40,45 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 singleton class Game : Object
 {
-	/**
-	 * @var StateMachine	stateMachine
-	 * @brief				game's state machine
-	 * @memberof			Game
-	 */
+	// game's state machine
 	StateMachine stateMachine;
-	/**
-	 * @var GameState		currentState
-	 * @brief				game's current state
-	 * @memberof			Game
-	 */
+	// game's current state
 	GameState currentState;
-	/**
-	 * @var Clock			clock
-	 * @brief				engine's global timer
-	 * @memberof			Game
-	 */
+	// engine's global timer
 	Clock clock;
-	/**
-	 * @var ClockManager	clockManager
-	 * @brief				managers
-	 * @memberof			Game
-	 */
+	// managers
 	ClockManager clockManager;
-	/**
-	 * @var KeypadManager 	keypadManager
-	 * @brief
-	 * @memberof			Game
-	 */
+	//
 	KeypadManager keypadManager;
-	/**
-	 * @var VIPManager 		vipManager
-	 * @brief
-	 * @memberof			Game
-	 */
+	//
 	VIPManager vipManager;
-	/**
-	 * @var TimerManager 	timerManager
-	 * @brief
-	 * @memberof			Game
-	 */
+	//
 	TimerManager timerManager;
-	/**
-	 * @var Camera 			camera
-	 * @brief
-	 * @memberof			Game
-	 */
+	//
 	Camera camera;
-	/**
-	 * @var GameState		nextState
-	 * @brief				game's next state
-	 * @memberof			Game
-	 */
+	// game's next state
 	GameState nextState;
-	/**
-	 * @var int				nextStateOperation
-	 * @brief				game's next state operation
-	 * @memberof			Game
-	 */
+	// game's next state operation
 	int nextStateOperation;
-	/**
-	 * @var char*			lastProcessName
-	 * @brief				last process' name
-	 * @memberof			Game
-	 */
+	// last process' name
 	char* lastProcessName;
-	/**
-	 * @var GameState		automaticPauseState
-	 * @brief				auto pause state
-	 * @memberof			Game
-	 */
+	// auto pause state
 	GameState automaticPauseState;
-	/**
-	 * @var u32				lastAutoPauseCheckTime
-	 * @brief				auto pause last checked time
-	 * @memberof			Game
-	 */
+	// auto pause last checked time
 	u32 lastAutoPauseCheckTime;
-	/**
-	 * @var u32				gameFrameTotalTime
-	 * @brief				elapsed time in current 50hz cycle
-	 * @memberof			Game
-	 */
+	// elapsed time in current 50hz cycle
 	u32 gameFrameTotalTime;
-	/**
-	 * @var bool			isShowingLowBatteryIndicator
-	 * @brief				low battery indicator showing flag
-	 * @memberof			Game
-	 */
+	// low battery indicator showing flag
 	bool isShowingLowBatteryIndicator;
-	/**
-	 * @var bool			currentFrameEnded
-	 * @brief				frame ended flag
-	 * @memberof			Game
-	 */
+	// frame ended flag
 	volatile bool currentFrameEnded;
 
+	/// @publicsection
 	static Game getInstance();
 	static bool isConstructed();
-
 	void pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void pushBackProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void addState(GameState state);

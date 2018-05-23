@@ -40,63 +40,29 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup states
 class GameState : State
 {
-	/**
-	* @var PhysicalWorld 		physicalWorld
-	* @brief					a pointer to the game's stage
-	* @memberof				GameState
-	*/
+	// a pointer to the game's stage
 	PhysicalWorld physicalWorld;
-	/**
-	* @var CollisionManager 	collisionManager
-	* @brief					a pointer to the game's stage
-	* @memberof				GameState
-	*/
+	// a pointer to the game's stage
 	CollisionManager collisionManager;
-	/**
-	* @var Stage 				stage
-	* @brief					a pointer to the game's stage
-	* @memberof				GameState
-	*/
+	// a pointer to the game's stage
 	Stage stage;
-	/**
-	* @var int 				canStream
-	* @brief					flag to allow streaming
-	* @memberof				GameState
-	*/
+	// flag to allow streaming
 	int canStream;
-	/**
-	* @var Vector3D 			cameraPosition
-	* @brief					must save to allow pause
-	* @memberof				GameState
-	*/
+	// must save to allow pause
 	Vector3D cameraPosition;
-	/**
-	* @var Clock 				messagingClock
-	* @brief					clock for messaging
-	* @memberof				GameState
-	*/
+	// clock for messaging
 	Clock messagingClock;
-	/**
-	* @var Clock 				updateClock
-	* @brief					clock for update cycle
-	* @memberof				GameState
-	*/
+	// clock for update cycle
 	Clock updateClock;
-	/**
-	* @var Clock 				physicsClock
-	* @brief					clock for physics
-	* @memberof				GameState
-	*/
+	// clock for physics
 	Clock physicsClock;
-	/**
-	* @var u32 				previousUpdateTime
-	* @brief					previous update time
-	* @memberof				GameState
-	*/
+	// previous update time
 	u32 previousUpdateTime;
 
+	/// @publicsection
 	void constructor();
 	CollisionManager getCollisionManager();
 	Clock getMessagingClock();

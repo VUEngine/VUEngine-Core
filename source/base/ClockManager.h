@@ -35,15 +35,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+
+/// @ingroup base
 singleton class ClockManager : Object
 {
-	/**
-	 * @var VirtualList	clocks
-	 * @brief			registered clocks
-	 * @memberof		ClockManager
-	 */
+	// registered clocks
 	VirtualList clocks;
 
+	/// @publicsection
 	static ClockManager getInstance();
 	void register(Clock clock);
 	void reset();

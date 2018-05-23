@@ -50,60 +50,60 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 class BgmapSprite;
 
 typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
 
-
+/**
+ * A BgmapSprite definition
+ *
+ * @memberof BgmapSprite
+ */
 typedef struct BgmapSpriteDefinition
 {
-	// it has a Sprite definition at the beginning
+	/// it has a Sprite definition at the beginning
 	SpriteDefinition spriteDefinition;
 
-	// the display mode (BGMAP, AFFINE, H-BIAS)
+	/// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
 
-	// pointer to affine/hbias manipulation function
+	/// pointer to affine/hbias manipulation function
 	ParamTableEffectMethod applyParamTableEffect;
 
-	// flag to indicate in which display to show the bg texture
+	/// flag to indicate in which display to show the bg texture
 	u16 display;
-
 
 } BgmapSpriteDefinition;
 
+/**
+ * A BgmapSprite definition that is stored in ROM
+ *
+ * @memberof BgmapSprite
+ */
 typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// Sprite which holds a texture and a drawing specification.
+/// @ingroup graphics-2d-sprites-bgmap
 class BgmapSprite : Sprite
 {
-	/**
-	* @var DrawSpec 				drawSpec
-	* @brief						3d world position
-	* @memberof					BgmapSprite
-	*/
+	// 3d world position
 	DrawSpec drawSpec;
-	/**
-	* @var u32 					param
-	* @brief						param table offset
-	* @memberof					BgmapSprite
-	*/
+	// param table offset
 	u32 param;
-	/**
-	* @var s16 					paramTableRow
-	* @brief						param table offset
-	* @memberof					BgmapSprite
-	*/
+	// param table offset
 	s16 paramTableRow;
-	/**
-	* @var void(*)(BgmapSprite) 	paramTableEffect
-	* @brief						pointer to function that implements the param table based effects
-	* @memberof					BgmapSprite
-	*/
+	// pointer to function that implements the param table based effects
 	ParamTableEffectMethod applyParamTableEffect;
 
+	/// @publicsection
 	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
 	DrawSpec getDrawSpec();
 	void invalidateParamTable();

@@ -49,7 +49,7 @@ Cast everything
 
 Because the engine implements class inheritance by accumulation of attributes' definitions within macros, it is necessary to cast every pointer of any given class to its base class in order to avoid compiler warnings when calling the base class' methods. This exposes the program to hard to identify errors. In order to mitigate this danger, cast every pointer before passing it to the base class' method by following this pattern:
 
-	BaseClass_method(__SAFE_CAST(BaseClass, object), ...);
+	BaseClass::method(__SAFE_CAST(BaseClass, object), ...);
 
 When compiling for release, the macro is replaced by a simple C type cast; while for debug, the Object_getCast method will be called, returning NULL if the object does not inherit from the given BaseClass, raising an exception in the method (which must check that the "this" pointer isn't NULL).
 

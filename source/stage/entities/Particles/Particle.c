@@ -33,18 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	Particle
- * @extends SpatialObject
- * @ingroup stage-entities-particles
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
@@ -58,10 +46,6 @@
 /**
  * Class constructor
  *
- * @memberof					Particle
- * @public
- *
- * @param this					Function scope
  * @param particleDefinition	Definition of the Particle
  * @param spriteDefinition
  * @param lifeSpan
@@ -83,11 +67,6 @@ void Particle::constructor(const ParticleDefinition* particleDefinition, const S
 
 /**
  * Class destructor
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::destructor()
 {
@@ -113,10 +92,7 @@ void Particle::destructor()
 /**
  * Add a sprite
  *
- * @memberof	Particle
  * @private
- *
- * @param this	Function scope
  */
 void Particle::addSprite()
 {
@@ -136,13 +112,8 @@ void Particle::addSprite()
 /**
  * Update
  *
- * @memberof			Particle
- * @public
- *
- * @param this			Function scope
  * @param elapsedTime
  * @param behavior
- *
  * @return				Boolean that tells whether a body was set active(?)
  */
 u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
@@ -171,10 +142,6 @@ u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 /**
  * Update Visual Representation
  *
- * @memberof					Particle
- * @public
- *
- * @param this					Function scope
  * @param updateSpritePosition
  */
 void Particle::synchronizeGraphics(bool updateSpritePosition)
@@ -201,10 +168,6 @@ void Particle::synchronizeGraphics(bool updateSpritePosition)
 /**
  * Add force
  *
- * @memberof			Particle
- * @public
- *
- * @param this			Function scope
  * @param force
  * @param movementType
  */
@@ -246,10 +209,6 @@ void Particle::addForce(const Force* force, u32 movementType)
 /**
  * Set lifespan
  *
- * @memberof		Particle
- * @public
- *
- * @param this		Function scope
  * @param lifeSpan
  */
 void Particle::setLifeSpan(int lifeSpan)
@@ -260,10 +219,6 @@ void Particle::setLifeSpan(int lifeSpan)
 /**
  * Set mass
  *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  * @param mass
  */
 void Particle::setMass(fix10_6 mass)
@@ -274,10 +229,6 @@ void Particle::setMass(fix10_6 mass)
 /**
  * Set position
  *
- * @memberof		Particle
- * @public
- *
- * @param this		Function scope
  * @param position
  */
 void Particle::setPosition(const Vector3D* position)
@@ -296,11 +247,6 @@ void Particle::setPosition(const Vector3D* position)
 /**
  * Retrieve position
  *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
- *
  * @return		Position of particle's body
  */
 const Vector3D* Particle::getPosition()
@@ -312,11 +258,6 @@ const Vector3D* Particle::getPosition()
 
 /**
  * Make Particle visible
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::show()
 {
@@ -332,11 +273,6 @@ void Particle::show()
 
 /**
  * Make Particle invisible
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::hide()
 {
@@ -350,12 +286,7 @@ void Particle::hide()
 /**
  * Can move over axis?
  *
- * @memberof			Particle
- * @public
- *
- * @param this			Function scope
  * @param acceleration
- *
  * @return				Boolean that tells whether the Particle's body can move over axis (defaults to true)
  */
 bool Particle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
@@ -365,22 +296,12 @@ bool Particle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 
 /**
  * Transform
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::transform()
 {}
 
 /**
  * Resume
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::resume()
 {
@@ -391,11 +312,6 @@ void Particle::resume()
 
 /**
  * Pause
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::suspend()
 {
@@ -406,11 +322,6 @@ void Particle::suspend()
 
 /**
  * Reset
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  */
 void Particle::reset()
 {
@@ -420,11 +331,6 @@ void Particle::reset()
 
 /**
  * Is visible
- *
- * @memberof	Particle
- * @public
- *
- * @param this	Function scope
  *
  * @return		True if within camera's reach
  */

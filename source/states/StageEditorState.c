@@ -33,18 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	StageEditorState
- * @extends GameState
- * @ingroup states
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -54,7 +42,6 @@
  * @fn			StageEditorState::getInstance()
  * @memberof	StageEditorState
  * @public
- *
  * @return		StageEditorState instance
  */
 
@@ -62,10 +49,7 @@
 /**
  * Class constructor
  *
- * @memberof	StageEditorState
  * @private
- *
- * @param this	Function scope
  */
 void StageEditorState::constructor()
 {
@@ -75,10 +59,7 @@ void StageEditorState::constructor()
 /**
  * Class destructor
  *
- * @memberof	StageEditorState
  * @private
- *
- * @param this	Function scope
  */
 void StageEditorState::destructor()
 {
@@ -89,10 +70,6 @@ void StageEditorState::destructor()
 /**
  * Method called when the Game's StateMachine enters to this state
  *
- * @memberof		StageEditorState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void StageEditorState::enter(void* owner __attribute__ ((unused)))
@@ -105,10 +82,6 @@ void StageEditorState::enter(void* owner __attribute__ ((unused)))
 /**
  * Method called when by the StateMachine's update method
  *
- * @memberof		StageEditorState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void StageEditorState::execute(void* owner __attribute__ ((unused)))
@@ -119,10 +92,6 @@ void StageEditorState::execute(void* owner __attribute__ ((unused)))
 /**
  * Method called when the Game's StateMachine exits from this state
  *
- * @memberof		StageEditorState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void StageEditorState::exit(void* owner __attribute__ ((unused)))
@@ -135,10 +104,6 @@ void StageEditorState::exit(void* owner __attribute__ ((unused)))
 /**
  * Process user input
  *
- * @memberof			StageEditorState
- * @private
- *
- * @param this			Function scope
  * @param userInput		User input
  */
 void StageEditorState::processUserInput(UserInput userInput)

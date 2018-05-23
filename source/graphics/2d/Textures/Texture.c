@@ -32,27 +32,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	Texture
- * @extends Object
- * @ingroup graphics-2d-textures
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
  *
- * @memberof					Texture
  * @private
- *
- * @param this					Function scope
  * @param textureDefinition		Definition to use
  * @param id					Texture's identification
  */
@@ -76,11 +62,6 @@ void Texture::constructor(TextureDefinition* textureDefinition, u16 id)
 
 /**
  * Class destructor
- *
- * @memberof	Texture
- * @public
- *
- * @param this	Function scope
  */
 void Texture::destructor()
 {
@@ -94,10 +75,7 @@ void Texture::destructor()
 /**
  * Load the CharSet defined by the TextureDefinition
  *
- * @memberof	Texture
  * @private
- *
- * @param this	Function scope
  */
 void Texture::loadCharSet()
 {
@@ -113,10 +91,6 @@ void Texture::loadCharSet()
 /**
  * Set the TextureDefinition
  *
- * @memberof					Texture
- * @public
- *
- * @param this					Function scope
  * @param textureDefinition		New TextureDefinition
  */
 void Texture::setDefinition(TextureDefinition* textureDefinition)
@@ -131,11 +105,6 @@ void Texture::setDefinition(TextureDefinition* textureDefinition)
 /**
  * Retrieve the TextureDefinition
  *
- * @memberof			Texture
- * @public
- *
- * @param this			Function scope
- *
  * @return				TextureDefinition
  */
 TextureDefinition* Texture::getDefinition()
@@ -145,11 +114,6 @@ TextureDefinition* Texture::getDefinition()
 
 /**
  * Release the CharSet
- *
- * @memberof					Texture
- * @public
- *
- * @param this					Function scope
  */
 void Texture::releaseCharSet()
 {
@@ -168,11 +132,6 @@ void Texture::releaseCharSet()
 
 /**
  * Write the map to DRAM
- *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
  */
 void Texture::write()
 {
@@ -189,11 +148,6 @@ void Texture::write()
 
 /**
  * Rewrite the map to DRAM
- *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
  */
 void Texture::rewrite()
 {
@@ -204,11 +158,6 @@ void Texture::rewrite()
 
 /**
  * Write to DRAM in h-bias mode
- *
- * @memberof					Texture
- * @public
- *
- * @param this					Function scope
  */
 void Texture::writeHBiasMode()
 {
@@ -229,12 +178,7 @@ void Texture::writeHBiasMode()
 /**
  * Retrieve the number of CHARs according to the TextureDefinition's CharDefinition
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Number of CHARs
+ * @return	Number of CHARs
  */
 int Texture::getNumberOfChars()
 {
@@ -244,12 +188,7 @@ int Texture::getNumberOfChars()
 /**
  * Retrieve the TextureDefinition
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			TextureDefinition
+ * @return	TextureDefinition
  */
 TextureDefinition* Texture::getTextureDefinition()
 {
@@ -259,12 +198,7 @@ TextureDefinition* Texture::getTextureDefinition()
 /**
  * Retrieve map's total column size, accounting for the total frames of animation
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Number of total columns
+ * @return	Number of total columns
  */
 u32 Texture::getTotalCols()
 {
@@ -306,12 +240,7 @@ u32 Texture::getTotalCols()
 /**
  * Retrieve map's total row size, accounting for the total frames of animation
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Number of total rows
+ * @return	Number of total rows
  */
 u32 Texture::getTotalRows()
 {
@@ -352,12 +281,7 @@ u32 Texture::getTotalRows()
 /**
  * Retrieve number of frames for animation
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Number of frames for animation
+ * @return	Number of frames for animation
  */
 u32 Texture::getNumberOfFrames()
 {
@@ -367,13 +291,8 @@ u32 Texture::getNumberOfFrames()
 /**
  * Retrieve CharSet
  *
- * @memberof				Texture
- * @public
- *
- * @param this				Function scope
- * @param loadIfNeeded		Flag to force loading if CharSet is NULL
- *
- * @return					CharSet
+ * @param loadIfNeeded	Flag to force loading if CharSet is NULL
+ * @return				CharSet
  */
 CharSet Texture::getCharSet(u32 loadIfNeeded)
 {
@@ -388,12 +307,7 @@ CharSet Texture::getCharSet(u32 loadIfNeeded)
 /**
  * Retrieve map definition
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Pointer to the map definition
+ * @return	Pointer to the map definition
  */
 BYTE* Texture::getMapDefinition()
 {
@@ -403,11 +317,7 @@ BYTE* Texture::getMapDefinition()
 /**
  * Set palette
  *
- * @memberof			Texture
- * @public
- *
- * @param this			Function scope
- * @param palette		New palette
+ * @param palette	New palette
  */
 void Texture::setPalette(u8 palette)
 {
@@ -417,12 +327,7 @@ void Texture::setPalette(u8 palette)
 /**
  * Retrieve palette
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Palette
+ * @return	Palette
  */
 u8 Texture::getPalette()
 {
@@ -432,15 +337,11 @@ u8 Texture::getPalette()
 /**
  * Retrieve map's row size
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Number of rows
+ * @return	Number of rows
  */
 u32 Texture::getRows()
-{	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
+{
+	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
 
 	return this->textureDefinition->rows;
 }
@@ -448,12 +349,7 @@ u32 Texture::getRows()
 /**
  * Retrieve map's column size
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Number of columns
+ * @return	Number of columns
  */
 u32 Texture::getCols()
 {
@@ -463,12 +359,7 @@ u32 Texture::getCols()
 /**
  * Retrieve identification
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			Identification number
+ * @return	Identification number
  */
 u16 Texture::getId()
 {
@@ -478,11 +369,8 @@ u16 Texture::getId()
 /**
  * Event listener for CharSet re-writing to DRAM
  *
- * @memberof				Texture
  * @private
- *
- * @param this				Function scope
- * @param eventFirer		CharSet
+ * @param eventFirer	CharSet
  */
 void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
 {
@@ -495,11 +383,8 @@ void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
 /**
  * Event listener for CharSet deletion
  *
- * @memberof				Texture
  * @private
- *
- * @param this				Function scope
- * @param eventFirer		CharSet
+ * @param eventFirer	CharSet
  */
 void Texture::onCharSetDeleted(Object eventFirer)
 {
@@ -509,12 +394,8 @@ void Texture::onCharSetDeleted(Object eventFirer)
 /**
  * Write a single CHAR to DRAM
  *
- * @memberof				Texture
- * @public
- *
- * @param this				Function scope
- * @param texturePixel		Coordinates within the map definition to write
- * @param newChar			CHAR data to write
+ * @param texturePixel	Coordinates within the map definition to write
+ * @param newChar		CHAR data to write
  */
 void Texture::putChar(Point* texturePixel, BYTE* newChar)
 {
@@ -529,13 +410,9 @@ void Texture::putChar(Point* texturePixel, BYTE* newChar)
 /**
  * Write a single pixel to DRAM
  *
- * @memberof				Texture
- * @public
- *
- * @param this				Function scope
- * @param texturePixel		Point that defines the position of the char in the Sprite's texture
- * @param charSetPixel		Pixel data
- * @param newPixelColor		Color value of pixel
+ * @param texturePixel	Point that defines the position of the char in the Sprite's texture
+ * @param charSetPixel	Pixel data
+ * @param newPixelColor	Color value of pixel
  */
 void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
@@ -550,12 +427,7 @@ void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCo
 /**
  * Check if writing to DRAM is done
  *
- * @memberof		Texture
- * @public
- *
- * @param this		Function scope
- *
- * @return			True if completely written to DRAM
+ * @return	True if completely written to DRAM
  */
 bool Texture::isWritten()
 {
@@ -565,11 +437,7 @@ bool Texture::isWritten()
 /**
  * Set displacement to add to the offset within the BGMAP memory
  *
- * @memberof								Texture
- * @public
- *
- * @param this								Function scope
- * @param mapDefinitionDisplacement			Displacement
+ * @param mapDefinitionDisplacement	Displacement
  */
 void Texture::setMapDisplacement(u32 mapDisplacement)
 {

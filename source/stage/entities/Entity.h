@@ -38,69 +38,34 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup stage-entities
 class Entity : Container
 {
-	/**
-	* @var EntityFactory		entityFactory
-	* @brief					Entity factory
-	* @memberof				Entity
-	*/
+	// Entity factory
 	EntityFactory entityFactory;
-	/**
-	* @var VirtualList		 	sprites
-	* @brief					Sprites list
-	* @memberof				Entity
-	*/
+	// Sprites list
 	VirtualList sprites;
-	/**
-	* @var VirtualList			shapes
-	* @brief					Shapes for collision detection
-	* @memberof				Entity
-	*/
+	// Shapes for collision detection
 	VirtualList shapes;
-	/**
-	* @var Size				size
-	* @brief					Used for collisions and streaming
-	* @memberof				Entity
-	*/
+	// Used for collisions and streaming
 	Size size;
-	/**
-	* @var EntityDefinition*	entityDefinition
-	* @brief					Entity's definition
-	* @memberof				Entity
-	*/
+	// Entity's definition
 	EntityDefinition* entityDefinition;
-	/**
-	* @var Vector3D*			centerDisplacement
-	* @brief					Center displacement
-	* @memberof				Entity
-	*/
+	// Center displacement
 	Vector3D* centerDisplacement;
-	/**
-	* @var s16				 	id
-	* @brief					Entity's id, set by the user
-	* @memberof				Entity
-	*/
+	// Entity's id, set by the user
 	s16 id;
-	/**
-	* @var s16				 	internalId
-	* @brief					Entity's internal id, set by the engine
-	* @memberof				Entity
-	*/
+	// Entity's internal id, set by the engine
 	s16 internalId;
-	/**
-	* @var bool				invalidateSprites
-	* @brief					Flag to update sprites' attributes
-	* @memberof				Entity
-	*/
+	// Flag to update sprites' attributes
 	bool invalidateSprites;
 
+	/// @publicsection
 	static Entity instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo);
 	static Entity loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
 	static PixelRightBox getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
 	static Vector3D* calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName);
-
 	void constructor(EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);
 	void addChildEntities(const PositionedEntity* childrenDefinitions);
 	void addChildEntitiesDeferred(const PositionedEntity* childrenDefinitions);

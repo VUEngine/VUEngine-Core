@@ -21,7 +21,7 @@ Allows the deferring of the instantiation and initialization of entities to be a
 
 
 AnimatedEntity
---------------------
+--------------
 
 An entity with animated sprites.
 
@@ -55,7 +55,7 @@ Texture allocation must be planned ahead with texture preloading to work with mu
 
 
 ManagedEntity
-------------------
+-------------
 
 Like the `ManagedEntity`, it manages the sprites of all its children, but it is meant to hold entities that don't need to do anything in their update methods.
 

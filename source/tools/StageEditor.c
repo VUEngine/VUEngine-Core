@@ -64,17 +64,15 @@
 //											CLASS' DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	StageEditor
- * @extends Object
- * @ingroup tools
- * @brief	In-game stage editor for debug and productivity purposes
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 friend class Sprite;
 friend class Container;
+
+
+//---------------------------------------------------------------------------------------------------------
+//												ENUMS
+//---------------------------------------------------------------------------------------------------------
 
 /**
  * The different modes of the StageEditor
@@ -93,9 +91,12 @@ enum Modes
 };
 
 
+//---------------------------------------------------------------------------------------------------------
+//												GLOBALS
+//---------------------------------------------------------------------------------------------------------
+
 // globals
 extern UserObject _userObjects[];
-
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -108,7 +109,6 @@ extern UserObject _userObjects[];
  * @fn			StageEditor::getInstance()
  * @memberof	StageEditor
  * @public
- *
  * @return		StageEditor instance
  */
 
@@ -116,10 +116,7 @@ extern UserObject _userObjects[];
 /**
  * Class constructor
  *
- * @memberof	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::constructor()
 {
@@ -155,11 +152,6 @@ void StageEditor::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	StageEditor
- * @public
- *
- * @param this	Function scope
  */
 void StageEditor::destructor()
 {
@@ -174,11 +166,6 @@ void StageEditor::destructor()
 
 /**
  * Update
- *
- * @memberof	StageEditor
- * @public
- *
- * @param this	Function scope
  */
 void StageEditor::update()
 {}
@@ -186,10 +173,6 @@ void StageEditor::update()
 /**
  * Show editor
  *
- * @memberof		StageEditor
- * @public
- *
- * @param this		Function scope
  * @param gameState Current game state
  */
 void StageEditor::show(GameState gameState)
@@ -206,11 +189,6 @@ void StageEditor::show(GameState gameState)
 
 /**
  * Hide editor
- *
- * @memberof	StageEditor
- * @public
- *
- * @param this	Function scope
  */
 void StageEditor::hide()
 {
@@ -224,10 +202,6 @@ void StageEditor::hide()
 /**
  * Process user input
  *
- * @memberof			StageEditor
- * @public
- *
- * @param this			Function scope
  * @param pressedKey	User input
  */
 void StageEditor::processUserInput(u16 pressedKey)
@@ -277,10 +251,7 @@ void StageEditor::processUserInput(u16 pressedKey)
 /**
  * Print header
  *
- * @memberof	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::printHeader()
 {
@@ -294,10 +265,7 @@ void StageEditor::printHeader()
 /**
  * Print title
  *
- * @memberof	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::setupMode()
 {
@@ -352,10 +320,7 @@ void StageEditor::setupMode()
 /**
  * Release shape
  *
- * @memberof	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::releaseShape()
 {
@@ -398,10 +363,7 @@ void StageEditor::releaseShape()
 /**
  * Get shape
  *
- * @memberof	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::getShape()
 {
@@ -433,8 +395,6 @@ void StageEditor::getShape()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::positionShape()
 {
@@ -459,8 +419,6 @@ void StageEditor::positionShape()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::highLightEntity()
 {
@@ -480,8 +438,6 @@ void StageEditor::highLightEntity()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::selectPreviousEntity()
 {
@@ -515,8 +471,6 @@ void StageEditor::selectPreviousEntity()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::selectNextEntity()
 {
@@ -550,8 +504,6 @@ void StageEditor::selectNextEntity()
  *
  * @memberof 			StageEditor
  * @private
- *
- * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
 void StageEditor::moveCamera(u32 pressedKey)
@@ -629,8 +581,6 @@ void StageEditor::moveCamera(u32 pressedKey)
  *
  * @memberof StageEditor
  * @private
- *
- * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
 void StageEditor::changeProjection(u32 pressedKey)
@@ -707,8 +657,6 @@ void StageEditor::changeProjection(u32 pressedKey)
  *
  * @memberof 			StageEditor
  * @private
- *
- * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
 void StageEditor::translateEntity(u32 pressedKey)
@@ -812,8 +760,6 @@ void StageEditor::translateEntity(u32 pressedKey)
  *
  * @memberof 			StageEditor
  * @private
- *
- * @param this			Function scope
  * @param translation	Translation vector
  */
 void StageEditor::applyTranslationToEntity(Vector3D translation)
@@ -853,8 +799,6 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::removePreviousSprite()
 {
@@ -872,8 +816,6 @@ void StageEditor::removePreviousSprite()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::showSelectedUserObject()
 {
@@ -912,8 +854,6 @@ void StageEditor::showSelectedUserObject()
  *
  * @memberof 			StageEditor
  * @private
- *
- * @param this			Function scope
  * @param pressedKey	The controller button pressed by the user
  */
 void StageEditor::selectUserObject(u32 pressedKey)
@@ -982,8 +922,6 @@ void StageEditor::selectUserObject(u32 pressedKey)
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::printEntityPosition()
 {
@@ -1038,8 +976,6 @@ void StageEditor::printEntityPosition()
  *
  * @memberof 			StageEditor
  * @private
- *
- * @param this			Function scope
  * @param translation   Translation vector
  */
 void StageEditor::applyTranslationToCamera(Vector3D translation)
@@ -1056,8 +992,6 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::printCameraPosition()
 {
@@ -1069,8 +1003,6 @@ void StageEditor::printCameraPosition()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::printProjectionValues()
 {
@@ -1104,8 +1036,6 @@ void StageEditor::printProjectionValues()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::printUserObjects()
 {
@@ -1122,8 +1052,6 @@ void StageEditor::printUserObjects()
  *
  * @memberof 	StageEditor
  * @private
- *
- * @param this	Function scope
  */
 void StageEditor::printTranslationStepSize()
 {

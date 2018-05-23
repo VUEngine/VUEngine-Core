@@ -42,12 +42,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	CollisionManager
- * @extends Object
- * @ingroup physics
- */
-
 friend class Shape;
 friend class Clock;
 friend class VirtualNode;
@@ -57,7 +51,6 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
 
 // class's constructor
 void CollisionManager::constructor()

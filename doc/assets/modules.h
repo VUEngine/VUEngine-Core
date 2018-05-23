@@ -2,6 +2,11 @@
  *  @brief Base classes
  */
 
+ /** @defgroup base-libgccvb libgccvb
+ *  @ingroup base
+ *  @brief libgccvb classes
+ */
+
 
 /** @defgroup graphics Graphics
  *  @brief Graphics classes

@@ -36,15 +36,14 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-3d
+
 singleton class WireframeManager : Object
 {
-	/**
-	 * @var VirtualList wireframes
-	 * @brief			Wireframes
-	 * @memberof		WireframeManager
-	 */
+	// Wireframes
 	VirtualList wireframes;
 
+	/// @publicsection
 	static WireframeManager getInstance();
 	void drawWireframes();
 	void print(int x, int y);

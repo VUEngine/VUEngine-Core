@@ -38,18 +38,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	HardwareManager
- * @extends Object
- * @ingroup hardware
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
@@ -81,7 +69,6 @@ int _sp = 0;
  * @fn			HardwareManager::getInstance()
  * @memberof	HardwareManager
  * @public
- *
  * @return		HardwareManager instance
  */
 
@@ -89,10 +76,7 @@ int _sp = 0;
 /**
  * Class constructor
  *
- * @memberof	HardwareManager
  * @private
- *
- * @param this	Function scope
  */
 void HardwareManager::constructor()
 {
@@ -113,11 +97,6 @@ void HardwareManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	HardwareManager
- * @public
- *
- * @param this	Function scope
  */
 void HardwareManager::destructor()
 {
@@ -128,9 +107,6 @@ void HardwareManager::destructor()
 
 /**
  * Check that the memory map is sane
- *
- * @memberof	HardwareManager
- * @public
  */
 void HardwareManager::checkMemoryMap()
 {
@@ -168,9 +144,6 @@ void HardwareManager::checkMemoryMap()
 
 /**
  * Expansion port interrupt handle
- *
- * @memberof	HardwareManager
- * @public
  */
 static void HardwareManager::croInterruptHandler()
 {
@@ -180,11 +153,6 @@ static void HardwareManager::croInterruptHandler()
 
 /**
  * Setup interrupt vectors
- *
- * @memberof	HardwareManager
- * @public
- *
- * @param this	Function scope
  */
 void HardwareManager::setInterruptVectors()
 {
@@ -198,10 +166,6 @@ void HardwareManager::setInterruptVectors()
 /**
  * Set the interrupt level
  *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  * @param level	 	Interrupt level
  */
 void HardwareManager::setInterruptLevel(u8 level)
@@ -226,11 +190,6 @@ void HardwareManager::setInterruptLevel(u8 level)
 /**
  * Get the interrupt level
  *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
  * @return		 	Interrupt level
  */
 int HardwareManager::getInterruptLevel()
@@ -253,11 +212,6 @@ int HardwareManager::getInterruptLevel()
 
 /**
  * Initialize the timer
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::initializeTimer()
 {
@@ -266,11 +220,6 @@ void HardwareManager::initializeTimer()
 
 /**
  * Clear the CHAR and Param table memory
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::clearScreen()
 {
@@ -279,11 +228,6 @@ void HardwareManager::clearScreen()
 
 /**
  * Turn the displays on
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::displayOn()
 {
@@ -292,11 +236,6 @@ void HardwareManager::displayOn()
 
 /**
  * Turn the displays off
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::displayOff()
 {
@@ -305,11 +244,6 @@ void HardwareManager::displayOff()
 
 /**
  * Disable rendering
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::disableRendering()
 {
@@ -320,11 +254,6 @@ void HardwareManager::disableRendering()
 
 /**
  * Enable rendering
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::enableRendering()
 {
@@ -336,11 +265,6 @@ void HardwareManager::enableRendering()
 
 /**
  * Turn brightness all the way up
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::upBrightness()
 {
@@ -349,11 +273,6 @@ void HardwareManager::upBrightness()
 
 /**
  * Turn brightness all the way down
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::lowerBrightness()
 {
@@ -363,10 +282,6 @@ void HardwareManager::lowerBrightness()
 /**
  * Setup the column table
  *
- * @memberof						HardwareManager
- * @public
- *
- * @param this						Function scope
  * @param columnTableDefinition		Definition to use
  */
 void HardwareManager::setupColumnTable(ColumnTableDefinition* columnTableDefinition)
@@ -376,11 +291,6 @@ void HardwareManager::setupColumnTable(ColumnTableDefinition* columnTableDefinit
 
 /**
  * Enable user input processing
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::enableKeypad()
 {
@@ -389,11 +299,6 @@ void HardwareManager::enableKeypad()
 
 /**
  * Disable user input processing
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 void HardwareManager::disableKeypad()
 {
@@ -402,10 +307,6 @@ void HardwareManager::disableKeypad()
 
 /**
  * Enable interrupts
- *
- * @memberof					HardwareManager
- * @public
- *
  */
 static void HardwareManager::enableInterrupts()
 {
@@ -414,10 +315,6 @@ static void HardwareManager::enableInterrupts()
 
 /**
  * Disable interrupts
- *
- * @memberof					HardwareManager
- * @public
- *
  */
 static void HardwareManager::disableInterrupts()
 {
@@ -426,10 +323,6 @@ static void HardwareManager::disableInterrupts()
 
 /**
  * Enable multiplexed interrupts
- *
- * @memberof					VIPManager
- * @public
- *
  */
 static void HardwareManager::enableMultiplexedInterrupts()
 {
@@ -455,10 +348,6 @@ static void HardwareManager::enableMultiplexedInterrupts()
 
 /**
  * Disable multiplexed interrupts
- *
- * @memberof					VIPManager
- * @public
- *
  */
 static void HardwareManager::disableMultiplexedInterrupts()
 {
@@ -473,12 +362,6 @@ static void HardwareManager::disableMultiplexedInterrupts()
 
 /**
  * Retrieve the Stack Pointer's value
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
  */
 static int HardwareManager::getStackPointer()
 {
@@ -495,12 +378,6 @@ static int HardwareManager::getStackPointer()
 
 /**
  * Retrieve the Link Pointer's value
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
- *
  */
 static int HardwareManager::getLinkPointer()
 {
@@ -517,10 +394,6 @@ static int HardwareManager::getLinkPointer()
 
 /**
  * Retrieve PSW
- *
- * @memberof		HardwareManager
- * @public
- *
  * @return		 	PSW
  */
 static int HardwareManager::getPSW()
@@ -539,10 +412,6 @@ static int HardwareManager::getPSW()
 /**
  * Print manager's state
  *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  */
@@ -630,11 +499,6 @@ void HardwareManager::print(int x, int y)
 
 /**
  * Check for stack overflows
- *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  */
 static void HardwareManager::checkStackStatus()
 {
@@ -651,10 +515,6 @@ static void HardwareManager::checkStackStatus()
 /**
  * Print the Stack Pointer's status
  *
- * @memberof		HardwareManager
- * @public
- *
- * @param this		Function scope
  * @param x			Camera's x coordinate
  * @param y			Camera's y coordinate
  * @param resumed	Flag to print resumed or detailed info

@@ -36,33 +36,19 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 class StateMachine : Object
 {
-	/**
-	 * @var void*		owner
-	 * @brief			Object which owns this instance
-	 * @memberof		StateMachine
-	 */
+	// Object which owns this instance
 	void* owner;
-	/**
-	 * @var State		currentState
-	 * @brief			Pointer to the current state
-	 * @memberof		StateMachine
-	 */
+	// Pointer to the current state
 	State currentState;
-	/**
-	 * @var State		previousState
-	 * @brief			Pointer to the previous state
-	 * @memberof		StateMachine
-	 */
+	// Pointer to the previous state
 	State previousState;
-	/**
-	 * @var VirtualList	stateStack
-	 * @brief			Stack of states
-	 * @memberof		StateMachine
-	 */
+	// Stack of states
 	VirtualList stateStack;
 
+	/// @publicsection
 	void constructor(void* owner);
 	void update();
 	void swapState(State newState);

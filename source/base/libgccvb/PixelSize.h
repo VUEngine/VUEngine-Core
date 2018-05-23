@@ -32,11 +32,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base-libgccvb
 static class PixelSize : Object
 {
+	/// @publicsection
 	static inline PixelSize getFromSize(Size size);
 }
 

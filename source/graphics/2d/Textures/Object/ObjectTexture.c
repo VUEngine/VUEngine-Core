@@ -31,28 +31,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	ObjectTexture
- * @extends Texture
- * @ingroup graphics-2d-textures-object
- * @brief	A texture which has the logic to be allocated in graphic memory
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
  *
- * @memberof							ObjectTexture
  * @private
- *
- * @param this							Function scope
  * @param objectTextureDefinition		Texture definition
  * @param id							Identifier
  */
@@ -67,11 +52,6 @@ void ObjectTexture::constructor(ObjectTextureDefinition* objectTextureDefinition
 
 /**
  * Class destructor
- *
- * @memberof			ObjectTexture
- * @public
- *
- * @param this			Function scope
  */
 void ObjectTexture::destructor()
 {
@@ -84,11 +64,6 @@ void ObjectTexture::destructor()
 
 /**
  * Write the texture to DRAM
- *
- * @memberof			ObjectTexture
- * @public
- *
- * @param this			Function scope
  */
 void ObjectTexture::write()
 {
@@ -128,11 +103,7 @@ void ObjectTexture::write()
 /**
  * Set the start OBJECT index
  *
- * @memberof				ObjectTexture
- * @public
- *
- * @param this				Function scope
- * @param objectIndex		OBJECT index
+ * @param objectIndex	OBJECT index
  */
 void ObjectTexture::setObjectIndex(int objectIndex)
 {

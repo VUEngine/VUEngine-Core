@@ -35,21 +35,15 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup physics
 class Ball : Shape
 {
-	/**
-	* @var fix10_6*	radius
-	* @brief			the radius of the ball
-	* @memberof 		Box
-	*/
+	// the radius of the ball
 	fix10_6 radius;
-	/**
-	* @var Vector3D		center
-	* @brief			the center of the ball
-	* @memberof 		Box
-	*/
+	// the center of the ball
 	Vector3D center;
 
+	/// @publicsection
 	static void project(Vector3D center, fix10_6 radius, Vector3D vector, fix10_6* min, fix10_6* max);
 	void constructor(SpatialObject owner);
 	override void position(const Vector3D* position, const Rotation* rotation, const Scale* scale, const Size* size);

@@ -33,18 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	BgmapAnimatedSprite
- * @extends BgmapSprite
- * @ingroup graphics-2d-sprites-bgmap
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
@@ -58,10 +46,6 @@ extern int strcmp(const char *, const char *);
 /**
  * Class constructor
  *
- * @memberof						BgmapAnimatedSprite
- * @public
- *
- * @param this						Function scope
  * @param bgmapSpriteDefinition		Sprite definition
  * @param owner						Owner
  */
@@ -81,11 +65,6 @@ void BgmapAnimatedSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDe
 
 /**
  * Class destructor
- *
- * @memberof						BgmapAnimatedSprite
- * @public
- *
- * @param this						Function scope
  */
 void BgmapAnimatedSprite::destructor()
 {
@@ -102,11 +81,6 @@ void BgmapAnimatedSprite::destructor()
 
 /**
  * Write animation
- *
- * @memberof		BgmapAnimatedSprite
- * @public
- *
- * @param this		Function scope
  */
 void BgmapAnimatedSprite::writeAnimation()
 {

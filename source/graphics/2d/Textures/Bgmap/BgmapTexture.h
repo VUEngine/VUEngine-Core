@@ -33,34 +33,40 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A BgmapTexture definition
+ *
+ * @memberof BgmapTexture
+ */
 typedef const TextureDefinition BgmapTextureDefinition;
+
+/**
+ * A BgmapTexture definition that is stored in ROM
+ *
+ * @memberof BgmapTexture
+ */
 typedef const BgmapTextureDefinition BgmapTextureROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// A texture which has the logic to be allocated in graphic memory
+/// @ingroup graphics-2d-textures-bgmap
 class BgmapTexture : Texture
 {
-	/**
-	* @var s8 		segment
-	* @brief		Segment
-	* @memberof	BgmapTexture
-	*/
+	// Segment
 	s8 segment;
-	/**
-	* @var u8 		usageCount
-	* @brief		How many textures are using me
-	* @memberof	BgmapTexture
-	*/
+	// How many textures are using me
 	u8 usageCount;
-	/**
-	* @var s8 		remainingRowsToBeWritten
-	* @brief		Remaining rows to be written
-	* @memberof	BgmapTexture
-	*/
+	// Remaining rows to be written
 	s8 remainingRowsToBeWritten;
 
+	/// @publicsection
 	void constructor(BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
 	s8 getRemainingRowsToBeWritten();
 	s16 getXOffset();

@@ -42,21 +42,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Actor
- * @extends AnimatedEntity
- * @ingroup stage-entities
- */
-
-
 friend class VirtualList;
 friend class VirtualNode;
-
-//---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-// global
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -603,7 +590,6 @@ void Actor::changeEnvironment(Transformation* environmentTransform)
  * @memberof					Actor
  * @public
  *
- * @param this					Function scope
  * @param environmentTransform
  * @param recursive
  */

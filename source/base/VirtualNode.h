@@ -34,27 +34,17 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 class VirtualNode : Object
 {
-	/**
-	* @var VirtualNode next
-	* @brief			pointer to next node
-	* @memberof		VirtualNode
-	*/
+	// pointer to next node
 	VirtualNode next;
-	/**
-	* @var VirtualNode previous
-	* @brief			pointer to previous node
-	* @memberof		VirtualNode
-	*/
+	// pointer to previous node
 	VirtualNode previous;
-	/**
-	* @var void*		data
-	* @brief			pointer to the data
-	* @memberof		VirtualNode
-	*/
+	// pointer to the data
 	void* data;
 
+	/// @publicsection
 	void constructor(const void* const data);
 	void* getData();
 	VirtualNode getNext();

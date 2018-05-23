@@ -36,11 +36,13 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-animation
 singleton class AnimationCoordinatorFactory : Object
 {
-	/* entities that use bgmap sprites */
+	// entities that use bgmap sprites
 	VirtualList animationCoordinators;
 
+	/// @publicsection
 	static AnimationCoordinatorFactory getInstance();
 	AnimationCoordinator getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition);
 	void reset();

@@ -34,8 +34,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup physics
 class InverseBox : Box
 {
+	/// @publicsection
 	void constructor(SpatialObject owner);
 }
 

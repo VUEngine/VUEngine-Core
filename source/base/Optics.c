@@ -33,6 +33,13 @@
 //												3D HELPER FUNCTIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * Calculate parallax based on the x and z coordinates
+ *
+ * @param x	X parameter for the calculation of the parallax displacement
+ * @param z	Z parameter for the calculation of the parallax displacement
+ * @return 	Parallax (in pixels)
+ */
 static s16 Optics::calculateParallax(fix10_6 x, fix10_6 z)
 {
 	fix10_6 leftEyePoint, rightEyePoint;

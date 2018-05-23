@@ -29,28 +29,11 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	State
- * @extends Object
- * @ingroup base
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
- *
- * @memberof	State
- * @public
- *
- * @param this	Function scope
  */
 void State::constructor()
 {
@@ -60,11 +43,6 @@ void State::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	State
- * @public
- *
- * @param this	Function scope
  */
 void State::destructor()
 {
@@ -76,10 +54,6 @@ void State::destructor()
 /**
  * Method called when the StateMachine enters to this state
  *
- * @memberof		State
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void State::enter(void* owner __attribute__ ((unused)))
@@ -88,10 +62,6 @@ void State::enter(void* owner __attribute__ ((unused)))
 /**
  * Method called when by the StateMachine's update method
  *
- * @memberof		State
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void State::execute(void* owner __attribute__ ((unused)))
@@ -100,10 +70,6 @@ void State::execute(void* owner __attribute__ ((unused)))
 /**
  * Method called when the StateMachine exits from this state
  *
- * @memberof		State
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void State::exit(void* owner __attribute__ ((unused)))
@@ -112,10 +78,6 @@ void State::exit(void* owner __attribute__ ((unused)))
 /**
  * Method called when the StateMachine enters another state without exiting this one
  *
- * @memberof		State
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void State::suspend(void* owner __attribute__ ((unused)))
@@ -124,10 +86,6 @@ void State::suspend(void* owner __attribute__ ((unused)))
 /**
  * Method called when the StateMachine returns to this state from another
  *
- * @memberof		State
- * @public
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void State::resume(void* owner __attribute__ ((unused)))

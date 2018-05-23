@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 typedef struct ParticleSystemDefinition
@@ -87,57 +87,31 @@ typedef struct ParticleSystemDefinition
 typedef const ParticleSystemDefinition ParticleSystemROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage-entities-particles
 class ParticleSystem : Entity
 {
-	/*
-	* @var ParticleSystemDefinition*	particleSystemDefinition
-	* @brief							system's definition
-	* @memberof						ParticleSystem
-	*/
+	// system's definition
 	const ParticleSystemDefinition* particleSystemDefinition;
-	/*
-	* @var VirtualList				 	particles
-	* @brief							particle list
-	* @memberof						ParticleSystem
-	*/
+	// particle list
 	VirtualList particles;
-	/*
-	* @var VirtualList				 	recyclableParticles
-	* @brief							particle list
-	* @memberof						ParticleSystem
-	*/
+	// particle list
 	VirtualList recyclableParticles;
-	/*
-	* @var VirtualList				 	expiredParticles
-	* @brief							particle list
-	* @memberof						ParticleSystem
-	*/
+	// particle list
 	VirtualList expiredParticles;
-	/*
-	* @var int						 	nextSpawnTime
-	* @brief							next spawn time
-	* @memberof						ParticleSystem
-	*/
+	// next spawn time
 	int nextSpawnTime;
-	/*
-	* @var int						 	particleCount
-	* @brief							particle count
-	* @memberof						ParticleSystem
-	*/
+	// particle count
 	int particleCount;
-	/*
-	* @var s16						 	numberOfSpriteDefinitions
-	* @brief							number of sprite definitions
-	* @memberof						ParticleSystem
-	*/
+	// number of sprite definitions
 	s16 numberOfSpriteDefinitions;
-	/*
-	* @var bool						paused
-	* @brief							pause flag
-	* @memberof						ParticleSystem
-	*/
+	// pause flag
 	bool paused;
 
+	/// @publicsection
 	void constructor(ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
 	bool handleMessage(Telegram telegram);
 	void pause();

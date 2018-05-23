@@ -37,21 +37,15 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-animation
 class AnimationCoordinator : Object
 {
-	/**
-	* @var VirtualList 		animationControllers
-	* @brief					Controllers to sync
-	* @memberof				AnimationController
-	*/
+	// Controllers to sync
 	VirtualList animationControllers;
-	/**
-	* @var CharSetDefinition 	charSetDefinition
-	* @brief					Charset definition shared among entities
-	* @memberof				AnimationController
-	*/
+	// Charset definition shared among entities
 	const CharSetDefinition* charSetDefinition;
 
+	/// @publicsection
 	void constructor(const CharSetDefinition* charSetDefinition);
 	const CharSetDefinition* getCharSetDefinition();
 	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);

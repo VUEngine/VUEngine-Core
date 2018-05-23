@@ -32,27 +32,13 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class 	CharSet
- * @extends Object
- * @ingroup graphics-2d-textures-char
- */
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
  * Class constructor
  *
- * @memberof							CharSet
  * @private
- *
- * @param this							Function scope
  * @param charSetDefinition				CharSet definition
  * @param offset						Displacement within the CHAR segment
  */
@@ -71,11 +57,6 @@ void CharSet::constructor(CharSetDefinition* charSetDefinition, u16 offset)
 
 /**
  * Class destructor
- *
- * @memberof							CharSet
- * @public
- *
- * @param this							Function scope
  */
 void CharSet::destructor()
 {
@@ -91,11 +72,6 @@ void CharSet::destructor()
 
 /**
  * Increase CharSet usage
- *
- * @memberof							CharSet
- * @public
- *
- * @param this							Function scope
  */
 void CharSet::increaseUsageCount()
 {
@@ -104,11 +80,6 @@ void CharSet::increaseUsageCount()
 
 /**
  * Decrease CharSet usage
- *
- * @memberof							CharSet
- * @public
- *
- * @param this							Function scope
  *
  * @return								True if usage count is zero
  */
@@ -125,11 +96,6 @@ bool CharSet::decreaseUsageCount()
 /**
  * Get usage count
  *
- * @memberof							CharSet
- * @public
- *
- * @param this							Function scope
- *
  * @return								Usage count
  */
 u8 CharSet::getUsageCount()
@@ -139,11 +105,6 @@ u8 CharSet::getUsageCount()
 
 /**
  * Retrieve allocation type
- *
- * @memberof			CharSet
- * @public
- *
- * @param this			Function scope
  *
  * @return				Allocation type
  */
@@ -155,11 +116,6 @@ u32 CharSet::getAllocationType()
 /**
  * Retrieve the offset within CHAR memory
  *
- * @memberof			CharSet
- * @public
- *
- * @param this			Function scope
- *
  * @return				Offset within CHAR memory
  */
 u32 CharSet::getOffset()
@@ -170,10 +126,6 @@ u32 CharSet::getOffset()
 /**
  * Set the offset within CHAR memory
  *
- * @memberof			CharSet
- * @public
- *
- * @param this			Function scope
  * @param offset		Offset within CHAR memory
  */
 void CharSet::setOffset(u16 offset)
@@ -186,11 +138,6 @@ void CharSet::setOffset(u16 offset)
 /**
  * Retrieve the definition
  *
- * @memberof			CharSet
- * @public
- *
- * @param this			Function scope
- *
  * @return				CharSetDefinition
  */
 CharSetDefinition* CharSet::getCharSetDefinition()
@@ -201,10 +148,6 @@ CharSetDefinition* CharSet::getCharSetDefinition()
 /**
  * Set the definition
  *
- * @memberof						CharSet
- * @public
- *
- * @param this						Function scope
  * @param charSetDefinition			CharSetDefinition
  */
 void CharSet::setCharSetDefinition(CharSetDefinition* charSetDefinition)
@@ -215,11 +158,6 @@ void CharSet::setCharSetDefinition(CharSetDefinition* charSetDefinition)
 /**
  * Retrieve the number of CHARS in the definition
  *
- * @memberof		CharSet
- * @public
- *
- * @param this		Function scope
- *
  * @return 			Number of CHARS in the definition
  */
 u32 CharSet::getNumberOfChars()
@@ -229,11 +167,6 @@ u32 CharSet::getNumberOfChars()
 
 /**
  * Write the CHARs to DRAM
- *
- * @memberof		CharSet
- * @public
- *
- * @param this		Function scope
  */
 void CharSet::write()
 {
@@ -246,11 +179,6 @@ void CharSet::write()
 
 /**
  * Rewrite the CHARs to DRAM
- *
- * @memberof		CharSet
- * @public
- *
- * @param this		Function scope
  */
 void CharSet::rewrite()
 {
@@ -264,10 +192,6 @@ void CharSet::rewrite()
 /**
  * Set displacement to add to the offset within the CHAR memory
  *
- * @memberof								CharSet
- * @public
- *
- * @param this								Function scope
  * @param charDefinitionDisplacement		Displacement
  */
 void CharSet::setCharDefinitionDisplacement(u32 charDefinitionDisplacement)
@@ -278,10 +202,6 @@ void CharSet::setCharDefinitionDisplacement(u32 charDefinitionDisplacement)
 /**
  * Write a single CHAR to DRAM
  *
- * @memberof				CharSet
- * @public
- *
- * @param this				Function scope
  * @param charToReplace		Index of the CHAR to overwrite
  * @param newChar			CHAR data to write
  */
@@ -296,10 +216,6 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 /**
  * Write a single pixel to DRAM
  *
- * @memberof				CharSet
- * @public
- *
- * @param this				Function scope
  * @param charToReplace		Index of the CHAR to overwrite
  * @param charSetPixel		Pixel data
  * @param newPixelColor		Color value of pixel

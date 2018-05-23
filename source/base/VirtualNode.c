@@ -29,37 +29,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
-//---------------------------------------------------------------------------------------------------------
-
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	VirtualNode
- * @extends Object
- * @ingroup base
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-
-
 
 /**
  * Class constructor
  *
- * @memberof	VirtualNode
- * @private
- *
- * @param this	Function scope
  * @param data
  */
 void VirtualNode::constructor(const void* const data)
@@ -74,11 +49,6 @@ void VirtualNode::constructor(const void* const data)
 
 /**
  * Class destructor
- *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
  */
 void VirtualNode::destructor()
 {
@@ -90,10 +60,6 @@ void VirtualNode::destructor()
 /**
  * Set node's data pointer
  *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
  * @param data
  */
 void VirtualNode::setData(const void* const data)
@@ -103,11 +69,6 @@ void VirtualNode::setData(const void* const data)
 
 /**
  * Retrieve node's data pointer
- *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
  *
  * @return		Data pointer
  */
@@ -119,11 +80,6 @@ void* VirtualNode::getData()
 /**
  * Get next node's address
  *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
- *
  * @return		Node
  */
 VirtualNode VirtualNode::getNext()
@@ -134,10 +90,6 @@ VirtualNode VirtualNode::getNext()
 /**
  * set next node's address
  *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
  * @param next
  */
 void VirtualNode::setNext(VirtualNode next)
@@ -147,11 +99,6 @@ void VirtualNode::setNext(VirtualNode next)
 
 /**
  * Get previous node's address
- *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
  *
  * @return		Node
  */
@@ -163,10 +110,6 @@ VirtualNode VirtualNode::getPrevious()
 /**
  * Set previous node's address
  *
- * @memberof		VirtualNode
- * @public
- *
- * @param this		Function scope
  * @param previous
  */
 void VirtualNode::setPrevious(VirtualNode previous)
@@ -177,10 +120,6 @@ void VirtualNode::setPrevious(VirtualNode previous)
 /**
  * Swap the data between two nodes
  *
- * @memberof	VirtualNode
- * @public
- *
- * @param this	Function scope
  * @param node
  */
 void VirtualNode::swapData(VirtualNode node)

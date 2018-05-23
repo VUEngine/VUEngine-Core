@@ -33,18 +33,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	AnimationInspectorState
- * @extends GameState
- * @ingroup states
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -54,7 +42,6 @@
  * @fn			AnimationInspectorState::getInstance()
  * @memberof	AnimationInspectorState
  * @public
- *
  * @return		AnimationInspectorState instance
  */
 
@@ -62,10 +49,7 @@
 /**
  * Class constructor
  *
- * @memberof	AnimationInspectorState
  * @private
- *
- * @param this	Function scope
  */
 void AnimationInspectorState::constructor()
 {
@@ -75,10 +59,7 @@ void AnimationInspectorState::constructor()
 /**
  * Class destructor
  *
- * @memberof	AnimationInspectorState
  * @private
- *
- * @param this	Function scope
  */
 void AnimationInspectorState::destructor()
 {
@@ -89,10 +70,6 @@ void AnimationInspectorState::destructor()
 /**
  * Method called when the Game's StateMachine enters to this state
  *
- * @memberof		AnimationInspectorState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void AnimationInspectorState::enter(void* owner __attribute__ ((unused)))
@@ -105,10 +82,6 @@ void AnimationInspectorState::enter(void* owner __attribute__ ((unused)))
 /**
  * Method called when by the StateMachine's update method
  *
- * @memberof		AnimationInspectorState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void AnimationInspectorState::execute(void* owner __attribute__ ((unused)))
@@ -119,10 +92,6 @@ void AnimationInspectorState::execute(void* owner __attribute__ ((unused)))
 /**
  * Method called when the Game's StateMachine exits from this state
  *
- * @memberof		AnimationInspectorState
- * @private
- *
- * @param this		Function scope
  * @param owner		StateMachine's owner
  */
 void AnimationInspectorState::exit(void* owner __attribute__ ((unused)))
@@ -135,10 +104,6 @@ void AnimationInspectorState::exit(void* owner __attribute__ ((unused)))
 /**
  * Process user input
  *
- * @memberof			AnimationInspectorState
- * @private
- *
- * @param this			Function scope
  * @param userInput		User input
  */
 void AnimationInspectorState::processUserInput(UserInput userInput)

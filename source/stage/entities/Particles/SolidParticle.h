@@ -30,8 +30,9 @@
 #include <Particle.h>
 #include <Shape.h>
 
+
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -75,21 +76,19 @@ typedef struct SolidParticleDefinition
 typedef const SolidParticleDefinition SolidParticleROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage-entities-particles
 class SolidParticle : Particle
 {
-	/*
-	* @var Shape 						shape
-	* @brief							Particle's shape for collision detection
-	* @memberof						SolidParticle
-	*/
+	// Particle's shape for collision detection
 	Shape shape;
-	/*
-	* @var SolidParticleDefinition*	shapeParticleDefinition
-	* @brief
-	* @memberof						SolidParticle
-	*/
+	//
 	const SolidParticleDefinition* solidParticleDefinition;
 
+	/// @publicsection
 	void constructor(const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
 	Shape getShape();
 	override u32 update(int timeElapsed, void (* behavior)(Particle particle));

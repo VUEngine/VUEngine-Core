@@ -32,10 +32,8 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-// declare the virtual methods
 
 /**
  * For debugging
@@ -52,81 +50,39 @@ typedef struct ClassSizeData
 } ClassSizeData;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup tools
 singleton class Debug : Object
 {
-	/**
-	 * @var GameState	gameState
-	 * @brief			current in game state
-	 * @memberof		Debug
-	 */
+	// current in game state
 	GameState gameState;
-	/**
-	 * @var VirtualList	pages
-	 * @brief			pages
-	 * @memberof		Debug
-	 */
+	// pages
 	VirtualList pages;
-	/**
-	 * @var VirtualList	subPages
-	 * @brief			sub pages
-	 * @memberof		Debug
-	 */
+	// sub pages
 	VirtualList subPages;
-	/**
-	 * @var VirtualNode	currentPage
-	 * @brief			current page
-	 * @memberof		Debug
-	 */
+	// current page
 	VirtualNode currentPage;
-	/**
-	 * @var VirtualNode	currentSubPage
-	 * @brief			current sub page
-	 * @memberof		Debug
-	 */
+	// current sub page
 	VirtualNode currentSubPage;
-	/**
-	 * @var u8			currentLayer
-	 * @brief			current layer
-	 * @memberof		Debug
-	 */
+	// current layer
 	u8 currentLayer;
-	/**
-	 * @var int			bgmapSegment
-	 * @brief			current bgmap
-	 * @memberof		Debug
-	 */
+	// current bgmap
 	int bgmapSegment;
-	/**
-	 * @var int			objectSegment
-	 * @brief			current obj segment
-	 * @memberof		Debug
-	 */
+	// current obj segment
 	int objectSegment;
-	/**
-	 * @var int			charSegment
-	 * @brief			current char segment
-	 * @memberof		Debug
-	 */
+	// current char segment
 	int charSegment;
-	/**
-	 * @var int			sramPage
-	 * @brief			current page in sram inspector
-	 * @memberof		Debug
-	 */
+	// current page in sram inspector
 	int sramPage;
-	/**
-	 * @var PixelVector		mapDisplacement
-	 * @brief			window to look into bgmap memory
-	 * @memberof		Debug
-	 */
+	// window to look into bgmap memory
 	PixelVector mapDisplacement;
-	/**
-	 * @var void 		(*update)(void	*)
-	 * @brief			update function pointer
-	 * @memberof		Debug
-	 */
+	// update function pointer
 	void (*update)(void *);
 
+	/// @publicsection
 	static Debug getInstance();
 	void update();
 	void render();

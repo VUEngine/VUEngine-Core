@@ -31,18 +31,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	SpatialObject
- * @extends Object
- * @ingroup stage
- */
-
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -180,8 +168,6 @@ u16 SpatialObject::getMovementState()
  * @memberof	SpatialObject
  * @public
  *
- * @param this	Function scope
- *
  * @return		SpatialObject's Shape list
  */
 VirtualList SpatialObject::getShapes()
@@ -194,8 +180,6 @@ VirtualList SpatialObject::getShapes()
  *
  * @memberof	SpatialObject
  * @public
- *
- * @param this	Function scope
  *
  * @return		no type
  */

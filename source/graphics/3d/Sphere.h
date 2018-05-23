@@ -35,21 +35,15 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-3d
 class Sphere : Wireframe
 {
-	/**
-	* @var Vector3D 	center
-	* @brief			Vertices
-	* @memberof		Sphere
-	*/
+	// Vertices
 	Vector3D center;
-	/**
-	* @var fix10_6 	radius
-	* @brief			Radious
-	* @memberof		Sphere
-	*/
+	// Radious
 	fix10_6 radius;
 
+	/// @publicsection
 	void constructor(Vector3D center, fix10_6 radius);
 	Vector3D getCenter();
 	fix10_6 getRadius();

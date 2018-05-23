@@ -39,43 +39,38 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-// declare the virtual methods
-
-/**
- * A language
- *
- * @memberof 	I18n
- */
+/// A language definition
+/// @memberof I18n
 typedef struct LangDefinition
 {
-	/// Language name
+	/// language name
 	char name[__MAX_LANGUAGE_NAME_LENGTH];
 
-	/// Language strings
+	/// language strings
 	const char** language;
 
 } LangDefinition;
 
-/**
- * A LangDefinition that is stored in ROM
- *
- * @memberof 	I18n
- */
+/// A LangDefinition that is stored in ROM
+/// @memberof I18n
 typedef const LangDefinition LangROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// Handles internationalization of text output and thus allows for multiple selectable languages.
+/// @ingroup base
 singleton class I18n : Object
 {
-	/**
-	* @var u8		activeLanguage
-	* @brief		Currently active language
-	* @memberof	I18n
-	*/
+	// Currently active language
 	u8 activeLanguage;
 
+	/// @publicsection
 	static I18n getInstance();
 	u8 getActiveLanguage();
 	char* getActiveLanguageName();

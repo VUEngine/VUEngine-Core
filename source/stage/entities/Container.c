@@ -33,12 +33,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Container
- * @extends SpatialObject
- * @ingroup stage-entities
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -47,14 +41,9 @@ friend class VirtualList;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-
 /**
  * Class constructor
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  * @param name
  */
 void Container::constructor(const char* const name)
@@ -89,11 +78,6 @@ void Container::constructor(const char* const name)
 
 /**
  * Class destructor
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::destructor()
 {
@@ -162,11 +146,6 @@ void Container::destructor()
 
 /**
  * Safe call to delete entities within a normal stage
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::deleteMyself()
 {
@@ -186,24 +165,12 @@ void Container::deleteMyself()
 	}
 }
 
-/**
- *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- */
 void Container::iAmDeletingMyself()
 {}
 
 /**
  * Add a child Container
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  * @param child	Child Container to add
  */
 void Container::addChild(Container child)
@@ -251,10 +218,6 @@ void Container::addChild(Container child)
 /**
  * Remove a child Container
  *
- * @memberof			Container
- * @public
- *
- * @param this			Function scope
  * @param child			Child Container to remove
  * @param deleteChild
  */
@@ -298,14 +261,6 @@ void Container::removeChild(Container child, bool deleteChild)
 #endif
 }
 
-/**
- *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- */
 void Container::setupGraphics()
 {
 	// if I have children
@@ -321,14 +276,6 @@ void Container::setupGraphics()
 	}
 }
 
-/**
- *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- */
 void Container::releaseGraphics()
 {
 	// if I have children
@@ -346,11 +293,6 @@ void Container::releaseGraphics()
 
 /**
  * Process removed children
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::purgeChildren()
 {
@@ -396,10 +338,6 @@ void Container::purgeChildren()
 /**
  * Update each Container's child
  *
- * @memberof			Container
- * @public
- *
- * @param this			Function scope
  * @param elapsedTime
  */
 void Container::update(u32 elapsedTime)
@@ -423,12 +361,7 @@ void Container::update(u32 elapsedTime)
 /**
  * Retrieve environment transformation
  *
- * @memberof			Container
- * @public
- *
- * @param this			Function scope
  * @param elapsedTime
- *
  * @return				Environment Transformation
  */
 Transformation Container::getEnvironmentTransform()
@@ -460,10 +393,6 @@ Transformation Container::getEnvironmentTransform()
 /**
  * Contatenate transformation
  *
- * @memberof							Container
- * @public
- *
- * @param this							Function scope
  * @param concatenatedTransformation
  * @param transformation
  */
@@ -491,10 +420,6 @@ void Container::concatenateTransform(Transformation* concatenatedTransformation,
 /**
  * Change environment
  *
- * @memberof					Container
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 void Container::changeEnvironment(Transformation* environmentTransform)
@@ -531,10 +456,6 @@ void Container::changeEnvironment(Transformation* environmentTransform)
 /**
  * Initial transformation
  *
- * @memberof					Container
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  * @param recursive
  */
@@ -567,10 +488,6 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
 /**
  *
  *
- * @memberof					Container
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 void Container::applyEnvironmentToTransformation(const Transformation* environmentTransform)
@@ -583,10 +500,7 @@ void Container::applyEnvironmentToTransformation(const Transformation* environme
 /**
  *
  *
- * @memberof					Container
  * @private
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
@@ -606,10 +520,7 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
 /**
  *
  *
- * @memberof					Container
  * @private
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
@@ -629,10 +540,7 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
 /**
  *
  *
- * @memberof					Container
  * @private
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
@@ -651,10 +559,6 @@ inline void Container::applyEnvironmentToScale(const Transformation* environment
 /**
  * Initial transformation but without calling the virtual method
  *
- * @memberof					Container
- * @public
- *
- * @param this					Function scope
  * @param environmentTransform
  */
 void Container::transformNonVirtual(const Transformation* environmentTransform)
@@ -698,10 +602,6 @@ void Container::transformNonVirtual(const Transformation* environmentTransform)
 /**
  * Initial transformation
  *
- * @memberof							Container
- * @public
- *
- * @param this							Function scope
  * @param environmentTransform
  * @param invalidateTransformationFlag
  */
@@ -745,14 +645,6 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 	this->invalidateGlobalTransformation = 0;
 }
 
-/**
- *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- */
 void Container::synchronizeGraphics()
 {
 	// if I have children
@@ -771,11 +663,6 @@ void Container::synchronizeGraphics()
 /**
  * Retrieve transformation
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- *
  * @return		Pointer to Transformation
  */
 Transformation* Container::getTransform()
@@ -785,11 +672,6 @@ Transformation* Container::getTransform()
 
 /**
  * Retrieve global position
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  *
  * @return		Pointer to global position
  */
@@ -801,11 +683,6 @@ const Vector3D* Container::getGlobalPosition()
 /**
  * Retrieve local position
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- *
  * @return		Pointer to local position
  */
 const Vector3D* Container::getLocalPosition()
@@ -816,10 +693,6 @@ const Vector3D* Container::getLocalPosition()
 /**
  * Set local position
  *
- * @memberof		Container
- * @public
- *
- * @param this		Function scope
  * @param position	Pointer to position
  */
 void Container::setLocalPosition(const Vector3D* position)
@@ -845,11 +718,6 @@ void Container::setLocalPosition(const Vector3D* position)
 /**
  * Retrieve local rotation
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- *
  * @return		Pointer to local Rotation
  */
 const Rotation* Container::getLocalRotation()
@@ -860,10 +728,6 @@ const Rotation* Container::getLocalRotation()
 /**
  * Set local rotation
  *
- * @memberof		Container
- * @public
- *
- * @param this		Function scope
  * @param rotation	Pointer to Rotation
  */
 void Container::setLocalRotation(const Rotation* rotation)
@@ -876,11 +740,6 @@ void Container::setLocalRotation(const Rotation* rotation)
 /**
  * Retrieve local scale
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- *
  * @return		Pointer to local Scale
  */
 const Scale* Container::getLocalScale()
@@ -891,10 +750,6 @@ const Scale* Container::getLocalScale()
 /**
  * Set local scale
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  * @param scale	Pointer to Scale
  */
 void Container::setLocalScale(const Scale* scale)
@@ -906,11 +761,6 @@ void Container::setLocalScale(const Scale* scale)
 
 /**
  * Invalidate global transformation
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::invalidateGlobalTransformation()
 {
@@ -931,11 +781,6 @@ void Container::invalidateGlobalTransformation()
 
 /**
  * Invalidate global position
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::invalidateGlobalPosition()
 {
@@ -956,11 +801,6 @@ void Container::invalidateGlobalPosition()
 
 /**
  * Invalidate global rotation
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::invalidateGlobalRotation()
 {
@@ -981,11 +821,6 @@ void Container::invalidateGlobalRotation()
 
 /**
  * Invalidate global scale
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::invalidateGlobalScale()
 {
@@ -1007,10 +842,6 @@ void Container::invalidateGlobalScale()
 /**
  * Propagate a message to the child wrapper
  *
- * @memberof						Container
- * @public
- *
- * @param this						Function scope
  * @param propagatedMessageHandler
  * @param args						va_list of propagated message parameters
 
@@ -1031,10 +862,6 @@ int Container::propagateMessage(int (*propagatedMessageHandler)(void*, va_list),
 /**
  * Pass message to children recursively
  *
- * @memberof						Container
- * @public
- *
- * @param this						Function scope
  * @param propagatedMessageHandler
  * @param args						va_list of propagated message parameters
 
@@ -1071,10 +898,6 @@ int Container::passMessage(int (*propagatedMessageHandler)(void*, va_list), va_l
 /**
  * Process user input
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  * @param args	va_list of propagated message parameters
 
  * @return		Result
@@ -1088,10 +911,6 @@ int Container::onPropagatedMessage(va_list args)
 /**
  * Process message
  *
- * @memberof		Container
- * @public
- *
- * @param this		Function scope
  * @param message	Message
 
  * @return			Result
@@ -1104,10 +923,6 @@ bool Container::handlePropagatedMessage(int message __attribute__ ((unused)))
 /**
  * Retrieve parent
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
 
  * @return		Parent Container
  */
@@ -1119,10 +934,6 @@ Container Container::getParent()
 /**
  * Retrieve children count
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
 
  * @return		Children count
  */
@@ -1134,10 +945,6 @@ int Container::getChildCount()
 /**
  * Set name
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  * @param name	Name
  */
 void Container::setName(const char* const name)
@@ -1167,11 +974,6 @@ void Container::setName(const char* const name)
 /**
  * Retrieve name
  *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- *
  * @return		Name
  */
 char* Container::getName()
@@ -1182,14 +984,9 @@ char* Container::getName()
 /**
  * Find child by name in given list
  *
- * @memberof		Container
- * @public
- *
- * @param this		Function scope
  * @param children	List to search
  * @param childName	Name of child to search for
  * @param recursive	Whether to search recursively
- *
  * @return			Child Container
  */
 Container Container::findChildByName(VirtualList children, char* childName, bool recursive)
@@ -1227,13 +1024,8 @@ Container Container::findChildByName(VirtualList children, char* childName, bool
 /**
  * Get child by name
  *
- * @memberof		Container
- * @public
- *
- * @param this		Function scope
  * @param childName	Name of child to search for
  * @param recursive	Whether to search recursively
- *
  * @return			Child Container
  */
 Container Container::getChildByName(char* childName, bool recursive)
@@ -1257,11 +1049,6 @@ Container Container::getChildByName(char* childName, bool recursive)
 
 /**
  * Suspend for pause
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::suspend()
 {
@@ -1282,11 +1069,6 @@ void Container::suspend()
 
 /**
  * Resume after pause
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  */
 void Container::resume()
 {
@@ -1306,14 +1088,6 @@ void Container::resume()
 	Container::invalidateGlobalTransformation(this);
 }
 
-/**
- *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- */
 void Container::show()
 {
 	this->hidden = false;
@@ -1331,14 +1105,6 @@ void Container::show()
 	Container::invalidateGlobalTransformation(this);
 }
 
-/**
- *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
- */
 void Container::hide()
 {
 	this->hidden = true;
@@ -1356,11 +1122,6 @@ void Container::hide()
 
 /**
  *
- *
- * @memberof	Container
- * @public
- *
- * @param this	Function scope
  *
  * @return		Where Container is hidden
  */

@@ -35,27 +35,17 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup stage-entities-particles
 class ParticleRemover : Object
 {
-	/**
-	 * @var VirtualList particlesLists
-	 * @brief			List of Particles
-	 * @memberof		ParticleRemover
-	 */
+	// List of Particles
 	VirtualList particlesLists;
-	/**
-	 * @var int 		removalDelayCycles
-	 * @brief			Removal delay
-	 * @memberof		ParticleRemover
-	 */
+	// Removal delay
 	int removalDelayCycles;
-	/**
-	 * @var int 		remainingRemoveDelayCycles
-	 * @brief			Removal delay
-	 * @memberof		ParticleRemover
-	 */
+	// Removal delay
 	int remainingRemoveDelayCycles;
 
+	/// @publicsection
 	void constructor();
 	void deleteParticles(VirtualList particles);
 	void reset();

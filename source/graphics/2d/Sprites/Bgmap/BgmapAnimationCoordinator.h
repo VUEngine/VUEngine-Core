@@ -34,8 +34,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup graphics-2d-sprites-bgmap
 class BgmapAnimationCoordinator : AnimationCoordinator
 {
+	/// @publicsection
 	void constructor(const CharSetDefinition* charSetDefinition);
 	override void addAnimationController(AnimationController animationController);
 	override void removeAnimationController(AnimationController animationController);

@@ -35,21 +35,15 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
 class VirtualList : Object
 {
-	/**
-	* @var VirtualNode head
-	* @brief			A pointer to the head of the list
-	* @memberof		VirtualList
-	*/
+	// A pointer to the head of the list
 	VirtualNode head;
-	/**
-	* @var VirtualNode tail
-	* @brief			A pointer to the tail of the list
-	* @memberof		VirtualList
-	*/
+	// A pointer to the tail of the list
 	VirtualNode tail;
 
+	/// @publicsection
 	void constructor();
 	void* back();
 	VirtualNode begin();

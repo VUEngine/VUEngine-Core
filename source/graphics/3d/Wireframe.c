@@ -33,12 +33,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Wireframe
- * @extends Object
- * @ingroup graphics-3d
- */
-
 friend class VirtualNode;
 friend class VirtualList;
 
@@ -49,11 +43,6 @@ friend class VirtualList;
 
 /**
  * Class constructor
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
  */
 void Wireframe::constructor()
 {
@@ -63,11 +52,6 @@ void Wireframe::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
  */
 void Wireframe::destructor()
 {
@@ -80,11 +64,6 @@ void Wireframe::destructor()
 
 /**
  * Start being rendered
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
  */
 void Wireframe::show()
 {
@@ -93,11 +72,6 @@ void Wireframe::show()
 
 /**
  * Stop being rendered
- *
- * @memberof	Wireframe
- * @public
- *
- * @param this	Function scope
  */
 void Wireframe::hide()
 {

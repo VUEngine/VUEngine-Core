@@ -34,8 +34,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup states
 singleton class DebugState : GameState
 {
+	/// @publicsection
 	static DebugState getInstance();
 	override void enter(void* owner);
 	override void execute(void* owner);

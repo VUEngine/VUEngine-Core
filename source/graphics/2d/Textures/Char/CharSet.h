@@ -57,57 +57,57 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A CharSet definition
+ *
+ * @memberof CharSet
+ */
 typedef struct CharSetDefinition
 {
-	// number of chars, depending on allocation type:
-	// __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows)
-	// __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows)
-	// __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
-	// __ANIMATED_MULTI: sum of chars of all animation frames
-	// __NOT_ANIMATED: number of chars of whole image
+	/// number of chars, depending on allocation type:
+	/// __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows)
+	/// __ANIMATED_SHARED: number of chars of a single animation frame (cols * rows)
+	/// __ANIMATED_SHARED_COORDINATED: number of chars of a single animation frame (cols * rows)
+	/// __ANIMATED_MULTI: sum of chars of all animation frames
+	/// __NOT_ANIMATED: number of chars of whole image
 	u32 numberOfChars;
 
-	// the way its chars and bgtexture will be allocated in graphic memory
+	/// the way its chars and bgtexture will be allocated in graphic memory
 	u32 allocationType;
 
-	// pointer to the char definition in ROM
+	/// pointer to the char definition in ROM
 	BYTE* charDefinition;
 
 } CharSetDefinition;
 
+/**
+ * A CharSet definition that is stored in ROM
+ *
+ * @memberof CharSet
+ */
 typedef const CharSetDefinition CharSetROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup graphics-2d-textures-char
 class CharSet : Object
 {
-	/**
-	* @var CharSetDefinition*  charSetDefinition
-	* @brief					Charset definition
-	* @memberof				CharSet
-	*/
+	// Charset definition
 	CharSetDefinition* charSetDefinition;
-	/**
-	* @var u32 				charDefinitionDisplacement
-	* @brief					Array definition of the charSet
-	* @memberof				CharSet
-	*/
+	// Array definition of the charSet
 	u32 charDefinitionDisplacement;
-	/**
-	* @var u16 				offset
-	* @brief					Memory displacement
-	* @memberof				CharSet
-	*/
+	// Memory displacement
 	u16 offset;
-	/**
-	* @var u8 					usageCount
-	* @brief					How many textures are using me
-	* @memberof				CharSet
-	*/
+	// How many textures are using me
 	u8 usageCount;
 
+	/// @publicsection
 	void constructor(CharSetDefinition* charSetDefinition, u16 offset);
 	void increaseUsageCount();
 	bool decreaseUsageCount();

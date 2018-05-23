@@ -30,7 +30,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											PROTOTYPES
+//												PROTOTYPES
 //---------------------------------------------------------------------------------------------------------
 
 // extern declarations
@@ -62,10 +62,8 @@ inline int customAbs(int number)
 	return result;
 }
 
-
 // usable only when m is a power of 2
 #define __MODULO(n, m)			(n & (m - 1))
-
 
 // fixed point macros
 #define fix7_9					s16
@@ -74,7 +72,6 @@ inline int customAbs(int number)
 #define fix10_6					s16
 #define fix10_6_ext				s32
 #define fix19_13				s32
-
 
 // round functions
 #define __F_ROUND(n)				(int)((n) + 0.5f)
@@ -225,12 +222,20 @@ static const s16 _sinLut[] =
  -50,  -43,  -37,  -31,  -25,  -18,  -12,   -6  //64
 };
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup base-libgccvb
 static class Math : Object
 {
+	/// @publicsection
 	static float squareRoot(float number);
 	static int powerFast(int base, int power);
 	static int intInfinity();
 	static fix10_6 fix10_6Infinity();
 }
-#endif
 
+
+#endif

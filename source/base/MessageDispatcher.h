@@ -34,30 +34,42 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											TYPE DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+/**
+ * Delayed Message
+ *
+ * @memberof MessageDispatcher
+ */
+typedef struct DelayedMessage
+{
+	/// pointer to the telegram to dispatch
+	Telegram telegram;
+	/// time of arrival
+	u32 timeOfArrival;
+	/// reference to clock
+	Clock clock;
+
+} DelayedMessage;
+
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup base
+
 singleton class MessageDispatcher : Object
 {
-	/**
-	 * @var VirtualList	delayedMessages
-	 * @brief			Delayed messages
-	 * @memberof		MessageDispatcher
-	 */
+	// Delayed messages
 	VirtualList delayedMessages;
-	/**
-	 * @var VirtualList	delayedMessagesToDiscard
-	 * @brief			Delayed messages to discard
-	 * @memberof		MessageDispatcher
-	 */
+	// Delayed messages to discard
 	VirtualList delayedMessagesToDiscard;
-	/**
-	 * @var VirtualList	delayedMessagesToDispatch
-	 * @brief			Delayed messages to dispatch
-	 * @memberof		MessageDispatcher
-	 */
+	// Delayed messages to dispatch
 	VirtualList delayedMessagesToDispatch;
 
+	/// @publicsection
 	static MessageDispatcher getInstance();
 	static bool dispatchMessage(u32 delay, Object sender, Object receiver, int message, void* extraInfo);
 	void dispatchDelayedMessage(Clock clock, u32 delay, Object sender,

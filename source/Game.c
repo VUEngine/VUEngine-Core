@@ -90,12 +90,6 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Game
- * @extends Object
- * @ingroup base
- */
-
 #ifdef __PROFILE_GAME
 
 bool _updateProfiling = false;
@@ -1363,7 +1357,7 @@ void Game::pause(GameState pauseState)
 void Game::unpause(GameState pauseState)
 {
 	ASSERT(pauseState, "Game::unpause: null pauseState");
-	ASSERT(pauseState == this->currentState, "Game::unpause: null pauseState sent is not the current one");
+	ASSERT(pauseState == this->currentState, "Game::unpause: pauseState sent is not the current one");
 
 	if(pauseState && this->currentState == pauseState)
 	{
@@ -1380,7 +1374,8 @@ void Game::unpause(GameState pauseState)
 
 // set auto pause state
 void Game::setAutomaticPauseState(GameState automaticPauseState)
-{	this->automaticPauseState = automaticPauseState;
+{
+	this->automaticPauseState = automaticPauseState;
 }
 
 // get auto pause state

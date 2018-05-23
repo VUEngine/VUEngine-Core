@@ -46,46 +46,22 @@
 volatile u16* _vipRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)0x0005F800;
 u32* _currentDrawingFrameBufferSet = NULL;
 
-//---------------------------------------------------------------------------------------------------------
-//												DECLARATIONS
-//---------------------------------------------------------------------------------------------------------
+static VIPManager _vipManager;
+static TimerManager _timerManager;
+static WireframeManager _wireframeManager;
+static SpriteManager _spriteManager;
+static HardwareManager _hardwareManager;
 
 extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
 extern BrightnessRepeatROMDef DEFAULT_BRIGHTNESS_REPEAT;
-
-/**
- * Texture Post Processing Effect Registry
- *
- * @memberof VIPManager
- */
-typedef struct PostProcessingEffectRegistry
-{
-	PostProcessingEffect postProcessingEffect;
-	SpatialObject spatialObject;
-
-} PostProcessingEffectRegistry;
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	VIPManager
- * @extends Object
- * @ingroup hardware
- */
-
 friend class VirtualNode;
 friend class VirtualList;
-
-
-
-static VIPManager _vipManager;
-static TimerManager _timerManager;
-static WireframeManager _wireframeManager;
-static SpriteManager _spriteManager;
-static HardwareManager _hardwareManager;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -98,7 +74,6 @@ static HardwareManager _hardwareManager;
  * @fn			VIPManager::getInstance()
  * @memberof	VIPManager
  * @public
- *
  * @return		VIPManager instance
  */
 
@@ -106,10 +81,7 @@ static HardwareManager _hardwareManager;
 /**
  * Class constructor
  *
- * @memberof	VIPManager
  * @private
- *
- * @param this	Function scope
  */
 void VIPManager::constructor()
 {
@@ -133,11 +105,6 @@ void VIPManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	VIPManager
- * @public
- *
- * @param this	Function scope
  */
 void VIPManager::destructor()
 {
@@ -149,11 +116,6 @@ void VIPManager::destructor()
 
 /**
  * Allow VIP's drawing process to start
- *
- * @memberof	VIPManager
- * @public
- *
- * @param this	Function scope
  */
 void VIPManager::enableDrawing()
 {
@@ -163,11 +125,6 @@ void VIPManager::enableDrawing()
 
 /**
  * Disallow VIP's drawing process to start
- *
- * @memberof	VIPManager
- * @public
- *
- * @param this	Function scope
  */
 void VIPManager::disableDrawing()
 {
@@ -177,10 +134,6 @@ void VIPManager::disableDrawing()
 /**
  * Enable VIP's interrupts
  *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
  * @param interruptCode			Interrupts to enable
  */
 void VIPManager::enableInterrupt(u16 interruptCode)
@@ -191,11 +144,6 @@ void VIPManager::enableInterrupt(u16 interruptCode)
 
 /**
  * Disable VIP's interrupts
- *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
  */
 void VIPManager::disableInterrupts()
 {
@@ -206,10 +154,6 @@ void VIPManager::disableInterrupts()
 /**
  * Enable / disable DRAM writing
  *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
  * @param allowDRAMAccess		Flag's value
  */
 void VIPManager::allowDRAMAccess(bool allowDRAMAccess)
@@ -220,11 +164,6 @@ void VIPManager::allowDRAMAccess(bool allowDRAMAccess)
 /**
  * Check if rendering is pending
  *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
- *
  * @return						True if XPEND already happened but DRAM writing didn't take place
  */
 bool VIPManager::isRenderingPending()
@@ -234,9 +173,6 @@ bool VIPManager::isRenderingPending()
 
 /**
  * VIP's interrupt handler
- *
- * @memberof		VIPManager
- * @public
  */
 static void VIPManager::interruptHandler()
 {
@@ -261,9 +197,6 @@ static void VIPManager::interruptHandler()
 }
 /**
  * Process interrupt method
- *
- * @memberof		VIPManager
- * @public
  */
 void VIPManager::processInterrupt(u16 interrupt)
 {
@@ -400,11 +333,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 /**
  * Start frame buffer writing operations
  *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
- *
  * @return			The time in milliseconds that it took to process the interrupt (only if profiling is enabled)
  */
 void VIPManager::processFrameBuffers()
@@ -427,11 +355,6 @@ void VIPManager::processFrameBuffers()
 
 /**
  * Turn on the displays
- *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
  */
 void VIPManager::displayOn()
 {
@@ -442,11 +365,6 @@ void VIPManager::displayOn()
 
 /**
  * Turn off the displays
- *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
  */
 void VIPManager::displayOff()
 {
@@ -461,10 +379,6 @@ void VIPManager::displayOff()
 /**
  * Setup the palettes
  *
- * @memberof					VIPManager
- * @public
- *
- * @param this					Function scope
  * @param paletteConfig			Configuration of the palettes
  */
 void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
@@ -482,11 +396,6 @@ void VIPManager::setupPalettes(PaletteConfig* paletteConfig)
 
 /**
  * Turn brightness all the way up
- *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
  */
 void VIPManager::upBrightness()
 {
@@ -497,11 +406,6 @@ void VIPManager::upBrightness()
 
 /**
  * Turn brightness all the way down
- *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
  */
 void VIPManager::lowerBrightness()
 {
@@ -514,11 +418,6 @@ void VIPManager::lowerBrightness()
 
 /**
  * Clear the CHAR and Param table memory
- *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
  */
 void VIPManager::clearScreen()
 {	u8* bgmapStartAddress = (u8*)__BGMAP_SPACE_BASE_ADDRESS;
@@ -539,10 +438,6 @@ void VIPManager::clearScreen()
 /**
  * Clear a BGMAP segment
  *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
  * @param segment	The segment to clean up
  * @param size		Segment's size
  */
@@ -554,10 +449,6 @@ void VIPManager::clearBgmapSegment(int segment, int size)
 /**
  * Setup the column table
  *
- * @memberof						VIPManager
- * @public
- *
- * @param this						Function scope
  * @param columnTableDefinition		Definition to use
  */
 void VIPManager::setupColumnTable(ColumnTableDefinition* columnTableDefinition)
@@ -585,11 +476,7 @@ void VIPManager::setupColumnTable(ColumnTableDefinition* columnTableDefinition)
 /**
  * Use the vip's built-in column table instead of reading the one defined in memory
  *
- * @memberof				VIPManager
- * @public
- *
- * @param this				Function scope
- * @param useInternal		Flag
+ * @param useInternal	Flag
  */
 void VIPManager::useInternalColumnTable(bool useInternal)
 {
@@ -609,11 +496,7 @@ void VIPManager::useInternalColumnTable(bool useInternal)
 /**
  * Write brightness repeat values to column table
  *
- * @memberof								VIPManager
- * @public
- *
- * @param this								Function scope
- * @param brightnessRepeatDefinition		Definition
+ * @param brightnessRepeatDefinition	Definition
  */
 void VIPManager::setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRepeatDefinition)
 {
@@ -644,11 +527,7 @@ void VIPManager::setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRep
 /**
  * Set background color
  *
- * @memberof			VIPManager
- * @public
- *
- * @param this			Function scope
- * @param color			New color
+ * @param color		New color
  */
 void VIPManager::setBackgroundColor(u8 color)
 {
@@ -660,14 +539,9 @@ void VIPManager::setBackgroundColor(u8 color)
 /**
  * Check if a post-processing effect is already registered
  *
- * @memberof							VIPManager
- * @public
- *
- * @param this							Function scope
- * @param postProcessingEffect			Post-processing effect function
- * @param spatialObject					Post-processing effect function's scope
- *
- * @return								Whether the effect and object are already registered
+ * @param postProcessingEffect	Post-processing effect function
+ * @param spatialObject			Post-processing effect function's scope
+ * @return						Whether the effect and object are already registered
  */
 bool VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
@@ -689,12 +563,8 @@ bool VIPManager::isPostProcessingEffectRegistered(PostProcessingEffect postProce
 /**
  * Register a post-processing effect with a higher priority
  *
- * @memberof							VIPManager
- * @public
- *
- * @param this							Function scope
- * @param postProcessingEffect			Post-processing effect function
- * @param spatialObject					Post-processing effect function's scope
+ * @param postProcessingEffect	Post-processing effect function
+ * @param spatialObject			Post-processing effect function's scope
  */
 void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
@@ -713,12 +583,8 @@ void VIPManager::pushFrontPostProcessingEffect(PostProcessingEffect postProcessi
 /**
  * Register a post-processing effect with lower priority
  *
- * @memberof							VIPManager
- * @public
- *
- * @param this							Function scope
- * @param postProcessingEffect			Post-processing effect function
- * @param spatialObject					Post-processing effect function's scope
+ * @param postProcessingEffect	Post-processing effect function
+ * @param spatialObject			Post-processing effect function's scope
  */
 void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
@@ -737,12 +603,8 @@ void VIPManager::pushBackPostProcessingEffect(PostProcessingEffect postProcessin
 /**
  * Remove a post-processing effect
  *
- * @memberof							VIPManager
- * @public
- *
- * @param this							Function scope
- * @param postProcessingEffect			Post-processing effect function
- * @param spatialObject					Post-processing effect function's scope
+ * @param postProcessingEffect	Post-processing effect function
+ * @param spatialObject			Post-processing effect function's scope
  */
 void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {
@@ -764,11 +626,6 @@ void VIPManager::removePostProcessingEffect(PostProcessingEffect postProcessingE
 
 /**
  * Remove all a post-processing effects
- *
- * @memberof			VIPManager
- * @public
- *
- * @param this			Function scope
  */
 void VIPManager::removePostProcessingEffects()
 {
@@ -784,11 +641,6 @@ void VIPManager::removePostProcessingEffects()
 
 /**
  * Register the frame buffer in use by the VIP's drawing process
- *
- * @memberof			VIPManager
- * @public
- *
- * @param this			Function scope
  */
 void VIPManager::registerCurrentDrawingFrameBufferSet()
 {
@@ -809,12 +661,7 @@ void VIPManager::registerCurrentDrawingFrameBufferSet()
 /**
  * Retrieve the frame buffer in use by the VIP's drawing process
  *
- * @memberof		VIPManager
- * @public
- *
- * @param this		Function scope
- *
- * @return			Frame buffer in use by the VIP's drawing process
+ * @return	Frame buffer in use by the VIP's drawing process
  */
 u32 VIPManager::getCurrentDrawingframeBufferSet()
 {

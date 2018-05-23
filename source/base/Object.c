@@ -32,31 +32,8 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	Object
- * @ingroup base
- * @brief	Base class for all other classes in the engine, it derives from nothing but itself
- */
-
 friend class VirtualNode;
 friend class VirtualList;
-
-/**
- * An Event
- *
- * @memberof Object
- */
-typedef struct Event
-{
-	/// Object to register event listener at
-	Object listener;
-	/// The method to execute on event
-	EventListener method;
-	/// The code of the event to listen to
-	u32 code;
-
-} Event;
-
 
 // to speed things up
 extern MemoryPool _memoryPool;
@@ -68,11 +45,6 @@ extern MemoryPool _memoryPool;
 
 /**
  * Class constructor
- *
- * @memberof	Object
- * @public
- *
- * @param this	Function scope
  */
 void Object::constructor()
 {
@@ -81,11 +53,6 @@ void Object::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	Object
- * @public
- *
- * @param this	Function scope
  */
 void Object::destructor()
 {
@@ -115,12 +82,7 @@ void Object::destructor()
 /**
  * Handles incoming messages
  *
- * @memberof		Object
- * @public
- *
- * @param this		Function scope
  * @param telegram	The received message
- *
  * @return			Always returns false, this is meant to be used only in derived classes
  */
 bool Object::handleMessage(Telegram telegram __attribute__ ((unused)))
@@ -131,10 +93,6 @@ bool Object::handleMessage(Telegram telegram __attribute__ ((unused)))
 /**
  * Registers an event listener
  *
- * @memberof			Object
- * @public
- *
- * @param this			Function scope
  * @param listener		Object to register event listener at
  * @param method		The method to execute on event
  * @param eventCode		The code of the event to listen to
@@ -177,10 +135,6 @@ void Object::addEventListener(Object listener, EventListener method, u32 eventCo
 /**
  * Removes an event listener
  *
- * @memberof			Object
- * @public
- *
- * @param this			Function scope
  * @param listener		Object where event listener is registered at
  * @param method		The method attached to event listener
  * @param eventCode		The code of the event
@@ -209,10 +163,6 @@ void Object::removeEventListener(Object listener, EventListener method, u32 even
 /**
  * Removes event listeners without specifying a method
  *
- * @memberof			Object
- * @public
- *
- * @param this			Function scope
  * @param listener		Object where event listener is registered at
  * @param eventCode		The code of the event
  */
@@ -256,10 +206,6 @@ void Object::removeEventListeners(Object listener, u32 eventCode)
 /**
  * Removes event listeners without specifying a method nor a listener
  *
- * @memberof			Object
- * @public
- *
- * @param this			Function scope
  * @param eventCode		The code of the event
  */
 void Object::removeAllEventListeners(u32 eventCode)
@@ -302,10 +248,6 @@ void Object::removeAllEventListeners(u32 eventCode)
 /**
  * Fires an event
  *
- * @memberof			Object
- * @public
- *
- * @param this			Function scope
  * @param eventCode		The code of the event
  */
 void Object::fireEvent(u32 eventCode)
@@ -374,13 +316,8 @@ void Object::fireEvent(u32 eventCode)
 /**
  * Casts an object to base class
  *
- * @memberof							Object
- * @public
- *
- * @param this							Function scope
  * @param targetClassGetClassMethod
  * @param baseClassGetClassMethod
- *
  * @return								Casted Object
  */
 static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
@@ -407,7 +344,7 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 		Printing::setDebugMode(Printing::getInstance());
 		Printing::text(Printing::getInstance(), "Object's address: ", 1, 15, NULL);
 		Printing::hex(Printing::getInstance(), (u32)object, 18, 15, 8, NULL);
-*/
+	*/
 		_lp = lp;
 		_sp = sp;
 		NM_CAST_ASSERT(false, "Object::getCast: deleted object");
@@ -449,11 +386,6 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 
 /**
  * Get an Object's vTable
- *
- * @memberof	Object
- * @public
- *
- * @param this	Function scope
  *
  * @return		vTable pointer
  */

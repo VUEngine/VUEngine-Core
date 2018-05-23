@@ -31,64 +31,60 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+/**
+ * A MBgmapSprite definition
+ *
+ * @memberof MBgmapSprite
+ */
 typedef struct MBgmapSpriteDefinition
 {
-	// the normal sprite definition
+	/// the normal sprite definition
 	BgmapSpriteDefinition bgmapSpriteDefinition;
 
-	// texture to use with the sprite
+	/// texture to use with the sprite
 	TextureDefinition** textureDefinitions;
 
-	// SCX/SCY value
+	/// SCX/SCY value
 	u32 scValue;
 
-	// flag to loop the x axis
+	/// flag to loop the x axis
 	int xLoop;
 
-	// flag to loop the y axis
+	/// flag to loop the y axis
 	int yLoop;
 
 } MBgmapSpriteDefinition;
 
+/**
+ * A MBgmapSprite definition that is stored in ROM
+ *
+ * @memberof MBgmapSprite
+ */
 typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup graphics-2d-sprites-bgmap
 class MBgmapSprite : BgmapSprite
 {
-	/**
-	* @var VirtualList 			textures
-	* @brief						this is our texture
-	* @memberof 					MBgmapSprite
-	*/
+	// this is our texture
 	VirtualList textures;
-	/**
-	* @var MBgmapSpriteDefinition*	mBgmapSpriteDefinition
-	* @brief						pinter to definition
-	* @memberof 					MBgmapSprite
-	*/
+	// pinter to definition
 	const MBgmapSpriteDefinition* mBgmapSpriteDefinition;
-	/**
-	* @var u32 					textureXOffset
-	* @brief						to speed up rendering
-	* @memberof 					MBgmapSprite
-	*/
+	// to speed up rendering
 	u32 textureXOffset;
-	/**
-	* @var u32 					textureYOffset
-	* @brief						to speed up rendering
-	* @memberof 					MBgmapSprite
-	*/
+	// to speed up rendering
 	u32 textureYOffset;
-	/**
-	* @var Point 					sizeMultiplier
-	* @brief						Multiple BGMAP expansion
-	* @memberof 					MBgmapSprite
-	*/
+	// Multiple BGMAP expansion
 	Point sizeMultiplier;
 
+	/// @publicsection
 	void constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
 	override void position(const Vector3D* position);
 	override void setPosition(const PixelVector* position);

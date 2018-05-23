@@ -35,33 +35,8 @@
 // 											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class	EntityFactory
- * @extends Object
- * @ingroup stage-entities
- */
-
 friend class VirtualNode;
 friend class VirtualList;
-
-/**
- * Positioned Entity Description
- *
- * @memberof EntityFactory
- */
-typedef struct PositionedEntityDescription
-{
-	PositionedEntity* positionedEntity;
-	Container parent;
-	Entity entity;
-	EventListener callback;
-	int spriteDefinitionIndex;
-	s16 id;
-	bool transformed;
-	bool initialized;
-} PositionedEntityDescription;
-
-
 
 typedef u32 (*StreamingPhase)(void*);
 

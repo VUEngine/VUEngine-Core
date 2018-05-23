@@ -72,7 +72,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -98,30 +98,24 @@ typedef struct UserInput
 	u16 powerFlag;
 } UserInput;
 
+
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup hardware
 singleton class KeypadManager : Object
 {
-	/**
-	 * @var UserInput 	userInput
-	 * @brief			User's Input
-	 * @memberof		KeypadManager
-	 */
+	// User's Input
 	UserInput userInput;
-	/**
-	 * @var UserInput 	userInputToRegister
-	 * @brief			User's Input to be registered
-	 * @memberof		KeypadManager
-	 */
+	// User's Input to be registered
 	UserInput userInputToRegister;
-	/**
-	 * @var bool 		enabled
-	 * @brief			Enabled
-	 * @memberof		KeypadManager
-	 */
+	// Enabled
 	bool enabled;
 
+	/// @publicsection
 	static KeypadManager getInstance();
 	static void interruptHandler();
-
 	void disable();
 	void disableInterrupt();
 	void enable();

@@ -101,7 +101,6 @@ static const unsigned char sinWave[32] =
 /**
  * Sound Registry
  *
- * @memberof SoundManager
  */
 typedef struct SOUNDREG
 {
@@ -144,16 +143,6 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DEFINITION
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * @class	SoundManager
- * @extends Object
- * @ingroup hardware
- */
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -161,9 +150,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
  * Get instance
  *
  * @fn			SoundManager::getInstance()
- * @memberof	SoundManager
  * @public
- *
  * @return		SoundManager instance
  */
 
@@ -171,10 +158,7 @@ static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0
 /**
  * Class constructor
  *
- * @memberof	SoundManager
  * @private
- *
- * @param this	Function scope
  */
 void SoundManager::constructor()
 {
@@ -204,11 +188,6 @@ void SoundManager::constructor()
 
 /**
  * Class destructor
- *
- * @memberof	SoundManager
- * @public
- *
- * @param this	Function scope
  */
 void SoundManager::destructor()
 {
@@ -217,11 +196,6 @@ void SoundManager::destructor()
 
 /**
  * Load wave form data
- *
- * @memberof	SoundManager
- * @public
- *
- * @param this	Function scope
  */
 void SoundManager::setWaveForm()
 {
@@ -238,11 +212,6 @@ void SoundManager::setWaveForm()
 
 /**
  * Update sound playback
- *
- * @memberof	SoundManager
- * @public
- *
- * @param this	Function scope
  */
 void SoundManager::playSounds()
 {
@@ -253,10 +222,7 @@ void SoundManager::playSounds()
 /**
  * Update background music playback
  *
- * @memberof	SoundManager
  * @private
- *
- * @param this	Function scope
  */
 void SoundManager::continuePlayingBGM()
 {
@@ -350,10 +316,7 @@ void SoundManager::continuePlayingBGM()
 /**
  * Calculate sound volume according to its spatial position
  *
- * @memberof	SoundManager
  * @private
- *
- * @param this	Function scope
  * @param fxS	Fx sound index
  */
 int SoundManager::calculateSoundPosition(int fxS)
@@ -383,10 +346,7 @@ int SoundManager::calculateSoundPosition(int fxS)
 /**
  * Update fx sounds playback
  *
- * @memberof	SoundManager
  * @private
- *
- * @param this	Function scope
  */
 void SoundManager::continuePlayingFxSounds()
 {
@@ -474,10 +434,6 @@ void SoundManager::continuePlayingFxSounds()
 /**
  * Start playback of background music
  *
- * @memberof	SoundManager
- * @public
- *
- * @param this	Function scope
  * @param bgm	Background music
  */
 void SoundManager::playBGM(const u16 (*bgm)[])
@@ -490,13 +446,8 @@ void SoundManager::playBGM(const u16 (*bgm)[])
  * Start playback of fx sound.
  * If all fx channels are in use, it is not guaranteed that the sound will be played.
  *
- * @memberof		SoundManager
- * @public
- *
- * @param this		Function scope
  * @param fxSound	Fx sound to play
  * @param position	3D position
- *
  * @return 			True if playback started
  */
 int SoundManager::playFxSound(const u16* fxSound, Vector3D position)
@@ -551,11 +502,6 @@ int SoundManager::playingSound(const u16* fxSound)
 
 /**
  * Stop all sound playback
- *
- * @memberof		SoundManager
- * @public
- *
- * @param this		Function scope
  */
 void SoundManager::stopAllSound()
 {

@@ -34,8 +34,10 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
+/// @ingroup stage-entities-particles
 class ParticleBody : Body
 {
+	/// @publicsection
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 	override void update();
 }

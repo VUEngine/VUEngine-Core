@@ -33,7 +33,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 typedef struct AnimatedEntityDefinition
@@ -52,17 +52,23 @@ typedef struct AnimatedEntityDefinition
 typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
-	/* Pointer to the ROM definition */
+	// Pointer to the ROM definition
 	AnimatedEntityDefinition* animatedEntityDefinition;
-	/* Pointer to the animation description */
+	// Pointer to the animation description
 	AnimationDescription* animationDescription;
-	/* direction */
+	// direction
 	Direction direction;
-	/* need to save for pausing */
+	// need to save for pausing
 	char* currentAnimationName;
 
+	/// @publicsection
 	void constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
 	AnimationDescription* getAnimationDescription();
 	s8 getActualFrame();

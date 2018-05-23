@@ -39,12 +39,6 @@
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * @class 	ObjectSpriteContainer
- * @extends Sprite
- * @ingroup graphics-2d-sprites-object
- */
-
 friend class Sprite;
 friend class Texture;
 friend class ObjectSprite;
@@ -59,10 +53,6 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @memberof					ObjectSpriteContainer
- * @public
- *
- * @param this					Function scope
  * @param spt					SPT assigned to this container
  * @param totalObjects			Total number of OBJECTs that manages by this container
  * @param firstObjectIndex		The index of the first OBJECT managed by this container
@@ -106,11 +96,6 @@ void ObjectSpriteContainer::constructor(int spt, int totalObjects, int firstObje
 
 /**
  * Class destructor
- *
- * @memberof				ObjectSpriteContainer
- * @public
- *
- * @param this				Function scope
  */
 void ObjectSpriteContainer::destructor()
 {
@@ -135,10 +120,6 @@ void ObjectSpriteContainer::destructor()
 /**
  * Add an ObjectSprite to this container
  *
- * @memberof				ObjectSpriteContainer
- * @public
- *
- * @param this				Function scope
  * @param objectSprite		Sprite to add
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
@@ -176,10 +157,6 @@ s32 ObjectSpriteContainer::addObjectSprite(ObjectSprite objectSprite, int number
 /**
  * Remove a previously registered ObjectSprite
  *
- * @memberof				ObjectSpriteContainer
- * @public
- *
- * @param this				Function scope
  * @param objectSprite		Sprite to remove
  * @param numberOfObjects	The number of OBJECTs used by the Sprite
  */
@@ -251,12 +228,7 @@ void ObjectSpriteContainer::removeObjectSprite(ObjectSprite objectSprite, s32 nu
 /**
  * Check if this container has enough free OBJECTs
  *
- * @memberof				ObjectSpriteContainer
- * @public
- *
- * @param this				Function scope
  * @param numberOfObjects	The number of OBJECTs to check
- *
  * @return 					True if there is enough OBJECT space in this container
  */
 bool ObjectSpriteContainer::hasRoomFor(s32 numberOfObjects)
@@ -267,10 +239,6 @@ bool ObjectSpriteContainer::hasRoomFor(s32 numberOfObjects)
 /**
  * Set 2D position
  *
- * @memberof			ObjectSpriteContainer
- * @public
- *
- * @param this			Function scope
  * @param position		New 2D position
  */
 void ObjectSpriteContainer::setPosition(const PixelVector* position)
@@ -293,10 +261,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 /**
  * Defragment the ObjectSpriteContainer's OBJECT segment
  *
- * @memberof		ParamTableManager
  * @private
- *
- * @param this		Function scope
  */
 void ObjectSpriteContainer::defragment()
 {
@@ -338,10 +303,7 @@ void ObjectSpriteContainer::defragment()
 /**
  * Sort the object sprites within this container according to their z coordinates
  *
- * @memberof		ParamTableManager
  * @private
- *
- * @param this		Function scope
  */
 void ObjectSpriteContainer::sortProgressively()
 {
@@ -394,10 +356,6 @@ void ObjectSpriteContainer::sortProgressively()
 /**
  * Write WORLD data to DRAM
  *
- * @memberof		ObjectSpriteContainer
- * @public
- *
- * @param this		Function scope
  * @param evenFrame
  */
 void ObjectSpriteContainer::render(bool evenFrame)
@@ -452,11 +410,6 @@ void ObjectSpriteContainer::render(bool evenFrame)
 
 /**
  * Show
- *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
  */
 void ObjectSpriteContainer::show()
 {
@@ -472,11 +425,6 @@ void ObjectSpriteContainer::show()
 
 /**
  * Hide
- *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
  */
 void ObjectSpriteContainer::hide()
 {
@@ -498,11 +446,6 @@ void ObjectSpriteContainer::hide()
 /**
  * Retrieve the number of free OBJECTs within the segment assigned to this container
  *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Number of free OBJECTs
  */
 int ObjectSpriteContainer::getAvailableObjects()
@@ -512,11 +455,6 @@ int ObjectSpriteContainer::getAvailableObjects()
 
 /**
  * Retrieve the number of used OBJECTs within the segment assigned to this container
- *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
  *
  * @return 		Number of used OBJECTs
  */
@@ -539,11 +477,6 @@ int ObjectSpriteContainer::getTotalUsedObjects()
 /**
  * Retrieve the index of the next free OBJECT within the segment assigned to this container
  *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Index of the next free OBJECT
  */
 int ObjectSpriteContainer::getNextFreeObjectIndex()
@@ -563,11 +496,6 @@ int ObjectSpriteContainer::getNextFreeObjectIndex()
 /**
  * Retrieve the index of the first OBJECT within the segment assigned to this container
  *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
- *
  * @return 		Index of the first OBJECT
  */
 int ObjectSpriteContainer::getFirstObjectIndex()
@@ -577,11 +505,6 @@ int ObjectSpriteContainer::getFirstObjectIndex()
 
 /**
  * Retrieve the index of the last OBJECT within the segment assigned to this container
- *
- * @memberof	ObjectSpriteContainer
- * @public
- *
- * @param this	Function scope
  *
  * @return 		Index of the last OBJECT
  */
@@ -593,10 +516,6 @@ int ObjectSpriteContainer::getLastObjectIndex()
 /**
  * Add displacement to position
  *
- * @memberof				ObjectSpriteContainer
- * @public
- *
- * @param this				Function scope
  * @param displacement		2D position displacement
  */
 void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
@@ -615,10 +534,6 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
 /**
  * Print the container's status
  *
- * @memberof		ObjectSpriteContainer
- * @public
- *
- * @param this		Function scope
  * @param x			Camera x coordinate
  * @param y			Camera y coordinate
  */
@@ -651,10 +566,6 @@ void ObjectSpriteContainer::print(int x, int y)
 /**
  * Set Sprite's render mode
  *
- * @memberof		ObjectSpriteContainer
- * @public
- *
- * @param this		Function scope
  * @param display	Which displays to show on
  * @param mode		WORLD layer's head mode
  */
@@ -663,11 +574,6 @@ void ObjectSpriteContainer::setMode(u16 display __attribute__ ((unused)), u16 mo
 
 /**
  * Write textures
- *
- * @memberof		ObjectSpriteContainer
- * @public
- *
- * @param this		Function scope
  *
  * @return			true it all textures are written
  */
@@ -678,11 +584,6 @@ bool ObjectSpriteContainer::writeTextures()
 
 /**
  * Check if all textures are written
- *
- * @memberof		ObjectSpriteContainer
- * @public
- *
- * @param this		Function scope
  *
  * @return			true it all textures are written
  */

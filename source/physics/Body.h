@@ -42,7 +42,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
 /**
@@ -76,133 +76,58 @@ typedef struct PhysicalSpecification
 typedef const PhysicalSpecification PhysicalSpecificationROMDef;
 
 
+//---------------------------------------------------------------------------------------------------------
+//											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
+
+/// @ingroup physics
 class Body : Object
 {
-	/**
-	* @var SpatialObject 	owner
-	* @brief				owner
-	* @memberof 			Body
-	*/
+	// owner
 	SpatialObject owner;
-	/**
-	* @var Force 			weight
-	* @brief				direction
-	* @memberof 			Body
-	*/
+	// direction
 	Force weight;
-	/**
-	* @var Force 			externalForce
-	* @brief				direction
-	* @memberof 			Body
-	*/
+	// direction
 	Force externalForce;
-	/**
-	* @var Force 			friction
-	* @brief				friction surrounding object
-	* @memberof 			Body
-	*/
+	// friction surrounding object
 	Force friction;
-	/**
-	* @var Force 			totalNormal
-	* @brief				total normal forces applied to the body
-	* @memberof 			Body
-	*/
+	// total normal forces applied to the body
 	Force totalNormal;
-	/**
-	* @var VirtualList 	normals
-	* @brief				List of normal forces affecting the body
-	* @memberof 			Body
-	*/
+	// List of normal forces affecting the body
 	VirtualList normals;
-	/**
-	* @var Vector3D 		position
-	* @brief				spatial position
-	* @memberof 			Body
-	*/
+	// spatial position
 	Vector3D position;
-	/**
-	* @var Velocity 		velocity
-	* @brief				velocity on each instance
-	* @memberof 			Body
-	*/
+	// velocity on each instance
 	Velocity velocity;
-	/**
-	* @var Velocity 		maximum velocity
-	* @brief				maximum velocity on each instance
-	* @memberof 			Body
-	*/
+	// maximum velocity on each instance
 	Velocity maximumVelocity;
-	/**
-	* @var Acceleration 	acceleration
-	* @brief				acceleration structure
-	* @memberof 			Body
-	*/
+	// acceleration structure
 	Acceleration acceleration;
-	/**
-	* @var fix10_6 		bounciness
-	* @brief				bounciness
-	* @memberof 			Body
-	*/
+	// bounciness
 	fix10_6 bounciness;
-	/**
-	* @var fix10_6 		frictionCoefficient
-	* @brief				friction coefficient
-	* @memberof 			Body
-	*/
+	// friction coefficient
 	fix10_6 frictionCoefficient;
-	/**
-	* @var fix10_6 		surroundingFrictionCoefficient
-	* @brief				friction coefficient of the surroundings
-	* @memberof 			Body
-	*/
+	// friction coefficient of the surroundings
 	fix10_6 surroundingFrictionCoefficient;
-	/**
-	* @var fix10_6 		frictionForceMagnitude
-	* @brief				friction force magnitude
-	* @memberof 			Body
-	*/
+	// friction force magnitude
 	fix10_6 totalFrictionCoefficient;
-	/**
-	* @var fix10_6 		totalFrictionCoefficient
-	* @brief				total friction force magnitude
-	* @memberof 			Body
-	*/
+	// total friction force magnitude
 	fix10_6 frictionForceMagnitude;
-	/**
-	* @var fix10_6 		mass
-	* @brief				mass
-	* @memberof 			Body
-	*/
+	// mass
 	fix10_6 mass;
-	/**
-	* @var MovementType 	movementType
-	* @brief				movement type on each axis
-	* @memberof 			Body
-	*/
+	// movement type on each axis
 	MovementType movementType;
-	/**
-	* @var u8 				axesSubjectToGravity
-	* @brief				axes that are subject to gravity
-	* @memberof 			Body
-	*/
+	// axes that are subject to gravity
 	u16 axesSubjectToGravity;
-	/**
-	* @var bool 			active
-	* @brief				raise flag to make the body active
-	* @memberof 			Body
-	*/
+	// raise flag to make the body active
 	bool active;
-	/**
-	* @var bool			awake
-	* @brief				raise flag to update body's physics
-	* @memberof 			Body
-	*/
+	// raise flag to update body's physics
 	bool awake;
 
+	/// @publicsection
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
 	static void setCurrentWorldFrictionCoefficient(fix10_6 _currentWorldFriction);
 	static void setCurrentGravity(const Acceleration* currentGravity);
-
 	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
 	void addForce(const Force* force);
 	void applyForce(const Force* force);
