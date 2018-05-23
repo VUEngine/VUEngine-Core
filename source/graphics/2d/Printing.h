@@ -171,10 +171,15 @@ typedef const FontData FontROMData;
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// Manages printing layer and offers various functions to write to it.
-/// @ingroup graphics-2d
+/**
+ * Manages printing layer and offers various functions to write to it.
+ *
+ * @ingroup graphics-2d
+ */
 singleton class Printing : Object
 {
+	/// @publicsection
+
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
 	// x coordinate for printing WORLD
@@ -186,24 +191,159 @@ singleton class Printing : Object
 	// Palette to use for printing
 	u8 palette;
 
+
 	/// @publicsection
+
+	/** Get instance
+	 *
+	 * @return		Printing instance
+	 */
 	static Printing getInstance();
+
+	/**
+	 * Clear printing area
+	 */
 	void clear();
-	FontData* getFontByName(const char* font);
-	FontSize getTextSize(const char* string, const char* font);
-	void loadDebugFont();
-	void loadFonts(FontDefinition** fontDefinitions);
-	void render(int textLayer);
-	void reset();
-	void setDebugMode();
-	void setPalette(u8 palette);
-	void setWorldCoordinates(u16 gx, u16 gy);
-	void resetWorldCoordinates();
-	int getPixelCount();
-	void text(const char *string, int x, int y, const char* font);
-	void int(int value, u8 x, u8 y, const char* font);
+
+	/**
+	 * Print a float value
+	 *
+	 * @param value	Float value to print
+	 * @param x		Column to start printing at
+	 * @param y		Row to start printing at
+	 * @param font	Name of font to use for printing
+	 */
 	void float(float value, u8 x, u8 y, const char* font);
+
+	/**
+     * Get font definition and starting position in character memory
+     *
+     * @param font	Name of font to get definition for
+     * @return		FontData of desired font or default font if NULL or none could be found matching the name
+     */
+	FontData* getFontByName(const char* font);
+
+	/**
+	 * Retrieve the pixels used by the WORLD for printing
+	 *
+	 * @return			number of pixels
+	 */
+	int getPixelCount();
+
+	/**
+	 * Get the size of a (block of) text so you can for example center it on screen
+	 *
+	 * @param string	String to compute size for
+	 * @param font		Name of font to use for size computation
+	 */
+	FontSize getTextSize(const char* string, const char* font);
+
+	/**
+	 * Print a hex value
+	 *
+	 * @param value		Hex value to print
+	 * @param x			Column to start printing at
+	 * @param y			Row to start printing at
+	 * @param length	digits to print
+	 * @param font		Name of font to use for printing
+	 */
 	void hex(WORD value, u8 x, u8 y, u8 length, const char* font);
+
+	/**
+	 * Print an Integer value
+	 *
+	 * @param value	Integer to print
+	 * @param x		Column to start printing at
+	 * @param y		Row to start printing at
+	 * @param font	Name of font to use for printing
+	 */
+	void int(int value, u8 x, u8 y, const char* font);
+
+	/**
+     * Load engine's default font to end of char memory directly (for debug purposes)
+     */
+	void loadDebugFont();
+
+	/**
+     * Add fonts to internal VirtualList and preload CharSets for specified fonts
+     *
+     * @param fontDefinitions	Array of font definitions whose charset should pre preloaded
+     */
+	void loadFonts(FontDefinition** fontDefinitions);
+
+	/**
+     * Render general print output layer
+     *
+     * @param textLayer	Number of layer (World) to set as printing layer
+     */
+	void render(int textLayer);
+
+	/**
+     * Empties internal virtual list of registered fonts
+     */
+	void reset();
+
+	/**
+	 * Reset the coordinates of the WORLD used for printing
+	 */
+	void resetWorldCoordinates();
+
+	/**
+	 * Set mode to debug to bypass loading fonts through CharSets
+	 */
+	void setDebugMode();
+
+	/**
+	 * Set palette
+	 */
+	void setPalette(u8 palette);
+
+	/**
+	 * Set the coordinates of the WORLD used for printing
+	 *
+	 * @param gx		WORLD x coordinate
+	 * @param gy		WORLD y coordinate
+	 */
+	void setWorldCoordinates(u16 gx, u16 gy);
+
+	/**
+	 * Print a string
+	 *
+	 * @param string	String to print
+	 * @param x			Column to start printing at
+	 * @param y			Row to start printing at
+	 * @param font		Name of font to use for printing
+	 */
+	void text(const char *string, int x, int y, const char* font);
+
+
+	/// @privatesection
+
+	/**
+	 * Class constructor
+	 *
+	 * @fn 	void Printing::constructor()
+     * @memberof  Printing
+	 */
+
+	/**
+	 * Class destructor
+	 *
+	 * @fn	void Printing::destructor()
+     * @memberof  Printing
+	 */
+
+ 	/**
+ 	 * Direct printing out method
+ 	 *
+     * @fn	void Printing::out(u8 x, u8 y, const char* string, const char* font)
+     * @memberof  Printing
+     *
+     * @param x			Column to start printing at
+     * @param y			Row to start printing at
+     * @param string	String to print
+     * @param font		Name of font to use for printing
+     */
 }
 
 

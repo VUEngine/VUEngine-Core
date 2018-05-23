@@ -66,21 +66,6 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			Printing::getInstance()
- * @memberof	Printing
- * @public
- * @return		Printing instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
 void Printing::constructor()
 {
 	Base::constructor();
@@ -93,9 +78,6 @@ void Printing::constructor()
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 }
 
-/**
- * Class destructor
- */
 void Printing::destructor()
 {
 	delete this->fonts;
@@ -104,11 +86,6 @@ void Printing::destructor()
 	Base::destructor();
 }
 
-/**
- * Render general print output layer
- *
- * @param textLayer	Number of layer (World) to set as printing layer
- */
 void Printing::render(int textLayer)
 {
 	ASSERT(!(0 > textLayer || textLayer >= __TOTAL_LAYERS), "Printing::render: invalid layer");
@@ -124,9 +101,6 @@ void Printing::render(int textLayer)
 	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT - this->gy - 1;
 }
 
-/**
- * Empties internal virtual list of registered fonts
- */
 void Printing::reset()
 {
 	VirtualNode node = VirtualList::begin(this->fonts);
@@ -142,11 +116,6 @@ void Printing::reset()
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 }
 
-/**
- * Add fonts to internal VirtualList and preload CharSets for specified fonts
- *
- * @param fontDefinitions	Array of font definitions whose charset should pre preloaded
- */
 void Printing::loadFonts(FontDefinition** fontDefinitions)
 {
 	// empty list of registered fonts
@@ -180,11 +149,6 @@ void Printing::loadFonts(FontDefinition** fontDefinitions)
 	}
 }
 
-/**
- * Load engine's default font to end of char memory directly (for debug purposes)
- *
- * @private
- */
 void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(
@@ -194,9 +158,6 @@ void Printing::loadDebugFont()
 	);
 }
 
-/**
- * Set mode to debug to bypass loading fonts through CharSets
- */
 void Printing::setDebugMode()
 {
 	Printing::resetWorldCoordinates(this);
@@ -204,9 +165,6 @@ void Printing::setDebugMode()
 	this->mode = __PRINTING_MODE_DEBUG;
 }
 
-/**
- * Set palette
- */
 void Printing::setPalette(u8 palette)
 {
 	if(palette < 4)
@@ -215,9 +173,6 @@ void Printing::setPalette(u8 palette)
 	}
 }
 
-/**
- * Clear printing area
- */
 void Printing::clear()
 {
 	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
@@ -225,13 +180,6 @@ void Printing::clear()
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), printingBgmap, __PRINTABLE_BGMAP_AREA);
 }
 
-/**
- * Get font definition and starting position in character memory
- *
- * @private
- * @param font	Name of font to get definition for
- * @return		FontData of desired font or default font if NULL or none could be found matching the name
- */
 FontData* Printing::getFontByName(const char* font)
 {
 	FontData* result = NULL;
@@ -273,15 +221,6 @@ FontData* Printing::getFontByName(const char* font)
 	return result;
 }
 
-/**
- * Direct printing out method
- *
- * @private
- * @param x			Column to start printing at
- * @param y			Row to start printing at
- * @param string	String to print
- * @param font		Name of font to use for printing
- */
 void Printing::out(u8 x, u8 y, const char* string, const char* font)
 {
 	u32 i = 0;
@@ -370,14 +309,6 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	}
 }
 
-/**
- * Print an Integer value
- *
- * @param value	Integer to print
- * @param x		Column to start printing at
- * @param y		Row to start printing at
- * @param font	Name of font to use for printing
- */
 void Printing::int(int value, u8 x, u8 y, const char* font)
 {
 	if(value < 0)
@@ -393,28 +324,11 @@ void Printing::int(int value, u8 x, u8 y, const char* font)
 	}
 }
 
-/**
- * Print a hex value
- *
- * @param value		Hex value to print
- * @param x			Column to start printing at
- * @param y			Row to start printing at
- * @param length	digits to print
- * @param font		Name of font to use for printing
- */
 void Printing::hex(WORD value, u8 x, u8 y, u8 length, const char* font)
 {
 	Printing::out(this, x,y, Utilities::itoa((int)(value), 16, length), font);
 }
 
-/**
- * Print a float value
- *
- * @param value	Float value to print
- * @param x		Column to start printing at
- * @param y		Row to start printing at
- * @param font	Name of font to use for printing
- */
 void Printing::float(float value, u8 x, u8 y, const char* font)
 {
 	if(0 > value)
@@ -449,14 +363,6 @@ void Printing::float(float value, u8 x, u8 y, const char* font)
 	}
 }
 
-/**
- * Print a string
- *
- * @param string	String to print
- * @param x			Column to start printing at
- * @param y			Row to start printing at
- * @param font		Name of font to use for printing
- */
 void Printing::text(const char* string, int x, int y, const char* font)
 {
 #ifdef __FORCE_UPPERCASE
@@ -466,12 +372,6 @@ void Printing::text(const char* string, int x, int y, const char* font)
 #endif
 }
 
-/**
- * Set the coordinates of the WORLD used for printing
- *
- * @param gx		WORLD x coordinate
- * @param gy		WORLD y coordinate
- */
 #ifdef __FORCE_PRINTING_LAYER
 void Printing::setWorldCoordinates(u16 gx __attribute__ ((unused)), u16 gy __attribute__ ((unused)))
 {
@@ -486,33 +386,17 @@ void Printing::setWorldCoordinates(u16 gx, u16 gy)
 }
 #endif
 
-/**
- * Reset the coordinates of the WORLD used for printing
- */
 void Printing::resetWorldCoordinates()
 {
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 }
 
-
-/**
- * Retrieve the pixels used by the WORLD for printing
- *
- * @return			number of pixels
- */
 int Printing::getPixelCount()
 {
 	return (__SCREEN_WIDTH - this->gx) * (__SCREEN_HEIGHT - this->gy);
 }
 
-
-/**
- * Get the size of a (block of) text so you can for example center it on screen
- *
- * @param string	String to compute size for
- * @param font		Name of font to use for size computation
- */
 FontSize Printing::getTextSize(const char* string, const char* font)
 {
 	FontSize fontSize = {0, 0};
