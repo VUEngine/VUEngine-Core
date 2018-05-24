@@ -22,7 +22,7 @@ MY_HOME = $(VBDE)libs/$(NAME)
 BUILD_DIR = build
 
 # Where to store object and dependency files.
-STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
+STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 
 # Where to preprocess source files
 PREPROCESSOR_WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/working
@@ -77,11 +77,11 @@ ifeq ($(PRINT_PEDANTIC_WARNINGS), 1)
 PEDANTIC_WARNINGS_FLAG = -pedantic
 endif
 
-STORE_SUFIX =
+STORE_SUFFIX =
 PROLOG_FUNCTIONS_FLAG =
 ifeq ($(USE_PROLOG_FUNCTIONS), 1)
 PROLOG_FUNCTIONS_FLAG = -mprolog-function
-STORE_SUFIX = -pf
+STORE_SUFFIX = -pf
 endif
 
 FRAME_POINTER_USAGE_FLAG = -fomit-frame-pointer

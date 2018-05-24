@@ -178,7 +178,7 @@ typedef const FontData FontROMData;
  */
 singleton class Printing : Object
 {
-	/// @publicsection
+	/// @protectedsection
 
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
