@@ -104,7 +104,6 @@ enum MessagesTypes
 	// general purpose messages
 	kHighFps,
 	kAutoPause,
-	kLowBatteryIndicator,
 	kEntityRemoved,
 
 	// physics messages

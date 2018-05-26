@@ -71,8 +71,6 @@ singleton class Game : Object
 	u32 lastAutoPauseCheckTime;
 	// elapsed time in current 50hz cycle
 	u32 gameFrameTotalTime;
-	// low battery indicator showing flag
-	bool isShowingLowBatteryIndicator;
 	// frame ended flag
 	volatile bool currentFrameEnded;
 

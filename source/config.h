@@ -384,26 +384,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											LOW BATTERY INDICATOR
-//---------------------------------------------------------------------------------------------------------
-
-// When defined, the engine's default low battery indicator is used
-#define __LOW_BATTERY_INDICATOR
-
-// Position of low battery indicator
-#define __LOW_BATTERY_INDICATOR_POS_X			45
-#define __LOW_BATTERY_INDICATOR_POS_Y			1
-
-// Delay between showing/not showing the low battery indicator (in milliseconds)
-#define __LOW_BATTERY_INDICATOR_BLINK_DELAY		500
-
-/* Wait this long after first receiving the PWR signal
- * before showing the low battery indicator (in milliseconds)
- */
-#define __LOW_BATTERY_INDICATOR_INITIAL_DELAY	2000
-
-
-//---------------------------------------------------------------------------------------------------------
 //											AUTOMATIC PAUSE
 //---------------------------------------------------------------------------------------------------------
 

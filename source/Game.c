@@ -208,7 +208,6 @@ void Game::constructor()
 	this->nextState = NULL;
 	this->automaticPauseState = NULL;
 	this->lastAutoPauseCheckTime = 0;
-	this->isShowingLowBatteryIndicator = false;
 	this->currentFrameEnded = false;
 
 	// make sure all managers are initialized now
@@ -700,10 +699,6 @@ u32 Game::processUserInput()
 	}
 #endif
 
-#ifdef __LOW_BATTERY_INDICATOR
-	Game::checkLowBattery(this, userInput.powerFlag);
-#endif
-
 	if(userInput.pressedKey | userInput.releasedKey | userInput.holdKey)
 	{
 		 GameState::processUserInput(Game::getCurrentState(this), userInput);
@@ -1131,8 +1126,6 @@ void Game::setLastProcessName(char* processName)
 }
 #endif
 
-
-
 // process a telegram
 bool Game::handleMessage(Telegram telegram)
 {
@@ -1145,14 +1138,6 @@ bool Game::handleMessage(Telegram telegram)
 			Game::autoPause(this);
 			return true;
 			break;
-
-#ifdef __LOW_BATTERY_INDICATOR
-		case kLowBatteryIndicator:
-
-			Game::printLowBatteryIndicator(this, Telegram::getExtraInfo(telegram) ? true : false);
-			return true;
-			break;
-#endif
 	}
 
 	return StateMachine::handleMessage(this->stateMachine, telegram);
@@ -1309,37 +1294,6 @@ CollisionManager Game::getCollisionManager()
 
 	return GameState::getCollisionManager(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine)));
 }
-
-#ifdef __LOW_BATTERY_INDICATOR
-// low battery indicator check
-void Game::checkLowBattery(u16 keypad)
-{
-	if(keypad & K_PWR)
-	{
-		if(!this->isShowingLowBatteryIndicator)
-		{
-			MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_INITIAL_DELAY, Object::safeCast(this), Object::safeCast(this), kLowBatteryIndicator, (bool*)true);
-			this->isShowingLowBatteryIndicator = true;
-		}
-	}
-	else
-	{
-		if(this->isShowingLowBatteryIndicator)
-		{
-			MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), kLowBatteryIndicator);
-			Printing::text(Printing::getInstance(), "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
-			this->isShowingLowBatteryIndicator = false;
-		}
-	}
-}
-
-// print low battery indicator
-void Game::printLowBatteryIndicator(bool showIndicator)
-{
-	Printing::text(Printing::getInstance(), (showIndicator) ? __CHAR_BATTERY : "  ", __LOW_BATTERY_INDICATOR_POS_X, __LOW_BATTERY_INDICATOR_POS_Y, NULL);
-	MessageDispatcher::dispatchMessage(__LOW_BATTERY_INDICATOR_BLINK_DELAY, Object::safeCast(this), Object::safeCast(this), kLowBatteryIndicator, (bool*)(!showIndicator));
-}
-#endif
 
 // pause
 void Game::pause(GameState pauseState)

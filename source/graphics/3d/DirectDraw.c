@@ -133,7 +133,7 @@ static void DirectDraw::drawBlackPixelWrapper(u32 buffer, u16 x, u16 y, int colo
 }
 
 /**
- * Draws a point between two given 2D points
+ * Draws a point on screen in the given color
  *
  * @param point 	Point to draw
  * @param color		The color to draw (0-3)

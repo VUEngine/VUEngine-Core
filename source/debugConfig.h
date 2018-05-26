@@ -7,7 +7,6 @@
 
 
 // define / undefine as you see fit
-//#undef __LOW_BATTERY_INDICATOR
 //#undef __PRINT_FRAMERATE
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
