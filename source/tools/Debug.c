@@ -525,6 +525,7 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	Printing::text(Printing::getInstance(), "GAME'S STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 19, y, NULL);
+	/*
 	Printing::text(Printing::getInstance(), "Auto Pause State:", 1, ++y, NULL);
 	GameState autoPauseState = Game::getAutomaticPauseState(Game::getInstance());
 	if(autoPauseState)
@@ -535,6 +536,7 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	{
 		Printing::text(Printing::getInstance(), "none", 19, y, NULL);
 	}
+	*/
 
 	y += 3;
 

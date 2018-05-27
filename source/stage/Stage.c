@@ -658,7 +658,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 // load all visible entities
 void Stage::loadInitialEntities()
 {
-	// need a temporal list to remove and delete entities
+	// need a temporary list to remove and delete entities
 	VirtualNode node = this->stageEntities->head;
 
 	for(; node; node = node->next)
@@ -707,7 +707,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 	timeBeforeProcess = TimerManager::getMillisecondsElapsed(TimerManager::getInstance());
 #endif
 
-	// need a temporal list to remove and delete entities
+	// need a temporary list to remove and delete entities
 	VirtualNode node = this->children->head;
 
 	// check which actors must be unloaded

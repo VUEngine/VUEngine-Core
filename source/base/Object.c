@@ -254,7 +254,7 @@ void Object::fireEvent(u32 eventCode)
 {
 	if(this->events)
 	{
-		// temporal lists to being able to modify the event lists while firing them
+		// temporary lists to being able to modify the event lists while firing them
 		VirtualList eventsToFire = new VirtualList();
 		VirtualList eventsToRemove = new VirtualList();
 

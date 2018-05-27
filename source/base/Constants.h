@@ -103,7 +103,6 @@ enum MessagesTypes
 	kNoMessage = 0,
 	// general purpose messages
 	kHighFps,
-	kAutoPause,
 	kEntityRemoved,
 
 	// physics messages

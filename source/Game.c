@@ -206,8 +206,6 @@ void Game::constructor()
 
 	this->currentState = NULL;
 	this->nextState = NULL;
-	this->automaticPauseState = NULL;
-	this->lastAutoPauseCheckTime = 0;
 	this->currentFrameEnded = false;
 
 	// make sure all managers are initialized now
@@ -291,9 +289,6 @@ void Game::start(GameState state)
 
 	if(!StateMachine::getCurrentState(this->stateMachine))
 	{
-		// register start time for auto pause check
-		this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
-
 		// set state
 		Game::setNextState(this, state);
 
@@ -431,8 +426,7 @@ void Game::setNextState(GameState state)
 {
 	ASSERT(state, "Game::setState: setting NULL state");
 
-	// prevent the VIPManager to modify the DRAM
-	// during the next state's setup
+	// prevent the VIPManager to modify the DRAM during the next state's setup
 	VIPManager::allowDRAMAccess(this->vipManager, false);
 
 	switch(this->nextStateOperation)
@@ -500,17 +494,6 @@ void Game::setNextState(GameState state)
 			// setup new state
 			StateMachine::popState(this->stateMachine);
 			break;
-	}
-
-	// if automatic pause function is in place
-	if(this->automaticPauseState)
-	{
-		int automaticPauseCheckDelay = __AUTO_PAUSE_DELAY - (Clock::getTime(this->clock) - this->lastAutoPauseCheckTime);
-		automaticPauseCheckDelay = 0 > automaticPauseCheckDelay? automaticPauseCheckDelay: automaticPauseCheckDelay;
-
-		MessageDispatcher::discardDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this), kAutoPause);
-		MessageDispatcher::dispatchMessage((u32)automaticPauseCheckDelay, Object::safeCast(this), Object::safeCast(this), kAutoPause, NULL);
-		this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
 	}
 
 	// no next state now
@@ -1126,23 +1109,6 @@ void Game::setLastProcessName(char* processName)
 }
 #endif
 
-// process a telegram
-bool Game::handleMessage(Telegram telegram)
-{
-	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
-
-	switch(Telegram::getMessage(telegram))
-	{
-		case kAutoPause:
-
-			Game::autoPause(this);
-			return true;
-			break;
-	}
-
-	return StateMachine::handleMessage(this->stateMachine, telegram);
-}
-
 // retrieve time
 u32 Game::getTime()
 {
@@ -1304,6 +1270,7 @@ void Game::pause(GameState pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
+		Object::fireEvent(this, kEventGamePaused);
 	}
 }
 
@@ -1317,42 +1284,7 @@ void Game::unpause(GameState pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
-
-		if(this->currentState == this->automaticPauseState)
-		{
-			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_DELAY, Object::safeCast(this), Object::safeCast(this), kAutoPause, NULL);
-			this->lastAutoPauseCheckTime = Clock::getTime(this->clock);
-		}
-	}
-}
-
-// set auto pause state
-void Game::setAutomaticPauseState(GameState automaticPauseState)
-{
-	this->automaticPauseState = automaticPauseState;
-}
-
-// get auto pause state
-GameState Game::getAutomaticPauseState()
-{
-	return this->automaticPauseState;
-}
-
-// show auto pause camera
-void Game::autoPause()
-{
-	if(this->automaticPauseState)
-	{
-		// only pause if no more than one state is active
-		if(1 == StateMachine::getStackSize(this->stateMachine))
-		{
-			Game::pause(this, this->automaticPauseState);
-		}
-		else
-		{
-			// otherwise just wait a minute to check again
-			MessageDispatcher::dispatchMessage(__AUTO_PAUSE_RECHECK_DELAY, Object::safeCast(this), Object::safeCast(this), kAutoPause, NULL);
-		}
+		Object::fireEvent(this, kEventGameUnpaused);
 	}
 }
 
@@ -1365,7 +1297,6 @@ void Game::enableKeypad()
 {
 	KeypadManager::enable(this->keypadManager);
 }
-
 
 void Game::pushFrontProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject)
 {

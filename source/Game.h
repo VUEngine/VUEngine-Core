@@ -65,10 +65,6 @@ singleton class Game : Object
 	int nextStateOperation;
 	// last process' name
 	char* lastProcessName;
-	// auto pause state
-	GameState automaticPauseState;
-	// auto pause last checked time
-	u32 lastAutoPauseCheckTime;
 	// elapsed time in current 50hz cycle
 	u32 gameFrameTotalTime;
 	// frame ended flag
@@ -86,7 +82,6 @@ singleton class Game : Object
 	void disableKeypad();
 	void enableHardwareInterrupts();
 	void enableKeypad();
-	GameState getAutomaticPauseState();
 	Clock getClock();
 	CollisionManager getCollisionManager();
 	char* getLastProcessName();
@@ -107,7 +102,6 @@ singleton class Game : Object
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void reset();
 	void resetProfiling();
-	void setAutomaticPauseState(GameState automaticPauseState);
 	void setOptical(Optical optical);
 	void showLastGameFrameProfiling(int x, int y);
 	void start(GameState state);
@@ -121,7 +115,6 @@ singleton class Game : Object
 	void increaseGameFrameDuration(u32 gameFrameDuration);
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();
-	override bool handleMessage(Telegram telegram);
 }
 
 

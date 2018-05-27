@@ -384,21 +384,6 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											AUTOMATIC PAUSE
-//---------------------------------------------------------------------------------------------------------
-
-// Amount of time after which to show auto pause (in milliseconds)
-#define __AUTO_PAUSE_DELAY						(30 * 60 * 1000)
-
-/* The automatic pause state is not pushed until
- * there is only one state in the game's stack.
- * the following defines the time between checks
- * whether the condition is met (in milliseconds)
- */
-#define __AUTO_PAUSE_RECHECK_DELAY				(60 * 1000)
-
-
-//---------------------------------------------------------------------------------------------------------
 //										RANDOM NUMBER GENERATION
 //---------------------------------------------------------------------------------------------------------
 

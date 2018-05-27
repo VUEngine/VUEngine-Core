@@ -40,6 +40,9 @@ enum Events
 	kEventShapeDeleted,
 	kEventShapeChanged,
 
+	kEventGamePaused,
+	kEventGameUnpaused,
+
 	kEventSecondChanged,
 	kEventMinuteChanged,
 	kEventHourChanged,
