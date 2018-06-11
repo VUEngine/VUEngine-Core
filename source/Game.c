@@ -1066,7 +1066,7 @@ void Game::run()
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
-//	CommunicationManager::update(CommunicationManager::getInstance());
+	CommunicationManager::update(CommunicationManager::getInstance());
 
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);

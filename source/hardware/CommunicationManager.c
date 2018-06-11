@@ -273,8 +273,9 @@ bool CommunicationManager::waitHandshake(u8 handshakePayload, bool sendMessage)
  */
 static void CommunicationManager::processInterrupt()
 {
-//	CommunicationManager::printStatus(this, 25, 5);
+
 	CommunicationManager this = _communicationManager;
+//	CommunicationManager::printStatus(this, 25, 5);
 
 	switch(this->status)
 	{
