@@ -94,14 +94,12 @@ enum HandshakeStatus
 
 
 
-#define __COM_TIME_TO_WAIT_FOR_RESPONSE		10
-#define __HANDSHAKE_TRIES					10000
+#define __COM_TIME_TO_WAIT_FOR_RESPONSE		50
 #define __COM_WAIT_TO_FINISH				-1
 #define __HANDSHAKE_SIN						0x11
 #define __HANDSHAKE_ACK						0x22
 #define __HANDSHAKE_FIN						0x33
 #define __KEEP_ALIVE						0x44
-#define __WAIT_RESPONSE_TRIES				100
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -193,7 +191,7 @@ static void CommunicationManager::interruptHandler()
 	CommunicationManager::processInterrupt(_communicationManager);
 
 	// enable interrupts
-//	CommunicationManager::enableInterrupts(_communicationManager);
+	CommunicationManager::enableInterrupts(_communicationManager);
 }
 
 void CommunicationManager::resetCommunications()
@@ -223,7 +221,8 @@ bool CommunicationManager::sendHandshake(u8 handshakePayload)
 	}
 	else if(__KEEP_ALIVE == handshakePayload)
 	{
-		this->handshake = kWaitingToSendKeepAlive;
+//		this->handshake = kWaitingToSendKeepAlive;
+		this->handshake = kSendingKeepAlive;
 		this->sequenceNumber++;
 	}
 
@@ -253,7 +252,8 @@ bool CommunicationManager::waitHandshake(u8 handshakePayload, bool sendMessage)
 	}
 	else if(__KEEP_ALIVE == handshakePayload)
 	{
-		this->handshake = kWaitingToWaitKeepAlive;
+//		this->handshake = kWaitingToWaitKeepAlive;
+		this->handshake = kWaitingKeepAlive;
 		this->sequenceNumber++;
 	}
 
@@ -273,7 +273,6 @@ bool CommunicationManager::waitHandshake(u8 handshakePayload, bool sendMessage)
  */
 static void CommunicationManager::processInterrupt()
 {
-
 	CommunicationManager this = _communicationManager;
 //	CommunicationManager::printStatus(this, 25, 5);
 
@@ -500,6 +499,9 @@ void CommunicationManager::printStatus(int x, int y)
 		case kSendingPayload:
 			helper = "Sending";
 			break;
+		default:
+			helper = "Error in status";
+			break;
 	}
 
 	PRINT_TEXT(helper, x + 12, y++);
@@ -521,6 +523,9 @@ void CommunicationManager::printStatus(int x, int y)
 		case kSendingKeepAlive:
 		case kWaitingKeepAlive:
 			helper = "KeepAlive";
+			break;
+		default:
+			helper = "Error in handshake";
 			break;
 	}
 
