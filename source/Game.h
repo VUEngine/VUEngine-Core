@@ -69,6 +69,8 @@ singleton class Game : Object
 	u32 gameFrameTotalTime;
 	// frame ended flag
 	volatile bool currentFrameEnded;
+	// game paused flag
+	bool isPaused;
 
 	/// @publicsection
 	static Game getInstance();
@@ -96,6 +98,7 @@ singleton class Game : Object
 	Clock getUpdateClock();
 	bool isEnteringSpecialMode();
 	bool isExitingSpecialMode();
+	bool isPaused();
 	bool isInSpecialMode();
 	void pause(GameState pauseState);
 	void printClassSizes(int x, int y);
