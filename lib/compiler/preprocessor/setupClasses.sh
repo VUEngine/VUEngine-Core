@@ -50,7 +50,9 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 
 	echo "// Do not modify this file, it is auto-generated" > $OUTPUT_C_FILE
 
-	CLASSES_NAMES=`grep -v ':.*static.*' $CLASSES_HIERARCHY_FILE | sed -e 's/:.*//g'`
+	if [ -f "$CLASSES_HIERARCHY_FILE" ]; then
+		CLASSES_NAMES=`grep -v ':.*static.*' $CLASSES_HIERARCHY_FILE | sed -e 's/:.*//g'`
+	fi
 
 #	echo "CLASSES_NAMES $CLASSES_NAMES"
 

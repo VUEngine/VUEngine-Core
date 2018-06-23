@@ -132,6 +132,11 @@ if [[ ! -s $OUTPUT_FILE ]];then
 	exit 0
 fi
 
+if [ ! -f "$CLASSES_HIERARCHY_FILE" ]; then
+	clean_up
+	exit 0
+fi
+
 baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
 if [ -z "$baseClassName" ];then
 	clean_up
@@ -155,6 +160,11 @@ for prefix in $HELPER_FILES_PREFIXES
 do
 	#echo prefix $prefix
 	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$prefix"VirtualMethods.txt"
+
+	if [ ! -f "$VIRTUAL_METHODS_FILE" ]; then
+		continue;
+    fi
+
 	VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
 	virtualMethods=`cat $VIRTUAL_METHODS_FILE`
