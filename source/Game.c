@@ -501,6 +501,9 @@ void Game::setNextState(GameState state)
 
 	// allow the VIPManager to modify the DRAM
 	VIPManager::allowDRAMAccess(this->vipManager, true);
+
+	// fire event
+	Object::fireEvent(this, kEventNextStateSet);
 }
 
 // disable interrupts

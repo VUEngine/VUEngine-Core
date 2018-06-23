@@ -41,7 +41,6 @@
 #define PRINT_FLOAT(number, x, y)	Printing_float(Printing_getInstance(), number, x, y, NULL)
 #define PRINT_HEX(number, x, y)		Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
 
-
 // max length of a font's name
 #define __MAX_FONT_NAME_LENGTH		16
 
