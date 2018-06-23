@@ -59,6 +59,7 @@ singleton class CommunicationManager : Object
 	int handshake;
 	int status;
 	int messageToSelf;
+	int nextHandshakeAction;
 	int waitCycles;
 
 	/// @publicsection
