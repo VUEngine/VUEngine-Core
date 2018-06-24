@@ -43,9 +43,10 @@ enum Events
 	kEventGamePaused,
 	kEventGameUnpaused,
 
+	kEventNextStateSet,
+
 	kEventSecondChanged,
 	kEventMinuteChanged,
-	kEventHourChanged,
 
 	kEventAnimationCompleted,
 	kEventTextureRewritten,

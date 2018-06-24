@@ -537,6 +537,8 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 		Printing::text(Printing::getInstance(), "none", 19, y, NULL);
 	}
 	*/
+	Printing::text(Printing::getInstance(), "Active Language:", 1, ++y, NULL);
+	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 19, y, NULL);
 
 	y += 3;
 

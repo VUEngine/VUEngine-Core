@@ -179,7 +179,6 @@ static bool Game::isConstructed()
 	return 0 < _singletonConstructed;
 }
 
-
 // class's constructor
 void Game::constructor()
 {
@@ -207,6 +206,7 @@ void Game::constructor()
 	this->currentState = NULL;
 	this->nextState = NULL;
 	this->currentFrameEnded = false;
+	this->isPaused = false;
 
 	// make sure all managers are initialized now
 	this->camera = Camera::getInstance();
@@ -224,15 +224,12 @@ void Game::constructor()
 	I18n::getInstance();
 	ParamTableManager::getInstance();
 
-
 #ifdef __DEBUG_TOOLS
 	DebugState::getInstance();
 #endif
-
 #ifdef __STAGE_EDITOR
 	StageEditorState::getInstance();
 #endif
-
 #ifdef __ANIMATION_INSPECTOR
 	AnimationInspectorState::getInstance();
 #endif
@@ -504,6 +501,9 @@ void Game::setNextState(GameState state)
 
 	// allow the VIPManager to modify the DRAM
 	VIPManager::allowDRAMAccess(this->vipManager, true);
+
+	// fire event
+	Object::fireEvent(this, kEventNextStateSet);
 }
 
 // disable interrupts
@@ -1270,6 +1270,7 @@ void Game::pause(GameState pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPushState;
+		this->isPaused = true;
 		Object::fireEvent(this, kEventGamePaused);
 	}
 }
@@ -1284,8 +1285,15 @@ void Game::unpause(GameState pauseState)
 	{
 		this->nextState = pauseState;
 		this->nextStateOperation = kPopState;
+		this->isPaused = false;
 		Object::fireEvent(this, kEventGameUnpaused);
 	}
+}
+
+// is game currently paused?
+bool Game::isPaused()
+{
+	return this->isPaused;
 }
 
 void Game::disableKeypad()

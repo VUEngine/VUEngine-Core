@@ -38,7 +38,7 @@
 /**
  * A Package
  *
- * @memberof I18n
+ * @memberof CommunicationManager
  */
 typedef struct CommunicationManager
 {

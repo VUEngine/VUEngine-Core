@@ -24,79 +24,43 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <string.h>
-#include <I18n.h>
-#include <Game.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern LangROMDef* __LANGUAGES[];
+extern BYTE VUEngineFontTiles[];
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-/// Get instance
-/// @fn			I18n::getInstance()
-/// @memberof	I18n
-/// @public
-/// @return		I18n instance
-
-
-/// Class constructor
-/// @private
-void I18n::constructor()
+CharSetROMDef VUENGINE_FONT_CH =
 {
-	Base::constructor();
+	// number of chars
+	256,
 
-	this->activeLanguage = 0;
-}
+	// allocation type
+	__NOT_ANIMATED,
 
-/// Class destructor
-void I18n::destructor()
+	// char definition
+	VUEngineFontTiles,
+};
+
+FontROMDef VUENGINE_FONT =
 {
-	// allow a new construct
-	Base::destructor();
-}
+	// font charset definition pointer
+	(CharSetDefinition*)&VUENGINE_FONT_CH,
 
-/// Get localized string
-/// @param string	The identifier of the string to localize
-/// @return 		localized string or NULL if no translation could be found
-const char* I18n::getText(int string)
-{
-	// TODO: check if __LANGUAGES is empty
-	return 0 <= string ? __LANGUAGES[this->activeLanguage]->language[string] : NULL;
-}
+	// character number at which the font starts, allows you to skip the control characters for example
+	0,
 
-/// Set the active language
-/// @param languageId	ID of the language to make active
-void I18n::setActiveLanguage(u8 languageId)
-{
-	this->activeLanguage = languageId;
-}
+	// size of a single character (in chars) ({width, height})
+	{1, 1},
 
-/// Get all registered languages
-/// @return		Array of LangDefinition pointers
-LangDefinition * I18n::getLanguages()
-{
-	return (LangDefinition *)__LANGUAGES;
-}
+	// font's name
+	"VUEngineFont",
+};
 
-/// Retrieves ID of the currently active language
-/// @return		ID of currently active language
-u8 I18n::getActiveLanguage()
-{
-	return this->activeLanguage;
-}
-
-/// Retrieves name of the currently active language
-/// @return	Name of currently active language
-char* I18n::getActiveLanguageName()
-{
-	// TODO: check if __LANGUAGES is empty, return "none" if so
-	return (char*)__LANGUAGES[this->activeLanguage]->name;
-}
