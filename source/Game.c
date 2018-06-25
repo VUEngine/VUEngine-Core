@@ -1109,6 +1109,14 @@ void Game::setLastProcessName(char* processName)
 }
 #endif
 
+// process a telegram
+bool Game::handleMessage(Telegram telegram)
+{
+	ASSERT(this->stateMachine, "Game::handleMessage: NULL stateMachine");
+
+	return StateMachine::handleMessage(this->stateMachine, telegram);
+}
+
 // retrieve time
 u32 Game::getTime()
 {
