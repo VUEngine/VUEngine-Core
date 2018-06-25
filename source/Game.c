@@ -1074,6 +1074,43 @@ void Game::run()
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
 
+	if(CommunicationManager::isConnected(CommunicationManager::getInstance()))
+	{
+		PRINT_TIME(10, 27);
+		PRINT_TEXT("   ", 40, 15);
+		PRINT_TEXT("CON", 1, 15);
+		if(CommunicationManager::isMaster(CommunicationManager::getInstance()))
+		{
+			PRINT_TEXT("Player 1", 1, 27);
+			UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
+			CommunicationManager::sendData(CommunicationManager::getInstance(), (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
+
+			PRINT_HEX(userInput.holdKey, 30, 6);
+		}
+		else
+		{
+			PRINT_TEXT("Player 2", 1, 27);
+			UserInput userInput;
+			CommunicationManager::receiveData(CommunicationManager::getInstance(), (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
+
+			PRINT_HEX(userInput.holdKey, 40, 6);
+
+			userInput = KeypadManager::getUserInput(this->keypadManager);
+			PRINT_HEX(userInput.holdKey, 30, 7);
+
+		}
+	}
+	else
+	{
+		PRINT_TIME(30, 27);
+		PRINT_TEXT("DIS", 40, 15);
+		PRINT_TEXT("   ", 1, 15);
+		PRINT_TEXT("Player 0", 1, 27);
+
+		PRINT_INT(sizeof(UserInput), 10, 20);
+		PRINT_INT(sizeof(UserInput) * 8, 10, 21);
+		PRINT_INT(sizeof(UserInput) * 8 * 50, 10, 22);
+	}
 	// simulate physics
 	Game::updatePhysics(this);
 

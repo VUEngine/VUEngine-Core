@@ -55,12 +55,14 @@ typedef struct CommunicationManager
 singleton class CommunicationManager : Object
 {
 	u8 communicationMode;
-	u8 sequenceNumber;
+	int dataTransmissionStatus;
 	int handshake;
 	int status;
 	int messageToSelf;
 	int nextHandshakeAction;
 	int waitCycles;
+	int numberOfBytesPendingTransmission;
+	BYTE* dataPointer;
 
 	/// @publicsection
 	static CommunicationManager getInstance();
@@ -69,7 +71,10 @@ singleton class CommunicationManager : Object
 	bool sendPayload(u8 payload);
 	bool receivePayload();
 	Package getPackage();
-	void update();
+	bool isConnected();
+	bool isMaster();
+	void sendData(BYTE* data, int numberOfBytes);
+	void receiveData(BYTE* data, int numberOfBytes);
 }
 
 
