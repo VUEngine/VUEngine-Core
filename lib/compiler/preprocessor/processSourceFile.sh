@@ -158,7 +158,9 @@ anyMethodVirtualized=false
 
 for prefix in $HELPER_FILES_PREFIXES
 do
-	#echo prefix $prefix
+	# Clean prefix from path
+	prefix=`rev <<< $prefix | cut -d "/" -f1 | rev`
+	# echo prefix $prefix
 	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$prefix"VirtualMethods.txt"
 
 	if [ ! -f "$VIRTUAL_METHODS_FILE" ]; then

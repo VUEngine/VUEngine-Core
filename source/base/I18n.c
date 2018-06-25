@@ -68,6 +68,7 @@ void I18n::destructor()
 /// @return 		localized string or NULL if no translation could be found
 const char* I18n::getText(int string)
 {
+	// TODO: check if __LANGUAGES is empty
 	return 0 <= string ? __LANGUAGES[this->activeLanguage]->language[string] : NULL;
 }
 
@@ -96,5 +97,6 @@ u8 I18n::getActiveLanguage()
 /// @return	Name of currently active language
 char* I18n::getActiveLanguageName()
 {
+	// TODO: check if __LANGUAGES is empty, return "none" if so
 	return (char*)__LANGUAGES[this->activeLanguage]->name;
 }

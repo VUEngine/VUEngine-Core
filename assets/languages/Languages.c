@@ -19,63 +19,20 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef COMMUNICATTION_MANAGER_H_
-#define COMMUNICATTION_MANAGER_H_
+
+//---------------------------------------------------------------------------------------------------------
+// 												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <I18n.h>
+#include <Languages.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												INCLUDES
+// 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <Telegram.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * A Package
- *
- * @memberof CommunicationManager
- */
-typedef struct CommunicationManager
+const LangROMDef* __LANGUAGES[] =
 {
-	u8 payload;
-	bool isValid;
-} Package;
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/// @ingroup hardware
-singleton class CommunicationManager : Object
-{
-	u8 communicationMode;
-	int dataTransmissionStatus;
-	int handshake;
-	int status;
-	int messageToSelf;
-	int nextHandshakeAction;
-	int waitCycles;
-	int numberOfBytesPendingTransmission;
-	BYTE* dataPointer;
-
-	/// @publicsection
-	static CommunicationManager getInstance();
-	static void interruptHandler();
-	void update();
-	bool sendPayload(u8 payload);
-	bool receivePayload();
-	Package getPackage();
-	bool isConnected();
-	bool isMaster();
-	void sendData(BYTE* data, int numberOfBytes);
-	void receiveData(BYTE* data, int numberOfBytes);
-}
-
-
-#endif
+	NULL
+};

@@ -19,63 +19,48 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef COMMUNICATTION_MANAGER_H_
-#define COMMUNICATTION_MANAGER_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
-#include <Telegram.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
+//												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * A Package
- *
- * @memberof CommunicationManager
- */
-typedef struct CommunicationManager
+extern BYTE VUEngineFontTiles[];
+
+
+//---------------------------------------------------------------------------------------------------------
+//												DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
+
+CharSetROMDef VUENGINE_FONT_CH =
 {
-	u8 payload;
-	bool isValid;
-} Package;
+	// number of chars
+	256,
 
+	// allocation type
+	__NOT_ANIMATED,
 
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
+	// char definition
+	VUEngineFontTiles,
+};
 
-/// @ingroup hardware
-singleton class CommunicationManager : Object
+FontROMDef VUENGINE_FONT =
 {
-	u8 communicationMode;
-	int dataTransmissionStatus;
-	int handshake;
-	int status;
-	int messageToSelf;
-	int nextHandshakeAction;
-	int waitCycles;
-	int numberOfBytesPendingTransmission;
-	BYTE* dataPointer;
+	// font charset definition pointer
+	(CharSetDefinition*)&VUENGINE_FONT_CH,
 
-	/// @publicsection
-	static CommunicationManager getInstance();
-	static void interruptHandler();
-	void update();
-	bool sendPayload(u8 payload);
-	bool receivePayload();
-	Package getPackage();
-	bool isConnected();
-	bool isMaster();
-	void sendData(BYTE* data, int numberOfBytes);
-	void receiveData(BYTE* data, int numberOfBytes);
-}
+	// character number at which the font starts, allows you to skip the control characters for example
+	0,
 
+	// size of a single character (in chars) ({width, height})
+	{1, 1},
 
-#endif
+	// font's name
+	"VUEngineFont",
+};
+
