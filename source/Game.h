@@ -34,6 +34,8 @@
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
 #include <VIPManager.h>
+#include <CommunicationManager.h>
+
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,6 +59,8 @@ singleton class Game : Object
 	VIPManager vipManager;
 	//
 	TimerManager timerManager;
+	//
+	CommunicationManager communicationManager;
 	//
 	Camera camera;
 	// game's next state

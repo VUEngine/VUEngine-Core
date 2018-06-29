@@ -44,7 +44,6 @@
 #include <ParamTableManager.h>
 #include <SpriteManager.h>
 #include <CharSetManager.h>
-#include <CommunicationManager.h>
 #include <AnimationCoordinatorFactory.h>
 #include <StateMachine.h>
 #include <Camera.h>
@@ -213,6 +212,7 @@ void Game::constructor()
 	this->keypadManager = KeypadManager::getInstance();
 	this->vipManager = VIPManager::getInstance();
 	this->timerManager = TimerManager::getInstance();
+	this->communicationManager = CommunicationManager::getInstance();
 
 	SoundManager::getInstance();
 	CharSetManager::getInstance();
@@ -268,6 +268,9 @@ void Game::initialize()
 
 	// make sure timer interrupts are enable
 	HardwareManager::initializeTimer(HardwareManager::getInstance());
+
+	// enable communications
+	CommunicationManager::enableCommunications(this->communicationManager);
 
 	// start the game's general clock
 	Clock::start(this->clock);
@@ -1066,7 +1069,7 @@ void Game::run()
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
-	CommunicationManager::update(CommunicationManager::getInstance());
+	CommunicationManager::update(this->communicationManager);
 
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
@@ -1074,16 +1077,16 @@ void Game::run()
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
 
-	if(CommunicationManager::isConnected(CommunicationManager::getInstance()))
+	if(CommunicationManager::isConnected(this->communicationManager))
 	{
 		PRINT_TIME(10, 27);
 		PRINT_TEXT("   ", 40, 15);
 		PRINT_TEXT("CON", 1, 15);
-		if(CommunicationManager::isMaster(CommunicationManager::getInstance()))
+		if(CommunicationManager::isMaster(this->communicationManager))
 		{
 			PRINT_TEXT("Player 1", 1, 27);
 			UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
-			CommunicationManager::sendData(CommunicationManager::getInstance(), (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
+			CommunicationManager::sendData(this->communicationManager, (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
 
 			PRINT_HEX(userInput.holdKey, 30, 6);
 		}
@@ -1091,9 +1094,9 @@ void Game::run()
 		{
 			PRINT_TEXT("Player 2", 1, 27);
 			UserInput userInput;
-			CommunicationManager::receiveData(CommunicationManager::getInstance(), (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
+			CommunicationManager::receiveData(this->communicationManager, (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
 
-			PRINT_HEX(userInput.holdKey, 40, 6);
+			PRINT_HEX(userInput.holdKey, 30, 6);
 
 			userInput = KeypadManager::getUserInput(this->keypadManager);
 			PRINT_HEX(userInput.holdKey, 30, 7);
@@ -1102,6 +1105,7 @@ void Game::run()
 	}
 	else
 	{
+
 		PRINT_TIME(30, 27);
 		PRINT_TEXT("DIS", 40, 15);
 		PRINT_TEXT("   ", 1, 15);
@@ -1110,7 +1114,9 @@ void Game::run()
 		PRINT_INT(sizeof(UserInput), 10, 20);
 		PRINT_INT(sizeof(UserInput) * 8, 10, 21);
 		PRINT_INT(sizeof(UserInput) * 8 * 50, 10, 22);
+
 	}
+
 	// simulate physics
 	Game::updatePhysics(this);
 

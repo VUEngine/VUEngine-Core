@@ -35,17 +35,6 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * A Package
- *
- * @memberof CommunicationManager
- */
-typedef struct CommunicationManager
-{
-	u8 payload;
-	bool isValid;
-} Package;
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -54,23 +43,18 @@ typedef struct CommunicationManager
 /// @ingroup hardware
 singleton class CommunicationManager : Object
 {
+	bool connected;
 	u8 communicationMode;
-	int dataTransmissionStatus;
-	int handshake;
 	int status;
-	int messageToSelf;
-	int nextHandshakeAction;
-	int waitCycles;
 	int numberOfBytesPendingTransmission;
 	BYTE* dataPointer;
+	u32 timeout;
 
 	/// @publicsection
 	static CommunicationManager getInstance();
 	static void interruptHandler();
+	void enableCommunications();
 	void update();
-	bool sendPayload(u8 payload);
-	bool receivePayload();
-	Package getPackage();
 	bool isConnected();
 	bool isMaster();
 	void sendData(BYTE* data, int numberOfBytes);
