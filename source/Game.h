@@ -122,6 +122,7 @@ singleton class Game : Object
 	void increaseGameFrameDuration(u32 gameFrameDuration);
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();
+	override bool handleMessage(Telegram telegram);
 }
 
 
