@@ -264,7 +264,7 @@ void TimerManager::wait(u32 milliSeconds)
  */
 void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32))
 {
-	if(object && method)
+	if(!isDeleted(object) && method)
 	{
 		// declare as volatile to prevent the compiler to optimize currentMilliseconds away
 		// making the last assignment invalid
@@ -275,6 +275,12 @@ void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, 
 		for(; i < callTimes; i++)
 		{
 			TimerManager::wait(this, duration / callTimes);
+
+			if(isDeleted(object))
+			{
+				return;
+			}
+
 			method(object, i);
 		}
 
