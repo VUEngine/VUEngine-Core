@@ -45,8 +45,8 @@ singleton class CommunicationManager : Object
 {
 	bool connected;
 	u8 communicationMode;
-	int status;
-	int numberOfBytesPendingTransmission;
+	volatile int status;
+	volatile int numberOfBytesPendingTransmission;
 	BYTE* dataPointer;
 	u32 timeout;
 
@@ -59,6 +59,9 @@ singleton class CommunicationManager : Object
 	bool isMaster();
 	void sendData(BYTE* data, int numberOfBytes);
 	void receiveData(BYTE* data, int numberOfBytes);
+
+	void closeChannel();
+	void openChannel();
 }
 
 
