@@ -59,9 +59,7 @@ singleton class CommunicationManager : Object
 	bool isMaster();
 	void sendData(BYTE* data, int numberOfBytes);
 	void receiveData(BYTE* data, int numberOfBytes);
-
-	void closeChannel();
-	void openChannel();
+	void printStatus(int x, int y);
 }
 
 

@@ -50,7 +50,6 @@ enum CommunicationsStatus
 {
 	kCommunicationsStatusIdle = 1,
 	kCommunicationsStatusSendingHandshake,
-	kCommunicationsStatusSendingKeepAlive,
 	kCommunicationsStatusSendingPayload,
 	kCommunicationsStatusWaitingPayload,
 };
@@ -80,9 +79,9 @@ enum CommunicationsStatus
 #define	__COM_AS_MASTER			(__COM_DISABLE_INTERRUPT |  0x00)
 
 
-#define __COM_KEEP_ALIVE_TIMEOUT						100
-
-#define __COM_CHECKSUM									0x44
+#define __COM_HANDSHAKE					0x34
+#define __COM_KEEP_ALIVE_TIMEOUT		100
+#define __COM_CHECKSUM					0x44
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -146,34 +145,31 @@ void CommunicationManager::disableInterrupts()
 	_communicationRegisters[__CCSR] |= __COM_DISABLE_INTERRUPT;
 }
 
-void CommunicationManager::endCommunications()
-{
-	_communicationRegisters[__CCR] &= (~__COM_START);
-}
-
 void CommunicationManager::openChannel()
 {
-	_communicationRegisters[__CCSR] |= __COM_DISABLE_INTERRUPT;
-
-	if(CommunicationManager::managesChannel(this))
-	{
-		_communicationRegisters[__CCSR] &= (~0x02);
-	}
+	_communicationRegisters[__CCSR] |= 0x02;
 }
 
 void CommunicationManager::closeChannel()
 {
-	_communicationRegisters[__CCSR] |= __COM_DISABLE_INTERRUPT;
+	_communicationRegisters[__CCSR] &= (~0x02);
+}
 
-//	if(CommunicationManager::managesChannel(this))
-	{
-		_communicationRegisters[__CCSR] |= 0x02;
-	}
+bool CommunicationManager::isHandshakeIncoming()
+{
+	// If channel was successfully opened,
+	// then there is no handshake taking place
+	return !CommunicationManager::isChannelOpen(this);
 }
 
 bool CommunicationManager::isChannelOpen()
 {
-	return _communicationRegisters[__CCSR] & 0x01 ? false : true;
+	return _communicationRegisters[__CCSR] & 0x01 ? true : false;
+}
+
+bool CommunicationManager::isTransmitting()
+{
+	return _communicationRegisters[__CCR] & __COM_PENDING ? true : false;
 }
 
 bool CommunicationManager::managesChannel()
@@ -206,13 +202,10 @@ void CommunicationManager::enableCommunications()
 	CommunicationManager::disableInterrupts(this);
 
 	// Wait a little bit for channel to stabilize
-	TimerManager::wait(TimerManager::getInstance(), 1000);
+	TimerManager::wait(TimerManager::getInstance(), 2000);
 
-	// Try to close the channel
-	CommunicationManager::closeChannel(this);
-
-	// If channel was not closed
-    if(CommunicationManager::isChannelOpen(this))
+	// If handshake is taking place
+    if(CommunicationManager::isHandshakeIncoming(this))
     {
 		// There is another system attached already managing
 		// the channel
@@ -259,6 +252,7 @@ bool CommunicationManager::sendPayload(u8 payload)
 		this->status = kCommunicationsStatusSendingPayload;
 		_communicationRegisters[__CDTR] = payload;
 		CommunicationManager::startTransmissions(this);
+		CommunicationManager::openChannel(this);
 		return true;
 	}
 
@@ -272,6 +266,7 @@ bool CommunicationManager::receivePayload()
 		this->status = kCommunicationsStatusWaitingPayload;
 		_communicationRegisters[__CDTR] = __COM_CHECKSUM;
 		CommunicationManager::startTransmissions(this);
+		CommunicationManager::openChannel(this);
 		return true;
 	}
 
@@ -282,22 +277,9 @@ bool CommunicationManager::sendHandshake()
 {
 	if(kCommunicationsStatusIdle == this->status)
 	{
-		// open channel
-		CommunicationManager::openChannel(this);
-
+		CommunicationManager::closeChannel(this);
 		this->status = kCommunicationsStatusSendingHandshake;
-		CommunicationManager::startTransmissions(this);
-		return true;
-	}
-
-	return false;
-}
-
-bool CommunicationManager::sendKeepAlive()
-{
-	if(kCommunicationsStatusIdle == this->status)
-	{
-		this->status = kCommunicationsStatusSendingKeepAlive;
+		_communicationRegisters[__CDTR] = __COM_HANDSHAKE;
 		CommunicationManager::startTransmissions(this);
 		return true;
 	}
@@ -312,8 +294,6 @@ static void CommunicationManager::interruptHandler()
 {
 	CommunicationManager::disableInterrupts(_communicationManager);
 
-	//CommunicationManager::endCommunications(_communicationManager);
-
 	CommunicationManager::processInterrupt(_communicationManager);
 }
 
@@ -322,26 +302,36 @@ static void CommunicationManager::interruptHandler()
  */
 void CommunicationManager::processInterrupt()
 {
-	HardwareManager::enableMultiplexedInterrupts();
+	int status = this->status;
+	this->status = kCommunicationsStatusIdle;
 
-	while(_communicationRegisters[__CCR] & __COM_PENDING);
+	//HardwareManager::enableMultiplexedInterrupts();
+	while(CommunicationManager::isTransmitting(this));
+	//HardwareManager::disableMultiplexedInterrupts();
+	CommunicationManager::closeChannel(this);
 
-	switch(this->status)
+	switch(status)
 	{
-		case kCommunicationsStatusIdle:
-
-			// do nothing
-			break;
-
 		case kCommunicationsStatusSendingHandshake:
 
-			break;
+			if(__COM_HANDSHAKE != _communicationRegisters[__CDRR])
+			{
+				CommunicationManager::sendHandshake(this);
+				break;
+			}
 
+		default:
+
+			this->connected = true;
+			break;
+	}
+
+	switch(status)
+	{
 		case kCommunicationsStatusWaitingPayload:
 
 			if(this->dataPointer)
 			{
-				//CommunicationManager::closeChannel(this);
 				this->numberOfBytesPendingTransmission--;
 				*this->dataPointer = _communicationRegisters[__CDRR];
 				this->dataPointer++;
@@ -353,7 +343,6 @@ void CommunicationManager::processInterrupt()
 
 			if(this->dataPointer)
 			{
-				//CommunicationManager::closeChannel(this);
 				//if(__COM_CHECKSUM == _communicationRegisters[__CDRR])
 				{
 					this->numberOfBytesPendingTransmission--;
@@ -365,17 +354,11 @@ void CommunicationManager::processInterrupt()
 			}
 			break;
 	}
-
-	this->status = kCommunicationsStatusIdle;
-
-	this->connected = true;
-
-	HardwareManager::disableMultiplexedInterrupts();
 }
 
 void CommunicationManager::update()
 {
-	//CommunicationManager::printStatus(this, 1, 3);
+//	CommunicationManager::printStatus(this, 1, 3);
 
 /* int timeRemaining = (int)this->timeout - (int)TimerManager_getTotalMillisecondsElapsed(TimerManager_getInstance());
 
@@ -395,7 +378,7 @@ void CommunicationManager::update()
 
 void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, bool sendData)
 {
-	if(!data || 0 >= numberOfBytes || this->status != kCommunicationsStatusIdle)
+	if(!this->connected || !data || 0 >= numberOfBytes || this->status != kCommunicationsStatusIdle)
 	{
 		return;
 	}
@@ -403,9 +386,11 @@ void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 	this->dataPointer = data;
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
-	CommunicationManager::openChannel(this);
-	// Check for channel to be ready before proceeding
-	while(!CommunicationManager::isChannelOpen(this));
+	if(CommunicationManager::isMaster(this))
+	{
+		CommunicationManager::openChannel(this);
+		while(!CommunicationManager::isChannelOpen(this));
+	}
 
 	while(0 < this->numberOfBytesPendingTransmission)
 	{
@@ -423,9 +408,6 @@ void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 	}
 
 	CommunicationManager::closeChannel(this);
-	// Close channel so that master has to wait for channel
-	// to be opened again before starting communications again
-	//CommunicationManager::sendKeepAlive(this);
 
 	this->dataPointer = NULL;
 	this->numberOfBytesPendingTransmission = 0;
@@ -455,22 +437,19 @@ void CommunicationManager::printStatus(int x, int y)
 	switch(this->status)
 	{
 		case kCommunicationsStatusIdle:
-			helper = "Idle     ";
+			helper = "Idle             ";
 			break;
 		case kCommunicationsStatusSendingHandshake:
-			helper = "Sending handshake  ";
-			break;
-		case kCommunicationsStatusSendingKeepAlive:
-			helper = "Sending keep alive ";
+			helper = "Sending handshake";
 			break;
 		case kCommunicationsStatusWaitingPayload:
-			helper = "Waiting payload";
+			helper = "Waiting payload  ";
 			break;
 		case kCommunicationsStatusSendingPayload:
-			helper = "Sending payload";
+			helper = "Sending payload  ";
 			break;
 		default:
-			helper = "Error";
+			helper = "Error            ";
 			break;
 	}
 
