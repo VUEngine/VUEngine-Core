@@ -84,7 +84,6 @@
 #include <ParticleSystem.h>
 #include <SolidParticle.h>
 
-
 #include <GameState.h>
 #include <Stage.h>
 #include <UiContainer.h>
@@ -99,6 +98,10 @@
 #include <Debug.h>
 #include <OptionsSelector.h>
 #include <StageEditor.h>
+
+#ifdef __AUTOMATIC_PAUSE_ENABLED
+#include <AutoPauseManager.h>
+#endif
 
 #include <debugUtilities.h>
 
@@ -525,18 +528,20 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	Printing::text(Printing::getInstance(), "GAME'S STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 19, y, NULL);
-	/*
+
+	#ifdef __AUTOMATIC_PAUSE_ENABLED
 	Printing::text(Printing::getInstance(), "Auto Pause State:", 1, ++y, NULL);
-	GameState autoPauseState = Game::getAutomaticPauseState(Game::getInstance());
+	GameState autoPauseState = AutoPauseManager::getAutomaticPauseState(AutoPauseManager::getInstance());
 	if(autoPauseState)
 	{
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(Game::getAutomaticPauseState(Game::getInstance())), 19, y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(AutoPauseManager::getAutomaticPauseState(AutoPauseManager::getInstance())), 19, y, NULL);
 	}
 	else
 	{
 		Printing::text(Printing::getInstance(), "none", 19, y, NULL);
 	}
-	*/
+	#endif
+
 	Printing::text(Printing::getInstance(), "Active Language:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 19, y, NULL);
 

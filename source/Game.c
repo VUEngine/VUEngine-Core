@@ -1077,6 +1077,7 @@ void Game::run()
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
 
+/*
 	if(CommunicationManager::isConnected(this->communicationManager))
 	{
 		PRINT_TIME(10, 27);
@@ -1116,6 +1117,7 @@ void Game::run()
 		PRINT_INT(sizeof(UserInput) * 8 * 50, 10, 22);
 
 	}
+*/
 
 	// simulate physics
 	Game::updatePhysics(this);
