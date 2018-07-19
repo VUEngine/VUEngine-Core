@@ -87,7 +87,6 @@ singleton class SpriteManager : Object
 	static SpriteManager getInstance();
 	Sprite createSprite(SpriteDefinition* spriteDefinition, Object owner);
 	void deferParamTableEffects(bool deferAffineTransformations);
-	void deferTextureWriting(bool deferTextureWriting);
 	void destructor();
 	void disposeSprite(Sprite sprite);
 	void disposeSprites();

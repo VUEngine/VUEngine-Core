@@ -367,13 +367,17 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			Container::addChild(this, Container::safeCast(entity));
 
 			// apply transformations
-			 Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
+			Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
+
+			if(!this->stageDefinition->streaming.deferred)
+			{
+				SpriteManager::writeTextures(SpriteManager::getInstance());
+			}
 
 			if(makeReady)
 			{
 				Stage::makeChildReady(this, entity);
 			}
-
 		}
 /*
 		if(permanent)

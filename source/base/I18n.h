@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Object.h>
+#include <Entity.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -45,20 +46,27 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-/// A language definition
-/// @memberof I18n
+/**
+ * A language definition
+ * @memberof I18n
+ */
 typedef struct LangDefinition
 {
 	/// language name
 	char name[__MAX_LANGUAGE_NAME_LENGTH];
+
+	/// pointer to a representative entity (i.e. flag)
+	EntityDefinition* entityDefinition;
 
 	/// language strings
 	const char** language;
 
 } LangDefinition;
 
-/// A LangDefinition that is stored in ROM
-/// @memberof I18n
+/**
+ * A LangDefinition that is stored in ROM
+ * @memberof I18n
+ */
 typedef const LangDefinition LangROMDef;
 
 
@@ -66,8 +74,10 @@ typedef const LangDefinition LangROMDef;
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// Handles internationalization of text output and thus allows for multiple selectable languages.
-/// @ingroup base
+/**
+ * Handles internationalization of text output and thus allows for multiple selectable languages.
+ * @ingroup base
+ */
 singleton class I18n : Object
 {
 	// Currently active language
