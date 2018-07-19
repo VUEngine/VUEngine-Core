@@ -950,15 +950,15 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
 		Printing::text(Printing::getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
 		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->x), x + 13, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 22, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 25, y, NULL);
 		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
 		Printing::text(Printing::getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), globalRotation->x, x + 13, y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->y, x + 22, y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->y, x + 25, y, NULL);
 		Printing::int(Printing::getInstance(), globalRotation->z, x + 31, y, NULL);
 		Printing::text(Printing::getInstance(), "Scl. (x,y,z):                  ", x, ++y, NULL);
 		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 13, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 22, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 25, y, NULL);
 		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 31, y, NULL);
 		Printing::text(Printing::getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getWidth(entity)), x + 13, y, NULL);
@@ -1018,17 +1018,17 @@ void StageEditor::printProjectionValues()
 	Printing::text(Printing::getInstance(), "BD     \x17\x18", 38, 6, NULL);
 
 	Printing::text(Printing::getInstance(), "H. view point center:            ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 22, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "V. view point center:            ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 22, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 22, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum X View Distance:            ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->maximumXViewDistancePower), x + 22, y, NULL);
+	Printing::int(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Maximum Y View Distance:            ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->maximumYViewDistancePower), x + 22, y, NULL);
+	Printing::int(Printing::getInstance(), _optical->maximumYViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Base Distance:                  ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 22, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
 }
 
 /**

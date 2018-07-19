@@ -471,10 +471,10 @@ int SoundManager::playFxSound(const u16* fxSound, Vector3D position)
 		fix10_6 rightDistance = __ABS(__FIX10_6_MULT(position.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
 
 		fix10_6 leftOutput = maxOutputLevel - __FIX10_6_MULT(maxOutputLevel, __FIX10_6_DIV(leftDistance, _optical->horizontalViewPointCenter));
-		this->fxLeftOutput[i] = __FIX10_6_TO_I(leftOutput - __FIX10_6_MULT(leftOutput, __FIX10_6_DIV(position.z, _optical->maximumXViewDistancePower)));
+		this->fxLeftOutput[i] = __FIX10_6_TO_I(leftOutput - __FIX10_6_MULT(leftOutput, position.z >> _optical->maximumXViewDistancePower));
 
 		fix10_6 rightOutput = maxOutputLevel - __FIX10_6_MULT(maxOutputLevel, __FIX10_6_DIV(rightDistance, _optical->horizontalViewPointCenter));
-		this->fxRightOutput[i] = __FIX10_6_TO_I(rightOutput - __FIX10_6_MULT(rightOutput, __FIX10_6_DIV(position.z, _optical->maximumXViewDistancePower)));
+		this->fxRightOutput[i] = __FIX10_6_TO_I(rightOutput - __FIX10_6_MULT(rightOutput, position.z >> _optical->maximumXViewDistancePower));
 
 		return true;
 	}

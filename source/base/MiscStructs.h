@@ -144,8 +144,8 @@ typedef struct Direction
 // engine's optical values structure
 typedef struct Optical
 {
-	fix10_6 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
-	fix10_6 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumXViewDistancePower;		// maximum distance from the screen to the infinite
+	u16 maximumYViewDistancePower;		// maximum distance from the screen to the infinite
 	fix10_6 distanceEyeScreen;
 	fix10_6 baseDistance;				// distance from left to right eye (depth perception)
 	fix10_6 horizontalViewPointCenter;	// horizontal View point center
