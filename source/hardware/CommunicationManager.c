@@ -192,8 +192,6 @@ void CommunicationManager::reset()
 	CommunicationManager::disableInterrupts(this);
 	this->connected = false;
 	this->status = kCommunicationsStatusIdle;
-	this->numberOfBytesPendingTransmission = 0;
-	this->dataPointer = NULL;
 	this->communicationMode = __COM_AS_REMOTE;
 }
 
@@ -238,10 +236,13 @@ bool CommunicationManager::cancelCommunications()
 	return false;
 }
 
-void CommunicationManager::startTransmissions()
+void CommunicationManager::startTransmissions(bool enableInterrupts)
 {
 	_communicationRegisters[__CCR] = this->communicationMode;
-	CommunicationManager::enableInterrupts(this);
+	if(enableInterrupts)
+	{
+		CommunicationManager::enableInterrupts(this);
+	}
 	_communicationRegisters[__CCR] |= __COM_START;
 }
 
@@ -251,7 +252,7 @@ bool CommunicationManager::sendPayload(u8 payload)
 	{
 		this->status = kCommunicationsStatusSendingPayload;
 		_communicationRegisters[__CDTR] = payload;
-		CommunicationManager::startTransmissions(this);
+		CommunicationManager::startTransmissions(this, false);
 		CommunicationManager::openChannel(this);
 		return true;
 	}
@@ -265,7 +266,7 @@ bool CommunicationManager::receivePayload()
 	{
 		this->status = kCommunicationsStatusWaitingPayload;
 		_communicationRegisters[__CDTR] = __COM_CHECKSUM;
-		CommunicationManager::startTransmissions(this);
+		CommunicationManager::startTransmissions(this, false);
 		CommunicationManager::openChannel(this);
 		return true;
 	}
@@ -280,7 +281,7 @@ bool CommunicationManager::sendHandshake()
 		CommunicationManager::closeChannel(this);
 		this->status = kCommunicationsStatusSendingHandshake;
 		_communicationRegisters[__CDTR] = __COM_HANDSHAKE;
-		CommunicationManager::startTransmissions(this);
+		CommunicationManager::startTransmissions(this, true);
 		return true;
 	}
 
@@ -305,11 +306,6 @@ void CommunicationManager::processInterrupt()
 	int status = this->status;
 	this->status = kCommunicationsStatusIdle;
 
-	//HardwareManager::enableMultiplexedInterrupts();
-	while(CommunicationManager::isTransmitting(this));
-	//HardwareManager::disableMultiplexedInterrupts();
-	CommunicationManager::closeChannel(this);
-
 	switch(status)
 	{
 		case kCommunicationsStatusSendingHandshake:
@@ -325,55 +321,6 @@ void CommunicationManager::processInterrupt()
 			this->connected = true;
 			break;
 	}
-
-	switch(status)
-	{
-		case kCommunicationsStatusWaitingPayload:
-
-			if(this->dataPointer)
-			{
-				this->numberOfBytesPendingTransmission--;
-				*this->dataPointer = _communicationRegisters[__CDRR];
-				this->dataPointer++;
-			}
-
-			break;
-
-		case kCommunicationsStatusSendingPayload:
-
-			if(this->dataPointer)
-			{
-				//if(__COM_CHECKSUM == _communicationRegisters[__CDRR])
-				{
-					this->numberOfBytesPendingTransmission--;
-					this->dataPointer++;
-				}
-				//else
-				{
-				}
-			}
-			break;
-	}
-}
-
-void CommunicationManager::update()
-{
-//	CommunicationManager::printStatus(this, 1, 3);
-
-/* int timeRemaining = (int)this->timeout - (int)TimerManager_getTotalMillisecondsElapsed(TimerManager_getInstance());
-
-	switch(this->status)
-	{
-		case kCommunicationsStatusIdle:
-
-			break;
-
-		case kCommunicationsStatusWaitingPayload:
-		case kCommunicationsStatusSendingPayload:
-
-			break;
-	}
-	*/
 }
 
 void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, bool sendData)
@@ -383,34 +330,39 @@ void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 		return;
 	}
 
-	this->dataPointer = data;
-	this->numberOfBytesPendingTransmission = numberOfBytes;
+	HardwareManager::disableInterrupts();
 
-	if(CommunicationManager::isMaster(this))
+	while(0 < numberOfBytes)
 	{
-		CommunicationManager::openChannel(this);
-		while(!CommunicationManager::isChannelOpen(this));
-	}
+		if(CommunicationManager::isMaster(this))
+    	{
+			CommunicationManager::openChannel(this);
+			while(!CommunicationManager::isChannelOpen(this));
+		}
 
-	while(0 < this->numberOfBytesPendingTransmission)
-	{
 		if(sendData)
 		{
-			CommunicationManager::sendPayload(this, *this->dataPointer);
+			CommunicationManager::sendPayload(this, *data);
+			while(CommunicationManager::isTransmitting(this));
+			CommunicationManager::closeChannel(this);
+			numberOfBytes--;
+			data++;
 		}
 		else
 		{
 			CommunicationManager::receivePayload(this);
+			while(CommunicationManager::isTransmitting(this));
+			CommunicationManager::closeChannel(this);
+			numberOfBytes--;
+			*data = _communicationRegisters[__CDRR];
+			data++;
 		}
 
-		// Wait for transmissions to complete
-		while(kCommunicationsStatusIdle != this->status);
+		this->status = kCommunicationsStatusIdle;
 	}
 
+	HardwareManager::enableInterrupts();
 	CommunicationManager::closeChannel(this);
-
-	this->dataPointer = NULL;
-	this->numberOfBytesPendingTransmission = 0;
 }
 
 void CommunicationManager::sendData(BYTE* data, int numberOfBytes)
@@ -461,9 +413,6 @@ void CommunicationManager::printStatus(int x, int y)
 
 	PRINT_TEXT("Channel: ", x, y);
 	PRINT_TEXT(CommunicationManager::isChannelOpen(this) ? "Open    " : "Closed ", x + valueDisplacement, y++);
-
-	PRINT_TEXT("Bytes left:", x, y);
-	PRINT_INT(this->numberOfBytesPendingTransmission, x + valueDisplacement, y++);
 
 	PRINT_TEXT(_communicationRegisters[__CCR] & __COM_PENDING ? "Pending" : "Done  ", 1, y++);
 	PRINT_TEXT("CCR: ", x, y);

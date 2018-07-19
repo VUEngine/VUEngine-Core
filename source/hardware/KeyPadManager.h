@@ -116,6 +116,8 @@ singleton class KeypadManager : Object
 	/// @publicsection
 	static KeypadManager getInstance();
 	static void interruptHandler();
+	static void printUserInput(const UserInput* userInput, int x, int y);
+
 	void disable();
 	void disableInterrupt();
 	void enable();

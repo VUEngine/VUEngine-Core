@@ -687,7 +687,7 @@ u32 Game::processUserInput()
 
 	if(userInput.pressedKey | userInput.releasedKey | userInput.holdKey)
 	{
-		 GameState::processUserInput(Game::getCurrentState(this), userInput);
+		GameState::processUserInput(Game::getCurrentState(this), userInput);
 	}
 
 #ifdef __PROFILE_GAME
@@ -1022,7 +1022,7 @@ void Game::checkFrameRate()
 #ifdef __PRINT_FRAMERATE
 		if(!Game::isInSpecialMode(this))
 		{
-			FrameRate::print(FrameRate::getInstance(), 21, 27);
+			FrameRate::print(FrameRate::getInstance(), 21, 26);
 		}
 #endif
 
@@ -1069,53 +1069,11 @@ void Game::run()
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
-	CommunicationManager::update(this->communicationManager);
-
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
-
-	if(CommunicationManager::isConnected(this->communicationManager))
-	{
-		PRINT_TIME(10, 27);
-		PRINT_TEXT("   ", 40, 15);
-		PRINT_TEXT("CON", 1, 15);
-		if(CommunicationManager::isMaster(this->communicationManager))
-		{
-			PRINT_TEXT("Player 1", 1, 27);
-			UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
-			CommunicationManager::sendData(this->communicationManager, (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
-
-			PRINT_HEX(userInput.holdKey, 30, 6);
-		}
-		else
-		{
-			PRINT_TEXT("Player 2", 1, 27);
-			UserInput userInput;
-			CommunicationManager::receiveData(this->communicationManager, (BYTE*)&(userInput.holdKey), sizeof(userInput.pressedKey));
-
-			PRINT_HEX(userInput.holdKey, 30, 6);
-
-			userInput = KeypadManager::getUserInput(this->keypadManager);
-			PRINT_HEX(userInput.holdKey, 30, 7);
-
-		}
-	}
-	else
-	{
-
-		PRINT_TIME(30, 27);
-		PRINT_TEXT("DIS", 40, 15);
-		PRINT_TEXT("   ", 1, 15);
-		PRINT_TEXT("Player 0", 1, 27);
-
-		PRINT_INT(sizeof(UserInput), 10, 20);
-		PRINT_INT(sizeof(UserInput) * 8, 10, 21);
-		PRINT_INT(sizeof(UserInput) * 8 * 50, 10, 22);
-
-	}
 
 	// simulate physics
 	Game::updatePhysics(this);

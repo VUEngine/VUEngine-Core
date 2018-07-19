@@ -238,3 +238,37 @@ static void KeypadManager::interruptHandler()
 	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 
+
+static void KeypadManager::printUserInput(const UserInput* userInput, int x, int y)
+{
+	if(!userInput)
+	{
+		return;
+	}
+
+	int xDisplacement = 12;
+
+	PRINT_TEXT("USER INPUT:", x, y++);
+
+	PRINT_TEXT("allKeys:", x, y);
+	PRINT_HEX(userInput->allKeys, x + xDisplacement, y++);
+
+	PRINT_TEXT("pressedKey:", x, y);
+	PRINT_HEX(userInput->pressedKey, x + xDisplacement, y++);
+
+	PRINT_TEXT("releasedKey:", x, y);
+	PRINT_HEX(userInput->releasedKey, x + xDisplacement, y++);
+
+	PRINT_TEXT("holdKey:", x, y);
+	PRINT_HEX(userInput->holdKey, x + xDisplacement, y++);
+
+	PRINT_TEXT("holdKeyDuration:", x, y);
+	PRINT_HEX(userInput->holdKeyDuration, x + xDisplacement, y++);
+
+	PRINT_TEXT("previousKey:", x, y);
+	PRINT_HEX(userInput->previousKey, x + xDisplacement, y++);
+
+	PRINT_TEXT("powerFlag:", x, y);
+	PRINT_HEX(userInput->powerFlag, x + xDisplacement, y++);
+}
+

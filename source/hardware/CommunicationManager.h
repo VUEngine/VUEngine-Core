@@ -45,9 +45,7 @@ singleton class CommunicationManager : Object
 {
 	bool connected;
 	u8 communicationMode;
-	volatile int status;
-	volatile int numberOfBytesPendingTransmission;
-	BYTE* dataPointer;
+	int status;
 	u32 timeout;
 
 	/// @publicsection
