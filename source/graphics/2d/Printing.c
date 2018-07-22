@@ -226,8 +226,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 	u32 i = 0;
 	u32 position = 0;
 	u32 startColumn = x;
-	u32 charOffsetX = 0;
-	u32 charOffsetY = 0;
+	u32 charOffset = 0, charOffsetX = 0, charOffsetY = 0;
 	u32 printingBgmap = __PRINTING_MODE_DEBUG == this->mode ? __EXCEPTIONS_BGMAP : BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance());
 
 	FontData* fontData = Printing::getFontByName(this, font);
@@ -276,9 +275,14 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 					{
 						for(charOffsetY = 0; charOffsetY < fontData->fontDefinition->fontSize.y; charOffsetY++)
 						{
+							// allow fonts with less than 32 letters
+							charOffset = (fontData->fontDefinition->characterCount < 32)
+								? charOffsetX + (charOffsetY * fontData->fontDefinition->characterCount * fontData->fontDefinition->fontSize.x)
+								: charOffsetX + (charOffsetY << 5);
+
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
 								(
-									// font offset
+									// font offset in char memory
 									fontData->offset +
 
 									// top left char of letter
@@ -288,7 +292,7 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 									((((u8)(string[i] - fontData->fontDefinition->offset) * fontData->fontDefinition->fontSize.x) >> 5) * ((fontData->fontDefinition->fontSize.y - 1)) << 5) +
 
 									// respective char of letter in multi-char fonts
-									charOffsetX + (charOffsetY << 5)
+									charOffset
 								)
 								| (this->palette << 14);
 						}

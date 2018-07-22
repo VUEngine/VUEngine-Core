@@ -51,6 +51,9 @@ FontROMDef VUENGINE_FONT =
 	// character number at which the font starts, allows you to skip the control characters for example
 	0,
 
+	// number of characters in this font
+	256,
+
 	// size of a single character (in chars) ({width, height})
 	{1, 1},
 

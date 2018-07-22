@@ -128,6 +128,9 @@ typedef struct FontDefinition
 	/// at which character number the font starts
 	s16 offset;
 
+	/// number of characters in this font
+	u16 characterCount;
+
 	/// size of a single character (in chars) ({width, height})
 	FontSize fontSize;
 
