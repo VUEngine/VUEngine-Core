@@ -99,10 +99,6 @@
 #include <OptionsSelector.h>
 #include <StageEditor.h>
 
-#ifdef __AUTOMATIC_PAUSE_ENABLED
-#include <AutoPauseManager.h>
-#endif
-
 #include <debugUtilities.h>
 
 
@@ -158,6 +154,7 @@ void Debug::constructor()
 	this->currentSubPage = NULL;
 
 	this->gameState = NULL;
+	this->autoPauseState = NULL;
 
 	this->currentLayer = __TOTAL_LAYERS - 1;
 	this->bgmapSegment = 0;
@@ -529,18 +526,15 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 19, y, NULL);
 
-	#ifdef __AUTOMATIC_PAUSE_ENABLED
 	Printing::text(Printing::getInstance(), "Auto Pause State:", 1, ++y, NULL);
-	GameState autoPauseState = AutoPauseManager::getAutomaticPauseState(AutoPauseManager::getInstance());
-	if(autoPauseState)
+	if(this->autoPauseState)
 	{
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(AutoPauseManager::getAutomaticPauseState(AutoPauseManager::getInstance())), 19, y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->autoPauseState), 19, y, NULL);
 	}
 	else
 	{
 		Printing::text(Printing::getInstance(), "none", 19, y, NULL);
 	}
-	#endif
 
 	Printing::text(Printing::getInstance(), "Active Language:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 19, y, NULL);
@@ -1430,4 +1424,14 @@ void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribu
 
 	// mark scroll bar position
 	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
+}
+
+/**
+ * Register the current auto pause status. Use NULL if no state.
+ *
+ * @param autoPauseState
+ */
+void Debug::registerAutomaticPauseState(GameState autoPauseState)
+{
+	this->autoPauseState = autoPauseState;
 }
