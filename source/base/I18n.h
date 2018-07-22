@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // handy macros
-#define TRANSLATE(id)				I18n_getText(I18n_getInstance(), id)
+#define __TRANSLATE(id)				I18n_getText(I18n_getInstance(), id)
 
 // max length of a font's name
 #define __MAX_LANGUAGE_NAME_LENGTH	32
