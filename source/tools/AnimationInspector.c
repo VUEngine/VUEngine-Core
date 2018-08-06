@@ -759,7 +759,7 @@ void AnimationInspector::createSprite()
 	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
 
-	prite::setPosition(this->animatedSprite, &spritePosition);
+	Sprite::setPosition(this->animatedSprite, &spritePosition);
 	Sprite::applyAffineTransformations(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
