@@ -362,9 +362,9 @@ void CameraEffectManager::fxFadeOut()
 {
 	// decrease brightness
 	__SET_BRIGHT(
-		_vipRegisters[__BRTA] - 1,
-		_vipRegisters[__BRTB] - 2,
-		_vipRegisters[__BRTC] - 1
+		(_vipRegisters[__BRTA] > 0) ? _vipRegisters[__BRTA] - 1 : 0,
+		(_vipRegisters[__BRTB] > 1) ? _vipRegisters[__BRTB] - 2 : 0,
+		(_vipRegisters[__BRTC] > 0) ? _vipRegisters[__BRTC] - 1 : 0
 	);
 }
 
