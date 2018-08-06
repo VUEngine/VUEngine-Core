@@ -258,7 +258,8 @@ void MBgmapSprite::setPosition(const PixelVector* position)
  * @param displacement		2D position displacement
  */
 void MBgmapSprite::addDisplacement(const PixelVector* displacement)
-{	this->positioned = true;
+{
+	this->positioned = true;
 
 	if(this->mBgmapSpriteDefinition->xLoop)
 	{

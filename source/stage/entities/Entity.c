@@ -1113,6 +1113,9 @@ void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], Object::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
+
+	// make sure that the new sprites are properly initialized
+	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 }
 
 /**
@@ -1273,7 +1276,7 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 {
 	if(this->sprites)
 	{
-		this->invalidateSprites = invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
+		this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
 	if(this->invalidateGlobalTransformation)
