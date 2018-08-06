@@ -1,6 +1,6 @@
 # Makefile taken from Wikipedia.org
 
-NAME = vuengine
+NAME = vuengine/core
 
 # Default build type
 TYPE = release
@@ -10,7 +10,7 @@ TYPE = release
 #TYPE = preprocessor
 
 # Which libraries are linked
-LIBRARIES = $(COMPONENTS)
+LIBRARIES = $(PLUGINS)
 
 # Where the game lives
 GAME_HOME = .
@@ -120,7 +120,7 @@ HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 CONFIG_FILE =       $(shell pwd)/source/config.h
 ESSENTIAL_HEADERS = -include $(CONFIG_FILE) \
                     -include $(MY_HOME)/source/libvuengine.h \
-                    $(foreach COMPONENT, $(COMPONENTS), $(shell if [ -f $(VBDE)libs/$(COMPONENT)/source/config.h ]; then echo -include $(VBDE)libs/$(COMPONENT)/source/config.h; fi; )) \
+                    $(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) \
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
