@@ -157,9 +157,8 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 void Actor::syncWithBody()
 {
-	 Actor::syncPositionWithBody(this);
-
-	 Actor::syncRotationWithBody(this);
+	Actor::syncPositionWithBody(this);
+	Actor::syncRotationWithBody(this);
 }
 
 void Actor::syncPositionWithBody()
@@ -336,25 +335,25 @@ void Actor::changeDirectionOnAxis(u16 axis)
 
 		if((__Y_AXIS & axis))
 		{
-			if(__NEAR == direction.y)
+			if(__UP == direction.y)
 			{
-				direction.y = __FAR;
+				direction.y = __DOWN;
 			}
 			else
 			{
-				direction.x = __NEAR;
+				direction.y = __UP;
 			}
 		}
 
 		if((__Z_AXIS & axis))
 		{
-			if(__RIGHT == direction.z)
+			if(__NEAR == direction.z)
 			{
-				direction.x = __LEFT;
+				direction.x = __FAR;
 			}
 			else
 			{
-				direction.x = __RIGHT;
+				direction.x = __NEAR;
 			}
 		}
 

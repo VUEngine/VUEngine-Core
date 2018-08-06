@@ -374,7 +374,7 @@ u16 Texture::getId()
  */
 void Texture::onCharSetRewritten(Object eventFirer __attribute__ ((unused)))
 {
-	 Texture::rewrite(this);
+	Texture::rewrite(this);
 
 	// propagate event
 	Object::fireEvent(this, kEventTextureRewritten);

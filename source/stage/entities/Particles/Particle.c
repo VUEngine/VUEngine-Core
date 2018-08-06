@@ -158,11 +158,11 @@ void Particle::synchronizeGraphics(bool updateSpritePosition)
 	if(__Z_AXIS & Body::getMovementOnAllAxes(this->body))
 	{
 		// calculate sprite's parallax
-		 Sprite::calculateParallax(this->objectSprite, position->z);
+		Sprite::calculateParallax(this->objectSprite, position->z);
 	}
 
 	// update sprite's 2D position
-	 Sprite::position(this->objectSprite, position);
+	Sprite::position(this->objectSprite, position);
 }
 
 /**
@@ -238,10 +238,10 @@ void Particle::setPosition(const Vector3D* position)
 	Body::setPosition(this->body, position, SpatialObject::safeCast(this));
 
 	// sync sprite
-	 Sprite::position(this->objectSprite, position);
+	Sprite::position(this->objectSprite, position);
 
 	// calculate sprite's parallax
-	 Sprite::calculateParallax(this->objectSprite, position->z);
+	Sprite::calculateParallax(this->objectSprite, position->z);
 }
 
 /**

@@ -40,7 +40,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											 CLASS' MACROS
+//											CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_ACTOR_SHOW_ROW 			6
@@ -170,8 +170,8 @@ void AnimationInspector::update()
 	{
 		Sprite::updateAnimation(this->animatedSprite);
 		Sprite::update(this->animatedSprite);
-		 Sprite::applyAffineTransformations(this->animatedSprite);
-		 Sprite::applyHbiasEffects(this->animatedSprite);
+		Sprite::applyAffineTransformations(this->animatedSprite);
+		Sprite::applyHbiasEffects(this->animatedSprite);
 	}
 }
 
@@ -301,7 +301,7 @@ void AnimationInspector::setupMode()
 			AnimationInspector::createAnimationEditionSelector(this);
 			AnimationInspector::createFrameEditionSelector(this);
 			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction);
-			 Sprite::writeAnimation(this->animatedSprite);
+			Sprite::writeAnimation(this->animatedSprite);
 			Sprite::pause(this->animatedSprite, true);
 			Sprite::pause(this->animatedSprite, false);
 			AnimationInspector::printAnimationConfig(this);
@@ -759,16 +759,16 @@ void AnimationInspector::createSprite()
 	spritePosition.x = ((__HALF_SCREEN_WIDTH) - (Texture::getCols(Sprite::getTexture(this->animatedSprite)) << 2));
 	spritePosition.y = ((__HALF_SCREEN_HEIGHT) - (Texture::getRows(Sprite::getTexture(this->animatedSprite)) << 2));
 
-	 Sprite::setPosition(this->animatedSprite, &spritePosition);
-	 Sprite::applyAffineTransformations(this->animatedSprite);
+	prite::setPosition(this->animatedSprite, &spritePosition);
+	Sprite::applyAffineTransformations(this->animatedSprite);
 
 	Rotation spriteRotation = {0, 0, 0};
 	Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
 
-	 Sprite::setPosition(this->animatedSprite, &spritePosition);
-	 Sprite::rotate(this->animatedSprite, &spriteRotation);
-	 Sprite::resize(this->animatedSprite, spriteScale, spritePosition.z);
-	 Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
+	Sprite::setPosition(this->animatedSprite, &spritePosition);
+	Sprite::rotate(this->animatedSprite, &spriteRotation);
+	Sprite::resize(this->animatedSprite, spriteScale, spritePosition.z);
+	Sprite::calculateParallax(this->animatedSprite, spritePosition.z);
 
 	this->animatedSprite->writeAnimationFrame = true;
 	SpriteManager::writeTextures(SpriteManager::getInstance());

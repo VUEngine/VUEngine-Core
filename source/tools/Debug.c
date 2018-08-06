@@ -103,7 +103,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											 CLASS' MACROS
+//											CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define DISPLACEMENT_STEP_X				512 - 384
@@ -726,8 +726,8 @@ void Debug::memoryStatusShowFourthPage(int increment __attribute__ ((unused)), i
 		{&Body_getObjectSize, 							"Body"},
 		{&Shape_getObjectSize, 							"Shape"},
 		{&Ball_getObjectSize, 							"Ball"},
-		{&Box_getObjectSize,		 					"Box"},
-		{&InverseBox_getObjectSize,		 				"InverseBox"},
+		{&Box_getObjectSize,							"Box"},
+		{&InverseBox_getObjectSize,						"InverseBox"},
 		{&Wireframe_getObjectSize, 						"Wireframe"},
 		{&Polyhedron_getObjectSize, 					"Polyhedron"},
 		{&Sphere_getObjectSize, 						"Sphere"},
@@ -1366,11 +1366,11 @@ void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribu
 
 	if(this->sramPage < 0)
 	{
-	   this->sramPage = totalPages - 1;
+		this->sramPage = totalPages - 1;
 	}
 	else if(this->sramPage >= totalPages)
 	{
-	   this->sramPage = 0;
+		this->sramPage = 0;
 	}
 
 	// get sram base address

@@ -227,8 +227,8 @@ CollisionInformation CollisionHelper::checkIfBoxOverlapsInverseBox(Box boxA, Inv
 {
 	// test for collision
 	if((boxA->rightBox.x0 < inverseBoxB->rightBox.x0) | (boxA->rightBox.x1 > inverseBoxB->rightBox.x1) |
-	 (boxA->rightBox.y0 < inverseBoxB->rightBox.y0) | (boxA->rightBox.y1 > inverseBoxB->rightBox.y1) |
-	 (boxA->rightBox.z0 < inverseBoxB->rightBox.z0) | (boxA->rightBox.z1 > inverseBoxB->rightBox.z1)
+		(boxA->rightBox.y0 < inverseBoxB->rightBox.y0) | (boxA->rightBox.y1 > inverseBoxB->rightBox.y1) |
+		(boxA->rightBox.z0 < inverseBoxB->rightBox.z0) | (boxA->rightBox.z1 > inverseBoxB->rightBox.z1)
 	)
 	{
 		return (CollisionInformation){Shape::safeCast(boxA), Shape::safeCast(inverseBoxB), {{0, 0, 0}, 0}};

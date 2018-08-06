@@ -274,7 +274,7 @@ void Entity::calculateSizeFromChildren(PixelRightBox* pixelRightBox, Vector3D en
 		{
 			Sprite sprite = Sprite::safeCast(spriteNode->data);
 			ASSERT(sprite, "Entity::calculateSizeFromChildren: null sprite");
-//			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+//			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			halfWidth = Sprite::getHalfWidth(sprite);
 			halfHeight = Sprite::getHalfHeight(sprite);
@@ -679,7 +679,7 @@ static Entity Entity::instantiate(const EntityDefinition* const entityDefinition
 	// process extra info
 	if(extraInfo)
 	{
-		 Entity::setExtraInfo(entity, extraInfo);
+		Entity::setExtraInfo(entity, extraInfo);
 	}
 
 	return entity;
@@ -732,7 +732,7 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	 Container::setLocalPosition(entity, &position);
+	Container::setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
@@ -798,7 +798,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
 	// set spatial position
-	 Container::setLocalPosition(entity, &position);
+	Container::setLocalPosition(entity, &position);
 
 	// add children if defined
 	if(positionedEntity->childrenDefinitions)
@@ -854,8 +854,8 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 	ASSERT(childEntity, "Entity::addChildEntity: childEntity no created");
 
 	// must add graphics
-	 Container::setupGraphics(childEntity);
-	 Entity::initialize(childEntity, true);
+	Container::setupGraphics(childEntity);
+	Entity::initialize(childEntity, true);
 
 	// create the entity and add it to the world
 	Container::addChild(this, Container::safeCast(childEntity));
@@ -863,11 +863,11 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 	// apply transformations
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 
-	 // apply transformations
-	 Container::initialTransform(childEntity, &environmentTransform, true);
+	// apply transformations
+	Container::initialTransform(childEntity, &environmentTransform, true);
 
 	// make ready
-	 Entity::ready(childEntity, true);
+	Entity::ready(childEntity, true);
 
 	return childEntity;
 }
@@ -996,7 +996,7 @@ void Entity::transformShapes()
 
 			Size size = Size::getFromPixelSize(shapeDefinitions[i].pixelSize);
 
-			 Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
 		}
 	}
 }
@@ -1051,7 +1051,7 @@ void Entity::initialize(bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			 Entity::initialize(childNode->data, recursive);
+			Entity::initialize(childNode->data, recursive);
 		}
 	}
 }
@@ -1070,7 +1070,7 @@ void Entity::ready(bool recursive)
 
 		for(; childNode; childNode = childNode->next)
 		{
-			 Entity::ready(childNode->data, recursive);
+			Entity::ready(childNode->data, recursive);
 		}
 	}
 }
@@ -1165,16 +1165,16 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
-			 Sprite::position(sprite, &this->transformation.globalPosition);
+			Sprite::position(sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			 Sprite::rotate(sprite, &this->transformation.globalRotation);
+			Sprite::rotate(sprite, &this->transformation.globalRotation);
 
 			// calculate the scale
-			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			 Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
+			Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition && updateRotation)
@@ -1184,10 +1184,10 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
-			 Sprite::position(sprite, &this->transformation.globalPosition);
+			Sprite::position(sprite, &this->transformation.globalPosition);
 
 			// update sprite's 2D rotation
-			 Sprite::rotate(sprite, &this->transformation.globalRotation);
+			Sprite::rotate(sprite, &this->transformation.globalRotation);
 		}
 	}
 	else if(updatePosition && updateScale)
@@ -1197,13 +1197,13 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
-			 Sprite::position(sprite, &this->transformation.globalPosition);
+			Sprite::position(sprite, &this->transformation.globalPosition);
 
 			// calculate the scale
-			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			 Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
+			Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 	else if(updatePosition)
@@ -1213,7 +1213,7 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// update sprite's 2D position
-			 Sprite::position(sprite, &this->transformation.globalPosition);
+			Sprite::position(sprite, &this->transformation.globalPosition);
 		}
 	}
 	else if(updateScale)
@@ -1223,10 +1223,10 @@ void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotati
 			Sprite sprite = Sprite::safeCast(node->data);
 
 			// calculate the scale
-			 Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
+			Sprite::resize(sprite, this->transformation.globalScale, this->transformation.globalPosition.z);
 
 			// calculate sprite's parallax
-			 Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
+			Sprite::calculateParallax(sprite, this->transformation.globalPosition.z);
 		}
 	}
 }
@@ -1458,9 +1458,9 @@ bool Entity::isVisible(int pad, bool recursive)
 
 			PixelSize pixelSize = PixelSize::getFromSize(this->size);
 
-			s16 halfWidth	 = pixelSize.x >> 1;
-			s16 halfHeight	 = pixelSize.y >> 1;
-			s16 halfDepth	 = pixelSize.z >> 1;
+			s16 halfWidth	= pixelSize.x >> 1;
+			s16 halfHeight	= pixelSize.y >> 1;
+			s16 halfDepth	= pixelSize.z >> 1;
 
 			x = spritePosition.x;
 			y = spritePosition.y;
@@ -1592,7 +1592,7 @@ void Entity::show()
 {
 	// update transformation before hiding
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
-	 Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
+	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
 
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
@@ -1606,7 +1606,7 @@ void Entity::show()
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			 Sprite::show(node->data);
+			Sprite::show(node->data);
 		}
 	}
 
@@ -1635,7 +1635,7 @@ void Entity::hide()
 		VirtualNode node = this->sprites->head;
 		for(; node ; node = node->next)
 		{
-			 Sprite::hide(node->data);
+			Sprite::hide(node->data);
 		}
 	}
 }

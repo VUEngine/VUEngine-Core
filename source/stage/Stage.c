@@ -281,7 +281,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	ParticleRemover::setRemovalDelayCycles(this->particleRemover, this->stageDefinition->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
-	 Container::initialTransform(this, &neutralEnvironmentTransformation, true);
+	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
 
 	if(this->uiContainer)
 	{
@@ -1114,12 +1114,11 @@ void Stage::resume()
 	Base::resume(this);
 
 	// apply transformations
-	 Container::initialTransform(this, &neutralEnvironmentTransformation, true);
+	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
 
 	if(this->uiContainer)
 	{
 		 Container::resume(this->uiContainer);
-
 		 Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 

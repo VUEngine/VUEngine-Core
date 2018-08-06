@@ -120,7 +120,7 @@ void StateMachine::swapState(State newState)
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// call enter method from new state
-	 State::enter(this->currentState, this->owner);
+	State::enter(this->currentState, this->owner);
 }
 
 /**
@@ -152,7 +152,7 @@ u32 StateMachine::pushState(State newState)
 	VirtualList::pushFront(this->stateStack, (BYTE*)this->currentState);
 
 	// call enter method from new state
-	 State::enter(this->currentState, this->owner);
+	State::enter(this->currentState, this->owner);
 
 	// return the resulting stack size
 	return StateMachine::getStackSize(this);
@@ -233,7 +233,7 @@ void StateMachine::changeToGlobal(State globalState)
 
 	this->currentState = globalState;
 
-	 State::enter(this->currentState, this->owner);
+	State::enter(this->currentState, this->owner);
 }
 
 /**

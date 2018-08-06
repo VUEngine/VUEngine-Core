@@ -119,7 +119,7 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 	if(!Clock::isPaused(this->messagingClock))
 	{
 		// update the stage
-		 Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
+			Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
 
 		this->previousUpdateTime = Clock::getTime(this->updateClock);
 	}
@@ -183,7 +183,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 
 	if(this->stage)
 	{
-		 Container::suspend(this->stage);
+			Container::suspend(this->stage);
 	}
 
 #ifdef __DEBUG_TOOLS
@@ -203,7 +203,8 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
  * @param owner		StateMachine's owner
  */
 void GameState::resume(void* owner __attribute__ ((unused)))
-{	NM_ASSERT(this->stage, "GameState::resume: null stage");
+{
+	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
 #ifdef __DEBUG_TOOLS
 	if(!Game::isExitingSpecialMode(Game::getInstance()))
@@ -229,7 +230,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 
 	// update the stage
-	 Container::resume(this->stage);
+	Container::resume(this->stage);
 
 	// move the camera to its previous position
 	Camera::focus(Camera::getInstance(), false);
@@ -238,7 +239,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	GameState::initialTransform(this);
 
 	// force all streaming right now
-	 Stage::streamAll(this->stage);
+	Stage::streamAll(this->stage);
 
 	// force char memory defragmentation
 	CharSetManager::defragment(CharSetManager::getInstance());
@@ -333,7 +334,7 @@ void GameState::transform()
 	invalidateTransformationFlag |= _cameraDisplacement->z ? __INVALIDATE_SCALE : 0;
 
 	// then transformation loaded entities
-	 Container::transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
+	Container::transform(this->stage, &neutralEnvironmentTransformation, invalidateTransformationFlag);
 }
 
 /**
@@ -347,7 +348,7 @@ void GameState::initialTransform()
 
 	extern Transformation neutralEnvironmentTransformation;
 
-	 Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
+		Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
 }
 
 
@@ -359,7 +360,7 @@ void GameState::synchronizeGraphics()
 	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transformation loaded entities
-	 Container::synchronizeGraphics(this->stage);
+		Container::synchronizeGraphics(this->stage);
 }
 
 /**

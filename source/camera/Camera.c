@@ -177,7 +177,7 @@ void Camera::focus(u32 checkIfFocusEntityIsMoving)
 	if(!Game::isInSpecialMode(Game::getInstance()))
 #endif
 
-	 CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
+	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
 
 #ifdef __PRINT_CAMERA_STATUS
 	Camera::print(this, 1, 1);
@@ -441,7 +441,7 @@ void Camera::startEffect(int effect, ...)
 {
 	va_list args;
 	va_start(args, effect);
-	 CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
+	CameraEffectManager::startEffect(this->cameraEffectManager, effect, args);
 	va_end(args);
 }
 
@@ -452,7 +452,7 @@ void Camera::startEffect(int effect, ...)
  */
 void Camera::stopEffect(int effect)
 {
-	 CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
+	CameraEffectManager::stopEffect(this->cameraEffectManager, effect);
 }
 
 /**

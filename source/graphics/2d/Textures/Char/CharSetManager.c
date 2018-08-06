@@ -209,7 +209,8 @@ void CharSetManager::releaseCharSet(CharSet charSet)
  * @return 						Allocated CharSet
  */
 CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
-{	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
+{
+	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
 	NM_ASSERT(charSetDefinition, "CharSetManager::allocateCharSet: null charSetDefinition");
 	NM_ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in definition");

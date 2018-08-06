@@ -247,10 +247,10 @@ Particle ParticleSystem::recycleParticle()
 		// call the appropriate allocator to support inheritance
 		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
 
-		 Particle::reset(particle);
+		Particle::reset(particle);
 		Particle::setLifeSpan(particle, lifeSpan);
 		Particle::setMass(particle, mass);
-		 Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
+		Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
 		Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
 		Particle::show(particle);
 
@@ -341,7 +341,7 @@ Particle ParticleSystem::spawnParticle()
 
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix10_6)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
-	 Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
+	Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
 	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
 
 	return particle;
@@ -362,7 +362,7 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 
 	for(; node; node = node->next)
 	{
-		 Particle::transform(node->data);
+		Particle::transform(node->data);
 	}
 
 }
@@ -375,7 +375,7 @@ void ParticleSystem::synchronizeGraphics()
 
 	for(; node; node = node->next)
 	{
-		 Particle::synchronizeGraphics(node->data, updateSprites);
+		Particle::synchronizeGraphics(node->data, updateSprites);
 	}
 
 	this->invalidateSprites = 0;
@@ -424,7 +424,7 @@ void ParticleSystem::resume()
 
 	for(; node; node = node->next)
 	{
-		 Particle::resume(node->data);
+		Particle::resume(node->data);
 	}
 
 	if(this->recyclableParticles)
@@ -433,7 +433,7 @@ void ParticleSystem::resume()
 
 		for(; node; node = node->next)
 		{
-			 Particle::resume(node->data);
+			Particle::resume(node->data);
 		}
 	}
 
@@ -441,7 +441,7 @@ void ParticleSystem::resume()
 
 	for(; node; node = node->next)
 	{
-		 Particle::resume(node->data);
+		Particle::resume(node->data);
 		Particle::hide(node->data);
 	}
 
@@ -458,7 +458,7 @@ void ParticleSystem::suspend()
 
 	for(; node; node = node->next)
 	{
-		 Particle::suspend(node->data);
+		Particle::suspend(node->data);
 	}
 
 	if(this->recyclableParticles)
@@ -467,7 +467,7 @@ void ParticleSystem::suspend()
 
 		for(; node; node = node->next)
 		{
-			 Particle::suspend(node->data);
+			Particle::suspend(node->data);
 		}
 	}
 }

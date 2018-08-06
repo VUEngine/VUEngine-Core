@@ -258,7 +258,7 @@ bool Sprite::writeTextures()
 
 	if(!this->texture->written)
 	{
-		 Texture::write(this->texture);
+		Texture::write(this->texture);
 	}
 
 	return this->texture->written;
@@ -401,7 +401,7 @@ void Sprite::rewrite()
 	if(this->texture)
 	{
 		// write it in graphical memory
-		 Texture::rewrite(this->texture);
+		Texture::rewrite(this->texture);
 	}
 }
 
@@ -412,8 +412,8 @@ void Sprite::rewrite()
  */
 void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
 {
-	 Sprite::applyAffineTransformations(this);
-	 Sprite::applyHbiasEffects(this);
+	Sprite::applyAffineTransformations(this);
+	Sprite::applyHbiasEffects(this);
 }
 
 /**
@@ -479,7 +479,7 @@ void Sprite::update()
 		// first animate the frame
 		if(this->writeAnimationFrame)
 		{
-			 Sprite::writeAnimation(this);
+			Sprite::writeAnimation(this);
 			this->writeAnimationFrame = false;
 		}
 	}

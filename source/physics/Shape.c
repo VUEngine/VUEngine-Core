@@ -220,7 +220,7 @@ void Shape::updateCollision(CollisionData* collisionData)
 	}
 	else
 	{
-		 SpatialObject::updateCollision(this->owner, &collisionData->collisionInformation);
+		SpatialObject::updateCollision(this->owner, &collisionData->collisionInformation);
 	}
 }
 
@@ -453,7 +453,7 @@ void Shape::displaceOwner(Vector3D displacement)
 	ownerPosition.y += displacement.y;
 	ownerPosition.z += displacement.z;
 
-	 SpatialObject::setPosition(this->owner, &ownerPosition);
+	SpatialObject::setPosition(this->owner, &ownerPosition);
 }
 
 /**
@@ -650,7 +650,7 @@ void Shape::onCollidingShapeDestroyed(Object eventFirer)
 
 	if(Shape::unregisterCollidingShape(this, shapeNotCollidingAnymore))
 	{
-		 SpatialObject::collidingShapeOwnerDestroyed(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
+		SpatialObject::collidingShapeOwnerDestroyed(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -678,7 +678,7 @@ void Shape::onCollidingShapeChanged(Object eventFirer)
 
 	if(Shape::unregisterCollidingShape(this, shapeNotCollidingAnymore))
 	{
-		 SpatialObject::exitCollision(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
+		SpatialObject::exitCollision(this->owner, this, shapeNotCollidingAnymore, isImpenetrable);
 	}
 }
 
@@ -793,7 +793,7 @@ void Shape::show()
 		Shape::hide(this);
 	}
 
-	 Shape::configureWireframe(this);
+	Shape::configureWireframe(this);
 
 	// show the wireframe
 	Wireframe::show(this->wireframe);

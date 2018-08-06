@@ -41,7 +41,7 @@ void UiContainer::constructor(UiContainerDefinition* uiContainerDefinition)
 	Base::constructor(NULL);
 
 	// add entities in the definition
-	 UiContainer::addEntities(this, uiContainerDefinition->entities);
+	UiContainer::addEntities(this, uiContainerDefinition->entities);
 }
 
 // class's destructor
@@ -121,7 +121,7 @@ void UiContainer::initialTransform(const Transformation* environmentTransform, u
 
 	Base::initialTransform(this, environmentTransform, recursive);
 
-	 Container::synchronizeGraphics(this);
+	Container::synchronizeGraphics(this);
 
 	if(camera)
 	{

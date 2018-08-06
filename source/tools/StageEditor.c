@@ -44,7 +44,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											 CLASS' MACROS
+//												CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
 #define __USER_OBJECT_SHOW_ROW 				6
@@ -384,7 +384,7 @@ void StageEditor::getShape()
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-		 Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+			Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 	}
 
 	Shape::setReady(this->shape, false);
@@ -406,7 +406,7 @@ void StageEditor::positionShape()
 	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 	Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-	 Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 
 	if(this->shape)
 	{
@@ -773,7 +773,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-		 Container::setLocalPosition(container, &localPosition);
+			Container::setLocalPosition(container, &localPosition);
 		Container::invalidateGlobalPosition(container);
 
 		// this hack forces the Entity to recalculate its sprites' value.
@@ -835,10 +835,10 @@ void StageEditor::showSelectedUserObject()
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-		 Sprite::setPosition(this->userObjectSprite, &spritePosition);
-		 Sprite::rotate(this->userObjectSprite, &spriteRotation);
-		 Sprite::resize(this->userObjectSprite, spriteScale, spritePosition.z);
-		 Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
+			Sprite::setPosition(this->userObjectSprite, &spritePosition);
+		Sprite::rotate(this->userObjectSprite, &spriteRotation);
+		Sprite::resize(this->userObjectSprite, spriteScale, spritePosition.z);
+		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);
 
 		this->userObjectSprite->writeAnimationFrame = true;
 		SpriteManager::writeTextures(SpriteManager::getInstance());
@@ -984,7 +984,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
 	GameState::transform(this->gameState);
 	GameState::synchronizeGraphics(this->gameState);
 	StageEditor::printCameraPosition(this);
-	 Stage::streamAll(GameState::getStage(this->gameState));
+	Stage::streamAll(GameState::getStage(this->gameState));
 }
 
 /**
