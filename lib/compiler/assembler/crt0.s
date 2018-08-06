@@ -157,11 +157,21 @@ end_init_sram_bss:
 /* long call setup classes */
 	.global	_setupClasses
 
-	movhi	hi(__call_main),r0,lp
-	movea	lo(__call_main),lp,lp
+	movhi	hi(__init_engine),r0,lp
+	movea	lo(__init_engine),lp,lp
 
 	movhi	hi(_setupClasses), r0, r1
 	movea	lo(_setupClasses), r1, r1
+	jmp	    [r1]
+
+/* long call setup engine */
+__init_engine:
+
+	movhi	hi(__call_main),r0,lp
+	movea	lo(__call_main),lp,lp
+
+	movhi	hi(_Game_init), r0, r1
+	movea	lo(_Game_init), r1, r1
 	jmp	    [r1]
 
 __call_main:

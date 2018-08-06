@@ -113,6 +113,8 @@ void MemoryPool::constructor()
  */
  BYTE* MemoryPool::allocate(int numberOfBytes)
 {
+	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::allocate: no properly constructed yet");
+
 	int lp = HardwareManager::getLinkPointer();
 
 	int i = 0;
@@ -202,6 +204,8 @@ void MemoryPool::constructor()
  */
 void MemoryPool::free(BYTE* object)
 {
+	NM_ASSERT(__SINGLETON_NOT_CONSTRUCTED != _singletonConstructed, "MemoryPool::free: no properly constructed yet");
+
 	if(!(object >= &this->poolLocation[0][0] && object < &this->poolLocation[__MEMORY_POOLS - 1][0] + this->poolSizes[__MEMORY_POOLS - 1][ePoolSize]))
 	{
 		return;

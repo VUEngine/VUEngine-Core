@@ -172,6 +172,11 @@ static s16 _previousGameFrameTotalTime = 0;
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
+static void Game::init()
+{
+	Game::getInstance();
+}
+
 // class's constructor
 static bool Game::isConstructed()
 {
