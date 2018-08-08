@@ -2,6 +2,9 @@
 
 NAME = vuengine/core
 
+# Clean plugin name by stripping out everything up to (and including) the last slash
+BASENAME = $(shell sed -e "s@.*/@@" <<< $(NAME))
+
 # Default build type
 TYPE = release
 #TYPE = beta
@@ -176,7 +179,7 @@ C_INTERMEDIATE_SOURCES = $(addprefix $(STORE)/sources/$(NAME)/, $(C_SOURCE:.c=.c
 # Makes a list of the object files that will have to be created.
 ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 
-HELPERS_PREFIX = $(NAME)
+HELPERS_PREFIX = $(BASENAME)
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
@@ -190,7 +193,7 @@ D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
 CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/$(HELPERS_PREFIX)ClassesHierarchy.txt
 
 # the target file
-TARGET_FILE = lib$(NAME)
+TARGET_FILE = lib$(BASENAME)
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
@@ -244,7 +247,7 @@ $(STORE)/objects/$(NAME)/%.o: %.s
 
 $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: %.h
 	@echo Preprocessing $<
-	@sh $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
+	@sh $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(BASENAME)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
