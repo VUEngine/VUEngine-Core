@@ -123,8 +123,8 @@ DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DAT
 
 
 # Which directories contain source files
-SOURCES_DIRS = $(shell find $(MY_HOME)/source -type d -print)
-HEADERS_DIRS = $(SOURCES_DIRS)
+SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)
+HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 
 # Obligatory headers
 CONFIG_FILE =       	$(VUENGINE_HOME)/source/config.h
