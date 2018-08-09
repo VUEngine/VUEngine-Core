@@ -1,5 +1,4 @@
-# Makefile taken from Wikipedia.org
-
+# Project name
 NAME = vuengine/core
 
 # Clean plugin name by stripping out everything up to (and including) the last slash
@@ -12,7 +11,7 @@ TYPE = release
 #TYPE = debug
 #TYPE = preprocessor
 
-# Which libraries are linked
+# Libraries that are linked
 LIBRARIES = $(PLUGINS)
 
 # Where the game lives
@@ -128,7 +127,7 @@ ESSENTIAL_HEADERS = -include $(CONFIG_FILE) \
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
 
-# The next blocks changes some variables depending on the build type
+# The following blocks change some variables depending on the build type
 ifeq ($(TYPE),debug)
 LD_PARAMS = -T$(LINKER_SCRIPT) -lm
 C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
@@ -260,7 +259,7 @@ clean:
 
 # Create necessary directories
 dirs:
-	@echo Checking working dirs..
+	@echo Checking working dirs...
 	@-$(foreach DIR,$(HEADERS_DIRS), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR) ]; \
          then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR); fi; )
 	@-if [ ! -e $(STORE)/sources/$(NAME) ]; then mkdir -p $(STORE)/sources/$(NAME); fi;
