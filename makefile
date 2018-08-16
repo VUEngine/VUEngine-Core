@@ -21,13 +21,13 @@ GAME_HOME = .
 MY_HOME = $(VBDE)libs/$(NAME)
 
 # output dir
-BUILD_DIR = build
+BUILD_DIR = $(GAME_HOME)/build
 
 # Where to store object and dependency files.
-STORE = $(GAME_HOME)/$(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
+STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 
 # Where to preprocess source files
-PREPROCESSOR_WORKING_FOLDER = $(GAME_HOME)/$(BUILD_DIR)/working
+PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
 
 # All the modules
 MODULES = $(NAME) $(LIBRARIES)
