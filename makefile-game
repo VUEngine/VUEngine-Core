@@ -298,7 +298,7 @@ $(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
 $(STORE)/sources/$(NAME)/%.c: %.c
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $(NAME) $(PLUGINS)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $(PLUGINS) $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: %.s
 	@echo Creating object file for $*

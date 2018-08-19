@@ -222,8 +222,7 @@ elapsedTime=$$(( `date +%s` - $(START_TIME) ))
 
 $(TARGET).a: $(H_FILES) libraries $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a
-	@$(AR) rcsT $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o	\
-		$(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a)
+	@$(AR) rcsT $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a)
 
 $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
@@ -271,7 +270,7 @@ $(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
 $(STORE)/sources/$(NAME)/%.c: %.c
-	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $(BASENAME) $($(BASENAME)_PLUGINS)
+	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $($(BASENAME)_PLUGINS) $(BASENAME)
 
 $(STORE)/objects/$(NAME)/%.o: %.s
 	@echo Creating object file for $*
