@@ -180,7 +180,7 @@ MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE),preprocessor)
-ALL_TARGET_PREREQUISITES = dirs $(VUENGINE) $(C_OBJECTS) printPostPreprocessorInfo
+ALL_TARGET_PREREQUISITES = dirs libraries $(C_OBJECTS) printPostPreprocessorInfo
 LD_PARAMS =
 C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
 MACROS = $(COMMON_MACROS)
