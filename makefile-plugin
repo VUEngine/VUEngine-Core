@@ -15,12 +15,6 @@ TYPE = release
 # Engine name
 ENGINE_NAME = vuengine/core
 
-# include overrides
-CONFIG_MAKE_FILE =
-ifneq ($(CONFIG_MAKE_FILE),)
-include $(CONFIG_MAKE_FILE)
-endif
-
 $(BASENAME)_PLUGINS = $(DEPENDENCIES)
 
 # Libraries that are linked
@@ -81,6 +75,12 @@ INITIALIZED_DATA_SECTION_ATTRIBUTE          = __INITIALIZED_DATA_SECTION_ATTRIBU
 STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE    = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE=
 VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE       = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE=
 
+# include overrides
+CONFIG_MAKE_FILE =
+ifneq ($(CONFIG_MAKE_FILE),)
+include $(CONFIG_MAKE_FILE)
+endif
+
 OPTIMIZATION_OPTION = -O0
 ifneq ($(OPTIMIZATION),)
 OPTIMIZATION_OPTION = -$(OPTIMIZATION)
@@ -135,8 +135,8 @@ HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 CONFIG_FILE =       	$(VUENGINE_HOME)/source/config.h
 ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) 																			\
                     	-include $(VUENGINE_HOME)/source/libvuengine.h 														\
-						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)	\
                     	$(foreach PLUGIN, $($(BASENAME)_PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) \
+						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)	\
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
@@ -222,7 +222,7 @@ elapsedTime=$$(( `date +%s` - $(START_TIME) ))
 
 $(TARGET).a: $(H_FILES) libraries $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
 	@echo Linking $(TARGET).a
-	@$(AR) rcsT $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a)
+	@$(AR) rcsT $@ $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
 $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
@@ -253,6 +253,7 @@ libraries: deleteLibraries
 			-e CONFIG_FILE=$(CONFIG_FILE) 																									\
 			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
 			-e GAME_HOME=$(GAME_HOME)																										\
+			-e GAME_PLUGINS=$(GAME_PLUGINS)																									\
 			-e NAME=$(LIBRARY);																												\
 	)
 
