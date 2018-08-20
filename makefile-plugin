@@ -135,7 +135,7 @@ HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 CONFIG_FILE =       	$(VUENGINE_HOME)/source/config.h
 ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) 																			\
                     	-include $(VUENGINE_HOME)/source/libvuengine.h 														\
-                    	$(foreach PLUGIN, $($(BASENAME)_PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) \
+                    	$(foreach PLUGIN, $(PLUGINS) $($(BASENAME)_PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) \
 						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)	\
 
 # Common macros for all build types
@@ -253,7 +253,6 @@ libraries: deleteLibraries
 			-e CONFIG_FILE=$(CONFIG_FILE) 																									\
 			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
 			-e GAME_HOME=$(GAME_HOME)																										\
-			-e GAME_PLUGINS=$(GAME_PLUGINS)																									\
 			-e NAME=$(LIBRARY);																												\
 	)
 

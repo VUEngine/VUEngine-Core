@@ -321,7 +321,6 @@ libraries: deleteLibraries
 			-e CONFIG_FILE=$(CONFIG_FILE) 																									\
 			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
 			-e GAME_HOME=$(MY_HOME)																											\
-			-e GAME_PLUGINS=$(PLUGINS)																											\
 			-e NAME=$(LIBRARY);																												\
 	)
 
