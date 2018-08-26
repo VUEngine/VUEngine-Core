@@ -61,6 +61,10 @@ singleton class Game : Object
 	TimerManager timerManager;
 	//
 	CommunicationManager communicationManager;
+	// current auto pause state
+	GameState autoPauseState;
+	// current save data manager
+	Object saveDataManager;
 	//
 	Camera camera;
 	// game's next state
@@ -123,6 +127,10 @@ singleton class Game : Object
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();
 	override bool handleMessage(Telegram telegram);
+	void registerAutoPauseState(GameState autoPauseState);
+	GameState getAutoPauseState();
+	void registerSaveDataManager(Object saveDataManager);
+	Object getSaveDataManager();
 }
 
 

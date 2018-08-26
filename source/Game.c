@@ -208,6 +208,8 @@ void Game::constructor()
 	this->stateMachine = new StateMachine(this);
 
 	this->currentState = NULL;
+	this->autoPauseState = NULL;
+	this->saveDataManager = NULL;
 	this->nextState = NULL;
 	this->currentFrameEnded = false;
 	this->isPaused = false;
@@ -1830,5 +1832,35 @@ void Game::resetProfiling()
 	_processNameDuringFRAMESTART = NULL;
 	_processNameDuringXPEND = NULL;
 #endif
+}
+
+/**
+ * Register the current auto pause state. Use NULL if no state.
+ *
+ * @param autoPauseState
+ */
+void Game::registerAutoPauseState(GameState autoPauseState)
+{
+	this->autoPauseState = autoPauseState;
+}
+
+GameState Game::getAutoPauseState()
+{
+	return this->autoPauseState;
+}
+
+/**
+ * Register the current save data manager. Use NULL if none.
+ *
+ * @param saveDataManager
+ */
+void Game::registerSaveDataManager(Object saveDataManager)
+{
+	this->saveDataManager = saveDataManager;
+}
+
+Object Game::getSaveDataManager()
+{
+	return this->saveDataManager;
 }
 

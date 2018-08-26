@@ -154,7 +154,6 @@ void Debug::constructor()
 	this->currentSubPage = NULL;
 
 	this->gameState = NULL;
-	this->autoPauseState = NULL;
 
 	this->currentLayer = __TOTAL_LAYERS - 1;
 	this->bgmapSegment = 0;
@@ -524,20 +523,30 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 
 	Printing::text(Printing::getInstance(), "GAME'S STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 19, y, NULL);
+	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 20, y, NULL);
 
 	Printing::text(Printing::getInstance(), "Auto Pause State:", 1, ++y, NULL);
-	if(this->autoPauseState)
+	if(Game::getAutoPauseState(Game::getInstance()))
 	{
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->autoPauseState), 19, y, NULL);
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(Game::getAutoPauseState(Game::getInstance())), 20, y, NULL);
 	}
 	else
 	{
-		Printing::text(Printing::getInstance(), "none", 19, y, NULL);
+		Printing::text(Printing::getInstance(), "none", 20, y, NULL);
+	}
+
+	Printing::text(Printing::getInstance(), "Save Data Manager:", 1, ++y, NULL);
+	if(Game::getSaveDataManager(Game::getInstance()))
+	{
+		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(Game::getSaveDataManager(Game::getInstance())), 20, y, NULL);
+	}
+	else
+	{
+		Printing::text(Printing::getInstance(), "none", 20, y, NULL);
 	}
 
 	Printing::text(Printing::getInstance(), "Active Language:", 1, ++y, NULL);
-	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 19, y, NULL);
+	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 20, y, NULL);
 
 	y += 3;
 
@@ -803,14 +812,12 @@ void Debug::memoryStatusShowSeventhPage(int increment __attribute__ ((unused)), 
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&DebugState_getObjectSize,			"DebugSt."},
-		{&DebugState_getObjectSize,						"DebugState"},
-		{&GameState_getObjectSize,						"GameState"},
-		{&StageEditorState_getObjectSize,				"StageEditorState"},
+		{&DebugState_getObjectSize,			"DebugState"},
+		{&GameState_getObjectSize,			"GameState"},
+		{&StageEditorState_getObjectSize,	"StageEditorState"},
 		{&Debug_getObjectSize,				"Debug"},
-		{&Debug_getObjectSize,							"Debug"},
-		{&OptionsSelector_getObjectSize,				"OptionsSelector"},
-		{&StageEditor_getObjectSize,					"StageEditor"},
+		{&OptionsSelector_getObjectSize,	"OptionsSelector"},
+		{&StageEditor_getObjectSize,		"StageEditor"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -1424,14 +1431,4 @@ void Debug::showSramPage(int increment __attribute__ ((unused)), int x __attribu
 
 	// mark scroll bar position
 	Printing::text(Printing::getInstance(), __CHAR_BRIGHT_RED_BOX, 46, y - 15 + (this->sramPage / (totalPages / 16)), NULL);
-}
-
-/**
- * Register the current auto pause status. Use NULL if no state.
- *
- * @param autoPauseState
- */
-void Debug::registerAutomaticPauseState(GameState autoPauseState)
-{
-	this->autoPauseState = autoPauseState;
 }

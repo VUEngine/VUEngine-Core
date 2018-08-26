@@ -59,8 +59,6 @@ singleton class Debug : Object
 {
 	// current in game state
 	GameState gameState;
-	// current auto pause state
-	GameState autoPauseState;
 	// pages
 	VirtualList pages;
 	// sub pages
@@ -91,7 +89,6 @@ singleton class Debug : Object
 	void show(GameState gameState);
 	void hide();
 	void processUserInput(u16 pressedKey);
-	void registerAutomaticPauseState(GameState autoPauseState);
 }
 
 
