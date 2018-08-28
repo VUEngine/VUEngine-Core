@@ -199,7 +199,7 @@ SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
-D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
+D_FILES = $(addprefix $(STORE)/objects/$(NAME)/,$(C_SOURCE:.c=.d))
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
 
 # File that holds the classes hierarchy

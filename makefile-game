@@ -206,7 +206,7 @@ C_INTERMEDIATE_SOURCES = $(addprefix $(STORE)/sources/$(NAME)/, $(C_SOURCE:.c=.c
 ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 
 # Same for the .d (dependency) files.
-D_FILES = $(addprefix $(STORE)/,$(C_SOURCE:.c=.d))
+D_FILES = $(addprefix $(STORE)/objects/$(NAME)/,$(C_SOURCE:.c=.d))
 
 HELPERS_PREFIX = $(NAME)
 
