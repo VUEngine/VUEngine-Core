@@ -199,22 +199,17 @@ TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 all: printBuildingInfo dirs $(TARGET).a
 
 printBuildingInfo:
-	@echo Building $(TARGET).a
-	@echo Build type: $(TYPE)
-	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
-	@echo Compiler\'s output: $(COMPILER_OUTPUT)
-
-START_TIME=`date +%s`
-elapsedTime=$$(( `date +%s` - $(START_TIME) ))
+	@echo Building $(TARGET_FILE).a
+#	@echo Build type: $(TYPE)
+#	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
+#	@echo Compiler\'s output: $(COMPILER_OUTPUT)
 
 $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
-	@echo Linking $(TARGET).a
+	@echo Linking $(TARGET_FILE).a
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
 $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
-	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).a in $(TYPE) mode with GCC $(COMPILER_VERSION)
-	@echo "Time elapsed: $(elapsedTime) seconds"
 
 $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
 	@echo -n "Compiling "

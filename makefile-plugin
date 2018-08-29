@@ -213,21 +213,16 @@ TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 all: printBuildingInfo dirs $(TARGET).a
 
 printBuildingInfo:
-	@echo Building target $(TARGET).a
-	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
-	@echo Compiler\'s output: $(COMPILER_OUTPUT)
-
-START_TIME=`date +%s`
-elapsedTime=$$(( `date +%s` - $(START_TIME) ))
+	@echo Building $(TARGET_FILE).a
+#	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
+#	@echo Compiler\'s output: $(COMPILER_OUTPUT)
 
 $(TARGET).a: $(H_FILES) libraries $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
-	@echo Linking $(TARGET).a
+	@echo Linking $(TARGET_FILE).a
 	@$(AR) rcsT $@ $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
 $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
-	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).a in $(TYPE) mode with GCC $(COMPILER_VERSION)
-	@echo "Time elapsed: $(elapsedTime) seconds"
 
 $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
 	@echo -n "Compiling "
@@ -241,23 +236,27 @@ $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
 	@sh $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES).c -w $(PREPROCESSOR_WORKING_FOLDER)
 
 libraries: deleteLibraries
-	@-$(foreach LIBRARY, $(LIBRARIES), echo; 																								\
-		echo Building $(LIBRARY);																											\
-		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																	\
-		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																				\
-		echo Using $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo custom makefile; else echo default VUEngine plugin makefile; fi; );		\
-		$(MAKE) all 																														\
-			$(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a 																		\
-			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
-			-e TYPE=$(TYPE) 																												\
-			-e CONFIG_FILE=$(CONFIG_FILE) 																									\
-			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
-			-e GAME_HOME=$(GAME_HOME)																										\
-			-e NAME=$(LIBRARY);																												\
+	@-$(foreach LIBRARY, $(LIBRARIES), 	 																										\
+		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
+		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
+		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell sed -e "s@.*/@@" <<< $(LIBRARY)).a )															\
+		if [ ! -f $(LIBRARY_FILE) ]; then 																										\
+			echo;																																\
+			echo Using $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo custom makefile; else echo default VUEngine plugin makefile; fi; );		\
+			$(MAKE) --no-print-directory all 																									\
+				$(LIBRARY_FILE)																													\
+				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
+				-e TYPE=$(TYPE) 																												\
+				-e CONFIG_FILE=$(CONFIG_FILE) 																									\
+				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
+				-e GAME_HOME=$(GAME_HOME)																										\
+				-e NAME=$(LIBRARY);																												\
+		fi;																																		\
 	)
 
 deleteLibraries:
-	-$(foreach LIBRARY, $(LIBRARIES), $(shell rm -f $(LIBRARIES_PATH)/$(LIBRARY)))
+	@rm -f $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
+#	-$(foreach LIBRARY, $(LIBRARIES), $(shell rm -f $(LIBRARIES_PATH)/$(LIBRARY)))
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
