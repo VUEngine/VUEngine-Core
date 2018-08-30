@@ -309,8 +309,6 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  */
 void MBgmapSprite::render(bool evenFrame)
 {
-	Base::render(this, evenFrame);
-
 	if(!this->positioned)
 	{
 		return;
