@@ -324,7 +324,7 @@ libraries: deleteLibraries
 	)
 
 deleteLibraries:
-	-$(foreach LIBRARY, $(LIBRARIES), $(shell rm -f $(LIBRARIES_PATH)/$(LIBRARY)))
+	@rm -f $(LIBRARIES_PATH)/*.a
 
 
 # Empty rule to prevent problems when a header is deleted.
