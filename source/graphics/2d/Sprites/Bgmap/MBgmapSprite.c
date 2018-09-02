@@ -307,7 +307,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
  *
  * @param evenFrame
  */
-void MBgmapSprite::render(bool evenFrame)
+void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 {
 	if(!this->positioned)
 	{
