@@ -96,10 +96,10 @@ typedef struct StageDefinition
 		// number of segments reserved for the param tables
 		int paramTableSegments;
 
-		// OBJECT segments' sizes (__spt0 to __spt3)
+		// object segments sizes (__spt0 to __spt3)
 		s16 objectSpritesContainersSize[__TOTAL_OBJECT_SEGMENTS];
 
-		// OBJECT segments z coordinates (__spt0 to __spt3)
+		// object segments z coordinates (__spt0 to __spt3)
 		s16 objectSpritesContainersZPosition[__TOTAL_OBJECT_SEGMENTS];
 
 		// engine's optical values structure
