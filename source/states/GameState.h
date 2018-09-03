@@ -33,7 +33,7 @@
 #include <Clock.h>
 #include <PhysicalWorld.h>
 #include <CollisionManager.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

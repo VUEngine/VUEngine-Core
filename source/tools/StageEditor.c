@@ -38,7 +38,7 @@
 #include <Camera.h>
 #include <Box.h>
 #include <OptionsSelector.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 #include <BgmapTextureManager.h>
 #include <debugUtilities.h>
 

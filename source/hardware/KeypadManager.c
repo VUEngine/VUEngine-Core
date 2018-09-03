@@ -24,7 +24,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 #include <HardwareManager.h>
 #include <VirtualList.h>
 

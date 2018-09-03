@@ -45,7 +45,7 @@
 #include <MBgmapSprite.h>
 #include <BgmapAnimationCoordinator.h>
 #include <ObjectAnimationCoordinator.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 #include <SRAMManager.h>
 #include <I18n.h>
 #include <Camera.h>

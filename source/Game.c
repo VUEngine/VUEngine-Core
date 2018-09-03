@@ -48,7 +48,7 @@
 #include <StateMachine.h>
 #include <Camera.h>
 #include <CameraMovementManager.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>

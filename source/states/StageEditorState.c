@@ -29,7 +29,7 @@
 #include <Game.h>
 #include <MessageDispatcher.h>
 #include <Telegram.h>
-#include <KeyPadManager.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
