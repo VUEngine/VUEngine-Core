@@ -205,7 +205,7 @@ bool AnimationController::updateAnimation()
 	this->frameDuration -= this->frameCycleDecrement;
 
 	// reduce frame delay count
-	if(0 > this->frameDuration)
+	if(0 >= this->frameDuration)
 	{
 		// increase the frame to show
 		this->previousFrame = this->actualFrame++;
