@@ -130,7 +130,7 @@ singleton class KeypadManager : Object
 	u16 getReleasedKey();
 	UserInput getUserInput();
 	int isEnabled();
-	UserInput read();
+	void captureUserInput();
 	void registerInput(u16 inputToRegister);
 }
 

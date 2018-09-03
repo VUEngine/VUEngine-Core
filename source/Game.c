@@ -583,7 +583,8 @@ u32 Game::processUserInput()
 #endif
 
 	// poll the user's input
-	UserInput userInput = KeypadManager::read(this->keypadManager);
+	KeypadManager::captureUserInput(this->keypadManager);
+	UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS
 

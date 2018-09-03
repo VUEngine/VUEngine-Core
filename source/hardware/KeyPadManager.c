@@ -124,7 +124,7 @@ int KeypadManager::isEnabled()
 /**
  * Read user input
  */
-UserInput KeypadManager::read()
+void KeypadManager::captureUserInput()
 {
 	// wait for keypad to stabilize
 	while(*_readingStatus & __S_STAT);
@@ -145,8 +145,6 @@ UserInput KeypadManager::read()
 	this->userInput.holdKeyDuration = (this->userInput.holdKey == this->userInput.previousKey)
 		? this->userInput.holdKeyDuration + 1
 		: 0;
-
-	return this->userInput;
 }
 
 /**
