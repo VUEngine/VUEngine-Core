@@ -33,10 +33,10 @@
 #include <EntityFactory.h>
 #include <Texture.h>
 #include <UiContainer.h>
-#include <ObjectSpriteContainerManager.h>
 #include <ParticleRemover.h>
 #include <VIPManager.h>
 #include <Camera.h>
+#include <SpriteManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------

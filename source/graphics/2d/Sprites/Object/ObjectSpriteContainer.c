@@ -25,7 +25,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <ObjectSpriteContainer.h>
-#include <ObjectSpriteContainerManager.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Camera.h>

@@ -29,7 +29,15 @@
 
 #include <Object.h>
 #include <Sprite.h>
-#include <ObjectSpriteContainerManager.h>
+#include <ObjectSpriteContainer.h>
+
+
+
+//---------------------------------------------------------------------------------------------------------
+//											 MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __TOTAL_OBJECT_SEGMENTS 	4
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,6 +68,8 @@ singleton class SpriteManager : Object
 	VirtualList sprites;
 	// list of sprites to delete
 	VirtualList spritesToDispose;
+	// list of object sprite containers
+	VirtualList objectSpriteContainers;
 	// sorting first node
 	VirtualNode zSortingFirstNode;
 	// sorting second node
@@ -95,6 +105,7 @@ singleton class SpriteManager : Object
 	Sprite getSpriteAtLayer(u8 layer);
 	s8 getTexturesMaximumRowsToWrite();
 	void print(int x, int y, bool resumed);
+	void printObjectSpriteContainersStatus(int x, int y);
 	void processFreedLayers();
 	void processLayers();
 	void recoverLayers();
@@ -105,6 +116,8 @@ singleton class SpriteManager : Object
 	void setMaximumParamTableRowsToComputePerCall(int maximumAffineRowsToComputePerCall);
 	void setTexturesMaximumRowsToWrite(u8 texturesMaximumRowsToWrite);
 	void setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS]);
+	ObjectSpriteContainer getObjectSpriteContainer(int numberOfObjects, fix10_6 z);
+	ObjectSpriteContainer getObjectSpriteContainerBySegment(int segment);
 	void showLayer(u8 layer);
 	void sortLayers();
 	void sortLayersProgressively();

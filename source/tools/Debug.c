@@ -36,6 +36,7 @@
 #include <HardwareManager.h>
 #include <SoundManager.h>
 #include <SpriteManager.h>
+#include <ObjectTexture.h>
 #include <BgmapTextureManager.h>
 #include <ParamTableManager.h>
 #include <VIPManager.h>
@@ -1176,23 +1177,37 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 	if(-1 == this->objectSegment)
 	{
 		SpriteManager::recoverLayers(SpriteManager::getInstance());
-		ObjectSpriteContainerManager::print(ObjectSpriteContainerManager::getInstance(), x, y);
+		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 		Debug::dimmGame(this);
 	}
 	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
 		Printing::text(Printing::getInstance(), "OBJECTS' USAGE", x, y++, NULL);
 
-		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainerManager::getObjectSpriteContainerBySegment(ObjectSpriteContainerManager::getInstance(), this->objectSegment);
-		SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(objectSpriteContainer));
-		ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
-		Debug::lightUpGame(this);
+		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
+
+		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 || __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
+		{
+			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
+
+			if(!objectSpriteContainer)
+			{
+				this->objectSegment += increment;
+			}
+		}
+
+		if(objectSpriteContainer)
+		{
+			SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(objectSpriteContainer));
+			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
+			Debug::lightUpGame(this);
+		}
 	}
 	else
 	{
 		this->objectSegment = -1;
 		SpriteManager::recoverLayers(SpriteManager::getInstance());
-		ObjectSpriteContainerManager::print(ObjectSpriteContainerManager::getInstance(), x, y);
+		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
 		Debug::dimmGame(this);
 	}
 }

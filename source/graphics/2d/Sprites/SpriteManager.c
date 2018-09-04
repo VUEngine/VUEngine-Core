@@ -27,7 +27,6 @@
 #include <string.h>
 #include <SpriteManager.h>
 #include <Game.h>
-#include <ObjectSpriteContainerManager.h>
 #include <VIPManager.h>
 #include <ParamTableManager.h>
 #include <CharSetManager.h>
@@ -87,6 +86,7 @@ void SpriteManager::constructor()
 
 	this->sprites = NULL;
 	this->spritesToDispose = NULL;
+	this->objectSpriteContainers = NULL;
 
 	this->spritePendingTextureWriting = NULL;
 	this->cyclesToWaitForSpriteTextureWriting = 0;
@@ -119,6 +119,12 @@ void SpriteManager::destructor()
 		this->spritesToDispose = NULL;
 	}
 
+	if(this->objectSpriteContainers)
+	{
+		delete this->objectSpriteContainers;
+		this->objectSpriteContainers = NULL;
+	}
+
 	// allow a new construct
 	Base::destructor();
 }
@@ -130,13 +136,27 @@ void SpriteManager::reset()
 {
 	this->lockSpritesLists = true;
 
-	// must reset the ObjectSpriteContainerManager before the SpriteManager!
-	ObjectSpriteContainerManager::reset(ObjectSpriteContainerManager::getInstance());
+	int i = 0;
+	// clean OBJ memory
+	for(; i < __AVAILABLE_CHAR_OBJECTS; i++)
+	{
+		_vipRegisters[__SPT3 - i] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 0] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 1] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 2] = 0;
+		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
+	}
 
 	if(this->spritesToDispose)
 	{
 		delete this->spritesToDispose;
 		this->spritesToDispose = NULL;
+	}
+
+	if(this->objectSpriteContainers)
+	{
+		delete this->objectSpriteContainers;
+		this->objectSpriteContainers = NULL;
 	}
 
 	if(this->sprites)
@@ -154,6 +174,7 @@ void SpriteManager::reset()
 
 	this->sprites = new VirtualList();
 	this->spritesToDispose = new VirtualList();
+	this->objectSpriteContainers = new VirtualList();
 
 	this->freeLayer = __TOTAL_LAYERS - 1;
 
@@ -178,19 +199,115 @@ void SpriteManager::reset()
  */
 void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS], s16 z[__TOTAL_OBJECT_SEGMENTS])
 {
-	const ObjectSpriteContainer* objectSpriteContainers = ObjectSpriteContainerManager::setupObjectSpriteContainers(ObjectSpriteContainerManager::getInstance(), size, z);
+	int availableObjects = __AVAILABLE_CHAR_OBJECTS;
+#ifndef __RELEASE
+	s16 previousZ = z[__TOTAL_OBJECT_SEGMENTS - 1];
+#endif
 
+	if(this->objectSpriteContainers && VirtualList::getSize(this->objectSpriteContainers))
+	{
+		return;
+	}
+
+	// must add them from __SPT3 to __SPT0
+	// so each they start presorted in the WORLDS
+
+	int spt = __TOTAL_OBJECT_SEGMENTS - 1;
 	int i = __TOTAL_OBJECT_SEGMENTS;
 	for(; i--; )
 	{
-		// only request a WORLD layer if can hold any OBJECT
-		if(objectSpriteContainers[i]->totalObjects)
+		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
+
+		if(0 < size[i])
 		{
-			// register to sprite manager
-			SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainers[i]));
+			availableObjects -= size[i];
+			NM_ASSERT(0 <= availableObjects, "SpriteManager::setupObjectSpriteContainers: OBJs depleted");
+			ObjectSpriteContainer objectSpriteContainer = new ObjectSpriteContainer(spt--, size[i], availableObjects);
+			VirtualList::pushBack(this->objectSpriteContainers, objectSpriteContainer);
+
+			PixelVector position =
+			{
+					0, 0, z[i], 0
+			};
+
+			SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainer));
+			ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
+
+#ifndef __RELEASE
+			previousZ = z[i];
+#endif
 		}
 	}
 }
+
+/**
+ * Retrieve an ObjectSpriteContainer capable of allocating the given number of OBJECTs and close to the given z coordinate
+ *
+ * @param numberOfObjects		Number of OBJECTs required
+ * @param z						Z coordinate
+ * @return 						ObjectSpriteContainer instance
+ */
+ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int numberOfObjects, fix10_6 z)
+{
+	ObjectSpriteContainer suitableObjectSpriteContainer = NULL;
+	VirtualNode node = this->objectSpriteContainers->head;
+
+	for(; node; node = node->next)
+	{
+		ObjectSpriteContainer objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+		if(ObjectSpriteContainer::hasRoomFor(objectSpriteContainer, numberOfObjects))
+		{
+			if(!suitableObjectSpriteContainer)
+			{
+				suitableObjectSpriteContainer = objectSpriteContainer;
+			}
+			else
+			{
+				if(__ABS(__FIX10_6_TO_I(Sprite::getPosition(objectSpriteContainer).z - z)) < __ABS(__FIX10_6_TO_I(Sprite::getPosition(suitableObjectSpriteContainer).z - z)))
+				{
+					suitableObjectSpriteContainer = objectSpriteContainer;
+				}
+			}
+		}
+	}
+
+	NM_ASSERT(suitableObjectSpriteContainer, "SpriteManager::getObjectSpriteContainer: no ObjectSpriteContainers available");
+
+	return suitableObjectSpriteContainer;
+}
+
+/**
+ * Retrieve the SpriteManager for the given segment
+ *
+ * @param segment		Spt segment
+ * @return 				ObjectSpriteContainer instance
+ */
+ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int segment)
+{
+	ASSERT((unsigned)segment < __TOTAL_OBJECT_SEGMENTS, "SpriteManager::getObjectSpriteContainerBySegment: invalid segment");
+
+	if((unsigned)segment > __TOTAL_OBJECT_SEGMENTS)
+	{
+		return NULL;
+	}
+
+	ObjectSpriteContainer objectSpriteContainer = NULL;
+	VirtualNode node = this->objectSpriteContainers->head;
+
+	for(; node; node = node->next)
+	{
+		objectSpriteContainer = ObjectSpriteContainer::safeCast(node->data);
+
+		if(objectSpriteContainer->spt == segment)
+		{
+			return objectSpriteContainer;
+		}
+	}
+
+	return NULL;
+}
+
 
 /**
  * Dispose sprite
@@ -852,4 +969,25 @@ void SpriteManager::print(int x, int y, bool resumed)
 			auxX += __MAX_SPRITE_CLASS_NAME_SIZE + 10;
 		}
 	}
+}
+
+/**
+ * Print the manager's status
+ *
+ * @param x			Camera x coordinate
+ * @param y			Camera y coordinate
+ */
+void SpriteManager::printObjectSpriteContainersStatus(int x, int y)
+{
+	Printing::text(Printing::getInstance(), "OBJECTS' USAGE", x, y++, NULL);
+	int totalUsedObjects = 0;
+	VirtualNode node = this->objectSpriteContainers->head;
+
+	for(; node; node = node->next)
+	{
+		totalUsedObjects += ObjectSpriteContainer::getTotalUsedObjects(ObjectSpriteContainer::safeCast(node->data));
+	}
+
+	Printing::text(Printing::getInstance(), "Total used objects: ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), totalUsedObjects, x + 20, y, NULL);
 }

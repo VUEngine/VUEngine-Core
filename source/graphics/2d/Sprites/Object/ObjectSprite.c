@@ -26,7 +26,7 @@
 
 #include <ObjectSprite.h>
 #include <ObjectSpriteContainer.h>
-#include <ObjectSpriteContainerManager.h>
+#include <SpriteManager.h>
 #include <ObjectTexture.h>
 #include <Optics.h>
 #include <Camera.h>
@@ -194,7 +194,7 @@ void ObjectSprite::checkForContainer()
 {
 	if(0 > this->objectIndex)
 	{
-		this->objectSpriteContainer = ObjectSpriteContainerManager::getObjectSpriteContainer(ObjectSpriteContainerManager::getInstance(), this->totalObjects, this->position.z);
+		this->objectSpriteContainer = SpriteManager::getObjectSpriteContainer(SpriteManager::getInstance(), this->totalObjects, this->position.z);
 		ObjectSprite::setObjectIndex(this, ObjectSpriteContainer::addObjectSprite(this->objectSpriteContainer, this, this->totalObjects));
 		ASSERT(0 <= this->objectIndex, "ObjectSprite::position: 0 > this->objectIndex");
 	}
