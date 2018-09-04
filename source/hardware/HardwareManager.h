@@ -80,6 +80,7 @@ singleton class HardwareManager : Object
     static int getLinkPointer();
     static int getPSW();
 	static void checkMemoryMap();
+	static void checkStackStatus();
 	void clearScreen();
 	void disableKeypad();
 	void disableRendering();
@@ -94,7 +95,6 @@ singleton class HardwareManager : Object
 	void setInterruptVectors();
 	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
 	void upBrightness();
-	void checkStackStatus();
 	void printStackStatus(int x, int y, bool resumed);
 }
 
