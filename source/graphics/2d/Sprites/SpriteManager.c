@@ -105,28 +105,50 @@ void SpriteManager::constructor()
  */
 void SpriteManager::destructor()
 {
-	if(this->sprites)
-	{
-		delete this->sprites;
-		this->sprites = NULL;
-	}
+	SpriteManager::cleanUp(this);
 
+	// allow a new construct
+	Base::destructor();
+}
+
+/**
+ * Clean up lists
+ */
+void SpriteManager::cleanUp()
+{
 	if(this->spritesToDispose)
 	{
-		while(SpriteManager::disposeSpritesProgressively(this));
-
 		delete this->spritesToDispose;
 		this->spritesToDispose = NULL;
 	}
 
+	if(this->sprites)
+	{
+		VirtualNode node = this->sprites->head;
+
+		for(; node; node = node->next)
+		{
+			VirtualList::removeElement(this->objectSpriteContainers, node->data);
+			delete node->data;
+		}
+
+		delete this->sprites;
+		this->sprites = NULL;
+	}
+
 	if(this->objectSpriteContainers)
 	{
+		VirtualNode node = this->objectSpriteContainers->head;
+
+		for(; node; node = node->next)
+		{
+			delete node->data;
+		}
+
 		delete this->objectSpriteContainers;
 		this->objectSpriteContainers = NULL;
 	}
 
-	// allow a new construct
-	Base::destructor();
 }
 
 /**
@@ -135,6 +157,8 @@ void SpriteManager::destructor()
 void SpriteManager::reset()
 {
 	this->lockSpritesLists = true;
+
+	SpriteManager::cleanUp(this);
 
 	int i = 0;
 	// clean OBJ memory
@@ -147,30 +171,6 @@ void SpriteManager::reset()
 		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
-	if(this->spritesToDispose)
-	{
-		delete this->spritesToDispose;
-		this->spritesToDispose = NULL;
-	}
-
-	if(this->objectSpriteContainers)
-	{
-		delete this->objectSpriteContainers;
-		this->objectSpriteContainers = NULL;
-	}
-
-	if(this->sprites)
-	{
-		VirtualNode node = this->sprites->head;
-
-		for(; node; node = node->next)
-		{
-			delete node->data;
-		}
-
-		delete this->sprites;
-		this->sprites = NULL;
-	}
 
 	this->sprites = new VirtualList();
 	this->spritesToDispose = new VirtualList();
@@ -218,7 +218,7 @@ void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS
 	{
 		NM_ASSERT(z[i] <= previousZ, "SpriteManager::setupObjectSpriteContainers: wrong z");
 
-		if(0 < size[i])
+		if(0 <= size[i])
 		{
 			availableObjects -= size[i];
 			NM_ASSERT(0 <= availableObjects, "SpriteManager::setupObjectSpriteContainers: OBJs depleted");
@@ -230,8 +230,11 @@ void SpriteManager::setupObjectSpriteContainers(s16 size[__TOTAL_OBJECT_SEGMENTS
 					0, 0, z[i], 0
 			};
 
-			SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainer));
-			ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
+			if(size[i])
+			{
+				SpriteManager::registerSprite(this, Sprite::safeCast(objectSpriteContainer));
+				ObjectSpriteContainer::setPosition(objectSpriteContainer, &position);
+			}
 
 #ifndef __RELEASE
 			previousZ = z[i];
