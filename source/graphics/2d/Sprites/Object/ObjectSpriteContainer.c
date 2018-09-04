@@ -539,7 +539,7 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
 void ObjectSpriteContainer::print(int x, int y)
 {
 	Printing::text(Printing::getInstance(), "Segment:                ", x, y, NULL);
-	Printing::int(Printing::getInstance(), this->spt, x + 24, y, NULL);
+	Printing::int(Printing::getInstance(), this->spt, x + 24, y++, NULL);
 	Printing::text(Printing::getInstance(), "STP value:                ", x, y, NULL);
 	Printing::int(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "WORLD:                  ", x, ++y, NULL);
