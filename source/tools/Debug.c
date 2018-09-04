@@ -1186,7 +1186,7 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 
 		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
 
-		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 || __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
+		while(NULL == objectSpriteContainer && (this->objectSegment >= 0 && __TOTAL_OBJECT_SEGMENTS > this->objectSegment))
 		{
 			objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
 
@@ -1201,6 +1201,13 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 			SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(objectSpriteContainer));
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
 			Debug::lightUpGame(this);
+		}
+		else
+		{
+			this->objectSegment = -1;
+			SpriteManager::recoverLayers(SpriteManager::getInstance());
+			SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
+			Debug::dimmGame(this);
 		}
 	}
 	else
