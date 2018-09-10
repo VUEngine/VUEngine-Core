@@ -862,8 +862,6 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 
 	// apply transformations
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
-
-	// apply transformations
 	Container::initialTransform(childEntity, &environmentTransform, true);
 
 	// make ready

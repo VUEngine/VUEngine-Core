@@ -799,6 +799,8 @@ void Sprite::print(int x, int y)
 		Printing::int(Printing::getInstance(), BgmapTexture::getRemainingRowsToBeWritten(bgmapTexture), x + 24, y, NULL);
 	}
 }
+
+
 //---------------------------------------------------------------------------------------------------------
 //										CLASS'S METHODS (Direct Draw)
 //---------------------------------------------------------------------------------------------------------
