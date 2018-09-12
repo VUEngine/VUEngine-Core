@@ -1687,16 +1687,6 @@ bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 }
 
 /**
- * Get axis for flipping
- *
- * @return		Defaults to true
- */
-u16 Entity::getAxisForFlipping()
-{
-	return __X_AXIS | __Y_AXIS;
-}
-
-/**
  * Get in game type
  *
  * @return		Type of entity within the game's logic

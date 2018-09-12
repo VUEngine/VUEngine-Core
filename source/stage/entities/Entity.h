@@ -103,7 +103,6 @@ class Entity : Container
 	virtual void initialize(bool recursive);
 	virtual void ready(bool recursive);
 	virtual bool respawn();
-	virtual u16 getAxisForFlipping();
 	virtual void setDefinition(void* entityDefinition);
 	virtual u16 getAxesForShapeSyncWithDirection();
 	override void iAmDeletingMyself();
