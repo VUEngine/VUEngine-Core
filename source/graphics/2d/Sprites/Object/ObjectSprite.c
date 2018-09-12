@@ -241,8 +241,8 @@ void ObjectSprite::render(bool evenFrame)
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;
 
-	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection? __FLIP_X_DISPLACEMENT : 0);
-	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection? __FLIP_Y_DISPLACEMENT : 0);
+	int x = this->position.x - this->halfWidth * xDirection + this->displacement.x - (__LEFT == xDirection ? __FLIP_X_DISPLACEMENT : 0);
+	int y = this->position.y - this->halfHeight * yDirection + this->displacement.y - (__UP == yDirection ? __FLIP_Y_DISPLACEMENT : 0);
 
 	int i = 0;
 	u16 secondWordValue = (this->head & __OBJECT_CHAR_SHOW_MASK) | ((this->position.parallax + this->displacement.parallax) & ~__OBJECT_CHAR_SHOW_MASK);
