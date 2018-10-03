@@ -237,7 +237,7 @@ void AnimatedEntity::resume()
 	AnimatedEntity::playAnimation(this, this->currentAnimationName);
 }
 
-s8 AnimatedEntity::getActualFrame()
+s16 AnimatedEntity::getActualFrame()
 {
 	if(!this->sprites)
 	{

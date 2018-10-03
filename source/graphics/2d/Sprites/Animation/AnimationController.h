@@ -44,16 +44,16 @@ class AnimationController : Object
 	Object owner;
 	// who owns the animated sprite
 	AnimationCoordinator animationCoordinator;
+	// a pointer to the animation function being played
+	const AnimationFunction* animationFunction;
 	// actual animation's frame to show
-	s8 actualFrame;
+	s16 actualFrame;
 	// previous animation's frame shown
-	s8 previousFrame;
-	// the number of game cycles that an animation frame is show
+	s16 previousFrame;
+	// the number of game cycles that an animation frame is shown
 	s8 frameDuration;
 	// frame delay decrement update cycle
 	s8 frameCycleDecrement;
-	// a pointer to the animation function being played
-	const AnimationFunction* animationFunction;
 	// flag to know if playing an animation
 	u8 playing;
 	// frame changed flag
@@ -61,15 +61,15 @@ class AnimationController : Object
 
 	/// @publicsection
 	void constructor(Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
-	s8 getActualFrame();
-	s8 getActualFrameIndex();
+	s16 getActualFrame();
+	s16 getActualFrameIndex();
 	u8 getCols();
 	u8 getFrameCycleDecrement();
 	s8 getFrameDuration();
 	int getMapType();
 	int getNumberOfFrames();
 	const AnimationFunction* getPlayingAnimationFunction();
-	s8 getPreviousFrame();
+	s16 getPreviousFrame();
 	u8 getRows();
 	bool isPlaying();
 	bool isPlayingFunction(const char* functionName);
@@ -78,7 +78,7 @@ class AnimationController : Object
 	bool play(const AnimationDescription* animationDescription, const char* functionName);
 	void playAnimationFunction(const AnimationFunction* animationFunction);
 	void previousFrame();
-	void setActualFrame(s8 actualFrame);
+	void setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameCycleDecrement);
 	void setFrameDuration(u8 frameDuration);
 	void stop();

@@ -611,7 +611,7 @@ void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
  *
  * @return		Frame number
  */
-s8 Sprite::getActualFrame()
+s16 Sprite::getActualFrame()
 {
 	if(this->animationController)
 	{
@@ -626,7 +626,7 @@ s8 Sprite::getActualFrame()
  *
  * @param actualFrame	Frame number
  */
-void Sprite::setActualFrame(s8 actualFrame)
+void Sprite::setActualFrame(s16 actualFrame)
 {
 	if(this->animationController)
 	{

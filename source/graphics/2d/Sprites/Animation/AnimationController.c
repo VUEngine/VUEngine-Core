@@ -99,7 +99,7 @@ void AnimationController::destructor()
  * @private
  * @return 		Actual frame of animation index
  */
-s8 AnimationController::getActualFrameIndex()
+s16 AnimationController::getActualFrameIndex()
 {
 	return this->animationFunction ? this->animationFunction->frames[this->actualFrame] : 0;
 }
@@ -110,7 +110,7 @@ s8 AnimationController::getActualFrameIndex()
  * @private
  * @return 		Actual frame of animation
  */
-s8 AnimationController::getActualFrame()
+s16 AnimationController::getActualFrame()
 {
 	return this->actualFrame;
 }
@@ -121,7 +121,7 @@ s8 AnimationController::getActualFrame()
  * @private
  * @return 		Previous frame of animation
  */
-s8 AnimationController::getPreviousFrame()
+s16 AnimationController::getPreviousFrame()
 {
 	return this->previousFrame;
 }
@@ -132,7 +132,7 @@ s8 AnimationController::getPreviousFrame()
  * @private
  * @param actualFrame	The new frame of animation
  */
-void AnimationController::setActualFrame(s8 actualFrame)
+void AnimationController::setActualFrame(s16 actualFrame)
 {
 	this->actualFrame = actualFrame;
 }
@@ -196,7 +196,7 @@ bool AnimationController::updateAnimation()
 	}
 
 	// if the actual frame was set to -1
-	// it means that a not loop animation has been completed
+	// it means that a non looping animation has been completed
 	if(-1 == this->actualFrame)
 	{
 		return false;

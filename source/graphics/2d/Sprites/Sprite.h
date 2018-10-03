@@ -192,7 +192,7 @@ abstract class Sprite : Object
 	void rewrite();
 	void setTransparent(u8 value);
 	void setWorldLayer(u8 worldLayer);
-	s8 getActualFrame();
+	s16 getActualFrame();
 	PixelVector getDisplacement();
 	void setDisplacement(PixelVector displacement);
 	s8 getFrameDuration();
@@ -208,7 +208,7 @@ abstract class Sprite : Object
 	void play(AnimationDescription* animationDescription, char* functionName);
 	void previousFrame();
 	void print(int x, int y);
-	void setActualFrame(s8 actualFrame);
+	void setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameDelayDelta);
 	void setFrameDuration(u8 frameDuration);
 	void update();
