@@ -35,7 +35,6 @@
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-
 /// @ingroup base
 singleton class ClockManager : Object
 {

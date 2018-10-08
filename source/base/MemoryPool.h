@@ -34,7 +34,6 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-
 // MemoryPool's defines
 #define __BLOCK_DEFINITION(BlockSize, Elements)															\
 	BYTE pool ## BlockSize ## B[BlockSize * Elements]; 													\
