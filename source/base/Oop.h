@@ -220,21 +220,14 @@
 		void __attribute__ ((noinline)) ClassName ## _checkVTable()										\
 		{																								\
 			/* setup the class's vtable only if destructor is NULL */									\
-			if(ClassName ## _vTable.destructor)															\
-			{																							\
-				return;																					\
-			}																							\
-			else																						\
-			{																							\
-				NM_ASSERT(false, ClassName ## vTable not properly set. 									\
-				Delete the GAME/lib/compiler/setupClasses.c file);										\
-			}																							\
+			NM_ASSERT(ClassName ## _vTable.destructor, ClassName ## vTable not properly set. 			\
+			Delete the GAME/lib/compiler/setupClasses.c file);											\
 																										\
 			/* check that no method is null */															\
 			u32 i = 0;																					\
-			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)						\
+			for(; i < sizeof(ClassName ## _vTable) / sizeof(void (*(*))()); i++)							\
 			{																							\
-				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ##	is abstract);		\
+				NM_ASSERT(((void (*(*))())&ClassName ## _vTable)[i], ClassName ## ## is abstract);		\
 			}																							\
 		}
 #else
