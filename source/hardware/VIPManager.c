@@ -182,8 +182,12 @@ static void VIPManager::interruptHandler()
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
+	HardwareManager::enableMultiplexedInterrupts();
+
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, interrupt);
+
+	HardwareManager::disableMultiplexedInterrupts();
 
 	// enable interrupts
 	if(_vipManager->processingXPEND)
@@ -254,7 +258,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 					VIPManager::disableDrawing(this);
 //#endif
 					// to allow timer interrupts
-					HardwareManager::enableMultiplexedInterrupts();
 					VIPManager::enableInterrupt(this, __FRAMESTART);
 
 					if(this->allowDRAMAccess)
@@ -273,7 +276,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 					// flag completions
 					this->drawingEnded = true;
 
-					HardwareManager::disableMultiplexedInterrupts();
+//					HardwareManager::disableMultiplexedInterrupts();
 
 #ifdef __DEBUG_TOOLS
 					if(Game::isInDebugMode(Game::getInstance()))
