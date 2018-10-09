@@ -161,6 +161,11 @@ void Actor::syncWithBody()
 	Actor::syncRotationWithBody(this);
 }
 
+bool Actor::overrideParentingPositioningWhenBodyIsNotMoving()
+{
+	return true;
+}
+
 void Actor::syncPositionWithBody()
 {
 	if(!this->body)
@@ -172,7 +177,14 @@ void Actor::syncPositionWithBody()
 	Vector3D bodyLastDisplacement = {0, 0, 0};
 	Vector3D bodyPosition = this->transformation.globalPosition;
 
-	if(!Clock::isPaused(Game::getPhysicsClock(Game::getInstance())) && Body::isActive(this->body) && Body::isAwake(this->body))
+	if(
+		!Clock::isPaused(Game::getPhysicsClock(Game::getInstance()))
+		&&
+		(
+			Actor::overrideParentingPositioningWhenBodyIsNotMoving(this) ||
+			(Body::isActive(this->body) && Body::isAwake(this->body))
+		)
+	)
 	{
 		bodyPosition = *Body::getPosition(this->body);
 	}
@@ -239,12 +251,12 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 
 	if(this->body)
 	{
+		Actor::syncWithBody(this);
+
 		u16 bodyMovement = Body::getMovementOnAllAxes(this->body);
 
 		if(bodyMovement)
 		{
-			Actor::syncWithBody(this);
-
 			this->invalidateGlobalTransformation |= __INVALIDATE_POSITION;
 
 			if(__Z_AXIS & bodyMovement)

@@ -89,6 +89,7 @@ class Actor : AnimatedEntity
 	virtual fix10_6 getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fix10_6 getSurroundingFrictionCoefficient();
 	virtual bool mustBounce();
+	virtual bool overrideParentingPositioningWhenBodyIsNotMoving();
 	override void iAmDeletingMyself();
 	override void update(u32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
