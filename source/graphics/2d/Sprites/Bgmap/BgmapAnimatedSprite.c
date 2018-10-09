@@ -100,13 +100,13 @@ void BgmapAnimatedSprite::writeAnimation()
 			{
 				// move charset definition to the next frame chars
 				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
+						(AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				BgmapTexture bgmapTexture = BgmapTexture::safeCast(this->texture);
 
 				// move map definition to the next frame
 				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) *
-						((int)AnimationController::getActualFrameIndex(this->animationController) << 1));
+						(AnimationController::getActualFrameIndex(this->animationController) << 1));
 
 				CharSet::write(charSet);
 				BgmapTexture::rewrite(bgmapTexture);
@@ -119,7 +119,7 @@ void BgmapAnimatedSprite::writeAnimation()
 			{
 				// move charset definition to the next frame chars
 				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
+						(AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				// write charset
 				CharSet::write(charSet);
@@ -129,7 +129,7 @@ void BgmapAnimatedSprite::writeAnimation()
 		case __ANIMATED_MULTI:
 			{
 				int totalColumns = 64 - (this->originalTextureSource.mx / 8);
-				int frameColumn = Texture::getCols(this->texture) * AnimationController::getActualFrameIndex(this->animationController);
+				s32 frameColumn = Texture::getCols(this->texture) * AnimationController::getActualFrameIndex(this->animationController);
 				this->drawSpec.textureSource.mx = this->originalTextureSource.mx + ((frameColumn % totalColumns) << 3);
 				this->drawSpec.textureSource.my = this->originalTextureSource.my + ((frameColumn / totalColumns) << 3);
 			}

@@ -86,7 +86,7 @@ void ObjectAnimatedSprite::writeAnimation()
 		return;
 	}
 
-	int animationFrame = (int)AnimationController::getActualFrameIndex(this->animationController);
+	int animationFrame = AnimationController::getActualFrameIndex(this->animationController);
 
 	if(0 > animationFrame)
 	{
@@ -102,7 +102,7 @@ void ObjectAnimatedSprite::writeAnimation()
 
 				// move charset definition to the next frame chars
 				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						((int)AnimationController::getActualFrameIndex(this->animationController) << 4));
+						(AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				ObjectTexture objectTexture = ObjectTexture::safeCast(this->texture);
 

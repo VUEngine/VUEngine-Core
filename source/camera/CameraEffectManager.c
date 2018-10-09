@@ -103,7 +103,16 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		brightness = stageDefinition->rendering.colorConfig.brightness;
 	}
 
-	// convert brightness settings to vip format
+	return brightness;
+}
+
+/**
+ * Convert brightness to VIP format
+ *
+ * @return		Brightness
+ */
+Brightness CameraEffectManager::convertBrightnessToVipFormat(Brightness brightness)
+{
 	brightness.brightRed -= (brightness.darkRed + brightness.mediumRed);
 
 	return brightness;
@@ -248,6 +257,8 @@ void CameraEffectManager::fxFadeAsyncStart(int initialDelay, const Brightness* t
 		this->fxFadeTargetBrightness = *targetBrightness;
 	}
 
+	this->fxFadeTargetBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, this->fxFadeTargetBrightness);
+
 	// set effect parameters
 	this->fxFadeDelay = (0 >= delayBetweenSteps) ? 1 : (u8)(delayBetweenSteps);
 
@@ -307,6 +318,7 @@ void CameraEffectManager::fxFadeAsyncStop()
 void CameraEffectManager::showCamera()
 {
 	Brightness defaultBrightness = CameraEffectManager::getDefaultBrightness(this);
+	defaultBrightness = CameraEffectManager::convertBrightnessToVipFormat(this, defaultBrightness);
 
 	__SET_BRIGHT(
 		defaultBrightness.darkRed,
