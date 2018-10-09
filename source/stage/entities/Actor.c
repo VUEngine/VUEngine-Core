@@ -182,7 +182,7 @@ void Actor::syncPositionWithBody()
 		&&
 		(
 			Actor::overrideParentingPositioningWhenBodyIsNotMoving(this) ||
-			(Body::isActive(this->body) && Body::isAwake(this->body))
+			Body::isAwake(this->body)
 		)
 	)
 	{
