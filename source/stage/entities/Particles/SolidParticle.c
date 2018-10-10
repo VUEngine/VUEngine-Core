@@ -275,7 +275,6 @@ void SolidParticle::transform()
 	SolidParticle::transformShape(this);
 }
 
-
 /**
  * Set position
  *
@@ -345,7 +344,6 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));
 }
-
 
 /**
  * Reset

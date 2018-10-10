@@ -516,7 +516,6 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
 	this->transformation.globalPosition = globalPosition;
 }
 
-
 /**
  *
  *
@@ -535,7 +534,6 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
 
 	this->transformation.globalRotation = globalRotation;
 }
-
 
 /**
  *

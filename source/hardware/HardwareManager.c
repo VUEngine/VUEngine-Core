@@ -104,7 +104,6 @@ void HardwareManager::destructor()
 	Base::destructor();
 }
 
-
 /**
  * Check that the memory map is sane
  */
@@ -407,7 +406,6 @@ static int HardwareManager::getPSW()
 	);
 	return psw;
 }
-
 
 /**
  * Print manager's state

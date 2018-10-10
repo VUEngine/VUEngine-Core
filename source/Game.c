@@ -867,7 +867,6 @@ void Game::updatePhysics()
 #endif
 }
 
-
 void Game::updateTransformations()
 {
 #ifdef __PROFILE_GAME

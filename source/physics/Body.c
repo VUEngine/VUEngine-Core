@@ -87,7 +87,6 @@ static void Body::setCurrentGravity(const Acceleration* currentGravity)
 	_currentGravity = currentGravity;
 }
 
-
 enum CollidingObjectIndexes
 {
 	eXAxis = 0,
@@ -103,7 +102,6 @@ typedef struct NormalRegistry
 	fix10_6 magnitude;
 
 } NormalRegistry;
-
 
 Clock _physhicsClock = NULL;
 
@@ -477,7 +475,6 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 			}
 		}
 	}
-
 
 	// cannot change direction if movement stopped on that axes
 	movementResult.axesOfChangeOfMovement &= ~movementResult.axesStoppedMovement;
@@ -1078,7 +1075,8 @@ MovementResult Body::getBouncingResult(Vector3D previousVelocity, Vector3D bounc
 
 // bounce back
 void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness)
-{	Acceleration gravity = Body::getGravity(this);
+{
+	Acceleration gravity = Body::getGravity(this);
 
 	// set friction
 	Body::setSurroundingFrictionCoefficient(this, frictionCoefficient);
@@ -1183,9 +1181,9 @@ Velocity Body::getMaximumVelocity()
 void Body::print(int x, int y)
 {
 	Printing::text(Printing::getInstance(), "Active:", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->active? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
+	Printing::text(Printing::getInstance(), this->active ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
 	Printing::text(Printing::getInstance(), "Awake:", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->awake? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
+	Printing::text(Printing::getInstance(), this->awake ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "               X         Y         Z", x, y++, NULL);
 

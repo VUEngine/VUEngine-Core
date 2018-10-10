@@ -373,7 +373,6 @@ void Actor::changeDirectionOnAxis(u16 axis)
 	}
 }
 
-
 // check if gravity must apply to this actor
 bool Actor::isSubjectToGravity(Acceleration gravity)
 {

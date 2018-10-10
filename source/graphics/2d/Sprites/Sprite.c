@@ -200,7 +200,6 @@ PixelVector Sprite::getPosition()
 	return this->position;
 }
 
-
 /**
  * Get displaced position relative to the camera
  *

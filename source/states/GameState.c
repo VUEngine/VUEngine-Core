@@ -351,7 +351,6 @@ void GameState::initialTransform()
 		Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
 }
 
-
 /**
  * Start a cycle on the Stage that coordinates the entities with their sprites
  */

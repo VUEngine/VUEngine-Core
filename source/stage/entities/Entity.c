@@ -1793,7 +1793,6 @@ void Entity::setDirection(Direction direction)
 		this->transformation.localRotation.z,
 	};
 
-
 	Container::setLocalRotation(this, &rotation);
 }
 

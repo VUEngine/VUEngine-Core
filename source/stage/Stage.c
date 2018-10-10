@@ -95,7 +95,6 @@ const Transformation neutralEnvironmentTransformation =
 
 };
 
-
 #ifdef __PROFILE_STREAMING
 extern s16 _renderingProcessTimeHelper;
 #endif
@@ -758,7 +757,6 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 
 				unloaded = true;
 			}
-
 
 			if(unloaded && defer)
 			{

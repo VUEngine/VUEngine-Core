@@ -504,7 +504,6 @@ bool Shape::isActive()
 	return this->isActive;
 }
 
-
 /**
  * Set active
  *
