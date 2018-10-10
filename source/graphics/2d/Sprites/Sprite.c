@@ -67,6 +67,7 @@ void Sprite::constructor(const SpriteDefinition* spriteDefinition __attribute__ 
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
+	this->disposed = false;
 }
 
 /**
@@ -119,6 +120,16 @@ void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute_
 Texture Sprite::getTexture()
 {
 	return this->texture;
+}
+
+/**
+ * Set disposed
+ */
+void Sprite::disposed()
+{
+	Sprite::hide(this);
+
+	this->disposed = true;
 }
 
 /**

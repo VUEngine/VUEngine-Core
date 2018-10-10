@@ -158,18 +158,20 @@ abstract class Sprite : Object
 	s16 halfHeight;
 	// Head definition for world entry setup
 	u16 head;
-	//
-	bool hidden;
-	// Update animation
-	bool writeAnimationFrame : 2;
-	// Flag for transparency control
-	bool visible : 2;
-	// Flag to allow rendering
-	bool positioned : 2;
 	// World layer where to render the texture
 	u8 worldLayer;
 	// Flag for making it transparent
 	u8 transparent;
+	// Disposed flag
+	bool disposed : 1;
+	// Hidden flag
+	bool hidden : 1;
+	// Update animation
+	bool writeAnimationFrame : 1;
+	// Flag for transparency control
+	bool visible : 1;
+	// Flag to allow rendering
+	bool positioned : 1;
 
 	/// @publicsection
 	void constructor(const SpriteDefinition* spriteDefinition, Object owner);
@@ -217,6 +219,8 @@ abstract class Sprite : Object
 	void putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor);
 	void onTextureRewritten(Object eventFirer);
 	AnimationController getAnimationController();
+	void disposed();
+	bool isDisposed();
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
 	virtual void applyAffineTransformations();
 	virtual void applyHbiasEffects();
