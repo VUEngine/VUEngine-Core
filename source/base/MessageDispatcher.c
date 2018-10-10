@@ -369,5 +369,3 @@ void MessageDispatcher::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Discarded messages:         ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->delayedMessagesToDiscard), x + 19, y, NULL);
 }
-
-

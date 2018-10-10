@@ -171,7 +171,6 @@ void SpriteManager::reset()
 		_objectAttributesBaseAddress[(i << 2) + 3] = 0;
 	}
 
-
 	this->sprites = new VirtualList();
 	this->spritesToDispose = new VirtualList();
 	this->objectSpriteContainers = new VirtualList();
@@ -311,7 +310,6 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int segme
 	return NULL;
 }
 
-
 /**
  * Dispose sprite
  *
@@ -348,7 +346,7 @@ void SpriteManager::disposeSprite(Sprite sprite)
 	{
 		VirtualList::pushBack(this->spritesToDispose, sprite);
 
-		Sprite::hide(sprite);
+		Sprite::disposed(sprite);
 	}
 
 	this->lockSpritesLists = false;
@@ -721,19 +719,18 @@ void SpriteManager::render()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		// first update
-		if((u32)sprite->animationController)
-		{
-			Sprite::update(sprite);
-		}
-
-		if(sprite->hidden)
+		if(sprite->hidden | sprite->disposed)
 		{
 			_worldAttributesBaseAddress[sprite->worldLayer].head = __WORLD_OFF;
 		}
 		else
 		{
-			 Sprite::render(sprite, this->evenFrame);
+			if((u32)sprite->animationController)
+			{
+				Sprite::update(sprite);
+			}
+
+			Sprite::render(sprite, this->evenFrame);
 
 			if(!sprite->visible)
 			{

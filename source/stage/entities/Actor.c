@@ -182,7 +182,7 @@ void Actor::syncPositionWithBody()
 		&&
 		(
 			Actor::overrideParentingPositioningWhenBodyIsNotMoving(this) ||
-			(Body::isActive(this->body) && Body::isAwake(this->body))
+			Body::isAwake(this->body)
 		)
 	)
 	{
@@ -372,7 +372,6 @@ void Actor::changeDirectionOnAxis(u16 axis)
 		Entity::setDirection(this, direction);
 	}
 }
-
 
 // check if gravity must apply to this actor
 bool Actor::isSubjectToGravity(Acceleration gravity)

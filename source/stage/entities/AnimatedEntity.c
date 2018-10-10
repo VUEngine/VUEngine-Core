@@ -91,7 +91,6 @@ void AnimatedEntity::ready(bool recursive)
 	AnimatedEntity::playAnimation(this, this->animatedEntityDefinition->initialAnimation);
 }
 
-
 // execute character's logic
 void AnimatedEntity::update(u32 elapsedTime)
 {
@@ -117,7 +116,7 @@ void AnimatedEntity::animate()
 	VirtualNode node = this->sprites->head;
 
 	// move each child to a temporary list
-	for(; node ; node = node->next)
+	for(; node && this->sprites; node = node->next)
 	{
 		// first animate the frame
 		Sprite::updateAnimation(node->data);
@@ -137,7 +136,7 @@ void AnimatedEntity::pauseAnimation(int pause)
 	VirtualNode node = this->sprites->head;
 
 	// play animation on each sprite
-	for(; node ; node = node->next)
+	for(; node && this->sprites; node = node->next)
 	{
 		Sprite::pause(node->data, pause);
 	}
@@ -156,7 +155,7 @@ void AnimatedEntity::playAnimation(char* animationName)
 	VirtualNode node = this->sprites->head;
 
 	// play animation on each sprite
-	for(; node ; node = node->next)
+	for(; node && this->sprites; node = node->next)
 	{
 		Sprite::play(node->data, this->animationDescription, animationName);
 	}
@@ -173,7 +172,7 @@ void AnimatedEntity::nextFrame()
 	VirtualNode node = this->sprites->head;
 
 	// do on each sprite
-	for(; node ; node = node->next)
+	for(; node && this->sprites; node = node->next)
 	{
 		Sprite::nextFrame(node->data);
 	}
@@ -190,7 +189,7 @@ void AnimatedEntity::previousFrame()
 	VirtualNode node = this->sprites->head;
 
 	// do on each sprite
-	for(; node ; node = node->next)
+	for(; node && this->sprites; node = node->next)
 	{
 		Sprite::previousFrame(node->data);
 	}
@@ -237,7 +236,7 @@ void AnimatedEntity::resume()
 	AnimatedEntity::playAnimation(this, this->currentAnimationName);
 }
 
-s8 AnimatedEntity::getActualFrame()
+s16 AnimatedEntity::getActualFrame()
 {
 	if(!this->sprites)
 	{

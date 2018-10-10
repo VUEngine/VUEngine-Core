@@ -490,7 +490,6 @@ void OptionsSelector::doCurrentSelectionCallback()
 	}
 }
 
-
 /**
  * Retrieve the total number of options
  *

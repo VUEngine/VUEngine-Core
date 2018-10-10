@@ -71,7 +71,7 @@ class AnimatedEntity : Entity
 	/// @publicsection
 	void constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
 	AnimationDescription* getAnimationDescription();
-	s8 getActualFrame();
+	s16 getActualFrame();
 	int getNumberOfFrames();
 	bool isAnimationLoaded(char* functionName);
 	bool isPlayingAnimation();

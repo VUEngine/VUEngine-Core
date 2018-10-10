@@ -416,7 +416,6 @@ void BgmapSprite::processAffineEffects(int gx, int width, int myDisplacement)
 			worldPointer->w = width;
 		}
 
-
 		ASSERT(0 <= (((signed)this->param + (signed)(myDisplacement << 4))) - 0x20000, "BgmapSprite::processAffineEffects: right shift on negative operand");
 
 		worldPointer->param = (u16)((((this->param + (myDisplacement << 4))) - 0x20000) >> 1) & 0xFFF0;

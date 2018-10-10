@@ -67,6 +67,7 @@ void Sprite::constructor(const SpriteDefinition* spriteDefinition __attribute__ 
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
+	this->disposed = false;
 }
 
 /**
@@ -119,6 +120,16 @@ void Sprite::resize(Scale scale __attribute__ ((unused)), fix10_6 z __attribute_
 Texture Sprite::getTexture()
 {
 	return this->texture;
+}
+
+/**
+ * Set disposed
+ */
+void Sprite::disposed()
+{
+	Sprite::hide(this);
+
+	this->disposed = true;
 }
 
 /**
@@ -188,7 +199,6 @@ PixelVector Sprite::getPosition()
 {
 	return this->position;
 }
-
 
 /**
  * Get displaced position relative to the camera
@@ -611,7 +621,7 @@ void Sprite::setFrameCycleDecrement(u8 frameCycleDecrement)
  *
  * @return		Frame number
  */
-s8 Sprite::getActualFrame()
+s16 Sprite::getActualFrame()
 {
 	if(this->animationController)
 	{
@@ -626,7 +636,7 @@ s8 Sprite::getActualFrame()
  *
  * @param actualFrame	Frame number
  */
-void Sprite::setActualFrame(s8 actualFrame)
+void Sprite::setActualFrame(s16 actualFrame)
 {
 	if(this->animationController)
 	{

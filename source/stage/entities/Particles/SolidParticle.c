@@ -74,7 +74,7 @@ void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefi
 		{0, 0, 0},
 
 		// scale (x, y, z)
-		{__I_TO_FIX7_9(1), __I_TO_FIX7_9(1), __I_TO_FIX7_9(1)},
+		{1, 1, 1},
 
 		// check for collisions against other shapes
 		true,
@@ -275,7 +275,6 @@ void SolidParticle::transform()
 	SolidParticle::transformShape(this);
 }
 
-
 /**
  * Set position
  *
@@ -345,7 +344,6 @@ void SolidParticle::exitCollision(Shape shape __attribute__ ((unused)), Shape sh
 
 	Body::setSurroundingFrictionCoefficient(this->body, Shape::getCollidingFrictionCoefficient(this->shape));
 }
-
 
 /**
  * Reset

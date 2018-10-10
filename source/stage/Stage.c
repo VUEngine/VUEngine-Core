@@ -95,7 +95,6 @@ const Transformation neutralEnvironmentTransformation =
 
 };
 
-
 #ifdef __PROFILE_STREAMING
 extern s16 _renderingProcessTimeHelper;
 #endif
@@ -360,8 +359,8 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 		if(entity)
 		{
 			// must add graphics
-			 Container::setupGraphics(entity);
-			 Entity::initialize(entity, true);
+			Container::setupGraphics(entity);
+			Entity::initialize(entity, true);
 
 			// create the entity and add it to the world
 			Container::addChild(this, Container::safeCast(entity));
@@ -758,7 +757,6 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 
 				unloaded = true;
 			}
-
 
 			if(unloaded && defer)
 			{

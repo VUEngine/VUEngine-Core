@@ -70,7 +70,7 @@ void BgmapAnimationCoordinator::addAnimationController(AnimationController anima
 		if(AnimationController::isPlaying(firstAnimationController))
 		{
 			AnimationController::playAnimationFunction(animationController, AnimationController::getPlayingAnimationFunction(firstAnimationController));
-			s8 currentFrame = AnimationController::getActualFrame(firstAnimationController);
+			s16 currentFrame = AnimationController::getActualFrame(firstAnimationController);
 			s8 frameDuration = AnimationController::getFrameDuration(firstAnimationController);
 			AnimationController::setActualFrame(animationController, currentFrame);
 			AnimationController::setFrameDuration(animationController, frameDuration);

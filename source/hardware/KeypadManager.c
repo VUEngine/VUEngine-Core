@@ -236,7 +236,6 @@ static void KeypadManager::interruptHandler()
 	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 
-
 static void KeypadManager::printUserInput(const UserInput* userInput, int x, int y)
 {
 	if(!userInput)

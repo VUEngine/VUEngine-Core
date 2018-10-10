@@ -258,7 +258,6 @@ void PhysicalWorld::update(Clock clock)
 
 	VirtualNode node = this->activeBodies->head;
 
-	// check the shapes
 	for(activeBodiesIndex = 0, node = this->activeBodies->head; node; node = node->next, activeBodiesIndex++)
 	{
 		activeBodies[activeBodiesIndex] = Body::safeCast(node->data);
@@ -273,7 +272,7 @@ void PhysicalWorld::update(Clock clock)
 			continue;
 		}
 
-		 Body::update(activeBodies[activeBodiesIndex]);
+		Body::update(activeBodies[activeBodiesIndex]);
 	}
 
 #ifdef __SHOW_PHYSICS_PROFILING

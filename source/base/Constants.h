@@ -120,7 +120,6 @@ enum MessagesTypes
 	kLastEngineMessage
 };
 
-
 enum DefaultInGameTypes
 {
 	kNoType = 0,
