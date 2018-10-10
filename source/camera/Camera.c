@@ -553,7 +553,6 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
 	return this->focusEntityPositionDisplacement;
 }
 
-
 /**
  * Print status
  *

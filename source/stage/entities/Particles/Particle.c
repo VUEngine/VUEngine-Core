@@ -328,7 +328,6 @@ void Particle::reset()
 	Body::reset(this->body);
 }
 
-
 /**
  * Is visible
  *

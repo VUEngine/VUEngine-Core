@@ -91,7 +91,6 @@ void AnimatedEntity::ready(bool recursive)
 	AnimatedEntity::playAnimation(this, this->animatedEntityDefinition->initialAnimation);
 }
 
-
 // execute character's logic
 void AnimatedEntity::update(u32 elapsedTime)
 {

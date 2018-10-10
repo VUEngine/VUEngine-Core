@@ -58,7 +58,6 @@ static int Utilities::intLength(int value)
 	return length;
 }
 
-
 static char* Utilities::itoa(u32 num, u32 base, u32 digits)
 {
 #define __CHAR_HOLDER_SIZE		11

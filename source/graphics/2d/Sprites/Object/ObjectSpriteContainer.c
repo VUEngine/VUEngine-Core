@@ -250,7 +250,7 @@ void ObjectSpriteContainer::setPosition(const PixelVector* position)
 		{
 			Sprite sprite = Sprite::safeCast(node->data);
 
-			 Sprite::setPosition(sprite, &sprite->position);
+			Sprite::setPosition(sprite, &sprite->position);
 		}
 	}
 
