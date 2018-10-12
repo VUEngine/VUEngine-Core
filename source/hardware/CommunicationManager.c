@@ -240,11 +240,7 @@ void CommunicationManager::startTransmissions(bool keepTrying)
 {
 	_communicationRegisters[__CCR] = this->communicationMode;
 	CommunicationManager::enableInterrupts(this);
-
-	do
-	{
-		_communicationRegisters[__CCR] |= __COM_START;
-	}
+	_communicationRegisters[__CCR] |= __COM_START;
 	while(keepTrying && !CommunicationManager::isTransmitting(this));
 }
 
@@ -305,6 +301,67 @@ static void CommunicationManager::interruptHandler()
  * Process interrupt method
  */
 void CommunicationManager::processInterrupt()
+{
+	int status = this->status;
+	this->status = kCommunicationsStatusIdle;
+
+	bool switchMode = false;
+
+	switch(status)
+	{
+		case kCommunicationsStatusSendingHandshake:
+
+			if(__COM_HANDSHAKE != _communicationRegisters[__CDRR])
+			{
+				CommunicationManager::sendHandshake(this);
+				break;
+			}
+
+		default:
+
+			this->connected = true;
+			break;
+	}
+
+	switch(status)
+	{
+		case kCommunicationsStatusWaitingPayload:
+
+			if(this->data)
+			{
+				*this->data = _communicationRegisters[__CDRR];
+				this->data++;
+			}
+
+			switchMode = true;
+
+			break;
+
+		case kCommunicationsStatusSendingPayload:
+
+			if(this->data)
+			{
+				this->data++;
+			}
+
+			switchMode = true;
+			break;
+	}
+/*
+	if(switchMode)
+	{
+		if(CommunicationManager::isMaster(this))
+    	{
+    		this->communicationMode = __COM_AS_REMOTE;
+    	}
+    	else
+    	{
+    		this->communicationMode = __COM_AS_MASTER;
+    	}
+	}*/
+}
+
+void CommunicationManager::processInterrupt1()
 {
 	switch(this->status)
 	{
@@ -380,11 +437,17 @@ void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 		}
 
 		// Wait for transmissions to complete
-//		while(CommunicationManager::isTransmitting(this))
 
-		volatile int* status = &this->status;
-		while(kCommunicationsStatusIdle != *status);
+//		volatile int* status = &this->status;
+	while(CommunicationManager::isTransmitting(this))
+	{
+//		CommunicationManager::printStatus(this, 5, 7);
+	}
 
+	CommunicationManager::closeChannel(this);
+
+///		while(kCommunicationsStatusIdle != this->status);
+/*
 		if(CommunicationManager::isMaster(this))
 		{
 			this->communicationMode = __COM_AS_REMOTE;
@@ -393,6 +456,7 @@ void CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, 
 		{
 			this->communicationMode = __COM_AS_MASTER;
 		}
+*/
 	}
 
 	this->status = kCommunicationsStatusIdle;
