@@ -7,8 +7,9 @@ SEARCH_DIR(.);
 
 MEMORY
 {
+    dram    (!r)    : ORIGIN =  0x0003A000, LENGTH = 14k
     wram    (!r)    : ORIGIN =  0x05000000, LENGTH = 64k /*64k*/
-    dram    (!r)    : ORIGIN =  0x0003D800, LENGTH = 0k
+    exp     (r)     : ORIGIN =  0x04000000, LENGTH = 16M
     sram    (!r)    : ORIGIN =  0x06000000, LENGTH = 16M
     rom     (rx)    : ORIGIN =  0x07000000, LENGTH = 16M
 }
@@ -18,15 +19,23 @@ If not defined, define interrupt
 Handlers as system reset
 */
 
-__text_vma = ORIGIN(rom);
-__data_vma = ORIGIN(wram);
-__sram_vma = ORIGIN(sram);
 __dram_vma = ORIGIN(dram);
+__data_vma = ORIGIN(wram);
+__exp_vma = ORIGIN(exp);
+__sram_vma = ORIGIN(sram);
+__text_vma = ORIGIN(rom);
 __stack = ORIGIN(wram) + LENGTH(wram) - 64;
 
 SECTIONS
 {
     /* Read-only sections, merged into text segment: */
+	.expdata __exp_vma (NOLOAD):
+	{
+		PROVIDE (__exp_data_start = .);
+		*(.expdata*)
+		PROVIDE (__exp_data_end = .);
+	} >exp = 0xFF
+
     .text __text_vma :
     {
     	PROVIDE (__tp = .);
