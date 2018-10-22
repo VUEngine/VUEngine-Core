@@ -79,6 +79,7 @@ class AnimatedEntity : Entity
 	void pauseAnimation(int pause);
 	void playAnimation(char* animationName);
 	void previousFrame();
+	void setActualFrame(s16 frame);
 	void setAnimationDescription(AnimationDescription* animationDescription);
 	override void ready(bool recursive);
 	override void update(u32 elapsedTime);

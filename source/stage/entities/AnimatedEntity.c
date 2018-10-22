@@ -222,6 +222,20 @@ AnimationDescription* AnimatedEntity::getAnimationDescription()
 	return this->animationDescription;
 }
 
+void AnimatedEntity::setActualFrame(s16 frame)
+{
+	if(!this->sprites)
+	{
+		return;
+	}
+
+	VirtualNode node = this->sprites->head;
+	for(; node ; node = node->next)
+	{
+		Sprite::setActualFrame(node->data, frame);
+	}
+}
+
 // set animation description
 void AnimatedEntity::setAnimationDescription(AnimationDescription* animationDescription)
 {
@@ -244,7 +258,6 @@ s16 AnimatedEntity::getActualFrame()
 	}
 
 	VirtualNode node = this->sprites->head;
-
 	for(; node ; node = node->next)
 	{
 		return Sprite::getActualFrame(node->data);
