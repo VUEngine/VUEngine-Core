@@ -221,7 +221,7 @@
 		{																								\
 			/* setup the class's vtable only if destructor is NULL */									\
 			NM_ASSERT(ClassName ## _vTable.destructor, ClassName ## vTable not properly set. 			\
-			Delete the GAME/lib/compiler/setupClasses.c file);											\
+			Delete the GAME/build/working/setupClasses.c file);											\
 																										\
 			/* check that no method is null */															\
 			u32 i = 0;																					\

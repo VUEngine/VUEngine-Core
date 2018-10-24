@@ -100,7 +100,7 @@ sed  -i -e 's/'"$mark"'/\n/g'  $OUTPUT_FILE
 #exit 0
 
 # Inject this pointer
-sed -i -e 's/<%>{<START_BLOCK>/{\n/g' -e 's/<START_BLOCK>\(.*\)<%DECLARATION>/'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1\n/g' $OUTPUT_FILE
+sed -i -e 's/<%>{<START_BLOCK>/{\n/g' -e 's/<START_BLOCK>\(.*\)<%DECLARATION>/\n\t'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1\n\n/g' $OUTPUT_FILE
 
 # Inject _this parameter
 sed -i -e '/<DECLARATION>[A-z0-9 	]*static[ 	]\+/!s/\(<DECLARATION>[ 	]*.*'"$className"'[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*\)(/\1(void* _this '"__attribute__ ((unused))"',/g' $OUTPUT_FILE
@@ -236,7 +236,7 @@ classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" 
 
 if [[ ! $classModifiers = *"static "* ]] ;
 then
-	classDefinition="__CLASS_DEFINITION($className, $baseClassName);$prototypes"
+	classDefinition="__CLASS_DEFINITION($className, $baseClassName);\n$prototypes\n"
 
 	# Add allocator if it is not abstract nor a singleton class
 	if [[ ! $classModifiers = *"singleton "* ]] && [[ ! $classModifiers = *"static "* ]] && [[ ! $classModifiers = *"abstract "* ]] ;
@@ -266,13 +266,13 @@ then
 			then
 				if [[ $classModifiers = *"dynamic_singleton "* ]] ;
 				then
-					classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
+					classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);\n"
 				else
-					classDefinition=$classDefinition"__SINGLETON($className);"
+					classDefinition=$classDefinition"__SINGLETON($className);\n"
 				fi
 			else
 				customSingletonDefinition=`sed -e 's@^.*[ \t]\+\(.*SINGLETON.*\)(@\1@' <<< $customSingletonDefinition`
-				classDefinition=$classDefinition"$customSingletonDefinition($className);"
+				classDefinition=$classDefinition"$customSingletonDefinition($className);\n"
 			fi
 
 			sed -i -e "s/Base_destructor();/_singletonConstructed = __SINGLETON_NOT_CONSTRUCTED; Base_destructor();/" $OUTPUT_FILE
