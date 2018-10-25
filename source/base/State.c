@@ -90,3 +90,15 @@ void State::suspend(void* owner __attribute__ ((unused)))
  */
 void State::resume(void* owner __attribute__ ((unused)))
 {}
+
+/**
+ * Method called when the StateMachine receives a message to be processed
+ *
+ * @param owner			StateMachine's owner
+ * @param telegram		Message wrapper
+ * @return 				Always returns true
+ */
+bool State::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
+{
+	return true;
+}
