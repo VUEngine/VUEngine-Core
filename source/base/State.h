@@ -45,7 +45,7 @@ abstract class State : Object
 	virtual void exit(void* owner);
 	virtual void suspend(void* owner);
 	virtual void resume(void* owner);
-	virtual bool processMessage(void* owner, Telegram telegram) = 0;
+	virtual bool processMessage(void* owner, Telegram telegram);
 }
 
 

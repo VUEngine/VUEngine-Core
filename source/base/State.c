@@ -90,3 +90,13 @@ void State::suspend(void* owner __attribute__ ((unused)))
  */
 void State::resume(void* owner __attribute__ ((unused)))
 {}
+
+/**
+ * Since C doesn't support function overloading, need a new method to receive the owner of the state
+ *
+ * @param owner		StateMachine's owner
+ */
+bool State::processMessage(void* owner, Telegram telegram)
+{
+	return true;
+}
