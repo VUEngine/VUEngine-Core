@@ -78,6 +78,7 @@ abstract class Object : Object
 	void removeEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListeners(Object listener, u32 eventCode);
 	void removeAllEventListeners(u32 eventCode);
+	bool hasActiveEventListeners();
 	void fireEvent(u32 eventCode);
 	const void* getVTable();
 	virtual bool handleMessage(Telegram telegram);

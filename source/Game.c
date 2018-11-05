@@ -819,7 +819,7 @@ void Game::synchronizeGraphics()
 	// apply transformations to graphics
 	GameState::synchronizeGraphics(this->currentState);
 
-//	if(VIPManager::isRenderingPending(this->vipManager))
+	if(VIPManager::isRenderingPending(this->vipManager))
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
 		this->lastProcessName = "rendering sprites";

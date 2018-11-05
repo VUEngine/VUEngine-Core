@@ -57,6 +57,8 @@ enum Events
 	kEventEffectFadeStart,
 	kEventEffectFadeStop,
 
+	kEventCommunicationsCompleted,
+
 	// do not remove me
 	kLastEngineEvent
 };

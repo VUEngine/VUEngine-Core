@@ -38,11 +38,14 @@
 /// @ingroup hardware
 singleton class CommunicationManager : Object
 {
-	bool connected;
-	u8 communicationMode;
+	volatile bool connected;
+	volatile u8 communicationMode;
 	volatile int status;
+	volatile BYTE* syncData;
+	volatile BYTE* asyncData;
+	volatile int numberOfBytesPendingTransmission;
+
 	u32 timeout;
-	volatile BYTE* data;
 
 	/// @publicsection
 	static CommunicationManager getInstance();
@@ -51,8 +54,11 @@ singleton class CommunicationManager : Object
 	void update();
 	bool isConnected();
 	bool isMaster();
-	void sendData(BYTE* data, int numberOfBytes);
-	void receiveData(BYTE* data, int numberOfBytes);
+	bool sendData(BYTE* data, int numberOfBytes);
+	bool receiveData(BYTE* data, int numberOfBytes);
+	bool sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
+	bool receiveDataAsync(int numberOfBytes, EventListener eventLister, Object scope);
+	const BYTE* getAsyncData();
 	void printStatus(int x, int y);
 }
 

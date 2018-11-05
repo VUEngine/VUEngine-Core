@@ -182,12 +182,12 @@ static void VIPManager::interruptHandler()
 	// disable interrupts
 	VIPManager::disableInterrupts(_vipManager);
 
-	//HardwareManager::enableMultiplexedInterrupts();
+	HardwareManager::enableMultiplexedInterrupts();
 
 	// handle the interrupt
 	VIPManager::processInterrupt(_vipManager, interrupt);
 
-	//HardwareManager::disableMultiplexedInterrupts();
+	HardwareManager::disableMultiplexedInterrupts();
 
 	// enable interrupts
 	if(_vipManager->processingXPEND)
@@ -255,7 +255,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 					// prevent VIP's drawing operations
 //#ifndef __ALERT_VIP_OVERTIME
-					/*VIPManager::disableDrawing(this);
+					VIPManager::disableDrawing(this);
 //#endif
 					// to allow timer interrupts
 					VIPManager::enableInterrupt(this, __FRAMESTART);
@@ -269,7 +269,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 					// write to the frame buffers
 					VIPManager::processFrameBuffers(this);
-*/
+
 					// allow VIP's drawing operations
 					VIPManager::enableDrawing(this);
 
