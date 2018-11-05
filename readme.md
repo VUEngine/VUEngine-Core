@@ -173,7 +173,7 @@ In alphabetical order:
 	Jose Zagal
 	Kevin L Mellott
 	Larry Anderson
-	Marten ReiÃŸ
+	Marten Reiß
 	Michael Ortega
 	Mike Boodle
 	Nektarios Moulianakis
