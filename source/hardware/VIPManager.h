@@ -173,8 +173,8 @@ static u16* const	_objectAttributesBaseAddress			=	(u16*)__OBJECT_SPACE_BASE_ADD
 #define	__WORLD_2x1				0x0400
 #define	__WORLD_2x2				0x0500
 #define	__WORLD_2x4				0x0600
-#define	__WORLD_4x2				0x0900
 #define	__WORLD_4x1				0x0800
+#define	__WORLD_4x2				0x0900
 #define	__WORLD_8x1				0x0C00
 
 #define	__WORLD_OVR				0x0080

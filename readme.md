@@ -109,13 +109,11 @@ GENERAL NOTES
 
 A short summary of the file layout:
 
+- assets: engine default font, etc
+- doc: Documentation
+- lib: precompiler, miscellaneous files needed for linking, etc.
 - source: VUEngine source code.
 - source/base/libgccvb: heavily modified libgccvb
-- lib: miscellaneous files needed for linking, etc.
-- lib/src: miscellaneous files needed for linking, etc. sources, and other utilities sources.
-- utilities: miscellaneous utilities for padding, sound, etc.
-
-Full documentation can be found in doc/DevelopmentManual.htm
 
 
 COMPILING ON WIN32
@@ -139,6 +137,51 @@ previously plagued with).
 - Libgccvb has been refactored to accommodate better to this engine, all its code is credited to
 its creators, we do not take any credit on it.
 
-
 V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo.
 Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.
+
+
+PATRONS
+-------
+
+A huge thank you to the following people for their financial support through our Patreon campaign (https://www.patreon.com/vuengine). 
+In alphabetical order:
+
+	Adam Emmons
+	Adam Nelson
+	Amos Bieler
+	Andres Gaetan
+	Benjamin Stevens
+	Bernardo Compagnoni
+	Bnjmn Mrph
+	Braxton Mott
+	Brie Hebert
+	Candi's Classic Game Shrine
+	Cesar Henzelin
+	Chris
+	Daniel Lhota
+	Dave Sheldon
+	David Baisley
+	David Green
+	Eckart Sauerbrey
+	Eric Freeman
+	Eric Luke
+	Graham Dawes
+	Jesse Levine
+	Jon Zrostlik
+	Jordan Carriere
+	Jose Zagal
+	Kevin L Mellott
+	Larry Anderson
+	Marten ReiÃŸ
+	Michael Ortega
+	Mike Boodle
+	Nektarios Moulianakis
+	norty
+	Patrick Fenton
+	Randy Jeffery
+	Sean Machan
+	Steven Hagelgans
+	Tero Piiroinen
+	Tony
+	VectrexRoli
