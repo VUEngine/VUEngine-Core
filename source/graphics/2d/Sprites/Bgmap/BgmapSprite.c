@@ -64,7 +64,7 @@ void BgmapSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition
 	// create the texture
 	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
 	{
-		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition));
+		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition, 0, false));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
 

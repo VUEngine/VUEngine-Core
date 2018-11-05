@@ -120,9 +120,11 @@ void BgmapTextureManager::reset()
  *
  * @private
  * @param bgmapTexture		Texture to allocate space for
+ * @param minimumSegment				Minimum bgmap segment to use
+ * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 					True if the required space was successfully allocated
  */
-int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
+int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegment, bool mustLiveAtEvenSegment)
 {
 	int i = 0;
 	int j = 0;
@@ -141,7 +143,7 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture)
 	// if texture already defined, don't allocate
 	if(Texture::getNumberOfChars(bgmapTexture))
 	{
-		for(i = 0; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i++)
+		for(i = minimumSegment; i < __MAX_NUMBER_OF_BGMAPS_SEGMENTS && i < this->availableBgmapSegmentsForTextures; i += mustLiveAtEvenSegment ? 2 : 1)
 		{
 			// if there is space in the segment memory
 			// there are 4096 chars in each bgmap segment
@@ -397,9 +399,11 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextu
  *
  * @private
  * @param bgmapTextureDefinition		Texture to allocate space for
+ * @param minimumSegment				Minimum bgmap segment to use
+ * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 								True if the required space was successfully allocated
  */
-BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapTextureDefinition)
+BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapTextureDefinition, s16 minimumSegment, bool mustLiveAtEvenSegment)
 {
 	int i = 0;
 
@@ -412,7 +416,7 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapT
 			this->bgmapTextures[i] = new BgmapTexture(bgmapTextureDefinition, i);
 
 			//if not, then allocate
-			BgmapTextureManager::doAllocate(this, this->bgmapTextures[i]);
+			BgmapTextureManager::doAllocate(this, this->bgmapTextures[i], minimumSegment, mustLiveAtEvenSegment);
 
 			return this->bgmapTextures[i];
 		}
@@ -426,9 +430,11 @@ BgmapTexture BgmapTextureManager::allocateTexture(BgmapTextureDefinition* bgmapT
  *
  * @private
  * @param bgmapTextureDefinition		Texture definition to find o allocate a Texture
+ * @param minimumSegment				Minimum bgmap segment to use
+ * @param mustLiveAtEvenSegment			To force loading in an even bgmap segment
  * @return 								Allocated Texture
  */
-BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextureDefinition)
+BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextureDefinition, s16 minimumSegment, bool mustLiveAtEvenSegment)
 {
 	BgmapTexture bgmapTexture = NULL;
 
@@ -439,7 +445,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextur
 		case __ANIMATED_SINGLE_OPTIMIZED:
 
 			// load a new texture
-			bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureDefinition);
+			bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureDefinition, minimumSegment, mustLiveAtEvenSegment);
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (animated) texture no allocated");
 			break;
@@ -460,7 +466,7 @@ BgmapTexture BgmapTextureManager::getTexture(BgmapTextureDefinition* bgmapTextur
 			else
 			{
 				// load it
-				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureDefinition);
+				bgmapTexture = BgmapTextureManager::allocateTexture(this, bgmapTextureDefinition, minimumSegment, mustLiveAtEvenSegment);
 			}
 
 			ASSERT(bgmapTexture, "BgmapTextureManager::getTexture: (shared) texture no allocated");

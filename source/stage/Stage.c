@@ -541,7 +541,7 @@ void Stage::preloadAssets()
 			if(__ANIMATED_SINGLE != this->stageDefinition->assets.textureDefinitions[i]->charSetDefinition->allocationType &&
 				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.textureDefinitions[i]->charSetDefinition->allocationType)
 			{
-				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageDefinition->assets.textureDefinitions[i]);
+				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageDefinition->assets.textureDefinitions[i], 0, false);
 
 				if(bgmapTexture)
 				{

@@ -140,7 +140,7 @@ void MBgmapSprite::loadTextures()
 
 			for(; this->mBgmapSpriteDefinition->textureDefinitions[i]; i++)
 			{
-				MBgmapSprite::loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i]);
+				MBgmapSprite::loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i], 0 == i);
 			}
 
 			this->texture = Texture::safeCast(VirtualList::front(this->textures));
@@ -163,12 +163,21 @@ void MBgmapSprite::loadTextures()
  * @public
  *
  * @param textureDefinition		TextureDefinition to use
+ * @param isFirstTexture		To force loading in an even bgmap segment
  */
-void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition)
+void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition, bool isFirstTexture)
 {
 	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureDefinition);
+	s16 minimumSegment = 0;
+
+	if(VirtualList::getSize(this->textures))
+	{
+		BgmapTexture bgmapTexture = BgmapTexture::safeCast(VirtualList::back(this->textures));
+		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
+	}
+
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureDefinition, minimumSegment, isFirstTexture);
 
 	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
