@@ -171,6 +171,7 @@ void CommunicationManager::reset()
 {
 	CommunicationManager::disableInterrupts(this);
 	this->connected = false;
+	this->data = NULL;
 	this->syncData = NULL;
 	this->asyncData = NULL;
 	this->status = kCommunicationsStatusIdle;
@@ -337,10 +338,11 @@ bool CommunicationManager::receivePayload()
  */
 static void CommunicationManager::interruptHandler()
 {
-			PRINT_TIME(1, 6); PRINT_TEXT("II", 10, 6);
+//			PRINT_TIME(1, 6); PRINT_TEXT("II", 10, 6);
 	CommunicationManager::setReady(_communicationManager, false);
 
 	CommunicationManager::processInterrupt(_communicationManager);
+			PRINT_TIME(1, 6); PRINT_TEXT("ZZ", 10, 6);
 }
 
 /**
@@ -384,19 +386,21 @@ void CommunicationManager::processInterrupt()
 			else if(this->asyncData)
 			{
 				*this->asyncData = _communicationRegisters[__CDRR];
+				CommunicationManager::disableInterrupts(_communicationManager);
 				this->asyncData++;
+
+				PRINT_HEX(_communicationRegisters[__CDRR], 10, 15);
 			PRINT_TIME(1, 6); PRINT_TEXT("JJ", 10, 6);
 
-				CommunicationManager::disableInterrupts(_communicationManager);
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
 			PRINT_TIME(1, 6); PRINT_TEXT("KK", 10, 6);
-					if(CommunicationManager::isMaster(this))
+/*					if(CommunicationManager::isMaster(this))
 					{
 						volatile int i = 0; for(; i++ < 8000;);
 					}
-
+*/
 					CommunicationManager::receivePayload(this);
 				}
 				else
@@ -406,7 +410,7 @@ void CommunicationManager::processInterrupt()
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
 					delete this->asyncData;
-					this->asyncData = NULL;
+					this->data = this->asyncData = NULL;
 				}
 			}
 
@@ -429,11 +433,12 @@ void CommunicationManager::processInterrupt()
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
 			PRINT_TIME(1, 6); PRINT_TEXT("NN", 10, 6);
+			/*
 					if(CommunicationManager::isMaster(this))
 					{
 						volatile int i = 0; for(; i++ < 8000;);
 					}
-
+*/
 					CommunicationManager::sendPayload(this, *this->asyncData);
 				}
 				else
@@ -442,7 +447,7 @@ void CommunicationManager::processInterrupt()
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
 					delete this->asyncData;
-					this->asyncData = NULL;
+					this->data = this->asyncData = NULL;
 				}
 			}
 
@@ -473,7 +478,7 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 	}
 
 	this->asyncData = NULL;
-	this->syncData = data;
+	this->data = this->syncData = data;
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	while(0 < this->numberOfBytesPendingTransmission)
@@ -523,7 +528,7 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 	}
 
 	this->status = kCommunicationsStatusIdle;
-	this->syncData = NULL;
+	this->data = this->syncData = NULL;
 
 	//HardwareManager::enableInterrupts();
 	CommunicationManager::setReady(this, false);
@@ -552,7 +557,7 @@ bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBy
 			PRINT_TIME(1, 6); PRINT_TEXT("FF", 10, 6);
 	Object::addEventListener(this, scope, eventLister, kEventCommunicationsCompleted);
 	this->syncData = NULL;
-	this->asyncData = MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD;
+	this->data = this->asyncData = MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD;
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	if(sendData)
@@ -582,9 +587,9 @@ bool CommunicationManager::receiveDataAsync(int numberOfBytes, EventListener eve
 	return CommunicationManager::startDataTransmissionAsync(this, NULL, numberOfBytes, false, eventLister, scope);
 }
 
-const BYTE* CommunicationManager::getAsyncData()
+const BYTE* CommunicationManager::getData()
 {
-	return (const BYTE*)this->asyncData;
+	return (const BYTE*)this->data;
 }
 
 void CommunicationManager::printStatus(int x, int y)
