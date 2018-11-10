@@ -40,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 //volatile u16* _communicationRegisters __INITIALIZED_DATA_SECTION_ATTRIBUTE = (u16*)_hardwareRegisters;
-static u8* volatile _communicationRegisters =			(u8*)0x02000000;
+static volatile BYTE* _communicationRegisters =			(u8*)0x02000000;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -336,13 +336,23 @@ bool CommunicationManager::receivePayload()
 /**
  * Communication's interrupt handler
  */
+
+ static bool inInterrupt = false;
 static void CommunicationManager::interruptHandler()
 {
-//			PRINT_TIME(1, 6); PRINT_TEXT("II", 10, 6);
+	if(inInterrupt)
+	{
+		PRINT_TEXT("ERROR", 30, 16);
+	}
+	inInterrupt = true;
+
+	// Don't disable interrupts right away, otherwise it messes up with the lecture
+	// of the transmitted data and with the sending of new data
+
 	CommunicationManager::setReady(_communicationManager, false);
 
 	CommunicationManager::processInterrupt(_communicationManager);
-			PRINT_TIME(1, 6); PRINT_TEXT("ZZ", 10, 6);
+	inInterrupt = false;
 }
 
 /**
@@ -363,12 +373,11 @@ void CommunicationManager::processInterrupt()
 				break;
 			}
 
-			this->connected = true;
+			CommunicationManager::disableInterrupts(_communicationManager);
 
 		default:
 
 			this->connected = true;
-			CommunicationManager::disableInterrupts(_communicationManager);
 			break;
 	}
 
@@ -386,26 +395,20 @@ void CommunicationManager::processInterrupt()
 			else if(this->asyncData)
 			{
 				*this->asyncData = _communicationRegisters[__CDRR];
-				CommunicationManager::disableInterrupts(_communicationManager);
 				this->asyncData++;
-
-				PRINT_HEX(_communicationRegisters[__CDRR], 10, 15);
-			PRINT_TIME(1, 6); PRINT_TEXT("JJ", 10, 6);
-
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
-			PRINT_TIME(1, 6); PRINT_TEXT("KK", 10, 6);
-/*					if(CommunicationManager::isMaster(this))
+					int breaker = 8000;
+					if(CommunicationManager::isMaster(this))
 					{
-						volatile int i = 0; for(; i++ < 8000;);
+						while(0 > --breaker && CommunicationManager::isRemoteReady(this));
 					}
-*/
+
 					CommunicationManager::receivePayload(this);
 				}
 				else
 				{
-			PRINT_TIME(1, 6); PRINT_TEXT("LL", 10, 6);
 					CommunicationManager::disableInterrupts(_communicationManager);
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
@@ -426,24 +429,21 @@ void CommunicationManager::processInterrupt()
 			}
 			else if(this->asyncData)
 			{
-			PRINT_TIME(1, 6); PRINT_TEXT("MM", 10, 6);
 				this->asyncData++;
-				CommunicationManager::disableInterrupts(_communicationManager);
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
-			PRINT_TIME(1, 6); PRINT_TEXT("NN", 10, 6);
-			/*
+					int breaker = 8000;
 					if(CommunicationManager::isMaster(this))
 					{
-						volatile int i = 0; for(; i++ < 8000;);
+						while(0 > --breaker && CommunicationManager::isRemoteReady(this));
 					}
-*/
+
 					CommunicationManager::sendPayload(this, *this->asyncData);
 				}
 				else
 				{
-			PRINT_TIME(1, 6); PRINT_TEXT("OO", 10, 6);
+					CommunicationManager::disableInterrupts(_communicationManager);
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
 					delete this->asyncData;
@@ -451,23 +451,8 @@ void CommunicationManager::processInterrupt()
 				}
 			}
 
-
 			break;
 	}
-
-
-/*
-	if(switchMode)
-	{
-		if(CommunicationManager::isMaster(this))
-    	{
-    		this->communicationMode = __COM_AS_REMOTE;
-    	}
-    	else
-    	{
-    		this->communicationMode = __COM_AS_MASTER;
-    	}
-	}*/
 }
 
 bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile int numberOfBytes, volatile bool sendData)
@@ -489,7 +474,6 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 		}
 		if(sendData)
 		{
-			//PRINT_HEX(*this->syncData, 5, 15+ xx++);
 			CommunicationManager::sendPayload(this, *this->syncData);
 		}
 		else
@@ -548,13 +532,11 @@ bool CommunicationManager::receiveData(BYTE* data, int numberOfBytes)
 
 bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBytes, bool sendData, EventListener eventLister, Object scope)
 {
-			PRINT_TIME(1, 6); PRINT_TEXT("EE", 10, 6);
 	if(!this->connected || this->syncData || this->asyncData || (sendData && !data) || 0 >= numberOfBytes || this->status != kCommunicationsStatusIdle || Object::hasActiveEventListeners(Object::safeCast(this)))
 	{
 		return false;
 	}
 
-			PRINT_TIME(1, 6); PRINT_TEXT("FF", 10, 6);
 	Object::addEventListener(this, scope, eventLister, kEventCommunicationsCompleted);
 	this->syncData = NULL;
 	this->data = this->asyncData = MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD;
@@ -562,16 +544,12 @@ bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBy
 
 	if(sendData)
 	{
-			PRINT_TIME(1, 6); PRINT_TEXT("GG", 10, 6);
 		Mem::copyBYTE((BYTE*)this->asyncData, data, numberOfBytes);
 		CommunicationManager::sendPayload(this, *this->asyncData);
-			PRINT_TIME(1, 6); PRINT_TEXT("WW", 10, 6);
 	}
 	else
 	{
-			PRINT_TIME(1, 6); PRINT_TEXT("GG", 10, 6);
 		CommunicationManager::receivePayload(this);
-			PRINT_TIME(1, 6); PRINT_TEXT("WW", 10, 6);
 	}
 
 	return true;
