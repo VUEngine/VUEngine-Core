@@ -261,18 +261,28 @@ void CommunicationManager::startTransmissions(u8 payload, bool isHandShake)
 	// Set Start flag
 	_communicationRegisters[__CCR] |= __COM_START;
 
+PRINT_TIME(10, 10);
+PRINT_TEXT("11", 10, 11);
+
 	// Check if the Stat flag is raised
 	if(!isHandShake)
 	{
 		while(!(_communicationRegisters[__CCR] & __COM_PENDING))
 		{
+		        			PRINT_TIME(30, 10);
+        			PRINT_TEXT("BB", 10, 11);
+
 			// Set Start flag
 			_communicationRegisters[__CCR] |= __COM_START;
 		}
+
 	}
 
 	// Open communications channel
 	CommunicationManager::setReady(this, true);
+
+PRINT_TIME(10, 10);
+PRINT_TEXT("22", 10, 11);
 }
 
 void CommunicationManager::stopTransmissions()
@@ -388,9 +398,9 @@ void CommunicationManager::processInterrupt()
 			if(this->syncData)
 			{
 				*this->syncData = _communicationRegisters[__CDRR];
+				CommunicationManager::disableInterrupts(_communicationManager);
 				this->syncData++;
 				this->numberOfBytesPendingTransmission--;
-				CommunicationManager::disableInterrupts(_communicationManager);
 			}
 			else if(this->asyncData)
 			{
@@ -423,9 +433,9 @@ void CommunicationManager::processInterrupt()
 
 			if(this->syncData)
 			{
+				CommunicationManager::disableInterrupts(_communicationManager);
 				this->syncData++;
 				this->numberOfBytesPendingTransmission--;
-				CommunicationManager::disableInterrupts(_communicationManager);
 			}
 			else if(this->asyncData)
 			{
@@ -470,7 +480,7 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 	{
 		if(CommunicationManager::isMaster(this))
 		{
-			volatile int i = 0; for(; i++ < 8000;);
+			volatile int i = 0; for(; i++ < 1*8000;);
 		}
 		if(sendData)
 		{
@@ -484,6 +494,10 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 //		volatile bool didChannelClosed = !CommunicationManager::isRemoteReady(this);
 
 		while(kCommunicationsStatusIdle != this->status);
+
+PRINT_TIME(10, 10);
+PRINT_TEXT("33", 10, 11);
+
 		/*
 		{
 			if(!didChannelClosed)
@@ -494,7 +508,7 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 
 		if(!CommunicationManager::isMaster(this))
 		{
-			volatile int i = 0; for(; i++ < 8000;);
+			volatile int i = 0; for(; i++ < 2*8000;);
 		}
 
 		//for(; !didChannelClosed; didChannelClosed = !CommunicationManager::isRemoteReady(this));
@@ -509,6 +523,8 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 			this->communicationMode = __COM_AS_MASTER;
 		}
 		*/
+PRINT_TIME(10, 10);
+PRINT_TEXT("44", 10, 11);
 	}
 
 	this->status = kCommunicationsStatusIdle;
@@ -516,6 +532,9 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 
 	//HardwareManager::enableInterrupts();
 	CommunicationManager::setReady(this, false);
+
+PRINT_TIME(10, 10);
+PRINT_TEXT("55", 10, 11);
 
 	return true;
 }
