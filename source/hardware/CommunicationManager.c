@@ -243,9 +243,15 @@ bool CommunicationManager::isHandshakeIncoming()
 void CommunicationManager::startTransmissions(u8 payload, bool isHandShake)
 {
 	// Select clock
-	_communicationRegisters[__CCR] = this->communicationMode;
-	// Set transmission data
-	_communicationRegisters[__CDTR] = payload;
+
+//	volatile int i = 0; for(; i++ < 1*8000;);
+
+	if(CommunicationManager::isTransmitting(this))
+	{
+		PRINT_TIME(20, 10);
+        PRINT_TEXT("1ERROR1", 20, 11);
+
+	}
 
 	// Master must wait for slave to open the channel
 	if(CommunicationManager::isMaster(this))
@@ -253,17 +259,36 @@ void CommunicationManager::startTransmissions(u8 payload, bool isHandShake)
 		CommunicationManager::setReady(this, true);
 
 		while(!CommunicationManager::isRemoteReady(this));
+
+		_communicationRegisters[__CDTR] = payload;
+
+		_communicationRegisters[__CCR] = __COM_START;
 	}
+	else
+	{
+		_communicationRegisters[__CDTR] = payload;
+
+		_communicationRegisters[__CCR] = __COM_USE_EXTERNAL_CLOCK | __COM_START;
+
+			CommunicationManager::setReady(this, true);
+
+	}
+
+	// Set transmission data
+//	_communicationRegisters[__CDTR] = payload;
+/*
+	_communicationRegisters[__CCR] = this->communicationMode;
 
 	// Enable interrupts just before starting communications
 	CommunicationManager::enableInterrupts(this);
 
 	// Set Start flag
 	_communicationRegisters[__CCR] |= __COM_START;
+	*/
 
-PRINT_TIME(10, 10);
-PRINT_TEXT("11", 10, 11);
 
+
+/*
 	// Check if the Stat flag is raised
 	if(!isHandShake)
 	{
@@ -274,9 +299,9 @@ PRINT_TEXT("11", 10, 11);
 		}
 
 	}
-
+*/
 	// Open communications channel
-	CommunicationManager::setReady(this, true);
+//	CommunicationManager::setReady(this, true);
 }
 
 void CommunicationManager::stopTransmissions()
@@ -352,6 +377,7 @@ static void CommunicationManager::interruptHandler()
 
 	// Don't disable interrupts right away, otherwise it messes up with the lecture
 	// of the transmitted data and with the sending of new data
+					_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
 
 	CommunicationManager::setReady(_communicationManager, false);
 
@@ -392,7 +418,9 @@ void CommunicationManager::processInterrupt()
 			if(this->syncData)
 			{
 				*this->syncData = _communicationRegisters[__CDRR];
-				CommunicationManager::disableInterrupts(_communicationManager);
+					_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
+
+//				CommunicationManager::disableInterrupts(_communicationManager);
 				this->syncData++;
 				this->numberOfBytesPendingTransmission--;
 			}
@@ -427,7 +455,8 @@ void CommunicationManager::processInterrupt()
 
 			if(this->syncData)
 			{
-				CommunicationManager::disableInterrupts(_communicationManager);
+//				CommunicationManager::disableInterrupts(_communicationManager);
+					_communicationRegisters[__CCR] = __COM_DISABLE_INTERRUPT;
 				this->syncData++;
 				this->numberOfBytesPendingTransmission--;
 			}
@@ -472,10 +501,6 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 
 	while(0 < this->numberOfBytesPendingTransmission)
 	{
-		if(CommunicationManager::isMaster(this))
-		{
-			volatile int i = 0; for(; i++ < 1*8000;);
-		}
 		if(sendData)
 		{
 			CommunicationManager::sendPayload(this, *this->syncData);
@@ -496,11 +521,6 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 				didChannelClosed = !CommunicationManager::isRemoteReady(this);
 			}
 		}*/
-
-		if(!CommunicationManager::isMaster(this))
-		{
-			volatile int i = 0; for(; i++ < 2*8000;);
-		}
 
 		//for(; !didChannelClosed; didChannelClosed = !CommunicationManager::isRemoteReady(this));
 
