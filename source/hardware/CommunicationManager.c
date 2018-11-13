@@ -495,9 +495,6 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 
 		while(kCommunicationsStatusIdle != this->status);
 
-PRINT_TIME(10, 10);
-PRINT_TEXT("33", 10, 11);
-
 		/*
 		{
 			if(!didChannelClosed)
@@ -523,8 +520,6 @@ PRINT_TEXT("33", 10, 11);
 			this->communicationMode = __COM_AS_MASTER;
 		}
 		*/
-PRINT_TIME(10, 10);
-PRINT_TEXT("44", 10, 11);
 	}
 
 	this->status = kCommunicationsStatusIdle;
@@ -532,9 +527,6 @@ PRINT_TEXT("44", 10, 11);
 
 	//HardwareManager::enableInterrupts();
 	CommunicationManager::setReady(this, false);
-
-PRINT_TIME(10, 10);
-PRINT_TEXT("55", 10, 11);
 
 	return true;
 }
