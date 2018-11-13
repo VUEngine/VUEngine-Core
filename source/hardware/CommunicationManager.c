@@ -269,9 +269,6 @@ PRINT_TEXT("11", 10, 11);
 	{
 		while(!(_communicationRegisters[__CCR] & __COM_PENDING))
 		{
-		        			PRINT_TIME(30, 10);
-        			PRINT_TEXT("BB", 10, 11);
-
 			// Set Start flag
 			_communicationRegisters[__CCR] |= __COM_START;
 		}
@@ -280,9 +277,6 @@ PRINT_TEXT("11", 10, 11);
 
 	// Open communications channel
 	CommunicationManager::setReady(this, true);
-
-PRINT_TIME(10, 10);
-PRINT_TEXT("22", 10, 11);
 }
 
 void CommunicationManager::stopTransmissions()
