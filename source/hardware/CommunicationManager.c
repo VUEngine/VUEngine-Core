@@ -256,21 +256,28 @@ void CommunicationManager::startTransmissions(u8 payload, bool isHandShake)
 		CommunicationManager::setReady(this, true);
 
 		while(!CommunicationManager::isRemoteReady(this));
+
+		// Set transmission data
+		_communicationRegisters[__CDTR] = payload;
+
+		// Set Start flag
+		_communicationRegisters[__CCR] = __COM_START;
+
 	}
+	else
+	{
+		// Set transmission data
+		_communicationRegisters[__CDTR] = payload;
 
-	// Set transmission data
-	_communicationRegisters[__CDTR] = payload;
+		// Set Start flag
+		_communicationRegisters[__CCR] = __COM_USE_EXTERNAL_CLOCK | __COM_START;
 
-	_communicationRegisters[__CCR] = this->communicationMode;
+		volatile int i = 0;
+		for(; i < 100; i++);
 
-	// Enable interrupts just before starting communications
-	CommunicationManager::enableInterrupts(this);
-
-	// Set Start flag
-	_communicationRegisters[__CCR] |= __COM_START;
-
-	// Open communications channel
-	CommunicationManager::setReady(this, true);
+		// Open communications channel
+		CommunicationManager::setReady(this, true);
+	}
 }
 
 void CommunicationManager::stopTransmissions()
@@ -459,20 +466,7 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 			CommunicationManager::receivePayload(this);
 		}
 
-//		volatile bool didChannelClosed = !CommunicationManager::isRemoteReady(this);
-
 		while(kCommunicationsStatusIdle != this->status);
-
-		/*
-		{
-			if(!didChannelClosed)
-			{
-				didChannelClosed = !CommunicationManager::isRemoteReady(this);
-			}
-		}*/
-
-		//for(; !didChannelClosed; didChannelClosed = !CommunicationManager::isRemoteReady(this));
-
 	}
 
 	this->status = kCommunicationsStatusIdle;
