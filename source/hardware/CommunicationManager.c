@@ -489,7 +489,7 @@ bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBy
 
 	Object::addEventListener(this, scope, eventLister, kEventCommunicationsCompleted);
 	this->syncData = NULL;
-	this->data = this->asyncData = MemoryPool::allocate(MemoryPool::getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD;
+	this->data = this->asyncData = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	if(sendData)
