@@ -355,14 +355,6 @@ static void CommunicationManager::interruptHandler()
 	CommunicationManager::processInterrupt(_communicationManager);
 }
 
-void CommunicationManager::waitForRemote()
-{
-	volatile int breaker = 100;
-	if(CommunicationManager::isMaster(this))
-	{
-		while(CommunicationManager::isRemoteReady(this) && 0 > --breaker);
-	}
-}
 /**
  * Process interrupt method
  */
@@ -395,11 +387,7 @@ void CommunicationManager::processInterrupt()
 			{
 				*this->syncData = _communicationRegisters[__CDRR];
 				this->syncData++;
-
-				if(0 < --this->numberOfBytesPendingTransmission)
-				{
-					//CommunicationManager::waitForRemote(this);
-				}
+				--this->numberOfBytesPendingTransmission;
 			}
 			else if(this->asyncData)
 			{
@@ -408,7 +396,6 @@ void CommunicationManager::processInterrupt()
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
-					CommunicationManager::waitForRemote(this);
 					CommunicationManager::receivePayload(this);
 				}
 				else
@@ -427,11 +414,7 @@ void CommunicationManager::processInterrupt()
 			if(this->syncData)
 			{
 				this->syncData++;
-
-				if(0 < --this->numberOfBytesPendingTransmission)
-				{
-					//CommunicationManager::waitForRemote(this);
-				}
+				--this->numberOfBytesPendingTransmission;
 			}
 			else if(this->asyncData)
 			{
@@ -439,7 +422,6 @@ void CommunicationManager::processInterrupt()
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
-					CommunicationManager::waitForRemote(this);
 					CommunicationManager::sendPayload(this, *this->asyncData);
 				}
 				else
