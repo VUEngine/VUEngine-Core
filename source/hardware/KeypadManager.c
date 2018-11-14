@@ -54,11 +54,7 @@ void KeypadManager::constructor()
 {
 	Base::constructor();
 
-	KeypadManager::flush(this);
-	this->enabled = false;
-
-	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
-	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+	KeypadManager::reset(this);
 
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
@@ -213,6 +209,21 @@ u32 KeypadManager::getHoldKeyDuration()
 u16 KeypadManager::getPreviousKey()
 {
 	return this->userInput.previousKey;
+}
+
+
+
+/**
+ * Reset
+ *
+ */
+void KeypadManager::reset()
+{
+	KeypadManager::flush(this);
+	this->enabled = false;
+
+	this->userInput = (UserInput){0, 0, 0, 0, 0, 0, 0};
+	this->userInputToRegister = (UserInput){0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 }
 
 /**

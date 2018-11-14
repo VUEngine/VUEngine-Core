@@ -547,6 +547,7 @@ void Game::reset()
 	WireframeManager::reset(WireframeManager::getInstance());
 	SoundManager::setWaveForm(SoundManager::getInstance());
 	TimerManager::resetMilliseconds(this->timerManager);
+	KeypadManager::reset(this->keypadManager);
 
 	// the order of reset for the graphics managers must not be changed!
 	SpriteManager::reset(SpriteManager::getInstance());

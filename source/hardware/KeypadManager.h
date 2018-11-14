@@ -118,6 +118,7 @@ singleton class KeypadManager : Object
 	static void interruptHandler();
 	static void printUserInput(const UserInput* userInput, int x, int y);
 
+	void reset();
 	void disable();
 	void disableInterrupt();
 	void enable();
