@@ -402,7 +402,7 @@ void CommunicationManager::processInterrupt()
 				{
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
-					delete this->asyncData;
+					delete this->data;
 					this->data = this->asyncData = NULL;
 				}
 			}
@@ -428,7 +428,7 @@ void CommunicationManager::processInterrupt()
 				{
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
-					delete this->asyncData;
+					delete this->data;
 					this->data = this->asyncData = NULL;
 				}
 			}
