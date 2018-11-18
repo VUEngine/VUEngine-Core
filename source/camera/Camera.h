@@ -139,7 +139,7 @@ singleton class Camera : Object
 	void unsetFocusEntity();
 	Vector3D getFocusEntityPosition();
 	Vector3D getFocusEntityPositionDisplacement();
-	void print(int x, int y);
+	void print(int x, int y, bool inPixels);
 }
 
 

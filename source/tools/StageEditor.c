@@ -665,7 +665,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX10_6(-this->translationStepSize),
+			__PIXELS_TO_METERS(-this->translationStepSize),
 			0,
 			0
 		};
@@ -676,7 +676,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__I_TO_FIX10_6(this->translationStepSize),
+			__PIXELS_TO_METERS(this->translationStepSize),
 			0,
 			0
 		};
@@ -688,7 +688,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX10_6(-this->translationStepSize),
+			__PIXELS_TO_METERS(-this->translationStepSize),
 			0
 		};
 
@@ -699,7 +699,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__I_TO_FIX10_6(this->translationStepSize),
+			__PIXELS_TO_METERS(this->translationStepSize),
 			0
 		};
 
@@ -729,7 +729,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX10_6(this->translationStepSize),
+			__PIXELS_TO_METERS(this->translationStepSize),
 		};
 
 		StageEditor::applyTranslationToEntity(this, translation);
@@ -740,7 +740,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 		{
 			0,
 			0,
-			__I_TO_FIX10_6(-this->translationStepSize),
+			__PIXELS_TO_METERS(-this->translationStepSize),
 		};
 
 		StageEditor::applyTranslationToEntity(this, translation);
@@ -949,25 +949,25 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(), "Name:                                  ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
 		Printing::text(Printing::getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->x), x + 13, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->y), x + 25, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX10_6_TO_F(globalPosition->z), x + 31, y, NULL);
+		Printing::float(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->x), x + 14, y, NULL);
+		Printing::float(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->y), x + 21, y, NULL);
+		Printing::float(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->z), x + 28, y, NULL);
 		Printing::text(Printing::getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->x, x + 13, y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->y, x + 25, y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->z, x + 31, y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->x, x + 14, y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->y, x + 21, y, NULL);
+		Printing::int(Printing::getInstance(), globalRotation->z, x + 28, y, NULL);
 		Printing::text(Printing::getInstance(), "Scl. (x,y,z):                  ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 13, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 25, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 31, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 14, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 21, y, NULL);
+		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 28, y, NULL);
 		Printing::text(Printing::getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getWidth(entity)), x + 13, y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getHeight(entity)), x + 20, y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getDepth(entity)), x + 27, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getWidth(entity)), x + 14, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getHeight(entity)), x + 21, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getDepth(entity)), x + 28, y, NULL);
 		Printing::text(Printing::getInstance(), "Is visible:                  ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 13, y, NULL);
+		Printing::text(Printing::getInstance(), Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
 		Printing::text(Printing::getInstance(), "Children:                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), Container::getChildCount(entity), x + 13, y, NULL);
+		Printing::int(Printing::getInstance(), Container::getChildCount(entity), x + 14, y, NULL);
 	}
 }
 
@@ -995,7 +995,7 @@ void StageEditor::applyTranslationToCamera(Vector3D translation)
  */
 void StageEditor::printCameraPosition()
 {
-	Camera::print(Camera::getInstance(), 1, 2);
+	Camera::print(Camera::getInstance(), 1, 2, true);
 }
 
 /**

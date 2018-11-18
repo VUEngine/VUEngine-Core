@@ -558,19 +558,20 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
  *
  * @param x				Column
  * @param y				Row
+ * @param inPixels		Whether to printing the output in pixels or not
  */
-void Camera::print(int x, int y)
+void Camera::print(int x, int y, bool inPixels)
 {
 	Printing::text(Printing::getInstance(), "MOVE SCREEN", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
 	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 2, NULL);
 	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", 38, 3, NULL);
 	Printing::text(Printing::getInstance(), "Stage's size:               ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->stageSize.x), x + 10, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->stageSize.y), x + 15, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->stageSize.z), x + 20, y, NULL);
+	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIX10_6_TO_I(this->stageSize.x), x + 14, y, NULL);
+	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.y) : __FIX10_6_TO_I(this->stageSize.y), x + 19, y, NULL);
+	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.z) : __FIX10_6_TO_I(this->stageSize.z), x + 24, y, NULL);
 	Printing::text(Printing::getInstance(), "Position:               ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->position.x), x + 10, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->position.y), x + 15, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->position.z), x + 20, y, NULL);
+	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.x) : __FIX10_6_TO_I(this->position.x), x + 14, y, NULL);
+	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.y) : __FIX10_6_TO_I(this->position.y), x + 19, y, NULL);
+	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->position.z) : __FIX10_6_TO_I(this->position.z), x + 24, y, NULL);
 }
