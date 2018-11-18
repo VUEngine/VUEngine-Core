@@ -127,7 +127,7 @@ int Error::triggerException(char* message, char* detail)
 		Printing::text(Printing::getInstance(), "                                             ", x, y - 1, NULL);
 	}
 
-	Printing::text(Printing::getInstance(), "                   EXCEPTION                    " , x, y++, NULL);
+	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08 EXCEPTION \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08" , x, y++, NULL);
 	Printing::text(Printing::getInstance(), "                                                " , x, y++, NULL);
 	Printing::text(Printing::getInstance(), " Last process:                                  ", x, y, NULL);
 	Printing::text(Printing::getInstance(), Game::isConstructed() ? Game::getLastProcessName(Game::getInstance()) : "constructor", x + 15, y++, NULL);

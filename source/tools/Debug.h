@@ -89,6 +89,8 @@ singleton class Debug : Object
 	void show(GameState gameState);
 	void hide();
 	void processUserInput(u16 pressedKey);
+	void dimmGame();
+	void lightUpGame();
 }
 
 

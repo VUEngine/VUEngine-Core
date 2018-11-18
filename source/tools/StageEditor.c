@@ -40,6 +40,7 @@
 #include <OptionsSelector.h>
 #include <KeypadManager.h>
 #include <BgmapTextureManager.h>
+#include <Debug.h>
 #include <debugUtilities.h>
 
 
@@ -47,17 +48,9 @@
 //												CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __USER_OBJECT_SHOW_ROW 				6
-#define __MAX_TRANSLATION_STEP				__PIXELS_TO_METERS(8 * 4)
-#define __SCREEN_X_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_WIDTH / 4)
-#define __SCREEN_Y_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_HEIGHT / 4)
-#define __SCREEN_Z_TRANSLATION_STEP			__PIXELS_TO_METERS(__SCREEN_HEIGHT / 4)
-
-#define __HVPC_STEP							__PIXELS_TO_METERS(8)
-#define __VERTICAL_VIEW_POINT_CENTER_STEP	__PIXELS_TO_METERS(8)
-#define __DISTANCE_EYE_SCREEN_STEP			__PIXELS_TO_METERS(8)
-#define __MAXIMUM_VIEW_DISTACE_STEP			1
-#define __BASE_DISTACE_STEP					__PIXELS_TO_METERS(8)
+#define __DEFAULT_TRANSLATION_STEP			8
+#define __MAX_TRANSLATION_STEP				__PIXELS_TO_METERS(32)
+#define __MAXIMUM_VIEW_DISTANCE_STEP		1
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -147,7 +140,7 @@ void StageEditor::constructor()
 
 	delete userObjects;
 
-	this->translationStepSize = 1;
+	this->translationStepSize = __DEFAULT_TRANSLATION_STEP;
 }
 
 /**
@@ -185,6 +178,8 @@ void StageEditor::show(GameState gameState)
 
 	StageEditor::releaseShape(this);
 	StageEditor::setupMode(this);
+
+	Debug::dimmGame(this);
 }
 
 /**
@@ -197,6 +192,8 @@ void StageEditor::hide()
 	StageEditor::removePreviousSprite(this);
 	StageEditor::releaseShape(this);
 	this->currentEntityNode = NULL;
+
+	Debug::lightUpGame(this);
 }
 
 /**
@@ -291,12 +288,14 @@ void StageEditor::setupMode()
 
 			StageEditor::releaseShape(this);
 			StageEditor::printCameraPosition(this);
+			StageEditor::printTranslationStepSize(this, 6);
 			break;
 
 		case kChangeProjection:
 
 			StageEditor::releaseShape(this);
 			StageEditor::printProjectionValues(this);
+			StageEditor::printTranslationStepSize(this, 9);
 			break;
 
 		case kTranslateEntities:
@@ -312,7 +311,7 @@ void StageEditor::setupMode()
 			}
 
 			StageEditor::printEntityPosition(this);
-			StageEditor::printTranslationStepSize(this);
+			StageEditor::printTranslationStepSize(this, 7);
 			break;
 	}
 }
@@ -487,7 +486,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			-__SCREEN_X_TRANSLATION_STEP,
+			__PIXELS_TO_METERS(-this->translationStepSize),
 			0,
 			0
 		};
@@ -498,7 +497,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 	{
 		Vector3D translation =
 		{
-			__SCREEN_X_TRANSLATION_STEP,
+			__PIXELS_TO_METERS(this->translationStepSize),
 			0,
 			0
 		};
@@ -510,7 +509,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			-__SCREEN_Y_TRANSLATION_STEP,
+			__PIXELS_TO_METERS(-this->translationStepSize),
 			0
 		};
 
@@ -521,7 +520,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 		Vector3D translation =
 		{
 			0,
-			__SCREEN_Y_TRANSLATION_STEP,
+			__PIXELS_TO_METERS(this->translationStepSize),
 			0
 		};
 
@@ -533,7 +532,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 		{
 			0,
 			0,
-			__SCREEN_Z_TRANSLATION_STEP,
+			__PIXELS_TO_METERS(this->translationStepSize),
 		};
 
 		StageEditor::applyTranslationToCamera(this, translation);
@@ -544,10 +543,28 @@ void StageEditor::moveCamera(u32 pressedKey)
 		{
 			0,
 			0,
-			-__SCREEN_Z_TRANSLATION_STEP,
+			__PIXELS_TO_METERS(-this->translationStepSize),
 		};
 
 		StageEditor::applyTranslationToCamera(this, translation);
+	}
+	else if(pressedKey & K_RR)
+	{
+		if(__MAX_TRANSLATION_STEP < ++this->translationStepSize)
+		{
+			this->translationStepSize = __MAX_TRANSLATION_STEP;
+		}
+
+		StageEditor::printTranslationStepSize(this, 6);
+	}
+	else if(pressedKey & K_RL)
+	{
+		if(1 > --this->translationStepSize)
+		{
+			this->translationStepSize = 1;
+		}
+
+		StageEditor::printTranslationStepSize(this, 6);
 	}
 }
 
@@ -564,37 +581,37 @@ void StageEditor::changeProjection(u32 pressedKey)
 
 	if(pressedKey & K_LL)
 	{
-		optical.horizontalViewPointCenter -= __HVPC_STEP;
+		optical.horizontalViewPointCenter -= __PIXELS_TO_METERS(this->translationStepSize);
 	}
 	else if(pressedKey & K_LR)
 	{
-		optical.horizontalViewPointCenter += __HVPC_STEP;
+		optical.horizontalViewPointCenter += __PIXELS_TO_METERS(this->translationStepSize);
 	}
 	else if(pressedKey & K_LU)
 	{
-		optical.verticalViewPointCenter -= __VERTICAL_VIEW_POINT_CENTER_STEP;
+		optical.verticalViewPointCenter -= __PIXELS_TO_METERS(this->translationStepSize);
 	}
 	else if(pressedKey & K_LD)
 	{
-		optical.verticalViewPointCenter += __VERTICAL_VIEW_POINT_CENTER_STEP;
-	}
-	else if(pressedKey & K_RL)
-	{
-		optical.distanceEyeScreen -= __DISTANCE_EYE_SCREEN_STEP;
-	}
-	else if(pressedKey & K_RR)
-	{
-		optical.distanceEyeScreen += __DISTANCE_EYE_SCREEN_STEP;
+		optical.verticalViewPointCenter += __PIXELS_TO_METERS(this->translationStepSize);
 	}
 	else if(pressedKey & K_RU)
 	{
-		optical.maximumXViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
-		optical.maximumYViewDistancePower += __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.distanceEyeScreen -= __PIXELS_TO_METERS(this->translationStepSize);
 	}
 	else if(pressedKey & K_RD)
 	{
-		optical.maximumXViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
-		optical.maximumYViewDistancePower -= __MAXIMUM_VIEW_DISTACE_STEP;
+		optical.distanceEyeScreen += __PIXELS_TO_METERS(this->translationStepSize);
+	}
+	else if(pressedKey & K_A)
+	{
+		optical.maximumXViewDistancePower += __MAXIMUM_VIEW_DISTANCE_STEP;
+		optical.maximumYViewDistancePower += __MAXIMUM_VIEW_DISTANCE_STEP;
+	}
+	else if(pressedKey & K_B)
+	{
+		optical.maximumXViewDistancePower -= __MAXIMUM_VIEW_DISTANCE_STEP;
+		optical.maximumYViewDistancePower -= __MAXIMUM_VIEW_DISTANCE_STEP;
 
 		if(0 >= optical.maximumXViewDistancePower)
 		{
@@ -608,11 +625,29 @@ void StageEditor::changeProjection(u32 pressedKey)
 	}
 	else if(pressedKey & K_LT)
 	{
-		optical.baseDistance -= __BASE_DISTACE_STEP;
+		optical.baseDistance -= __PIXELS_TO_METERS(this->translationStepSize);
 	}
 	else if(pressedKey & K_RT)
 	{
-		optical.baseDistance += __BASE_DISTACE_STEP;
+		optical.baseDistance += __PIXELS_TO_METERS(this->translationStepSize);
+	}
+	else if(pressedKey & K_RR)
+	{
+		if(__MAX_TRANSLATION_STEP < ++this->translationStepSize)
+		{
+			this->translationStepSize = __MAX_TRANSLATION_STEP;
+		}
+
+		StageEditor::printTranslationStepSize(this, 9);
+	}
+	else if(pressedKey & K_RL)
+	{
+		if(1 > --this->translationStepSize)
+		{
+			this->translationStepSize = 1;
+		}
+
+		StageEditor::printTranslationStepSize(this, 9);
 	}
 
 	Camera::setOptical(Camera::getInstance(), optical);
@@ -687,7 +722,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
-		StageEditor::printTranslationStepSize(this);
+		StageEditor::printTranslationStepSize(this, 7);
 	}
 	else if(pressedKey & K_RL)
 	{
@@ -696,7 +731,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 			this->translationStepSize = 1;
 		}
 
-		StageEditor::printTranslationStepSize(this);
+		StageEditor::printTranslationStepSize(this, 7);
 	}
 	else if(pressedKey & K_RU)
 	{
@@ -765,7 +800,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 		SpriteManager::sortLayers(SpriteManager::getInstance());
 
-		StageEditor::printTranslationStepSize(this);
+		StageEditor::printTranslationStepSize(this, 7);
 	}
 }
 
@@ -904,10 +939,11 @@ void StageEditor::printEntityPosition()
 	int y = 2;
 
 	Printing::text(Printing::getInstance(), "MOVE OBJECT", x, y++, NULL);
+
 	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "Next   \x17\x18", 38, 2, NULL);
-	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 3, NULL);
-	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", 38, 4, NULL);
+	Printing::text(Printing::getInstance(), "Next   \x17\x18", 38, 3, NULL);
+	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 4, NULL);
+	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", 38, 5, NULL);
 
 	if(this->currentEntityNode)
 	{
@@ -917,32 +953,33 @@ void StageEditor::printEntityPosition()
 		const Scale* globalScale =  SpatialObject::getScale(entity);
 		char* entityName = Container::getName(entity);
 
-		Printing::text(Printing::getInstance(), "ID: ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), Entity::getInternalId(entity), x + 6, y, NULL);
-		Printing::text(Printing::getInstance(), "Type:                                  ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(entity), x + 6, y, NULL);
-		Printing::text(Printing::getInstance(), "Name:                                  ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
-		Printing::text(Printing::getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->x), x + 14, y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->y), x + 21, y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->z), x + 28, y, NULL);
-		Printing::text(Printing::getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->x, x + 14, y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->y, x + 21, y, NULL);
-		Printing::int(Printing::getInstance(), globalRotation->z, x + 28, y, NULL);
-		Printing::text(Printing::getInstance(), "Scl. (x,y,z):                  ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->x), x + 14, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->y), x + 21, y, NULL);
-		Printing::float(Printing::getInstance(), __FIX7_9_TO_F(globalScale->z), x + 28, y, NULL);
-		Printing::text(Printing::getInstance(), "Size (w,h,d):                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getWidth(entity)), x + 14, y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getHeight(entity)), x + 21, y, NULL);
-		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(Entity::getDepth(entity)), x + 28, y, NULL);
-		Printing::text(Printing::getInstance(), "Is visible:                  ", x, ++y, NULL);
-		Printing::text(Printing::getInstance(), Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 14, y, NULL);
-		Printing::text(Printing::getInstance(), "Children:                  ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), Container::getChildCount(entity), x + 14, y, NULL);
+		Printing::text(Printing::getInstance(),		"ID:                             ", 			x, 		++y, 	NULL);
+		Printing::int(Printing::getInstance(), 		Entity::getInternalId(entity), 					x + 10, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"Type:                           ", 			x, 		++y, 	NULL);
+		Printing::text(Printing::getInstance(),		__GET_CLASS_NAME_UNSAFE(entity), 				x + 10, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"Name:                           ", 			x, 		++y, 	NULL);
+		Printing::text(Printing::getInstance(),		entityName ? entityName : "-", 					x + 10, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"          X      Y      Z       ", 			x, 		++y, 	NULL);
+		Printing::text(Printing::getInstance(),		"Position:                       ", 			x, 		++y, 	NULL);
+		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->x), 			x + 10, y, 		NULL);
+		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->y), 			x + 17, y, 		NULL);
+		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(globalPosition->z), 			x + 24, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"Rotation:                       ", 			x, 		++y, 	NULL);
+		Printing::int(Printing::getInstance(), 		globalRotation->x, 								x + 10, y, 		NULL);
+		Printing::int(Printing::getInstance(), 		globalRotation->y, 								x + 17, y, 		NULL);
+		Printing::int(Printing::getInstance(), 		globalRotation->z, 								x + 24, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"Scale:                          ", 			x, 		++y, 	NULL);
+		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->x), 					x + 10, y, 		NULL);
+		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->y), 					x + 17, y, 		NULL);
+		Printing::float(Printing::getInstance(), 	__FIX7_9_TO_F(globalScale->z), 					x + 24, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"Size:                           ", 			x, 		++y, 	NULL);
+		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getWidth(entity)), 	x + 10, y, 		NULL);
+		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getHeight(entity)), 	x + 17, y, 		NULL);
+		Printing::int(Printing::getInstance(), 		__METERS_TO_PIXELS(Entity::getDepth(entity)), 	x + 24, y++, 	NULL);
+		Printing::text(Printing::getInstance(),		"Visible:                        ", 			x, 		++y, 	NULL);
+		Printing::text(Printing::getInstance(),		Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y, NULL);
+		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
+		Printing::int(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
 	}
 }
 
@@ -986,21 +1023,21 @@ void StageEditor::printProjectionValues()
 
 	Printing::text(Printing::getInstance(), "PROJECTION VALUES", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "HVPC  \x1E\x1C\x1D", 38, 2, NULL);
-	Printing::text(Printing::getInstance(), "VVPC  \x1E\x1A\x1B", 38, 3, NULL);
-	Printing::text(Printing::getInstance(), "DES   \x1F\x1C\x1D", 38, 4, NULL);
-	Printing::text(Printing::getInstance(), "MVD   \x1F\x1A\x1B", 38, 5, NULL);
-	Printing::text(Printing::getInstance(), "BD     \x17\x18", 38, 6, NULL);
+	Printing::text(Printing::getInstance(), "HVPC  \x1E\x1C\x1D", 38, 3, NULL);
+	Printing::text(Printing::getInstance(), "VVPC  \x1E\x1A\x1B", 38, 4, NULL);
+	Printing::text(Printing::getInstance(), "DETC  \x1F\x1A\x1B", 38, 5, NULL);
+	Printing::text(Printing::getInstance(), "MVD    \x13\x14", 38, 6, NULL);
+	Printing::text(Printing::getInstance(), "BD     \x17\x18", 38, 7, NULL);
 
-	Printing::text(Printing::getInstance(), "H. view point center:            ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Horz. view point center:        ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "V. view point center:            ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Vert. view point center:        ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->verticalViewPointCenter), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Distance Eye Camera:            ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Distance Eye to Camera:         ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->distanceEyeScreen), x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum X View Distance:            ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum X View Distance:        ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), _optical->maximumXViewDistancePower, x + 25, y, NULL);
-	Printing::text(Printing::getInstance(), "Maximum Y View Distance:            ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Maximum Y View Distance:        ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), _optical->maximumYViewDistancePower, x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Base Distance:                  ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->baseDistance), x + 25, y, NULL);
@@ -1017,7 +1054,7 @@ void StageEditor::printUserObjects()
 	Printing::text(Printing::getInstance(), "ADD OBJECTS", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
 	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "Accept  \x13", 38, 2, NULL);
+	Printing::text(Printing::getInstance(), "Accept  \x13", 38, 3, NULL);
 
 	OptionsSelector::printOptions(this->userObjectsSelector, 1, 4);
 }
@@ -1028,9 +1065,9 @@ void StageEditor::printUserObjects()
  * @memberof 	StageEditor
  * @private
  */
-void StageEditor::printTranslationStepSize()
+void StageEditor::printTranslationStepSize(u8 y)
 {
-	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", 38, 5, NULL);
-	Printing::text(Printing::getInstance(), "+     ", 38, 6, NULL);
-	Printing::int(Printing::getInstance(), this->translationStepSize, 39, 6, NULL);
+	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", 38, y, NULL);
+	Printing::text(Printing::getInstance(), "+     ", 38, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->translationStepSize, 39, y, NULL);
 }
