@@ -924,9 +924,9 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(), "Name:                                  ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), entityName ? entityName : "-", x + 6, y, NULL);
 		Printing::text(Printing::getInstance(), "Pos. (x,y,z):                  ", x, ++y, NULL);
-		Printing::float(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->x), x + 14, y, NULL);
-		Printing::float(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->y), x + 21, y, NULL);
-		Printing::float(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->z), x + 28, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->x), x + 14, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->y), x + 21, y, NULL);
+		Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(globalPosition->z), x + 28, y, NULL);
 		Printing::text(Printing::getInstance(), "Rot. (x,y,z):                  ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), globalRotation->x, x + 14, y, NULL);
 		Printing::int(Printing::getInstance(), globalRotation->y, x + 21, y, NULL);
