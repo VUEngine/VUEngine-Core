@@ -610,15 +610,15 @@ void Debug::memoryStatusShowZeroPage(int increment __attribute__ ((unused)), int
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Game_getObjectSize, 							"Game"},
-		{&DirectDraw_getObjectSize, 					"DirectDraw"},
-		{&Error_getObjectSize, 							"Error"},
-		{&FrameRate_getObjectSize, 						"FrameRate"},
-		{&I18n_getObjectSize, 							"I18n"},
-		{&MemoryPool_getObjectSize, 					"MemoryPool"},
-		{&MessageDispatcher_getObjectSize, 				"MessageDispatcher"},
-		{&Printing_getObjectSize, 						"Printing"},
-		{&Camera_getObjectSize, 						"Camera"},
+		{&Game_getObjectSize, 					"Game"},
+		{&DirectDraw_getObjectSize, 			"DirectDraw"},
+		{&Error_getObjectSize, 					"Error"},
+		{&FrameRate_getObjectSize, 				"FrameRate"},
+		{&I18n_getObjectSize, 					"I18n"},
+		{&MemoryPool_getObjectSize, 			"MemoryPool"},
+		{&MessageDispatcher_getObjectSize, 		"MessageDispatcher"},
+		{&Printing_getObjectSize, 				"Printing"},
+		{&Camera_getObjectSize, 				"Camera"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -671,13 +671,13 @@ void Debug::memoryStatusShowSecondPage(int increment __attribute__ ((unused)), i
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&Clock_getObjectSize, 							"Clock"},
-		{&Object_getObjectSize, 						"Object"},
-		{&State_getObjectSize, 							"State"},
-		{&StateMachine_getObjectSize, 					"StateMachine"},
-		{&Telegram_getObjectSize, 						"Telegram"},
-		{&VirtualList_getObjectSize, 					"VirtualList"},
-		{&VirtualNode_getObjectSize, 					"VirtualNode"},
+		{&Clock_getObjectSize, 			"Clock"},
+		{&Object_getObjectSize, 		"Object"},
+		{&State_getObjectSize, 			"State"},
+		{&StateMachine_getObjectSize, 	"StateMachine"},
+		{&Telegram_getObjectSize, 		"Telegram"},
+		{&VirtualList_getObjectSize, 	"VirtualList"},
+		{&VirtualNode_getObjectSize, 	"VirtualNode"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -732,15 +732,15 @@ void Debug::memoryStatusShowFourthPage(int increment __attribute__ ((unused)), i
 
 	ClassSizeData classesSizeData[] =
 	{
-		{&PhysicalWorld_getObjectSize, 					"PhysicalWorld"},
-		{&Body_getObjectSize, 							"Body"},
-		{&Shape_getObjectSize, 							"Shape"},
-		{&Ball_getObjectSize, 							"Ball"},
-		{&Box_getObjectSize,							"Box"},
-		{&InverseBox_getObjectSize,						"InverseBox"},
-		{&Wireframe_getObjectSize, 						"Wireframe"},
-		{&Polyhedron_getObjectSize, 					"Polyhedron"},
-		{&Sphere_getObjectSize, 						"Sphere"},
+		{&PhysicalWorld_getObjectSize, 	"PhysicalWorld"},
+		{&Body_getObjectSize, 			"Body"},
+		{&Shape_getObjectSize, 			"Shape"},
+		{&Ball_getObjectSize, 			"Ball"},
+		{&Box_getObjectSize,			"Box"},
+		{&InverseBox_getObjectSize,		"InverseBox"},
+		{&Wireframe_getObjectSize, 		"Wireframe"},
+		{&Polyhedron_getObjectSize, 	"Polyhedron"},
+		{&Sphere_getObjectSize, 		"Sphere"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");
@@ -861,7 +861,7 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int count, int x, in
 	}
 
 	Printing::text(Printing::getInstance(), "Name                Size", x, ++y, NULL);
-	y++;
+	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, ++y, NULL);
 
 	int i = 0;
 	for(; classesSizeData[i].classSizeFunction && (0 == count || i < count); i++)
@@ -967,8 +967,11 @@ void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, 
 	else if(charSegments > this->charSegment)
 	{
 		Printing::text(Printing::getInstance(), "CHAR MEMORY INSPECTOR", x, y++, NULL);
-		Printing::text(Printing::getInstance(), "Chars:      -     ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 7, y, NULL);
+		Printing::text(Printing::getInstance(), "Segment:  / ", x, ++y, NULL);
+		Printing::int(Printing::getInstance(), this->charSegment + 1, x + 9, y, NULL);
+		Printing::int(Printing::getInstance(), charSegments, x + 11, y, NULL);
+		Printing::text(Printing::getInstance(), "Chars:       -    ", x, ++y, NULL);
+		Printing::int(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 9, y, NULL);
 		Printing::int(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW - 1, x + 14, y, NULL);
 
 		Debug::charMemoryShowMemory(this, increment, x, y);
@@ -1268,7 +1271,7 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 		SpriteManager::showLayer(SpriteManager::getInstance(), this->currentLayer);
 
 		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
-		Sprite::print(sprite, x, y);
+		Sprite::print(sprite, x, ++y);
 	}
 	else
 	{

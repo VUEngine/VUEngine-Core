@@ -346,9 +346,8 @@ void MemoryPool::printDetailedUsage(int x, int y)
 
 	Printing::text(printing, "MEMORY POOLS STATUS", x, y++, NULL);
 
-	Printing::text(printing, "Pool", x, ++y, NULL);
-	Printing::text(printing, "Free", x + 5, y, NULL);
-	Printing::text(printing, "Used", x + 10, y, NULL);
+	Printing::text(printing, "Pool Free Used", x, ++y, NULL);
+	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, ++y, NULL);
 
 	for(pool = 0; pool < __MEMORY_POOLS; pool++)
 	{

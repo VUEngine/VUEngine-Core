@@ -393,9 +393,11 @@ int OptionsSelector::getSelectedOption()
  */
 void OptionsSelector::printOptions(u8 x, u8 y)
 {
+	Printing printing = Printing::getInstance();
+
 	if(this->currentPage && 0 < VirtualList::getSize(VirtualList::safeCast(VirtualNode::getData(this->currentPage))))
 	{
-		FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
+		FontData* fontData = Printing::getFontByName(printing, this->font);
 
 		this->x = (x < (__SCREEN_WIDTH_IN_CHARS)) ? x : 0;
 		this->y = (y < (__SCREEN_HEIGHT_IN_CHARS)) ? y : 0;
@@ -409,7 +411,7 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 			int j = 0;
 			for(; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
-				Printing::text(Printing::getInstance(), " ", x + j, y + i, this->font);
+				Printing::text(printing, " ", x + j, y + i, this->font);
 			}
 		}
 
@@ -423,15 +425,15 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 			switch(option->type)
 			{
 				case kString:
-					Printing::text(Printing::getInstance(), (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing::text(printing, (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 
 				case kInt:
-					Printing::int(Printing::getInstance(), *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing::int(printing, *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 
 				case kFloat:
-					Printing::float(Printing::getInstance(), *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+					Printing::float(printing, *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
 					break;
 			}
 

@@ -255,24 +255,26 @@ void AnimationInspector::hide()
  */
 void AnimationInspector::setupMode()
 {
+	Printing printing = Printing::getInstance();
+
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
-	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
-	Printing::text(Printing::getInstance(), " ANIMATION INSPECTOR ", 1, 0, NULL);
-	Printing::text(Printing::getInstance(), "             ", 39, 2, NULL);
-	Printing::text(Printing::getInstance(), "             ", 39, 3, NULL);
+	Printing::text(printing, "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text(printing, " ANIMATION INSPECTOR ", 1, 0, NULL);
+	Printing::text(printing, "             ", 39, 2, NULL);
+	Printing::text(printing, "             ", 39, 3, NULL);
 
 	switch(this->mode)
 	{
 		case kSelectActor:
 
-			Printing::text(Printing::getInstance(), "Select \x13  ", 39, 2, NULL);
+			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
 			AnimationInspector::printUserAnimatedEntities(this);
 			break;
 
 		case kSelectSprite:
 
-			Printing::text(Printing::getInstance(), "Select \x13  ", 39, 2, NULL);
-			Printing::text(Printing::getInstance(), "Back   \x14  ", 39, 3, NULL);
+			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
+			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createSpriteSelector(this);
 			AnimationInspector::printSprites(this);
 			AnimationInspector::createSprite(this);
@@ -281,8 +283,8 @@ void AnimationInspector::setupMode()
 
 		case kSelectAnimation:
 
-			Printing::text(Printing::getInstance(), "Select \x13  ", 39, 2, NULL);
-			Printing::text(Printing::getInstance(), "Back   \x14  ", 39, 3, NULL);
+			Printing::text(printing, "Select \x13  ", 39, 2, NULL);
+			Printing::text(printing, "Back   \x14  ", 39, 3, NULL);
 			AnimationInspector::createAnimationsSelector(this);
 			Sprite::pause(this->animatedSprite, true);
 			AnimationInspector::printAnimatedEntityAnimations(this);
@@ -469,7 +471,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 		}
 		else
 		{
-			Sprite::pause(this->animatedSprite, false);
+			AnimationController::playAnimationFunction(Sprite::getAnimationController(this->animatedSprite), &this->animationFunction);
 		}
 	}
 	else if((pressedKey & K_LU))
@@ -507,7 +509,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 
 			case kLoop:
 
-				this->animationFunction.loop = false;
+				this->animationFunction.loop = !this->animationFunction.loop;
 				break;
 
 			case kFrames:
@@ -543,7 +545,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 
 			case kLoop:
 
-				this->animationFunction.loop = true;
+				this->animationFunction.loop = !this->animationFunction.loop;
 				break;
 
 			case kFrames:
@@ -607,7 +609,7 @@ void AnimationInspector::editAnimation(u32 pressedKey)
 					TextureDefinition* textureDefinition = Texture::getTextureDefinition(texture);
 					NM_ASSERT(textureDefinition, "AnimationInspector::selectAnimation: null textureDefinition");
 
-					if(++this->animationFunction.frames[selectedFrame] >= textureDefinition->numberOfFrames)
+					if(++this->animationFunction.frames[selectedFrame] >= textureDefinition->numberOfFrames && textureDefinition->charSetDefinition->allocationType == __ANIMATED_MULTI)
 					{
 						this->animationFunction.frames[selectedFrame] = textureDefinition->numberOfFrames - 1;
 					}
@@ -626,8 +628,9 @@ void AnimationInspector::editAnimation(u32 pressedKey)
  */
 void AnimationInspector::printUserAnimatedEntities()
 {
-	Printing::text(Printing::getInstance(), "OBJECTS", 1, 2, NULL);
-	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
+	Printing printing = Printing::getInstance();
+	Printing::text(printing, "OBJECTS", 1, 2, NULL);
+	Printing::text(printing, "                       ", 1, 3, NULL);
 	OptionsSelector::printOptions(this->animatedEntitySelector, 1, 4);
 }
 
@@ -638,8 +641,9 @@ void AnimationInspector::printUserAnimatedEntities()
  */
 void AnimationInspector::printSprites()
 {
-	Printing::text(Printing::getInstance(), "SPRITES", 1, 2, NULL);
-	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
+	Printing printing = Printing::getInstance();
+	Printing::text(printing, "SPRITES", 1, 2, NULL);
+	Printing::text(printing, "                       ", 1, 3, NULL);
 	OptionsSelector::printOptions(this->spriteSelector, 1, 4);
 }
 
@@ -650,8 +654,9 @@ void AnimationInspector::printSprites()
  */
 void AnimationInspector::printAnimatedEntityAnimations()
 {
-	Printing::text(Printing::getInstance(), "AVAILABLE ANIMATIONS", 1, 2, NULL);
-	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
+	Printing printing = Printing::getInstance();
+	Printing::text(printing, "AVAILABLE ANIMATIONS", 1, 2, NULL);
+	Printing::text(printing, "                       ", 1, 3, NULL);
 	OptionsSelector::printOptions(this->animationsSelector, 1, 4);
 }
 
@@ -664,28 +669,29 @@ void AnimationInspector::printAnimationConfig()
 {
 	int x = 1;
 	int y = 2;
+	Printing printing = Printing::getInstance();
 
-	Printing::text(Printing::getInstance(), "Animation: ", x, y, NULL);
-	Printing::text(Printing::getInstance(), this->animationFunction.name, x + 11, y++, NULL);
+	Printing::text(printing, "Animation: ", x, y, NULL);
+	Printing::text(printing, this->animationFunction.name, x + 11, y++, NULL);
 	OptionsSelector::printOptions(this->animationEditionSelector, x, ++y);
 
-	Printing::int(Printing::getInstance(), this->animationFunction.numberOfFrames, x + 19, y++, NULL);
-	Printing::int(Printing::getInstance(), this->animationFunction.delay, x + 19, y++, NULL);
-	Printing::text(Printing::getInstance(), this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
+	Printing::int(printing, this->animationFunction.numberOfFrames, x + 19, y++, NULL);
+	Printing::int(printing, this->animationFunction.delay, x + 19, y++, NULL);
+	Printing::text(printing, this->animationFunction.loop ? "true" : "false", x + 19, y++, NULL);
 
 	OptionsSelector::printOptions(this->frameEditionSelector, x, ++y + 1);
 
-	Printing::text(Printing::getInstance(), "Back     \x14 ", 37, 2, NULL);
+	Printing::text(printing, "Back     \x14 ", 37, 2, NULL);
 	if(!Sprite::isPlaying(this->animatedSprite))
 	{
-		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
+		Printing::text(printing, "Play     \x13 ", 37, 3, NULL);
 	}
 	else
 	{
-		Printing::text(Printing::getInstance(), "Pause    \x13 ", 37, 3, NULL);
+		Printing::text(printing, "Pause    \x13 ", 37, 3, NULL);
 	}
-	Printing::text(Printing::getInstance(), "Select \x1E\x1A\x1B", 37, 4, NULL);
-	Printing::text(Printing::getInstance(), "Modify \x1E\x1C\x1D", 37, 5, NULL);
+	Printing::text(printing, "Select \x1E\x1A\x1B", 37, 4, NULL);
+	Printing::text(printing, "Modify \x1E\x1C\x1D", 37, 5, NULL);
 
 	int selectedProperty = OptionsSelector::getSelectedOption(this->animationEditionSelector);
 
@@ -693,14 +699,14 @@ void AnimationInspector::printAnimationConfig()
 	{
 		case kFrames:
 
-			Printing::text(Printing::getInstance(), "Select \x1F\x1A\x1B", 37, 7, NULL);
-			Printing::text(Printing::getInstance(), "Modify \x1F\x1C\x1D", 37, 8, NULL);
+			Printing::text(printing, "Select \x1F\x1A\x1B", 37, 7, NULL);
+			Printing::text(printing, "Modify \x1F\x1C\x1D", 37, 8, NULL);
 			break;
 
 		default:
 
-			Printing::text(Printing::getInstance(), "                   ", 37, 7, NULL);
-			Printing::text(Printing::getInstance(), "                   ", 37, 8, NULL);
+			Printing::text(printing, "                   ", 37, 7, NULL);
+			Printing::text(printing, "                   ", 37, 8, NULL);
 			break;
 	}
 }
@@ -925,6 +931,6 @@ void AnimationInspector::onAnimationComplete(Object eventFirer __attribute__ ((u
 {
 	if(!this->animationFunction.loop)
 	{
-		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 2, NULL);
+		Printing::text(Printing::getInstance(), "Play     \x13 ", 37, 3, NULL);
 	}
 }
