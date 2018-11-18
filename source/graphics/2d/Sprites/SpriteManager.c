@@ -39,7 +39,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAX_SPRITE_CLASS_NAME_SIZE			10
+#define __MAX_SPRITE_CLASS_NAME_SIZE			14
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -925,19 +925,19 @@ void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTab
  */
 void SpriteManager::print(int x, int y, bool resumed)
 {
-	Printing::text(Printing::getInstance(), "SPRITES' USAGE", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 #ifdef __PROFILE_GAME
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), _totalPixelsToDraw, x + 17, y, NULL);
+	Printing::int(Printing::getInstance(), _totalPixelsToDraw, x + 18, y, NULL);
 #endif
 	Printing::text(Printing::getInstance(), "Last free layer:     ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->freeLayer, x + 17, y, NULL);
+	Printing::int(Printing::getInstance(), this->freeLayer, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Free layers:         ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - 1 - VirtualList::getSize(this->sprites), x + 17, y, NULL);
-	Printing::text(Printing::getInstance(), "Sprites' count:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 17, y, NULL);
+	Printing::int(Printing::getInstance(), __TOTAL_LAYERS - 1 - VirtualList::getSize(this->sprites), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Sprites count:      ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->sprites), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Disposed sprites:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->spritesToDispose ? VirtualList::getSize(this->spritesToDispose) : 0, x + 17, y, NULL);
+	Printing::int(Printing::getInstance(), this->spritesToDispose ? VirtualList::getSize(this->spritesToDispose) : 0, x + 18, y, NULL);
 
 	if(resumed)
 	{
@@ -961,7 +961,7 @@ void SpriteManager::print(int x, int y, bool resumed)
 		Printing::int(Printing::getInstance(), Sprite::getWorldLayer(sprite), auxX, auxY, NULL);
 		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
-		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + 14, auxY, 4, NULL);
+		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
 
 		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
 		{
@@ -979,7 +979,7 @@ void SpriteManager::print(int x, int y, bool resumed)
  */
 void SpriteManager::printObjectSpriteContainersStatus(int x, int y)
 {
-	Printing::text(Printing::getInstance(), "OBJECTS' USAGE", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "OBJECTS USAGE", x, y++, NULL);
 	int totalUsedObjects = 0;
 	VirtualNode node = this->objectSpriteContainers->head;
 

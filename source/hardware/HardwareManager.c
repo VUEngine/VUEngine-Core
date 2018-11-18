@@ -418,7 +418,7 @@ void HardwareManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "HARDWARE STATUS", x, y++, NULL);
 
 	int auxY = y;
-	int xDisplacement = 6;
+	int xDisplacement = 5;
 
 	// print registries' status to know the call source
 	Printing::text(Printing::getInstance(), "PSW:" , x, ++auxY, NULL);
@@ -428,8 +428,8 @@ void HardwareManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "LP:" , x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), HardwareManager::getLinkPointer(), x + xDisplacement, auxY++, 4, NULL);
 
-	Printing::text(Printing::getInstance(), "_hardwareRegisters", x, ++auxY, NULL);
-	auxY++;
+	Printing::text(Printing::getInstance(), "Hardware\nRegisters", x, ++auxY, NULL);
+	auxY+=2;
 	Printing::text(Printing::getInstance(), "WCR:", x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), _hardwareRegisters[__WCR], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "CCR:", x, ++auxY, NULL);
@@ -456,11 +456,11 @@ void HardwareManager::print(int x, int y)
 	Printing::hex(Printing::getInstance(), _hardwareRegisters[__SCR], x + xDisplacement, auxY, 4, NULL);
 
 	auxY = y + 4;
-	x += 19;
+	x += 11;
 	xDisplacement = 8;
 
-	Printing::text(Printing::getInstance(), "_vipRegisters", x, ++auxY, NULL);
-	auxY++;
+	Printing::text(Printing::getInstance(), "VIP\nRegisters", x, ++auxY, NULL);
+	auxY+=2;
 	Printing::text(Printing::getInstance(), "INTPND:", x, ++auxY, NULL);
 	Printing::hex(Printing::getInstance(), _vipRegisters[__INTPND], x + xDisplacement, auxY, 4, NULL);
 	Printing::text(Printing::getInstance(), "INTENB:", x, ++auxY, NULL);

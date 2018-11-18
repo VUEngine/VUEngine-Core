@@ -563,10 +563,10 @@ void BgmapTextureManager::print(int x, int y)
 		}
 	}
 
-	Printing::text(Printing::getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "BGMAP TEXTURES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Segments for textures: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), BgmapTextureManager::getAvailableBgmapSegmentsForTextures(this), x + 23, y, NULL);
-	Printing::text(Printing::getInstance(), "Textures' count: ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Textures count: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), textureCount, x + 23, y, NULL);
 	Printing::text(Printing::getInstance(), "Printing segment: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(this), x + 23, y, NULL);
@@ -578,8 +578,8 @@ void BgmapTextureManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Free: ", x, y++, NULL);
 
 	y++;
-	Printing::text(Printing::getInstance(), "ROM      Refs", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Address  ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "ROM", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Address  Refs", x, y++, NULL);
 
 	int i = 0;
 	int j = 0;

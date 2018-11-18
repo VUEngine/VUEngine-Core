@@ -344,7 +344,7 @@ void MemoryPool::printDetailedUsage(int x, int y)
 
 	Printing::resetWorldCoordinates(printing);
 
-	Printing::text(printing, "MEMORY POOL'S STATUS", x, y++, NULL);
+	Printing::text(printing, "MEMORY POOLS STATUS", x, y++, NULL);
 
 	Printing::text(printing, "Pool", x, ++y, NULL);
 	Printing::text(printing, "Free", x + 5, y, NULL);

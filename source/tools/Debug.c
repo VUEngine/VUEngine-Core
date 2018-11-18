@@ -522,7 +522,7 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 {
 	Debug::removeSubPages(this);
 
-	Printing::text(Printing::getInstance(), "GAME'S STATUS", 1, y++, NULL);
+	Printing::text(Printing::getInstance(), "GAME STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "Current State:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this->gameState), 20, y, NULL);
 
@@ -551,7 +551,7 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 
 	y += 3;
 
-	Printing::text(Printing::getInstance(), "CLOCKS' STATUS", 1, y++, NULL);
+	Printing::text(Printing::getInstance(), "CLOCKS STATUS", 1, y++, NULL);
 	Printing::text(Printing::getInstance(), "General clock time: ", 1, ++y, NULL);
 	Clock::print(Game::getClock(Game::getInstance()), 26, y, NULL);
 	Printing::text(Printing::getInstance(), "In game clock's time: ", 1, ++y, NULL);
@@ -852,7 +852,7 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int count, int x, in
 {
 	int columnIncrement = 20;
 
-	Printing::text(Printing::getInstance(), "CLASSES' MEMORY USAGE (B) ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "CLASSES MEMORY USAGE (B) ", x, y++, NULL);
 
 	if(message)
 	{
@@ -860,7 +860,7 @@ void Debug::printClassSizes(ClassSizeData* classesSizeData, int count, int x, in
 		y++;
 	}
 
-	Printing::text(Printing::getInstance(), "Name				Size", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Name                Size", x, ++y, NULL);
 	y++;
 
 	int i = 0;
@@ -966,7 +966,7 @@ void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, 
 	}
 	else if(charSegments > this->charSegment)
 	{
-		Printing::text(Printing::getInstance(), "CHAR MEMORY'S USAGE", x, y++, NULL);
+		Printing::text(Printing::getInstance(), "CHAR MEMORY INSPECTOR", x, y++, NULL);
 		Printing::text(Printing::getInstance(), "Chars:      -     ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW, x + 7, y, NULL);
 		Printing::int(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW - 1, x + 14, y, NULL);
@@ -1109,14 +1109,13 @@ void Debug::texturesShowStatus(int increment, int x, int y)
 	{
 		SpriteManager::recoverLayers(SpriteManager::getInstance());
 		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
-
-		ParamTableManager::print(ParamTableManager::getInstance(), x + 26, y);
+		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 		Debug::dimmGame(this);
 	}
 	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
 		Printing::text(Printing::getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
-		Printing::text(Printing::getInstance(), "BGMAP TEXTURES' USAGE", x, y++, NULL);
+		Printing::text(Printing::getInstance(), "BGMAP TEXTURES INSPECTOR", x, y++, NULL);
 		Printing::text(Printing::getInstance(), "Segment: ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), this->bgmapSegment, x + 9, y, NULL);
 
@@ -1131,7 +1130,7 @@ void Debug::texturesShowStatus(int increment, int x, int y)
 		this->bgmapSegment = -1;
 		SpriteManager::recoverLayers(SpriteManager::getInstance());
 		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
-		ParamTableManager::print(ParamTableManager::getInstance(), x, y + 7);
+		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
 		Debug::dimmGame(this);
 	}
 }
@@ -1182,7 +1181,7 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 	}
 	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
-		Printing::text(Printing::getInstance(), "OBJECTS' USAGE", x, y++, NULL);
+		Printing::text(Printing::getInstance(), "OBJECTS INSPECTOR", x, y++, NULL);
 
 		ObjectSpriteContainer objectSpriteContainer = SpriteManager::getObjectSpriteContainerBySegment(SpriteManager::getInstance(), this->objectSegment);
 
@@ -1268,7 +1267,7 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 
 		SpriteManager::showLayer(SpriteManager::getInstance(), this->currentLayer);
 
-		Printing::text(Printing::getInstance(), "SPRITES' USAGE", x, y++, NULL);
+		Printing::text(Printing::getInstance(), "SPRITES INSPECTOR", x, y++, NULL);
 		Sprite::print(sprite, x, y);
 	}
 	else

@@ -352,7 +352,7 @@ void ParamTableManager::print(int x, int y)
 {
 	int xDisplacement = 11;
 
-	Printing::text(Printing::getInstance(), "PARAM TABLE'S STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "PARAM TABLE STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Size:              ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->size, x + xDisplacement, y, NULL);
 

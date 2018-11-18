@@ -1184,24 +1184,24 @@ ParticleRemover Stage::getParticleRemover()
 
 void Stage::showStreamingProfiling(int x, int y)
 {
-	Printing::text(Printing::getInstance(), "STREAMING'S STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "STREAMING STATUS", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Stage's status", x, ++y, NULL);
 
 	int originalY __attribute__ ((unused)) = y;
-	int xDisplacement = 18;
+	int xDisplacement = 21;
 	y++;
 
-	Printing::text(Printing::getInstance(), "Regist. entities:      ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Registered entities:            ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->stageEntities), x + xDisplacement, y++, NULL);
-	Printing::text(Printing::getInstance(), "Loaded entities:       ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Loaded entities:                ", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->loadedStageEntities), x + xDisplacement, y++, NULL);
-	Printing::text(Printing::getInstance(), "Children entities:       ", x, y, NULL);
+	Printing::text(Printing::getInstance(), "Child entities:                 ", x, y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->children), x + xDisplacement, y++, NULL);
 
 #ifdef __PROFILE_STREAMING
 
-	xDisplacement = 12;
+	xDisplacement = 10;
 
 	Printing::text(Printing::getInstance(), "Process duration (ms):", x, ++y, NULL);
 

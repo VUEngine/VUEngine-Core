@@ -454,7 +454,7 @@ void PhysicalWorld::print(int x, int y)
 {
 	Printing::resetWorldCoordinates(Printing::getInstance());
 
-	Printing::text(Printing::getInstance(), "PHYSICS' STATUS", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->bodies), x + 19, y, NULL);
 	Printing::text(Printing::getInstance(), "Active bodies:         ", x, ++y, NULL);
