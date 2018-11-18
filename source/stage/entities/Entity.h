@@ -92,6 +92,9 @@ class Entity : Container
 	void informShapesThatStoppedMoving();
 	void disableShapes();
 	void activateShapes(bool value);
+	bool hasShapes();
+	void showShapes();
+	void hideShapes();
 	Direction getDirection();
 	u32 getShapesLayers();
 	void setShapesLayers(u32 layers);

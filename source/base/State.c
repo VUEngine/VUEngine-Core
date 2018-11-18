@@ -96,7 +96,7 @@ void State::resume(void* owner __attribute__ ((unused)))
  *
  * @param owner		StateMachine's owner
  */
-bool State::processMessage(void* owner, Telegram telegram)
+bool State::processMessage(void* owner __attribute__ ((unused)), Telegram telegram __attribute__ ((unused)))
 {
 	return true;
 }

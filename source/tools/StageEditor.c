@@ -327,31 +327,9 @@ void StageEditor::releaseShape()
 	if(this->currentEntityNode)
 	{
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
+		Entity::hideShapes(entity);
 
-		VirtualList shapes =  Entity::getShapes(entity);
-
-		if(shapes)
-		{
-			VirtualNode node = shapes->head;
-
-			for(; node; node = node->next)
-			{
-				if(this->shape == Shape::safeCast(node->data))
-				{
-					break;
-				}
-			}
-
-			if(this->shape && !node)
-			{
-				delete this->shape;
-			}
-			else if(this->shape)
-			{
-				Shape::hide(this->shape);
-			}
-		}
-		else if(this->shape)
+		if(!Entity::hasShapes(entity) && this->shape)
 		{
 			delete this->shape;
 		}
@@ -373,21 +351,18 @@ void StageEditor::getShape()
 	}
 
 	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
-	VirtualList shapes =  Entity::getShapes(entity);
+	Entity::showShapes(entity);
 
-	this->shape = shapes ? Shape::safeCast(VirtualList::front(shapes)) : NULL;
-
-	if(!this->shape)
+	if(!Entity::hasShapes(entity))
 	{
 		this->shape = Shape::safeCast(new Box(SpatialObject::safeCast(entity)));
 
 		Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
 		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
 
-			Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
+		Shape::setReady(this->shape, false);
 	}
-
-	Shape::setReady(this->shape, false);
 }
 
 /**
@@ -398,18 +373,18 @@ void StageEditor::getShape()
  */
 void StageEditor::positionShape()
 {
-	if(!this->currentEntityNode || !this->shape)
+	if(!this->currentEntityNode)
 	{
 		return;
 	}
 
 	Entity entity = Entity::safeCast(VirtualNode::getData(this->currentEntityNode));
-	Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
+	Entity::showShapes(entity);
 
-		Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
-
-	if(this->shape)
+	if(!Entity::hasShapes(entity) && this->shape)
 	{
+		Size size = {Entity::getWidth(entity), Entity::getHeight(entity), 0};
+		Shape::position(this->shape, Entity::getPosition(entity), Entity::getRotation(entity), Entity::getScale(entity), &size);
 		Shape::show(this->shape);
 	}
 }
@@ -764,7 +739,7 @@ void StageEditor::translateEntity(u32 pressedKey)
  */
 void StageEditor::applyTranslationToEntity(Vector3D translation)
 {
-	if(this->currentEntityNode && this->shape)
+	if(this->currentEntityNode)
 	{
 		Container container = Container::safeCast(this->currentEntityNode->data);
 		Vector3D localPosition = *Container::getLocalPosition(container);
@@ -773,7 +748,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 		localPosition.y += translation.y;
 		localPosition.z += translation.z;
 
-			Container::setLocalPosition(container, &localPosition);
+		Container::setLocalPosition(container, &localPosition);
 		Container::invalidateGlobalPosition(container);
 
 		// this hack forces the Entity to recalculate its sprites' value.
@@ -835,7 +810,7 @@ void StageEditor::showSelectedUserObject()
 
 		Rotation spriteRotation = {0, 0, 0};
 		Scale spriteScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-			Sprite::setPosition(this->userObjectSprite, &spritePosition);
+		Sprite::setPosition(this->userObjectSprite, &spritePosition);
 		Sprite::rotate(this->userObjectSprite, &spriteRotation);
 		Sprite::resize(this->userObjectSprite, spriteScale, spritePosition.z);
 		Sprite::calculateParallax(this->userObjectSprite, spritePosition.z);

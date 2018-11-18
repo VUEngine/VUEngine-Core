@@ -950,51 +950,72 @@ u32 Entity::areAllChildrenReady()
  */
 void Entity::transformShapes()
 {
-	if(this->shapes && this->entityDefinition->shapeDefinitions)
+	if(this->shapes)
 	{
-		const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
-
 		// setup shape
-//		bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
+		//	bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
 		const Vector3D* myPosition =  SpatialObject::getPosition(this);
 		const Rotation* myRotation =  SpatialObject::getRotation(this);
 		const Scale* myScale =  SpatialObject::getScale(this);
 
 		Direction currentDirection = Entity::getDirection(this);
 		VirtualNode node = this->shapes->head;
-		int i = 0;
+		if(this->entityDefinition->shapeDefinitions)
+    	{
+			const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
+			VirtualNode node = this->shapes->head;
+			int i = 0;
 
-		for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
+			for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
+			{
+				Shape shape = Shape::safeCast(node->data);
+				u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
+
+				Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeDefinitions[i].displacement);
+
+				Vector3D shapePosition =
+				{
+					myPosition->x + ((__X_AXIS & axesForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
+					myPosition->y + ((__Y_AXIS & axesForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
+					myPosition->z + ((__Z_AXIS & axesForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
+				};
+
+				Rotation shapeRotation =
+				{
+					myRotation->x + shapeDefinitions[i].rotation.x,
+					myRotation->y + shapeDefinitions[i].rotation.y,
+					myRotation->z + shapeDefinitions[i].rotation.z,
+				};
+
+				Scale shapeScale =
+				{
+					__FIX7_9_MULT(myScale->x, shapeDefinitions[i].scale.x),
+					__FIX7_9_MULT(myScale->y, shapeDefinitions[i].scale.y),
+					__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
+				};
+
+				Size size = Size::getFromPixelSize(shapeDefinitions[i].pixelSize);
+
+				Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			}
+		}
+		else
 		{
-			Shape shape = Shape::safeCast(node->data);
-			u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
-
-			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeDefinitions[i].displacement);
-
-			Vector3D shapePosition =
+			for(; node; node = node->next)
 			{
-				myPosition->x + ((__X_AXIS & axesForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
-				myPosition->y + ((__Y_AXIS & axesForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
-				myPosition->z + ((__Z_AXIS & axesForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
-			};
+				Shape shape = Shape::safeCast(node->data);
+				u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
 
-			Rotation shapeRotation =
-			{
-				myRotation->x + shapeDefinitions[i].rotation.x,
-				myRotation->y + shapeDefinitions[i].rotation.y,
-				myRotation->z + shapeDefinitions[i].rotation.z,
-			};
+				Vector3D shapePosition = *myPosition;
 
-			Scale shapeScale =
-			{
-				__FIX7_9_MULT(myScale->x, shapeDefinitions[i].scale.x),
-				__FIX7_9_MULT(myScale->y, shapeDefinitions[i].scale.y),
-				__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
-			};
+				Rotation shapeRotation = *myRotation;
 
-			Size size = Size::getFromPixelSize(shapeDefinitions[i].pixelSize);
+				Scale shapeScale = *myScale;
 
-			Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+				Size size = this->size;
+
+				Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+			}
 		}
 	}
 }
@@ -1763,6 +1784,41 @@ void Entity::activateShapes(bool value)
 		}
 	}
 }
+
+/**
+ * Returns whether I have collision shapes or not
+ */
+bool Entity::hasShapes()
+{
+	return NULL != this->shapes && 0 < VirtualList::getSize(this->shapes);
+}
+
+void Entity::showShapes()
+{
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape::show(node->data);
+		}
+	}
+}
+
+void Entity::hideShapes()
+{
+	if(this->shapes)
+	{
+		VirtualNode node = this->shapes->head;
+
+		for(; node; node = node->next)
+		{
+			Shape::hide(node->data);
+		}
+	}
+}
+
 
 /**
  * Set direction
