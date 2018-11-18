@@ -93,11 +93,11 @@ class Entity : Container
 	void disableShapes();
 	void activateShapes(bool value);
 	Direction getDirection();
-	void setDirection(Direction direction);
 	u32 getShapesLayers();
 	void setShapesLayers(u32 layers);
 	u32 getShapesLayersToIgnore();
 	void setShapesLayersToIgnore(u32 layersToIgnore);
+	virtual void setDirection(Direction direction);
 	virtual bool isVisible(int pad, bool recursive);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual void initialize(bool recursive);
