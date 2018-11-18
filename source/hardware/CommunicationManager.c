@@ -231,7 +231,7 @@ bool CommunicationManager::sendHandshake()
 	if(kCommunicationsStatusIdle == this->status)
 	{
 		this->status = kCommunicationsStatusSendingHandshake;
-		CommunicationManager::startTransmissions(this, __COM_HANDSHAKE, true);
+		CommunicationManager::startTransmissions(this, __COM_HANDSHAKE);
 		return true;
 	}
 
@@ -247,7 +247,7 @@ bool CommunicationManager::isHandshakeIncoming()
 	return CommunicationManager::isRemoteReady(this);
 }
 
-void CommunicationManager::startTransmissions(u8 payload, bool isHandShake)
+void CommunicationManager::startTransmissions(u8 payload)
 {
 	// Master must wait for slave to open the channel
 	if(CommunicationManager::isMaster(this))
@@ -315,7 +315,7 @@ bool CommunicationManager::sendPayload(u8 payload)
 	if(kCommunicationsStatusIdle == this->status)
 	{
 		this->status = kCommunicationsStatusSendingPayload;
-		CommunicationManager::startTransmissions(this, payload, false);
+		CommunicationManager::startTransmissions(this, payload);
 		return true;
 	}
 
@@ -327,7 +327,7 @@ bool CommunicationManager::receivePayload()
 	if(kCommunicationsStatusIdle == this->status)
 	{
 		this->status = kCommunicationsStatusWaitingPayload;
-		CommunicationManager::startTransmissions(this, __COM_CHECKSUM, false);
+		CommunicationManager::startTransmissions(this, __COM_CHECKSUM);
 		return true;
 	}
 
