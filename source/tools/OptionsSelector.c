@@ -404,10 +404,10 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
 		int i = 0;
-		for(; i < (this->rows * fontData->fontDefinition->fontSize.y); i++)
+		for(; i < (this->rows * fontData->fontDefinition->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
 		{
 			int j = 0;
-			for(; (this->columnWidth * this->cols) > j; j++)
+			for(; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
 			{
 				Printing::text(Printing::getInstance(), " ", x + j, y + i, this->font);
 			}
