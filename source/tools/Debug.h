@@ -69,6 +69,8 @@ singleton class Debug : Object
 	VirtualNode currentSubPage;
 	// current layer
 	u8 currentLayer;
+	// part of bgmap memory current viewed
+	u8 viewedMapPart;
 	// current bgmap
 	int bgmapSegment;
 	// current obj segment
@@ -77,8 +79,6 @@ singleton class Debug : Object
 	int charSegment;
 	// current page in sram inspector
 	int sramPage;
-	// window to look into bgmap memory
-	PixelVector mapDisplacement;
 	// update function pointer
 	void (*update)(void *);
 

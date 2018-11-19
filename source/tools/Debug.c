@@ -107,9 +107,6 @@
 //											CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define DISPLACEMENT_STEP_X				512 - 384
-#define DISPLACEMENT_STEP_Y				512 - 224
-
 #define __CHARS_PER_SEGMENT_TO_SHOW		512
 #define __CHARS_PER_ROW_TO_SHOW			32
 
@@ -164,8 +161,7 @@ void Debug::constructor()
 
 	this->update = NULL;
 
-	this->mapDisplacement.x = 0;
-	this->mapDisplacement.y = 0;
+	this->viewedMapPart = 0;
 
 	Debug::setupPages(this);
 }
@@ -468,7 +464,10 @@ void Debug::showSubPage(int increment)
  */
 void Debug::displaceLeft()
 {
-	this->mapDisplacement.x = 0;
+	if(this->viewedMapPart % 2 == 1)
+	{
+		this->viewedMapPart--;
+	}
 	Debug::showDebugBgmap(this);
 }
 
@@ -477,7 +476,10 @@ void Debug::displaceLeft()
  */
 void Debug::displaceRight()
 {
-	this->mapDisplacement.x = DISPLACEMENT_STEP_X;
+	if(this->viewedMapPart % 2 == 0)
+	{
+		this->viewedMapPart++;
+	}
 	Debug::showDebugBgmap(this);
 }
 
@@ -486,7 +488,10 @@ void Debug::displaceRight()
  */
 void Debug::displaceUp()
 {
-	this->mapDisplacement.y = 0;
+	if(this->viewedMapPart > 1)
+	{
+		this->viewedMapPart -= 2;
+	}
 	Debug::showDebugBgmap(this);
 }
 
@@ -495,7 +500,10 @@ void Debug::displaceUp()
  */
 void Debug::displaceDown()
 {
-	this->mapDisplacement.y = DISPLACEMENT_STEP_Y;
+	if(this->viewedMapPart < 4)
+	{
+		this->viewedMapPart += 2;
+	}
 	Debug::showDebugBgmap(this);
 }
 
@@ -1045,8 +1053,7 @@ void Debug::texturesPage(int increment __attribute__ ((unused)), int x __attribu
 	this->currentSubPage = this->subPages->head;
 
 	this->bgmapSegment = -1;
-	this->mapDisplacement.x = 0;
-	this->mapDisplacement.y = 0;
+	this->viewedMapPart = 0;
 
 	Debug::showSubPage(this, 0);
 }
@@ -1066,6 +1073,7 @@ void Debug::showDebugBgmap()
 	}
 
 	Debug::setBlackBackground(this);
+	Debug::lightUpGame(this);
 	Debug::showBgmapSegment(this);
 }
 
@@ -1076,16 +1084,104 @@ void Debug::showDebugBgmap()
  */
 void Debug::showBgmapSegment()
 {
+	u8 i = 0;
+	u8 yOffset = 4;
+
 	// write the head
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].head = __WORLD_ON | this->bgmapSegment;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = this->mapDisplacement.x;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mx = (this->viewedMapPart % 2 == 0) ? 0 : (512-(384-16));
 	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].mp = 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].my = this->mapDisplacement.y;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gx = 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gp = 3;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gy = 0;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].w = __SCREEN_WIDTH;
-	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].h = __SCREEN_HEIGHT;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].my = (this->viewedMapPart < 2) ? 0 : (this->viewedMapPart > 3) ? (512-(224-48)) : ((512-(224-32))/2);
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gx = (this->viewedMapPart % 2 == 0) ? 16 : 0;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gp = 0;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].gy = (this->viewedMapPart < 2) ? 40 : 32;
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].w = (384-16);
+	_worldAttributesBaseAddress[__TOTAL_LAYERS - 1].h = (this->viewedMapPart < 2) ? (224-40) : (this->viewedMapPart > 3) ? (224-48) : (224-32);
+
+	// print box
+	switch(this->viewedMapPart)
+	{
+		case 0:
+		{
+			Printing::text(Printing::getInstance(), " \x03\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, yOffset, NULL);
+			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+
+        	for(i = yOffset + 1; i < 28; i++)
+        	{
+        		Printing::text(Printing::getInstance(), "\x07", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
+        	}
+
+			break;
+		}
+		case 1:
+		{
+			Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x04 ", 0, yOffset, NULL);
+			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+
+        	for(i = yOffset + 1; i < 28; i++)
+        	{
+        		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), "\x07", 46, i, NULL);
+        	}
+
+			break;
+		}
+		case 2:
+		{
+			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
+			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+
+        	for(i = yOffset; i < 28; i++)
+        	{
+        		Printing::text(Printing::getInstance(), "\x07", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
+        	}
+
+			break;
+		}
+		case 3:
+		{
+			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
+			Printing::text(Printing::getInstance(), "                                                ", 0, 26, NULL);
+
+        	for(i = yOffset; i < 28; i++)
+        	{
+        		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), "\x07", 46, i, NULL);
+        	}
+
+			break;
+		}
+		case 4:
+		{
+			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
+			Printing::text(Printing::getInstance(), " \x05\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 26, NULL);
+			Printing::text(Printing::getInstance(), "                                                ", 0, 27, NULL);
+
+        	for(i = yOffset; i < 26; i++)
+        	{
+        		Printing::text(Printing::getInstance(), "\x07", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), " ", 46, i, NULL);
+        	}
+
+			break;
+		}
+		case 5:
+		{
+			Printing::text(Printing::getInstance(), "                                                ", 0, yOffset, NULL);
+			Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x06 ", 0, 26, NULL);
+			Printing::text(Printing::getInstance(), "                                                ", 0, 27, NULL);
+
+        	for(i = yOffset; i < 26; i++)
+        	{
+        		Printing::text(Printing::getInstance(), " ", 1, i, NULL);
+        		Printing::text(Printing::getInstance(), "\x07", 46, i, NULL);
+        	}
+
+			break;
+		}
+	}
 }
 
 /**
@@ -1114,12 +1210,10 @@ void Debug::texturesShowStatus(int increment, int x, int y)
 	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
 		Printing::text(Printing::getInstance(), " \x1E\x1A\x1B\x1C\x1D\x1F\x1A\x1B\x1C\x1D ", 35, 0, NULL);
-		Printing::text(Printing::getInstance(), "BGMAP TEXTURES INSPECTOR", x, y++, NULL);
-		Printing::text(Printing::getInstance(), "Segment: ", x, ++y, NULL);
-		Printing::int(Printing::getInstance(), this->bgmapSegment, x + 9, y, NULL);
+		Printing::text(Printing::getInstance(), "BGMAP TEXTURES INSPECTOR           Segment: ", x, y, NULL);
+		Printing::int(Printing::getInstance(), this->bgmapSegment, x + 44, y, NULL);
 
-		this->mapDisplacement.x = 0;
-		this->mapDisplacement.y = 0;
+		this->viewedMapPart = 0;
 
 		Debug::showDebugBgmap(this);
 	}
@@ -1164,6 +1258,8 @@ void Debug::objectsPage(int increment __attribute__ ((unused)), int x __attribut
 void Debug::objectsShowStatus(int increment, int x, int y)
 {
 	this->objectSegment += increment;
+
+	Debug::dimmGame(this);
 
 	if(-1 > this->objectSegment)
 	{
@@ -1243,6 +1339,8 @@ void Debug::spritesPage(int increment __attribute__ ((unused)), int x __attribut
 void Debug::spritesShowStatus(int increment, int x, int y)
 {
 	this->currentLayer -= increment;
+
+	Debug::dimmGame(this);
 
 	if(this->currentLayer > __TOTAL_LAYERS)
 	{

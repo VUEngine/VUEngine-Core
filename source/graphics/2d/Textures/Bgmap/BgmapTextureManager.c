@@ -622,6 +622,6 @@ void BgmapTextureManager::print(int x, int y)
 		}
 	}
 
-	Printing::int(Printing::getInstance(), recyclableTextures, x + 9, y - 7, NULL);
-	Printing::int(Printing::getInstance(), freeEntries, x + 9, y - 6, NULL);
+	Printing::int(Printing::getInstance(), recyclableTextures, x + 7, y - 7, NULL);
+	Printing::int(Printing::getInstance(), freeEntries, x + 7, y - 6, NULL);
 }
