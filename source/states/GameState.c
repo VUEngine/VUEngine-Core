@@ -119,7 +119,7 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 	if(!Clock::isPaused(this->messagingClock))
 	{
 		// update the stage
-			Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
+		Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
 
 		this->previousUpdateTime = Clock::getTime(this->updateClock);
 	}
@@ -500,7 +500,7 @@ void GameState::startClocks()
 	Clock::start(this->updateClock);
 	Clock::start(this->physicsClock);
 
-	this->previousUpdateTime = Clock::getTime(this->messagingClock);
+	this->previousUpdateTime = Clock::getTime(this->updateClock);
 }
 
 /**
