@@ -574,12 +574,15 @@ void BgmapTextureManager::print(int x, int y)
 	y++;
 	y++;
 	Printing::text(Printing::getInstance(), "Recyclable textures", x, y++, NULL);
+	y++;
 	Printing::text(Printing::getInstance(), "Total: ", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Free: ", x, y++, NULL);
 
 	y++;
 	Printing::text(Printing::getInstance(), "ROM", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Address  Refs", x, y++, NULL);
+	y++;
+	Printing::text(Printing::getInstance(), "Address   Refs", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", x, y++, NULL);
 
 	int i = 0;
 	int j = 0;
@@ -600,9 +603,9 @@ void BgmapTextureManager::print(int x, int y)
 				recyclableTextures++;
 				freeEntries += !BgmapTexture::getUsageCount(bgmapTexture)? 1 : 0;
 
-//				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture)? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
+//				Printing::text(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + j + 1, y + i, NULL);
 				Printing::hex(Printing::getInstance(), (int)Texture::getTextureDefinition(bgmapTexture), x + j, y + i, 8, NULL);
-				Printing::int(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 9, y + i, NULL);
+				Printing::int(Printing::getInstance(), BgmapTexture::getUsageCount(bgmapTexture), x + j + 10, y + i, NULL);
 
 				if(++i + y > __SCREEN_HEIGHT / 8)
 				{
@@ -619,6 +622,6 @@ void BgmapTextureManager::print(int x, int y)
 		}
 	}
 
-	Printing::int(Printing::getInstance(), recyclableTextures, x + 9, y - 5, NULL);
-	Printing::int(Printing::getInstance(), freeEntries, x + 9, y - 4, NULL);
+	Printing::int(Printing::getInstance(), recyclableTextures, x + 9, y - 7, NULL);
+	Printing::int(Printing::getInstance(), freeEntries, x + 9, y - 6, NULL);
 }

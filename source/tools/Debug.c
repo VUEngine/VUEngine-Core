@@ -234,7 +234,6 @@ void Debug::show(GameState gameState)
 
 	this->gameState = gameState;
 
-	Debug::dimmGame(this);
 	Debug::showPage(this, 0);
 }
 
@@ -246,8 +245,6 @@ void Debug::hide()
 	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
-
-	Debug::lightUpGame(this);
 }
 
 /**
@@ -285,6 +282,11 @@ void Debug::dimmGame()
 void Debug::lightUpGame()
 {
 	Stage::setupPalettes(GameState::getStage(this->gameState));
+}
+
+void Debug::setBlackBackground()
+{
+	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
 }
 
 /**
@@ -334,7 +336,6 @@ void Debug::processUserInput(u16 pressedKey)
 void Debug::showPreviousPage()
 {
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
-	Debug::dimmGame(this);
 
 	this->currentPage = VirtualNode::getPrevious(this->currentPage);
 
@@ -352,7 +353,6 @@ void Debug::showPreviousPage()
 void Debug::showNextPage()
 {
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
-	Debug::dimmGame(this);
 
 	this->currentPage = this->currentPage->next;
 
@@ -435,7 +435,7 @@ void Debug::showPage(int increment)
 		Debug::printHeader(this);
 		Printing::text(Printing::getInstance(), " \x1E\x1C\x1D ", 42, 0, NULL);
 
-		Debug::dimmGame(this);
+		Debug::setBlackBackground(this);
 
 		CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
 
@@ -960,9 +960,8 @@ void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, 
 
 	if(-1 == this->charSegment)
 	{
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		CharSetManager::print(CharSetManager::getInstance(), x, y);
-		Debug::dimmGame(this);
 	}
 	else if(charSegments > this->charSegment)
 	{
@@ -975,14 +974,12 @@ void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, 
 		Printing::int(Printing::getInstance(), this->charSegment * __CHARS_PER_SEGMENT_TO_SHOW + __CHARS_PER_SEGMENT_TO_SHOW - 1, x + 14, y, NULL);
 
 		Debug::charMemoryShowMemory(this, increment, x, y);
-		Debug::lightUpGame(this);
 	}
 	else
 	{
 		this->charSegment = -1;
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		CharSetManager::print(CharSetManager::getInstance(), x, y);
-		Debug::dimmGame(this);
 	}
 }
 
@@ -996,7 +993,7 @@ void Debug::charMemoryShowStatus(int increment __attribute__ ((unused)), int x, 
  */
 void Debug::charMemoryShowMemory(int increment __attribute__ ((unused)), int x __attribute__ ((unused)), int y)
 {
-	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
+	Debug::setBlackBackground(this);
 
 	int i = 0;
 	int yOffset = y + 3;
@@ -1068,7 +1065,7 @@ void Debug::showDebugBgmap()
 		return;
 	}
 
-	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
+	Debug::setBlackBackground(this);
 	Debug::showBgmapSegment(this);
 }
 
@@ -1110,10 +1107,9 @@ void Debug::texturesShowStatus(int increment, int x, int y)
 
 	if(-1 == this->bgmapSegment)
 	{
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
 		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
-		Debug::dimmGame(this);
 	}
 	else if(BgmapTextureManager::getAvailableBgmapSegmentsForTextures(BgmapTextureManager::getInstance()) > this->bgmapSegment)
 	{
@@ -1126,15 +1122,13 @@ void Debug::texturesShowStatus(int increment, int x, int y)
 		this->mapDisplacement.y = 0;
 
 		Debug::showDebugBgmap(this);
-		Debug::lightUpGame(this);
 	}
 	else
 	{
 		this->bgmapSegment = -1;
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		BgmapTextureManager::print(BgmapTextureManager::getInstance(), x, y);
 		ParamTableManager::print(ParamTableManager::getInstance(), x + 27, y);
-		Debug::dimmGame(this);
 	}
 }
 
@@ -1178,9 +1172,8 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 
 	if(-1 == this->objectSegment)
 	{
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
-		Debug::dimmGame(this);
 	}
 	else if(__TOTAL_OBJECT_SEGMENTS > this->objectSegment)
 	{
@@ -1202,22 +1195,19 @@ void Debug::objectsShowStatus(int increment, int x, int y)
 		{
 			SpriteManager::showLayer(SpriteManager::getInstance(), Sprite::getWorldLayer(objectSpriteContainer));
 			ObjectSpriteContainer::print(objectSpriteContainer, x, ++y);
-			Debug::lightUpGame(this);
 		}
 		else
 		{
 			this->objectSegment = -1;
-			SpriteManager::recoverLayers(SpriteManager::getInstance());
+			Debug::setBlackBackground(this);
 			SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
-			Debug::dimmGame(this);
 		}
 	}
 	else
 	{
 		this->objectSegment = -1;
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		SpriteManager::printObjectSpriteContainersStatus(SpriteManager::getInstance(), x, y);
-		Debug::dimmGame(this);
 	}
 }
 
@@ -1261,7 +1251,7 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 
 	if(__TOTAL_LAYERS == this->currentLayer)
 	{
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
 	}
 	else if(SpriteManager::getFreeLayer(SpriteManager::getInstance()) < this->currentLayer)
@@ -1276,9 +1266,8 @@ void Debug::spritesShowStatus(int increment, int x, int y)
 	else
 	{
 		this->currentLayer = __TOTAL_LAYERS;
-		SpriteManager::recoverLayers(SpriteManager::getInstance());
+		Debug::setBlackBackground(this);
 		SpriteManager::print(SpriteManager::getInstance(), x, y, false);
-		Debug::dimmGame(this);
 	}
 }
 
@@ -1313,6 +1302,9 @@ void Debug::physicStatusShowStatistics(int increment __attribute__ ((unused)), i
 {
 	PhysicalWorld::print(GameState::getPhysicalWorld(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y);
 	CollisionManager::print(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))), x, y + 6);
+	CollisionManager::hideShapes(GameState::getCollisionManager(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance())))));
+
+	Debug::setBlackBackground(this);
 }
 
 /**
@@ -1327,6 +1319,9 @@ void Debug::physicStatusShowShapes(int increment __attribute__ ((unused)), int x
 {
 	Printing::text(Printing::getInstance(), "COLLISION SHAPES", x, y++, NULL);
 	this->update = (void (*)(void *))&Debug_showCollisionShapes;
+
+	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	Debug::dimmGame(this);
 }
 
 /**

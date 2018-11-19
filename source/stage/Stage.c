@@ -1203,7 +1203,8 @@ void Stage::showStreamingProfiling(int x, int y)
 
 	xDisplacement = 10;
 
-	Printing::text(Printing::getInstance(), "Process duration (ms):", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "Process duration (ms)", x, ++y, NULL);
+	y++;
 
 	Printing::text(Printing::getInstance(), "Unload:           ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), unloadOutOfRangeEntitiesHighestTime, x + xDisplacement, y, NULL);
