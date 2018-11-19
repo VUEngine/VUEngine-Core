@@ -415,26 +415,35 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 			}
 		}
 
-		for(; node; node = node->next)
+		int counter = 0;
+
+		for(; node; node = node->next, counter++)
 		{
 			ASSERT(node, "printOptions: push null node");
 			ASSERT(node->data, "printOptions: push null node data");
 
 			Option* option = VirtualNode::getData(node);
 
-			switch(option->type)
+			if(NULL == option->value)
 			{
-				case kString:
-					Printing::text(printing, (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
-					break;
+				Printing::int(printing, counter, x + fontData->fontDefinition->fontSize.x, y, this->font);
+			}
+			else
+			{
+				switch(option->type)
+				{
+					case kString:
+						Printing::text(printing, (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
+						break;
 
-				case kInt:
-					Printing::int(printing, *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
-					break;
+					case kInt:
+						Printing::int(printing, *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+						break;
 
-				case kFloat:
-					Printing::float(printing, *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
-					break;
+					case kFloat:
+						Printing::float(printing, *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+						break;
+				}
 			}
 
 			y += fontData->fontDefinition->fontSize.y;
