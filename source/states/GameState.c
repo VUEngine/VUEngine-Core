@@ -101,6 +101,7 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 	Printing::resetWorldCoordinates(Printing::getInstance());
 
 	GameState::pauseClocks(this);
+	this->previousUpdateTime = Clock::getTime(this->updateClock);
 
 	Clock::start(this->messagingClock);
 
@@ -116,7 +117,7 @@ void GameState::execute(void* owner __attribute__ ((unused)))
 {
 	ASSERT(this->stage, "GameState::execute: null stage");
 
-	if(!Clock::isPaused(this->messagingClock))
+	if(!Clock::isPaused(this->updateClock))
 	{
 		// update the stage
 		Container::update(this->stage, Clock::getTime(this->updateClock) - this->previousUpdateTime);
