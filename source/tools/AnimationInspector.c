@@ -799,7 +799,7 @@ void AnimationInspector::createSpriteSelector()
 	while(_userAnimatedEntities[OptionsSelector::getSelectedOption(this->animatedEntitySelector)].animatedEntityDefinition->entityDefinition.spriteDefinitions[i])
 	{
 		Option* option = new Option;
-		option->value = &i;
+		option->value = NULL;
 		option->type = kInt;
 		VirtualList::pushBack(spriteIndexes, option);
 
