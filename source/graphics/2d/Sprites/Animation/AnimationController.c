@@ -195,6 +195,7 @@ bool AnimationController::updateAnimation()
 		return false;
 	}
 
+
 	// if the actual frame was set to -1
 	// it means that a non looping animation has been completed
 	if(-1 == this->actualFrame)
@@ -205,7 +206,7 @@ bool AnimationController::updateAnimation()
 	this->frameDuration -= this->frameCycleDecrement;
 
 	// reduce frame delay count
-	if(0 >= this->frameDuration)
+	if(0 > this->frameDuration)
 	{
 		// increase the frame to show
 		this->previousFrame = this->actualFrame++;
@@ -233,24 +234,35 @@ bool AnimationController::updateAnimation()
 			}
 		}
 
-		// reset frame delay
-		this->frameDuration = this->animationFunction->delay;
-
-		// the minimum valid delay is 1
-		if(0 == this->frameDuration)
-		{
-			this->frameDuration = 1;
-		}
-		else if(0 > this->frameDuration)
-		{
-			// pick up a random delay
-			this->frameDuration = 1 + Utilities::random(Utilities::randomSeed(), __ABS(this->frameDuration));
-		}
+		// Reset frame duration
+		AnimationController::resetFrameDuration(this);
 
 		return true;
 	}
 
 	return false;
+}
+
+/**
+ * Reset frame duration
+ *
+ * @private
+ */
+void AnimationController::resetFrameDuration()
+{
+	// reset frame delay
+	this->frameDuration = this->animationFunction->delay;
+
+	// the minimum valid delay is 1
+	if(0 == this->frameDuration)
+	{
+		this->frameDuration = 1;
+	}
+	else if(0 > this->frameDuration)
+	{
+		// pick up a random delay
+		this->frameDuration = 1 + Utilities::random(Utilities::randomSeed(), __ABS(this->frameDuration));
+	}
 }
 
 /**
@@ -284,8 +296,8 @@ void AnimationController::playAnimationFunction(const AnimationFunction* animati
 	// reset frame to play
 	this->actualFrame = 0;
 
-	// set frame delay to 1 to force the writing of the first animation frame in the next update
-	this->frameDuration = 1;
+	// Reset frame duration
+	AnimationController::resetFrameDuration(this);
 
 	// it's playing now
 	this->playing = true;
@@ -349,8 +361,8 @@ bool AnimationController::play(const AnimationDescription* animationDescription,
 			// reset frame to play
 			this->actualFrame = 0;
 
-			// set frame delay to 1 to force the writing of the first animation frame in the next update
-			this->frameDuration = 1;
+			// Reset frame duration
+			AnimationController::resetFrameDuration(this);
 
 			// it's playing now
 			this->playing = true;
