@@ -53,6 +53,7 @@ enum CommunicationsStatus
 	kCommunicationsStatusSendingHandshake,
 	kCommunicationsStatusSendingPayload,
 	kCommunicationsStatusWaitingPayload,
+	kCommunicationsStatusSendingAndReceivingPayload,
 };
 
 
@@ -171,9 +172,12 @@ void CommunicationManager::reset()
 {
 	CommunicationManager::endCommunications(this);
 	this->connected = false;
-	this->data = NULL;
-	this->syncData = NULL;
-	this->asyncData = NULL;
+	this->sentData = NULL;
+	this->syncSentData = NULL;
+	this->asyncSentData = NULL;
+	this->receivedData = NULL;
+	this->syncReceivedData = NULL;
+	this->asyncReceivedData = NULL;
 	this->status = kCommunicationsStatusIdle;
 	this->communicationMode = __COM_AS_REMOTE;
 }
@@ -334,6 +338,18 @@ bool CommunicationManager::receivePayload()
 	return false;
 }
 
+bool CommunicationManager::sendAndReceivePayload(u8 payload)
+{
+	if(kCommunicationsStatusIdle == this->status)
+	{
+		this->status = kCommunicationsStatusSendingAndReceivingPayload;
+		CommunicationManager::startTransmissions(this, payload);
+		return true;
+	}
+
+	return false;
+}
+
 /**
  * Communication's interrupt handler
  */
@@ -383,16 +399,16 @@ void CommunicationManager::processInterrupt()
 	{
 		case kCommunicationsStatusWaitingPayload:
 
-			if(this->syncData)
+			if(this->syncReceivedData)
 			{
-				*this->syncData = _communicationRegisters[__CDRR];
-				this->syncData++;
+				*this->syncReceivedData = _communicationRegisters[__CDRR];
+				this->syncReceivedData++;
 				--this->numberOfBytesPendingTransmission;
 			}
-			else if(this->asyncData)
+			else if(this->asyncReceivedData)
 			{
-				*this->asyncData = _communicationRegisters[__CDRR];
-				this->asyncData++;
+				*this->asyncReceivedData = _communicationRegisters[__CDRR];
+				this->asyncReceivedData++;
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
@@ -402,8 +418,8 @@ void CommunicationManager::processInterrupt()
 				{
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
-					delete this->data;
-					this->data = this->asyncData = NULL;
+					delete this->receivedData;
+					this->receivedData = this->asyncReceivedData = NULL;
 				}
 			}
 
@@ -411,25 +427,56 @@ void CommunicationManager::processInterrupt()
 
 		case kCommunicationsStatusSendingPayload:
 
-			if(this->syncData)
+			if(this->syncSentData)
 			{
-				this->syncData++;
+				this->syncSentData++;
 				--this->numberOfBytesPendingTransmission;
 			}
-			else if(this->asyncData)
+			else if(this->asyncSentData)
 			{
-				this->asyncData++;
+				this->asyncSentData++;
 
 				if(0 < --this->numberOfBytesPendingTransmission)
 				{
-					CommunicationManager::sendPayload(this, *this->asyncData);
+					CommunicationManager::sendPayload(this, *this->asyncSentData);
 				}
 				else
 				{
 					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
 					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
-					delete this->data;
-					this->data = this->asyncData = NULL;
+					delete this->sentData;
+					this->sentData = this->asyncSentData = NULL;
+				}
+			}
+
+			break;
+
+		case kCommunicationsStatusSendingAndReceivingPayload:
+
+			if(this->syncSentData && this->syncReceivedData)
+			{
+				*this->syncReceivedData = _communicationRegisters[__CDRR];
+				this->syncReceivedData++;
+				this->syncSentData++;
+				--this->numberOfBytesPendingTransmission;
+			}
+			else if(this->asyncSentData && this->asyncReceivedData)
+			{
+				*this->asyncReceivedData = _communicationRegisters[__CDRR];
+				this->asyncReceivedData++;
+				this->asyncSentData++;
+
+				if(0 < --this->numberOfBytesPendingTransmission)
+				{
+					CommunicationManager::sendAndReceivePayload(this, *this->asyncSentData);
+				}
+				else
+				{
+					Object::fireEvent(Object::safeCast(this), kEventCommunicationsCompleted);
+					Object::removeAllEventListeners(Object::safeCast(this), kEventCommunicationsCompleted);
+					delete this->sentData;
+					delete this->receivedData;
+					this->sentData = this->receivedData = this->asyncSentData = this->asyncReceivedData = NULL;
 				}
 			}
 
@@ -437,22 +484,45 @@ void CommunicationManager::processInterrupt()
 	}
 }
 
-bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile int numberOfBytes, volatile bool sendData)
+bool CommunicationManager::isFreeForTransmissions()
 {
-	if(!this->connected || this->asyncData || !data || 0 >= numberOfBytes || this->status != kCommunicationsStatusIdle)
+	return
+		!this->connected ||
+		this->syncSentData ||
+		this->syncReceivedData ||
+		this->asyncSentData ||
+		this->asyncReceivedData ||
+		this->status != kCommunicationsStatusIdle ||
+		Object::hasActiveEventListeners(Object::safeCast(this));
+}
+
+bool CommunicationManager::startDataTransmission(BYTE* data, int numberOfBytes, bool sendingData)
+{
+	if((sendingData && !data) || 0 >= numberOfBytes || CommunicationManager::isFreeForTransmissions(this))
 	{
 		return false;
 	}
 
-	this->asyncData = NULL;
-	this->data = this->syncData = data;
+	this->sentData = this->receivedData = NULL;
+	this->syncSentData = this->syncReceivedData = NULL;
+	this->asyncSentData = this->asyncReceivedData = NULL;
+
+	if(sendingData)
+	{
+		this->syncSentData = data;
+	}
+	else
+	{
+		this->syncReceivedData = data;
+	}
+
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
 	while(0 < this->numberOfBytesPendingTransmission)
 	{
-		if(sendData)
+		if(sendingData)
 		{
-			CommunicationManager::sendPayload(this, *this->syncData);
+			CommunicationManager::sendPayload(this, *this->syncSentData);
 		}
 		else
 		{
@@ -463,7 +533,7 @@ bool CommunicationManager::startDataTransmission(volatile BYTE* data, volatile i
 	}
 
 	this->status = kCommunicationsStatusIdle;
-	this->data = this->syncData = NULL;
+	this->syncSentData = this->syncReceivedData = NULL;
 
 	CommunicationManager::setReady(this, false);
 
@@ -480,25 +550,69 @@ bool CommunicationManager::receiveData(BYTE* data, int numberOfBytes)
 	return CommunicationManager::startDataTransmission(this, data, numberOfBytes, false);
 }
 
-bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBytes, bool sendData, EventListener eventLister, Object scope)
+bool CommunicationManager::startBidirectionalDataTransmission(BYTE* sentData, BYTE* receivedData, int numberOfBytes)
 {
-	if(!this->connected || this->syncData || this->asyncData || (sendData && !data) || 0 >= numberOfBytes || this->status != kCommunicationsStatusIdle || Object::hasActiveEventListeners(Object::safeCast(this)))
+	if((!sentData || !receivedData) || 0 >= numberOfBytes || CommunicationManager::isFreeForTransmissions(this))
 	{
 		return false;
 	}
 
-	Object::addEventListener(this, scope, eventLister, kEventCommunicationsCompleted);
-	this->syncData = NULL;
-	this->data = this->asyncData = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+	this->sentData = this->receivedData = NULL;
+	this->syncSentData = this->syncReceivedData = NULL;
+	this->asyncSentData = this->asyncReceivedData = NULL;
+
+	this->syncSentData = sentData;
+	this->syncReceivedData = receivedData;
+
 	this->numberOfBytesPendingTransmission = numberOfBytes;
 
-	if(sendData)
+	while(0 < this->numberOfBytesPendingTransmission)
 	{
-		Mem::copyBYTE((BYTE*)this->asyncData, data, numberOfBytes);
-		CommunicationManager::sendPayload(this, *this->asyncData);
+		CommunicationManager::sendAndReceivePayload(this, *this->syncSentData);
+
+		while(kCommunicationsStatusIdle != this->status);
+	}
+
+	this->status = kCommunicationsStatusIdle;
+	this->syncSentData = this->syncReceivedData = NULL;
+
+	CommunicationManager::setReady(this, false);
+
+	return true;
+}
+
+bool CommunicationManager::sendAndReceiveData(BYTE* sentData, BYTE* receivedData, int numberOfBytes)
+{
+	return CommunicationManager::startBidirectionalDataTransmission(this, sentData, receivedData, numberOfBytes);
+}
+
+bool CommunicationManager::startDataTransmissionAsync(BYTE* data, int numberOfBytes, bool sendingData, EventListener eventLister, Object scope)
+{
+	if((sendingData && !data) || 0 >= numberOfBytes || CommunicationManager::isFreeForTransmissions(this))
+	{
+		return false;
+	}
+
+	this->sentData = this->receivedData = NULL;
+	this->syncSentData = this->syncReceivedData = NULL;
+	this->asyncSentData = this->asyncReceivedData = NULL;
+
+	if(eventLister && !isDeleted(scope))
+	{
+		Object::addEventListener(this, scope, eventLister, kEventCommunicationsCompleted);
+	}
+
+	this->numberOfBytesPendingTransmission = numberOfBytes;
+
+	if(sendingData)
+	{
+		this->sentData = this->asyncSentData = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+		Mem::copyBYTE((BYTE*)this->asyncSentData, data, numberOfBytes);
+		CommunicationManager::sendPayload(this, *this->asyncSentData);
 	}
 	else
 	{
+		this->receivedData = this->asyncReceivedData = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
 		CommunicationManager::receivePayload(this);
 	}
 
@@ -515,9 +629,40 @@ bool CommunicationManager::receiveDataAsync(int numberOfBytes, EventListener eve
 	return CommunicationManager::startDataTransmissionAsync(this, NULL, numberOfBytes, false, eventLister, scope);
 }
 
+bool CommunicationManager::startBidirectionalDataTransmissionAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope)
+{
+	if(!data || 0 >= numberOfBytes || CommunicationManager::isFreeForTransmissions(this))
+	{
+		return false;
+	}
+
+	this->sentData = this->receivedData = NULL;
+	this->syncSentData = this->syncReceivedData = NULL;
+	this->asyncSentData = this->asyncReceivedData = NULL;
+
+	if(eventLister && !isDeleted(scope))
+	{
+		Object::addEventListener(this, scope, eventLister, kEventCommunicationsCompleted);
+	}
+
+	this->sentData = this->asyncSentData = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+	this->receivedData = this->asyncReceivedData = (BYTE*)((u32)MemoryPool_allocate(MemoryPool_getInstance(), numberOfBytes + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);
+	this->numberOfBytesPendingTransmission = numberOfBytes;
+
+	Mem::copyBYTE((BYTE*)this->asyncSentData, data, numberOfBytes);
+	CommunicationManager::sendAndReceivePayload(this, *this->asyncSentData);
+
+	return true;
+}
+
+bool CommunicationManager::sendAndReceiveDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope)
+{
+	return CommunicationManager::startBidirectionalDataTransmissionAsync(this, data, numberOfBytes, eventLister, scope);
+}
+
 const BYTE* CommunicationManager::getData()
 {
-	return (const BYTE*)this->data;
+	return (const BYTE*)this->receivedData;
 }
 
 void CommunicationManager::printStatus(int x, int y)

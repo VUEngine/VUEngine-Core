@@ -41,9 +41,12 @@ singleton class CommunicationManager : Object
 	volatile bool connected;
 	volatile u8 communicationMode;
 	volatile int status;
-	volatile BYTE* data;
-	volatile BYTE* syncData;
-	volatile BYTE* asyncData;
+	volatile BYTE* sentData;
+	volatile BYTE* receivedData;
+	volatile BYTE* syncSentData;
+	volatile BYTE* syncReceivedData;
+	volatile BYTE* asyncSentData;
+	volatile BYTE* asyncReceivedData;
 	volatile int numberOfBytesPendingTransmission;
 
 	u32 timeout;
@@ -57,8 +60,10 @@ singleton class CommunicationManager : Object
 	bool isMaster();
 	bool sendData(BYTE* data, int numberOfBytes);
 	bool receiveData(BYTE* data, int numberOfBytes);
+	bool sendAndReceiveData(BYTE* sentData, BYTE* receivedData, int numberOfBytes);
 	bool sendDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
 	bool receiveDataAsync(int numberOfBytes, EventListener eventLister, Object scope);
+	bool sendAndReceiveDataAsync(BYTE* data, int numberOfBytes, EventListener eventLister, Object scope);
 	const BYTE* getData();
 	void printStatus(int x, int y);
 }
