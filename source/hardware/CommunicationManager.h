@@ -43,10 +43,10 @@ singleton class CommunicationManager : Object
 	volatile int status;
 	volatile BYTE* sentData;
 	volatile BYTE* receivedData;
-	volatile BYTE* syncSentData;
-	volatile BYTE* syncReceivedData;
-	volatile BYTE* asyncSentData;
-	volatile BYTE* asyncReceivedData;
+	volatile BYTE* syncSentByte;
+	volatile BYTE* syncReceivedByte;
+	volatile BYTE* asyncSentByte;
+	volatile BYTE* asyncReceivedByte;
 	volatile int numberOfBytesPendingTransmission;
 
 	u32 timeout;
