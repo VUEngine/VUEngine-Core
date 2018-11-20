@@ -1004,14 +1004,9 @@ void Entity::transformShapes()
 			for(; node; node = node->next)
 			{
 				Shape shape = Shape::safeCast(node->data);
-				u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
-
 				Vector3D shapePosition = *myPosition;
-
 				Rotation shapeRotation = *myRotation;
-
 				Scale shapeScale = *myScale;
-
 				Size size = this->size;
 
 				Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
