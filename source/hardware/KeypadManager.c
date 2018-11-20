@@ -138,7 +138,7 @@ void KeypadManager::captureUserInput()
 	this->userInput.releasedKey = KeypadManager::getReleasedKey(this) & this->userInputToRegister.releasedKey;
 	this->userInput.holdKey 	= KeypadManager::getHoldKey(this) & this->userInputToRegister.holdKey;
 	this->userInput.previousKey = this->userInput.allKeys;
-	this->userInput.holdKeyDuration = (this->userInput.holdKey == this->userInput.previousKey)
+	this->userInput.holdKeyDuration = (this->userInput.holdKey && this->userInput.holdKey == this->userInput.previousKey)
 		? this->userInput.holdKeyDuration + 1
 		: 0;
 }
@@ -254,7 +254,7 @@ static void KeypadManager::printUserInput(const UserInput* userInput, int x, int
 		return;
 	}
 
-	int xDisplacement = 12;
+	int xDisplacement = 13;
 
 	PRINT_TEXT("USER INPUT:", x, y++);
 
