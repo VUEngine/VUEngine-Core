@@ -694,7 +694,7 @@ u32 Game::processUserInput()
 	}
 #endif
 
-	if(userInput.pressedKey | userInput.releasedKey | userInput.holdKey)
+	if(GameState::processUserInputRegardlessOfInput(Game::getCurrentState(this)) || (userInput.pressedKey | userInput.releasedKey | userInput.holdKey))
 	{
 		GameState::processUserInput(Game::getCurrentState(this), userInput);
 	}

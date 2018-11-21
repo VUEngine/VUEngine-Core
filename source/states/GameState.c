@@ -292,6 +292,16 @@ void GameState::processUserInput(UserInput userInput __attribute__ ((unused)))
 {}
 
 /**
+ * Whether to call processUserInput even when there is no input at all during the current cycle
+ *
+ * @return 				False by default
+ */
+bool GameState::processUserInputRegardlessOfInput()
+{
+	return false;
+}
+
+/**
  * Method called when the Game's StateMachine receives a message to be processed
  *
  * @param owner			StateMachine's owner

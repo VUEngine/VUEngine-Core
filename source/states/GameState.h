@@ -87,6 +87,7 @@ class GameState : State
 	void updatePhysics();
 	void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);
+	virtual bool processUserInputRegardlessOfInput();
 	virtual void transform();
 	override void enter(void* owner);
 	override void execute(void* owner);
