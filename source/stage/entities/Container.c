@@ -271,7 +271,7 @@ void Container::setupGraphics()
 		// update each child
 		for(; node ; node = node->next)
 		{
-			 Container::setupGraphics(node->data);
+			Container::setupGraphics(node->data);
 		}
 	}
 }
@@ -286,7 +286,7 @@ void Container::releaseGraphics()
 		// update each child
 		for(; node ; node = node->next)
 		{
-			 Container::releaseGraphics(node->data);
+			Container::releaseGraphics(node->data);
 		}
 	}
 }
@@ -353,7 +353,7 @@ void Container::update(u32 elapsedTime)
 		// update each child
 		for(; node ; node = node->next)
 		{
-			 Container::update(node->data, elapsedTime);
+			Container::update(node->data, elapsedTime);
 		}
 	}
 }
@@ -480,7 +480,7 @@ void Container::initialTransform(const Transformation* environmentTransform, u32
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
-			 Container::initialTransform(child, &this->transformation, true);
+			Container::initialTransform(child, &this->transformation, true);
 		}
 	}
 }
@@ -635,7 +635,7 @@ void Container::transform(const Transformation* environmentTransform, u8 invalid
 
 			child->invalidateGlobalTransformation |= this->invalidateGlobalTransformation;
 
-			 Container::transform(child, &this->transformation, invalidateTransformationFlag);
+			Container::transform(child, &this->transformation, invalidateTransformationFlag);
 		}
 	}
 
@@ -653,7 +653,7 @@ void Container::synchronizeGraphics()
 		// update each child
 		for(; node; node = node->next)
 		{
-			 Container::synchronizeGraphics(node->data);
+			Container::synchronizeGraphics(node->data);
 		}
 	}
 }
@@ -1060,7 +1060,7 @@ void Container::suspend()
 		{
 			Container child = Container::safeCast(node->data);
 
-			 Container::suspend(child);
+			Container::suspend(child);
 		}
 	}
 }
@@ -1078,7 +1078,7 @@ void Container::resume()
 		{
 			Container child = Container::safeCast(node->data);
 
-			 Container::resume(child);
+			Container::resume(child);
 		}
 	}
 
@@ -1096,7 +1096,7 @@ void Container::show()
 
 		for(; node; node = node->next)
 		{
-			 Container::show(node->data);
+			Container::show(node->data);
 		}
 	}
 
@@ -1113,7 +1113,7 @@ void Container::hide()
 
 		for(; node; node = node->next)
 		{
-			 Container::hide(node->data);
+			Container::hide(node->data);
 		}
 	}
 }

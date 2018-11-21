@@ -204,7 +204,7 @@ void StateMachine::returnToPreviousState()
 	{
 		if(this->currentState)
 		{
-			 State::exit(this->currentState, this->owner);
+			State::exit(this->currentState, this->owner);
 		}
 
 		this->currentState = this->previousState;

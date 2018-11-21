@@ -533,7 +533,7 @@ bool MBgmapSprite::writeTextures()
 
 		if(!texture->written)
 		{
-			 Texture::write(texture);
+			Texture::write(texture);
 			break;
 		}
 	}

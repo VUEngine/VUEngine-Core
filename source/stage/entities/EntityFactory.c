@@ -298,11 +298,11 @@ u32 EntityFactory::transformEntities()
 		{
 			positionedEntityDescription->transformed = true;
 
-			 Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
+			Container::addChild(positionedEntityDescription->parent, Container::safeCast(positionedEntityDescription->entity));
 
 			Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
 
-			 Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
+			Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
 		}
 
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))
@@ -344,7 +344,7 @@ u32 EntityFactory::makeReadyEntities()
 		if(Entity::areAllChildrenReady(positionedEntityDescription->entity))
 		{
 			// call ready method
-			 Entity::ready(positionedEntityDescription->entity, false);
+			Entity::ready(positionedEntityDescription->entity, false);
 
 			VirtualList::pushBack(this->spawnedEntities, positionedEntityDescription);
 			VirtualList::removeElement(this->entitiesToMakeReady, positionedEntityDescription);

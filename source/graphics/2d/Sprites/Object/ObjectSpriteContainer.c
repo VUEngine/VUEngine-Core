@@ -402,7 +402,7 @@ void ObjectSpriteContainer::render(bool evenFrame)
 		}
 		else
 		{
-			 Sprite::render(sprite, evenFrame);
+			Sprite::render(sprite, evenFrame);
 		}
 	}
 }
@@ -434,7 +434,7 @@ void ObjectSpriteContainer::hide()
 
 		for(; node; node = node->next)
 		{
-			 Sprite::hide(node->data);
+			Sprite::hide(node->data);
 		}
 	}
 
@@ -525,7 +525,7 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
 
 		for(; node; node = node->next)
 		{
-			 Sprite::addDisplacement(node->data, displacement);
+			Sprite::addDisplacement(node->data, displacement);
 		}
 	}
 }

@@ -551,7 +551,7 @@ void BgmapSprite::render(bool evenFrame)
 			worldPointer->w *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.x));
 			worldPointer->h *= __FIX7_9_TO_F(__ABS(this->drawSpec.scale.y));
 
-			 if(0 <= this->paramTableRow)
+			if(0 <= this->paramTableRow)
 			{
 				h = Texture::getRows(this->texture)<< 3;
 				int lastRow = h + worldPointer->gy >= _cameraFrustum->y1 ? _cameraFrustum->y1 - worldPointer->gy + myDisplacement: h;

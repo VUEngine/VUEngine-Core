@@ -337,7 +337,7 @@ void Stage::setupUI()
 		if(this->uiContainer)
 		{
 			// apply transformations
-			 Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+			Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 		}
 	}
 }

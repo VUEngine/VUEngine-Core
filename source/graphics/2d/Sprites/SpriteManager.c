@@ -800,11 +800,11 @@ void SpriteManager::showLayer(u8 layer)
 
 		if(sprite->worldLayer != layer)
 		{
-			 Sprite::hide(sprite);
+			Sprite::hide(sprite);
 		}
 		else
 		{
-			 Sprite::show(sprite);
+			Sprite::show(sprite);
 		}
 
 		Sprite::setPosition(sprite, &sprite->position);

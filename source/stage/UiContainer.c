@@ -67,16 +67,16 @@ void UiContainer::addEntities(PositionedEntity* entities)
 		if(entity)
 		{
 			// setup graphics
-			 Container::setupGraphics(entity);
+			Container::setupGraphics(entity);
 
 			// create the entity and add it to the world
 			Container::addChild(this, Container::safeCast(entity));
 
 			// apply transformations
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
-			 Container::initialTransform(entity, &environmentTransform, true);
+			Container::initialTransform(entity, &environmentTransform, true);
 
-			 Entity::ready(entity, true);
+			Entity::ready(entity, true);
 		}
 	}
 }

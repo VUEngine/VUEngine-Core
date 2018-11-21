@@ -140,7 +140,7 @@ void MemoryPool::constructor()
 		if(numberOfBytes <= blockSize)
 		{
 			for(i = this->poolSizes[pool][eLastFreeBlockIndex],
-			 	j = i,
+				j = i,
 				forwardDisplacement = backwardDisplacement = i * blockSize;
 				!blockFound && (i < numberOfOjects || 0 <= j);
 				i++, j--,
