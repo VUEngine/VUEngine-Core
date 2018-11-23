@@ -29,6 +29,7 @@
 #include <Mem.h>
 #include <Game.h>
 #include <Utilities.h>
+#include <VIPManager.h>
 #ifdef __DEBUG_TOOLS
 #include <Debug.h>
 #endif
@@ -663,6 +664,42 @@ bool CommunicationManager::sendAndReceiveDataAsync(BYTE* data, int numberOfBytes
 const BYTE* CommunicationManager::getData()
 {
 	return (const BYTE*)this->receivedData;
+}
+
+void CommunicationManager::startSyncCycle()
+{
+	extern volatile u16* _vipRegisters;
+
+	_vipRegisters[__FRMCYC] = 0;
+	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE);
+
+#define __REMOTE_READY_MESSAGE			0x43873AD1
+#define __MASTER_FRMCYC_SET_MESSAGE		0x5DC289F4
+
+	if(CommunicationManager::isMaster(this))
+	{
+		u32 message = 0;
+		do
+		{
+			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
+		}
+		while(__REMOTE_READY_MESSAGE != message);
+
+		message = __MASTER_FRMCYC_SET_MESSAGE;
+		while(!(_vipRegisters[__DPSTTS] & __FCLK));
+		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
+	}
+	else
+	{
+		u32 message = __REMOTE_READY_MESSAGE;
+		CommunicationManager::sendData(this, (BYTE*)&message, sizeof(message));
+
+		do
+		{
+			CommunicationManager::receiveData(this, (BYTE*)&message, sizeof(message));
+		}
+		while(__MASTER_FRMCYC_SET_MESSAGE != message);
+	}
 }
 
 void CommunicationManager::printStatus(int x, int y)

@@ -559,8 +559,15 @@ void Game::reset()
 
 	// reset profiling
 	Game::resetProfiling(this);
+}
 
-	// turn on VIP
+void Game::enableRendering(bool isVersusMode)
+{
+	if(isVersusMode)
+	{
+		CommunicationManager::startSyncCycle(this->communicationManager);
+	}
+
 	HardwareManager::displayOn(HardwareManager::getInstance());
 	HardwareManager::enableRendering(HardwareManager::getInstance());
 	HardwareManager::enableInterrupts();

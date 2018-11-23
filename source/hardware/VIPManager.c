@@ -362,8 +362,8 @@ void VIPManager::processFrameBuffers()
 void VIPManager::displayOn()
 {
 	_vipRegisters[__REST] = 0;
-	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 	_vipRegisters[__FRMCYC] = __FRAME_CYCLE;
+	_vipRegisters[__DPCTRL] = _vipRegisters[__DPSTTS] | (__SYNCE | __RE | __DISP);
 }
 
 /**

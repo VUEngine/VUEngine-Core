@@ -112,6 +112,7 @@ singleton class Game : Object
 	void printClassSizes(int x, int y);
 	void removePostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void reset();
+	void enableRendering(bool isVersusMode);
 	void resetProfiling();
 	void setOptical(Optical optical);
 	void showLastGameFrameProfiling(int x, int y);

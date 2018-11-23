@@ -225,7 +225,11 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	Camera::setPosition(Camera::getInstance(), this->cameraPosition);
 	Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
 
+	// Reset the engine state
 	Game::reset(Game::getInstance());
+
+	// Must be called after reseting the game
+	Game::enableRendering(Game::getInstance(), GameState::isVersusMode(this));
 
 	// must make sure that all textures are completely written
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
@@ -349,6 +353,15 @@ void GameState::transform()
 }
 
 /**
+ * By default, every state is single player
+ */
+bool GameState::isVersusMode()
+{
+	return false;
+}
+
+
+/**
  * Call the initial transformation on the Stage to setup its children
  *
  * @private
@@ -414,8 +427,11 @@ void GameState::loadStage(StageDefinition* stageDefinition, VirtualList position
 	PhysicalWorld::reset(this->physicalWorld);
 	CollisionManager::reset(this->collisionManager);
 
-	// reset the engine state
+	// Reset the engine state
 	Game::reset(Game::getInstance());
+
+	// Must be called after reseting the game
+	Game::enableRendering(Game::getInstance(), GameState::isVersusMode(this));
 
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusGameEntity(Camera::getInstance(), NULL);

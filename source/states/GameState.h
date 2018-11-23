@@ -89,6 +89,7 @@ class GameState : State
 	virtual void processUserInput(UserInput userInput);
 	virtual bool processUserInputRegardlessOfInput();
 	virtual void transform();
+	virtual bool isVersusMode();
 	override void enter(void* owner);
 	override void execute(void* owner);
 	override void exit(void* owner);
