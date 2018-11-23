@@ -207,7 +207,7 @@ singleton class SoundManager : Object
 
 	/// @publicsection
 	static SoundManager getInstance();
-	void setWaveForm();
+	void reset();
 	void playBGM(const u16 (*bgm)[]);
 	int playFxSound(const u16* fxSound, Vector3D position);
 	int playingSound(const u16* fxSound);

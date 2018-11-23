@@ -267,8 +267,8 @@ void Game::initialize()
 	// setup vectorInterrupts
 	HardwareManager::setInterruptVectors(HardwareManager::getInstance());
 
-	// set waveform data
-	SoundManager::setWaveForm(SoundManager::getInstance());
+	// Reset sounds
+	SoundManager::reset(SoundManager::getInstance());
 
 	// clear sprite memory
 	HardwareManager::clearScreen(HardwareManager::getInstance());
@@ -535,6 +535,9 @@ void Game::reset()
 	MemoryPool::cleanUp(MemoryPool::getInstance());
 #endif
 
+	// Disable timer
+	TimerManager::enable(this->timerManager, false);
+
 	// disable rendering
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
 	HardwareManager::displayOff(HardwareManager::getInstance());
@@ -545,7 +548,7 @@ void Game::reset()
 
 	// reset managers
 	WireframeManager::reset(WireframeManager::getInstance());
-	SoundManager::setWaveForm(SoundManager::getInstance());
+	SoundManager::reset(SoundManager::getInstance());
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
 
@@ -559,6 +562,9 @@ void Game::reset()
 
 	// reset profiling
 	Game::resetProfiling(this);
+
+	// Enable timer
+	TimerManager::enable(this->timerManager, true);
 }
 
 void Game::enableRendering(bool isVersusMode)

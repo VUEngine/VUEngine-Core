@@ -164,26 +164,7 @@ void SoundManager::constructor()
 {
 	Base::constructor();
 
-	{
-		int i = 0;
-
-		// reset all records
-		for(i = 0; i < __TOTAL_SOUNDS; i++)
-		{
-			this->noteWait[i] = 0;
-			this->actualNote[i] = 0;
-		}
-
-		this->bgm = NULL;
-
-		for( i = 0; i < __FXS; i++)
-		{
-			this->fxSound[i] = NULL;
-
-			this->fxLeftOutput[i] = 0;
-			this->fxRightOutput[i] = 0;
-		}
-	}
+	SoundManager::reset(this);
 }
 
 /**
@@ -192,6 +173,30 @@ void SoundManager::constructor()
 void SoundManager::destructor()
 {
 	Base::destructor();
+}
+
+void SoundManager::reset()
+{
+	int i = 0;
+
+	// reset all records
+	for(i = 0; i < __TOTAL_SOUNDS; i++)
+	{
+		this->noteWait[i] = 0;
+		this->actualNote[i] = 0;
+	}
+
+	this->bgm = NULL;
+
+	for( i = 0; i < __FXS; i++)
+	{
+		this->fxSound[i] = NULL;
+
+		this->fxLeftOutput[i] = 0;
+		this->fxRightOutput[i] = 0;
+	}
+
+	SoundManager::setWaveForm(this);
 }
 
 /**
