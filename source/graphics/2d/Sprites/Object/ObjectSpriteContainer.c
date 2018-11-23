@@ -385,14 +385,9 @@ void ObjectSpriteContainer::render(bool evenFrame)
 
 	for(; node; node = node->next)
 	{
-		ObjectSprite sprite = ObjectSprite::safeCast(node->data);
+		ObjectSprite sprite = Sprite::safeCast(node->data);
 
-		if((sprite->texture && sprite->texture->written && sprite->animationController) || (sprite->transparent != __TRANSPARENCY_NONE))
-		{
-			Sprite::update(sprite);
-		}
-
-		if((sprite->hidden | !sprite->visible) && 0 <= sprite->objectIndex)
+		if(sprite->hidden | sprite->disposed)
 		{
 			int i = 0;
 			for(; i < sprite->totalObjects; i++)
@@ -402,7 +397,21 @@ void ObjectSpriteContainer::render(bool evenFrame)
 		}
 		else
 		{
+			if((u32)sprite->animationController)
+			{
+				Sprite::update(sprite);
+			}
+
 			Sprite::render(sprite, evenFrame);
+
+			if(!sprite->visible)
+			{
+			int i = 0;
+			for(; i < sprite->totalObjects; i++)
+			{
+				_objectAttributesBaseAddress[((sprite->objectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+			}
+			}
 		}
 	}
 }
