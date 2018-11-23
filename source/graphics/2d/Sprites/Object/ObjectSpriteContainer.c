@@ -385,7 +385,7 @@ void ObjectSpriteContainer::render(bool evenFrame)
 
 	for(; node; node = node->next)
 	{
-		ObjectSprite sprite = Sprite::safeCast(node->data);
+		ObjectSprite sprite = ObjectSprite::safeCast(node->data);
 
 		if(sprite->hidden | sprite->disposed)
 		{
