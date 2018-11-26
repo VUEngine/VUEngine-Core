@@ -207,7 +207,7 @@ u32 MessageDispatcher::dispatchDelayedMessages()
 				if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage) && !isDeleted(sender) && !isDeleted(receiver))
 				{
 					messagesDispatched |= true;
-					 Object::handleMessage(receiver, telegram);
+					Object::handleMessage(receiver, telegram);
 				}
 
 				VirtualList::removeElement(this->delayedMessages, delayedMessage);

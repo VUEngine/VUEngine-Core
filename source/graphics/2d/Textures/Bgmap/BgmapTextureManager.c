@@ -388,7 +388,7 @@ BgmapTexture BgmapTextureManager::findTexture(BgmapTextureDefinition* bgmapTextu
 	{
 		Texture::setDefinition(selectedBgmapTexture, textureDefinition);
 		Texture::setPalette(selectedBgmapTexture, textureDefinition->palette);
-		 Texture::rewrite(selectedBgmapTexture);
+		Texture::rewrite(selectedBgmapTexture);
 	}
 
 	return selectedBgmapTexture;

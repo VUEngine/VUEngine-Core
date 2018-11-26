@@ -349,7 +349,7 @@ void ObjectSprite::setObjectIndex(s16 objectIndex)
 
 			if(!this->hidden)
 			{
-				 Sprite::show(this);
+				Sprite::show(this);
 
 				// turn off previous OBJs' to avoid ghosting
 				if(this->objectIndex < previousObjectIndex)

@@ -154,9 +154,9 @@ void Container::deleteMyself()
 
 	if(!isDeleted(this->parent))
 	{
-		 Container::removeChild(this->parent, this, true);
-		 Container::iAmDeletingMyself(this);
-		 Container::releaseGraphics(this);
+		Container::removeChild(this->parent, this, true);
+		Container::iAmDeletingMyself(this);
+		Container::releaseGraphics(this);
 	}
 	else
 	{

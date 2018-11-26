@@ -637,7 +637,7 @@ void SpriteManager::writeTextures()
 
 	for(; node; node = node->next)
 	{
-		 Sprite::writeTextures(node->data);
+		Sprite::writeTextures(node->data);
 	}
 
 	this->texturesMaximumRowsToWrite = texturesMaximumRowsToWrite;
@@ -823,7 +823,7 @@ void SpriteManager::recoverLayers()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		 Sprite::show(sprite);
+		Sprite::show(sprite);
 
 		Sprite::setPosition(sprite, &sprite->position);
 

@@ -324,7 +324,7 @@ void Actor::changeDirectionOnAxis(u16 axis)
 {
 	if(this->body)
 	{
-		 Actor::syncRotationWithBody(this);
+		Actor::syncRotationWithBody(this);
 	}
 	else
 	{

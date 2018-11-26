@@ -425,7 +425,7 @@ void ObjectSpriteContainer::show()
 
 	for(; node; node = node->next)
 	{
-		 Sprite::show(node->data);
+		Sprite::show(node->data);
 	}
 
 	this->hidden = false;

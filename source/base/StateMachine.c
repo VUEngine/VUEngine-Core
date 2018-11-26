@@ -87,7 +87,7 @@ void StateMachine::update()
 {
 	if(this->currentState)
 	{
-		 State::execute(this->currentState, this->owner);
+		State::execute(this->currentState, this->owner);
 	}
 }
 
@@ -110,7 +110,7 @@ void StateMachine::swapState(State newState)
 		this->previousState = this->currentState;
 
 		// call the exit method from current state
-		 State::exit(this->currentState, this->owner);
+		State::exit(this->currentState, this->owner);
 	}
 
 	this->currentState = newState;
@@ -140,7 +140,7 @@ u32 StateMachine::pushState(State newState)
 	if(this->currentState)
 	{
 		// call the pause method from current state
-		 State::suspend(this->currentState, this->owner);
+		State::suspend(this->currentState, this->owner);
 	}
 
 	// set new state
@@ -175,7 +175,7 @@ u32 StateMachine::popState()
 	if(this->currentState)
 	{
 		// call the exit method from current state
-		 State::exit(this->currentState, this->owner);
+		State::exit(this->currentState, this->owner);
 	}
 
 	// update the stack
@@ -188,7 +188,7 @@ u32 StateMachine::popState()
 	// call resume method from new state
 	if(this->currentState)
 	{
-		 State::resume(this->currentState, this->owner);
+		State::resume(this->currentState, this->owner);
 	}
 
 	// return the resulting stack size
@@ -226,7 +226,7 @@ void StateMachine::changeToGlobal(State globalState)
 	}
 	if(this->currentState)
 	{
-		 State::suspend(this->currentState, this->owner);
+		State::suspend(this->currentState, this->owner);
 
 		this->previousState = this->currentState;
 	}

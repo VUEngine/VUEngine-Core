@@ -134,7 +134,7 @@ enum DefaulCollisionLayers
 
 #ifndef __RELEASE
 #define NM_ASSERT(Statement, ...)																		\
-	 																									\
+																										\
 	if(!(Statement) && !_triggeringException)															\
 	{ 																									\
 		_triggeringException = true;																	\
@@ -152,7 +152,7 @@ enum DefaulCollisionLayers
 
 #ifndef __RELEASE
 #define NM_CAST_ASSERT(Statement, ...)																	\
-	 																									\
+																										\
 	if(!(Statement) && !_triggeringException)															\
 	{ 																									\
 		_triggeringException = true;																	\
@@ -170,7 +170,7 @@ enum DefaulCollisionLayers
 	#define ASSERT(Statement, ...)
 #else
 #define ASSERT(Statement, Message)																		\
-	 																									\
+																										\
 	if(!(Statement) && !_triggeringException) 															\
 	{																									\
 		_triggeringException = true;																	\

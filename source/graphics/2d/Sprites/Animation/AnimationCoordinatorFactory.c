@@ -122,7 +122,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 					if(AnimationCoordinator::getCharSetDefinition(animationCoordinator) == charSetDefinition)
 					{
-						 AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
+						AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 						return animationCoordinator;
 					}
 				}
@@ -143,7 +143,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 				}
 
 				// create a new coordinator
-				 AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
+				AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 
 				VirtualList::pushBack(this->animationCoordinators, animationCoordinator);
 

@@ -254,7 +254,7 @@ void MBgmapSprite::setPosition(const PixelVector* position)
 	if(previousZPosition != this->position.z)
 	{
 		// calculate sprite's parallax
-		 Sprite::calculateParallax(this, this->position.z);
+		Sprite::calculateParallax(this, this->position.z);
 	}
 }
 

@@ -84,7 +84,7 @@ void AnimationController::destructor()
 {
 	if(this->animationCoordinator)
 	{
-		 AnimationCoordinator::removeAnimationController(this->animationCoordinator, this);
+		AnimationCoordinator::removeAnimationController(this->animationCoordinator, this);
 		this->animationCoordinator = NULL;
 	}
 

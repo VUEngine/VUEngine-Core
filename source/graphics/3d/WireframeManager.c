@@ -131,7 +131,7 @@ void WireframeManager::drawWireframes()
 	// check the shapes
 	for(; node; node = node->next)
 	{
-		 Wireframe::draw(node->data, true);
+		Wireframe::draw(node->data, true);
 	}
 }
 

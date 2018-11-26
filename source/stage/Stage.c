@@ -284,7 +284,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 
 	if(this->uiContainer)
 	{
-		 Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+		Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 }
 
@@ -398,7 +398,7 @@ void Stage::makeChildReady(Entity entity)
 
 	if(entity->parent == Container::safeCast(this))
 	{
-		 Entity::ready(entity, true);
+		Entity::ready(entity, true);
 	}
 }
 
@@ -545,7 +545,7 @@ void Stage::preloadAssets()
 
 				if(bgmapTexture)
 				{
-					 Texture::write(bgmapTexture);
+					Texture::write(bgmapTexture);
 
 					if(this->stageDefinition->assets.textureDefinitions[i]->recyclable)
 					{
@@ -1029,7 +1029,7 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 
 	if(this->uiContainer)
 	{
-		 Container::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
+		Container::transform(this->uiContainer, environmentTransform, invalidateTransformationFlag);
 	}
 }
 
@@ -1055,7 +1055,7 @@ void Stage::suspend()
 
 	if(this->uiContainer)
 	{
-		 Container::suspend(this->uiContainer);
+		Container::suspend(this->uiContainer);
 	}
 
 	// relinquish camera focus priority
@@ -1116,8 +1116,8 @@ void Stage::resume()
 
 	if(this->uiContainer)
 	{
-		 Container::resume(this->uiContainer);
-		 Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
+		Container::resume(this->uiContainer);
+		Container::initialTransform(this->uiContainer, &neutralEnvironmentTransformation, true);
 	}
 
 	this->entityFactory = new EntityFactory();

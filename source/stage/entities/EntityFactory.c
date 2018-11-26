@@ -247,7 +247,7 @@ u32 EntityFactory::initializeEntities()
 				positionedEntityDescription->initialized = true;
 
 				// call ready method
-				 Entity::initialize(positionedEntityDescription->entity, false);
+				Entity::initialize(positionedEntityDescription->entity, false);
 
 				return __ENTITY_PENDING_PROCESSING;
 			}
