@@ -399,7 +399,7 @@ void SoundManager::continuePlayingFxSounds()
 				SND_REGS[fxS + 2].SxINT = 0x00;
 
 				// grab note
-				note=this->fxSound[fxS][this->actualNote[fxS + 1] + 6];
+				note = this->fxSound[fxS][this->actualNote[fxS + 1] + 6];
 
 				// if note is not off
 				if(note != 0)
@@ -494,10 +494,10 @@ int SoundManager::playingSound(const u16* fxSound)
 	int i = 0;
 
 	// find sound
-	for(;i<__FXS && this->fxSound[i] != fxSound; i++);
+	for(;i < __FXS && this->fxSound[i] != fxSound; i++);
 
 	// if sound found
-	if(i<__FXS)
+	if(i < __FXS)
 	{
 		return true;
 	}
