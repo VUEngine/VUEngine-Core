@@ -66,6 +66,8 @@ void ParticleSystem::constructor(ParticleSystemDefinition* particleSystemDefinit
 	this->expiredParticles = new VirtualList();
 
 	this->particleCount = 0;
+	this->totalSpawnedParticles = 0;
+	this->loop = true;
 	this->paused = !this->particleSystemDefinition->autoStart;
 
 	// set size from definition
@@ -147,6 +149,16 @@ void ParticleSystem::destructor()
 	Base::destructor();
 }
 
+void ParticleSystem::setLoop(bool value)
+{
+	this->loop = value;
+}
+
+void ParticleSystem::getLoop()
+{
+	return this->loop;
+}
+
 /**
  * @private
  */
@@ -215,6 +227,13 @@ void ParticleSystem::update(u32 elapsedTime)
 	{
 		if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
 		{
+			if(++this->totalSpawnedParticles >= this->particleSystemDefinition->maximumNumberOfAliveParticles &&
+				!this->loop)
+			{
+				ParticleSystem::pause(this);
+				return;
+			}
+
 			if(this->particleSystemDefinition->recycleParticles)
 			{
 				VirtualList::pushBack(this->particles, ParticleSystem::recycleParticle(this));
@@ -495,7 +514,7 @@ int ParticleSystem::computeNextSpawnTime()
 void ParticleSystem::start()
 {
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
-
+	this->totalSpawnedParticles = 0;
 	this->paused = false;
 }
 

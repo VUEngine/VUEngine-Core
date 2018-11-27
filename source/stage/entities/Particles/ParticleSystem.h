@@ -110,6 +110,10 @@ class ParticleSystem : Entity
 	s16 numberOfSpriteDefinitions;
 	// pause flag
 	bool paused;
+	// Flag to keep spawning particles
+	bool loop;
+	// Counter of total spawned particles
+	u16 totalSpawnedParticles;
 
 	/// @publicsection
 	void constructor(ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
