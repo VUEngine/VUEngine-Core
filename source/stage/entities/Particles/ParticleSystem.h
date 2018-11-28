@@ -122,6 +122,8 @@ class ParticleSystem : Entity
 	void show();
 	void spawnAllParticles();
 	void start();
+	bool getLoop();
+	void setLoop(bool value);
 	override void update(u32 elapsedTime);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void synchronizeGraphics();

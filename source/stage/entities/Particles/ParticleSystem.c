@@ -154,7 +154,7 @@ void ParticleSystem::setLoop(bool value)
 	this->loop = value;
 }
 
-void ParticleSystem::getLoop()
+bool ParticleSystem::getLoop()
 {
 	return this->loop;
 }
