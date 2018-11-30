@@ -276,9 +276,6 @@ void Game::initialize()
 	// make sure timer interrupts are enable
 	HardwareManager::initializeTimer(HardwareManager::getInstance());
 
-	// enable communications
-	CommunicationManager::enableCommunications(this->communicationManager);
-
 	// start the game's general clock
 	Clock::start(this->clock);
 }

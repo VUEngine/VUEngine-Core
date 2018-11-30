@@ -57,7 +57,8 @@ enum Events
 	kEventEffectFadeStart,
 	kEventEffectFadeStop,
 
-	kEventCommunicationsCompleted,
+	kEventCommunicationsConnected,
+	kEventCommunicationsTransmissionCompleted,
 
 	// do not remove me
 	kLastEngineEvent
