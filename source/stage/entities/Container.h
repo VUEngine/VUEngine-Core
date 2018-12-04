@@ -80,6 +80,8 @@ class Container : SpatialObject
 	Container parent;
 	// Name
 	char* name;
+	// whether to inherit position, rotation and scale from environment (parents)
+	bool inheritEnvironment;
 	// Flag for parent to know to delete it
 	u8 deleteMe;
 	// Flag to hide the entity
@@ -117,6 +119,7 @@ class Container : SpatialObject
 	void setLocalScale(const Scale* scale);
 	void setName(const char* const name);
 	void transformNonVirtual(const Transformation* environmentTransform);
+	void setInheritEnvironment(bool inheritEnvironment);
 	virtual void iAmDeletingMyself();
 	virtual void update(u32 elapsedTime);
 	virtual void setupGraphics();
