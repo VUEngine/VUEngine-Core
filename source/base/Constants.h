@@ -116,6 +116,9 @@ enum MessagesTypes
 	kKeyReleased,
 	kKeyHold,
 
+	// Communication messages
+	kCommunicationCheckIfRemoteIsReady,
+
 	// don't place messages below this
 	kLastEngineMessage
 };
