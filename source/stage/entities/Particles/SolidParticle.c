@@ -88,7 +88,7 @@ void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefi
 
 	// register a shape for collision detection
 	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeDefinition);
-	CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
+	CollisionManager::shapeBecameActive(Game::getCollisionManager(Game::getInstance()), this->shape);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
 	Body::setBounciness(this->body, this->solidParticleDefinition->bounciness);
@@ -251,7 +251,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 	{
 		case kBodyStartedMoving:
 
-			CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
+			CollisionManager::shapeBecameActive(Game::getCollisionManager(Game::getInstance()), this->shape);
 			return true;
 			break;
 
@@ -259,7 +259,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 			if(this->solidParticleDefinition->disableCollisionOnStop && !Body::getMovementOnAllAxes(this->body))
 			{
-				CollisionManager::shapeStoppedMoving(Game::getCollisionManager(Game::getInstance()), this->shape);
+				CollisionManager::shapeBecameInactive(Game::getCollisionManager(Game::getInstance()), this->shape);
 			}
 			break;
 	}

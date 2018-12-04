@@ -207,7 +207,7 @@ abstract class Shape : Object
 	// flag to know if has moved
 	u8 moved;
 	// flag to know if shape is reacting to collisions
-	u8 isActive;
+	u8 enabled;
 	// flag to check against other shapes
 	u8 checkForCollisions;
 	// flag to cull off shapes outside the screen
@@ -222,9 +222,9 @@ abstract class Shape : Object
 	bool checkForCollisions();
 	SpatialObject getOwner();
 	void reset();
-	bool isActive();
+	bool isEnabled();
 	bool isReady();
-	void setActive(bool active);
+	void enable(bool enable);
 	void setCheckForCollisions(bool checkForCollisions);
 	void setReady(bool ready);
 	bool canMoveTowards(Vector3D displacement, fix10_6 sizeIncrement);

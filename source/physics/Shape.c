@@ -65,7 +65,7 @@ void Shape::constructor(SpatialObject owner)
 
 	// not setup yet
 	this->ready = false;
-	this->isActive = true;
+	this->enabled = true;
 
 	this->wireframe = NULL;
 
@@ -177,7 +177,7 @@ void Shape::setup(u32 layers, u32 layersToIgnore)
  */
 void Shape::position(const Vector3D* position __attribute__ ((unused)), const Rotation* rotation __attribute__ ((unused)), const Scale* scale __attribute__ ((unused)), const Size* size __attribute__ ((unused)))
 {
-	if(this->isActive && this->events)
+	if(this->enabled && this->events)
 	{
 		Object::fireEvent(this, kEventShapeChanged);
 	}
@@ -495,23 +495,23 @@ SpatialObject Shape::getOwner()
 }
 
 /**
- * Is active?
+ * Is enabled?
  *
- * @return		Active status
+ * @return		Enabled status
  */
-bool Shape::isActive()
+bool Shape::isEnabled()
 {
-	return this->isActive;
+	return this->enabled;
 }
 
 /**
- * Set active
+ * Enable / disable
  *
- * @param active
+ * @param enable
  */
-void Shape::setActive(bool active)
+void Shape::enable(bool enable)
 {
-	this->isActive = active;
+	this->enabled = enable;
 }
 
 /**

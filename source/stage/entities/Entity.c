@@ -114,7 +114,7 @@ void Entity::iAmDeletingMyself()
 	Base::iAmDeletingMyself(this);
 
 	// destroy collision shapes
-	Entity::activateShapes(this, false);
+	Entity::enableShapes(this, false);
 //	Entity::destroyShapes(this);
 }
 
@@ -1732,34 +1732,32 @@ fix10_6 Entity::getFrictionCoefficient()
 
 /**
  * Propagate that movement started to the shapes
+ *
+ *@para Active status
  */
-void Entity::informShapesThatStartedMoving()
+void Entity::activateShapes(bool active)
 {
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
 
-		for(; node; node = node->next)
+		if(active)
 		{
-			Shape shape = Shape::safeCast(node->data);
+			for(; node; node = node->next)
+			{
+				Shape shape = Shape::safeCast(node->data);
 
-			CollisionManager::shapeStartedMoving(Game::getCollisionManager(Game::getInstance()), shape);
+				CollisionManager::shapeBecameActive(Game::getCollisionManager(Game::getInstance()), shape);
+			}
 		}
-	}
-}
-
-/**
- * Propagate that movement stopped to the shapes
- */
-void Entity::informShapesThatStoppedMoving()
-{
-	if(this->shapes)
-	{
-		VirtualNode node = this->shapes->head;
-
-		for(; node; node = node->next)
+		else
 		{
-			CollisionManager::shapeStoppedMoving(Game::getCollisionManager(Game::getInstance()), Shape::safeCast(node->data));
+			for(; node; node = node->next)
+			{
+				Shape shape = Shape::safeCast(node->data);
+
+				CollisionManager::shapeBecameInactive(Game::getCollisionManager(Game::getInstance()), shape);
+			}
 		}
 	}
 }
@@ -1767,7 +1765,7 @@ void Entity::informShapesThatStoppedMoving()
 /**
  * Propagate active status to the shapes
  */
-void Entity::activateShapes(bool value)
+void Entity::enableShapes(bool value)
 {
 	if(this->shapes)
 	{
@@ -1775,7 +1773,7 @@ void Entity::activateShapes(bool value)
 
 		for(; node; node = node->next)
 		{
-			Shape::setActive(node->data, value);
+			Shape::enable(node->data, value);
 		}
 	}
 }

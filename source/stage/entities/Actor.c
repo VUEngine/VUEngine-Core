@@ -494,7 +494,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 					if(this->shapes)
 					{
-						Entity::informShapesThatStartedMoving(this);
+						Entity::activateShapes(this, true);
 						return true;
 					}
 					break;
@@ -503,7 +503,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 					if(!Body::getMovementOnAllAxes(this->body) && this->shapes)
 					{
-						Entity::informShapesThatStoppedMoving(this);
+						Entity::activateShapes(this, false);
 					}
 					break;
 
@@ -558,7 +558,7 @@ void Actor::addForce(const Force* force)
 	if(this->shapes)
 	{
 		// register the shape for collision detections
-		Entity::informShapesThatStartedMoving(this);
+		Entity::activateShapes(this, true);
 	}
 }
 
@@ -569,7 +569,7 @@ void Actor::moveUniformly(Velocity* velocity)
 	{
 		Body::moveUniformly(this->body, *velocity);
 
-		Entity::informShapesThatStartedMoving(this);
+		Entity::activateShapes(this, true);
 	}
 }
 
