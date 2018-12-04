@@ -71,6 +71,7 @@ void Container::constructor(const char* const name)
 	this->removedChildren = NULL;
 	this->deleteMe = false;
 	this->hidden = false;
+	this->inheritEnvironment = true;
 
 	this->name = NULL;
 	Container::setName(this, name);
@@ -505,15 +506,18 @@ void Container::applyEnvironmentToTransformation(const Transformation* environme
  */
 inline void Container::applyEnvironmentToPosition(const Transformation* environmentTransform)
 {
-	Vector3D globalPosition = environmentTransform->globalPosition;
-	Vector3D localPosition = this->transformation.localPosition;
+	if(this->inheritEnvironment)
+	{
+		Vector3D globalPosition = environmentTransform->globalPosition;
+		Vector3D localPosition = this->transformation.localPosition;
 
-	// propagate position
-	globalPosition.x += localPosition.x;
-	globalPosition.y += localPosition.y;
-	globalPosition.z += localPosition.z;
+		// propagate position
+		globalPosition.x += localPosition.x;
+		globalPosition.y += localPosition.y;
+		globalPosition.z += localPosition.z;
 
-	this->transformation.globalPosition = globalPosition;
+		this->transformation.globalPosition = globalPosition;
+	}
 }
 
 /**
@@ -524,15 +528,18 @@ inline void Container::applyEnvironmentToPosition(const Transformation* environm
  */
 inline void Container::applyEnvironmentToRotation(const Transformation* environmentTransform)
 {
-	Rotation globalRotation = environmentTransform->globalRotation;
-	Rotation localRotation = this->transformation.localRotation;
+	if(this->inheritEnvironment)
+	{
+		Rotation globalRotation = environmentTransform->globalRotation;
+		Rotation localRotation = this->transformation.localRotation;
 
-	// propagate position
-	globalRotation.x += localRotation.x;
-	globalRotation.y += localRotation.y;
-	globalRotation.z += localRotation.z;
+		// propagate position
+		globalRotation.x += localRotation.x;
+		globalRotation.y += localRotation.y;
+		globalRotation.z += localRotation.z;
 
-	this->transformation.globalRotation = globalRotation;
+		this->transformation.globalRotation = globalRotation;
+	}
 }
 
 /**
@@ -543,15 +550,18 @@ inline void Container::applyEnvironmentToRotation(const Transformation* environm
  */
 inline void Container::applyEnvironmentToScale(const Transformation* environmentTransform)
 {
-	Scale globalScale = environmentTransform->globalScale;
-	Scale localScale = this->transformation.localScale;
+	if(this->inheritEnvironment)
+	{
+		Scale globalScale = environmentTransform->globalScale;
+		Scale localScale = this->transformation.localScale;
 
-	// propagate scale
-	globalScale.x = __FIX7_9_MULT(globalScale.x, localScale.x);
-	globalScale.y = __FIX7_9_MULT(globalScale.y, localScale.y);
-	globalScale.z = __FIX7_9_MULT(globalScale.z, localScale.z);
+		// propagate scale
+		globalScale.x = __FIX7_9_MULT(globalScale.x, localScale.x);
+		globalScale.y = __FIX7_9_MULT(globalScale.y, localScale.y);
+		globalScale.z = __FIX7_9_MULT(globalScale.z, localScale.z);
 
-	this->transformation.globalScale = globalScale;
+		this->transformation.globalScale = globalScale;
+	}
 }
 
 /**
@@ -1118,12 +1128,12 @@ void Container::hide()
 	}
 }
 
-/**
- *
- *
- * @return		Where Container is hidden
- */
 bool Container::isHidden()
 {
 	return this->hidden;
+}
+
+void Container::setInheritEnvironment(bool inheritEnvironment)
+{
+	this->inheritEnvironment = inheritEnvironment;
 }
