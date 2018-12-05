@@ -134,12 +134,3 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving)
 		}
 	}
 }
-
-/**
- * Tells me that the focus entity for the camera has been set
- *
- * @param focusEntity	Focus entity
- */
-void CameraMovementManager::focusGameEntitySet(Entity focusEntity)
-{
-}
