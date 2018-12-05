@@ -512,6 +512,11 @@ bool Shape::isEnabled()
 void Shape::enable(bool enable)
 {
 	this->enabled = enable;
+
+	if(!this->enabled)
+	{
+		CollisionManager::shapeBecameInactive(Game::getCollisionManager(Game::getInstance()), this);
+	}
 }
 
 /**

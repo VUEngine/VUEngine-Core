@@ -285,6 +285,8 @@ void CollisionManager::shapeBecameActive(Shape shape)
 {
 	ASSERT(shape, "CollisionManager::shapeBecameActive: null shape");
 
+	Shape::enable(shape, true);
+
 	if(!VirtualList::find(this->activeShapes, shape))
 	{
 		VirtualList::pushBack(this->activeShapes, shape);
