@@ -175,7 +175,7 @@ void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container pa
 	positionedEntityDescription->id = id;
 	positionedEntityDescription->initialized = false;
 	positionedEntityDescription->transformed = false;
-	positionedEntityDescription->spriteDefinitionIndex = 0;
+	positionedEntityDescription->spriteSpecIndex = 0;
 
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
@@ -252,7 +252,7 @@ u32 EntityFactory::initializeEntities()
 				return __ENTITY_PENDING_PROCESSING;
 			}
 
-			if(Entity::addSpriteFromDefinitionAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteDefinitionIndex++))
+			if(Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
 			{
 				return __ENTITY_PENDING_PROCESSING;
 			}

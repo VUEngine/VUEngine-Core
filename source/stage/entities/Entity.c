@@ -53,12 +53,12 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @param entityDefinition
+ * @param entitySpec
  * @param id
  * @param internalId
  * @param name
  */
-void Entity::constructor(EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name)
+void Entity::constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const char* const name)
 {
 	// construct base Container
 	Base::constructor(name);
@@ -67,8 +67,8 @@ void Entity::constructor(EntityDefinition* entityDefinition, s16 id, s16 interna
 	this->id = id;
 	this->internalId = internalId;
 
-	// save definition
-	this->entityDefinition = entityDefinition;
+	// save spec
+	this->entitySpec = entitySpec;
 
 	// the sprite must be initialized in the derived class
 	this->sprites = NULL;
@@ -77,7 +77,7 @@ void Entity::constructor(EntityDefinition* entityDefinition, s16 id, s16 interna
 	this->entityFactory = NULL;
 
 	// initialize to 0 for the engine to know that size must be set
-	this->size = Size::getFromPixelSize(entityDefinition->pixelSize);
+	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 
 	this->invalidateSprites = 0;
 }
@@ -129,7 +129,7 @@ s16 Entity::getInternalId()
 }
 
 /**
- * Retrieve instance's id as per its definition
+ * Retrieve instance's id as per its spec
  *
  * @return		ID
  */
@@ -166,14 +166,14 @@ Entity Entity::getChildById(s16 id)
 }
 
 /**
- * Set definition
+ * Set spec
  *
- * @param entityDefinition	EntityDefinition
+ * @param entitySpec	EntitySpec
  */
-void Entity::setDefinition(void* entityDefinition)
+void Entity::setSpec(void* entitySpec)
 {
-	// save definition
-	this->entityDefinition = entityDefinition;
+	// save spec
+	this->entitySpec = entitySpec;
 }
 
 /**
@@ -185,7 +185,7 @@ void Entity::destroyShapes()
 {
 	if(this->shapes)
 	{
-		ASSERT(!isDeleted(this->shapes), "Entity::setDefinition: dead shapes");
+		ASSERT(!isDeleted(this->shapes), "Entity::setSpec: dead shapes");
 
 		VirtualNode node = this->shapes->head;
 
@@ -206,7 +206,7 @@ void Entity::setupGraphics()
 {
 	Base::setupGraphics(this);
 
-	Entity::addSprites(this, this->entityDefinition->spriteDefinitions);
+	Entity::addSprites(this, this->entitySpec->spriteSpecs);
 }
 
 /**
@@ -399,17 +399,17 @@ void Entity::calculateSize()
 }
 
 /**
- * Get size from definition
+ * Get size from spec
  *
  * @private
  * @param positionedEntity		Function scope
  * @param environmentPosition
  * @param pixelRightBox
  */
-static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition, PixelRightBox* pixelRightBox)
+static void Entity::getSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition, PixelRightBox* pixelRightBox)
 {
-	ASSERT(positionedEntity, "Entity::getSizeFromDefinition: null positionedEntity");
-	ASSERT(positionedEntity->entityDefinition, "Entity::getSizeFromDefinition: null entityDefinition");
+	ASSERT(positionedEntity, "Entity::getSizeFromSpec: null positionedEntity");
+	ASSERT(positionedEntity->entitySpec, "Entity::getSizeFromSpec: null entitySpec");
 
 	PixelVector pixelGlobalPosition = *environmentPosition;
 
@@ -427,15 +427,15 @@ static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEnti
 	s16 halfHeight = 0;
 	s16 halfDepth = 5;
 
-	if(positionedEntity->entityDefinition->spriteDefinitions && positionedEntity->entityDefinition->spriteDefinitions[0])
+	if(positionedEntity->entitySpec->spriteSpecs && positionedEntity->entitySpec->spriteSpecs[0])
 	{
 		int i = 0;
 
-		for(; positionedEntity->entityDefinition->spriteDefinitions[i]; i++)
+		for(; positionedEntity->entitySpec->spriteSpecs[i]; i++)
 		{
-			if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(positionedEntity->entityDefinition->spriteDefinitions[i]->allocator && ((MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spriteDefinitions[i])->textureDefinitions[0]))
+			if(__TYPE(MBgmapSprite) == __ALLOCATOR_TYPE(positionedEntity->entitySpec->spriteSpecs[i]->allocator && ((MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i])->textureSpecs[0]))
 			{
-				MBgmapSpriteDefinition* mBgmapSpriteDefinition = (MBgmapSpriteDefinition*)positionedEntity->entityDefinition->spriteDefinitions[i];
+				MBgmapSpriteSpec* mBgmapSpriteSpec = (MBgmapSpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
 
 				int j = 0;
 
@@ -443,95 +443,95 @@ static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEnti
 				halfHeight = 0;
 				halfDepth = 0;
 
-				for(; mBgmapSpriteDefinition->textureDefinitions[j]; j++)
+				for(; mBgmapSpriteSpec->textureSpecs[j]; j++)
 				{
-					if(halfWidth < (s16)(mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2))
+					if(halfWidth < (s16)(mBgmapSpriteSpec->textureSpecs[j]->cols << 2))
 					{
-						halfWidth = mBgmapSpriteDefinition->textureDefinitions[j]->cols << 2;
+						halfWidth = mBgmapSpriteSpec->textureSpecs[j]->cols << 2;
 					}
 
-					if(halfHeight < (s16)(mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2))
+					if(halfHeight < (s16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2))
 					{
-						halfHeight = (s16)(mBgmapSpriteDefinition->textureDefinitions[j]->rows << 2);
+						halfHeight = (s16)(mBgmapSpriteSpec->textureSpecs[j]->rows << 2);
 					}
 				}
 
-				if(left > -halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x)
+				if(left > -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
 				{
-					left = -halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x;
+					left = -halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
 				}
 
-				if(right < halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x)
+				if(right < halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x)
 				{
-					right = halfWidth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.x;
+					right = halfWidth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.x;
 				}
 
-				if(top > -halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y)
+				if(top > -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
 				{
-					top = -halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y;
+					top = -halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
 				}
 
-				if(bottom < halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y)
+				if(bottom < halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y)
 				{
-					bottom = halfHeight + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.y;
+					bottom = halfHeight + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.y;
 				}
 
-				if(front > mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z)
+				if(front > mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
 				{
-					front = mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z;
+					front = mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
 				}
 
-				if(back < halfDepth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z)
+				if(back < halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z)
 				{
-					back = halfDepth + mBgmapSpriteDefinition->bgmapSpriteDefinition.spriteDefinition.displacement.z;
+					back = halfDepth + mBgmapSpriteSpec->bgmapSpriteSpec.spriteSpec.displacement.z;
 				}
 
 			}
-			else if(positionedEntity->entityDefinition->spriteDefinitions[i]->textureDefinition)
+			else if(positionedEntity->entitySpec->spriteSpecs[i]->textureSpec)
 			{
-				SpriteDefinition* spriteDefinition = (SpriteDefinition*)positionedEntity->entityDefinition->spriteDefinitions[i];
-				halfWidth = spriteDefinition->textureDefinition->cols << 2;
-				halfHeight = spriteDefinition->textureDefinition->rows << 2;
+				SpriteSpec* spriteSpec = (SpriteSpec*)positionedEntity->entitySpec->spriteSpecs[i];
+				halfWidth = spriteSpec->textureSpec->cols << 2;
+				halfHeight = spriteSpec->textureSpec->rows << 2;
 				halfDepth = 16;
 
-				if(left > -halfWidth + spriteDefinition->displacement.x)
+				if(left > -halfWidth + spriteSpec->displacement.x)
 				{
-					left = -halfWidth + spriteDefinition->displacement.x;
+					left = -halfWidth + spriteSpec->displacement.x;
 				}
 
-				if(right < halfWidth + spriteDefinition->displacement.x)
+				if(right < halfWidth + spriteSpec->displacement.x)
 				{
-					right = halfWidth + spriteDefinition->displacement.x;
+					right = halfWidth + spriteSpec->displacement.x;
 				}
 
-				if(top > -halfHeight + spriteDefinition->displacement.y)
+				if(top > -halfHeight + spriteSpec->displacement.y)
 				{
-					top = -halfHeight + spriteDefinition->displacement.y;
+					top = -halfHeight + spriteSpec->displacement.y;
 				}
 
-				if(bottom < halfHeight + spriteDefinition->displacement.y)
+				if(bottom < halfHeight + spriteSpec->displacement.y)
 				{
-					bottom = halfHeight + spriteDefinition->displacement.y;
+					bottom = halfHeight + spriteSpec->displacement.y;
 				}
 
-				if(front > -halfDepth + spriteDefinition->displacement.z)
+				if(front > -halfDepth + spriteSpec->displacement.z)
 				{
-					front = -halfDepth + spriteDefinition->displacement.z;
+					front = -halfDepth + spriteSpec->displacement.z;
 				}
 
-				if(back < (halfDepth << 1) + spriteDefinition->displacement.z)
+				if(back < (halfDepth << 1) + spriteSpec->displacement.z)
 				{
-					back = (halfDepth << 1) + spriteDefinition->displacement.z;
+					back = (halfDepth << 1) + spriteSpec->displacement.z;
 				}
 			}
 		}
 	}
-	else if(!positionedEntity->childrenDefinitions)
+	else if(!positionedEntity->childrenSpecs)
 	{
 		// TODO: there should be a class which handles special cases
-		halfWidth = positionedEntity->entityDefinition->pixelSize.x >> 1;
-		halfHeight = positionedEntity->entityDefinition->pixelSize.y >> 1;
-		halfDepth = positionedEntity->entityDefinition->pixelSize.z >> 1;
+		halfWidth = positionedEntity->entitySpec->pixelSize.x >> 1;
+		halfHeight = positionedEntity->entitySpec->pixelSize.y >> 1;
+		halfDepth = positionedEntity->entitySpec->pixelSize.z >> 1;
 
 		left = -halfWidth;
 		right = halfWidth;
@@ -571,28 +571,28 @@ static void Entity::getSizeFromDefinition(const PositionedEntity* positionedEnti
 		pixelRightBox->z1 = back + pixelGlobalPosition.z;
 	}
 
-	if(positionedEntity->childrenDefinitions)
+	if(positionedEntity->childrenSpecs)
 	{
 		int i = 0;
-		for(; positionedEntity->childrenDefinitions[i].entityDefinition; i++)
+		for(; positionedEntity->childrenSpecs[i].entitySpec; i++)
 		{
-			Entity::getSizeFromDefinition(&positionedEntity->childrenDefinitions[i], &pixelGlobalPosition, pixelRightBox);
+			Entity::getSizeFromSpec(&positionedEntity->childrenSpecs[i], &pixelGlobalPosition, pixelRightBox);
 		}
 	}
 }
 
 /**
- * Calculate total size from definition
+ * Calculate total size from spec
  *
  * @param positionedEntity		Function scope
  * @param environmentPosition
  * @return						PixelRightBox
  */
-static PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
+static PixelRightBox Entity::getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition)
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::getSizeFromDefinition(positionedEntity, environmentPosition, &pixelRightBox);
+	Entity::getSizeFromSpec(positionedEntity, environmentPosition, &pixelRightBox);
 
 	pixelRightBox.x0 = pixelRightBox.x0 - positionedEntity->onScreenPosition.x;
 	pixelRightBox.x1 = pixelRightBox.x1 - positionedEntity->onScreenPosition.x;
@@ -607,16 +607,16 @@ static PixelRightBox Entity::getTotalSizeFromDefinition(const PositionedEntity* 
 /**
  * Find child by name in given list
  *
- * @param childrenDefinitions	Function scope
+ * @param childrenSpecs	Function scope
  * @param environmentPosition
  * @param childName
  * @return						Entity's global position
  */
-static Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName)
+static Vector3D* Entity::calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName)
 {
-	ASSERT(childrenDefinitions, "Entity::calculateGlobalPositionFromDefinitionByName: null positionedEntity");
+	ASSERT(childrenSpecs, "Entity::calculateGlobalPositionFromSpecByName: null positionedEntity");
 
-	if(!childrenDefinitions)
+	if(!childrenSpecs)
 	{
 		return NULL;
 	}
@@ -624,24 +624,24 @@ static Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struc
 	static Vector3D position;
 
 	int i = 0;
-	for(; childrenDefinitions[i].entityDefinition; i++)
+	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		if(!strncmp(childName, childrenDefinitions[i].name, __MAX_CONTAINER_NAME_LENGTH))
+		if(!strncmp(childName, childrenSpecs[i].name, __MAX_CONTAINER_NAME_LENGTH))
 		{
-			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.x);
-			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.y);
-			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.z + childrenDefinitions[i].onScreenPosition.zDisplacement);
+			position.x = environmentPosition.x + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
+			position.y = environmentPosition.y + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
+			position.z = environmentPosition.z + __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z + childrenSpecs[i].onScreenPosition.zDisplacement);
 			return &position;
 		}
 
-		if(childrenDefinitions[i].childrenDefinitions)
+		if(childrenSpecs[i].childrenSpecs)
 		{
 			Vector3D concatenatedEnvironmentPosition = environmentPosition;
-			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.x);
-			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.y);
-			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenDefinitions[i].onScreenPosition.z + childrenDefinitions[i].onScreenPosition.zDisplacement);
+			concatenatedEnvironmentPosition.x += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.x);
+			concatenatedEnvironmentPosition.y += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.y);
+			concatenatedEnvironmentPosition.z += __PIXELS_TO_METERS(childrenSpecs[i].onScreenPosition.z + childrenSpecs[i].onScreenPosition.zDisplacement);
 
-			Vector3D* position = Entity::calculateGlobalPositionFromDefinitionByName(childrenDefinitions[i].childrenDefinitions, concatenatedEnvironmentPosition, childName);
+			Vector3D* position = Entity::calculateGlobalPositionFromSpecByName(childrenSpecs[i].childrenSpecs, concatenatedEnvironmentPosition, childName);
 
 			if(position)
 			{
@@ -656,25 +656,25 @@ static Vector3D* Entity::calculateGlobalPositionFromDefinitionByName(const struc
 /**
  * Instantiate an Entity using the provided allocator
  *
- * @param entityDefinition
+ * @param entitySpec
  * @param id
  * @param internalId
  * @param name
  * @param extraInfo
  * @return					Entity instance
  */
-static Entity Entity::instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo)
+static Entity Entity::instantiate(const EntitySpec* const entitySpec, s16 id, s16 internalId, const char* const name, void* extraInfo)
 {
-	ASSERT(entityDefinition, "Entity::load: null definition");
-	ASSERT(entityDefinition->allocator, "Entity::load: no allocator defined");
+	ASSERT(entitySpec, "Entity::load: null spec");
+	ASSERT(entitySpec->allocator, "Entity::load: no allocator defined");
 
-	if(!entityDefinition || !entityDefinition->allocator)
+	if(!entitySpec || !entitySpec->allocator)
 	{
 		return NULL;
 	}
 
 	// call the appropriate allocator to support inheritance
-	Entity entity = ((Entity (*)(EntityDefinition*, s16, s16, const char* const)) entityDefinition->allocator)((EntityDefinition*)entityDefinition, id, internalId, name);
+	Entity entity = ((Entity (*)(EntitySpec*, s16, s16, const char* const)) entitySpec->allocator)((EntitySpec*)entitySpec, id, internalId, name);
 
 	// process extra info
 	if(extraInfo)
@@ -686,23 +686,23 @@ static Entity Entity::instantiate(const EntityDefinition* const entityDefinition
 }
 
 /**
- * Add children to the instance from the definitions array
+ * Add children to the instance from the specs array
  *
- * @param childrenDefinitions
+ * @param childrenSpecs
  */
-void Entity::addChildEntities(const PositionedEntity* childrenDefinitions)
+void Entity::addChildEntities(const PositionedEntity* childrenSpecs)
 {
-	if(!childrenDefinitions)
+	if(!childrenSpecs)
 	{
 		return;
 	}
 
 	int i = 0;
 
-	// go through n sprites in entity's definition
-	for(; childrenDefinitions[i].entityDefinition; i++)
+	// go through n sprites in entity's spec
+	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		Entity child = Entity::loadEntity(&childrenDefinitions[i], this->internalId + Container::getChildCount(this));
+		Entity child = Entity::loadEntity(&childrenSpecs[i], this->internalId + Container::getChildCount(this));
 		ASSERT(child, "Entity::loadChildren: entity not loaded");
 
 		// create the entity and add it to the world
@@ -719,15 +719,15 @@ void Entity::addChildEntities(const PositionedEntity* childrenDefinitions)
  */
 static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity, s16 internalId)
 {
-	ASSERT(positionedEntity, "Entity::loadFromDefinition: null positionedEntity");
+	ASSERT(positionedEntity, "Entity::loadFromSpec: null positionedEntity");
 
 	if(!positionedEntity)
 	{
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
-	ASSERT(entity, "Entity::loadFromDefinition: entity not loaded");
+	Entity entity = Entity::instantiate(positionedEntity->entitySpec, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	ASSERT(entity, "Entity::loadFromSpec: entity not loaded");
 
 	Vector3D position = Vector3D::getFromScreenPixelVector(positionedEntity->onScreenPosition);
 
@@ -735,24 +735,24 @@ static Entity Entity::loadEntity(const PositionedEntity* const positionedEntity,
 	Container::setLocalPosition(entity, &position);
 
 	// add children if defined
-	if(positionedEntity->childrenDefinitions)
+	if(positionedEntity->childrenSpecs)
 	{
-		Entity::addChildEntities(entity, positionedEntity->childrenDefinitions);
+		Entity::addChildEntities(entity, positionedEntity->childrenSpecs);
 	}
 
 	return entity;
 }
 
 /**
- * Add children to instance from the definitions array, but deferred
+ * Add children to instance from the specs array, but deferred
  *
- * @param childrenDefinitions
+ * @param childrenSpecs
  */
-void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinitions)
+void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenSpecs)
 {
-	ASSERT(childrenDefinitions, "Entity::addChildEntitiesDeferred: null childrenDefinitions");
+	ASSERT(childrenSpecs, "Entity::addChildEntitiesDeferred: null childrenSpecs");
 
-	if(!childrenDefinitions)
+	if(!childrenSpecs)
 	{
 		return;
 	}
@@ -764,10 +764,10 @@ void Entity::addChildEntitiesDeferred(const PositionedEntity* childrenDefinition
 
 	int i = 0;
 
-	// go through n sprites in entity's definition
-	for(; childrenDefinitions[i].entityDefinition; i++)
+	// go through n sprites in entity's spec
+	for(; childrenSpecs[i].entitySpec; i++)
 	{
-		EntityFactory::spawnEntity(this->entityFactory, &childrenDefinitions[i], Container::safeCast(this), NULL, this->internalId + Container::getChildCount(this));
+		EntityFactory::spawnEntity(this->entityFactory, &childrenSpecs[i], Container::safeCast(this), NULL, this->internalId + Container::getChildCount(this));
 	}
 }
 
@@ -787,7 +787,7 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 		return NULL;
 	}
 
-	Entity entity = Entity::instantiate(positionedEntity->entityDefinition, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
+	Entity entity = Entity::instantiate(positionedEntity->entitySpec, positionedEntity->id, internalId, positionedEntity->name, positionedEntity->extraInfo);
 	ASSERT(entity, "Entity::loadEntityDeferred: entity not loaded");
 
 	if(positionedEntity->name)
@@ -801,29 +801,29 @@ static Entity Entity::loadEntityDeferred(const PositionedEntity* const positione
 	Container::setLocalPosition(entity, &position);
 
 	// add children if defined
-	if(positionedEntity->childrenDefinitions)
+	if(positionedEntity->childrenSpecs)
 	{
-		Entity::addChildEntitiesDeferred(entity, positionedEntity->childrenDefinitions);
+		Entity::addChildEntitiesDeferred(entity, positionedEntity->childrenSpecs);
 	}
 
 	return entity;
 }
 
 /**
- * Add child entity from definition
+ * Add child entity from spec
  *
- * @param entityDefinition
+ * @param entitySpec
  * @param internalId
  * @param name
  * @param position
  * @param extraInfo
  * @return					Entity
  */
-Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo)
+Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo)
 {
-	ASSERT(entityDefinition, "Entity::addChildEntity: null entityDefinition");
+	ASSERT(entitySpec, "Entity::addChildEntity: null entitySpec");
 
-	if(!entityDefinition)
+	if(!entitySpec)
 	{
 		return NULL;
 	}
@@ -840,7 +840,7 @@ Entity Entity::addChildEntity(const EntityDefinition* entityDefinition, int inte
 
 	PositionedEntity positionedEntity =
 	{
-		(EntityDefinition*)entityDefinition,
+		(EntitySpec*)entitySpec,
 		screenPixelVector,
 		this->internalId + Container::getChildCount(this),
 		(char*)name,
@@ -960,18 +960,18 @@ void Entity::transformShapes()
 
 		Direction currentDirection = Entity::getDirection(this);
 		VirtualNode node = this->shapes->head;
-		if(this->entityDefinition->shapeDefinitions)
+		if(this->entitySpec->shapeSpecs)
     	{
-			const ShapeDefinition* shapeDefinitions = this->entityDefinition->shapeDefinitions;
+			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
 			VirtualNode node = this->shapes->head;
 			int i = 0;
 
-			for(; node && shapeDefinitions[i].allocator; node = node->next, i++)
+			for(; node && shapeSpecs[i].allocator; node = node->next, i++)
 			{
 				Shape shape = Shape::safeCast(node->data);
 				u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
 
-				Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeDefinitions[i].displacement);
+				Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[i].displacement);
 
 				Vector3D shapePosition =
 				{
@@ -982,19 +982,19 @@ void Entity::transformShapes()
 
 				Rotation shapeRotation =
 				{
-					myRotation->x + shapeDefinitions[i].rotation.x,
-					myRotation->y + shapeDefinitions[i].rotation.y,
-					myRotation->z + shapeDefinitions[i].rotation.z,
+					myRotation->x + shapeSpecs[i].rotation.x,
+					myRotation->y + shapeSpecs[i].rotation.y,
+					myRotation->z + shapeSpecs[i].rotation.z,
 				};
 
 				Scale shapeScale =
 				{
-					__FIX7_9_MULT(myScale->x, shapeDefinitions[i].scale.x),
-					__FIX7_9_MULT(myScale->y, shapeDefinitions[i].scale.y),
-					__FIX7_9_MULT(myScale->z, shapeDefinitions[i].scale.z),
+					__FIX7_9_MULT(myScale->x, shapeSpecs[i].scale.x),
+					__FIX7_9_MULT(myScale->y, shapeSpecs[i].scale.y),
+					__FIX7_9_MULT(myScale->z, shapeSpecs[i].scale.z),
 				};
 
-				Size size = Size::getFromPixelSize(shapeDefinitions[i].pixelSize);
+				Size size = Size::getFromPixelSize(shapeSpecs[i].pixelSize);
 
 				Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
 			}
@@ -1019,11 +1019,11 @@ void Entity::transformShapes()
  * Setup shape
  *
  * @private
- * @param shapeDefinitions		List of shapes
+ * @param shapeSpecs		List of shapes
  */
-void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPreviousShapes)
+void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 {
-	if(!shapeDefinitions)
+	if(!shapeSpecs)
 	{
 		return;
 	}
@@ -1040,10 +1040,10 @@ void Entity::addShapes(const ShapeDefinition* shapeDefinitions, bool destroyPrev
 		this->shapes = new VirtualList();
 	}
 
-	// go through n sprites in entity's definition
-	for(; shapeDefinitions[i].allocator; i++)
+	// go through n sprites in entity's spec
+	for(; shapeSpecs[i].allocator; i++)
 	{
-		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeDefinitions[i]);
+		Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpecs[i]);
 		ASSERT(shape, "Entity::addSprite: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
@@ -1101,11 +1101,11 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 /**
  * Add sprites
  *
- * @param spriteDefinitions
+ * @param spriteSpecs
  */
-void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
+void Entity::addSprites(const SpriteSpec** spriteSpecs)
 {
-	if(!spriteDefinitions)
+	if(!spriteSpecs)
 	{
 		return;
 	}
@@ -1119,12 +1119,12 @@ void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 
 	int i = 0;
 
-	// go through n sprites in entity's definition
-	for(; spriteDefinitions[i]; i++)
+	// go through n sprites in entity's spec
+	for(; spriteSpecs[i]; i++)
 	{
-		ASSERT(spriteDefinitions[i]->allocator, "Entity::addSprites: no sprite allocator");
+		ASSERT(spriteSpecs[i]->allocator, "Entity::addSprites: no sprite allocator");
 
-		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteDefinition*)spriteDefinitions[i], Object::safeCast(this)));
+		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], Object::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}
 
@@ -1135,19 +1135,19 @@ void Entity::addSprites(const SpriteDefinition** spriteDefinitions)
 /**
  * Add sprite
  *
- * @param spriteDefinitionIndex		Index in sprite definitions array
+ * @param spriteSpecIndex		Index in sprite specs array
  * @return							True if a sprite was created
  */
-bool Entity::addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex)
+bool Entity::addSpriteFromSpecAtIndex(int spriteSpecIndex)
 {
-	if(!this->entityDefinition->spriteDefinitions)
+	if(!this->entitySpec->spriteSpecs)
 	{
 		return false;
 	}
 
-	const SpriteDefinition* spriteDefinition = this->entityDefinition->spriteDefinitions[spriteDefinitionIndex];
+	const SpriteSpec* spriteSpec = this->entitySpec->spriteSpecs[spriteSpecIndex];
 
-	if(!spriteDefinition || !spriteDefinition->allocator)
+	if(!spriteSpec || !spriteSpec->allocator)
 	{
 		return false;
 	}
@@ -1158,7 +1158,7 @@ bool Entity::addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex)
 	}
 
 	// call the appropriate allocator to support inheritance
-	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteDefinition*)spriteDefinition, Object::safeCast(this)));
+	VirtualList::pushBack(this->sprites, SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)spriteSpec, Object::safeCast(this)));
 
 	return true;
 }
@@ -1277,7 +1277,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 	// if not already done
 	if(!this->shapes)
 	{
-		Entity::addShapes(this, this->entityDefinition->shapeDefinitions, false);
+		Entity::addShapes(this, this->entitySpec->shapeSpecs, false);
 	}
 }
 
@@ -1342,13 +1342,13 @@ void Entity::synchronizeGraphics()
 }
 
 /**
- * Retrieve EntityDefinition
+ * Retrieve EntitySpec
  *
- * @return		EntityDefinition
+ * @return		EntitySpec
  */
-EntityDefinition* Entity::getEntityDefinition()
+EntitySpec* Entity::getEntitySpec()
 {
-	return this->entityDefinition;
+	return this->entitySpec;
 }
 
 /**
@@ -1675,9 +1675,9 @@ void Entity::resume()
 	Base::resume(this);
 
 	// initialize sprites
-	if(this->entityDefinition)
+	if(this->entitySpec)
 	{
-		Entity::addSprites(this, this->entityDefinition->spriteDefinitions);
+		Entity::addSprites(this, this->entitySpec->spriteSpecs);
 	}
 
 	if(this->hidden)
@@ -1707,7 +1707,7 @@ bool Entity::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
  */
 u32 Entity::getInGameType()
 {
-	return this->entityDefinition->inGameType;
+	return this->entitySpec->inGameType;
 }
 
 /**
@@ -1717,7 +1717,7 @@ u32 Entity::getInGameType()
  */
 fix10_6 Entity::getBounciness()
 {
-	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->bounciness : 0;
+	return this->entitySpec->physicalSpecification ? this->entitySpec->physicalSpecification->bounciness : 0;
 }
 
 /**
@@ -1727,7 +1727,7 @@ fix10_6 Entity::getBounciness()
  */
 fix10_6 Entity::getFrictionCoefficient()
 {
-	return this->entityDefinition->physicalSpecification ? this->entityDefinition->physicalSpecification->frictionCoefficient : 0;
+	return this->entitySpec->physicalSpecification ? this->entitySpec->physicalSpecification->frictionCoefficient : 0;
 }
 
 /**

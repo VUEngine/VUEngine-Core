@@ -38,7 +38,7 @@
 class ObjectAnimationCoordinator : AnimationCoordinator
 {
 	/// @publicsection
-	void constructor(const CharSetDefinition* charSetDefinition);
+	void constructor(const CharSetSpec* charSetSpec);
 	override void addAnimationController(AnimationController animationController);
 	override void removeAnimationController(AnimationController animationController);
 }

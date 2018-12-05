@@ -39,16 +39,16 @@
  * Class constructor
  *
  * @private
- * @param charSetDefinition				CharSet definition
+ * @param charSetSpec				CharSet spec
  * @param offset						Displacement within the CHAR segment
  */
-void CharSet::constructor(CharSetDefinition* charSetDefinition, u16 offset)
+void CharSet::constructor(CharSetSpec* charSetSpec, u16 offset)
 {
 	Base::constructor();
 
-	// save definition
-	this->charSetDefinition = charSetDefinition;
-	this->charDefinitionDisplacement = 0;
+	// save spec
+	this->charSetSpec = charSetSpec;
+	this->charSpecDisplacement = 0;
 
 	// set the offset
 	this->offset = offset;
@@ -110,7 +110,7 @@ u8 CharSet::getUsageCount()
  */
 u32 CharSet::getAllocationType()
 {
-	return this->charSetDefinition->allocationType;
+	return this->charSetSpec->allocationType;
 }
 
 /**
@@ -136,33 +136,33 @@ void CharSet::setOffset(u16 offset)
 }
 
 /**
- * Retrieve the definition
+ * Retrieve the spec
  *
- * @return				CharSetDefinition
+ * @return				CharSetSpec
  */
-CharSetDefinition* CharSet::getCharSetDefinition()
+CharSetSpec* CharSet::getCharSetSpec()
 {
-	return this->charSetDefinition;
+	return this->charSetSpec;
 }
 
 /**
- * Set the definition
+ * Set the spec
  *
- * @param charSetDefinition			CharSetDefinition
+ * @param charSetSpec			CharSetSpec
  */
-void CharSet::setCharSetDefinition(CharSetDefinition* charSetDefinition)
+void CharSet::setCharSetSpec(CharSetSpec* charSetSpec)
 {
-	this->charSetDefinition = charSetDefinition;
+	this->charSetSpec = charSetSpec;
 }
 
 /**
- * Retrieve the number of CHARS in the definition
+ * Retrieve the number of CHARS in the spec
  *
- * @return 			Number of CHARS in the definition
+ * @return 			Number of CHARS in the spec
  */
 u32 CharSet::getNumberOfChars()
 {
-	return this->charSetDefinition->numberOfChars;
+	return this->charSetSpec->numberOfChars;
 }
 
 /**
@@ -172,8 +172,8 @@ void CharSet::write()
 {
 	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
-		(WORD*)(this->charSetDefinition->charDefinition + this->charDefinitionDisplacement),
-		(u32)(this->charSetDefinition->numberOfChars + __CHAR_ROOM) << 2
+		(WORD*)(this->charSetSpec->charSpec + this->charSpecDisplacement),
+		(u32)(this->charSetSpec->numberOfChars + __CHAR_ROOM) << 2
 	);
 }
 
@@ -192,11 +192,11 @@ void CharSet::rewrite()
 /**
  * Set displacement to add to the offset within the CHAR memory
  *
- * @param charDefinitionDisplacement		Displacement
+ * @param charSpecDisplacement		Displacement
  */
-void CharSet::setCharDefinitionDisplacement(u32 charDefinitionDisplacement)
+void CharSet::setCharSpecDisplacement(u32 charSpecDisplacement)
 {
-	this->charDefinitionDisplacement = charDefinitionDisplacement;
+	this->charSpecDisplacement = charSpecDisplacement;
 }
 
 /**
@@ -207,7 +207,7 @@ void CharSet::setCharDefinitionDisplacement(u32 charDefinitionDisplacement)
  */
 void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 {
-	if(newChar && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM)
+	if(newChar && charToReplace < this->charSetSpec->numberOfChars + __CHAR_ROOM)
 	{
 		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 3));
 	}
@@ -222,7 +222,7 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
  */
 void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	if(charSetPixel && charToReplace < this->charSetDefinition->numberOfChars + __CHAR_ROOM && charSetPixel->x < 8 && charSetPixel->y < 8)
+	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars + __CHAR_ROOM && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
 		static BYTE auxChar[] =
 		{

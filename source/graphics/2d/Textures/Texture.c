@@ -39,10 +39,10 @@
  * Class constructor
  *
  * @private
- * @param textureDefinition		Definition to use
+ * @param textureSpec		Spec to use
  * @param id					Texture's identification
  */
-void Texture::constructor(TextureDefinition* textureDefinition, u16 id)
+void Texture::constructor(TextureSpec* textureSpec, u16 id)
 {
 	// construct base object
 	Base::constructor();
@@ -52,11 +52,11 @@ void Texture::constructor(TextureDefinition* textureDefinition, u16 id)
 
 	this->mapDisplacement = 0;
 
-	// save the bgmap definition's address
-	this->textureDefinition = textureDefinition;
+	// save the bgmap spec's address
+	this->textureSpec = textureSpec;
 	this->charSet = NULL;
 	// set the palette
-	this->palette = textureDefinition->palette;
+	this->palette = textureSpec->palette;
 	this->written = false;
 }
 
@@ -73,7 +73,7 @@ void Texture::destructor()
 }
 
 /**
- * Load the CharSet defined by the TextureDefinition
+ * Load the CharSet defined by the TextureSpec
  *
  * @private
  */
@@ -81,35 +81,35 @@ void Texture::loadCharSet()
 {
 	Texture::releaseCharSet(this);
 
-	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureDefinition->charSetDefinition);
+	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
-	// if the char definition is NULL, it must be a text
+	// if the char spec is NULL, it must be a text
 	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
 	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
 }
 
 /**
- * Set the TextureDefinition
+ * Set the TextureSpec
  *
- * @param textureDefinition		New TextureDefinition
+ * @param textureSpec		New TextureSpec
  */
-void Texture::setDefinition(TextureDefinition* textureDefinition)
+void Texture::setSpec(TextureSpec* textureSpec)
 {
-	ASSERT(textureDefinition, "Texture::setDefinition: null textureDefinition");
+	ASSERT(textureSpec, "Texture::setSpec: null textureSpec");
 
-	this->textureDefinition = textureDefinition;
+	this->textureSpec = textureSpec;
 
 	Texture::releaseCharSet(this);
 }
 
 /**
- * Retrieve the TextureDefinition
+ * Retrieve the TextureSpec
  *
- * @return				TextureDefinition
+ * @return				TextureSpec
  */
-TextureDefinition* Texture::getDefinition()
+TextureSpec* Texture::getSpec()
 {
-	return this->textureDefinition;
+	return this->textureSpec;
 }
 
 /**
@@ -135,8 +135,8 @@ void Texture::releaseCharSet()
  */
 void Texture::write()
 {
-	ASSERT(this->textureDefinition, "Texture::write: null textureDefinition");
-	ASSERT(this->textureDefinition->charSetDefinition, "Texture::write: null charSetDefinition");
+	ASSERT(this->textureSpec, "Texture::write: null textureSpec");
+	ASSERT(this->textureSpec->charSetSpec, "Texture::write: null charSetSpec");
 
 	if(!this->charSet)
 	{
@@ -165,34 +165,34 @@ void Texture::writeHBiasMode()
 	/*
 	int i;
 	//put the this into memory calculation the number of char for each reference
-	for(i=0;i<this->textureDefinition->rows;i++)
+	for(i=0;i<this->textureSpec->rows;i++)
 	{
-		//write into the specified bgmap segment plus the offset defined in the this structure, the this definition
+		//write into the specified bgmap segment plus the offset defined in the this structure, the this spec
 		//specifying the char displacement inside the char mem
-		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureDefinition->mapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
-		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureDefinition->cols/3+64* const this->yOffset+64*i)<<1), this->textureDefinition->mapDefinition+(i<<7), (this->textureDefinition->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
+		//addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+(this->yOffset<<6)+(i<<6))<<1), this->textureSpec->mapSpec+(i<<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
+		addMem ((void*)BGTexture(this->bgmapSegment)+((this->xOffset+this->textureSpec->cols/3+64* const this->yOffset+64*i)<<1), this->textureSpec->mapSpec+(i<<7), (this->textureSpec->cols/3)*2,(this->palette<<14)|((CharSet::getCharSet(&this->charSet)<<9)+CharSet::getOffset(&this->charSet)));
 	}
 	*/
 }
 
 /**
- * Retrieve the number of CHARs according to the TextureDefinition's CharDefinition
+ * Retrieve the number of CHARs according to the TextureSpec's CharSpec
  *
  * @return	Number of CHARs
  */
 int Texture::getNumberOfChars()
 {
-	return this->textureDefinition->charSetDefinition->numberOfChars;
+	return this->textureSpec->charSetSpec->numberOfChars;
 }
 
 /**
- * Retrieve the TextureDefinition
+ * Retrieve the TextureSpec
  *
- * @return	TextureDefinition
+ * @return	TextureSpec
  */
-TextureDefinition* Texture::getTextureDefinition()
+TextureSpec* Texture::getTextureSpec()
 {
-	return this->textureDefinition;
+	return this->textureSpec;
 }
 
 /**
@@ -203,7 +203,7 @@ TextureDefinition* Texture::getTextureDefinition()
 u32 Texture::getTotalCols()
 {
 	// determine the allocation type
-	switch(this->textureDefinition->charSetDefinition->allocationType)
+	switch(this->textureSpec->charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -211,13 +211,13 @@ u32 Texture::getTotalCols()
 		case __ANIMATED_SHARED_COORDINATED:
 
 			// just return the cols
-			return this->textureDefinition->cols;
+			return this->textureSpec->cols;
 			break;
 
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				int totalCols = this->textureDefinition->numberOfFrames * this->textureDefinition->cols;
+				int totalCols = this->textureSpec->numberOfFrames * this->textureSpec->cols;
 				return 64 >= totalCols ? totalCols : 64;
 			}
 			break;
@@ -225,7 +225,7 @@ u32 Texture::getTotalCols()
 		case __NOT_ANIMATED:
 
 			// just return the cols
-			return this->textureDefinition->cols;
+			return this->textureSpec->cols;
 			break;
 
 		default:
@@ -245,7 +245,7 @@ u32 Texture::getTotalCols()
 u32 Texture::getTotalRows()
 {
 	// determine the allocation type
-	switch(this->textureDefinition->charSetDefinition->allocationType)
+	switch(this->textureSpec->charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -253,20 +253,20 @@ u32 Texture::getTotalRows()
 		case __ANIMATED_SHARED_COORDINATED:
 
 			// just return the cols
-			return this->textureDefinition->rows;
+			return this->textureSpec->rows;
 			break;
 
 		case __ANIMATED_MULTI:
 			{
 				// return the total number of chars
-				return this->textureDefinition->rows + this->textureDefinition->rows * (Texture::getTotalCols(this) >> 6);
+				return this->textureSpec->rows + this->textureSpec->rows * (Texture::getTotalCols(this) >> 6);
 			}
 			break;
 
 		case __NOT_ANIMATED:
 
 			// just return the cols
-			return this->textureDefinition->rows;
+			return this->textureSpec->rows;
 			break;
 
 		default:
@@ -285,7 +285,7 @@ u32 Texture::getTotalRows()
  */
 u32 Texture::getNumberOfFrames()
 {
-	return this->textureDefinition->numberOfFrames;
+	return this->textureSpec->numberOfFrames;
 }
 
 /**
@@ -305,13 +305,13 @@ CharSet Texture::getCharSet(u32 loadIfNeeded)
 }
 
 /**
- * Retrieve map definition
+ * Retrieve map spec
  *
- * @return	Pointer to the map definition
+ * @return	Pointer to the map spec
  */
-BYTE* Texture::getMapDefinition()
+BYTE* Texture::getMapSpec()
 {
-	return this->textureDefinition ? this->textureDefinition->mapDefinition : NULL;
+	return this->textureSpec ? this->textureSpec->mapSpec : NULL;
 }
 
 /**
@@ -341,9 +341,9 @@ u8 Texture::getPalette()
  */
 u32 Texture::getRows()
 {
-	//ASSERT(this->textureDefinition, "Texture::getRows: 0 rows");
+	//ASSERT(this->textureSpec, "Texture::getRows: 0 rows");
 
-	return this->textureDefinition->rows;
+	return this->textureSpec->rows;
 }
 
 /**
@@ -353,7 +353,7 @@ u32 Texture::getRows()
  */
 u32 Texture::getCols()
 {
-	return this->textureDefinition->cols;
+	return this->textureSpec->cols;
 }
 
 /**
@@ -394,15 +394,15 @@ void Texture::onCharSetDeleted(Object eventFirer)
 /**
  * Write a single CHAR to DRAM
  *
- * @param texturePixel	Coordinates within the map definition to write
+ * @param texturePixel	Coordinates within the map spec to write
  * @param newChar		CHAR data to write
  */
 void Texture::putChar(Point* texturePixel, BYTE* newChar)
 {
-	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
+	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
-		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
-		u32 charToReplace = this->textureDefinition->mapDefinition[displacement];
+		u32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
+		u32 charToReplace = this->textureSpec->mapSpec[displacement];
 		CharSet::putChar(this->charSet, charToReplace, newChar);
 	}
 }
@@ -416,10 +416,10 @@ void Texture::putChar(Point* texturePixel, BYTE* newChar)
  */
 void Texture::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureDefinition->cols && ((unsigned)texturePixel->y) < this->textureDefinition->rows)
+	if(this->charSet && texturePixel && ((unsigned)texturePixel->x) < this->textureSpec->cols && ((unsigned)texturePixel->y) < this->textureSpec->rows)
 	{
-		u32 displacement = (this->textureDefinition->cols * texturePixel->y + texturePixel->x) << 1;
-		u32 charToReplace = this->textureDefinition->mapDefinition[displacement];
+		u32 displacement = (this->textureSpec->cols * texturePixel->y + texturePixel->x) << 1;
+		u32 charToReplace = this->textureSpec->mapSpec[displacement];
 		CharSet::putPixel(this->charSet, charToReplace, charSetPixel, newPixelColor);
 	}
 }
@@ -437,7 +437,7 @@ bool Texture::isWritten()
 /**
  * Set displacement to add to the offset within the BGMAP memory
  *
- * @param mapDefinitionDisplacement	Displacement
+ * @param mapSpecDisplacement	Displacement
  */
 void Texture::setMapDisplacement(u32 mapDisplacement)
 {

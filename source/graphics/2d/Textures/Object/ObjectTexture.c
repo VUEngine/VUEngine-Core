@@ -38,13 +38,13 @@
  * Class constructor
  *
  * @private
- * @param objectTextureDefinition		Texture definition
+ * @param objectTextureSpec		Texture spec
  * @param id							Identifier
  */
-void ObjectTexture::constructor(ObjectTextureDefinition* objectTextureDefinition, u16 id)
+void ObjectTexture::constructor(ObjectTextureSpec* objectTextureSpec, u16 id)
 {
 	// construct base object
-	Base::constructor((TextureDefinition*)objectTextureDefinition, id);
+	Base::constructor((TextureSpec*)objectTextureSpec, id);
 
 	this->objectIndex = -1;
 	this->mapDisplacement = 0;
@@ -81,9 +81,9 @@ void ObjectTexture::write()
 
 	int palette = this->palette << 14;
 	int charLocation = CharSet::getOffset(this->charSet);
-	int rows = this->textureDefinition->rows;
-	int cols = this->textureDefinition->cols;
-	BYTE* framePointer = this->textureDefinition->mapDefinition + this->mapDisplacement;
+	int rows = this->textureSpec->rows;
+	int cols = this->textureSpec->cols;
+	BYTE* framePointer = this->textureSpec->mapSpec + this->mapDisplacement;
 
 	int i = 0;
 

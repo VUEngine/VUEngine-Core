@@ -102,15 +102,15 @@ void AnimationCoordinatorFactory::reset()
  *
  * @param animationController
  * @param sprite
- * @param charSetDefinition
+ * @param charSetSpec
  * @return						AnimationCoordinator instance
  */
-AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Sprite sprite, const CharSetDefinition* charSetDefinition)
+AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationController animationController, Sprite sprite, const CharSetSpec* charSetSpec)
 {
 	ASSERT(sprite, "AnimationCoordinatorFactory::getCoordinator: null sprite");
-	ASSERT(charSetDefinition, "AnimationCoordinatorFactory::getCoordinator: null charSetDefinition");
+	ASSERT(charSetSpec, "AnimationCoordinatorFactory::getCoordinator: null charSetSpec");
 
-	switch(charSetDefinition->allocationType)
+	switch(charSetSpec->allocationType)
 	{
 		case __ANIMATED_SHARED_COORDINATED:
 			{
@@ -120,7 +120,7 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 				{
 					AnimationCoordinator animationCoordinator = AnimationCoordinator::safeCast(node->data);
 
-					if(AnimationCoordinator::getCharSetDefinition(animationCoordinator) == charSetDefinition)
+					if(AnimationCoordinator::getCharSetSpec(animationCoordinator) == charSetSpec)
 					{
 						AnimationCoordinator::addAnimationController(animationCoordinator, animationController);
 						return animationCoordinator;
@@ -131,11 +131,11 @@ AnimationCoordinator AnimationCoordinatorFactory::getCoordinator(AnimationContro
 
 				if(__GET_CAST(BgmapAnimatedSprite, sprite))
 				{
-					animationCoordinator = AnimationCoordinator::safeCast(new BgmapAnimationCoordinator(charSetDefinition));
+					animationCoordinator = AnimationCoordinator::safeCast(new BgmapAnimationCoordinator(charSetSpec));
 				}
 				else if(__GET_CAST(ObjectAnimatedSprite, sprite))
 				{
-					animationCoordinator = AnimationCoordinator::safeCast(new ObjectAnimationCoordinator(charSetDefinition));
+					animationCoordinator = AnimationCoordinator::safeCast(new ObjectAnimationCoordinator(charSetSpec));
 				}
 				else
 				{

@@ -40,10 +40,10 @@
  *
  * @memberof	SolidParticle
  */
-typedef struct SolidParticleDefinition
+typedef struct SolidParticleSpec
 {
 	/// the class type
-	ParticleDefinition particleDefinition;
+	ParticleSpec particleSpec;
 
 	/// ball's radius
 	fix10_6 radius;
@@ -66,14 +66,14 @@ typedef struct SolidParticleDefinition
 	/// disable collision detection when the particle stops
 	bool disableCollisionOnStop;
 
-} SolidParticleDefinition;
+} SolidParticleSpec;
 
 /**
  * A SolidParticle that is stored in ROM
  *
  * @memberof	SolidParticle
  */
-typedef const SolidParticleDefinition SolidParticleROMDef;
+typedef const SolidParticleSpec SolidParticleROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -86,10 +86,10 @@ class SolidParticle : Particle
 	// Particle's shape for collision detection
 	Shape shape;
 	//
-	const SolidParticleDefinition* solidParticleDefinition;
+	const SolidParticleSpec* solidParticleSpec;
 
 	/// @publicsection
-	void constructor(const SolidParticleDefinition* shapeParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
+	void constructor(const SolidParticleSpec* shapeParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass);
 	Shape getShape();
 	override u32 update(int timeElapsed, void (* behavior)(Particle particle));
 	override u16 getWidth();

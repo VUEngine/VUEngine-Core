@@ -44,7 +44,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // defines a game world in ROM memory
-typedef struct StageDefinition
+typedef struct StageSpec
 {
 	/// class allocator
 	AllocatorPointer allocator;
@@ -120,13 +120,13 @@ typedef struct StageDefinition
 	struct Assets
 	{
 		// fonts for preloading
-		FontDefinition** fontDefinitions;
+		FontSpec** fontSpecs;
 
 		// char sets for preloading
-		CharSetDefinition** charSetDefinitions;
+		CharSetSpec** charSetSpecs;
 
 		// textures for preloading
-		TextureDefinition** textureDefinitions;
+		TextureSpec** textureSpecs;
 
 		// pointer to the background music
 		const u16 (*bgm)[];
@@ -135,8 +135,8 @@ typedef struct StageDefinition
 
 	struct Entities
 	{
-		// ui's definition
-		UiContainerDefinition uiContainerDefinition;
+		// ui's spec
+		UiContainerSpec uiContainerSpec;
 
 		// each of the stage's entities
 		PositionedEntity* children;
@@ -146,9 +146,9 @@ typedef struct StageDefinition
 	// post processing effects
 	PostProcessingEffect* postProcessingEffects;
 
-} StageDefinition;
+} StageSpec;
 
-typedef const StageDefinition StageROMDef;
+typedef const StageSpec StageROMSpec;
 
 /**
  * Stage Entity Description
@@ -172,8 +172,8 @@ typedef struct StageEntityDescription
 /// @ingroup stage
 class Stage : Container
 {
-	// world's definition pointer
-	StageDefinition* stageDefinition;
+	// world's spec pointer
+	StageSpec* stageSpec;
 	// entity factory
 	EntityFactory entityFactory;
 	// particle remover
@@ -200,17 +200,17 @@ class Stage : Container
 	s16 nextEntityId;
 
 	/// @publicsection
-	void constructor(StageDefinition* stageDefinition);
+	void constructor(StageSpec* stageSpec);
 	void setupPalettes();
 	void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	void loadPostProcessingEffects();
 	Size getSize();
 	CameraFrustum getCameraFrustum();
-	bool registerEntityId(s16 internalId, EntityDefinition* entityDefinition);
+	bool registerEntityId(s16 internalId, EntitySpec* entitySpec);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
 	UiContainer getUiContainer();
-	StageDefinition* getStageDefinition();
+	StageSpec* getStageSpec();
 	ParticleRemover getParticleRemover();
 	void showStreamingProfiling(int x, int y);
 	bool unloadOutOfRangeEntities(int defer);

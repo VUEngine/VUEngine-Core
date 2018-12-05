@@ -39,8 +39,8 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontROMDef* const __FONTS[];
-extern FontROMDef VUENGINE_FONT;
+extern FontROMSpec* const __FONTS[];
+extern FontROMSpec VUENGINE_FONT;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,8 +54,8 @@ extern FontROMDef VUENGINE_FONT;
 #define VUENGINE_DEBUG_FONT_SIZE	160
 FontROMData VUENGINE_DEBUG_FONT_DATA =
 {
-	// font definition
-	(FontDefinition*)&VUENGINE_FONT,
+	// font spec
+	(FontSpec*)&VUENGINE_FONT,
 
 	// offset of font in char memory
 	__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE,
@@ -116,7 +116,7 @@ void Printing::reset()
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 }
 
-void Printing::loadFonts(FontDefinition** fontDefinitions)
+void Printing::loadFonts(FontSpec** fontSpecs)
 {
 	// empty list of registered fonts
 	Printing::reset(this);
@@ -127,19 +127,19 @@ void Printing::loadFonts(FontDefinition** fontDefinitions)
 	{
 		// instance and initialize a new fontdata instance
 		FontData* fontData = new FontData;
-		fontData->fontDefinition = __FONTS[i];
+		fontData->fontSpec = __FONTS[i];
 		fontData->offset = 0;
 
 		// preload charset for font if in list of fonts to preload
-		if(fontDefinitions)
+		if(fontSpecs)
 		{
 			// find defined font in list of fonts to preload
-			for(j = 0; fontDefinitions[j]; j++)
+			for(j = 0; fontSpecs[j]; j++)
 			{
 				// preload charset and save charset reference, if font was found
-				if(__FONTS[i]->charSetDefinition == fontDefinitions[j]->charSetDefinition)
+				if(__FONTS[i]->charSetSpec == fontSpecs[j]->charSetSpec)
 				{
-					fontData->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), fontDefinitions[j]->charSetDefinition));
+					fontData->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), fontSpecs[j]->charSetSpec));
 				}
 			}
 		}
@@ -153,7 +153,7 @@ void Printing::loadDebugFont()
 {
 	Mem::copyBYTE(
 		(u8*)(__CHAR_SPACE_BASE_ADDRESS + (VUENGINE_DEBUG_FONT_DATA.offset << 4)),
-		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontDefinition->charSetDefinition->charDefinition),
+		(u8*)(VUENGINE_DEBUG_FONT_DATA.fontSpec->charSetSpec->charSpec),
 		VUENGINE_DEBUG_FONT_SIZE << 4
 	);
 }
@@ -197,12 +197,12 @@ FontData* Printing::getFontByName(const char* font)
 		{
 			if(font)
 			{
-				// iterate over registered fonts to find definition of font to use
+				// iterate over registered fonts to find spec of font to use
 				VirtualNode node = VirtualList::begin(this->fonts);
 				for(; node; node = VirtualNode::getNext(node))
 				{
 					FontData* fontData = VirtualNode::getData(node);
-					if(!strcmp(fontData->fontDefinition->name, font))
+					if(!strcmp(fontData->fontSpec->name, font))
 					{
 						result = fontData;
 						break;
@@ -213,7 +213,7 @@ FontData* Printing::getFontByName(const char* font)
 			// if font's charset has not been preloaded, load it now
 			if(!result->offset)
 			{
-				result->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontDefinition->charSetDefinition));
+				result->offset = CharSet::getOffset(CharSetManager::getCharSet(CharSetManager::getInstance(), result->fontSpec->charSetSpec));
 			}
 		}
 	}
@@ -259,25 +259,25 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 			// tab
 			case 9:
 
-				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontData->fontDefinition->fontSize.x;
+				x = (x / TAB_SIZE + 1) * TAB_SIZE * fontData->fontSpec->fontSize.x;
 				break;
 
 			// carriage return
 			case 10:
 
-				y += fontData->fontDefinition->fontSize.y;
+				y += fontData->fontSpec->fontSize.y;
 				x = startColumn;
 				break;
 
 			default:
 				{
-					for(charOffsetX = 0; charOffsetX < fontData->fontDefinition->fontSize.x; charOffsetX++)
+					for(charOffsetX = 0; charOffsetX < fontData->fontSpec->fontSize.x; charOffsetX++)
 					{
-						for(charOffsetY = 0; charOffsetY < fontData->fontDefinition->fontSize.y; charOffsetY++)
+						for(charOffsetY = 0; charOffsetY < fontData->fontSpec->fontSize.y; charOffsetY++)
 						{
 							// allow fonts with less than 32 letters
-							charOffset = (fontData->fontDefinition->characterCount < 32)
-								? charOffsetX + (charOffsetY * fontData->fontDefinition->characterCount * fontData->fontDefinition->fontSize.x)
+							charOffset = (fontData->fontSpec->characterCount < 32)
+								? charOffsetX + (charOffsetY * fontData->fontSpec->characterCount * fontData->fontSpec->fontSize.x)
 								: charOffsetX + (charOffsetY << 5);
 
 							bgmapSpaceBaseAddress[(0x1000 * printingBgmap) + position + charOffsetX + (charOffsetY << 6)] =
@@ -286,10 +286,10 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 									fontData->offset +
 
 									// top left char of letter
-									((u8)(string[i] - fontData->fontDefinition->offset) * fontData->fontDefinition->fontSize.x) +
+									((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) +
 
 									// skip lower chars of multi-char fonts with y > 1
-									((((u8)(string[i] - fontData->fontDefinition->offset) * fontData->fontDefinition->fontSize.x) >> 5) * ((fontData->fontDefinition->fontSize.y - 1)) << 5) +
+									((((u8)(string[i] - fontData->fontSpec->offset) * fontData->fontSpec->fontSize.x) >> 5) * ((fontData->fontSpec->fontSize.y - 1)) << 5) +
 
 									// respective char of letter in multi-char fonts
 									charOffset
@@ -299,11 +299,11 @@ void Printing::out(u8 x, u8 y, const char* string, const char* font)
 					}
 				}
 
-				x += fontData->fontDefinition->fontSize.x;
+				x += fontData->fontSpec->fontSize.x;
 				if(x >= 48)
 				{
 					// wrap around when outside of the visible area
-					y += fontData->fontDefinition->fontSize.y;
+					y += fontData->fontSpec->fontSize.y;
 					x = startColumn;
 				}
 
@@ -415,7 +415,7 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 		return fontSize;
 	}
 
-	fontSize.y = fontData->fontDefinition->fontSize.y;
+	fontSize.y = fontData->fontSpec->fontSize.y;
 
 	while(string[i])
 	{
@@ -429,22 +429,22 @@ FontSize Printing::getTextSize(const char* string, const char* font)
 			// tab
 			case 9:
 
-				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontData->fontDefinition->fontSize.x;
+				currentLineLength += (currentLineLength / TAB_SIZE + 1) * TAB_SIZE * fontData->fontSpec->fontSize.x;
 				break;
 
 			// carriage return
 			case 10:
 
-				fontSize.y += fontData->fontDefinition->fontSize.y;
+				fontSize.y += fontData->fontSpec->fontSize.y;
 				currentLineLength = 0;
 				break;
 
 			default:
 
-				currentLineLength += fontData->fontDefinition->fontSize.x;
+				currentLineLength += fontData->fontSpec->fontSize.x;
 				if(currentLineLength >= 64)
 				{
-					fontSize.y += fontData->fontDefinition->fontSize.y;
+					fontSize.y += fontData->fontSpec->fontSize.y;
 					currentLineLength = 0;
 				}
 

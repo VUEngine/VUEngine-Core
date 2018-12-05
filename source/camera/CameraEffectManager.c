@@ -95,12 +95,12 @@ Brightness CameraEffectManager::getDefaultBrightness()
 		__BRIGHTNESS_BRIGHT_RED,
 	};
 
-	// if exists, get brightness settings from stage definition
+	// if exists, get brightness settings from stage spec
 	Stage stage = GameState::getStage(Game::getCurrentState(Game::getInstance()));
 	if(stage != NULL)
 	{
-		StageDefinition* stageDefinition = Stage::getStageDefinition(stage);
-		brightness = stageDefinition->rendering.colorConfig.brightness;
+		StageSpec* stageSpec = Stage::getStageSpec(stage);
+		brightness = stageSpec->rendering.colorConfig.brightness;
 	}
 
 	return brightness;

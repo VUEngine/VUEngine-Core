@@ -55,7 +55,7 @@ class CollisionManager : Object
 	void constructor();
 	void hideShapes();
 	void print(int x, int y);
-	Shape createShape(SpatialObject owner, const ShapeDefinition* shapeDefinition);
+	Shape createShape(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void destroyShape(Shape shape);
 	void reset();
 	void shapeBecameActive(Shape shape);

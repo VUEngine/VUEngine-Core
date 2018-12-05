@@ -37,10 +37,10 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct ActorDefinition
+typedef struct ActorSpec
 {
 	/// it has an Entity at the beginning
-	AnimatedEntityDefinition animatedEntityDefinition;
+	AnimatedEntitySpec animatedEntitySpec;
 
 	/// true to create a body
 	bool createBody;
@@ -48,9 +48,9 @@ typedef struct ActorDefinition
 	// axes subject to gravity
 	u16 axesSubjectToGravity;
 
-} ActorDefinition;
+} ActorSpec;
 
-typedef const ActorDefinition ActorROMDef;
+typedef const ActorSpec ActorROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -60,8 +60,8 @@ typedef const ActorDefinition ActorROMDef;
 /// @ingroup stage-entities
 class Actor : AnimatedEntity
 {
-	// definition
-	const ActorDefinition* actorDefinition;
+	// spec
+	const ActorSpec* actorSpec;
 	// a state machine to handle entity's logic
 	StateMachine stateMachine;
 	// a physical body
@@ -70,7 +70,7 @@ class Actor : AnimatedEntity
 	Rotation previousRotation;
 
 	/// @publicsection
-	void constructor(const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name);
+	void constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, const char* const name);
 	bool hasChangedDirection(u16 axis);
 	void changeDirectionOnAxis(u16 axis);
 	bool isInsideGame();
@@ -107,7 +107,7 @@ class Actor : AnimatedEntity
 	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void collidingShapeOwnerDestroyed(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
 	override void changeEnvironment(Transformation* environmentTransform);
-	override void setDefinition(void* actorDefinition);
+	override void setSpec(void* actorSpec);
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 }
 

@@ -49,8 +49,8 @@ class Entity : Container
 	VirtualList shapes;
 	// Used for collisions and streaming
 	Size size;
-	// Entity's definition
-	EntityDefinition* entityDefinition;
+	// Entity's spec
+	EntitySpec* entitySpec;
 	// Center displacement
 	Vector3D* centerDisplacement;
 	// Entity's id, set by the user
@@ -61,23 +61,23 @@ class Entity : Container
 	bool invalidateSprites;
 
 	/// @publicsection
-	static Entity instantiate(const EntityDefinition* const entityDefinition, s16 id, s16 internalId, const char* const name, void* extraInfo);
+	static Entity instantiate(const EntitySpec* const entitySpec, s16 id, s16 internalId, const char* const name, void* extraInfo);
 	static Entity loadEntity(const PositionedEntity* const positionedEntity, s16 internalId);
 	static Entity loadEntityDeferred(const PositionedEntity* const positionedEntity, s16 internalId);
-	static PixelRightBox getTotalSizeFromDefinition(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
-	static Vector3D* calculateGlobalPositionFromDefinitionByName(const struct PositionedEntity* childrenDefinitions, Vector3D environmentPosition, const char* childName);
-	void constructor(EntityDefinition* entityDefinition, s16 id, s16 internalId, const char* const name);
-	void addChildEntities(const PositionedEntity* childrenDefinitions);
-	void addChildEntitiesDeferred(const PositionedEntity* childrenDefinitions);
-	Entity addChildEntity(const EntityDefinition* entityDefinition, int internalId, const char* name, const Vector3D* position, void* extraInfo);
-	bool addSpriteFromDefinitionAtIndex(int spriteDefinitionIndex);
-	void addSprites(const SpriteDefinition** spritesDefinitions);
+	static PixelRightBox getTotalSizeFromSpec(const PositionedEntity* positionedEntity, const PixelVector* environmentPosition);
+	static Vector3D* calculateGlobalPositionFromSpecByName(const struct PositionedEntity* childrenSpecs, Vector3D environmentPosition, const char* childName);
+	void constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const char* const name);
+	void addChildEntities(const PositionedEntity* childrenSpecs);
+	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
+	Entity addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo);
+	bool addSpriteFromSpecAtIndex(int spriteSpecIndex);
+	void addSprites(const SpriteSpec** spritesSpecs);
 	u32 areAllChildrenInstantiated();
 	u32 areAllChildrenInitialized();
 	u32 areAllChildrenTransformed();
 	u32 areAllChildrenReady();
 	Entity getChildById(s16 id);
-	EntityDefinition* getEntityDefinition();
+	EntitySpec* getEntitySpec();
 	int getMapParallax();
 	s16 getId();
 	s16 getInternalId();
@@ -104,7 +104,7 @@ class Entity : Container
 	virtual void initialize(bool recursive);
 	virtual void ready(bool recursive);
 	virtual bool respawn();
-	virtual void setDefinition(void* entityDefinition);
+	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxesForShapeSyncWithDirection();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);

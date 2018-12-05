@@ -46,21 +46,21 @@
 /**
  * Class constructor
  *
- * @param particleDefinition	Definition of the Particle
- * @param spriteDefinition
+ * @param particleSpec	Spec of the Particle
+ * @param spriteSpec
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass)
 {
 	// construct base Container
 	Base::constructor();
 
-	this->particleDefinition = particleDefinition;
-	this->spriteDefinition = spriteDefinition;
+	this->particleSpec = particleSpec;
+	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
 	PhysicalSpecification physicalSpecification = {mass, 0, 0, (Vector3D){0, 0, 0}};
-	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleDefinition->axesSubjectToGravity);
+	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleSpec->axesSubjectToGravity);
 	this->objectSprite = NULL;
 	Particle::addSprite(this);
 }
@@ -96,14 +96,14 @@ void Particle::destructor()
  */
 void Particle::addSprite()
 {
-	ASSERT(this->spriteDefinition->allocator, "Particle::load: no sprite allocator");
+	ASSERT(this->spriteSpec->allocator, "Particle::load: no sprite allocator");
 
 	// call the appropriate allocator to support inheritance
-	this->objectSprite = ObjectSprite::safeCast(((Sprite (*)(const SpriteDefinition*, Object)) this->spriteDefinition->allocator)((SpriteDefinition*)this->spriteDefinition, Object::safeCast(this)));
+	this->objectSprite = ObjectSprite::safeCast(((Sprite (*)(const SpriteSpec*, Object)) this->spriteSpec->allocator)((SpriteSpec*)this->spriteSpec, Object::safeCast(this)));
 
-	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
+	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
 	{
-		Sprite::play(this->objectSprite, this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite::play(this->objectSprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
 	}
 
 	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
@@ -265,9 +265,9 @@ void Particle::show()
 
 	Sprite::show(this->objectSprite);
 
-	if(this->particleDefinition->initialAnimation && this->particleDefinition->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
+	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
 	{
-		Sprite::play(this->objectSprite, this->particleDefinition->animationDescription, this->particleDefinition->initialAnimation);
+		Sprite::play(this->objectSprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
 	}
 }
 

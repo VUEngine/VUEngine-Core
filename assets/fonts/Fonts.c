@@ -31,15 +31,15 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern FontDefinition VUENGINE_FONT;
+extern FontSpec VUENGINE_FONT;
 
 
 //---------------------------------------------------------------------------------------------------------
 //												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-FontDefinition* const __FONTS[] =
+FontSpec* const __FONTS[] =
 {
-	(FontDefinition*)&VUENGINE_FONT,
+	(FontSpec*)&VUENGINE_FONT,
 	NULL
 };

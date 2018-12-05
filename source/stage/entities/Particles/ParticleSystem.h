@@ -36,10 +36,10 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct ParticleSystemDefinition
+typedef struct ParticleSystemSpec
 {
 	/// it has an Entity at the beginning
-	EntityDefinition entityDefinition;
+	EntitySpec entitySpec;
 
 	/// whether to delete or reuse expired particles
 	u8 recycleParticles;
@@ -54,13 +54,13 @@ typedef struct ParticleSystemDefinition
 	u8 maximumNumberOfAliveParticles;
 
 	/// array of sprites to select randomly
-	const ObjectSpriteDefinition** objectSpriteDefinitions;
+	const ObjectSpriteSpec** objectSpriteSpecs;
 
 	/// auto start
 	bool autoStart;
 
-	/// particle's definition
-	ParticleDefinition* particleDefinition;
+	/// particle's spec
+	ParticleSpec* particleSpec;
 
 	/// minimum relative spawn position
 	Vector3D minimumRelativeSpawnPosition;
@@ -68,23 +68,23 @@ typedef struct ParticleSystemDefinition
 	/// maximum relative spawn position
 	Vector3D maximumRelativeSpawnPosition;
 
-	/// minimum force to apply (use int values in the definition to avoid overflow)
+	/// minimum force to apply (use int values in the spec to avoid overflow)
 	Vector3D minimumForce;
 
-	/// maximum force to apply (use int values in the definition to avoid overflow)
+	/// maximum force to apply (use int values in the spec to avoid overflow)
 	Vector3D maximumForce;
 
 	/// type of movement for the particles
 	u32 movementType;
 
-} ParticleSystemDefinition;
+} ParticleSystemSpec;
 
 /**
  * A ParticleSystem that is stored in ROM
  *
  * @memberof	ParticleSystem
  */
-typedef const ParticleSystemDefinition ParticleSystemROMDef;
+typedef const ParticleSystemSpec ParticleSystemROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -94,8 +94,8 @@ typedef const ParticleSystemDefinition ParticleSystemROMDef;
 /// @ingroup stage-entities-particles
 class ParticleSystem : Entity
 {
-	// system's definition
-	const ParticleSystemDefinition* particleSystemDefinition;
+	// system's spec
+	const ParticleSystemSpec* particleSystemSpec;
 	// particle list
 	VirtualList particles;
 	// particle list
@@ -106,8 +106,8 @@ class ParticleSystem : Entity
 	int nextSpawnTime;
 	// particle count
 	int particleCount;
-	// number of sprite definitions
-	s16 numberOfSpriteDefinitions;
+	// number of sprite specs
+	s16 numberOfSpriteSpecs;
 	// pause flag
 	bool paused;
 	// Flag to keep spawning particles
@@ -116,7 +116,7 @@ class ParticleSystem : Entity
 	u16 totalSpawnedParticles;
 
 	/// @publicsection
-	void constructor(ParticleSystemDefinition* particleSystemDefinition,  s16 id, s16 internalId, const char* const name);
+	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 id, s16 internalId, const char* const name);
 	bool handleMessage(Telegram telegram);
 	void pause();
 	void show();

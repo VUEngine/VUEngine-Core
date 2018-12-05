@@ -336,7 +336,7 @@
 			/* class attributes */																		\
 			ClassName ## _ATTRIBUTES																	\
 																										\
-			/* end definition */																		\
+			/* end spec */																		\
 		} ClassName ## _str 																			\
 
 
@@ -360,10 +360,10 @@
 			/* class attributes */																		\
 			ClassName ## _ATTRIBUTES																	\
 																										\
-			/* end definition */																		\
+			/* end spec */																		\
 		} ClassName ## _str;																			\
 																										\
-		/* class' vtable's definition */																\
+		/* class' vtable's spec */																\
 		struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		static void (* const _baseDestructor)(Object) =													\
@@ -377,7 +377,7 @@
 		ObjectBaseClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))			\
 		{																								\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
-					"Wrong class definition: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "		\
+					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "		\
 					__MAKE_STRING(BaseClassName) ")");													\
 			return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;								\
 		}																								\
@@ -386,7 +386,7 @@
 		const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))				\
 		{																								\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
-					"Wrong class definition: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "		\
+					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "		\
 					__MAKE_STRING(BaseClassName) ")");													\
 			return #ClassName;																			\
 		}																								\

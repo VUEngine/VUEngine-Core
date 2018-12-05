@@ -38,7 +38,7 @@
 
 class Particle;
 
-typedef struct ParticleDefinition
+typedef struct ParticleSpec
 {
 	/// class allocator
 	AllocatorPointer allocator;
@@ -67,14 +67,14 @@ typedef struct ParticleDefinition
 	/// animation to play automatically
 	char* initialAnimation;
 
-} ParticleDefinition;
+} ParticleSpec;
 
 /**
  * A Particle that is stored in ROM
  *
  * @memberof	Particle
  */
-typedef const ParticleDefinition ParticleROMDef;
+typedef const ParticleSpec ParticleROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -84,10 +84,10 @@ typedef const ParticleDefinition ParticleROMDef;
 /// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {
-	// Particle's definition
-	const ParticleDefinition* particleDefinition;
-	// Particle's SpriteDefinition
-	const SpriteDefinition* spriteDefinition;
+	// Particle's spec
+	const ParticleSpec* particleSpec;
+	// Particle's SpriteSpec
+	const SpriteSpec* spriteSpec;
 	// OBJ based sprite
 	ObjectSprite objectSprite;
 	// Particle's physical body
@@ -96,7 +96,7 @@ class Particle : SpatialObject
 	int lifeSpan;
 
 	/// @publicsection
-	void constructor(const ParticleDefinition* particleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass);
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass);
 	void addForce(const Force* force, u32 movementType);
 	u16 getDepth();
 	u16 getHeight();

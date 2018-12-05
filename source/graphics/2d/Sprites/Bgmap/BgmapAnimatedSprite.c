@@ -46,17 +46,17 @@ extern int strcmp(const char *, const char *);
 /**
  * Class constructor
  *
- * @param bgmapSpriteDefinition		Sprite definition
+ * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapAnimatedSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+void BgmapAnimatedSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner)
 {
 	// construct base object
-	Base::constructor(bgmapSpriteDefinition, owner);
+	Base::constructor(bgmapSpriteSpec, owner);
 
 	ASSERT(this->texture, "BgmapAnimatedSprite::constructor: null texture");
 
-    this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+    this->animationController = new AnimationController(owner, Sprite::safeCast(this), bgmapSpriteSpec->spriteSpec.textureSpec->charSetSpec);
 
     // since the offset will be moved during animation, must save it
     this->originalTextureSource.mx = BgmapTexture::getXOffset(this->texture) << 3;
@@ -98,13 +98,13 @@ void BgmapAnimatedSprite::writeAnimation()
 	{
 		case __ANIMATED_SINGLE_OPTIMIZED:
 			{
-				// move charset definition to the next frame chars
-				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
+				// move charset spec to the next frame chars
+				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
 						(AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				BgmapTexture bgmapTexture = BgmapTexture::safeCast(this->texture);
 
-				// move map definition to the next frame
+				// move map spec to the next frame
 				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) *
 						(AnimationController::getActualFrameIndex(this->animationController) << 1));
 
@@ -117,8 +117,8 @@ void BgmapAnimatedSprite::writeAnimation()
 		case __ANIMATED_SHARED:
 		case __ANIMATED_SHARED_COORDINATED:
 			{
-				// move charset definition to the next frame chars
-				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
+				// move charset spec to the next frame chars
+				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
 						(AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				// write charset

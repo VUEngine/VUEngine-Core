@@ -47,15 +47,15 @@ extern int strcmp(const char *, const char *);
 /**
  * Class constructor
  *
- * @param objectSpriteDefinition	Sprite definition
+ * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectAnimatedSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+void ObjectAnimatedSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner)
 {
 	// construct base object
-	Base::constructor((const ObjectSpriteDefinition*)objectSpriteDefinition, owner);
+	Base::constructor((const ObjectSpriteSpec*)objectSpriteSpec, owner);
 
-	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectSpriteDefinition->spriteDefinition.textureDefinition->charSetDefinition);
+	this->animationController = new AnimationController(owner, Sprite::safeCast(this), objectSpriteSpec->spriteSpec.textureSpec->charSetSpec);
 }
 
 /**
@@ -100,13 +100,13 @@ void ObjectAnimatedSprite::writeAnimation()
 			{
 				CharSet charSet = Texture::getCharSet(this->texture, true);
 
-				// move charset definition to the next frame chars
-				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
+				// move charset spec to the next frame chars
+				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
 						(AnimationController::getActualFrameIndex(this->animationController) << 4));
 
 				ObjectTexture objectTexture = ObjectTexture::safeCast(this->texture);
 
-				// move map definition to the next frame
+				// move map spec to the next frame
 				Texture::setMapDisplacement(this->texture, Texture::getCols(this->texture) * Texture::getRows(this->texture) * (animationFrame << 1));
 
 				CharSet::write(charSet);
@@ -120,8 +120,8 @@ void ObjectAnimatedSprite::writeAnimation()
 			{
 				CharSet charSet = Texture::getCharSet(this->texture, true);
 
-				// move charset definition to the next frame chars
-				CharSet::setCharDefinitionDisplacement(charSet, Texture::getNumberOfChars(this->texture) * (animationFrame << 4));
+				// move charset spec to the next frame chars
+				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) * (animationFrame << 4));
 
 				// write charset
 				CharSet::write(charSet);

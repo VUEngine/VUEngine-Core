@@ -85,12 +85,12 @@ void CollisionManager::destructor()
 }
 
 // register a shape
-Shape CollisionManager::createShape(SpatialObject owner, const ShapeDefinition* shapeDefinition)
+Shape CollisionManager::createShape(SpatialObject owner, const ShapeSpec* shapeSpec)
 {
 	// create the shape
-	Shape shape = ((Shape (*)(SpatialObject)) shapeDefinition->allocator)(owner);
-	Shape::setup(shape, shapeDefinition->layers, shapeDefinition->layersToIgnore);
-	Shape::setCheckForCollisions(shape, shapeDefinition->checkForCollisions);
+	Shape shape = ((Shape (*)(SpatialObject)) shapeSpec->allocator)(owner);
+	Shape::setup(shape, shapeSpec->layers, shapeSpec->layersToIgnore);
+	Shape::setCheckForCollisions(shape, shapeSpec->checkForCollisions);
 
 	// register it
 	VirtualList::pushFront(this->shapes, shape);

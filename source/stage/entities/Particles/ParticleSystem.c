@@ -48,39 +48,39 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @param particleSystemDefinition	Definition of the ParticleSystem
+ * @param particleSystemSpec	Spec of the ParticleSystem
  * @param id
  * @param internalId
  * @param name
  */
-void ParticleSystem::constructor(ParticleSystemDefinition* particleSystemDefinition, s16 id, s16 internalId, const char* const name)
+void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id, s16 internalId, const char* const name)
 {
 	// construct base
-	Base::constructor(&particleSystemDefinition->entityDefinition, id, internalId, name);
+	Base::constructor(&particleSystemSpec->entitySpec, id, internalId, name);
 
-	// save definition
-	this->particleSystemDefinition = particleSystemDefinition;
+	// save spec
+	this->particleSystemSpec = particleSystemSpec;
 
 	this->particles = new VirtualList();
-	this->recyclableParticles = this->particleSystemDefinition->recycleParticles ? new VirtualList() : NULL;
+	this->recyclableParticles = this->particleSystemSpec->recycleParticles ? new VirtualList() : NULL;
 	this->expiredParticles = new VirtualList();
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
 	this->loop = true;
-	this->paused = !this->particleSystemDefinition->autoStart;
+	this->paused = !this->particleSystemSpec->autoStart;
 
-	// set size from definition
-	this->size.x += __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x);
-	this->size.y += __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y);
-	this->size.z += __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z);
+	// set size from spec
+	this->size.x += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x);
+	this->size.y += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y);
+	this->size.z += __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z);
 
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem::computeNextSpawnTime(this);
 
-	// calculate the number of sprite definitions
-	for(this->numberOfSpriteDefinitions = 0; 0 <= this->numberOfSpriteDefinitions && this->particleSystemDefinition->objectSpriteDefinitions[this->numberOfSpriteDefinitions]; this->numberOfSpriteDefinitions++);
+	// calculate the number of sprite specs
+	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->objectSpriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
 
-	ASSERT(0 < this->numberOfSpriteDefinitions, "ParticleSystem::constructor: 0 sprite definitions");
+	ASSERT(0 < this->numberOfSpriteSpecs, "ParticleSystem::constructor: 0 sprite specs");
 }
 
 /**
@@ -166,7 +166,7 @@ void ParticleSystem::processExpiredParticles()
 {
 	VirtualNode node = this->expiredParticles->head;
 
-	if(this->particleSystemDefinition->recycleParticles)
+	if(this->particleSystemSpec->recycleParticles)
 	{
 		for(; node; node = node->next)
 		{
@@ -205,7 +205,7 @@ void ParticleSystem::update(u32 elapsedTime)
 	// update each particle
 	VirtualNode node = this->particles->head;
 
-	void (* behavior)(Particle particle) = this->particleSystemDefinition->particleDefinition->behavior;
+	void (* behavior)(Particle particle) = this->particleSystemSpec->particleSpec->behavior;
 
 	for(; node; node = node->next)
 	{
@@ -225,16 +225,16 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	if(0 > this->nextSpawnTime)
 	{
-		if(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+		if(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
 		{
-			if(++this->totalSpawnedParticles >= this->particleSystemDefinition->maximumNumberOfAliveParticles &&
+			if(++this->totalSpawnedParticles >= this->particleSystemSpec->maximumNumberOfAliveParticles &&
 				!this->loop)
 			{
 				ParticleSystem::pause(this);
 				return;
 			}
 
-			if(this->particleSystemDefinition->recycleParticles)
+			if(this->particleSystemSpec->recycleParticles)
 			{
 				VirtualList::pushBack(this->particles, ParticleSystem::recycleParticle(this));
 				this->particleCount++;
@@ -256,12 +256,12 @@ void ParticleSystem::update(u32 elapsedTime)
  */
 Particle ParticleSystem::recycleParticle()
 {
-	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemDefinition->maximumNumberOfAliveParticles))
+	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
 	{
 		long seed = Utilities::randomSeed();
 
-		int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities::random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
-		fix10_6 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities::random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
+		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
+		fix10_6 mass = this->particleSystemSpec->particleSpec->minimumMass + Utilities::random(seed, this->particleSystemSpec->particleSpec->massDelta);
 
 		// call the appropriate allocator to support inheritance
 		Particle particle = Particle::safeCast(VirtualList::front(this->recyclableParticles));
@@ -270,7 +270,7 @@ Particle ParticleSystem::recycleParticle()
 		Particle::setLifeSpan(particle, lifeSpan);
 		Particle::setMass(particle, mass);
 		Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
-		Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
+		Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemSpec->movementType);
 		Particle::show(particle);
 
 		VirtualList::popFront(this->recyclableParticles);
@@ -293,9 +293,9 @@ const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
 		0, 0, 0
 	};
 
-	position.x = this->transformation.globalPosition.x + this->particleSystemDefinition->minimumRelativeSpawnPosition.x + Utilities::random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.x - this->particleSystemDefinition->minimumRelativeSpawnPosition.x));
-	position.y = this->transformation.globalPosition.y + this->particleSystemDefinition->minimumRelativeSpawnPosition.y + Utilities::random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.y - this->particleSystemDefinition->minimumRelativeSpawnPosition.y));
-	position.z = this->transformation.globalPosition.z + this->particleSystemDefinition->minimumRelativeSpawnPosition.z + Utilities::random(seed, __ABS(this->particleSystemDefinition->maximumRelativeSpawnPosition.z - this->particleSystemDefinition->minimumRelativeSpawnPosition.z));
+	position.x = this->transformation.globalPosition.x + this->particleSystemSpec->minimumRelativeSpawnPosition.x + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x));
+	position.y = this->transformation.globalPosition.y + this->particleSystemSpec->minimumRelativeSpawnPosition.y + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y));
+	position.z = this->transformation.globalPosition.z + this->particleSystemSpec->minimumRelativeSpawnPosition.z + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.z - this->particleSystemSpec->minimumRelativeSpawnPosition.z));
 
 	return &position;
 }
@@ -312,9 +312,9 @@ const Force* ParticleSystem::getParticleSpawnForce(long seed)
 		0, 0, 0
 	};
 
-	force.x = this->particleSystemDefinition->minimumForce.x + Utilities::random(seed, __ABS(this->particleSystemDefinition->maximumForce.x - this->particleSystemDefinition->minimumForce.x));
-	force.y = this->particleSystemDefinition->minimumForce.y + Utilities::random(seed, __ABS(this->particleSystemDefinition->maximumForce.y - this->particleSystemDefinition->minimumForce.y));
-	force.z = this->particleSystemDefinition->minimumForce.z + Utilities::random(seed, __ABS(this->particleSystemDefinition->maximumForce.z - this->particleSystemDefinition->minimumForce.z));
+	force.x = this->particleSystemSpec->minimumForce.x + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.x - this->particleSystemSpec->minimumForce.x));
+	force.y = this->particleSystemSpec->minimumForce.y + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.y - this->particleSystemSpec->minimumForce.y));
+	force.z = this->particleSystemSpec->minimumForce.z + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.z - this->particleSystemSpec->minimumForce.z));
 
 	return &force;
 }
@@ -324,9 +324,9 @@ const Force* ParticleSystem::getParticleSpawnForce(long seed)
  */
 void ParticleSystem::spawnAllParticles()
 {
-	while(this->particleCount < this->particleSystemDefinition->maximumNumberOfAliveParticles)
+	while(this->particleCount < this->particleSystemSpec->maximumNumberOfAliveParticles)
 	{
-		if(this->particleSystemDefinition->recycleParticles)
+		if(this->particleSystemSpec->recycleParticles)
 		{
 			VirtualList::pushBack(this->particles, ParticleSystem::recycleParticle(this));
 			this->particleCount++;
@@ -348,20 +348,20 @@ Particle ParticleSystem::spawnParticle()
 {
 	long seed = Utilities::randomSeed();
 
-	int lifeSpan = this->particleSystemDefinition->particleDefinition->minimumLifeSpan + Utilities::random(seed, this->particleSystemDefinition->particleDefinition->lifeSpanDelta);
-	fix10_6 mass = this->particleSystemDefinition->particleDefinition->minimumMass + Utilities::random(seed, this->particleSystemDefinition->particleDefinition->massDelta);
+	int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
+	fix10_6 mass = this->particleSystemSpec->particleSpec->minimumMass + Utilities::random(seed, this->particleSystemSpec->particleSpec->massDelta);
 
-	int spriteDefinitionIndex = 0;
+	int spriteSpecIndex = 0;
 
-	if(1 < this->numberOfSpriteDefinitions)
+	if(1 < this->numberOfSpriteSpecs)
 	{
-		spriteDefinitionIndex = Utilities::random(seed, this->numberOfSpriteDefinitions);
+		spriteSpecIndex = Utilities::random(seed, this->numberOfSpriteSpecs);
 	}
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleDefinition*, const SpriteDefinition*, int, fix10_6)) this->particleSystemDefinition->particleDefinition->allocator)(this->particleSystemDefinition->particleDefinition, (const SpriteDefinition*)this->particleSystemDefinition->objectSpriteDefinitions[spriteDefinitionIndex], lifeSpan, mass);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int, fix10_6)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, (const SpriteSpec*)this->particleSystemSpec->objectSpriteSpecs[spriteSpecIndex], lifeSpan, mass);
 	Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
-	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemDefinition->movementType);
+	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemSpec->movementType);
 
 	return particle;
 }
@@ -507,8 +507,8 @@ void ParticleSystem::particleExpired(Particle particle)
  */
 int ParticleSystem::computeNextSpawnTime()
 {
-	return this->particleSystemDefinition->minimumSpawnDelay +
-			Utilities::random(Utilities::randomSeed(), this->particleSystemDefinition->spawnDelayDelta);
+	return this->particleSystemSpec->minimumSpawnDelay +
+			Utilities::random(Utilities::randomSeed(), this->particleSystemSpec->spawnDelayDelta);
 }
 
 void ParticleSystem::start()

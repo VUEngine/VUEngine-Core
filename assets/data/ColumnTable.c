@@ -32,12 +32,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 // the default column table as provided by nintendo
-ColumnTableROMDef DEFAULT_COLUMN_TABLE =
+ColumnTableROMSpec DEFAULT_COLUMN_TABLE =
 {
-	// mirror definition?
+	// mirror spec?
 	true,
 
-	// column table definition
+	// column table spec
 	{
 		0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
 		0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe, 0xfe,
@@ -76,9 +76,9 @@ ColumnTableROMDef DEFAULT_COLUMN_TABLE =
 };
 
 // default brightness repeat values
-BrightnessRepeatROMDef DEFAULT_BRIGHTNESS_REPEAT =
+BrightnessRepeatROMSpec DEFAULT_BRIGHTNESS_REPEAT =
 {
-	// mirror definition?
+	// mirror spec?
 	true,
 
 	// brightness repeat values

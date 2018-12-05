@@ -281,11 +281,11 @@ void HardwareManager::lowerBrightness()
 /**
  * Setup the column table
  *
- * @param columnTableDefinition		Definition to use
+ * @param columnTableSpec		Spec to use
  */
-void HardwareManager::setupColumnTable(ColumnTableDefinition* columnTableDefinition)
+void HardwareManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
-	VIPManager::setupColumnTable(this->vipManager, columnTableDefinition);
+	VIPManager::setupColumnTable(this->vipManager, columnTableSpec);
 }
 
 /**

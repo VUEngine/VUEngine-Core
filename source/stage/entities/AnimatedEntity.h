@@ -36,10 +36,10 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct AnimatedEntityDefinition
+typedef struct AnimatedEntitySpec
 {
 	// it has an Entity at the beginning
-	EntityDefinition entityDefinition;
+	EntitySpec entitySpec;
 
 	// the animation
 	AnimationDescription* animationDescription;
@@ -47,9 +47,9 @@ typedef struct AnimatedEntityDefinition
 	// animation to play automatically
 	char* initialAnimation;
 
-} AnimatedEntityDefinition;
+} AnimatedEntitySpec;
 
-typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
+typedef const AnimatedEntitySpec AnimatedEntityROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -59,8 +59,8 @@ typedef const AnimatedEntityDefinition AnimatedEntityROMDef;
 /// @ingroup stage-entities
 class AnimatedEntity : Entity
 {
-	// Pointer to the ROM definition
-	AnimatedEntityDefinition* animatedEntityDefinition;
+	// Pointer to the ROM spec
+	AnimatedEntitySpec* animatedEntitySpec;
 	// Pointer to the animation description
 	AnimationDescription* animationDescription;
 	// direction
@@ -69,7 +69,7 @@ class AnimatedEntity : Entity
 	char* currentAnimationName;
 
 	/// @publicsection
-	void constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name);
+	void constructor(AnimatedEntitySpec* animatedEntitySpec, s16 id, s16 internalId, const char* const name);
 	AnimationDescription* getAnimationDescription();
 	s16 getActualFrame();
 	int getNumberOfFrames();
@@ -84,7 +84,7 @@ class AnimatedEntity : Entity
 	override void ready(bool recursive);
 	override void update(u32 elapsedTime);
 	override void resume();
-	override void setDefinition(void* animatedEntityDefinition);
+	override void setSpec(void* animatedEntitySpec);
 }
 
 

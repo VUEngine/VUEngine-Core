@@ -51,13 +51,13 @@ friend class VirtualNode;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Actor::constructor(const ActorDefinition* actorDefinition, s16 id, s16 internalId, const char* const name)
+void Actor::constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, const char* const name)
 {
 	// construct base object
-	Base::constructor((AnimatedEntityDefinition*)&actorDefinition->animatedEntityDefinition, id, internalId, name);
+	Base::constructor((AnimatedEntitySpec*)&actorSpec->animatedEntitySpec, id, internalId, name);
 
-	// save definition
-	this->actorDefinition = actorDefinition;
+	// save spec
+	this->actorSpec = actorSpec;
 
 	// construct the game state machine
 	this->stateMachine = NULL;
@@ -66,16 +66,16 @@ void Actor::constructor(const ActorDefinition* actorDefinition, s16 id, s16 inte
 	this->previousRotation = this->transformation.localRotation;
 
 	// create body
-	if(actorDefinition->createBody)
+	if(actorSpec->createBody)
 	{
-		if(actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification)
+		if(actorSpec->animatedEntitySpec.entitySpec.physicalSpecification)
 		{
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification, actorDefinition->axesSubjectToGravity);
+			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axesSubjectToGravity);
 		}
 		else
 		{
 			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0}};
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorDefinition->axesSubjectToGravity);
+			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axesSubjectToGravity);
 		}
 	}
 }
@@ -120,15 +120,15 @@ void Actor::iAmDeletingMyself()
 	}
 }
 
-// set definition
-void Actor::setDefinition(void* actorDefinition)
+// set spec
+void Actor::setSpec(void* actorSpec)
 {
-	ASSERT(actorDefinition, "Actor::setDefinition: null definition");
+	ASSERT(actorSpec, "Actor::setSpec: null spec");
 
-	// save definition
-	this->actorDefinition = actorDefinition;
+	// save spec
+	this->actorSpec = actorSpec;
 
-	Base::setDefinition(this, &((ActorDefinition*)actorDefinition)->animatedEntityDefinition);
+	Base::setSpec(this, &((ActorSpec*)actorSpec)->animatedEntitySpec);
 }
 
 //set class's local position
@@ -659,7 +659,7 @@ void Actor::takeHitFrom(Actor other)
 // get bounciness
 fix10_6 Actor::getBounciness()
 {
-	PhysicalSpecification* physicalSpecification = this->actorDefinition->animatedEntityDefinition.entityDefinition.physicalSpecification;
+	PhysicalSpecification* physicalSpecification = this->actorSpec->animatedEntitySpec.entitySpec.physicalSpecification;
 
 	return this->body ? Body::getBounciness(this->body) : physicalSpecification ? physicalSpecification->bounciness : 0;
 }

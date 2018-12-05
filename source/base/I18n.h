@@ -47,27 +47,27 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A language definition
+ * A language spec
  * @memberof I18n
  */
-typedef struct LangDefinition
+typedef struct LangSpec
 {
 	/// language name
 	char name[__MAX_LANGUAGE_NAME_LENGTH];
 
 	/// pointer to a representative entity (i.e. flag)
-	EntityDefinition* entityDefinition;
+	EntitySpec* entitySpec;
 
 	/// language strings
 	const char** language;
 
-} LangDefinition;
+} LangSpec;
 
 /**
- * A LangDefinition that is stored in ROM
+ * A LangSpec that is stored in ROM
  * @memberof I18n
  */
-typedef const LangDefinition LangROMDef;
+typedef const LangSpec LangROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -87,7 +87,7 @@ singleton class I18n : Object
 	static I18n getInstance();
 	u8 getActiveLanguage();
 	char* getActiveLanguageName();
-	LangDefinition * getLanguages();
+	LangSpec * getLanguages();
 	const char* getText(int string);
 	void setActiveLanguage(u8 languageId);
 }

@@ -56,12 +56,12 @@
 #define __STREAMING_CYCLES		5
 
 #define __MAXIMUM_PARALLAX		10
-#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->stageDefinition->streaming.loadPadding)
-#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageDefinition->streaming.loadPadding)
-#define __LOAD_LOW_Y_LIMIT		(-this->stageDefinition->streaming.loadPadding)
-#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->stageDefinition->streaming.loadPadding)
-#define __LOAD_LOW_Z_LIMIT		(-this->stageDefinition->streaming.loadPadding)
-#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->stageDefinition->streaming.loadPadding)
+#define __LOAD_LOW_X_LIMIT		(-__MAXIMUM_PARALLAX - this->stageSpec->streaming.loadPadding)
+#define __LOAD_HIGHT_X_LIMIT	(__SCREEN_WIDTH + __MAXIMUM_PARALLAX + this->stageSpec->streaming.loadPadding)
+#define __LOAD_LOW_Y_LIMIT		(-this->stageSpec->streaming.loadPadding)
+#define __LOAD_HIGHT_Y_LIMIT	(__SCREEN_HEIGHT + this->stageSpec->streaming.loadPadding)
+#define __LOAD_LOW_Z_LIMIT		(-this->stageSpec->streaming.loadPadding)
+#define __LOAD_HIGHT_Z_LIMIT	(__SCREEN_DEPTH + this->stageSpec->streaming.loadPadding)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -121,7 +121,7 @@ static u32 timeBeforeProcess = 0;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void Stage::constructor(StageDefinition *stageDefinition)
+void Stage::constructor(StageSpec *stageSpec)
 {
 	// construct base object
 	Base::constructor(NULL);
@@ -130,7 +130,7 @@ void Stage::constructor(StageDefinition *stageDefinition)
 	this->particleRemover = new ParticleRemover();
 	this->children = new VirtualList();
 
-	this->stageDefinition = stageDefinition;
+	this->stageSpec = stageSpec;
 	this->stageEntities = NULL;
 	this->loadedStageEntities = NULL;
 	this->uiContainer = NULL;
@@ -213,30 +213,30 @@ int Stage::isEntityInLoadRange(ScreenPixelVector onScreenPosition, const PixelRi
 
 void Stage::setObjectSpritesContainers()
 {
-	SpriteManager::setupObjectSpriteContainers(SpriteManager::getInstance(), this->stageDefinition->rendering.objectSpritesContainersSize, this->stageDefinition->rendering.objectSpritesContainersZPosition);
+	SpriteManager::setupObjectSpriteContainers(SpriteManager::getInstance(), this->stageSpec->rendering.objectSpritesContainersSize, this->stageSpec->rendering.objectSpritesContainersZPosition);
 }
 
 void Stage::setupPalettes()
 {
-	VIPManager::setupPalettes(VIPManager::getInstance(), &this->stageDefinition->rendering.paletteConfig);
+	VIPManager::setupPalettes(VIPManager::getInstance(), &this->stageSpec->rendering.paletteConfig);
 }
 
 // load stage's entites
 void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
 	// set optical values
-	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
+	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
 
 	// stop all sounds
 	SoundManager::stopAllSound(SoundManager::getInstance());
 
-	Camera::setCameraFrustum(Camera::getInstance(), this->stageDefinition->level.cameraFrustum);
-	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageDefinition->level.pixelSize));
+	Camera::setCameraFrustum(Camera::getInstance(), this->stageSpec->level.cameraFrustum);
+	Camera::setStageSize(Camera::getInstance(), Size::getFromPixelSize(this->stageSpec->level.pixelSize));
 
 	if(overrideCameraPosition)
 	{
 		Camera::reset(Camera::getInstance());
-		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageDefinition->level.cameraInitialPosition));
+		Camera::setPosition(Camera::getInstance(), Vector3D::getFromPixelVector(this->stageSpec->level.cameraInitialPosition));
 	}
 
 	// set palettes
@@ -246,9 +246,9 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Stage::setObjectSpritesContainers(this);
 
 	// setup SpriteManager's configuration
-	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
-	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
+	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
+	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
+	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
 
 	// preload textures
 	Stage::preloadAssets(this);
@@ -256,7 +256,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	// setup ui
 	Stage::setupUI(this);
 
-	// register all the entities in the stage's definition
+	// register all the entities in the stage's spec
 	Stage::registerEntities(this, positionedEntitiesToIgnore);
 
 	// load entities
@@ -266,18 +266,18 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Stage::setFocusEntity(this, Camera::getFocusEntity(Camera::getInstance()));
 
 	// set physics
-	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageDefinition->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageDefinition->physics.gravity);
+	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
+	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
 
 	// load background music
-	SoundManager::playBGM(SoundManager::getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
+	SoundManager::playBGM(SoundManager::getInstance(), (const u16 (*)[6])this->stageSpec->assets.bgm);
 
 	// setup colors and brightness
-	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageDefinition->rendering.colorConfig.backgroundColor);
-	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageDefinition->rendering.colorConfig.brightnessRepeat);
+	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
+	VIPManager::setupBrightnessRepeat(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.brightnessRepeat);
 
 	// set particle removal delay
-	ParticleRemover::setRemovalDelayCycles(this->particleRemover, this->stageDefinition->streaming.particleRemovalDelayCycles);
+	ParticleRemover::setRemovalDelayCycles(this->particleRemover, this->stageSpec->streaming.particleRemovalDelayCycles);
 
 	// apply transformations
 	Container::initialTransform(this, &neutralEnvironmentTransformation, true);
@@ -290,12 +290,12 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 
 void Stage::loadPostProcessingEffects()
 {
-	if(this->stageDefinition->postProcessingEffects)
+	if(this->stageSpec->postProcessingEffects)
 	{
 		int i = 0;
-		for(; this->stageDefinition->postProcessingEffects[i]; i++)
+		for(; this->stageSpec->postProcessingEffects[i]; i++)
 		{
-			Game::pushFrontProcessingEffect(Game::getInstance(), this->stageDefinition->postProcessingEffects[i], NULL);
+			Game::pushFrontProcessingEffect(Game::getInstance(), this->stageSpec->postProcessingEffects[i], NULL);
 		}
 	}
 }
@@ -303,18 +303,18 @@ void Stage::loadPostProcessingEffects()
 // retrieve size
 Size Stage::getSize()
 {
-	ASSERT(this->stageDefinition, "Stage::getSize: null stageDefinition");
+	ASSERT(this->stageSpec, "Stage::getSize: null stageSpec");
 
 	// set world's limits
-	return Size::getFromPixelSize(this->stageDefinition->level.pixelSize);
+	return Size::getFromPixelSize(this->stageSpec->level.pixelSize);
 }
 
 CameraFrustum Stage::getCameraFrustum()
 {
-	ASSERT(this->stageDefinition, "Stage::getCameraFrustum: null stageDefinition");
+	ASSERT(this->stageSpec, "Stage::getCameraFrustum: null stageSpec");
 
 	// set world's limits
-	return this->stageDefinition->level.cameraFrustum;
+	return this->stageSpec->level.cameraFrustum;
 }
 // setup ui
 void Stage::setupUI()
@@ -327,10 +327,10 @@ void Stage::setupUI()
 		this->uiContainer = NULL;
 	}
 
-	if(this->stageDefinition->entities.uiContainerDefinition.allocator)
+	if(this->stageSpec->entities.uiContainerSpec.allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		this->uiContainer = ((UiContainer (*)(UiContainerDefinition*)) this->stageDefinition->entities.uiContainerDefinition.allocator)(&this->stageDefinition->entities.uiContainerDefinition);
+		this->uiContainer = ((UiContainer (*)(UiContainerSpec*)) this->stageSpec->entities.uiContainerSpec.allocator)(&this->stageSpec->entities.uiContainerSpec);
 		ASSERT(this->uiContainer, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
@@ -368,7 +368,7 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 			// apply transformations
 			Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
 
-			if(!this->stageDefinition->streaming.deferred)
+			if(!this->stageSpec->streaming.deferred)
 			{
 				SpriteManager::writeTextures(SpriteManager::getInstance());
 			}
@@ -402,7 +402,7 @@ void Stage::makeChildReady(Entity entity)
 	}
 }
 
-bool Stage::registerEntityId(s16 internalId, EntityDefinition* entityDefinition)
+bool Stage::registerEntityId(s16 internalId, EntitySpec* entitySpec)
 {
 	VirtualNode node = this->stageEntities->head;
 
@@ -410,7 +410,7 @@ bool Stage::registerEntityId(s16 internalId, EntityDefinition* entityDefinition)
 	{
 		StageEntityDescription* stageEntityDescription = (StageEntityDescription*)node->data;
 
-		if(entityDefinition == stageEntityDescription->positionedEntity->entityDefinition)
+		if(entitySpec == stageEntityDescription->positionedEntity->entitySpec)
 		{
 			stageEntityDescription->internalId = internalId;
 			return true;
@@ -509,19 +509,19 @@ void Stage::unloadChild(Container child)
 void Stage::preloadAssets()
 {
 	// fonts
-	Printing::loadFonts(Printing::getInstance(), this->stageDefinition->assets.fontDefinitions);
+	Printing::loadFonts(Printing::getInstance(), this->stageSpec->assets.fontSpecs);
 
 	// charsets
-	if(this->stageDefinition->assets.charSetDefinitions)
+	if(this->stageSpec->assets.charSetSpecs)
 	{
 		int i = 0;
 
-		for(; this->stageDefinition->assets.charSetDefinitions[i]; i++)
+		for(; this->stageSpec->assets.charSetSpecs[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->assets.charSetDefinitions[i]->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.charSetDefinitions[i]->allocationType)
+			if(__ANIMATED_SINGLE != this->stageSpec->assets.charSetSpecs[i]->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.charSetSpecs[i]->allocationType)
 			{
-				CharSetManager::getCharSet(CharSetManager::getInstance(), this->stageDefinition->assets.charSetDefinitions[i]);
+				CharSetManager::getCharSet(CharSetManager::getInstance(), this->stageSpec->assets.charSetSpecs[i]);
 			}
 			else
 			{
@@ -531,23 +531,23 @@ void Stage::preloadAssets()
 	}
 
 	// textures
-	if(this->stageDefinition->assets.textureDefinitions)
+	if(this->stageSpec->assets.textureSpecs)
 	{
 		VirtualList recyclableTextures = new VirtualList();
 		int i = 0;
 
-		for(; this->stageDefinition->assets.textureDefinitions[i]; i++)
+		for(; this->stageSpec->assets.textureSpecs[i]; i++)
 		{
-			if(__ANIMATED_SINGLE != this->stageDefinition->assets.textureDefinitions[i]->charSetDefinition->allocationType &&
-				__ANIMATED_SINGLE_OPTIMIZED != this->stageDefinition->assets.textureDefinitions[i]->charSetDefinition->allocationType)
+			if(__ANIMATED_SINGLE != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType &&
+				__ANIMATED_SINGLE_OPTIMIZED != this->stageSpec->assets.textureSpecs[i]->charSetSpec->allocationType)
 			{
-				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageDefinition->assets.textureDefinitions[i], 0, false);
+				BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), this->stageSpec->assets.textureSpecs[i], 0, false);
 
 				if(bgmapTexture)
 				{
 					Texture::write(bgmapTexture);
 
-					if(this->stageDefinition->assets.textureDefinitions[i]->recyclable)
+					if(this->stageSpec->assets.textureSpecs[i]->recyclable)
 					{
 						VirtualList::pushBack(recyclableTextures, bgmapTexture);
 					}
@@ -569,7 +569,7 @@ void Stage::preloadAssets()
 		delete recyclableTextures;
 	}
 
-	ParamTableManager::calculateParamTableBase(ParamTableManager::getInstance(), this->stageDefinition->rendering.paramTableSegments);
+	ParamTableManager::calculateParamTableBase(ParamTableManager::getInstance(), this->stageSpec->rendering.paramTableSegments);
 }
 
 // register an entity in the streaming list
@@ -583,7 +583,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	stageEntityDescription->positionedEntity = positionedEntity;
 
 	PixelVector environmentPosition = {0, 0, 0, 0};
-	stageEntityDescription->pixelRightBox = Entity::getTotalSizeFromDefinition(stageEntityDescription->positionedEntity, &environmentPosition);
+	stageEntityDescription->pixelRightBox = Entity::getTotalSizeFromSpec(stageEntityDescription->positionedEntity, &environmentPosition);
 
 	int x = stageEntityDescription->positionedEntity->onScreenPosition.x - (stageEntityDescription->pixelRightBox.x1 - stageEntityDescription->pixelRightBox.x0) / 2;
 	int y = stageEntityDescription->positionedEntity->onScreenPosition.y - (stageEntityDescription->pixelRightBox.y1 - stageEntityDescription->pixelRightBox.y0) / 2;
@@ -594,7 +594,7 @@ StageEntityDescription* Stage::registerEntity(PositionedEntity* positionedEntity
 	return stageEntityDescription;
 }
 
-// register the stage's definition entities in the streaming list
+// register the stage's spec entities in the streaming list
 void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 {
 	if(this->stageEntities)
@@ -614,7 +614,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 	// register entities ordering them according to their distances to the origin
 	int i = 0;
 
-	for(;this->stageDefinition->entities.children[i].entityDefinition; i++)
+	for(;this->stageSpec->entities.children[i].entitySpec; i++)
 	{
 		if(positionedEntitiesToIgnore)
 		{
@@ -622,7 +622,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 
 			for(; node; node = node->next)
 			{
-				if(&this->stageDefinition->entities.children[i] == (PositionedEntity*)node->data)
+				if(&this->stageSpec->entities.children[i] == (PositionedEntity*)node->data)
 				{
 					break;
 				}
@@ -634,7 +634,7 @@ void Stage::registerEntities(VirtualList positionedEntitiesToIgnore)
 			}
 		}
 
-		StageEntityDescription* stageEntityDescription = Stage::registerEntity(this, &this->stageDefinition->entities.children[i]);
+		StageEntityDescription* stageEntityDescription = Stage::registerEntity(this, &this->stageSpec->entities.children[i]);
 
 		VirtualNode auxNode = this->stageEntities->head;
 
@@ -720,7 +720,7 @@ bool Stage::unloadOutOfRangeEntities(int defer)
 		Entity entity = Entity::safeCast(node->data);
 
 		// if the entity isn't visible inside the view field, unload it
-		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->stageDefinition->streaming.loadPadding + this->stageDefinition->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
+		if(!entity->deleteMe && entity->parent == Container::safeCast(this) && !Entity::isVisible(entity, (this->stageSpec->streaming.loadPadding + this->stageSpec->streaming.unloadPadding + __MAXIMUM_PARALLAX), true))
 		{
 			s16 internalId = Entity::getInternalId(entity);
 
@@ -793,7 +793,7 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 							cameraPosition.z * cameraPosition.z);
 
 	static int advancing __INITIALIZED_DATA_SECTION_ATTRIBUTE = true;
-	u16 amplitude = this->stageDefinition->streaming.streamingAmplitude;
+	u16 amplitude = this->stageSpec->streaming.streamingAmplitude;
 
 	if(this->cameraPreviousDistance != cameraDistance)
 	{
@@ -975,12 +975,12 @@ bool Stage::stream()
 	}
 #endif
 
-	if(Stage::purgeChildrenProgressively(this) && this->stageDefinition->streaming.deferred)
+	if(Stage::purgeChildrenProgressively(this) && this->stageSpec->streaming.deferred)
 	{
 		return true;
 	}
 
-	if(Stage::updateEntityFactory(this) && this->stageDefinition->streaming.deferred)
+	if(Stage::updateEntityFactory(this) && this->stageSpec->streaming.deferred)
 	{
 		return false;
 	}
@@ -992,7 +992,7 @@ bool Stage::stream()
 		this->streamingPhase = 0;
 	}
 
-	return _streamingPhases[this->streamingPhase](this, this->stageDefinition->streaming.deferred);
+	return _streamingPhases[this->streamingPhase](this, this->stageSpec->streaming.deferred);
 }
 
 void Stage::streamAll()
@@ -1080,11 +1080,11 @@ void Stage::suspend()
 void Stage::resume()
 {
 	// set back optical values
-	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageDefinition->rendering.pixelOptical));
+	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
 
 	// set physics
-	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageDefinition->physics.frictionCoefficient);
-	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageDefinition->physics.gravity);
+	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
+	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
 
 	// set palettes
 	Stage::setupPalettes(this);
@@ -1093,9 +1093,9 @@ void Stage::resume()
 	Stage::setObjectSpritesContainers(this);
 
 	// setup SpriteManager's configuration
-	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageDefinition->rendering.cyclesToWaitForTextureWriting);
-	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageDefinition->rendering.texturesMaximumRowsToWrite);
-	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageDefinition->rendering.maximumAffineRowsToComputePerCall);
+	SpriteManager::setCyclesToWaitForTextureWriting(SpriteManager::getInstance(), this->stageSpec->rendering.cyclesToWaitForTextureWriting);
+	SpriteManager::setTexturesMaximumRowsToWrite(SpriteManager::getInstance(), this->stageSpec->rendering.texturesMaximumRowsToWrite);
+	SpriteManager::setMaximumParamTableRowsToComputePerCall(SpriteManager::getInstance(), this->stageSpec->rendering.maximumAffineRowsToComputePerCall);
 
 	// reload textures
 	Stage::preloadAssets(this);
@@ -1107,7 +1107,7 @@ void Stage::resume()
 	}
 
 	// load background music
-	SoundManager::playBGM(SoundManager::getInstance(), (const u16 (*)[6])this->stageDefinition->assets.bgm);
+	SoundManager::playBGM(SoundManager::getInstance(), (const u16 (*)[6])this->stageSpec->assets.bgm);
 
 	Base::resume(this);
 
@@ -1171,10 +1171,10 @@ void Stage::setFocusEntity(Entity focusEntity)
 	}
 }
 
-// get stage definition
-StageDefinition* Stage::getStageDefinition()
+// get stage spec
+StageSpec* Stage::getStageSpec()
 {
-	return this->stageDefinition;
+	return this->stageSpec;
 }
 
 ParticleRemover Stage::getParticleRemover()

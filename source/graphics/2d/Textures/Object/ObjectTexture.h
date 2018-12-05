@@ -37,18 +37,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A ObjectTexture definition
+ * A ObjectTexture spec
  *
  * @memberof ObjectTexture
  */
-typedef const TextureDefinition ObjectTextureDefinition;
+typedef const TextureSpec ObjectTextureSpec;
 
 /**
- * A ObjectTexture definition that is stored in ROM
+ * A ObjectTexture spec that is stored in ROM
  *
  * @memberof ObjectTexture
  */
-typedef const ObjectTextureDefinition ObjectTextureROMDef;
+typedef const ObjectTextureSpec ObjectTextureROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -62,7 +62,7 @@ class ObjectTexture : Texture
 	int objectIndex;
 
 	/// @publicsection
-	void constructor(ObjectTextureDefinition* objectTextureDefinition, u16 id);
+	void constructor(ObjectTextureSpec* objectTextureSpec, u16 id);
 	void setObjectIndex(int objectIndex);
 	override void write();
 }

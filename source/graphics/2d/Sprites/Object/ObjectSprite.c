@@ -58,14 +58,14 @@ friend class Texture;
  * @memberof						ObjectSprite
  * @public
  *
- * @param objectSpriteDefinition	Sprite definition
+ * @param objectSpriteSpec	Sprite spec
  * @param owner						Owner
  */
-void ObjectSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinition, Object owner)
+void ObjectSprite::constructor(const ObjectSpriteSpec* objectSpriteSpec, Object owner)
 {
-	Base::constructor((SpriteDefinition*)objectSpriteDefinition, owner);
+	Base::constructor((SpriteSpec*)objectSpriteSpec, owner);
 
-	this->head = objectSpriteDefinition->display;
+	this->head = objectSpriteSpec->display;
 	this->objectIndex = -1;
 	this->objectSpriteContainer = NULL;
 	this->totalObjects = 0;
@@ -76,14 +76,14 @@ void ObjectSprite::constructor(const ObjectSpriteDefinition* objectSpriteDefinit
 	this->position.z = 0;
 	this->position.parallax = 0;
 
-	this->displacement = objectSpriteDefinition->spriteDefinition.displacement;
+	this->displacement = objectSpriteSpec->spriteSpec.displacement;
 
-	ASSERT(objectSpriteDefinition->spriteDefinition.textureDefinition, "ObjectSprite::constructor: null textureDefinition");
+	ASSERT(objectSpriteSpec->spriteSpec.textureSpec, "ObjectSprite::constructor: null textureSpec");
 
-	this->texture = Texture::safeCast(new ObjectTexture(objectSpriteDefinition->spriteDefinition.textureDefinition, 0));
-	this->halfWidth = this->texture->textureDefinition->cols << 2;
-	this->halfHeight = this->texture->textureDefinition->rows << 2;
-	this->totalObjects = objectSpriteDefinition->spriteDefinition.textureDefinition->cols * objectSpriteDefinition->spriteDefinition.textureDefinition->rows;
+	this->texture = Texture::safeCast(new ObjectTexture(objectSpriteSpec->spriteSpec.textureSpec, 0));
+	this->halfWidth = this->texture->textureSpec->cols << 2;
+	this->halfHeight = this->texture->textureSpec->rows << 2;
+	this->totalObjects = objectSpriteSpec->spriteSpec.textureSpec->cols * objectSpriteSpec->spriteSpec.textureSpec->rows;
 	ASSERT(this->texture, "ObjectSprite::constructor: null texture");
 }
 
@@ -235,8 +235,8 @@ void ObjectSprite::render(bool evenFrame)
 		ObjectTexture::write(this->texture);
 	}
 
-	int cols = this->texture->textureDefinition->cols;
-	int rows = this->texture->textureDefinition->rows;
+	int cols = this->texture->textureSpec->cols;
+	int rows = this->texture->textureSpec->rows;
 
 	int xDirection = this->head & 0x2000 ? -1 : 1;
 	int yDirection = this->head & 0x1000 ? -1 : 1;

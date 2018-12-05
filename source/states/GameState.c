@@ -405,15 +405,15 @@ u32 GameState::processCollisions()
 }
 
 /**
- * Load the Stage with the give definition
+ * Load the Stage with the give spec
  *
- * @param stageDefinition				Stage's configuration
- * @param positionedEntitiesToIgnore	List of entities from the definition to not load
+ * @param stageSpec				Stage's configuration
+ * @param positionedEntitiesToIgnore	List of entities from the spec to not load
  * @param overrideCameraPosition		Flag to override or not the Camera's current position
  */
-void GameState::loadStage(StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
+void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
-	ASSERT(stageDefinition, "GameState::loadStage: null stageDefinition");
+	ASSERT(stageSpec, "GameState::loadStage: null stageSpec");
 
 	// disable hardware interrupts
 	Game::disableHardwareInterrupts(Game::getInstance());
@@ -440,7 +440,7 @@ void GameState::loadStage(StageDefinition* stageDefinition, VirtualList position
 	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 
 	// construct the stage
-	this->stage = ((Stage (*)(StageDefinition*)) stageDefinition->allocator)((StageDefinition*)stageDefinition);
+	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
 	ASSERT(this->stage, "GameState::loadStage: null stage");
 
 	// load world entities

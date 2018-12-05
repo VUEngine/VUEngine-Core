@@ -42,11 +42,11 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @param charSetDefinition		CharSetDefinition
+ * @param charSetSpec		CharSetSpec
  */
-void ObjectAnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
+void ObjectAnimationCoordinator::constructor(const CharSetSpec* charSetSpec)
 {
-	Base::constructor(charSetDefinition);
+	Base::constructor(charSetSpec);
 }
 
 /**

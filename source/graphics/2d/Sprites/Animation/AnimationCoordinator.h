@@ -42,12 +42,12 @@ class AnimationCoordinator : Object
 {
 	// Controllers to sync
 	VirtualList animationControllers;
-	// Charset definition shared among entities
-	const CharSetDefinition* charSetDefinition;
+	// Charset spec shared among entities
+	const CharSetSpec* charSetSpec;
 
 	/// @publicsection
-	void constructor(const CharSetDefinition* charSetDefinition);
-	const CharSetDefinition* getCharSetDefinition();
+	void constructor(const CharSetSpec* charSetSpec);
+	const CharSetSpec* getCharSetSpec();
 	bool playAnimation(AnimationController animationController, const AnimationDescription* animationDescription, const char* functionName);
 	virtual void addAnimationController(AnimationController animationController) = 0;
 	virtual void removeAnimationController(AnimationController animationController) = 0;

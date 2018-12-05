@@ -136,7 +136,7 @@ typedef struct VertexProjection
 } VertexProjection;
 
 // defines a shape
-typedef struct ShapeDefinition
+typedef struct ShapeSpec
 {
 	/// class allocator
 	AllocatorPointer allocator;
@@ -162,9 +162,9 @@ typedef struct ShapeDefinition
 	/// layers to ignore when checking for collisions
 	u32 layersToIgnore;
 
-} ShapeDefinition;
+} ShapeSpec;
 
-typedef const ShapeDefinition ShapeROMDef;
+typedef const ShapeSpec ShapeROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------

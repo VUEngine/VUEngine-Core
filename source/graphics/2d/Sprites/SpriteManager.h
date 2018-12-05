@@ -95,7 +95,7 @@ singleton class SpriteManager : Object
 
 	/// @publicsection
 	static SpriteManager getInstance();
-	Sprite createSprite(SpriteDefinition* spriteDefinition, Object owner);
+	Sprite createSprite(SpriteSpec* spriteSpec, Object owner);
 	void deferParamTableEffects(bool deferAffineTransformations);
 	void destructor();
 	void disposeSprite(Sprite sprite);

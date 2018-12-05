@@ -34,22 +34,22 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// definition of a CharSet for unanimated sprites
+// spec of a CharSet for unanimated sprites
 #define __NOT_ANIMATED						0x01
 
-// definition of a CharSet for animated sprites
+// spec of a CharSet for animated sprites
 #define __ANIMATED_SINGLE					0x02
 
-// definition of a CharSet for animated sprites
+// spec of a CharSet for animated sprites
 #define __ANIMATED_SINGLE_OPTIMIZED			0x03
 
-// definition of a CharSet for animated sprites with one char set is shared by all
+// spec of a CharSet for animated sprites with one char set is shared by all
 #define __ANIMATED_SHARED					0x04
 
-// definition of a CharSet for animated sprites with a coordinator that syncs them
+// spec of a CharSet for animated sprites with a coordinator that syncs them
 #define __ANIMATED_SHARED_COORDINATED		0x05
 
-// definition of a charset for animated sprites whose all frames are written to memory and shared
+// spec of a charset for animated sprites whose all frames are written to memory and shared
 #define __ANIMATED_MULTI					0x06
 
 // char memory room to add
@@ -61,11 +61,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A CharSet definition
+ * A CharSet spec
  *
  * @memberof CharSet
  */
-typedef struct CharSetDefinition
+typedef struct CharSetSpec
 {
 	/// number of chars, depending on allocation type:
 	/// __ANIMATED_SINGLE: number of chars of a single animation frame (cols * rows)
@@ -78,17 +78,17 @@ typedef struct CharSetDefinition
 	/// the way its chars and bgtexture will be allocated in graphic memory
 	u32 allocationType;
 
-	/// pointer to the char definition in ROM
-	BYTE* charDefinition;
+	/// pointer to the char spec in ROM
+	BYTE* charSpec;
 
-} CharSetDefinition;
+} CharSetSpec;
 
 /**
- * A CharSet definition that is stored in ROM
+ * A CharSet spec that is stored in ROM
  *
  * @memberof CharSet
  */
-typedef const CharSetDefinition CharSetROMDef;
+typedef const CharSetSpec CharSetROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -98,28 +98,28 @@ typedef const CharSetDefinition CharSetROMDef;
 /// @ingroup graphics-2d-textures-char
 class CharSet : Object
 {
-	// Charset definition
-	CharSetDefinition* charSetDefinition;
-	// Array definition of the charSet
-	u32 charDefinitionDisplacement;
+	// Charset spec
+	CharSetSpec* charSetSpec;
+	// Array spec of the charSet
+	u32 charSpecDisplacement;
 	// Memory displacement
 	u16 offset;
 	// How many textures are using me
 	u8 usageCount;
 
 	/// @publicsection
-	void constructor(CharSetDefinition* charSetDefinition, u16 offset);
+	void constructor(CharSetSpec* charSetSpec, u16 offset);
 	void increaseUsageCount();
 	bool decreaseUsageCount();
 	u32 getAllocationType();
 	u32 getOffset();
 	void setOffset(u16 offset);
-	void setCharSetDefinition(CharSetDefinition* charSetDefinition);
-	CharSetDefinition* getCharSetDefinition();
+	void setCharSetSpec(CharSetSpec* charSetSpec);
+	CharSetSpec* getCharSetSpec();
 	u32 getNumberOfChars();
 	void write();
 	void rewrite();
-	void setCharDefinitionDisplacement(u32 charDefinitionDisplacement);
+	void setCharSpecDisplacement(u32 charSpecDisplacement);
 	void putChar(u32 charToReplace, BYTE* newChar);
 	void putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor);
 }

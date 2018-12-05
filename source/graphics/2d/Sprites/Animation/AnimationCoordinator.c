@@ -43,14 +43,14 @@ friend class VirtualList;
 /**
  * Class constructor
  *
- * @param charSetDefinition		CharSetDefinition
+ * @param charSetSpec		CharSetSpec
  */
-void AnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
+void AnimationCoordinator::constructor(const CharSetSpec* charSetSpec)
 {
 	Base::constructor();
 
 	this->animationControllers = new VirtualList();
-	this->charSetDefinition = charSetDefinition;
+	this->charSetSpec = charSetSpec;
 }
 
 /**
@@ -71,11 +71,11 @@ void AnimationCoordinator::destructor()
 /**
  * Class constructor
  *
- * @return 				CharSetDefinition
+ * @return 				CharSetSpec
  */
-const CharSetDefinition* AnimationCoordinator::getCharSetDefinition()
+const CharSetSpec* AnimationCoordinator::getCharSetSpec()
 {
-	return this->charSetDefinition;
+	return this->charSetSpec;
 }
 
 /**

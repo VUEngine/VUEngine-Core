@@ -18,7 +18,7 @@ Fixed point math defines
 #define F_PRECISION_MUL(X,Y) F_PRECISION_DN(((X)*(Y)))
 #define F_PRECISION_DIV(X,Y) (F_PRECISION_UP(X)/(Y))
 
-//Definitions
+//Specs
 #define SCREEN_HEIGHT 128
 #define SCREEN_WIDTH 320
 #define FAR_Z F_NUM_UP(8192)
@@ -29,7 +29,7 @@ Fixed point math defines
 
 
 /**********************
-Type definitions used in
+Type specs used in
 the game functions
 **********************/
 typedef struct

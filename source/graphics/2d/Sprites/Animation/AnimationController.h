@@ -60,7 +60,7 @@ class AnimationController : Object
 	u8 animationFrameChanged;
 
 	/// @publicsection
-	void constructor(Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition);
+	void constructor(Object owner, Sprite sprite, const CharSetSpec* charSetSpec);
 	s16 getActualFrame();
 	s16 getActualFrameIndex();
 	u8 getCols();

@@ -77,10 +77,10 @@
 #define __1I_FIX10_6			0x0040
 #define __05F_FIX10_6			0x0020
 
-// override null definition (because we don't want to include standard C libraries)
+// override null spec (because we don't want to include standard C libraries)
 #define NULL 		(void *)0x00000000
 
-// axis definitions
+// axis specs
 #define __NO_AXIS 	0x00
 #define __X_AXIS 	0x01
 #define __Y_AXIS 	0x02

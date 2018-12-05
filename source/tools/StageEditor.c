@@ -125,7 +125,7 @@ void StageEditor::constructor()
 	VirtualList userObjects = new VirtualList();
 
 	int i = 0;
-	for(;  _userObjects[i].entityDefinition; i++)
+	for(;  _userObjects[i].entitySpec; i++)
 	{
 		Option* option = new Option;
 		option->value = _userObjects[i].name;
@@ -831,11 +831,11 @@ void StageEditor::showSelectedUserObject()
 {
 	StageEditor::removePreviousSprite(this);
 
-	SpriteDefinition* spriteDefinition = (SpriteDefinition*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entityDefinition->spriteDefinitions[0];
+	SpriteSpec* spriteSpec = (SpriteSpec*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entitySpec->spriteSpecs[0];
 
-	if(spriteDefinition)
+	if(spriteSpec)
 	{
-		this->userObjectSprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, Object::safeCast(this));
+		this->userObjectSprite = ((Sprite (*)(SpriteSpec*, Object)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, Object::safeCast(this));
 		ASSERT(this->userObjectSprite, "AnimationInspector::createSprite: null animatedSprite");
 		ASSERT(Sprite::getTexture(this->userObjectSprite), "AnimationInspector::createSprite: null texture");
 
@@ -899,7 +899,7 @@ void StageEditor::selectUserObject(u32 pressedKey)
 
 		PositionedEntity DUMMY_ENTITY =
 		{
-			(EntityDefinition*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entityDefinition,
+			(EntitySpec*)_userObjects[OptionsSelector::getSelectedOption(this->userObjectsSelector)].entitySpec,
 			position,
 			0,
 			NULL,

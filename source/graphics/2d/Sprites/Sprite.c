@@ -46,10 +46,10 @@ friend class Texture;
 /**
  * Class constructor
  *
- * @param spriteDefinition	Definition of the Sprite
+ * @param spriteSpec	Spec of the Sprite
  * @param owner				Entity the Sprite belongs to
  */
-void Sprite::constructor(const SpriteDefinition* spriteDefinition __attribute__ ((unused)), Object owner __attribute__ ((unused)))
+void Sprite::constructor(const SpriteSpec* spriteSpec __attribute__ ((unused)), Object owner __attribute__ ((unused)))
 {
 	Base::constructor();
 
@@ -63,7 +63,7 @@ void Sprite::constructor(const SpriteDefinition* spriteDefinition __attribute__ 
 	this->position = (PixelVector){0, 0, 0, 0};
 	this->displacement = (PixelVector){0, 0, 0, 0};
 	this->hidden = false;
-	this->transparent = spriteDefinition ? spriteDefinition->transparent : __TRANSPARENCY_NONE;
+	this->transparent = spriteSpec ? spriteSpec->transparent : __TRANSPARENCY_NONE;
 	this->visible = true;
 	this->writeAnimationFrame = false;
 	this->positioned = false;
@@ -801,8 +801,8 @@ void Sprite::print(int x, int y)
 		y++;
 		Printing::text(Printing::getInstance(), "Segment:                         ", x, ++y, NULL);
 		Printing::int(Printing::getInstance(), BgmapTexture::getSegment(bgmapTexture), x + 18, y, NULL);
-		Printing::text(Printing::getInstance(), "Definition:                      ", x, ++y, NULL);
-		Printing::hex(Printing::getInstance(), (int)Texture::getTextureDefinition(bgmapTexture), x + 18, y, 8, NULL);
+		Printing::text(Printing::getInstance(), "Spec:                      ", x, ++y, NULL);
+		Printing::hex(Printing::getInstance(), (int)Texture::getTextureSpec(bgmapTexture), x + 18, y, 8, NULL);
 		Printing::text(Printing::getInstance(), "Written:                         ", x, ++y, NULL);
 		Printing::text(Printing::getInstance(), Texture::isWritten(bgmapTexture) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 18, y, NULL);
 		Printing::text(Printing::getInstance(), "Rows remaining:                  ", x, ++y, NULL);

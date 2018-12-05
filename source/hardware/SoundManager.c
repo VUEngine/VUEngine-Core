@@ -330,7 +330,7 @@ int SoundManager::calculateSoundPosition(int fxS)
 
 	/* The maximum sound level for each side is 0xF
 	 * In the center position the output level is the one
-	 * defined in the sound's definition */
+	 * defined in the sound's spec */
 	if(0 < this->fxLeftOutput[fxS])
 	{
 		output |= (((int)this->fxLeftOutput[fxS]) << 4);
@@ -465,7 +465,7 @@ int SoundManager::playFxSound(const u16* fxSound, Vector3D position)
 	// if a channel was available
 	if(i < __FXS)
 	{
-		// record the fx definition's address
+		// record the fx spec's address
 		this->fxSound[i] = fxSound;
 
 		// set position inside camera coordinates

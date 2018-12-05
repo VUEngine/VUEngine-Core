@@ -54,17 +54,17 @@ friend class BgmapTexture;
  * @memberof						BgmapSprite
  * @public
  *
- * @param bgmapSpriteDefinition		Sprite definition
+ * @param bgmapSpriteSpec		Sprite spec
  * @param owner						Owner
  */
-void BgmapSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner)
+void BgmapSprite::constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner)
 {
-	Base::constructor((SpriteDefinition*)&bgmapSpriteDefinition->spriteDefinition, owner);
+	Base::constructor((SpriteSpec*)&bgmapSpriteSpec->spriteSpec, owner);
 
 	// create the texture
-	if(bgmapSpriteDefinition->spriteDefinition.textureDefinition)
+	if(bgmapSpriteSpec->spriteSpec.textureSpec)
 	{
-		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteDefinition->spriteDefinition.textureDefinition, 0, false));
+		this->texture = Texture::safeCast(BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), bgmapSpriteSpec->spriteSpec.textureSpec, 0, false));
 		ASSERT(this->texture, "BgmapSprite::constructor: null texture");
 	}
 
@@ -94,14 +94,14 @@ void BgmapSprite::constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition
 	this->drawSpec.rotation.y = 0;
 	this->drawSpec.rotation.z = 0;
 
-	this->displacement = bgmapSpriteDefinition->spriteDefinition.displacement;
+	this->displacement = bgmapSpriteSpec->spriteSpec.displacement;
 
 	this->param = 0;
 	this->paramTableRow = 0;
 
 	// set WORLD layer's head according to map's render mode
-	this->applyParamTableEffect = bgmapSpriteDefinition->applyParamTableEffect;
-	BgmapSprite::setMode(this, bgmapSpriteDefinition->display, bgmapSpriteDefinition->bgmapMode);
+	this->applyParamTableEffect = bgmapSpriteSpec->applyParamTableEffect;
+	BgmapSprite::setMode(this, bgmapSpriteSpec->display, bgmapSpriteSpec->bgmapMode);
 }
 
 /**
@@ -163,7 +163,7 @@ void BgmapSprite::computeDimensions()
 	this->halfWidth = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
 		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.y)),
 		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int)this->texture->textureDefinition->cols << 2),
+			__I_TO_FIX10_6((int)this->texture->textureSpec->cols << 2),
 			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.x)
 		)
 	))) + 1;
@@ -171,7 +171,7 @@ void BgmapSprite::computeDimensions()
 	this->halfHeight = __FIX10_6_TO_I(__ABS(__FIX10_6_MULT(
 		__FIX7_9_TO_FIX10_6(__COS(this->drawSpec.rotation.x)),
 		__FIX10_6_MULT(
-			__I_TO_FIX10_6((int)this->texture->textureDefinition->rows << 2),
+			__I_TO_FIX10_6((int)this->texture->textureSpec->rows << 2),
 			__FIX7_9_TO_FIX10_6(this->drawSpec.scale.y)
 		)
 	))) + 1;
@@ -296,7 +296,7 @@ void BgmapSprite::render(bool evenFrame)
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
-	// TODO: check if required, causes that the sprite is turned off when changing the texture definition
+	// TODO: check if required, causes that the sprite is turned off when changing the texture spec
 /*
 	if(!this->texture->written)
 	{
@@ -735,8 +735,8 @@ static s16 BgmapSprite::doApplyAffineTransformations(BgmapSprite bgmapSprite)
 			__I_TO_FIX10_6(bgmapSprite->halfHeight),
 			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.mx),
 			__I_TO_FIX13_3(bgmapSprite->drawSpec.textureSource.my),
-			__I_TO_FIX10_6(bgmapSprite->texture->textureDefinition->cols << 2),
-			__I_TO_FIX10_6(bgmapSprite->texture->textureDefinition->rows << 2),
+			__I_TO_FIX10_6(bgmapSprite->texture->textureSpec->cols << 2),
+			__I_TO_FIX10_6(bgmapSprite->texture->textureSpec->rows << 2),
 			&bgmapSprite->drawSpec.scale,
 			&bgmapSprite->drawSpec.rotation
 		);

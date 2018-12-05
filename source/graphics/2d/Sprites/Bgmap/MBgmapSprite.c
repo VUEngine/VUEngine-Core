@@ -62,14 +62,14 @@ friend class VirtualList;
  * @memberof							MBgmapSprite
  * @public
  *
- * @param mBgmapSpriteDefinition		Definition to use
+ * @param mBgmapSpriteSpec		Spec to use
  * @param owner							Sprite's owner
  */
-void MBgmapSprite::constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner)
+void MBgmapSprite::constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner)
 {
-	Base::constructor(&mBgmapSpriteDefinition->bgmapSpriteDefinition, owner);
+	Base::constructor(&mBgmapSpriteSpec->bgmapSpriteSpec, owner);
 
-	this->mBgmapSpriteDefinition = mBgmapSpriteDefinition;
+	this->mBgmapSpriteSpec = mBgmapSpriteSpec;
 
 	ASSERT(!this->texture, "MBgmapSprite::constructor: texture already loaded");
 	this->textures = NULL;
@@ -123,14 +123,14 @@ void MBgmapSprite::releaseTextures()
 }
 
 /**
- * Load textures from definition
+ * Load textures from spec
  *
  * @memberof		MBgmapSprite
  * @public
  */
 void MBgmapSprite::loadTextures()
 {
-	if(this->mBgmapSpriteDefinition)
+	if(this->mBgmapSpriteSpec)
 	{
 		if(!this->texture && !this->textures)
 		{
@@ -138,9 +138,9 @@ void MBgmapSprite::loadTextures()
 
 			int i = 0;
 
-			for(; this->mBgmapSpriteDefinition->textureDefinitions[i]; i++)
+			for(; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
 			{
-				MBgmapSprite::loadTexture(this, this->mBgmapSpriteDefinition->textureDefinitions[i], 0 == i);
+				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i);
 			}
 
 			this->texture = Texture::safeCast(VirtualList::front(this->textures));
@@ -162,12 +162,12 @@ void MBgmapSprite::loadTextures()
  * @memberof					MBgmapSprite
  * @public
  *
- * @param textureDefinition		TextureDefinition to use
+ * @param textureSpec		TextureSpec to use
  * @param isFirstTexture		To force loading in an even bgmap segment
  */
-void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition, bool isFirstTexture)
+void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTexture)
 {
-	ASSERT(textureDefinition, "MBgmapSprite::loadTexture: null textureDefinition");
+	ASSERT(textureSpec, "MBgmapSprite::loadTexture: null textureSpec");
 
 	s16 minimumSegment = 0;
 
@@ -177,7 +177,7 @@ void MBgmapSprite::loadTexture(TextureDefinition* textureDefinition, bool isFirs
 		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
 	}
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureDefinition, minimumSegment, isFirstTexture);
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTexture);
 
 	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
@@ -214,7 +214,7 @@ void MBgmapSprite::setPosition(const PixelVector* position)
 
 	Base::setPosition(this, position);
 
-	if(this->mBgmapSpriteDefinition->xLoop)
+	if(this->mBgmapSpriteSpec->xLoop)
 	{
 		this->position.x = 0;
 		this->drawSpec.textureSource.mx = -auxPosition.x;
@@ -231,7 +231,7 @@ void MBgmapSprite::setPosition(const PixelVector* position)
 */
 	}
 
-	if(this->mBgmapSpriteDefinition->yLoop)
+	if(this->mBgmapSpriteSpec->yLoop)
 	{
 		this->position.y = 0;
 		this->drawSpec.textureSource.my = -auxPosition.y;
@@ -270,7 +270,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
 {
 	this->positioned = true;
 
-	if(this->mBgmapSpriteDefinition->xLoop)
+	if(this->mBgmapSpriteSpec->xLoop)
 	{
 		this->position.x = 0;
 		this->drawSpec.textureSource.mx -= displacement->x;
@@ -287,7 +287,7 @@ void MBgmapSprite::addDisplacement(const PixelVector* displacement)
 */
 	}
 
-	if(this->mBgmapSpriteDefinition->yLoop)
+	if(this->mBgmapSpriteSpec->yLoop)
 	{
 		this->position.y = 0;
 		this->drawSpec.textureSource.my -= displacement->y;
@@ -333,7 +333,7 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
 	// TODO: check if required, causes that the sprite is turned off
-	// when changing the texture definition
+	// when changing the texture spec
 /*
 	if(!this->texture->written)
 	{
@@ -343,7 +343,7 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 */
 
 	// set the head
-	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteDefinition->scValue;
+	worldPointer->head = this->head | (BgmapTexture::safeCast(this->texture))->segment | this->mBgmapSpriteSpec->scValue;
 
 	// get coordinates
 	int gx = this->position.x + this->displacement.x - this->halfWidth;
@@ -372,7 +372,7 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// set the world size
-	if(!this->mBgmapSpriteDefinition->xLoop)
+	if(!this->mBgmapSpriteSpec->xLoop)
 	{
     	int w = (this->halfWidth << 1) - mxDisplacement;
 
@@ -413,7 +413,7 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 		}
 	}
 
-	if(!this->mBgmapSpriteDefinition->yLoop)
+	if(!this->mBgmapSpriteSpec->yLoop)
 	{
     	int h = (this->halfHeight << 1) - myDisplacement;
 
@@ -481,8 +481,8 @@ void MBgmapSprite::calculateSize()
 	for(; node; node = node->next)
 	{
 		// free the texture
-		int textureCols = (Texture::safeCast(node->data))->textureDefinition->cols;
-		int textureRows = (Texture::safeCast(node->data))->textureDefinition->rows;
+		int textureCols = (Texture::safeCast(node->data))->textureSpec->cols;
+		int textureRows = (Texture::safeCast(node->data))->textureSpec->rows;
 
 		if(cols < textureCols)
 		{

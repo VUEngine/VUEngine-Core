@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // defines a UI for ROM memory
-typedef struct UiContainerDefinition
+typedef struct UiContainerSpec
 {
 	// ui's entities
 	PositionedEntity* entities;
@@ -44,7 +44,7 @@ typedef struct UiContainerDefinition
 	// class allocator
 	AllocatorPointer allocator;
 
-} UiContainerDefinition;
+} UiContainerSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ typedef struct UiContainerDefinition
 class UiContainer : Container
 {
 	/// @publicsection
-	void constructor(UiContainerDefinition* uiContainerDefinition);
+	void constructor(UiContainerSpec* uiContainerSpec);
 	virtual void addEntities(PositionedEntity* entities);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);

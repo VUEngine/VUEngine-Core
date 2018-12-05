@@ -93,7 +93,7 @@ singleton class HardwareManager : Object
 	void print(int x, int y);
 	void setInterruptLevel(u8 level);
 	void setInterruptVectors();
-	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
+	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
 	void printStackStatus(int x, int y, bool resumed);
 }

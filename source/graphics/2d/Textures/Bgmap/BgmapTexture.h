@@ -37,18 +37,18 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A BgmapTexture definition
+ * A BgmapTexture spec
  *
  * @memberof BgmapTexture
  */
-typedef const TextureDefinition BgmapTextureDefinition;
+typedef const TextureSpec BgmapTextureSpec;
 
 /**
- * A BgmapTexture definition that is stored in ROM
+ * A BgmapTexture spec that is stored in ROM
  *
  * @memberof BgmapTexture
  */
-typedef const BgmapTextureDefinition BgmapTextureROMDef;
+typedef const BgmapTextureSpec BgmapTextureROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -67,7 +67,7 @@ class BgmapTexture : Texture
 	s8 remainingRowsToBeWritten;
 
 	/// @publicsection
-	void constructor(BgmapTextureDefinition* bgmapTextureDefinition, u16 id);
+	void constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id);
 	s8 getRemainingRowsToBeWritten();
 	s16 getXOffset();
 	s16 getYOffset();

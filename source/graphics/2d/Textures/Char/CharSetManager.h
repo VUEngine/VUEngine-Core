@@ -48,7 +48,7 @@ singleton class CharSetManager : Object
 	/// @publicsection
 	static CharSetManager getInstance();
 	void reset();
-	CharSet getCharSet(CharSetDefinition* charSetDefinition);
+	CharSet getCharSet(CharSetSpec* charSetSpec);
 	void releaseCharSet(CharSet charSet);
 	void defragment();
 	void writeCharSets();

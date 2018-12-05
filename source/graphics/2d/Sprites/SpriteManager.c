@@ -315,13 +315,13 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int segme
  *
  * @param sprite	Sprite to dispose
  */
-Sprite SpriteManager::createSprite(SpriteDefinition* spriteDefinition, Object owner)
+Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, Object owner)
 {
-	ASSERT(spriteDefinition, "SpriteManager::createSprite: null spriteDefinition");
+	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
 
 	this->lockSpritesLists = true;
 
-	Sprite sprite = ((Sprite (*)(SpriteDefinition*, Object)) spriteDefinition->allocator)((SpriteDefinition*)spriteDefinition, owner);
+	Sprite sprite = ((Sprite (*)(SpriteSpec*, Object)) spriteSpec->allocator)((SpriteSpec*)spriteSpec, owner);
 	ASSERT(!isDeleted(sprite), "SpriteManager::createSprite: failed creating sprite");
 
 	SpriteManager::registerSprite(this, sprite);

@@ -70,7 +70,7 @@ class GameState : State
 	Clock getPhysicsClock();
 	Stage getStage();
 	Clock getUpdateClock();
-	void loadStage(StageDefinition* stageDefinition, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
+	void loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	void pauseAnimations(bool pause);
 	void pauseClocks();
 	void pauseMessagingClock(bool pause);

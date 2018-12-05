@@ -73,7 +73,7 @@ typedef struct PhysicalSpecification
 
 } PhysicalSpecification;
 
-typedef const PhysicalSpecification PhysicalSpecificationROMDef;
+typedef const PhysicalSpecification PhysicalSpecificationROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------

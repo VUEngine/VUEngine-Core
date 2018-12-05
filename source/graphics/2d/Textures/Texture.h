@@ -37,17 +37,17 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A Texture definition
+ * A Texture spec
  *
  * @memberof Texture
  */
-typedef struct TextureDefinition
+typedef struct TextureSpec
 {
-	/// pointer to the char definition
-	CharSetDefinition* charSetDefinition;
+	/// pointer to the char spec
+	CharSetSpec* charSetSpec;
 
-	/// pointer to the bgtexture definition in ROM
-	BYTE* mapDefinition;
+	/// pointer to the bgtexture spec in ROM
+	BYTE* mapSpec;
 
 	/// x size, 1 column represents 8 pixels
 	u32 cols;
@@ -67,14 +67,14 @@ typedef struct TextureDefinition
 	/// recyclable
 	bool recyclable;
 
-} TextureDefinition;
+} TextureSpec;
 
 /**
- * A Texture definition that is stored in ROM
+ * A Texture spec that is stored in ROM
  *
  * @memberof Texture
  */
-typedef const TextureDefinition TextureROMDef;
+typedef const TextureSpec TextureROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -87,9 +87,9 @@ abstract class Texture : Object
 {
 	// Char group to use int this texture
 	CharSet charSet;
-	// Pointer to ROM definition
-	TextureDefinition* textureDefinition;
-	// Array definition of the map
+	// Pointer to ROM spec
+	TextureSpec* textureSpec;
+	// Array spec of the map
 	u32 mapDisplacement;
 	// Texture's id
 	u16 id;
@@ -99,18 +99,18 @@ abstract class Texture : Object
 	u8 written;
 
 	/// @publicsection
-	void constructor(TextureDefinition* textureDefinition, u16 id);
-	void setDefinition(TextureDefinition* textureDefinition);
-	TextureDefinition* getDefinition();
+	void constructor(TextureSpec* textureSpec, u16 id);
+	void setSpec(TextureSpec* textureSpec);
+	TextureSpec* getSpec();
 	void releaseCharSet();
 	void writeHBiasMode();
 	int getNumberOfChars();
-	TextureDefinition* getTextureDefinition();
+	TextureSpec* getTextureSpec();
 	u32 getTotalCols();
 	u32 getTotalRows();
 	u32 getNumberOfFrames();
 	CharSet getCharSet(u32 loadIfNeeded);
-	BYTE* getMapDefinition();
+	BYTE* getMapSpec();
 	void setPalette(u8 palette);
 	u8 getPalette();
 	u32 getRows();

@@ -56,17 +56,17 @@
 class AnimationController;
 
 /**
- * A SpriteDefinition
+ * A SpriteSpec
  *
  * @memberof	Sprite
  */
-typedef struct SpriteDefinition
+typedef struct SpriteSpec
 {
 	/// class allocator
 	AllocatorPointer allocator;
 
 	/// texture to use with the sprite
-	TextureDefinition* textureDefinition;
+	TextureSpec* textureSpec;
 
 	/// transparency mode
 	u8 transparent;
@@ -74,14 +74,14 @@ typedef struct SpriteDefinition
 	/// displacement modifier to achieve better control over display
 	PixelVector displacement;
 
-} SpriteDefinition;
+} SpriteSpec;
 
 /**
- * A SpriteDefinition that is stored in ROM
+ * A SpriteSpec that is stored in ROM
  *
  * @memberof	Sprite
  */
-typedef const SpriteDefinition SpriteROMDef;
+typedef const SpriteSpec SpriteROMSpec;
 
 /**
  * A function which defines the frames to play
@@ -115,10 +115,10 @@ typedef struct AnimationFunction
  *
  * @memberof	Sprite
  */
-typedef const AnimationFunction AnimationFunctionROMDef;
+typedef const AnimationFunction AnimationFunctionROMSpec;
 
 /**
- * An animation definition
+ * An animation spec
  *
  * @memberof	Sprite
  */
@@ -134,7 +134,7 @@ typedef struct AnimationDescription
  *
  * @memberof	Sprite
  */
-typedef const AnimationDescription AnimationDescriptionROMDef;
+typedef const AnimationDescription AnimationDescriptionROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -156,7 +156,7 @@ abstract class Sprite : Object
 	s16 halfWidth;
 	// Texture's half height
 	s16 halfHeight;
-	// Head definition for world entry setup
+	// Head spec for world entry setup
 	u16 head;
 	// World layer where to render the texture
 	u8 worldLayer;
@@ -174,7 +174,7 @@ abstract class Sprite : Object
 	bool positioned : 1;
 
 	/// @publicsection
-	void constructor(const SpriteDefinition* spriteDefinition, Object owner);
+	void constructor(const SpriteSpec* spriteSpec, Object owner);
 	PixelVector getPosition();
 	PixelVector getDisplacedPosition();
 	u16 getHead();

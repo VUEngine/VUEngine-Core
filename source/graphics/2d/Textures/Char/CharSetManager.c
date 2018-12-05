@@ -107,21 +107,21 @@ void CharSetManager::reset()
 }
 
 /**
- * Find a previously registered CharSet with the given definition
+ * Find a previously registered CharSet with the given spec
  *
  * @private
- * @param charSetDefinition		CharSet definition
+ * @param charSetSpec		CharSet spec
  */
-CharSet CharSetManager::findCharSet(CharSetDefinition* charSetDefinition)
+CharSet CharSetManager::findCharSet(CharSetSpec* charSetSpec)
 {
-	// try to find a charset with the same char definition
+	// try to find a charset with the same char spec
 	VirtualNode node = this->charSets->head;
 
 	for(; node; node = node->next)
 	{
 		CharSet charSet = CharSet::safeCast(node->data);
 
-		if(charSet && CharSet::getCharSetDefinition(charSet)->charDefinition == charSetDefinition->charDefinition && CharSet::getAllocationType(charSet) == charSetDefinition->allocationType)
+		if(charSet && CharSet::getCharSetSpec(charSet)->charSpec == charSetSpec->charSpec && CharSet::getAllocationType(charSet) == charSetSpec->allocationType)
 		{
 			return charSet;
 		}
@@ -134,20 +134,20 @@ CharSet CharSetManager::findCharSet(CharSetDefinition* charSetDefinition)
  * Retrieve a CharSet
  *
  * @private
- * @param charSetDefinition				CharSet definition to find o allocate a CharSet
+ * @param charSetSpec				CharSet spec to find o allocate a CharSet
  * @return 								Allocated CharSet
  */
-CharSet CharSetManager::getCharSet(CharSetDefinition* charSetDefinition)
+CharSet CharSetManager::getCharSet(CharSetSpec* charSetSpec)
 {
 	CharSet charSet = NULL;
 
-	switch(charSetDefinition->allocationType)
+	switch(charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
 
 			// ask for allocation
-			charSet = CharSetManager::allocateCharSet(CharSetManager::getInstance(), charSetDefinition);
+			charSet = CharSetManager::allocateCharSet(CharSetManager::getInstance(), charSetSpec);
 			break;
 
 		case __ANIMATED_SHARED:
@@ -156,7 +156,7 @@ CharSet CharSetManager::getCharSet(CharSetDefinition* charSetDefinition)
 		case __NOT_ANIMATED:
 
 			// first try to find an already created charset
-			charSet = CharSetManager::findCharSet(this, charSetDefinition);
+			charSet = CharSetManager::findCharSet(this, charSetSpec);
 
 			if(charSet)
 			{
@@ -164,7 +164,7 @@ CharSet CharSetManager::getCharSet(CharSetDefinition* charSetDefinition)
 			}
 			else
 			{
-				charSet = CharSetManager::allocateCharSet(this, charSetDefinition);
+				charSet = CharSetManager::allocateCharSet(this, charSetSpec);
 			}
 
 			break;
@@ -205,15 +205,15 @@ void CharSetManager::releaseCharSet(CharSet charSet)
  * Try to allocate a CHAR memory space for a new CharSet
  *
  * @private
- * @param charSetDefinition		CharSet definition to allocate space for
+ * @param charSetSpec		CharSet spec to allocate space for
  * @return 						Allocated CharSet
  */
-CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
+CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 {
 	NM_ASSERT(this->charSets, "CharSetManager::allocateCharSet: null this");
-	NM_ASSERT(charSetDefinition, "CharSetManager::allocateCharSet: null charSetDefinition");
-	NM_ASSERT(charSetDefinition->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
-	NM_ASSERT(charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in definition");
+	NM_ASSERT(charSetSpec, "CharSetManager::allocateCharSet: null charSetSpec");
+	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
+	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
 
 	u16 offset = 1;
 
@@ -223,14 +223,14 @@ CharSet CharSetManager::allocateCharSet(CharSetDefinition* charSetDefinition)
 		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet) + __CHAR_ROOM;
 	}
 
-	if((unsigned)offset + charSetDefinition->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
+	if((unsigned)offset + charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
 	{
-		CharSet charSet = new CharSet(charSetDefinition, offset);
+		CharSet charSet = new CharSet(charSetSpec, offset);
 
 		VirtualList::pushBack(this->charSets, charSet);
 		VirtualList::pushBack(this->charSetsPendingWriting, charSet);
 /*
-		switch(charSetDefinition->allocationType)
+		switch(charSetSpec->allocationType)
 		{
 			case __ANIMATED_SINGLE:
 			case __ANIMATED_SHARED:

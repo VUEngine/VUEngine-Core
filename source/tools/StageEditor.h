@@ -43,8 +43,8 @@
  */
 typedef struct UserObject
 {
-	/// Pointer to EntityDefinition
-	EntityDefinition* entityDefinition;
+	/// Pointer to EntitySpec
+	EntitySpec* entitySpec;
 	/// Name of the Entity
 	char* name;
 

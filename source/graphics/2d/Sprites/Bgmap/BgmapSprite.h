@@ -58,14 +58,14 @@ class BgmapSprite;
 typedef s16 (*ParamTableEffectMethod)(BgmapSprite);
 
 /**
- * A BgmapSprite definition
+ * A BgmapSprite spec
  *
  * @memberof BgmapSprite
  */
-typedef struct BgmapSpriteDefinition
+typedef struct BgmapSpriteSpec
 {
-	/// it has a Sprite definition at the beginning
-	SpriteDefinition spriteDefinition;
+	/// it has a Sprite spec at the beginning
+	SpriteSpec spriteSpec;
 
 	/// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
@@ -76,14 +76,14 @@ typedef struct BgmapSpriteDefinition
 	/// flag to indicate in which display to show the bg texture
 	u16 display;
 
-} BgmapSpriteDefinition;
+} BgmapSpriteSpec;
 
 /**
- * A BgmapSprite definition that is stored in ROM
+ * A BgmapSprite spec that is stored in ROM
  *
  * @memberof BgmapSprite
  */
-typedef const BgmapSpriteDefinition BgmapSpriteROMDef;
+typedef const BgmapSpriteSpec BgmapSpriteROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -104,7 +104,7 @@ class BgmapSprite : Sprite
 	ParamTableEffectMethod applyParamTableEffect;
 
 	/// @publicsection
-	void constructor(const BgmapSpriteDefinition* bgmapSpriteDefinition, Object owner);
+	void constructor(const BgmapSpriteSpec* bgmapSpriteSpec, Object owner);
 	DrawSpec getDrawSpec();
 	void invalidateParamTable();
 	void setDrawSpec(const DrawSpec* const drawSpec);

@@ -50,14 +50,14 @@ friend class VirtualList;
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void AnimatedEntity::constructor(AnimatedEntityDefinition* animatedEntityDefinition, s16 id, s16 internalId, const char* const name)
+void AnimatedEntity::constructor(AnimatedEntitySpec* animatedEntitySpec, s16 id, s16 internalId, const char* const name)
 {
 	// construct base object
-	Base::constructor(&animatedEntityDefinition->entityDefinition, id, internalId, name);
+	Base::constructor(&animatedEntitySpec->entitySpec, id, internalId, name);
 
-	// save ROM definition
-	this->animatedEntityDefinition = animatedEntityDefinition;
-	this->animationDescription = animatedEntityDefinition->animationDescription;
+	// save ROM spec
+	this->animatedEntitySpec = animatedEntitySpec;
+	this->animationDescription = animatedEntitySpec->animationDescription;
 
 	this->currentAnimationName = NULL;
 }
@@ -70,25 +70,25 @@ void AnimatedEntity::destructor()
 	Base::destructor();
 }
 
-// set definition
-void AnimatedEntity::setDefinition(void* animatedEntityDefinition)
+// set spec
+void AnimatedEntity::setSpec(void* animatedEntitySpec)
 {
-	ASSERT(animatedEntityDefinition, "AnimatedEntity::setDefinition: null definition");
+	ASSERT(animatedEntitySpec, "AnimatedEntity::setSpec: null spec");
 
-	// save definition
-	this->animatedEntityDefinition = animatedEntityDefinition;
+	// save spec
+	this->animatedEntitySpec = animatedEntitySpec;
 
-	Base::setDefinition(this, &((AnimatedEntityDefinition*)animatedEntityDefinition)->entityDefinition);
+	Base::setSpec(this, &((AnimatedEntitySpec*)animatedEntitySpec)->entitySpec);
 }
 
 // ready method
 void AnimatedEntity::ready(bool recursive)
 {
-	ASSERT(this->animatedEntityDefinition, "AnimatedEntity::ready: null animatedEntityDefinition");
+	ASSERT(this->animatedEntitySpec, "AnimatedEntity::ready: null animatedEntitySpec");
 
 	Base::ready(this, recursive);
 
-	AnimatedEntity::playAnimation(this, this->animatedEntityDefinition->initialAnimation);
+	AnimatedEntity::playAnimation(this, this->animatedEntitySpec->initialAnimation);
 }
 
 // execute character's logic
@@ -216,7 +216,7 @@ bool AnimatedEntity::isAnimationLoaded(char* functionName)
 	return Sprite::isPlayingFunction(sprite, functionName);
 }
 
-// get animation definition
+// get animation spec
 AnimationDescription* AnimatedEntity::getAnimationDescription()
 {
 	return this->animationDescription;

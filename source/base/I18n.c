@@ -33,7 +33,7 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-extern LangROMDef* __LANGUAGES[];
+extern LangROMSpec* __LANGUAGES[];
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -89,11 +89,11 @@ void I18n::setActiveLanguage(u8 languageId)
 
 /**
  * Get all registered languages
- * @return		Array of LangDefinition pointers
+ * @return		Array of LangSpec pointers
  */
-LangDefinition * I18n::getLanguages()
+LangSpec * I18n::getLanguages()
 {
-	return (LangDefinition *)__LANGUAGES;
+	return (LangSpec *)__LANGUAGES;
 }
 
 /**

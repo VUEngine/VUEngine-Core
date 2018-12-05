@@ -31,7 +31,7 @@ extern BYTE VUEngineFontTiles[];
 //												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-CharSetROMDef VUENGINE_FONT_CH =
+CharSetROMSpec VUENGINE_FONT_CH =
 {
 	// number of chars
 	256,
@@ -39,14 +39,14 @@ CharSetROMDef VUENGINE_FONT_CH =
 	// allocation type
 	__NOT_ANIMATED,
 
-	// char definition
+	// char spec
 	VUEngineFontTiles,
 };
 
-FontROMDef VUENGINE_FONT =
+FontROMSpec VUENGINE_FONT =
 {
-	// font charset definition pointer
-	(CharSetDefinition*)&VUENGINE_FONT_CH,
+	// font charset spec pointer
+	(CharSetSpec*)&VUENGINE_FONT_CH,
 
 	// character number at which the font starts, allows you to skip the control characters for example
 	0,

@@ -120,10 +120,10 @@ typedef struct FontSize
  *
  * @memberof 	Printing
  */
-typedef struct FontDefinition
+typedef struct FontSpec
 {
-	/// font charset definition pointer
-	CharSetDefinition* charSetDefinition;
+	/// font charset spec pointer
+	CharSetSpec* charSetSpec;
 
 	/// at which character number the font starts
 	s16 offset;
@@ -137,24 +137,24 @@ typedef struct FontDefinition
 	/// font's name
 	char name[__MAX_FONT_NAME_LENGTH];
 
-} FontDefinition;
+} FontSpec;
 
 /**
- * A FontDefinition that is stored in ROM
+ * A FontSpec that is stored in ROM
  *
  * @memberof 	Printing
  */
-typedef const FontDefinition FontROMDef;
+typedef const FontSpec FontROMSpec;
 
 /**
- * A FontDefinition plus the offset of its charset in memory
+ * A FontSpec plus the offset of its charset in memory
  *
  * @memberof 	Printing
  */
 typedef struct FontData
 {
-	/// Font definition
-	const struct FontDefinition* fontDefinition;
+	/// Font spec
+	const struct FontSpec* fontSpec;
 
 	/// Offset of font in char memory
 	u32 offset;
@@ -218,9 +218,9 @@ singleton class Printing : Object
 	void float(float value, u8 x, u8 y, const char* font);
 
 	/**
-     * Get font definition and starting position in character memory
+     * Get font spec and starting position in character memory
      *
-     * @param font	Name of font to get definition for
+     * @param font	Name of font to get spec for
      * @return		FontData of desired font or default font if NULL or none could be found matching the name
      */
 	FontData* getFontByName(const char* font);
@@ -269,9 +269,9 @@ singleton class Printing : Object
 	/**
      * Add fonts to internal VirtualList and preload CharSets for specified fonts
      *
-     * @param fontDefinitions	Array of font definitions whose charset should pre preloaded
+     * @param fontSpecs	Array of font specs whose charset should pre preloaded
      */
-	void loadFonts(FontDefinition** fontDefinitions);
+	void loadFonts(FontSpec** fontSpecs);
 
 	/**
      * Render general print output layer

@@ -45,14 +45,14 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A ObjectSprite definition
+ * A ObjectSprite spec
  *
  * @memberof ObjectSprite
  */
-typedef struct ObjectSpriteDefinition
+typedef struct ObjectSpriteSpec
 {
-	/// it has a Sprite definition at the beginning
-	SpriteDefinition spriteDefinition;
+	/// it has a Sprite spec at the beginning
+	SpriteSpec spriteSpec;
 
 	/// the display mode (BGMAP, AFFINE, H-BIAS)
 	u16 bgmapMode;
@@ -60,14 +60,14 @@ typedef struct ObjectSpriteDefinition
 	/// flag to indicate in which display to show the bg texture
 	u16 display;
 
-} ObjectSpriteDefinition;
+} ObjectSpriteSpec;
 
 /**
- * A ObjectSprite definition that is stored in ROM
+ * A ObjectSprite spec that is stored in ROM
  *
  * @memberof ObjectSprite
  */
-typedef const ObjectSpriteDefinition ObjectSpriteROMDef;
+typedef const ObjectSpriteSpec ObjectSpriteROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +85,7 @@ class ObjectSprite : Sprite
 	s16 totalObjects;
 
 	/// @publicsection
-	void constructor(const ObjectSpriteDefinition* oSpriteDefinition, Object owner);
+	void constructor(const ObjectSpriteSpec* oSpriteSpec, Object owner);
 	s16 getObjectIndex();
 	s16 getTotalObjects();
 	void setObjectIndex(s16 objectIndex);

@@ -43,8 +43,8 @@
  */
 typedef struct UserAnimatedEntity
 {
-	/// definition
-	const AnimatedEntityDefinition* animatedEntityDefinition;
+	/// spec
+	const AnimatedEntitySpec* animatedEntitySpec;
 	/// name
 	const char* name;
 

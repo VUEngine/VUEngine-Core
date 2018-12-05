@@ -35,17 +35,17 @@
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * A MBgmapSprite definition
+ * A MBgmapSprite spec
  *
  * @memberof MBgmapSprite
  */
-typedef struct MBgmapSpriteDefinition
+typedef struct MBgmapSpriteSpec
 {
-	/// the normal sprite definition
-	BgmapSpriteDefinition bgmapSpriteDefinition;
+	/// the normal sprite spec
+	BgmapSpriteSpec bgmapSpriteSpec;
 
 	/// texture to use with the sprite
-	TextureDefinition** textureDefinitions;
+	TextureSpec** textureSpecs;
 
 	/// SCX/SCY value
 	u32 scValue;
@@ -56,14 +56,14 @@ typedef struct MBgmapSpriteDefinition
 	/// flag to loop the y axis
 	int yLoop;
 
-} MBgmapSpriteDefinition;
+} MBgmapSpriteSpec;
 
 /**
- * A MBgmapSprite definition that is stored in ROM
+ * A MBgmapSprite spec that is stored in ROM
  *
  * @memberof MBgmapSprite
  */
-typedef const MBgmapSpriteDefinition MBgmapSpriteROMDef;
+typedef const MBgmapSpriteSpec MBgmapSpriteROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -75,8 +75,8 @@ class MBgmapSprite : BgmapSprite
 {
 	// this is our texture
 	VirtualList textures;
-	// pinter to definition
-	const MBgmapSpriteDefinition* mBgmapSpriteDefinition;
+	// pinter to spec
+	const MBgmapSpriteSpec* mBgmapSpriteSpec;
 	// to speed up rendering
 	u32 textureXOffset;
 	// to speed up rendering
@@ -85,7 +85,7 @@ class MBgmapSprite : BgmapSprite
 	Point sizeMultiplier;
 
 	/// @publicsection
-	void constructor(const MBgmapSpriteDefinition* mBgmapSpriteDefinition, Object owner);
+	void constructor(const MBgmapSpriteSpec* mBgmapSpriteSpec, Object owner);
 	override void position(const Vector3D* position);
 	override void setPosition(const PixelVector* position);
 	override void render(bool evenFrame);

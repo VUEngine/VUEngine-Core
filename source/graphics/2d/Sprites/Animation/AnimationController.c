@@ -48,9 +48,9 @@ extern int strcmp(const char *, const char *);
  *
  * @param owner					Controller's owner
  * @param sprite				Sprite to animate
- * @param charSetDefinition		CharSetDefinition used to decide the animation allocation type
+ * @param charSetSpec		CharSetSpec used to decide the animation allocation type
  */
-void AnimationController::constructor(Object owner, Sprite sprite, const CharSetDefinition* charSetDefinition)
+void AnimationController::constructor(Object owner, Sprite sprite, const CharSetSpec* charSetSpec)
 {
 	Base::constructor();
 
@@ -71,10 +71,10 @@ void AnimationController::constructor(Object owner, Sprite sprite, const CharSet
 	// not playing anything yet
 	this->playing = false;
 
-	ASSERT(charSetDefinition, "AnimationController::constructor: null charSetDefinition");
+	ASSERT(charSetSpec, "AnimationController::constructor: null charSetSpec");
 
 	// animation coordinator
-	this->animationCoordinator = AnimationCoordinatorFactory::getCoordinator(AnimationCoordinatorFactory::getInstance(), this, sprite, charSetDefinition);
+	this->animationCoordinator = AnimationCoordinatorFactory::getCoordinator(AnimationCoordinatorFactory::getInstance(), this, sprite, charSetSpec);
 }
 
 /**

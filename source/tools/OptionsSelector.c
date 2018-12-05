@@ -167,7 +167,7 @@ void OptionsSelector::setColumnWidth(u8 width)
 	FontData* fontData = Printing::getFontByName(Printing::getInstance(), this->font);
 
 	// add space for selection mark, consider font width
-	width = ((width + 1) * fontData->fontDefinition->fontSize.x);
+	width = ((width + 1) * fontData->fontSpec->fontSize.x);
 
 	if((0 < width) && (width <= (__SCREEN_WIDTH_IN_CHARS)))
 	{
@@ -406,7 +406,7 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 		VirtualNode node = (VirtualList::safeCast(VirtualNode::getData(this->currentPage)))->head;
 
 		int i = 0;
-		for(; i < (this->rows * fontData->fontDefinition->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
+		for(; i < (this->rows * fontData->fontSpec->fontSize.y) && y + i < __SCREEN_HEIGHT_IN_CHARS; i++)
 		{
 			int j = 0;
 			for(; (this->columnWidth * this->cols) > j && x + j < __SCREEN_WIDTH_IN_CHARS; j++)
@@ -426,28 +426,28 @@ void OptionsSelector::printOptions(u8 x, u8 y)
 
 			if(NULL == option->value)
 			{
-				Printing::int(printing, counter, x + fontData->fontDefinition->fontSize.x, y, this->font);
+				Printing::int(printing, counter, x + fontData->fontSpec->fontSize.x, y, this->font);
 			}
 			else
 			{
 				switch(option->type)
 				{
 					case kString:
-						Printing::text(printing, (char*)option->value, x + fontData->fontDefinition->fontSize.x, y, this->font);
+						Printing::text(printing, (char*)option->value, x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
 					case kInt:
-						Printing::int(printing, *((int*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+						Printing::int(printing, *((int*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 
 					case kFloat:
-						Printing::float(printing, *((float*)option->value), x + fontData->fontDefinition->fontSize.x, y, this->font);
+						Printing::float(printing, *((float*)option->value), x + fontData->fontSpec->fontSize.x, y, this->font);
 						break;
 				}
 			}
 
-			y += fontData->fontDefinition->fontSize.y;
-			if((y >= (this->rows * fontData->fontDefinition->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_CHARS)))
+			y += fontData->fontSpec->fontSize.y;
+			if((y >= (this->rows * fontData->fontSpec->fontSize.y + this->y)) || (y >= (__SCREEN_HEIGHT_IN_CHARS)))
 			{
 				y = this->y;
 				x += this->columnWidth;
@@ -482,7 +482,7 @@ void OptionsSelector::printSelectorMark(char* mark)
 			Printing::getInstance(),
 			mark,
 			this->x + optionColumn,
-			this->y + (optionRow * fontData->fontDefinition->fontSize.y),
+			this->y + (optionRow * fontData->fontSpec->fontSize.y),
 			this->font
 		);
 	}

@@ -50,16 +50,16 @@
 class Entity;
 
 // defines an entity in ROM memory
-typedef struct EntityDefinition
+typedef struct EntitySpec
 {
 	/// class allocator
 	AllocatorPointer allocator;
 
 	/// sprites
-	const SpriteDefinition** spriteDefinitions;
+	const SpriteSpec** spriteSpecs;
 
 	/// collision shapes
-	const ShapeDefinition* shapeDefinitions;
+	const ShapeSpec* shapeSpecs;
 
 	/// pixelSize
 	// if 0, width and height will be inferred from the first sprite's texture's pixelSize
@@ -71,16 +71,16 @@ typedef struct EntityDefinition
 	/// physical specification
 	PhysicalSpecification* physicalSpecification;
 
-} EntityDefinition;
+} EntitySpec;
 
-typedef const EntityDefinition EntityROMDef;
+typedef const EntitySpec EntityROMSpec;
 
 
 // an entity associated with a position
 typedef const struct PositionedEntity
 {
-	// pointer to the entity definition in ROM
-	EntityDefinition* entityDefinition;
+	// pointer to the entity spec in ROM
+	EntitySpec* entitySpec;
 
 	// position in the screen coordinates
 	ScreenPixelVector onScreenPosition;
@@ -92,7 +92,7 @@ typedef const struct PositionedEntity
 	char* name;
 
 	// the children
-	struct PositionedEntity* childrenDefinitions;
+	struct PositionedEntity* childrenSpecs;
 
 	// extra info
 	void* extraInfo;
@@ -102,7 +102,7 @@ typedef const struct PositionedEntity
 
 } PositionedEntity;
 
-typedef const PositionedEntity PositionedEntityROMDef;
+typedef const PositionedEntity PositionedEntityROMSpec;
 
 /**
  * Positioned Entity Description
@@ -115,7 +115,7 @@ typedef struct PositionedEntityDescription
 	Container parent;
 	Entity entity;
 	EventListener callback;
-	int spriteDefinitionIndex;
+	int spriteSpecIndex;
 	s16 id;
 	bool transformed;
 	bool initialized;

@@ -255,7 +255,7 @@
 // BGMAP segments to use (leave 2 to allocate param table, 1 for printing)
 #define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 		(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 3)
 
-// Number of BGMAP definitions in each BGMAP segment
+// Number of BGMAP specs in each BGMAP segment
 #define __NUM_BGMAPS_PER_SEGMENT 				16
 
 // Printing area
@@ -353,7 +353,7 @@
 //											BRIGHTNESS
 //---------------------------------------------------------------------------------------------------------
 
-/* Default brightness settings, actual values are set in stage definitions
+/* Default brightness settings, actual values are set in stage specs
  * for a nice progression, each shade should be about twice as big as the previous one
  * _BRIGHT_RED must be larger than _DARK_RED + _MEDIUM_RED
  */
@@ -371,7 +371,7 @@
 
 #define __PRINTING_PALETTE						0
 
-// Default palette values, actual values are set in stage definitions
+// Default palette values, actual values are set in stage specs
 #define __BGMAP_PALETTE_0						0b11100100 // normal progression
 #define __BGMAP_PALETTE_1						0b11100000 // show dark red as black
 #define __BGMAP_PALETTE_2						0b10010000 // background layer

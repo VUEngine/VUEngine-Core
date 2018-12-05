@@ -49,13 +49,13 @@ static SpriteManager _spriteManager = NULL;
  * Class constructor
  *
  * @private
- * @param bgmapTextureDefinition		Texture definition
+ * @param bgmapTextureSpec		Texture spec
  * @param id							Identifier
  */
-void BgmapTexture::constructor(BgmapTextureDefinition* bgmapTextureDefinition, u16 id)
+void BgmapTexture::constructor(BgmapTextureSpec* bgmapTextureSpec, u16 id)
 {
 	// construct base object
-	Base::constructor((TextureDefinition*)bgmapTextureDefinition, id);
+	Base::constructor((TextureSpec*)bgmapTextureSpec, id);
 
 	this->segment = -1;
 	this->usageCount = 1;
@@ -91,7 +91,7 @@ void BgmapTexture::destructor()
 void BgmapTexture::rewrite()
 {
 	this->written = false;
-	this->remainingRowsToBeWritten = this->textureDefinition->rows;
+	this->remainingRowsToBeWritten = this->textureSpec->rows;
 
 	BgmapTexture::write(this);
 }
@@ -104,7 +104,7 @@ void BgmapTexture::write()
 	if(!this->charSet)
 	{
 		// make sure to force full writing if no char set
-		this->remainingRowsToBeWritten = this->textureDefinition->rows;
+		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 
 	Base::write(this);
@@ -117,11 +117,11 @@ void BgmapTexture::write()
 
 	if(0 >= this->remainingRowsToBeWritten)
 	{
-		this->remainingRowsToBeWritten = this->textureDefinition->rows;
+		this->remainingRowsToBeWritten = this->textureSpec->rows;
 	}
 
 	//determine the allocation type
-	switch(this->textureDefinition->charSetDefinition->allocationType)
+	switch(this->textureSpec->charSetSpec->allocationType)
 	{
 		case __ANIMATED_SINGLE:
 		case __ANIMATED_SINGLE_OPTIMIZED:
@@ -134,7 +134,7 @@ void BgmapTexture::write()
 
 		case __ANIMATED_MULTI:
 
-			// write the definition to graphic memory
+			// write the spec to graphic memory
 			BgmapTexture::writeAnimatedMulti(this);
 			break;
 
@@ -166,7 +166,7 @@ void BgmapTexture::writeAnimatedMulti()
 	int palette = this->palette << 14;
 
 	// determine the number of frames the map had
-	int area = (this->textureDefinition->cols * this->textureDefinition->rows);
+	int area = (this->textureSpec->cols * this->textureSpec->rows);
 	int charLocation = (int)CharSet::getOffset(this->charSet);
 	int frames = CharSet::getNumberOfChars(this->charSet) / area;
 	u32 mapDisplacement = this->mapDisplacement >> 1;
@@ -177,13 +177,13 @@ void BgmapTexture::writeAnimatedMulti()
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		int j = 1;
-		// write into the specified bgmap segment plus the offset defined in the this structure, the this definition
+		// write into the specified bgmap segment plus the offset defined in the this structure, the this spec
 		// specifying the char displacement inside the char mem
 		for(; j <= frames; j++)
 		{
-			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureDefinition->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
-				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
-				this->textureDefinition->cols,
+			Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + (offsetDisplacement + (this->textureSpec->cols * (j - 1)) + (this->remainingRowsToBeWritten << 6)),
+				(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
+				this->textureSpec->cols,
 				(palette) | (charLocation + area * (j - 1)));
 		}
 	}
@@ -215,8 +215,8 @@ void BgmapTexture::doWrite()
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		Mem::addHWORD((HWORD*)__BGMAP_SEGMENT(bgmapSegment) + offsetDisplacement + (this->remainingRowsToBeWritten << 6),
-				(const HWORD*)this->textureDefinition->mapDefinition + mapDisplacement + (this->remainingRowsToBeWritten * this->textureDefinition->cols),
-				this->textureDefinition->cols,
+				(const HWORD*)this->textureSpec->mapSpec + mapDisplacement + (this->remainingRowsToBeWritten * this->textureSpec->cols),
+				this->textureSpec->cols,
 				colorInformation);
 	}
 }
@@ -240,8 +240,8 @@ void BgmapTexture::writeAnimatedSingleOptimized()
 	for(; counter && this->remainingRowsToBeWritten--; counter--)
 	{
 		Mem::add ((u8*)__BGMAP_SEGMENT(bgmapSegment) + ((xOffset + (yOffset << 6 ) + (this->remainingRowsToBeWritten << 6)) << 1),
-				(const u8*)(this->textureDefinition->mapDefinition + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureDefinition->cols) << 1)),
-				this->textureDefinition->cols << 1,
+				(const u8*)(this->textureSpec->mapSpec + this->mapDisplacement + (this->remainingRowsToBeWritten * (this->textureSpec->cols) << 1)),
+				this->textureSpec->cols << 1,
 				(palette) | (charLocation));
 	}
 }

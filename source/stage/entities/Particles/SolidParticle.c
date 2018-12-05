@@ -48,24 +48,24 @@ friend class Shape;
 /**
  * Class constructor
  *
- * @param solidParticleDefinition	Definition of the SolidParticle
- * @param spriteDefinition
+ * @param solidParticleSpec	Spec of the SolidParticle
+ * @param spriteSpec
  * @param lifeSpan
  * @param mass
  */
-void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefinition, const SpriteDefinition* spriteDefinition, int lifeSpan, fix10_6 mass)
+void SolidParticle::constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass)
 {
 	// construct base Container
-	Base::constructor(&solidParticleDefinition->particleDefinition, spriteDefinition, lifeSpan, mass);
+	Base::constructor(&solidParticleSpec->particleSpec, spriteSpec, lifeSpan, mass);
 
-	this->solidParticleDefinition = solidParticleDefinition;
+	this->solidParticleSpec = solidParticleSpec;
 
-	ShapeDefinition shapeDefinition =
+	ShapeSpec shapeSpec =
 	{
 		// shape
 		__TYPE(Ball),
 
-		{solidParticleDefinition->radius, solidParticleDefinition->radius, solidParticleDefinition->radius},
+		{solidParticleSpec->radius, solidParticleSpec->radius, solidParticleSpec->radius},
 
 		// displacement (x, y, z, p)
 		{0, 0, 0, 0},
@@ -80,19 +80,19 @@ void SolidParticle::constructor(const SolidParticleDefinition* solidParticleDefi
 		true,
 
 		/// layers in which I live
-		this->solidParticleDefinition->layers,
+		this->solidParticleSpec->layers,
 
 		/// layers to ignore when checking for collisions
-		this->solidParticleDefinition->layersToIgnore,
+		this->solidParticleSpec->layersToIgnore,
 	};
 
 	// register a shape for collision detection
-	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeDefinition);
+	this->shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &shapeSpec);
 	CollisionManager::shapeBecameActive(Game::getCollisionManager(Game::getInstance()), this->shape);
 
 	// has to set bounciness and friction myself since Particle ignores collisions
-	Body::setBounciness(this->body, this->solidParticleDefinition->bounciness);
-	Body::setFrictionCoefficient(this->body, this->solidParticleDefinition->frictionCoefficient);
+	Body::setBounciness(this->body, this->solidParticleSpec->bounciness);
+	Body::setFrictionCoefficient(this->body, this->solidParticleSpec->frictionCoefficient);
 }
 
 /**
@@ -139,7 +139,7 @@ void SolidParticle::transformShape()
 {
 	const Rotation shapeRotation = {0, 0, 0};
 	const Scale shapeScale = {__1I_FIX7_9, __1I_FIX7_9, __1I_FIX7_9};
-	const Size shapeSize = {this->solidParticleDefinition->radius, this->solidParticleDefinition->radius, this->solidParticleDefinition->radius};
+	const Size shapeSize = {this->solidParticleSpec->radius, this->solidParticleSpec->radius, this->solidParticleSpec->radius};
 
 	Shape::position(this->shape, Body::getPosition(this->body), &shapeRotation, &shapeScale, &shapeSize);
 }
@@ -161,7 +161,7 @@ Shape SolidParticle::getShape()
  */
 u16 SolidParticle::getWidth()
 {
-	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
+	return __FIX10_6_TO_I(this->solidParticleSpec->radius);
 }
 
 /**
@@ -171,7 +171,7 @@ u16 SolidParticle::getWidth()
  */
 u16 SolidParticle::getHeight()
 {
-	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
+	return __FIX10_6_TO_I(this->solidParticleSpec->radius);
 }
 
 /**
@@ -182,7 +182,7 @@ u16 SolidParticle::getHeight()
 u16 SolidParticle::getDepth()
 {
 	// must calculate based on the scale because not affine object must be enlarged
-	return __FIX10_6_TO_I(this->solidParticleDefinition->radius);
+	return __FIX10_6_TO_I(this->solidParticleSpec->radius);
 }
 
 /**
@@ -257,7 +257,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 		case kBodyStopped:
 
-			if(this->solidParticleDefinition->disableCollisionOnStop && !Body::getMovementOnAllAxes(this->body))
+			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxes(this->body))
 			{
 				CollisionManager::shapeBecameInactive(Game::getCollisionManager(Game::getInstance()), this->shape);
 			}
@@ -315,7 +315,7 @@ VirtualList SolidParticle::getShapes()
  */
 u32 SolidParticle::getInGameType()
 {
-	return this->solidParticleDefinition->inGameType;
+	return this->solidParticleSpec->inGameType;
 }
 
 /**

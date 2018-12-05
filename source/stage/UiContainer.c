@@ -35,13 +35,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void UiContainer::constructor(UiContainerDefinition* uiContainerDefinition)
+void UiContainer::constructor(UiContainerSpec* uiContainerSpec)
 {
 	// construct base object
 	Base::constructor(NULL);
 
-	// add entities in the definition
-	UiContainer::addEntities(this, uiContainerDefinition->entities);
+	// add entities in the spec
+	UiContainer::addEntities(this, uiContainerSpec->entities);
 }
 
 // class's destructor
@@ -60,7 +60,7 @@ void UiContainer::addEntities(PositionedEntity* entities)
 	static int internalId = 0;
 	int i = 0;
 
-	for(;entities && entities[i].entityDefinition; i++)
+	for(;entities && entities[i].entitySpec; i++)
 	{
 		Entity entity = Entity::loadEntity(&entities[i], internalId++);
 

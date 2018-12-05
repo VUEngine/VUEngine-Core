@@ -34,11 +34,11 @@
 /**
  * Class constructor
  *
- * @param charSetDefinition		CharSetDefinition used by the sprites to be coordinated
+ * @param charSetSpec		CharSetSpec used by the sprites to be coordinated
  */
-void BgmapAnimationCoordinator::constructor(const CharSetDefinition* charSetDefinition)
+void BgmapAnimationCoordinator::constructor(const CharSetSpec* charSetSpec)
 {
-	Base::constructor(charSetDefinition);
+	Base::constructor(charSetSpec);
 }
 
 /**

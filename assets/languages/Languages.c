@@ -32,7 +32,7 @@
 // 												DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-const LangROMDef* __LANGUAGES[] =
+const LangROMSpec* __LANGUAGES[] =
 {
 	NULL
 };

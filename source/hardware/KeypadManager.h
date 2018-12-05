@@ -34,7 +34,7 @@
 //											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// hardware reg __SCR definitions
+// hardware reg __SCR specs
 #define	__S_INTDIS		0x80 	// Disable Interrupts
 #define	__S_SW			0x20 	// Software Reading
 #define	__S_SWCK		0x10 	// Software Clock, Interrupt?
@@ -42,7 +42,7 @@
 #define	__S_STAT		0x02 	// Hardware Reading Status
 #define	__S_HWDIS		0x01	// Disable Hardware Reading
 
-// keypad definitions
+// keypad specs
 #define	K_PWR			0x0001	// Low Power
 #define	K_SGN			0x0002	// Signature; 1 = Standard Pad
 #define	K_A				0x0004	// A Button

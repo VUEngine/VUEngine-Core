@@ -194,31 +194,31 @@ extern u32 _dram_data_start;
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-typedef struct ColumnTableDefinition
+typedef struct ColumnTableSpec
 {
-	// defines whether the definition's first half should be mirrored (true)
+	// defines whether the spec's first half should be mirrored (true)
 	// or if a full 256 entry table is provided (false)
 	bool mirror;
 
-	// column table definition
+	// column table spec
 	BYTE columnTable[];
 
-} ColumnTableDefinition;
+} ColumnTableSpec;
 
-typedef const ColumnTableDefinition ColumnTableROMDef;
+typedef const ColumnTableSpec ColumnTableROMSpec;
 
-typedef struct BrightnessRepeatDefinition
+typedef struct BrightnessRepeatSpec
 {
-	// defines whether the definition's first half should be mirrored (true)
+	// defines whether the spec's first half should be mirrored (true)
 	// or if a full 96 entry table is provided (false)
 	bool mirror;
 
 	// brightness repeat values
 	u8 brightnessRepeat[];
 
-} BrightnessRepeatDefinition;
+} BrightnessRepeatSpec;
 
-typedef const BrightnessRepeatDefinition BrightnessRepeatROMDef;
+typedef const BrightnessRepeatSpec BrightnessRepeatROMSpec;
 
 typedef struct ColorConfig
 {
@@ -229,7 +229,7 @@ typedef struct ColorConfig
 	Brightness brightness;
 
 	// brightness repeat values
-	BrightnessRepeatDefinition* brightnessRepeat;
+	BrightnessRepeatSpec* brightnessRepeat;
 
 } ColorConfig;
 
@@ -297,9 +297,9 @@ singleton class VIPManager : Object
 	void displayHide();
 	void clearScreen();
 	void clearBgmapSegment(int segment, int size);
-	void setupColumnTable(ColumnTableDefinition* columnTableDefinition);
+	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void useInternalColumnTable(bool internal);
-	void setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRepeat);
+	void setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeat);
 	void setBackgroundColor(u8 color);
 	void pushFrontPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);
 	void pushBackPostProcessingEffect(PostProcessingEffect postProcessingEffect, SpatialObject spatialObject);

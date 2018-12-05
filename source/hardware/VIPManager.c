@@ -52,8 +52,8 @@ static WireframeManager _wireframeManager;
 static SpriteManager _spriteManager;
 static HardwareManager _hardwareManager;
 
-extern ColumnTableROMDef DEFAULT_COLUMN_TABLE;
-extern BrightnessRepeatROMDef DEFAULT_BRIGHTNESS_REPEAT;
+extern ColumnTableROMSpec DEFAULT_COLUMN_TABLE;
+extern BrightnessRepeatROMSpec DEFAULT_BRIGHTNESS_REPEAT;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -452,24 +452,24 @@ void VIPManager::clearBgmapSegment(int segment, int size)
 /**
  * Setup the column table
  *
- * @param columnTableDefinition		Definition to use
+ * @param columnTableSpec		Spec to use
  */
-void VIPManager::setupColumnTable(ColumnTableDefinition* columnTableDefinition)
+void VIPManager::setupColumnTable(ColumnTableSpec* columnTableSpec)
 {
 	int i, value;
 
 	// use the default column table as fallback
-	if(columnTableDefinition == NULL)
+	if(columnTableSpec == NULL)
 	{
-		columnTableDefinition = (ColumnTableDefinition*)&DEFAULT_COLUMN_TABLE;
+		columnTableSpec = (ColumnTableSpec*)&DEFAULT_COLUMN_TABLE;
 	}
 
 	// write column table
 	for(i = 0; i < 256; i++)
 	{
-		value = (columnTableDefinition->mirror && (i > 127))
-			? columnTableDefinition->columnTable[255 - i]
-			: columnTableDefinition->columnTable[i];
+		value = (columnTableSpec->mirror && (i > 127))
+			? columnTableSpec->columnTable[255 - i]
+			: columnTableSpec->columnTable[i];
 
 		_columnTableBaseAddressLeft[i] = value;
 		_columnTableBaseAddressRight[i] = value;
@@ -499,16 +499,16 @@ void VIPManager::useInternalColumnTable(bool useInternal)
 /**
  * Write brightness repeat values to column table
  *
- * @param brightnessRepeatDefinition	Definition
+ * @param brightnessRepeatSpec	Spec
  */
-void VIPManager::setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRepeatDefinition)
+void VIPManager::setupBrightnessRepeat(BrightnessRepeatSpec* brightnessRepeatSpec)
 {
 	int i, leftCta, rightCta, value;
 
 	// use the default repeat values as fallback
-	if(brightnessRepeatDefinition == NULL)
+	if(brightnessRepeatSpec == NULL)
 	{
-		brightnessRepeatDefinition = (BrightnessRepeatDefinition*)&DEFAULT_BRIGHTNESS_REPEAT;
+		brightnessRepeatSpec = (BrightnessRepeatSpec*)&DEFAULT_BRIGHTNESS_REPEAT;
 	}
 
 	// column table offsets
@@ -518,9 +518,9 @@ void VIPManager::setupBrightnessRepeat(BrightnessRepeatDefinition* brightnessRep
 	// write repeat values to column table
 	for(i = 0; i < 96; i++)
 	{
-		value = (brightnessRepeatDefinition->mirror && (i > 47))
-			? brightnessRepeatDefinition->brightnessRepeat[95 - i] << 8
-			: brightnessRepeatDefinition->brightnessRepeat[i] << 8;
+		value = (brightnessRepeatSpec->mirror && (i > 47))
+			? brightnessRepeatSpec->brightnessRepeat[95 - i] << 8
+			: brightnessRepeatSpec->brightnessRepeat[i] << 8;
 
 		_columnTableBaseAddressLeft[leftCta - i] = (_columnTableBaseAddressLeft[leftCta - i] & 0xff) | value;
 		_columnTableBaseAddressRight[rightCta - i] = (_columnTableBaseAddressRight[rightCta - i] & 0xff) | value;
