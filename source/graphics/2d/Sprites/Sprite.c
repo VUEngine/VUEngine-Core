@@ -236,8 +236,15 @@ AnimationController Sprite::getAnimationController()
  */
 void Sprite::setWorldLayer(u8 worldLayer)
 {
+	// Prevent retention if lowering the WORLD by going off
+	if(worldLayer < (s8)this->worldLayer)
+	{
+		_worldAttributesBaseAddress[this->worldLayer].head = __WORLD_OFF;
+	}
+
 	this->worldLayer = worldLayer;
 
+	// Don't allow to become the end WORLD
 	if(0 <= (s8)this->worldLayer)
 	{
 		_worldAttributesBaseAddress[this->worldLayer].head &= ~__WORLD_END;
