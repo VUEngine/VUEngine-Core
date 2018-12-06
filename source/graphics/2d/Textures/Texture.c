@@ -84,8 +84,8 @@ void Texture::loadCharSet()
 	this->charSet = CharSetManager::getCharSet(CharSetManager::getInstance(), this->textureSpec->charSetSpec);
 	ASSERT(this->charSet, "Texture::constructor: null charSet");
 	// if the char spec is NULL, it must be a text
-	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
+	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+	Object::addEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 }
 
 /**
@@ -119,8 +119,8 @@ void Texture::releaseCharSet()
 {
 	if(this->charSet)
 	{
-		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetRewritten, kEventCharSetRewritten);
-		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture_onCharSetDeleted, kEventCharSetDeleted);
+		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetRewritten, kEventCharSetRewritten);
+		Object::removeEventListener(this->charSet, Object::safeCast(this), (EventListener)Texture::onCharSetDeleted, kEventCharSetDeleted);
 
 		CharSetManager::releaseCharSet(CharSetManager::getInstance(), this->charSet);
 
