@@ -224,6 +224,7 @@ abstract class Shape : Object
 	void reset();
 	bool isEnabled();
 	bool isReady();
+	void activeCollisionChecks(bool activate);
 	void enable(bool enable);
 	void setCheckForCollisions(bool checkForCollisions);
 	void setReady(bool ready);

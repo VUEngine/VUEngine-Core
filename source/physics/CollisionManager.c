@@ -59,7 +59,7 @@ void CollisionManager::constructor()
 
 	// create the shape list
 	this->shapes = new VirtualList();
-	this->activeShapes = new VirtualList();
+	this->activeForCollisionCheckingShapes = new VirtualList();
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -77,7 +77,7 @@ void CollisionManager::destructor()
 
 	// delete lists
 	delete this->shapes;
-	delete this->activeShapes;
+	delete this->activeForCollisionCheckingShapes;
 
 	// destroy the super object
 	// must always be called at the end of the destructor
@@ -105,7 +105,7 @@ void CollisionManager::destroyShape(Shape shape)
 	if(shape && VirtualList::find(this->shapes, shape))
 	{
 		VirtualList::removeElement(this->shapes, shape);
-		VirtualList::removeElement(this->activeShapes, shape);
+		VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
 
 		// delete it
 		delete shape;
@@ -165,23 +165,23 @@ u32 CollisionManager::update(Clock clock)
 		shape->moved = false;
 	}
 
-	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList::getSize(this->activeShapes), "CollisionManager::update: too many moving shapes");
+	NM_ASSERT(__TOTAL_USABLE_SHAPES >= VirtualList::getSize(this->activeForCollisionCheckingShapes), "CollisionManager::update: too many moving shapes");
 
-	Shape activeShapes[__TOTAL_USABLE_SHAPES];
-	int activeShapesIndex = 0;
+	Shape activeForCollisionCheckingShapes[__TOTAL_USABLE_SHAPES];
+	int activeForCollisionCheckingShapesIndex = 0;
 
 	// check the active shapes
-	for(activeShapesIndex = 0, node = this->activeShapes->head; node; node = node->next)
+	for(activeForCollisionCheckingShapesIndex = 0, node = this->activeForCollisionCheckingShapes->head; node; node = node->next)
 	{
 		Shape shape = Shape::safeCast(node->data);
 
 		if(shape->enabled)
 		{
-			activeShapes[activeShapesIndex++] = shape;
+			activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex++] = shape;
 		}
 	}
 
-	activeShapes[activeShapesIndex] = NULL;
+	activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex] = NULL;
 
 	Shape enabledShapes[__TOTAL_USABLE_SHAPES];
 	int enabledShapesIndex = 0;
@@ -200,15 +200,15 @@ u32 CollisionManager::update(Clock clock)
 	enabledShapes[enabledShapesIndex] = NULL;
 
 	// check the shapes
-	for(activeShapesIndex = 0; activeShapes[activeShapesIndex]; activeShapesIndex++)
+	for(activeForCollisionCheckingShapesIndex = 0; activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex]; activeForCollisionCheckingShapesIndex++)
 	{
-		if(isDeleted(activeShapes[activeShapesIndex]))
+		if(isDeleted(activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex]))
 		{
 			continue;
 		}
 
 		// load the current shape
-		Shape shape = Shape::safeCast(activeShapes[activeShapesIndex]);
+		Shape shape = Shape::safeCast(activeForCollisionCheckingShapes[activeForCollisionCheckingShapesIndex]);
 
 		if(shape->ready && shape->checkForCollisions && shape->isVisible)
 		{
@@ -271,7 +271,7 @@ void CollisionManager::reset()
 
 	// empty the lists
 	VirtualList::clear(this->shapes);
-	VirtualList::clear(this->activeShapes);
+	VirtualList::clear(this->activeForCollisionCheckingShapes);
 
 	this->lastCycleCollisionChecks = 0;
 	this->lastCycleCollisions = 0;
@@ -281,24 +281,24 @@ void CollisionManager::reset()
 }
 
 // inform of a change in the shape
-void CollisionManager::shapeBecameActive(Shape shape)
+void CollisionManager::activeCollisionCheckForShape(Shape shape, bool activate)
 {
-	ASSERT(shape, "CollisionManager::shapeBecameActive: null shape");
+	ASSERT(shape, "CollisionManager::activeCollisionCheckForShape: null shape");
 
-	Shape::enable(shape, true);
-
-	if(!VirtualList::find(this->activeShapes, shape))
+	if(activate)
 	{
-		VirtualList::pushBack(this->activeShapes, shape);
+		Shape::enable(shape, true);
+
+		if(!VirtualList::find(this->activeForCollisionCheckingShapes, shape))
+		{
+			VirtualList::pushBack(this->activeForCollisionCheckingShapes, shape);
+		}
 	}
-}
+	else
+	{
+		VirtualList::removeElement(this->activeForCollisionCheckingShapes, shape);
+	}
 
-// inform of a change in the shape
-void CollisionManager::shapeBecameInactive(Shape shape)
-{
-	ASSERT(shape, "CollisionManager::shapeBecameInactive: null shape");
-
-	VirtualList::removeElement(this->activeShapes, shape);
 }
 
 // draw shapes
@@ -328,7 +328,7 @@ void CollisionManager::hideShapes()
 	}
 }
 
-int CollisionManager::getNumberOfActiveShapes()
+int CollisionManager::getNumberOfactiveForCollisionCheckingShapes()
 {
 	int count = 0;
 
@@ -360,9 +360,9 @@ void CollisionManager::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Registered:     ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->shapes), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Active:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), CollisionManager::getNumberOfActiveShapes(this), x + 12, y, NULL);
+	Printing::int(Printing::getInstance(), CollisionManager::getNumberOfactiveForCollisionCheckingShapes(this), x + 12, y, NULL);
 	Printing::text(Printing::getInstance(), "Moving:          ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), VirtualList::getSize(this->activeShapes), x + 12, y++, NULL);
+	Printing::int(Printing::getInstance(), VirtualList::getSize(this->activeForCollisionCheckingShapes), x + 12, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Statistics (per cycle)", x, ++y, NULL);
 	y++;

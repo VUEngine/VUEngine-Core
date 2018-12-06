@@ -505,6 +505,16 @@ bool Shape::isEnabled()
 }
 
 /**
+ * Make this shape to test collision against other shapes
+ *
+ * @param activate
+ */
+void Shape::activeCollisionChecks(bool activate)
+{
+	CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, activate);
+}
+
+/**
  * Enable / disable
  *
  * @param enable
@@ -515,7 +525,7 @@ void Shape::enable(bool enable)
 
 	if(!this->enabled)
 	{
-		CollisionManager::shapeBecameInactive(Game::getCollisionManager(Game::getInstance()), this);
+		CollisionManager::activeCollisionCheckForShape(Game::getCollisionManager(Game::getInstance()), this, false);
 	}
 }
 

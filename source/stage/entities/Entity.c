@@ -114,7 +114,7 @@ void Entity::iAmDeletingMyself()
 	Base::iAmDeletingMyself(this);
 
 	// destroy collision shapes
-	Entity::enableShapes(this, false);
+	Entity::allowCollisions(this, false);
 //	Entity::destroyShapes(this);
 }
 
@@ -1735,7 +1735,7 @@ fix10_6 Entity::getFrictionCoefficient()
  *
  *@para Active status
  */
-void Entity::activateShapes(bool active)
+void Entity::activeCollisionChecks(bool active)
 {
 	if(this->shapes)
 	{
@@ -1747,7 +1747,7 @@ void Entity::activateShapes(bool active)
 			{
 				Shape shape = Shape::safeCast(node->data);
 
-				CollisionManager::shapeBecameActive(Game::getCollisionManager(Game::getInstance()), shape);
+				Shape::activeCollisionChecks(shape, true);
 			}
 		}
 		else
@@ -1756,7 +1756,7 @@ void Entity::activateShapes(bool active)
 			{
 				Shape shape = Shape::safeCast(node->data);
 
-				CollisionManager::shapeBecameInactive(Game::getCollisionManager(Game::getInstance()), shape);
+				Shape::activeCollisionChecks(shape, false);
 			}
 		}
 	}
@@ -1765,7 +1765,7 @@ void Entity::activateShapes(bool active)
 /**
  * Propagate active status to the shapes
  */
-void Entity::enableShapes(bool value)
+void Entity::allowCollisions(bool value)
 {
 	if(this->shapes)
 	{

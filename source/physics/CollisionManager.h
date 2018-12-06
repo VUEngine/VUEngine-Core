@@ -42,8 +42,8 @@ class CollisionManager : Object
 {
 	// a list of registered shapes
 	VirtualList	shapes;
-	// a list of active shapes
-	VirtualList	activeShapes;
+	// a list of shapes that check for collisions against other shapes
+	VirtualList	activeForCollisionCheckingShapes;
 	// counters for statistics
 	u32 lastCycleCollisionChecks;
 	u32 lastCycleCollisions;
@@ -58,8 +58,7 @@ class CollisionManager : Object
 	Shape createShape(SpatialObject owner, const ShapeSpec* shapeSpec);
 	void destroyShape(Shape shape);
 	void reset();
-	void shapeBecameActive(Shape shape);
-	void shapeBecameInactive(Shape shape);
+	void activeCollisionCheckForShape(Shape shape, bool activate);
 	void showShapes();
 	u32 update(Clock clock);
 }

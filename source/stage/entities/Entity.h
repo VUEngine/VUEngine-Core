@@ -88,8 +88,8 @@ class Entity : Container
 	bool updateSpritePosition();
 	bool updateSpriteRotation();
 	bool updateSpriteScale();
-	void activateShapes(bool activate);
-	void enableShapes(bool value);
+	void activeCollisionChecks(bool activate);
+	void allowCollisions(bool value);
 	bool hasShapes();
 	void showShapes();
 	void hideShapes();
