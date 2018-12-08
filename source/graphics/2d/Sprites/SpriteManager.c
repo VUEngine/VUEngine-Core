@@ -691,7 +691,11 @@ void SpriteManager::render()
 	// as soon as possible
 
 	bool skipNonCriticalProcesses = SpriteManager::disposeSpritesProgressively(this);
-	skipNonCriticalProcesses |= CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
+
+	if(!skipNonCriticalProcesses)
+	{
+		skipNonCriticalProcesses |= CharSetManager::writeCharSetsProgressively(CharSetManager::getInstance());
+	}
 
 	// write textures
 	if(!skipNonCriticalProcesses && !SpriteManager::writeSelectedSprite(this))
@@ -757,6 +761,7 @@ void SpriteManager::render()
 		}
 	}
 #endif
+
 
 	// configure printing layer and shutdown unused layers
 	SpriteManager::renderLastLayer(this);

@@ -34,7 +34,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // redefine memcpy
-__attribute__ ((unused)) static void *memcpy(void *destination, const void *source, size_t numberOfBytes)
+__attribute__ ((unused)) static void* memcpy(void *destination, const void *source, size_t numberOfBytes)
 {
 	BYTE* finalSource = (BYTE*)source + numberOfBytes;
 
@@ -69,6 +69,7 @@ static void Mem::clear(BYTE* destination, u32 numberOfBYTES)
 // Copy a block of data from one area in memory to another.
 static void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYTES)
 {
+/*
 	asm("          \n\t"      \
 		"mov r29,r1\n\t"      \
 		"mov %0,r26\n\t"      \
@@ -82,7 +83,8 @@ static void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYT
 		: "r" (((u32)destination & 0x3) << 2), "r" (((u32)source & 0x3) << 2), "r" (numberOfBYTES << 3), "r" ((u32)destination & ~0x3), "r" ((u32)source & ~0x3) // input
 		: "r1", "r26", "r27", "r28", "r29", "r30" // trashed
 		);
-/*
+*/
+
 	const BYTE* finalSource = source + numberOfBYTES;
 
 	asm("				\n\t"      \
@@ -99,7 +101,6 @@ static void Mem::copyBYTE(BYTE* destination, const BYTE* source, u32 numberOfBYT
 		: "r" (destination), "r" (source), "r" (finalSource)
 		: "r10" // regs used
 	);
-*/
 }
 
 static void Mem::copyHWORD(HWORD* destination, const HWORD* source, u32 numberOfHWORDS)

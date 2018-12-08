@@ -50,9 +50,6 @@ static u8* const _hardwareRegisters =			(u8*)0x02000000;
 #define	__WCR		0x24	// Wait-state Control Register		(0x0200 0024)
 #define	__SCR		0x28	// Serial Control Register			(0x0200 0028)
 
-// cache management
-#define CACHE_DISABLE	asm("ldsr r0,sr24")
-
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
