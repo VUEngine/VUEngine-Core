@@ -497,6 +497,16 @@ void MBgmapSprite::calculateSize()
 
 	this->halfWidth = cols << 2;
 	this->halfHeight = rows << 2;
+
+	if(0 < this->mBgmapSpriteSpec->width)
+	{
+		this->halfWidth = this->mBgmapSpriteSpec->width >> 1;
+	}
+
+	if(0 < this->mBgmapSpriteSpec->height)
+	{
+		this->halfHeight = this->mBgmapSpriteSpec->height >> 1;
+	}
 }
 
 /**

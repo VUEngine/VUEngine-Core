@@ -56,6 +56,12 @@ typedef struct MBgmapSpriteSpec
 	/// flag to loop the y axis
 	int yLoop;
 
+	/// Bounds the sprite's size to provide culling; if 0, the value is inferred from the texture
+	int width;
+
+	/// Bounds the sprite's size to provide culling; if 0, the value is inferred from the texture
+	int height;
+
 } MBgmapSpriteSpec;
 
 /**
