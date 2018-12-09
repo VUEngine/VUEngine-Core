@@ -467,7 +467,8 @@ bool AnimationController::isPlaying()
  * @param pause			Flag to pause or to resume animation
  */
 void AnimationController::pause(bool pause)
-{	this->playing = !pause;
+{
+	this->playing = !pause;
 
 	if(-1 == this->actualFrame)
 	{
