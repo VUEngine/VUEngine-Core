@@ -80,6 +80,7 @@ void Entity::constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const c
 	this->size = Size::getFromPixelSize(entitySpec->pixelSize);
 
 	this->invalidateSprites = 0;
+	this->transformShapes = true;
 }
 
 /**
@@ -1293,7 +1294,7 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 		this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
-	if(this->invalidateGlobalTransformation)
+	if(this->invalidateGlobalTransformation && this->transformShapes)
 	{
 		Entity::transformShapes(this);
 
@@ -1304,6 +1305,8 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
+
+	this->transformShapes = true;
 }
 
 /**

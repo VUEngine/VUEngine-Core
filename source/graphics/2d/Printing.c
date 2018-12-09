@@ -223,6 +223,10 @@ FontData* Printing::getFontByName(const char* font)
 
 void Printing::out(u8 x, u8 y, const char* string, const char* font)
 {
+#ifdef __FORCE_FONT
+	font = __FORCE_FONT;
+#endif
+
 	u32 i = 0;
 	u32 position = 0;
 	u32 startColumn = x;

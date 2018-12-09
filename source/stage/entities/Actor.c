@@ -253,6 +253,9 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 	{
 		Actor::syncWithBody(this);
 
+		// Prevent transformation of shapes again when calling Base::transform
+		this->transformShapes = false;
+
 		u16 bodyMovement = Body::getMovementOnAllAxes(this->body);
 
 		if(bodyMovement)

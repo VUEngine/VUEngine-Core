@@ -59,6 +59,8 @@ class Entity : Container
 	s16 internalId;
 	// Flag to update sprites' attributes
 	bool invalidateSprites;
+	// Flag to prevent transforming the shapes during the transformation phase
+	bool transformShapes;
 
 	/// @publicsection
 	static Entity instantiate(const EntitySpec* const entitySpec, s16 id, s16 internalId, const char* const name, void* extraInfo);
