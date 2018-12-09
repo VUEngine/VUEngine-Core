@@ -137,12 +137,6 @@ end_init_sram_bss:
 
 /* clean psw */
 	ldsr	r0, psw
-/* disable-clear-enable cache GCC 4.7 */
-    ldsr    r0, chcw
-    mov     1, r1
-    ldsr    r1, chcw
-    mov     2, r1
-    ldsr    r1, chcw
 
 /* setup sp, fp, gp, and tp */
 	movhi	hi(__stack), r0,sp
@@ -181,6 +175,14 @@ __call_main:
 
 	movhi	hi(_main),r0,r1
 	movea	lo(_main),r1,r1
+
+/* disable-clear-enable cache GCC 4.7 */
+    ldsr    r0, chcw
+    mov     1, r6
+    ldsr    r6, chcw
+    mov     2, r6
+    ldsr    r6, chcw
+
 	jmp	    [r1]
 __end:
 
