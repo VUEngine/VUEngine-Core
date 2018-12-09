@@ -31,6 +31,7 @@
 //#define __PRINT_CAMERA_STATUS
 //#define __PRINT_WIREFRAME_MANAGER_STATUS
 //#define __MAXIMUM_BOUNCINESS_COEFFICIENT		5.5f
+//#define __FORCE_FONT "GuiFont"
 
 //#undef __TIMER_RESOLUTION
 //#define __TIMER_RESOLUTION						10
