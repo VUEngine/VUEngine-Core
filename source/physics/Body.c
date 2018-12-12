@@ -54,8 +54,12 @@ friend class VirtualNode;
 #define CHANGED_DIRECTION	2
 
 //#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIX10_6(0.9f)
+#ifndef __STOP_VELOCITY_THRESHOLD
 #define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(8)
+#endif
+#ifndef __STOP_VELOCITY_THRESHOLD
 #define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(48)
+#endif
 
 #define __MIN_MASS								__F_TO_FIX10_6(0.1f)
 #define __MAX_MASS								__I_TO_FIX10_6(1)
