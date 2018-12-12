@@ -187,6 +187,16 @@ Velocity Body::getVelocity()
 	return this->velocity;
 }
 
+fix10_6 Body::getSpeed()
+{
+	return Vector3D::length(this->velocity);
+}
+
+fix10_6_ext Body::getSpeedSquare()
+{
+	return Vector3D::squareLength(this->velocity);
+}
+
 void Body::modifyVelocity(const Velocity* modifier)
 {
 	ASSERT(modifier, "Body::modifyVelocity: null multiplier");
@@ -359,6 +369,8 @@ void Body::addForce(const Force* force)
 	ASSERT(force, "Body::addForce: null force");
 
 	Body::applyForce(this, force);
+
+	Body::computeFriction(this);
 }
 
 // update movement
@@ -720,16 +732,7 @@ void Body::computeTotalNormal()
 		}
 	}
 
-	Body::computeTotalFrictionCoefficient(this);
-
-	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
-	{
-		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->totalNormal), this->totalFrictionCoefficient));
-	}
-	else
-	{
-		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER);
-	}
+	Body::computeFriction(this);
 }
 
 void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
@@ -894,7 +897,7 @@ fix10_6 Body::getFrictionCoefficient()
 	return this->frictionCoefficient;
 }
 
-void Body::computeTotalFrictionCoefficient()
+void Body::computeFriction()
 {
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
@@ -907,6 +910,33 @@ void Body::computeTotalFrictionCoefficient()
 	else if(__MAXIMUM_FRICTION_COEFFICIENT < this->totalFrictionCoefficient)
 	{
 		this->totalFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
+	}
+
+	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
+	{
+		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->totalNormal), this->totalFrictionCoefficient));
+	}
+	else
+	{
+		fix10_6 weight = Vector3D::length(this->weight);
+
+		if(weight)
+		{
+			this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->weight), _currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER);
+		}
+		else
+		{
+			this->frictionForceMagnitude = __ABS(_currentWorldFriction) >> __FRICTION_FORCE_FACTOR_POWER;
+
+			if(0 > this->frictionForceMagnitude)
+			{
+				this->frictionForceMagnitude = 0;
+			}
+			else if(__MAXIMUM_FRICTION_COEFFICIENT < this->frictionForceMagnitude)
+			{
+				this->frictionForceMagnitude = __MAXIMUM_FRICTION_COEFFICIENT;
+			}
+		}
 	}
 }
 
@@ -923,7 +953,7 @@ void Body::setFrictionCoefficient(fix10_6 frictionCoefficient)
 	}
 
 	this->frictionCoefficient = frictionCoefficient;
-	Body::computeTotalFrictionCoefficient(this);
+	Body::computeFriction(this);
 }
 
 void Body::setSurroundingFrictionCoefficient(fix10_6 surroundingFrictionCoefficient)
@@ -938,7 +968,7 @@ void Body::setSurroundingFrictionCoefficient(fix10_6 surroundingFrictionCoeffici
 	}
 
 	this->surroundingFrictionCoefficient = surroundingFrictionCoefficient;
-	Body::computeTotalFrictionCoefficient(this);
+	Body::computeFriction(this);
 }
 
 fix10_6 Body::getMass()

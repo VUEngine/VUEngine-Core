@@ -78,59 +78,69 @@ void CameraMovementManager::destructor()
  *
  * @param checkIfFocusEntityIsMoving	Flag whether to check if the focus Entity is moving
  */
-void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving)
+void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ ((unused)))
 {
 	Camera camera = Camera::getInstance();
 
 	// if focusEntity is defined
-	if(camera && camera->focusEntity)
+	if(!Camera::getFocusEntity(camera))
 	{
-		Container focusEntityParent = Container::getParent(camera->focusEntity);
+		return;
+	}
 
-		if(focusEntityParent)
+	Entity focusEntity = Camera::getFocusEntity(camera);
+
+	Direction direction = Entity::getDirection(focusEntity);
+
+	Vector3D cameraNewPosition = Camera::getPosition(camera);
+
+	Vector3D focusEntityPosition = Camera::getFocusEntityPosition(camera);
+	Vector3D focusEntityPositionDisplacement = Camera::getFocusEntityPositionDisplacement(camera);
+
+	{
+
+		Vector3D position3D = Vector3D::getRelativeToCamera(focusEntityPosition);
+
+		// calculate the target position
+		fix10_6 horizontalPosition = cameraNewPosition.x;
+		fix10_6 horizontalTarget = focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__SCREEN_WIDTH / 2);
+
+		fix10_6 easingDisplacement = __PIXELS_TO_METERS(7);
+
+		if(horizontalPosition + easingDisplacement < horizontalTarget)
 		{
-			// get focusEntity is moving
-			if( SpatialObject::isMoving(camera->focusEntity) || !checkIfFocusEntityIsMoving)
-			{
-				// save last position
-				camera->lastDisplacement = camera->position;
-
-				// get focusEntity's position
-				camera->position = *Entity::getPosition(camera->focusEntity);
-
-				camera->position.x += camera->focusEntityPositionDisplacement.x - __I_TO_FIX10_6(__HALF_SCREEN_WIDTH);
-				camera->position.y += camera->focusEntityPositionDisplacement.y - __I_TO_FIX10_6(__HALF_SCREEN_HEIGHT);
-				camera->position.z += camera->focusEntityPositionDisplacement.z - __I_TO_FIX10_6(__HALF_SCREEN_DEPTH);
-
-				if(0 > camera->position.x)
-				{
-					camera->position.x = 0;
-				}
-				else if(__I_TO_FIX10_6(camera->stageSize.x) < camera->position.x + __I_TO_FIX10_6(__SCREEN_WIDTH))
-				{
-					camera->position.x = __I_TO_FIX10_6(camera->stageSize.x - __SCREEN_WIDTH);
-				}
-
-				if(0 > camera->position.y)
-				{
-					camera->position.y = 0;
-				}
-				else if(__I_TO_FIX10_6(camera->stageSize.y) < camera->position.y + __I_TO_FIX10_6(__SCREEN_HEIGHT))
-				{
-					camera->position.y = __I_TO_FIX10_6(camera->stageSize.y - __SCREEN_HEIGHT);
-				}
-
-				camera->lastDisplacement.x = camera->position.x - camera->lastDisplacement.x;
-				camera->lastDisplacement.y = camera->position.y - camera->lastDisplacement.y;
-				camera->lastDisplacement.z = camera->position.z - camera->lastDisplacement.z;
-			}
-			else
-			{
-				// not moving
-				camera->lastDisplacement.x = 0;
-				camera->lastDisplacement.y = 0;
-				camera->lastDisplacement.z = 0;
-			}
+			cameraNewPosition.x += easingDisplacement;
+		}
+		else if(horizontalPosition - easingDisplacement > horizontalTarget)
+		{
+			cameraNewPosition.x -= easingDisplacement;
+		}
+		else
+		{
+			cameraNewPosition.x = horizontalTarget;
 		}
 	}
+
+	{
+		// calculate the target position
+		fix10_6 verticalPosition = cameraNewPosition.y;
+		fix10_6 verticalTarget = focusEntityPosition.y + focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__SCREEN_HEIGHT / 2);
+
+		fix10_6 easingDisplacement = __PIXELS_TO_METERS(7);
+
+		if(verticalPosition + easingDisplacement < verticalTarget)
+		{
+			cameraNewPosition.y += easingDisplacement;
+		}
+		else if(verticalPosition - easingDisplacement > verticalTarget)
+		{
+			cameraNewPosition.y -= easingDisplacement;
+		}
+		else
+		{
+			cameraNewPosition.y = verticalTarget;
+		}
+	}
+
+	Camera::setPosition(camera, cameraNewPosition);
 }

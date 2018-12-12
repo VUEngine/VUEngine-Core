@@ -145,6 +145,8 @@ class Body : Object
 	SpatialObject getOwner();
 	const Vector3D* getPosition();
 	Velocity getVelocity();
+	fix10_6 getSpeed();
+	fix10_6_ext getSpeedSquare();
 	void modifyVelocity(const Velocity* multiplier);
 	bool isActive();
 	bool isAwake();
