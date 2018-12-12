@@ -63,8 +63,6 @@ class AnimatedEntity : Entity
 	AnimatedEntitySpec* animatedEntitySpec;
 	// Pointer to the animation description
 	AnimationDescription* animationDescription;
-	// direction
-	Direction direction;
 	// need to save for pausing
 	char* currentAnimationName;
 
