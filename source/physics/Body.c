@@ -374,7 +374,9 @@ void Body::addForce(const Force* force)
 
 	Body::applyForce(this, force);
 
-	Body::computeFriction(this);
+	Body::computeTotalFrictionCoefficient(this);
+
+	Body::computeFrictionForceMagnitude(this);
 }
 
 // update movement
@@ -736,7 +738,9 @@ void Body::computeTotalNormal()
 		}
 	}
 
-	Body::computeFriction(this);
+	Body::computeTotalFrictionCoefficient(this);
+
+	Body::computeFrictionForceMagnitude(this);
 }
 
 void Body::addNormal(Object referent, Vector3D direction, fix10_6 magnitude)
@@ -901,7 +905,7 @@ fix10_6 Body::getFrictionCoefficient()
 	return this->frictionCoefficient;
 }
 
-void Body::computeFriction()
+void Body::computeTotalFrictionCoefficient()
 {
 	this->totalFrictionCoefficient = this->frictionCoefficient;
 
@@ -915,7 +919,10 @@ void Body::computeFriction()
 	{
 		this->totalFrictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
 	}
+}
 
+void Body::computeFrictionForceMagnitude()
+{
 	if(this->totalNormal.x || this->totalNormal.y || this->totalNormal.z)
 	{
 		this->frictionForceMagnitude = __ABS(__FIX10_6_MULT(Vector3D::length(this->totalNormal), this->totalFrictionCoefficient));
@@ -957,7 +964,7 @@ void Body::setFrictionCoefficient(fix10_6 frictionCoefficient)
 	}
 
 	this->frictionCoefficient = frictionCoefficient;
-	Body::computeFriction(this);
+	Body::computeTotalFrictionCoefficient(this);
 }
 
 void Body::setSurroundingFrictionCoefficient(fix10_6 surroundingFrictionCoefficient)
@@ -972,7 +979,7 @@ void Body::setSurroundingFrictionCoefficient(fix10_6 surroundingFrictionCoeffici
 	}
 
 	this->surroundingFrictionCoefficient = surroundingFrictionCoefficient;
-	Body::computeFriction(this);
+	Body::computeTotalFrictionCoefficient(this);
 }
 
 fix10_6 Body::getMass()
