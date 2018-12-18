@@ -110,3 +110,60 @@ static fix10_6 Math::fix10_6Infinity()
 {
 	return 0x3FFF;
 }
+
+static int Math::getAngle(fix7_9 x, fix7_9 y)
+{
+	int entry = 0;
+	int lastEntry = 0;
+	int entriesPerQuadrant = (int)(sizeof(_sinLut) / sizeof(s16)) / 4;
+	int totalEntries = (int)(sizeof(_sinLut) / sizeof(s16));
+
+	// Determine the quadrant
+	if(0 <= x)
+	{
+		// First quadrant
+		if(0 <= y)
+		{
+			entry = 0;
+			lastEntry = entriesPerQuadrant;
+		}
+		// Fourth quadrant
+		else
+		{
+			entry = entriesPerQuadrant * 3;
+			lastEntry = totalEntries;
+		}
+	}
+	// Second quadrant
+	else if(0 <= y)
+	{
+		entry = entriesPerQuadrant;
+		lastEntry = entry + entriesPerQuadrant;
+	}
+	// Third quadrant
+	else
+	{
+			PRINT_TEXT("THIRD", 1, 2);
+		entry = entriesPerQuadrant * 2;
+		lastEntry = totalEntries - entriesPerQuadrant;
+	}
+
+	fix7_9 difference = 1024;
+	fix7_9 sin = y;
+	int angle = 0;
+
+	for(; entry < lastEntry; entry++)
+	{
+		if(__ABS(sin - _sinLut[entry]) < difference)
+		{
+			difference = __ABS(sin - _sinLut[entry]);
+			angle = entry;
+		}
+		else if(__ABS(sin - _sinLut[entry]) > difference)
+		{
+			break;
+		}
+	}
+
+	return angle;
+}
