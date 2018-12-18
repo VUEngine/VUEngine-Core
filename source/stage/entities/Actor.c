@@ -218,6 +218,12 @@ void Actor::syncRotationWithBody()
 	{
 		Velocity velocity = Body::getVelocity(this->body);
 
+		velocity = Vector3D::normalize(velocity);
+
+//		this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
+
+//		Base::setLocalRotation(this, &this->transformation.localRotation);
+//return;
 		Direction direction =
 		{
 			__RIGHT, __DOWN, __FAR
@@ -464,6 +470,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 			if( Actor::mustBounce(this))
 			{
 				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+				//Actor::syncRotationWithBody(this);
 			}
 			else
 			{
