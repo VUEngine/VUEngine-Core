@@ -12,26 +12,26 @@ while [[ $# -gt 1 ]]
 do
 	key="$1"
 	case $key in
-		-i|-output)
+		-i)
 		INPUT_FILE="$2"
 		shift # past argument
 		;;
-		-o|-output)
+		-o)
 		OUTPUT_FILE="$2"
 		shift # past argument
 		;;
-		-w|-output)
+		-w)
 		WORKING_FOLDER="$2"
 		shift # past argument
 		;;
-		-p|-output)
+		-p)
 		HELPER_FILES_PREFIX="$2"
 		shift # past argument
 		;;
-		-d|-output)
+		-d)
 		PRINT_DEBUG_OUTPUT="true"
 		;;
-		-c|-output)
+		-c)
 		CLASSES_HIERARCHY_FILE="$2"
 		shift # past argument
 		;;
@@ -43,9 +43,9 @@ done
 classDeclaration=`grep -n -e "^[ 	]*[A-z0-9]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
 line=`cut -d: -f1 <<< "$classDeclaration"`
 cleanClassDeclaration=`cut -d: -f2,3 <<< "$classDeclaration"`
-classModifiers=`sed -e 's#\(^.*\)class[ 	]\+.*#\1#' <<< "$cleanClassDeclaration"`
+classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
 className=`sed -e 's#^.*class \([A-z][A-z0-9]*\)[ 	]*\:.*#\1#' <<< "$cleanClassDeclaration"`
-baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's#[  ]##g'`
+baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_-]//g'`
 
 if [ -z "$className" ];
 then
@@ -86,12 +86,12 @@ end=`tail -n +$line $INPUT_FILE | grep -m 1 -n "}" | cut -d: -f1`
 end=$((line + end))
 line=$((line + 1))
 
-classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e '^[ 	]*[\*//]\+.*' | sed -e 's#[{}]#\n#' | tr -d '\n' | sed -e 's#;#;\n#g' `
+classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e '^[ 	]*[\*//]\+.*' | sed -e 's#[{}]#\'$'\n#' | tr -d "\r\n"  | sed -e 's/;/;\'$'\n/g'`
 #echo "$classDeclarationBlock"
-methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*$'`
+methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*'`
 attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#.*;#&\\\#' `
 
-
+#echo "$classDeclarationBlock"
 #echo
 #echo "methods
 #$methods"
@@ -114,18 +114,23 @@ then
 	virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
 fi
 
-#echo
-#echo methods
-#echo $methods
-
 VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethods.txt"
+
+# Process each method to generate the final header
+methodDeclarations=
 
 # check if necessary files already exist
 if [ ! -f $VIRTUAL_METHODS_FILE ] ; then
 	touch $VIRTUAL_METHODS_FILE
 fi
 
-# Process each method to generate the final header
+separator=
+virtualMethodsFileHasContents=`cat $VIRTUAL_METHODS_FILE`
+if [ ! -z "$virtualMethodsFileHasContents" ];
+then
+	separator="\|"
+fi
+
 while IFS= read -r method;
 do
     if [ -z "$method" ];
@@ -133,19 +138,20 @@ do
         continue;
     fi
 
-	methodPrelude=`cut -d "(" -f1 <<< "$method"`
-    methodType=`sed -e 's#\(^.*\)[ \t]\+[a-z][A-z0-9]\+[ \t]*$#\1#' <<< "$methodPrelude"`
-    methodName=`sed -e 's#^.*[ \t]\+\([a-z][A-z0-9]\+[ \t]*$\)#\1#' <<< "$methodPrelude"`
+    methodPrelude=`cut -d "(" -f1 <<< "$method"`
+    methodName=`sed 's/.* //g' <<< "$methodPrelude"`
+    methodType=`sed 's/'$methodName'//g' <<< "$methodPrelude"`
     methodParameters=`cut -d "(" -f2- <<< "$method" | rev | cut -d ")" -f2- | rev`
 
-#   echo
-#   echo "method $method"
-#   echo "methodType $methodType"
-#   echo "methodName $methodName"
-#   echo "methodParameters $methodParameters"
+    nonModifiedMethodType=`sed -e 's#virtual##;s#override##;s#static##' <<< "$methodType"`
+    methodIsAbstract=false
 
-    nonModifiedMethodType=`sed -e 's#virtual##' -e 's#override##' -e 's#static##' <<< "$methodType"`
-	methodIsAbstract=false
+    #echo
+    #echo "method $method"
+    #echo "methodType $methodType"
+    #echo "methodName $methodName"
+    #echo "methodParameters $methodParameters"
+    #echo nonModifiedMethodType $nonModifiedMethodType
 
     if [[ $methodType = *"virtual "* ]]; then
 
@@ -153,8 +159,8 @@ do
 		hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
 		if [ -z "$hasMethod" ];
 		then
+			echo "$separator\<$methodCall[ 	]*(.*" >> $VIRTUAL_METHODS_FILE
 			separator="\|"
-			echo -n "$separator\<$methodCall[ 	]*(.*" >> $VIRTUAL_METHODS_FILE
 		fi
 
         if [ ! -z "$methodParameters" ];
@@ -191,8 +197,8 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
 			hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
 			if [ -z "$hasMethod" ];
 			then
+				echo "$separator\<$methodCall[ 	]*(.*" >> $VIRTUAL_METHODS_FILE
 				separator="\|"
-				echo -n "$separator\<$methodCall[ 	]*(.*" >> $VIRTUAL_METHODS_FILE
 			fi
         fi
     fi
@@ -218,6 +224,9 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
 "$methodDeclaration
 
 done <<< "$methods"
+
+#echo methodDeclarations
+#echo "$methodDeclarations"
 
 while IFS= read -r classModifier;
 do
@@ -251,8 +260,8 @@ done <<< "$classModifiers"
 # Add destructor declaration
 if [ ! "$isStaticClass" = true ];
 then
-	methodDeclarations="	void "$className"_destructor(void* _this);
-"$methodDeclarations
+	methodDeclarations=$methodDeclarations"
+	void "$className"_destructor(void* _this);"
 fi
 
 
@@ -266,7 +275,7 @@ then
 
 	if [ -z "$constructor" ];
 	then
-		echo "Error: no constructor defined for $className : $baseClassName"
+		echo "Error: no constructor defined for $className : $baseClassName in $methodDeclarations"
 		exit 0
 	else
 #		echo "Added allocator"
@@ -275,8 +284,9 @@ then
 		parameters=`cut -d\( -f2 <<< $constructor | cut -d\) -f1 | cut -d, -f2- | sed -e 's#^.*this##'`
 #		echo parameters $parameters
 		allocator="	"$className" "$className"_new("$parameters");"
-		methodDeclarations="$allocator
-"$methodDeclarations
+		methodDeclarations=$methodDeclarations"
+$allocator"
+
 	fi
 fi
 
@@ -327,7 +337,8 @@ cat $TEMPORAL_FILE >> $OUTPUT_FILE
 tail -${remaining} $INPUT_FILE >> $OUTPUT_FILE
 
 # Clean up
-sed -i -e 's#^[ 	]*class[ 	]\+\([A-Z[A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1)#' -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
+sed -i -e 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#' $OUTPUT_FILE
+sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 sed -i -e 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
 sed -i -e 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
 

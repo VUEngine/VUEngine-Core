@@ -11,9 +11,6 @@ TYPE = release
 #TYPE = debug
 #TYPE = preprocessor
 
-# Libraries that are linked
-LIBRARIES = $(PLUGINS)
-
 # Where the game lives
 GAME_HOME = .
 
@@ -28,9 +25,6 @@ STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 
 # Where to preprocess source files
 PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
-
-# All the modules
-MODULES = $(NAME) $(LIBRARIES)
 
 # Add directories to the include and library paths
 INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/headers -type d -print)
@@ -212,7 +206,7 @@ $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 
 $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
-	@echo -n "Compiling "
+	@echo "Compiling "
 	@sed -e 's#'"$(STORE)"/sources/$(NAME)/'##g' <<< $<
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
@@ -225,7 +219,7 @@ $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
-	@echo -n "Compiling "
+	@echo "Compiling "
 	@sed -e 's#'"$(STORE)"/sources/$(NAME)/'##g' <<< $<
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
@@ -233,7 +227,7 @@ $(STORE)/objects/$(NAME)/%.o: $(STORE)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
 $(STORE)/sources/$(NAME)/%.c: %.c
-	@sh $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(MODULES)
+	@sh $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: %.s
 	@echo Creating object file for $*

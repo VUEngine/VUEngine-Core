@@ -95,7 +95,7 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 	# Create the calls directives
 	for setupClassFile in $SETUP_CLASSES_FILES
 	do
-		setupFunction=`grep "SetupClasses" $setupClassFile | sed -e "s/.*void \+\(.*SetupClasses\)(.*/\1/g"`
+		setupFunction=`grep "SetupClasses" $setupClassFile | sed -e "s/.*void[ 	]*\(.*SetupClasses\)(.*/\1/g"`
 		#echo setupFunction $setupFunction
 
 		# add function setup call
