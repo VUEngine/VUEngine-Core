@@ -98,9 +98,6 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ (
 	Vector3D focusEntityPositionDisplacement = Camera::getFocusEntityPositionDisplacement(camera);
 
 	{
-
-		Vector3D position3D = Vector3D::getRelativeToCamera(focusEntityPosition);
-
 		// calculate the target position
 		fix10_6 horizontalPosition = cameraNewPosition.x;
 		fix10_6 horizontalTarget = focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__SCREEN_WIDTH / 2);
