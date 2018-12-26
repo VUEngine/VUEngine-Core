@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 clean_up() {
 	# clean up
@@ -19,7 +19,7 @@ HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
-while [[ $# -gt 0 ]]
+while [ $# -gt 0 ]
 do
 	key="$1"
 	case $key in
@@ -58,14 +58,16 @@ done
 #echo OUTPUT_FILE $OUTPUT_FILE
 cp $INPUT_FILE $OUTPUT_FILE
 
-if [[ ${INPUT_FILE} = *"assets/"* ]];then
+if [ -z "$INPUT_FILE" ] || [ -z "${INPUT_FILE##*assets/*}" ];
+then
 	exit 0
 fi
 
 className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $OUTPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
 isStatic=false
 
-if [ -z "$className" ];then
+if [ -z "$className" ];
+then
 # Maybe it is a static class
 	isStatic=false
 	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
@@ -110,7 +112,8 @@ sed -i -e 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__at
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 
-if [[ ! -s $OUTPUT_FILE ]];then
+if [ ! -s $OUTPUT_FILE ];
+then
 	echo "1.5 Error processing file: $OUTPUT_FILE"
 	exit 0
 fi
@@ -118,32 +121,38 @@ fi
 #echo "prototypes $prototypes"
 #echo "firstMethodDeclarationLine $firstMethodDeclarationLine"
 
-if [ -z "$className" ];then
+if [ -z "$className" ];
+then
 	clean_up
 	exit 0
 fi
 
-if [[ ! -s $OUTPUT_FILE ]];then
+if [ ! -s $OUTPUT_FILE ];
+then
 	echo "2 Error processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
-if [ ! -f "$CLASSES_HIERARCHY_FILE" ]; then
+if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
+then
 	clean_up
 	exit 0
 fi
 
 baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f2`
-if [ -z "$baseClassName" ];then
+if [ -z "$baseClassName" ];
+then
 	clean_up
 	exit 0
 fi
 
-if [[ ${INPUT_FILE} != *"source/"* ]];then
+if [ -z "$INPUT_FILE" ] || [ ! -z "${INPUT_FILE##*source/*}" ];
+then
 	exit 0
 fi
 
-if [ ! -d $WORKING_FOLDER ]; then
+if [ ! -d $WORKING_FOLDER ];
+then
 	mkdir -p $WORKING_FOLDER
 fi
 
@@ -161,21 +170,24 @@ do
 	#echo prefix $prefix
 	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$prefix"VirtualMethods.txt"
 
-	if [ ! -f "$VIRTUAL_METHODS_FILE" ]; then
+	if [ ! -f "$VIRTUAL_METHODS_FILE" ];
+	then
 		continue;
-    	fi
+	fi
 
 	VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
 	virtualMethods=`cat $VIRTUAL_METHODS_FILE | tr -d "\r\n"`
 
-	if [ -z "$virtualMethods" ]; then
+	if [ -z "$virtualMethods" ];
+	then
 		continue;
-    	fi
+	fi
 
 	TEMPORAL_METHOD_LIST=$WORKING_FOLDER/processedMethods.txt
 
-	if [ -f $TEMPORAL_METHOD_LIST ] ; then
+	if [ -f $TEMPORAL_METHOD_LIST ];
+	then
 		rm $TEMPORAL_METHOD_LIST
 	fi
 
@@ -185,7 +197,8 @@ do
 
 	virtualMethodsInFile=`grep -e "$virtualMethods" $OUTPUT_FILE `
 
-	if [ -z "$virtualMethodsInFile" ] ; then
+	if [ -z "$virtualMethodsInFile" ];
+	then
 		continue;
 	fi
 
@@ -233,7 +246,8 @@ do
 	done
 done
 
-if [[ ! -s $OUTPUT_FILE ]];then
+if [ ! -s $OUTPUT_FILE ];
+then
 	echo "3 Error processing file: $OUTPUT_FILE"
 	exit 0
 fi
@@ -247,12 +261,18 @@ sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
 
 classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f3`
 
-if [[ ! $classModifiers = *"static "* ]] ;
+if [ -z $classModifiers ];
 then
+	classModifiers="normal"
+fi
+
+if [ ! -z "${classModifiers##*static *}" ] ;
+then
+
 	classDefinition="__CLASS_DEFINITION($className, $baseClassName); $prototypes"
 
 	# Add allocator if it is not abstract nor a singleton class
-	if [[ ! $classModifiers = *"singleton "* ]] && [[ ! $classModifiers = *"static "* ]] && [[ ! $classModifiers = *"abstract "* ]] ;
+	if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
 	then
 	#	echo "Adding allocator"
 		constructor=`grep -m 1 -e $className"_constructor[ 	]*(.*)" $OUTPUT_FILE`
@@ -271,13 +291,13 @@ then
 			classDefinition=$classDefinition"__CLASS_NEW_END($className, $allocatorArguments);"
 		fi
 	else
-		if [[ $classModifiers = *"singleton "* ]] ;
+		if [ -z "${classModifiers##*singleton *}" ];
 		then
 			customSingletonDefinition=`grep -o -e '#define[ 	][ 	]*.*SINGLETON.*(' $OUTPUT_FILE`
 
 			if [ -z "$customSingletonDefinition" ];
 			then
-				if [[ $classModifiers = *"dynamic_singleton "* ]] ;
+				if [ -z "${classModifiers##*dynamic_singleton *}" ];
 				then
 					classDefinition=$classDefinition"__SINGLETON_DYNAMIC($className);"
 				else
@@ -296,7 +316,8 @@ else
 	classDefinition="$prototypes"
 fi
 
-if [[ ! -s $OUTPUT_FILE ]];then
+if [ ! -s $OUTPUT_FILE ];
+then
 	echo "4 Error processing file: $OUTPUT_FILE"
 	exit 0
 fi
@@ -308,7 +329,8 @@ fi
 #	echo "$className inherits from $baseClassName (is $classModifiers)"
 #fi
 
-if [ ! -z "$firstMethodDeclarationLine" ];then
+if [ ! -z "$firstMethodDeclarationLine" ];
+then
 
 	firstMethodDeclarationLine=$((firstMethodDeclarationLine - 1))
 	orig=$'\n'; replace=$'\\\n'
@@ -332,7 +354,8 @@ sed -i -e "s/\([^A-z0-9]\)delete[ 	][ 	]*\(.*\);/\1__DELETE(\2);/g"  $OUTPUT_FIL
 sed -i -e "s/\([^A-z0-9]\)new[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;/\1__NEW_BASIC(\2);/g" $OUTPUT_FILE
 
 
-if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
+if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ];
+then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
 	echo "*****************************************************************************************************" >> $WORKING_FOLDER/virtualizations.txt
@@ -345,7 +368,8 @@ if [ $PRINT_DEBUG_OUTPUT ] && [ "$anyMethodVirtualized" = true ] ; then
 	echo "" >> $WORKING_FOLDER/virtualizations.txt
 fi
 
-if [[ ! -s $OUTPUT_FILE ]];then
+if [ ! -s $OUTPUT_FILE ];
+then
 	echo "Error processing file: $OUTPUT_FILE"
 	exit 0
 fi

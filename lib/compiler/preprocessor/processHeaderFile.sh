@@ -8,7 +8,7 @@ PRINT_DEBUG_OUTPUT=
 HELPER_FILES_PREFIX=engine
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
-while [[ $# -gt 1 ]]
+while [ $# -gt 1 ]
 do
 	key="$1"
 	case $key in
@@ -120,7 +120,8 @@ VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$HELPER_FILES_PREFIX"VirtualMethods.txt"
 methodDeclarations=
 
 # check if necessary files already exist
-if [ ! -f $VIRTUAL_METHODS_FILE ] ; then
+if [ ! -f $VIRTUAL_METHODS_FILE ];
+then
 	touch $VIRTUAL_METHODS_FILE
 fi
 
@@ -153,7 +154,8 @@ do
     #echo "methodParameters $methodParameters"
     #echo nonModifiedMethodType $nonModifiedMethodType
 
-    if [[ $methodType = *"virtual "* ]]; then
+	if [ ! -z "$methodType" ] && [ -z "${methodType##*virtual *}" ];
+	then
 
 		methodCall="$className""_""$methodName"
 		hasMethod=`grep -e "|$methodCall(" $VIRTUAL_METHODS_FILE`
@@ -175,8 +177,8 @@ __VIRTUAL_DEC(ClassName, "$nonModifiedMethodType", "$methodName");"
         fi
 
         abstractMark=`sed -n -E 's#\)[    ]*=[    ]*0[    ]*;##p' <<< "$method"`
-        if [[ -z "$abstractMark" ]]; then
-
+        if [ -z "$abstractMark" ];
+		then
             #echo $methodName is not abstract
             virtualMethodOverrides=$virtualMethodOverrides"\\
 __VIRTUAL_SET(ClassName, "$className", "$methodName");"
@@ -186,7 +188,8 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
 #            echo $methodName is abstract
         fi
     else
-        if [[ $methodType = *"override "* ]]; then
+		if [ ! -z "$methodType" ] && [ -z "${methodType##*override *}" ];
+		then
 
             methodType=`sed -e 's#override##' <<< "$methodType"`
 
@@ -206,14 +209,16 @@ __VIRTUAL_SET(ClassName, "$className", "$methodName");"
 	methodDeclaration=
 	if [ ! -z "$methodParameters" ];
 	then
-		if [[ $methodType = *"static "* ]]; then
+		if [ ! -z "$methodType" ] && [ -z "${methodType##*static *}" ];
+		then
 			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$methodParameters");"
 		else
 			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"(void* _this, "$methodParameters");"
 		fi
 	else
 
-		if [[ $methodType = *"static "* ]]; then
+		if [ ! -z "$methodType" ] && [ -z "${methodType##*static *}" ];
+		then
 			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"();"
 		else
 			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"(void* _this);"
@@ -235,22 +240,26 @@ do
         continue;
     fi
 
-    if [[ $classModifier = *"abstract "* ]]; then
+	if [ -z "${classModifier##*abstract *}" ];
+	then
 
 		isAbstractClass=true
 	fi
 
-	if [[ $classModifier = *"final "* ]]; then
+	if [ -z "${classModifier##*final *}" ];
+	then
 
 		isFinalClass=true;
 	fi
 
-	if [[ $classModifier = *"singleton "* ]]; then
+	if [ -z "${classModifier##*singleton *}" ];
+	then
 
 		isSingletonClass=true
 	fi
 
-	if [[ $classModifier = *"static "* ]]; then
+	if [ -z "${classModifier##*static *}" ];
+	then
 
 		isStaticClass=true
 	fi

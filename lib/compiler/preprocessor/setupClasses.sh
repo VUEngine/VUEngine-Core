@@ -5,7 +5,7 @@ HEADER_FOLDERS=
 WORKING_FOLDER=build/working
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
 
-while [[ $# -gt 1 ]]
+while [ $# -gt 1 ]
 do
 	key="$1"
 	case $key in
