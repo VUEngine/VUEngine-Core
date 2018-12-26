@@ -330,8 +330,12 @@ deleteLibraries:
 # Cleans up the objects, .d files and executables.
 clean:
 	@echo Cleaning $(TYPE)...$(STORE)
-#	@find $(BUILD_DIR) -maxdepth 1 -type f -exec rm -f {} \;
-	@rm -Rf $(STORE)
+	@find $(BUILD_DIR) -maxdepth 1 -type f -exec rm -f {} \;
+	@echo Cleaning done.
+
+clean_all:
+	@echo Cleaning $(BUILD_DIR)
+	@rm -Rf $(BUILD_DIR)
 	@echo Cleaning done.
 
 # Create necessary directories
