@@ -1,5 +1,5 @@
 #!/bin/bash
-
+#
 OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
 WORKING_FOLDER=build/working
