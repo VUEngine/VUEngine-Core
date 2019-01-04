@@ -263,16 +263,6 @@ __interrupt_handler_epilogue:
 	.section ".vbvectors","ax"
 	.align	1
 
-.global _rom_title
-
-/* Rom info table (07FFFDE0h) */
-_rom_title:
-	.ascii  "change this title   "		/* Game Title          */
-	.byte   0x00,0x00,0x00,0x00,0x00 	/* Reserved            */
-	.ascii  "MFGMID"					/* Manufacture/Game ID */
-	.byte   0x01						/* Rom Version         */
-
-
 /* Hardware Interupt Vectors */
 _interrupt_table:
 
