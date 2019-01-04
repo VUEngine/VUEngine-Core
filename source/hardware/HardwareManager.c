@@ -80,10 +80,11 @@ ROMInfo romInfo __attribute__((section(".rominfo"))) =
 {
 	__GAME_TITLE,
 	{0x00,0x00,0x00,0x00},
-	__PUBLISHER_ID,
-	__GAME_ID,
+	__MAKER_CODE,
+	__GAME_CODE,
 	__ROM_VERSION
 };
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
