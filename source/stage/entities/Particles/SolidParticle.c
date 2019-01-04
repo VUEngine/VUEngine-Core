@@ -257,7 +257,7 @@ bool SolidParticle::handleMessage(Telegram telegram)
 
 		case kBodyStopped:
 
-			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxes(this->body))
+			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
 			{
 				Shape::activeCollisionChecks(this->shape, false);
 			}

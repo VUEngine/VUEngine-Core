@@ -52,10 +52,10 @@
  */
 typedef struct MovementResult
 {
-	u16 axesStoppedMovement;
-	u16 axesOfAcceleratedBouncing;
-	u16 axesOfChangeOfMovement;
-	u16 axesOfChangeOfDirection;
+	u16 axisStoppedMovement;
+	u16 axisOfAcceleratedBouncing;
+	u16 axisOfChangeOfMovement;
+	u16 axisOfChangeOfDirection;
 
 } MovementResult;
 
@@ -117,8 +117,8 @@ class Body : Object
 	fix10_6 mass;
 	// movement type on each axis
 	MovementType movementType;
-	// axes that are subject to gravity
-	u16 axesSubjectToGravity;
+	// axis that are subject to gravity
+	u16 axisSubjectToGravity;
 	// raise flag to make the body active
 	bool active;
 	// raise flag to update body's physics
@@ -128,16 +128,16 @@ class Body : Object
 	static void setCurrentElapsedTime(fix10_6 currentElapsedTime);
 	static void setCurrentWorldFrictionCoefficient(fix10_6 _currentWorldFriction);
 	static void setCurrentGravity(const Acceleration* currentGravity);
-	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity);
+	void constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity);
 	void addForce(const Force* force);
 	void applyForce(const Force* force);
-	void applyGravity(u16 axes);
+	void applyGravity(u16 axis);
 	void bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 frictionCoefficient, fix10_6 bounciness);
-	void clearAcceleration(u16 axes);
+	void clearAcceleration(u16 axis);
 	void clearExternalForce();
 	Acceleration getAcceleration();
 	Force getAppliedForce();
-	u16 getAxesSubjectToGravity();
+	u16 getaxisSubjectToGravity();
 	fix10_6 getBounciness();
 	Vector3D getLastDisplacement();
 	fix10_6 getMass();
@@ -150,11 +150,11 @@ class Body : Object
 	void modifyVelocity(const Velocity* multiplier);
 	bool isActive();
 	bool isAwake();
-	u16 getMovementOnAllAxes();
-	void moveAccelerated(u16 axes);
+	u16 getMovementOnAllAxis();
+	void moveAccelerated(u16 axis);
 	void moveUniformly(Velocity velocity);
 	void setActive(bool active);
-	void setAxesSubjectToGravity(u16 axesSubjectToGravity);
+	void setAxisSubjectToGravity(u16 axisSubjectToGravity);
 	void setBounciness(fix10_6 bounciness);
 	Force getNormal();
 	Force getLastNormalDirection();
@@ -166,7 +166,7 @@ class Body : Object
 	void setMass(fix10_6 mass);
 	void setOwner(SpatialObject owner);
 	void setPosition(const Vector3D* position, SpatialObject caller);
-	u16 stopMovement(u16 axes);
+	u16 stopMovement(u16 axis);
 	void takeHitFrom(Body other);
 	void setMaximumVelocity(Velocity maximumVelocity);
 	Velocity getMaximumVelocity();

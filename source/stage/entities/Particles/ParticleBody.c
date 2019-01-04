@@ -48,9 +48,9 @@ extern const Acceleration* _currentGravity;
  * @param owner
  * @param mass
  */
-void ParticleBody::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+void ParticleBody::constructor(SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity)
 {
-	Base::constructor(owner, physicalSpecification, axesSubjectToGravity);
+	Base::constructor(owner, physicalSpecification, axisSubjectToGravity);
 }
 
 /**
@@ -75,11 +75,11 @@ void ParticleBody::update()
 			MovementResult movementResult = Body::updateMovement(this);
 
 			// if stopped on any axis
-			if(movementResult.axesStoppedMovement)
+			if(movementResult.axisStoppedMovement)
 			{
-				Body::stopMovement(this, movementResult.axesStoppedMovement);
+				Body::stopMovement(this, movementResult.axisStoppedMovement);
 			}
-/*			else if(!Body::getMovementOnAllAxes(this))
+/*			else if(!Body::getMovementOnAllAxis(this))
 			{
 				Body::sleep(this);
 			}

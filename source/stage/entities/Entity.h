@@ -107,7 +107,7 @@ class Entity : Container
 	virtual void ready(bool recursive);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
-	virtual u16 getAxesForShapeSyncWithDirection();
+	virtual u16 getAxisForShapeSyncWithDirection();
 	override void iAmDeletingMyself();
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
 	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);

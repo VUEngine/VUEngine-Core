@@ -110,7 +110,7 @@ void PhysicalWorld::destructor()
  * @param physicalSpecification
  * @return				Registered Body
  */
-Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axesSubjectToGravity)
+Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner, const PhysicalSpecification* physicalSpecification, u16 axisSubjectToGravity)
 {
 	// if the entity is already registered
 	Body body = PhysicalWorld::getBody(this, owner);
@@ -122,7 +122,7 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
 
 	if(bodyAllocator)
 	{
-		Body body = bodyAllocator(owner, physicalSpecification, axesSubjectToGravity);
+		Body body = bodyAllocator(owner, physicalSpecification, axisSubjectToGravity);
 		VirtualList::pushFront(this->bodies, body);
 		ASSERT(Body::safeCast(VirtualList::front(this->bodies)), "PhysicalWorld::createBody: bad class body");
 
@@ -215,9 +215,9 @@ void PhysicalWorld::checkForGravity()
 		if(body->active)
 		{
 			// check if necessary to apply gravity
-			u16 movingState = Body::getMovementOnAllAxes(body);
+			u16 movingState = Body::getMovementOnAllAxis(body);
 
-			u16 gravitySensibleAxis = body->axesSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
+			u16 gravitySensibleAxis = body->axisSubjectToGravity & ((__X_AXIS & ~(__X_AXIS & movingState) )| (__Y_AXIS & ~(__Y_AXIS & movingState)) | (__Z_AXIS & ~(__Z_AXIS & movingState)));
 
 			if(gravitySensibleAxis &&  SpatialObject::isSubjectToGravity(body->owner, gravityDirection))
 			{

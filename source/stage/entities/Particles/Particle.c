@@ -60,7 +60,7 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
 	PhysicalSpecification physicalSpecification = {mass, 0, 0, (Vector3D){0, 0, 0}};
-	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleSpec->axesSubjectToGravity);
+	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleSpec->axisSubjectToGravity);
 	this->objectSprite = NULL;
 	Particle::addSprite(this);
 }
@@ -129,7 +129,7 @@ u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 
 		if(0 > this->lifeSpan)
 		{
-			Body::stopMovement(this->body, __ALL_AXES);
+			Body::stopMovement(this->body, __ALL_AXIS);
 			return true;
 		}
 
@@ -155,7 +155,7 @@ void Particle::synchronizeGraphics(bool updateSpritePosition)
 
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
-	if(__Z_AXIS & Body::getMovementOnAllAxes(this->body))
+	if(__Z_AXIS & Body::getMovementOnAllAxis(this->body))
 	{
 		// calculate sprite's parallax
 		Sprite::calculateParallax(this->objectSprite, position->z);
@@ -280,7 +280,7 @@ void Particle::hide()
 
 	Sprite::hide(this->objectSprite);
 
-	Body::stopMovement(this->body, __ALL_AXES);
+	Body::stopMovement(this->body, __ALL_AXIS);
 }
 
 /**
@@ -291,7 +291,7 @@ void Particle::hide()
  */
 bool Particle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 {
-	return (bool)Body::getAxesSubjectToGravity(this->body);
+	return (bool)Body::getaxisSubjectToGravity(this->body);
 }
 
 /**

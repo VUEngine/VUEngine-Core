@@ -45,8 +45,11 @@ typedef struct ActorSpec
 	/// true to create a body
 	bool createBody;
 
-	// axes subject to gravity
-	u16 axesSubjectToGravity;
+	/// axis subject to gravity
+	u16 axisSubjectToGravity;
+
+	/// axis around which to rotate the entity when syncronizing with body
+	u16 axisForSynchronizationWithBody;
 
 } ActorSpec;
 

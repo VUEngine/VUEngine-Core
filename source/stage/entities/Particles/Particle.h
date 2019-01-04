@@ -55,8 +55,8 @@ typedef struct ParticleSpec
 	/// particle's mass delta
 	fix10_6 massDelta;
 
-	/// axes subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
-	u16 axesSubjectToGravity;
+	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
+	u16 axisSubjectToGravity;
 
 	/// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);

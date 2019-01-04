@@ -970,15 +970,15 @@ void Entity::transformShapes()
 			for(; node && shapeSpecs[i].allocator; node = node->next, i++)
 			{
 				Shape shape = Shape::safeCast(node->data);
-				u16 axesForShapeSyncWithDirection =  Entity::getAxesForShapeSyncWithDirection(this);
+				u16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
 
 				Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[i].displacement);
 
 				Vector3D shapePosition =
 				{
-					myPosition->x + ((__X_AXIS & axesForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
-					myPosition->y + ((__Y_AXIS & axesForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
-					myPosition->z + ((__Z_AXIS & axesForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
+					myPosition->x + ((__X_AXIS & axisForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
+					myPosition->y + ((__Y_AXIS & axisForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
+					myPosition->z + ((__Z_AXIS & axisForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
 				};
 
 				Rotation shapeRotation =
@@ -1967,13 +1967,13 @@ void Entity::setShapesLayersToIgnore(u32 layersToIgnore)
 }
 
 /**
- * Get axes for Shape sync with direction
+ * Get axis for Shape sync with direction
  *
- * @return		Axes
+ * @return		Axis
  */
-u16 Entity::getAxesForShapeSyncWithDirection()
+u16 Entity::getAxisForShapeSyncWithDirection()
 {
-	return __ALL_AXES;
+	return __ALL_AXIS;
 }
 
 /**

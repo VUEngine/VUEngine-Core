@@ -70,12 +70,12 @@ void Actor::constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, cons
 	{
 		if(actorSpec->animatedEntitySpec.entitySpec.physicalSpecification)
 		{
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axesSubjectToGravity);
+			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), actorSpec->animatedEntitySpec.entitySpec.physicalSpecification, actorSpec->axisSubjectToGravity);
 		}
 		else
 		{
 			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0}};
-			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axesSubjectToGravity);
+			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axisSubjectToGravity);
 		}
 	}
 }
@@ -214,12 +214,13 @@ void Actor::syncPositionWithBody()
 
 void Actor::syncRotationWithBody()
 {
-	if(this->body && Body::getMovementOnAllAxes(this->body))
+	if(this->body && Body::getMovementOnAllAxis(this->body))
 	{
 		Velocity velocity = Body::getVelocity(this->body);
 
 		velocity = Vector3D::normalize(velocity);
 
+		//if(this->actorSpec->)
 //		this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
 
 //		Base::setLocalRotation(this, &this->transformation.localRotation);
@@ -262,7 +263,7 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 		// Prevent transformation of shapes again when calling Base::transform
 		this->transformShapes = false;
 
-		u16 bodyMovement = Body::getMovementOnAllAxes(this->body);
+		u16 bodyMovement = Body::getMovementOnAllAxis(this->body);
 
 		if(bodyMovement)
 		{
@@ -511,7 +512,7 @@ bool Actor::handleMessage(Telegram telegram)
 
 				case kBodyStopped:
 
-					if(!Body::getMovementOnAllAxes(this->body) && this->shapes)
+					if(!Body::getMovementOnAllAxis(this->body) && this->shapes)
 					{
 						Entity::activeCollisionChecks(this, false);
 					}
@@ -586,7 +587,7 @@ void Actor::moveUniformly(Velocity* velocity)
 // is it moving?
 bool Actor::isMoving()
 {
-	return this->body ? Body::getMovementOnAllAxes(this->body) : 0;
+	return this->body ? Body::getMovementOnAllAxis(this->body) : 0;
 }
 
 u16 Actor::getMovementState()
