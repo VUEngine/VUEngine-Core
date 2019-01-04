@@ -38,7 +38,7 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//												PROTOTYPES
+//												GLOBALS
 //---------------------------------------------------------------------------------------------------------
 
 extern u32 keyVector;
@@ -54,10 +54,36 @@ extern u32 _bss_end;
 extern u32 _dram_bss_end;
 extern u32 _dram_data_start;
 
-
 int _lp = 0;
 int _sp = 0;
 
+typedef const struct ROMInfo
+{
+	// Game Title
+	char title[21];
+
+	// Reserved
+	BYTE reserved[4];
+
+	// Published ID
+	char publisherID[4];
+
+	// Published ID
+	char gameID[2];
+
+	// ROM Version
+	BYTE version;
+
+} ROMInfo;
+
+ROMInfo romInfo __attribute__((section(".rominfo"))) = 
+{
+	__GAME_TITLE,
+	{0x00,0x00,0x00,0x00},
+	__PUBLISHER_ID,
+	__GAME_ID,
+	__ROM_VERSION
+};
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
