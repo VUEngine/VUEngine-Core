@@ -209,7 +209,7 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 {
 	if(newChar && charToReplace < this->charSetSpec->numberOfChars + __CHAR_ROOM)
 	{
-		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 3));
+		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 4));
 	}
 }
 
@@ -226,14 +226,7 @@ void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColo
 	{
 		static BYTE auxChar[] =
 		{
-			0x00, 0x00,
-			0x00, 0x00,
-			0x00, 0x00,
-			0x00, 0x00,
-			0x00, 0x00,
-			0x00, 0x00,
-			0x00, 0x00,
-			0x00, 0x00,
+			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		};
 
 		Mem::copyBYTE(auxChar, (u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), (int)(1 << 4));
