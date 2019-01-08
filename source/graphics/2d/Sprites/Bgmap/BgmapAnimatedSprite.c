@@ -100,7 +100,7 @@ void BgmapAnimatedSprite::writeAnimation()
 			{
 				// move charset spec to the next frame chars
 				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						(AnimationController::getActualFrameIndex(this->animationController) << 4));
+						AnimationController::getActualFrameIndex(this->animationController));
 
 				BgmapTexture bgmapTexture = BgmapTexture::safeCast(this->texture);
 
@@ -119,7 +119,7 @@ void BgmapAnimatedSprite::writeAnimation()
 			{
 				// move charset spec to the next frame chars
 				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						(AnimationController::getActualFrameIndex(this->animationController) << 4));
+						AnimationController::getActualFrameIndex(this->animationController));
 
 				// write charset
 				CharSet::write(charSet);

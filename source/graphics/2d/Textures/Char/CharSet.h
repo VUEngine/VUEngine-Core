@@ -55,6 +55,9 @@
 // char memory room to add
 #define __CHAR_ROOM							1
 
+// Bytes per CHAR
+#define __BYTES_PER_CHARS(n)			((n) << 4)
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS

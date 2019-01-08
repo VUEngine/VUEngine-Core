@@ -172,8 +172,9 @@ void CharSet::write()
 {
 	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
-		(WORD*)(this->charSetSpec->charSpec + this->charSpecDisplacement),
-		(u32)(this->charSetSpec->numberOfChars + __CHAR_ROOM) << 2
+		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
+		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars + __CHAR_ROOM) / sizeof(WORD)
+
 	);
 }
 

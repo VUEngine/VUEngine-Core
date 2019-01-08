@@ -102,7 +102,7 @@ void ObjectAnimatedSprite::writeAnimation()
 
 				// move charset spec to the next frame chars
 				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) *
-						(AnimationController::getActualFrameIndex(this->animationController) << 4));
+						AnimationController::getActualFrameIndex(this->animationController));
 
 				ObjectTexture objectTexture = ObjectTexture::safeCast(this->texture);
 
@@ -121,7 +121,7 @@ void ObjectAnimatedSprite::writeAnimation()
 				CharSet charSet = Texture::getCharSet(this->texture, true);
 
 				// move charset spec to the next frame chars
-				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) * (animationFrame << 4));
+				CharSet::setCharSpecDisplacement(charSet, Texture::getNumberOfChars(this->texture) * animationFrame);
 
 				// write charset
 				CharSet::write(charSet);
