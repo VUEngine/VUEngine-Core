@@ -100,7 +100,7 @@ void Entity::destructor()
 		delete this->entityFactory;
 	}
 
-	Entity::releaseSprites(this);
+	Entity::releaseSprites(this, false);
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
@@ -217,13 +217,15 @@ void Entity::releaseGraphics()
 {
 	Base::releaseGraphics(this);
 
-	Entity::releaseSprites(this);
+	Entity::releaseSprites(this, false);
 }
 
 /**
  * Delete all of the Entity's sprites
+ * 
+ * @param forcePurgingGraphicalMemory	Calls the SpriteManager to purge graphics memory. May cause graphical corruption if done during VIP drawing
  */
-void Entity::releaseSprites()
+void Entity::releaseSprites(bool forcePurgingGraphicalMemory)
 {
 	if(this->sprites)
 	{
@@ -239,6 +241,12 @@ void Entity::releaseSprites()
 		// delete the sprites
 		delete this->sprites;
 		this->sprites = NULL;
+
+		
+		if(forcePurgingGraphicalMemory)
+		{
+			SpriteManager::disposeSprites(SpriteManager::getInstance());
+		}
 	}
 }
 

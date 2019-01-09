@@ -85,7 +85,7 @@ class Entity : Container
 	s16 getInternalId();
 	VirtualList getSprites();
 	void transformShapes();
-	void releaseSprites();
+	void releaseSprites(bool forcePurgingGraphicalMemory);
 	void setAnimation(void (*animation)());
 	bool updateSpritePosition();
 	bool updateSpriteRotation();
