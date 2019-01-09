@@ -1675,7 +1675,7 @@ void Entity::suspend()
 {
 	Base::suspend(this);
 
-	Entity::releaseSprites(this);
+	Entity::releaseSprites(this, false);
 }
 
 /**
