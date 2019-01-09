@@ -648,6 +648,9 @@ void SpriteManager::writeTextures()
  */
 bool SpriteManager::writeSelectedSprite()
 {
+#ifdef __SHOW_CHAR_MEMORY_STATUS
+	CharSetManager::print(CharSetManager::getInstance(), 1, 5);
+#endif
 	bool textureWritten = false;
 
 	if(!this->waitToWriteSpriteTextures)
