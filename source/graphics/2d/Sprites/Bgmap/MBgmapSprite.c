@@ -140,7 +140,7 @@ void MBgmapSprite::loadTextures()
 
 			for(; this->mBgmapSpriteSpec->textureSpecs[i]; i++)
 			{
-				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i);
+				MBgmapSprite::loadTexture(this, this->mBgmapSpriteSpec->textureSpecs[i], 0 == i && this->mBgmapSpriteSpec->textureSpecs[i + 1]);
 			}
 
 			this->texture = Texture::safeCast(VirtualList::front(this->textures));
@@ -159,13 +159,13 @@ void MBgmapSprite::loadTextures()
 /**
  * Load a texture
  *
- * @memberof					MBgmapSprite
+ * @memberof										MBgmapSprite
  * @public
  *
- * @param textureSpec		TextureSpec to use
- * @param isFirstTexture		To force loading in an even bgmap segment
+ * @param textureSpec								TextureSpec to use
+ * @param isFirstTextureAndHasMultipleTextures		To force loading in an even bgmap segment for the first texture
  */
-void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTexture)
+void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTextureAndHasMultipleTextures)
 {
 	ASSERT(textureSpec, "MBgmapSprite::loadTexture: null textureSpec");
 
@@ -177,7 +177,7 @@ void MBgmapSprite::loadTexture(TextureSpec* textureSpec, bool isFirstTexture)
 		minimumSegment = BgmapTexture::getSegment(bgmapTexture);
 	}
 
-	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTexture);
+	BgmapTexture bgmapTexture = BgmapTextureManager::getTexture(BgmapTextureManager::getInstance(), textureSpec, minimumSegment, isFirstTextureAndHasMultipleTextures);
 
 	ASSERT(bgmapTexture, "MBgmapSprite::loadTexture: texture not loaded");
 	ASSERT(this->textures, "MBgmapSprite::loadTexture: null textures list");
