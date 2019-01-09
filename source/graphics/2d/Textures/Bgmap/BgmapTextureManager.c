@@ -140,6 +140,14 @@ int BgmapTextureManager::doAllocate(BgmapTexture bgmapTexture, s16 minimumSegmen
 
 	int area = (cols + colsPad) * (rows + rowsPad);
 
+	if(mustLiveAtEvenSegment)
+	{
+		if(minimumSegment % 2)
+		{
+			minimumSegment++;
+		}
+	}
+
 	// if texture already defined, don't allocate
 	if(Texture::getNumberOfChars(bgmapTexture))
 	{
