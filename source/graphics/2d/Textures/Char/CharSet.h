@@ -52,9 +52,6 @@
 // spec of a charset for animated sprites whose all frames are written to memory and shared
 #define __ANIMATED_MULTI					0x06
 
-// char memory room to add
-#define __CHAR_ROOM							1
-
 // Bytes per CHAR
 #define __BYTES_PER_CHARS(n)			((n) << 4)
 

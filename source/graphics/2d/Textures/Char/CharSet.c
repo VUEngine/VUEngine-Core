@@ -173,7 +173,7 @@ void CharSet::write()
 	Mem::copyWORD(
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
 		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
-		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars + __CHAR_ROOM) / sizeof(WORD)
+		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
 
 	);
 }
@@ -208,7 +208,7 @@ void CharSet::setCharSpecDisplacement(u32 charSpecDisplacement)
  */
 void CharSet::putChar(u32 charToReplace, BYTE* newChar)
 {
-	if(newChar && charToReplace < this->charSetSpec->numberOfChars + __CHAR_ROOM)
+	if(newChar && charToReplace < this->charSetSpec->numberOfChars)
 	{
 		Mem::copyBYTE((BYTE*)__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4) + (charToReplace << 4), newChar, (int)(sizeof(BYTE) << 4));
 	}
@@ -223,7 +223,7 @@ void CharSet::putChar(u32 charToReplace, BYTE* newChar)
  */
 void CharSet::putPixel(u32 charToReplace, Pixel* charSetPixel, BYTE newPixelColor)
 {
-	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars + __CHAR_ROOM && charSetPixel->x < 8 && charSetPixel->y < 8)
+	if(charSetPixel && charToReplace < this->charSetSpec->numberOfChars && charSetPixel->x < 8 && charSetPixel->y < 8)
 	{
 		static BYTE auxChar[] =
 		{

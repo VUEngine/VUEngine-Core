@@ -215,12 +215,12 @@ CharSet CharSetManager::allocateCharSet(CharSetSpec* charSetSpec)
 	NM_ASSERT(charSetSpec->numberOfChars > 0, "CharSetManager::allocateCharSet: number of chars < 0");
 	NM_ASSERT(charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS, "CharSetManager::allocateCharSet: too many chars in spec");
 
-	u16 offset = 1;
+	u16 offset = 0 < VirtualList::getSize(this->charSets) ? 0 : 1;
 
 	if(this->charSets->head)
 	{
 		CharSet lastCharSet = CharSet::safeCast(VirtualList::back(this->charSets));
-		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet) + __CHAR_ROOM;
+		offset += CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
 	}
 
 	if((unsigned)offset + charSetSpec->numberOfChars < __CHAR_MEMORY_TOTAL_CHARS)
@@ -321,13 +321,13 @@ bool CharSetManager::defragmentProgressively()
 			if(this->freedOffset < CharSet::getOffset(charSet))
 			{
 				// clean previous chars
-				//Mem::copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet::getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet::getNumberOfChars(charSet) + __CHAR_ROOM) << 4);
+				//Mem::copy((u8*)__CHAR_SPACE_BASE_ADDRESS + (((u32)CharSet::getOffset(charSet)) << 4), (u8*)(0), (u32)(CharSet::getNumberOfChars(charSet)) << 4);
 
 				CharSet::setOffset(charSet, this->freedOffset);
 
 				//write to CHAR memory
 				CharSet::rewrite(charSet);
-				this->freedOffset += CharSet::getNumberOfChars(charSet) + __CHAR_ROOM;
+				this->freedOffset += CharSet::getNumberOfChars(charSet);
 
 				VirtualList::removeElement(this->charSetsPendingWriting, charSet);
 				return true;
@@ -350,7 +350,7 @@ int CharSetManager::getTotalUsedChars()
 	ASSERT(this->charSets, "CharSetManager::getTotalFreeChars: null charSets list");
 
 	CharSet lastCharSet = VirtualList::back(this->charSets);
-	return (int)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet) + __CHAR_ROOM;
+	return (int)CharSet::getOffset(lastCharSet) + CharSet::getNumberOfChars(lastCharSet);
 }
 
 /**
