@@ -381,12 +381,12 @@ int CharSetManager::getTotalCharSets()
  */
 void CharSetManager::print(int x, int y)
 {
-/*	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "CHAR MEMORY USAGE", x, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Total CharSets:        ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), VirtualList::getSize(this->charSets), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total used chars:      ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), CharSetManager::getTotalUsedChars(this), x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Total free chars:      ", x, ++y, NULL);
-*/	Printing::int(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
+	Printing::int(Printing::getInstance(), CharSetManager::getTotalFreeChars(this), x + 18, y, NULL);
 }
