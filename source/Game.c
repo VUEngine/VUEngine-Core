@@ -1034,7 +1034,9 @@ void Game::checkFrameRate()
 		this->gameFrameTotalTime = 0;
 
 #ifdef __DEBUG
+#ifdef __PRINT_DEBUG_ALERT
 		Printing::text(Printing::getInstance(), "DEBUG MODE", 0, (__SCREEN_HEIGHT_IN_CHARS) - 1, NULL);
+#endif
 #endif
 
 #ifdef __PRINT_FRAMERATE

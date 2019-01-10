@@ -7,7 +7,8 @@
 
 
 // define / undefine as you see fit
-#undef __PRINT_FRAMERATE
+//#define __PRINT_FRAMERATE
+//#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
