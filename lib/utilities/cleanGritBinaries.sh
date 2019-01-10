@@ -107,5 +107,6 @@ sed -e 's/+ [0-9][0-9]* \(tiles .*\)/+ '$numberOfChars' \1/g' $FILE > $FILE.clea
 grep -v "Time-stamp" $FILE.clean > $FILE
 
 rm -f $FILE.bak
+rm -f $FILE.clean
 
 echo " Cleaned $FILE_BASENAME"
