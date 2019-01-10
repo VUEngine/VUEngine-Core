@@ -3,31 +3,32 @@
 
 if [ -z "$1" ];
 then
-        echo "Provide a file path"
+        echo " Provide a file path"
         exit 0
 fi
 
 FILE=$1
+FILE_BASENAME=`basename $FILE`
 
-echo "Cleaning $FILE"
+#echo " Cleaning $FILE_BASENAME"
 
 if [ ! -f $FILE ];
 then
-	echo "File doesn't exist"
+	echo " File doesn't exist"
 	exit 0
 fi
 
 hasTiles=`grep -e "Tiles\[" $FILE`
 if [ -z "$hasTiles" ];
 then
-	echo "Doesn't have tiles"
+	echo " Doesn't have tiles"
 	exit 0
 fi
 
 hasMap=`grep -e "Map\[" $FILE`
 if [ -z "$hasMap" ];
 then
-	echo "Doesn't have a map"
+	echo " Doesn't have a map"
 	exit 0
 fi
 
@@ -35,7 +36,7 @@ usesEmptyChar=`grep -w "0x0000" $FILE`
 
 if [ ! -z "$usesEmptyChar" ];
 then
-	echo "Uses empty char"
+	echo " Did not clean $FILE_BASENAME - empty char is used"
 	exit 0
 fi
 
@@ -107,4 +108,4 @@ grep -v "Time-stamp" $FILE.clean > $FILE
 
 rm -f $FILE.bak
 
-echo "Cleaned $FILE"
+echo " Cleaned $FILE_BASENAME"
