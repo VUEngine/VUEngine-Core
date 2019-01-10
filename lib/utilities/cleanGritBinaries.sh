@@ -18,6 +18,10 @@ then
 	exit 0
 fi
 
+# Remove timestamp
+grep -v "Time-stamp" $FILE > $FILE.tmp
+mv $FILE.tmp $FILE
+
 hasTiles=`grep -e "Tiles\[" $FILE`
 if [ -z "$hasTiles" ];
 then
@@ -103,10 +107,9 @@ mv $FILE.clean $FILE
 numberOfChars=`grep -e "tiles .*" $FILE | cut -d " " -f2`
 numberOfChars=$((numberOfChars - 1))
 sed -e 's/+ [0-9][0-9]* \(tiles .*\)/+ '$numberOfChars' \1/g' $FILE > $FILE.clean
-# Remove timestamp
-grep -v "Time-stamp" $FILE.clean > $FILE
+mv $FILE.clean $FILE
 
+# Cleaning up
 rm -f $FILE.bak
-rm -f $FILE.clean
 
 echo " Cleaned $FILE_BASENAME"
