@@ -102,7 +102,8 @@ mv $FILE.clean $FILE
 numberOfChars=`grep -e "tiles .*" $FILE | cut -d " " -f2`
 numberOfChars=$((numberOfChars - 1))
 sed -e 's/+ [0-9][0-9]* \(tiles .*\)/+ '$numberOfChars' \1/g' $FILE > $FILE.clean
-mv $FILE.clean $FILE
+# Remove timestamp
+grep -v "Time-stamp" $FILE.clean > $FILE
 
 rm -f $FILE.bak
 
