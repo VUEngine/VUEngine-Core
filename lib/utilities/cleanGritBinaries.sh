@@ -69,12 +69,12 @@ do
 	if [ 256 -gt "$correctedIndex" ]; then
 
 		if [ 16 -gt "$correctedIndex" ]; then
-			indexToPrint=0x000`echo "obase=16; $correctedIndex" | bc`
+			indexToPrint=0x000`printf '%x\n' $correctedIndex`
 		else
-			indexToPrint=0x00`echo "obase=16; $correctedIndex" | bc`
+			indexToPrint=0x00`printf '%x\n' $correctedIndex`
 		fi
 	else
-		indexToPrint=0x0`echo "obase=16; $correctedIndex" | bc`
+		indexToPrint=0x0`printf '%x\n' $correctedIndex`
 	fi
 
 	#echo $index = $indexToPrint
