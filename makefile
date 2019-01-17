@@ -11,6 +11,9 @@ TYPE = release
 #TYPE = debug
 #TYPE = preprocessor
 
+# Default clean type
+CLEAN_TYPE =
+
 # Where the game lives
 GAME_HOME = .
 
@@ -240,9 +243,9 @@ $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: %.h
 
 # Cleans up the objects, .d files and executables.
 clean:
-	@echo Cleaning $(TYPE)...$(STORE)
-	@rm -Rf $(STORE)
-	@echo Cleaning done.
+	@-if [ -z $(CLEAN_TYPE) ]; then echo Cleaning everything... && rm -Rf $(MY_HOME)/$(BUILD_DIR); fi;
+	@-if [ ! -z $(CLEAN_TYPE) ]; then echo Cleaning $(CLEAN_TYPE)... && rm -Rf $(MY_HOME)/$(BUILD_DIR)/$(CLEAN_TYPE); fi;
+	@echo "Cleaning done."
 
 # Create necessary directories
 dirs:
