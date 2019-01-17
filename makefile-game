@@ -9,7 +9,7 @@ TYPE = release
 #TYPE = preprocessor
 
 # Default clean type
-CLEAN_TYPE =
+CLEAN_TYPE = all
 
 # Engine name
 ENGINE_NAME = vuengine/core
@@ -182,11 +182,16 @@ C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_F
 MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
-ifeq ($(TYPE),preprocessor)
+ifeq ($(TYPE), preprocessor)
 ALL_TARGET_PREREQUISITES = dirs libraries $(C_OBJECTS) printPostPreprocessorInfo
 LD_PARAMS =
 C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
 MACROS = $(COMMON_MACROS)
+endif
+
+FOLDER_TO_CLEAN=$(MY_HOME)/$(BUILD_DIR)
+ifneq ($(CLEAN_TYPE), all)
+FOLDER_TO_CLEAN=$(MY_HOME)/$(BUILD_DIR)/$(CLEAN_TYPE)*
 endif
 
 # Makefs a list of the source (.c) files.
@@ -332,8 +337,8 @@ deleteLibraries:
 
 # Cleans up the objects, .d files and executables.
 clean:
-	@-if [ -z $(CLEAN_TYPE) ]; then echo Cleaning everything... && rm -Rf $(MY_HOME)/$(BUILD_DIR); fi;
-	@-if [ ! -z $(CLEAN_TYPE) ]; then echo Cleaning $(CLEAN_TYPE)... && rm -Rf $(MY_HOME)/$(BUILD_DIR)/$(CLEAN_TYPE); fi;
+	@echo Cleaning $(CLEAN_TYPE)
+	@rm -Rf $(FOLDER_TO_CLEAN)
 	@echo "Cleaning done."
 
 # Create necessary directories
