@@ -134,7 +134,10 @@ s16 AnimationController::getPreviousFrame()
  */
 void AnimationController::setActualFrame(s16 actualFrame)
 {
-	this->actualFrame = actualFrame;
+	if(this->animationFunction && 0 <= actualFrame && actualFrame < this->animationFunction->numberOfFrames)
+	{
+		this->actualFrame = actualFrame;
+	}
 }
 
 /**

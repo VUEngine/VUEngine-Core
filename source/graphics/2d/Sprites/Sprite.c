@@ -648,6 +648,7 @@ void Sprite::setActualFrame(s16 actualFrame)
 	if(this->animationController)
 	{
 		AnimationController::setActualFrame(this->animationController, actualFrame);
+		this->writeAnimationFrame |= true;
 	}
 }
 
