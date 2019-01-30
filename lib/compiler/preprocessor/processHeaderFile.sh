@@ -123,8 +123,7 @@ methodDeclarations=
 if [ -f $VIRTUAL_METHODS_FILE ];
 then
 	# Clean file from previous entries for current class
-	classNameMark="<$className"
-	classNameMark=$classNameMark"_"
+	classNameMark="<"$className"_"
 	grep -v $classNameMark $VIRTUAL_METHODS_FILE > $VIRTUAL_METHODS_FILE.tmp
 	mv $VIRTUAL_METHODS_FILE.tmp $VIRTUAL_METHODS_FILE
 else
