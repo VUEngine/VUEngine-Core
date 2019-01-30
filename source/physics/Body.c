@@ -145,6 +145,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->totalNormal			= (Force){0, 0, 0};
 	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
+	this->maximumSpeed 		= physicalSpecification->maximumSpeed;
 
 	if(!_physhicsClock)
 	{
@@ -209,7 +210,7 @@ void Body::modifyVelocity(const Velocity* modifier)
 	this->velocity.y += modifier->y;
 	this->velocity.z += modifier->z;
 
-	Body::capVelocity(this);
+	Body::clampVelocity(this);
 }
 
 // retrieve acceleration
@@ -510,8 +511,15 @@ Acceleration Body::getGravity()
 	};
 }
 
-void Body::capVelocity()
+void Body::clampVelocity()
 {
+	// First check if must clamp speed
+	if(this->maximumSpeed && __FIX10_6_EXT_MULT(this->maximumSpeed, this->maximumSpeed) < Vector3D::squareLength(this->velocity))
+	{
+		this->velocity = Vector3D::scalarProduct(Vector3D::normalize(this->velocity), this->maximumSpeed);
+	}
+
+	// Then clamp speed based on each axis configuration
 	if(this->maximumVelocity.x)
 	{
 		if(__ABS(this->maximumVelocity.x) < __ABS(this->velocity.x))
@@ -605,7 +613,7 @@ MovementResult Body::updateMovement()
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime) + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
 
-	Body::capVelocity(this);
+	Body::clampVelocity(this);
 
 	return Body::getMovementResult(this, previousVelocity);
 }
@@ -1160,7 +1168,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 	this->velocity.y = w.y - u.y;
 	this->velocity.z = w.z - u.z;
 
-	Body::capVelocity(this);
+	Body::clampVelocity(this);
 
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
 	{
@@ -1218,6 +1226,17 @@ Velocity Body::getMaximumVelocity()
 {
 	return this->maximumVelocity;
 }
+
+void Body::setMaximumSpeed(fix10_6 maximumSpeed)
+{
+	this->maximumSpeed = maximumSpeed;
+}
+
+fix10_6 Body::getMaximumSpeed()
+{
+	return this->maximumSpeed;
+}
+
 
 void Body::print(int x, int y)
 {

@@ -70,6 +70,8 @@ typedef struct PhysicalSpecification
 	fix10_6 bounciness;
 	/// maximum velocity
 	Velocity maximumVelocity;
+	/// maximum speed
+	fix10_6 maximumSpeed;
 
 } PhysicalSpecification;
 
@@ -101,6 +103,8 @@ class Body : Object
 	Velocity velocity;
 	// maximum velocity on each instance
 	Velocity maximumVelocity;
+	// maximum speed
+	fix10_6 maximumSpeed;
 	// acceleration structure
 	Acceleration acceleration;
 	// bounciness
@@ -170,6 +174,8 @@ class Body : Object
 	void takeHitFrom(Body other);
 	void setMaximumVelocity(Velocity maximumVelocity);
 	Velocity getMaximumVelocity();
+	void setMaximumSpeed(fix10_6 maximumSpeed);
+	fix10_6 getMaximumSpeed();	
 	void print(int x, int y);
 	MovementResult updateMovement();
 	virtual void update();
