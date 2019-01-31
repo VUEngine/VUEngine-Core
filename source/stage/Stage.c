@@ -908,6 +908,22 @@ bool Stage::loadInRangeEntities(int defer __attribute__ ((unused)))
 	return loadedEntities;
 }
 
+Entity Stage::findChildByInternalId(s16 internalId)
+{
+	VirtualNode node = this->children->head;
+
+	for(; node; node = node->next)
+	{
+		if(Entity::getInternalId(Entity::safeCast(node->data)) == internalId)
+		{
+			return Entity::safeCast(node->data);
+		}
+	}
+
+	return NULL;
+}
+
+
 // process removed children
 bool Stage::purgeChildrenProgressively()
 {

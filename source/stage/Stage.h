@@ -202,7 +202,6 @@ class Stage : Container
 	/// @publicsection
 	void constructor(StageSpec* stageSpec);
 	void setupPalettes();
-	void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	void loadPostProcessingEffects();
 	Size getSize();
 	CameraFrustum getCameraFrustum();
@@ -215,6 +214,9 @@ class Stage : Container
 	void showStreamingProfiling(int x, int y);
 	bool unloadOutOfRangeEntities(int defer);
     bool loadInRangeEntities(int defer);
+	Entity findChildByInternalId(s16 internalId);
+	
+	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
 	virtual void streamAll();
 	override void update(u32 elapsedTime);
