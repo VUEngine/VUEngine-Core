@@ -39,12 +39,31 @@
 static class PixelVector : Object
 {
 	/// @publicsection
+	static inline PixelVector get(PixelVector from, PixelVector to);
+	static inline PixelVector getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax);
 	static inline PixelVector getFromVector3D(Vector3D vector3D, s16 parallax);
+	static inline u32 squareLength(PixelVector vector);
 }
 
 //---------------------------------------------------------------------------------------------------------
 //											IMPLEMENTATIONS
 //---------------------------------------------------------------------------------------------------------
+
+static inline PixelVector PixelVector::get(PixelVector from, PixelVector to)
+{
+	return (PixelVector){to.x - from.x, to.y - from.y, to.z - from.z, to.parallax - from.parallax};
+}
+
+static inline PixelVector PixelVector::getFromScreenPixelVector(ScreenPixelVector screenPixelVector, s16 parallax)
+{
+	return (PixelVector)
+	{
+		screenPixelVector.x,
+		screenPixelVector.y,
+		screenPixelVector.z + screenPixelVector.zDisplacement,
+		parallax
+	};
+}
 
 static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, s16 parallax)
 {
@@ -55,6 +74,11 @@ static inline PixelVector PixelVector::getFromVector3D(Vector3D vector3D, s16 pa
 		__METERS_TO_PIXELS(vector3D.z),
 		parallax
 	};
+}
+
+static inline u32 PixelVector::squareLength(PixelVector vector)
+{
+	return ((u32)vector.x) * ((u32)vector.x) + ((u32)vector.y) * ((u32)vector.y) + ((u32)vector.z) * ((u32)vector.z);
 }
 
 
