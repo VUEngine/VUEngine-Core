@@ -159,7 +159,7 @@ void EntityFactory::destructor()
 	Base::destructor();
 }
 
-void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 id)
+void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container parent, EventListener callback, s16 internalId)
 {
 	if(!positionedEntity || !parent)
 	{
@@ -172,7 +172,7 @@ void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container pa
 	positionedEntityDescription->parent = parent;
 	positionedEntityDescription->entity = NULL;
 	positionedEntityDescription->callback = callback;
-	positionedEntityDescription->id = id;
+	positionedEntityDescription->internalId = internalId;
 	positionedEntityDescription->initialized = false;
 	positionedEntityDescription->transformed = false;
 	positionedEntityDescription->spriteSpecIndex = 0;
@@ -208,7 +208,7 @@ u32 EntityFactory::instantiateEntities()
 		}
 		else
 		{
-			positionedEntityDescription->entity = Entity::loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->id);
+			positionedEntityDescription->entity = Entity::loadEntityDeferred(positionedEntityDescription->positionedEntity, positionedEntityDescription->internalId);
 			ASSERT(positionedEntityDescription->entity, "EntityFactory::spawnEntities: entity not loaded");
 
 			if(positionedEntityDescription->callback)
