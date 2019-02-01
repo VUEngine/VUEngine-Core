@@ -117,7 +117,6 @@ class Entity : Container
 	override void releaseGraphics();
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);
-	override const Vector3D* getPosition();
 	override const Rotation* getRotation();
 	override const Scale* getScale();
 	override fix10_6 getWidth();

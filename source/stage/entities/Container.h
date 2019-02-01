@@ -138,6 +138,7 @@ class Container : SpatialObject
 	virtual void show();
 	virtual void hide();
 	virtual int passMessage(int (*propagatedMessageHandler)(void*, va_list), va_list args);
+	override const Vector3D* getPosition();
 }
 
 

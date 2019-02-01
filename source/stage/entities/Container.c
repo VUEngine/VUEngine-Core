@@ -699,6 +699,16 @@ const Vector3D* Container::getLocalPosition()
 }
 
 /**
+ * Retrieve position
+ *
+ * @return		Global position
+ */
+const Vector3D* Container::getPosition()
+{
+	return &this->transformation.globalPosition;
+}
+
+/**
  * Set local position
  *
  * @param position	Pointer to position

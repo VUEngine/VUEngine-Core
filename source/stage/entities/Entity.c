@@ -1363,16 +1363,6 @@ EntitySpec* Entity::getEntitySpec()
 }
 
 /**
- * Retrieve position
- *
- * @return		Global position
- */
-const Vector3D* Entity::getPosition()
-{
-	return &this->transformation.globalPosition;
-}
-
-/**
  * Retrieve rotation
  *
  * @return		Global rotation
