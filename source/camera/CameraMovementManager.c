@@ -35,6 +35,12 @@
 
 
 //---------------------------------------------------------------------------------------------------------
+//											CLASS'S MACROS
+//---------------------------------------------------------------------------------------------------------
+
+#define __EASING_SPEED_IN_PIXELS		7
+
+//---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
@@ -102,7 +108,7 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ (
 		fix10_6 horizontalPosition = cameraNewPosition.x;
 		fix10_6 horizontalTarget = focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__SCREEN_WIDTH / 2);
 
-		fix10_6 easingDisplacement = __PIXELS_TO_METERS(7);
+		fix10_6 easingDisplacement = __PIXELS_TO_METERS(__EASING_SPEED_IN_PIXELS);
 
 		if(horizontalPosition + easingDisplacement < horizontalTarget)
 		{
@@ -123,7 +129,7 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ (
 		fix10_6 verticalPosition = cameraNewPosition.y;
 		fix10_6 verticalTarget = focusEntityPosition.y + focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__SCREEN_HEIGHT / 2);
 
-		fix10_6 easingDisplacement = __PIXELS_TO_METERS(7);
+		fix10_6 easingDisplacement = __PIXELS_TO_METERS(__EASING_SPEED_IN_PIXELS);
 
 		if(verticalPosition + easingDisplacement < verticalTarget)
 		{

@@ -132,6 +132,8 @@ Body PhysicalWorld::createBody(BodyAllocator bodyAllocator, SpatialObject owner,
 		return Body::safeCast(VirtualList::front(this->bodies));
 	}
 
+	ASSERT(false, "PhysicalWorld::createBody: could not create body");
+
 	return NULL;
 }
 
