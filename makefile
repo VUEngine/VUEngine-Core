@@ -114,6 +114,9 @@ DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DAT
 # Which directories contain source files
 SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets $(MY_HOME)/lib/compiler -type d -print)
 HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
+SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
 
 # Obligatory headers
 CONFIG_FILE =       $(shell pwd)/source/config.h
@@ -171,14 +174,19 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCE:.c=.o))
-C_INTERMEDIATE_SOURCES = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCE:.c=.c))
+C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCE:.c=.o))
+C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCE:.c=.c))
+C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
-ASSEMBLY_OBJECTS = $(addprefix $(STORE)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 HELPERS_PREFIX = $(BASENAME)
 
@@ -214,7 +222,7 @@ $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 
 $(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
-	@echo $< | sed -e 's#'"$(PREPROCESSOR_WORKING_FOLDER)"/sources/$(NAME)/'#Compiling #g'
+	@echo $< | sed -e 's#'"$(PREPROCESSOR_WORKING_FOLDER)"/sources/'#Compiling #g'
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
@@ -226,22 +234,22 @@ $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
-	@echo $< | sed -e 's#'"$(PREPROCESSOR_WORKING_FOLDER)"/sources/$(NAME)/'#Compiling #g'
+	@echo $< | sed -e 's#'"$(PREPROCESSOR_WORKING_FOLDER)"/sources/'#Compiling #g'
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
-$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: %.c
+$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
-$(STORE)/objects/$(NAME)/%.o: %.s
+$(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@echo Creating object file for $*
 	@$(AS) -o $@ $<
 
-$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: %.h
+$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
 	@echo Preprocessing $<
-	@bash $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(BASENAME)
+	@bash $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -d $(MY_HOME)/source -p $(BASENAME)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
@@ -255,13 +263,13 @@ clean:
 # Create necessary directories
 dirs:
 	@echo Checking working dirs...
-	@-$(foreach DIR,$(HEADERS_DIRS), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR) ]; \
+	@-$(foreach DIR,$(HEADERS_DIRS_CLEAN), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR) ]; \
          then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR); fi; )
 	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME); fi;
-	@-$(foreach DIR,$(SOURCES_DIRS), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR) ]; \
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR) ]; \
          then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); fi; )
 	@-if [ ! -e $(STORE)/objects/$(NAME) ]; then mkdir -p $(STORE)/objects/$(NAME); fi;
-	@-$(foreach DIR,$(SOURCES_DIRS), if [ ! -e $(STORE)/objects/$(NAME)/$(DIR) ]; \
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(STORE)/objects/$(NAME)/$(DIR) ]; \
          then mkdir -p $(STORE)/objects/$(NAME)/$(DIR); fi; )
 
 # Includes the .d files so it knows the exact dependencies for every source
