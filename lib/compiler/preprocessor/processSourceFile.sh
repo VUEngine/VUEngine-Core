@@ -17,7 +17,7 @@ OUTPUT_FILE=
 WORKING_FOLDER=build/preprocessor
 HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
-CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
+CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/hierarchies/classesHierarchy.txt
 
 while [ $# -gt 0 ]
 do
@@ -58,8 +58,15 @@ done
 #echo OUTPUT_FILE $OUTPUT_FILE
 cp $INPUT_FILE $OUTPUT_FILE
 
+if [ ! -f "$INPUT_FILE" ];
+then
+	echo "File not found: $INPUT_FILE"
+	exit 0
+fi
+
 if [ -z "$INPUT_FILE" ] || [ -z "${INPUT_FILE##*assets/*}" ];
 then
+	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
 	exit 0
 fi
 
@@ -72,7 +79,6 @@ then
 	isStatic=false
 	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 fi
-# INJECTION OF ClassName _this into method declarations
 
 mark="@N@"
 # Mark block starters
@@ -80,7 +86,7 @@ sed -i -e 's/{/{<START_BLOCK>/g' $OUTPUT_FILE
 
 # Inline multiline declarations
 sed -i -e 's/,[ 	]*$/,<Â·>/g' $OUTPUT_FILE
-awk '{if ($0 ~ "<Â·>") printf "%s ", $0; else print;}' $OUTPUT_FILE > $OUTPUT_FILE.tmp &&   mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
+awk '{if ($0 ~ "<Â·>") printf "%s ", $0; else print;}' $OUTPUT_FILE > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Identify static declarations
 sed -i -e 's/.*static.*/&<%>/g' $OUTPUT_FILE
@@ -98,6 +104,12 @@ sed -i -e 's/\(<DECLARATION>[^:]*::[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attrib
 # Clean methods with no parameters declarations
 sed -i -e 's/,[ 	]*)/)/g' $OUTPUT_FILE
 
+# Put back line breaks
+sed  -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
+
+referencedClassesNames=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/\([A-Z][A-z0-9]*::\)/<\1>\'$'\n/g' | grep "::>" | sed -e 's/.*<\([A-Z][A-z0-9]*\)::>/\1/g' | sort -u`
+rm -f $OUTPUT_FILE.tmp
+
 # Replace :: by _
 sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 
@@ -106,9 +118,13 @@ prototypes=`sed -e 's/<DECLARATION>/\'$'\n<DECLARATION>/g' $OUTPUT_FILE | sed -e
 # Put back line breaks
 sed  -i -e 's/'"$mark"'/\'$'\n/g'  $OUTPUT_FILE
 
+# Clean up empty new line added at the start of file
+tail -n +2 $OUTPUT_FILE > $OUTPUT_FILE.tmp
+mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+
 # Inject this pointer
 sed -i -e 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{\'$'\n/g' $OUTPUT_FILE
-sed -i -e 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1\'$'\n/g' $OUTPUT_FILE
+sed -i -e 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
 
@@ -124,6 +140,7 @@ fi
 if [ -z "$className" ];
 then
 	clean_up
+	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
 	exit 0
 fi
 
@@ -136,6 +153,7 @@ fi
 if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
 then
 	clean_up
+	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
 	exit 0
 fi
 
@@ -143,6 +161,7 @@ baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -
 if [ -z "$baseClassName" ];
 then
 	clean_up
+	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
 	exit 0
 fi
 
@@ -150,6 +169,9 @@ if [ -z "$INPUT_FILE" ] || [ ! -z "${INPUT_FILE##*source/*}" ];
 then
 	exit 0
 fi
+
+# INJECTION OF ClassName _this into method declarations
+echo "Compiling class: $className"
 
 if [ ! -d $WORKING_FOLDER ];
 then
@@ -163,21 +185,23 @@ anyMethodVirtualized=false
 
 #echo HELPER_FILES_PREFIXES $HELPER_FILES_PREFIXES
 
-for prefix in $HELPER_FILES_PREFIXES
+for referencedClassName in $referencedClassesNames
 do
 	# Clean prefix from path
 	prefix=`rev <<< $prefix | cut -d "/" -f1 | rev`
 	#echo prefix $prefix
-	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/$prefix"VirtualMethods.txt"
+	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsVirtual.txt"
+	INHERITED_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsInherited.txt"
 
 	if [ ! -f "$VIRTUAL_METHODS_FILE" ];
 	then
 		continue;
 	fi
 
-	VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
+	#VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
 	virtualMethods=`cat $VIRTUAL_METHODS_FILE | tr -d "\r\n"`
+	inheritedMethods=`cat $INHERITED_METHODS_FILE`
 
 	if [ -z "$virtualMethods" ];
 	then
