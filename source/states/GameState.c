@@ -634,3 +634,12 @@ CollisionManager GameState::getCollisionManager()
 	return this->collisionManager;
 }
 
+/**
+ * Retrieve the update clock
+ *
+ * @return			CollisionManager
+ */
+Clock GameState::getClock()
+{
+	return this->updateClock;
+}
