@@ -43,6 +43,9 @@ extern float sqrtf (float);
 // this code was taken from the Doom engine
 static float Math::squareRoot(float number)
 {
+// Disable "warning: dereferencing type-punned pointer will break strict-aliasing rules"
+#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
 	if(0 >= (* ( long * ) &number))
     {
     	return 0;
@@ -124,12 +127,14 @@ static int Math::getAngle(fix7_9 x, fix7_9 y)
 		// First quadrant
 		if(0 <= y)
 		{
+			PRINT_TEXT("FIRST", 1, 2);
 			entry = 0;
 			lastEntry = entriesPerQuadrant;
 		}
 		// Fourth quadrant
 		else
 		{
+			PRINT_TEXT("FOURTH", 1, 2);
 			entry = entriesPerQuadrant * 3;
 			lastEntry = totalEntries;
 		}
@@ -137,6 +142,7 @@ static int Math::getAngle(fix7_9 x, fix7_9 y)
 	// Second quadrant
 	else if(0 <= y)
 	{
+			PRINT_TEXT("SECON", 1, 2);
 		entry = entriesPerQuadrant;
 		lastEntry = entry + entriesPerQuadrant;
 	}
