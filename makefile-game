@@ -277,7 +277,7 @@ pad: $(TARGET).vb
 	@echo " "
 
 $(TARGET).vb: $(TARGET).elf
-	@echo Creating $@
+	@echo
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
 	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).vb in $(TYPE) mode with GCC $(COMPILER_VERSION)
