@@ -66,7 +66,7 @@ fi
 
 if [ -z "$INPUT_FILE" ] || [ -z "${INPUT_FILE##*assets/*}" ];
 then
-	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
+	echo $INPUT_FILE | sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1#g'
 	exit 0
 fi
 
@@ -140,7 +140,7 @@ fi
 if [ -z "$className" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
+	echo $INPUT_FILE | sed -e 's#^.*source/\(>.*$\)#Compiling source: \1#g'
 	exit 0
 fi
 
@@ -153,7 +153,7 @@ fi
 if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
+	echo "Compiling $INPUT_FILE"
 	exit 0
 fi
 
@@ -161,7 +161,7 @@ baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -
 if [ -z "$baseClassName" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*\(assets.*$\)#Compiling \1#g'
+	echo "Compiling $INPUT_FILE"
 	exit 0
 fi
 
@@ -184,14 +184,22 @@ sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
 anyMethodVirtualized=false
 
 #echo HELPER_FILES_PREFIXES $HELPER_FILES_PREFIXES
+# Replace calls to base class methods
+CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/dictionaries/$className"MethodsOwned.txt"
+classHasOwnMethods=`cat $CLASS_OWNED_METHODS_DICTIONARY`
+if [ ! -z "$classHasOwnMethods" ];
+then
+	awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/traduction.awk $CLASS_OWNED_METHODS_DICTIONARY $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+fi
 
 for referencedClassName in $referencedClassesNames
 do
 	# Clean prefix from path
-	prefix=`rev <<< $prefix | cut -d "/" -f1 | rev`
+	#prefix=`rev <<< $prefix | cut -d "/" -f1 | rev`
 	#echo prefix $prefix
 	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsVirtual.txt"
-	INHERITED_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsInherited.txt"
+
 
 	if [ ! -f "$VIRTUAL_METHODS_FILE" ];
 	then
@@ -201,7 +209,6 @@ do
 	#VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
 
 	virtualMethods=`cat $VIRTUAL_METHODS_FILE | tr -d "\r\n"`
-	inheritedMethods=`cat $INHERITED_METHODS_FILE`
 
 	if [ -z "$virtualMethods" ];
 	then

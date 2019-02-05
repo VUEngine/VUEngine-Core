@@ -193,7 +193,8 @@ for ancestorClassName in $baseClassesNames;
 do
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsVirtual.txt"
-	cat $ancestorInheritedMethodsDictionary | sed -e 's/<[A-Z][A-z]*_/<'"$className"'_/g' >> $CLASS_OWNED_METHODS_DICTIONARY
+	cat $ancestorInheritedMethodsDictionary | sed -e 's/.*<\([A-Z][A-z]*\)_\(.*\)\[.*$/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
+#	cat $ancestorInheritedMethodsDictionary | sed -e 's/\(<[A-Z][A-z]*\)_\(.*$\)/<'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
 	cat $ancestorVirtualMethodsDictionary | sed -e 's/<'"$ancestorClassName"'_/<'"$className"'_/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
 done
@@ -275,7 +276,7 @@ do
 				virtualMethodOverrides=$virtualMethodOverrides"\\
 	__VIRTUAL_SET(ClassName, "$className", "$methodName");"
 			else 
-				if [ ! -z "$methodType" ];
+				if [ ! -z "${methodType##*static *}" ];
 				then
 
 					methodCall="$className""_""$methodName"
@@ -312,6 +313,9 @@ done <<< "$methods"
 
 # Remove duplicates
 awk '!x[$0]++' $CLASS_OWNED_METHODS_DICTIONARY > $CLASS_OWNED_METHODS_DICTIONARY.tmp
+mv $CLASS_OWNED_METHODS_DICTIONARY.tmp $CLASS_OWNED_METHODS_DICTIONARY
+
+grep -v -e "_constructor\|_destructor\|_new" $CLASS_OWNED_METHODS_DICTIONARY > $CLASS_OWNED_METHODS_DICTIONARY.tmp
 mv $CLASS_OWNED_METHODS_DICTIONARY.tmp $CLASS_OWNED_METHODS_DICTIONARY
 
 awk '!x[$0]++' $CLASS_VIRTUAL_METHODS_DICTIONARY > $CLASS_VIRTUAL_METHODS_DICTIONARY.tmp

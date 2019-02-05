@@ -74,7 +74,7 @@ void Actor::constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, cons
 		}
 		else
 		{
-			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0}};
+			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0},};
 			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axisSubjectToGravity);
 		}
 	}
@@ -280,6 +280,9 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	this->previousRotation = this->transformation.localRotation;
+
+					PRINT_INT(this->transformation.localRotation.z, 20, 9);
+
 }
 
 void Actor::resume()
@@ -471,6 +474,17 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 			if( Actor::mustBounce(this))
 			{
 				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
+
+				Velocity velocity = Vector3D::normalize(Body::getVelocity(this->body));
+
+				PRINT_TEXT("   ", 20, 10);
+				PRINT_TEXT("   ", 20, 11);
+
+				PRINT_INT(this->transformation.localRotation.z, 20, 10);
+				this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
+				PRINT_INT(this->transformation.localRotation.z, 20, 11);
+				Base::setLocalRotation(this, &this->transformation.localRotation);
+
 				//Actor::syncRotationWithBody(this);
 			}
 			else
