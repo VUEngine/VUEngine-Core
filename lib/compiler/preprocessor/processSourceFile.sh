@@ -129,7 +129,7 @@ tail -n +2 $OUTPUT_FILE > $OUTPUT_FILE.tmp
 mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Inject this pointer
-sed -i -e 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{\'$'\n/g' $OUTPUT_FILE
+sed -i -e 's/<%>[ 	]*{[ 	]*<START_BLOCK>/{/g' $OUTPUT_FILE
 sed -i -e 's/{[ 	]*<START_BLOCK>\(.*\)<%DECLARATION>/{'"$className"' this '"__attribute__ ((unused))"' = __SAFE_CAST('"$className"' , _this);\1/g' $OUTPUT_FILE
 
 firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -d ":" -f1`
