@@ -220,7 +220,7 @@ printBuildingInfo:
 #	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 #	@echo Compiler\'s output: $(COMPILER_OUTPUT)
 
-$(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_OBJECT).o $(ASSEMBLY_OBJECTS)
+$(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET_FILE).a
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
@@ -239,6 +239,7 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | sed -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS)'@'$(MY_HOME)'@g' -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS)'@'$(MY_HOME)'@g'
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d 
@@ -248,7 +249,7 @@ $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
-	@echo Creating object file for $*
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
 
 $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h

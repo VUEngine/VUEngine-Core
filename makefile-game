@@ -288,6 +288,7 @@ $(TARGET).elf: preprocessLibraries $(H_FILES) libraries $(C_OBJECTS) $(C_INTERME
 		$(foreach LIBRARY, $(LIBRARIES),-l$(shell echo $(LIBRARY) | sed -e "s@.*/@@")) $(foreach LIB,$(LIBRARIES_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
@@ -305,6 +306,7 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | sed -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS)'@'$(MY_HOME)'@g' -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS)'@'$(MY_HOME)'@g'
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d
@@ -314,13 +316,15 @@ $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) -p $(PLUGINS) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
-	@echo Creating object file for $*
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
 
 $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(BASENAME)
 
 preprocessLibraries: deleteLibraries
+	@echo 
+	@echo Preprocessing libraries
 	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\

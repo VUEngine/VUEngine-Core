@@ -69,7 +69,6 @@ fi
 
 if [ -z "$INPUT_FILE" ] || [ -z "${INPUT_FILE##*assets/*}" ];
 then
-	echo $INPUT_FILE | sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1#g'
 	exit 0
 fi
 
@@ -146,7 +145,6 @@ fi
 if [ -z "$className" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file: \1#g'
 	exit 0
 fi
 
@@ -159,7 +157,6 @@ fi
 if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file: \1#g'
 	exit 0
 fi
 
@@ -167,7 +164,6 @@ baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -
 if [ -z "$baseClassName" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file: \1#g'
 	exit 0
 fi
 
@@ -177,7 +173,6 @@ then
 fi
 
 # INJECTION OF ClassName _this into method declarations
-echo "Compiling class: $className"
 
 if [ ! -d $WORKING_FOLDER ];
 then
