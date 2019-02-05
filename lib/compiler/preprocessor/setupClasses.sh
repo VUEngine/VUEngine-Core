@@ -4,20 +4,27 @@ OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
 WORKING_FOLDER=build/working
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
+LIBRARY="LibraryName"
+SETUP_FUNCTION="ClassName"
 
 while [ $# -gt 1 ]
 do
 	key="$1"
 	case $key in
-		-o|-output)
+		-n)
+		LIBRARY="$2"
+		SETUP_FUNCTION="$2"
+		shift # past argument
+		;;
+		-o)
 		OUTPUT_C_FILE="$2"
 		shift # past argument
 		;;
-		-w|-output)
+		-w)
 		WORKING_FOLDER="$2"
 		shift # past argument
 		;;
-		-c|-output)
+		-c)
 		CLASSES_HIERARCHY_FILE="$2"
 		shift # past argument
 		;;
@@ -26,8 +33,7 @@ do
 	shift
 done
 
-SETUP_FUNCTION=`echo $OUTPUT_C_FILE | sed -e "s/.c$//g" -e "s/[^A-z0-9]//g"`
-OUTPUT_C_FILE="$WORKING_FOLDER/$OUTPUT_C_FILE"
+OUTPUT_C_FILE="$OUTPUT_C_FILE"
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo OUTPUT_C_FILE $OUTPUT_C_FILE
 
@@ -77,14 +83,14 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 	done
 	echo "}" >> $OUTPUT_C_FILE
 
-	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/setupClasses.c
+	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/sources/setupClasses.c
 
 	if [ -f $FINAL_SETUP_CLASSES_FILE ]; then
 		rm $FINAL_SETUP_CLASSES_FILE
 	fi
 
 	# Setup calls in final file
-	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/ -name "*SetupClasses.c"`
+	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/sources/ -name "*SetupClasses.c"`
 
 	echo "// setup function" > $FINAL_SETUP_CLASSES_FILE
 
@@ -109,3 +115,5 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 fi
 
 rm -f $CLASSES_FILE
+#echo $OUTPUT_C_FILE | sed -e 's#^.*sources/\(.*$\)#Compiling source: \1#g'
+echo "Setting up library: $LIBRARY"

@@ -193,10 +193,10 @@ for ancestorClassName in $baseClassesNames;
 do
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsVirtual.txt"
-	cat $ancestorInheritedMethodsDictionary | sed -e 's/.*<\([A-Z][A-z]*\)_\(.*\)\[.*$/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
+	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 #	cat $ancestorInheritedMethodsDictionary | sed -e 's/\(<[A-Z][A-z]*\)_\(.*$\)/<'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
-	cat $ancestorVirtualMethodsDictionary | sed -e 's/<'"$ancestorClassName"'_/<'"$className"'_/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+	cat $ancestorVirtualMethodsDictionary | sed -e 's/'"$ancestorClassName"'/'"$className"'/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
 done
 
 methodSeparator=
@@ -242,7 +242,10 @@ do
 		if [ -z "${methodType##*virtual *}" ];
 		then
 			methodCall="$className""_""$methodName"
-			echo "$virtualMethodSeparator\<$methodCall[ 	]*(.*" >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+			#echo "$virtualMethodSeparator\<$methodCall[ 	]*(.*" >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+
+			echo "$methodCall __VIRTUAL_CALL($className,$methodName," >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+
 			virtualMethodSeparator="\|"
 
 			if [ ! -z "$methodParameters" ];
@@ -280,7 +283,9 @@ do
 				then
 
 					methodCall="$className""_""$methodName"
-					echo "$methodSeparator\<$methodCall[ 	]*(.*" >> $CLASS_INHERITED_METHODS_DICTIONARY
+#					echo "$methodSeparator\<$methodCall[ 	]*(.*" >> $CLASS_INHERITED_METHODS_DICTIONARY
+					echo "$methodCall" >> $CLASS_INHERITED_METHODS_DICTIONARY
+
 					methodSeparator="\|"
 				fi
 			fi

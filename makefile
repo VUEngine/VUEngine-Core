@@ -19,6 +19,7 @@ GAME_HOME = .
 
 # My home
 MY_HOME = $(VBDE)libs/$(NAME)
+VUENGINE_HOME = $(MY_HOME)
 
 # output dir
 BUILD_DIR = $(GAME_HOME)/build
@@ -192,6 +193,7 @@ HELPERS_PREFIX = $(BASENAME)
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
+SETUP_CLASSES_SOURCE = $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CLASSES)
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
@@ -212,6 +214,7 @@ preprocessClasses: dirs $(H_FILES)
 
 printBuildingInfo:
 	@echo Building $(TARGET_FILE).a
+
 #	@echo Build type: $(TYPE)
 #	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 #	@echo Compiler\'s output: $(COMPILER_OUTPUT)
@@ -223,15 +226,14 @@ $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(SETUP_CLASSES_O
 $(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 
-$(SETUP_CLASSES_OBJECT).o: $(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c
-	@echo $< | sed -e 's#'"$(PREPROCESSOR_WORKING_FOLDER)"/sources/'#Compiling #g'
+$(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
 	@rm -f $*.dd
 
-$(PREPROCESSOR_WORKING_FOLDER)/$(SETUP_CLASSES).c: $(H_FILES)
-	@bash $(MY_HOME)/lib/compiler/preprocessor/setupClasses.sh -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES).c -w $(PREPROCESSOR_WORKING_FOLDER)
+$(SETUP_CLASSES_SOURCE).c: $(H_FILES)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(PREPROCESSOR_WORKING_FOLDER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.

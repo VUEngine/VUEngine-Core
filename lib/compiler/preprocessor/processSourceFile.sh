@@ -5,8 +5,11 @@ clean_up() {
 	sed -i -e 's/<%>//g' $OUTPUT_FILE
 	sed -i -e 's/<[%]*DECLARATION>[ 	]*static[ 	][ 	]*/ /g' $OUTPUT_FILE
 	sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
+	sed -i -e 's/!DECLARATION_MIDDLE!//g' $OUTPUT_FILE
+	sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 	sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
 	sed -i -e 's/,<Â·>/,\'$'\n/g' $OUTPUT_FILE
+	
 
 	# Replace casts
     sed -i -e 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
@@ -80,6 +83,9 @@ then
 	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $OUTPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 fi
 
+# Prepare file by adding a blank space in front of each Class::method pattern
+sed -i -e 's/\([A-z][A-z0-9]*::[a-z][A-z0-9]*\)/ \1/g' $OUTPUT_FILE
+
 mark="@N@"
 # Mark block starters
 sed -i -e 's/{/{<START_BLOCK>/g' $OUTPUT_FILE
@@ -93,13 +99,13 @@ sed -i -e 's/.*static.*/&<%>/g' $OUTPUT_FILE
 echo >> $OUTPUT_FILE
 
 # Find method declarations
-sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1<%DECLARATION>/g' > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
+sed -e 's/.*/'"$mark"'&/g' $OUTPUT_FILE | tr -d "\r\n" | sed -e 's/'"$mark"'\([ 	]*[A-z0-9_ 	]*[A-z0-9_\*][A-z0-9_\*]*[ 	][ 	]*'"$className"'\)[ 	]*::\([ 	]*[a-z][A-z0-9]*[ 	]*([^{}]*{[ 	]*<START_BLOCK>\)/'"$mark"'<DECLARATION>\1!DECLARATION_MIDDLE!_\2<%DECLARATION>/g' > $OUTPUT_FILE.tmp && mv -f $OUTPUT_FILE.tmp $OUTPUT_FILE
 
 # Add static qualifier to static methods block start
 sed  -i -e 's/\(<DECLARATION>[^<]*\)<%>\([^{]*\)@N@{/\1@N@\2<%>{/g' $OUTPUT_FILE
 
 # Inject _this parameter
-sed -i -e 's/\(<DECLARATION>[^:]*::[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__ ((unused))"', \2/g' $OUTPUT_FILE
+sed -i -e 's/\(!DECLARATION_MIDDLE!_[^(]*\)(\([^%{]*{\)/\1(void* _this '"__attribute__ ((unused))"', \2/g' $OUTPUT_FILE
 
 # Clean methods with no parameters declarations
 sed -i -e 's/,[ 	]*)/)/g' $OUTPUT_FILE
@@ -130,7 +136,7 @@ firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "1.5 Error processing file: $OUTPUT_FILE"
+	echo "Error (1) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -140,20 +146,20 @@ fi
 if [ -z "$className" ];
 then
 	clean_up
-	echo $INPUT_FILE | sed -e 's#^.*source/\(>.*$\)#Compiling source: \1#g'
+	echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file: \1#g'
 	exit 0
 fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "2 Error processing file: $OUTPUT_FILE"
+	echo "Error (2) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
 if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
 then
 	clean_up
-	echo "Compiling $INPUT_FILE"
+	echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file: \1#g'
 	exit 0
 fi
 
@@ -161,7 +167,7 @@ baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -
 if [ -z "$baseClassName" ];
 then
 	clean_up
-	echo "Compiling $INPUT_FILE"
+	echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file: \1#g'
 	exit 0
 fi
 
@@ -189,97 +195,45 @@ CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/dictionaries/$className"MethodsOw
 classHasOwnMethods=`cat $CLASS_OWNED_METHODS_DICTIONARY`
 if [ ! -z "$classHasOwnMethods" ];
 then
-	awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/traduction.awk $CLASS_OWNED_METHODS_DICTIONARY $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/normalMethodTraduction.awk $CLASS_OWNED_METHODS_DICTIONARY $OUTPUT_FILE > $OUTPUT_FILE.tmp
 	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 fi
 
+VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$className"MethodsVirtualToApply.txt"
+if [ -f $VIRTUAL_METHODS_FILE ];
+then
+	rm -f $VIRTUAL_METHODS_FILE
+fi
+
+# Generate a dictionary of all virtual methods to replace on file
 for referencedClassName in $referencedClassesNames
 do
-	# Clean prefix from path
-	#prefix=`rev <<< $prefix | cut -d "/" -f1 | rev`
-	#echo prefix $prefix
-	VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsVirtual.txt"
+	REFERENCED_CLASS_VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsVirtual.txt"
 
-
-	if [ ! -f "$VIRTUAL_METHODS_FILE" ];
+	if [ ! -f "$REFERENCED_CLASS_VIRTUAL_METHODS_FILE" ];
 	then
 		continue;
 	fi
 
-	#VIRTUAL_CALLS_FILE=$WORKING_FOLDER/$prefix"VirtualMethodCalls.txt"
-
-	virtualMethods=`cat $VIRTUAL_METHODS_FILE | tr -d "\r\n"`
-
-	if [ -z "$virtualMethods" ];
-	then
-		continue;
-	fi
-
-	TEMPORAL_METHOD_LIST=$WORKING_FOLDER/processedMethods.txt
-
-	if [ -f $TEMPORAL_METHOD_LIST ];
-	then
-		rm $TEMPORAL_METHOD_LIST
-	fi
-
-	touch $TEMPORAL_METHOD_LIST
-
-	#echo "Processing source $INPUT_FILE"
-
-	virtualMethodsInFile=`grep -e "$virtualMethods" $OUTPUT_FILE `
-
-	if [ -z "$virtualMethodsInFile" ];
-	then
-		continue;
-	fi
-
-	#echo
-	#echo ///////////////////////////////
-	#echo "virtualMethodsInFile $virtualMethodsInFile"
-	#echo ///////////////////////////////
-	#echo
-
-	while : ; do
-
-		while IFS= read -r methodCall;
-		do
-			if [ -z "$methodCall" ];
-			then
-				continue;
-			fi
-
-			methodCall=`grep -o -e "^[0-9][0-9]*:" -e "$virtualMethods" <<< $methodCall | tr -d "\r\n"`
-
-			#echo "Checking $methodCall"
-			pureMethodCall=`echo $methodCall | cut -d: -f2 | cut -d\( -f1`
-			#echo pureMethodCall $pureMethodCall
-
-			line=`cut -d: -f1 <<< "$methodCall"`
-			class=`cut -d_ -f1 <<< "$pureMethodCall"`
-			method=`cut -d_ -f2 <<< "$pureMethodCall"`
-			#echo "$pureMethodCall is going to be virtualized into $class and $method at $line"
-			anyMethodVirtualized=true
-
-			# replace virtual method calls
-
-			sed -i -e "${line}s#\([^A-z]*\)$pureMethodCall(#\1__VIRTUAL_CALL($class, $method, #g" $OUTPUT_FILE
-
-		done <<< "$(grep -n -e "$virtualMethods" $OUTPUT_FILE | grep -v -e '<DECLARATION>')";
-
-		pendingSubstitutions=`grep -n -e "$virtualMethods" $OUTPUT_FILE | grep -v -e '<DECLARATION>'`
-
-		if [ -z "$pendingSubstitutions" ];
-		then
-			break;
-		fi
-
-		#echo "Pending substitutions: \necho $pendingSubstitutions"
-	done
+	cat $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
 done
+
+if [ -f $VIRTUAL_METHODS_FILE ];
+then
+
+	classHasOwnMethods=`cat $VIRTUAL_METHODS_FILE`
+	if [ ! -z "$classHasOwnMethods" ];
+	then
+		awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+	fi
+
+	rm -f $VIRTUAL_METHODS_FILE
+fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "3 Error processing file: $OUTPUT_FILE"
+	echo "Error (3) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -306,7 +260,7 @@ then
 	if [ ! -z "${classModifiers##*singleton *}" ] && [ ! -z "${classModifiers##*static *}" ] && [ ! -z "${classModifiers##*abstract *}" ];
 	then
 	#	echo "Adding allocator"
-		constructor=`grep -m 1 -e $className"_constructor[ 	]*(.*)" $OUTPUT_FILE`
+		constructor=`grep -m 1 -e $className"!DECLARATION_MIDDLE!_constructor[ 	]*(.*)" $OUTPUT_FILE`
 		constructorParameters=`sed -e 's#^.*(\(.*\))[ 	{]*$#\1#' <<< "$constructor"`
 		#echo "constructorParameters $constructorParameters"
 		allocatorParameters=`cut -d "," -f2- <<< "$constructorParameters,"`
@@ -349,7 +303,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "4 Error processing file: $OUTPUT_FILE"
+	echo "Error (4) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -401,6 +355,6 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "Error processing file: $OUTPUT_FILE"
+	echo "Error (5) processing file: $OUTPUT_FILE"
 	exit 0
 fi
