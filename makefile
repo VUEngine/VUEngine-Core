@@ -29,6 +29,8 @@ STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 
 # Where to preprocess source files
 PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
+PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS=$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)
+PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS=$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)
 
 # Add directories to the include and library paths
 INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/headers -type d -print)
@@ -214,7 +216,6 @@ preprocessClasses: dirs $(H_FILES)
 
 printBuildingInfo:
 	@echo Building $(TARGET_FILE).a
-
 #	@echo Build type: $(TYPE)
 #	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 #	@echo Compiler\'s output: $(COMPILER_OUTPUT)
@@ -239,7 +240,7 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | sed -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS)'@'$(MY_HOME)'@g' -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS)'@'$(MY_HOME)'@g'
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d 
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
