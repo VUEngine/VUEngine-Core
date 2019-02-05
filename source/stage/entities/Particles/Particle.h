@@ -98,8 +98,6 @@ class Particle : SpatialObject
 	/// @publicsection
 	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass);
 	void addForce(const Force* force, u32 movementType);
-	u16 getDepth();
-	u16 getHeight();
 	void hide();
 	void setLifeSpan(int lifeSpan);
 	void setMass(fix10_6 mass);

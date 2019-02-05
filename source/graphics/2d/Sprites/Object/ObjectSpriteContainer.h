@@ -76,7 +76,6 @@ class ObjectSpriteContainer : Sprite
 	int getTotalUsedObjects();
 	bool hasRoomFor(s32 numberOfObjects);
 	void position(const Vector3D* position);
-	void print(int x, int y);
 	void removeObjectSprite(ObjectSprite objectSprite, s32 numberOfObjects);
 	override void render(bool evenFrame);
 	override void setPosition(const PixelVector* position);
@@ -86,6 +85,7 @@ class ObjectSpriteContainer : Sprite
 	override void setMode(u16 display, u16 mode);
 	override bool writeTextures();
 	override bool areTexturesWritten();
+	override void print(int x, int y);
 }
 
 

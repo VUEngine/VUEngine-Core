@@ -209,7 +209,6 @@ abstract class Sprite : Object
 	void pause(bool pause);
 	void play(AnimationDescription* animationDescription, char* functionName);
 	void previousFrame();
-	void print(int x, int y);
 	void setActualFrame(s16 actualFrame);
 	void setFrameCycleDecrement(u8 frameDelayDelta);
 	void setFrameDuration(u8 frameDuration);
@@ -238,6 +237,7 @@ abstract class Sprite : Object
 	virtual void show();
 	virtual void writeAnimation();
 	virtual bool writeTextures();
+	virtual void print(int x, int y);
 }
 
 

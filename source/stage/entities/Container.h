@@ -101,7 +101,6 @@ class Container : SpatialObject
 	int getChildCount();
 	Transformation getEnvironmentTransform();
 	const Vector3D* getGlobalPosition();
-	s16 getId();
 	const Vector3D* getLocalPosition();
 	const Rotation* getLocalRotation();
 	const Scale* getLocalScale();

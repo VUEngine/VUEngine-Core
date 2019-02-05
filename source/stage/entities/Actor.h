@@ -82,9 +82,9 @@ class Actor : AnimatedEntity
 	void addForce(const Force* force);
 	void moveUniformly(Velocity* velocity);
 	void stopAllMovement();
-	void stopMovement(u16 axis);
 	void resetCollisionStatus();
 	Body getBody();
+	virtual void stopMovement(u16 axis);
 	virtual void takeHitFrom(Actor other);
 	virtual void syncPositionWithBody();
 	virtual void syncRotationWithBody();

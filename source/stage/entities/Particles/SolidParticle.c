@@ -159,9 +159,9 @@ Shape SolidParticle::getShape()
  *
  * @return		Width
  */
-u16 SolidParticle::getWidth()
+fix10_6 SolidParticle::getWidth()
 {
-	return __FIX10_6_TO_I(this->solidParticleSpec->radius);
+	return this->solidParticleSpec->radius;
 }
 
 /**
@@ -169,9 +169,9 @@ u16 SolidParticle::getWidth()
  *
  * @return		Height
  */
-u16 SolidParticle::getHeight()
+fix10_6 SolidParticle::getHeight()
 {
-	return __FIX10_6_TO_I(this->solidParticleSpec->radius);
+	return this->solidParticleSpec->radius;
 }
 
 /**
@@ -179,10 +179,10 @@ u16 SolidParticle::getHeight()
  *
  * @return		Depth
  */
-u16 SolidParticle::getDepth()
+fix10_6 SolidParticle::getDepth()
 {
 	// must calculate based on the scale because not affine object must be enlarged
-	return __FIX10_6_TO_I(this->solidParticleSpec->radius);
+	return this->solidParticleSpec->radius;
 }
 
 /**

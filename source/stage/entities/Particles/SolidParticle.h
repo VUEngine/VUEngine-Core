@@ -92,9 +92,9 @@ class SolidParticle : Particle
 	void constructor(const SolidParticleSpec* shapeParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass);
 	Shape getShape();
 	override u32 update(int timeElapsed, void (* behavior)(Particle particle));
-	override u16 getWidth();
-	override u16 getHeight();
-	override u16 getDepth();
+	override fix10_6 getWidth();
+	override fix10_6 getHeight();
+	override fix10_6 getDepth();
 	override bool enterCollision(const CollisionInformation* collisionInformation);
 	override bool isSubjectToGravity(Acceleration gravity);
 	override bool handleMessage(Telegram telegram);
