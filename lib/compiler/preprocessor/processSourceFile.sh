@@ -317,10 +317,10 @@ fi
 if [ ! -z "$firstMethodDeclarationLine" ];
 then
 
-	firstMethodDeclarationLine=$((firstMethodDeclarationLine - 1))
+	firstMethodDeclarationLine=$((firstMethodDeclarationLine))
 	orig=$'\n'; replace=$'\\\n'
-	sed -i -e "${firstMethodDeclarationLine}s@.*@&<$>${classDefinition//$orig/$replace}@" $OUTPUT_FILE
-	sed -i -e 's/<$>/\'$'\n/g' $OUTPUT_FILE
+	sed -i -e "${firstMethodDeclarationLine}s@.*@${classDefinition//$orig/$replace};&@" $OUTPUT_FILE
+#	sed -i -e 's/<$>/\'$'\n/g' $OUTPUT_FILE
 fi
 
 sed -i -e 's#[ 	]*friend[ 	][ 	]*class[ 	][ 	]*\([A-z0-9][A-z0-9]*\)#__CLASS_FRIEND_DEFINITION(\1)#' $OUTPUT_FILE
