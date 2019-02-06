@@ -261,6 +261,7 @@ printBuildingInfo:
 	@echo ""
 	@echo "********************************************* $(NAME)"
 	@echo Building $(TARGET_FILE).a
+	@echo ""
 
 printPostBuildingInfo:
 	@echo ""

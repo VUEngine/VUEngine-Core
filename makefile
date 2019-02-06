@@ -209,14 +209,15 @@ TARGET_FILE = lib$(BASENAME)
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printPreBuildingInfo dirs $(TARGET).a printPostBuildingInfo
+all: printPreBuildingInfo printBuildingInfo dirs $(TARGET).a printPostBuildingInfo
 
 printPreBuildingInfo:
+
+printBuildingInfo:
 	@echo ""
 	@echo "********************************************* $(BASENAME)"
 	@echo Building $(TARGET_FILE).a
-
-printBuildingInfo:
+	@echo ""
 
 printPostBuildingInfo:
 

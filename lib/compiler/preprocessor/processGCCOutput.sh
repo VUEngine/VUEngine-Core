@@ -80,5 +80,5 @@ then
 fi
 
 sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
-
+echo 
 rm -f $GCC_OUTPUT
