@@ -31,8 +31,8 @@ LIBRARIES_PATH = $(BUILD_DIR)/
 
 # Where to preprocess source files
 PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
-PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS=$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)
-PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS=$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)
+#PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS=$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)
+#PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS=$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)
 
 # Add directories to the include and library paths
 INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/headers -type d -print)
@@ -308,7 +308,7 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | sed -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_HEADER_PATHS)'@'$(MY_HOME)'@g' -e 's@'$(PREPROCESSOR_WORKING_INTERMEDIATE_SOURCE_PATHS)'@'$(MY_HOME)'@g'
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(PREPROCESSOR_WORKING_FOLDER) -n $(NAME) -lp $(VBDE)libs -l $(LIBRARIES)
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 
@@ -320,7 +320,7 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@$(AS) -o $@ $<
 
 $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(BASENAME)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(BASENAME) -l $(LIBRARIES)
 
 preprocessLibraries: deleteLibraries
 	@echo 
