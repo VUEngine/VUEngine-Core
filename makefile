@@ -166,7 +166,7 @@ FOLDER_TO_CLEAN=$(MY_HOME)/$(BUILD_DIR)/$(CLEAN_TYPE)*
 endif
 
 # Makes a list of the source (.c) files.
-C_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
+C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
 
 # Makes a list of the source (.s) files.
 ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
@@ -179,10 +179,10 @@ H_FILES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(HE
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCE:.c=.o))
+C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
-C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCE:.c=.c))
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCES:.c=.c))
 C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
@@ -197,8 +197,9 @@ SETUP_CLASSES_SOURCE = $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CL
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
-D_FILES = $(addprefix $(STORE)/objects/$(NAME)/,$(C_SOURCE:.c=.d))
+D_FILES = $(addprefix $(STORE)/objects/$(NAME)/,$(C_SOURCES:.c=.d))
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
+D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # File that holds the classes hierarchy
 CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
@@ -237,13 +238,15 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(PREPROCESSOR_WORKING_FOLDER) -lp $(VBDE)libs -l $(NAME)
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d 
+	@sed '1d' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp
+	@sed -e 's#$<#$<:#' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.d
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
+	@rm -f $(STORE)/objects/$(NAME)/$*.dd.tmp
 
 $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s

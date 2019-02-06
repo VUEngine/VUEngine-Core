@@ -8,12 +8,12 @@ then
 	exit 0
 fi
 
-className=`grep -m 1 -e '__CLASS_DEFINITION([A-z][A-z0-9]*],' $INPUT_FILE | sed -e 's#__CLASS_DEFINITION(\([A-Z][A-z0-9]*\),.*#\1#'`
+className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $INPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
 
 if [ -z "$className" ];
 then
 	# Maybe it is a static class
-	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*_[ 	]*[a-z][A-z0-9]*[ 	]*(' $INPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*_.*/\1/'`
+	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $INPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
 fi
 
 if [ -z "$className" ];
