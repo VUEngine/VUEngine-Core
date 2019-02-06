@@ -77,9 +77,6 @@ then
 	if [ -f "$baseClassFile" ] && [ ! -f "$processedBaseClassFile" ];
 	then
 		processedBaseClassFile=`echo "$WORKING_FOLDER/headers/$LIBRARY_NAME/$baseClassFile" | sed -e 's@'"$HEADERS_FOLDER"/'@@g'`
-#		echo "Must preprocess base class first: $baseClassName"
-#		echo FROM baseClassFile $baseClassFile 
-#		echo INTO processedBaseClassFile $processedBaseClassFile 
 		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $HELPER_FILES_PREFIX
 	fi
 fi
@@ -105,16 +102,6 @@ fi
 #echo "cleanClassDeclaration: $cleanClassDeclaration"
 #echo "line: $line"
 #echo "Modifiers: $classModifiers"
-
-#if [ -z "$classModifiers" ];
-#then
-#	echo "$className inherits from $baseClassName"
-#else
-#	echo "$className inherits from $baseClassName ( is $classModifiers)"
-#fi
-
-#sed -e "s#$classDeclaration#__CLASS($className);#g" <<< "$classDeclaration"
-#echo attributes $attributes
 
 # Compute the class' whole hierarchy
 if [ ! -z "$baseClassName" ];
@@ -147,7 +134,7 @@ classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e
 
 # Get class' methods
 methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*'`
-attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#.*;#&\\\#' `
+attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#&\\\##' | tr -d "\r\n"`
 
 #echo "$classDeclarationBlock"
 #echo
@@ -194,25 +181,12 @@ do
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsVirtual.txt"
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
-#	cat $ancestorInheritedMethodsDictionary | sed -e 's/\(<[A-Z][A-z]*\)_\(.*$\)/<'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
 	cat $ancestorVirtualMethodsDictionary | sed -e 's/'"$ancestorClassName"'/'"$className"'/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
 done
 
-methodSeparator=
-inheritedMethodsDictionaryHasEntries=`cat $CLASS_INHERITED_METHODS_DICTIONARY`
-if [ ! -z "$inheritedMethodsDictionaryHasEntries" ];
-then
-	methodSeparator="\|"
-fi
-
-virtualMethodSeparator=
-virtualMethodsDictionaryHasEntries=`cat $CLASS_VIRTUAL_METHODS_DICTIONARY`
-if [ ! -z "$virtualMethodsDictionaryHasEntries" ];
-then
-	virtualMethodSeparator="\|"
-fi
-
+isFirstMethod=
+firstMethodLine=-1
 
 while IFS= read -r method;
 do
@@ -225,6 +199,12 @@ do
     methodName=`sed 's/.* //g' <<< "$methodPrelude"`
     methodType=`sed 's/'$methodName'//g' <<< "$methodPrelude"`
     methodParameters=`cut -d "(" -f2- <<< "$method" | rev | cut -d ")" -f2- | rev`
+
+	if [ -z "$isFirstMethod" ];
+	then
+		isFirstMethod=false
+		firstMethodLine=`grep -m 1 -n "$methodName" $INPUT_FILE | cut -d: -f1`
+	fi
 
     nonModifiedMethodType=`sed -e 's#virtual##;s#override##;s#static##' <<< "$methodType"`
     methodIsAbstract=false
@@ -242,29 +222,22 @@ do
 		if [ -z "${methodType##*virtual *}" ];
 		then
 			methodCall="$className""_""$methodName"
-			#echo "$virtualMethodSeparator\<$methodCall[ 	]*(.*" >> $CLASS_VIRTUAL_METHODS_DICTIONARY
-
 			echo "$methodCall __VIRTUAL_CALL($className,$methodName," >> $CLASS_VIRTUAL_METHODS_DICTIONARY
-
-			virtualMethodSeparator="\|"
 
 			if [ ! -z "$methodParameters" ];
 			then
 	#			echo "method $method"
 	#			echo "methodParameters $methodParameters"
-				virtualMethodDeclarations=$virtualMethodDeclarations"\\
-	__VIRTUAL_DEC(ClassName, "$nonModifiedMethodType", "$methodName", "$methodParameters");"
+				virtualMethodDeclarations=$virtualMethodDeclarations" __VIRTUAL_DEC(ClassName,"$nonModifiedMethodType","$methodName","$methodParameters");"
 			else
-				virtualMethodDeclarations=$virtualMethodDeclarations"\\
-	__VIRTUAL_DEC(ClassName, "$nonModifiedMethodType", "$methodName");"
+				virtualMethodDeclarations=$virtualMethodDeclarations" __VIRTUAL_DEC(ClassName,"$nonModifiedMethodType","$methodName");"
 			fi
 
 			abstractMark=`sed -n -E 's#\)[    ]*=[    ]*0[    ]*;##p' <<< "$method"`
 			if [ -z "$abstractMark" ];
 			then
 				#echo $methodName is not abstract
-				virtualMethodOverrides=$virtualMethodOverrides"\\
-	__VIRTUAL_SET(ClassName, "$className", "$methodName");"
+				virtualMethodOverrides=$virtualMethodOverrides" __VIRTUAL_SET(ClassName,"$className","$methodName");"
 			else
 				isAbstractClass=true
 				methodIsAbstract=true
@@ -276,17 +249,13 @@ do
 
 				methodType=`sed -e 's#override##' <<< "$methodType"`
 
-				virtualMethodOverrides=$virtualMethodOverrides"\\
-	__VIRTUAL_SET(ClassName, "$className", "$methodName");"
+				virtualMethodOverrides=$virtualMethodOverrides" __VIRTUAL_SET(ClassName,"$className","$methodName");"
 			else 
 				if [ ! -z "${methodType##*static *}" ];
 				then
 
 					methodCall="$className""_""$methodName"
-#					echo "$methodSeparator\<$methodCall[ 	]*(.*" >> $CLASS_INHERITED_METHODS_DICTIONARY
 					echo "$methodCall" >> $CLASS_INHERITED_METHODS_DICTIONARY
-
-					methodSeparator="\|"
 				fi
 			fi
 		fi
@@ -311,8 +280,13 @@ do
 		fi
 	fi
 
-	methodDeclarations=$methodDeclarations"
+	if [ -z "$methodDeclarations" ];
+	then
+		methodDeclarations=$methodDeclaration
+	else
+		methodDeclarations=$methodDeclarations"
 "$methodDeclaration
+	fi
 
 done <<< "$methods"
 
@@ -400,42 +374,62 @@ $allocator"
 fi
 
 TEMPORAL_FILE=$WORKING_FOLDER/temporal.txt
-echo "" > $TEMPORAL_FILE
+touch $TEMPORAL_FILE
+
+#echo "" > $TEMPORAL_FILE
 if [ ! "$isStaticClass" = true ];
 then
 	echo "$virtualMethodDeclarations" >> $TEMPORAL_FILE
-	echo "" >> $TEMPORAL_FILE
+#	echo "" >> $TEMPORAL_FILE
 	echo "$virtualMethodOverrides" >> $TEMPORAL_FILE
-	echo "" >> $TEMPORAL_FILE
+#	echo "" >> $TEMPORAL_FILE
 
 	if [ ! "$isFinalClass" = true ];
 	then
 		if [ ! -z "$baseClassName" ];
 		then
-			attributes="#define "$className"_ATTRIBUTES \\
-		"$baseClassName"_ATTRIBUTES \\
-		$attributes"
+			attributes="#define "$className"_ATTRIBUTES "$baseClassName"_ATTRIBUTES $attributes"
 
 			virtualMethodDeclarations=$virtualMethodDeclarations" "$baseClassName"_METHODS(ClassName) "
 			virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
 		else
-			attributes="#define "$className"_ATTRIBUTES \\
-		$attributes"
+			attributes="#define "$className"_ATTRIBUTES $attributes"
 		fi
 
 		echo "$attributes" >> $TEMPORAL_FILE
 	fi
 fi
 
-echo "" >> $TEMPORAL_FILE
+#echo "" >> $TEMPORAL_FILE
 if [ ! "$isStaticClass" = true ];
 then
 	echo "__CLASS($className);" >> $TEMPORAL_FILE
 fi
 
-echo "" >> $TEMPORAL_FILE
+#echo "" >> $TEMPORAL_FILE
+
+# Adjust the output in order to make the methods to appear in the same lines as in the original header file
+if [ ! -z "$firstMethodLine" ];
+then
+	if [ "$firstMethodLine" -gt 0 ];
+	then
+		methodsTargetLine=`wc -l < $TEMPORAL_FILE`
+		methodsTargetLine=$((methodsTargetLine + line))
+
+		if [ "$firstMethodLine" -gt "$methodsTargetLine" ];
+		then
+			paddingLines=$((firstMethodLine - methodsTargetLine))
+			while [ "$paddingLines" -gt "0" ];
+			do
+				echo >> $TEMPORAL_FILE
+				paddingLines=$((paddingLines - 1))
+			done
+		fi
+	fi
+fi
+
 sed -e 's#static[ 	]\+##g' <<< "$methodDeclarations" >> $TEMPORAL_FILE
-echo >> $TEMPORAL_FILE
+#echo >> $TEMPORAL_FILE
 
 prelude=$((line - 2))
 totalLines=`wc -l < $INPUT_FILE`
