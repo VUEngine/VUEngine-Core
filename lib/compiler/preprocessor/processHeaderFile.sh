@@ -76,7 +76,7 @@ then
 	
 	if [ -f "$baseClassFile" ] && [ ! -f "$processedBaseClassFile" ];
 	then
-		processedBaseClassFile=`echo "$WORKING_FOLDER/headers/$LIBRARY_NAME/$baseClassFile" | sed -e 's@'"$HEADERS_FOLDER"/'@@g'`
+		processedBaseClassFile=`echo "$WORKING_FOLDER/sources/$LIBRARY_NAME/$baseClassFile" | sed -e 's@'"$HEADERS_FOLDER"/'@@g'`
 		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $HELPER_FILES_PREFIX
 	fi
 fi
@@ -446,3 +446,4 @@ sed -i -e 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
 sed -i -e 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
 
 rm -f $TEMPORAL_FILE
+rm -f $OUTPUT_FILE"-e"

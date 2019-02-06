@@ -31,7 +31,7 @@ STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
 
 # Add directories to the include and library paths
-INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/headers -type d -print)
+INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/sources -type d -print)
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -175,7 +175,7 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(HEADERS:.h=.h))
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
@@ -250,7 +250,7 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
 
-$(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/%.h: $(MY_HOME)/%.h
+$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(BASENAME)
 
 # Empty rule to prevent problems when a header is deleted.
@@ -265,8 +265,6 @@ clean:
 # Create necessary directories
 dirs:
 #	@echo Checking working dirs...
-	@-$(foreach DIR,$(HEADERS_DIRS_CLEAN), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR) ]; \
-         then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/headers/$(NAME)/$(DIR); fi; )
 	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME); fi;
 	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/dictionaries ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/dictionaries; fi;
 	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/hierarchies ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/hierarchies; fi;

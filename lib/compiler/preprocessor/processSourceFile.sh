@@ -13,6 +13,8 @@ clean_up() {
 
 	# Replace casts
     sed -i -e 's/\([A-Z][A-z0-9]*\)_safeCast[ 	]*(/__SAFE_CAST(\1, /g' $OUTPUT_FILE
+
+	rm -f $OUTPUT_FILE"-e"
 }
 
 INPUT_FILE=
@@ -353,3 +355,5 @@ then
 	echo "Error (5) processing file: $OUTPUT_FILE"
 	exit 0
 fi
+
+rm -f $OUTPUT_FILE"-e"

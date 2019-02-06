@@ -60,21 +60,18 @@ fi
 
 for library in $LIBRARIES;
 do
-	pattern1=$WORKING_FOLDER/sources/$library/
-	pattern2=$WORKING_FOLDER/headers/$library/
+	pattern=$WORKING_FOLDER/sources/$library/
 	replacement=$LIBRARIES_PATH/$library/
-	sed -e 's@'"$pattern1"'@'"$replacement"'@g' -e 's@'"$pattern2"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
+	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
 replacement=
-pattern1=$WORKING_FOLDER/sources/$LIBRARY
-pattern2=$WORKING_FOLDER/headers/$LIBRARY
+pattern=$WORKING_FOLDER/sources/$LIBRARY
 
 if [ ! -z "$LIBRARY" ];
 then
-	pattern1=$WORKING_FOLDER/sources/$LIBRARY/
-	pattern2=$WORKING_FOLDER/headers/$LIBRARY/
+	pattern=$WORKING_FOLDER/sources/$LIBRARY/
 
 	if [ ! -z "$LIBRARY_PATH" ];
 	then
@@ -82,6 +79,6 @@ then
 	fi
 fi
 
-sed -e 's@'"$pattern1"'@'"$replacement"'@g' -e 's@'"$pattern2"'@'"$replacement"'@g' $GCC_OUTPUT
+sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
 
 rm -f $GCC_OUTPUT
