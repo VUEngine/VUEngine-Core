@@ -6,7 +6,7 @@ GCC_OUTPUT=build/gcc.out
 if [ -p /dev/stdin ]; then
 	# If we want to read the input line by line
 	while IFS= read line; do
-			echo "${line}" >> $GCC_OUTPUT
+		echo "${line}" >> $GCC_OUTPUT
 	done
 else
 	exit 0
@@ -41,9 +41,8 @@ do
 	shift
 done
 
-if [ -z "$GCC_OUTPUT" ];
+if [ ! -f "$GCC_OUTPUT" ];
 then
-	rm -f $GCC_OUTPUT
 	exit 0
 fi
 
