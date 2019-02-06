@@ -185,7 +185,7 @@ MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), preprocessor)
-ALL_TARGET_PREREQUISITES = dirs libraries $(C_OBJECTS) printPostPreprocessorInfo
+ALL_TARGET_PREREQUISITES = dirs libraries $(C_OBJECTS)
 LD_PARAMS =
 C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
 MACROS = $(COMMON_MACROS)
@@ -250,25 +250,29 @@ TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 # define the engine
 VUENGINE = $(BUILD_DIR)/libvuengine.a
 
-all: printBuildingInfo $(ALL_TARGET_PREREQUISITES)
+all: printPreBuildingInfo dirs libraries printBuildingInfo dirs $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
-printBuildingInfo:
-	@echo Building $(TARGET_FILE).vb
+printPreBuildingInfo:
 	@echo Build type: $(TYPE)
 	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
 	@echo Compiler\'s output: $(COMPILER_OUTPUT)
 
+printBuildingInfo:
+	@echo ""
+	@echo "********************************************* $(NAME)"
+	@echo Building $(TARGET_FILE).a
+
+printPostBuildingInfo:
+	@echo ""
+	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
+
 portToNewSyntax: dirs
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/cleanSyntax.sh $(VUENGINE_HOME) $(MY_HOME)/source $(PREPROCESSOR_WORKING_FOLDER)
-
-printPostPreprocessorInfo:
-	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
 
 dump: $(TARGET).elf
 	@echo Dumping elf
 	@$(OBJDUMP) -t $(TARGET).elf > $(STORE)/sections-$(TYPE).txt
 	@$(OBJDUMP) -S $(TARGET).elf > $(STORE)/machine-$(TYPE).asm
-	@echo Dumping elf done
 
 pad: $(TARGET).vb
 	@echo Padding $(BUILD_DIR)/$(TARGET_FILE).vb
@@ -276,15 +280,14 @@ pad: $(TARGET).vb
 	@echo " "
 
 $(TARGET).vb: $(TARGET).elf
-	@echo
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
-	@echo Done creating $(BUILD_DIR)/$(TARGET_FILE).vb in $(TYPE) mode with GCC $(COMPILER_VERSION)
 
-$(TARGET).elf: preprocessLibraries $(H_FILES) libraries $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+$(TARGET).elf: $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET).elf
 	@$(GCC) -o $@ -nostartfiles $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(FINAL_SETUP_CLASSES_OBJECT).o $(SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
 		$(foreach LIBRARY, $(LIBRARIES),-l$(shell echo $(LIBRARY) | sed -e "s@.*/@@")) $(foreach LIB,$(LIBRARIES_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
+	@echo
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
@@ -307,14 +310,15 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(PREPROCESSOR_WORKING_FOLDER) -n $(NAME) -lp $(VBDE)libs -l $(LIBRARIES)
-	@sed '1d' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp
-	@sed -e 's#$<#$<:#' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.d
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp 
+	@sed -e 's#$<##' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.dd
+	@sed -e 's#$@#$<#' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd.tmp
 
 $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) -p $(PLUGINS) -p $(NAME)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $@
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
@@ -325,7 +329,7 @@ $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
 
 preprocessLibraries: deleteLibraries
 	@echo 
-	@echo Preprocessing libraries
+	@echo Preprocessing classes
 	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
@@ -339,14 +343,13 @@ preprocessLibraries: deleteLibraries
 			-e NAME=$(LIBRARY);																											\
 	)																																	\
 
-libraries:
-	@-$(foreach LIBRARY, $(LIBRARIES), echo; 																							\
+libraries: preprocessLibraries $(H_FILES)
+	@-$(foreach LIBRARY, $(LIBRARIES), 																									\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
 		$(eval LIBRARY_FILE=$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a)									\
-		echo Using $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo custom makefile; else echo default VUEngine plugin makefile; fi; );	\
 		$(MAKE) --no-print-directory all 																								\
-			$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a 													\
+			$(LIBRARY_FILE) 																											\
 			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )					\
 			-e TYPE=$(TYPE) 																											\
 			-e CONFIG_FILE=$(CONFIG_FILE) 																								\

@@ -313,7 +313,7 @@ fi
 
 if [ ! -z "$firstMethodDeclarationLine" ];
 then
-	classDefinition=`echo "$classDefinition" | tr -d "\r\n"`
+	classDefinition=`echo "/*CLASS_IN_FILE($className)*/$classDefinition" | tr -d "\r\n"`
 	firstMethodDeclarationLine=$((firstMethodDeclarationLine))
 	orig=$'\n'; replace=$'\\\n'
 	sed -i -e "${firstMethodDeclarationLine}s@.*@${classDefinition//$orig/$replace};&@" $OUTPUT_FILE
