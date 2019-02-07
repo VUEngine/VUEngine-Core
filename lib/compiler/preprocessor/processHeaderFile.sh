@@ -69,12 +69,15 @@ then
 	exit 0
 fi
 
-inheritingClasses=`grep $className"_constructor" $WORKING_FOLDER/dictionaries/*MethodsInherited.txt | cut -d ":" -f 1 | sed -e 's@.*dictionaries/\(.*\)MethodsInherited.txt@\1@g' | sort -u`
+if [ ! -z "$(find "$WORKING_FOLDER/dictionaries/" -mindepth 1 -print -quit 2>/dev/null)" ]; then
 
-for inheritingClass in $inheritingClasses;
-do
-	find "$WORKING_FOLDER/sources" -name "$inheritingClass.h" -exec rm -f {} \;
-done
+	inheritingClasses=`grep $className"_constructor" $WORKING_FOLDER/dictionaries/*MethodsInherited.txt | cut -d ":" -f 1 | sed -e 's@.*dictionaries/\(.*\)MethodsInherited.txt@\1@g' | sort -u`
+
+	for inheritingClass in $inheritingClasses;
+	do
+		find "$WORKING_FOLDER/sources" -name "$inheritingClass.h" -exec rm -f {} \;
+	done
+fi
 
 if [ ! -z "${className##Object}" ];
 then
@@ -195,107 +198,29 @@ done
 isFirstMethod=
 firstMethodLine=-1
 
-while IFS= read -r method;
-do
-    if [ -z "$method" ];
-    then
-        continue;
-    fi
+methodDeclarations=`echo "$methods" | sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#'`
 
-    methodPrelude=`cut -d "(" -f1 <<< "$method"`
-    methodName=`sed 's/.* //g' <<< "$methodPrelude"`
-    methodType=`sed 's/'$methodName'//g' <<< "$methodPrelude"`
-    methodParameters=`cut -d "(" -f2- <<< "$method" | rev | cut -d ")" -f2- | rev`
+virtualMethodDeclarations=$virtualMethodDeclarations" "`echo "$methodDeclarations" | grep -e "<virtual>" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
+virtualMethodOverrides=$virtualMethodOverrides" "`echo "$methodDeclarations" | grep -e "<override>\|<virtual>" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
+virtualMethodNames=`echo "$methodDeclarations" | grep -e "<virtual>" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/\1/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
 
-	if [ -z "$isFirstMethod" ];
-	then
-		isFirstMethod=false
-		firstMethodLine=`grep -m 1 -n "$methodName" $INPUT_FILE | cut -d: -f1`
-	fi
+methodCalls=`echo "$methodDeclarations" | grep -v -e "<static>\|<virtual>\|<override>" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/'"$className"'_\1/g'`
 
-    nonModifiedMethodType=`sed -e 's#virtual##;s#override##;s#static##' <<< "$methodType"`
-    methodIsAbstract=false
+# Clean up method declarations
+virtualMethodDeclarations=`echo "$virtualMethodDeclarations" | sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
+methodDeclarations=`echo "$methodDeclarations" | sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g'`
+methodDeclarations=`echo "$methodDeclarations" | sed -e 's/\(^.*[ 	][ 	]*\)\([a-z][A-z0-9]*\)(\(.*\)/\1'"$className"'_\2(void* _this,\3/g'`
+methodDeclarations=`echo "$methodDeclarations" | sed -e 's/\(^.*\)void\* _this,\(.*\)<static>/\1\2/g' -e 's#<virtual>#	#;s#<override>#	#;s#<static>#	#' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
 
-    #echo
-    #echo "method $method"
-    #echo "methodType $methodType"
-    #echo "methodName $methodName"
-    #echo "methodParameters $methodParameters"
-    #echo nonModifiedMethodType $nonModifiedMethodType
+if [ ! -z "$virtualMethodNames" ];
+then
+	echo "$virtualMethodNames" | sed -e 's/\(^.*\)/'"$className"'_\1 __VIRTUAL_CALL('"$className"',\1,/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+fi
 
-	if [ ! -z "$methodType" ];
-	then
-
-		if [ -z "${methodType##*virtual *}" ];
-		then
-			methodCall="$className""_""$methodName"
-			echo "$methodCall __VIRTUAL_CALL($className,$methodName," >> $CLASS_VIRTUAL_METHODS_DICTIONARY
-
-			if [ ! -z "$methodParameters" ];
-			then
-	#			echo "method $method"
-	#			echo "methodParameters $methodParameters"
-				virtualMethodDeclarations=$virtualMethodDeclarations" __VIRTUAL_DEC(ClassName,"$nonModifiedMethodType","$methodName","$methodParameters");"
-			else
-				virtualMethodDeclarations=$virtualMethodDeclarations" __VIRTUAL_DEC(ClassName,"$nonModifiedMethodType","$methodName");"
-			fi
-
-			abstractMark=`sed -n -E 's#\)[    ]*=[    ]*0[    ]*;##p' <<< "$method"`
-			if [ -z "$abstractMark" ];
-			then
-				#echo $methodName is not abstract
-				virtualMethodOverrides=$virtualMethodOverrides" __VIRTUAL_SET(ClassName,"$className","$methodName");"
-			else
-				isAbstractClass=true
-				methodIsAbstract=true
-	#            echo $methodName is abstract
-			fi
-		else
-			if [ -z "${methodType##*override *}" ];
-			then
-
-				methodType=`sed -e 's#override##' <<< "$methodType"`
-
-				virtualMethodOverrides=$virtualMethodOverrides" __VIRTUAL_SET(ClassName,"$className","$methodName");"
-			else 
-				if [ ! -z "${methodType##*static *}" ];
-				then
-
-					methodCall="$className""_""$methodName"
-					echo "$methodCall" >> $CLASS_INHERITED_METHODS_DICTIONARY
-				fi
-			fi
-		fi
-    fi
-
-	methodDeclaration=
-	if [ ! -z "$methodParameters" ];
-	then
-		if [ ! -z "$methodType" ] && [ -z "${methodType##*static *}" ];
-		then
-			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"("$methodParameters");"
-		else
-			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"(void* _this, "$methodParameters");"
-		fi
-	else
-
-		if [ ! -z "$methodType" ] && [ -z "${methodType##*static *}" ];
-		then
-			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"();"
-		else
-			methodDeclaration=$nonModifiedMethodType" "$className"_"$methodName"(void* _this);"
-		fi
-	fi
-
-	if [ -z "$methodDeclarations" ];
-	then
-		methodDeclarations=$methodDeclaration
-	else
-		methodDeclarations=$methodDeclarations"
-"$methodDeclaration
-	fi
-
-done <<< "$methods"
+if [ ! -z "$methodCalls" ];
+then
+	echo "$methodCalls" >> $CLASS_INHERITED_METHODS_DICTIONARY
+fi
 
 # Remove duplicates
 awk '!x[$0]++' $CLASS_OWNED_METHODS_DICTIONARY > $CLASS_OWNED_METHODS_DICTIONARY.tmp
@@ -353,7 +278,6 @@ then
 	methodDeclarations=$methodDeclarations"
 	void "$className"_destructor(void* _this);"
 fi
-
 
 # Add allocator if it is not abstract nor a singleton class
 if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] ;
