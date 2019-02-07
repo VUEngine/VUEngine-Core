@@ -214,12 +214,15 @@ all: printPreBuildingInfo printBuildingInfo dirs $(TARGET).a printPostBuildingIn
 printPreBuildingInfo:
 
 printBuildingInfo:
+	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
 	@echo "********************************************* $(BASENAME)"
 	@echo Building $(TARGET_FILE).a
 	@echo ""
 
 printPostBuildingInfo:
+	@$(eval END_TIME=$(shell date +%s))
+	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
 preprocessClasses: dirs $(H_FILES)
 
