@@ -198,23 +198,23 @@ done
 isFirstMethod=
 firstMethodLine=-1
 
-methodDeclarations=`echo "$methods" | sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#'`
+methodDeclarations=`sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#' <<< "$methods"`
 
-virtualMethodDeclarations=$virtualMethodDeclarations" "`echo "$methodDeclarations" | grep -e "<virtual>" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
-virtualMethodOverrides=$virtualMethodOverrides" "`echo "$methodDeclarations" | grep -e "<override>\|<virtual>" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
-virtualMethodNames=`echo "$methodDeclarations" | grep -e "<virtual>" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/\1/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
+virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
+virtualMethodOverrides=$virtualMethodOverrides" "`grep -e "<override>\|<virtual>" <<< "$methodDeclarations" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
+virtualMethodNames=`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/\1/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
 
-methodCalls=`echo "$methodDeclarations" | grep -v -e "<static>\|<virtual>\|<override>" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/'"$className"'_\1/g'`
+methodCalls=`grep -v -e "<static>\|<virtual>\|<override>" <<< "$methodDeclarations" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/'"$className"'_\1/g'`
 
 # Clean up method declarations
-virtualMethodDeclarations=`echo "$virtualMethodDeclarations" | sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
-methodDeclarations=`echo "$methodDeclarations" | sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g'`
-methodDeclarations=`echo "$methodDeclarations" | sed -e 's/\(^.*[ 	][ 	]*\)\([a-z][A-z0-9]*\)(\(.*\)/\1'"$className"'_\2(void* _this,\3/g'`
-methodDeclarations=`echo "$methodDeclarations" | sed -e 's/\(^.*\)void\* _this,\(.*\)<static>/\1\2/g' -e 's#<virtual>#	#;s#<override>#	#;s#<static>#	#' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
+virtualMethodDeclarations=`sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' -e 's/,[ 	]*)[ 	]*;/);/g' <<< "$virtualMethodDeclarations"`
+methodDeclarations=`sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' <<< "$methodDeclarations"`
+methodDeclarations=`sed -e 's/\(^.*[ 	][ 	]*\)\([a-z][A-z0-9]*\)(\(.*\)/\1'"$className"'_\2(void* _this,\3/g' <<< "$methodDeclarations"`
+methodDeclarations=`sed -e 's/\(^.*\)void\* _this,\(.*\)<static>/\1\2/g' -e 's#<virtual>#	#;s#<override>#	#;s#<static>#	#' -e 's/,[ 	]*)[ 	]*;/);/g' <<< "$methodDeclarations"`
 
 if [ ! -z "$virtualMethodNames" ];
 then
-	echo "$virtualMethodNames" | sed -e 's/\(^.*\)/'"$className"'_\1 __VIRTUAL_CALL('"$className"',\1,/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+	sed -e 's/\(^.*\)/'"$className"'_\1 __VIRTUAL_CALL('"$className"',\1,/g' <<< "$virtualMethodNames" >> $CLASS_VIRTUAL_METHODS_DICTIONARY
 fi
 
 if [ ! -z "$methodCalls" ];
