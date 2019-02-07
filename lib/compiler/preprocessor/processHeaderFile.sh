@@ -69,6 +69,13 @@ then
 	exit 0
 fi
 
+inheritingClasses=`grep $className"_constructor" $WORKING_FOLDER/dictionaries/*MethodsInherited.txt | cut -d ":" -f 1 | sed -e 's@.*dictionaries/\(.*\)MethodsInherited.txt@\1@g' | sort -u`
+
+for inheritingClass in $inheritingClasses;
+do
+	find "$WORKING_FOLDER/sources" -name "$inheritingClass.h" -exec rm -f {} \;
+done
+
 if [ ! -z "${className##Object}" ];
 then
 	baseClassFile=`find $HEADERS_FOLDER -name "$baseClassName.h"`
