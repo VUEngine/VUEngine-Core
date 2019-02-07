@@ -31,7 +31,7 @@ STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
 
 # Add directories to the include and library paths
-INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/sources -type d -print)
+INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
