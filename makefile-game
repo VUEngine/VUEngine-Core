@@ -267,13 +267,12 @@ printBuildingInfo:
 	@echo ""
 
 printPostBuildingInfo:
-	@echo ""
 	@$(eval END_TIME=$(shell date +%s))
 	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Started at: "$(HUMAN_START_DATE)
 	@echo "Ended   at: "$(shell date +%H:%M:%S)
-	@echo "Total time:" $$(( $(END_TIME) - $(START_TIME) ))" seconds"
-	
+	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
+
 portToNewSyntax: dirs
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/cleanSyntax.sh $(VUENGINE_HOME) $(MY_HOME)/source $(PREPROCESSOR_WORKING_FOLDER)
 
