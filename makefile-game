@@ -253,6 +253,7 @@ VUENGINE = $(BUILD_DIR)/libvuengine.a
 all: printPreBuildingInfo dirs libraries printBuildingInfo dirs $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
 printPreBuildingInfo:
+	@echo $(H_FILES)
 	@$(eval START_TIME=$(shell date +%s))
 	@echo "Starting at: "$(shell date)
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
@@ -292,7 +293,7 @@ $(TARGET).vb: $(TARGET).elf
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
 
-$(TARGET).elf: $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+$(TARGET).elf: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET).elf
 	@$(GCC) -o $@ -nostartfiles $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(FINAL_SETUP_CLASSES_OBJECT).o $(SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
 		$(foreach LIBRARY, $(LIBRARIES),-l$(shell echo $(LIBRARY) | sed -e "s@.*/@@")) $(foreach LIB,$(LIBRARIES_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
@@ -353,7 +354,7 @@ preprocessLibraries: deleteLibraries
 			-e NAME=$(LIBRARY);																											\
 	)
 
-libraries: preprocessLibraries $(H_FILES)
+libraries: preprocessLibraries
 	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
 	@-$(foreach LIBRARY, $(LIBRARIES), 																									\
