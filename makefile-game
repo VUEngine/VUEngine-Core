@@ -277,9 +277,12 @@ portToNewSyntax: dirs
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/cleanSyntax.sh $(VUENGINE_HOME) $(MY_HOME)/source $(PREPROCESSOR_WORKING_FOLDER)
 
 dump: $(TARGET).elf
-	@echo Dumping elf
 	@$(OBJDUMP) -t $(TARGET).elf > $(STORE)/sections-$(TYPE).txt
 	@$(OBJDUMP) -S $(TARGET).elf > $(STORE)/machine-$(TYPE).asm
+	@echo "Memory map $(TARGET).map"
+	@echo "Sections   $(STORE)/sections-$(TYPE).txt"
+	@echo "Assembly   $(STORE)/machine-$(TYPE).asm"
+	@echo
 
 pad: $(TARGET).vb
 	@echo Padding $(BUILD_DIR)/$(TARGET_FILE).vb
