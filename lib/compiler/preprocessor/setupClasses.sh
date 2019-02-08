@@ -13,7 +13,7 @@ do
 	case $key in
 		-n)
 		LIBRARY="$2"
-		SETUP_FUNCTION="$2"
+		SETUP_FUNCTION=`sed $'s/[^[:alnum:]\t]//g' <<< $2`
 		shift # past argument
 		;;
 		-o)

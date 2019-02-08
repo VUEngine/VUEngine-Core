@@ -5,10 +5,11 @@ INPUT_FILE=
 OUTPUT_FILE=
 WORKING_FOLDER=build/compiler/preprocessor
 PRINT_DEBUG_OUTPUT=
-HELPER_FILES_PREFIX=engine
-CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/hierarchies/classesHierarchy.txt
+CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classes/hierarchies/classesHierarchy.txt
 HEADERS_FOLDER=
 LIBRARY_NAME=
+LIBRARIES=
+LIBRARIES_PAHT=
 
 while [ $# -gt 1 ]
 do
@@ -26,10 +27,6 @@ do
 		WORKING_FOLDER="$2"
 		shift # past argument
 		;;
-		-p)
-		HELPER_FILES_PREFIX="$2"
-		shift # past argument
-		;;
 		-d)
 		PRINT_DEBUG_OUTPUT="true"
 		;;
@@ -45,6 +42,15 @@ do
 		LIBRARY_NAME="$2"
 		shift # past argument
 		;;
+		-lp)
+		LIBRARIES_PATH="$2"
+		shift # past argument
+		;;
+		-l)
+		;;
+		*)
+		LIBRARIES="$LIBRARIES $1"
+		;;
 	esac
 
 	shift
@@ -53,6 +59,14 @@ done
 if [ -z "$INPUT_FILE" ] || [ ! -f "$INPUT_FILE" ];
 then
 	echo "Input file not found: $INPUT_FILE"
+	exit 0
+fi
+
+if [ "$INPUT_FILE" = "$OUTPUT_FILE" ];
+then
+	echo Files are the same
+	echo "$INPUT_FILE" 
+	echo "$OUTPUT_FILE"
 	exit 0
 fi
 
@@ -66,31 +80,51 @@ baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_
 if [ -z "$className" ];
 then
 	cp -f $INPUT_FILE $OUTPUT_FILE
+#	echo No class in $INPUT_FILE
 	exit 0
 fi
 
-if [ ! -z "$(find "$WORKING_FOLDER/dictionaries/" -mindepth 1 -print -quit 2>/dev/null)" ]; then
+# Build headers search path
+searchPaths="$HEADERS_FOLDER/source"
+for library in $LIBRARIES;
+do
+	searchPaths=$searchPaths" $LIBRARIES_PATH/$library/source"
+done
 
-	inheritingClasses=`grep $className"_constructor" $WORKING_FOLDER/dictionaries/*MethodsInherited.txt | cut -d ":" -f 1 | sed -e 's@.*dictionaries/\(.*\)MethodsInherited.txt@\1@g' | sort -u`
-
-	for inheritingClass in $inheritingClasses;
-	do
-		find "$WORKING_FOLDER/sources" -name "$inheritingClass.h" -exec rm -f {} \;
-	done
-fi
-
+mustBeReprocessed=false
+# Call upwards
 if [ ! -z "${className##Object}" ];
 then
-	baseClassFile=`find $HEADERS_FOLDER -name "$baseClassName.h"`
-	processedBaseClassFile=`find $WORKING_FOLDER -name "$baseClassName.h"`
-	
-	if [ -f "$baseClassFile" ] && [ ! -f "$processedBaseClassFile" ];
+	baseClassFile=`find $HEADERS_FOLDER/source -not -path "*/working/*" -name "$baseClassName.h"`
+	processedBaseClassFile=`sed -e 's#.*'"$LIBRARY_NAME"'/\(.*\)#'"$WORKING_FOLDER"'/sources/'"$LIBRARY_NAME"'/\1#g' <<< "$baseClassFile"`
+
+	# Call upwards if base class belongs to library
+	if [ -f "$baseClassFile" ];
 	then
-		processedBaseClassFile=`echo "$WORKING_FOLDER/sources/$LIBRARY_NAME/$baseClassFile" | sed -e 's@'"$HEADERS_FOLDER"/'@@g'`
-		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $HELPER_FILES_PREFIX
+#		echo Call upwards to "$baseClassName" from $className 
+#		echo baseClassFile $baseClassFile 
+#		echo processedBaseClassFile $processedBaseClassFile
+		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -lp $LIBRARIES_PATH -l $LIBRARIES
+	fi
+
+	processedBaseClassFile=`find $WORKING_FOLDER/sources -name "$baseClassName.h"`
+
+#	echo processedBaseClassFile $processedBaseClassFile
+	if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
+	then
+		mustBeReprocessed=true
 	fi
 fi
 
+if [ ! "$mustBeReprocessed" = true ] &&[ -f "$OUTPUT_FILE" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
+then
+#	ls -l $OUTPUT_FILE
+#	ls -l $INPUT_FILE
+#	echo Up to date "$className"
+	exit 0
+fi
+
+# The continue
 echo "Preprocessing class: $className"
 
 # replace any previous entry
@@ -98,15 +132,10 @@ if [ -f $CLASSES_HIERARCHY_FILE ];
 then
 	sed -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE > $CLASSES_HIERARCHY_FILE.tmp
 	mv $CLASSES_HIERARCHY_FILE.tmp $CLASSES_HIERARCHY_FILE
+else
+	touch $CLASSES_HIERARCHY_FILE
 fi
-# save new hierarchy
-echo "$className:$baseClassName:$classModifiers" >> $CLASSES_HIERARCHY_FILE
 
-# Must prevent Object class trying to actually inherit from itself
-if [ "$className" = "Object" ];
-then
-	baseClassName=
-fi
 
 #echo "classDeclaration: $classDeclaration"
 #echo "cleanClassDeclaration: $cleanClassDeclaration"
@@ -114,22 +143,35 @@ fi
 #echo "Modifiers: $classModifiers"
 
 # Compute the class' whole hierarchy
+baseClassesNamesHelper=$baseClassName":"
+
 if [ ! -z "$baseClassName" ];
 then
-
 	baseClassesNames=$baseClassName
 	baseBaseClassName=$baseClassName
 
+	CLASSES_HIERARCHY=`cat $WORKING_FOLDER/classes/hierarchies/*.txt`
+
 	while : ; do
 
-		baseBaseClassName=`grep -e "^$baseBaseClassName:.*" $CLASSES_HIERARCHY_FILE | cut -d ":" -f 2`
+		baseBaseClassName=`grep -e "^$baseBaseClassName:.*" <<< "$CLASSES_HIERARCHY" | cut -d ":" -f 2`
 		baseClassesNames="$baseBaseClassName $baseClassesNames"
+		baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
 
 		if [ -z "${baseBaseClassName##Object}" ];
 		then
 			break
 		fi
 	done
+fi
+
+# save new hierarchy
+echo "$className:$baseClassesNamesHelper:$classModifiers" >> $CLASSES_HIERARCHY_FILE
+
+# Must prevent Object class trying to actually inherit from itself
+if [ -z "${className##Object}" ];
+then
+	baseClassName=
 fi
 
 #echo className $className
@@ -172,28 +214,45 @@ fi
 # Process each method to generate the final header
 methodDeclarations=
 
-# Created method dictionaries
-CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/dictionaries/$className"MethodsOwned.txt"
+# Create method dictionaries
+CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwned.txt"
 rm -f $CLASS_OWNED_METHODS_DICTIONARY
 touch $CLASS_OWNED_METHODS_DICTIONARY
 
-CLASS_INHERITED_METHODS_DICTIONARY=$WORKING_FOLDER/dictionaries/$className"MethodsInherited.txt"
+CLASS_INHERITED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsInherited.txt"
 rm -f $CLASS_INHERITED_METHODS_DICTIONARY
 touch $CLASS_INHERITED_METHODS_DICTIONARY
 
-CLASS_VIRTUAL_METHODS_DICTIONARY=$WORKING_FOLDER/dictionaries/$className"MethodsVirtual.txt"
+CLASS_VIRTUAL_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtual.txt"
 rm -f $CLASS_VIRTUAL_METHODS_DICTIONARY
 touch $CLASS_VIRTUAL_METHODS_DICTIONARY
+
+CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
+#echo "$OUTPUT_FILE:" | sed -e 's@'"$WORKING_FOLDER"'/@@g' > $CLASS_DEPENDENCIES_FILE
+
+if [ ! -z "$baseClassesNames" ];
+then
+	echo "$OUTPUT_FILE: \\" > $CLASS_DEPENDENCIES_FILE
+fi
 
 # Get base classes' methods
 for ancestorClassName in $baseClassesNames;
 do
-	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsInherited.txt"
-	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/dictionaries/$ancestorClassName"MethodsVirtual.txt"
+	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsInherited.txt"
+	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsVirtual.txt"
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
 	cat $ancestorVirtualMethodsDictionary | sed -e 's/'"$ancestorClassName"'/'"$className"'/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
+	headerFile=`find $searchPaths -name "$ancestorClassName.h"`
+
+	if [ -f "$headerFile" ];
+	then
+		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
+	fi
 done
+
+echo >> $CLASS_DEPENDENCIES_FILE
+rm -f $CLASS_DEPENDENCIES_FILE-e
 
 isFirstMethod=
 firstMethodLine=-1
@@ -375,6 +434,8 @@ sed -i -e 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#'
 sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 sed -i -e 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
 sed -i -e 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
+sed -i -e '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
 
 rm -f $TEMPORAL_FILE
 rm -f $OUTPUT_FILE"-e"
+

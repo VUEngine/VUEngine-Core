@@ -14,6 +14,9 @@ TYPE = release
 # Default clean type
 CLEAN_TYPE = all
 
+# Engine name
+ENGINE_NAME = $(NAME)
+
 # Where the game lives
 GAME_HOME = .
 
@@ -197,12 +200,14 @@ SETUP_CLASSES_SOURCE = $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CL
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
-D_FILES = $(addprefix $(STORE)/objects/$(NAME)/,$(C_SOURCES:.c=.d))
+D_FILES = $(C_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
-D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
+D_FILES := $(D_FILES) $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) -name "*.d"; fi; )
+D_FILES := $(D_FILES) $(foreach PLUGIN, $(PLUGINS), $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(PLUGIN) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(PLUGIN) -name "*.d"; fi; ))
+
 
 # File that holds the classes hierarchy
-CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
+CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
 
 # the target file
 TARGET_FILE = lib$(BASENAME)
@@ -250,9 +255,11 @@ $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(PREPROCESSOR_WORKING_FOLDER) -lp $(VBDE)libs -l $(NAME)
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp 
 	@sed -e 's#$<##' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.dd
-	@sed -e 's#$@#$<#' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d
+	@sed -e 's#$@#$<#' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d.tmp
+	@sed -e '/^[ 	\\]*$$/d' $(STORE)/objects/$(NAME)/$*.d.tmp > $(STORE)/objects/$(NAME)/$*.d
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd.tmp
+	@rm -f $(STORE)/objects/$(NAME)/$*.d.tmp
 
 $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
@@ -262,7 +269,7 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@$(AS) -o $@ $<
 
 $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(MY_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(BASENAME)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
@@ -277,8 +284,9 @@ clean:
 dirs:
 #	@echo Checking working dirs...
 	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME); fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/dictionaries ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/dictionaries; fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/hierarchies ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/hierarchies; fi;
+	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies; fi;
+	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries; fi;
+	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME); fi;
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR) ]; \
          then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); fi; )
 	@-if [ ! -e $(STORE)/objects/$(NAME) ]; then mkdir -p $(STORE)/objects/$(NAME); fi;

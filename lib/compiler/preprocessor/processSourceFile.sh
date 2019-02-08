@@ -20,9 +20,8 @@ clean_up() {
 INPUT_FILE=
 OUTPUT_FILE=
 WORKING_FOLDER=build/preprocessor
-HELPER_FILES_PREFIXES=
 PRINT_DEBUG_OUTPUT=
-CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/hierarchies/classesHierarchy.txt
+CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classes/hierarchies/classesHierarchy.txt
 
 while [ $# -gt 0 ]
 do
@@ -47,17 +46,11 @@ do
 		-d)
 		PRINT_DEBUG_OUTPUT="true"
 		;;
-		-p|-output)
-		;;
-		*)
-		HELPER_FILES_PREFIXES="$HELPER_FILES_PREFIXES $1"
-		;;
 	esac
 
 	shift
 done
 
-#echo HELPER_FILES_PREFIXES $HELPER_FILES_PREFIXES
 #echo WORKING_FOLDER $WORKING_FOLDER
 #echo INPUT_FILE $INPUT_FILE
 #echo OUTPUT_FILE $OUTPUT_FILE
@@ -186,9 +179,8 @@ sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
 
 anyMethodVirtualized=false
 
-#echo HELPER_FILES_PREFIXES $HELPER_FILES_PREFIXES
 # Replace calls to base class methods
-CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/dictionaries/$className"MethodsOwned.txt"
+CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwned.txt"
 classHasOwnMethods=`cat $CLASS_OWNED_METHODS_DICTIONARY`
 if [ ! -z "$classHasOwnMethods" ];
 then
@@ -196,7 +188,7 @@ then
 	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 fi
 
-VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$className"MethodsVirtualToApply.txt"
+VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtualToApply.txt"
 if [ -f $VIRTUAL_METHODS_FILE ];
 then
 	rm -f $VIRTUAL_METHODS_FILE
@@ -205,7 +197,7 @@ fi
 # Generate a dictionary of all virtual methods to replace on file
 for referencedClassName in $referencedClassesNames
 do
-	REFERENCED_CLASS_VIRTUAL_METHODS_FILE=$WORKING_FOLDER/dictionaries/$referencedClassName"MethodsVirtual.txt"
+	REFERENCED_CLASS_VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsVirtual.txt"
 
 	if [ ! -f "$REFERENCED_CLASS_VIRTUAL_METHODS_FILE" ];
 	then
@@ -241,7 +233,7 @@ sed -i -e 's/<[%]*DECLARATION>//g' $OUTPUT_FILE
 sed -i -e 's/<START_BLOCK>//g' $OUTPUT_FILE
 
 
-classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -f3`
+classModifiers=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | sed -e 's/^.*::\(.*\)/\1/g'`
 
 if [ -z $classModifiers ];
 then
