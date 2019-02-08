@@ -254,11 +254,10 @@ all: printPreBuildingInfo dirs libraries printBuildingInfo dirs $(TARGET).vb $(P
 
 printPreBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
-	@echo Starting at $(shell date)
+	@echo "Starting at: "$(shell date)
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
-	@echo Build type: $(TYPE)
-	@echo Compiler: $(COMPILER_NAME) $(COMPILER_VERSION)
-	@echo Compiler\'s output: $(COMPILER_OUTPUT)
+	@echo "Build type : $(TYPE)"
+	@echo "Compiler   : $(COMPILER_NAME) $(COMPILER_VERSION)"
 
 printBuildingInfo:
 	@echo ""
@@ -338,8 +337,9 @@ $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(BASENAME) -l $(LIBRARIES)
 
 preprocessLibraries: deleteLibraries
+	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 	@echo 
-	@echo Preprocessing classes
+	@echo "********************************************* PREPROCESSING CLASSES"
 	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
@@ -351,9 +351,11 @@ preprocessLibraries: deleteLibraries
 			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
 			-e GAME_HOME=$(MY_HOME)																										\
 			-e NAME=$(LIBRARY);																											\
-	)																																	\
+	)
 
 libraries: preprocessLibraries $(H_FILES)
+	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
+	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
 	@-$(foreach LIBRARY, $(LIBRARIES), 																									\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\

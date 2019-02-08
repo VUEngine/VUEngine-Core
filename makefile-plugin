@@ -244,13 +244,14 @@ printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
-preprocessClasses: dirs $(H_FILES)
+preprocessClasses: dirs preprocessLibraries $(H_FILES)
 
 $(TARGET).a: $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET_FILE)-$(TYPE)
 	@$(AR) rcsT $@ $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
 $(BUILD_DIR)/$(TARGET_FILE).a: 
+	@echo CALLED
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
@@ -263,7 +264,21 @@ $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(PREPROCESSOR_WORKING_FOLDER)
 
-libraries: $(H_FILES)
+preprocessLibraries:
+	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
+		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
+		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
+		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )															\
+		$(MAKE) --no-print-directory preprocessClasses																					\
+			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )					\
+			-e TYPE=$(TYPE) 																											\
+			-e CONFIG_FILE=$(CONFIG_FILE) 																								\
+			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
+			-e GAME_HOME=$(GAME_HOME)																										\
+			-e NAME=$(LIBRARY);																											\
+	)
+
+libraries: preprocessLibraries $(H_FILES)
 	@-$(foreach LIBRARY, $(LIBRARIES), 	 																										\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
