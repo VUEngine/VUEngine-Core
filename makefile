@@ -235,8 +235,11 @@ $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECT
 	@echo Linking $(TARGET_FILE)-$(TYPE)
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
-$(BUILD_DIR)/$(TARGET_FILE).a: $(TARGET).a
+$(BUILD_DIR)/$(TARGET_FILE).a: phony $(TARGET).a
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
+
+phony:
+	@echo > /dev/null
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
