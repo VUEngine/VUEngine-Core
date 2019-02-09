@@ -257,7 +257,6 @@ VUENGINE = $(BUILD_DIR)/libvuengine.a
 all: printPreBuildingInfo dirs preprocessClasses libraries printBuildingInfo dirs $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
 printPreBuildingInfo:
-	@echo $(TEST)
 	@$(eval START_TIME=$(shell date +%s))
 	@echo "Starting at: "$(shell date)
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
