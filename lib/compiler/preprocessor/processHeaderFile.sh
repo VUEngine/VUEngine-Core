@@ -3,9 +3,9 @@
 
 INPUT_FILE=
 OUTPUT_FILE=
-WORKING_FOLDER=build/compiler/preprocessor
+WORKING_FOLDER=
 PRINT_DEBUG_OUTPUT=
-CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classes/hierarchies/classesHierarchy.txt
+CLASSES_HIERARCHY_FILE=
 HEADERS_FOLDER=
 LIBRARY_NAME=
 LIBRARIES=
@@ -71,9 +71,7 @@ then
 fi
 
 classDeclaration=`grep -n -e "^[ 	]*[A-z0-9]*[ 	]*class[ 	]\+[A-Z][A-z0-9]*[ 	]*:[ 	]*[A-Z][A-z0-9]*" $INPUT_FILE`
-line=`cut -d: -f1 <<< "$classDeclaration"`
 cleanClassDeclaration=`cut -d: -f2,3 <<< "$classDeclaration"`
-classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
 className=`sed -e 's#^.*class \([A-z][A-z0-9]*\)[ 	]*\:.*#\1#' <<< "$cleanClassDeclaration"`
 baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_-]//g'`
 
@@ -84,18 +82,11 @@ then
 	exit 0
 fi
 
-# Build headers search path
-searchPaths="$HEADERS_FOLDER/source"
-for library in $LIBRARIES;
-do
-	searchPaths=$searchPaths" $LIBRARIES_PATH/$library/source"
-done
-
 mustBeReprocessed=false
 # Call upwards
 if [ ! -z "${className##Object}" ];
 then
-	baseClassFile=`find $HEADERS_FOLDER/source -not -path "*/working/*" -name "$baseClassName.h"`
+	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
 	processedBaseClassFile=`sed -e 's#.*'"$LIBRARY_NAME"'/\(.*\)#'"$WORKING_FOLDER"'/sources/'"$LIBRARY_NAME"'/\1#g' <<< "$baseClassFile"`
 
 	# Call upwards if base class belongs to library
@@ -107,7 +98,10 @@ then
 		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -lp $LIBRARIES_PATH -l $LIBRARIES
 	fi
 
-	processedBaseClassFile=`find $WORKING_FOLDER/sources -name "$baseClassName.h"`
+	if [ ! -f "$processedBaseClassFile" ];
+	then
+		processedBaseClassFile=`find $WORKING_FOLDER/sources -name "$baseClassName.h" -print -quit`
+	fi
 
 #	echo processedBaseClassFile $processedBaseClassFile
 	if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
@@ -116,7 +110,7 @@ then
 	fi
 fi
 
-if [ ! "$mustBeReprocessed" = true ] &&[ -f "$OUTPUT_FILE" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
+if [ -z "${mustBeReprocessed##false}" ] && [ -f "$OUTPUT_FILE" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
 then
 #	ls -l $OUTPUT_FILE
 #	ls -l $INPUT_FILE
@@ -127,11 +121,13 @@ fi
 # The continue
 echo "Preprocessing class: $className"
 
+classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
+line=`cut -d: -f1 <<< "$classDeclaration"`
+
 # replace any previous entry
 if [ -f $CLASSES_HIERARCHY_FILE ];
 then
-	sed -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE > $CLASSES_HIERARCHY_FILE.tmp
-	mv $CLASSES_HIERARCHY_FILE.tmp $CLASSES_HIERARCHY_FILE
+	sed -i -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
 else
 	touch $CLASSES_HIERARCHY_FILE
 fi
@@ -235,6 +231,13 @@ then
 	echo "$OUTPUT_FILE: \\" > $CLASS_DEPENDENCIES_FILE
 fi
 
+# Build headers search path
+searchPaths="$HEADERS_FOLDER/source"
+for library in $LIBRARIES;
+do
+	searchPaths=$searchPaths" $LIBRARIES_PATH/$library/source"
+done
+
 # Get base classes' methods
 for ancestorClassName in $baseClassesNames;
 do
@@ -243,7 +246,7 @@ do
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
 	cat $ancestorVirtualMethodsDictionary | sed -e 's/'"$ancestorClassName"'/'"$className"'/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
-	headerFile=`find $searchPaths -name "$ancestorClassName.h"`
+	headerFile=`find $searchPaths -name "$ancestorClassName.h" -print -quit`
 
 	if [ -f "$headerFile" ];
 	then
