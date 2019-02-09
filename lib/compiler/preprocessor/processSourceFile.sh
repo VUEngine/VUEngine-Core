@@ -58,7 +58,7 @@ cp $INPUT_FILE $OUTPUT_FILE
 
 if [ ! -f "$INPUT_FILE" ];
 then
-	echo "File not found: $INPUT_FILE"
+	echo " file not found: $INPUT_FILE"
 	exit 0
 fi
 
@@ -130,7 +130,7 @@ firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "Error (1) processing file: $OUTPUT_FILE"
+	echo " error (1) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -145,7 +145,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "Error (2) processing file: $OUTPUT_FILE"
+	echo " error (2) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -222,7 +222,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "Error (3) processing file: $OUTPUT_FILE"
+	echo " error (3) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -292,7 +292,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "Error (4) processing file: $OUTPUT_FILE"
+	echo " error (4) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -344,7 +344,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo "Error (5) processing file: $OUTPUT_FILE"
+	echo " error (5) processing file: $OUTPUT_FILE"
 	exit 0
 fi
 

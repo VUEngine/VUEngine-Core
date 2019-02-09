@@ -64,9 +64,9 @@ fi
 
 if [ "$INPUT_FILE" = "$OUTPUT_FILE" ];
 then
-	echo Files are the same
-	echo "$INPUT_FILE" 
-	echo "$OUTPUT_FILE"
+	echo "Input and output files are the same: $INPUT_FILE"
+#	echo "$INPUT_FILE" 
+#	echo "$OUTPUT_FILE"
 	exit 0
 fi
 
@@ -119,7 +119,7 @@ then
 fi
 
 # The continue
-echo "Preprocessing class: $className"
+echo -n "Preprocessing class: $className..."
 
 classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
 line=`cut -d: -f1 <<< "$classDeclaration"`
@@ -351,7 +351,8 @@ then
 
 	if [ -z "$constructor" ];
 	then
-		echo "Error: no constructor defined for $className : $baseClassName in $methodDeclarations"
+		echo
+		echo " error (1): no constructor defined for $className : $baseClassName in $methodDeclarations"
 		exit 0
 	else
 #		echo "Added allocator"
@@ -442,3 +443,4 @@ sed -i -e '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
 rm -f $TEMPORAL_FILE
 rm -f $OUTPUT_FILE"-e"
 
+echo " done"

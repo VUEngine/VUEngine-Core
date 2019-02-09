@@ -232,16 +232,14 @@ TARGET_FILE = lib$(BASENAME)
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printPreBuildingInfo dirs libraries printBuildingInfo $(TARGET).a printPostBuildingInfo
+all: printPreBuildingInfo preprocessClasses libraries printBuildingInfo $(TARGET).a printPostBuildingInfo
 
 printPreBuildingInfo:
 
 printBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
-	@echo "********************************************* $(BASENAME)"
-	@echo Building $(TARGET_FILE).a
-	@echo ""
+	@echo "********************************************* Building $(BASENAME)"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
@@ -253,11 +251,8 @@ $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECT
 	@echo Linking $(TARGET_FILE)-$(TYPE)
 	@$(AR) rcsT $@ $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
-$(BUILD_DIR)/$(TARGET_FILE).a: phony
+$(BUILD_DIR)/$(TARGET_FILE).a: printBuildingInfo libraries $(TARGET).a printPostBuildingInfo
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
-
-phony:
-	@echo > /dev/null
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
@@ -270,26 +265,26 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(PREPROCESSOR_WORKING_FOLDER)
 
 preprocessLibraries:
-	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
+	@-$(foreach LIBRARY, $(LIBRARIES), 		 																									\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
-		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )															\
-		$(MAKE) --no-print-directory preprocessClasses																					\
-			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )					\
-			-e TYPE=$(TYPE) 																											\
-			-e CONFIG_FILE=$(CONFIG_FILE) 																								\
-			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
-			-e GAME_HOME=$(GAME_HOME)																										\
-			-e NAME=$(LIBRARY);																											\
+		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )														\
+		$(MAKE) --no-print-directory preprocessClasses																							\
+			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )							\
+			-e TYPE=$(TYPE) 																													\
+			-e CONFIG_FILE=$(CONFIG_FILE) 																										\
+			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
+			-e GAME_HOME=$(GAME_HOME)																											\
+			-e NAME=$(LIBRARY);																													\
 	)
 
-libraries: preprocessLibraries $(H_FILES)
+libraries:
 	@-$(foreach LIBRARY, $(LIBRARIES), 	 																										\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
-		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )															\
+		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )														\
 		if [ ! -f $(LIBRARY_FILE) ]; then 																										\
-			$(MAKE) --no-print-directory all 																									\
+			$(MAKE) --no-print-directory	 																									\
 				$(LIBRARY_FILE)																													\
 				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
 				-e TYPE=$(TYPE) 																												\
@@ -315,6 +310,7 @@ $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.d.tmp
 
 $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
+#	@echo Preocompiling $<
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $($(BASENAME)_PLUGINS) $(BASENAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
@@ -334,17 +330,39 @@ clean:
 	@echo "Cleaning done."
 
 # Create necessary directories
-dirs:
-#	@echo Checking working dirs...
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME); fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies; fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries; fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME); fi;
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR) ]; \
-         then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); fi; )
-	@-if [ ! -e $(STORE)/objects/$(NAME) ]; then mkdir -p $(STORE)/objects/$(NAME); fi;
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(STORE)/objects/$(NAME)/$(DIR) ]; \
-         then mkdir -p $(STORE)/objects/$(NAME)/$(DIR); fi; )
+DIRS_EXIST=$(shell [ -e $(STORE)/objects/$(NAME) ] && echo 1 || echo 0 )
+
+checkLibrariesDirs:
+	@-$(foreach LIBRARY, $(LIBRARIES), 		 																									\
+		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
+		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
+		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )														\
+		$(MAKE) --no-print-directory dirs																										\
+			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )							\
+			-e TYPE=$(TYPE) 																													\
+			-e CONFIG_FILE=$(CONFIG_FILE) 																										\
+			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
+			-e GAME_HOME=$(GAME_HOME)																											\
+			-e NAME=$(LIBRARY);																													\
+	)
+
+printDirsInfo: phony
+ifeq ($(DIRS_EXIST), 0)
+	@echo -n Checking working dirs for $(BASENAME)...
+endif
+
+dirs: checkLibrariesDirs printDirsInfo
+ifeq ($(DIRS_EXIST), 0)
+	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies
+	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries
+	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME)
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); )
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(STORE)/objects/$(NAME)/$(DIR); )
+	@echo " done"
+endif
+
+phony:
+	@echo > /dev/null
 
 # Includes the .d files so it knows the exact dependencies for every source
 -include $(D_FILES)

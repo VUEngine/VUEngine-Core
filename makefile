@@ -214,16 +214,14 @@ TARGET_FILE = lib$(BASENAME)
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printPreBuildingInfo printBuildingInfo dirs $(TARGET).a printPostBuildingInfo
+all: printPreBuildingInfo printBuildingInfo $(TARGET).a printPostBuildingInfo
 
 printPreBuildingInfo:
 
 printBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
-	@echo "********************************************* $(BASENAME)"
-	@echo Building $(TARGET_FILE).a
-	@echo ""
+	@echo "********************************************* Building $(BASENAME)"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
@@ -231,15 +229,12 @@ printPostBuildingInfo:
 
 preprocessClasses: dirs $(H_FILES)
 
-$(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+$(TARGET).a: dirs $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET_FILE)-$(TYPE)
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 
-$(BUILD_DIR)/$(TARGET_FILE).a: phony $(TARGET).a
+$(BUILD_DIR)/$(TARGET_FILE).a: printBuildingInfo $(TARGET).a printPostBuildingInfo
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
-
-phony:
-	@echo > /dev/null
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
@@ -265,6 +260,7 @@ $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.d.tmp
 
 $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
+#	@echo Preocompiling $<
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
@@ -284,17 +280,25 @@ clean:
 	@echo "Cleaning done."
 
 # Create necessary directories
-dirs:
-#	@echo Checking working dirs...
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME); fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies; fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries; fi;
-	@-if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME); fi;
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR) ]; \
-         then mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); fi; )
-	@-if [ ! -e $(STORE)/objects/$(NAME) ]; then mkdir -p $(STORE)/objects/$(NAME); fi;
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), if [ ! -e $(STORE)/objects/$(NAME)/$(DIR) ]; \
-         then mkdir -p $(STORE)/objects/$(NAME)/$(DIR); fi; )
+DIRS_EXIST=$(shell [ -e $(STORE)/objects/$(NAME) ] && echo 1 || echo 0 )
+
+printDirsInfo: phony
+ifeq ($(DIRS_EXIST), 0)
+	@echo -n Checking working dirs for $(BASENAME)...
+endif
+
+dirs: printDirsInfo
+ifeq ($(DIRS_EXIST), 0)
+	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies
+	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries
+	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME)
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); )
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(STORE)/objects/$(NAME)/$(DIR); )
+	@echo " done"
+endif
+
+phony:
+	@echo > /dev/null
 
 # Includes the .d files so it knows the exact dependencies for every source
 -include $(D_FILES)
