@@ -250,7 +250,7 @@ preprocessClasses: dirs preprocessLibraries $(H_FILES)
 
 $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
-	@$(AR) rcsT $@ $(foreach LIBRARY, $(LIBRARIES), $(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+	@$(AR) rcsT $@ $(foreach LIBRARY, $(LIBRARIES), $(STORE)/lib$(shell echo $(LIBRARY)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo " done"
 
 $(BUILD_DIR)/$(TARGET_FILE).a: libraries printBuildingInfo $(TARGET).a printPostBuildingInfo

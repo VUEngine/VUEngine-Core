@@ -369,7 +369,7 @@ preprocessLibraries:
 			-e PREPROCESS=1;																											\
 	)
 
-libraries:
+libraries: deleteLibraries
 	@-$(foreach LIBRARY, $(LIBRARIES), 																									\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
