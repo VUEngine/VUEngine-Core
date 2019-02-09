@@ -31,10 +31,10 @@ BUILD_DIR = $(GAME_HOME)/build
 STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 
 # Where to preprocess source files
-PREPROCESSOR_WORKING_FOLDER = $(BUILD_DIR)/working
+WORKING_FOLDER = $(BUILD_DIR)/working
 
 # Add directories to the include and library paths
-INCLUDE_PATHS = $(shell find $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/sources/$(NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -178,14 +178,14 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/sources/$(NAME)/, $(HEADERS:.h=.h))
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
 C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
-C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCES:.c=.c))
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCES:.c=.c))
 C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
@@ -196,21 +196,21 @@ HELPERS_PREFIX = $(BASENAME)
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
-SETUP_CLASSES_SOURCE = $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CLASSES)
+SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CLASSES)
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
 ifneq ($(PREPROCESS), 1)
 D_FILES = $(C_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
-D_FILES := $(D_FILES) $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) -name "*.d"; fi; )
+D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) -name "*.d"; fi; )
 else
-D_FILES = $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
+D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
 endif
 
 
 # File that holds the classes hierarchy
-CLASSES_HIERARCHY_FILE=$(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
+CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
 
 # the target file
 TARGET_FILE = lib$(BASENAME)
@@ -232,9 +232,10 @@ printPostBuildingInfo:
 
 preprocessClasses: dirs $(H_FILES)
 
-$(TARGET).a: dirs $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
-	@echo Linking $(TARGET_FILE)-$(TYPE)
+$(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
 	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+	@echo " done"
 
 $(BUILD_DIR)/$(TARGET_FILE).a: printBuildingInfo $(TARGET).a printPostBuildingInfo
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
@@ -246,14 +247,14 @@ $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@rm -f $*.dd
 
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(PREPROCESSOR_WORKING_FOLDER)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
+$(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/sources/$(NAME)/%.c
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(PREPROCESSOR_WORKING_FOLDER) -lp $(VBDE)libs -l $(NAME)
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -lp $(VBDE)libs -l $(NAME)
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp 
 	@sed -e 's#$<##' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.dd
 	@sed -e 's#$@#$<#' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d.tmp
@@ -262,16 +263,16 @@ $(STORE)/objects/$(NAME)/%.o: $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd.tmp
 	@rm -f $(STORE)/objects/$(NAME)/$*.d.tmp
 
-$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
+$(WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
 #	@echo Preocompiling $<
-	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
+	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
 
-$(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(PREPROCESSOR_WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
+$(WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
@@ -292,10 +293,10 @@ endif
 
 dirs: printDirsInfo
 ifeq ($(DIRS_EXIST), 0)
-	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/hierarchies
-	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dictionaries
-	@mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME)
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(DIR); )
+	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies
+	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
+	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/sources/$(NAME)/$(DIR); )
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(STORE)/objects/$(NAME)/$(DIR); )
 	@echo " done"
 endif
