@@ -31,4 +31,4 @@ else
 	message="Compiling class: $className..."
 fi
 
-echo -n $message
+echo -n "$message"

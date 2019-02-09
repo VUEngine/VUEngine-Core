@@ -214,8 +214,12 @@ then
 	classHasOwnMethods=`cat $VIRTUAL_METHODS_FILE`
 	if [ ! -z "$classHasOwnMethods" ];
 	then
+		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
+		printProgressID=`echo $!`
 		awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
 		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+		disown $printProgressID
+		kill $printProgressID
 	fi
 
 	rm -f $VIRTUAL_METHODS_FILE

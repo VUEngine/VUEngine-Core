@@ -262,19 +262,29 @@ rm -f $CLASS_DEPENDENCIES_FILE-e
 isFirstMethod=
 firstMethodLine=-1
 
+echo -n "."
 methodDeclarations=`sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#' <<< "$methods"`
 
+echo -n "."
 virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
+echo -n "."
 virtualMethodOverrides=$virtualMethodOverrides" "`grep -e "<override>\|<virtual>" <<< "$methodDeclarations" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
+echo -n "."
 virtualMethodNames=`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/\1/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
 
+echo -n "."
 methodCalls=`grep -v -e "<static>\|<virtual>\|<override>" <<< "$methodDeclarations" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/'"$className"'_\1/g'`
 
 # Clean up method declarations
+echo -n "."
 virtualMethodDeclarations=`sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' -e 's/,[ 	]*)[ 	]*;/);/g' <<< "$virtualMethodDeclarations"`
+echo -n "."
 methodDeclarations=`sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' <<< "$methodDeclarations"`
+echo -n "."
 methodDeclarations=`sed -e 's/\(^.*[ 	][ 	]*\)\([a-z][A-z0-9]*\)(\(.*\)/\1'"$className"'_\2(void* _this,\3/g' <<< "$methodDeclarations"`
+echo -n "."
 methodDeclarations=`sed -e 's/\(^.*\)void\* _this,\(.*\)<static>/\1\2/g' -e 's#<virtual>#	#;s#<override>#	#;s#<static>#	#' -e 's/,[ 	]*)[ 	]*;/);/g' <<< "$methodDeclarations"`
+echo -n "."
 
 if [ ! -z "$virtualMethodNames" ];
 then
