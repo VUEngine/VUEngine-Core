@@ -60,18 +60,18 @@ fi
 
 for library in $LIBRARIES;
 do
-	pattern=$WORKING_FOLDER/sources/$library/
+	pattern=$WORKING_FOLDER/objects/$library/
 	replacement=$LIBRARIES_PATH/$library/
 	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
 replacement=
-pattern=$WORKING_FOLDER/sources/$LIBRARY
+pattern=$WORKING_FOLDER/objects/$LIBRARY
 
 if [ ! -z "$LIBRARY" ];
 then
-	pattern=$WORKING_FOLDER/sources/$LIBRARY/
+	pattern=$WORKING_FOLDER/objects/$LIBRARY/
 
 	if [ ! -z "$LIBRARY_PATH" ];
 	then

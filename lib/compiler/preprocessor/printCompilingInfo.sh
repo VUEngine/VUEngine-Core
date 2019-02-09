@@ -2,23 +2,33 @@
 #
 INPUT_FILE=$1
 
+message="Compiling file:  $INPUT_FILE..."
+
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
-	echo $INPUT_FILE | sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1#g'
-	exit 0
+	message=`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1...#g' <<< $INPUT_FILE`
 fi
 
-className=`grep -m 1 -e 'CLASS_IN_FILE([A-Z][A-z0-9]*)' $INPUT_FILE | sed -e 's#.*CLASS_IN_FILE(\([A-Z][A-z0-9]*\)).*#\1#'`
+className=`grep -m 1 -e '^.*::[ 	]*constructor[ 	]*(' $INPUT_FILE | sed -e 's#^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)::.*#\1#'`
+
+if [ -z "$className" ];
+then
+	className=`grep -o -m 1 -e '^.*[ 	][ 	]*[A-Z][A-z0-9\*()]*[ 	][ 	]*[A-Z][A-z0-9]*[ 	]*::[ 	]*[a-z][A-z0-9]*[ 	]*(' $INPUT_FILE | sed -e 's/^.*[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*::.*/\1/'`
+fi
 
 if [ -z "$className" ];
 then
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo $INPUT_FILE | sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g'
+		message=`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`
 	else
-		echo "Compiling file:  $INPUT_FILE"
+		if [ -z "${INPUT_FILE##*object*}" ];
+		then
+			message=`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`
+		fi
 	fi
-	exit 0
+else
+	message="Compiling class: $className..."
 fi
 
-echo "Compiling class: $className"
+echo -n $message

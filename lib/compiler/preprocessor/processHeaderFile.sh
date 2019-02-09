@@ -87,7 +87,7 @@ mustBeReprocessed=false
 if [ ! -z "${className##Object}" ];
 then
 	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
-	processedBaseClassFile=`sed -e 's#.*'"$LIBRARY_NAME"'/\(.*\)#'"$WORKING_FOLDER"'/sources/'"$LIBRARY_NAME"'/\1#g' <<< "$baseClassFile"`
+	processedBaseClassFile=`sed -e 's#.*'"$LIBRARY_NAME"'/\(.*\)#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/\1#g' <<< "$baseClassFile"`
 
 	# Call upwards if base class belongs to library
 	if [ -f "$baseClassFile" ];
@@ -100,7 +100,7 @@ then
 
 	if [ ! -f "$processedBaseClassFile" ];
 	then
-		processedBaseClassFile=`find $WORKING_FOLDER/sources -name "$baseClassName.h" -print -quit`
+		processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
 	fi
 
 #	echo processedBaseClassFile $processedBaseClassFile
@@ -241,6 +241,8 @@ done
 # Get base classes' methods
 for ancestorClassName in $baseClassesNames;
 do
+	echo -n "."
+
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsVirtual.txt"
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY

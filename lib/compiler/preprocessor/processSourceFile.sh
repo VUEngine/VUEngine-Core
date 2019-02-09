@@ -205,6 +205,7 @@ do
 	fi
 
 	cat $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
+	echo -n "."
 done
 
 if [ -f $VIRTUAL_METHODS_FILE ];

@@ -31,10 +31,10 @@ BUILD_DIR = $(GAME_HOME)/build
 STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
 
 # Where to preprocess source files
-WORKING_FOLDER = $(BUILD_DIR)/working
+WORKING_FOLDER = $(STORE)
 
 # Add directories to the include and library paths
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/sources/$(NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -178,14 +178,14 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
 
 # Makes a list of the header files that will have to be created.
-H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/sources/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(HEADERS:.h=.h))
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
 C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
-C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/sources/$(NAME)/, $(C_SOURCES:.c=.c))
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.c))
 C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
@@ -196,7 +196,7 @@ HELPERS_PREFIX = $(BASENAME)
 
 # Class setup file
 SETUP_CLASSES = $(HELPERS_PREFIX)SetupClasses
-SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CLASSES)
+SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
@@ -241,18 +241,19 @@ $(BUILD_DIR)/$(TARGET_FILE).a: printBuildingInfo $(TARGET).a printPostBuildingIn
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
 	@rm -f $*.dd
+	@echo " done"
 
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/sources/$(NAME)/%.c
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
+$(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -lp $(VBDE)libs -l $(NAME)
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp 
@@ -262,16 +263,18 @@ $(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/sources/$(NAME)/%.c
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd
 	@rm -f $(STORE)/objects/$(NAME)/$*.dd.tmp
 	@rm -f $(STORE)/objects/$(NAME)/$*.d.tmp
+	@echo " done"
 
-$(WORKING_FOLDER)/sources/$(NAME)/%.c: $(MY_HOME)/%.c
-#	@echo Preocompiling $<
+$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
+	@echo " done"
 
-$(WORKING_FOLDER)/sources/$(NAME)/%.h: $(MY_HOME)/%.h
+$(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
 
 # Empty rule to prevent problems when a header is deleted.
@@ -296,8 +299,7 @@ ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/sources/$(NAME)/$(DIR); )
-	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(STORE)/objects/$(NAME)/$(DIR); )
+	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
 	@echo " done"
 endif
 

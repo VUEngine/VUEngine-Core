@@ -83,14 +83,14 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 	done
 	echo "}" >> $OUTPUT_C_FILE
 
-	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/sources/setupClasses.c
+	FINAL_SETUP_CLASSES_FILE=$WORKING_FOLDER/objects/setupClasses.c
 
 	if [ -f $FINAL_SETUP_CLASSES_FILE ]; then
 		rm $FINAL_SETUP_CLASSES_FILE
 	fi
 
 	# Setup calls in final file
-	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/sources/ -name "*SetupClasses.c"`
+	SETUP_CLASSES_FILES=`find $WORKING_FOLDER/objects/ -name "*SetupClasses.c"`
 
 	echo "// setup function" > $FINAL_SETUP_CLASSES_FILE
 
@@ -115,5 +115,5 @@ if [ -n "$CLASSES_HIERARCHY_FILE" ]; then
 fi
 
 rm -f $CLASSES_FILE
-#echo $OUTPUT_C_FILE | sed -e 's#^.*sources/\(.*$\)#Compiling source: \1#g'
+#echo $OUTPUT_C_FILE | sed -e 's#^.*objects/\(.*$\)#Compiling source: \1#g'
 echo "Setting up library: $LIBRARY"
