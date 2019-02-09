@@ -228,8 +228,6 @@ D_FILES = $(C_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
 D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
 D_FILES := $(D_FILES) $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
-D_FILES := $(D_FILES) $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) -name "*.d"; fi; )
-D_FILES := $(D_FILES) $(foreach PLUGIN, $(PLUGINS), $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(PLUGIN) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(PLUGIN) -name "*.d"; fi; ))
 
 HELPERS_PREFIX = $(NAME)
 
@@ -363,7 +361,8 @@ preprocessLibraries:
 			-e CONFIG_FILE=$(CONFIG_FILE) 																								\
 			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
 			-e GAME_HOME=$(MY_HOME)																										\
-			-e NAME=$(LIBRARY);																											\
+			-e NAME=$(LIBRARY)																											\
+			-e PREPROCESS=1;																											\
 	)
 
 libraries:

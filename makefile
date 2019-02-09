@@ -200,10 +200,13 @@ SETUP_CLASSES_SOURCE = $(PREPROCESSOR_WORKING_FOLDER)/sources/$(NAME)/$(SETUP_CL
 SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 
 # Same for the .d (dependency) files.
+ifneq ($(PREPROCESS), 1)
 D_FILES = $(C_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
 D_FILES := $(D_FILES) $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) -name "*.d"; fi; )
-D_FILES := $(D_FILES) $(foreach PLUGIN, $(PLUGINS), $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(PLUGIN) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(PLUGIN) -name "*.d"; fi; ))
+else
+D_FILES = $(shell if [ -d $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(PREPROCESSOR_WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
+endif
 
 
 # File that holds the classes hierarchy
