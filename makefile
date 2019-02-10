@@ -283,7 +283,6 @@ LIBRARIES_ARGUMENT="$(addprefix :, $(LIBRARIES:.=.))"
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(LIBRARIES_ARGUMENT)
-	@rm -f $(BUILD_DIR)/$(TARGET_FILE).a 2>&1
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;

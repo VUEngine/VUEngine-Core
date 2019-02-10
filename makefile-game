@@ -373,7 +373,7 @@ preprocessLibraries:
 	@touch $(CLASSES_HIERARCHY_FILE);
 
 
-libraries:
+libraries: deleteLibraries
 	@-$(foreach LIBRARY, $(LIBRARIES), 																											\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
