@@ -17,25 +17,25 @@ CLEAN_TYPE = all
 # Engine name
 ENGINE_NAME = vuengine/core
 
-# Libraries that are linked
-LIBRARIES = $(ENGINE_NAME) $(PLUGINS)
-
 # Engine's home
 VUENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
 
 # My home
 MY_HOME = $(shell pwd)
 
+# Where the game lives
+GAME_HOME = $(MY_HOME)
+
 # output dir
 BUILD_DIR = build
 
 # Linked engine's home
-LIBRARIES_PATH = $(BUILD_DIR)/
+PLUGINS_PATH = $(BUILD_DIR)/
 
 # Where to preprocess source files
 WORKING_FOLDER = $(STORE)
 
-# Add directories to the include and library paths
+# Add directories to the include and plugin paths
 INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects -type d -print)
 
 # target's needed steps
@@ -68,10 +68,12 @@ INITIALIZED_DATA_SECTION_ATTRIBUTE          = __INITIALIZED_DATA_SECTION_ATTRIBU
 STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE    = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE=
 VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE       = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE=
 
-
-# include overrides
+# Include overrides
 CONFIG_MAKE_FILE = $(shell pwd)/config.make
 include $(CONFIG_MAKE_FILE)
+
+PLUGINS := $(ENGINE_NAME) $(PLUGINS)
+PLUGIN_MAKEFILE=$(VUENGINE_HOME)/makefile
 
 ifneq ($(BUILD_MODE),)
 TYPE = $(BUILD_MODE)
@@ -188,7 +190,7 @@ MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), preprocessor)
-ALL_TARGET_PREREQUISITES = dirs libraries $(C_OBJECTS)
+ALL_TARGET_PREREQUISITES = dirs plugins $(C_OBJECTS)
 LD_PARAMS =
 C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
 MACROS = $(COMMON_MACROS)
@@ -240,7 +242,7 @@ FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(STORE)/objects/$(FINAL_SETUP_CLASSES)
 
 # File that holds the classes hierarchy
-CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
+CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(NAME)/classesHierarchy.txt
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
 
@@ -254,7 +256,7 @@ TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 # define the engine
 VUENGINE = $(BUILD_DIR)/libvuengine.a
 
-all: printPreBuildingInfo preprocessClasses libraries printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
+all: printPreBuildingInfo preprocessClasses plugins printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
 printPreBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
@@ -297,7 +299,7 @@ $(TARGET).vb: $(TARGET).elf
 $(TARGET).elf: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET).elf...
 	@$(GCC) -o $@ -nostartfiles $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(FINAL_SETUP_CLASSES_OBJECT).o $(SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
-		$(foreach LIBRARY, $(LIBRARIES),-l$(shell echo $(LIBRARY) | sed -e "s@.*/@@")) $(foreach LIB,$(LIBRARIES_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
+		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
 	@echo " done"
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
@@ -323,7 +325,7 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -n $(NAME) -lp $(VBDE)libs -l $(LIBRARIES)
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -n $(NAME) -lp $(VBDE)libs -l $(PLUGINS)
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp 
 	@sed -e 's#$<##' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.dd
 	@sed -e 's#$@#$<#' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d.tmp
@@ -342,56 +344,54 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@$(AS) -o $@ $<
 	@echo " done"
 
-LIBRARIES_ARGUMENT="$(addprefix :, $(LIBRARIES:.=.))"
+PLUGINS_ARGUMENT="$(addprefix :, $(PLUGINS:.=.))"
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(LIBRARIES_ARGUMENT)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(PLUGINS_ARGUMENT)
 
-preprocessClasses: dirs preprocessLibraries $(H_FILES)
+preprocessClasses: dirs preprocessPlugins $(H_FILES)
+	@touch $(CLASSES_HIERARCHY_FILE)
 	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
 
-preprocessLibraries:
+preprocessPlugins:
 	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
-	@$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)
-	@-$(foreach LIBRARY, $(LIBRARIES),							 																				\
-		$(eval LIBRARY_BASENAME=$(shell echo $(LIBRARY) | sed -e "s@.*/@@"))																	\
-		$(eval LIBRARY_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(LIBRARY_BASENAME)ClassesHierarchy.txt)					\
-		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
-		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(LIBRARY_CLASSES_HIERARCHY_FILE) 2>&1)) \
-		if [ ! -f $(LIBRARY_CLASSES_HIERARCHY_FILE) ] || [ ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 								\
-			$(MAKE) --no-print-directory preprocessClasses																						\
-				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
-				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
-				-e GAME_HOME=$(MY_HOME)																											\
-				-e NAME=$(LIBRARY)																												\
-				-e PREPROCESS=1;																												\
-		fi;																																		\
+	@-$(foreach PLUGIN, $(PLUGINS),							 																						\
+		$(eval PLUGIN_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(PLUGIN)/classesHierarchy.txt)									\
+		if [ -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] && [ ! -f $(CLASSES_HIERARCHY_FILE) ]; then continue; fi; 										\
+		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(PLUGIN_CLASSES_HIERARCHY_FILE) 2>&1))		\
+		if [ ! -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] || [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 		\
+			$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
+			$(MAKE) --no-print-directory preprocessClasses																							\
+				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+				-e GAME_HOME=$(GAME_HOME)																											\
+				-e NAME=$(PLUGIN)																													\
+				-e PREPROCESS=1;																													\
+		fi;																																			\
 	)
 	@echo
 	@echo "********************************************* Preprocessing $(BASENAME)"
-	@touch $(CLASSES_HIERARCHY_FILE);
 
 
-libraries: deleteLibraries
-	@-$(foreach LIBRARY, $(LIBRARIES), 																											\
-		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
-		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
-		$(eval LIBRARY_FILE=$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@"))												\
-		if [ ! -f $(LIBRARY_FILE).a ]; then 																									\
-			$(MAKE) --no-print-directory	 																									\
-				$(LIBRARY_FILE).a 																												\
-				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
-				-e TYPE=$(TYPE) 																												\
-				-e CONFIG_FILE=$(CONFIG_FILE) 																									\
-				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
-				-e GAME_HOME=$(MY_HOME)																											\
-				-e NAME=$(LIBRARY);																												\
-		fi;																																		\
-	)																																			\
+
+plugins: deleteLibraries
+	@-$(foreach PLUGIN, $(PLUGINS), 	 																											\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																				\
+		$(eval PLUGIN_FILE=$(GAME_HOME)/$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))													\
+		if [ ! -f $(PLUGIN_FILE).a ]; then 																											\
+			$(MAKE) --no-print-directory	 																										\
+				$(PLUGIN_FILE).a 																													\
+				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+				-e TYPE=$(TYPE) 																													\
+				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
+				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
+				-e GAME_HOME=$(GAME_HOME)																											\
+				-e NAME=$(PLUGIN);																													\
+		fi;																																			\
+	)																																				\
 
 deleteLibraries:
-	@rm -f $(LIBRARIES_PATH)/*.a
+	@rm -f $(PLUGINS_PATH)/*.a
 
 
 # Empty rule to prevent problems when a header is deleted.
@@ -406,22 +406,19 @@ clean:
 # Create necessary directories
 DIRS_EXIST=$(shell [ -e $(STORE)/objects/$(NAME) ] && echo 1 || echo 0 )
 
-checkLibrariesDirs:
+checkPluginsDirs:
 	@$(eval CHECKING_DIRS_START_TIME=$(shell date +%s))
 	@echo 
 	@echo "********************************************* Checking working folders"
 ifeq ($(DIRS_EXIST), 0)
-	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
-		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
-		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
-		$(eval LIBRARY_FILE=$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a)									\
-		$(MAKE) --no-print-directory dirs																								\
-			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )					\
-			-e TYPE=$(TYPE) 																											\
-			-e CONFIG_FILE=$(CONFIG_FILE) 																								\
-			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
-			-e GAME_HOME=$(MY_HOME)																										\
-			-e NAME=$(LIBRARY);																											\
+	@-$(foreach PLUGIN, $(PLUGINS), 		 																									\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
+		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
+		$(MAKE) --no-print-directory dirs																										\
+			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+			-e TYPE=$(TYPE) 																													\
+			-e GAME_HOME=$(GAME_HOME)																											\
+			-e NAME=$(PLUGIN);																													\
 	)
 endif
 
@@ -430,11 +427,11 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo -n Checking working dirs for $(BASENAME)...
 endif
 
-dirs: checkLibrariesDirs printDirsInfo
+dirs: checkPluginsDirs printDirsInfo
 ifeq ($(DIRS_EXIST), 0)
-	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
+	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
 	@echo " done"
 endif

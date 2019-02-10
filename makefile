@@ -1,5 +1,6 @@
-# Project name
-NAME = vuengine/core
+# Fully qualified plugin name
+# (this is set from outside)
+NAME = vuengine/plugins/plugin-name
 
 # Clean plugin name by stripping out everything up to (and including) the last slash
 BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
@@ -15,26 +16,31 @@ TYPE = release
 CLEAN_TYPE = all
 
 # Engine name
-ENGINE_NAME = $(NAME)
+ENGINE_NAME = vuengine/core
 
 # Where the game lives
 GAME_HOME = .
 
+# Engine's home
+VUENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+
 # My home
 MY_HOME = $(VBDE)libs/$(NAME)
-VUENGINE_HOME = $(MY_HOME)
+
+DEPENDENCIES =
 
 # output dir
 BUILD_DIR = $(GAME_HOME)/build
 
 # Where to store object and dependency files.
-STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFFIX)
+STORE = $(BUILD_DIR)/$(TYPE)$(STORE_SUFIX)
 
 # Where to preprocess source files
 WORKING_FOLDER = $(STORE)
 
-# Add directories to the include and library paths
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+# Add directories to the include and plugin paths
+#INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/vuengine -type d -print)
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
 
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
@@ -64,11 +70,27 @@ INITIALIZED_DATA_SECTION_ATTRIBUTE          = __INITIALIZED_DATA_SECTION_ATTRIBU
 STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE    = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE=
 VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE       = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE=
 
-# include overrides
+# Include overrides
 CONFIG_MAKE_FILE =
 ifneq ($(CONFIG_MAKE_FILE),)
 include $(CONFIG_MAKE_FILE)
 endif
+
+INHERITED_PLUGINS = $(PLUGINS)
+PLUGINS =
+
+# Include custom overrides
+ifneq ("$(wildcard $(MY_HOME)/config.make)","")
+include $(MY_HOME)/config.make
+endif
+
+# Plugins that are linked
+ifneq ($(NAME), $(ENGINE_NAME))
+PLUGINS := $(ENGINE_NAME) $(PLUGINS)
+endif
+
+PLUGIN_MAKEFILE=$(VUENGINE_HOME)/makefile
+
 
 OPTIMIZATION_OPTION = -O0
 ifneq ($(OPTIMIZATION),)
@@ -80,11 +102,11 @@ ifeq ($(PRINT_PEDANTIC_WARNINGS), 1)
 PEDANTIC_WARNINGS_FLAG = -pedantic
 endif
 
-STORE_SUFFIX =
+STORE_SUFIX =
 PROLOG_FUNCTIONS_FLAG =
 ifeq ($(USE_PROLOG_FUNCTIONS), 1)
 PROLOG_FUNCTIONS_FLAG = -mprolog-function
-STORE_SUFFIX = -pf
+STORE_SUFIX = -pf
 endif
 
 FRAME_POINTER_USAGE_FLAG = -fomit-frame-pointer
@@ -115,18 +137,21 @@ endif
 
 DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
 
+
 # Which directories contain source files
-SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets $(MY_HOME)/lib/compiler -type d -print)
+SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)
 HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
 SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
 HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 
 # Obligatory headers
-CONFIG_FILE =       $(shell pwd)/source/config.h
-ESSENTIAL_HEADERS = -include $(CONFIG_FILE) \
-                    -include $(MY_HOME)/source/libvuengine.h \
-                    $(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) \
+CONFIG_FILE = 			$(VUENGINE_HOME)/source/config.h
+ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) 																							\
+                    	-include $(VUENGINE_HOME)/source/libvuengine.h 																		\
+                    	$(foreach PLUGIN, $(PLUGINS) $(INHERITED_PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then 	\
+							echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) 													\
+						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
@@ -169,7 +194,7 @@ FOLDER_TO_CLEAN=$(MY_HOME)/$(BUILD_DIR)/$(CLEAN_TYPE)*
 endif
 
 # Makes a list of the source (.c) files.
-C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
+C_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
 
 # Makes a list of the source (.s) files.
 ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
@@ -182,15 +207,16 @@ H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(HEADERS:.h=.h))
 H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
-C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
+C_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(C_SOURCE:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
-C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.c))
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCE:.c=.c))
 C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
 # Makes a list of the object files that will have to be created.
 ASSEMBLY_OBJECTS_TEMP = $(addprefix $(STORE)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
 
 HELPERS_PREFIX = $(BASENAME)
 
@@ -203,21 +229,20 @@ SETUP_CLASSES_OBJECT = $(STORE)/objects/$(NAME)/$(SETUP_CLASSES)
 ifneq ($(PREPROCESS), 1)
 D_FILES = $(C_OBJECTS:.o=.d)
 D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
-D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(ENGINE_NAME) -name "*.d"; fi; )
+D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
 else
 D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
 endif
 
-
 # File that holds the classes hierarchy
-CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(HELPERS_PREFIX)ClassesHierarchy.txt
+CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(NAME)/classesHierarchy.txt
 
 # the target file
 TARGET_FILE = lib$(BASENAME)
 TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
-all: printPreBuildingInfo printBuildingInfo $(TARGET).a printPostBuildingInfo
+all: printPreBuildingInfo preprocessClasses plugins printBuildingInfo $(TARGET).a printPostBuildingInfo
 
 printPreBuildingInfo:
 
@@ -225,24 +250,21 @@ printBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
 	@echo "********************************************* Building $(BASENAME)"
+	@echo $(INCLUDED_CONFIG_MAKE) $(NAME) : $(INHERITED_PLUGINS)
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
-preprocessClasses: dirs printPreprocessClassesInfo $(H_FILES) 
-	@touch $(CLASSES_HIERARCHY_FILE);
-
-printPreprocessClassesInfo:
-	@echo
-	@echo "********************************************* Preprocessing $(BASENAME)"
+preprocessClasses: dirs preprocessPlugins $(H_FILES)
+	@touch $(CLASSES_HIERARCHY_FILE)
 
 $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
-	@$(AR) rcs $@ $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(STORE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo " done"
 
-$(BUILD_DIR)/$(TARGET_FILE).a: printBuildingInfo $(TARGET).a printPostBuildingInfo
+$(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo $(TARGET).a printPostBuildingInfo
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
@@ -256,11 +278,45 @@ $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
 
+preprocessPlugins:
+	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
+	@-$(foreach PLUGIN, $(PLUGINS),							 																						\
+		$(eval PLUGIN_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(PLUGIN)/classesHierarchy.txt)									\
+		if [ -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] && [ ! -f $(CLASSES_HIERARCHY_FILE) ]; then continue; fi; 										\
+		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(PLUGIN_CLASSES_HIERARCHY_FILE) 2>&1))		\
+		if [ ! -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] || [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 		\
+			$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
+			$(MAKE) --no-print-directory preprocessClasses																							\
+				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+				-e GAME_HOME=$(GAME_HOME)																											\
+				-e NAME=$(PLUGIN)																													\
+				-e PREPROCESS=1;																													\
+		fi;																																			\
+	)
+	@echo
+	@echo "********************************************* Preprocessing $(BASENAME)"
+
+plugins:
+	@-$(foreach PLUGIN, $(PLUGINS), 	 																											\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																				\
+		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))																\
+		if [ ! -f $(PLUGIN_FILE).a ]; then 																											\
+			$(MAKE) --no-print-directory	 																										\
+				$(PLUGIN_FILE).a 																													\
+				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+				-e TYPE=$(TYPE) 																													\
+				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
+				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
+				-e GAME_HOME=$(GAME_HOME)																											\
+				-e NAME=$(PLUGIN);																													\
+		fi;																																			\
+	)
+
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 	@$(GCC) -Wp,-MD,$(STORE)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -lp $(VBDE)libs -l $(NAME)
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -np $(VBDE)libs -n $(NAME) -lp $(VBDE)libs -l $(PLUGINS)
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.dd.tmp 
 	@sed -e 's#$<##' $(STORE)/objects/$(NAME)/$*.dd.tmp > $(STORE)/objects/$(NAME)/$*.dd
 	@sed -e 's#$@#$<#' $(STORE)/objects/$(NAME)/$*.dd > $(STORE)/objects/$(NAME)/$*.d.tmp
@@ -272,17 +328,17 @@ $(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
-	@bash $(MY_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(NAME)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $($(BASENAME)_PLUGINS) $(BASENAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
 	@echo " done"
 
-LIBRARIES_ARGUMENT="$(addprefix :, $(LIBRARIES:.=.))"
+PLUGINS_ARGUMENT="$(addprefix :, $(PLUGINS:.=.))"
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(LIBRARIES_ARGUMENT)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(PLUGINS_ARGUMENT)
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
@@ -296,16 +352,27 @@ clean:
 # Create necessary directories
 DIRS_EXIST=$(shell [ -e $(STORE)/objects/$(NAME) ] && echo 1 || echo 0 )
 
+checkPluginsDirs:
+	@-$(foreach PLUGIN, $(PLUGINS), 		 																									\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
+		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
+		$(MAKE) --no-print-directory dirs																										\
+			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
+			-e TYPE=$(TYPE) 																													\
+			-e GAME_HOME=$(GAME_HOME)																											\
+			-e NAME=$(PLUGIN);																													\
+	)
+
 printDirsInfo: phony
 ifeq ($(DIRS_EXIST), 0)
 	@echo -n Checking working dirs for $(BASENAME)...
 endif
 
-dirs: printDirsInfo
+dirs: checkPluginsDirs printDirsInfo
 ifeq ($(DIRS_EXIST), 0)
-	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
+	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
 	@echo " done"
 endif

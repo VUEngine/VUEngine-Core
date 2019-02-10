@@ -21,7 +21,7 @@ do
 		shift # past argument
 		;;
 		-l)
-		LIBRARIES="$2"
+		PLUGINS="$2"
 		shift # past argument
 		;;
 		-lp)
@@ -29,7 +29,7 @@ do
 		shift # past argument
 		;;
 		-n)
-		LIBRARY="$2"
+		PLUGIN="$2"
 		shift # past argument
 		;;
 		-np)
@@ -52,30 +52,30 @@ then
 	exit 0
 fi
 
-if [ -z "$LIBRARIES" ] && [ -z "$LIBRARY" ] && [ -z "$LIBRARY_PATH" ];
+if [ -z "$PLUGINS" ] && [ -z "$PLUGIN" ] && [ -z "$LIBRARY_PATH" ];
 then
 	rm -f $GCC_OUTPUT
 	exit 0
 fi
 
-for library in $LIBRARIES;
+for plugin in $PLUGINS;
 do
-	pattern=$WORKING_FOLDER/objects/$library/
-	replacement=$LIBRARIES_PATH/$library/
+	pattern=$WORKING_FOLDER/objects/$plugin/
+	replacement=$LIBRARIES_PATH/$plugin/
 	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
 replacement=
-pattern=$WORKING_FOLDER/objects/$LIBRARY
+pattern=$WORKING_FOLDER/objects/$PLUGIN
 
-if [ ! -z "$LIBRARY" ];
+if [ ! -z "$PLUGIN" ];
 then
-	pattern=$WORKING_FOLDER/objects/$LIBRARY/
+	pattern=$WORKING_FOLDER/objects/$PLUGIN/
 
 	if [ ! -z "$LIBRARY_PATH" ];
 	then
-		replacement=$LIBRARY_PATH/$LIBRARY/
+		replacement=$LIBRARY_PATH/$PLUGIN/
 	fi
 fi
 

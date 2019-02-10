@@ -8,7 +8,7 @@ PRINT_DEBUG_OUTPUT=
 CLASSES_HIERARCHY_FILE=
 HEADERS_FOLDER=
 LIBRARY_NAME=
-LIBRARIES=
+PLUGINS=
 LIBRARIES_PAHT=
 LIBRARIES_ARGUMENT=
 
@@ -48,7 +48,7 @@ do
 		shift # past argument
 		;;
 		-l)
-		LIBRARIES=`sed -e 's/:/ /g' <<< "$2"`
+		PLUGINS=`sed -e 's/:/ /g' <<< "$2"`
 		LIBRARIES_ARGUMENT="$2"
 		shift # past argument
 		;;
@@ -90,7 +90,7 @@ then
 	baseClassFile=`find $HEADERS_FOLDER/source -name "$baseClassName.h" -print -quit`
 	processedBaseClassFile=`sed -e 's#.*'"$LIBRARY_NAME"'/\(.*\)#'"$WORKING_FOLDER"'/objects/'"$LIBRARY_NAME"'/\1#g' <<< "$baseClassFile"`
 
-	# Call upwards if base class belongs to library
+	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
 	then
 #		echo Call upwards to "$baseClassName" from $className 
@@ -122,7 +122,7 @@ fi
 # The continue
 echo -n "Preprocessing class: $className..."
 #echo 
-#echo LIBRARIES $LIBRARIES
+#echo PLUGINS $PLUGINS
 #echo LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT
 
 classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
@@ -150,7 +150,7 @@ then
 	baseClassesNames=$baseClassName
 	baseBaseClassName=$baseClassName
 
-	CLASSES_HIERARCHY=`cat $WORKING_FOLDER/classes/hierarchies/*.txt`
+	CLASSES_HIERARCHY=`find $WORKING_FOLDER/classes/hierarchies -name "*.txt" -exec cat {} \;`
 
 	while : ; do
 
@@ -237,9 +237,9 @@ fi
 
 # Build headers search path
 searchPaths="$HEADERS_FOLDER/source"
-for library in $LIBRARIES;
+for plugin in $PLUGINS;
 do
-	searchPaths=$searchPaths" $LIBRARIES_PATH/$library/source"
+	searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"
 done
 
 # Get base classes' methods
@@ -257,7 +257,7 @@ do
 		echo -n "."
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 	else
-		echo -n " error (1): header file not found for $ancestorClassName in $searchPaths with $LIBRARIES... "
+		echo -n " error (1): header file not found for $ancestorClassName in $searchPaths with $PLUGINS... "
 		rm -f $CLASS_DEPENDENCIES_FILE
 		rm -f $OUTPUT_FILE
 		exit 0

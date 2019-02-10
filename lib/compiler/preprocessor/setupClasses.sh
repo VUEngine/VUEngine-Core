@@ -4,7 +4,7 @@ OUTPUT_C_FILE=setupClasses.c
 HEADER_FOLDERS=
 WORKING_FOLDER=build/working
 CLASSES_HIERARCHY_FILE=$WORKING_FOLDER/classesHierarchy.txt
-LIBRARY="LibraryName"
+PLUGIN="LibraryName"
 SETUP_FUNCTION="ClassName"
 
 while [ $# -gt 1 ]
@@ -12,7 +12,7 @@ do
 	key="$1"
 	case $key in
 		-n)
-		LIBRARY="$2"
+		PLUGIN="$2"
 		SETUP_FUNCTION=`sed $'s/[^[:alnum:]\t]//g' <<< $2`
 		shift # past argument
 		;;
@@ -116,4 +116,4 @@ fi
 
 rm -f $CLASSES_FILE
 #echo $OUTPUT_C_FILE | sed -e 's#^.*objects/\(.*$\)#Compiling source: \1#g'
-echo "Setting up library: $LIBRARY"
+echo "Setting up plugin: $PLUGIN"
