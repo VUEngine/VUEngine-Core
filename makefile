@@ -76,7 +76,6 @@ ifneq ($(CONFIG_MAKE_FILE),)
 include $(CONFIG_MAKE_FILE)
 endif
 
-INHERITED_PLUGINS = $(PLUGINS)
 PLUGINS =
 
 # Include custom overrides
@@ -90,7 +89,6 @@ PLUGINS := $(ENGINE_NAME) $(PLUGINS)
 endif
 
 PLUGIN_MAKEFILE=$(VUENGINE_HOME)/makefile
-
 
 OPTIMIZATION_OPTION = -O0
 ifneq ($(OPTIMIZATION),)
@@ -147,11 +145,12 @@ HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g
 
 # Obligatory headers
 CONFIG_FILE = 			$(VUENGINE_HOME)/source/config.h
-ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) 																							\
-                    	-include $(VUENGINE_HOME)/source/libvuengine.h 																		\
-                    	$(foreach PLUGIN, $(PLUGINS) $(INHERITED_PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then 	\
-							echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) 													\
-						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)
+ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) 																				\
+						-include $(VUENGINE_HOME)/source/libvuengine.h 															\
+						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then 			\
+							echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; ))											\
+						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)		\
+						$(GAME_ESSENTIAL_HEADERS)			
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
@@ -250,7 +249,6 @@ printBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
 	@echo "********************************************* Building $(BASENAME)"
-	@echo $(INCLUDED_CONFIG_MAKE) $(NAME) : $(INHERITED_PLUGINS)
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
@@ -258,6 +256,8 @@ printPostBuildingInfo:
 
 preprocessClasses: dirs preprocessPlugins $(H_FILES)
 	@touch $(CLASSES_HIERARCHY_FILE)
+	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
+	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
 
 $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
@@ -308,6 +308,7 @@ plugins:
 				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
 				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
 				-e GAME_HOME=$(GAME_HOME)																											\
+				-e GAME_ESSENTIAL_HEADERS="$(ESSENTIAL_HEADERS)"																					\
 				-e NAME=$(PLUGIN);																													\
 		fi;																																			\
 	)

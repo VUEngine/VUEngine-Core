@@ -157,9 +157,10 @@ HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g
 
 # Obligatory headers
 CONFIG_FILE = 			$(shell pwd)/source/config.h
-ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) \
-						-include $(VUENGINE_HOME)/source/libvuengine.h \
-						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; )) \
+ESSENTIAL_HEADERS = 	-include $(CONFIG_FILE) 																				\
+						-include $(VUENGINE_HOME)/source/libvuengine.h 															\
+						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then 			\
+							echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; ))
 
 # Common macros for all build types
 COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
@@ -386,6 +387,7 @@ plugins: deleteLibraries
 				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
 				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
 				-e GAME_HOME=$(GAME_HOME)																											\
+				-e GAME_ESSENTIAL_HEADERS="$(ESSENTIAL_HEADERS)"																					\
 				-e NAME=$(PLUGIN);																													\
 		fi;																																			\
 	)																																				\
