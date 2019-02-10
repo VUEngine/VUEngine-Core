@@ -10,6 +10,7 @@ HEADERS_FOLDER=
 LIBRARY_NAME=
 LIBRARIES=
 LIBRARIES_PAHT=
+LIBRARIES_ARGUMENT=
 
 while [ $# -gt 1 ]
 do
@@ -42,14 +43,14 @@ do
 		LIBRARY_NAME="$2"
 		shift # past argument
 		;;
-		-lp)
+		-p)
 		LIBRARIES_PATH="$2"
 		shift # past argument
 		;;
 		-l)
-		;;
-		*)
-		LIBRARIES="$LIBRARIES $1"
+		LIBRARIES=`sed -e 's/:/ /g' <<< "$2"`
+		LIBRARIES_ARGUMENT="$2"
+		shift # past argument
 		;;
 	esac
 
@@ -95,7 +96,7 @@ then
 #		echo Call upwards to "$baseClassName" from $className 
 #		echo baseClassFile $baseClassFile 
 #		echo processedBaseClassFile $processedBaseClassFile
-		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -lp $LIBRARIES_PATH -l $LIBRARIES
+		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -l $LIBRARIES_ARGUMENT
 	fi
 
 	if [ ! -f "$processedBaseClassFile" ];
@@ -120,6 +121,9 @@ fi
 
 # The continue
 echo -n "Preprocessing class: $className..."
+#echo 
+#echo LIBRARIES $LIBRARIES
+#echo LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT
 
 classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
 line=`cut -d: -f1 <<< "$classDeclaration"`
@@ -241,8 +245,6 @@ done
 # Get base classes' methods
 for ancestorClassName in $baseClassesNames;
 do
-	echo -n "."
-
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsVirtual.txt"
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
@@ -252,7 +254,13 @@ do
 
 	if [ -f "$headerFile" ];
 	then
+		echo -n "."
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
+	else
+		echo -n " error (1): header file not found for $ancestorClassName in $searchPaths with $LIBRARIES... "
+		rm -f $CLASS_DEPENDENCIES_FILE
+		rm -f $OUTPUT_FILE
+		exit 0
 	fi
 done
 
@@ -364,7 +372,7 @@ then
 	if [ -z "$constructor" ];
 	then
 		echo
-		echo " error (1): no constructor defined for $className : $baseClassName in $methodDeclarations"
+		echo " error (2): no constructor defined for $className : $baseClassName in $methodDeclarations"
 		exit 0
 	else
 #		echo "Added allocator"

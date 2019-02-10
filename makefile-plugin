@@ -21,7 +21,7 @@ ENGINE_NAME = vuengine/core
 $(BASENAME)_PLUGINS = $(DEPENDENCIES)
 
 # Libraries that are linked
-LIBRARIES = $($(BASENAME)_PLUGINS)
+LIBRARIES = $(ENGINE_NAME) $($(BASENAME)_PLUGINS)
 
 # Where the game lives
 GAME_HOME = .
@@ -268,28 +268,33 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
 
 preprocessLibraries:
-	@-$(foreach LIBRARY, $(LIBRARIES), 		 																									\
-		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
+	@$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)
+	@-$(foreach LIBRARY, $(LIBRARIES),							 																				\
+		$(eval LIBRARY_BASENAME=$(shell echo $(LIBRARY) | sed -e "s@.*/@@"))																	\
+		$(eval LIBRARY_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(LIBRARY_BASENAME)ClassesHierarchy.txt)					\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
-		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )														\
-		$(MAKE) --no-print-directory preprocessClasses																							\
-			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )							\
-			-e TYPE=$(TYPE) 																													\
-			-e CONFIG_FILE=$(CONFIG_FILE) 																										\
-			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																							\
-			-e GAME_HOME=$(GAME_HOME)																											\
-			-e NAME=$(LIBRARY)																													\
-			-e PREPROCESS=1;																													\
+		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(LIBRARY_CLASSES_HIERARCHY_FILE) 2>&1))	\
+		if [ ! -f $(LIBRARY_CLASSES_HIERARCHY_FILE) ] || [ ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 								\
+			$(MAKE) --no-print-directory preprocessClasses																						\
+				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
+				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
+				-e GAME_HOME=$(GAME_HOME)																										\
+				-e NAME=$(LIBRARY)																												\
+				-e PREPROCESS=1;																												\
+		fi;																																		\
 	)
+	@echo
+	@echo "********************************************* Preprocessing $(BASENAME)"
+	@touch $(CLASSES_HIERARCHY_FILE);
 
 libraries:
 	@-$(foreach LIBRARY, $(LIBRARIES), 	 																										\
 		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
 		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
-		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a )														\
-		if [ ! -f $(LIBRARY_FILE) ]; then 																										\
+		$(eval LIBRARY_FILE=$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@"))														\
+		if [ ! -f $(LIBRARY_FILE).a ]; then 																									\
 			$(MAKE) --no-print-directory	 																									\
-				$(LIBRARY_FILE)																													\
+				$(LIBRARY_FILE).a 																												\
 				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
 				-e TYPE=$(TYPE) 																												\
 				-e CONFIG_FILE=$(CONFIG_FILE) 																									\
@@ -322,8 +327,11 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@$(AS) -o $@ $<
 	@echo " done"
 
+LIBRARIES_ARGUMENT="$(addprefix :, $(LIBRARIES:.=.))"
+
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(LIBRARIES_ARGUMENT)
+	@rm -f $(BUILD_DIR)/$(TARGET_FILE).a 2>&1
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;

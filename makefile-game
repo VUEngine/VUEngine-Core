@@ -342,10 +342,10 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@$(AS) -o $@ $<
 	@echo " done"
 
-#H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(HEADERS:.h=.h))
+LIBRARIES_ARGUMENT="$(addprefix :, $(LIBRARIES:.=.))"
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(LIBRARIES_ARGUMENT)
 
 preprocessClasses: dirs preprocessLibraries $(H_FILES)
 	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
@@ -353,36 +353,42 @@ preprocessClasses: dirs preprocessLibraries $(H_FILES)
 
 preprocessLibraries:
 	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
-	@echo 
-	@echo "********************************************* Preprocessing classes"
-	@-$(foreach LIBRARY, $(LIBRARIES), 		 																							\
-		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
-		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
-		$(eval LIBRARY_FILE=$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a)									\
-		$(MAKE) --no-print-directory preprocessClasses																					\
-			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )					\
-			-e TYPE=$(TYPE) 																											\
-			-e CONFIG_FILE=$(CONFIG_FILE) 																								\
-			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
-			-e GAME_HOME=$(MY_HOME)																										\
-			-e NAME=$(LIBRARY)																											\
-			-e PREPROCESS=1;																											\
+	@$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)
+	@-$(foreach LIBRARY, $(LIBRARIES),							 																				\
+		$(eval LIBRARY_BASENAME=$(shell echo $(LIBRARY) | sed -e "s@.*/@@"))																	\
+		$(eval LIBRARY_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(LIBRARY_BASENAME)ClassesHierarchy.txt)					\
+		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
+		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(LIBRARY_CLASSES_HIERARCHY_FILE) 2>&1)) \
+		if [ ! -f $(LIBRARY_CLASSES_HIERARCHY_FILE) ] || [ ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 								\
+			$(MAKE) --no-print-directory preprocessClasses																						\
+				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
+				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
+				-e GAME_HOME=$(MY_HOME)																											\
+				-e NAME=$(LIBRARY)																												\
+				-e PREPROCESS=1;																												\
+		fi;																																		\
 	)
+	@echo
+	@echo "********************************************* Preprocessing $(BASENAME)"
+	@touch $(CLASSES_HIERARCHY_FILE);
 
-libraries: deleteLibraries
-	@-$(foreach LIBRARY, $(LIBRARIES), 																									\
-		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																\
-		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																			\
-		$(eval LIBRARY_FILE=$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@").a)									\
-		$(MAKE) --no-print-directory	 																								\
-			$(LIBRARY_FILE) 																											\
-			-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )					\
-			-e TYPE=$(TYPE) 																											\
-			-e CONFIG_FILE=$(CONFIG_FILE) 																								\
-			-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																					\
-			-e GAME_HOME=$(MY_HOME)																										\
-			-e NAME=$(LIBRARY);																											\
-	)																																	\
+
+libraries:
+	@-$(foreach LIBRARY, $(LIBRARIES), 																											\
+		$(eval LIBRARY_MAKEFILE=$(VBDE)libs/vuengine/core/makefile-plugin)																		\
+		$(eval PLUGIN_MAKEFILE=$(VBDE)libs/$(LIBRARY)/makefile)																					\
+		$(eval LIBRARY_FILE=$(MY_HOME)/$(BUILD_DIR)/lib$(shell echo $(LIBRARY) | sed -e "s@.*/@@"))												\
+		if [ ! -f $(LIBRARY_FILE).a ]; then 																									\
+			$(MAKE) --no-print-directory	 																									\
+				$(LIBRARY_FILE).a 																												\
+				-f $(shell if [ -f $(PLUGIN_MAKEFILE) ]; then echo $(PLUGIN_MAKEFILE); else echo $(LIBRARY_MAKEFILE); fi; )						\
+				-e TYPE=$(TYPE) 																												\
+				-e CONFIG_FILE=$(CONFIG_FILE) 																									\
+				-e CONFIG_MAKE_FILE=$(CONFIG_MAKE_FILE) 																						\
+				-e GAME_HOME=$(MY_HOME)																											\
+				-e NAME=$(LIBRARY);																												\
+		fi;																																		\
+	)																																			\
 
 deleteLibraries:
 	@rm -f $(LIBRARIES_PATH)/*.a

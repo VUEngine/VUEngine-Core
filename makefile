@@ -230,7 +230,12 @@ printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
-preprocessClasses: dirs $(H_FILES)
+preprocessClasses: dirs printPreprocessClassesInfo $(H_FILES) 
+	@touch $(CLASSES_HIERARCHY_FILE);
+
+printPreprocessClassesInfo:
+	@echo
+	@echo "********************************************* Preprocessing $(BASENAME)"
 
 $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
@@ -274,8 +279,11 @@ $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@$(AS) -o $@ $<
 	@echo " done"
 
+LIBRARIES_ARGUMENT="$(addprefix :, $(LIBRARIES:.=.))"
+
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -lp $(VBDE)libs -l $(LIBRARIES)
+	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs -l $(LIBRARIES_ARGUMENT)
+	@rm -f $(BUILD_DIR)/$(TARGET_FILE).a 2>&1
 
 # Empty rule to prevent problems when a header is deleted.
 %.h: ;
