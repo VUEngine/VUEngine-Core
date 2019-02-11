@@ -70,7 +70,7 @@ fi
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
-	echo -n "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1...#g' <<< $INPUT_FILE`"
+	echo "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1...#g' <<< $INPUT_FILE`"
 	exit 0
 fi
 
@@ -149,11 +149,11 @@ then
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo -n "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
 	else
 		if [ -z "${INPUT_FILE##*object*}" ];
 		then
-			echo -n "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
 		fi
 	fi
 	exit 0
@@ -178,11 +178,11 @@ then
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo -n "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
 	else
 		if [ -z "${INPUT_FILE##*object*}" ];
 		then
-			echo -n "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
 		fi
 	fi
 	exit 0
@@ -201,7 +201,7 @@ then
 	mkdir -p $WORKING_FOLDER
 fi
 
-echo -n "Compiling class: $className..."
+echo "Compiling class: $className..."
 
 # Move declaration mark to the end in preparation for virtual method call substitutions
 sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
@@ -234,7 +234,7 @@ do
 	fi
 
 	cat $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
-	echo -n "."
+	#echo "."
 done
 
 if [ -f $VIRTUAL_METHODS_FILE ];
@@ -243,12 +243,12 @@ then
 	classHasOwnMethods=`cat $VIRTUAL_METHODS_FILE`
 	if [ ! -z "$classHasOwnMethods" ];
 	then
-		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
-		printProgressID=`echo $!`
+#		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
+#		printProgressID=`echo $!`
 		awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
 		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
-		disown $printProgressID
-		kill $printProgressID
+#		disown $printProgressID
+#		kill $printProgressID
 	fi
 
 	rm -f $VIRTUAL_METHODS_FILE

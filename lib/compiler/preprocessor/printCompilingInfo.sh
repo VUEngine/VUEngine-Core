@@ -19,4 +19,4 @@ else
 	fi
 fi
 
-echo -n "$message"
+echo "$message"

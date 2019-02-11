@@ -111,8 +111,9 @@ $(TARGET).vb: $(TARGET).elf
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
 
-$(TARGET).elf: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
-	@echo -n Linking $(TARGET).elf...
+$(TARGET).elf: compile
+	@echo -n Linking $(TARGET).elf... $(PLUGINS_PATH)
+	@echo
 	@$(GCC) -o $@ -nostartfiles $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(FINAL_SETUP_CLASSES_OBJECT).o $(SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
 	@echo " done"																																			\
