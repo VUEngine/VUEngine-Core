@@ -56,14 +56,21 @@ done
 #echo OUTPUT_FILE $OUTPUT_FILE
 cp $INPUT_FILE $OUTPUT_FILE
 
-if [ ! -f "$INPUT_FILE" ];
+if [ -z "$INPUT_FILE" ];
 then
-	echo " file not found: $INPUT_FILE"
+	echo "Compiling error (1): no input file give"
 	exit 0
 fi
 
-if [ -z "$INPUT_FILE" ] || [ -z "${INPUT_FILE##*assets/*}" ];
+if [ ! -f "$INPUT_FILE" ];
 then
+	echo "Compiling error (2): file not found $INPUT_FILE"
+	exit 0
+fi
+
+if [ -z "${INPUT_FILE##*assets/*}" ];
+then
+	echo -n "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1...#g' <<< $INPUT_FILE`"
 	exit 0
 fi
 
@@ -130,7 +137,7 @@ firstMethodDeclarationLine=`grep -m1 -n -e "^<DECLARATION>" $OUTPUT_FILE | cut -
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo " error (1) processing file: $OUTPUT_FILE"
+	echo "Compiling error (3): could no processes file $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -140,18 +147,31 @@ fi
 if [ -z "$className" ];
 then
 	clean_up
+	if [ -z "${INPUT_FILE##*source*}" ];
+	then
+		echo -n "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+	else
+		if [ -z "${INPUT_FILE##*object*}" ];
+		then
+			echo -n "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+		fi
+	fi
 	exit 0
 fi
 
+echo -n "Compiling class: $className..."
+
+
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo " error (2) processing file: $OUTPUT_FILE"
+	echo " error (4): could no process file $OUTPUT_FILE"
 	exit 0
 fi
 
 if [ ! -f "$CLASSES_HIERARCHY_FILE" ];
 then
 	clean_up
+	echo " error (5): no classes hierarchy file $CLASSES_HIERARCHY_FILE"
 	exit 0
 fi
 
@@ -159,11 +179,13 @@ baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -
 if [ -z "$baseClassName" ];
 then
 	clean_up
+	echo " error (6): no base class name found"
 	exit 0
 fi
 
-if [ -z "$INPUT_FILE" ] || [ ! -z "${INPUT_FILE##*source/*}" ];
+if [ ! -z "${INPUT_FILE##*source/*}" ];
 then
+	echo " error (7): $INPUT_FILE must be inside source folder"
 	exit 0
 fi
 
@@ -227,7 +249,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo " error (3) processing file: $OUTPUT_FILE"
+	echo " error (8): could not processess file $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -297,7 +319,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo " error (4) processing file: $OUTPUT_FILE"
+	echo " error (9): could not processess file $OUTPUT_FILE"
 	exit 0
 fi
 
@@ -349,7 +371,7 @@ fi
 
 if [ ! -s $OUTPUT_FILE ];
 then
-	echo " error (5) processing file: $OUTPUT_FILE"
+	echo " error (10): could not processess file $OUTPUT_FILE"
 	exit 0
 fi
 

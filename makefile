@@ -330,7 +330,6 @@ $(STORE)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 	@echo " done"
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
-	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -p $(ENGINE_NAME) $($(BASENAME)_PLUGINS) $(BASENAME)
 
 $(STORE)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
@@ -355,7 +354,7 @@ clean:
 # Create necessary directories
 DIRS_EXIST=$(shell [ -e $(STORE)/objects/$(NAME) ] && echo 1 || echo 0 )
 
-checkPluginsDirs:
+createPluginDirs:
 	@-$(foreach PLUGIN, $(PLUGINS), 		 																									\
 		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
 		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
@@ -368,10 +367,10 @@ checkPluginsDirs:
 
 printDirsInfo: phony
 ifeq ($(DIRS_EXIST), 0)
-	@echo -n Checking working dirs for $(BASENAME)...
+	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
-dirs: checkPluginsDirs printDirsInfo
+dirs: createPluginDirs printDirsInfo
 ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
