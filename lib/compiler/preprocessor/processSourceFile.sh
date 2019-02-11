@@ -159,9 +159,6 @@ then
 	exit 0
 fi
 
-echo -n "Compiling class: $className..."
-
-
 if [ ! -s $OUTPUT_FILE ];
 then
 	echo " error (4): could no process file $OUTPUT_FILE"
@@ -179,7 +176,15 @@ baseClassName=`grep -m1 -e "^$className:" $CLASSES_HIERARCHY_FILE | cut -d ":" -
 if [ -z "$baseClassName" ];
 then
 	clean_up
-	echo " error (6): no base class name found"
+	if [ -z "${INPUT_FILE##*source*}" ];
+	then
+		echo -n "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+	else
+		if [ -z "${INPUT_FILE##*object*}" ];
+		then
+			echo -n "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+		fi
+	fi
 	exit 0
 fi
 
@@ -195,6 +200,8 @@ if [ ! -d $WORKING_FOLDER ];
 then
 	mkdir -p $WORKING_FOLDER
 fi
+
+echo -n "Compiling class: $className..."
 
 # Move declaration mark to the end in preparation for virtual method call substitutions
 sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
