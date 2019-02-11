@@ -254,11 +254,6 @@ printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
-preprocessClasses: dirs preprocessPlugins $(H_FILES)
-	@touch $(CLASSES_HIERARCHY_FILE)
-	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
-	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
-
 $(TARGET).a: $(H_FILES) $(C_OBJECTS) $(C_INTERMEDIATE_SOURCES) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
 	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(STORE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
@@ -278,8 +273,17 @@ $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(VUENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
 
-preprocessPlugins:
+preprocessClasses: dirs preprocessPlugins printClassPreprocessingInfo $(H_FILES)
+	@touch $(CLASSES_HIERARCHY_FILE)
+	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
+	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
+
+printClassPreprocessingInfo:
+	@echo
+	@echo "********************************************* Preprocessing $(BASENAME)"
 	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
+
+preprocessPlugins:
 	@-$(foreach PLUGIN, $(PLUGINS),							 																						\
 		$(eval PLUGIN_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(PLUGIN)/classesHierarchy.txt)									\
 		if [ -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] && [ ! -f $(CLASSES_HIERARCHY_FILE) ]; then continue; fi; 										\
@@ -293,8 +297,6 @@ preprocessPlugins:
 				-e PREPROCESS=1;																													\
 		fi;																																			\
 	)
-	@echo
-	@echo "********************************************* Preprocessing $(BASENAME)"
 
 plugins:
 	@-$(foreach PLUGIN, $(PLUGINS), 	 																											\
