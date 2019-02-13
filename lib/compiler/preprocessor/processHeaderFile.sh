@@ -366,7 +366,7 @@ then
 	baseClassesNames=$baseClassName
 	baseBaseClassName=$baseClassName
 
-	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies -name ".*/classesHierarchy.txt"`
+	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies -type f -name "classesHierarchy.txt"`
 	classesHierarchy=
 
 	echo "Starting computation of whole hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
