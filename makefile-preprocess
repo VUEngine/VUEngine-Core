@@ -25,7 +25,7 @@ preprocess: phony $(SETUP_CLASSES_SOURCE).c
 
 PLUGINS_ARGUMENT="$(addprefix :, $(PLUGINS:.=.))"
 
-# Override makefile's dependencies for header files
+# Override makefile's below dependencies for header files so proper propagation of changes in base classes are catched up
 -include $(D_FILES)
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
@@ -35,6 +35,6 @@ $(SETUP_CLASSES_SOURCE).c: $(H_FILES)
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
 
 phony:
-	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/$(BASENAME).dependencies.txt )
 	@echo > /dev/null
+#	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/$(BASENAME).dependencies.txt )
 

@@ -226,7 +226,7 @@ CLASS_LOG_FILE="$WORKING_FOLDER/classes/logs/$className.log"
 # This handles a race condition between a call from the makefile and from this below in this script
 CLASS_LOCK_FILE="$WORKING_FOLDER/classes/locks/$className"
 tryToLock $CLASS_LOCK_FILE exit
-echo "Got lock on calling from $CALLER" >> $CLASS_LOG_FILE
+echo "Got lock on calling from $CALLER" > $CLASS_LOG_FILE
 
 DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
 if [ -f "$DEPENDENCIES_FILE" ];
