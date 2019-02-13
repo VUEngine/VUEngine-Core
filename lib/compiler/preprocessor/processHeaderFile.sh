@@ -1,6 +1,122 @@
 #!/bin/bash
 #
 
+function waitRandom()
+{
+	delay="0.00"$(( ( ( RANDOM % 900 ) + 10 ) ))
+	sleep $delay
+}
+
+function waitForLockToRelease()
+{
+	lockFolder=$1".lock"
+
+	counter=0
+	while [ -d $lockFolder ];
+	do
+		counter=$((counter + 1))
+
+		if [ "$counter" -gt 100 ];
+		then
+			counter=0
+			echo "Waiting on caller $CALLER for:"  >> $CLASS_LOG_FILE
+			sed -e 's#.*\(/[A-z][A-z0-9]*\.*\)#		\1#g' <<< $lockFolder  >> $CLASS_LOG_FILE
+		fi
+
+		waitRandom
+	done
+}
+
+function tryToLock()
+{
+	file=$1
+	command=$2
+	#echo Trying to lock $file
+
+	if [ ! -z "$file" ];
+	then
+		lockFolder=$1".lock"
+
+		echo "Trying to lock on $file on caller $CALLER" >> $CLASS_LOG_FILE
+		mkdir $lockFolder 2>/dev/null ||
+		{
+			if [ ! -z "$command" ] && [ -z "${command##hierarchy}" ];
+			then
+				echo "Waiting lock on hierarchy file with command $command on caller $CALLER" >> $CLASS_LOG_FILE
+			fi
+
+			waitForLockToRelease $file
+
+			if [ ! -z "$command" ] && [ -z "${command##exit}" ];
+			then
+				echo "Gived up with command $command on caller $CALLER" >> $CLASS_LOG_FILE
+				exit 0
+			fi
+
+			tryToLock $file
+			return
+		}
+
+		lockFile=$lockFolder/stamp.txt
+		echo "Succeeded to lock $file on caller $CALLER" >> $CLASS_LOG_FILE
+		stamp="$$ : $PPID : $UID"
+		echo $stamp > $lockFile
+
+		waitRandom
+
+		readStamp=`cat $lockFile`
+
+		if [ ! "$readStamp" = "$stamp" ]; 
+		then
+			echo "$className: Error on reading $file read stamp ($readStamp) doesn't match my stamp ($stamp) on caller $CALLER"
+			cat $lockFile
+			echo
+		fi
+
+	fi
+}
+
+function releaseLock()
+{
+	file=$1
+
+	if [ ! -z "$file" ];
+	then
+		lockFolder=$1".lock"
+	
+		if [ -d "$lockFolder" ];
+		then
+			stamp="$$ : $PPID : $UID"
+			lockFile=$lockFolder/stamp.txt
+
+			readStamp=`cat $lockFile`
+
+			if [ ! "$readStamp" = "$stamp" ]; 
+			then
+				echo "Error on unlocking $file read stamp ($readStamp) doesn't match my stamp ($stamp) on caller $CALLER" >> $CLASS_LOG_FILE
+				echo "$className: Error on unlocking $file read stamp ($readStamp) doesn't match my stamp ($stamp) on caller $CALLER"
+			fi
+
+			rm -f $lockFile
+			waitRandom
+			rm -Rf $lockFolder
+			echo "Released lock $file on caller $CALLER" >> $CLASS_LOG_FILE
+		fi
+	fi
+}
+
+function clean_up()
+{
+	rm -f $TEMPORAL_FILE
+	rm -f $OUTPUT_FILE"-e"
+	#rm -f $CLASS_LOG_FILE
+}
+
+function releaseLocks()
+{
+	releaseLock $CLASS_LOCK_FILE
+}
+
 INPUT_FILE=
 OUTPUT_FILE=
 WORKING_FOLDER=
@@ -16,6 +132,10 @@ while [ $# -gt 1 ]
 do
 	key="$1"
 	case $key in
+		-g)
+		CALLER="$2"
+		shift # past argument
+		;;
 		-i)
 		INPUT_FILE="$2"
 		shift # past argument
@@ -57,15 +177,22 @@ do
 	shift
 done
 
+if [ -z "$CALLER" ];
+then
+	echo "NO CALLER!!!!"
+fi
+
 if [ -z "$INPUT_FILE" ] || [ ! -f "$INPUT_FILE" ];
 then
 	echo "Input file not found: $INPUT_FILE"
+	clean_up
 	exit 0
 fi
 
 if [ "$INPUT_FILE" = "$OUTPUT_FILE" ];
 then
 	echo "Input and output files are the same: $INPUT_FILE"
+	clean_up
 #	echo "$INPUT_FILE" 
 #	echo "$OUTPUT_FILE"
 	exit 0
@@ -79,11 +206,58 @@ baseClassName=`cut -d: -f2 <<< "$cleanClassDeclaration" | sed -e 's/[^[:alnum:]_
 if [ -z "$className" ];
 then
 	cp -f $INPUT_FILE $OUTPUT_FILE
+	clean_up
 #	echo No class in $INPUT_FILE
 	exit 0
 fi
 
+if [ ! -d "$WORKING_FOLDER/classes/logs" ];
+then
+	mkdir -p $WORKING_FOLDER/classes/logs
+fi
+
+if [ ! -d "$WORKING_FOLDER/classes/locks" ];
+then
+	mkdir -p $WORKING_FOLDER/classes/locks
+fi
+
+CLASS_LOG_FILE="$WORKING_FOLDER/classes/logs/$className.log"
+
+# This handles a race condition between a call from the makefile and from this below in this script
+CLASS_LOCK_FILE="$WORKING_FOLDER/classes/locks/$className"
+tryToLock $CLASS_LOCK_FILE exit
+echo "Got lock on calling from $CALLER" >> $CLASS_LOG_FILE
+
+DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
+if [ -f "$DEPENDENCIES_FILE" ];
+then
+	DEPENDENCIES=`cat $DEPENDENCIES_FILE | sed -e 's/[\\:]//g' | tail -n +2 `
+
+	mustBeReprocessed=false
+	for dependency in $DEPENDENCIES;
+	do
+		if [ "$dependency" -nt "$OUTPUT_FILE" ];
+		then
+			mustBeReprocessed=true
+			break;
+		fi
+	done
+
+	if [ -z "${mustBeReprocessed##false}" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
+	then
+		clean_up
+		releaseLocks
+		echo "Already processed on caller $CALLER" >> $CLASS_LOG_FILE
+
+		exit 0
+	fi
+fi
+
+echo "Will check if base class $baseClassName needs to be processed on caller $CALLER" >> $CLASS_LOG_FILE
+
 mustBeReprocessed=false
+baseClassFile=
+
 # Call upwards
 if [ ! -z "${className##Object}" ];
 then
@@ -93,49 +267,61 @@ then
 	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
 	then
-#		echo Call upwards to "$baseClassName" from $className 
 #		echo baseClassFile $baseClassFile 
 #		echo processedBaseClassFile $processedBaseClassFile
-		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -l $LIBRARIES_ARGUMENT
+
+		if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
+		then
+			mustBeReprocessed=true
+		else
+			baseClassLockFile=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
+
+			if [ ! -d "$baseClassLockFile" ];
+			then
+				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
+
+				bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l $LIBRARIES_ARGUMENT 
+			else
+				mustBeReprocessed=true
+			fi
+		fi
 	fi
 
-	if [ ! -f "$processedBaseClassFile" ];
+	if [ ! -z "${mustBeReprocessed##true}" ];
 	then
-		processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
-	fi
+		if [ ! -f "$processedBaseClassFile" ];
+		then
+			processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
+		fi
 
-#	echo processedBaseClassFile $processedBaseClassFile
-	if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
-	then
-		mustBeReprocessed=true
+		if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
+		then
+			mustBeReprocessed=true
+		fi
 	fi
 fi
+
 
 if [ -z "${mustBeReprocessed##false}" ] && [ -f "$OUTPUT_FILE" ] && [ "$OUTPUT_FILE" -nt "$INPUT_FILE" ];
 then
 #	ls -l $OUTPUT_FILE
 #	ls -l $INPUT_FILE
 #	echo Up to date "$className"
+	clean_up
+	releaseLocks
+	echo "Don't need processing, base class is fine, and I'm newer on caller $CALLER"  >> $CLASS_LOG_FILE
 	exit 0
 fi
 
 # The continue
-echo -n "Preprocessing class: $className..."
+#echo "Preprocessing class: $className..."
 #echo 
 #echo PLUGINS $PLUGINS
 #echo LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT
+echo "Starting preprocessing" >> $CLASS_LOG_FILE
 
 classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
 line=`cut -d: -f1 <<< "$classDeclaration"`
-
-# replace any previous entry
-if [ -f $CLASSES_HIERARCHY_FILE ];
-then
-	sed -i -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
-else
-	touch $CLASSES_HIERARCHY_FILE
-fi
-
 
 #echo "classDeclaration: $classDeclaration"
 #echo "cleanClassDeclaration: $cleanClassDeclaration"
@@ -145,28 +331,69 @@ fi
 # Compute the class' whole hierarchy
 baseClassesNamesHelper=$baseClassName":"
 
-if [ ! -z "$baseClassName" ];
+if [ ! -z "${className##Object}" ];
 then
+
+	if [ ! -z "$baseClassName" ];
+	then
+		processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
+		baseClassLockFile=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
+		counter=0
+
+		while [ -z "$processedBaseClassFile" ] || [ ! -f "$processedBaseClassFile" ] || [ -d "$baseClassLockFile" ];
+		do
+			if [ "$counter" -gt 100 ];
+			then
+				counter=0
+				echo "Waiting for $baseClassName during computation of whole hierarchy"  >> $CLASS_LOG_FILE
+			fi
+			waitRandom
+			processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
+
+			counter=$((counter + 1))
+
+			if [ "$counter" -gt 1000 ];
+			then
+				echo "Error processing $className while computing hierarchy on $baseClassName with file $processedBaseClassFile not found"  >> $CLASS_LOG_FILE
+				ls -la FILE: $processedBaseClassFile
+				ls -la LOCK: $baseClassLockFile.lock
+				releaseLocks
+				exit 0
+			fi
+		done
+	fi
+
 	baseClassesNames=$baseClassName
 	baseBaseClassName=$baseClassName
 
-	CLASSES_HIERARCHY=`find $WORKING_FOLDER/classes/hierarchies -name "*.txt" -exec cat {} \;`
+	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies -name ".*/classesHierarchy.txt"`
+	classesHierarchy=
+
+	echo "Starting computation of whole hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
+
+	for classesHierarchyFile in $CLASSES_HIERARCHY_FILES;
+	do
+		tryToLock $classesHierarchyFile
+		classesHierarchy="$classesHierarchy
+`cat $classesHierarchyFile`"
+		releaseLock $classesHierarchyFile
+	done
 
 	while : ; do
-
-		baseBaseClassName=`grep -e "^$baseBaseClassName:.*" <<< "$CLASSES_HIERARCHY" | cut -d ":" -f 2`
-		baseClassesNames="$baseBaseClassName $baseClassesNames"
-		baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
 
 		if [ -z "${baseBaseClassName##Object}" ];
 		then
 			break
 		fi
+
+		baseBaseClassName=`grep -e "^$baseBaseClassName:.*" <<< "$classesHierarchy" | cut -d ":" -f 2`
+		baseClassesNames="$baseBaseClassName $baseClassesNames"
+		baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
+	
 	done
 fi
 
-# save new hierarchy
-echo "$className:$baseClassesNamesHelper:$classModifiers" >> $CLASSES_HIERARCHY_FILE
+echo "Hierarchy on caller $CALLER: baseClassesNames"  >> $CLASS_LOG_FILE
 
 # Must prevent Object class trying to actually inherit from itself
 if [ -z "${className##Object}" ];
@@ -187,6 +414,8 @@ classDeclarationBlock=`cat $INPUT_FILE | sed ''"$line"','"$end"'!d' | grep -v -e
 # Get class' methods
 methods=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*\*' <<< "$classDeclarationBlock" | grep -e '(.*)[ 	=0]*;[ 	]*'`
 attributes=`grep -v -e '^[ 	\*A-z0-9]\+[ 	]*([ 	]*[^\*]' <<< "$classDeclarationBlock" | grep -e ';' | sed -e 's#&\\\##' | tr -d "\r\n"`
+
+echo "Computing attributes and methods on caller $CALLER"  >> $CLASS_LOG_FILE
 
 #echo "$classDeclarationBlock"
 #echo
@@ -211,6 +440,8 @@ then
 	virtualMethodOverrides=$virtualMethodOverrides" "$baseClassName"_SET_VTABLE(ClassName) "
 fi
 
+echo "Writing owned methods on caller $CALLER"  >> $CLASS_LOG_FILE
+
 # Process each method to generate the final header
 methodDeclarations=
 
@@ -219,9 +450,13 @@ CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"M
 rm -f $CLASS_OWNED_METHODS_DICTIONARY
 touch $CLASS_OWNED_METHODS_DICTIONARY
 
+echo "Writing inherited methods on caller $CALLER"  >> $CLASS_LOG_FILE
+
 CLASS_INHERITED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsInherited.txt"
 rm -f $CLASS_INHERITED_METHODS_DICTIONARY
 touch $CLASS_INHERITED_METHODS_DICTIONARY
+
+echo "Writing virtual methods on caller $CALLER"  >> $CLASS_LOG_FILE
 
 CLASS_VIRTUAL_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtual.txt"
 rm -f $CLASS_VIRTUAL_METHODS_DICTIONARY
@@ -230,11 +465,6 @@ touch $CLASS_VIRTUAL_METHODS_DICTIONARY
 CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
 #echo "$OUTPUT_FILE:" | sed -e 's@'"$WORKING_FOLDER"'/@@g' > $CLASS_DEPENDENCIES_FILE
 
-if [ ! -z "$baseClassesNames" ];
-then
-	echo "$OUTPUT_FILE: \\" > $CLASS_DEPENDENCIES_FILE
-fi
-
 # Build headers search path
 searchPaths="$HEADERS_FOLDER/source"
 for plugin in $PLUGINS;
@@ -242,11 +472,37 @@ do
 	searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"
 done
 
+echo "Starting computation of dependcies on caller $CALLER with search path $searchPath "  >> $CLASS_LOG_FILE
+
+if [ ! -z "$baseClassesNames" ];
+then
+	echo "$OUTPUT_FILE: \\" > $CLASS_DEPENDENCIES_FILE
+fi
+
 # Get base classes' methods
 for ancestorClassName in $baseClassesNames;
-do
+do	
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsVirtual.txt"
+
+	if [ ! -z "${className##Object}" ];
+	then
+		ancestorLockFile=$WORKING_FOLDER/classes/locks/$ancestorClassName".lock"
+
+		counter=0
+
+		while [ -d "$ancestorLockFile" ] || [ ! -f "$ancestorVirtualMethodsDictionary" ];
+		do
+			counter=$((counter + 1))
+			if [ "$counter" -gt 100 ];
+			then
+				counter=0
+				echo "$className waiting (2) for $baseClassName"  >> $CLASS_LOG_FILE
+			fi
+			waitRandom
+		done
+	fi 
+
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
 	cat $ancestorVirtualMethodsDictionary | sed -e 's/'"$ancestorClassName"'/'"$className"'/g' >> $CLASS_VIRTUAL_METHODS_DICTIONARY
@@ -254,45 +510,55 @@ do
 
 	if [ -f "$headerFile" ];
 	then
-		echo -n "."
+		##echo "."
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 	else
-		echo -n " error (1): header file not found for $ancestorClassName in $searchPaths with $PLUGINS... "
+		echo " error (1): header file not found for $ancestorClassName in $searchPaths with $PLUGINS... "
 		rm -f $CLASS_DEPENDENCIES_FILE
 		rm -f $OUTPUT_FILE
+		clean_up
+		releaseLocks
 		exit 0
 	fi
 done
 
-echo >> $CLASS_DEPENDENCIES_FILE
+if [ ! -z "$baseClassesNames" ];
+then
+	echo " $INPUT_FILE " >> $CLASS_DEPENDENCIES_FILE
+fi
+
+echo "Computation of dependcies done on caller $CALLER"  >> $CLASS_LOG_FILE
+
 rm -f $CLASS_DEPENDENCIES_FILE-e
 
 isFirstMethod=
 firstMethodLine=-1
 
-echo -n "."
+echo "Computing final header text on caller $CALLER"  >> $CLASS_LOG_FILE
+
+#echo "."
 methodDeclarations=`sed -e 's#^[ 	][ 	]*\(virtual\)[ 	][ 	]*\(.*\)#\2<\1>#;s#^[ 	][ 	]*\(override\)[ 	][ 	]*\(.*$\)#\2<\1>#;s#^[ 	][ 	]*\(static\)[ 	][ 	]*\(.*$\)#\2<\1>#' <<< "$methods"`
 
-echo -n "."
+#echo "."
 virtualMethodDeclarations=$virtualMethodDeclarations" "`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/\(^.*\)[ 	][ 	]*\([a-z][A-z0-9]*\)(\([^;]*;\)<virtual>.*/ __VIRTUAL_DEC(ClassName,\1,\2,\3/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g' | tr -d "\r\n"`
-echo -n "."
+#echo "."
 virtualMethodOverrides=$virtualMethodOverrides" "`grep -e "<override>\|<virtual>" <<< "$methodDeclarations" | grep -v -e ")[ 	]*=[ 	]*0[ 	]*;" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*/ __VIRTUAL_SET(ClassName,'"$className"',\1);/g' | tr -d "\r\n"`
-echo -n "."
+#echo "."
 virtualMethodNames=`grep -e "<virtual>" <<< "$methodDeclarations" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/\1/g' | sed -e 's/,[ 	]*)[ 	]*;/);/g'`
 
-echo -n "."
+#echo "."
 methodCalls=`grep -v -e "<static>\|<virtual>\|<override>" <<< "$methodDeclarations" | sed -e 's/^.*[ 	][ 	]*\([a-z][A-z0-9]*\)(.*$/'"$className"'_\1/g'`
 
 # Clean up method declarations
-echo -n "."
+#echo "."
 virtualMethodDeclarations=`sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' -e 's/,[ 	]*)[ 	]*;/);/g' <<< "$virtualMethodDeclarations"`
-echo -n "."
+#echo "."
 methodDeclarations=`sed -e 's/)[ 	]*=[ 	]*0[ 	]*;/);/g' <<< "$methodDeclarations"`
-echo -n "."
+#echo "."
 methodDeclarations=`sed -e 's/\(^.*[ 	][ 	]*\)\([a-z][A-z0-9]*\)(\(.*\)/\1'"$className"'_\2(void* _this,\3/g' <<< "$methodDeclarations"`
-echo -n "."
+#echo "."
 methodDeclarations=`sed -e 's/\(^.*\)void\* _this,\(.*\)<static>/\1\2/g' -e 's#<virtual>#	#;s#<override>#	#;s#<static>#	#' -e 's/,[ 	]*)[ 	]*;/);/g' <<< "$methodDeclarations"`
-echo -n "."
+#echo "."
 
 if [ ! -z "$virtualMethodNames" ];
 then
@@ -304,15 +570,23 @@ then
 	echo "$methodCalls" >> $CLASS_INHERITED_METHODS_DICTIONARY
 fi
 
+echo "Cleaning owned methods dictionary on caller $CALLER"  >> $CLASS_LOG_FILE
+
 # Remove duplicates
 awk '!x[$0]++' $CLASS_OWNED_METHODS_DICTIONARY > $CLASS_OWNED_METHODS_DICTIONARY.tmp
 mv $CLASS_OWNED_METHODS_DICTIONARY.tmp $CLASS_OWNED_METHODS_DICTIONARY
 
+echo "Writing owned methods dictionary on caller $CALLER"  >> $CLASS_LOG_FILE
+
 grep -v -e "_constructor\|_destructor\|_new" $CLASS_OWNED_METHODS_DICTIONARY > $CLASS_OWNED_METHODS_DICTIONARY.tmp
 mv $CLASS_OWNED_METHODS_DICTIONARY.tmp $CLASS_OWNED_METHODS_DICTIONARY
 
+echo "Writing virtual methods dictionary on caller $CALLER"  >> $CLASS_LOG_FILE
+
 awk '!x[$0]++' $CLASS_VIRTUAL_METHODS_DICTIONARY > $CLASS_VIRTUAL_METHODS_DICTIONARY.tmp
 mv $CLASS_VIRTUAL_METHODS_DICTIONARY.tmp $CLASS_VIRTUAL_METHODS_DICTIONARY
+
+echo "Writing inherited methods dictionary on caller $CALLER"  >> $CLASS_LOG_FILE
 
 awk '!x[$0]++' $CLASS_INHERITED_METHODS_DICTIONARY > $CLASS_INHERITED_METHODS_DICTIONARY.tmp
 mv $CLASS_INHERITED_METHODS_DICTIONARY.tmp $CLASS_INHERITED_METHODS_DICTIONARY
@@ -320,6 +594,7 @@ mv $CLASS_INHERITED_METHODS_DICTIONARY.tmp $CLASS_INHERITED_METHODS_DICTIONARY
 
 #echo methodDeclarations
 #echo "$methodDeclarations"
+echo "Computing class modifiers on caller $CALLER"  >> $CLASS_LOG_FILE
 
 while IFS= read -r classModifier;
 do
@@ -361,6 +636,8 @@ then
 	void "$className"_destructor(void* _this);"
 fi
 
+echo "Computing constructor/destructor/allocators on caller $CALLER"  >> $CLASS_LOG_FILE
+
 # Add allocator if it is not abstract nor a singleton class
 if [ ! "$isAbstractClass" = true ] && [ ! "$isSingletonClass" = true ] && [ ! "$isStaticClass" = true ] ;
 then
@@ -373,6 +650,8 @@ then
 	then
 		echo
 		echo " error (2): no constructor defined for $className : $baseClassName in $methodDeclarations"
+		clean_up
+		releaseLocks
 		exit 0
 	else
 #		echo "Added allocator"
@@ -387,7 +666,10 @@ $allocator"
 	fi
 fi
 
-TEMPORAL_FILE=$WORKING_FOLDER/temporal.txt
+echo "Writing temporal file on caller $CALLER"  >> $CLASS_LOG_FILE
+
+TEMPORAL_FILE=$WORKING_FOLDER/$className"Temporal.txt"
+#echo created $TEMPORAL_FILE
 touch $TEMPORAL_FILE
 
 #echo "" > $TEMPORAL_FILE
@@ -421,6 +703,7 @@ then
 fi
 
 #echo "" >> $TEMPORAL_FILE
+echo "Padding temporal file on caller $CALLER"  >> $CLASS_LOG_FILE
 
 # Adjust the output in order to make the methods to appear in the same lines as in the original header file
 if [ ! -z "$firstMethodLine" ];
@@ -445,6 +728,8 @@ fi
 sed -e 's#static[ 	]\+##g' <<< "$methodDeclarations" >> $TEMPORAL_FILE
 #echo >> $TEMPORAL_FILE
 
+echo "Writing $OUTPUT_FILE file on caller $CALLER"  >> $CLASS_LOG_FILE
+
 prelude=$((line - 2))
 totalLines=`wc -l < $INPUT_FILE`
 remaining=$((totalLines - end + 1))
@@ -458,9 +743,25 @@ sed -i -e 's#^[ 	]*class[ 	][ 	]*\([A-Z][A-z0-9]*\)[ 	]*;#__FORWARD_CLASS(\1);#'
 sed -i -e 's#\([A-Z][A-z0-9]*\)::\([a-z][A-z0-9]*\)#\1_\2#g' $OUTPUT_FILE
 sed -i -e 's/static[ 	]inline[ 	]/inline /g' $OUTPUT_FILE
 sed -i -e 's/inline[ 	]static[ 	]/inline /g' $OUTPUT_FILE
+
+echo "Writing class hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
+
+tryToLock $CLASSES_HIERARCHY_FILE hierarchy
+#tryToLock $CLASSES_HIERARCHY_FILE hierarchy
+# save new hierarchy
+touch $CLASSES_HIERARCHY_FILE
+sed -i -e "s#^$className:.*##g" $CLASSES_HIERARCHY_FILE
 sed -i -e '/^[[:space:]]*$/d' $CLASSES_HIERARCHY_FILE
+echo "$className:$baseClassesNamesHelper:$classModifiers" >> $CLASSES_HIERARCHY_FILE
+# replace any previous entry
+# Clean it
+releaseLock $CLASSES_HIERARCHY_FILE
 
-rm -f $TEMPORAL_FILE
-rm -f $OUTPUT_FILE"-e"
+echo "Done on caller $CALLER"  >> $CLASS_LOG_FILE
 
-echo " done"
+clean_up
+
+echo "Preprocessed class: $className..."
+releaseLocks
+
+echo "Released locks on caller $CALLER"  >> $CLASS_LOG_FILE

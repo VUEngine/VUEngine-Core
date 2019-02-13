@@ -24,9 +24,6 @@ MY_HOME = $(VBDE)libs/$(NAME)
 # Where the game lives
 GAME_HOME = .
 
-# Prefix used to clean the include paths
-INCLUDE_PATH_CLEAN_PREFIX = $(GAME_HOME)
-
 # output dir
 BUILD_DIR = $(GAME_HOME)/build
 
@@ -47,18 +44,9 @@ ifneq ($(NAME), $(ENGINE_NAME))
 PLUGINS := $(ENGINE_NAME) $(PLUGINS)
 endif
 
-# Same for the .d (dependency) files.
-ifneq ($(PREPROCESS), 1)
-D_FILES = $(C_OBJECTS:.o=.d)
-D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
-D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
-else
-D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
-endif
-
 # the target file
 TARGET_FILE = lib$(BASENAME)
-TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
+TARGET = $(WORKING_FOLDER)/$(TARGET_FILE)-$(TYPE)
 
 # Main target. The @ in front of a command prevents make from displaying it to the standard output.
 all: printPreBuildingInfo preprocessClasses plugins printBuildingInfo $(TARGET).a printPostBuildingInfo
@@ -74,10 +62,10 @@ printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
-$(TARGET).a: $(H_FILES) compile
+$(TARGET).a: $(H_FILES) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo -n Linking $(TARGET_FILE)-$(TYPE)...
-	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(STORE)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
+	@$(AR) rcsT $@ $(foreach PLUGIN, $(PLUGINS), $(WORKING_FOLDER)/lib$(shell echo $(PLUGIN)-$(TYPE) | sed -e "s@.*/@@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o
 	@echo " done"
 
-$(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo $(TARGET).a printPostBuildingInfo
+$(BUILD_DIR)/$(TARGET_FILE).a: plugins printBuildingInfo compile $(TARGET).a printPostBuildingInfo
 	@cp $(TARGET).a $(BUILD_DIR)/$(TARGET_FILE).a

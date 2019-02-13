@@ -1,0 +1,40 @@
+# Engine name
+ENGINE_NAME = vuengine/core
+
+# Engine's home
+ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+
+# List of header files.
+HEADERS_DIRS = $(shell find $(MY_HOME)/source -type d -print)
+HEADERS_DIRS_CLEAN = $(shell echo $(HEADERS_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+HEADERS = $(foreach DIR,$(HEADERS_DIRS),$(wildcard $(DIR)/*.h))
+
+# Makes a list of the header files that will have to be created.
+H_FILES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(HEADERS:.h=.h))
+H_FILES = $(shell echo $(H_FILES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+D_FILES = $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
+#D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
+
+# Class setup file
+SETUP_CLASSES = $(BASENAME)SetupClasses
+SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
+
+preprocess: phony $(SETUP_CLASSES_SOURCE).c
+	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/$(BASENAME).dependencies.txt )
+
+PLUGINS_ARGUMENT="$(addprefix :, $(PLUGINS:.=.))"
+
+# Override makefile's dependencies for header files
+-include $(D_FILES)
+
+$(WORKING_FOLDER)/objects/$(NAME)/%.h: $(MY_HOME)/%.h
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processHeaderFile.sh -i $< -o $@ -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE) -n $(NAME) -h $(MY_HOME) -p $(VBDE)libs  -g makefile -l $(PLUGINS_ARGUMENT)
+
+$(SETUP_CLASSES_SOURCE).c: $(H_FILES)
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/setupClasses.sh -n $(SETUP_CLASSES) -c $(CLASSES_HIERARCHY_FILE) -o $(SETUP_CLASSES_SOURCE).c -w $(WORKING_FOLDER)
+
+phony:
+	@$(shell echo "$(D_FILES)" > $(WORKING_FOLDER)/$(BASENAME).dependencies.txt )
+	@echo > /dev/null
+

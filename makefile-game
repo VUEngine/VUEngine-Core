@@ -1,6 +1,9 @@
 # Project name
 NAME = $(shell pwd | sed -e "s@.*/@@")
 
+# Game name
+GAME_NAME = $(NAME)
+
 # Default build type
 TYPE = release
 #TYPE = beta
@@ -53,20 +56,11 @@ PAD = pad
 endif
 
 # linker script
-LINKER_SCRIPT = $(ENGINE_HOME)/lib/compiler/linker/vb.ld
-ifneq ($(USE_CUSTOM_LINKER_SCRIPT),)
 LINKER_SCRIPT = $(shell pwd)/lib/compiler/linker/vb.ld
-endif
-
-# Same for the .d (dependency) files.
-D_FILES = $(C_OBJECTS:.o=.d)
-D_FILES := $(D_FILES) $(STORE)/objects/$(NAME)/$(SETUP_CLASSES).d
-D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
-D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
 
 # the target file
 TARGET_FILE = output
-TARGET = $(STORE)/$(TARGET_FILE)-$(TYPE)
+TARGET = $(WORKING_FOLDER)/$(TARGET_FILE)-$(TYPE)
 
 # define the engine
 VUENGINE = $(BUILD_DIR)/libvuengine.a
@@ -79,6 +73,7 @@ printPreBuildingInfo:
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
 	@echo "Build type : $(TYPE)"
 	@echo "Compiler   : $(COMPILER_NAME) $(COMPILER_VERSION)"
+	@echo
 
 printBuildingInfo:
 	@echo ""
@@ -95,11 +90,11 @@ portToNewSyntax: dirs
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/cleanSyntax.sh $(ENGINE_HOME) $(MY_HOME)/source $(WORKING_FOLDER)
 
 dump: $(TARGET).elf
-	@$(OBJDUMP) -t $(TARGET).elf > $(STORE)/sections-$(TYPE).txt
-	@$(OBJDUMP) -S $(TARGET).elf > $(STORE)/machine-$(TYPE).asm
+	@$(OBJDUMP) -t $(TARGET).elf > $(WORKING_FOLDER)/sections-$(TYPE).txt
+	@$(OBJDUMP) -S $(TARGET).elf > $(WORKING_FOLDER)/machine-$(TYPE).asm
 	@echo "Memory map $(TARGET).map"
-	@echo "Sections   $(STORE)/sections-$(TYPE).txt"
-	@echo "Assembly   $(STORE)/machine-$(TYPE).asm"
+	@echo "Sections   $(WORKING_FOLDER)/sections-$(TYPE).txt"
+	@echo "Assembly   $(WORKING_FOLDER)/machine-$(TYPE).asm"
 	@echo
 
 pad: $(TARGET).vb
@@ -107,16 +102,15 @@ pad: $(TARGET).vb
 	@$(ENGINE_HOME)/lib/utilities/padder $(BUILD_DIR)/$(TARGET_FILE).vb 3
 	@echo " "
 
-$(TARGET).vb: $(TARGET).elf
+$(TARGET).vb: compile $(TARGET).elf
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
 
-$(TARGET).elf: compile
-	@echo -n Linking $(TARGET).elf... $(PLUGINS_PATH)
+$(TARGET).elf: $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+	@echo Linking $(TARGET).elf...
 	@echo
-	@$(GCC) -o $@ -nostartfiles $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(FINAL_SETUP_CLASSES_OBJECT).o $(SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
+	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
-	@echo " done"																																			\
 
 deleteLibraries:
 	@rm -f $(PLUGINS_PATH)/*.a

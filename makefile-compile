@@ -1,0 +1,210 @@
+# Clean plugin name by stripping out everything up to (and including) the last slash
+BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
+
+# Engine name
+ENGINE_NAME = vuengine/core
+
+# Engine's home
+ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+
+
+# Small data sections' usage
+MSDA_SIZE                       = 0
+MEMORY_POOL_SECTION             =
+NON_INITIALIZED_DATA_SECTION    =
+INITIALIZED_DATA_SECTION        =
+STATIC_SINGLETONS_DATA_SECTION  =
+VIRTUAL_TABLES_DATA_SECTION     =
+
+MEMORY_POOL_SECTION_ATTRIBUTE               = __MEMORY_POOL_SECTION_ATTRIBUTE=
+NON_INITIALIZED_DATA_SECTION_ATTRIBUTE      = __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE=
+INITIALIZED_DATA_SECTION_ATTRIBUTE          = __INITIALIZED_DATA_SECTION_ATTRIBUTE=
+STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE    = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE=
+VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE       = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE=
+
+include $(ENGINE_HOME)/makefile-compiler
+-include $(GAME_CONFIG_MAKE_FILE)
+-include $(PLUGIN_CONFIG_MAKE_FILE)
+
+OPTIMIZATION_OPTION = -O0
+ifneq ($(OPTIMIZATION),)
+OPTIMIZATION_OPTION = -$(OPTIMIZATION)
+endif
+
+PEDANTIC_WARNINGS_FLAG =
+ifeq ($(PRINT_PEDANTIC_WARNINGS), 1)
+PEDANTIC_WARNINGS_FLAG = -pedantic
+endif
+
+STORE_SUFFIX =
+PROLOG_FUNCTIONS_FLAG =
+ifeq ($(USE_PROLOG_FUNCTIONS), 1)
+PROLOG_FUNCTIONS_FLAG = -mprolog-function
+STORE_SUFFIX = -pf
+endif
+
+FRAME_POINTER_USAGE_FLAG = -fomit-frame-pointer
+ifeq ($(USE_FRAME_POINTER), 1)
+FRAME_POINTER_USAGE_FLAG = -fno-omit-frame-pointer
+endif
+
+USE_CUSTOM_LINKER_SCRIPT =
+
+ifneq ($(MEMORY_POOL_SECTION),)
+MEMORY_POOL_SECTION_ATTRIBUTE = __MEMORY_POOL_SECTION_ATTRIBUTE="__attribute__((section(\"$(MEMORY_POOL_SECTION)\")))"
+USE_CUSTOM_LINKER_SCRIPT = 1
+endif
+
+ifneq ($(NON_INITIALIZED_DATA_SECTION),)
+NON_INITIALIZED_DATA_SECTION_ATTRIBUTE = __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(NON_INITIALIZED_DATA_SECTION)\")))"
+USE_CUSTOM_LINKER_SCRIPT = 1
+endif
+
+ifneq ($(INITIALIZED_DATA_SECTION),)
+INITIALIZED_DATA_SECTION_ATTRIBUTE = __INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(INITIALIZED_DATA_SECTION)\")))"
+USE_CUSTOM_LINKER_SCRIPT = 1
+endif
+
+ifneq ($(STATIC_SINGLETONS_DATA_SECTION),)
+STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(STATIC_SINGLETONS_DATA_SECTION)\")))"
+USE_CUSTOM_LINKER_SCRIPT = 1
+endif
+
+ifneq ($(VIRTUAL_TABLES_DATA_SECTION),)
+VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(VIRTUAL_TABLES_DATA_SECTION)\")))"
+USE_CUSTOM_LINKER_SCRIPT = 1
+endif
+
+DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
+
+# Common macros for all build types
+COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
+
+# The following blocks change some variables depending on the build type
+ifeq ($(TYPE),debug)
+LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+MACROS = __DEBUG __TOOLS $(COMMON_MACROS)
+endif
+
+ifeq ($(TYPE), release)
+LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+MACROS = __RELEASE $(COMMON_MACROS)
+endif
+
+ifeq ($(TYPE), beta)
+LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+MACROS = __BETA $(COMMON_MACROS)
+endif
+
+ifeq ($(TYPE), tools)
+LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+MACROS = __TOOLS $(COMMON_MACROS)
+endif
+
+ifeq ($(TYPE), preprocessor)
+ALL_TARGET_PREREQUISITES = dirs plugins $(C_OBJECTS)
+LD_PARAMS =
+C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
+MACROS = $(COMMON_MACROS)
+endif
+
+# Add directories to the includes in order of overriding priority: game, then plugins
+ifeq ($(GAME_NAME), $(NAME))
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print)
+INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print)
+else
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
+INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+endif
+
+# Which directories contain source files
+SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)
+SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+# Makes a list of the source (.c) files.
+C_SOURCES = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.c))
+
+# Makes a list of the source (.s) files.
+ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
+
+# Makes a list of the object files that will have to be created.
+C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
+C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+C_INTERMEDIATE_SOURCES_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.c))
+C_INTERMEDIATE_SOURCES = $(shell echo $(C_INTERMEDIATE_SOURCES_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+# Makes a list of the object files that will have to be created.
+ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
+ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+# Class setup file
+SETUP_CLASSES = $(BASENAME)SetupClasses
+SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
+SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES)
+FINAL_SETUP_CLASSES = setupClasses
+FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
+FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
+
+compile: phony $(C_INTERMEDIATE_SOURCES) $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+
+$(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
+	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
+	@rm -f $*.dd
+
+$(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
+	@$(GCC) -Wp,-MD,$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $*.dd > $*.d
+	@rm -f $*.dd
+
+# Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
+# because the files gcc outputs assume it will be in the same dir as the source file.
+$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
+	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -np $(VBDE)libs -n $(NAME) -lp $(VBDE)libs -l $(PLUGINS)
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp 
+	@sed -e 's#$<##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
+	@sed -e 's#$@#$<#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
+	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.d
+	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
+	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
+	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
+
+$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
+
+$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
+	@$(AS) -o $@ $<
+
+phony:
+	@echo > /dev/null
+#	@echo WORKING_FOLDER $(WORKING_FOLDER)
+#	@echo GAME_NAME $(GAME_NAME)
+#	@echo NAME $(NAME)
+#	@echo PLUGINS $(PLUGINS)
+#	@echo $(INCLUDE_PATHS)
+#	@$(bash sed -e 's@$(INCLUDE_PATH_CLEAN_PREFIX)/@@g' <<< $(INCLUDE_PATHS) )
+#	@echo Using config $(CONFIG_FILE)
+#	@echo Using config $(ESSENTIAL_HEADERS)
+
+D_FILES = $(C_OBJECTS:.o=.d)
+D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES).d
+D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
+# Same for the .d (dependency) files.
+#D_FILES = $(C_OBJECTS:.o=.d)
+#D_FILES := $(D_FILES) $(WORKING_FOLDER)/objects/$(NAME)/$(SETUP_CLASSES).d
+#D_FILES := $(shell echo $(D_FILES) | sed -e 's@'"$(MY_HOME)"/'@@g')
+#D_FILES := $(D_FILES) $(shell if [ -d $(WORKING_FOLDER)/classes/dependencies/$(NAME) ]; then find $(WORKING_FOLDER)/classes/dependencies/$(NAME) -name "*.d"; fi; )
+
+-include $(D_FILES)
