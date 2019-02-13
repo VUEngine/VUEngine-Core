@@ -1,5 +1,8 @@
 include $(ENGINE_HOME)/makefile-compiler
 
+# Number of jobs to run
+MAKE_JOBS = 4
+
 # Clean plugin name by stripping out everything up to (and including) the last slash
 BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
 
@@ -91,13 +94,13 @@ preprocessPlugins:
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
 				-e GAME_HOME=$(GAME_HOME)																											\
 				-e NAME=$(PLUGIN)																													\
-				-e PREPROCESS=1;																													\
+				-e MAKE_JOBS=$(MAKE_JOBS);																											\
 		fi;																																			\
 	)
 
 preprocessHeaderFiles:
 	@$(MAKE) --no-print-directory preprocess																										\
-		-j 4																																		\
+		-j $(MAKE_JOBS)																																		\
 		-f $(ENGINE_HOME)/makefile-preprocess																										\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
@@ -110,7 +113,7 @@ preprocessHeaderFiles:
 
 compile:
 	@$(MAKE) --no-print-directory compile																											\
-		-j 4																																		\
+		-j $(MAKE_JOBS)																																		\
 		-f $(ENGINE_HOME)/makefile-compile																											\
 		-e TYPE=$(TYPE) 																															\
 		-e GAME_HOME=$(GAME_HOME)																													\
@@ -137,6 +140,7 @@ plugins: deleteLibraries
 				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e GAME_HOME=$(GAME_HOME)																											\
+				-e MAKE_JOBS=$(MAKE_JOBS)																											\
 				-e NAME=$(PLUGIN)																													\
 				-e GAME_NAME=$(GAME_NAME);																											\
 		fi;																																			\
