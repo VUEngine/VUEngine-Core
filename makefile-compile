@@ -168,19 +168,22 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
-$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
+$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
+	@$(eval OBJECT_FILE=$(shell echo $@ | sed -e 's/\.c/\.o/g'))
 	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $< -o $@ 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -np $(VBDE)libs -n $(NAME) -lp $(VBDE)libs -l $(PLUGINS)
-	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $@))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp 
-	@sed -e 's#$<##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
-	@sed -e 's#$@#$<#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $@ -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -w $(WORKING_FOLDER) -np $(VBDE)libs -n $(NAME) -lp $(VBDE)libs -l $(PLUGINS)
+	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp 
+	@sed -e 's#$@##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
+	@sed -e 's#$(OBJECT_FILE)#$@#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
 	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.d
 	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
 	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
 	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
 
-$(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
+# Override make's default call to GCC
+$(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
+	@echo > /dev/null
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
