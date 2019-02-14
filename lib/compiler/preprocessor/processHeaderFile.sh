@@ -114,7 +114,7 @@ function clean_up()
 
 function releaseLocks()
 {
-	releaseLock $CLASS_LOCK_FILE
+	releaseLock $CLASS_LOCK
 }
 
 INPUT_FILE=
@@ -224,8 +224,8 @@ fi
 CLASS_LOG_FILE="$WORKING_FOLDER/classes/logs/$className.log"
 
 # This handles a race condition between a call from the makefile and from this below in this script
-CLASS_LOCK_FILE="$WORKING_FOLDER/classes/locks/$className"
-tryToLock $CLASS_LOCK_FILE exit
+CLASS_LOCK="$WORKING_FOLDER/classes/locks/$className"
+tryToLock $CLASS_LOCK exit
 echo "Got lock on calling from $CALLER" > $CLASS_LOG_FILE
 
 DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$className".d"
@@ -274,9 +274,9 @@ then
 		then
 			mustBeReprocessed=true
 		else
-			baseClassLockFile=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
+			baseClassLock=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
 
-			if [ ! -d "$baseClassLockFile" ];
+			if [ ! -d "$baseClassLock" ];
 			then
 				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
 
@@ -337,10 +337,10 @@ then
 	if [ ! -z "$baseClassName" ];
 	then
 		processedBaseClassFile=`find $WORKING_FOLDER/objects -name "$baseClassName.h" -print -quit`
-		baseClassLockFile=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
+		baseClassLock=$WORKING_FOLDER/classes/locks/$baseClassName".lock"
 		counter=0
 
-		while [ -z "$processedBaseClassFile" ] || [ ! -f "$processedBaseClassFile" ] || [ -d "$baseClassLockFile" ];
+		while [ -z "$processedBaseClassFile" ] || [ ! -f "$processedBaseClassFile" ] || [ -d "$baseClassLock" ];
 		do
 			if [ "$counter" -gt 100 ];
 			then
@@ -356,7 +356,7 @@ then
 			then
 				echo "Error processing $className while computing hierarchy on $baseClassName with file $processedBaseClassFile not found"  >> $CLASS_LOG_FILE
 				ls -la FILE: $processedBaseClassFile
-				ls -la LOCK: $baseClassLockFile.lock
+				ls -la LOCK: $baseClassLock.lock
 				releaseLocks
 				exit 0
 			fi
@@ -487,11 +487,11 @@ do
 
 	if [ ! -z "${className##Object}" ];
 	then
-		ancestorLockFile=$WORKING_FOLDER/classes/locks/$ancestorClassName".lock"
+		ancestorLock=$WORKING_FOLDER/classes/locks/$ancestorClassName".lock"
 
 		counter=0
 
-		while [ -d "$ancestorLockFile" ] || [ ! -f "$ancestorVirtualMethodsDictionary" ];
+		while [ -d "$ancestorLock" ] || [ ! -f "$ancestorVirtualMethodsDictionary" ];
 		do
 			counter=$((counter + 1))
 			if [ "$counter" -gt 100 ];
