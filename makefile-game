@@ -4,9 +4,6 @@ NAME = $(shell pwd | sed -e "s@.*/@@")
 # Game name
 GAME_NAME = $(NAME)
 
-# Default clean type
-CLEAN_TYPE = all
-
 # Engine name
 ENGINE_NAME = vuengine/core
 

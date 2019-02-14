@@ -9,6 +9,9 @@ BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
 # Default build type. Available types: release, beta, tools, debug, preprocessor
 TYPE = release
 
+# Default clean type
+CLEAN_TYPE = all
+
 # output dir
 #BUILD_DIR = $(GAME_HOME)/build
 

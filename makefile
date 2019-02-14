@@ -2,9 +2,6 @@
 # (this is set from outside)
 NAME = vuengine/plugins/plugin-name
 
-# Default clean type
-CLEAN_TYPE = all
-
 # Engine name
 ENGINE_NAME = vuengine/core
 
