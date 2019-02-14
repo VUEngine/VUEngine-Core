@@ -245,7 +245,7 @@ do
 	REFERENCED_CLASS_NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsOwned.txt"
 	REFERENCED_CLASS_VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsVirtual.txt"
 
-	referencedMethodNamesTemp=`grep "$referencedClassName" <<< "$methodCalls" | sed -e 's/::/_/g' | sort -u | sed -e 's/$/\\\|/g' | tr -d "\r\n"`
+	referencedMethodNamesTemp=`grep "$referencedClassName" <<< "$methodCalls" | sed -e 's/::/_/g' | sed -e 's/$/\\\|/g' | tr -d "\r\n"`
 	referencedMethodNamesTemp=$referencedMethodNamesTemp"DUMMY_METHOD_NAME"
 
 	if [ -f "$REFERENCED_CLASS_NORMAL_METHODS_FILE" ];
@@ -264,12 +264,6 @@ do
 
 	#echo "."
 done
-
-sort -u $NORMAL_METHODS_FILE > $NORMAL_METHODS_FILE.tmp
-mv $NORMAL_METHODS_FILE.tmp $NORMAL_METHODS_FILE
-sort -u $VIRTUAL_METHODS_FILE > $VIRTUAL_METHODS_FILE.tmp
-mv $VIRTUAL_METHODS_FILE.tmp $VIRTUAL_METHODS_FILE
-
 
 #ls -l $NORMAL_METHODS_FILE
 #ls -l $VIRTUAL_METHODS_FILE
