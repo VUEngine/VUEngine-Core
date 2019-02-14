@@ -4,13 +4,6 @@ NAME = $(shell pwd | sed -e "s@.*/@@")
 # Game name
 GAME_NAME = $(NAME)
 
-# Default build type
-TYPE = release
-#TYPE = beta
-#TYPE = tools
-#TYPE = debug
-#TYPE = preprocessor
-
 # Default clean type
 CLEAN_TYPE = all
 

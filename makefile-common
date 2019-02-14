@@ -6,12 +6,8 @@ MAKE_JOBS = 4
 # Clean plugin name by stripping out everything up to (and including) the last slash
 BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
 
-# Default build type
-#TYPE = release
-#TYPE = beta
-#TYPE = tools
-#TYPE = debug
-#TYPE = preprocessor
+# Default build type. Available types: release, beta, tools, debug, preprocessor
+TYPE = release
 
 # output dir
 #BUILD_DIR = $(GAME_HOME)/build
@@ -93,6 +89,7 @@ preprocessPlugins:
 			$(MAKE) --no-print-directory preprocessClasses																							\
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
 				-e GAME_HOME=$(GAME_HOME)																											\
+				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e NAME=$(PLUGIN)																													\
 				-e MAKE_JOBS=$(MAKE_JOBS);																											\
 		fi;																																			\
@@ -166,6 +163,7 @@ ifeq ($(DIRS_EXIST), 0)
 			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
 			-e TYPE=$(TYPE) 																													\
 			-e GAME_HOME=$(GAME_HOME)																											\
+			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 			-e NAME=$(PLUGIN);																													\
 	)
 endif
@@ -174,7 +172,7 @@ printDirsInfo: phony
 ifeq ($(DIRS_EXIST), 0)
 #	@$(eval CHECKING_DIRS_START_TIME=$(shell date +%s))
 #	@echo "********************************************* Checking working folders for $(BASENAME)"
-	@echo Creating working dirs for $(BASENAME)...
+	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
 dirs: createPluginDirs printDirsInfo
@@ -183,7 +181,7 @@ ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
 	@mkdir -p $(WORKING_FOLDER)/classes/hierarchies/$(NAME)
 	@-$(foreach DIR,$(SOURCES_DIRS_CLEAN), mkdir -p $(WORKING_FOLDER)/objects/$(NAME)/$(DIR); )
-#	@echo " done"
+	@echo " done"
 #	@$(eval CHECKING_DIRS_END_TIME=$(shell date +%s))
 #	@echo "Total time:" $$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) / 60 ))" min. "$$(( ($(CHECKING_DIRS_END_TIME) - $(CHECKING_DIRS_START_TIME)) % 60 ))" sec."
 endif

@@ -70,7 +70,7 @@ fi
 
 if [ -z "${INPUT_FILE##*assets/*}" ];
 then
-	echo "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1...#g' <<< $INPUT_FILE`"
+	echo "`sed -e 's#^.*assets/\(.*$\)#Compiling asset: \1#g' <<< $INPUT_FILE`"
 	exit 0
 fi
 
@@ -149,11 +149,11 @@ then
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 	else
 		if [ -z "${INPUT_FILE##*object*}" ];
 		then
-			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 		fi
 	fi
 	exit 0
@@ -178,11 +178,11 @@ then
 	clean_up
 	if [ -z "${INPUT_FILE##*source*}" ];
 	then
-		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+		echo "`sed -e 's#^.*source[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 	else
 		if [ -z "${INPUT_FILE##*object*}" ];
 		then
-			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1...#g' <<< $INPUT_FILE`"
+			echo "`sed -e 's#^.*object[s]*/\(.*$\)#Compiling file:  \1#g' <<< $INPUT_FILE`"
 		fi
 	fi
 	exit 0
@@ -201,7 +201,7 @@ then
 	mkdir -p $WORKING_FOLDER
 fi
 
-echo "Compiling class: $className..."
+echo "Compiling class: $className"
 
 # Move declaration mark to the end in preparation for virtual method call substitutions
 sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE

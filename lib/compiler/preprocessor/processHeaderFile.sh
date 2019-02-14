@@ -314,7 +314,7 @@ then
 fi
 
 # The continue
-#echo "Preprocessing class: $className..."
+#echo "Preprocessing class: $className"
 #echo 
 #echo PLUGINS $PLUGINS
 #echo LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT
@@ -513,7 +513,7 @@ do
 		##echo "."
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 	else
-		echo " error (1): header file not found for $ancestorClassName in $searchPaths with $PLUGINS... "
+		echo " error (1): header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
 		rm -f $CLASS_DEPENDENCIES_FILE
 		rm -f $OUTPUT_FILE
 		clean_up
@@ -761,7 +761,7 @@ echo "Done on caller $CALLER"  >> $CLASS_LOG_FILE
 
 clean_up
 
-echo "Preprocessed class: $className..."
+echo "Preprocessed class: $className"
 releaseLocks
 
 echo "Released locks on caller $CALLER"  >> $CLASS_LOG_FILE

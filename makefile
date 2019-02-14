@@ -2,13 +2,6 @@
 # (this is set from outside)
 NAME = vuengine/plugins/plugin-name
 
-# Default build type
-TYPE = release
-#TYPE = beta
-#TYPE = tools
-#TYPE = debug
-#TYPE = preprocessor
-
 # Default clean type
 CLEAN_TYPE = all
 
