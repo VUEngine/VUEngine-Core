@@ -114,7 +114,11 @@ sed -i -e 's/,[ 	]*)/)/g' $OUTPUT_FILE
 # Put back line breaks
 sed  -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
 
-referencedClassesNames=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/\([A-Z][A-z0-9]*::\)/<\1>\'$'\n/g' | grep "::>" | sed -e 's/.*<\([A-Z][A-z0-9]*\)::>/\1/g' | sort -u`
+referencedClassesNames=$className"
+`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/\([A-Z][A-z0-9]*::\)/<\1>\'$'\n/g' | grep "::>" | sed -e 's/.*<\([A-Z][A-z0-9]*\)::>/\1/g' | sort -u`"
+referencedMethodNames=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/[A-Z][A-z0-9]*[ 	]*\(::[^(]*\)(/<\1>\'$'\n/g' | grep "<::" | sed -e 's/.*<::\([^>]*\)>/\1\\\|/g' | sort -u | tr -d "\r\n"`
+referencedMethodNames=$referencedMethodNames"DUMMY_METHOD"
+
 rm -f $OUTPUT_FILE.tmp
 
 # Replace :: by _
@@ -209,13 +213,12 @@ sed -i -e 's/<DECLARATION>.*/&<DECLARATION>/g' $OUTPUT_FILE
 anyMethodVirtualized=false
 
 # Replace calls to base class methods
-CLASS_OWNED_METHODS_DICTIONARY=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwned.txt"
-classHasOwnMethods=`cat $CLASS_OWNED_METHODS_DICTIONARY`
-if [ ! -z "$classHasOwnMethods" ];
+NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsOwnedToApply.txt"
+if [ -f $NORMAL_METHODS_FILE ];
 then
-	awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/normalMethodTraduction.awk $CLASS_OWNED_METHODS_DICTIONARY $OUTPUT_FILE > $OUTPUT_FILE.tmp
-	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+	rm -f $NORMAL_METHODS_FILE
 fi
+
 
 VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$className"MethodsVirtualToApply.txt"
 if [ -f $VIRTUAL_METHODS_FILE ];
@@ -223,34 +226,51 @@ then
 	rm -f $VIRTUAL_METHODS_FILE
 fi
 
+classHasNormalMethods=
+classHasVirtualMethods=
+
 # Generate a dictionary of all virtual methods to replace on file
 for referencedClassName in $referencedClassesNames
 do
+	REFERENCED_CLASS_NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsOwned.txt"
 	REFERENCED_CLASS_VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsVirtual.txt"
 
-	if [ ! -f "$REFERENCED_CLASS_VIRTUAL_METHODS_FILE" ];
+	if [ -f "$REFERENCED_CLASS_NORMAL_METHODS_FILE" ];
 	then
-		continue;
+		classHasNormalMethods=true
+		grep -e "$referencedMethodNames" $REFERENCED_CLASS_NORMAL_METHODS_FILE >> $NORMAL_METHODS_FILE
 	fi
 
-	cat $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
+	if [ -f "$REFERENCED_CLASS_VIRTUAL_METHODS_FILE" ];
+	then
+		classHasVirtualMethods=true
+		grep -e "$referencedMethodNames" $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
+	fi
+
 	#echo "."
 done
 
-if [ -f $VIRTUAL_METHODS_FILE ];
+classHasNormalMethods=`cat $NORMAL_METHODS_FILE`
+if [ ! -z "$classHasNormalMethods" ];
 then
-
-	classHasOwnMethods=`cat $VIRTUAL_METHODS_FILE`
-	if [ ! -z "$classHasOwnMethods" ];
-	then
 #		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
 #		printProgressID=`echo $!`
-		awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
-		mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+	awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 #		disown $printProgressID
 #		kill $printProgressID
-	fi
+	rm -f $NORMAL_METHODS_FILE
+fi
 
+classHasVirtualMethods=`cat $VIRTUAL_METHODS_FILE`
+if [ ! -z "$classHasVirtualMethods" ];
+then
+#		bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
+#		printProgressID=`echo $!`
+	awk -f $VBDE/libs/vuengine/core/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
+#		disown $printProgressID
+#		kill $printProgressID
 	rm -f $VIRTUAL_METHODS_FILE
 fi
 
