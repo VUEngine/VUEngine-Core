@@ -114,20 +114,10 @@ sed -i -e 's/,[ 	]*)/)/g' $OUTPUT_FILE
 # Put back line breaks
 sed  -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
 
+# Must read the method calls now that the declarations can be singled out
 methodCalls=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/.*\[//;s/\].*//;' | sed -e 's/\([A-Z][A-z0-9]*::[^(]*\)(/<\1>\'$'\n/g' | grep "<.*::.*>" | sed -e 's/.*<\(.*\)>/\1/g' | sort -u`
 referencedClassesNames=$className"
 `sed -e 's/::.*//g' <<< "$methodCalls" |sort -u`"
-referencedMethodPartialNames=`sed -e 's/^[^:]*:://g' <<< "$methodCalls" | sort -u | sed -e 's/$/\\\|/g' |  tr -d "\r\n"`
-referencedMethodPartialNames=$referencedMethodPartialNames"DUMMY_PARTIAL_METHOD_NAME"
-#referencedComplexMethodNames=`sed -e 's/\(^[^:]*\)::\(.*\)/\^\1_\2 \[A\-z\]\[A\-z\0\-9\]\*_\2/g' <<< "$methodCalls" | sort -u | sed -e 's/$/\\\|/g' | tr -d "\r\n"`
-#referencedComplexMethodNames=` echo  "$methodCalls" | sort -u | sed -e 's/\(^[^:]*\)::\(.*\)/\\\<\1_\2 \\\>/g' | sed -e 's/$/\\\|/g' | tr -d "\r\n"`
-#referencedComplexMethodNames=$referencedComplexMethodNames"DUMMY_METHOD_NAME"
-#echo "methodCalls $methodCalls"
-#echo "referencedClassesNames $referencedClassesNames"
-#echo
-#echo "referencedMethodPartialNames $referencedMethodPartialNames"
-#echo
-#echo referencedComplexMethodNames $referencedComplexMethodNames:
 
 rm -f $OUTPUT_FILE.tmp
 
@@ -245,21 +235,21 @@ do
 	REFERENCED_CLASS_NORMAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsOwned.txt"
 	REFERENCED_CLASS_VIRTUAL_METHODS_FILE=$WORKING_FOLDER/classes/dictionaries/$referencedClassName"MethodsVirtual.txt"
 
-	referencedMethodNamesTemp=`grep "$referencedClassName" <<< "$methodCalls" | sed -e 's/::/_/g' | sed -e 's/$/\\\|/g' | tr -d "\r\n"`
-	referencedMethodNamesTemp=$referencedMethodNamesTemp"DUMMY_METHOD_NAME"
+	referencedMethodNames=`grep "$referencedClassName" <<< "$methodCalls" | sed -e 's/::/_/g' | sed -e 's/$/\\\|/g' | tr -d "\r\n"`
+	referencedMethodNames=$referencedMethodNames"DUMMY_METHOD_NAME"
 
 	if [ -f "$REFERENCED_CLASS_NORMAL_METHODS_FILE" ];
 	then
 		classHasNormalMethods=true
 
-		grep -e "$referencedMethodPartialNames" $REFERENCED_CLASS_NORMAL_METHODS_FILE | grep -e "$referencedMethodNamesTemp" >> $NORMAL_METHODS_FILE
+		grep -e "$referencedMethodNames" $REFERENCED_CLASS_NORMAL_METHODS_FILE >> $NORMAL_METHODS_FILE
 	fi
 
 	if [ -f "$REFERENCED_CLASS_VIRTUAL_METHODS_FILE" ];
 	then
 
 		classHasVirtualMethods=true
-		grep -e "$referencedMethodPartialNames" $REFERENCED_CLASS_VIRTUAL_METHODS_FILE | grep -e "$referencedMethodNamesTemp" >> $VIRTUAL_METHODS_FILE
+		grep -e "$referencedMethodNames" $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
 	fi
 
 	#echo "."
