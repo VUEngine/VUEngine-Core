@@ -259,7 +259,7 @@ do
 	then
 
 		classHasVirtualMethods=true
-		grep -e "$referencedMethodPartialNames" $REFERENCED_CLASS_VIRTUAL_METHODS_FILE >> $VIRTUAL_METHODS_FILE
+		grep -e "$referencedMethodPartialNames" $REFERENCED_CLASS_VIRTUAL_METHODS_FILE | grep -e "$referencedMethodNamesTemp" >> $VIRTUAL_METHODS_FILE
 	fi
 
 	#echo "."
