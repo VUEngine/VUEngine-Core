@@ -64,7 +64,7 @@ printPreBuildingInfo:
 
 printBuildingInfo:
 	@echo ""
-	@echo "********************************************* Building $(NAME) $(TYPE)"
+	@echo "********************************************* Building $(NAME)"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
