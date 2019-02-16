@@ -7,7 +7,6 @@ ENGINE_NAME = vuengine/core
 # Engine's home
 ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
 
-
 # Small data sections' usage
 MSDA_SIZE                       = 0
 MEMORY_POOL_SECTION             =

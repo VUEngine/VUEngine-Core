@@ -16,9 +16,6 @@ MY_HOME = $(shell pwd)
 # Where the game lives
 GAME_HOME = $(MY_HOME)
 
-# output dir
-BUILD_DIR = build
-
 # target's needed steps
 ALL_TARGET_PREREQUISITES = dirs $(TARGET).vb $(PAD) $(DUMP_TARGET)
 
@@ -67,7 +64,7 @@ printPreBuildingInfo:
 
 printBuildingInfo:
 	@echo ""
-	@echo "********************************************* Building $(NAME)"
+	@echo "********************************************* Building $(NAME) $(TYPE)"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))

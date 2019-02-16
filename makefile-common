@@ -3,17 +3,25 @@ include $(ENGINE_HOME)/makefile-compiler
 # Number of jobs to run
 MAKE_JOBS = 4
 
-# Clean plugin name by stripping out everything up to (and including) the last slash
-BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
-
 # Default build type. Available types: release, beta, tools, debug, preprocessor
 TYPE = release
+
+# Alllow override of build type and number of jobs in config.make file
+-include $(GAME_CONFIG_MAKE_FILE)
+-include $(PLUGIN_CONFIG_MAKE_FILE)
+
+# Clean plugin name by stripping out everything up to (and including) the last slash
+BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
 
 # Default clean type
 CLEAN_TYPE = all
 
 # output dir
-#BUILD_DIR = $(GAME_HOME)/build
+ifeq ($(MY_HOME), $(GAME_HOME))
+BUILD_DIR = build
+else
+BUILD_DIR = $(GAME_HOME)/build
+endif
 
 # Where to store object and dependency files.
 WORKING_FOLDER = $(BUILD_DIR)/$(TYPE)$(WORKING_FOLDER_SUFFIX)
@@ -46,9 +54,6 @@ FOLDER_TO_CLEAN=$(MY_HOME)/build
 ifneq ($(CLEAN_TYPE), all)
 FOLDER_TO_CLEAN=$(MY_HOME)/build/$(CLEAN_TYPE)*
 endif
-
--include $(GAME_CONFIG_MAKE_FILE)
--include $(PLUGIN_CONFIG_MAKE_FILE)
 
 # Obligatory headers
 CONFIG_FILE = 			$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo $(MY_HOME)/source/config.h; fi;)
@@ -110,12 +115,10 @@ preprocessHeaderFiles:
 		-e WORKING_FOLDER=$(WORKING_FOLDER) 																										\
 		-e PLUGINS="$(PLUGINS)"														
 
-
 compile:
 	@$(MAKE) --no-print-directory compile																											\
 		-j $(MAKE_JOBS)																																		\
 		-f $(ENGINE_HOME)/makefile-compile																											\
-		-e TYPE=$(TYPE) 																															\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
 		-e MY_HOME=$(MY_HOME)																														\
@@ -136,7 +139,6 @@ plugins: deleteLibraries
 			$(MAKE) --no-print-directory	 																										\
 				$(PLUGIN_FILE).a 																													\
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
-				-e TYPE=$(TYPE) 																													\
 				-e CONFIG_FILE=$(CONFIG_FILE) 																										\
 				-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 				-e GAME_HOME=$(GAME_HOME)																											\
@@ -164,7 +166,6 @@ ifeq ($(DIRS_EXIST), 0)
 		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
 		$(MAKE) --no-print-directory dirs																										\
 			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
-			-e TYPE=$(TYPE) 																													\
 			-e GAME_HOME=$(GAME_HOME)																											\
 			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
 			-e NAME=$(PLUGIN);																													\

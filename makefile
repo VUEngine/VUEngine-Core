@@ -14,9 +14,6 @@ MY_HOME = $(VBDE)libs/$(NAME)
 # Where the game lives
 GAME_HOME = .
 
-# output dir
-BUILD_DIR = $(GAME_HOME)/build
-
 # target's needed steps
 ALL_TARGET_PREREQUISITES =  $(TARGET).a
 
