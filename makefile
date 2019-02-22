@@ -3,33 +3,19 @@
 NAME = vuengine/plugins/plugin-name
 
 # Engine name
-ENGINE_NAME = vuengine/core
+override ENGINE_NAME = vuengine/core
 
 # Engine's home
-ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+override ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
 
 # My home
-MY_HOME = $(VBDE)libs/$(NAME)
+override MY_HOME = $(VBDE)libs/$(NAME)
 
 # Where the game lives
 GAME_HOME = .
 
-# target's needed steps
-ALL_TARGET_PREREQUISITES =  $(TARGET).a
-
-# Overrides file
-PLUGIN_CONFIG_MAKE_FILE = $(shell if [ -f $(MY_HOME)/config.make ]; then echo $(MY_HOME)/config.make; fi;)
-
 # Common
 include $(ENGINE_HOME)/makefile-common
-
-# Override plugins
-PLUGINS =
--include $(PLUGIN_CONFIG_MAKE_FILE)
-
-ifneq ($(NAME), $(ENGINE_NAME))
-PLUGINS := $(ENGINE_NAME) $(PLUGINS)
-endif
 
 # the target file
 TARGET_FILE = lib$(BASENAME)

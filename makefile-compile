@@ -27,51 +27,51 @@ include $(ENGINE_HOME)/makefile-compiler
 
 OPTIMIZATION_OPTION = -O0
 ifneq ($(OPTIMIZATION),)
-OPTIMIZATION_OPTION = -$(OPTIMIZATION)
+	OPTIMIZATION_OPTION = -$(OPTIMIZATION)
 endif
 
 PEDANTIC_WARNINGS_FLAG =
 ifeq ($(PRINT_PEDANTIC_WARNINGS), 1)
-PEDANTIC_WARNINGS_FLAG = -pedantic
+	PEDANTIC_WARNINGS_FLAG = -pedantic
 endif
 
 STORE_SUFFIX =
 PROLOG_FUNCTIONS_FLAG =
 ifeq ($(USE_PROLOG_FUNCTIONS), 1)
-PROLOG_FUNCTIONS_FLAG = -mprolog-function
-STORE_SUFFIX = -pf
+	PROLOG_FUNCTIONS_FLAG = -mprolog-function
+	STORE_SUFFIX = -pf
 endif
 
 FRAME_POINTER_USAGE_FLAG = -fomit-frame-pointer
 ifeq ($(USE_FRAME_POINTER), 1)
-FRAME_POINTER_USAGE_FLAG = -fno-omit-frame-pointer
+	FRAME_POINTER_USAGE_FLAG = -fno-omit-frame-pointer
 endif
 
 USE_CUSTOM_LINKER_SCRIPT =
 
 ifneq ($(MEMORY_POOL_SECTION),)
-MEMORY_POOL_SECTION_ATTRIBUTE = __MEMORY_POOL_SECTION_ATTRIBUTE="__attribute__((section(\"$(MEMORY_POOL_SECTION)\")))"
-USE_CUSTOM_LINKER_SCRIPT = 1
+	MEMORY_POOL_SECTION_ATTRIBUTE = __MEMORY_POOL_SECTION_ATTRIBUTE="__attribute__((section(\"$(MEMORY_POOL_SECTION)\")))"
+	USE_CUSTOM_LINKER_SCRIPT = 1
 endif
 
 ifneq ($(NON_INITIALIZED_DATA_SECTION),)
-NON_INITIALIZED_DATA_SECTION_ATTRIBUTE = __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(NON_INITIALIZED_DATA_SECTION)\")))"
-USE_CUSTOM_LINKER_SCRIPT = 1
+	NON_INITIALIZED_DATA_SECTION_ATTRIBUTE = __NON_INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(NON_INITIALIZED_DATA_SECTION)\")))"
+	USE_CUSTOM_LINKER_SCRIPT = 1
 endif
 
 ifneq ($(INITIALIZED_DATA_SECTION),)
-INITIALIZED_DATA_SECTION_ATTRIBUTE = __INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(INITIALIZED_DATA_SECTION)\")))"
-USE_CUSTOM_LINKER_SCRIPT = 1
+	INITIALIZED_DATA_SECTION_ATTRIBUTE = __INITIALIZED_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(INITIALIZED_DATA_SECTION)\")))"
+	USE_CUSTOM_LINKER_SCRIPT = 1
 endif
 
 ifneq ($(STATIC_SINGLETONS_DATA_SECTION),)
-STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(STATIC_SINGLETONS_DATA_SECTION)\")))"
-USE_CUSTOM_LINKER_SCRIPT = 1
+	STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE = __STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(STATIC_SINGLETONS_DATA_SECTION)\")))"
+	USE_CUSTOM_LINKER_SCRIPT = 1
 endif
 
 ifneq ($(VIRTUAL_TABLES_DATA_SECTION),)
-VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(VIRTUAL_TABLES_DATA_SECTION)\")))"
-USE_CUSTOM_LINKER_SCRIPT = 1
+	VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE = __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE="__attribute__((section(\"$(VIRTUAL_TABLES_DATA_SECTION)\")))"
+	USE_CUSTOM_LINKER_SCRIPT = 1
 endif
 
 DATA_SECTION_ATTRIBUTES = $(MEMORY_POOL_SECTION_ATTRIBUTE) $(NON_INITIALIZED_DATA_SECTION_ATTRIBUTE) $(INITIALIZED_DATA_SECTION_ATTRIBUTE) $(STATIC_SINGLETONS_DATA_SECTION_ATTRIBUTE) $(VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE)
@@ -81,44 +81,51 @@ COMMON_MACROS = $(DATA_SECTION_ATTRIBUTES)
 
 # The following blocks change some variables depending on the build type
 ifeq ($(TYPE),debug)
-LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
-MACROS = __DEBUG __TOOLS $(COMMON_MACROS)
+	LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+	C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+	MACROS = __DEBUG __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), release)
-LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
-MACROS = __RELEASE $(COMMON_MACROS)
+	LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+	C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+	MACROS = __RELEASE $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), beta)
-LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
-MACROS = __BETA $(COMMON_MACROS)
+	LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+	C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+	MACROS = __BETA $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), tools)
-LD_PARAMS = -T$(LINKER_SCRIPT) -lm
-C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
-MACROS = __TOOLS $(COMMON_MACROS)
+	LD_PARAMS = -T$(LINKER_SCRIPT) -lm
+	C_PARAMS = $(ESSENTIAL_HEADERS) $(PROLOG_FUNCTIONS_FLAG) $(FRAME_POINTER_USAGE_FLAG) $(PEDANTIC_WARNINGS_FLAG) $(OPTIMIZATION_OPTION) -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -finline-functions -Winline
+	MACROS = __TOOLS $(COMMON_MACROS)
 endif
 
 ifeq ($(TYPE), preprocessor)
-ALL_TARGET_PREREQUISITES = dirs plugins $(C_OBJECTS)
-LD_PARAMS =
-C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
-MACROS = $(COMMON_MACROS)
+	LD_PARAMS =
+	C_PARAMS = -std=gnu99 -mv810 -nodefaultlibs -Wall -Wextra -E
+	MACROS = $(COMMON_MACROS)
 endif
 
 # Add directories to the includes in order of overriding priority: game, then plugins
 ifeq ($(GAME_NAME), $(NAME))
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print)
-INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print)
+	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print)
+	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print)
 else
-INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
-INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
+	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
 endif
+
+# Obligatory headers
+ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 																				\
+						-include $(ENGINE_HOME)/source/libvuengine.h 															\
+						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then 			\
+							echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; ))											\
+						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)		\
+
 
 # Which directories contain source files
 SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)

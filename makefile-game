@@ -1,45 +1,40 @@
 # Project name
-NAME = $(shell pwd | sed -e "s@.*/@@")
+override NAME = $(shell pwd | sed -e "s@.*/@@")
+
 
 # Game name
-GAME_NAME = $(NAME)
+override GAME_NAME = $(NAME)
 
 # Engine name
-ENGINE_NAME = vuengine/core
+override ENGINE_NAME = vuengine/core
 
 # Engine's home
-ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+override ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
 
 # My home
-MY_HOME = $(shell pwd)
+override MY_HOME = $(shell pwd)
 
 # Where the game lives
-GAME_HOME = $(MY_HOME)
-
-# target's needed steps
-ALL_TARGET_PREREQUISITES = dirs $(TARGET).vb $(PAD) $(DUMP_TARGET)
-
-# Overrides file
-GAME_CONFIG_MAKE_FILE = $(shell if [ -f $(MY_HOME)/config.make ]; then echo $(MY_HOME)/config.make; fi;)
+override GAME_HOME = $(MY_HOME)
 
 # Common
 include $(ENGINE_HOME)/makefile-common
 
 # Override plugins
-PLUGINS := $(ENGINE_NAME) $(PLUGINS)
+#PLUGINS := $(ENGINE_NAME) $(PLUGINS)
 
 ifneq ($(BUILD_MODE),)
-TYPE = $(BUILD_MODE)
+	TYPE = $(BUILD_MODE)
 endif
 
 DUMP_TARGET =
 ifeq ($(DUMP_ELF), 1)
-DUMP_TARGET = dump
+	DUMP_TARGET = dump
 endif
 
 PAD =
 ifeq ($(PAD_ROM), 1)
-PAD = pad
+	PAD = pad
 endif
 
 # linker script

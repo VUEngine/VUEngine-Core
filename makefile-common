@@ -6,9 +6,23 @@ MAKE_JOBS = 4
 # Default build type. Available types: release, beta, tools, debug, preprocessor
 TYPE = release
 
-# Alllow override of build type and number of jobs in config.make file
--include $(GAME_CONFIG_MAKE_FILE)
--include $(PLUGIN_CONFIG_MAKE_FILE)
+# Overrides file
+CONFIG_MAKE_FILE = $(shell if [ -f $(MY_HOME)/config.make ]; then echo $(MY_HOME)/config.make; fi;)
+
+# Override plugins when not game
+ifeq ($(NAME), $(GAME_NAME))
+	GAME_CONFIG_MAKE_FILE = $(CONFIG_MAKE_FILE)
+	-include $(GAME_CONFIG_MAKE_FILE)
+else
+	-include $(GAME_CONFIG_MAKE_FILE)
+	PLUGINS = 
+	-include $(CONFIG_MAKE_FILE)
+endif
+
+# All, except the core, must include the core as a plugin
+ifneq ($(NAME), $(ENGINE_NAME))
+	PLUGINS := $(ENGINE_NAME) $(PLUGINS)
+endif
 
 # Clean plugin name by stripping out everything up to (and including) the last slash
 BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
@@ -52,16 +66,11 @@ ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME
 
 FOLDER_TO_CLEAN=$(MY_HOME)/build
 ifneq ($(CLEAN_TYPE), all)
-FOLDER_TO_CLEAN=$(MY_HOME)/build/$(CLEAN_TYPE)*
+	FOLDER_TO_CLEAN=$(MY_HOME)/build/$(CLEAN_TYPE)*
 endif
 
-# Obligatory headers
+# Configuration file
 CONFIG_FILE = 			$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo $(MY_HOME)/source/config.h; fi;)
-ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 																				\
-						-include $(ENGINE_HOME)/source/libvuengine.h 															\
-						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)libs/$(PLUGIN)/source/config.h ]; then 			\
-							echo -include $(VBDE)libs/$(PLUGIN)/source/config.h; fi; ))											\
-						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)		\
 
 # File that holds the classes hierarchy
 CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(NAME)/classesHierarchy.txt
@@ -126,9 +135,8 @@ compile:
 		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
 		-e CLASSES_HIERARCHY_FILE=$(CLASSES_HIERARCHY_FILE) 																						\
 		-e WORKING_FOLDER=$(WORKING_FOLDER) 																										\
-		-e ALL_TARGET_PREREQUISITES="$(ALL_TARGET_PREREQUISITES)"																					\
 		-e PLUGINS="$(PLUGINS)"																														\
-		-e ESSENTIAL_HEADERS="$(ESSENTIAL_HEADERS)"																									\
+		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e GAME_NAME=$(GAME_NAME)																													\
 
 plugins: deleteLibraries
@@ -161,7 +169,7 @@ DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(NAME) ] && echo 1 || echo 0 
 
 createPluginDirs:
 ifeq ($(DIRS_EXIST), 0)
-	@-$(foreach PLUGIN, $(PLUGINS), 		 																									\
+	@-$(foreach PLUGIN, $(PLUGINS), 	 																										\
 		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
 		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
 		$(MAKE) --no-print-directory dirs																										\
