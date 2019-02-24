@@ -1,0 +1,19 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+				"${workspaceFolder}/assets/**",
+				"${workspaceFolder}/source/**",
+				"${command:vbde.getPath}/tools/win/gcc/msys32/v810/v810-win32/lib/gcc/v810/4.7.4/include/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "intelliSenseMode": "msvc-x64"
+        }
+    ],
+    "version": 4
+}
