@@ -113,10 +113,10 @@ endif
 # Add directories to the includes in order of overriding priority: game, then plugins
 ifeq ($(GAME_NAME), $(NAME))
 	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print)
-	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print)
+	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/vuengine -type d -print)
 else
 	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
-	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/$(ENGINE_NAME)/../ -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/vuengine -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
 endif
 
 # Obligatory headers

@@ -65,24 +65,14 @@ fi
 
 for plugin in $PLUGINS;
 do
-	pattern=$WORKING_FOLDER/objects/$plugin/
+	pattern=^.*build/[a-z][a-z]*/objects/$objects/
 	replacement=$PLUGINS_PATH/$plugin/
 	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
-replacement=
-pattern=$WORKING_FOLDER/objects/$NAME
-
-if [ ! -z "$NAME" ];
-then
-	pattern=$WORKING_FOLDER/objects/$NAME/
-
-	if [ ! -z "$NAME_HOME" ];
-	then
-		replacement=$NAME_HOME/
-	fi
-fi
+replacement=$NAME_HOME/
+pattern=^.*build/[a-z][a-z]*/objects/$NAME
 
 sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
 echo 
