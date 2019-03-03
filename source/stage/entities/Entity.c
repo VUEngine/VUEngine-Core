@@ -81,6 +81,8 @@ void Entity::constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const c
 
 	this->invalidateSprites = 0;
 	this->transformShapes = true;
+
+	Entity::addBehaviors(this, this->entitySpec->behaviorSpecs);
 }
 
 /**
@@ -1080,25 +1082,6 @@ void Entity::initialize(bool recursive)
 }
 
 /**
- * Entity is ready
- *
- * @param recursive
- */
-void Entity::ready(bool recursive)
-{
-	if(recursive && this->children)
-	{
-		// call ready method on children
-		VirtualNode childNode = this->children->head;
-
-		for(; childNode; childNode = childNode->next)
-		{
-			Entity::ready(childNode->data, recursive);
-		}
-	}
-}
-
-/**
  * Process extra info in initialization
  *
  * @param extraInfo
@@ -1108,11 +1091,35 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
 }
 
 /**
+ * Add behaviors
+ *
+ * @param spriteSpecs
+ */
+void Entity::addBehaviors(const BehaviorSpec* behaviorSpecs)
+{
+	if(!behaviorSpecs)
+	{
+		return;
+	}
+
+	int i = 0;
+	Behavior behavior = Behavior::create(&behaviorSpecs[i]);
+
+	// go through n behaviors in entity's spec
+	while(behavior)
+	{
+		Container::addBehavior(Container::safeCast(this), behavior);
+		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addSprite: sprite not created");
+		behavior = Behavior::create(&behaviorSpecs[i]);
+	}
+}
+
+/**
  * Add sprites
  *
  * @param spriteSpecs
  */
-void Entity::addSprites(const SpriteSpec** spriteSpecs)
+void Entity::addSprites(SpriteSpec** spriteSpecs)
 {
 	if(!spriteSpecs)
 	{

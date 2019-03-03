@@ -33,6 +33,7 @@
 #include <HardwareManager.h>
 #include <MiscStructs.h>
 #include <VirtualList.h>
+#include <Behavior.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -76,6 +77,8 @@ class Container : SpatialObject
 	VirtualList children;
 	// Removed children list
 	VirtualList removedChildren;
+	// Bahaviors list
+	VirtualList behaviors;
 	// Parent
 	Container parent;
 	// Name
@@ -94,6 +97,8 @@ class Container : SpatialObject
 	void applyEnvironmentToTransformation(const Transformation* environmentTransform);
 	void concatenateTransform(Transformation *environmentTransform, Transformation* transformation);
 	void deleteMyself();
+	void addBehavior(Behavior behavior);
+	void removeBehavior(Behavior behavior);
 	int doKeyHold(int pressedKey);
 	int doKeyPressed(int pressedKey);
 	int doKeyUp(int pressedKey);
@@ -120,6 +125,7 @@ class Container : SpatialObject
 	void transformNonVirtual(const Transformation* environmentTransform);
 	void setInheritEnvironment(bool inheritEnvironment);
 	virtual void iAmDeletingMyself();
+	virtual void ready(bool recursive);
 	virtual void update(u32 elapsedTime);
 	virtual void setupGraphics();
 	virtual void releaseGraphics();

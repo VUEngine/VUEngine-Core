@@ -190,7 +190,6 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
 	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
 	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
-	@echo > /dev/null
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<

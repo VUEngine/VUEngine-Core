@@ -69,6 +69,7 @@ void Container::constructor(const char* const name)
 	this->parent = NULL;
 	this->children = NULL;
 	this->removedChildren = NULL;
+	this->behaviors = NULL;
 	this->deleteMe = false;
 	this->hidden = false;
 	this->inheritEnvironment = true;
@@ -121,6 +122,20 @@ void Container::destructor()
 
 	}
 
+	if(this->behaviors)
+	{
+		VirtualNode node = this->behaviors->head;
+
+		// destroy each child
+		for(; node ; node = node->next)
+		{
+			delete node->data;
+		}
+
+		delete this->behaviors;
+		this->behaviors = NULL;
+	}
+
 	// first remove from parent
 	if(this->parent)
 	{
@@ -163,6 +178,30 @@ void Container::deleteMyself()
 	{
 		//Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), 1, 15, NULL);
 		NM_ASSERT(false, "Container::deleteMyself: I'm orphan");
+	}
+}
+
+void Container::addBehavior(Behavior behavior)
+{
+	if(!isDeleted(behavior))
+	{
+		if(!this->behaviors)
+		{
+			this->behaviors = new VirtualList();
+		}
+
+		if(!VirtualList::find(this->behaviors, behavior))
+		{
+			VirtualList::pushBack(this->behaviors, behavior);
+		}
+	}
+}
+
+void Container::removeBehavior(Behavior behavior)
+{
+	if(this->behaviors)
+	{
+		VirtualList::removeElement(this->behaviors, behavior);
 	}
 }
 
@@ -337,12 +376,61 @@ void Container::purgeChildren()
 }
 
 /**
+ * Container is ready
+ *
+ * @param recursive
+ */
+void Container::ready(bool recursive)
+{
+	if(this->behaviors)
+	{
+		VirtualNode node = this->behaviors->head;
+
+		for(; node ; node = node->next)
+		{
+			Behavior behavior = Behavior::safeCast(node->data);
+
+			if(Behavior::isEnabled(behavior))
+			{
+				Behavior::start(behavior, this);
+			}
+		}
+	}
+	
+	if(recursive && this->children)
+	{
+		// call ready method on children
+		VirtualNode childNode = this->children->head;
+
+		for(; childNode; childNode = childNode->next)
+		{
+			Container::ready(childNode->data, recursive);
+		}
+	}
+}
+
+/**
  * Update each Container's child
  *
  * @param elapsedTime
  */
 void Container::update(u32 elapsedTime)
 {
+	if(this->behaviors)
+	{
+		VirtualNode node = this->behaviors->head;
+
+		for(; node ; node = node->next)
+		{
+			Behavior behavior = Behavior::safeCast(node->data);
+
+			if(Behavior::isEnabled(behavior))
+			{
+				Behavior::update(behavior, this, elapsedTime);
+			}
+		}
+	}
+
 	// if I have children
 	if(this->children)
 	{
@@ -1070,6 +1158,21 @@ Container Container::getChildByName(char* childName, bool recursive)
  */
 void Container::suspend()
 {
+	if(this->behaviors)
+	{
+		VirtualNode node = this->behaviors->head;
+
+		for(; node ; node = node->next)
+		{
+			Behavior behavior = Behavior::safeCast(node->data);
+
+			if(Behavior::isEnabled(behavior))
+			{
+				Behavior::pause(behavior, this);
+			}
+		}
+	}
+
 	if(this->children)
 	{
 		Container::purgeChildren(this);
@@ -1090,6 +1193,21 @@ void Container::suspend()
  */
 void Container::resume()
 {
+	if(this->behaviors)
+	{
+		VirtualNode node = this->behaviors->head;
+
+		for(; node ; node = node->next)
+		{
+			Behavior behavior = Behavior::safeCast(node->data);
+
+			if(Behavior::isEnabled(behavior))
+			{
+				Behavior::resume(behavior, this);
+			}
+		}
+	}
+
 	if(this->children)
 	{
 		VirtualNode node = this->children->head;

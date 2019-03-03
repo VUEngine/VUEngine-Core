@@ -55,11 +55,14 @@ typedef struct EntitySpec
 	/// class allocator
 	AllocatorPointer allocator;
 
-	/// sprites
-	const SpriteSpec** spriteSpecs;
+	/// behaviors
+	BehaviorSpec* behaviorSpecs;
+
+	// sprites
+	SpriteSpec** spriteSpecs;
 
 	/// collision shapes
-	const ShapeSpec* shapeSpecs;
+	ShapeSpec* shapeSpecs;
 
 	/// pixelSize
 	// if 0, width and height will be inferred from the first sprite's texture's pixelSize

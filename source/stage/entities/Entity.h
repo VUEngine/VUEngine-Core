@@ -43,7 +43,7 @@ class Entity : Container
 {
 	// Entity factory
 	EntityFactory entityFactory;
-	// Sprites list
+	// sprites list
 	VirtualList sprites;
 	// Shapes for collision detection
 	VirtualList shapes;
@@ -73,7 +73,7 @@ class Entity : Container
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	Entity addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo);
 	bool addSpriteFromSpecAtIndex(int spriteSpecIndex);
-	void addSprites(const SpriteSpec** spritesSpecs);
+	void addSprites(SpriteSpec** spritesSpecs);
 	u32 areAllChildrenInstantiated();
 	u32 areAllChildrenInitialized();
 	u32 areAllChildrenTransformed();
@@ -104,7 +104,6 @@ class Entity : Container
 	virtual bool isVisible(int pad, bool recursive);
 	virtual void setExtraInfo(void* extraInfo);
 	virtual void initialize(bool recursive);
-	virtual void ready(bool recursive);
 	virtual bool respawn();
 	virtual void setSpec(void* entitySpec);
 	virtual u16 getAxisForShapeSyncWithDirection();
