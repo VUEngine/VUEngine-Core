@@ -280,7 +280,7 @@ then
 			then
 				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
 
-				bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l $LIBRARIES_ARGUMENT 
+				bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT" 
 			else
 				mustBeReprocessed=true
 			fi
@@ -316,8 +316,8 @@ fi
 # The continue
 #echo "Preprocessing class: $className"
 #echo 
-#echo PLUGINS $PLUGINS
-#echo LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT
+#echo "$className PLUGINS $PLUGINS"
+#echo "$className LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT"
 echo "Starting preprocessing" >> $CLASS_LOG_FILE
 
 classModifiers=`sed -e 's#^\(.*\)class .*#\1#' <<< "$cleanClassDeclaration"`
@@ -513,7 +513,8 @@ do
 		##echo "."
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 	else
-		echo " error (1): header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
+		
+		echo " error (1): $className, header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
 		rm -f $CLASS_DEPENDENCIES_FILE
 		rm -f $OUTPUT_FILE
 		clean_up

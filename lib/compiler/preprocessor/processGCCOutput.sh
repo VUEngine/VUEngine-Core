@@ -1,6 +1,40 @@
 #!/bin/bash
 #
-GCC_OUTPUT=build/gcc.out
+
+while [ $# -gt 1 ]
+do
+	key="$1"
+	case $key in
+		-o)
+		OUTPUT_FILE="$2"
+		shift # past argument
+		;;
+		-w)
+		WORKING_FOLDER="$2"
+		shift # past argument
+		;;
+		-p)
+		PLUGINS="$2"
+		shift # past argument
+		;;
+		-l)
+		PLUGINS_PATH="$2"
+		shift # past argument
+		;;
+		-n)
+		NAME="$2"
+		shift # past argument
+		;;
+		-h)
+		NAME_HOME="$2"
+		shift # past argument
+		;;
+	esac
+
+	shift
+done
+
+GCC_OUTPUT=$OUTPUT_FILE.out
 
 # Check to see if a pipe exists on stdin.
 if [ -p /dev/stdin ]; then
@@ -11,35 +45,6 @@ if [ -p /dev/stdin ]; then
 else
 	exit 0
 fi
-
-while [ $# -gt 1 ]
-do
-	key="$1"
-	case $key in
-		-w)
-		WORKING_FOLDER="$2"
-		shift # past argument
-		;;
-		-l)
-		PLUGINS="$2"
-		shift # past argument
-		;;
-		-lp)
-		LIBRARIES_PATH="$2"
-		shift # past argument
-		;;
-		-n)
-		PLUGIN="$2"
-		shift # past argument
-		;;
-		-np)
-		LIBRARY_PATH="$2"
-		shift # past argument
-		;;
-	esac
-
-	shift
-done
 
 if [ ! -f "$GCC_OUTPUT" ];
 then
@@ -52,7 +57,7 @@ then
 	exit 0
 fi
 
-if [ -z "$PLUGINS" ] && [ -z "$PLUGIN" ] && [ -z "$LIBRARY_PATH" ];
+if [ -z "$PLUGINS" ] && [ -z "$NAME" ] && [ -z "$NAME_HOME" ];
 then
 	rm -f $GCC_OUTPUT
 	exit 0
@@ -61,21 +66,21 @@ fi
 for plugin in $PLUGINS;
 do
 	pattern=$WORKING_FOLDER/objects/$plugin/
-	replacement=$LIBRARIES_PATH/$plugin/
+	replacement=$PLUGINS_PATH/$plugin/
 	sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT > $GCC_OUTPUT.tmp
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
 replacement=
-pattern=$WORKING_FOLDER/objects/$PLUGIN
+pattern=$WORKING_FOLDER/objects/$NAME
 
-if [ ! -z "$PLUGIN" ];
+if [ ! -z "$NAME" ];
 then
-	pattern=$WORKING_FOLDER/objects/$PLUGIN/
+	pattern=$WORKING_FOLDER/objects/$NAME/
 
-	if [ ! -z "$LIBRARY_PATH" ];
+	if [ ! -z "$NAME_HOME" ];
 	then
-		replacement=$LIBRARY_PATH/$PLUGIN/
+		replacement=$NAME_HOME/
 	fi
 fi
 

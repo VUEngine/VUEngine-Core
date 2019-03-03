@@ -60,6 +60,10 @@ ASSEMBLY_SOURCE = $(foreach DIR,$(SOURCES_DIRS),$(wildcard $(DIR)/*.s))
 C_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(C_SOURCES:.c=.o))
 C_OBJECTS = $(shell echo $(C_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
 
+# Override make's default call to GCC
+$(WORKING_FOLDER)/objects/$(NAME)/%.o:
+	@echo > /dev/null
+
 # Makes a list of the object files that will have to be created.
 ASSEMBLY_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(ASSEMBLY_SOURCE:.s=.o))
 ASSEMBLY_OBJECTS = $(shell echo $(ASSEMBLY_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
