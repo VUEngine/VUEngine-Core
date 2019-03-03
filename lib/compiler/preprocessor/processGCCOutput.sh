@@ -71,7 +71,7 @@ do
 	mv $GCC_OUTPUT.tmp $GCC_OUTPUT
 done
 
-replacement=$NAME_HOME/
+replacement=$NAME_HOME
 pattern=^.*build/[a-z][a-z]*/objects/$NAME
 
 sed -e 's@'"$pattern"'@'"$replacement"'@g' $GCC_OUTPUT
