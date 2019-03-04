@@ -1095,7 +1095,7 @@ void Entity::setExtraInfo(void* extraInfo __attribute__ ((unused)))
  *
  * @param spriteSpecs
  */
-void Entity::addBehaviors(const BehaviorSpec* behaviorSpecs)
+void Entity::addBehaviors(BehaviorSpec** behaviorSpecs)
 {
 	if(!behaviorSpecs)
 	{
@@ -1103,14 +1103,12 @@ void Entity::addBehaviors(const BehaviorSpec* behaviorSpecs)
 	}
 
 	int i = 0;
-	Behavior behavior = Behavior::create(&behaviorSpecs[i]);
 
-	// go through n behaviors in entity's spec
-	while(behavior)
+	// go through n sprites in entity's spec
+	for(; behaviorSpecs[i]; i++)
 	{
-		Container::addBehavior(Container::safeCast(this), behavior);
-		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addSprite: sprite not created");
-		behavior = Behavior::create(&behaviorSpecs[i]);
+		Container::addBehavior(Container::safeCast(this), Behavior::create(behaviorSpecs[i]));
+		ASSERT(Behavior::safeCast(VirtualList::back(this->behaviors)), "Entity::addBehaviors: sprite not created");
 	}
 }
 
@@ -1138,8 +1136,6 @@ void Entity::addSprites(SpriteSpec** spriteSpecs)
 	// go through n sprites in entity's spec
 	for(; spriteSpecs[i]; i++)
 	{
-		ASSERT(spriteSpecs[i]->allocator, "Entity::addSprites: no sprite allocator");
-
 		VirtualList::pushBack(this->sprites, SpriteManager::createSprite(spriteManager, (SpriteSpec*)spriteSpecs[i], Object::safeCast(this)));
 		ASSERT(Sprite::safeCast(VirtualList::back(this->sprites)), "Entity::addSprite: sprite not created");
 	}

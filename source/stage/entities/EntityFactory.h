@@ -56,7 +56,7 @@ typedef struct EntitySpec
 	AllocatorPointer allocator;
 
 	/// behaviors
-	BehaviorSpec* behaviorSpecs;
+	BehaviorSpec** behaviorSpecs;
 
 	// sprites
 	SpriteSpec** spriteSpecs;

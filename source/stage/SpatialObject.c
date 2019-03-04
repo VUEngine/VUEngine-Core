@@ -136,6 +136,11 @@ Velocity SpatialObject::getVelocity()
 	return (Velocity){0, 0, 0};
 }
 
+fix10_6 SpatialObject::getMaximumSpeed()
+{
+	return 0;
+}
+
 bool SpatialObject::isAffectedByRelativity()
 {
 	return false;

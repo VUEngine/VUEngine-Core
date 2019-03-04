@@ -280,9 +280,6 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	this->previousRotation = this->transformation.localRotation;
-
-					PRINT_INT(this->transformation.localRotation.z, 20, 9);
-
 }
 
 void Actor::resume()
@@ -693,6 +690,11 @@ fix10_6 Actor::getBounciness()
 Velocity Actor::getVelocity()
 {
 	return this->body ? Body::getVelocity(this->body) : Base::getVelocity(this);
+}
+
+fix10_6 Actor::getMaximumSpeed()
+{
+	return this->body ? Body::getMaximumSpeed(this->body) : Base::getMaximumSpeed(this);
 }
 
 void Actor::exitCollision(Shape shape  __attribute__ ((unused)), Shape shapeNotCollidingAnymore, bool isShapeImpenetrable)

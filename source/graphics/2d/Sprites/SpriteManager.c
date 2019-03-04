@@ -318,6 +318,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainerBySegment(int segme
 Sprite SpriteManager::createSprite(SpriteSpec* spriteSpec, Object owner)
 {
 	ASSERT(spriteSpec, "SpriteManager::createSprite: null spriteSpec");
+	ASSERT(spriteSpec->allocator, "SpriteManager::createSprite: no sprite allocator");
 
 	this->lockSpritesLists = true;
 

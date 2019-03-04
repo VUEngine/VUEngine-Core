@@ -124,6 +124,7 @@ class Container : SpatialObject
 	void setName(const char* const name);
 	void transformNonVirtual(const Transformation* environmentTransform);
 	void setInheritEnvironment(bool inheritEnvironment);
+	VirtualList getBehaviors(ObjectBaseClassPointer objectBaseClassPointer);
 	virtual void iAmDeletingMyself();
 	virtual void ready(bool recursive);
 	virtual void update(u32 elapsedTime);

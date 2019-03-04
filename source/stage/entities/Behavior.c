@@ -88,5 +88,5 @@ static Behavior Behavior::create(const BehaviorSpec* behaviorSpec)
 		return NULL;
 	}
 	
-	return 	((Behavior (*)(BehaviorSpec*)) behaviorSpec->allocator)((BehaviorSpec*)behaviorSpec);
+	return 	((Behavior (*)(BehaviorSpec**)) behaviorSpec->allocator)((BehaviorSpec**)behaviorSpec);
 }

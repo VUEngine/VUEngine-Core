@@ -40,6 +40,7 @@ static class Vector3D : Object
 {
 	/// @publicsection
 	static inline Vector3D get(Vector3D from, Vector3D to);
+	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D normalize(Vector3D vector);
@@ -60,6 +61,11 @@ static class Vector3D : Object
 static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 {
 	return (Vector3D){to.x - from.x, to.y - from.y, to.z - from.z};
+}
+
+static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
+{
+	return (Vector3D){a.x + b.x, a.y + b.y, a.z + b.z};
 }
 
 static inline fix10_6 Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
