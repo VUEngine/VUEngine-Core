@@ -66,7 +66,7 @@ function tryToLock()
 
 		readStamp=`cat $lockFile`
 
-		if [ ! "$readStamp" = "$stamp" ]; 
+		if [ ! "$readStamp" = "$stamp" ];
 		then
 			echo "$className: Error on reading $file read stamp ($readStamp) doesn't match my stamp ($stamp) on caller $CALLER"
 			cat $lockFile
@@ -83,7 +83,7 @@ function releaseLock()
 	if [ ! -z "$file" ];
 	then
 		lockFolder=$1".lock"
-	
+
 		if [ -d "$lockFolder" ];
 		then
 			stamp="$$ : $PPID : $UID"
@@ -91,7 +91,7 @@ function releaseLock()
 
 			readStamp=`cat $lockFile`
 
-			if [ ! "$readStamp" = "$stamp" ]; 
+			if [ ! "$readStamp" = "$stamp" ];
 			then
 				echo "Error on unlocking $file read stamp ($readStamp) doesn't match my stamp ($stamp) on caller $CALLER" >> $CLASS_LOG_FILE
 				echo "$className: Error on unlocking $file read stamp ($readStamp) doesn't match my stamp ($stamp) on caller $CALLER"
@@ -193,7 +193,7 @@ if [ "$INPUT_FILE" = "$OUTPUT_FILE" ];
 then
 	echo "Input and output files are the same: $INPUT_FILE"
 	clean_up
-#	echo "$INPUT_FILE" 
+#	echo "$INPUT_FILE"
 #	echo "$OUTPUT_FILE"
 	exit 0
 fi
@@ -267,7 +267,7 @@ then
 	# Call upwards if base class belongs to plugin
 	if [ -f "$baseClassFile" ];
 	then
-#		echo baseClassFile $baseClassFile 
+#		echo baseClassFile $baseClassFile
 #		echo processedBaseClassFile $processedBaseClassFile
 
 		if [ -f "$processedBaseClassFile" ] && [ "$processedBaseClassFile" -nt "$OUTPUT_FILE" ];
@@ -280,7 +280,7 @@ then
 			then
 				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
 
-				bash $VBDE/libs/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT" 
+				bash $VBDE/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
 			else
 				mustBeReprocessed=true
 			fi
@@ -315,7 +315,7 @@ fi
 
 # The continue
 #echo "Preprocessing class: $className"
-#echo 
+#echo
 #echo "$className PLUGINS $PLUGINS"
 #echo "$className LIBRARIES_ARGUMENT $LIBRARIES_ARGUMENT"
 echo "Starting preprocessing" >> $CLASS_LOG_FILE
@@ -389,7 +389,7 @@ then
 		baseBaseClassName=`grep -e "^$baseBaseClassName:.*" <<< "$classesHierarchy" | cut -d ":" -f 2`
 		baseClassesNames="$baseBaseClassName $baseClassesNames"
 		baseClassesNamesHelper=$baseClassesNamesHelper$baseBaseClassName":"
-	
+
 	done
 fi
 
@@ -481,7 +481,7 @@ fi
 
 # Get base classes' methods
 for ancestorClassName in $baseClassesNames;
-do	
+do
 	ancestorInheritedMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsInherited.txt"
 	ancestorVirtualMethodsDictionary=$WORKING_FOLDER/classes/dictionaries/$ancestorClassName"MethodsVirtual.txt"
 
@@ -501,7 +501,7 @@ do
 			fi
 			waitRandom
 		done
-	fi 
+	fi
 
 	cat $ancestorInheritedMethodsDictionary | sed -e 's/^\([A-Z][A-z]*\)_\(.*\)/'"$className"'_\2 \1_\2/g' >> $CLASS_OWNED_METHODS_DICTIONARY
 	cat $ancestorInheritedMethodsDictionary >> $CLASS_INHERITED_METHODS_DICTIONARY
@@ -513,7 +513,7 @@ do
 		##echo "."
 		echo " $headerFile \\" >> $CLASS_DEPENDENCIES_FILE
 	else
-		
+
 		echo " error (1): $className, header file not found for $ancestorClassName in $searchPaths with $PLUGINS "
 		rm -f $CLASS_DEPENDENCIES_FILE
 		rm -f $OUTPUT_FILE

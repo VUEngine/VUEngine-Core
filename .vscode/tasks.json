@@ -6,9 +6,9 @@
         {
             "label": "Clean",
             "type": "shell",
-            "command": "make clean -f makefile-game -e CLEAN_TYPE=${input:cleanType} -C ${command:vbde.getWorkspaceRoot}",
+            "command": "make clean -f makefile-game -e CLEAN_TYPE=${input:cleanType} -C ${command:vuengine.getWorkspaceRoot}",
             "windows": {
-                "command": "${command:vbde.getPath}\\batch\\clean.bat ${command:vbde.getWorkspaceRoot} ${input:cleanType}"
+                "command": "${command:vuengine.getPath}\\system\\clean.bat ${command:vuengine.getWorkspaceRoot} ${input:cleanType}"
             },
             "problemMatcher": [],
             "presentation": {
@@ -20,9 +20,9 @@
         {
             "label": "Build",
             "type": "shell",
-            "command": "make all -f makefile-game -e TYPE=${input:buildType} -C ${command:vbde.getWorkspaceRoot}",
+            "command": "make all -f makefile-game -e TYPE=${input:buildType} -C ${command:vuengine.getWorkspaceRoot}",
             "windows": {
-                "command": "${command:vbde.getPath}\\batch\\build.bat ${command:vbde.getWorkspaceRoot} vuengine/core ${input:buildType}"
+                "command": "${command:vuengine.getPath}\\system\\build.bat ${command:vuengine.getWorkspaceRoot} ${input:buildType}"
             },
             "problemMatcher": [],
             "presentation": {
@@ -40,10 +40,10 @@
             "type": "shell",
             "command": "mednafen",
             "windows": {
-                "command": "${command:vbde.getPath}\\tools\\win\\mednafen\\mednafen.exe"
+                "command": "${command:vuengine.getPath}\\tools\\win\\mednafen\\mednafen.exe"
             },
             "args": [
-                "${command:vbde.getWorkspaceRoot}\\build\\output.vb"
+                "${command:vuengine.getWorkspaceRoot}\\build\\output.vb"
             ],
             "problemMatcher": [],
             "presentation": {
@@ -51,14 +51,49 @@
             }
         },
         {
+            "label": "Flash",
+            "type": "shell",
+            "command": "${command:vuengine.getPath}/system/flash.sh ${command:vuengine.getWorkspaceRoot}",
+            "windows": {
+                "command": "${command:vuengine.getPath}\\system\\flash.bat ${command:vuengine.getWorkspaceRoot}"
+            },
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new",
+                "focus": true
+            }
+        },
+        {
             "label": "Build & Run",
             "type": "shell",
             "command": "mednafen",
             "windows": {
-                "command": "${command:vbde.getPath}\\tools\\win\\mednafen\\mednafen.exe"
+                "command": "${command:vuengine.getPath}\\tools\\win\\mednafen\\mednafen.exe"
             },
             "args": [
-                "${command:vbde.getWorkspaceRoot}\\build\\output.vb"
+                "${command:vuengine.getWorkspaceRoot}\\build\\output.vb"
+            ],
+            "dependsOn": ["Build"],
+            "problemMatcher": [],
+            "presentation": {
+                "reveal": "always",
+                "panel": "new"
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "Build & Flash",
+            "type": "shell",
+            "command": "${command:vuengine.getPath}/system/flash.sh",
+            "windows": {
+                "command": "${command:vuengine.getPath}\\system\\flash.bat"
+            },
+            "args": [
+                "${command:vuengine.getWorkspaceRoot}"
             ],
             "dependsOn": ["Build"],
             "problemMatcher": [],

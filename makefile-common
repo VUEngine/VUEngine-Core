@@ -97,7 +97,7 @@ preprocessClasses: dirs preprocessPlugins printClassPreprocessingInfo preprocess
 
 printClassPreprocessingInfo:
 	@echo
-	@echo "********************************************* Preprocessing $(BASENAME)"
+	@echo "*** Preprocessing $(BASENAME)"
 	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 preprocessPlugins:
@@ -106,7 +106,7 @@ preprocessPlugins:
 		if [ -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] && [ ! -f $(CLASSES_HIERARCHY_FILE) ]; then continue; fi; 										\
 		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(PLUGIN_CLASSES_HIERARCHY_FILE) 2>&1))		\
 		if [ ! -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] || [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 		\
-			$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
+			$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)$(PLUGIN)/makefile)																				\
 			$(MAKE) --no-print-directory preprocessClasses																							\
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
 				-e GAME_HOME=$(GAME_HOME)																											\
@@ -118,7 +118,7 @@ preprocessPlugins:
 
 preprocessHeaderFiles:
 	@$(MAKE) --no-print-directory preprocess																										\
-		-j $(MAKE_JOBS)																																		\
+		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-preprocess																										\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
@@ -130,7 +130,7 @@ preprocessHeaderFiles:
 
 compile:
 	@$(MAKE) --no-print-directory compile																											\
-		-j $(MAKE_JOBS)																																		\
+		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-compile																											\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
@@ -145,7 +145,7 @@ compile:
 
 plugins: deleteLibraries
 	@-$(foreach PLUGIN, $(PLUGINS),	 																												\
-		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																				\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)$(PLUGIN)/makefile)																					\
 		$(eval PLUGIN_FILE=$(GAME_HOME)/build/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))														\
 		if [ ! -f $(PLUGIN_FILE).a ]; then 																											\
 			$(MAKE) --no-print-directory	 																										\
@@ -174,7 +174,7 @@ DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(NAME) ] && echo 1 || echo 0 
 createPluginDirs:
 ifeq ($(DIRS_EXIST), 0)
 	@-$(foreach PLUGIN, $(PLUGINS), 	 																										\
-		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)libs/$(PLUGIN)/makefile)																			\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)$(PLUGIN)/makefile)																				\
 		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
 		$(MAKE) --no-print-directory dirs																										\
 			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
@@ -187,7 +187,7 @@ endif
 printDirsInfo: phony
 ifeq ($(DIRS_EXIST), 0)
 #	@$(eval CHECKING_DIRS_START_TIME=$(shell date +%s))
-#	@echo "********************************************* Checking working folders for $(BASENAME)"
+#	@echo "*** Checking working folders for $(BASENAME)"
 	@echo -n Creating working dirs for $(BASENAME)...
 endif
 

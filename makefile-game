@@ -9,7 +9,7 @@ override GAME_NAME = $(NAME)
 override ENGINE_NAME = vuengine/core
 
 # Engine's home
-override ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+override ENGINE_HOME = $(VBDE)$(ENGINE_NAME)
 
 # My home
 override MY_HOME = $(shell pwd)
@@ -53,19 +53,19 @@ printPreBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo "Starting at: "$(shell date)
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
-	@echo "Build type : $(TYPE)"
-	@echo "Compiler   : $(COMPILER_NAME) $(COMPILER_VERSION)"
+	@echo "Build type:  $(TYPE)"
+	@echo "Compiler:    $(COMPILER_NAME) $(COMPILER_VERSION)"
 	@echo
 
 printBuildingInfo:
 	@echo ""
-	@echo "********************************************* Building $(NAME)"
+	@echo "*** Building $(NAME)"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
 	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Started at: "$(HUMAN_START_DATE)
-	@echo "Ended   at: "$(shell date +%H:%M:%S)
+	@echo "Ended at:   "$(shell date +%H:%M:%S)
 	@echo "Total time:" $$(( ($(END_TIME) - $(START_TIME)) / 60 ))" min. "$$(( ($(END_TIME) - $(START_TIME)) % 60 ))" sec."
 
 portToNewSyntax: dirs

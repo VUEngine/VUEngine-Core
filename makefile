@@ -6,10 +6,10 @@ NAME = vuengine/plugins/plugin-name
 override ENGINE_NAME = vuengine/core
 
 # Engine's home
-override ENGINE_HOME = $(VBDE)libs/$(ENGINE_NAME)
+override ENGINE_HOME = $(VBDE)$(ENGINE_NAME)
 
 # My home
-override MY_HOME = $(VBDE)libs/$(NAME)
+override MY_HOME = $(VBDE)$(NAME)
 
 # Where the game lives
 GAME_HOME = .
@@ -29,7 +29,7 @@ printPreBuildingInfo:
 printBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
-	@echo "********************************************* Building $(BASENAME)"
+	@echo "*** Building $(BASENAME)"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))

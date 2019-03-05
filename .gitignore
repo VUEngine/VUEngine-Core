@@ -2,6 +2,7 @@
 doc/html/
 build/
 /.settings/
+.history
 .cdtproject
 .cproject
 .project
