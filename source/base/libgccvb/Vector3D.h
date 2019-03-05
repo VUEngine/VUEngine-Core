@@ -43,6 +43,7 @@ static class Vector3D : Object
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
+	static inline Vector3D scalarDivision(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D normalize(Vector3D vector);
 	static inline Vector3D getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC);
 	static inline fix10_6 length(Vector3D vector);
@@ -78,16 +79,19 @@ static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fix10_6 scalar)
 	return (Vector3D){__FIX10_6_MULT(vector.x, scalar), __FIX10_6_MULT(vector.y, scalar), __FIX10_6_MULT(vector.z, scalar)};
 }
 
-static inline Vector3D Vector3D::normalize(Vector3D vector)
+static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fix10_6 scalar)
 {
-	fix10_6 length = Vector3D::length(vector);
-
-	if(length)
+	if(scalar)
 	{
-		return (Vector3D){__FIX10_6_DIV(vector.x, length), __FIX10_6_DIV(vector.y, length),__FIX10_6_DIV(vector.z, length)};
+		return (Vector3D){__FIX10_6_DIV(vector.x, scalar), __FIX10_6_DIV(vector.y, scalar), __FIX10_6_DIV(vector.z, scalar)};
 	}
 
 	return (Vector3D){0, 0, 0};
+}
+
+static inline Vector3D Vector3D::normalize(Vector3D vector)
+{
+	return Vector3D::scalarDivision(vector, Vector3D::length(vector));
 }
 
 static inline Vector3D Vector3D::getPlaneNormal(Vector3D vectorA, Vector3D vectorB, Vector3D vectorC)
