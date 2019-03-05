@@ -172,7 +172,7 @@
 #define __SAFE_CAST(ClassName, object)																	\
 																										\
 		/* try to up cast object */																		\
-		(ClassName)Object_getCast((Object)object, (ObjectBaseClassPointer)&ClassName ## _getBaseClass, NULL)
+		(ClassName)Object_getCast((Object)object, (ClassPointer)&ClassName ## _getBaseClass, NULL)
 #else
 #define __SAFE_CAST(ClassName, object) (ClassName)object
 #endif
@@ -187,11 +187,13 @@
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
 
 
+#define typeofclass(ClassName)		((ClassPointer)&ClassName ## _getBaseClass)
+
 #define __GET_CAST(ClassName, object)																	\
 																										\
 		/* try to up cast object */																		\
 		(ClassName)Object_getCast((Object)object,														\
-			(ObjectBaseClassPointer)&ClassName ## _getBaseClass, NULL)									\
+			(ClassPointer)&ClassName ## _getBaseClass, NULL)											\
 
 #define __IS_INSTANCE_OF(ClassName, object)																\
 																										\
@@ -287,7 +289,7 @@
 			__VIRTUAL_DEC(ClassName, void, destructor);													\
 																										\
 			/* get super class method */																\
-			__VIRTUAL_DEC(ClassName, ObjectBaseClassPointer, getBaseClass);							\
+			__VIRTUAL_DEC(ClassName, ClassPointer, getBaseClass);										\
 																										\
 			/* all destructors are virtual */															\
 			__VIRTUAL_DEC(ClassName, const char*, getClassName);										\
@@ -304,14 +306,14 @@
 		/* declare a pointer */																			\
 		typedef struct ClassName ## _str* ClassName;													\
 
+/* typedef for RTTI */
+typedef void* (*(*ClassPointer)(void*))(void*);
+
 // declare a class
 #define __CLASS(ClassName)																				\
 																										\
 		/* declare a pointer */																			\
 		typedef struct ClassName ## _str* ClassName;													\
-																										\
-		/* typedef for RTTI */																			\
-		typedef void* (*(*ClassName ## BaseClassPointer)(void*))(void*);								\
 																										\
 		/* declare vtable */																			\
 		__VTABLE(ClassName);																			\
@@ -323,7 +325,7 @@
 		int ClassName ## _getObjectSize();																\
 																										\
 		/* declare getBaseClass method */																\
-		ObjectBaseClassPointer ClassName ## _getBaseClass(void*);										\
+		ClassPointer ClassName ## _getBaseClass(void*);													\
 																										\
 		/* declare getClass name method */																\
 		const char* ClassName ## _getClassName(ClassName)												\
@@ -360,10 +362,10 @@
 			/* class attributes */																		\
 			ClassName ## _ATTRIBUTES																	\
 																										\
-			/* end spec */																		\
+			/* end spec */																				\
 		} ClassName ## _str;																			\
 																										\
-		/* class' vtable's spec */																\
+		/* class' vtable's spec */																		\
 		struct ClassName ## _vTable ClassName ## _vTable __VIRTUAL_TABLES_DATA_SECTION_ATTRIBUTE;		\
 																										\
 		static void (* const _baseDestructor)(Object) =													\
@@ -374,19 +376,19 @@
 		__GET_INSTANCE_SIZE_DEFINITION(ClassName)														\
 																										\
 		/* define class's getBaseClass method */														\
-		ObjectBaseClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))			\
+		ClassPointer ClassName ## _getBaseClass(void* this __attribute__ ((unused)))					\
 		{																								\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
-					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "		\
+					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "				\
 					__MAKE_STRING(BaseClassName) ")");													\
-			return (ObjectBaseClassPointer)&BaseClassName ## _getBaseClass;								\
+			return (ClassPointer)&BaseClassName ## _getBaseClass;										\
 		}																								\
 																										\
 		/* define class's getSize method */																\
-		const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))				\
+		const char* ClassName ## _getClassName(ClassName this __attribute__ ((unused)))					\
 		{																								\
 			ASSERT(&BaseClassName ## _getBaseClass != &ClassName ## _getBaseClass,						\
-					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "		\
+					"Wrong class spec: __CLASS_DEFINITION(" __MAKE_STRING(ClassName) ", "				\
 					__MAKE_STRING(BaseClassName) ")");													\
 			return #ClassName;																			\
 		}																								\

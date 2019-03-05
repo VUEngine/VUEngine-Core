@@ -330,7 +330,7 @@ void Object::fireEvent(u32 eventCode)
  * @param baseClassGetClassMethod
  * @return								Casted Object
  */
-static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod)
+static Object Object::getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod)
 {
 	static int lp = -1;
 	static int sp = -1;
@@ -365,7 +365,7 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 
 	if(!baseClassGetClassMethod)
 	{
-		if(targetClassGetClassMethod == (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
+		if(targetClassGetClassMethod == (ClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object))
 		{
 			lp = -1;
 			sp = -1;
@@ -374,10 +374,10 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 
 		// make my own virtual call, otherwise the macro will cause an infinite recursive call because of the
 		// ObjectClass::getCast check
-		baseClassGetClassMethod = (ObjectBaseClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
+		baseClassGetClassMethod = (ClassPointer)__VIRTUAL_CALL_ADDRESS(Object, getBaseClass, object)(object);
 	}
 
-	if(!baseClassGetClassMethod || ((ObjectBaseClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ObjectBaseClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
+	if(!baseClassGetClassMethod || ((ClassPointer)&Object_getBaseClass == baseClassGetClassMethod && (ClassPointer)&Object_getBaseClass != targetClassGetClassMethod))
 	{
 		lp = -1;
 		sp = -1;
@@ -391,7 +391,7 @@ static Object Object::getCast(void* object, ObjectBaseClassPointer targetClassGe
 		return object;
 	}
 
-	return Object::getCast((Object)object, targetClassGetClassMethod, (ObjectBaseClassPointer)baseClassGetClassMethod(object));
+	return Object::getCast((Object)object, targetClassGetClassMethod, (ClassPointer)baseClassGetClassMethod(object));
 }
 
 /**

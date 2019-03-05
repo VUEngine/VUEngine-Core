@@ -72,7 +72,7 @@ abstract class Object : Object
 	VirtualList events;
 
 	/// @publicsection
-	static Object getCast(void* object, ObjectBaseClassPointer targetClassGetClassMethod, ObjectBaseClassPointer baseClassGetClassMethod);
+	static Object getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod);
 	void constructor();
 	void addEventListener(Object listener, EventListener method, u32 eventCode);
 	void removeEventListener(Object listener, EventListener method, u32 eventCode);
