@@ -50,12 +50,13 @@ VUENGINE = $(BUILD_DIR)/libvuengine.a
 all: printPreBuildingInfo preprocessClasses plugins printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
 printPreBuildingInfo:
+	@echo 
+	@echo "*** STARTING BUILD"
 	@$(eval START_TIME=$(shell date +%s))
 	@echo "Starting at: "$(shell date)
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
 	@echo "Build type:  $(TYPE)"
 	@echo "Compiler:    $(COMPILER_NAME) $(COMPILER_VERSION)"
-	@echo "Threads:     $(MAKE_JOBS)"
 	@echo
 
 printBuildingInfo:
@@ -63,6 +64,7 @@ printBuildingInfo:
 	@echo "*** Building $(NAME)"
 
 printPostBuildingInfo:
+	@echo "*** BUILD FINISHED"
 	@$(eval END_TIME=$(shell date +%s))
 	@echo Done compiling in $(TYPE) mode with GCC $(COMPILER_VERSION)
 	@echo "Started at: "$(HUMAN_START_DATE)
