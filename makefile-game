@@ -57,6 +57,7 @@ printPreBuildingInfo:
 	@$(eval HUMAN_START_DATE=$(shell date +%H:%M:%S))
 	@echo "Build type:  $(TYPE)"
 	@echo "Compiler:    $(COMPILER_NAME) $(COMPILER_VERSION)"
+	@echo "Threads:     $(MAKE_JOBS)"
 	@echo
 
 printBuildingInfo:
