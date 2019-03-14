@@ -163,6 +163,7 @@ In alphabetical order:
 	Dave Sheldon
 	David Baisley
 	David Green
+	Domenic Umberto Raso
 	Eckart Sauerbrey
 	Eric Freeman
 	Eric Luke
@@ -173,13 +174,16 @@ In alphabetical order:
 	Jose Zagal
 	Kevin L Mellott
 	Larry Anderson
-	Marten Rei√ü
+	Marcus
+	Marten Reiﬂ
 	Michael Ortega
 	Mike Boodle
 	Nektarios Moulianakis
+	NeGiZON
 	norty
 	Patrick Fenton
 	Randy Jeffery
+	Richard Corlett
 	Sean Machan
 	Steven Hagelgans
 	Tero Piiroinen
