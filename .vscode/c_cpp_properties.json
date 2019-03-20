@@ -5,7 +5,7 @@
             "includePath": [
 				"${workspaceFolder}/assets/**",
 				"${workspaceFolder}/source/**",
-				"${command:vuengine.getPath}/tools/win/gcc/msys32/v810/v810-win32/lib/gcc/v810/4.7.4/include/**"
+				"${command:vuengine.getCIncludePath}/**"
             ],
             "defines": [
                 "_DEBUG",

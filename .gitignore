@@ -1,6 +1,7 @@
 .idea/workspace.xml
 doc/html/
 build/
+.vscode/ipch
 /.settings/
 .history
 .cdtproject
