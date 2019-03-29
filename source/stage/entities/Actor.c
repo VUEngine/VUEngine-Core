@@ -501,6 +501,8 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
 				Actor::syncRotationWithBodyAfterBouncing(this);
+
+				Actor::fireEvent(this, kActorBounced);
 			}
 			else
 			{

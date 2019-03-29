@@ -75,11 +75,11 @@ singleton class MessageDispatcher : Object
 	void dispatchDelayedMessage(Clock clock, u32 delay, Object sender,
 		Object receiver, int message, void* extraInfo);
  	u32 dispatchDelayedMessages();
-	void discardDelayedMessagesWithClock(Clock clock);
-	void discardDelayedMessagesFromSender(Object sender, int message);
-	void discardDelayedMessagesForReceiver(Object receiver, int message);
-	void discardAllDelayedMessagesFromSender(Object sender);
-	void discardAllDelayedMessagesForReceiver(Object receiver);
+	bool discardDelayedMessagesWithClock(Clock clock);
+	bool discardDelayedMessagesFromSender(Object sender, int message);
+	bool discardDelayedMessagesForReceiver(Object receiver, int message);
+	bool discardAllDelayedMessagesFromSender(Object sender);
+	bool discardAllDelayedMessagesForReceiver(Object receiver);
 	void processDiscardedMessages();
 	void print(int x, int y);
 }

@@ -60,6 +60,8 @@ enum Events
 	kEventCommunicationsConnected,
 	kEventCommunicationsTransmissionCompleted,
 
+	kActorBounced,
+
 	// do not remove me
 	kLastEngineEvent
 };

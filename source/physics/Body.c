@@ -145,7 +145,7 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->totalNormal			= (Force){0, 0, 0};
 	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
-	this->maximumSpeed 		= physicalSpecification->maximumSpeed;
+	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
 
 	if(!_physhicsClock)
 	{

@@ -241,8 +241,9 @@ u32 MessageDispatcher::dispatchDelayedMessages()
  * @private
  * @param clock		the clock against which the message's delay is measured
  */
-void MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
+bool MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 {
+	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -252,8 +253,11 @@ void MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
 		if(delayedMessage->clock == clock && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
 			VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			messagesWereDiscarded |= true;
 		}
 	}
+
+	return messagesWereDiscarded;
 }
 
 /**
@@ -263,8 +267,9 @@ void MessageDispatcher::discardDelayedMessagesWithClock(Clock clock)
  * @param sender	the object that originally sent the message
  * @param message	the actual message code
  */
-void MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int message)
+bool MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int message)
 {
+	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -275,8 +280,11 @@ void MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int mess
 		if(Telegram::getMessage(telegram) == message && Telegram::getSender(telegram) == sender && !VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 		{
 			VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
+			messagesWereDiscarded |= true;
 		}
 	}
+
+	return messagesWereDiscarded;
 }
 
 /**
@@ -286,8 +294,9 @@ void MessageDispatcher::discardDelayedMessagesFromSender(Object sender, int mess
  * @param sender	the object that the message was originally sent to
  * @param message	the actual message code
  */
-void MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int message)
+bool MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int message)
 {
+	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -300,9 +309,12 @@ void MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int m
 			if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 			{
 				VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
+				messagesWereDiscarded |= true;
 			}
 		}
 	}
+
+	return messagesWereDiscarded;
 }
 
 /**
@@ -311,8 +323,9 @@ void MessageDispatcher::discardDelayedMessagesForReceiver(Object receiver, int m
  * @private
  * @param sender	the object that originally sent the message
  */
-void MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
+bool MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 {
+	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -325,9 +338,12 @@ void MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
 			if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 			{
 				VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
+				messagesWereDiscarded |= true;
 			}
 		}
 	}
+
+	return messagesWereDiscarded;
 }
 
 /**
@@ -336,8 +352,9 @@ void MessageDispatcher::discardAllDelayedMessagesFromSender(Object sender)
  * @private
  * @param sender	the object that the message was originally sent to
  */
-void MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
+bool MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
 {
+	bool messagesWereDiscarded = false;
 	VirtualNode node = this->delayedMessages->head;
 
 	for(; node; node = node->next)
@@ -350,9 +367,12 @@ void MessageDispatcher::discardAllDelayedMessagesForReceiver(Object receiver)
 			if(!VirtualList::find(this->delayedMessagesToDiscard, delayedMessage))
 			{
 				VirtualList::pushBack(this->delayedMessagesToDiscard, delayedMessage);
+				messagesWereDiscarded |= true;
 			}
 		}
 	}
+
+	return messagesWereDiscarded;
 }
 
 /**
