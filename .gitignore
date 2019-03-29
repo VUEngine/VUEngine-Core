@@ -9,3 +9,5 @@ build/
 .project
 cproject
 .DS_Store
+*.bin
+*.ipch
