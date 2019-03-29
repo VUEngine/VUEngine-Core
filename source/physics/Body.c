@@ -1142,6 +1142,7 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 
 	// compute bouncing velocity vector
 	Vector3D u = Vector3D::scalarProduct(bouncingPlaneNormal, Vector3D::dotProduct(velocity, bouncingPlaneNormal));
+
 	Vector3D w =
 	{
 		velocity.x - u.x,
@@ -1160,9 +1161,18 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 		bounciness = __F_TO_FIX10_6(__MAXIMUM_BOUNCINESS_COEFFICIENT);
 	}
 
+	if(0 > frictionCoefficient)
+	{
+		frictionCoefficient = 0;
+	}
+	else if(__MAXIMUM_FRICTION_COEFFICIENT < frictionCoefficient)
+	{
+		frictionCoefficient = __MAXIMUM_FRICTION_COEFFICIENT;
+	}
+
 	// add bounciness and friction
 	u = Vector3D::scalarProduct(u, bounciness);
-	w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - this->totalFrictionCoefficient));
+	w = Vector3D::scalarProduct(w, (__MAXIMUM_FRICTION_COEFFICIENT - frictionCoefficient));
 
 	this->velocity.x = w.x - u.x;
 	this->velocity.y = w.y - u.y;

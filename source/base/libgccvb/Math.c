@@ -122,34 +122,60 @@ static int Math::getAngle(fix7_9 x, fix7_9 y)
 	int totalEntries = (int)(sizeof(_sinLut) / sizeof(s16));
 
 	// Determine the quadrant
-	if(0 <= x)
+	if(0 == x)
 	{
 		// First quadrant
-		if(0 <= y)
+		if(0 < y)
 		{
-			PRINT_TEXT("FIRST", 1, 2);
+			return entriesPerQuadrant * 1;
+		}
+		// Fourth quadrant
+		else if(0 > y)
+		{
+			return entriesPerQuadrant * 3;
+		}
+
+		return 0;
+	}
+	else if(0 == y)
+	{
+		// First quadrant
+		if(0 < x)
+		{
+			return entriesPerQuadrant * 0;
+		}
+		// Fourth quadrant
+		else if(0 > x)
+		{
+			return entriesPerQuadrant * 2;
+		}
+
+		return 0;
+	}
+	else if(0 < x)
+	{
+		// First quadrant
+		if(0 < y)
+		{
 			entry = 0;
 			lastEntry = entriesPerQuadrant;
 		}
 		// Fourth quadrant
 		else
 		{
-			PRINT_TEXT("FOURTH", 1, 2);
 			entry = entriesPerQuadrant * 3;
 			lastEntry = totalEntries;
 		}
 	}
 	// Second quadrant
-	else if(0 <= y)
+	else if(0 < y)
 	{
-			PRINT_TEXT("SECON", 1, 2);
 		entry = entriesPerQuadrant;
 		lastEntry = entry + entriesPerQuadrant;
 	}
 	// Third quadrant
 	else
 	{
-			PRINT_TEXT("THIRD", 1, 2);
 		entry = entriesPerQuadrant * 2;
 		lastEntry = totalEntries - entriesPerQuadrant;
 	}
@@ -160,7 +186,7 @@ static int Math::getAngle(fix7_9 x, fix7_9 y)
 
 	for(; entry < lastEntry; entry++)
 	{
-		if(__ABS(sin - _sinLut[entry]) < difference)
+		if(__ABS(sin - _sinLut[entry]) <= difference)
 		{
 			difference = __ABS(sin - _sinLut[entry]);
 			angle = entry;

@@ -212,41 +212,69 @@ void Actor::syncPositionWithBody()
 	Base::setLocalPosition(this, &localPosition);
 }
 
-void Actor::syncRotationWithBody()
+void Actor::doSyncRotationWithBody()
 {
 	if(this->body && Body::getMovementOnAllAxis(this->body))
 	{
 		Velocity velocity = Body::getVelocity(this->body);
 
-		velocity = Vector3D::normalize(velocity);
-
-		//if(this->actorSpec->)
-//		this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
-
-//		Base::setLocalRotation(this, &this->transformation.localRotation);
-//return;
-		Direction direction =
+		if(!this->actorSpec->axisForSynchronizationWithBody)
 		{
-			__RIGHT, __DOWN, __FAR
-		};
+			Direction direction =
+			{
+				__RIGHT, __DOWN, __FAR
+			};
 
-		if(0 > velocity.x)
-		{
-			direction.x = __LEFT;
+			if(0 > velocity.x)
+			{
+				direction.x = __LEFT;
+			}
+
+			if(0 > velocity.y)
+			{
+				direction.y = __UP;
+			}
+
+			if(0 > velocity.z)
+			{
+				direction.z = __NEAR;
+			}
+
+			Entity::setDirection(this, direction);
 		}
-
-		if(0 > velocity.y)
+		else
 		{
-			direction.y = __UP;
-		}
+			velocity = Vector3D::normalize(velocity);
 
-		if(0 > velocity.z)
-		{
-			direction.z = __NEAR;
-		}
+			switch(this->actorSpec->axisForSynchronizationWithBody)
+			{
+				case __X_AXIS:
+					this->transformation.localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.y), __FIX10_6_TO_FIX7_9(velocity.z));
+					break;
 
-		Entity::setDirection(this, direction);
+				case __Y_AXIS:
+					this->transformation.localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.z));
+					break;
+
+				case __Z_AXIS:
+					this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
+					break;
+
+			}
+
+			Base::setLocalRotation(this, &this->transformation.localRotation);
+		}
 	}
+}
+
+void Actor::syncRotationWithBody()
+{
+	Actor::doSyncRotationWithBody(this);
+}
+
+void Actor::syncRotationWithBodyAfterBouncing()
+{
+	Actor::doSyncRotationWithBody(this);
 }
 
 // updates the animation attributes
@@ -468,21 +496,11 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 			fix10_6 bounciness =  Actor::getBouncinessOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 			fix10_6 frictionCoefficient =  Actor::getFrictionOnCollision(this, collidingObject, &collisionInformation->solutionVector.direction);
 
-			if( Actor::mustBounce(this))
+			if(Actor::mustBounce(this))
 			{
 				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
-/*
-				Velocity velocity = Vector3D::normalize(Body::getVelocity(this->body));
 
-				PRINT_TEXT("   ", 20, 10);
-				PRINT_TEXT("   ", 20, 11);
-
-				PRINT_INT(this->transformation.localRotation.z, 20, 10);
-				this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
-				PRINT_INT(this->transformation.localRotation.z, 20, 11);
-				Base::setLocalRotation(this, &this->transformation.localRotation);
-*/
-				//Actor::syncRotationWithBody(this);
+				Actor::syncRotationWithBodyAfterBouncing(this);
 			}
 			else
 			{
