@@ -174,7 +174,6 @@ void CharSet::write()
 		(WORD*)(__CHAR_SPACE_BASE_ADDRESS + (((u32)this->offset) << 4)),
 		(WORD*)(this->charSetSpec->charSpec + __BYTES_PER_CHARS(this->charSpecDisplacement)),
 		__BYTES_PER_CHARS(this->charSetSpec->numberOfChars) / sizeof(WORD)
-
 	);
 }
 
@@ -183,8 +182,18 @@ void CharSet::write()
  */
 void CharSet::rewrite()
 {
-	// write again
-	CharSet::write(this);
+	switch(this->charSetSpec->allocationType)
+	{
+		case __ANIMATED_SINGLE:
+		case __ANIMATED_SHARED:
+		case __ANIMATED_SHARED_COORDINATED:
+			break;
+
+		default:
+			// write again
+			CharSet::write(this);
+			break;
+	}
 
 	// propagate event
 	Object::fireEvent(this, kEventCharSetRewritten);
