@@ -431,6 +431,7 @@ void Sprite::onTextureRewritten(Object eventFirer __attribute__ ((unused)))
 {
 	Sprite::applyAffineTransformations(this);
 	Sprite::applyHbiasEffects(this);
+	this->writeAnimationFrame = true;
 }
 
 /**
@@ -558,6 +559,7 @@ void Sprite::pause(bool pause)
 	{
 		// first animate the frame
 		AnimationController::pause(this->animationController, pause);
+		this->writeAnimationFrame = false;
 	}
 }
 
@@ -648,7 +650,7 @@ void Sprite::setActualFrame(s16 actualFrame)
 	if(this->animationController)
 	{
 		AnimationController::setActualFrame(this->animationController, actualFrame);
-		this->writeAnimationFrame |= true;
+		this->writeAnimationFrame = true;
 	}
 }
 
