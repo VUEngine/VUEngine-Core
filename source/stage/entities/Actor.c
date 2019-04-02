@@ -534,7 +534,7 @@ bool Actor::handleMessage(Telegram telegram)
 			{
 				case kBodyStartedMoving:
 
-					if(this->shapes)
+					if(this->allowCollisions && this->shapes)
 					{
 						Entity::activeCollisionChecks(this, true);
 						return true;
@@ -596,12 +596,6 @@ void Actor::addForce(const Force* force)
 	}
 
 	Body::addForce(this->body, force);
-
-	if(this->shapes)
-	{
-		// register the shape for collision detections
-		Entity::activeCollisionChecks(this, true);
-	}
 }
 
 void Actor::moveUniformly(Velocity* velocity)

@@ -81,6 +81,7 @@ void Entity::constructor(EntitySpec* entitySpec, s16 id, s16 internalId, const c
 
 	this->invalidateSprites = 0;
 	this->transformShapes = true;
+	this->allowCollisions = true;
 
 	Entity::addBehaviors(this, this->entitySpec->behaviorSpecs);
 }
@@ -1741,27 +1742,17 @@ fix10_6 Entity::getFrictionCoefficient()
  */
 void Entity::activeCollisionChecks(bool active)
 {
+	this->allowCollisions |= active;
+
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
 
-		if(active)
+		for(; node; node = node->next)
 		{
-			for(; node; node = node->next)
-			{
-				Shape shape = Shape::safeCast(node->data);
+			Shape shape = Shape::safeCast(node->data);
 
-				Shape::activeCollisionChecks(shape, true);
-			}
-		}
-		else
-		{
-			for(; node; node = node->next)
-			{
-				Shape shape = Shape::safeCast(node->data);
-
-				Shape::activeCollisionChecks(shape, false);
-			}
+			Shape::activeCollisionChecks(shape, active);
 		}
 	}
 }
@@ -1771,6 +1762,8 @@ void Entity::activeCollisionChecks(bool active)
  */
 void Entity::allowCollisions(bool value)
 {
+	this->allowCollisions = value;
+
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
