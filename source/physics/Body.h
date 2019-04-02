@@ -101,6 +101,8 @@ class Body : Object
 	Vector3D position;
 	// velocity on each instance
 	Velocity velocity;
+	// direction
+	Direction3D direction;
 	// maximum velocity on each instance
 	Velocity maximumVelocity;
 	// maximum speed
@@ -149,6 +151,7 @@ class Body : Object
 	SpatialObject getOwner();
 	const Vector3D* getPosition();
 	Velocity getVelocity();
+	Direction3D getDirection3D();
 	fix10_6 getSpeed();
 	fix10_6_ext getSpeedSquare();
 	void modifyVelocity(const Velocity* multiplier);

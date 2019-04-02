@@ -39,6 +39,8 @@
 static class Vector3D : Object
 {
 	/// @publicsection
+	static inline Vector3D zero();
+	static inline Vector3D unit(u16 axis);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
@@ -58,6 +60,21 @@ static class Vector3D : Object
 //---------------------------------------------------------------------------------------------------------
 //											IMPLEMENTATIONS
 //---------------------------------------------------------------------------------------------------------
+
+static inline Vector3D Vector3D::zero()
+{
+	return (Vector3D){0, 0, 0};
+}
+
+static inline Vector3D Vector3D::unit(u16 axis)
+{
+	return (Vector3D)
+	{
+		__X_AXIS & axis ? __I_TO_FIX10_6(1) : 0, 
+		__Y_AXIS & axis ? __I_TO_FIX10_6(1) : 0, 
+		__Z_AXIS & axis ? __I_TO_FIX10_6(1) : 0
+	};
+}
 
 static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 {
@@ -86,7 +103,7 @@ static inline Vector3D Vector3D::scalarDivision(Vector3D vector, fix10_6 scalar)
 		return (Vector3D){__FIX10_6_DIV(vector.x, scalar), __FIX10_6_DIV(vector.y, scalar), __FIX10_6_DIV(vector.z, scalar)};
 	}
 
-	return (Vector3D){0, 0, 0};
+	return Vector3D::zero();
 }
 
 static inline Vector3D Vector3D::normalize(Vector3D vector)

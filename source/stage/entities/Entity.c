@@ -385,7 +385,7 @@ void Entity::calculateSize()
 {
 	PixelRightBox pixelRightBox = {0, 0, 0, 0, 0, 0};
 
-	Entity::calculateSizeFromChildren(this, &pixelRightBox, (Vector3D){0, 0, 0});
+	Entity::calculateSizeFromChildren(this, &pixelRightBox, Vector3D::zero());
 
 	Vector3D centerDisplacement =
 	{

@@ -298,7 +298,7 @@ CollisionData Shape::collides(Shape shape)
 	// to determine if I'm not colliding against them anymore
 	else if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->solutionVector.magnitude)
 	{
-		collisionData.collisionInformation =  Shape::testForCollision(this, shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+		collisionData.collisionInformation =  Shape::testForCollision(this, shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 		if(collisionData.collisionInformation.shape == this && collisionData.collisionInformation.solutionVector.magnitude >= __STILL_COLLIDING_CHECK_SIZE_INCREMENT)
 		{
@@ -412,7 +412,7 @@ void Shape::checkPreviousCollisions(Shape collidingShape)
 
 		if(collidingShapeRegistry->isImpenetrable && collidingShapeRegistry->shape != collidingShape)
 		{
-			CollisionInformation collisionInformation =  Shape::testForCollision(this, collidingShapeRegistry->shape, (Vector3D){0, 0, 0}, __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
+			CollisionInformation collisionInformation =  Shape::testForCollision(this, collidingShapeRegistry->shape, Vector3D::zero(), __STILL_COLLIDING_CHECK_SIZE_INCREMENT);
 
 			if(collisionInformation.shape == this && 0 < collisionInformation.solutionVector.magnitude)
 			{
@@ -600,8 +600,8 @@ CollidingShapeRegistry* Shape::registerCollidingShape(Shape collidingShape, Solu
 	{
 		VirtualList::pushBack(this->collidingShapes, collidingShapeRegistry);
 
-		Object::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeDestroyed, kEventShapeDeleted);
-		Object::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape_onCollidingShapeChanged, kEventShapeChanged);
+		Object::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeDestroyed, kEventShapeDeleted);
+		Object::addEventListener(collidingShape, Object::safeCast(this), (EventListener)Shape::onCollidingShapeChanged, kEventShapeChanged);
 	}
 
 	return collidingShapeRegistry;

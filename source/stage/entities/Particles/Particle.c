@@ -59,7 +59,7 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->particleSpec = particleSpec;
 	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
-	PhysicalSpecification physicalSpecification = {mass, 0, 0, (Vector3D){0, 0, 0}, 0};
+	PhysicalSpecification physicalSpecification = {mass, 0, 0, Vector3D::zero(), 0};
 	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleSpec->axisSubjectToGravity);
 	this->objectSprite = NULL;
 	Particle::addSprite(this);

@@ -133,7 +133,7 @@ fix10_6 SpatialObject::getFrictionCoefficient()
 // get velocity
 Velocity SpatialObject::getVelocity()
 {
-	return (Velocity){0, 0, 0};
+	return Vector3D::zero();
 }
 
 fix10_6 SpatialObject::getMaximumSpeed()

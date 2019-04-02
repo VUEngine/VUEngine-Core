@@ -137,12 +137,13 @@ void Body::constructor(SpatialObject owner, const PhysicalSpecification* physica
 	this->movementType.y = __NO_MOVEMENT;
 	this->movementType.z = __NO_MOVEMENT;
 
-	this->position 				= (Vector3D){0, 0, 0};
-	this->velocity 				= (Velocity){0, 0, 0};
-	this->acceleration 			= (Acceleration){0, 0, 0};
-	this->externalForce	 		= (Force){0, 0, 0};
-	this->friction 				= (Force){0, 0, 0};
-	this->totalNormal			= (Force){0, 0, 0};
+	this->position 				= Vector3D::zero();
+	this->velocity 				= Vector3D::zero();
+	this->direction 			= Vector3D::zero();
+	this->acceleration 			= Vector3D::zero();
+	this->externalForce	 		= Vector3D::zero();
+	this->friction 				= Vector3D::zero();
+	this->totalNormal			= Vector3D::zero();
 	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 	this->maximumVelocity 		= physicalSpecification->maximumVelocity;
 	this->maximumSpeed 			= physicalSpecification->maximumSpeed;
@@ -186,10 +187,15 @@ SpatialObject Body::getOwner()
 	return this->owner;
 }
 
-// retrieve character's velocity
+// retrieve velocity
 Velocity Body::getVelocity()
 {
 	return this->velocity;
+}
+
+Direction3D Body::getDirection3D()
+{
+	return this->direction;
 }
 
 fix10_6 Body::getSpeed()
@@ -516,7 +522,7 @@ void Body::clampVelocity()
 	// First check if must clamp speed
 	if(this->maximumSpeed && __FIX10_6_EXT_MULT(this->maximumSpeed, this->maximumSpeed) < Vector3D::squareLength(this->velocity))
 	{
-		this->velocity = Vector3D::scalarProduct(Vector3D::normalize(this->velocity), this->maximumSpeed);
+		this->velocity = Vector3D::scalarProduct(this->direction, this->maximumSpeed);
 	}
 
 	// Then clamp speed based on each axis configuration
@@ -559,7 +565,7 @@ MovementResult Body::updateMovement()
 
 #ifndef __USE_HACK_FOR_FRICTION
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
-	this->friction = Vector3D::scalarProduct(Vector3D::normalize(this->velocity), -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
+	this->friction = Vector3D::scalarProduct(this->direction, -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
 #else
 	// hack to avoid normalization
 	this->friction = Vector3D::scalarProduct(this->velocity, -(this->totalFrictionCoefficient << __FRICTION_FORCE_FACTOR_POWER));
@@ -612,6 +618,8 @@ MovementResult Body::updateMovement()
 		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime) + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
+
+	this->direction = Vector3D::normalize(this->velocity);
 
 	Body::clampVelocity(this);
 
@@ -725,7 +733,7 @@ void Body::setBounciness(fix10_6 bounciness)
 
 void Body::computeTotalNormal()
 {
-	this->totalNormal = (Force){0, 0, 0};
+	this->totalNormal = Vector3D::zero();
 
 	if(this->normals)
 	{
@@ -787,7 +795,7 @@ Force Body::getLastNormalDirection()
 {
 	if(!this->normals || !this->normals->head)
 	{
-		return (Force){0, 0, 0};
+		return Vector3D::zero();
 	}
 
 	while(this->normals->head && isDeleted(((NormalRegistry*)VirtualList::back(this->normals))->referent))
@@ -801,7 +809,7 @@ Force Body::getLastNormalDirection()
 
 	if(!this->normals->head)
 	{
-		return (Force){0, 0, 0};
+		return Vector3D::zero();
 	}
 
 	return ((NormalRegistry*)VirtualList::back(this->normals))->direction;
@@ -825,11 +833,11 @@ void Body::reset()
 	Body::computeTotalNormal(this);
 	Body::setSurroundingFrictionCoefficient(this, 0);
 
-	this->velocity 				= (Velocity){0, 0, 0};
-	this->acceleration 			= (Acceleration){0, 0, 0};
-	this->externalForce	 		= (Force){0, 0, 0};
-	this->friction 				= (Force){0, 0, 0};
-	this->totalNormal			= (Force){0, 0, 0};
+	this->velocity 				= Vector3D::zero();
+	this->acceleration 			= Vector3D::zero();
+	this->externalForce	 		= Vector3D::zero();
+	this->friction 				= Vector3D::zero();
+	this->totalNormal			= Vector3D::zero();
 	this->weight 				= Vector3D::scalarProduct(*_currentGravity, this->mass);
 }
 

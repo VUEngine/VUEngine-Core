@@ -53,7 +53,7 @@ void Ball::constructor(SpatialObject owner)
 {
 	Base::constructor(owner);
 
-	this->center = (Vector3D){0, 0, 0};
+	this->center = Vector3D::zero();
 	this->radius = 0;
 }
 

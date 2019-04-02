@@ -52,8 +52,8 @@ void Container::constructor(const char* const name)
 	Base::constructor();
 
 	// set position
-	this->transformation.localPosition = (Vector3D){0, 0, 0};
-	this->transformation.globalPosition = (Vector3D){0, 0, 0};
+	this->transformation.localPosition = Vector3D::zero();
+	this->transformation.globalPosition = Vector3D::zero();
 
 	// set rotation
 	this->transformation.localRotation = (Rotation){0, 0, 0};

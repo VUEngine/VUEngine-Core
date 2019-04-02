@@ -59,7 +59,7 @@ void Box::constructor(SpatialObject owner)
 {
 	Base::constructor(owner);
 
-	this->rotationVertexDisplacement = (Vector3D){0, 0, 0};
+	this->rotationVertexDisplacement = Vector3D::zero();
 
 	this->normals = NULL;
 

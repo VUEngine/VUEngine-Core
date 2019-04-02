@@ -74,7 +74,7 @@ void Actor::constructor(const ActorSpec* actorSpec, s16 id, s16 internalId, cons
 		}
 		else
 		{
-			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, (Vector3D){0, 0, 0}, 0};
+			PhysicalSpecification defaultActorPhysicalSpecification = {__I_TO_FIX10_6(1), 0, 0, Vector3D::zero(), 0};
 			this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(Body), SpatialObject::safeCast(this), &defaultActorPhysicalSpecification, actorSpec->axisSubjectToGravity);
 		}
 	}
@@ -216,7 +216,7 @@ void Actor::doSyncRotationWithBody()
 {
 	if(this->body && Body::getMovementOnAllAxis(this->body))
 	{
-		Velocity velocity = Body::getVelocity(this->body);
+		Direction3D direction3D = Body::getDirection3D(this->body);
 
 		if(!this->actorSpec->axisForSynchronizationWithBody)
 		{
@@ -225,17 +225,17 @@ void Actor::doSyncRotationWithBody()
 				__RIGHT, __DOWN, __FAR
 			};
 
-			if(0 > velocity.x)
+			if(0 > direction3D.x)
 			{
 				direction.x = __LEFT;
 			}
 
-			if(0 > velocity.y)
+			if(0 > direction3D.y)
 			{
 				direction.y = __UP;
 			}
 
-			if(0 > velocity.z)
+			if(0 > direction3D.z)
 			{
 				direction.z = __NEAR;
 			}
@@ -244,20 +244,18 @@ void Actor::doSyncRotationWithBody()
 		}
 		else
 		{
-			velocity = Vector3D::normalize(velocity);
-
 			switch(this->actorSpec->axisForSynchronizationWithBody)
 			{
 				case __X_AXIS:
-					this->transformation.localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.y), __FIX10_6_TO_FIX7_9(velocity.z));
+					this->transformation.localRotation.x = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.y), __FIX10_6_TO_FIX7_9(direction3D.z));
 					break;
 
 				case __Y_AXIS:
-					this->transformation.localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.z));
+					this->transformation.localRotation.y = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.x), __FIX10_6_TO_FIX7_9(direction3D.z));
 					break;
 
 				case __Z_AXIS:
-					this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(velocity.x), __FIX10_6_TO_FIX7_9(velocity.y));
+					this->transformation.localRotation.z = Math::getAngle(__FIX10_6_TO_FIX7_9(direction3D.x), __FIX10_6_TO_FIX7_9(direction3D.y));
 					break;
 
 			}

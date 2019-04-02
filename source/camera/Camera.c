@@ -66,7 +66,7 @@ void Camera::constructor()
 	Base::constructor();
 
 	// initialize world's camera's position
-	this->position = (Vector3D){0, 0, 0};
+	this->position = Vector3D::zero();
 
 	// set the default camera movement manager
 	this->cameraMovementManager = CameraMovementManager::getInstance();
@@ -82,10 +82,10 @@ void Camera::constructor()
 	this->focusEntity = NULL;
 	this->focusEntityPosition = NULL;
 
-	this->position = (Vector3D){0, 0, 0};
-	this->previousPosition = (Vector3D){0, 0, 0};
-	this->positionBackup = (Vector3D){0, 0, 0};
-	this->lastDisplacement = (Vector3D){0, 0, 0};
+	this->position = Vector3D::zero();
+	this->previousPosition = Vector3D::zero();
+	this->positionBackup = Vector3D::zero();
+	this->lastDisplacement = Vector3D::zero();
 
 	this->cameraFrustum.x0 = 0;
 	this->cameraFrustum.y0 = 0;
@@ -462,9 +462,9 @@ void Camera::reset()
 {
 	Camera::setFocusGameEntity(this, NULL);
 
-	this->position = (Vector3D){0, 0, 0};
+	this->position = Vector3D::zero();
 	this->previousPosition = this->position;
-	this->lastDisplacement = (Vector3D){0, 0, 0};
+	this->lastDisplacement = Vector3D::zero();
 
 	Camera::resetCameraFrustum(this);
 }
@@ -540,7 +540,7 @@ CameraFrustum Camera::getCameraFrustum()
  */
 Vector3D Camera::getFocusEntityPosition()
 {
-	return this->focusEntityPosition ? *this->focusEntityPosition : (Vector3D){0, 0, 0};
+	return this->focusEntityPosition ? *this->focusEntityPosition : Vector3D::zero();
 }
 
 /**
