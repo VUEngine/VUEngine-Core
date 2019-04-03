@@ -1183,6 +1183,8 @@ void Body::bounce(Object bounceReferent, Vector3D bouncingPlaneNormal, fix10_6 f
 
 	Body::clampVelocity(this);
 
+	this->direction = Vector3D::normalize(this->velocity);
+
 	if(__NO_MOVEMENT == this->movementType.x && this->velocity.x)
 	{
 		this->movementType.x = __ACCELERATED_MOVEMENT;
