@@ -1776,6 +1776,15 @@ void Entity::allowCollisions(bool value)
 }
 
 /**
+ * Retrieve allowing collision status
+ */
+bool Entity::doesAllowCollisions()
+{
+	return this->allowCollisions;
+}
+
+
+/**
  * Returns whether I have collision shapes or not
  */
 bool Entity::hasShapes()

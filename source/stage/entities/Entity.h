@@ -94,6 +94,7 @@ class Entity : Container
 	bool updateSpriteScale();
 	void activeCollisionChecks(bool activate);
 	void allowCollisions(bool value);
+	bool doesAllowCollisions();
 	bool hasShapes();
 	void showShapes();
 	void hideShapes();
