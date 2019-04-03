@@ -76,6 +76,8 @@ singleton class SpriteManager : Object
 	VirtualNode zSortingSecondNode;
 	// sprite's texture writing
 	Sprite spritePendingTextureWriting;
+	// pixels drawn
+	int totalPixelsDrawn;
 	// semaphore to prevent manipulation of VirtualList during interrupt
 	bool lockSpritesLists;
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
@@ -104,6 +106,7 @@ singleton class SpriteManager : Object
 	int getMaximumParamTableRowsToComputePerCall();
 	Sprite getSpriteAtLayer(u8 layer);
 	s8 getTexturesMaximumRowsToWrite();
+	void computeTotalPixelsDrawn();
 	void print(int x, int y, bool resumed);
 	void printObjectSpriteContainersStatus(int x, int y);
 	void processFreedLayers();

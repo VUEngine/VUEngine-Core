@@ -802,6 +802,8 @@ void Sprite::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Size (w,h):                          ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), Sprite::getWorldWidth(this), x + 18, y, NULL);
 	Printing::int(Printing::getInstance(), Sprite::getWorldHeight(this), x + 24, y++, NULL);
+	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
+	Printing::int(Printing::getInstance(), Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this), x + 18, y++, NULL);
 
 	if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
 	{
@@ -855,6 +857,21 @@ void Sprite::putPixel(Point* texturePixel, Pixel* charSetPixel, BYTE newPixelCol
 	{
 		Texture::putPixel(this->texture, texturePixel, charSetPixel, newPixelColor);
 	}
+}
+
+/**
+ * Get the total amount of pixels displayed by the sprite
+ *
+ * @return		Total pixels
+ */
+int Sprite::getTotalPixels()
+{
+	if(0 <= (s8)this->worldLayer)
+	{
+		return (_worldAttributesBaseAddress[this->worldLayer].w + 1) * (_worldAttributesBaseAddress[this->worldLayer].h + 1);
+	}
+
+	return 0;
 }
 
 

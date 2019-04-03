@@ -81,6 +81,7 @@ void SpriteManager::constructor()
 	// construct base object
 	Base::constructor();
 
+	this->totalPixelsDrawn = 0;
 	this->zSortingFirstNode = NULL;
 	this->zSortingSecondNode = NULL;
 
@@ -750,19 +751,7 @@ void SpriteManager::render()
 #ifdef __SHOW_SPRITES_PROFILING
 	if(!Game::isInSpecialMode(Game::getInstance()))
 	{
-		_totalPixelsToDraw = _worldAttributesBaseAddress[this->freeLayer].w * _worldAttributesBaseAddress[this->freeLayer].h;
-
-		VirtualNode node = this->sprites->head;
-
-		for(; node; node = node->next)
-		{
-			Sprite sprite = Sprite::safeCast(node->data);
-
-			if(__WORLD_OFF != _worldAttributesBaseAddress[sprite->worldLayer].head)
-			{
-				_totalPixelsToDraw += _worldAttributesBaseAddress[sprite->worldLayer].w * _worldAttributesBaseAddress[sprite->worldLayer].h;
-			}
-		}
+		SpriteManager::computeTotalPixelsDrawn(this);
 	}
 #endif
 
@@ -926,6 +915,39 @@ void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTab
 }
 
 /**
+ * Compute the total amount of pixels to be drawn for all the sprites
+ *
+ */
+void SpriteManager::computeTotalPixelsDrawn()
+{
+	this->totalPixelsDrawn = SpriteManager::getTotalPixelsDrawn(this);
+}
+
+/**
+ * Retrieve the total amount of pixels to be drawn for all the sprites
+ *
+ * @return			Number of pixels
+ */
+int SpriteManager::getTotalPixelsDrawn()
+{
+	int totalPixelsToDraw = (_worldAttributesBaseAddress[this->freeLayer].w + 1) * (_worldAttributesBaseAddress[this->freeLayer].h + 1);
+
+	VirtualNode node = this->sprites->head;
+
+	for(; node; node = node->next)
+	{
+		Sprite sprite = Sprite::safeCast(node->data);
+
+		if(__WORLD_OFF != _worldAttributesBaseAddress[sprite->worldLayer].head)
+		{
+			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
+		}
+	}
+
+	return totalPixelsToDraw;
+}
+
+/**
  * Print manager's status
  *
  * @param x			Camera x coordinate
@@ -935,10 +957,8 @@ void SpriteManager::setMaximumParamTableRowsToComputePerCall(int maximumParamTab
 void SpriteManager::print(int x, int y, bool resumed)
 {
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
-#ifdef __PROFILE_GAME
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), _totalPixelsToDraw, x + 18, y, NULL);
-#endif
+	Printing::int(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Last free layer:     ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->freeLayer, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Free layers:         ", x, ++y, NULL);

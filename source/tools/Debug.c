@@ -227,6 +227,7 @@ void Debug::show(GameState gameState)
 {
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
+	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
 
 	this->gameState = gameState;
 

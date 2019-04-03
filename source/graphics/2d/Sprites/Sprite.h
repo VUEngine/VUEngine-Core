@@ -238,6 +238,7 @@ abstract class Sprite : Object
 	virtual void writeAnimation();
 	virtual bool writeTextures();
 	virtual void print(int x, int y);
+	virtual int getTotalPixels();
 }
 
 

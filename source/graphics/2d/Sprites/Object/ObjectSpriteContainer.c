@@ -569,7 +569,20 @@ void ObjectSpriteContainer::print(int x, int y)
 	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getLastObjectIndex(this), x  + 24 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->position.z, x + 24, y, NULL);
+	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 24, y, NULL);
 }
+
+int ObjectSpriteContainer::getTotalPixels()
+{
+	if(0 <= (s8)this->worldLayer)
+	{
+		return ObjectSpriteContainer::getAvailableObjects(this) * 8 * 8;
+	}
+
+	return 0;
+}
+
 
 /**
  * Set Sprite's render mode
