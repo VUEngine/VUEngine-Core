@@ -563,13 +563,8 @@ MovementResult Body::updateMovement()
 	Acceleration gravity = Body::getGravity(this);
 	this->weight = Vector3D::scalarProduct(gravity, this->mass);
 
-#ifndef __USE_HACK_FOR_FRICTION
 	// yeah, * 4 (<< 2) is a magical number, but it works well enough with the range of mass and friction coefficient
 	this->friction = Vector3D::scalarProduct(this->direction, -(this->frictionForceMagnitude << __FRICTION_FORCE_FACTOR_POWER));
-#else
-	// hack to avoid normalization
-	this->friction = Vector3D::scalarProduct(this->velocity, -(this->totalFrictionCoefficient << __FRICTION_FORCE_FACTOR_POWER));
-#endif
 
 	fix10_6 elapsedTime = _currentElapsedTime;
 	fix10_6 elapsedTimeHalfSquare = __FIX10_6_MULT(elapsedTime, elapsedTime) >> 1;
