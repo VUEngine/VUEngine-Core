@@ -7,6 +7,7 @@
 
 
 // define / undefine as you see fit
+//#define __BYPASS_CAST
 //#define __PRINT_FRAMERATE
 //#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_GAME
@@ -36,7 +37,7 @@
 //#define __SHOW_CHAR_MEMORY_STATUS
 
 //#undef __TIMER_RESOLUTION
-//#define __TIMER_RESOLUTION						10
+//#define __TIMER_RESOLUTION						1
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object

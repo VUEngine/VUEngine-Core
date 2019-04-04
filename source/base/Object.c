@@ -26,6 +26,7 @@
 
 #include <Object.h>
 #include <VirtualList.h>
+#include <debugConfig.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -332,6 +333,10 @@ void Object::fireEvent(u32 eventCode)
  */
 static Object Object::getCast(void* object, ClassPointer targetClassGetClassMethod, ClassPointer baseClassGetClassMethod)
 {
+#ifdef __BYPASS_CAST
+	return object;
+#endif
+
 	static int lp = -1;
 	static int sp = -1;
 
