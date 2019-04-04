@@ -120,6 +120,7 @@ preprocessHeaderFiles:
 	@$(MAKE) --no-print-directory preprocess																										\
 		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-preprocess																										\
+		-e TYPE=$(TYPE)																																\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
 		-e BASENAME=$(BASENAME) 																													\
@@ -132,6 +133,7 @@ compile:
 	@$(MAKE) --no-print-directory compile																											\
 		-j $(MAKE_JOBS)																																\
 		-f $(ENGINE_HOME)/makefile-compile																											\
+		-e TYPE=$(TYPE)																																\
 		-e GAME_HOME=$(GAME_HOME)																													\
 		-e NAME=$(NAME) 																															\
 		-e MY_HOME=$(MY_HOME)																														\
