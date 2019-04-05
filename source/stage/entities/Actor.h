@@ -88,6 +88,7 @@ class Actor : AnimatedEntity
 	virtual void takeHitFrom(Actor other);
 	virtual void syncPositionWithBody();
 	virtual void syncRotationWithBody();
+	virtual void syncRotationWithBodyAfterBouncing(SpatialObject collidingObject);
 	virtual fix10_6 getBouncinessOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fix10_6 getFrictionOnCollision(SpatialObject collidingObject, const Vector3D* collidingObjectNormal);
 	virtual fix10_6 getSurroundingFrictionCoefficient();

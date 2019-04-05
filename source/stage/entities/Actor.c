@@ -270,7 +270,7 @@ void Actor::syncRotationWithBody()
 	Actor::doSyncRotationWithBody(this);
 }
 
-void Actor::syncRotationWithBodyAfterBouncing()
+void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject)
 {
 	Actor::doSyncRotationWithBody(this);
 }
@@ -498,7 +498,7 @@ bool Actor::enterCollision(const CollisionInformation* collisionInformation)
 			{
 				Body::bounce(this->body, Object::safeCast(collisionInformation->collidingShape), collisionInformation->solutionVector.direction, frictionCoefficient, bounciness);
 
-				Actor::syncRotationWithBodyAfterBouncing(this);
+				Actor::syncRotationWithBodyAfterBouncing(this, collidingObject);
 
 				Actor::fireEvent(this, kActorBounced);
 			}
