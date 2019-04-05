@@ -270,7 +270,7 @@ void Actor::syncRotationWithBody()
 	Actor::doSyncRotationWithBody(this);
 }
 
-void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject)
+void Actor::syncRotationWithBodyAfterBouncing(SpatialObject collidingObject __attribute__((unused)))
 {
 	Actor::doSyncRotationWithBody(this);
 }
