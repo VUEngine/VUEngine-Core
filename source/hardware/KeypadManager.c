@@ -56,6 +56,8 @@ void KeypadManager::constructor()
 
 	KeypadManager::reset(this);
 
+	this->accumulatedUserInput = 0;
+
 	_readingStatus = (unsigned int *)&_hardwareRegisters[__SCR];
 }
 
@@ -141,6 +143,8 @@ void KeypadManager::captureUserInput()
 	this->userInput.holdKeyDuration = (this->userInput.holdKey && this->userInput.holdKey == this->userInput.previousKey)
 		? this->userInput.holdKeyDuration + 1
 		: 0;
+
+	this->accumulatedUserInput += this->userInput.allKeys;
 }
 
 /**
@@ -237,6 +241,17 @@ void KeypadManager::registerInput(u16 inputToRegister)
 	this->userInputToRegister.releasedKey = __KEY_RELEASED & inputToRegister? 0xFFFF : 0;
 	this->userInputToRegister.holdKey = __KEY_HOLD & inputToRegister? 0xFFFF : 0;
 }
+
+/**
+ * Retrieve the total user input so far
+ *
+ * @return Accumulated user input
+ */
+long KeypadManager::getAccumulatedUserInput()
+{
+	return this->accumulatedUserInput;
+}
+
 
 /**
  * Interrupt handler

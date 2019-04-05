@@ -106,6 +106,7 @@ typedef struct UserInput
 /// @ingroup hardware
 singleton class KeypadManager : Object
 {
+	long accumulatedUserInput;
 	// User's Input
 	UserInput userInput;
 	// User's Input to be registered
@@ -133,6 +134,7 @@ singleton class KeypadManager : Object
 	int isEnabled();
 	void captureUserInput();
 	void registerInput(u16 inputToRegister);
+	long getAccumulatedUserInput();
 }
 
 

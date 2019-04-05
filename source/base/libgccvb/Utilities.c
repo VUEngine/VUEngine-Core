@@ -30,7 +30,7 @@
 
 
 Clock _gameClock = NULL;
-
+KeypadManager _keypadManager = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //											DEFINITIONS
@@ -42,6 +42,12 @@ static void Utilities::setClock(Clock clock)
 {
 	_gameClock = clock;
 }
+
+static void Utilities::setKeypadManager(KeypadManager keypadManager)
+{
+	_keypadManager = keypadManager;
+}
+
 
 static int Utilities::intLength(int value)
 {
@@ -144,6 +150,10 @@ static long Utilities::randomSeed()
 // These real versions are due to Isaku Wada, 2002/01/09 added
 static int Utilities::random(long seed, int randnums)
 {
+#ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+	seed += Clock::getTime(_gameClock) - KeypadManager::getAccumulatedUserInput(_keypadManager);
+#endif
+
 	return seed & randnums ? __ABS((int)(seed % randnums)) : 0;
 }
 

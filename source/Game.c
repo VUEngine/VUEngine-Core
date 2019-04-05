@@ -202,7 +202,6 @@ void Game::constructor()
 
 	// construct the general clock
 	this->clock = new Clock();
-	Utilities::setClock(this->clock);
 
 	// construct the game's state machine
 	this->stateMachine = new StateMachine(this);
@@ -230,6 +229,9 @@ void Game::constructor()
 	DirectDraw::getInstance();
 	I18n::getInstance();
 	ParamTableManager::getInstance();
+
+	Utilities::setClock(this->clock);
+	Utilities::setKeypadManager(this->keypadManager);
 
 #ifdef __DEBUG_TOOLS
 	DebugState::getInstance();

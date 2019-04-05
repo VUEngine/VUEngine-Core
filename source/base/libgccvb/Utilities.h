@@ -28,6 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Clock.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -50,6 +51,7 @@ static class Utilities : Object
 {
 	/// @publicsection
 	static void setClock(Clock clock);
+	static void setKeypadManager(KeypadManager keypadManager);
 	static long randomSeed();
 	static int random(long seed, int randnums);
 	static char* itoa(u32 num, u32 base, u32 digits);
