@@ -126,6 +126,7 @@ class Container : SpatialObject
 	void setInheritEnvironment(bool inheritEnvironment);
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
+	bool getChildren(ClassPointer classPointer, VirtualList children);
 	virtual void iAmDeletingMyself();
 	virtual void ready(bool recursive);
 	virtual void update(u32 elapsedTime);

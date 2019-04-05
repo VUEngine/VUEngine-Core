@@ -1266,6 +1266,31 @@ void Container::setInheritEnvironment(bool inheritEnvironment)
 	this->inheritEnvironment = inheritEnvironment;
 }
 
+bool Container::getChildren(ClassPointer classPointer, VirtualList children)
+{
+	if(this->children && !isDeleted(children))
+	{
+		VirtualNode node = this->children->head;
+
+		for(; node ; node = node->next)
+		{
+			Container child = Container::safeCast(node->data);
+
+			if(!classPointer || Object::getCast((Object)child, classPointer, NULL))
+			{
+				VirtualList::pushBack(children, child);
+			}
+		}
+
+		if(VirtualList::getSize(children))
+		{
+			return true;
+		}
+	}
+
+	return false;
+}
+
 bool Container::getBehaviors(ClassPointer classPointer, VirtualList behaviors)
 {
 	if(this->behaviors && !isDeleted(behaviors))
