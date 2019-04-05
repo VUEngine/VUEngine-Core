@@ -605,3 +605,20 @@ void* VirtualCircularList::back()
 	return this->tail ? this->tail->data : NULL;
 }
 
+/**
+ * Retrieve the last element
+ *
+ * @param node
+ */
+bool VirtualCircularList::moveHead(VirtualNode node)
+{
+	if(!VirtualCircularList::isValidNode(this, node))
+	{
+		return false;
+	}
+
+	this->head = node;
+	this->tail = this->head->previous;
+
+	return true;
+}

@@ -68,6 +68,7 @@ class VirtualCircularList : Object
 	bool removeNode(VirtualNode node);
 	bool removeElement(const void* const dataPointer);
 	void swap(VirtualCircularList secondList);
+	bool moveHead(VirtualNode node);
 }
 
 
