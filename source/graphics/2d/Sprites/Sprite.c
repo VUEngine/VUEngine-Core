@@ -559,7 +559,7 @@ void Sprite::pause(bool pause)
 	{
 		// first animate the frame
 		AnimationController::pause(this->animationController, pause);
-		this->writeAnimationFrame = false;
+		this->writeAnimationFrame = !pause;
 	}
 }
 

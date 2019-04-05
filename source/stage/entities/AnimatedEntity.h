@@ -74,7 +74,7 @@ class AnimatedEntity : Entity
 	bool isAnimationLoaded(char* functionName);
 	bool isPlayingAnimation();
 	void nextFrame();
-	void pauseAnimation(int pause);
+	void pauseAnimation(bool pause);
 	void playAnimation(char* animationName);
 	void previousFrame();
 	void setActualFrame(s16 frame);

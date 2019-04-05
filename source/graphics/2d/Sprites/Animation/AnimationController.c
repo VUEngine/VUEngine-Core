@@ -473,7 +473,7 @@ void AnimationController::pause(bool pause)
 {
 	this->playing = !pause;
 
-	if(-1 == this->actualFrame)
+	if(pause && -1 == this->actualFrame)
 	{
 		this->actualFrame = 0;
 	}

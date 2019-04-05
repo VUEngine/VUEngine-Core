@@ -124,7 +124,7 @@ void AnimatedEntity::animate()
 }
 
 // pause animation
-void AnimatedEntity::pauseAnimation(int pause)
+void AnimatedEntity::pauseAnimation(bool pause)
 {
 	ASSERT(this->sprites, "AnimatedEntity::pauseAnimation: null sprites");
 
