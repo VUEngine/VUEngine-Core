@@ -1763,7 +1763,7 @@ void Entity::activeCollisionChecks(bool active)
 void Entity::allowCollisions(bool value)
 {
 	this->allowCollisions = value;
-
+	
 	if(this->shapes)
 	{
 		VirtualNode node = this->shapes->head;
