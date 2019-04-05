@@ -196,6 +196,7 @@ void Game::constructor()
 	MemoryPool::getInstance();
 
 	this->gameFrameTotalTime = 0;
+	this->randomSeed = 0;
 
 	// force construction now
 	this->clockManager = ClockManager::getInstance();
@@ -1091,6 +1092,9 @@ void Game::run()
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
+	// Generate random seed
+	this->randomSeed = Utilities::randomSeed();
+
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 
@@ -1877,5 +1881,10 @@ void Game::registerSaveDataManager(Object saveDataManager)
 Object Game::getSaveDataManager()
 {
 	return this->saveDataManager;
+}
+
+long Game::getRandomSeed()
+{
+	return this->randomSeed;
 }
 

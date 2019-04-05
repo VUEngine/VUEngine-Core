@@ -77,6 +77,8 @@ singleton class Game : Object
 	u32 gameFrameTotalTime;
 	// frame ended flag
 	volatile bool currentFrameEnded;
+	// random seed
+	long randomSeed;
 	// game paused flag
 	bool isPaused;
 
@@ -132,6 +134,7 @@ singleton class Game : Object
 	GameState getAutoPauseState();
 	void registerSaveDataManager(Object saveDataManager);
 	Object getSaveDataManager();
+	long getRandomSeed();
 }
 
 
