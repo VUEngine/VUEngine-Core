@@ -114,6 +114,11 @@ static fix10_6 Math::fix10_6Infinity()
 	return 0x3FFF;
 }
 
+static fix10_6_ext Math::fix10_6_extInfinity()
+{
+	return 0x3FFFFFFF;
+}
+
 static int Math::getAngle(fix7_9 x, fix7_9 y)
 {
 	int entry = 0;

@@ -235,6 +235,7 @@ static class Math : Object
 	static int powerFast(int base, int power);
 	static int intInfinity();
 	static fix10_6 fix10_6Infinity();
+	static fix10_6_ext fix10_6_extInfinity();
 	static int getAngle(fix7_9 x, fix7_9 y);
 }
 
