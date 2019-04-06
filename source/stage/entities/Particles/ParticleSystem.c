@@ -258,7 +258,7 @@ Particle ParticleSystem::recycleParticle()
 {
 	if(this->recyclableParticles->head && (VirtualList::getSize(this->particles) + VirtualList::getSize(this->recyclableParticles) >= this->particleSystemSpec->maximumNumberOfAliveParticles))
 	{
-		long seed = Utilities::randomSeed();
+		long seed = Game::getRandomSeed(Game::getInstance());
 
 		int lifeSpan = this->particleSystemSpec->particleSpec->minimumLifeSpan + Utilities::random(seed, this->particleSystemSpec->particleSpec->lifeSpanDelta);
 		fix10_6 mass = this->particleSystemSpec->particleSpec->minimumMass + Utilities::random(seed, this->particleSystemSpec->particleSpec->massDelta);
@@ -508,7 +508,7 @@ void ParticleSystem::particleExpired(Particle particle)
 int ParticleSystem::computeNextSpawnTime()
 {
 	return this->particleSystemSpec->minimumSpawnDelay +
-			Utilities::random(Utilities::randomSeed(), this->particleSystemSpec->spawnDelayDelta);
+			Utilities::random(Game::getRandomSeed(Game::getInstance()), this->particleSystemSpec->spawnDelayDelta);
 }
 
 void ParticleSystem::start()
