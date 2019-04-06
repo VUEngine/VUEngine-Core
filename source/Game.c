@@ -386,6 +386,7 @@ void Game::start(GameState state)
 			// skip the rest of the cycle if already late
 			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
 			{
+				PRINT_TIME(20, 0);
 				Game::showCurrentGameFrameProfiling(this, 1, 0);
 			}
 #endif
