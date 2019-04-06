@@ -1634,6 +1634,7 @@ void Game::showCurrentGameFrameProfiling(int x __attribute__ ((unused)), int y _
 							x + xDisplacement, y, NULL);
 
 
+#ifdef __DIMM_FOR_PROFILING
 		_vipRegisters[__GPLT0] = 0x50;
 		_vipRegisters[__GPLT1] = 0x50;
 		_vipRegisters[__GPLT2] = 0x54;
@@ -1644,6 +1645,7 @@ void Game::showCurrentGameFrameProfiling(int x __attribute__ ((unused)), int y _
 		_vipRegisters[__JPLT3] = 0x54;
 
 		_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
+#endif
 }
 #endif
 
