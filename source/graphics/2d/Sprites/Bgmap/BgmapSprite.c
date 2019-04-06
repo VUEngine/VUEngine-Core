@@ -327,11 +327,11 @@ void BgmapSprite::render(bool evenFrame)
 	worldPointer->mp = this->drawSpec.textureSource.mp;
 
 	// cap coordinates to camera space
-	if(_cameraFrustum->x0 - worldPointer->gp > gx)
+	if(_cameraFrustum->x0 - __ABS(worldPointer->gp) > gx)
 	{
-		worldPointer->gx = _cameraFrustum->x0 - worldPointer->gp;
-		worldPointer->mx += (_cameraFrustum->x0 - worldPointer->gp - gx);
-		w -= (_cameraFrustum->x0 - worldPointer->gp - gx);
+		worldPointer->gx = _cameraFrustum->x0 - __ABS(worldPointer->gp);
+		worldPointer->mx += (_cameraFrustum->x0 - __ABS(worldPointer->gp) - gx);
+		w -= (_cameraFrustum->x0 - __ABS(worldPointer->gp) - gx);
 	}
 
 	if(_cameraFrustum->y0 > gy)
@@ -342,9 +342,9 @@ void BgmapSprite::render(bool evenFrame)
 		myDisplacement = (_cameraFrustum->y0 - gy);
 	}
 
-	if(w + worldPointer->gx >= _cameraFrustum->x1 + worldPointer->gp)
+	if(w + worldPointer->gx >= _cameraFrustum->x1 + __ABS(worldPointer->gp))
 	{
-		w = _cameraFrustum->x1 - worldPointer->gx + worldPointer->gp;
+		w = _cameraFrustum->x1 - worldPointer->gx + __ABS(worldPointer->gp);
 	}
 
 	if (0 >= w)

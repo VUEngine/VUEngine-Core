@@ -400,8 +400,8 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	{
 		if(!_cameraFrustum->x0 && __SCREEN_WIDTH == _cameraFrustum->x1)
 		{
-			worldPointer->gx = worldPointer->gx - worldPointer->gp;
-        	worldPointer->w = _cameraFrustum->x1 + (worldPointer->gp << 1) - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
+			worldPointer->gx = worldPointer->gx - __ABS(worldPointer->gp);
+        	worldPointer->w = _cameraFrustum->x1 + (__ABS(worldPointer->gp) << 1) - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
 		}
 		else
 		{
