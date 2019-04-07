@@ -52,10 +52,6 @@ friend class Texture;
 friend class VirtualNode;
 friend class VirtualList;
 
-#ifdef __PROFILE_GAME
-int _totalPixelsToDraw = 0;
-#endif
-
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
