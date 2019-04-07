@@ -253,7 +253,7 @@ void ObjectSprite::render(bool evenFrame)
 		int outputY = y + (i << 3) * yDirection;
 		int jDisplacement = i * cols;
 
-		if((unsigned)(outputY - _cameraFrustum->y0) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
+		if((unsigned)(outputY - _cameraFrustum->y0 + 4) > (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0))
 		{
 			int j = 0;
 			for(; j < cols; j++)
