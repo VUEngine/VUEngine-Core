@@ -65,6 +65,36 @@ bool SpatialObject::isSubjectToGravity(Acceleration gravity __attribute__ ((unus
 	return false;
 }
 
+fix10_6 SpatialObject::getRadius()
+{
+	fix10_6 width = SpatialObject::getWidth(this);
+	fix10_6 height = SpatialObject::getHeight(this);
+	fix10_6 depth = SpatialObject::getDepth(this);
+
+	if(width > height)
+	{
+		if(width > depth)
+		{
+			return width;
+		}
+		else
+		{
+			return depth;
+		}
+		
+	}
+	else if(height > depth)
+	{
+		return height;
+	}
+	else
+	{
+		return depth;
+	}
+
+	return 0;
+}
+
 fix10_6 SpatialObject::getWidth()
 {
 	return 0;

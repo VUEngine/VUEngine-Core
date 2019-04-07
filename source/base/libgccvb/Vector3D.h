@@ -29,6 +29,7 @@
 #include <Math.h>
 #include <MiscStructs.h>
 #include <Constants.h>
+#include <Printing.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,6 +56,7 @@ static class Vector3D : Object
 	static inline PixelVector projectToPixelVector(Vector3D vector3D, s16 parallax);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
+	static inline void Vector3D::print(Vector3D vector, int x, int y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -206,6 +208,18 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 		__PIXELS_TO_METERS(screenPixelVector.z + screenPixelVector.zDisplacement)
 	};
 }
+
+static inline void Vector3D::print(Vector3D vector, int x, int y)
+{
+	PRINT_TEXT("x:    ", x, y);
+	PRINT_TEXT("y:    ", x, y + 1);
+	PRINT_TEXT("z:    ", x, y + 2);
+
+	PRINT_INT(__FIX10_6_TO_I(vector.x), x + 2, y);
+	PRINT_INT(__FIX10_6_TO_I(vector.y), x + 2, y + 1);
+	PRINT_INT(__FIX10_6_TO_I(vector.z), x + 2, y + 2);
+}
+
 
 
 #endif

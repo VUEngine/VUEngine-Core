@@ -45,6 +45,7 @@ class SpatialObject : Object
 	virtual VirtualList getShapes();
 	virtual bool isMoving();
 	virtual bool isSubjectToGravity(Acceleration gravity);
+	virtual fix10_6 getRadius();
 	virtual fix10_6 getWidth();
 	virtual fix10_6 getHeight();
 	virtual fix10_6 getDepth();
