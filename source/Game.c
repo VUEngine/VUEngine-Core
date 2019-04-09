@@ -167,6 +167,8 @@ static s16 _previousGameFrameTotalTime = 0;
 
 #endif
 
+#undef __PROFILE_GAME
+
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
