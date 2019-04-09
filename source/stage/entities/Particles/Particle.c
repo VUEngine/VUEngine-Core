@@ -29,7 +29,6 @@
 #include <ObjectAnimatedSprite.h>
 #include <Game.h>
 #include <Clock.h>
-#include <ParticleBody.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -51,7 +50,7 @@
  * @param lifeSpan
  * @param mass
  */
-void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass)
+void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan)
 {
 	// construct base Container
 	Base::constructor();
@@ -59,9 +58,9 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->particleSpec = particleSpec;
 	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
-	PhysicalSpecification physicalSpecification = {mass, 0, 0, Vector3D::zero(), 0};
-	this->body = PhysicalWorld::createBody(Game::getPhysicalWorld(Game::getInstance()), (BodyAllocator)__TYPE(ParticleBody), SpatialObject::safeCast(this), &physicalSpecification, particleSpec->axisSubjectToGravity);
 	this->objectSprite = NULL;
+	this->position = Vector3D::zero();
+
 	Particle::addSprite(this);
 }
 
@@ -70,14 +69,6 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
  */
 void Particle::destructor()
 {
-	// remove a body
-	if(this->body)
-	{
-		// remove a body
-		PhysicalWorld::destroyBody(Game::getPhysicalWorld(Game::getInstance()), this->body);
-		this->body = NULL;
-	}
-
 	if(this->objectSprite)
 	{
 		delete this->objectSprite;
@@ -129,7 +120,6 @@ u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 
 		if(0 > this->lifeSpan)
 		{
-			Body::stopMovement(this->body, __ALL_AXIS);
 			return true;
 		}
 
@@ -146,23 +136,18 @@ u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
  */
 void Particle::synchronizeGraphics(bool updateSpritePosition)
 {
-	if(!(updateSpritePosition | Body::isAwake(this->body)))
+	if(!updateSpritePosition)
 	{
 		return;
 	}
 
-	const Vector3D* position = Body::getPosition(this->body);
-
 	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
 
-	if(__Z_AXIS & Body::getMovementOnAllAxis(this->body))
-	{
-		// calculate sprite's parallax
-		Sprite::calculateParallax(this->objectSprite, position->z);
-	}
+	// calculate sprite's parallax
+	Sprite::calculateParallax(this->objectSprite, this->position.z);
 
 	// update sprite's 2D position
-	Sprite::position(this->objectSprite, position);
+	Sprite::position(this->objectSprite, &this->position);
 }
 
 /**
@@ -171,39 +156,8 @@ void Particle::synchronizeGraphics(bool updateSpritePosition)
  * @param force
  * @param movementType
  */
-void Particle::addForce(const Force* force, u32 movementType)
+void Particle::addForce(const Force* force __attribute__ ((unused)), u32 movementType __attribute__ ((unused)))
 {
-	if(__UNIFORM_MOVEMENT == movementType)
-	{
-		fix10_6 mass = Body::getMass(this->body);
-
-		Acceleration acceleration =
-		{
-			force->x,
-			force->y,
-			force->z
-		};
-
-		if(mass)
-		{
-			acceleration.x = __FIX10_6_DIV(acceleration.x, mass);
-			acceleration.y = __FIX10_6_DIV(acceleration.y, mass);
-			acceleration.z = __FIX10_6_DIV(acceleration.z, mass);
-		}
-
-		Velocity velocity =
-		{
-			acceleration.x,
-			acceleration.y,
-			acceleration.z
-		};
-
-		Body::moveUniformly(this->body, velocity);
-	}
-	else
-	{
-		Body::addForce(this->body, force);
-	}
 }
 
 /**
@@ -221,9 +175,16 @@ void Particle::setLifeSpan(int lifeSpan)
  *
  * @param mass
  */
-void Particle::setMass(fix10_6 mass)
+void Particle::setMass(fix10_6 mass __attribute__ ((unused)))
 {
-	Body::setMass(this->body, mass);
+}
+
+/**
+ * Change mass
+ * 
+ */
+void Particle::changeMass()
+{
 }
 
 /**
@@ -233,15 +194,9 @@ void Particle::setMass(fix10_6 mass)
  */
 void Particle::setPosition(const Vector3D* position)
 {
-	ASSERT(this->body, "Particle::setPosition: null body");
+	this->position = *position;
 
-	Body::setPosition(this->body, position, SpatialObject::safeCast(this));
-
-	// sync sprite
-	Sprite::position(this->objectSprite, position);
-
-	// calculate sprite's parallax
-	Sprite::calculateParallax(this->objectSprite, position->z);
+	Particle::synchronizeGraphics(this, true);
 }
 
 /**
@@ -251,9 +206,7 @@ void Particle::setPosition(const Vector3D* position)
  */
 const Vector3D* Particle::getPosition()
 {
-	ASSERT(this->body, "Particle::getPosition: null body");
-
-	return Body::getPosition(this->body);
+	return &this->position;
 }
 
 /**
@@ -279,8 +232,6 @@ void Particle::hide()
 	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
 
 	Sprite::hide(this->objectSprite);
-
-	Body::stopMovement(this->body, __ALL_AXIS);
 }
 
 /**
@@ -291,7 +242,7 @@ void Particle::hide()
  */
 bool Particle::isSubjectToGravity(Acceleration gravity __attribute__ ((unused)))
 {
-	return (bool)Body::getaxisSubjectToGravity(this->body);
+	return false;
 }
 
 /**
@@ -325,7 +276,6 @@ void Particle::suspend()
  */
 void Particle::reset()
 {
-	Body::reset(this->body);
 }
 
 /**

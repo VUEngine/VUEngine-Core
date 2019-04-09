@@ -49,15 +49,6 @@ typedef struct ParticleSpec
 	/// particle's life span delta in milliseconds
 	u16 lifeSpanDelta;
 
-	/// particle's minimum mass
-	fix10_6 minimumMass;
-
-	/// particle's mass delta
-	fix10_6 massDelta;
-
-	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
-	u16 axisSubjectToGravity;
-
 	/// function pointer to control particle's behavior
 	void (* behavior)(Particle particle);
 
@@ -84,35 +75,35 @@ typedef const ParticleSpec ParticleROMSpec;
 /// @ingroup stage-entities-particles
 class Particle : SpatialObject
 {
+	// Particle's life span in milliseconds
+	Vector3D position;
 	// Particle's spec
 	const ParticleSpec* particleSpec;
 	// Particle's SpriteSpec
 	const SpriteSpec* spriteSpec;
 	// OBJ based sprite
 	ObjectSprite objectSprite;
-	// Particle's physical body
-	Body body;
 	// Particle's life span in milliseconds
 	int lifeSpan;
 
 	/// @publicsection
-	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan, fix10_6 mass);
-	void addForce(const Force* force, u32 movementType);
-	void hide();
+	void constructor(const ParticleSpec* particleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
 	void setLifeSpan(int lifeSpan);
-	void setMass(fix10_6 mass);
-	void show();
 	bool isVisible();
+	virtual void addForce(const Force* force, u32 movementType);
 	virtual u32 update(u32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void synchronizeGraphics(bool updateSpritePosition);
 	virtual void transform();
 	virtual void resume();
 	virtual void suspend();
 	virtual void reset();
+	virtual void setMass(fix10_6 mass);
+	virtual void changeMass();
+	virtual void hide();
+	virtual void show();
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();
 }
-
 
 #endif

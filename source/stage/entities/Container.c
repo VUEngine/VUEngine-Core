@@ -410,11 +410,22 @@ void Container::ready(bool recursive)
 }
 
 /**
- * Update each Container's child
+ * Update container
  *
  * @param elapsedTime
  */
 void Container::update(u32 elapsedTime)
+{
+	Container::updateBehaviors(this, elapsedTime);
+	Container::updateChildren(this, elapsedTime);
+}
+
+/**
+ * Update container's behaviors
+ *
+ * @param elapsedTime
+ */
+void Container::updateBehaviors(u32 elapsedTime)
 {
 	if(this->behaviors)
 	{
@@ -431,6 +442,15 @@ void Container::update(u32 elapsedTime)
 		}
 	}
 
+}
+
+/**
+ * Update container's children
+ *
+ * @param elapsedTime
+ */
+void Container::updateChildren(u32 elapsedTime)
+{
 	// if I have children
 	if(this->children)
 	{

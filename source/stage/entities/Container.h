@@ -124,6 +124,8 @@ class Container : SpatialObject
 	void setName(const char* const name);
 	void transformNonVirtual(const Transformation* environmentTransform);
 	void setInheritEnvironment(bool inheritEnvironment);
+	void updateChildren(u32 elapsedTime);
+	void updateBehaviors(u32 elapsedTime);
 	// Use: typeofclass(ClassName)
 	bool getBehaviors(ClassPointer classPointer, VirtualList behaviors);
 	bool getChildren(ClassPointer classPointer, VirtualList children);

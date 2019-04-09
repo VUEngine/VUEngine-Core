@@ -19,61 +19,42 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef SOLID_PARTICLE_H_
-#define SOLID_PARTICLE_H_
+#ifndef PHYSICAL_PARTICLE_H_
+#define PHYSICAL_PARTICLE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <PhysicalParticle.h>
-#include <Shape.h>
+#include <Particle.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Defines a SolidParticle
- *
- * @memberof	SolidParticle
- */
-typedef struct SolidParticleSpec
+typedef struct PhysicalParticleSpec
 {
-	/// the class type
-	PhysicalParticleSpec physicalParticleSpec;
+	ParticleSpec particleSpec;
 
-	/// ball's radius
-	fix10_6 radius;
+	/// particle's minimum mass
+	fix10_6 minimumMass;
 
-	/// friction for physics
-	fix10_6 frictionCoefficient;
+	/// particle's mass delta
+	fix10_6 massDelta;
 
-	/// bounciness for physics
-	fix10_6 bounciness;
+	/// axis subject to gravity (bitwise or of __X_AXIS, __Y_AXIS, __Z_AXIS, or false to disable)
+	u16 axisSubjectToGravity;
 
-	/// object's in-game type
-	u32 inGameType;
-
-	/// layers in which I live
-	u32 layers;
-
-	/// layers to ignore when checking for collisions
-	u32 layersToIgnore;
-
-	/// disable collision detection when the particle stops
-	bool disableCollisionOnStop;
-
-} SolidParticleSpec;
+} PhysicalParticleSpec;
 
 /**
- * A SolidParticle that is stored in ROM
+ * A Particle that is stored in ROM
  *
- * @memberof	SolidParticle
+ * @memberof	Particle
  */
-typedef const SolidParticleSpec SolidParticleROMSpec;
+typedef const PhysicalParticleSpec PhysicalParticleROMSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -81,30 +62,23 @@ typedef const SolidParticleSpec SolidParticleROMSpec;
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage-entities-particles
-class SolidParticle : PhysicalParticle
+class PhysicalParticle : Particle
 {
-	// Particle's shape for collision detection
-	Shape shape;
-	//
-	const SolidParticleSpec* solidParticleSpec;
+	// Particle's spec
+	const PhysicalParticleSpec* physicalParticleSpec;
+	// Particle's physical body
+	Body body;
 
 	/// @publicsection
-	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
-	Shape getShape();
-	override u32 update(int timeElapsed, void (* behavior)(Particle particle));
-	override fix10_6 getWidth();
-	override fix10_6 getHeight();
-	override fix10_6 getDepth();
-	override bool enterCollision(const CollisionInformation* collisionInformation);
+	void constructor(const PhysicalParticleSpec* physicalParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
 	override bool isSubjectToGravity(Acceleration gravity);
-	override bool handleMessage(Telegram telegram);
-	override void transform();
 	override void setPosition(const Vector3D* position);
-	override VirtualList getShapes();
-	override u32 getInGameType();
-	override Velocity getVelocity();
-	override void exitCollision(Shape shape, Shape shapeNotCollidingAnymore, bool isShapeImpenetrable);
+	override void addForce(const Force* force, u32 movementType);
+	override u32 update(u32 elapsedTime, void (* behavior)(Particle particle));
+	override void setMass(fix10_6 mass);
+	override void hide();
 	override void reset();
+	override void changeMass();
 }
 
 
