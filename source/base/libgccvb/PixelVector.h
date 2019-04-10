@@ -44,6 +44,7 @@ static class PixelVector : Object
 	static inline PixelVector getFromVector3D(Vector3D vector3D, s16 parallax);
 	static inline u32 squareLength(PixelVector vector);
 	static inline fix10_6 length(PixelVector vector);
+	static inline void print(PixelVector vector, int x, int y);
 }
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,6 +86,17 @@ static inline u32 PixelVector::squareLength(PixelVector vector)
 static inline fix10_6 PixelVector::length(PixelVector vector)
 {
 	return __F_TO_FIX10_6(Math_squareRoot(PixelVector::squareLength(vector)));
+}
+
+static inline void PixelVector::print(PixelVector vector, int x, int y)
+{
+	PRINT_TEXT("x:    ", x, y);
+	PRINT_TEXT("y:    ", x, y + 1);
+	PRINT_TEXT("z:    ", x, y + 2);
+
+	PRINT_INT(vector.x, x + 2, y);
+	PRINT_INT(vector.y, x + 2, y + 1);
+	PRINT_INT(vector.z, x + 2, y + 2);
 }
 
 

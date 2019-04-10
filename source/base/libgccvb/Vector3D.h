@@ -230,5 +230,4 @@ static inline void Vector3D::print(Vector3D vector, int x, int y)
 }
 
 
-
 #endif
