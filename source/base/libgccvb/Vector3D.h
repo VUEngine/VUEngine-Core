@@ -45,6 +45,7 @@ static class Vector3D : Object
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
 	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
+	static inline fix19_13 dotProduct19_13(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D scalarDivision(Vector3D vector, fix10_6 scalar);
 	static inline Vector3D normalize(Vector3D vector);
@@ -92,6 +93,14 @@ static inline fix10_6 Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
 {
 	return __FIX10_6_MULT(vectorA.x, vectorB.x) + __FIX10_6_MULT(vectorA.y, vectorB.y) + __FIX10_6_MULT(vectorA.z, vectorB.z);
 }
+
+static inline fix19_13 Vector3D::dotProduct19_13(Vector3D vectorA, Vector3D vectorB)
+{
+	return __FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.x), __FIX10_6_TO_FIX19_13(vectorB.x)) + 
+			__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.y), __FIX10_6_TO_FIX19_13(vectorB.y)) + 
+			__FIX19_13_MULT(__FIX10_6_TO_FIX19_13(vectorA.z), (vectorB.z));
+}
+
 
 static inline Vector3D Vector3D::scalarProduct(Vector3D vector, fix10_6 scalar)
 {
