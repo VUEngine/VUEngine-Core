@@ -75,21 +75,21 @@ fix10_6 SpatialObject::getRadius()
 	{
 		if(width > depth)
 		{
-			return width;
+			return width >> 1;
 		}
 		else
 		{
-			return depth;
+			return depth >> 1;
 		}
 		
 	}
 	else if(height > depth)
 	{
-		return height;
+		return height >> 1;
 	}
 	else
 	{
-		return depth;
+		return depth >> 1;
 	}
 
 	return 0;
