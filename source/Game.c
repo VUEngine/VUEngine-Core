@@ -391,6 +391,19 @@ void Game::start(GameState state)
 			}
 #endif
 
+#ifdef __SHOW_ALERT_FOR_TORN_FRAMES
+			// skip the rest of the cycle if already late
+			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
+			{
+				static int counter = 0;
+				if(_processNameDuringFRAMESTART)
+				{
+					PRINT_TEXT("Torn Frames", 0, 26);
+					PRINT_INT(counter++, 6, 26);
+				}
+			}
+#endif
+
 #ifdef __PROFILE_GAME
 			_updateProfiling = !Game::isInSpecialMode(this);
 #endif

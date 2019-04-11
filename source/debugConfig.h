@@ -8,13 +8,14 @@
 
 // define / undefine as you see fit
 //#define __BYPASS_CAST
-//#define __PRINT_FRAMERATE
+#define __PRINT_FRAMERATE
 //#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
 //#define __SHOW_GAME_PROFILING
 //#define __SHOW_GAME_DETAILED_PROFILING
 //#define __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
+//#define __SHOW_ALERT_FOR_TORN_FRAMES
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
@@ -55,6 +56,11 @@
 #endif
 
 #ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
+#undef __PROFILE_GAME
+#define __PROFILE_GAME
+#endif
+
+#ifdef __SHOW_ALERT_DURING_TORN_FRAMES
 #undef __PROFILE_GAME
 #define __PROFILE_GAME
 #endif
@@ -140,4 +146,10 @@
 #endif
 #endif
 
+#ifdef __PROFILE_GAME
+#undef __TIMER_RESOLUTION
+#define __TIMER_RESOLUTION						1
 #endif
+
+#endif
+#undef __DIMM_FOR_PROFILING
