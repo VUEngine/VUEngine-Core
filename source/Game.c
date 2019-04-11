@@ -24,6 +24,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <string.h>
 #include <Game.h>
 #include <SRAMManager.h>
 #include <HardwareManager.h>
