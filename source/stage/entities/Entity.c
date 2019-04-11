@@ -1346,6 +1346,11 @@ void Entity::setLocalRotation(const Rotation* rotation)
  */
 void Entity::synchronizeGraphics()
 {
+	if(this->hidden)
+	{
+		return;
+	}
+	
 	if(this->children)
 	{
 		Base::synchronizeGraphics(this);
