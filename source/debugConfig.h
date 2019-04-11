@@ -60,7 +60,7 @@
 #define __PROFILE_GAME
 #endif
 
-#ifdef __SHOW_ALERT_DURING_TORN_FRAMES
+#ifdef __SHOW_ALERT_FOR_TORN_FRAMES
 #undef __PROFILE_GAME
 #define __PROFILE_GAME
 #endif
