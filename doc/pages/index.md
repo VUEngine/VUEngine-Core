@@ -134,11 +134,6 @@ A short summary of the file layout:
 
 See <a href="annotated.html">classes</a> for full documentation.
 
-Compiling on Win32 platforms
-----------------------------
-
-The VUEngine comes bundled with VBDE <http://vbde.planetvb.com>. Compile by starting the VBDE build system. This will produce the file libvuengine.a which must be linked against the game's code.
-
 
 Acknowledgments
 ---------------
