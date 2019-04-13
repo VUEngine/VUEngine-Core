@@ -116,13 +116,6 @@ A short summary of the file layout:
 - source/base/libgccvb: heavily modified libgccvb
 
 
-COMPILING ON WIN32
-------------------
-
-The VUEngine comes bundled with VBDE <http://vbde.planetvb.com>, compile by starting the VBDE build system. 
-This will produce the file libvuengine.a which must be linked against the game's code.
-
-
 ACKNOWLEDGMENTS
 ---------------
 
