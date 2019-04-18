@@ -57,6 +57,8 @@ static class Vector3D : Object
 	static inline PixelVector projectToPixelVector(Vector3D vector3D, s16 parallax);
 	static inline Vector3D getFromPixelVector(PixelVector screenVector);
 	static inline Vector3D getFromScreenPixelVector(ScreenPixelVector screenPixelVector);
+	static inline bool isLeft(Vector3D a, Vector3D b, Vector3D p);
+	static inline bool isRight(Vector3D a, Vector3D b, Vector3D p);
 	static inline void Vector3D::print(Vector3D vector, int x, int y);
 }
 
@@ -216,6 +218,16 @@ static inline Vector3D Vector3D::getFromScreenPixelVector(ScreenPixelVector scre
 		__PIXELS_TO_METERS(screenPixelVector.y),
 		__PIXELS_TO_METERS(screenPixelVector.z + screenPixelVector.zDisplacement)
 	};
+}
+
+static inline bool Vector3D::isLeft(Vector3D a, Vector3D b, Vector3D p)
+{
+	return 0 < (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));
+}
+
+static inline bool Vector3D::isRight(Vector3D a, Vector3D b, Vector3D p)
+{
+	return 0 > (__FIX10_6_MULT((b.x - a.x), (p.y - a.y)) - __FIX10_6_MULT((b.y - a.y), (p.x - a.x)));	
 }
 
 static inline void Vector3D::print(Vector3D vector, int x, int y)
