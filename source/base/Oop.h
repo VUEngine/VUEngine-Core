@@ -338,7 +338,7 @@ typedef void* (*(*ClassPointer)(void*))(void*);
 			/* class attributes */																		\
 			ClassName ## _ATTRIBUTES																	\
 																										\
-			/* end spec */																		\
+			/* end spec */																				\
 		} ClassName ## _str 																			\
 
 
