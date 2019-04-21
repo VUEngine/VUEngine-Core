@@ -1313,7 +1313,7 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 		// call base class's transformation method
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
-	else if((u32)this->children)
+	else if(this->children)
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}

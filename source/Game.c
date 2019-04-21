@@ -1126,10 +1126,7 @@ void Game::run()
 	skipNonCriticalProcesses |= Game::updateCollisions(this);
 
 	// dispatch delayed messages
-	skipNonCriticalProcesses |= Game::dispatchDelayedMessages(this);
-
-	// update game's logic
-	Game::updateLogic(this);
+	Game::dispatchDelayedMessages(this);
 
 #ifndef __DISABLE_STREAMING
 	// skip streaming if the game frame has been too busy
@@ -1139,6 +1136,9 @@ void Game::run()
 		Game::stream(this);
 	}
 #endif
+
+	// update game's logic
+	Game::updateLogic(this);
 
 	// this is the moment to check if the game's state
 	// needs to be changed
