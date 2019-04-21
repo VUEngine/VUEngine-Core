@@ -93,6 +93,14 @@ singleton class HardwareManager : Object
 	void setupColumnTable(ColumnTableSpec* columnTableSpec);
 	void upBrightness();
 	void printStackStatus(int x, int y, bool resumed);
+
+	static inline void halt();
+}
+
+static inline void HardwareManager::halt() 
+{ 
+    static const long code = 0x181F6800L; 
+    ((void(*)())&code)(); 
 }
 
 

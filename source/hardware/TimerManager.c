@@ -249,7 +249,10 @@ void TimerManager::wait(u32 milliSeconds)
 	u32 waitStartTime = this->milliseconds;
 	volatile u32 *milliseconds = (u32*)&this->milliseconds;
 
-	while ((*milliseconds - waitStartTime) < milliSeconds);
+	while ((*milliseconds - waitStartTime) < milliSeconds)
+	{
+		HardwareManager::halt();
+	}
 
 	this->milliseconds = currentMilliseconds;
 }

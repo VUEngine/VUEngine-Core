@@ -231,9 +231,10 @@ void VIPManager::processInterrupt(u16 interrupt)
 				// increase current game frame's duration
 				Game::increaseGameFrameDuration(Game::getInstance(), __GAME_FRAME_DURATION);
 
+				Game::currentFrameEnded(Game::getInstance());
+
 				if(!_vipManager->processingXPEND)
 				{
-					Game::currentFrameEnded(Game::getInstance());
 					this->drawingEnded = false;
 					this->renderingCompleted = false;
 				}
@@ -276,8 +277,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 					// flag completions
 					this->drawingEnded = true;
 
-//					HardwareManager::disableMultiplexedInterrupts();
-
 #ifdef __DEBUG_TOOLS
 					if(Game::isInDebugMode(Game::getInstance()))
 					{
@@ -310,21 +309,9 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 #ifdef __ALERT_VIP_OVERTIME
 				{
-					static int messageDelay __INITIALIZED_DATA_SECTION_ATTRIBUTE = __TARGET_FPS / 2;
-
-					if(0 >= messageDelay)
-					{
-						messageDelay = __TARGET_FPS;
-						static u32 count = 0;
-						Printing::text(Printing::getInstance(), "VIP Overtime! (   )", 0, 26, NULL);
-						Printing::int(Printing::getInstance(), ++count, 15, 26, NULL);
-					}
-
-					if(0 == --messageDelay)
-					{
-						Printing::text(Printing::getInstance(), "                   ", 0, 26, NULL);
-						messageDelay = -1;
-					}
+					static u32 count = 0;
+					PRINT_TEXT("VIP Overtime! (   )", 0, 27);
+					PRINT_INT(++count, 15, 27);
 				}
 #endif
 

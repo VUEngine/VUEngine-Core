@@ -302,7 +302,10 @@ void Game::start(GameState state)
 
 		while(true)
 		{
-			while(!this->currentFrameEnded);
+			while(!this->currentFrameEnded)
+			{
+				HardwareManager::halt();
+			}
 
 			this->currentFrameEnded = false;
 
@@ -393,16 +396,12 @@ void Game::start(GameState state)
 #endif
 
 #ifdef __SHOW_ALERT_FOR_TORN_FRAMES
-			// skip the rest of the cycle if already late
-			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
-			{
-				static int counter = 0;
-				if(_processNameDuringFRAMESTART)
-				{
-					PRINT_TEXT("Torn Frames:", 0, 26);
-					PRINT_INT(counter++, 13, 26);
-				}
-			}
+		if(this->currentFrameEnded)
+		{
+			static int counter = 0;
+			PRINT_TEXT("Torn Frames:", 0, 26);
+			PRINT_INT(counter++, 13, 26);
+		}
 #endif
 
 #ifdef __PROFILE_GAME
@@ -1102,8 +1101,11 @@ void Game::currentFrameEnded()
 	this->currentFrameEnded = true;
 }
 
+#define SKIP_FRAME(x)		if(this->currentFrameEnded && ! flag) {flag = true; PRINT_TEXT(x, 20, 27); }
+
 void Game::run()
 {
+	bool flag = false;
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 
@@ -1113,20 +1115,37 @@ void Game::run()
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 
+SKIP_FRAME("sync")
+
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
+
+SKIP_FRAME("inpu")
 
 	// simulate physics
 	Game::updatePhysics(this);
 
+SKIP_FRAME("phys")
+
 	// apply transformations
 	Game::updateTransformations(this);
+
+SKIP_FRAME("trans")
 
 	// process collisions
 	skipNonCriticalProcesses |= Game::updateCollisions(this);
 
+SKIP_FRAME("coll ")
+
 	// dispatch delayed messages
-	Game::dispatchDelayedMessages(this);
+	skipNonCriticalProcesses |= Game::dispatchDelayedMessages(this);
+
+SKIP_FRAME("mess ")
+
+	// update game's logic
+	Game::updateLogic(this);
+
+SKIP_FRAME("log ")
 
 #ifndef __DISABLE_STREAMING
 	// skip streaming if the game frame has been too busy
@@ -1137,8 +1156,7 @@ void Game::run()
 	}
 #endif
 
-	// update game's logic
-	Game::updateLogic(this);
+SKIP_FRAME("   ")
 
 	// this is the moment to check if the game's state
 	// needs to be changed
