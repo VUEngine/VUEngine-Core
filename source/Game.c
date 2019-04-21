@@ -1101,8 +1101,6 @@ void Game::currentFrameEnded()
 	this->currentFrameEnded = true;
 }
 
-#define SKIP_FRAME(x)		if(this->currentFrameEnded && ! flag) {flag = true; PRINT_TEXT(x, 20, 27); }
-
 void Game::run()
 {
 	bool flag = false;
@@ -1115,37 +1113,23 @@ void Game::run()
 	// sync entities with their sprites
 	Game::synchronizeGraphics(this);
 
-SKIP_FRAME("sync")
-
 	// process user's input
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
-
-SKIP_FRAME("inpu")
 
 	// simulate physics
 	Game::updatePhysics(this);
 
-SKIP_FRAME("phys")
-
 	// apply transformations
 	Game::updateTransformations(this);
-
-SKIP_FRAME("trans")
 
 	// process collisions
 	skipNonCriticalProcesses |= Game::updateCollisions(this);
 
-SKIP_FRAME("coll ")
-
 	// dispatch delayed messages
 	skipNonCriticalProcesses |= Game::dispatchDelayedMessages(this);
 
-SKIP_FRAME("mess ")
-
 	// update game's logic
 	Game::updateLogic(this);
-
-SKIP_FRAME("log ")
 
 #ifndef __DISABLE_STREAMING
 	// skip streaming if the game frame has been too busy
@@ -1155,8 +1139,6 @@ SKIP_FRAME("log ")
 		Game::stream(this);
 	}
 #endif
-
-SKIP_FRAME("   ")
 
 	// this is the moment to check if the game's state
 	// needs to be changed
