@@ -120,6 +120,7 @@ typedef struct PositionedEntityDescription
 	EventListener callback;
 	s16 spriteSpecIndex;
 	s16 shapeSpecIndex;
+	s16 transformedShapeSpecIndex;
 	s16 internalId;
 	bool transformed;
 	bool initialized;

@@ -76,7 +76,7 @@ class Entity : Container
 	Entity addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo);
 	bool addSpriteFromSpecAtIndex(int spriteSpecIndex);
 	bool addShapeFromSpecAtIndex(int shapeSpecIndex);
-
+	bool transformShapeAtSpecIndex(int shapeSpecIndex);
 	void addSprites(SpriteSpec** spritesSpecs);
 	u32 areAllChildrenInstantiated();
 	u32 areAllChildrenInitialized();

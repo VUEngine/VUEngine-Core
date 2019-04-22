@@ -359,7 +359,6 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 		if(entity)
 		{
 			Container::setupGraphics(entity);
-			Container::setupShapes(entity);
 			Entity::initialize(entity, true);
 
 			// create the entity and add it to the world
@@ -367,6 +366,8 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 			// apply transformations
 			Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
+			Container::setupShapes(entity);
+
 
 			if(!this->stageSpec->streaming.deferred)
 			{

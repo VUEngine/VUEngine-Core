@@ -177,7 +177,7 @@ void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container pa
 	positionedEntityDescription->transformed = false;
 	positionedEntityDescription->spriteSpecIndex = 0;
 	positionedEntityDescription->shapeSpecIndex = 0;
-
+	positionedEntityDescription->transformedShapeSpecIndex = 0;
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
 }
@@ -319,6 +319,17 @@ u32 EntityFactory::transformEntities()
 			Transformation* environmentTransform = Container::getTransform(positionedEntityDescription->parent);
 
 			Container::initialTransform(positionedEntityDescription->entity, environmentTransform, false);
+
+			return __ENTITY_PENDING_PROCESSING;
+		}
+
+		if(0 <= positionedEntityDescription->transformedShapeSpecIndex && Entity::transformShapeAtSpecIndex(positionedEntityDescription->entity, positionedEntityDescription->transformedShapeSpecIndex++))
+		{
+			return __ENTITY_PENDING_PROCESSING;
+		}
+		else
+		{
+			positionedEntityDescription->transformedShapeSpecIndex = -1;
 		}
 
 		if(Entity::areAllChildrenTransformed(positionedEntityDescription->entity))

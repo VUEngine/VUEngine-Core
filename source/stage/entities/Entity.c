@@ -226,6 +226,8 @@ void Entity::setupShapes()
 	{
 		Entity::addShapes(this, this->entitySpec->shapeSpecs, false);
 	}
+
+	Entity::transformShapes(this);
 }
 
 /**
@@ -975,6 +977,55 @@ u32 Entity::areAllChildrenReady()
  *
  * @private
  */
+void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotation* myRotation, const Scale* myScale, Direction currentDirection, int shapeSpecIndex)
+{
+	if(shape)
+	{
+		if(this->entitySpec->shapeSpecs && 0 <= shapeSpecIndex && this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
+    	{
+			const ShapeSpec* shapeSpecs = this->entitySpec->shapeSpecs;
+			
+			u16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
+
+			Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[shapeSpecIndex].displacement);
+
+			Vector3D shapePosition =
+			{
+				myPosition->x + ((__X_AXIS & axisForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
+				myPosition->y + ((__Y_AXIS & axisForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
+				myPosition->z + ((__Z_AXIS & axisForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
+			};
+
+			Rotation shapeRotation =
+			{
+				myRotation->x + shapeSpecs[shapeSpecIndex].rotation.x,
+				myRotation->y + shapeSpecs[shapeSpecIndex].rotation.y,
+				myRotation->z + shapeSpecs[shapeSpecIndex].rotation.z,
+			};
+
+			Scale shapeScale =
+			{
+				__FIX7_9_MULT(myScale->x, shapeSpecs[shapeSpecIndex].scale.x),
+				__FIX7_9_MULT(myScale->y, shapeSpecs[shapeSpecIndex].scale.y),
+				__FIX7_9_MULT(myScale->z, shapeSpecs[shapeSpecIndex].scale.z),
+			};
+
+			Size size = Size::getFromPixelSize(shapeSpecs[shapeSpecIndex].pixelSize);
+
+			Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+		}
+		else
+		{
+			Shape::position(shape, myPosition, myRotation, myScale, &this->size);
+		}
+	}
+}
+
+/**
+ * Set shape's position
+ *
+ * @private
+ */
 void Entity::transformShapes()
 {
 	if(this->shapes)
@@ -996,34 +1047,8 @@ void Entity::transformShapes()
 			for(; node && shapeSpecs[i].allocator; node = node->next, i++)
 			{
 				Shape shape = Shape::safeCast(node->data);
-				u16 axisForShapeSyncWithDirection =  Entity::getAxisForShapeSyncWithDirection(this);
 
-				Vector3D shapeDisplacement = Vector3D::getFromPixelVector(shapeSpecs[i].displacement);
-
-				Vector3D shapePosition =
-				{
-					myPosition->x + ((__X_AXIS & axisForShapeSyncWithDirection) && __LEFT == currentDirection.x ? -shapeDisplacement.x : shapeDisplacement.x),
-					myPosition->y + ((__Y_AXIS & axisForShapeSyncWithDirection) && __UP == currentDirection.y ? -shapeDisplacement.y : shapeDisplacement.y),
-					myPosition->z + ((__Z_AXIS & axisForShapeSyncWithDirection) && __NEAR == currentDirection.z ? -shapeDisplacement.z : shapeDisplacement.z),
-				};
-
-				Rotation shapeRotation =
-				{
-					myRotation->x + shapeSpecs[i].rotation.x,
-					myRotation->y + shapeSpecs[i].rotation.y,
-					myRotation->z + shapeSpecs[i].rotation.z,
-				};
-
-				Scale shapeScale =
-				{
-					__FIX7_9_MULT(myScale->x, shapeSpecs[i].scale.x),
-					__FIX7_9_MULT(myScale->y, shapeSpecs[i].scale.y),
-					__FIX7_9_MULT(myScale->z, shapeSpecs[i].scale.z),
-				};
-
-				Size size = Size::getFromPixelSize(shapeSpecs[i].pixelSize);
-
-				Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+				Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, i);
 			}
 		}
 		else
@@ -1031,15 +1056,45 @@ void Entity::transformShapes()
 			for(; node; node = node->next)
 			{
 				Shape shape = Shape::safeCast(node->data);
-				Vector3D shapePosition = *myPosition;
-				Rotation shapeRotation = *myRotation;
-				Scale shapeScale = *myScale;
-				Size size = this->size;
 
-				Shape::position(shape, &shapePosition, &shapeRotation, &shapeScale, &size);
+				Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, -1);
 			}
 		}
 	}
+}
+
+bool Entity::transformShapeAtSpecIndex(int shapeSpecIndex)
+{
+	if(!this->entitySpec->shapeSpecs)
+	{
+		return false;
+	}
+
+	if(!this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
+	{
+		return false;
+	}
+
+	if(this->shapes && 0 <= shapeSpecIndex && VirtualList::getSize(this->shapes))
+	{
+		Shape shape = Shape::safeCast(VirtualList::getObjectAtPosition(this->shapes, shapeSpecIndex));
+
+		if(!isDeleted(shape))
+		{
+			//	bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
+			const Vector3D* myPosition =  SpatialObject::getPosition(this);
+			const Rotation* myRotation =  SpatialObject::getRotation(this);
+			const Scale* myScale =  SpatialObject::getScale(this);
+
+			Direction currentDirection = Entity::getDirection(this);
+	
+			Entity::transformShape(this, shape, myPosition, myRotation, myScale, currentDirection, shapeSpecIndex);
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 /**
@@ -1329,8 +1384,6 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 		// must force size calculation now
 		Entity::calculateSize(this);
 	}
-
-	Entity::transformShapes(this);
 }
 
 /**
