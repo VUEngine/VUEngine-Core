@@ -358,8 +358,8 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 		if(entity)
 		{
-			// must add graphics
 			Container::setupGraphics(entity);
+			Container::setupShapes(entity);
 			Entity::initialize(entity, true);
 
 			// create the entity and add it to the world

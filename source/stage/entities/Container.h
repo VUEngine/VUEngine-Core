@@ -133,6 +133,7 @@ class Container : SpatialObject
 	virtual void ready(bool recursive);
 	virtual void update(u32 elapsedTime);
 	virtual void setupGraphics();
+	virtual void setupShapes();
 	virtual void releaseGraphics();
 	virtual void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	virtual void synchronizeGraphics();

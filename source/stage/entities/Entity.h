@@ -75,6 +75,8 @@ class Entity : Container
 	void addChildEntitiesDeferred(const PositionedEntity* childrenSpecs);
 	Entity addChildEntity(const EntitySpec* entitySpec, int internalId, const char* name, const Vector3D* position, void* extraInfo);
 	bool addSpriteFromSpecAtIndex(int spriteSpecIndex);
+	bool addShapeFromSpecAtIndex(int shapeSpecIndex);
+
 	void addSprites(SpriteSpec** spritesSpecs);
 	u32 areAllChildrenInstantiated();
 	u32 areAllChildrenInitialized();
@@ -116,6 +118,7 @@ class Entity : Container
 	override void setLocalPosition(const Vector3D* position);
 	override void setLocalRotation(const Rotation* rotation);
 	override void setupGraphics();
+	override void setupShapes();
 	override void releaseGraphics();
 	override void synchronizeGraphics();
 	override bool handleMessage(Telegram telegram);

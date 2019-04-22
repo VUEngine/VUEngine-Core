@@ -1103,7 +1103,6 @@ void Game::currentFrameEnded()
 
 void Game::run()
 {
-	bool flag = false;
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
 

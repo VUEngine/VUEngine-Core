@@ -316,6 +316,21 @@ void Container::setupGraphics()
 	}
 }
 
+void Container::setupShapes()
+{
+	// if I have children
+	if(this->children)
+	{
+		VirtualNode node = this->children->head;
+
+		// update each child
+		for(; node ; node = node->next)
+		{
+			Container::setupShapes(node->data);
+		}
+	}
+}
+
 void Container::releaseGraphics()
 {
 	// if I have children

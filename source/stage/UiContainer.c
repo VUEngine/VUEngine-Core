@@ -68,6 +68,7 @@ void UiContainer::addEntities(PositionedEntity* entities)
 		{
 			// setup graphics
 			Container::setupGraphics(entity);
+			Container::setupShapes(entity);
 
 			// create the entity and add it to the world
 			Container::addChild(this, Container::safeCast(entity));

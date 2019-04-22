@@ -214,6 +214,21 @@ void Entity::setupGraphics()
 }
 
 /**
+ * Add shapes
+ */
+void Entity::setupShapes()
+{
+	Base::setupShapes(this);
+
+	// this method can be called multiple times so only add shapes
+	// if not already done
+	if(!this->shapes)
+	{
+		Entity::addShapes(this, this->entitySpec->shapeSpecs, false);
+	}
+}
+
+/**
  * Release sprites
  */
 void Entity::releaseGraphics()
@@ -1059,8 +1074,6 @@ void Entity::addShapes(const ShapeSpec* shapeSpecs, bool destroyPreviousShapes)
 		ASSERT(shape, "Entity::addSprite: sprite not created");
 		VirtualList::pushBack(this->shapes, shape);
 	}
-
-	Entity::transformShapes(this);
 }
 
 /**
@@ -1176,6 +1189,37 @@ bool Entity::addSpriteFromSpecAtIndex(int spriteSpecIndex)
 	return true;
 }
 
+/**
+ * Add shape
+ *
+ * @param shapeSpecIndex			Index in shape specs array
+ * @return							True if a shape was created
+ */
+bool Entity::addShapeFromSpecAtIndex(int shapeSpecIndex)
+{
+	if(!this->entitySpec->shapeSpecs)
+	{
+		return false;
+	}
+
+	if(!this->entitySpec->shapeSpecs[shapeSpecIndex].allocator)
+	{
+		return false;
+	}
+
+	if(!this->shapes)
+	{
+		this->shapes = new VirtualList();
+	}
+
+	// call the appropriate allocator to support inheritance
+	Shape shape = CollisionManager::createShape(Game::getCollisionManager(Game::getInstance()), SpatialObject::safeCast(this), &this->entitySpec->shapeSpecs[shapeSpecIndex]);
+	NM_ASSERT(shape, "Entity::addShape: shape not created");
+	VirtualList::pushBack(this->shapes, shape);
+
+	return true;
+}
+
 void Entity::updateSprites(u32 updatePosition, u32 updateScale, u32 updateRotation, u32 updateProjection)
 {
 	if(!this->sprites)
@@ -1286,12 +1330,7 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 		Entity::calculateSize(this);
 	}
 
-	// this method can be called multiple times so only add shapes
-	// if not already done
-	if(!this->shapes)
-	{
-		Entity::addShapes(this, this->entitySpec->shapeSpecs, false);
-	}
+	Entity::transformShapes(this);
 }
 
 /**

@@ -176,6 +176,7 @@ void EntityFactory::spawnEntity(PositionedEntity* positionedEntity, Container pa
 	positionedEntityDescription->initialized = false;
 	positionedEntityDescription->transformed = false;
 	positionedEntityDescription->spriteSpecIndex = 0;
+	positionedEntityDescription->shapeSpecIndex = 0;
 
 
 	VirtualList::pushBack(this->entitiesToInstantiate, positionedEntityDescription);
@@ -236,9 +237,11 @@ u32 EntityFactory::initializeEntities()
 
 	PositionedEntityDescription* positionedEntityDescription = (PositionedEntityDescription*)this->entitiesToInitialize->head->data;
 
+	NM_ASSERT(!isDeleted(positionedEntityDescription), "EntityFactory::initializeEntities: positionedEntityDescription was deleted");
+
 	if(!isDeleted(positionedEntityDescription->parent))
 	{
-		ASSERT(positionedEntityDescription->entity, "EntityFactory::initializeEntities: entity not loaded");
+		NM_ASSERT(!isDeleted(positionedEntityDescription->entity), "EntityFactory::initializeEntities: entity was deleted");
 
 		if(Entity::areAllChildrenInitialized(positionedEntityDescription->entity))
 		{
@@ -252,9 +255,22 @@ u32 EntityFactory::initializeEntities()
 				return __ENTITY_PENDING_PROCESSING;
 			}
 
-			if(Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
+			if(0 <= positionedEntityDescription->spriteSpecIndex && Entity::addSpriteFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->spriteSpecIndex++))
 			{
 				return __ENTITY_PENDING_PROCESSING;
+			}
+			else
+			{
+				positionedEntityDescription->spriteSpecIndex = -1;
+			}
+
+			if(0 <= positionedEntityDescription->shapeSpecIndex && Entity::addShapeFromSpecAtIndex(positionedEntityDescription->entity, positionedEntityDescription->shapeSpecIndex++))
+			{
+				return __ENTITY_PENDING_PROCESSING;
+			}
+			else
+			{
+				positionedEntityDescription->shapeSpecIndex = -1;
 			}
 
 			VirtualList::pushBack(this->entitiesToTransform, positionedEntityDescription);
