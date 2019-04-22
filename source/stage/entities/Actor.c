@@ -302,12 +302,6 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 		}
 	}
 
-	// If I don't have children, prevent computing again the transformation
-	if(!this->children)
-	{
-		this->invalidateGlobalTransformation = 0;
-	}
-
 	// call base
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
