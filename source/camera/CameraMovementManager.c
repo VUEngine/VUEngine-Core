@@ -38,7 +38,6 @@
 //											CLASS'S MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __EASING_SPEED_IN_PIXELS		7
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DEFINITION
@@ -98,52 +97,16 @@ void CameraMovementManager::focus(u32 checkIfFocusEntityIsMoving __attribute__ (
 
 	Direction direction = Entity::getDirection(focusEntity);
 
-	Vector3D cameraNewPosition = Camera::getPosition(camera);
-
 	Vector3D focusEntityPosition = Camera::getFocusEntityPosition(camera);
 	Vector3D focusEntityPositionDisplacement = Camera::getFocusEntityPositionDisplacement(camera);
 
+	// calculate the target position
+	Vector3D cameraNewPosition = 
 	{
-		// calculate the target position
-		fix10_6 horizontalPosition = cameraNewPosition.x;
-		fix10_6 horizontalTarget = focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__SCREEN_WIDTH / 2);
-
-		fix10_6 easingDisplacement = __PIXELS_TO_METERS(__EASING_SPEED_IN_PIXELS);
-
-		if(horizontalPosition + easingDisplacement < horizontalTarget)
-		{
-			cameraNewPosition.x += easingDisplacement;
-		}
-		else if(horizontalPosition - easingDisplacement > horizontalTarget)
-		{
-			cameraNewPosition.x -= easingDisplacement;
-		}
-		else
-		{
-			cameraNewPosition.x = horizontalTarget;
-		}
-	}
-
-	{
-		// calculate the target position
-		fix10_6 verticalPosition = cameraNewPosition.y;
-		fix10_6 verticalTarget = focusEntityPosition.y + focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__SCREEN_HEIGHT / 2);
-
-		fix10_6 easingDisplacement = __PIXELS_TO_METERS(__EASING_SPEED_IN_PIXELS);
-
-		if(verticalPosition + easingDisplacement < verticalTarget)
-		{
-			cameraNewPosition.y += easingDisplacement;
-		}
-		else if(verticalPosition - easingDisplacement > verticalTarget)
-		{
-			cameraNewPosition.y -= easingDisplacement;
-		}
-		else
-		{
-			cameraNewPosition.y = verticalTarget;
-		}
-	}
+		focusEntityPosition.x + direction.x * focusEntityPositionDisplacement.x - __PIXELS_TO_METERS(__SCREEN_WIDTH / 2),
+		focusEntityPosition.y + direction.y * focusEntityPositionDisplacement.y - __PIXELS_TO_METERS(__SCREEN_HEIGHT / 2),
+		focusEntityPosition.z + direction.z * focusEntityPositionDisplacement.z - __PIXELS_TO_METERS(__SCREEN_DEPTH / 2),
+	};
 
 	Camera::setPosition(camera, cameraNewPosition);
 }
