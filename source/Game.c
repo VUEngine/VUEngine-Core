@@ -395,7 +395,7 @@ void Game::start(GameState state)
 			}
 #endif
 
-#ifdef __SHOW_ALERT_FOR_TORN_FRAMES
+#ifdef __ALERT_FOR_TORN_FRAMES
 		if(this->currentFrameEnded)
 		{
 			static int counter = 0;
