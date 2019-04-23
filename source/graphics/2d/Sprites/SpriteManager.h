@@ -78,6 +78,8 @@ singleton class SpriteManager : Object
 	Sprite spritePendingTextureWriting;
 	// pixels drawn
 	int totalPixelsDrawn;
+	// number of rows to write in affine transformations
+	s16 maximumParamTableRowsToComputePerCall;
 	// semaphore to prevent manipulation of VirtualList during interrupt
 	bool lockSpritesLists;
 	// Flag to distinguish between even and odd game frames, needed for sprite transparency.
@@ -88,8 +90,6 @@ singleton class SpriteManager : Object
 	s8 cyclesToWaitForSpriteTextureWriting;
 	// number of rows to write in texture's writing
 	s8 texturesMaximumRowsToWrite;
-	// number of rows to write in affine transformations
-	s8 maximumParamTableRowsToComputePerCall;
 	// flag to control texture's writing deferring
 	s8 deferParamTableEffects;
 	// delay before writing again
