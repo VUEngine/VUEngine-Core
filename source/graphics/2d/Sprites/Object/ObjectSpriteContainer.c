@@ -310,40 +310,43 @@ void ObjectSpriteContainer::sortProgressively()
 
 	this->previousNode = VirtualNode::getPrevious(this->node);
 
-	if(this->previousNode)
+	if(this->node)
 	{
-		ObjectSprite sprite = ObjectSprite::safeCast(VirtualNode::getData(this->node));
-		ObjectSprite previousSprite = ObjectSprite::safeCast(VirtualNode::getData(this->previousNode));
-
-		// check if z positions are swapped
-		if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
+		if(this->previousNode)
 		{
-			if(this->availableObjects >= sprite->totalObjects)
+			ObjectSprite sprite = ObjectSprite::safeCast(VirtualNode::getData(this->node));
+			ObjectSprite previousSprite = ObjectSprite::safeCast(VirtualNode::getData(this->previousNode));
+
+			// check if z positions are swapped
+			if(previousSprite->position.z + (Sprite::safeCast(previousSprite))->displacement.z > sprite->position.z + (Sprite::safeCast(sprite))->displacement.z)
 			{
-				// swap
-				s16 previousObjectIndex = previousSprite->objectIndex;
-
-				ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
-				s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
-
-				ObjectSprite::setObjectIndex(sprite, previousObjectIndex);
-				ObjectSprite::setObjectIndex(previousSprite, previousObjectIndex + sprite->totalObjects);
-
-				int i = 0;
-				for(; i < sprite->totalObjects; i++)
+				if(this->availableObjects >= sprite->totalObjects)
 				{
-					_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+					// swap
+					s16 previousObjectIndex = previousSprite->objectIndex;
+
+					ObjectSprite lastObjectSprite = ObjectSprite::safeCast(VirtualList::back(this->objectSprites));
+					s16 nextFreeObjectIndex = lastObjectSprite->objectIndex + lastObjectSprite->totalObjects;
+
+					ObjectSprite::setObjectIndex(sprite, previousObjectIndex);
+					ObjectSprite::setObjectIndex(previousSprite, previousObjectIndex + sprite->totalObjects);
+
+					int i = 0;
+					for(; i < sprite->totalObjects; i++)
+					{
+						_objectAttributesBaseAddress[((nextFreeObjectIndex + i) << 2) + 1] = __OBJECT_CHAR_HIDE_MASK;
+					}
+
+					// swap array entries
+					VirtualNode::swapData(this->node, this->previousNode);
+
+					this->node = this->previousNode;
 				}
-
-				// swap array entries
-				VirtualNode::swapData(this->node, this->previousNode);
-
-				this->node = this->previousNode;
 			}
 		}
-	}
 
-	this->node = VirtualNode::getPrevious(this->node);
+		this->node = VirtualNode::getPrevious(this->node);
+	}
 }
 
 /**
