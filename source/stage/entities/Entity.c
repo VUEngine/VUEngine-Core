@@ -892,6 +892,7 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	// apply transformations
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	Container::initialTransform(childEntity, &environmentTransform, true);
+	Container::setupShapes(childEntity);
 
 	// make ready
 	Entity::ready(childEntity, true);
