@@ -236,9 +236,9 @@ static inline void Vector3D::print(Vector3D vector, int x, int y)
 	PRINT_TEXT("y:    ", x, y + 1);
 	PRINT_TEXT("z:    ", x, y + 2);
 
-	PRINT_INT(__FIX10_6_TO_I(vector.x), x + 2, y);
-	PRINT_INT(__FIX10_6_TO_I(vector.y), x + 2, y + 1);
-	PRINT_INT(__FIX10_6_TO_I(vector.z), x + 2, y + 2);
+	PRINT_FLOAT(__FIX10_6_TO_F(vector.x), x + 2, y);
+	PRINT_FLOAT(__FIX10_6_TO_F(vector.y), x + 2, y + 1);
+	PRINT_FLOAT(__FIX10_6_TO_F(vector.z), x + 2, y + 2);
 }
 
 
