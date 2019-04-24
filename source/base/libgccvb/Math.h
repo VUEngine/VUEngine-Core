@@ -104,11 +104,13 @@ inline int customAbs(int number)
 #define __FIX10_6_EXT_TO_I(n)		(s32)((n) >> 6)
 #define __FIX19_13_TO_I(n)			(s32)((n) >> 13)
 
+
 #define __FIX10_6_TO_FIX7_9(n)		(fix7_9)		((n) << 3)
 #define __FIX10_6_TO_FIX13_3(n)		(fix13_3)		((n) >> 3)
 #define __FIX10_6_TO_FIX10_6_EXT(n)	(fix10_6_ext)	((n) << 0)
 #define __FIX10_6_EXT_TO_FIX10_6(n)	(fix10_6)		((n) << 0)
 #define __FIX10_6_TO_FIX19_13(n)	(fix19_13)		((n) << 7)
+#define __FIX7_9_TO_FIX19_13(n)		(((fix19_13)n) << 4)
 #define __FIX13_3_TO_FIX7_9(n)		(fix7_9)		((n) << 6)
 #define __FIX13_3_TO_FIX10_6(n)		(fix10_6)		((n) << 3)
 #define __FIX7_9_TO_FIX13_3(n)		(fix13_3)		((n) >> 6)
