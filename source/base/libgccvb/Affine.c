@@ -38,6 +38,8 @@
 
 extern double fabs (double);
 
+#define __FIX19_13_TO_FIX7_9(n)		(fix7_9)((n) >> 4)
+#define __FIX19_13_TO_FIX13_3(n)		(fix13_3)((n) >> 10)
 
 //---------------------------------------------------------------------------------------------------------
 //											FUNCTIONS
@@ -101,32 +103,59 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 
 	if(rotation->x)
 	{
-		fix19_13 auxWidth = __FIX10_6_TO_FIX19_13(__FIX10_6_MULT(halfWidth, __I_TO_FIX10_6(2)));
-		fix19_13 auxHeight = __FIX10_6_TO_FIX19_13(__FIX10_6_MULT(halfHeight, __I_TO_FIX10_6(2)));
-
-		fix19_13 auxHalfWidth = __FIX10_6_TO_FIX19_13(halfWidth);
-		fix19_13 auxHalfHeight = __FIX10_6_TO_FIX19_13(halfHeight);
-
-		fix19_13 edgeSizeX = __FIX19_13_MULT(auxHalfHeight, __FIX7_9_TO_FIX19_13(__COS(rotation->x)));
-		fix19_13 edgeSizeY = __FIX19_13_MULT(auxHalfHeight, __FIX7_9_TO_FIX19_13(__COS(rotation->x)));
-		fix19_13 edgeSizeZ = __FIX19_13_MULT(auxHalfHeight, __FIX7_9_TO_FIX19_13(__SIN(rotation->x)));
-
-		fix19_13 proportionX = __FIX19_13_DIV(edgeSizeX, auxHalfWidth);
-		fix19_13 proportionY = __FIX19_13_DIV(edgeSizeY, auxHalfHeight);
+		fix19_13 topEdgeSizeZ = __FIX19_13_MULT(__FIX10_6_TO_FIX19_13(halfHeight), __FIX7_9_TO_FIX19_13(__SIN(rotation->x)));
+		fix19_13 bottomEdgeSizeZ = -topEdgeSizeZ;
 
 		extern const Optical* _optical;
 
-		fix19_13 scaleXIncrement = __FIX19_13_DIV(proportionX, auxWidth >> (_optical->maximumXViewDistancePower >> 1));
-		fix19_13 scaleYIncrement = __FIX19_13_DIV(proportionY, auxHeight >> (_optical->maximumXViewDistancePower >> 1));
+		fix19_13 scaleXDifference = __FIX19_13_MULT(__I_TO_FIX19_13(1), __FIX10_6_TO_FIX19_13(__FIX10_6_DIV(__PIXELS_TO_METERS(__FIX19_13_TO_I(topEdgeSizeZ)), _optical->scalingFactor)));
+		fix19_13 scaleYDifference = __FIX7_9_TO_FIX19_13(__SIN(rotation->x));
 
-		fix19_13 scaleX = __FIX10_6_TO_FIX19_13(finalScaleX) - __FIX19_13_MULT(edgeSizeX, scaleXIncrement) + __FIX19_13_MULT(scaleXIncrement, __I_TO_FIX19_13(i));
-		fix19_13 scaleY = __FIX10_6_TO_FIX19_13(finalScaleY) - __FIX19_13_MULT(edgeSizeY, scaleYIncrement) + __FIX19_13_MULT(scaleYIncrement, __I_TO_FIX19_13(i));
+		fix19_13 scaleXFactor = __FIX10_6_TO_FIX19_13(finalScaleX);
+		fix19_13 scaleYFactor = __FIX10_6_TO_FIX19_13(finalScaleX);
 
-		lastRow = __FIX19_13_MULT(edgeSizeY, __I_TO_FIX19_13(2));
+		fix19_13 topEdgeScaleX = __FIX19_13_MULT(__I_TO_FIX19_13(1) - scaleXDifference, (scaleXFactor));
+		fix19_13 bottomEdgeScaleX = __FIX19_13_MULT(__I_TO_FIX19_13(1) + scaleXDifference, (scaleXFactor));
+		
+		fix19_13 topEdgeScaleY = __FIX19_13_MULT(__I_TO_FIX19_13(1) - scaleYDifference, (scaleYFactor));
+		fix19_13 bottomEdgeScaleY = __FIX19_13_MULT(__I_TO_FIX19_13(1) + scaleYDifference, (scaleYFactor));
 
-		fix10_6 parallaxIncrement = -__FIX10_6_DIV(edgeSizeZ, auxHeight);
-		//fix10_6 parallax = __FIX10_6_MULT(halfHeight, parallaxIncrement) - __FIX10_6_DIV(parallaxIncrement, __I_TO_FIX10_6(i));
-		fix10_6 parallax =0;
+		fix19_13 scaleXIncrement = __FIX19_13_DIV(bottomEdgeScaleX - topEdgeScaleX, __I_TO_FIX19_13(lastRow));
+		fix19_13 scaleYIncrement = __FIX19_13_DIV(bottomEdgeScaleY - topEdgeScaleY, __I_TO_FIX19_13(lastRow));
+
+		fix19_13 scaleX = topEdgeScaleX;
+		fix19_13 scaleY = topEdgeScaleY;
+		
+		fix10_6 parallaxIncrement = -__FIX10_6_DIV(__FIX19_13_TO_FIX10_6(__FIX19_13_DIV((bottomEdgeSizeZ - topEdgeSizeZ), __I_TO_FIX19_13(lastRow))), _optical->distanceEyeScreen);
+		fix10_6 parallax = -__FIX10_6_MULT(__I_TO_FIX10_6(lastRow / 2), parallaxIncrement) + __FIX10_6_MULT(parallaxIncrement, __I_TO_FIX10_6(i));
+
+/*
+PRINT_TEXT("    ", 1, 5);
+PRINT_INT(rotation->x, 1, 5);
+PRINT_TEXT("    ", 1, 7);
+PRINT_INT(__FIX19_13_TO_F(topEdgeScaleX)*1000, 1, 7);
+PRINT_TEXT("    ", 10, 7);
+PRINT_INT(__FIX19_13_TO_F(topEdgeScaleY)*1000, 10, 7);
+PRINT_TEXT("    ", 1, 8);
+PRINT_INT(__FIX19_13_TO_F(bottomEdgeScaleX)*1000, 1, 8);
+PRINT_TEXT("    ", 10, 8);
+PRINT_INT(__FIX19_13_TO_F(bottomEdgeScaleY)*1000, 10, 8);
+
+PRINT_TEXT("    ", 1, 9);
+PRINT_INT(__FIX19_13_TO_F(topEdgeSizeZ)*1000, 1, 9);
+PRINT_TEXT("    ", 10, 9);
+PRINT_INT(__FIX19_13_TO_F(bottomEdgeSizeZ)*1000, 10, 9);
+
+PRINT_TEXT("    ", 1, 10);
+PRINT_INT(__FIX19_13_TO_F(scaleX)*1000, 1, 10);
+PRINT_TEXT("    ", 10, 10);
+PRINT_INT(__FIX19_13_TO_F(scaleY)*1000, 10, 10);
+
+PRINT_TEXT("    ", 1, 16);
+PRINT_INT(lastRow, 1, 16);
+//PRINT_INT((_optical->maximumXViewDistancePower), 1, 14);
+//PRINT_INT(__METERS_TO_PIXELS(_optical->scalingFactor), 1, 15);
+*/
 
 		for(;counter && i <= lastRow; i++, counter--)
 		{
@@ -162,27 +191,26 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 				scaleY += scaleYIncrement;
 			}
 
-			fix10_6 highPrecisionPa = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__COS(-rotation->z)), scaleX));
-			fix10_6 highPrecisionPb = -__FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__SIN(-rotation->z)),scaleX));
-			fix10_6 highPrecisionPc = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__SIN(-rotation->z)), scaleY));
-			fix10_6 highPrecisionPd = __FIX19_13_TO_FIX10_6(__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__COS(-rotation->z)),scaleY));
+			highPrecisionPa = (__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__COS(-rotation->z)), scaleX));
+			highPrecisionPb = -(__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__SIN(-rotation->z)), scaleX));
+			highPrecisionPc = (__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__SIN(-rotation->z)), scaleY));
+			highPrecisionPd = (__FIX19_13_DIV(__FIX7_9_TO_FIX19_13(__COS(-rotation->z)), scaleY));
 
-			FixedAffineMatrix fixedAffineMatrix;
-			fixedAffineMatrix.pa = __FIX10_6_TO_FIX7_9(highPrecisionPa);
-			fixedAffineMatrix.pc = __FIX10_6_TO_FIX7_9(highPrecisionPc);
+			fixedAffineMatrix.pa = __FIX19_13_TO_FIX7_9(highPrecisionPa);
+			fixedAffineMatrix.pc = __FIX19_13_TO_FIX7_9(highPrecisionPc);
 
 			// bgX + bgWidth - pa * dispX - pb * dispY
 			fixedAffineMatrix.dx =
 				mx
 				+
-				__FIX10_6_TO_FIX13_3
+				__FIX19_13_TO_FIX13_3
 				(
-					halfWidth
+					__FIX10_6_TO_FIX19_13(halfWidth)
 					-
 					(
-						__FIX10_6_MULT(highPrecisionPa, x)
+						__FIX19_13_MULT(highPrecisionPa, __FIX10_6_TO_FIX19_13(x))
 						+
-						__FIX10_6_MULT(highPrecisionPb, y)
+						__FIX19_13_MULT(highPrecisionPb, __FIX10_6_TO_FIX19_13(y))
 					)
 				);
 
@@ -190,20 +218,20 @@ static s16 Affine::applyAll(u32 param, s16 paramTableRow, fix10_6 x, fix10_6 y, 
 			fixedAffineMatrix.dy =
 				my
 				+
-				__FIX10_6_TO_FIX13_3
+				__FIX19_13_TO_FIX13_3
 				(
-					halfHeight
+					__FIX10_6_TO_FIX19_13(halfHeight)
 					-
 					(
-						__FIX10_6_MULT(highPrecisionPc, x)
+						__FIX19_13_MULT(highPrecisionPc, __FIX10_6_TO_FIX19_13(x))
 						+
-						__FIX10_6_MULT(highPrecisionPd, y)
+						__FIX19_13_MULT(highPrecisionPd, __FIX10_6_TO_FIX19_13(y))
 					)
 				);
 
-			affine[i].pb_y = __FIX10_6_TO_FIX13_3(__FIX10_6_MULT(__I_TO_FIX10_6(i), highPrecisionPb)) + fixedAffineMatrix.dx;
+			affine[i].pb_y = __FIX19_13_TO_FIX13_3(__FIX10_6_MULT(__I_TO_FIX10_6(i), highPrecisionPb)) + fixedAffineMatrix.dx;
 			affine[i].parallax = __FIX10_6_TO_I(parallax);
-			affine[i].pd_y = __FIX10_6_TO_FIX13_3(__FIX10_6_MULT(__I_TO_FIX10_6(i), highPrecisionPd)) + fixedAffineMatrix.dy;
+			affine[i].pd_y = __FIX19_13_TO_FIX13_3(__FIX19_13_MULT(__I_TO_FIX19_13(i), highPrecisionPd)) + fixedAffineMatrix.dy;
 			affine[i].pa = fixedAffineMatrix.pa;
 			affine[i].pc = fixedAffineMatrix.pc;
 
