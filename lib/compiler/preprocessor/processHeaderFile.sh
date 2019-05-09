@@ -132,6 +132,10 @@ while [ $# -gt 1 ]
 do
 	key="$1"
 	case $key in
+		-e)
+		ENGINE_HOME="$2"
+		shift # past argument
+		;;
 		-g)
 		CALLER="$2"
 		shift # past argument
@@ -280,7 +284,7 @@ then
 			then
 				echo "$baseClassName needs preprocessing, calling it" >> $CLASS_LOG_FILE
 
-				bash $VBDE/vuengine/core/lib/compiler/preprocessor/processHeaderFile.sh -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
+				bash $ENGINE_HOME/lib/compiler/preprocessor/processHeaderFile.sh -e $ENGINE_HOME -i $baseClassFile -o $processedBaseClassFile -w $WORKING_FOLDER -c $CLASSES_HIERARCHY_FILE -n $LIBRARY_NAME -h $HEADERS_FOLDER -p $LIBRARIES_PATH -g $className -l "$LIBRARIES_ARGUMENT"
 			else
 				mustBeReprocessed=true
 			fi
@@ -466,7 +470,7 @@ CLASS_DEPENDENCIES_FILE=$WORKING_FOLDER/classes/dependencies/$LIBRARY_NAME/$clas
 #echo "$OUTPUT_FILE:" | sed -e 's@'"$WORKING_FOLDER"'/@@g' > $CLASS_DEPENDENCIES_FILE
 
 # Build headers search path
-searchPaths="$HEADERS_FOLDER/source"
+searchPaths="$HEADERS_FOLDER/source $ENGINE_HOME/source "
 for plugin in $PLUGINS;
 do
 	searchPaths=$searchPaths" $LIBRARIES_PATH/$plugin/source"

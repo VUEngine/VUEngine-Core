@@ -6,10 +6,10 @@ override NAME = $(shell pwd | sed -e "s@.*/@@")
 override GAME_NAME = $(NAME)
 
 # Engine name
-override ENGINE_NAME = vuengine/core
+override ENGINE_NAME = core
 
 # Engine's home
-override ENGINE_HOME = $(VBDE)$(ENGINE_NAME)
+override ENGINE_HOME = $(ENGINE_FOLDER)
 
 # My home
 override MY_HOME = $(shell pwd)
@@ -19,9 +19,6 @@ override GAME_HOME = $(MY_HOME)
 
 # Common
 include $(ENGINE_HOME)/makefile-common
-
-# Override plugins
-#PLUGINS := $(ENGINE_NAME) $(PLUGINS)
 
 ifneq ($(BUILD_MODE),)
 	TYPE = $(BUILD_MODE)
@@ -45,9 +42,9 @@ TARGET_FILE = output
 TARGET = $(WORKING_FOLDER)/$(TARGET_FILE)-$(TYPE)
 
 # define the engine
-VUENGINE = $(BUILD_DIR)/libvuengine.a
+VUENGINE = $(BUILD_DIR)/lib$(ENGINE_NAME).a
 
-all: printPreBuildingInfo preprocessClasses plugins printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
+all: printPreBuildingInfo preprocessClasses engine plugins printBuildingInfo $(TARGET).vb $(PAD) $(DUMP_TARGET) printPostBuildingInfo
 
 printPreBuildingInfo:
 	@echo 
@@ -92,9 +89,9 @@ $(TARGET).vb: compile $(TARGET).elf
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
 
-$(TARGET).elf: $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+$(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET).elf...
-	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(LD_PARAMS) \
+	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(VUENGINE) $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
 	@echo
 

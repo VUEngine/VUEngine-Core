@@ -1,15 +1,19 @@
 # Fully qualified plugin name
 # (this is set from outside)
-NAME = vuengine/plugins/plugin-name
+NAME = vuengine/plugin-name
 
 # Engine name
-override ENGINE_NAME = vuengine/core
+override ENGINE_NAME = core
 
 # Engine's home
-override ENGINE_HOME = $(VBDE)$(ENGINE_NAME)
+override ENGINE_HOME = $(ENGINE_FOLDER)
 
 # My home
-override MY_HOME = $(VBDE)$(NAME)
+ifeq ($(NAME), $(ENGINE_NAME))
+	override MY_HOME = $(ENGINE_HOME)
+else
+	override MY_HOME = $(PLUGINS_FOLDER)/$(NAME)
+endif
 
 # Where the game lives
 GAME_HOME = .

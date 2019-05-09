@@ -27,6 +27,10 @@ while [ $# -gt 0 ]
 do
 	key="$1"
 	case $key in
+		-e)
+		ENGINE_HOME="$2"
+		shift # past argument
+		;;
 		-i)
 		INPUT_FILE="$2"
 		shift # past argument
@@ -265,9 +269,9 @@ echo "Compiling class: $className (complexity: $(( complexity1 + complexity2 )))
 classHasNormalMethods=`cat $NORMAL_METHODS_FILE`
 if [ ! -z "$classHasNormalMethods" ];
 then
-#		bash $VBDE/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
+#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
 #		printProgressID=`echo $!`
-	awk -f $VBDE/vuengine/core/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	awk -f $ENGINE_HOME/lib/compiler/preprocessor/normalMethodTraduction.awk $NORMAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
 	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 #		disown $printProgressID
 #		kill $printProgressID
@@ -277,9 +281,9 @@ fi
 classHasVirtualMethods=`cat $VIRTUAL_METHODS_FILE`
 if [ ! -z "$classHasVirtualMethods" ];
 then
-#		bash $VBDE/vuengine/core/lib/compiler/preprocessor/printProgress.sh &
+#		bash $ENGINE_HOME/lib/compiler/preprocessor/printProgress.sh &
 #		printProgressID=`echo $!`
-	awk -f $VBDE/vuengine/core/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
+	awk -f $ENGINE_HOME/lib/compiler/preprocessor/virtualMethodTraduction.awk $VIRTUAL_METHODS_FILE $OUTPUT_FILE > $OUTPUT_FILE.tmp
 	mv $OUTPUT_FILE.tmp $OUTPUT_FILE
 #		disown $printProgressID
 #		kill $printProgressID

@@ -2,10 +2,10 @@
 BASENAME = $(shell echo $(NAME) | sed -e "s@.*/@@")
 
 # Engine name
-ENGINE_NAME = vuengine/core
+override ENGINE_NAME = core
 
 # Engine's home
-ENGINE_HOME = $(VBDE)$(ENGINE_NAME)
+override ENGINE_HOME = $(ENGINE_FOLDER)
 
 # Small data sections' usage
 MSDA_SIZE                       = 0
@@ -112,18 +112,16 @@ endif
 
 # Add directories to the includes in order of overriding priority: game, then plugins
 ifeq ($(GAME_NAME), $(NAME))
-	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print)
-	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/vuengine -type d -print)
+	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
 else
-	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
-	INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects/vuengine -type d -print | sed -e 's@'"$(GAME_HOME)"/'@@g')
+	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
 endif
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 							\
 						-include $(ENGINE_HOME)/source/libvuengine.h 															\
-						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(VBDE)$(PLUGIN)/source/config.h ]; then 					\
-							echo -include $(VBDE)$(PLUGIN)/source/config.h; fi; ))												\
+						$(foreach PLUGIN, $(PLUGINS), $(shell if [ -f $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h ]; then 		\
+							echo -include $(PLUGINS_FOLDER)/$(PLUGIN)/source/config.h; fi; ))									\
 						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)		\
 
 
@@ -175,7 +173,7 @@ $(FINAL_SETUP_CLASSES_OBJECT).o: $(FINAL_SETUP_CLASSES_SOURCE).c
 # Rule for creating object file and .d file, the sed magic is to add the object path at the start of the file
 # because the files gcc outputs assume it will be in the same dir as the source file.
 $(WORKING_FOLDER)/objects/$(NAME)/%.c: $(MY_HOME)/%.c
-	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
+	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/processSourceFile.sh -e $(ENGINE_HOME) -i $< -o $@ -d -w $(WORKING_FOLDER) -c $(CLASSES_HIERARCHY_FILE)
 
 # Override make's default call to GCC
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
@@ -185,11 +183,11 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
         $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(VBDE)libs -p "$(PLUGINS)"
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
 	@sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
-	@sed -e 's#$(OBJECT_FILE)#$(SOURCE_FILE)#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
+	@sed -e 's#$(OBJECT_FILE)\:#$(SOURCE_FILE)\:#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
 	@sed -e '/^[ 	\\]*$$/d' $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.d
-	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
-	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
-	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
+#	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
+#	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
+#	@rm -f $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp
 
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<

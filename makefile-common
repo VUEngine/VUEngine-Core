@@ -19,9 +19,17 @@ else
 	-include $(CONFIG_MAKE_FILE)
 endif
 
-# All, except the core, must include the core as a plugin
+CREATE_ENGINE_DIRS =
+PREPROCESS_ENGINE =
+BUILD_ENGINE =
+
+# All, except the core, must include the core as a build target
 ifneq ($(NAME), $(ENGINE_NAME))
-	PLUGINS := $(ENGINE_NAME) $(PLUGINS)
+	override CREATE_ENGINE_DIRS := createEngineDirs
+	override PREPROCESS_ENGINE := preprocessEngine
+	override BUILD_ENGINE := engine
+else
+	override PLUGINS =
 endif
 
 # Clean plugin name by stripping out everything up to (and including) the last slash
@@ -87,7 +95,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
 
-preprocessClasses: dirs preprocessPlugins printClassPreprocessingInfo preprocessHeaderFiles
+preprocessClasses: dirs $(PREPROCESS_ENGINE) preprocessPlugins printClassPreprocessingInfo preprocessHeaderFiles
 	@touch $(CLASSES_HIERARCHY_FILE)
 	@$(eval PREPROCESSING_CLASSES_END_TIME=$(shell date +%s))
 	@echo "Total time:" $$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) / 60 ))" min. "$$(( ($(PREPROCESSING_CLASSES_END_TIME) - $(PREPROCESSING_CLASSES_START_TIME)) % 60 ))" sec."
@@ -100,13 +108,40 @@ printClassPreprocessingInfo:
 	@echo "*** Preprocessing $(BASENAME)"
 	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
+ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt
+ENGINE_CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(ENGINE_CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
+CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
+
+preprocessEngine:
+ifeq ($(ENGINE_CLASSES_HIERARCHY_FILE_EXISTS), 0)
+	@$(MAKE) --no-print-directory preprocessClasses																									\
+			-f $(ENGINE_HOME)/makefile																												\
+			-e GAME_HOME=$(GAME_HOME)																												\
+			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
+			-e NAME=$(ENGINE_NAME)																													\
+			-e MAKE_JOBS=$(MAKE_JOBS)
+else
+ifeq ($(CLASSES_HIERARCHY_FILE_EXISTS), 1)
+MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(ENGINE_CLASSES_HIERARCHY_FILE) 2>&1)
+MUST_PREPROCESS_ENGINE = $(shell [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ] && echo 1 || echo 0 )
+ifeq ($(MUST_PREPROCESS_ENGINE), 1)
+		$(MAKE) --no-print-directory preprocessClasses																								\
+			-f $(ENGINE_HOME)/makefile																												\
+			-e GAME_HOME=$(GAME_HOME)																												\
+			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
+			-e NAME=$(ENGINE_NAME)																													\
+			-e MAKE_JOBS=$(MAKE_JOBS)
+endif
+endif
+endif
+
 preprocessPlugins:
 	@-$(foreach PLUGIN, $(PLUGINS),							 																						\
 		$(eval PLUGIN_CLASSES_HIERARCHY_FILE=$(WORKING_FOLDER)/classes/hierarchies/$(PLUGIN)/classesHierarchy.txt)									\
 		if [ -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] && [ ! -f $(CLASSES_HIERARCHY_FILE) ]; then continue; fi; 										\
 		$(eval MY_CLASSES_HIERARCHY_FILE_IS_NEWER=$(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(PLUGIN_CLASSES_HIERARCHY_FILE) 2>&1))		\
 		if [ ! -f $(PLUGIN_CLASSES_HIERARCHY_FILE) ] || [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ]; then 		\
-			$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)$(PLUGIN)/makefile)																				\
+			$(eval CUSTOM_PLUGIN_MAKEFILE=$(PLUGINS_FOLDER)/$(PLUGIN)/makefile)																		\
 			$(MAKE) --no-print-directory preprocessClasses																							\
 				-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
 				-e GAME_HOME=$(GAME_HOME)																											\
@@ -145,9 +180,20 @@ compile:
 		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
 		-e GAME_NAME=$(GAME_NAME)																													\
 
+engine: deleteLibraries
+	@$(MAKE) --no-print-directory	 																												\
+		$(GAME_HOME)/build/lib$(ENGINE_NAME).a																									\
+		-f $(ENGINE_HOME)/makefile																													\
+		-e CONFIG_FILE=$(CONFIG_FILE) 																												\
+		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																							\
+		-e GAME_HOME=$(GAME_HOME)																													\
+		-e MAKE_JOBS=$(MAKE_JOBS)																													\
+		-e NAME=$(ENGINE_NAME)																														\
+		-e GAME_NAME=$(GAME_NAME);																													\
+
 plugins: deleteLibraries
 	@-$(foreach PLUGIN, $(PLUGINS),	 																												\
-		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)$(PLUGIN)/makefile)																					\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(PLUGINS_FOLDER)/$(PLUGIN)/makefile)																			\
 		$(eval PLUGIN_FILE=$(GAME_HOME)/build/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@"))														\
 		if [ ! -f $(PLUGIN_FILE).a ]; then 																											\
 			$(MAKE) --no-print-directory	 																										\
@@ -173,10 +219,19 @@ clean:
 # Create necessary directories
 DIRS_EXIST=$(shell [ -e $(WORKING_FOLDER)/objects/$(NAME) ] && echo 1 || echo 0 )
 
+createEngineDirs:
+ifeq ($(DIRS_EXIST), 0)
+	@$(MAKE) --no-print-directory dirs																										\
+		-f $(ENGINE_HOME)/makefile																										\
+		-e GAME_HOME=$(GAME_HOME)																											\
+		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																					\
+		-e NAME=$(ENGINE_NAME);
+endif
+
 createPluginDirs:
 ifeq ($(DIRS_EXIST), 0)
 	@-$(foreach PLUGIN, $(PLUGINS), 	 																										\
-		$(eval CUSTOM_PLUGIN_MAKEFILE=$(VBDE)$(PLUGIN)/makefile)																				\
+		$(eval CUSTOM_PLUGIN_MAKEFILE=$(PLUGINS_FOLDER)/$(PLUGIN)/makefile)																		\
 		$(eval PLUGIN_FILE=$(BUILD_DIR)/lib$(shell echo $(PLUGIN) | sed -e "s@.*/@@").a )														\
 		$(MAKE) --no-print-directory dirs																										\
 			-f $(shell if [ -f $(CUSTOM_PLUGIN_MAKEFILE) ]; then echo $(CUSTOM_PLUGIN_MAKEFILE); else echo $(PLUGIN_MAKEFILE); fi; )			\
@@ -193,7 +248,7 @@ ifeq ($(DIRS_EXIST), 0)
 	@echo -n Creating working dirs for $(BASENAME)...
 endif
 
-dirs: createPluginDirs printDirsInfo
+dirs: $(CREATE_ENGINE_DIRS) createPluginDirs printDirsInfo
 ifeq ($(DIRS_EXIST), 0)
 	@mkdir -p $(WORKING_FOLDER)/classes/dictionaries
 	@mkdir -p $(WORKING_FOLDER)/classes/dependencies/$(NAME)
