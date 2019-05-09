@@ -111,11 +111,8 @@ ifeq ($(TYPE), preprocessor)
 endif
 
 # Add directories to the includes in order of overriding priority: game, then plugins
-ifeq ($(GAME_NAME), $(NAME))
-	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
-else
-	INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
-endif
+INCLUDE_PATHS = $(shell find $(WORKING_FOLDER)/objects/$(GAME_NAME) -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
+INCLUDE_PATHS := $(INCLUDE_PATHS) $(shell find $(WORKING_FOLDER)/objects -path $(WORKING_FOLDER)/objects/$(GAME_NAME) -prune -o -type d -print | sed -e 's@'"$(GAME_HOME)"'/@@g')
 
 # Obligatory headers
 ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CONFIG_FILE); fi;) 							\
