@@ -177,7 +177,7 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 	@$(eval SOURCE_FILE=$<)
 	@$(eval OBJECT_FILE=$@)
 	@$(GCC) -Wp,-MD,$(WORKING_FOLDER)/objects/$(NAME)/$*.dd $(foreach INC,$(INCLUDE_PATHS),-I$(INC))\
-        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(VBDE)libs -p "$(PLUGINS)"
+        $(foreach MACRO,$(MACROS),-D$(MACRO)) $(C_PARAMS) -$(COMPILER_OUTPUT) $(SOURCE_FILE) -o $(OBJECT_FILE) 2>&1 | bash $(ENGINE_HOME)/lib/compiler/preprocessor/processGCCOutput.sh -o $(OBJECT_FILE) -w $(WORKING_FOLDER) -h $(MY_HOME) -n $(NAME) -l $(PLUGINS_FOLDER)/../ -p "$(PLUGINS)"
 	@sed -e '1s/^\(.*\)$$/$(subst /,\/,$(dir $(OBJECT_FILE)))\1/' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp
 	@sed -e 's#$(SOURCE_FILE)##' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd.tmp > $(WORKING_FOLDER)/objects/$(NAME)/$*.dd
 	@sed -e 's#$(OBJECT_FILE)\:#$(SOURCE_FILE)\:#' $(WORKING_FOLDER)/objects/$(NAME)/$*.dd > $(WORKING_FOLDER)/objects/$(NAME)/$*.d.tmp

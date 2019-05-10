@@ -125,12 +125,12 @@ ifeq ($(CLASSES_HIERARCHY_FILE_EXISTS), 1)
 MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(ENGINE_CLASSES_HIERARCHY_FILE) 2>&1)
 MUST_PREPROCESS_ENGINE = $(shell [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ] && echo 1 || echo 0 )
 ifeq ($(MUST_PREPROCESS_ENGINE), 1)
-		$(MAKE) --no-print-directory preprocessClasses																								\
-			-f $(ENGINE_HOME)/makefile																												\
-			-e GAME_HOME=$(GAME_HOME)																												\
-			-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
-			-e NAME=$(ENGINE_NAME)																													\
-			-e MAKE_JOBS=$(MAKE_JOBS)
+	@$(MAKE) --no-print-directory preprocessClasses																								\
+		-f $(ENGINE_HOME)/makefile																												\
+		-e GAME_HOME=$(GAME_HOME)																												\
+		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
+		-e NAME=$(ENGINE_NAME)																													\
+		-e MAKE_JOBS=$(MAKE_JOBS)
 endif
 endif
 endif
