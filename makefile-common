@@ -112,8 +112,9 @@ ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_N
 ENGINE_CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(ENGINE_CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
 CLASSES_HIERARCHY_FILE_EXISTS = $(shell [ -e $(CLASSES_HIERARCHY_FILE) ] && echo 1 || echo 0 )
 
-preprocessEngine:
+# A very ugly hack
 ifeq ($(ENGINE_CLASSES_HIERARCHY_FILE_EXISTS), 0)
+preprocessEngine:
 	@$(MAKE) --no-print-directory preprocessClasses																									\
 			-f $(ENGINE_HOME)/makefile																												\
 			-e GAME_HOME=$(GAME_HOME)																												\
@@ -125,13 +126,18 @@ ifeq ($(CLASSES_HIERARCHY_FILE_EXISTS), 1)
 MY_CLASSES_HIERARCHY_FILE_IS_NEWER = $(shell find $(CLASSES_HIERARCHY_FILE) -prune -newer $(ENGINE_CLASSES_HIERARCHY_FILE) 2>&1)
 MUST_PREPROCESS_ENGINE = $(shell [ -f $(CLASSES_HIERARCHY_FILE) -a ! -z "$(MY_CLASSES_HIERARCHY_FILE_IS_NEWER)" ] && echo 1 || echo 0 )
 ifeq ($(MUST_PREPROCESS_ENGINE), 1)
+preprocessEngine:
 	@$(MAKE) --no-print-directory preprocessClasses																								\
 		-f $(ENGINE_HOME)/makefile																												\
 		-e GAME_HOME=$(GAME_HOME)																												\
 		-e GAME_CONFIG_MAKE_FILE=$(GAME_CONFIG_MAKE_FILE) 																						\
 		-e NAME=$(ENGINE_NAME)																													\
 		-e MAKE_JOBS=$(MAKE_JOBS)
+else
+preprocessEngine:
 endif
+else
+preprocessEngine:
 endif
 endif
 
