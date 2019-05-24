@@ -1,7 +1,7 @@
-VUEngine 6
+VUEngine 7
 ==========
 
-The VUEngine ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") 
+VUEngine ("Virtual Utopia Engine", based on the Virtual Boy's code name, "Virtual Utopia Experience") 
 is an attempt to provide other indie developers the base functionality to facilitate the creation of 
 content for the Nintendo Virtual Boy by taking care of most hardware management tasks to create 3D games 
 with 2D graphics.

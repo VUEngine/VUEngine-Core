@@ -7,7 +7,7 @@
 
 
 // define / undefine as you see fit
-#define __PRINT_FRAMERATE
+//#define __PRINT_FRAMERATE
 //#define __PRINT_DEBUG_ALERT
 //#define __PROFILE_GAME
 //#define __PROFILE_STREAMING
@@ -17,8 +17,8 @@
 //#define __SHOW_STREAMING_PROFILING
 //#define __SHOW_SPRITES_PROFILING
 //#define __DIMM_FOR_PROFILING
-#define __ALERT_FOR_TORN_FRAMES
-#define __ALERT_VIP_OVERTIME
+//#define __ALERT_FOR_TORN_FRAMES
+//#define __ALERT_VIP_OVERTIME
 //#define __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
 //#define __DRAW_SHAPES
 //#define __REGISTER_LAST_PROCESS_NAME
