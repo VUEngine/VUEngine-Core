@@ -1,6 +1,5 @@
 # Project name
-override NAME = $(shell pwd | sed -e "s@.*/@@")
-
+override NAME = Game
 
 # Game name
 override GAME_NAME = $(NAME)
