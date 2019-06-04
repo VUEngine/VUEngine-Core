@@ -370,7 +370,7 @@ then
 	baseClassesNames=$baseClassName
 	baseBaseClassName=$baseClassName
 
-	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies -type f -name "classesHierarchy.txt" -print -quit`
+	CLASSES_HIERARCHY_FILES=`find $WORKING_FOLDER/classes/hierarchies -type f -name "classesHierarchy.txt" -print`
 	classesHierarchy=
 
 	echo "Starting computation of whole hierarchy on caller $CALLER"  >> $CLASS_LOG_FILE
@@ -397,7 +397,7 @@ then
 	done
 fi
 
-echo "Hierarchy on caller $CALLER: baseClassesNames"  >> $CLASS_LOG_FILE
+echo "Hierarchy on caller $CALLER: $baseClassesNames"  >> $CLASS_LOG_FILE
 
 # Must prevent Object class trying to actually inherit from itself
 if [ -z "${className##Object}" ];
