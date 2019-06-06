@@ -575,7 +575,7 @@ MovementResult Body::updateMovement()
 	{
 		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
 	}
-	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
+	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->friction.x)
 	{
 		// need to use extended types to prevent overflows
 		fix10_6_ext acceleration = gravity.x + __FIX10_6_EXT_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
@@ -590,7 +590,7 @@ MovementResult Body::updateMovement()
 	{
 		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);
 	}
-	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
+	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->friction.y)
 	{
 		fix10_6_ext acceleration = gravity.y + __FIX10_6_EXT_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
@@ -604,7 +604,7 @@ MovementResult Body::updateMovement()
 	{
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
 	}
-	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
+	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->friction.z)
 	{
 		fix10_6_ext acceleration = gravity.z + __FIX10_6_EXT_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
@@ -1287,6 +1287,12 @@ void Body::print(int x, int y)
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.x), xDisplacement + x, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.y), xDisplacement + x + 10, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->velocity.z), xDisplacement + x + 10 * 2, y++, NULL);
+	
+	Printing::text(Printing::getInstance(), "Direction", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.x), xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.y), xDisplacement + x + 10, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.z), xDisplacement + x + 10 * 2, y++, NULL);
 
 	Printing::text(Printing::getInstance(), "Speed", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
@@ -1335,9 +1341,4 @@ void Body::print(int x, int y)
 	Printing::text(Printing::getInstance(), "Total friction coef.", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                              ", xDisplacement + x, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->totalFrictionCoefficient), xDisplacement + x, y++, NULL);
-
-
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(__STOP_VELOCITY_THRESHOLD), xDisplacement + x, y, NULL);
-	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(__STOP_BOUNCING_VELOCITY_THRESHOLD), 10 +xDisplacement + x, y, NULL);
-
 }
