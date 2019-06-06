@@ -79,6 +79,7 @@ class PhysicalParticle : Particle
 	override void hide();
 	override void reset();
 	override void changeMass();
+	override void synchronizeGraphics(bool updateSpritePosition);
 }
 
 

@@ -201,3 +201,13 @@ void PhysicalParticle::reset()
 {
 	Body::reset(this->body);
 }
+
+/**
+ * Update Visual Representation
+ *
+ * @param updateSpritePosition
+ */
+void PhysicalParticle::synchronizeGraphics(bool updateSpritePosition)
+{
+	Base::synchronizeGraphics(this, updateSpritePosition || Body::getMovementOnAllAxis(this->body));
+}
