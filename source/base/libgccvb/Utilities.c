@@ -151,10 +151,10 @@ static long Utilities::randomSeed()
 static int Utilities::random(long seed, int randnums)
 {
 #ifdef __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
-	seed += Clock::getTime(_gameClock) - KeypadManager::getAccumulatedUserInput(_keypadManager);
+	seed += Clock::getTime(_gameClock) + KeypadManager::getAccumulatedUserInput(_keypadManager);
 #endif
 
-	return seed & randnums ? __ABS((int)(seed % randnums)) : 0;
+	return seed && randnums ? __ABS((int)(seed % randnums)) : 0;
 }
 
 /*
