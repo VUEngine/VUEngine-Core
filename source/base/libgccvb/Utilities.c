@@ -36,6 +36,7 @@ KeypadManager _keypadManager = NULL;
 //											DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
+static u32 _seed = 7; /* Seed value */
 static const char numbers[17] = "0123456789ABCDEF";
 
 static void Utilities::setClock(Clock clock)
@@ -127,6 +128,11 @@ static const char* Utilities::toLowercase(const char* string)
 	return result;
 }
 
+static void Utilities::resetRandomSeed()
+{
+	_seed = 7; /* Seed value */
+}
+
 /*
  * Taken from Shokwav's N64 demo
  */
@@ -134,17 +140,16 @@ static long Utilities::randomSeed()
 {
 	ASSERT(_gameClock, "Utilities::randomSeed: null _gameClock");
 
-	static u32 seed = 7; /* Seed value */
-
-	if(!seed)
+	if(!_seed)
 	{
-		seed = 7;
+		_seed = 7;
 	}
 
-	seed ^= seed << 13;
-	seed ^= seed >> 17;
-	seed ^= seed << 5;
-	return (seed);
+	_seed ^= _seed << 13;
+	_seed ^= _seed >> 17;
+	_seed ^= _seed << 5;
+	
+	return _seed;
 }
 
 // These real versions are due to Isaku Wada, 2002/01/09 added
