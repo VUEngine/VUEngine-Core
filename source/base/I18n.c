@@ -85,6 +85,8 @@ const char* I18n::getText(int string)
 void I18n::setActiveLanguage(u8 languageId)
 {
 	this->activeLanguage = languageId;
+
+	Object::fireEvent(Game::getCurrentState(Game::getInstance()), kEventLanguageChanged);
 }
 
 /**
