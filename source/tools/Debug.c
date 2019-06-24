@@ -48,7 +48,7 @@
 #include <ObjectAnimationCoordinator.h>
 #include <KeypadManager.h>
 #include <SRAMManager.h>
-#include <I18n.h>
+//#include <I18n.h>
 #include <Camera.h>
 #include <CameraEffectManager.h>
 #include <CameraMovementManager.h>
@@ -554,10 +554,10 @@ void Debug::generalStatusPage(int increment __attribute__ ((unused)), int x __at
 	{
 		Printing::text(Printing::getInstance(), "none", 20, y, NULL);
 	}
-
+/*
 	Printing::text(Printing::getInstance(), "Active Language:", 1, ++y, NULL);
 	Printing::text(Printing::getInstance(), I18n::getActiveLanguageName(I18n::getInstance()), 20, y, NULL);
-
+*/
 	y += 3;
 
 	Printing::text(Printing::getInstance(), "CLOCKS STATUS", 1, y++, NULL);
@@ -623,7 +623,7 @@ void Debug::memoryStatusShowZeroPage(int increment __attribute__ ((unused)), int
 		{&DirectDraw_getObjectSize, 			"DirectDraw"},
 		{&Error_getObjectSize, 					"Error"},
 		{&FrameRate_getObjectSize, 				"FrameRate"},
-		{&I18n_getObjectSize, 					"I18n"},
+		//{&I18n_getObjectSize, 					"I18n"},
 		{&MemoryPool_getObjectSize, 			"MemoryPool"},
 		{&MessageDispatcher_getObjectSize, 		"MessageDispatcher"},
 		{&Printing_getObjectSize, 				"Printing"},

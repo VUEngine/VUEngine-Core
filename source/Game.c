@@ -53,7 +53,6 @@
 #include <SoundManager.h>
 #include <TimerManager.h>
 #include <VIPManager.h>
-#include <I18n.h>
 #include <debugConfig.h>
 
 #ifdef __DEBUG_TOOLS
@@ -229,7 +228,6 @@ void Game::constructor()
 	HardwareManager::getInstance();
 	SpriteManager::getInstance();
 	DirectDraw::getInstance();
-	I18n::getInstance();
 	ParamTableManager::getInstance();
 
 	Utilities::setClock(this->clock);
