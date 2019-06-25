@@ -24,7 +24,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <UiContainer.h>
+#include <UIContainer.h>
 #include <Optics.h>
 #include <Game.h>
 #include <Camera.h>
@@ -35,17 +35,17 @@
 //---------------------------------------------------------------------------------------------------------
 
 // class's constructor
-void UiContainer::constructor(UiContainerSpec* uiContainerSpec)
+void UIContainer::constructor(UIContainerSpec* uiContainerSpec)
 {
 	// construct base object
 	Base::constructor(NULL);
 
 	// add entities in the spec
-	UiContainer::addEntities(this, uiContainerSpec->entities);
+	UIContainer::addEntities(this, uiContainerSpec->entities);
 }
 
 // class's destructor
-void UiContainer::destructor()
+void UIContainer::destructor()
 {
 	// destroy base
 	// must always be called at the end of the destructor
@@ -53,9 +53,9 @@ void UiContainer::destructor()
 }
 
 // add entities
-void UiContainer::addEntities(PositionedEntity* entities)
+void UIContainer::addEntities(PositionedEntity* entities)
 {
-	ASSERT(entities, "UiContainer::addEntities: null entities");
+	ASSERT(entities, "UIContainer::addEntities: null entities");
 
 	static int internalId = 0;
 	int i = 0;
@@ -66,40 +66,48 @@ void UiContainer::addEntities(PositionedEntity* entities)
 
 		if(entity)
 		{
-			// setup graphics
 			Container::setupGraphics(entity);
+			Entity::initialize(entity, true);
 
 			// create the entity and add it to the world
 			Container::addChild(this, Container::safeCast(entity));
-			Container::setupShapes(entity);
 
 			// apply transformations
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
 			Container::initialTransform(entity, &environmentTransform, true);
+			Container::setupShapes(entity);
+
+			SpriteManager::writeTextures(SpriteManager::getInstance());
 
 			Entity::ready(entity, true);
+
+			Camera camera = Camera::getInstance();
+			Camera::prepareForUI(camera);
+		
+			Entity::synchronizeGraphics(entity);
+		
+			Camera::doneUITransform(camera);
 		}
 	}
 }
 
-// transformation
-void UiContainer::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
+void UIContainer::synchronizeGraphics()
 {
 	Camera camera = Camera::getInstance();
-	ASSERT(camera, "UiContainer::transform: null camera");
+	ASSERT(camera, "UIContainer::transform: null camera");
 
-	Camera::prepareForUITransform(camera);
+	Camera::prepareForUI(camera);
 
-	Base::transform(this, environmentTransform, invalidateTransformationFlag);
+	Base::synchronizeGraphics(this);
 
 	Camera::doneUITransform(camera);
 }
 
 // transformation
-void UiContainer::initialTransform(const Transformation* environmentTransform, u32 recursive)
+void UIContainer::initialTransform(const Transformation* environmentTransform, u32 recursive)
 {
 	Camera camera = Camera::getInstance();
-	ASSERT(camera, "UiContainer::initialTransform: null camera");
+	ASSERT(camera, "UIContainer::initialTransform: null camera");
 
 	Vector3D originalCameraPosition  =
 	{

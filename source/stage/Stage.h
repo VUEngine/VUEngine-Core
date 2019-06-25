@@ -32,7 +32,7 @@
 #include <Printing.h>
 #include <EntityFactory.h>
 #include <Texture.h>
-#include <UiContainer.h>
+#include <UIContainer.h>
 #include <ParticleRemover.h>
 #include <VIPManager.h>
 #include <Camera.h>
@@ -136,7 +136,7 @@ typedef struct StageSpec
 	struct Entities
 	{
 		// ui's spec
-		UiContainerSpec uiContainerSpec;
+		UIContainerSpec uiContainerSpec;
 
 		// each of the stage's entities
 		PositionedEntity* children;
@@ -191,7 +191,7 @@ class Stage : Container
 	// flag to control streaming
 	u32 hasRemovedChildren;
 	// the ui container
-	UiContainer uiContainer;
+	UIContainer uiContainer;
 	// focus entity: needed for streaming
 	Entity focusEntity;
 	// camera's previous distance. Used for the streaming
@@ -208,7 +208,7 @@ class Stage : Container
 	bool registerEntityId(s16 internalId, EntitySpec* entitySpec);
 	void spawnEntity(PositionedEntity* positionedEntity, Container requester, EventListener callback);
 	Entity addChildEntity(const PositionedEntity* const positionedEntity, bool permanent);
-	UiContainer getUiContainer();
+	UIContainer getUIContainer();
 	StageSpec* getStageSpec();
 	ParticleRemover getParticleRemover();
 	void showStreamingProfiling(int x, int y);

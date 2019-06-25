@@ -336,7 +336,7 @@ void Camera::setPosition(Vector3D position)
 /**
  * Set camera's position for UI transformation
  */
-void Camera::prepareForUITransform()
+void Camera::prepareForUI()
 {
 	this->positionBackup = this->position;
 

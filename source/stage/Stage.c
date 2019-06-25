@@ -330,7 +330,7 @@ void Stage::setupUI()
 	if(this->stageSpec->entities.uiContainerSpec.allocator)
 	{
 		// call the appropriate allocator to support inheritance
-		this->uiContainer = ((UiContainer (*)(UiContainerSpec*)) this->stageSpec->entities.uiContainerSpec.allocator)(&this->stageSpec->entities.uiContainerSpec);
+		this->uiContainer = ((UIContainer (*)(UIContainerSpec*)) this->stageSpec->entities.uiContainerSpec.allocator)(&this->stageSpec->entities.uiContainerSpec);
 		ASSERT(this->uiContainer, "Stage::setupUI: null ui");
 
 		// setup ui if allocated and constructed
@@ -1053,10 +1053,15 @@ void Stage::transform(const Transformation* environmentTransform __attribute__ (
 void Stage::synchronizeGraphics()
 {
 	Base::synchronizeGraphics(this);
+
+	if(this->uiContainer)
+	{
+		Container::synchronizeGraphics(this->uiContainer);
+	}
 }
 
 // retrieve ui
-UiContainer Stage::getUiContainer()
+UIContainer Stage::getUIContainer()
 {
 	return this->uiContainer;
 }

@@ -123,7 +123,7 @@ singleton class Camera : Object
 	Size getStageSize();
 	void move(Vector3D translation, int cap);
 	void onFocusEntityDeleted(Entity actor);
-	void prepareForUITransform();
+	void prepareForUI();
 	void reset();
 	void resetCameraFrustum();
 	void setCameraEffectManager(CameraEffectManager cameraEffectManager);

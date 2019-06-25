@@ -87,7 +87,7 @@
 
 #include <GameState.h>
 #include <Stage.h>
-#include <UiContainer.h>
+#include <UIContainer.h>
 #include <Mem.h>
 
 #include <DebugState.h>
@@ -802,7 +802,7 @@ void Debug::memoryStatusShowSixthPage(int increment __attribute__ ((unused)), in
 		{&SolidParticle_getObjectSize,					"SolidParticle"},
 		{&SpatialObject_getObjectSize,					"SpatialObject"},
 		{&Stage_getObjectSize,							"Stage"},
-		{&UiContainer_getObjectSize,					"UiContainer"},
+		{&UIContainer_getObjectSize,					"UIContainer"},
 	};
 
 	Debug::printClassSizes(this, classesSizeData, sizeof(classesSizeData) / sizeof(ClassSizeData), x + 21, y, "VUEngine classes:");

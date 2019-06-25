@@ -36,7 +36,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 // defines a UI for ROM memory
-typedef struct UiContainerSpec
+typedef struct UIContainerSpec
 {
 	// ui's entities
 	PositionedEntity* entities;
@@ -44,7 +44,7 @@ typedef struct UiContainerSpec
 	// class allocator
 	AllocatorPointer allocator;
 
-} UiContainerSpec;
+} UIContainerSpec;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -52,13 +52,13 @@ typedef struct UiContainerSpec
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup stage
-class UiContainer : Container
+class UIContainer : Container
 {
 	/// @publicsection
-	void constructor(UiContainerSpec* uiContainerSpec);
+	void constructor(UIContainerSpec* uiContainerSpec);
 	virtual void addEntities(PositionedEntity* entities);
-	override void transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag);
 	override void initialTransform(const Transformation* environmentTransform, u32 recursive);
+	override void synchronizeGraphics();
 }
 
 
