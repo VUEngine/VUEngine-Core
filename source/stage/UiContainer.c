@@ -80,13 +80,6 @@ void UIContainer::addEntities(PositionedEntity* entities)
 			SpriteManager::writeTextures(SpriteManager::getInstance());
 
 			Entity::ready(entity, true);
-
-			Camera camera = Camera::getInstance();
-			Camera::prepareForUI(camera);
-		
-			Entity::synchronizeGraphics(entity);
-		
-			Camera::doneUITransform(camera);
 		}
 	}
 }
