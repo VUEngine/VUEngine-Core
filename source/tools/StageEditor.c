@@ -980,6 +980,8 @@ void StageEditor::printEntityPosition()
 		Printing::text(Printing::getInstance(),		Entity::isVisible(entity, 16, true) ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + 10, y, NULL);
 		Printing::text(Printing::getInstance(),		"Children:                       ", 			x, 		++y, 	NULL);
 		Printing::int(Printing::getInstance(), 		Container::getChildCount(entity), 				x + 10, y, 		NULL);
+		Printing::text(Printing::getInstance(),		"Sprites:                       ", 			x, 		++y, 	NULL);
+		Printing::int(Printing::getInstance(), 		Entity::getSprites(entity) ? VirtualList::getSize(Entity::getSprites(entity)) : 0, 				x + 10, y, 		NULL);
 	}
 }
 
