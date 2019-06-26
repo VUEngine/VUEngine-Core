@@ -934,10 +934,7 @@ int SpriteManager::getTotalPixelsDrawn()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		if(__WORLD_OFF != _worldAttributesBaseAddress[sprite->worldLayer].head)
-		{
-			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
-		}
+		totalPixelsToDraw += Sprite::getTotalPixels(sprite);
 	}
 
 	return totalPixelsToDraw;
@@ -986,7 +983,8 @@ void SpriteManager::print(int x, int y, bool resumed)
 		Printing::int(Printing::getInstance(), Sprite::getWorldLayer(sprite), auxX, auxY, NULL);
 		Printing::text(Printing::getInstance(), ": ", auxX + 2, auxY, NULL);
 		Printing::text(Printing::getInstance(), spriteClassName, auxX + 4, auxY, NULL);
-		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
+//		Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[sprite->worldLayer].head, auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, 4, NULL);
+//		Printing::int(Printing::getInstance(), Sprite::getTotalPixels(sprite), auxX + __MAX_SPRITE_CLASS_NAME_SIZE + 4, auxY, NULL);
 
 		if((__SCREEN_HEIGHT_IN_CHARS) - 2 <= ++auxY)
 		{

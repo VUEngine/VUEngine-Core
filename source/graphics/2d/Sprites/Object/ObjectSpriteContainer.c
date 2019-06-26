@@ -544,30 +544,37 @@ void ObjectSpriteContainer::addDisplacement(const PixelVector* displacement)
  */
 void ObjectSpriteContainer::print(int x, int y)
 {
-	Printing::text(Printing::getInstance(), "Segment:                ", x, y, NULL);
-	Printing::int(Printing::getInstance(), this->spt, x + 24, y++, NULL);
+	Printing::text(Printing::getInstance(), "SPRITE ", x, y++, NULL);
+	Printing::text(Printing::getInstance(), "Layer: ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->worldLayer, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Class: ", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Head:                         ", x, ++y, NULL);
+	Printing::hex(Printing::getInstance(), Sprite::getWorldHead(this), x + 18, y, 8, NULL);
+	Printing::text(Printing::getInstance(), "Mode:", x, ++y, NULL);
+	Printing::text(Printing::getInstance(), "OBJECT   ", x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Segment:                ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->spt, x + 18, y++, NULL);
 	Printing::text(Printing::getInstance(), "STP value:                ", x, y, NULL);
-	Printing::int(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "WORLD:                  ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->worldLayer, x + 24, y, NULL);
+	Printing::int(Printing::getInstance(), _vipRegisters[__SPT0 + this->spt], x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "HEAD:                   ", x, ++y, NULL);
-	Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[this->worldLayer].head, x + 24, y, 4, NULL);
-	Printing::text(Printing::getInstance(), "Total OBJECTs:           ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->totalObjects, x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "Available OBJECTs:       ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getAvailableObjects(this), x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "Total used OBJECTs:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalUsedObjects(this), x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "Next free OBJECT index:  ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getNextFreeObjectIndex(this), x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "Object index range:      ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getFirstObjectIndex(this), x + 24, y, NULL);
-	Printing::text(Printing::getInstance(), "-", x  + 24 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)), y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getLastObjectIndex(this), x  + 24 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
+	Printing::hex(Printing::getInstance(), _worldAttributesBaseAddress[this->worldLayer].head, x + 18, y, 4, NULL);
+	Printing::text(Printing::getInstance(), "Total OBJs:           ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->totalObjects, x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Available OBJs:       ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getAvailableObjects(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Total used OBJs:      ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalUsedObjects(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "Next free OBJ:  ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getNextFreeObjectIndex(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "OBJ index range:      ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getFirstObjectIndex(this), x + 18, y, NULL);
+	Printing::text(Printing::getInstance(), "-", x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)), y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getLastObjectIndex(this), x  + 18 + Utilities::intLength(ObjectSpriteContainer::getFirstObjectIndex(this)) + 1, y, NULL);
 	Printing::text(Printing::getInstance(), "Z Position: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->position.z, x + 24, y, NULL);
+	Printing::int(Printing::getInstance(), this->position.z, x + 18, y, NULL);
 	Printing::text(Printing::getInstance(), "Pixels: ", x, ++y, NULL);
-	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 24, y, NULL);
+	Printing::int(Printing::getInstance(), ObjectSpriteContainer::getTotalPixels(this), x + 18, y, NULL);
 }
 
 int ObjectSpriteContainer::getTotalPixels()

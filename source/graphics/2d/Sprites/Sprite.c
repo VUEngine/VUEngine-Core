@@ -803,7 +803,7 @@ void Sprite::print(int x, int y)
 	Printing::int(Printing::getInstance(), Sprite::getWorldWidth(this), x + 18, y, NULL);
 	Printing::int(Printing::getInstance(), Sprite::getWorldHeight(this), x + 24, y++, NULL);
 	Printing::text(Printing::getInstance(), "Pixels:                      ", x, y, NULL);
-	Printing::int(Printing::getInstance(), Sprite::getWorldWidth(this) * Sprite::getWorldHeight(this), x + 18, y++, NULL);
+	Printing::int(Printing::getInstance(), Sprite::getTotalPixels(this), x + 18, y++, NULL);
 
 	if(Sprite::getTexture(this) && __GET_CAST(BgmapTexture, Sprite::getTexture(this)))
 	{
