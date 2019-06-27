@@ -892,7 +892,6 @@ Entity Entity::addChildEntity(const EntitySpec* entitySpec, int internalId, cons
 	// apply transformations
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	Container::initialTransform(childEntity, &environmentTransform, true);
-	Container::setupShapes(childEntity);
 
 	// make ready
 	Entity::ready(childEntity, true);
@@ -1029,7 +1028,7 @@ void Entity::transformShape(Shape shape, const Vector3D* myPosition, const Rotat
  */
 void Entity::transformShapes()
 {
-	if(this->shapes)
+	if(this->shapes && this->transformShapes)
 	{
 		// setup shape
 		//	bool isAffectedByRelativity =  SpatialObject::isAffectedByRelativity(this);
@@ -1062,6 +1061,8 @@ void Entity::transformShapes()
 			}
 		}
 	}
+
+	this->transformShapes = false;
 }
 
 bool Entity::transformShapeAtSpecIndex(int shapeSpecIndex)
@@ -1372,6 +1373,9 @@ void Entity::initialTransform(const Transformation* environmentTransform, u32 re
 	// call base class's transformation method
 	Base::initialTransform(this, environmentTransform, recursive);
 
+	this->transformShapes = true;
+	Container::setupShapes(this);
+
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 
 	if(this->hidden)
@@ -1399,7 +1403,9 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 		this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
-	if(this->invalidateGlobalTransformation && this->transformShapes)
+	bool invalidateGlobalTransformation = this->invalidateGlobalTransformation;
+
+	if(this->invalidateGlobalTransformation)
 	{
 		Entity::transformShapes(this);
 
@@ -1411,7 +1417,7 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
 
-	this->transformShapes = true;
+	this->transformShapes = invalidateGlobalTransformation;
 }
 
 /**
