@@ -366,8 +366,6 @@ Entity Stage::doAddChildEntity(const PositionedEntity* const positionedEntity, b
 
 			// apply transformations
 			Container::initialTransform(entity, &neutralEnvironmentTransformation, true);
-			Container::setupShapes(entity);
-
 
 			if(!this->stageSpec->streaming.deferred)
 			{

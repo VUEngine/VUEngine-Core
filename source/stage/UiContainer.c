@@ -75,7 +75,6 @@ void UIContainer::addEntities(PositionedEntity* entities)
 			// apply transformations
 			Transformation environmentTransform = Container::getEnvironmentTransform(this);
 			Container::initialTransform(entity, &environmentTransform, true);
-			Container::setupShapes(entity);
 
 			SpriteManager::writeTextures(SpriteManager::getInstance());
 
