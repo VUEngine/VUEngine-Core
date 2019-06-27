@@ -341,6 +341,15 @@ void Game::start(GameState state)
 			// execute game frame
 			Game::run(this);
 
+#ifdef __ALERT_FOR_TORN_FRAMES
+		if(this->currentFrameEnded)
+		{
+			static int counter = 0;
+			PRINT_TEXT("Torn Frames:", 0, 25);
+			PRINT_INT(++counter, 13, 25);
+		}
+#endif
+
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "end frame";
 #endif
@@ -391,15 +400,6 @@ void Game::start(GameState state)
 				PRINT_TIME(20, 0);
 				Game::showCurrentGameFrameProfiling(this, 1, 0);
 			}
-#endif
-
-#ifdef __ALERT_FOR_TORN_FRAMES
-		if(this->currentFrameEnded)
-		{
-			static int counter = 0;
-			PRINT_TEXT("Torn Frames:", 0, 25);
-			PRINT_INT(++counter, 13, 25);
-		}
 #endif
 
 #ifdef __PROFILE_GAME
