@@ -56,7 +56,8 @@ PLUGIN_MAKEFILE=$(ENGINE_HOME)/makefile
 
 # Which directories will contain source files
 ifeq ($(SCRAMBLE_BINARY),1)
-SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print | sort -R)
+SOURCES_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
+SOURCES_DIRS := $(shell find $(MY_HOME)/source -type d -print | sort -R) $(SOURCES_DIRS)
 else
 SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)
 endif
