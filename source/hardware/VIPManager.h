@@ -53,6 +53,7 @@
 #define	__DPRST			0x0001	// RESET VPU COUNTER AND WAIT __FCLK
 
 #define	__SBOUT			0x8000	// In FrameBuffer drawing included
+#define	__SBCOUNT		0x1F00	// Current bloc being drawn
 #define	__OVERTIME		0x0010	// Processing
 #define	__XPBSYR		0x000C	// In the midst of drawing processing reset
 #define	__XPBSY1		0x0008	// In the midst of FrameBuffer 1 picture editing

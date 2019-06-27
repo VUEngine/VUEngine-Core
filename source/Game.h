@@ -35,7 +35,7 @@
 #include <PhysicalWorld.h>
 #include <VIPManager.h>
 #include <CommunicationManager.h>
-
+#include <Profiler.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,6 +65,8 @@ singleton class Game : Object
 	GameState autoPauseState;
 	// current save data manager
 	Object saveDataManager;
+	//
+	Profiler profiler;
 	//
 	Camera camera;
 	// game's next state
@@ -135,6 +137,7 @@ singleton class Game : Object
 	void registerSaveDataManager(Object saveDataManager);
 	Object getSaveDataManager();
 	long getRandomSeed();
+	void startProfiling();
 }
 
 

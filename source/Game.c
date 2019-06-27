@@ -70,12 +70,6 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#ifdef __PROFILE_GAME
-#ifndef __REGISTER_LAST_PROCESS_NAME
-#define __REGISTER_LAST_PROCESS_NAME
-#endif
-#endif
-
 enum StateOperations
 {
 	kSwapState = 0,
@@ -89,12 +83,17 @@ enum StateOperations
 //											CLASS'S DEFINITION
 //---------------------------------------------------------------------------------------------------------
 
+#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
+static char* _processNameDuringFRAMESTART = NULL;
+#endif
+
+#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
+static char* _processNameDuringXPEND = NULL;
+#endif
+
 #ifdef __PROFILE_GAME
 
 bool _updateProfiling = false;
-
-static char* _processNameDuringFRAMESTART = NULL;
-static char* _processNameDuringXPEND = NULL;
 
 static s16 _gameFrameRealDuration = 0;
 static s16 _gameFrameDurationAverage = 0;
@@ -220,6 +219,7 @@ void Game::constructor()
 	this->vipManager = VIPManager::getInstance();
 	this->timerManager = TimerManager::getInstance();
 	this->communicationManager = CommunicationManager::getInstance();
+	this->profiler = Profiler::getInstance();
 
 	SoundManager::getInstance();
 	CharSetManager::getInstance();
@@ -397,8 +397,8 @@ void Game::start(GameState state)
 		if(this->currentFrameEnded)
 		{
 			static int counter = 0;
-			PRINT_TEXT("Torn Frames:", 0, 26);
-			PRINT_INT(counter++, 13, 26);
+			PRINT_TEXT("Torn Frames:", 0, 25);
+			PRINT_INT(++counter, 13, 25);
 		}
 #endif
 
@@ -605,7 +605,7 @@ u32 Game::processUserInput()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "processing input";
+	this->lastProcessName = "input";
 #endif
 
 	// poll the user's input
@@ -744,7 +744,7 @@ u32 Game::dispatchDelayedMessages()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "processing messages";
+	this->lastProcessName = "messages";
 #endif
 
 #ifdef __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
@@ -809,7 +809,7 @@ void Game::updateLogic()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "updating logic";
+	this->lastProcessName = "logic";
 #endif
 
 	// update the game's logic
@@ -834,7 +834,7 @@ void Game::synchronizeGraphics()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "synchronizing graphics";
+	this->lastProcessName = "graphics";
 #endif
 
 	// prevent the VIPManager to modify the DRAM
@@ -848,7 +848,7 @@ void Game::synchronizeGraphics()
 	if(VIPManager::isRenderingPending(this->vipManager))
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = "rendering sprites";
+		this->lastProcessName = "sprites";
 #endif
 
 		SpriteManager::render(SpriteManager::getInstance());
@@ -877,7 +877,7 @@ void Game::updatePhysics()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "updating physics";
+	this->lastProcessName = "physics";
 #endif
 
 	// simulate physics
@@ -901,13 +901,13 @@ void Game::updateTransformations()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "focusing camera";
+	this->lastProcessName = "camera";
 #endif
 	// position the camera
 	Camera::focus(this->camera, true);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "updating transforms";
+	this->lastProcessName = "transforms";
 #endif
 
 	// apply world transformations
@@ -932,7 +932,7 @@ u32 Game::updateCollisions()
 
 	// process the collisions after the transformations have taken place
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "processing collisions";
+	this->lastProcessName = "collisions";
 #endif
 
 	// process collisions
@@ -960,7 +960,7 @@ bool Game::stream()
 #endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
-	this->lastProcessName = "streaming level";
+	this->lastProcessName = "streaming";
 #endif
 
 #ifdef __PROFILE_GAME
@@ -984,7 +984,7 @@ void Game::checkForNewState()
 	if(this->nextState)
 	{
 #ifdef __REGISTER_LAST_PROCESS_NAME
-		this->lastProcessName = "checking for new state";
+		this->lastProcessName = "new state";
 #endif
 		Game::setNextState(this, this->nextState);
 
@@ -1103,23 +1103,23 @@ void Game::run()
 {
 	// reset timer
 	TimerManager::resetMilliseconds(this->timerManager);
-
+	
 	// Generate random seed
 	this->randomSeed = Utilities::randomSeed();
 
-	// sync entities with their sprites
+	// sync entities with their sprites	
 	Game::synchronizeGraphics(this);
 
-	// process user's input
+	// process user's input	
 	bool skipNonCriticalProcesses = Game::processUserInput(this);
 
-	// simulate physics
+	// simulate physics	
 	Game::updatePhysics(this);
 
-	// apply transformations
+	// apply transformations	
 	Game::updateTransformations(this);
 
-	// process collisions
+	// process collisions	
 	skipNonCriticalProcesses |= Game::updateCollisions(this);
 
 	// dispatch delayed messages
@@ -1129,12 +1129,12 @@ void Game::run()
 	// skip streaming if the game frame has been too busy
 	if(!skipNonCriticalProcesses)
 	{
-		// stream
+		// stream	
 		Game::stream(this);
 	}
 #endif
 
-	// update game's logic
+	// update game's logic	
 	Game::updateLogic(this);
 
 	// this is the moment to check if the game's state
@@ -1144,7 +1144,8 @@ void Game::run()
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 void Game::setLastProcessName(char* processName)
-{	this->lastProcessName = processName;
+{	
+	this->lastProcessName = processName;
 }
 #endif
 
@@ -1375,20 +1376,47 @@ void Game::wait(u32 milliSeconds)
 	TimerManager::wait(this->timerManager, milliSeconds);
 }
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 void Game::saveProcessNameDuringFRAMESTART()
 {
 	ASSERT(this, "Game::saveProcessNameDuringFRAMESTART: this null");
 
 	_processNameDuringFRAMESTART = this->lastProcessName;
-}
 
+#ifdef __SHOW_PROCESS_NAME_DURING_FRAMESTART
+	PRINT_TEXT("F START:           ", 0, 26);
+	PRINT_TEXT(_processNameDuringFRAMESTART, 9, 26);
+
+	if(strcmp("end frame", _processNameDuringFRAMESTART))
+	{
+		PRINT_TEXT(_processNameDuringFRAMESTART, 25, 26);
+		PRINT_TEXT("    ", 44, 26);
+		PRINT_INT(TimerManager::getMillisecondsElapsed(this->timerManager), 44, 26);
+	}
+#endif
+}
+#endif
+
+#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 void Game::saveProcessNameDuringXPEND()
 {
 	ASSERT(this, "Game::saveProcessNameDuringXPEND: this null");
 
 	_processNameDuringXPEND = this->lastProcessName;
+
+#ifdef __SHOW_PROCESS_NAME_DURING_XPEND
+	PRINT_TEXT("XPEND:            ", 0, 27);
+	PRINT_TEXT(_processNameDuringXPEND, 9, 27);
+
+	if(strcmp("end frame", _processNameDuringXPEND))
+	{
+		PRINT_TEXT(_processNameDuringXPEND, 25, 27);
+		PRINT_TEXT("    ", 44, 27);
+		PRINT_INT(TimerManager::getMillisecondsElapsed(this->timerManager), 44, 27);
+	}
+#endif
 }
+
 #endif
 
 #ifdef __SHOW_GAME_PROFILING
@@ -1902,3 +1930,7 @@ long Game::getRandomSeed()
 	return this->randomSeed;
 }
 
+void Game::startProfiling()
+{
+	Profiler::initialize(this->profiler);
+}

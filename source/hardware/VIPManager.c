@@ -220,7 +220,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 		{
 			case __FRAMESTART:
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_PROCESS_NAME_DURING_FRAMESTART
 				Game::saveProcessNameDuringFRAMESTART(Game::getInstance());
 #endif
 
@@ -245,8 +245,12 @@ void VIPManager::processInterrupt(u16 interrupt)
 				this->processingXPEND = true;
 				this->renderingCompleted = false;
 
-#ifdef __PROFILE_GAME
+#ifdef __REGISTER_PROCESS_NAME_DURING_XPEND
 				Game::saveProcessNameDuringXPEND(Game::getInstance());
+#endif
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+				//Game::setLastProcessName(Game::getInstance(), "VIP interrupt");
 #endif
 
 #ifdef __PROFILE_GAME
@@ -265,6 +269,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 					{
 						// write to DRAM
 						SpriteManager::render(_spriteManager);
+						
 						this->renderingCompleted = true;
 					}
 
@@ -327,10 +332,6 @@ void VIPManager::processInterrupt(u16 interrupt)
  */
 void VIPManager::processFrameBuffers()
 {
-#ifdef __REGISTER_LAST_PROCESS_NAME
-	Game::setLastProcessName(Game::getInstance(), "rendering");
-#endif
-
 	// draw 3d objects
 	WireframeManager::drawWireframes(_wireframeManager);
 
@@ -656,4 +657,26 @@ void VIPManager::registerCurrentDrawingFrameBufferSet()
 u32 VIPManager::getCurrentDrawingframeBufferSet()
 {
 	return this->currentDrawingFrameBufferSet;
+}
+
+/**
+ * Retrieve the block being drawn by the VIP
+ *
+ * @return	The number of the block being drawn by the VIP
+ */
+s16 VIPManager::getCurrentBlockBeingDrawn()
+{
+	if(_vipRegisters[__XPSTTS] & __SBOUT)
+	{
+		return (_vipRegisters[__XPSTTS] & __SBCOUNT) >> 8;
+	}
+
+	if(!(_vipRegisters[__XPSTTS] & __XPBSYR))
+	{
+		return -1;
+	}
+
+	while(!(_vipRegisters[__XPSTTS] & __SBOUT));
+
+	return (_vipRegisters[__XPSTTS] & __SBCOUNT) >> 8;
 }
