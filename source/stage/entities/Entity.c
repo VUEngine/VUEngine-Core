@@ -1401,8 +1401,6 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 		this->invalidateSprites |= invalidateTransformationFlag | Entity::updateSpritePosition(this) | Entity::updateSpriteRotation(this) | Entity::updateSpriteScale(this);
 	}
 
-	bool invalidateGlobalTransformation = this->invalidateGlobalTransformation;
-
 	if(this->invalidateGlobalTransformation)
 	{
 		Entity::transformShapes(this);

@@ -129,7 +129,7 @@ void Profiler::initialize()
 			};
 
 			UIContainer::addEntities(uiContainer, entities);
-			Entity profilingEntity = !isDeleted(uiContainer) ? UIContainer::getChildByName(uiContainer, "Profile", true) : NULL;
+			Entity profilingEntity = !isDeleted(uiContainer) ? Entity::safeCast(UIContainer::getChildByName(uiContainer, "Profile", true)) : NULL;
 			this->profilingSprite = !isDeleted(uiContainer) ? VirtualList::front(Entity::getSprites(profilingEntity)) : NULL;
 
 			NM_ASSERT(!isDeleted(this->profilingSprite), "ERROR");
