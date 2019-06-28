@@ -259,9 +259,8 @@ void VIPManager::processInterrupt(u16 interrupt)
 #endif
 
 					// prevent VIP's drawing operations
-//#ifndef __ALERT_VIP_OVERTIME
 					VIPManager::disableDrawing(this);
-//#endif
+
 					// to allow timer interrupts
 					VIPManager::enableInterrupt(this, __FRAMESTART);
 
