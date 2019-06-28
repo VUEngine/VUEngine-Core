@@ -1061,8 +1061,6 @@ void Entity::transformShapes()
 			}
 		}
 	}
-
-	this->transformShapes = false;
 }
 
 bool Entity::transformShapeAtSpecIndex(int shapeSpecIndex)
@@ -1416,8 +1414,6 @@ void Entity::transform(const Transformation* environmentTransform, u8 invalidate
 	{
 		Base::transform(this, environmentTransform, invalidateTransformationFlag);
 	}
-
-	this->transformShapes = invalidateGlobalTransformation;
 }
 
 /**

@@ -135,6 +135,10 @@ void Actor::setSpec(void* actorSpec)
 void Actor::setLocalPosition(const Vector3D* position)
 {
 	Vector3D displacement = this->transformation.localPosition;
+
+	// Must transform shapes after everything is setup
+	bool transformShapes = this->transformShapes;
+	this->transformShapes = false;
 	Base::setLocalPosition(this, position);
 
 	displacement.x -= this->transformation.localPosition.x;
@@ -152,6 +156,7 @@ void Actor::setLocalPosition(const Vector3D* position)
 
 	this->invalidateGlobalTransformation = (displacement.x ? __X_AXIS: 0) | (displacement.y ? __Y_AXIS: 0) | (displacement.y ? __Z_AXIS: 0);
 
+	this->transformShapes = transformShapes;
 	Actor::transformShapes(this);
 }
 
@@ -281,6 +286,7 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 {
 	// apply environment transformation
 	Container::applyEnvironmentToTransformation(this, environmentTransform);
+	bool transformShapes = this->transformShapes;
 
 	if(this->body)
 	{
@@ -304,6 +310,8 @@ void Actor::transform(const Transformation* environmentTransform, u8 invalidateT
 
 	// call base
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
+
+	this->transformShapes = transformShapes;
 
 	this->previousRotation = this->transformation.localRotation;
 }
