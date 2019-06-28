@@ -345,8 +345,8 @@ void Game::start(GameState state)
 		if(this->currentFrameEnded)
 		{
 			static int counter = 0;
-			PRINT_TEXT("Torn Frames:", 0, 25);
-			PRINT_INT(++counter, 13, 25);
+			PRINT_TEXT("Torn Frames:", 0, 26);
+			PRINT_INT(++counter, 13, 26);
 		}
 #endif
 
