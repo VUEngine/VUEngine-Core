@@ -78,7 +78,7 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	this->nextSpawnTime = this->paused ? 0 : ParticleSystem::computeNextSpawnTime(this);
 
 	// calculate the number of sprite specs
-	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->spritesSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
+	for(this->numberOfSpriteSpecs = 0; 0 <= this->numberOfSpriteSpecs && this->particleSystemSpec->spriteSpecs[this->numberOfSpriteSpecs]; this->numberOfSpriteSpecs++);
 
 	ASSERT(0 < this->numberOfSpriteSpecs, "ParticleSystem::constructor: 0 sprite specs");
 }
@@ -385,7 +385,7 @@ Particle ParticleSystem::spawnParticle()
 	}
 
 	// call the appropriate allocator to support inheritance
-	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, (const SpriteSpec*)this->particleSystemSpec->spritesSpecs[spriteSpecIndex], lifeSpan);
+	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex], lifeSpan);
 	Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
 	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemSpec->movementType);
 
