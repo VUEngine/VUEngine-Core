@@ -304,7 +304,7 @@ bool Particle::isVisible()
 	}
 
 	// check y visibility
-	if((unsigned)(spritePosition.y + halfWidth) >= (unsigned)(__SCREEN_HEIGHT + halfWidth))
+	if((unsigned)(spritePosition.y + halfHeight) >= (unsigned)(__SCREEN_HEIGHT + halfWidth))
 	{
 		return false;
 	}
