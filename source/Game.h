@@ -128,6 +128,7 @@ singleton class Game : Object
 	bool isInStageEditor();
 	bool isInAnimationInspector();
 	void currentFrameEnded();
+	bool hasCurrentFrameEnded();
 	void increaseGameFrameDuration(u32 gameFrameDuration);
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();

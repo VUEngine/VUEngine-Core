@@ -1099,6 +1099,12 @@ void Game::currentFrameEnded()
 	this->currentFrameEnded = true;
 }
 
+bool Game::hasCurrentFrameEnded()
+{
+	// raise flag to allow the next frame to start
+	return this->currentFrameEnded;
+}
+
 void Game::run()
 {
 	// reset timer

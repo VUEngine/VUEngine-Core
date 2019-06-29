@@ -199,6 +199,7 @@ static void VIPManager::interruptHandler()
 		VIPManager::enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
 	}
 }
+
 /**
  * Process interrupt method
  */
@@ -268,6 +269,14 @@ void VIPManager::processInterrupt(u16 interrupt)
 					{
 						// write to DRAM
 						SpriteManager::render(_spriteManager);
+#ifdef __ALERT_VIP_OVERTIME
+						if(Game::hasCurrentFrameEnded(Game::getInstance()))
+						{
+							static u32 count = 0;
+							PRINT_TEXT("VIP frame ended! [   ]", 0, 27);
+							PRINT_INT(++count, 18, 27);
+						}
+#endif
 						
 						this->renderingCompleted = true;
 					}
@@ -314,8 +323,8 @@ void VIPManager::processInterrupt(u16 interrupt)
 #ifdef __ALERT_VIP_OVERTIME
 				{
 					static u32 count = 0;
-					PRINT_TEXT("VIP Overtime! (   )", 0, 27);
-					PRINT_INT(++count, 15, 27);
+					PRINT_TEXT("VIP Overtime!    (   )", 0, 27);
+					PRINT_INT(++count, 18, 27);
 				}
 #endif
 
