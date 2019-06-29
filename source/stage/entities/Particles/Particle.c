@@ -25,8 +25,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Particle.h>
-#include <PhysicalWorld.h>
-#include <ObjectAnimatedSprite.h>
+#include <SpriteManager.h>
 #include <Game.h>
 #include <Clock.h>
 
@@ -58,7 +57,7 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
 	this->particleSpec = particleSpec;
 	this->spriteSpec = spriteSpec;
 	this->lifeSpan = lifeSpan;
-	this->objectSprite = NULL;
+	this->sprite = NULL;
 	this->position = Vector3D::zero();
 
 	Particle::addSprite(this);
@@ -69,10 +68,10 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
  */
 void Particle::destructor()
 {
-	if(this->objectSprite)
+	if(this->sprite)
 	{
-		delete this->objectSprite;
-		this->objectSprite = NULL;
+		delete this->sprite;
+		this->sprite = NULL;
 	}
 
 	// destroy the super Container
@@ -90,14 +89,14 @@ void Particle::addSprite()
 	ASSERT(this->spriteSpec->allocator, "Particle::load: no sprite allocator");
 
 	// call the appropriate allocator to support inheritance
-	this->objectSprite = ObjectSprite::safeCast(((Sprite (*)(const SpriteSpec*, Object)) this->spriteSpec->allocator)((SpriteSpec*)this->spriteSpec, Object::safeCast(this)));
+	this->sprite = SpriteManager::createSprite(SpriteManager::getInstance(), (SpriteSpec*)this->spriteSpec, Object::safeCast(this));
 
-	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
+	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription)
 	{
-		Sprite::play(this->objectSprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
+		Sprite::play(this->sprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
 	}
 
-	ASSERT(this->objectSprite, "Particle::addSprite: sprite not created");
+	ASSERT(this->sprite, "Particle::addSprite: sprite not created");
 }
 
 /**
@@ -123,7 +122,7 @@ u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 			return true;
 		}
 
-		Sprite::updateAnimation(this->objectSprite);
+		Sprite::updateAnimation(this->sprite);
 	}
 
 	return false;
@@ -141,13 +140,13 @@ void Particle::synchronizeGraphics(bool updateSpritePosition)
 		return;
 	}
 
-	ASSERT(this->objectSprite, "Particle::synchronizeGraphics: null objectSprite");
+	ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
 	// calculate sprite's parallax
-	Sprite::calculateParallax(this->objectSprite, this->position.z);
+	Sprite::calculateParallax(this->sprite, this->position.z);
 
 	// update sprite's 2D position
-	Sprite::position(this->objectSprite, &this->position);
+	Sprite::position(this->sprite, &this->position);
 }
 
 /**
@@ -214,13 +213,13 @@ const Vector3D* Particle::getPosition()
  */
 void Particle::show()
 {
-	ASSERT(this->objectSprite, "Particle::show: null objectSprite");
+	ASSERT(this->sprite, "Particle::show: null sprite");
 
-	Sprite::show(this->objectSprite);
+	Sprite::show(this->sprite);
 
-	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription && ObjectAnimatedSprite::safeCast(this->objectSprite))
+	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription)
 	{
-		Sprite::play(this->objectSprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
+		Sprite::play(this->sprite, this->particleSpec->animationDescription, this->particleSpec->initialAnimation);
 	}
 }
 
@@ -229,9 +228,9 @@ void Particle::show()
  */
 void Particle::hide()
 {
-	ASSERT(this->objectSprite, "Particle::hide: null objectSprite");
+	ASSERT(this->sprite, "Particle::hide: null sprite");
 
-	Sprite::hide(this->objectSprite);
+	Sprite::hide(this->sprite);
 }
 
 /**
@@ -258,7 +257,7 @@ void Particle::resume()
 {
 	Particle::addSprite(this);
 
-	NM_ASSERT(this->objectSprite, "Particle::resume: null objectSprite");
+	NM_ASSERT(this->sprite, "Particle::resume: null sprite");
 }
 
 /**
@@ -266,9 +265,9 @@ void Particle::resume()
  */
 void Particle::suspend()
 {
-	delete this->objectSprite;
+	delete this->sprite;
 
-	this->objectSprite = NULL;
+	this->sprite = NULL;
 }
 
 /**
@@ -285,7 +284,7 @@ void Particle::reset()
  */
 bool Particle::isVisible()
 {
-	PixelVector spritePosition = Sprite::getDisplacedPosition(this->objectSprite);
+	PixelVector spritePosition = Sprite::getDisplacedPosition(this->sprite);
 
 	// check x visibility
 	if((unsigned)(spritePosition.x + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_WIDTH) + __PARTICLE_VISIBILITY_PADDING))

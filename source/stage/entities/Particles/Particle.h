@@ -28,7 +28,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SpatialObject.h>
-#include <ObjectSprite.h>
+#include <Sprite.h>
 #include <Body.h>
 
 
@@ -81,8 +81,8 @@ class Particle : SpatialObject
 	const ParticleSpec* particleSpec;
 	// Particle's SpriteSpec
 	const SpriteSpec* spriteSpec;
-	// OBJ based sprite
-	ObjectSprite objectSprite;
+	// sprite
+	Sprite sprite;
 	// Particle's life span in milliseconds
 	int lifeSpan;
 
