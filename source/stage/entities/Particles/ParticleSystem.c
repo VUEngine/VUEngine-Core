@@ -209,7 +209,7 @@ void ParticleSystem::update(u32 elapsedTime)
 
 	for(; node; node = node->next)
 	{
-		if( Particle::update(node->data, elapsedTime, behavior) || !Particle::isVisible(node->data))
+		if(Particle::update(node->data, elapsedTime, behavior))
 		{
 			ParticleSystem::particleExpired(this, Particle::safeCast(node->data));
 		}

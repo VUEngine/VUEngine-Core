@@ -34,7 +34,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PARTICLE_VISIBILITY_PADDING	__PIXELS_TO_METERS(30)
+#define __PARTICLE_VISIBILITY_PADDING	8
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -286,20 +286,31 @@ bool Particle::isVisible()
 {
 	PixelVector spritePosition = Sprite::getDisplacedPosition(this->sprite);
 
+	Texture texture = Sprite::getTexture(this->sprite);
+
+	s16 halfWidth = __PARTICLE_VISIBILITY_PADDING;
+	s16 halfHeight = __PARTICLE_VISIBILITY_PADDING;
+
+	if(!isDeleted(texture))
+	{
+		halfWidth = Texture::getCols(texture) << 2;
+		halfHeight = Texture::getRows(texture) << 2;
+	}
+
 	// check x visibility
-	if((unsigned)(spritePosition.x + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_WIDTH) + __PARTICLE_VISIBILITY_PADDING))
+	if((unsigned)(spritePosition.x + halfWidth) >= (unsigned)(__SCREEN_WIDTH + halfWidth))
 	{
 		return false;
 	}
 
 	// check y visibility
-	if((unsigned)(spritePosition.y + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_HEIGHT) + __PARTICLE_VISIBILITY_PADDING))
+	if((unsigned)(spritePosition.y + halfWidth) >= (unsigned)(__SCREEN_HEIGHT + halfWidth))
 	{
 		return false;
 	}
 
 	// check z visibility
-	if((unsigned)(spritePosition.z + __PARTICLE_VISIBILITY_PADDING) >= (unsigned)(__I_TO_FIX10_6(__SCREEN_HEIGHT) + __PARTICLE_VISIBILITY_PADDING))
+	if(spritePosition.z > __SCREEN_DEPTH || spritePosition.z < -(__SCREEN_DEPTH >> 1))
 	{
 		return false;
 	}
