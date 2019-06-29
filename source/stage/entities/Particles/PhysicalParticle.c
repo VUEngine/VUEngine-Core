@@ -86,7 +86,7 @@ void PhysicalParticle::destructor()
  * @param behavior
  * @return				Boolean that tells whether a body was set active(?)
  */
-u32 PhysicalParticle::update(u32 elapsedTime, void (* behavior)(Particle particle))
+bool PhysicalParticle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(0 <= this->lifeSpan && Base::update(this, elapsedTime, behavior))
 	{

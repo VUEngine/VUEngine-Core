@@ -74,7 +74,7 @@ class PhysicalParticle : Particle
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void setPosition(const Vector3D* position);
 	override void addForce(const Force* force, u32 movementType);
-	override u32 update(u32 elapsedTime, void (* behavior)(Particle particle));
+	override bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	override void setMass(fix10_6 mass);
 	override void hide();
 	override void reset();

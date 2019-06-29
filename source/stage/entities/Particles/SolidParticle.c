@@ -113,13 +113,13 @@ void SolidParticle::destructor()
 /**
  * Update
  *
- * @param timeElapsed
+ * @param elapsedTime
  * @param behavior
  * @return				Boolean
  */
-u32 SolidParticle::update(int timeElapsed, void (* behavior)(Particle particle))
+bool SolidParticle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 {
-	u32 expired = Base::update(this, timeElapsed, behavior);
+	bool expired = Base::update(this, elapsedTime, behavior);
 
 	if(0 <= this->lifeSpan)
 	{

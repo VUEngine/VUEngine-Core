@@ -91,7 +91,7 @@ class SolidParticle : PhysicalParticle
 	/// @publicsection
 	void constructor(const SolidParticleSpec* solidParticleSpec, const SpriteSpec* spriteSpec, int lifeSpan);
 	Shape getShape();
-	override u32 update(int timeElapsed, void (* behavior)(Particle particle));
+	override bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	override fix10_6 getWidth();
 	override fix10_6 getHeight();
 	override fix10_6 getDepth();
