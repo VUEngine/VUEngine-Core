@@ -54,7 +54,7 @@ typedef struct ParticleSystemSpec
 	u8 maximumNumberOfAliveParticles;
 
 	/// array of sprites to select randomly
-	const ObjectSpriteSpec** objectSpriteSpecs;
+	const SpriteSpec** spriteSpecs;
 
 	/// auto start
 	bool autoStart;
