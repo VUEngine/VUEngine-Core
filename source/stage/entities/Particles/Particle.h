@@ -91,7 +91,7 @@ class Particle : SpatialObject
 	void setLifeSpan(int lifeSpan);
 	bool isVisible();
 	virtual void addForce(const Force* force, u32 movementType);
-	virtual u32 update(u32 elapsedTime, void (* behavior)(Particle particle));
+	virtual bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	virtual void synchronizeGraphics(bool updateSpritePosition);
 	virtual void transform();
 	virtual void resume();

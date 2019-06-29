@@ -34,7 +34,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PARTICLE_VISIBILITY_PADDING	__I_TO_FIX10_6(30)
+#define __PARTICLE_VISIBILITY_PADDING	__PIXELS_TO_METERS(30)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ void Particle::addSprite()
  * @param behavior
  * @return				Boolean that tells whether a body was set active(?)
  */
-u32 Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
+bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 {
 	if(0 <= this->lifeSpan)
 	{
