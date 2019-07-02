@@ -95,7 +95,7 @@ void ParticleSystem::destructor()
 	if(this->particles)
 	{
 		// the remover handles all the cleaning
-		if(particleRemover)
+		if(!isDeleted(particleRemover))
 		{
 			ParticleRemover::deleteParticles(particleRemover, this->particles);
 		}
@@ -117,7 +117,7 @@ void ParticleSystem::destructor()
 	if(this->recyclableParticles)
 	{
 		// the remover handles all the cleaning
-		if(particleRemover)
+		if(!isDeleted(particleRemover))
 		{
 			ParticleRemover::deleteParticles(particleRemover, this->recyclableParticles);
 		}

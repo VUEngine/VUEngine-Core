@@ -68,9 +68,9 @@ void Particle::constructor(const ParticleSpec* particleSpec, const SpriteSpec* s
  */
 void Particle::destructor()
 {
-	if(this->sprite)
+	if(!isDeleted(this->sprite))
 	{
-		delete this->sprite;
+		SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
 		this->sprite = NULL;
 	}
 

@@ -145,7 +145,6 @@ void SpriteManager::cleanUp()
 		delete this->objectSpriteContainers;
 		this->objectSpriteContainers = NULL;
 	}
-
 }
 
 /**
