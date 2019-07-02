@@ -119,9 +119,7 @@ void VIPManager::destructor()
  */
 void VIPManager::enableDrawing()
 {
-#ifdef __STRICT_RENDERING
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
-#endif
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 }
 
@@ -287,8 +285,10 @@ void VIPManager::processInterrupt(u16 interrupt)
 					// write to the frame buffers
 					VIPManager::processFrameBuffers(this);
 
+#ifdef __STRICT_RENDERING
 					// allow VIP's drawing operations
 					VIPManager::enableDrawing(this);
+#endif
 
 					// flag completions
 					this->drawingEnded = true;
