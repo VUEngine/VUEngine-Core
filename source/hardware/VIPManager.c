@@ -119,7 +119,9 @@ void VIPManager::destructor()
  */
 void VIPManager::enableDrawing()
 {
+#ifdef __STRICT_RENDERING
 	while(_vipRegisters[__XPSTTS] & __XPBSYR);
+#endif
 	_vipRegisters[__XPCTRL] = _vipRegisters[__XPSTTS] | __XPEN;
 }
 
@@ -260,8 +262,9 @@ void VIPManager::processInterrupt(u16 interrupt)
 #endif
 
 					// prevent VIP's drawing operations
+#ifdef __STRICT_RENDERING
 					VIPManager::disableDrawing(this);
-
+#endif
 					// to allow timer interrupts
 					VIPManager::enableInterrupt(this, __FRAMESTART);
 
