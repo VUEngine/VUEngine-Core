@@ -142,10 +142,10 @@ u32 CollisionManager::update(Clock clock)
 
 		// not ready for collision checks if out of the camera
 		if(
-			surroundingRightBox.x0 - _cameraPosition->x > __I_TO_FIX10_6(_cameraFrustum->x1) ||
-			surroundingRightBox.x1 - _cameraPosition->x < __I_TO_FIX10_6(_cameraFrustum->x0) ||
-			surroundingRightBox.y0 - _cameraPosition->y > __I_TO_FIX10_6(_cameraFrustum->y1) ||
-			surroundingRightBox.y1 - _cameraPosition->y < __I_TO_FIX10_6(_cameraFrustum->y0)
+			surroundingRightBox.x0 - _cameraPosition->x > __PIXELS_TO_METERS(_cameraFrustum->x1) ||
+			surroundingRightBox.x1 - _cameraPosition->x < __PIXELS_TO_METERS(_cameraFrustum->x0) ||
+			surroundingRightBox.y0 - _cameraPosition->y > __PIXELS_TO_METERS(_cameraFrustum->y1) ||
+			surroundingRightBox.y1 - _cameraPosition->y < __PIXELS_TO_METERS(_cameraFrustum->y0)
 		)
 		{
 			shape->isVisible = false;
