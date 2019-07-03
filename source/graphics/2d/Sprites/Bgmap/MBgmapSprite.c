@@ -398,22 +398,8 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	}
 	else
 	{
-		if(!_cameraFrustum->x0 && __SCREEN_WIDTH == _cameraFrustum->x1)
-		{
-			worldPointer->gx = worldPointer->gx - __ABS(worldPointer->gp);
-        	worldPointer->w = _cameraFrustum->x1 + (__ABS(worldPointer->gp) << 1) - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
-		}
-		else
-		{
-			int w = _cameraFrustum->x1 - mxDisplacement - __WORLD_SIZE_DISPLACEMENT;
-
-			if(0 > w || w + worldPointer->gx >= _cameraFrustum->x1)
-			{
-				w = _cameraFrustum->x1 - worldPointer->gx;
-			}
-
-			worldPointer->w = w;
-		}
+		worldPointer->gx = _cameraFrustum->x0 + __ABS(worldPointer->gp);
+		worldPointer->w = _cameraFrustum->x1 - (__ABS(worldPointer->gp) / 2) - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
 	}
 
 	if(!this->mBgmapSpriteSpec->yLoop)
