@@ -398,8 +398,10 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 	}
 	else
 	{
-		worldPointer->gx = _cameraFrustum->x0 + __ABS(worldPointer->gp);
-		worldPointer->w = _cameraFrustum->x1 - (__ABS(worldPointer->gp) / 2) - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
+		worldPointer->mp = - worldPointer->gp;
+		worldPointer->gp = 0;
+		worldPointer->gx = _cameraFrustum->x0;
+		worldPointer->w = _cameraFrustum->x1 - _cameraFrustum->x0 - __WORLD_SIZE_DISPLACEMENT;
 	}
 
 	if(!this->mBgmapSpriteSpec->yLoop)
