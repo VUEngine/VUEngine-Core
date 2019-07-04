@@ -362,7 +362,7 @@ bool SpriteManager::disposeSpritesProgressively()
 
 		Sprite sprite = Sprite::safeCast(VirtualList::popFront(this->spritesToDispose));
 
-		SpriteManager::unregisterSprite(SpriteManager::getInstance(), sprite);
+		SpriteManager::unregisterSprite(this, sprite);
 
 		delete sprite;
 
@@ -714,7 +714,7 @@ void SpriteManager::render()
 	{
 		this->freeLayer = __TOTAL_LAYERS - 1;
 	}
-	else
+	else if(!this->lockSpritesLists)
 	{
 		this->freeLayer = (Sprite::safeCast(node->data))->worldLayer - 1;
 	}
@@ -948,6 +948,8 @@ int SpriteManager::getTotalPixelsDrawn()
  */
 void SpriteManager::print(int x, int y, bool resumed)
 {
+	SpriteManager::computeTotalPixelsDrawn(this);
+
 	Printing::text(Printing::getInstance(), "SPRITES USAGE", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Total pixels:                ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), this->totalPixelsDrawn, x + 18, y, NULL);
