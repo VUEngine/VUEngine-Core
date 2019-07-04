@@ -490,7 +490,7 @@ void SpriteManager::registerSprite(Sprite sprite)
 
 		VirtualNode alreadyLoadedSpriteNode = VirtualList::find(this->sprites, sprite);
 
-		ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::registerSprite: sprite already registered");
+		NM_ASSERT(!alreadyLoadedSpriteNode, "SpriteManager::registerSprite: sprite already registered");
 
 		if(!alreadyLoadedSpriteNode)
 		{
@@ -509,17 +509,16 @@ void SpriteManager::registerSprite(Sprite sprite)
 
 			NM_ASSERT(0 < layer, "SpriteManager::registerSprite: no more layers");
 
+			Sprite::setWorldLayer(sprite, layer);
+
 			// add to the front: last element corresponds to the 31 WORLD
 			VirtualList::pushFront(this->sprites, sprite);
 
 			this->zSortingFirstNode = NULL;
 			this->zSortingSecondNode = NULL;
+
+			this->lockSpritesLists = false;
 		}
-
-		Sprite::setWorldLayer(sprite, layer);
-
-		this->lockSpritesLists = false;
-
 	}
 }
 
