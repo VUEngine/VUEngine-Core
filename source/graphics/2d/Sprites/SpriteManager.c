@@ -932,7 +932,10 @@ int SpriteManager::getTotalPixelsDrawn()
 	{
 		Sprite sprite = Sprite::safeCast(node->data);
 
-		totalPixelsToDraw += Sprite::getTotalPixels(sprite);
+		if(sprite->visible)
+		{
+			totalPixelsToDraw += Sprite::getTotalPixels(sprite);
+		}
 	}
 
 	return totalPixelsToDraw;
