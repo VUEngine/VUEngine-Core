@@ -504,15 +504,25 @@ void Sprite::update()
 }
 
 /**
+ * Update transparency
+ *
+ * @param evenFrame
+ */
+void Sprite::updateTransparency(bool evenFrame)
+{
+	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
+					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
+					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
+}
+
+/**
  * Render
  *
  * @param evenFrame
  */
 void Sprite::render(bool evenFrame)
 {
-	this->visible = (this->transparent == __TRANSPARENCY_NONE) ||
-					((this->transparent == __TRANSPARENCY_EVEN) && evenFrame) ||
-					((this->transparent == __TRANSPARENCY_ODD) && !evenFrame);
+	Sprite::updateTransparency(this, evenFrame);
 }
 
 /**
