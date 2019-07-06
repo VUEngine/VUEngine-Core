@@ -136,16 +136,15 @@ u32 CollisionManager::update(Clock clock)
 		shape->isVisible = true;
 
 		extern const Vector3D* _cameraPosition;
-		extern const CameraFrustum* _cameraFrustum;
 
 		RightBox surroundingRightBox =  Shape::getSurroundingRightBox(shape);
 
 		// not ready for collision checks if out of the camera
 		if(
-			surroundingRightBox.x0 - _cameraPosition->x > __PIXELS_TO_METERS(_cameraFrustum->x1) ||
-			surroundingRightBox.x1 - _cameraPosition->x < __PIXELS_TO_METERS(_cameraFrustum->x0) ||
-			surroundingRightBox.y0 - _cameraPosition->y > __PIXELS_TO_METERS(_cameraFrustum->y1) ||
-			surroundingRightBox.y1 - _cameraPosition->y < __PIXELS_TO_METERS(_cameraFrustum->y0)
+			surroundingRightBox.x0 - _cameraPosition->x > __SCREEN_WIDTH_METERS ||
+			surroundingRightBox.x1 - _cameraPosition->x < 0 ||
+			surroundingRightBox.y0 - _cameraPosition->y > __SCREEN_HEIGHT_METERS ||
+			surroundingRightBox.y1 - _cameraPosition->y < 0
 		)
 		{
 			shape->isVisible = false;
