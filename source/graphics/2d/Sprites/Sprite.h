@@ -220,6 +220,7 @@ abstract class Sprite : Object
 	AnimationController getAnimationController();
 	void disposed();
 	bool isDisposed();
+	void updateTransparency(bool evenFrame);
 	virtual void addDisplacement(const PixelVector* displacement) = 0;
 	virtual void applyAffineTransformations();
 	virtual void applyHbiasEffects();

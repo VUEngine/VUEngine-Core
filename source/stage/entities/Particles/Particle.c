@@ -135,11 +135,6 @@ bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
  */
 void Particle::synchronizeGraphics(bool updateSpritePosition)
 {
-	if(!updateSpritePosition)
-	{
-		return;
-	}
-
 	ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
 	// calculate sprite's parallax
@@ -194,8 +189,6 @@ void Particle::changeMass()
 void Particle::setPosition(const Vector3D* position)
 {
 	this->position = *position;
-
-	Particle::synchronizeGraphics(this, true);
 }
 
 /**

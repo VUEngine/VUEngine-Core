@@ -332,6 +332,8 @@ void MBgmapSprite::render(bool evenFrame __attribute__ ((unused)))
 		return;
 	}
 
+	MBgmapSprite::updateTransparency(this, evenFrame);
+
 	static WorldAttributes* worldPointer = NULL;
 	worldPointer = &_worldAttributesBaseAddress[this->worldLayer];
 
