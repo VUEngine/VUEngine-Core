@@ -1,0 +1,9 @@
+{
+	"images": {
+		"folders": {
+			"assets/fonts/VUEngineFont": {
+				"template": "font"
+			}
+		}
+	}
+}
