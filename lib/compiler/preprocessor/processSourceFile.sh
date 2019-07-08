@@ -119,7 +119,7 @@ sed -i -e 's/,[ 	]*)/)/g' $OUTPUT_FILE
 sed  -e 's/'"$mark"'/\'$'\n/g' $OUTPUT_FILE > $OUTPUT_FILE.tmp
 
 # Must read the method calls now that the declarations can be singled out
-methodCalls=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/.*\[//;s/\].*//;' | sed -e 's/\([A-Z][A-z0-9]*::[^(]*\)(/<\1>\'$'\n/g' | grep "<.*::.*>" | sed -e 's/.*<\(.*\)>/\1/g' | sort -u`
+methodCalls=`grep -v -e '<DECLARATION>' $OUTPUT_FILE.tmp | grep "::" | sed -e 's/\([A-Za-z0-9]*::[^(]*\)(/<\1>\'$'\n/g' | grep "<.*::.*>" | sed -e 's/.*<\(.*\)>/\1/g' | sort -u`
 referencedClassesNames=$className"
 `sed -e 's/::.*//g' <<< "$methodCalls" |sort -u`"
 
