@@ -133,7 +133,7 @@ bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
  *
  * @param updateSpritePosition
  */
-void Particle::synchronizeGraphics(bool updateSpritePosition)
+void Particle::synchronizeGraphics(bool updateSpritePosition __attribute__ ((unused)))
 {
 	ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
