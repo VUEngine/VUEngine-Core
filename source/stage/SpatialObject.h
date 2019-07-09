@@ -58,6 +58,7 @@ class SpatialObject : Object
 	virtual fix10_6 getBounciness();
 	virtual fix10_6 getFrictionCoefficient();
 	virtual Velocity getVelocity();
+	virtual fix10_6 getSpeed();
 	virtual fix10_6 getMaximumSpeed();
 	virtual bool isAffectedByRelativity();
 	virtual bool enterCollision(const CollisionInformation* collisionInformation);

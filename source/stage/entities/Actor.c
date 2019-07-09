@@ -712,6 +712,11 @@ Velocity Actor::getVelocity()
 	return this->body ? Body::getVelocity(this->body) : Base::getVelocity(this);
 }
 
+fix10_6 Actor::getSpeed()
+{
+	return this->body ? Body::getSpeed(this->body) : Base::getSpeed(this);
+}
+
 fix10_6 Actor::getMaximumSpeed()
 {
 	return this->body ? Body::getMaximumSpeed(this->body) : Base::getMaximumSpeed(this);

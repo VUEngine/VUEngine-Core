@@ -166,6 +166,11 @@ Velocity SpatialObject::getVelocity()
 	return Vector3D::zero();
 }
 
+fix10_6 SpatialObject::getSpeed()
+{
+	return 0;
+}
+
 fix10_6 SpatialObject::getMaximumSpeed()
 {
 	return 0;
