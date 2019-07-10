@@ -1323,6 +1323,10 @@ void Body::print(int x, int y)
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.y), xDisplacement + x + 8, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->direction.z), xDisplacement + x + 8 * 2, y++, NULL);
 
+	Printing::text(Printing::getInstance(), "Maximum Speed", x, y, NULL);
+	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
+	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(this->maximumSpeed), xDisplacement + x, y++, NULL);
+
 	Printing::text(Printing::getInstance(), "Speed", x, y, NULL);
 	Printing::text(Printing::getInstance(), "                                ", xDisplacement + x, y, NULL);
 	Printing::float(Printing::getInstance(), __FIX10_6_TO_F(Vector3D::length(this->velocity)), xDisplacement + x, y++, NULL);
