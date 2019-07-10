@@ -571,6 +571,10 @@ MovementResult Body::updateMovement()
 
 	Velocity previousVelocity = this->velocity;
 
+	bool acceleratedX = false;
+	bool acceleratedY = false;
+	bool acceleratedZ = false;
+
 	if(__UNIFORM_MOVEMENT == this->movementType.x)
 	{
 		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
@@ -578,13 +582,15 @@ MovementResult Body::updateMovement()
 	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->friction.x)
 //	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
 	{
+		acceleratedX = true;
+
 		// need to use extended types to prevent overflows
 		fix10_6_ext acceleration = gravity.x + __FIX10_6_EXT_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.x = __FIX10_6_EXT_TO_FIX10_6(acceleration);
 		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
-		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime) + __FIX10_6_MULT(this->acceleration.x, elapsedTimeHalfSquare);
+//		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);// + __FIX10_6_MULT(this->acceleration.x, elapsedTimeHalfSquare);
 	}
 
 	if(__UNIFORM_MOVEMENT == this->movementType.y)
@@ -594,12 +600,14 @@ MovementResult Body::updateMovement()
 	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->friction.y)
 //	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
 	{
+		acceleratedY = true;
+
 		fix10_6_ext acceleration = gravity.y + __FIX10_6_EXT_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.y = __FIX10_6_EXT_TO_FIX10_6(acceleration);
 		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
-		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime) + __FIX10_6_MULT(this->acceleration.y, elapsedTimeHalfSquare);
+//		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);// + __FIX10_6_MULT(this->acceleration.y, elapsedTimeHalfSquare);
 	}
 
 	if(__UNIFORM_MOVEMENT == this->movementType.z)
@@ -609,17 +617,34 @@ MovementResult Body::updateMovement()
 	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->friction.z)
 //	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
 	{
+		acceleratedZ = true;
+
 		fix10_6_ext acceleration = gravity.z + __FIX10_6_EXT_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.z = __FIX10_6_EXT_TO_FIX10_6(acceleration);
 		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
-		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime) + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
+//		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);// + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
 
 	this->direction = Vector3D::normalize(this->velocity);
 
 	Body::clampVelocity(this);
+
+	if(acceleratedX)
+	{
+		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
+	}
+
+	if(acceleratedY)
+	{
+		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);
+	}
+
+	if(acceleratedZ)
+	{
+		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
+	}
 
 	return Body::getMovementResult(this, previousVelocity);
 }
