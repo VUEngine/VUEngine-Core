@@ -31,7 +31,7 @@ The palette for printing can be set to one of the 4 available one with the
 
 An offset of the printing layer can be defined using the
 `__PRINTING_BGMAP_X_OFFSET`, `__PRINTING_BGMAP_Y_OFFSET` and
-`__PRINTING_BGMAP_Z_OFFSET` settings.
+`__PRINTING_BGMAP_PARALLAX_OFFSET` settings.
 
 
 Font management

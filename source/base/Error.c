@@ -180,7 +180,7 @@ int Error::triggerException(char* message, char* detail)
 	_worldAttributesBaseAddress[textLayer].mp = 0;
 	_worldAttributesBaseAddress[textLayer].my = 0;
 	_worldAttributesBaseAddress[textLayer].gx = __PRINTING_BGMAP_X_OFFSET;
-	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
+	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 	_worldAttributesBaseAddress[textLayer].gy = __PRINTING_BGMAP_Y_OFFSET;
 	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH;
 	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT;

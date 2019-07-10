@@ -185,9 +185,11 @@ singleton class Printing : Object
 	// A list of loaded fonts and their respective CharSets
 	VirtualList fonts;
 	// x coordinate for printing WORLD
-	u16 gx;
+	s16 gx;
 	// y coordinate for printing WORLD
-	u16 gy;
+	s16 gy;
+	// parallax value for printing WORLD
+	s8 gp;
 	// Printing mode (Default or Debug)
 	u8 mode;
 	// Palette to use for printing
@@ -305,8 +307,9 @@ singleton class Printing : Object
 	 *
 	 * @param gx		WORLD x coordinate
 	 * @param gy		WORLD y coordinate
+	 * @param gp		WORLD parallax value
 	 */
-	void setWorldCoordinates(u16 gx, u16 gy);
+	void setWorldCoordinates(s16 gx, s16 gy, s8 gp);
 
 	/**
 	 * Print a string

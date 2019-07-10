@@ -282,7 +282,7 @@
 // Printing area
 #define __PRINTING_BGMAP_X_OFFSET				0
 #define __PRINTING_BGMAP_Y_OFFSET				0
-#define __PRINTING_BGMAP_Z_OFFSET				0
+#define __PRINTING_BGMAP_PARALLAX_OFFSET		0
 #define __PRINTABLE_BGMAP_AREA 					(64 * 28)
 
 #define __PALETTE_MASK							0x0600

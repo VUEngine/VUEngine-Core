@@ -76,6 +76,7 @@ void Printing::constructor()
 	this->palette = __PRINTING_PALETTE;
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
+	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 }
 
 void Printing::destructor()
@@ -95,7 +96,7 @@ void Printing::render(int textLayer)
 	_worldAttributesBaseAddress[textLayer].mp = 0;
 	_worldAttributesBaseAddress[textLayer].my = this->gy;
 	_worldAttributesBaseAddress[textLayer].gx = this->gx;
-	_worldAttributesBaseAddress[textLayer].gp = __PRINTING_BGMAP_Z_OFFSET;
+	_worldAttributesBaseAddress[textLayer].gp = this->gp;
 	_worldAttributesBaseAddress[textLayer].gy = this->gy;
 	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH - this->gx - 1;
 	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT - this->gy - 1;
@@ -114,6 +115,7 @@ void Printing::reset()
 
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
+	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 }
 
 void Printing::loadFonts(FontSpec** fontSpecs)
@@ -381,16 +383,18 @@ void Printing::text(const char* string, int x, int y, const char* font)
 }
 
 #ifdef __FORCE_PRINTING_LAYER
-void Printing::setWorldCoordinates(u16 gx __attribute__ ((unused)), u16 gy __attribute__ ((unused)))
+void Printing::setWorldCoordinates(s16 gx __attribute__ ((unused)), s16 gy __attribute__ ((unused)), s8 gp __attribute__ ((unused)))
 {
 	this->gx = 0;
 	this->gy = 0;
+	this->gp = 0;
 }
 #else
-void Printing::setWorldCoordinates(u16 gx, u16 gy)
+void Printing::setWorldCoordinates(s16 gx, s16 gy, s8 gp)
 {
 	this->gx = gx <= __SCREEN_WIDTH ? gx : 0;
 	this->gy = gy <= __SCREEN_HEIGHT ? gy : 0;
+	this->gp = gp;
 }
 #endif
 
@@ -398,6 +402,7 @@ void Printing::resetWorldCoordinates()
 {
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
+	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 }
 
 int Printing::getPixelCount()
