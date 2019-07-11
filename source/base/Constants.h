@@ -67,6 +67,15 @@
 // Camera half depth in chars
 #define __HALF_SCREEN_DEPTH_IN_CHARS			(__SCREEN_DEPTH >> 4)
 
+// Camera half width in meters
+#define __HALF_SCREEN_WIDTH_METERS				__PIXELS_TO_METERS(__SCREEN_WIDTH >> 1)
+
+// Camera half height in meters
+#define __HALF_SCREEN_HEIGHT_METERS				__PIXELS_TO_METERS(__SCREEN_HEIGHT >> 1)
+
+// Camera half depth in meters
+#define __HALF_SCREEN_DEPTH_METERS				__PIXELS_TO_METERS(__SCREEN_DEPTH >> 1)
+
 
 // used for exceptions
 #define __EXCEPTIONS_BGMAP		0
