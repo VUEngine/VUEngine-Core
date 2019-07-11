@@ -567,7 +567,7 @@ MovementResult Body::updateMovement()
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
 
 	fix10_6 elapsedTime = _currentElapsedTime;
-
+//	fix10_6 elapsedTimeHalfSquare = __FIX10_6_MULT(elapsedTime, elapsedTime) >> 1;
 	Velocity previousVelocity = this->velocity;
 
 	bool acceleratedX = false;
