@@ -44,6 +44,7 @@ static class Vector3D : Object
 	static inline Vector3D unit(u16 axis);
 	static inline Vector3D get(Vector3D from, Vector3D to);
 	static inline Vector3D sum(Vector3D a, Vector3D b);
+	static inline Vector3D intermediate(Vector3D a, Vector3D b);
 	static inline fix10_6 dotProduct(Vector3D vectorA, Vector3D vectorB);
 	static inline fix19_13 dotProduct19_13(Vector3D vectorA, Vector3D vectorB);
 	static inline Vector3D scalarProduct(Vector3D vector, fix10_6 scalar);
@@ -89,6 +90,16 @@ static inline Vector3D Vector3D::get(Vector3D from, Vector3D to)
 static inline Vector3D Vector3D::sum(Vector3D a, Vector3D b)
 {
 	return (Vector3D){a.x + b.x, a.y + b.y, a.z + b.z};
+}
+
+static inline Vector3D Vector3D::intermediate(Vector3D a, Vector3D b)
+{
+	return (Vector3D)
+	{
+		(a.x + b.x) >> 1,
+		(a.y + b.y) >> 1,
+		(a.z + b.z) >> 1
+	};
 }
 
 static inline fix10_6 Vector3D::dotProduct(Vector3D vectorA, Vector3D vectorB)
