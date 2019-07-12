@@ -44,7 +44,7 @@ class Sphere : Wireframe
 	fix10_6 radius;
 
 	/// @publicsection
-	void constructor(Vector3D center, fix10_6 radius);
+	void constructor(Vector3D center, fix10_6 radius, u8 color);
 	Vector3D getCenter();
 	fix10_6 getRadius();
 	void setCenter(Vector3D center);

@@ -37,8 +37,10 @@
 /// @ingroup graphics-3d
 abstract class Wireframe : Object
 {
+	u8 color;
+	
 	/// @publicsection
-	void constructor();
+	void constructor(u8 color);
 	void hide();
 	void show();
 	virtual void draw(bool calculateParallax) = 0;

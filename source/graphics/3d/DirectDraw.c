@@ -148,14 +148,28 @@ void DirectDraw::drawPoint(PixelVector point, int color)
 		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
 	)
 	{
-		DirectDraw::drawPixel(leftBuffer, (u16)(point.x - point.parallax), (u16)point.y, color);
+		if(color == __COLOR_BLACK)
+		{
+			DirectDraw::drawBlackPixel(leftBuffer, (u16)(point.x - point.parallax), (u16)point.y);
+		}
+		else
+		{
+			DirectDraw::drawPixel(leftBuffer, (u16)(point.x - point.parallax), (u16)point.y, color);
+		}
 	}
 	if((unsigned)(point.x + point.parallax - _cameraFrustum->x0) < (unsigned)(_cameraFrustum->x1 - _cameraFrustum->x0)
 		&&
 		(unsigned)(point.y - _cameraFrustum->y0) < (unsigned)(_cameraFrustum->y1 - _cameraFrustum->y0)
 	)
 	{
-		DirectDraw::drawPixel(rightBuffer, (u16)(point.x + point.parallax), (u16)point.y, color);
+		if(color == __COLOR_BLACK)
+		{
+			DirectDraw::drawBlackPixel(rightBuffer, (u16)(point.x + point.parallax), (u16)point.y);
+		}
+		else
+		{
+			DirectDraw::drawPixel(rightBuffer, (u16)(point.x + point.parallax), (u16)point.y, color);
+		}
 	}
 }
 

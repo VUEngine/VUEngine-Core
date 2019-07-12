@@ -50,10 +50,10 @@ friend class VirtualList;
  *
  * @private
  */
-void Polyhedron::constructor()
+void Polyhedron::constructor(u8 color)
 {
 	// construct base object
-	Base::constructor();
+	Base::constructor(color);
 
 	// don't create the list yet
 	this->vertices = NULL;
@@ -119,8 +119,6 @@ void Polyhedron::addVertex(fix10_6 x, fix10_6 y, fix10_6 z)
  */
 void Polyhedron::draw(bool calculateParallax)
 {
-	int color = __COLOR_BRIGHT_RED;
-
 	// if I have some vertex, draw them
 	if(this->vertices && 2 < VirtualList::getSize(this->vertices))
 	{
@@ -155,7 +153,7 @@ void Polyhedron::draw(bool calculateParallax)
 			}
 
 			// draw the line in both buffers
-			DirectDraw::drawLine(DirectDraw::getInstance(), fromVertex2D, toVertex2D, color);
+			DirectDraw::drawLine(DirectDraw::getInstance(), fromVertex2D, toVertex2D, this->color);
 		}
 	}
 }

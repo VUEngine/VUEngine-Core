@@ -152,7 +152,7 @@ void Ball::configureWireframe()
 	}
 
 	// create a wireframe
-	this->wireframe = Wireframe::safeCast(new Sphere(this->center, this->radius));
+	this->wireframe = Wireframe::safeCast(new Sphere(this->center, this->radius, __COLOR_BRIGHT_RED));
 }
 
 // print debug data

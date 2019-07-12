@@ -41,10 +41,10 @@
  *
  * @private
  */
-void Sphere::constructor(Vector3D center, fix10_6 radius)
+void Sphere::constructor(Vector3D center, fix10_6 radius, u8 color)
 {
 	// construct base object
-	Base::constructor();
+	Base::constructor(color);
 
 	this->center = center;
 	this->radius = __ABS(radius);
@@ -109,8 +109,6 @@ void Sphere::setRadius(fix10_6 radius)
  */
 void Sphere::draw(bool calculateParallax)
 {
-	int color = __COLOR_BRIGHT_RED;
-
 	Vector3D normalizedCenter3D = Vector3D::getRelativeToCamera(this->center);
 
 	fix10_6 radiusSquare = __FIX10_6_MULT(this->radius, this->radius);
@@ -133,8 +131,8 @@ void Sphere::draw(bool calculateParallax)
 		PixelVector topPoint2D = Vector3D::projectToPixelVector(topTranslatedPoint3D, parallax);
 		PixelVector bottomPoint2D = Vector3D::projectToPixelVector(bottomTranslatedPoint3D, parallax);
 
-		DirectDraw::drawPoint(DirectDraw::getInstance(), topPoint2D, color);
-		DirectDraw::drawPoint(DirectDraw::getInstance(), bottomPoint2D, color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), topPoint2D, this->color);
+		DirectDraw::drawPoint(DirectDraw::getInstance(), bottomPoint2D, this->color);
 	}
 /*
 	// draw on YZ plane

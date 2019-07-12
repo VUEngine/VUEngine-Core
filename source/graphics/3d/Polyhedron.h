@@ -41,7 +41,7 @@ class Polyhedron : Wireframe
 	VirtualList vertices;
 
 	/// @publicsection
-	void constructor();
+	void constructor(u8 color);
 	void addVertex(fix10_6 x, fix10_6 y, fix10_6 z);
 	override void draw(bool calculateParallax);
 }
