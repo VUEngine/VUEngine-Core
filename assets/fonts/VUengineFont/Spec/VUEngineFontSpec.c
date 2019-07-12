@@ -58,6 +58,5 @@ FontROMSpec VUENGINE_FONT =
 	{1, 1},
 
 	// font's name
-	"VUEngineFont",
+	"VUEngine",
 };
-

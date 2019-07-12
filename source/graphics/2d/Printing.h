@@ -61,10 +61,12 @@
 #define __CHAR_SELECTOR				"\x0B"
 #define __CHAR_SELECTOR_LEFT		"\x0C"
 
-#define __CHAR_ARROW_UP				"\x0E"
-#define __CHAR_ARROW_DOWN			"\x0F"
-#define __CHAR_ARROW_LEFT			"\x10"
-#define __CHAR_ARROW_RIGHT			"\x11"
+#define __CHAR_DARK_RED_BOX			"\x0E"
+#define __CHAR_MEDIUM_RED_BOX		"\x0F"
+#define __CHAR_BRIGHT_RED_BOX		"\x10"
+
+#define __CHAR_CHECKBOX_UNCHECKED	"\x11"
+#define __CHAR_CHECKBOX_CHECKED		"\x12"
 
 #define __CHAR_START_BUTTON			"\x15"
 #define __CHAR_SELECT_BUTTON		"\x16"
@@ -90,13 +92,6 @@
 #define __CHAR_R_D_PAD_DOWN			"\x1F\x1B"
 #define __CHAR_R_D_PAD_LEFT			"\x1F\x1C"
 #define __CHAR_R_D_PAD_RIGHT		"\x1F\x1D"
-
-#define __CHAR_DARK_RED_BOX			"\x8D"
-#define __CHAR_MEDIUM_RED_BOX		"\x8F"
-#define __CHAR_BRIGHT_RED_BOX		"\x90"
-
-#define __CHAR_CHECKBOX_UNCHECKED	"\x81"
-#define __CHAR_CHECKBOX_CHECKED		"\x9D"
 
 
 //---------------------------------------------------------------------------------------------------------
