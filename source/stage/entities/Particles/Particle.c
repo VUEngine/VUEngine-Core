@@ -290,14 +290,16 @@ bool Particle::isVisible()
 		halfHeight = Texture::getRows(texture) << 2;
 	}
 
+	extern const CameraFrustum* _cameraFrustum;
+
 	// check x visibility
-	if((unsigned)(spritePosition.x + halfWidth) >= (unsigned)(__SCREEN_WIDTH + halfWidth))
+	if(spritePosition.x + halfWidth < _cameraFrustum->x0 || spritePosition.x - halfWidth > _cameraFrustum->x1)
 	{
 		return false;
 	}
 
 	// check y visibility
-	if((unsigned)(spritePosition.y + halfHeight) >= (unsigned)(__SCREEN_HEIGHT + halfWidth))
+	if(spritePosition.y + halfHeight < _cameraFrustum->y0 || spritePosition.y - halfHeight > _cameraFrustum->y1)
 	{
 		return false;
 	}
