@@ -262,6 +262,13 @@ done
 #ls -l $NORMAL_METHODS_FILE
 #ls -l $VIRTUAL_METHODS_FILE
 
+# Clean up
+cat $NORMAL_METHODS_FILE | sort -u > $NORMAL_METHODS_FILE.tmp
+mv $NORMAL_METHODS_FILE.tmp $NORMAL_METHODS_FILE
+
+cat $VIRTUAL_METHODS_FILE | sort -u > $VIRTUAL_METHODS_FILE.tmp
+mv $VIRTUAL_METHODS_FILE.tmp $VIRTUAL_METHODS_FILE
+
 complexity1=`cat $NORMAL_METHODS_FILE | wc -l` 
 complexity2=`cat $VIRTUAL_METHODS_FILE | wc -l`
 echo "Compiling class: $className (complexity: $(( complexity1 + complexity2 )))"
