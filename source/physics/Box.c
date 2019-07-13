@@ -575,18 +575,18 @@ void Box::print(int x, int y)
 {
 	RightBox rightBox = this->rightBox;
 
-	Printing::text(Printing::getInstance(), "X:" , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.x0), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.x1), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "X:             " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x0), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.x1), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Y:" , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.y0), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.y1), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Y:             " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y0), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.y1), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Z:" , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.z0), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(rightBox.z1), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Z:             " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z0), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(rightBox.z1), x + 8, y++, NULL);
 }

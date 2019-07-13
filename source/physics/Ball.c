@@ -158,23 +158,25 @@ void Ball::configureWireframe()
 // print debug data
 void Ball::print(int x, int y)
 {
+	Printing::text(Printing::getInstance(), "R:             " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->radius), x + 2, y++, NULL);
 	Printing::text(Printing::getInstance(), "C:         " , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x), x + 2, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y), x + 6, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.z), x + 10, y++, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.x), x + 2, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.y), x + 8, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.z), x + 14, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "X:" , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x - this->radius), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.x + this->radius), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "X:              " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.x - this->radius), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.x + this->radius), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Y:" , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y - this->radius), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.y + this->radius), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Y:               " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.y - this->radius), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.y + this->radius), x + 8, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Z:" , x, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.z - this->radius), x + 2, y, NULL);
-	Printing::text(Printing::getInstance(), "-" , x + 5, y, NULL);
-	Printing::int(Printing::getInstance(), __FIX10_6_TO_I(this->center.z + this->radius), x + 7, y++, NULL);
+	Printing::text(Printing::getInstance(), "Z:               " , x, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.z - this->radius), x + 2, y, NULL);
+	Printing::text(Printing::getInstance(), "-" , x + 6, y, NULL);
+	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(this->center.z + this->radius), x + 8, y++, NULL);
 }
