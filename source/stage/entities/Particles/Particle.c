@@ -258,8 +258,7 @@ void Particle::resume()
  */
 void Particle::suspend()
 {
-	delete this->sprite;
-
+	SpriteManager::disposeSprite(SpriteManager::getInstance(), this->sprite);
 	this->sprite = NULL;
 }
 
