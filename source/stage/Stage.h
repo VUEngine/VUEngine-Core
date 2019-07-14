@@ -215,7 +215,8 @@ class Stage : Container
 	bool unloadOutOfRangeEntities(int defer);
     bool loadInRangeEntities(int defer);
 	Entity findChildByInternalId(s16 internalId);
-	
+	bool updateEntityFactory();
+
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();
 	virtual void streamAll();
