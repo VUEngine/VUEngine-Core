@@ -122,6 +122,8 @@ bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
 			return true;
 		}
 
+		Sprite::show(this->sprite);
+
 		Sprite::updateAnimation(this->sprite);
 	}
 
@@ -207,8 +209,6 @@ const Vector3D* Particle::getPosition()
 void Particle::show()
 {
 	ASSERT(this->sprite, "Particle::show: null sprite");
-
-	Sprite::show(this->sprite);
 
 	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription)
 	{
