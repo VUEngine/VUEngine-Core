@@ -184,7 +184,7 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 
 	if(this->stage)
 	{
-			Container::suspend(this->stage);
+		Container::suspend(this->stage);
 	}
 
 #ifdef __DEBUG_TOOLS
