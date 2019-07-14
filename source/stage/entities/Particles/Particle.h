@@ -99,11 +99,12 @@ class Particle : SpatialObject
 	virtual void reset();
 	virtual void setMass(fix10_6 mass);
 	virtual void changeMass();
-	virtual void hide();
+	virtual void hide(const Vector3D* position);
 	virtual void show();
 	override bool isSubjectToGravity(Acceleration gravity);
 	override void setPosition(const Vector3D* position);
 	override const Vector3D* getPosition();
 }
+
 
 #endif

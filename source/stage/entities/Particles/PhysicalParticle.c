@@ -176,9 +176,9 @@ void PhysicalParticle::setPosition(const Vector3D* position)
 /**
  * Make PhysicalParticle invisible
  */
-void PhysicalParticle::hide()
+void PhysicalParticle::hide(const Vector3D* position)
 {
-	Base::hide(this);
+	Base::hide(this, position);
 
 	Body::stopMovement(this->body, __ALL_AXIS);
 }

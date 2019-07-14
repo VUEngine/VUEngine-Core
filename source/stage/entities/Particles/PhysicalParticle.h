@@ -76,7 +76,7 @@ class PhysicalParticle : Particle
 	override void addForce(const Force* force, u32 movementType);
 	override bool update(u32 elapsedTime, void (* behavior)(Particle particle));
 	override void setMass(fix10_6 mass);
-	override void hide();
+	override void hide(const Vector3D* position);
 	override void reset();
 	override void changeMass();
 	override void synchronizeGraphics(bool updateSpritePosition);

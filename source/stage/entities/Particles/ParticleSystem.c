@@ -457,7 +457,7 @@ void ParticleSystem::hide()
 
 	for(; node; node = node->next)
 	{
-		Particle::hide(node->data);
+		Particle::hide(node->data, &this->transformation.globalPosition);
 	}
 }
 
@@ -487,7 +487,7 @@ void ParticleSystem::resume()
 	for(; node; node = node->next)
 	{
 		Particle::resume(node->data);
-		Particle::hide(node->data);
+		Particle::hide(node->data, &this->transformation.globalPosition);
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
@@ -524,7 +524,8 @@ void ParticleSystem::suspend()
 void ParticleSystem::particleExpired(Particle particle)
 {
 	VirtualList::pushBack(this->expiredParticles, particle);
-	Particle::hide(particle);
+	
+	Particle::hide(particle, &this->transformation.globalPosition);
 }
 
 /**

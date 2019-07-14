@@ -219,9 +219,11 @@ void Particle::show()
 /**
  * Make Particle invisible
  */
-void Particle::hide()
+void Particle::hide(const Vector3D* position)
 {
 	ASSERT(this->sprite, "Particle::hide: null sprite");
+
+	Particle::setPosition(this, position);
 
 	Sprite::hide(this->sprite);
 }
