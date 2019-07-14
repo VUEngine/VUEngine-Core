@@ -1,0 +1,385 @@
+{% include('./base/header.c.nj') %}
+
+#ifndef CONFIG_H_
+#define CONFIG_H_
+
+
+{% if data.pluginsConfigFileExists -%}
+//---------------------------------------------------------------------------------------------------------
+//												PLUGINS
+//---------------------------------------------------------------------------------------------------------
+
+#include "pluginsConfig.h"
+
+
+{% endif %}
+{%- if game | length -%}
+//---------------------------------------------------------------------------------------------------------
+//											GAME SPECIFIC MACROS
+//---------------------------------------------------------------------------------------------------------
+
+{% for key, value in game -%}
+#define {{ key }} {{ value | safe }}
+{% endfor %}
+
+{% endif -%}
+//---------------------------------------------------------------------------------------------------------
+//											DEBUGGING / PROFILING
+//---------------------------------------------------------------------------------------------------------
+
+// print memory pool's status
+{% if debug.printMemoryPoolStatus %}#define{% else %}#undef{% endif %} __PRINT_MEMORY_POOL_STATUS
+{% if debug.printDetailedMemoryPoolStatus %}#define{% else %}#undef{% endif %} __PRINT_DETAILED_MEMORY_POOL_STATUS
+
+// print frame rate
+{% if debug.printFramerate %}#define{% else %}#undef{% endif %} __PRINT_FRAMERATE
+
+// alert stack overflows
+{% if debug.alertStackOverflow %}#define{% else %}#undef{% endif %} __ALERT_STACK_OVERFLOW
+
+// enable detailed profiling of each of the game's main processes
+// • it is more useful when __TIMER_RESOLUTION approaches 1
+{% if debug.profileGame %}#define{% else %}#undef{% endif %} __PROFILE_GAME
+
+// enable streaming's profiling
+{% if debug.profileStreaming %}#define{% else %}#undef{% endif %} __PROFILE_STREAMING
+
+// show games's profiling during game
+{% if debug.showGameProfiling %}#define{% else %}#undef{% endif %} __SHOW_GAME_PROFILING
+
+// show streaming's profiling during game
+{% if debug.showStreamingProfiling %}#define{% else %}#undef{% endif %} __SHOW_STREAMING_PROFILING
+
+// dimm screen to make it easier to read the profiling output
+{% if debug.dimmForProfiling %}#define{% else %}#undef{% endif %} __DIMM_FOR_PROFILING
+
+// print the game's current process while the VIP's frame start and idle interrupts are fired, but the 
+// game frame is still pending processes to complete
+{% if debug.profileGameStateDuringVipInterrupt %}#define{% else %}#undef{% endif %} __PROFILE_GAME_STATE_DURING_VIP_INTERRUPT
+
+// alert vip's overtime
+{% if debug.alertVipOvertime %}#define{% else %}#undef{% endif %} __ALERT_VIP_OVERTIME
+
+
+//---------------------------------------------------------------------------------------------------------
+//											DEBUGGING TOOLS
+//---------------------------------------------------------------------------------------------------------
+
+#ifdef __TOOLS
+
+// print frame rate
+#define __PRINT_FRAMERATE
+
+// enable detailed profiling of each of the game's main processes
+// • it is more useful when __TIMER_RESOLUTION approaches 1
+#define __PROFILE_GAME
+
+// enable streaming's profiling
+#define __PROFILE_STREAMING
+
+// tools
+#define __DEBUG_TOOLS
+#define __STAGE_EDITOR
+#define __ANIMATION_INSPECTOR
+
+#endif
+
+
+//---------------------------------------------------------------------------------------------------------
+//											ROM HEADER INFO
+//---------------------------------------------------------------------------------------------------------
+
+// game title (20 chars) 	 ####################
+#define __GAME_TITLE		"{{ (romHeader.gameTitle ~ '                    ') | truncate(20, true, '') }}"
+// maker code (2 chars)		 ##
+#define __MAKER_CODE		"{{ (romHeader.makerCode ~ '  ') | truncate(2, true, '') }}"
+// game code (4 chars)		 ####
+#define __GAME_CODE			"{{ (romHeader.gameCode ~ '    ') | truncate(4, true, '') }}"
+// revision (1.x)			 #
+#define __ROM_VERSION		 {{ (romHeader.revision ~ '') | truncate(1, true, '') }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//											OPTICS / PROJECTION
+//---------------------------------------------------------------------------------------------------------
+
+// screen width in pixels
+#define __SCREEN_WIDTH								{{ optics.screenWidth }}
+
+// screen height in pixels
+#define __SCREEN_HEIGHT								{{ optics.screenHeight }}
+
+// screen depth in pixels
+#define __SCREEN_DEPTH								{{ optics.screenDepth }}
+
+// distance from player's eyes to the virtual screen
+#define __DISTANCE_EYE_SCREEN						{{ optics.distanceEyeScreen }}
+
+// maximum x view distance (depth) (power of two)
+#define __MAXIMUM_X_VIEW_DISTANCE					{{ optics.maximumXViewDistance }}
+
+// maximum y view distance (depth) (power of two)
+#define __MAXIMUM_Y_VIEW_DISTANCE					{{ optics.maximumYViewDistance }}
+
+// distance between eyes
+#define __BASE_FACTOR								{{ optics.baseFactor }}
+
+// player's eyes' horizontal position
+#define __HORIZONTAL_VIEW_POINT_CENTER				{{ optics.horizontalViewPointCenter }}
+
+// player's eyes' vertical position
+#define __VERTICAL_VIEW_POINT_CENTER				{{ optics.verticalViewPointCenter }}
+
+// parallax values are divide by this factor to control their strength
+#define __PARALLAX_CORRECTION_FACTOR				{{ optics.parallaxCorrectionFactor }}
+
+// affects the strength of the scaling
+#define __SCALING_MODIFIER_FACTOR					{{ optics.scalingModifierFactor }}{% if not '.' in '' ~ optics.scalingModifierFactor %}.0{% endif %}f
+
+// minimum number of pixels that the camera can move
+#define __CAMERA_MINIMUM_DISPLACEMENT_PIXELS_POWER	{{ optics.cameraMinimumDisplacementPixelsPower }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//											FRAME RATE CONTROL
+//---------------------------------------------------------------------------------------------------------
+
+// when defined, the engine skips to the next game frame when the VIP's GAMESTART interrupt is fired 
+// beforethe current game frame is done
+{% if frameRate.forceVipSync %}#define{% else %}#undef{% endif %} __FORCE_VIP_SYNC
+
+// timer resolution
+#define __TIMER_RESOLUTION							{{ frameRate.timerResolution }}
+
+// __FRAME_CYCLE = 0 means __TARGET_FPS = 50
+// __FRAME_CYCLE = 1 means __TARGET_FPS = 25
+#define	__FRAME_CYCLE								{{ frameRate.frameCycle }}
+
+// target frames per second
+#define __TARGET_FPS 								(50 >> __FRAME_CYCLE)
+
+// milliseconds that must take to complete a game cycle
+#define __GAME_FRAME_DURATION						(__MILLISECONDS_IN_SECOND / __TARGET_FPS)
+
+// target frames per second
+#define __OPTIMUM_FPS 								(__TARGET_FPS >> __FRAME_CYCLE)
+
+// define to dispatch the delayed messages every other game frame cycle
+{% if frameRate.runDelayedMessagesAtHalfFrameRate %}#define{% else %}#undef{% endif %} __RUN_DELAYED_MESSAGES_DISPATCHING_AT_HALF_FRAME_RATE
+
+
+//---------------------------------------------------------------------------------------------------------
+//												ANIMATION
+//---------------------------------------------------------------------------------------------------------
+
+// maximum length of an animation function's name
+#define __MAX_ANIMATION_FUNCTION_NAME_LENGTH		{{ animation.maxAnimationFunctionNameLength }}
+
+// maximum number of frames per animation function
+#define __MAX_FRAMES_PER_ANIMATION_FUNCTION			{{ animation.maxFramesPerAnimationFunction }}
+
+// maximum number of animation functions per description
+#define __MAX_ANIMATION_FUNCTIONS					{{ animation.maxAnimationFunctions }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												MEMORY POOL
+//---------------------------------------------------------------------------------------------------------
+
+// reset to 0 each byte of each free block on resetting game
+// only use for debugging, proper object's initialization must make this macro unnecessary
+{% if memoryPools.cleanUp %}#define{% else %}#undef{% endif %} __MEMORY_POOL_CLEAN_UP
+
+#undef __MEMORY_POOLS
+#define __MEMORY_POOLS								{{ memoryPools.pools | length }}
+
+#undef __MEMORY_POOL_ARRAYS
+#define __MEMORY_POOL_ARRAYS \
+{%- set poolBlockDefinitions = '' -%}
+{% for size, number in memoryPools.pools %}
+	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ size ~ ', ' ~  number ~') \\\n' ~ poolBlockDefinitions -%}
+{% endfor %}
+{{ poolBlockDefinitions }}
+#undef __SET_MEMORY_POOL_ARRAYS
+#define __SET_MEMORY_POOL_ARRAYS \
+{%- set poolArrayDefinitions = '' -%}
+{% for size, number in memoryPools.pools -%}
+	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ size ~ ') \\\n' ~ poolArrayDefinitions -%}
+{% endfor %}
+{{ poolArrayDefinitions }}
+// percentage (0-100) above which the memory pool's status shows the pool usage
+#define __MEMORY_POOL_WARNING_THRESHOLD				{{ memoryPools.warningThreshold }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												SRAM
+//---------------------------------------------------------------------------------------------------------
+
+// amount of available sram space, in bytes
+// • the vb allows up to 16 mb, but all known carts support only 8 kb of sram
+#define __TOTAL_SAVE_RAM 							{{ sram.totalSram }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//											CHAR MANAGEMENT
+//---------------------------------------------------------------------------------------------------------
+
+// total number of available chars in char memory
+#define __CHAR_MEMORY_TOTAL_CHARS 					{{ char.totalChars }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//											SPRITE MANAGEMENT
+//---------------------------------------------------------------------------------------------------------
+
+// total number of layers (basically the number of worlds)
+#define __TOTAL_LAYERS								{{ sprite.totalLayers }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//											TEXTURE MANAGEMENT
+//---------------------------------------------------------------------------------------------------------
+
+// total number of bgmap segments
+#define __TOTAL_NUMBER_OF_BGMAPS_SEGMENTS 			{{ texture.totalBgmapSegments }}
+
+// bgmap segments to use (leave 2 to allocate param table, 1 for printing)
+#define __MAX_NUMBER_OF_BGMAPS_SEGMENTS 			(__TOTAL_NUMBER_OF_BGMAPS_SEGMENTS - 3)
+
+// number of bgmap specs in each bgmap segment
+#define __NUM_BGMAPS_PER_SEGMENT 					{{ texture.bgmapsPerSegments }}
+
+// printing area
+#define __PRINTING_BGMAP_X_OFFSET					{{ texture.printing.offset.x }}
+#define __PRINTING_BGMAP_Y_OFFSET					{{ texture.printing.offset.y }}
+#define __PRINTING_BGMAP_PARALLAX_OFFSET			{{ texture.printing.offset.parallax }}
+#define __PRINTABLE_BGMAP_AREA 						{{ texture.printing.printableArea }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												PARAM TABLE
+//---------------------------------------------------------------------------------------------------------
+
+// maximum possible scale: affects param table allocation space
+#define __MAXIMUM_SCALE								{{ affine.maxScale }}
+
+// maximum number of rows to write on each call to affine calculation functions
+#define __MAXIMUM_AFFINE_ROWS_PER_CALL				{{ affine.maxRowsPerCall }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												STREAMING
+//---------------------------------------------------------------------------------------------------------
+
+// number of total calls to the streaming method which completes a cycle
+// there are 4 parts for the streaming algorithm:
+// 1) unload entities
+// 2) select the next entity to load
+// 3) create the selected entity
+// 4) initialize the loaded entity
+#define __STREAM_CYCLE_DURATION						{{ streaming.cycleDuration }}
+
+// padding to determine if an entity must be loaded/unloaded
+// • load pad must always be lower than unload pad!
+// • too close values will put the streaming under heavy usage!
+#define __ENTITY_LOAD_PAD 							{{ streaming.loadPad }}
+#define __ENTITY_UNLOAD_PAD 						{{ streaming.unloadPad }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												PHYSICS
+//---------------------------------------------------------------------------------------------------------
+
+#define __GRAVITY									{{ physics.gravity }}{% if not '.' in '' ~ physics.gravity %}.0{% endif %}f
+
+// number of bodies to check for gravity on each cycle
+#define __BODIES_TO_CHECK_FOR_GRAVITY				{{ physics.bodiesToCheckForGravity }}
+
+// divisor to speed up physics simulations, bigger numbers equal faster computations
+#define __PHYSICS_TIME_ELAPSED_DIVISOR				{{ physics.timeElapsedDivisor }}
+
+// thresholds to stop bodies
+#define __STOP_VELOCITY_THRESHOLD					__PIXELS_TO_METERS({{ physics.stopVelocityThreshold }})
+#define __STOP_BOUNCING_VELOCITY_THRESHOLD 			__PIXELS_TO_METERS({{ physics.stopBouncingVelocityThreshold }})
+
+// maximum bounciness coefficient allowed
+#define __MAXIMUM_BOUNCINESS_COEFFICIENT			{{ physics.maximumBouncinessCoefficient }}{% if not '.' in '' ~ physics.maximumBouncinessCoefficient %}.0{% endif %}f
+
+#define __FRICTION_FORCE_FACTOR_POWER				{{ physics.frictionForceFactorPower }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//												SOUND
+//---------------------------------------------------------------------------------------------------------
+
+// channels per bgms
+#define __BGM_CHANNELS								{{ sound.bgmChannels }}
+
+// channels per fx
+#define __FX_CHANNELS								{{ sound.fxChannels }}
+
+// simultaneous bgms
+#define __BGMS										{{ sound.bgms }}
+
+// simultaneous fx
+#define __FXS										{{ sound.fxs }}
+
+#define __TOTAL_SOUNDS								(__BGMS + __FXS)
+#define __LEFT_EAR_CENTER							{{ sound.leftEarCenter }}
+#define __RIGHT_EAR_CENTER							{{ sound.rightEarCenter }}
+
+// affects the amount of attenuation caused by the distance between the x coordinate and each ear's
+// position defined by __LEFT_EAR_CENTER and __RIGHT_EAR_CENTER
+#define __SOUND_STEREO_ATTENUATION_FACTOR			__F_TO_FIX10_6({{ sound.stereoAttenuationFactor }}{% if not '.' in '' ~ sound.stereoAttenuationFactor %}.0{% endif %}f)
+
+
+//---------------------------------------------------------------------------------------------------------
+//											BRIGHTNESS
+//---------------------------------------------------------------------------------------------------------
+
+// default brightness settings, actual values are set in stage specs
+// • for a nice progression, each shade should be about twice as big as the previous one
+// • _BRIGHT_RED must be larger than _DARK_RED + _MEDIUM_RED
+#define __BRIGHTNESS_DARK_RED						{{ colors.brightness.darkRed }}
+#define __BRIGHTNESS_MEDIUM_RED						{{ colors.brightness.mediumRed }}
+#define __BRIGHTNESS_BRIGHT_RED						{{ colors.brightness.brightRed }}
+
+// default delay between steps in fade effect
+#define __FADE_DELAY								{{ colors.brightness.fadeDelay }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//											COLOR PALETTES
+//---------------------------------------------------------------------------------------------------------
+
+#define __PRINTING_PALETTE							{{ colors.palettes.printingPalette }}
+
+// default palette values, actual values are set in stage specs
+#define __BGMAP_PALETTE_0							{{ colors.palettes.bgMap[0] }}
+#define __BGMAP_PALETTE_1							{{ colors.palettes.bgMap[1] }}
+#define __BGMAP_PALETTE_2							{{ colors.palettes.bgMap[2] }}
+#define __BGMAP_PALETTE_3							{{ colors.palettes.bgMap[3] }}
+
+#define __OBJECT_PALETTE_0							{{ colors.palettes.object[0] }}
+#define __OBJECT_PALETTE_1							{{ colors.palettes.object[1] }}
+#define __OBJECT_PALETTE_2							{{ colors.palettes.object[2] }}
+#define __OBJECT_PALETTE_3							{{ colors.palettes.object[3] }}
+
+
+//---------------------------------------------------------------------------------------------------------
+//										RANDOM NUMBER GENERATION
+//---------------------------------------------------------------------------------------------------------
+
+{% if random.addUserInputAndTimeToRandomSeed %}#define{% else %}#undef{% endif %} __ADD_USER_INPUT_AND_TIME_TO_RANDOM_SEED
+
+
+//---------------------------------------------------------------------------------------------------------
+//												EXCEPTIONS
+//---------------------------------------------------------------------------------------------------------
+
+// camera coordinates for the output of exceptions
+#define __EXCEPTION_COLUMN							{{ exception.position.x }}
+#define __EXCEPTION_LINE							{{ exception.position.y }}
+
+
+#endif
