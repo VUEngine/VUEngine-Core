@@ -494,6 +494,8 @@ void EntityFactory::prepareAllEntities()
 	{
 		EntityFactory::makeReadyEntities(this);
 	}
+
+	EntityFactory::cleanUp(this);
 }
 
 #ifdef __PROFILE_STREAMING
