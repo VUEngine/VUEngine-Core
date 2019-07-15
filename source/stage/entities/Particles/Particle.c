@@ -137,7 +137,7 @@ bool Particle::update(u32 elapsedTime, void (* behavior)(Particle particle))
  */
 void Particle::synchronizeGraphics(bool updateSpritePosition __attribute__ ((unused)))
 {
-	ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
+	NM_ASSERT(this->sprite, "Particle::synchronizeGraphics: null sprite");
 
 	// calculate sprite's parallax
 	Sprite::calculateParallax(this->sprite, this->position.z);
@@ -221,7 +221,7 @@ void Particle::show()
  */
 void Particle::hide(const Vector3D* position)
 {
-	ASSERT(this->sprite, "Particle::hide: null sprite");
+	NM_ASSERT(this->sprite, "Particle::hide: null sprite");
 
 	Particle::setPosition(this, position);
 

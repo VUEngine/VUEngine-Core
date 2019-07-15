@@ -477,8 +477,7 @@ void ParticleSystem::hide()
 
 void ParticleSystem::resume()
 {
-	Base::resume(this);
-
+	// Must recover the particles first so their sprites are recreated
 	VirtualNode node = this->particles->head;
 
 	for(; node; node = node->next)
@@ -505,6 +504,9 @@ void ParticleSystem::resume()
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+
+	// Now call base
+	Base::resume(this);
 }
 
 void ParticleSystem::suspend()
