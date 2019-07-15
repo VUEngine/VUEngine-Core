@@ -338,12 +338,18 @@ void SpriteManager::disposeSprite(Sprite sprite)
 	ASSERT(!isDeleted(sprite), "SpriteManager::disposeSprite: trying to dispose dead sprite");
 
 	this->lockSpritesLists = true;
-
-	if(sprite && !VirtualList::find(this->spritesToDispose, sprite))
+	if(!__GET_CAST(ObjectSprite, sprite))
 	{
-		VirtualList::pushBack(this->spritesToDispose, sprite);
+		if(sprite && !VirtualList::find(this->spritesToDispose, sprite))
+		{
+			VirtualList::pushBack(this->spritesToDispose, sprite);
 
-		Sprite::disposed(sprite);
+			Sprite::disposed(sprite);
+		}
+	}
+	else
+	{
+		delete sprite;
 	}
 
 	this->lockSpritesLists = false;
