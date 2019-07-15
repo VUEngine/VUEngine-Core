@@ -549,3 +549,8 @@ void ParticleSystem::pause()
 {
 	this->paused = true;
 }
+
+bool ParticleSystem::isPaused()
+{
+	return this->paused;
+}

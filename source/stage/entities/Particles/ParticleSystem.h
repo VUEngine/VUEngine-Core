@@ -118,6 +118,7 @@ class ParticleSystem : Entity
 	/// @publicsection
 	void constructor(ParticleSystemSpec* particleSystemSpec,  s16 id, s16 internalId, const char* const name);
 	bool handleMessage(Telegram telegram);
+	bool isPaused();
 	void pause();
 	void show();
 	void spawnAllParticles();
