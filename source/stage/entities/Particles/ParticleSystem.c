@@ -471,7 +471,7 @@ void ParticleSystem::hide()
 
 	for(; node; node = node->next)
 	{
-		Particle::hide(node->data, &this->transformation.globalPosition);
+		ParticleSystem::particleExpired(this, Particle::safeCast(node->data));
 	}
 }
 
