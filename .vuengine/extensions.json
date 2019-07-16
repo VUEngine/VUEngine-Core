@@ -1,0 +1,48 @@
+{
+	"extensions": {
+		"activityBar": {
+			"project": [
+				{
+					"id": "fonts",
+					"label": {
+						"en": "Fonts",
+						"de": "Schriftarten"
+					},
+					"type": "configFile",
+					"icon": "font",
+					"value": "fonts",
+					"parent": null
+				},
+				{
+					"id": "romHeader",
+					"label": {
+						"en": "ROM Header",
+						"de": "ROM Header"
+					},
+					"type": "configFile",
+					"icon": "microchip",
+					"value": "romHeader",
+					"parent": "configuration"
+				},
+				{
+					"id": "general",
+					"label": {
+						"en": "General",
+						"de": "Generell"
+					},
+					"type": "configFile",
+					"icon": "file-text-o",
+					"value": "settings",
+					"parent": "configuration"
+				}
+			]
+		},
+		"config": [
+			"fonts",
+			"romHeader",
+			"settings"
+		],
+		"configPresets": [],
+		"fileTemplates": []
+	}
+}
