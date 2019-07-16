@@ -424,8 +424,8 @@ void Printing::setWorldCoordinates(s16 gx, s16 gy, s8 gp)
 
 void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __attribute__ ((unused)), s8 mp __attribute__ ((unused)))
 {
-	this->mx = mx <= 64 ? mx : 0;
-	this->my = my <= 64 ? my : 0;
+	this->mx = mx <= 64 * 8 ? mx : 0;
+	this->my = my <= 64 * 8 ? my : 0;
 	this->mp = mp;
 }
 

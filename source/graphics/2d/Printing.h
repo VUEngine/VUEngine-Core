@@ -196,7 +196,6 @@ singleton class Printing : Object
 	// Palette to use for printing
 	u8 palette;
 
-
 	/// @publicsection
 
 	/** Get instance
