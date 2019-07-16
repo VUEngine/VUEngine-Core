@@ -1709,6 +1709,8 @@ VirtualList Entity::getShapes()
  */
 void Entity::show()
 {
+	Base::show(this);
+
 	// update transformation before hiding
 	Transformation environmentTransform = Container::getEnvironmentTransform(this);
 	Container::transform(this, &environmentTransform, __INVALIDATE_TRANSFORMATION);
@@ -1716,8 +1718,6 @@ void Entity::show()
 	// update the visual representation
 	this->invalidateSprites = __INVALIDATE_TRANSFORMATION;
 	Entity::synchronizeGraphics(this);
-
-	Base::show(this);
 
 	// show all sprites
 	if(this->sprites)

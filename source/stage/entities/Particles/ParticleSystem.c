@@ -198,6 +198,11 @@ void ParticleSystem::processExpiredParticles()
  */
 void ParticleSystem::update(u32 elapsedTime)
 {
+	if(this->hidden)
+	{
+		return;
+	}
+
 	Base::update(this, elapsedTime);
 
 	ParticleSystem::processExpiredParticles(this);
@@ -397,6 +402,11 @@ Particle ParticleSystem::spawnParticle()
  */
 void ParticleSystem::transform(const Transformation* environmentTransform, u8 invalidateTransformationFlag)
 {
+	if(this->hidden)
+	{
+		return;
+	}
+
 	Base::transform(this, environmentTransform, invalidateTransformationFlag);
 
 	ParticleSystem::processExpiredParticles(this);
@@ -409,11 +419,15 @@ void ParticleSystem::transform(const Transformation* environmentTransform, u8 in
 	{
 		Particle::transform(node->data);
 	}
-
 }
 
 void ParticleSystem::synchronizeGraphics()
 {
+	if(this->hidden)
+	{
+		return;
+	}
+
 	VirtualNode node = this->particles->head;
 
 	bool updateSprites = this->invalidateSprites ? true : false;
@@ -463,8 +477,7 @@ void ParticleSystem::hide()
 
 void ParticleSystem::resume()
 {
-	Base::resume(this);
-
+	// Must recover the particles first so their sprites are recreated
 	VirtualNode node = this->particles->head;
 
 	for(; node; node = node->next)
@@ -491,6 +504,9 @@ void ParticleSystem::resume()
 	}
 
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+
+	// Now call base
+	Base::resume(this);
 }
 
 void ParticleSystem::suspend()

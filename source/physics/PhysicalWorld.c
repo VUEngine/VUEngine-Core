@@ -454,7 +454,7 @@ fix10_6 PhysicalWorld::getElapsedTime()
  */
 void PhysicalWorld::print(int x, int y)
 {
-	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "PHYSICS STATUS", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Registered bodies:     ", x, ++y, NULL);

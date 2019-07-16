@@ -342,7 +342,7 @@ void MemoryPool::printDetailedUsage(int x, int y)
 
 	Printing printing = Printing::getInstance();
 
-	Printing::resetWorldCoordinates(printing);
+	Printing::resetCoordinates(printing);
 
 	Printing::text(printing, "MEMORY POOLS STATUS", x, y++, NULL);
 

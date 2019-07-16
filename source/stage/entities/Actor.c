@@ -336,7 +336,7 @@ void Actor::update(u32 elapsedTime)
 
 //	Body::print(this->body, 1, 0);
 //	Shape::print(VirtualList::front(this->shapes), 1, 20);
-//	Printing::resetWorldCoordinates(Printing::getInstance());
+//	Printing::resetCoordinates(Printing::getInstance());
 }
 
 // whether changed direction in the last cycle or not

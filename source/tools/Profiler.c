@@ -100,7 +100,7 @@ void Profiler::reset()
 void Profiler::initialize()
 {
 	/*
-	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(Printing::getInstance());
 
 	int i = 0;
 	int j = 1;

@@ -351,7 +351,7 @@ int CollisionManager::getNumberOfactiveForCollisionCheckingShapes()
 // print status
 void CollisionManager::print(int x, int y)
 {
-	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(Printing::getInstance());
 
 	Printing::text(Printing::getInstance(), "COLLISION MANAGER", x, y++, NULL);
 	Printing::text(Printing::getInstance(), "Shapes", x, ++y, NULL);
