@@ -412,7 +412,7 @@ void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __att
 void Printing::setCoordinates(s16 x, s16 y, s8 p)
 {
 	Printing::setWorldCoordinates(this, x, y, p);
-	Printing::setBgmapCoordinates(this, x, y, p);
+	Printing::setBgmapCoordinates(this, x, y, 0);
 }
 
 void Printing::setWorldCoordinates(s16 gx, s16 gy, s8 gp)
