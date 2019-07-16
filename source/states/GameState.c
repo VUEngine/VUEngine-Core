@@ -98,7 +98,7 @@ void GameState::destructor()
 void GameState::enter(void* owner __attribute__ ((unused)))
 {
 	VIPManager::removePostProcessingEffects(VIPManager::getInstance());
-	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(Printing::getInstance());
 
 	GameState::pauseClocks(this);
 	this->previousUpdateTime = Clock::getTime(this->updateClock);

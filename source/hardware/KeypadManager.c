@@ -258,7 +258,7 @@ long KeypadManager::getAccumulatedUserInput()
  */
 static void KeypadManager::interruptHandler()
 {
-	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(Printing::getInstance());
 	Printing::text(Printing::getInstance(), "KYP interrupt", 48 - 13, 0, NULL);
 }
 

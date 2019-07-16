@@ -185,6 +185,12 @@ singleton class Printing : Object
 	s16 gy;
 	// parallax value for printing WORLD
 	s8 gp;
+	// x coordinate for printing BGMAP
+	s16 mx;
+	// y coordinate for printing BGMAP
+	s16 my;
+	// parallax value for printing BGMAP
+	s8 mp;
 	// Printing mode (Default or Debug)
 	u8 mode;
 	// Palette to use for printing
@@ -285,7 +291,7 @@ singleton class Printing : Object
 	/**
 	 * Reset the coordinates of the WORLD used for printing
 	 */
-	void resetWorldCoordinates();
+	void resetCoordinates();
 
 	/**
 	 * Set mode to debug to bypass loading fonts through CharSets
@@ -298,6 +304,15 @@ singleton class Printing : Object
 	void setPalette(u8 palette);
 
 	/**
+	 * Set the coordinates used for printing
+	 *
+	 * @param gx		x coordinate
+	 * @param gy		y coordinate
+	 * @param gp		parallax value
+	 */
+	void setCoordinates(s16 x, s16 y, s8 p);
+
+	/**
 	 * Set the coordinates of the WORLD used for printing
 	 *
 	 * @param gx		WORLD x coordinate
@@ -305,6 +320,15 @@ singleton class Printing : Object
 	 * @param gp		WORLD parallax value
 	 */
 	void setWorldCoordinates(s16 gx, s16 gy, s8 gp);
+
+	/**
+	 * Set the coordinates of the BGMAP used for printing
+	 *
+	 * @param mx		BGMAP x coordinate
+	 * @param my		BGMAP y coordinate
+	 * @param mp		BGMAP parallax value
+	 */
+	void setBgmapCoordinates(s16 mx, s16 my, s8 mp);
 
 	/**
 	 * Print a string

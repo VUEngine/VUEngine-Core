@@ -173,7 +173,7 @@ void HardwareManager::checkMemoryMap()
  */
 static void HardwareManager::croInterruptHandler()
 {
-	Printing::resetWorldCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(Printing::getInstance());
 	Printing::text(Printing::getInstance(), "EXP cron", 48 - 13, 0, NULL);
 }
 

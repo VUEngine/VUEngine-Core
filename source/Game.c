@@ -1040,7 +1040,7 @@ void Game::checkFrameRate()
 
 		if(!Game::isInSpecialMode(this))
 		{
-			Printing::resetWorldCoordinates(Printing::getInstance());
+			Printing::resetCoordinates(Printing::getInstance());
 			Stage::showStreamingProfiling(Game::getStage(this), 1, 1);
 		}
 #endif
@@ -1064,7 +1064,7 @@ void Game::checkFrameRate()
 #ifdef __PRINT_MEMORY_POOL_STATUS
 		if(!Game::isInSpecialMode(this))
 		{
-			Printing::resetWorldCoordinates(Printing::getInstance());
+			Printing::resetCoordinates(Printing::getInstance());
 
 #ifdef __PRINT_DETAILED_MEMORY_POOL_STATUS
 			MemoryPool::printDetailedUsage(MemoryPool::getInstance(), 30, 1);
@@ -1077,7 +1077,7 @@ void Game::checkFrameRate()
 #ifdef __ALERT_STACK_OVERFLOW
 		if(!Game::isInSpecialMode(this))
 		{
-			Printing::resetWorldCoordinates(Printing::getInstance());
+			Printing::resetCoordinates(Printing::getInstance());
 			HardwareManager::printStackStatus(HardwareManager::getInstance(), (__SCREEN_WIDTH_IN_CHARS) - 10, 0, true);
 		}
 #endif
@@ -1436,7 +1436,7 @@ void Game::showProfiling(int x __attribute__ ((unused)), int y __attribute__ ((u
 
 	Printing printing = Printing::getInstance();
 
-	Printing::resetWorldCoordinates(printing);
+	Printing::resetCoordinates(printing);
 
 	Printing::text(printing, "PROFILING", x, y++, NULL);
 
@@ -1575,7 +1575,7 @@ void Game::showCurrentGameFrameProfiling(int x __attribute__ ((unused)), int y _
 
 	int xDisplacement = 32;
 
-	Printing::resetWorldCoordinates(printing);
+	Printing::resetCoordinates(printing);
 
 	Printing::text(printing, "PROFILING", x, y++, NULL);
 
