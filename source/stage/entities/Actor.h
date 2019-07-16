@@ -78,11 +78,11 @@ class Actor : AnimatedEntity
 	void changeDirectionOnAxis(u16 axis);
 	bool isInsideGame();
 	StateMachine getStateMachine();
-	void addForce(const Force* force);
 	void moveUniformly(Velocity* velocity);
 	void stopAllMovement();
 	void resetCollisionStatus();
 	Body getBody();
+	virtual void addForce(const Force* force, bool checkIfCanMove);
 	virtual bool canMoveTowards(Vector3D direction);
 	virtual void stopMovement(u16 axis);
 	virtual void takeHitFrom(Actor other);

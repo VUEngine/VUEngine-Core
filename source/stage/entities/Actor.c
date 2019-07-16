@@ -587,7 +587,7 @@ void Actor::stopMovement(u16 axis)
 	}
 }
 
-void Actor::addForce(const Force* force)
+void Actor::addForce(const Force* force, bool checkIfCanMove)
 {
 	ASSERT(this->body, "Actor::addForce: null body");
 
@@ -596,9 +596,12 @@ void Actor::addForce(const Force* force)
 		return;
 	}
 
-	if(!Actor::canMoveTowards(this, *force))
+	if(checkIfCanMove)
 	{
-		return;
+		if(!Actor::canMoveTowards(this, *force))
+		{
+			return;
+		}
 	}
 
 	Body::addForce(this->body, force);
