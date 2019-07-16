@@ -208,6 +208,8 @@ void Particle::show()
 {
 	ASSERT(this->sprite, "Particle::show: null sprite");
 
+	Particle::synchronizeGraphics(this, __INVALIDATE_TRANSFORMATION);
+
 	Sprite::show(this->sprite);
 
 	if(this->particleSpec->initialAnimation && this->particleSpec->animationDescription)
