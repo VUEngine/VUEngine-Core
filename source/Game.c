@@ -1091,7 +1091,6 @@ void Game::currentFrameEnded()
 		PRINT_INT(++counter, 13, 26);
 #endif
 	}
-
 }
 
 bool Game::hasCurrentFrameEnded()

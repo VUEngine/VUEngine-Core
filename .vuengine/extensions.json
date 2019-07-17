@@ -10,8 +10,7 @@
 					},
 					"type": "configFile",
 					"icon": "font",
-					"value": "fonts",
-					"parent": null
+					"value": "fonts"
 				},
 				{
 					"id": "romHeader",
@@ -43,6 +42,37 @@
 			"settings"
 		],
 		"configPresets": [],
-		"fileTemplates": []
+		"fileTemplates": [
+			{
+				"file": "config.h",
+				"data": [
+					"romHeader",
+					"settings"
+				],
+				"target": "source/config.h"
+			},
+			{
+				"file": "config.make",
+				"data": [
+					"plugins",
+					"settings"
+				],
+				"target": "config.make"
+			},
+			{
+				"file": "Fonts.c",
+				"data": [
+					"fonts"
+				],
+				"target": "assets/fonts/Fonts.c"
+			},
+			{
+				"file": "Fonts.h",
+				"data": [
+					"fonts"
+				],
+				"target": "source/assets/Fonts.h"
+			}
+		]
 	}
 }
