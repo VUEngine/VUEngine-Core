@@ -924,6 +924,33 @@ void SpriteManager::computeTotalPixelsDrawn()
 }
 
 /**
+ * Render everything
+ *
+ */
+void SpriteManager::prepareAll()
+{
+	// Must make sure that all textures are completely written
+	SpriteManager::deferParamTableEffects(this, false);
+
+	// Make sure all textures are written right now
+	SpriteManager::writeTextures(this);
+
+	// Sort all sprites' layers
+	SpriteManager::sortLayers(this);
+
+	// Render sprites as soon as possible
+	SpriteManager::render(this);
+
+	// Sort all sprites' layers again
+	// don't remove me, some custom sprites depend on others
+	// to have been setup up before
+	SpriteManager::sortLayers(this);
+
+	// Defer rendering again
+	SpriteManager::deferParamTableEffects(this, true);
+}
+
+/**
  * Retrieve the total amount of pixels to be drawn for all the sprites
  *
  * @return			Number of pixels

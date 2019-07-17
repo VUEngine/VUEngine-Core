@@ -125,6 +125,7 @@ singleton class SpriteManager : Object
 	void sortLayers();
 	void sortLayersProgressively();
 	void writeTextures();
+	void prepareAll();
 }
 
 
