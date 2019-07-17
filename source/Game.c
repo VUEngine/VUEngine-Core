@@ -210,6 +210,7 @@ void Game::constructor()
 	this->autoPauseState = NULL;
 	this->saveDataManager = NULL;
 	this->nextState = NULL;
+	this->nextFrameStarted = false;
 	this->currentFrameEnded = false;
 	this->isPaused = false;
 
@@ -300,12 +301,16 @@ void Game::start(GameState state)
 
 		while(true)
 		{
-			while(!this->currentFrameEnded)
+			Game::currentFrameEnded(this);
+
+			while(!this->nextFrameStarted)
 			{
 				HardwareManager::halt();
 			}
 
+			this->nextFrameStarted = false;
 			this->currentFrameEnded = false;
+
 
 #ifdef __PROFILE_GAME
 			u32 elapsedTime = TimerManager::getMillisecondsElapsed(this->timerManager);
@@ -341,15 +346,6 @@ void Game::start(GameState state)
 			// execute game frame
 			Game::run(this);
 
-#ifdef __ALERT_FOR_TORN_FRAMES
-		if(this->currentFrameEnded)
-		{
-			static int counter = 0;
-			PRINT_TEXT("Torn Frames:", 0, 26);
-			PRINT_INT(++counter, 13, 26);
-		}
-#endif
-
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "end frame";
 #endif
@@ -383,12 +379,6 @@ void Game::start(GameState state)
 				{
 					totalGameFrameRealDuration = 0;
 					cycleCount = 0;
-				}
-
-				// skip the rest of the cycle if already late
-				if(this->currentFrameEnded)
-				{
-					_tornGameFrameCount++;
 				}
 			}
 #endif
@@ -1093,10 +1083,28 @@ void Game::checkFrameRate()
 	TimerManager::enable(this->timerManager, true);
 }
 
+void Game::nextFrameStarted()
+{
+	this->nextFrameStarted = true;
+}
+
 void Game::currentFrameEnded()
 {
-	// raise flag to allow the next frame to start
 	this->currentFrameEnded = true;
+
+	// skip the rest of the cycle if already late
+	if(this->nextFrameStarted)
+	{
+#ifdef __PROFILE_GAME
+		_tornGameFrameCount++;
+#endif
+#ifdef __ALERT_FOR_TORN_FRAMES
+		static int counter = 0;
+		PRINT_TEXT("Torn Frames:", 0, 26);
+		PRINT_INT(++counter, 13, 26);
+	}
+#endif
+
 }
 
 bool Game::hasCurrentFrameEnded()

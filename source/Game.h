@@ -77,8 +77,9 @@ singleton class Game : Object
 	char* lastProcessName;
 	// elapsed time in current 50hz cycle
 	u32 gameFrameTotalTime;
-	// frame ended flag
+	// frame flags
 	volatile bool currentFrameEnded;
+	volatile bool nextFrameStarted;
 	// random seed
 	long randomSeed;
 	// game paused flag
@@ -127,7 +128,7 @@ singleton class Game : Object
 	bool isInDebugMode();
 	bool isInStageEditor();
 	bool isInAnimationInspector();
-	void currentFrameEnded();
+	void nextFrameStarted();
 	bool hasCurrentFrameEnded();
 	void increaseGameFrameDuration(u32 gameFrameDuration);
 	void saveProcessNameDuringFRAMESTART();

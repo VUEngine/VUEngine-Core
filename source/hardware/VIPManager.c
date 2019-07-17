@@ -232,7 +232,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 				// increase current game frame's duration
 				Game::increaseGameFrameDuration(Game::getInstance(), __GAME_FRAME_DURATION);
 
-				Game::currentFrameEnded(Game::getInstance());
+				Game::nextFrameStarted(Game::getInstance());
 
 				if(!_vipManager->processingXPEND)
 				{
@@ -270,14 +270,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 					{
 						// write to DRAM
 						SpriteManager::render(_spriteManager);
-#ifdef __ALERT_VIP_OVERTIME
-						if(Game::hasCurrentFrameEnded(Game::getInstance()))
-						{
-							static u32 count = 0;
-							PRINT_TEXT("VIP frame ended! [   ]", 0, 27);
-							PRINT_INT(++count, 18, 27);
-						}
-#endif
 						
 						this->renderingCompleted = true;
 					}
