@@ -136,7 +136,7 @@ void VIPManager::disableDrawing()
  *
  * @param interruptCode			Interrupts to enable
  */
-void VIPManager::enableInterrupt(u16 interruptCode)
+void VIPManager::enableInterrupts(u16 interruptCode)
 {
 	_vipRegisters[__INTCLR] = _vipRegisters[__INTPND];
 	_vipRegisters[__INTENB]= interruptCode | __TIMEERR;
@@ -192,11 +192,11 @@ static void VIPManager::interruptHandler()
 	// enable interrupts
 	if(_vipManager->processingXPEND)
 	{
-		VIPManager::enableInterrupt(_vipManager, __FRAMESTART);
+		VIPManager::enableInterrupts(_vipManager, __FRAMESTART);
 	}
 	else
 	{
-		VIPManager::enableInterrupt(_vipManager, __FRAMESTART | __XPEND);
+		VIPManager::enableInterrupts(_vipManager, __FRAMESTART | __XPEND);
 	}
 }
 
@@ -259,22 +259,22 @@ void VIPManager::processInterrupt(u16 interrupt)
 					s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(_timerManager);
 #endif
 
-					// prevent VIP's drawing operations
+					// Prevent VIP's drawing operations
 #ifdef __STRICT_RENDERING
 					VIPManager::disableDrawing(this);
 #endif
-					// to allow timer interrupts
-					VIPManager::enableInterrupt(this, __FRAMESTART);
+					// Allow frame start interrupt
+					VIPManager::enableInterrupts(this, __FRAMESTART);
 
 					if(this->allowDRAMAccess)
 					{
-						// write to DRAM
+						// Write to DRAM
 						SpriteManager::render(_spriteManager);
 						
 						this->renderingCompleted = true;
 					}
 
-					// write to the frame buffers
+					// Write to the frame buffers
 					VIPManager::processFrameBuffers(this);
 
 #ifdef __STRICT_RENDERING

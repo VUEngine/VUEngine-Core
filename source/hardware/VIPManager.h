@@ -288,7 +288,7 @@ singleton class VIPManager : Object
 	static void interruptHandler();
 	void enableDrawing();
 	void disableDrawing();
-	void enableInterrupt(u16 interruptCode);
+	void enableInterrupts(u16 interruptCode);
 	void disableInterrupts();
 	void displayOn();
 	void displayOff();

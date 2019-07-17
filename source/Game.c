@@ -508,6 +508,10 @@ void Game::setNextState(GameState state)
 	// no next state now
 	this->nextState = NULL;
 
+	// reset flags
+	this->currentFrameEnded = true;
+	this->nextFrameStarted = false;
+
 	// save current state
 	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
