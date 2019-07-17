@@ -58,10 +58,16 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	// construct base
 	Base::constructor(&particleSystemSpec->entitySpec, id, internalId, name);
 
-	// save spec
-	this->particleSystemSpec = particleSystemSpec;
+	this->particles = NULL;
+	this->expiredParticles = NULL;
+	this->recyclableParticles = NULL;
 
-	ParticleSystem::reset(this);
+	this->particleCount = 0;
+	this->totalSpawnedParticles = 0;
+	this->loop = false;
+	this->paused = false;
+
+	ParticleSystem::setup(this, particleSystemSpec);
 }
 
 /**
@@ -81,17 +87,17 @@ void ParticleSystem::destructor()
  */
 void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec)
 {
-	this->particleSystemSpec = particleSystemSpec;
-
-	ParticleSystem::reset(this);
+	ParticleSystem::cleanUp(this);
+	ParticleSystem::setup(this, particleSystemSpec);
 }
 
 /**
  * Class reset
  */
-void ParticleSystem::reset()
+void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 {
-	ParticleSystem::cleanUp(this);
+	// save spec
+	this->particleSystemSpec = particleSystemSpec;
 
 	NM_ASSERT(this->particleSystemSpec, "ParticleSystem::reset: NULL spec");
 
@@ -154,7 +160,7 @@ void ParticleSystem::cleanUp()
 	}
 
 	if(this->recyclableParticles)
-	{
+	{	
 		// the remover handles all the cleaning
 		if(!isDeleted(particleRemover))
 		{
