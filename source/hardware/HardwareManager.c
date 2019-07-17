@@ -285,7 +285,7 @@ void HardwareManager::enableRendering()
 {
 	// turn on display
 	VIPManager::displayOn(this->vipManager);
-	VIPManager::enableInterrupt(this->vipManager, __FRAMESTART | __XPEND);
+	VIPManager::enableInterrupts(this->vipManager, __FRAMESTART | __XPEND);
 	VIPManager::enableDrawing(this->vipManager);
 }
 

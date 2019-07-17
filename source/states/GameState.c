@@ -104,8 +104,6 @@ void GameState::enter(void* owner __attribute__ ((unused)))
 	this->previousUpdateTime = Clock::getTime(this->updateClock);
 
 	Clock::start(this->messagingClock);
-
-	Game::enableHardwareInterrupts(Game::getInstance());
 }
 
 /**
@@ -133,8 +131,6 @@ void GameState::execute(void* owner __attribute__ ((unused)))
  */
 void GameState::exit(void* owner __attribute__ ((unused)))
 {
-	Game::disableHardwareInterrupts(Game::getInstance());
-
 	// make sure to free the memory
 	if(this->stage)
 	{
@@ -159,8 +155,6 @@ void GameState::exit(void* owner __attribute__ ((unused)))
  */
 void GameState::suspend(void* owner __attribute__ ((unused)))
 {
-	Game::disableHardwareInterrupts(Game::getInstance());
-
 	Clock::pause(this->messagingClock, true);
 
 #ifdef __DEBUG_TOOLS
@@ -176,10 +170,10 @@ void GameState::suspend(void* owner __attribute__ ((unused)))
 	{
 #endif
 
-	// save the camera position for resume reconfiguration
+	// Save the camera position for resume reconfiguration
 	this->cameraPosition = Camera::getPosition(Camera::getInstance());
 
-	// make sure shapes are not drawn while suspended
+	// Make sure shapes are not drawn while suspended
 	CollisionManager::hideShapes(this->collisionManager);
 
 	if(this->stage)
@@ -220,7 +214,7 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	{
 #endif
 
-	// set camera to its previous position
+	// Set camera to its previous position
 	Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
 	Camera::setPosition(Camera::getInstance(), this->cameraPosition);
 	Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
@@ -228,46 +222,27 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 	// Reset the engine state
 	Game::reset(Game::getInstance());
 
-	// Must be called after reseting the game
-	Game::enableRendering(Game::getInstance(), GameState::isVersusMode(this));
-
-	// must make sure that all textures are completely written
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
-
-	// update the stage
+	// Update the stage
 	Container::resume(this->stage);
 
-	// move the camera to its previous position
+	// Move the camera to its previous position
 	Camera::focus(Camera::getInstance(), false);
 
-	// force all transformations to take place again
+	// Force all transformations to take place again
 	GameState::initialTransform(this);
 
-	// force all streaming right now
+	// Force all streaming right now
 	Stage::streamAll(this->stage);
 
-	// force char memory defragmentation
+	// Force char memory defragmentation
 	CharSetManager::defragment(CharSetManager::getInstance());
 
-	// set up visual representation
+	// Set up visual representation
 	GameState::synchronizeGraphics(this);
 
-	// make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::getInstance());
+	// Make sure everything is properly rendered
+	SpriteManager::prepareAll(SpriteManager::getInstance());
 
-	// sort all sprites' layers
-	SpriteManager::sortLayers(SpriteManager::getInstance());
-
-	// render sprites as soon as possible
-	SpriteManager::render(SpriteManager::getInstance());
-
-	// sort all sprites' layers again
-	// don't remove me, some custom sprites depend on others
-	// to have been setup up before
-	SpriteManager::sortLayers(SpriteManager::getInstance());
-
-	// defer rendering again
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
 #ifdef __DEBUG_TOOLS
 	}
 #endif
@@ -283,8 +258,6 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 
 	// unpause clock
 	Clock::pause(this->messagingClock, false);
-
-	Game::enableHardwareInterrupts(Game::getInstance());
 }
 
 /**
@@ -415,9 +388,6 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 {
 	ASSERT(stageSpec, "GameState::loadStage: null stageSpec");
 
-	// disable hardware interrupts
-	Game::disableHardwareInterrupts(Game::getInstance());
-
 	if(this->stage)
 	{
 		// destroy the stage
@@ -430,14 +400,8 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// Reset the engine state
 	Game::reset(Game::getInstance());
 
-	// Must be called after reseting the game
-	Game::enableRendering(Game::getInstance(), GameState::isVersusMode(this));
-
 	// make sure no entity is set as focus for the camera
 	Camera::setFocusGameEntity(Camera::getInstance(), NULL);
-
-	// must make sure that all textures are completely written
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), false);
 
 	// construct the stage
 	this->stage = ((Stage (*)(StageSpec*)) stageSpec->allocator)((StageSpec*)stageSpec);
@@ -455,27 +419,11 @@ void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesTo
 	// set up visual representation
 	GameState::synchronizeGraphics(this);
 
-	// make sure all textures are written right now
-	SpriteManager::writeTextures(SpriteManager::getInstance());
-
-	// sort all sprites' layers
-	SpriteManager::sortLayers(SpriteManager::getInstance());
-
-	// render sprites as soon as possible
-	SpriteManager::render(SpriteManager::getInstance());
-
-	// sort all sprites' layers again
-	// don't remove me, some custom sprites depend on others
-	// to have been setup up before
-	SpriteManager::sortLayers(SpriteManager::getInstance());
-
-	// defer rendering again
-	SpriteManager::deferParamTableEffects(SpriteManager::getInstance(), true);
+	// Make sure everything is properly rendered
+	SpriteManager::prepareAll(SpriteManager::getInstance());
 
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);
-
-	Game::enableHardwareInterrupts(Game::getInstance());
 }
 
 /**

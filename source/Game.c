@@ -270,14 +270,14 @@ void Game::initialize()
 	// setup vectorInterrupts
 	HardwareManager::setInterruptVectors(HardwareManager::getInstance());
 
-	// Reset sounds
-	SoundManager::reset(SoundManager::getInstance());
-
 	// clear sprite memory
 	HardwareManager::clearScreen(HardwareManager::getInstance());
 
 	// make sure timer interrupts are enable
 	HardwareManager::initializeTimer(HardwareManager::getInstance());
+
+	// Reset sounds
+	SoundManager::reset(SoundManager::getInstance());
 
 	// start the game's general clock
 	Clock::start(this->clock);
@@ -288,15 +288,15 @@ void Game::start(GameState state)
 {
 	ASSERT(state, "Game::start: initial state is NULL");
 
-	// initialize SRAM
+	// Initialize SRAM
 	SRAMManager::getInstance();
 
-	// initialize VPU and turn off the brightness
+	// Initialize VPU and turn off the brightness
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
 
 	if(!StateMachine::getCurrentState(this->stateMachine))
 	{
-		// set state
+		// Set state
 		Game::setNextState(this, state);
 
 		while(true)
@@ -343,14 +343,14 @@ void Game::start(GameState state)
 			_waitForFrameStartTotalTime += TimerManager::getMillisecondsElapsed(this->timerManager) - elapsedTime;
 #endif
 
-			// execute game frame
+			// Execute game frame
 			Game::run(this);
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "end frame";
 #endif
 
-			// increase the fps counter
+			// Increase the fps counter
 			FrameRate::increaseFps(FrameRate::getInstance());
 
 #ifdef __PROFILE_GAME
@@ -384,7 +384,7 @@ void Game::start(GameState state)
 #endif
 
 #ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
-			// skip the rest of the cycle if already late
+			// Skip the rest of the cycle if already late
 			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
 			{
 				PRINT_TIME(20, 0);
@@ -403,16 +403,16 @@ void Game::start(GameState state)
 	}
 }
 
-// set game's state
+// Set game's state
 void Game::changeState(GameState state)
 {
-	// state changing must be done when no other process
+	// State changing must be done when no other process
 	// may be affecting the game's general state
 	this->nextState = state;
 	this->nextStateOperation = kSwapState;
 }
 
-// set game's state after cleaning the stack
+// Set game's state after cleaning the stack
 void Game::cleanAndChangeState(GameState state)
 {
 	// state changing must be done when no other process
@@ -421,10 +421,10 @@ void Game::cleanAndChangeState(GameState state)
 	this->nextStateOperation = kCleanAndSwapState;
 }
 
-// add a state to the game's state machine's stack
+// Add a state to the game's state machine's stack
 void Game::addState(GameState state)
 {
-	// state changing must be done when no other process
+	// State changing must be done when no other process
 	// may be affecting the game's general state
 	this->nextState = state;
 	this->nextStateOperation = kPushState;
@@ -435,21 +435,21 @@ void Game::setNextState(GameState state)
 {
 	ASSERT(state, "Game::setState: setting NULL state");
 
-	// prevent the VIPManager to modify the DRAM during the next state's setup
-	VIPManager::allowDRAMAccess(this->vipManager, false);
+	HardwareManager::displayOff(HardwareManager::getInstance());
+	HardwareManager::disableRendering(HardwareManager::getInstance());
 
 	switch(this->nextStateOperation)
 	{
 		case kCleanAndSwapState:
 
-			// clean the game's stack
+			// Clean the game's stack
 			// pop states until the stack is empty
 			while(StateMachine::getStackSize(this->stateMachine) > 0)
 			{
 				State stateMachineCurrentState = StateMachine::getCurrentState(this->stateMachine);
 				if(stateMachineCurrentState)
 				{
-					// discard delayed messages from the current state
+					// Discard delayed messages from the current state
 					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(stateMachineCurrentState));
 					MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 				}
@@ -457,7 +457,7 @@ void Game::setNextState(GameState state)
 				StateMachine::popState(this->stateMachine);
 			}
 
-			// setup new state
+			// Setup new state
 			StateMachine::pushState(this->stateMachine, (State)state);
 			break;
 
@@ -469,12 +469,12 @@ void Game::setNextState(GameState state)
 
 			if(this->currentState)
 			{
-				// discard delayed messages from the current state
+				// Discard delayed messages from the current state
 				MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(GameState::safeCast(StateMachine::getCurrentState(this->stateMachine))));
 				MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
 			}
 
-			// setup new state
+			// Setup new state
 			StateMachine::swapState(this->stateMachine, (State)state);
 			break;
 
@@ -483,7 +483,7 @@ void Game::setNextState(GameState state)
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "pushing state";
 #endif
-			// setup new state
+			// Setup new state
 			StateMachine::pushState(this->stateMachine, (State)state);
 			break;
 
@@ -505,29 +505,26 @@ void Game::setNextState(GameState state)
 			break;
 	}
 
-	// no next state now
+	// No next state now
 	this->nextState = NULL;
 
-	// save current state
+	// Reset flags
+	this->currentFrameEnded = true;
+	this->nextFrameStarted = false;
+
+	// Save current state
 	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 
-	// allow the VIPManager to modify the DRAM
-	VIPManager::allowDRAMAccess(this->vipManager, true);
+	if(GameState::isVersusMode(this->currentState))
+	{
+		CommunicationManager::startSyncCycle(this->communicationManager);
+	}
 
-	// fire event
+	HardwareManager::enableRendering(HardwareManager::getInstance());
+	HardwareManager::displayOn(HardwareManager::getInstance());
+
+	// Fire event
 	Object::fireEvent(this, kEventNextStateSet);
-}
-
-// disable interrupts
-void Game::disableHardwareInterrupts()
-{
-	HardwareManager::disableInterrupts();
-}
-
-// enable interrupts
-void Game::enableHardwareInterrupts()
-{
-	HardwareManager::enableInterrupts();
 }
 
 // erase engine's current status
@@ -537,13 +534,13 @@ void Game::reset()
 	MemoryPool::cleanUp(MemoryPool::getInstance());
 #endif
 
+	HardwareManager::disableInterrupts();
+
 	// Disable timer
 	TimerManager::enable(this->timerManager, false);
 
 	// disable rendering
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
-	HardwareManager::displayOff(HardwareManager::getInstance());
-	HardwareManager::disableRendering(HardwareManager::getInstance());
 	HardwareManager::clearScreen(HardwareManager::getInstance());
 	HardwareManager::setupColumnTable(HardwareManager::getInstance(), NULL);
 	VIPManager::removePostProcessingEffects(this->vipManager);
@@ -567,17 +564,7 @@ void Game::reset()
 
 	// Enable timer
 	TimerManager::enable(this->timerManager, true);
-}
 
-void Game::enableRendering(bool isVersusMode)
-{
-	if(isVersusMode)
-	{
-		CommunicationManager::startSyncCycle(this->communicationManager);
-	}
-
-	HardwareManager::displayOn(HardwareManager::getInstance());
-	HardwareManager::enableRendering(HardwareManager::getInstance());
 	HardwareManager::enableInterrupts();
 }
 
