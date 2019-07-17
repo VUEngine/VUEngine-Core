@@ -61,9 +61,48 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 	// save spec
 	this->particleSystemSpec = particleSystemSpec;
 
+	ParticleSystem::reset(this);
+}
+
+/**
+ * Class destructor
+ */
+void ParticleSystem::destructor()
+{
+	ParticleSystem::cleanUp(this);
+
+	// destroy the super Container
+	// must always be called at the end of the destructor
+	Base::destructor();
+}
+
+/**
+ * Class setParticleSystemSpec
+ */
+void ParticleSystem::setParticleSystemSpec(ParticleSystemSpec* particleSystemSpec)
+{
+	this->particleSystemSpec = particleSystemSpec;
+
+	ParticleSystem::reset(this);
+}
+
+/**
+ * Class reset
+ */
+void ParticleSystem::reset()
+{
+	ParticleSystem::cleanUp(this);
+
+	NM_ASSERT(this->particleSystemSpec, "ParticleSystem::reset: NULL spec");
+
+	if(NULL == this->particleSystemSpec)
+	{
+		return;
+	}
+
 	this->particles = new VirtualList();
-	this->recyclableParticles = this->particleSystemSpec->recycleParticles ? new VirtualList() : NULL;
 	this->expiredParticles = new VirtualList();
+	this->recyclableParticles = this->particleSystemSpec->recycleParticles ? new VirtualList() : NULL;
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
@@ -84,9 +123,9 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 }
 
 /**
- * Class destructor
+ * Class cleanUp
  */
-void ParticleSystem::destructor()
+void ParticleSystem::cleanUp()
 {
 	ParticleSystem::processExpiredParticles(this);
 
@@ -143,10 +182,6 @@ void ParticleSystem::destructor()
 		delete this->expiredParticles;
 		this->expiredParticles = NULL;
 	}
-
-	// destroy the super Container
-	// must always be called at the end of the destructor
-	Base::destructor();
 }
 
 void ParticleSystem::setLoop(bool value)
@@ -164,32 +199,35 @@ bool ParticleSystem::getLoop()
  */
 void ParticleSystem::processExpiredParticles()
 {
-	VirtualNode node = this->expiredParticles->head;
-
-	if(this->particleSystemSpec->recycleParticles)
+	if(!isDeleted(this->expiredParticles))
 	{
-		for(; node; node = node->next)
+		VirtualNode node = this->expiredParticles->head;
+
+		if(this->particleSystemSpec->recycleParticles)
 		{
-			Particle particle = Particle::safeCast(node->data);
-			VirtualList::pushBack(this->recyclableParticles, particle);
-			VirtualList::removeElement(this->particles, particle);
-			this->particleCount--;
-		}
+			for(; node; node = node->next)
+			{
+				Particle particle = Particle::safeCast(node->data);
+				VirtualList::pushBack(this->recyclableParticles, particle);
+				VirtualList::removeElement(this->particles, particle);
+				this->particleCount--;
+			}
 
-		VirtualList::clear(this->expiredParticles);
-	}
-	else
-	{
-		for(; node; node = node->next)
+			VirtualList::clear(this->expiredParticles);
+		}
+		else
 		{
-			Particle particle = Particle::safeCast(node->data);
-			VirtualList::removeElement(this->particles, particle);
+			for(; node; node = node->next)
+			{
+				Particle particle = Particle::safeCast(node->data);
+				VirtualList::removeElement(this->particles, particle);
 
-			delete particle;
-			this->particleCount--;
+				delete particle;
+				this->particleCount--;
+			}
+
+			VirtualList::clear(this->expiredParticles);
 		}
-
-		VirtualList::clear(this->expiredParticles);
 	}
 }
 
