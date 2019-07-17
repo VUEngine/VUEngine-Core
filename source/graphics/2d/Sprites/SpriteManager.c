@@ -262,7 +262,7 @@ ObjectSpriteContainer SpriteManager::getObjectSpriteContainer(int numberOfObject
 			}
 			else
 			{
-				if(__ABS(__FIX10_6_TO_I(Sprite::getPosition(objectSpriteContainer).z - z)) < __ABS(__FIX10_6_TO_I(Sprite::getPosition(suitableObjectSpriteContainer).z - z)))
+				if(__ABS(Sprite::getPosition(objectSpriteContainer).z - z) < __ABS(Sprite::getPosition(suitableObjectSpriteContainer).z - z))
 				{
 					suitableObjectSpriteContainer = objectSpriteContainer;
 				}
