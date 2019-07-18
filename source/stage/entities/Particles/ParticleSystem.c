@@ -64,7 +64,7 @@ void ParticleSystem::constructor(ParticleSystemSpec* particleSystemSpec, s16 id,
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
-	this->loop = false;
+	this->loop = true;
 	this->paused = false;
 
 	ParticleSystem::setup(this, particleSystemSpec);
@@ -112,7 +112,7 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
-	this->loop = false;
+	this->loop = true;
 	this->paused = !this->particleSystemSpec->autoStart;
 
 	// set size from spec
