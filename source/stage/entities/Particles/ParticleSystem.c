@@ -137,7 +137,7 @@ void ParticleSystem::cleanUp()
 
 	ParticleRemover particleRemover = Stage::getParticleRemover(Game::getStage(Game::getInstance()));
 
-	if(this->particles)
+	if(!isDeleted(this->particles))
 	{
 		// the remover handles all the cleaning
 		if(!isDeleted(particleRemover))
@@ -159,7 +159,7 @@ void ParticleSystem::cleanUp()
 		this->particles = NULL;
 	}
 
-	if(this->recyclableParticles)
+	if(!isDeleted(this->recyclableParticles))
 	{	
 		// the remover handles all the cleaning
 		if(!isDeleted(particleRemover))
@@ -214,6 +214,7 @@ void ParticleSystem::processExpiredParticles()
 			for(; node; node = node->next)
 			{
 				Particle particle = Particle::safeCast(node->data);
+				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted recyclable particle");
 				VirtualList::pushBack(this->recyclableParticles, particle);
 				VirtualList::removeElement(this->particles, particle);
 				this->particleCount--;
@@ -225,6 +226,8 @@ void ParticleSystem::processExpiredParticles()
 			{
 				Particle particle = Particle::safeCast(node->data);
 				VirtualList::removeElement(this->particles, particle);
+
+				NM_ASSERT(!isDeleted(particle), "ParticleSystem::processExpiredParticles: deleted particle");
 
 				delete particle;
 				this->particleCount--;
