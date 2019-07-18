@@ -318,8 +318,8 @@ Particle ParticleSystem::recycleParticle()
 		Particle::reset(particle);
 		Particle::setLifeSpan(particle, lifeSpan);
 		Particle::changeMass(particle);
-		Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
-		Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemSpec->movementType);
+		Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this));
+		Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this), this->particleSystemSpec->movementType);
 		Particle::show(particle);
 
 		VirtualList::popFront(this->recyclableParticles);
@@ -335,12 +335,14 @@ Particle ParticleSystem::recycleParticle()
  * @param seed
  * @return		Spawn position
  */
-const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
+const Vector3D* ParticleSystem::getParticleSpawnPosition()
 {
 	static Vector3D position =
 	{
 		0, 0, 0
 	};
+
+	long seed = Utilities::randomSeed();
 
 	position.x = this->transformation.globalPosition.x;
 	if(this->particleSystemSpec->maximumRelativeSpawnPosition.x | this->particleSystemSpec->minimumRelativeSpawnPosition.x)
@@ -348,12 +350,14 @@ const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
 		position.x += this->particleSystemSpec->minimumRelativeSpawnPosition.x + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.x - this->particleSystemSpec->minimumRelativeSpawnPosition.x));
 	}
 
+	seed = Utilities::randomSeed();
 	position.y = this->transformation.globalPosition.y;
 	if(this->particleSystemSpec->maximumRelativeSpawnPosition.y | this->particleSystemSpec->minimumRelativeSpawnPosition.y)
 	{
 		position.y += this->particleSystemSpec->minimumRelativeSpawnPosition.y + Utilities::random(seed, __ABS(this->particleSystemSpec->maximumRelativeSpawnPosition.y - this->particleSystemSpec->minimumRelativeSpawnPosition.y));
 	}
 
+	seed = Utilities::randomSeed();
 	position.z = this->transformation.globalPosition.z;
 	if(this->particleSystemSpec->maximumRelativeSpawnPosition.z | this->particleSystemSpec->minimumRelativeSpawnPosition.z)
 	{
@@ -368,12 +372,14 @@ const Vector3D* ParticleSystem::getParticleSpawnPosition(long seed)
  * @param seed
  * @return		Force
  */
-const Force* ParticleSystem::getParticleSpawnForce(long seed)
+const Force* ParticleSystem::getParticleSpawnForce()
 {
 	static Force force =
 	{
 		0, 0, 0
 	};
+
+	long seed = Utilities::randomSeed();
 
 	force.x = this->particleSystemSpec->minimumForce.x;
 	if(this->particleSystemSpec->maximumForce.x | this->particleSystemSpec->minimumForce.x)
@@ -381,12 +387,14 @@ const Force* ParticleSystem::getParticleSpawnForce(long seed)
 		force.x += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.x - this->particleSystemSpec->minimumForce.x));
 	}
 
+	seed = Utilities::randomSeed();
 	force.y = this->particleSystemSpec->minimumForce.y;
 	if(this->particleSystemSpec->maximumForce.y | this->particleSystemSpec->minimumForce.y)
 	{
 		force.y += Utilities::random(seed, __ABS(this->particleSystemSpec->maximumForce.y - this->particleSystemSpec->minimumForce.y));
 	}
 
+	seed = Utilities::randomSeed();
 	force.z = this->particleSystemSpec->minimumForce.z;
 	if(this->particleSystemSpec->maximumForce.z | this->particleSystemSpec->minimumForce.z)
 	{
@@ -436,8 +444,8 @@ Particle ParticleSystem::spawnParticle()
 
 	// call the appropriate allocator to support inheritance
 	Particle particle = ((Particle (*)(const ParticleSpec*, const SpriteSpec*, int)) this->particleSystemSpec->particleSpec->allocator)(this->particleSystemSpec->particleSpec, (const SpriteSpec*)this->particleSystemSpec->spriteSpecs[spriteSpecIndex], lifeSpan);
-	Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this, seed));
-	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this, seed), this->particleSystemSpec->movementType);
+	Particle::setPosition(particle, ParticleSystem::getParticleSpawnPosition(this));
+	Particle::addForce(particle, ParticleSystem::getParticleSpawnForce(this), this->particleSystemSpec->movementType);
 
 	return particle;
 }
