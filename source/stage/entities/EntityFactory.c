@@ -81,7 +81,7 @@ void EntityFactory::destructor()
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			delete positionedEntityDescription->entity;
+			Entity::deleteMyself(positionedEntityDescription->entity);
 		}
 
 		delete positionedEntityDescription;
@@ -98,7 +98,7 @@ void EntityFactory::destructor()
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			delete positionedEntityDescription->entity;
+			Entity::deleteMyself(positionedEntityDescription->entity);
 		}
 
 		delete positionedEntityDescription;
@@ -115,7 +115,7 @@ void EntityFactory::destructor()
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			delete positionedEntityDescription->entity;
+			Entity::deleteMyself(positionedEntityDescription->entity);
 		}
 
 		delete positionedEntityDescription;
@@ -132,7 +132,7 @@ void EntityFactory::destructor()
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			delete positionedEntityDescription->entity;
+			Entity::deleteMyself(positionedEntityDescription->entity);
 		}
 
 		delete positionedEntityDescription;
@@ -287,7 +287,7 @@ u32 EntityFactory::initializeEntities()
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			delete positionedEntityDescription->entity;
+			Entity::deleteMyself(positionedEntityDescription->entity);
 		}
 
 		delete positionedEntityDescription;
@@ -348,7 +348,7 @@ u32 EntityFactory::transformEntities()
 
 		if(!isDeleted(positionedEntityDescription->entity))
 		{
-			delete positionedEntityDescription->entity;
+			Entity::deleteMyself(positionedEntityDescription->entity);
 		}
 
 		delete positionedEntityDescription;

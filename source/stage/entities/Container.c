@@ -83,6 +83,10 @@ void Container::constructor(const char* const name)
  */
 void Container::destructor()
 {
+	// Must purge children first to prevent race conditions with
+	// children that just called deleteMyself
+	Container::purgeChildren(this);
+
 	// first remove any children removed
 	if(this->removedChildren)
 	{
@@ -100,18 +104,23 @@ void Container::destructor()
 		for(; node ; node = node->next)
 		{
 			Container child = Container::safeCast(node->data);
-/*
-#ifdef __DEBUG
+
+#ifndef __RELEASE
 			if(child->parent != this)
 			{
-				Printing::text(Printing::getInstance(), "Me: ", 1, 15, NULL);
-				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 5, 15, NULL);
-				Printing::text(Printing::getInstance(), "It: ", 1, 16, NULL);
-				Printing::text(Printing::getInstance(), child ? __GET_CLASS_NAME(child) : "NULL", 5, 16, NULL);
+				Printing::setDebugMode(Printing::getInstance());
+				Printing::clear(Printing::getInstance());
+				Printing::text(Printing::getInstance(), "Me: ", 20, 12, NULL);
+				Printing::text(Printing::getInstance(), __GET_CLASS_NAME(this), 24, 12, NULL);
+				Printing::text(Printing::getInstance(), "It: ", 20, 13, NULL);
+				Printing::text(Printing::getInstance(), child ? __GET_CLASS_NAME(child) : "NULL", 24, 13, NULL);
+				Printing::hex(Printing::getInstance(), (u32)child, 29, 14, 8, NULL);
+				Printing::text(Printing::getInstance(), "Parent: ", 20, 15, NULL);
+				Printing::hex(Printing::getInstance(), (u32)child->parent, 29, 15, 8, NULL);
 			}
 #endif
-			ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
-*/
+			NM_ASSERT(child->parent == this, "Container::destructor: deleting a child of not mine");
+
 			child->parent = NULL;
 			delete child;
 		}
@@ -166,7 +175,6 @@ void Container::destructor()
 void Container::deleteMyself()
 {
 	ASSERT(!isDeleted(this), "Container::deleteMyself: deleted this");
-	ASSERT(!isDeleted(this->parent), "Container::deleteMyself: deleted parent");
 
 	if(!isDeleted(this->parent))
 	{
@@ -176,8 +184,7 @@ void Container::deleteMyself()
 	}
 	else
 	{
-		//Printing::text(Printing::getInstance(), __GET_CLASS_NAME_UNSAFE(this), 1, 15, NULL);
-		NM_ASSERT(false, "Container::deleteMyself: I'm orphan");
+		delete this;
 	}
 }
 
