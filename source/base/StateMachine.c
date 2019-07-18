@@ -92,6 +92,16 @@ void StateMachine::update()
 }
 
 /**
+ * Return the states stack
+ *
+ * @return VirtualList
+ */
+VirtualList StateMachine::getStateStack()
+{
+	return this->stateStack;
+}
+
+/**
  * Replace the current state for a new one
  *
  * @param newState	State to switch to
@@ -156,6 +166,45 @@ u32 StateMachine::pushState(State newState)
 
 	// return the resulting stack size
 	return StateMachine::getStackSize(this);
+}
+
+/**
+ * Remove the current state, the one at the top of the stack but don't call resume on the previous state
+ *
+ * @return 			Resulting stack's size
+ */
+u32 StateMachine::popStateWithoutResume()
+{
+	// return in case the stack is empty
+	if(StateMachine::getStackSize(this) == 0)
+	{
+		return 0;
+	}
+
+	// finalize current state
+	if(this->currentState)
+	{
+		// call the exit method from current state
+		State::exit(this->currentState, this->owner);
+	}
+
+	// remove the state in the top of the stack
+	VirtualList::popFront(this->stateStack);
+
+	// update current state
+	this->currentState = VirtualList::front(this->stateStack);
+
+	// return the resulting stack size
+	return StateMachine::getStackSize(this);
+}
+
+/**
+ * Remove all the states in the stack
+ *
+ */
+void StateMachine::popAllStates()
+{
+	while(0 < StateMachine::popStateWithoutResume(this));
 }
 
 /**

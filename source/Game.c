@@ -441,20 +441,24 @@ void Game::setNextState(GameState state)
 	switch(this->nextStateOperation)
 	{
 		case kCleanAndSwapState:
-
-			// Clean the game's stack
-			// pop states until the stack is empty
-			while(StateMachine::getStackSize(this->stateMachine) > 0)
 			{
-				State stateMachineCurrentState = StateMachine::getCurrentState(this->stateMachine);
-				if(stateMachineCurrentState)
+				// Clean the game's stack
+				// pop states until the stack is empty
+				VirtualList stateMachineStack = StateMachine::getStateStack(this->stateMachine);
+
+				// Cancel all messages
+				VirtualNode node = VirtualList::begin(stateMachineStack);
+
+				for(; node; node = VirtualNode::getNext(node))
 				{
-					// Discard delayed messages from the current state
-					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(stateMachineCurrentState));
+					GameState gameState = GameState::safeCast(VirtualNode::getData(node));
+
+					MessageDispatcher::discardDelayedMessagesWithClock(MessageDispatcher::getInstance(), GameState::getMessagingClock(gameState));
 					MessageDispatcher::processDiscardedMessages(MessageDispatcher::getInstance());
+
 				}
 
-				StateMachine::popState(this->stateMachine);
+				StateMachine::popAllStates(this->stateMachine);
 			}
 
 			// Setup new state

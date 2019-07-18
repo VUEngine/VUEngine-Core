@@ -150,7 +150,11 @@ void Stage::destructor()
 	delete this->particleRemover;
 	this->particleRemover = NULL;
 
-	delete this->entityFactory;
+	if(this->entityFactory)
+	{
+		delete this->entityFactory;
+		this->entityFactory = NULL;
+	}
 
 	if(this->uiContainer)
 	{
@@ -1097,6 +1101,7 @@ void Stage::suspend()
 	}
 
 	delete this->entityFactory;
+	this->entityFactory = NULL;
 	ParticleRemover::reset(this->particleRemover);
 }
 

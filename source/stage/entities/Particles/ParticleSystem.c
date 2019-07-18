@@ -112,7 +112,7 @@ void ParticleSystem::setup(ParticleSystemSpec* particleSystemSpec)
 
 	this->particleCount = 0;
 	this->totalSpawnedParticles = 0;
-	this->loop = true;
+	this->loop = false;
 	this->paused = !this->particleSystemSpec->autoStart;
 
 	// set size from spec
@@ -218,8 +218,6 @@ void ParticleSystem::processExpiredParticles()
 				VirtualList::removeElement(this->particles, particle);
 				this->particleCount--;
 			}
-
-			VirtualList::clear(this->expiredParticles);
 		}
 		else
 		{
@@ -231,9 +229,9 @@ void ParticleSystem::processExpiredParticles()
 				delete particle;
 				this->particleCount--;
 			}
-
-			VirtualList::clear(this->expiredParticles);
 		}
+
+		VirtualList::clear(this->expiredParticles);
 	}
 }
 

@@ -30,6 +30,7 @@
 #include <Object.h>
 #include <Telegram.h>
 #include <State.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,10 +55,12 @@ class StateMachine : Object
 	void swapState(State newState);
 	u32 pushState(State newState);
 	u32 popState();
+	void popAllStates();
 	void returnToPreviousState();
 	void changeToGlobal(State globalState);
 	bool isInState(State state);
 	void setOwner(void* owner);
+	VirtualList getStateStack();
 	State getCurrentState();
 	State getPreviousState();
 	int getStackSize();
