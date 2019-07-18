@@ -98,18 +98,18 @@
 #define __NEW_BASIC(ClassName)																			\
 																										\
 		/* allocate data */																				\
-		(ClassName*)((u32)MemoryPool_allocate(MemoryPool_getInstance(),								\
+		(ClassName*)((u32)MemoryPool_allocate(MemoryPool_getInstance(),									\
 			sizeof(ClassName) + __DYNAMIC_STRUCT_PAD) + __DYNAMIC_STRUCT_PAD);							\
 
 // like delete in C++ (calls virtual destructor)
-#ifdef __DEBUG
+#ifndef __RELEASE
 #define __DELETE(object)																				\
 																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))					\
 		{																								\
 			/* since the destructor is the first element in the virtual table */						\
 			ASSERT(object && *(u32*)object, "Deleting null object");									\
-			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);		\
+			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
 		else																							\
 		{																								\
@@ -123,11 +123,11 @@
 																										\
 		if(__OBJECT_MEMORY_FOOT_PRINT == *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD))					\
 		{																								\
-			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);		\
+			((((struct Object ## _vTable*)((*((void**)object))))->destructor))((Object)object);			\
 		}																								\
 		else																							\
 		{																								\
-			*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;					\
+			*(u32*)((u32)object - __DYNAMIC_STRUCT_PAD) = __MEMORY_FREE_BLOCK_FLAG;						\
 		}
 #endif
 
@@ -136,7 +136,7 @@
 #define __CONSTRUCT_BASE(BaseClass, ...)																\
 																										\
 		/* call base's constructor */																	\
-		BaseClass ## _constructor(__SAFE_CAST(BaseClass, this), ##__VA_ARGS__);						\
+		BaseClass ## _constructor(__SAFE_CAST(BaseClass, this), ##__VA_ARGS__);							\
 
 // must always call base class's destructor
 #define __DESTROY_BASE																					\
@@ -148,7 +148,7 @@
 #define __VIRTUAL_CALL_ADDRESS(ClassName, MethodName, object)											\
 																										\
 		/* call derived implementation */																\
-		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)							\
+		(((struct ClassName ## _vTable*)((*((void**)object))))->MethodName)								\
 
 #define __VIRTUAL_CALL_COMMA_HELPER(...) ,##__VA_ARGS__
 
@@ -157,7 +157,7 @@
 																										\
 		((((struct ClassName ## _vTable*)((*((void**)object))))->MethodName))							\
 		(																								\
-			__SAFE_CAST(ClassName, object) __VIRTUAL_CALL_COMMA_HELPER(__VA_ARGS__)					\
+			__SAFE_CAST(ClassName, object) __VIRTUAL_CALL_COMMA_HELPER(__VA_ARGS__)						\
 		)
 
 // call the base's method
@@ -181,7 +181,7 @@
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
 		/* test if object has not been deleted */														\
-		(object && *(u32*)object - __DYNAMIC_STRUCT_PAD)												\
+		(object && (__MEMORY_FREE_BLOCK_FLAG != *(u32*)object - __DYNAMIC_STRUCT_PAD))					\
 
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))
