@@ -29,6 +29,7 @@
 #include <Clock.h>
 #include <PhysicalWorld.h>
 #include <MessageDispatcher.h>
+#include <FrameRate.h>
 #include <debugConfig.h>
 
 
@@ -55,7 +56,7 @@ friend class VirtualNode;
 
 //#define __STOP_VELOCITY_THRESHOLD				__F_TO_FIX10_6(0.9f)
 #ifndef __STOP_VELOCITY_THRESHOLD
-#define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(8)
+#define __STOP_VELOCITY_THRESHOLD				__PIXELS_TO_METERS(1)
 #endif
 #ifndef __STOP_BOUNCING_VELOCITY_THRESHOLD
 #define __STOP_BOUNCING_VELOCITY_THRESHOLD 		__PIXELS_TO_METERS(48)
@@ -455,49 +456,27 @@ MovementResult Body::getMovementResult(Vector3D previousVelocity)
 
 	// stop if no external force or opposing normal force is present
 	// and if the velocity minimum threshold is not reached
-	if(previousVelocity.x && __UNIFORM_MOVEMENT != this->movementType.x && (this->velocity.x | previousVelocity.x))
-//	if(previousVelocity.x && !this->externalForce.x && __UNIFORM_MOVEMENT != this->movementType.x && (this->velocity.x | previousVelocity.x))
+	if(previousVelocity.x && !this->externalForce.x && __ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		if(__X_AXIS & movementResult.axisOfChangeOfDirection)
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x) || (!this->externalForce.x && 0 == this->acceleration.x) || (__X_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __X_AXIS;
 		}
-		else if((__X_AXIS & movementResult.axisOfChangeOfMovement) && (0 <= this->totalNormal.x * this->velocity.x))
-		{
-			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.x))
-			{
-				movementResult.axisStoppedMovement |= __X_AXIS;
-			}
-		}
 	}
 
-	if(previousVelocity.y && __UNIFORM_MOVEMENT != this->movementType.y && (this->velocity.y | previousVelocity.y))
+	if(previousVelocity.y && !this->externalForce.y && __ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		if(__Y_AXIS & movementResult.axisOfChangeOfDirection)
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y) || (!this->externalForce.y && 0 == this->acceleration.y) || (__Y_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __Y_AXIS;
 		}
-		else if((__Y_AXIS & movementResult.axisOfChangeOfMovement) && (0 <= this->totalNormal.y * this->velocity.y))
-		{
-			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.y))
-			{
-				movementResult.axisStoppedMovement |= __Y_AXIS;
-			}
-		}
 	}
 
-	if(previousVelocity.z && __UNIFORM_MOVEMENT != this->movementType.z && (this->velocity.z | previousVelocity.z))
+	if(previousVelocity.z && !this->externalForce.z && __ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		if(__Z_AXIS & movementResult.axisOfChangeOfDirection)
+		if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z) || (!this->externalForce.z && 0 == this->acceleration.z) || (__Z_AXIS & movementResult.axisOfChangeOfDirection))
 		{
 			movementResult.axisStoppedMovement |= __Z_AXIS;
-		}
-		else if((__Z_AXIS & movementResult.axisOfChangeOfMovement) && (0 <= this->totalNormal.z * this->velocity.z))
-		{
-			if(__STOP_VELOCITY_THRESHOLD > __ABS(this->velocity.z))
-			{
-				movementResult.axisStoppedMovement |= __Z_AXIS;
-			}
 		}
 	}
 
@@ -567,80 +546,93 @@ MovementResult Body::updateMovement()
 	this->friction = Vector3D::scalarProduct(this->direction, -__FIX10_6_MULT(this->frictionForceMagnitude, __I_TO_FIX10_6(1 << __FRICTION_FORCE_FACTOR_POWER)));
 
 	fix10_6 elapsedTime = _currentElapsedTime;
-//	fix10_6 elapsedTimeHalfSquare = __FIX10_6_MULT(elapsedTime, elapsedTime) >> 1;
 	Velocity previousVelocity = this->velocity;
 
-	bool acceleratedX = false;
-	bool acceleratedY = false;
-	bool acceleratedZ = false;
-
-	if(__UNIFORM_MOVEMENT == this->movementType.x)
+	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
-		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
-	}
-	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->friction.x)
-//	else if((__ACCELERATED_MOVEMENT == this->movementType.x) | gravity.x | this->externalForce.x | this->totalNormal.x | this->friction.x)
-	{
-		acceleratedX = true;
-
 		// need to use extended types to prevent overflows
 		fix10_6_ext acceleration = gravity.x + __FIX10_6_EXT_DIV(this->externalForce.x + this->totalNormal.x + this->friction.x, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.x = __FIX10_6_EXT_TO_FIX10_6(acceleration);
 		this->velocity.x += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
-//		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);// + __FIX10_6_MULT(this->acceleration.x, elapsedTimeHalfSquare);
+	}
+	else if(__UNIFORM_MOVEMENT == this->movementType.x)
+	{
+		if(__ABS(this->velocity.x) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
+		{
+			if(0 == FrameRate::getFps(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.x)))
+			{
+				this->position.x += 0 <= this->velocity.x ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
+			}
+		}
+		else
+		{
+			this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
+		}
 	}
 
-	if(__UNIFORM_MOVEMENT == this->movementType.y)
+	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
-		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);
-	}
-	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->friction.y)
-//	else if((__ACCELERATED_MOVEMENT == this->movementType.y) | gravity.y | this->externalForce.y | this->totalNormal.y | this->friction.y)
-	{
-		acceleratedY = true;
-
 		fix10_6_ext acceleration = gravity.y + __FIX10_6_EXT_DIV(this->externalForce.y + this->totalNormal.y + this->friction.y, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.y = __FIX10_6_EXT_TO_FIX10_6(acceleration);
 		this->velocity.y += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
-//		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);// + __FIX10_6_MULT(this->acceleration.y, elapsedTimeHalfSquare);
+	}
+	else if(__UNIFORM_MOVEMENT == this->movementType.y)
+	{
+		if(__ABS(this->velocity.y) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
+		{
+			if(0 == FrameRate::getFps(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.y)))
+			{
+				this->position.y += 0 <= this->velocity.y ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
+			}
+		}
+		else
+		{
+			this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);
+		}
 	}
 
-	if(__UNIFORM_MOVEMENT == this->movementType.z)
+	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
-		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
-	}
-	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->friction.z)
-//	else if((__ACCELERATED_MOVEMENT == this->movementType.z) | gravity.z | this->externalForce.z | this->totalNormal.z | this->friction.z)
-	{
-		acceleratedZ = true;
-
 		fix10_6_ext acceleration = gravity.z + __FIX10_6_EXT_DIV(this->externalForce.z + this->totalNormal.z + this->friction.z, this->mass);
 		fix10_6_ext velocityDelta = __FIX10_6_EXT_MULT(acceleration, elapsedTime);
 
 		this->acceleration.z = __FIX10_6_EXT_TO_FIX10_6(acceleration);
 		this->velocity.z += __FIX10_6_EXT_TO_FIX10_6(velocityDelta);
-//		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);// + __FIX10_6_MULT(this->acceleration.z, elapsedTimeHalfSquare);
 	}
-
+	else if(__UNIFORM_MOVEMENT == this->movementType.z)
+	{
+		if(__ABS(this->velocity.z) < __PIXELS_TO_METERS((1 << __PIXELS_PER_METER_2_POWER)))
+		{
+			if(0 == FrameRate::getFps(FrameRate::getInstance()) % (__TARGET_FPS / __METERS_TO_PIXELS(this->velocity.z)))
+			{
+				this->position.z += 0 <= this->velocity.z ? __PIXELS_TO_METERS(1) : -__PIXELS_TO_METERS(1);
+			}
+		}
+		else
+		{
+			this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
+		}
+	}
+	
 	this->direction = Vector3D::normalize(this->velocity);
 
 	Body::clampVelocity(this);
 
-	if(acceleratedX)
+	if(__ACCELERATED_MOVEMENT == this->movementType.x)
 	{
 		this->position.x += __FIX10_6_MULT(this->velocity.x, elapsedTime);
 	}
 
-	if(acceleratedY)
+	if(__ACCELERATED_MOVEMENT == this->movementType.y)
 	{
 		this->position.y += __FIX10_6_MULT(this->velocity.y, elapsedTime);
 	}
 
-	if(acceleratedZ)
+	if(__ACCELERATED_MOVEMENT == this->movementType.z)
 	{
 		this->position.z += __FIX10_6_MULT(this->velocity.z, elapsedTime);
 	}

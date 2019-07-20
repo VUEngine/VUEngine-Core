@@ -327,9 +327,7 @@ void Game::start(GameState state)
 			}
 #endif
 
-#ifdef __PRINT_PROFILING_INFO
-			Game::checkFrameRate(this);
-#endif
+			Game::updateFrameRate(this);
 
 #ifdef __PRINT_WIREFRAME_MANAGER_STATUS
 			WireframeManager::print(WireframeManager::getInstance(), 1, 1);
@@ -991,7 +989,7 @@ void Game::increaseGameFrameDuration(u32 gameFrameDuration)
 	this->gameFrameTotalTime += gameFrameDuration;
 }
 
-void Game::checkFrameRate()
+void Game::updateFrameRate()
 {
 	if(Game::isInSpecialMode(this))
 	{
