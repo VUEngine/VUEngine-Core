@@ -74,9 +74,6 @@ void Printing::constructor()
 	this->fonts = new VirtualList();
 	this->mode = __PRINTING_MODE_DEFAULT;
 	this->palette = __PRINTING_PALETTE;
-	this->gx = __PRINTING_BGMAP_X_OFFSET;
-	this->gy = __PRINTING_BGMAP_Y_OFFSET;
-	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
 
 	Printing::reset(this);
 }
@@ -100,8 +97,8 @@ void Printing::render(int textLayer)
 	_worldAttributesBaseAddress[textLayer].gx = this->gx;
 	_worldAttributesBaseAddress[textLayer].gp = this->gp;
 	_worldAttributesBaseAddress[textLayer].gy = this->gy;
-	_worldAttributesBaseAddress[textLayer].w = __SCREEN_WIDTH - this->gx - 1;
-	_worldAttributesBaseAddress[textLayer].h = __SCREEN_HEIGHT - this->gy - 1;
+	_worldAttributesBaseAddress[textLayer].w = this->w;
+	_worldAttributesBaseAddress[textLayer].h = this->h;
 }
 
 void Printing::reset()
@@ -118,10 +115,11 @@ void Printing::reset()
 	this->gx = __PRINTING_BGMAP_X_OFFSET;
 	this->gy = __PRINTING_BGMAP_Y_OFFSET;
 	this->gp = __PRINTING_BGMAP_PARALLAX_OFFSET;
-	this->mx = 0;
-	this->my = 0;
+	this->mx = __PRINTING_BGMAP_X_OFFSET;
+	this->my = __PRINTING_BGMAP_Y_OFFSET;
 	this->mp = 0;
-
+	this->w = __SCREEN_WIDTH - 1;
+	this->h = __SCREEN_HEIGHT - 1;
 }
 
 void Printing::loadFonts(FontSpec** fontSpecs)
@@ -393,6 +391,7 @@ void Printing::setCoordinates(s16 x, s16 y, s8 p)
 {
 	Printing::setWorldCoordinates(this, 0, 0, 0);
 	Printing::setBgmapCoordinates(this, 0, 0, 0);
+	Printing::setWorldSize(this, __SCREEN_WIDTH, __SCREEN_HEIGHT);
 }
 
 void Printing::setWorldCoordinates(s16 gx __attribute__ ((unused)), s16 gy __attribute__ ((unused)), s8 gp __attribute__ ((unused)))
@@ -408,6 +407,13 @@ void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __att
 	this->my = 0;
 	this->mp = 0;
 }
+
+void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ ((unused)))
+{
+	this->w = __SCREEN_WIDTH - 1;
+	this->h = __SCREEN_HEIGHT - 1;
+}
+
 #else
 void Printing::setCoordinates(s16 x, s16 y, s8 p)
 {
@@ -429,6 +435,11 @@ void Printing::setBgmapCoordinates(s16 mx __attribute__ ((unused)), s16 my __att
 	this->mp = mp;
 }
 
+void Printing::setWorldSize(u16 w __attribute__ ((unused)), u16 h __attribute__ ((unused)))
+{
+	this->w = w < __SCREEN_WIDTH ? w : __SCREEN_WIDTH;
+	this->h = h < __SCREEN_HEIGHT ? h : __SCREEN_HEIGHT;
+}
 #endif
 
 void Printing::resetCoordinates()

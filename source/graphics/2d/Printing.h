@@ -191,6 +191,10 @@ singleton class Printing : Object
 	s16 my;
 	// parallax value for printing BGMAP
 	s8 mp;
+	// print WORLD's width
+	u16 w;
+	// print WORLD's height
+	u16 h;
 	// Printing mode (Default or Debug)
 	u8 mode;
 	// Palette to use for printing
@@ -328,6 +332,14 @@ singleton class Printing : Object
 	 * @param mp		BGMAP parallax value
 	 */
 	void setBgmapCoordinates(s16 mx, s16 my, s8 mp);
+
+	/**
+	 * Set WORLD's size
+	 *
+	 * @param w			WORLD's width
+	 * @param h			WORLD's height
+	 */
+	void setWorldSize(u16 w, u16 h);
 
 	/**
 	 * Print a string
