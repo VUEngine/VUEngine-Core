@@ -610,6 +610,7 @@ int ParticleSystem::computeNextSpawnTime()
 void ParticleSystem::start()
 {
 	this->nextSpawnTime = ParticleSystem::computeNextSpawnTime(this);
+	this->totalSpawnedParticles = 0;
 	this->paused = false;
 }
 
