@@ -387,7 +387,7 @@ void Printing::text(const char* string, int x, int y, const char* font)
 }
 
 #ifdef __FORCE_PRINTING_LAYER
-void Printing::setCoordinates(s16 x, s16 y, s8 p)
+void Printing::setCoordinates(s16 x __attribute__ ((unused)), s16 y __attribute__ ((unused)), s8 p __attribute__ ((unused)))
 {
 	Printing::setWorldCoordinates(this, 0, 0, 0);
 	Printing::setBgmapCoordinates(this, 0, 0, 0);
