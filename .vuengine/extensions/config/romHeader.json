@@ -1,8 +1,6 @@
 {
-	"romHeader": {
-		"gameCode": "VXXX",
-		"gameTitle": "VUENGINE PROJECT",
-		"makerCode": "XX",
-		"revision": 0
-	}
+	"gameCode": "VXXX",
+	"gameTitle": "VUENGINE PROJECT",
+	"makerCode": "XX",
+	"revision": 0
 }
