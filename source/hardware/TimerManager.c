@@ -66,6 +66,8 @@ void TimerManager::constructor()
 	this->tcrValue = 0;
 	this->milliseconds = 0;
 	this->totalMilliseconds = 0;
+	this->frequency = __TIMER_100US;
+	this->resolution = __TIME_MS(__TIMER_RESOLUTION);
 
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
@@ -76,8 +78,43 @@ void TimerManager::constructor()
  */
 void TimerManager::destructor()
 {
+	_timerManager = NULL;
+
 	// allow a new construct
 	Base::destructor();
+}
+
+/**
+ * Reset
+ */
+void TimerManager::reset()
+{
+	this->tcrValue = 0;
+	this->milliseconds = 0;
+	this->totalMilliseconds = 0;
+	this->frequency = __TIMER_100US;
+	this->resolution = __TIME_MS(__TIMER_RESOLUTION);
+}
+
+
+/**
+ * Set timer frequency
+ * 
+ * @param frequency 	u16
+ */
+void TimerManager::setFrequency(u16 frequency)
+{
+	this->frequency = frequency;
+}
+
+/**
+ * Set timer resolution
+ * 
+ * @param resolution 	u16
+ */
+void TimerManager::setResolution(u16 resolution)
+{
+	this->resolution = resolution;
 }
 
 /**
@@ -85,8 +122,9 @@ void TimerManager::destructor()
  */
 void TimerManager::initialize()
 {
-	TimerManager::setFrequency(this, __TIMER_100US);
-	TimerManager::setTime(this, __TIME_MS(__TIMER_RESOLUTION));
+	TimerManager::setTimerFrequency(this);
+	TimerManager::setTimerResolution(this); 
+
 	TimerManager::clearStat(this);
 	TimerManager::enable(this, true);
 	TimerManager::enableInterrupt(this, true);
@@ -155,9 +193,10 @@ static void TimerManager::interruptHandler()
 	if(previousHundredthSecond < (u32)(currentHundredthSecond / 10))
 	{
 		previousHundredthSecond = (u32)(currentHundredthSecond / 10);
-		// update sounds
-		SoundManager::playSounds(_soundManager);
 	}
+
+	// update sounds
+	SoundManager::playSounds(SoundManager::getInstance());
 
 	// enable
 	TimerManager::enable(_timerManager, true);
@@ -200,10 +239,10 @@ u32 TimerManager::resetMilliseconds()
  *
  * @param time		New time
  */
-void TimerManager::setTime(u16 time)
+void TimerManager::setTimerResolution()
 {
-	_hardwareRegisters[__TLR] = (time & 0xFF);
-	_hardwareRegisters[__THR] = (time >> 8);
+	_hardwareRegisters[__TLR] = (this->resolution & 0xFF);
+	_hardwareRegisters[__THR] = (this->resolution >> 8);
 }
 
 /**
@@ -211,10 +250,9 @@ void TimerManager::setTime(u16 time)
  *
  * @param frequency			New frequency
  */
-void TimerManager::setFrequency(int frequency)
+void TimerManager::setTimerFrequency()
 {
-	this->tcrValue = (this->tcrValue & 0x0F) | frequency;
-
+	this->tcrValue = (this->tcrValue & 0x0F) | this->frequency;
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 

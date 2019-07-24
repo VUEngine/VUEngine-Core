@@ -186,6 +186,114 @@
 #define B_9 0x00
 
 
+
+typedef struct SoundChannelConfiguration
+{
+	/// kMIDI, kPCM
+	u32 type;
+
+	/// SxINT
+	u8 SxINT;
+
+	/// Volume SxLRV
+	u8 SxLRV;
+
+	/// SxRAM
+	u8 SxRAM;
+
+	/// SxEV0 
+	u8 SxEV0;
+
+	/// SxEV1
+	u8 SxEV1;
+	
+	/// SxFQH
+	u8 SxFQH;
+
+	/// SxFQL
+	u8 SxFQL;
+
+	/// Ch. 5 only
+	u8 S5SWP; 
+	
+	/// Waveform data pointer
+	const u8* waveFormData;
+
+	/// Is modulation
+	bool isModulation;
+
+} SoundChannelConfiguration;
+
+typedef const SoundChannelConfiguration SoundChannelConfigurationROM;
+
+typedef struct SoundChannel
+{
+	/// Configuration
+	SoundChannelConfiguration* soundChannelConfiguration;
+
+	/// Length
+	u32 length;
+
+	/// Sound track
+	const u8* soundTrack;
+
+} SoundChannel;
+
+typedef const SoundChannel SoundChannelROM;
+
+typedef struct Sound
+{
+	/// Play in loop
+	bool loop;
+
+	/// Tracks
+	SoundChannel** soundChannels;
+
+} Sound;
+
+typedef const Sound SoundROM;
+
+typedef struct Waveform
+{
+	u8 number;
+	u8* wave;
+	const u8* data;
+
+} Waveform;
+
+typedef struct Channel
+{
+	// Channel configuration
+	SoundChannelConfiguration soundChannelConfiguration;
+
+	/// Sound definition
+	Sound* sound;
+
+	/// Position within the sound track
+	u32 cursor;
+
+	u8 number;
+	u8 soundChannel;
+	
+} Channel;
+
+enum SoundTrackTypes
+{
+	kUnknownType = 0,
+	kMIDI,
+	kPCM
+};
+
+enum SoundRequestReturnMessages
+{
+	kNullSound = 0,
+	kNotEnoughFreeChannels,
+	kNotEnoughFreeWaveforms,
+	kPlayRequestSuccess,
+};
+
+#define __TOTAL_CHANNELS	5
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -193,6 +301,10 @@
 /// @ingroup hardware
 singleton class SoundManager : Object
 {
+	Channel channels[__TOTAL_CHANNELS];
+	Waveform waveforms[__TOTAL_CHANNELS];
+	
+
 	// actual note of each sound being played
 	int actualNote[__TOTAL_SOUNDS];
 	// note delay for each sound being played
@@ -211,8 +323,11 @@ singleton class SoundManager : Object
 	void playBGM(const u16 (*bgm)[]);
 	int playFxSound(const u16* fxSound, Vector3D position);
 	int playingSound(const u16* fxSound);
-	void stopAllSound();
+	void stopAllSounds();
 	void playSounds();
+
+	u32 play(Sound* sound, bool forceAllChannels);
+	void print();
 }
 
 

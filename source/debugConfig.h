@@ -37,9 +37,13 @@
 //#define __MAXIMUM_BOUNCINESS_COEFFICIENT		5.5f
 //#define __FORCE_FONT "GuiFont"
 //#define __SHOW_CHAR_MEMORY_STATUS
+//#define __SHOW_SOUND_STATUS
 
 #undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						10
+#define __TIMER_RESOLUTION						2500
+
+
+
 
 //#undef __SAFE_CAST
 //#define __SAFE_CAST(ClassName, object) (ClassName)object

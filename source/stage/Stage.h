@@ -37,6 +37,8 @@
 #include <VIPManager.h>
 #include <Camera.h>
 #include <SpriteManager.h>
+#include <TimerManager.h>
+#include <SoundManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -48,6 +50,14 @@ typedef struct StageSpec
 {
 	/// class allocator
 	AllocatorPointer allocator;
+
+	// Timer config
+	struct Timer
+	{
+		u16 frequency;
+		u16 resolution;
+
+	} timer;
 
 	// general level's attributes
 	struct Level
@@ -128,8 +138,8 @@ typedef struct StageSpec
 		// textures for preloading
 		TextureSpec** textureSpecs;
 
-		// pointer to the background music
-		const u16 (*bgm)[];
+		// pointer to the background sounds
+		Sound** sounds;
 
 	} assets;
 

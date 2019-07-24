@@ -34,13 +34,18 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// use with 100us timer (range = 0 to 6500, and 0 to 6.5)
+//use with 20us timer (range = 0 to 1300)
+#define __TIME_US(n)		(((n)/20)-1)
+
+//use with 100us timer (range = 0 to 6500, and 0 to 6.5)
 #define __TIME_MS(n)		(((n)*10)-1)
+#define __TIME_SEC(n)		(((n)*10000)-1)
 
 #define __TIMER_ENB			0x01
 #define __TIMER_ZSTAT		0x02
 #define __TIMER_ZCLR		0x04
 #define __TIMER_INT			0x08
+#define __TIMER_20US		0x10
 #define __TIMER_100US		0x00
 
 
@@ -53,17 +58,20 @@ singleton class TimerManager : Object
 {
 	u32 milliseconds;
 	u32 totalMilliseconds;
+	u16 resolution;
+	u16 frequency;
 	u8 tcrValue;
 
 	/// @publicsection
 	static TimerManager getInstance();
 	static void interruptHandler();
+	void reset();
+	void setFrequency(u16 frequency);
+	void setResolution(u16 resolution);
 	void enable(bool flag);
 	u32 getMillisecondsElapsed();
 	u32 getTotalMillisecondsElapsed();
 	u32 resetMilliseconds();
-	void setTime(u16 time);
-	void setFrequency(int frequency);
 	int getStat();
 	void clearStat();
 	void initialize();

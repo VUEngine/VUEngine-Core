@@ -33,8 +33,7 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-// some wave forms data
-static const unsigned char sawSquareWave[32] =
+const unsigned char sawSquareWave[32] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Saw + Square */
 	0x00, 0x00, 0x00, 0x00, 0x08, 0x10, 0x18, 0x20,
@@ -42,7 +41,7 @@ static const unsigned char sawSquareWave[32] =
 	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-static const unsigned char glockenWave[32] =
+const unsigned char glockenWave[32] =
 {
 	0x20, 0x35, 0x26, 0x2d, 0x32, 0x19, 0x1d, 0x2a,	/* Glocken */
 	0x24, 0x30, 0x3e, 0x2e, 0x25, 0x21, 0x17, 0x18,
@@ -50,7 +49,7 @@ static const unsigned char glockenWave[32] =
 	0x1c, 0x16, 0x23, 0x27, 0x0f, 0x13, 0x1a, 0x0b,
 };
 
-static const unsigned char square0Wave[32] =
+const unsigned char square0Wave[32] =
 {
 	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -58,7 +57,7 @@ static const unsigned char square0Wave[32] =
 	0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-static const unsigned char square1Wave[32] =
+const unsigned char square1Wave[32] =
 {
 	0x26, 0x19, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Square Wave (Duty 75%) */
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -66,7 +65,7 @@ static const unsigned char square1Wave[32] =
 	0x1b, 0x2a, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f, 0x3f,
 };
 
-static const unsigned char organWave[32] =
+const unsigned char organWave[32] =
 {
 	0x20, 0x3f, 0x38, 0x38, 0x27, 0x23, 0x27, 0x11,	/* Organ (2+3)*/
 	0x13, 0x26, 0x0c, 0x26, 0x23, 0x22, 0x1e, 0x00,
@@ -74,7 +73,7 @@ static const unsigned char organWave[32] =
 	0x2c, 0x2f, 0x1a, 0x1d, 0x1a, 0x08, 0x09, 0x00,
 };
 
-static const unsigned char sinAlphaWave[32] =
+const unsigned char sinAlphaWave[32] =
 {
 	0x20, 0x29, 0x30, 0x33, 0x33, 0x31, 0x31, 0x35,	/* Sin Wave + alpha */
 	0x39, 0x3e, 0x3e, 0x3a, 0x33, 0x2a, 0x23, 0x20,
@@ -82,7 +81,7 @@ static const unsigned char sinAlphaWave[32] =
 	0x06, 0x0b, 0x0f, 0x0f, 0x0e, 0x0d, 0x10, 0x17,
 };
 
-static const unsigned char sawWave[32] =
+const unsigned char sawWave[32] =
 {
 	0x01, 0x03, 0x05, 0x07, 0x09, 0x0b, 0x0d, 0x0f,	/* Saw Wave */
 	0x31, 0x13, 0x15, 0x17, 0x19, 0x1b, 0x1d, 0x1f,
@@ -90,7 +89,7 @@ static const unsigned char sawWave[32] =
 	0x11, 0x33, 0x35, 0x37, 0x39, 0x3b, 0x3d, 0x3f,
 };
 
-static const unsigned char sinWave[32] =
+const unsigned char sinWave[32] =
 {
 	0x00, 0x06, 0x0C, 0x11, 0x16, 0x1A, 0x1D, 0x1E,
 	0x1F, 0x1E, 0x29, 0x1D, 0x16, 0x11, 0x0C, 0x06,
@@ -98,11 +97,19 @@ static const unsigned char sinWave[32] =
 	0x20, 0x21, 0x22, 0x25, 0x29, 0x2E, 0x33, 0x39
 };
 
+const unsigned char linearWave[32] =
+{
+	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
+	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
+	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
+	0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4, 0xC4,
+};
+
 /**
  * Sound Registry
  *
  */
-typedef struct SOUNDREG
+typedef struct SoundRegistry
 {
 	// this table is for the most part untested, but looks to be accurate
 	//				 	|		D7	   ||		D6	   ||		D5	   ||		D4	   ||		D3	   ||		D2	   ||		D1	   ||		D0	   |
@@ -126,18 +133,13 @@ typedef struct SOUNDREG
 	//Ch. 5 only
 	u8 S5SWP; //		[------CLK-----][-------------Sweep/Modulation Time------------][------U/D-----][----------------Number of Shifts--------------]
 	u8 spacer8[35];
-} SOUNDREG;
+} SoundRegistry;
 
-// reserved for world's background
-static u8* const WAVEDATA1 =		(u8*)0x01000000;
-static u8* const WAVEDATA2 =		(u8*)0x01000080;
-// reserved for world's background
-static u8* const WAVEDATA3 =		(u8*)0x01000100;
-static u8* const WAVEDATA4 =		(u8*)0x01000180;
-static u8* const WAVEDATA5 =		(u8*)0x01000200;
-static u8* const MODDATA =			(u8*)0x01000280;
-static SOUNDREG* const SND_REGS =	(SOUNDREG*)0x01000400; //(SOUNDREG*)0x010003C0;
-#define SSTOP						*(u8*)0x01000580
+static SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(SoundRegistry*)0x010003C0;
+
+#define __WAVE_ADDRESS(n)			(u8*)(0x01000000 + (n - 1) * 128)
+#define __MODDATA					(u8*)0x01000280;
+#define __SSTOP						*(u8*)0x01000580
 
 #define __MAXIMUM_OUTPUT_LEVEL		0xF
 
@@ -179,49 +181,85 @@ void SoundManager::reset()
 {
 	int i = 0;
 
-	// reset all records
-	for(i = 0; i < __TOTAL_SOUNDS; i++)
+	// Reset all sounds and channels
+	for(i = 0; i < __TOTAL_CHANNELS; i++)
 	{
-		this->noteWait[i] = 0;
-		this->actualNote[i] = 0;
+		this->channels[i].number = i + 1;
+		this->channels[i].sound = NULL;
+		this->channels[i].cursor = 0;
+		this->channels[i].soundChannel = 0;
+
+		this->channels[i].soundChannelConfiguration.type = kUnknownType;
+		this->channels[i].soundChannelConfiguration.SxLRV = 0;
+		this->channels[i].soundChannelConfiguration.SxRAM = 0;
+		this->channels[i].soundChannelConfiguration.SxEV0 = 0;
+		this->channels[i].soundChannelConfiguration.SxEV1 = 0;
+		this->channels[i].soundChannelConfiguration.SxFQH = 0;
+		this->channels[i].soundChannelConfiguration.SxFQL = 0;
+		this->channels[i].soundChannelConfiguration.waveFormData = NULL;
+		this->channels[i].soundChannelConfiguration.isModulation = false;
+
+		this->waveforms[i].number = i;
+		this->waveforms[i].wave = __WAVE_ADDRESS(i + 1);
+		this->waveforms[i].data = NULL;
 	}
 
-	this->bgm = NULL;
-
-	for( i = 0; i < __FXS; i++)
-	{
-		this->fxSound[i] = NULL;
-
-		this->fxLeftOutput[i] = 0;
-		this->fxRightOutput[i] = 0;
-	}
-
-	SoundManager::setWaveForm(this);
-}
-
-/**
- * Load wave form data
- */
-void SoundManager::setWaveForm()
-{
-	int i;
-	for(i = 0; i < 32; i++)
-	{
-		WAVEDATA1[i*4] = organWave[i];
-		WAVEDATA2[i*4] = sinWave[i];
-		WAVEDATA3[i*4] = glockenWave[i];
-		WAVEDATA4[i*4] = square1Wave[i];
-		WAVEDATA5[i*4] = sinAlphaWave[i];
-	}
+	SoundManager::stopAllSounds(this);
 }
 
 /**
  * Update sound playback
  */
+bool SoundManager::updatePlayback(Channel* channel)
+{
+	if(NULL == channel->sound)
+	{
+		return false;
+	}
+
+	switch(channel->soundChannelConfiguration.type)
+	{
+		case kMIDI:
+			{
+				//_soundRegistries[channel->number].SxLRV = SoundManager::calculateSoundPosition(this, fxS)
+				u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack[channel->cursor];
+				_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+				_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+			}
+			break;
+
+		case kPCM:
+
+			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = channel->sound->soundChannels[channel->soundChannel]->soundTrack[channel->cursor];
+			break;
+	}
+
+++channel->cursor;
+	if(++channel->cursor >= channel->sound->soundChannels[channel->soundChannel]->length)
+	{
+		channel->cursor = 0;
+
+		if(!channel->sound->loop)
+		{
+			return false;
+		}
+	}
+
+	return true;
+}
+
 void SoundManager::playSounds()
 {
-	SoundManager::continuePlayingBGM(this);
-	SoundManager::continuePlayingFxSounds(this);
+	int i = 0;
+
+	// Play sounds
+	for(i = 0; i < __TOTAL_CHANNELS; i++)
+	{
+		if(NULL != this->channels[i].sound && !SoundManager::updatePlayback(this, &this->channels[i]))
+		{
+			this->channels[i].sound = NULL;
+		}
+	}
 }
 
 /**
@@ -231,6 +269,7 @@ void SoundManager::playSounds()
  */
 void SoundManager::continuePlayingBGM()
 {
+	return;
 	// only if bgm loaded
 	if(!this->bgm)
 	{
@@ -271,11 +310,11 @@ void SoundManager::continuePlayingBGM()
 	{
 		// stop sound on the current channel
 		/* There is a bug which makes the sound of
-		 * SND_REGS 0 to not stop if not explicitly
+		 * _soundRegistries 0 to not stop if not explicitly
 		 * done.
 		 */
 
-		SND_REGS[channel].SxINT = 0x00;
+		_soundRegistries[channel].SxINT = 0x00;
 
 		// grab note
 		for(; i < 2 && !this->bgm[this->actualNote[0] + 3][i]; i++);
@@ -289,29 +328,29 @@ void SoundManager::continuePlayingBGM()
 		if(note != 0)
 		{
 			// set note's output level
-			SND_REGS[channel].SxLRV = this->bgm[0][2];
+			_soundRegistries[channel].SxLRV = this->bgm[0][2];
 
 			// set note's frequency
-			SND_REGS[channel].SxFQL = (note & 0xFF);
-			SND_REGS[channel].SxFQH = (note >> 8);
+			_soundRegistries[channel].SxFQL = (note & 0xFF);
+			_soundRegistries[channel].SxFQH = (note >> 8);
 
 			// set note's envelope
-			SND_REGS[channel].SxEV0 = this->bgm[0][3];
+			_soundRegistries[channel].SxEV0 = this->bgm[0][3];
 
 			// set note's envelope mode
-			SND_REGS[channel].SxEV1 = this->bgm[0][4];
+			_soundRegistries[channel].SxEV1 = this->bgm[0][4];
 
 			// set waveform source
-			SND_REGS[channel].SxRAM = this->bgm[0][5];
+			_soundRegistries[channel].SxRAM = this->bgm[0][5];
 
 			// output note
-			SND_REGS[channel].SxINT = 0x80;
+			_soundRegistries[channel].SxINT = 0x80;
 		}
 
 		// not sure about this
 		if(channel == 4)
 		{
-			SND_REGS[channel].S5SWP = this->bgm[0][5];
+			_soundRegistries[channel].S5SWP = this->bgm[0][5];
 		}
 	}
 
@@ -355,6 +394,7 @@ int SoundManager::calculateSoundPosition(int fxS)
  */
 void SoundManager::continuePlayingFxSounds()
 {
+	return;
 	int note = 0;
 	int fxS = 0;
 
@@ -375,14 +415,20 @@ void SoundManager::continuePlayingFxSounds()
 				// if note if greater than song's length
 				if(this->actualNote[fxS + 1] > this->fxSound[fxS][0])
 				{
+					if(true)
+					{
+						// rewind fx
+						this->actualNote[fxS + 1] = 0;
+						continue;
+					}
 					// stop sound
 					this->fxSound[fxS] = NULL;
 					this->fxLeftOutput[fxS] = 0;
 					this->fxRightOutput[fxS] = 0;
 					this->noteWait[fxS + 1] = 0;
 					this->actualNote[fxS + 1] = 0;
-					SND_REGS[fxS + 2].SxLRV = 0x00;
-					SND_REGS[fxS + 2].SxINT = 0x00;
+					_soundRegistries[fxS + 2].SxLRV = 0x00;
+					_soundRegistries[fxS + 2].SxINT = 0x00;
 
 					continue;
 				}
@@ -393,10 +439,10 @@ void SoundManager::continuePlayingFxSounds()
 			{
 				// stop sound on the current channel
 				/* There is a bug which makes the sound of
-				 * SND_REGS 0 to not stop if not explicitly
+				 * _soundRegistries 0 to not stop if not explicitly
 				 * done.
 				 */
-				SND_REGS[fxS + 2].SxINT = 0x00;
+				_soundRegistries[fxS + 2].SxINT = 0x00;
 
 				// grab note
 				note = this->fxSound[fxS][this->actualNote[fxS + 1] + 6];
@@ -405,23 +451,23 @@ void SoundManager::continuePlayingFxSounds()
 				if(note != 0)
 				{
 					// if sound is positioned
-					SND_REGS[fxS + 2].SxLRV = SoundManager::calculateSoundPosition(this, fxS);
+					_soundRegistries[fxS + 2].SxLRV = SoundManager::calculateSoundPosition(this, fxS);
 
 					// set note's frequency
-					SND_REGS[fxS + 2].SxFQL = (note & 0xFF);
-					SND_REGS[fxS + 2].SxFQH = (note >> 8);
+					_soundRegistries[fxS + 2].SxFQL = (note & 0xFF);
+					_soundRegistries[fxS + 2].SxFQH = (note >> 8);
 
 					// set note's envelope
-					SND_REGS[fxS + 2].SxEV0 = this->fxSound[fxS][3];
+					_soundRegistries[fxS + 2].SxEV0 = this->fxSound[fxS][3];
 
 					// set note's envelope mode
-					SND_REGS[fxS + 2].SxEV1 = this->fxSound[fxS][4];
+					_soundRegistries[fxS + 2].SxEV1 = this->fxSound[fxS][4];
 
 					// set waveform source
-					SND_REGS[fxS + 2].SxRAM = this->fxSound[fxS][5];
+					_soundRegistries[fxS + 2].SxRAM = this->fxSound[fxS][5];
 
 					// output note
-					SND_REGS[fxS + 2].SxINT = 0x80;
+					_soundRegistries[fxS + 2].SxINT = 0x80;
 				}
 			}
 
@@ -429,11 +475,176 @@ void SoundManager::continuePlayingFxSounds()
 		}
 		else
 		{
-			SND_REGS[fxS + 2].SxLRV = 0x00;
+			_soundRegistries[fxS + 2].SxLRV = 0x00;
 
-			SND_REGS[fxS + 2].SxINT = 0x00;
+			_soundRegistries[fxS + 2].SxINT = 0x00;
 		}
 	}
+}
+
+s8 SoundManager::getWaveform(const u8* waveFormData)
+{
+	int i = 0;
+
+	Waveform* freeWaveform = NULL;
+
+	// Reset all sounds and channels
+	for(i = __TOTAL_CHANNELS - 1; 0 <= i; i--)
+	{
+		if(NULL == this->waveforms[i].data)
+		{
+			freeWaveform = &this->waveforms[i];
+		}
+
+		if(waveFormData == this->waveforms[i].data)
+		{
+			return this->waveforms[i].number;
+		}
+	}
+
+	if(NULL != freeWaveform)
+	{
+		return freeWaveform->number;
+	}
+
+	return -1;
+}
+
+void SoundManager::setWaveform(Waveform* waveform, const u8* data)
+{
+	if(NULL != waveform)
+	{
+		waveform->data = data;
+
+		int i;
+
+		for(i = 0; i < 32; i++)
+		{
+			waveform->wave[i * 4] = data[i];
+		}
+	}
+}
+
+static u8 SoundManager::getSoundChannelsCount(Sound* sound)
+{
+	// Compute the number of 
+	u8 soundChannelsCount = 0;
+
+	for(; sound->soundChannels[soundChannelsCount]; soundChannelsCount++);
+
+	return __TOTAL_CHANNELS < soundChannelsCount ? __TOTAL_CHANNELS : soundChannelsCount;
+}
+
+u8 SoundManager::getChannelsForSound(Sound* sound, VirtualList availableChannels, u8 soundChannelsCount)
+{
+	if(NULL == sound || isDeleted(availableChannels))
+	{
+		return 0;
+	}
+
+	u16 i = 0;
+	u8 usableChannels = 0;
+
+	for(i = 0; usableChannels < soundChannelsCount && i < __TOTAL_CHANNELS; i++)
+	{
+		if(NULL == this->channels[i].sound)
+		{
+			usableChannels++;
+			VirtualList::pushBack(availableChannels, &this->channels[i]);
+		}
+	}
+
+	return usableChannels;
+}
+
+void SoundManager::configureChannel(Channel* channel)
+{
+	if(NULL == channel)
+	{
+		return;
+	}
+
+	_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+	_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH;
+	_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL;
+	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV;
+	_soundRegistries[channel->number].SxRAM = channel->soundChannelConfiguration.SxRAM;
+	_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;	
+}
+
+/**
+ * Start playback of a sound
+ *
+ * @param sound		Sound*
+ */
+u32 SoundManager::play(Sound* sound, bool forceAllChannels)
+{
+	u32 returnMessage = kNullSound;
+
+	if(NULL == sound)
+	{
+		return returnMessage;
+	}
+
+	// Compute the number of 
+	u8 soundChannelsCount = SoundManager::getSoundChannelsCount(sound);
+	
+	// Check for free channels
+	VirtualList availableChannels = new VirtualList();
+	u8 usableChannels = SoundManager::getChannelsForSound(this, sound, availableChannels, soundChannelsCount);
+
+	if(forceAllChannels)
+	{
+		returnMessage = kNotEnoughFreeChannels;
+	}
+	// If there are enough usable channels
+	else if(soundChannelsCount <= usableChannels)
+	{
+		s8 waves[__TOTAL_CHANNELS] = {-1, -1, -1, -1, -1};
+
+		u16 i = 0;
+
+		for(; i < soundChannelsCount; i++)
+		{
+			waves[i] = SoundManager::getWaveform(this, sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
+
+			if(0 > waves[i])
+			{
+				return kNotEnoughFreeWaveforms;
+			}
+		}
+
+		for(i = 0; i < soundChannelsCount; i++)
+		{
+			SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
+		}
+
+		VirtualNode node = VirtualList::begin(availableChannels);
+
+		for(i = 0; node; node = VirtualNode::getNext(node), i++)
+		{
+			Channel* channel = (Channel*)VirtualNode::getData(node);
+
+			channel->sound = sound;
+			channel->cursor = 0;
+			channel->soundChannel = i;
+			channel->soundChannelConfiguration = *sound->soundChannels[i]->soundChannelConfiguration;
+			channel->soundChannelConfiguration.SxRAM = waves[i];
+
+			SoundManager::configureChannel(this, channel);
+		}
+
+		returnMessage = kPlayRequestSuccess;
+	}
+	else
+	{
+		returnMessage = kNotEnoughFreeChannels;
+	}
+
+	delete availableChannels;
+
+	return returnMessage;
 }
 
 /**
@@ -443,20 +654,13 @@ void SoundManager::continuePlayingFxSounds()
  */
 void SoundManager::playBGM(const u16 (*bgm)[])
 {
-	SoundManager::stopAllSound(this);
+	SoundManager::stopAllSounds(this);
 	this->bgm = bgm;
 }
 
-/**
- * Start playback of fx sound.
- * If all fx channels are in use, it is not guaranteed that the sound will be played.
- *
- * @param fxSound	Fx sound to play
- * @param position	3D position
- * @return 			True if playback started
- */
 int SoundManager::playFxSound(const u16* fxSound, Vector3D position)
 {
+//	init_speech();
 	int i = 0;
 
 	// try to find a free channel
@@ -508,15 +712,116 @@ int SoundManager::playingSound(const u16* fxSound)
 /**
  * Stop all sound playback
  */
-void SoundManager::stopAllSound()
+void SoundManager::stopAllSounds()
 {
 	int channel = 0;
 
 	//disables sound on all channels
-	for(channel = 0; channel < 6; channel++)
+	for(channel = 0; channel < __TOTAL_CHANNELS + 1; channel++)
 	{
-		SND_REGS[channel].SxINT = 0x00;
+		_soundRegistries[channel].SxINT = 0x00;
 	}
 
-	SSTOP = 0x01;
+	__SSTOP = 0x01;
+}
+
+
+static void SoundManager::printSound(Sound* sound, u8 soundChannel, u32 cursor, int x, int y)
+{
+	if(NULL == sound)
+	{
+		return;
+	}
+
+	int xDisplacement = 10;
+
+//	PRINT_TEXT("Sound: ", x, ++y);
+//	PRINT_HEX((u32)sound, x + xDisplacement, y);
+
+	PRINT_TEXT("Loop: ", x, ++y);
+	PRINT_TEXT(sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+	PRINT_TEXT("Length: ", x, ++y);
+	PRINT_INT(sound->soundChannels[soundChannel]->length, x + xDisplacement, y);
+	
+	PRINT_TEXT("Note: ", x, ++y);
+	PRINT_INT(sound->soundChannels[soundChannel]->soundTrack[cursor], x + xDisplacement, y);
+}
+
+static void SoundManager::printChannel(Channel* channel, int x, int y)
+{
+	if(NULL == channel)
+	{
+		return;
+	}
+
+	int xDisplacement = 10;
+
+	PRINT_TEXT("CHANNEL: ", x, y);
+	PRINT_INT(channel->number, x + xDisplacement, y);
+
+	PRINT_TEXT("Type: ", x, ++y);
+
+	char* soundType = "Unknown";
+	switch(channel->soundChannelConfiguration.type)
+	{
+		case kMIDI:
+
+			soundType = "MIDI";
+			break;
+
+		case kPCM:
+
+			soundType = "PCM";
+			break;
+	}
+
+	PRINT_TEXT(soundType, x + xDisplacement, y);
+
+//	PRINT_TEXT("Cursor: ", x, ++y);
+//	PRINT_INT(channel->cursor, x + xDisplacement, y);
+
+	PRINT_TEXT("Snd Chnl: ", x, ++y);
+	PRINT_INT(channel->soundChannel, x + xDisplacement, y);
+
+	PRINT_TEXT("SxINT: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxINT | (NULL == channel->sound ? 0 : 0x80), x + xDisplacement, y, 2);
+
+	PRINT_TEXT("SxLRV: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxLRV, x + xDisplacement, y, 2);
+
+	PRINT_TEXT("SxRAM: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
+
+	PRINT_TEXT("SxEV0: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxEV0, x + xDisplacement, y, 2);
+
+	PRINT_TEXT("SxEV1: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxEV1, x + xDisplacement, y, 2);
+
+	PRINT_TEXT("SxFQH: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
+
+	PRINT_TEXT("SxFQH: ", x, ++y);
+	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
+
+	if(NULL == channel->sound)
+	{
+		PRINT_TEXT("Sound: None", x, ++y);
+	}
+	else
+	{
+		SoundManager::printSound(channel->sound, channel->soundChannel, channel->cursor, x, y);
+	}
+}
+
+void SoundManager::print()
+{
+	int i = 0;
+
+	for(; i < __TOTAL_CHANNELS; i++)
+	{
+		SoundManager::printChannel(&this->channels[i], 1, 1);
+		break;
+	}
 }

@@ -232,7 +232,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Camera::setOptical(Camera::getInstance(), Optical::getFromPixelOptical(this->stageSpec->rendering.pixelOptical));
 
 	// stop all sounds
-	SoundManager::stopAllSound(SoundManager::getInstance());
+	SoundManager::stopAllSounds(SoundManager::getInstance());
 
 	if(overrideCameraPosition)
 	{
@@ -278,7 +278,10 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
 
 	// load background music
-	SoundManager::playBGM(SoundManager::getInstance(), (const u16 (*)[6])this->stageSpec->assets.bgm);
+	Stage::loadBackgroundSounds(this);
+
+	// Setup timer
+	Stage::setupTimer(this);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -1135,8 +1138,11 @@ void Stage::resume()
 		Camera::setFocusGameEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
 	}
 
-	// load background music
-	SoundManager::playBGM(SoundManager::getInstance(), (const u16 (*)[6])this->stageSpec->assets.bgm);
+	// load background sounds
+	Stage::loadBackgroundSounds(this);
+
+	// Setup timer
+	Stage::setupTimer(this);
 
 	Base::resume(this);
 
@@ -1150,6 +1156,21 @@ void Stage::resume()
 	}
 
 	this->entityFactory = new EntityFactory();
+}
+
+void Stage::loadBackgroundSounds()
+{
+	int i = 0;
+
+	for(; this->stageSpec->assets.sounds[i]; i++)
+	{
+		SoundManager::play(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], false);
+	}
+}
+
+void Stage::setupTimer()
+{
+	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.frequency, this->stageSpec->timer.resolution);
 }
 
 bool Stage::handlePropagatedMessage(int message)

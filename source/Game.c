@@ -274,7 +274,7 @@ void Game::initialize()
 	HardwareManager::clearScreen(HardwareManager::getInstance());
 
 	// make sure timer interrupts are enable
-	HardwareManager::initializeTimer(HardwareManager::getInstance());
+	HardwareManager::setupTimer(HardwareManager::getInstance(), __TIMER_100US, __TIME_MS(10));
 
 	// Reset sounds
 	SoundManager::reset(SoundManager::getInstance());
@@ -343,6 +343,10 @@ void Game::start(GameState state)
 
 			// Execute game frame
 			Game::run(this);
+
+#ifdef __SHOW_SOUND_STATUS
+			SoundManager::print(SoundManager::getInstance());
+#endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "end frame";
@@ -540,6 +544,7 @@ void Game::reset()
 
 	// Disable timer
 	TimerManager::enable(this->timerManager, false);
+	TimerManager::reset(this->timerManager);
 
 	// disable rendering
 	HardwareManager::lowerBrightness(HardwareManager::getInstance());
