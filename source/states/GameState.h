@@ -61,6 +61,12 @@ class GameState : State
 	Clock physicsClock;
 	// previous update time
 	u32 previousUpdateTime;
+	// Flags to disable some processes
+	bool stream;
+	bool transform;
+	bool synchronizeGraphics;
+	bool updatePhysics;
+	bool processCollisions;
 
 	/// @publicsection
 	void constructor();

@@ -195,8 +195,8 @@ static void TimerManager::interruptHandler()
 		previousHundredthSecond = (u32)(currentHundredthSecond / 10);
 	}
 
-	// update sounds
-	SoundManager::playSounds(SoundManager::getInstance());
+	// update MIDI sounds
+//	SoundManager::playMIDISounds(SoundManager::getInstance());
 
 	// enable
 	TimerManager::enable(_timerManager, true);

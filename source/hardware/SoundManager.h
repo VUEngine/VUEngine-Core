@@ -234,6 +234,9 @@ typedef struct SoundChannel
 	/// Length
 	u32 length;
 
+	/// Delay before moving the cursor
+	u16 delay;
+
 	/// Sound track
 	const u8* soundTrack;
 
@@ -245,6 +248,9 @@ typedef struct Sound
 {
 	/// Play in loop
 	bool loop;
+
+	/// Combine all channels into a single sound
+	bool combineChannels;
 
 	/// Tracks
 	SoundChannel** soundChannels;
@@ -272,8 +278,15 @@ typedef struct Channel
 	/// Position within the sound track
 	u32 cursor;
 
+	/// Delay before moving the cursor
+	u16 delay;
+
+	/// Leader channel to sync PCM playback on combined channels
+	struct Channel* leaderChannel;
+
 	u8 number;
 	u8 soundChannel;
+	u8 partners;
 	
 } Channel;
 
@@ -292,7 +305,7 @@ enum SoundRequestReturnMessages
 	kPlayRequestSuccess,
 };
 
-#define __TOTAL_CHANNELS	5
+#define __TOTAL_CHANNELS	6
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -303,7 +316,6 @@ singleton class SoundManager : Object
 {
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
-	
 
 	// actual note of each sound being played
 	int actualNote[__TOTAL_SOUNDS];
@@ -320,11 +332,10 @@ singleton class SoundManager : Object
 	/// @publicsection
 	static SoundManager getInstance();
 	void reset();
-	void playBGM(const u16 (*bgm)[]);
-	int playFxSound(const u16* fxSound, Vector3D position);
-	int playingSound(const u16* fxSound);
+
+	void playMIDISounds();
+	void playPCMSounds();
 	void stopAllSounds();
-	void playSounds();
 
 	u32 play(Sound* sound, bool forceAllChannels);
 	void print();

@@ -58,6 +58,12 @@ void GameState::constructor()
 	this->cameraPosition.y = 0;
 	this->cameraPosition.z = 0;
 	this->previousUpdateTime = 0;
+	
+	this->stream = true;
+	this->transform = true;
+	this->synchronizeGraphics = true;
+	this->updatePhysics = true;
+	this->processCollisions = true;
 }
 
 /**
@@ -131,6 +137,12 @@ void GameState::execute(void* owner __attribute__ ((unused)))
  */
 void GameState::exit(void* owner __attribute__ ((unused)))
 {
+	this->stream = true;
+	this->transform = true;
+	this->synchronizeGraphics = true;
+	this->updatePhysics = true;
+	this->processCollisions = true;
+
 	// make sure to free the memory
 	if(this->stage)
 	{
@@ -306,6 +318,11 @@ int GameState::propagateMessage(int message)
  */
 bool GameState::stream()
 {
+	if(!this->stream)
+	{
+		return;
+	}
+
 	return  Stage::stream(this->stage);
 }
 
@@ -315,6 +332,11 @@ bool GameState::stream()
 void GameState::transform()
 {
 	ASSERT(this->stage, "GameState::transform: null stage");
+
+	if(!this->transform)
+	{
+		return;
+	}
 
 	extern Transformation neutralEnvironmentTransformation;
 
@@ -355,8 +377,13 @@ void GameState::synchronizeGraphics()
 {
 	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
+	if(!this->synchronizeGraphics)
+	{
+		return;
+	}
+
 	// then transformation loaded entities
-		Container::synchronizeGraphics(this->stage);
+	Container::synchronizeGraphics(this->stage);
 }
 
 /**
@@ -364,6 +391,11 @@ void GameState::synchronizeGraphics()
  */
 void GameState::updatePhysics()
 {
+	if(!this->updatePhysics)
+	{
+		return;
+	}
+
 	PhysicalWorld::update(this->physicalWorld, this->physicsClock);
 }
 
@@ -374,6 +406,11 @@ void GameState::updatePhysics()
  */
 u32 GameState::processCollisions()
 {
+	if(!this->processCollisions)
+	{
+		return false;
+	}
+
 	return CollisionManager::update(this->collisionManager, this->physicsClock);
 }
 

@@ -221,11 +221,11 @@ void Game::constructor()
 	this->timerManager = TimerManager::getInstance();
 	this->communicationManager = CommunicationManager::getInstance();
 	this->profiler = Profiler::getInstance();
+	this->frameRate = FrameRate::getInstance();
 
 	SoundManager::getInstance();
 	CharSetManager::getInstance();
 	BgmapTextureManager::getInstance();
-	FrameRate::getInstance();
 	HardwareManager::getInstance();
 	SpriteManager::getInstance();
 	DirectDraw::getInstance();
@@ -303,14 +303,22 @@ void Game::start(GameState state)
 		{
 			Game::currentFrameEnded(this);
 
-			while(!this->nextFrameStarted)
+			if(this->nextFrameStarted)
 			{
-				HardwareManager::halt();
+				Game::run(this);
+				this->nextFrameStarted = false;
+				this->currentFrameEnded = false;
+
+				Game::updateFrameRate(this);
+
+			//SoundManager::print(SoundManager::getInstance());
+			//VIPManager::upBrightness(this->vipManager);
+			//TimerManager::wait(TimerManager::getInstance(), 1000);
 			}
-
-			this->nextFrameStarted = false;
-			this->currentFrameEnded = false;
-
+			else
+			{
+				SoundManager::playPCMSounds(SoundManager::getInstance());
+			}
 
 #ifdef __PROFILE_GAME
 			u32 elapsedTime = TimerManager::getMillisecondsElapsed(this->timerManager);
@@ -327,7 +335,6 @@ void Game::start(GameState state)
 			}
 #endif
 
-			Game::updateFrameRate(this);
 
 #ifdef __PRINT_WIREFRAME_MANAGER_STATUS
 			WireframeManager::print(WireframeManager::getInstance(), 1, 1);
@@ -341,8 +348,6 @@ void Game::start(GameState state)
 			_waitForFrameStartTotalTime += TimerManager::getMillisecondsElapsed(this->timerManager) - elapsedTime;
 #endif
 
-			// Execute game frame
-			Game::run(this);
 
 #ifdef __SHOW_SOUND_STATUS
 			SoundManager::print(SoundManager::getInstance());
@@ -351,9 +356,6 @@ void Game::start(GameState state)
 #ifdef __REGISTER_LAST_PROCESS_NAME
 			this->lastProcessName = "end frame";
 #endif
-
-			// Increase the fps counter
-			FrameRate::increaseFps(FrameRate::getInstance());
 
 #ifdef __PROFILE_GAME
 
@@ -1066,12 +1068,15 @@ void Game::updateFrameRate()
 		}
 #endif
 		//reset frame rate counters
-		FrameRate::reset(FrameRate::getInstance());
+		FrameRate::reset(this->frameRate);
 
 #ifdef __PROFILE_GAME
 		Game::resetCurrentFrameProfiling(this, TimerManager::getMillisecondsElapsed(this->timerManager));
 #endif
 	}
+
+	// Increase the fps counter
+	FrameRate::increaseFps(this->frameRate);
 
 	// enable timer
 	TimerManager::enable(this->timerManager, true);

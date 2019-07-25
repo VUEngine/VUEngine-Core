@@ -142,6 +142,7 @@ static SoundRegistry* const _soundRegistries =	(SoundRegistry*)0x01000400; //(So
 #define __SSTOP						*(u8*)0x01000580
 
 #define __MAXIMUM_OUTPUT_LEVEL		0xF
+#define __MAXIMUM_VOLUMEN			0xF
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -187,7 +188,10 @@ void SoundManager::reset()
 		this->channels[i].number = i + 1;
 		this->channels[i].sound = NULL;
 		this->channels[i].cursor = 0;
+		this->channels[i].delay = 0;
 		this->channels[i].soundChannel = 0;
+		this->channels[i].partners = 0;
+		this->channels[i].leaderChannel = NULL;
 
 		this->channels[i].soundChannelConfiguration.type = kUnknownType;
 		this->channels[i].soundChannelConfiguration.SxLRV = 0;
@@ -207,59 +211,116 @@ void SoundManager::reset()
 	SoundManager::stopAllSounds(this);
 }
 
+void SoundManager::updateMIDIPlayback(Channel* channel)
+{
+	//_soundRegistries[channel->number].SxLRV = SoundManager::calculateSoundPosition(this, fxS)
+	u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack[channel->cursor];
+	_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+	_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+}
+
+void SoundManager::updatePCMPlayback(Channel* channel)
+{
+	//_soundRegistries[channel->number].SxLRV = SoundManager::calculateSoundPosition(this, fxS)
+	u8 volume = channel->sound->soundChannels[channel->soundChannel]->soundTrack[channel->cursor];
+
+	u16 maximumAccumulatedVolume = __MAXIMUM_VOLUMEN * (channel->partners + 1);
+
+	// Clamp volume to avoid saturation
+	volume = volume > maximumAccumulatedVolume? maximumAccumulatedVolume : volume;
+
+	s8 finalVolume  = 0;
+	finalVolume  = (s8)volume - __MAXIMUM_VOLUMEN * (channel->soundChannel);
+
+	if(finalVolume  < 0)
+	{
+		finalVolume  = 0;
+	}
+	else if (finalVolume  > __MAXIMUM_VOLUMEN)
+	{
+		finalVolume  = __MAXIMUM_VOLUMEN;
+	}			
+
+	u8 leftVolume = ((u8)finalVolume  << 4) & 0xF0;
+	u8 rightVolume = ((u8)finalVolume ) & 0x0F;
+
+	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = leftVolume | rightVolume;
+
+//	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 = 0x40;
+}
+
 /**
  * Update sound playback
  */
-bool SoundManager::updatePlayback(Channel* channel)
+bool SoundManager::updatePlayback(Channel* channel, u32 type)
 {
 	if(NULL == channel->sound)
 	{
 		return false;
 	}
 
-	switch(channel->soundChannelConfiguration.type)
+	switch(type)
 	{
 		case kMIDI:
-			{
-				//_soundRegistries[channel->number].SxLRV = SoundManager::calculateSoundPosition(this, fxS)
-				u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack[channel->cursor];
-				_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-				_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-			}
+
+			SoundManager::updateMIDIPlayback(this, channel);
 			break;
 
 		case kPCM:
 
-			_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = channel->sound->soundChannels[channel->soundChannel]->soundTrack[channel->cursor];
+			SoundManager::updatePCMPlayback(this, channel);
 			break;
 	}
 
-++channel->cursor;
-	if(++channel->cursor >= channel->sound->soundChannels[channel->soundChannel]->length)
+	if(channel->partners && channel->leaderChannel != channel)
 	{
-		channel->cursor = 0;
+		channel->cursor = channel->leaderChannel->cursor;
+	}
+	else if(++channel->delay > channel->sound->soundChannels[channel->soundChannel]->delay)
+	{
+		channel->delay = 0;
 
-		if(!channel->sound->loop)
+		if(++channel->cursor >= channel->sound->soundChannels[channel->soundChannel]->length)
 		{
-			return false;
+			channel->cursor = 0;
+
+			if(!channel->sound->loop)
+			{
+				return false;
+			}
 		}
 	}
+
+	
+	//channel->cursor = this->channels[0].cursor + channel->number;
 
 	return true;
 }
 
-void SoundManager::playSounds()
+void SoundManager::playSounds(u32 type)
 {
-	int i = 0;
-
-	// Play sounds
+	u16 i = 0;
+	
 	for(i = 0; i < __TOTAL_CHANNELS; i++)
 	{
-		if(NULL != this->channels[i].sound && !SoundManager::updatePlayback(this, &this->channels[i]))
+		if(NULL != this->channels[i].sound && type == this->channels[i].soundChannelConfiguration.type)
 		{
-			this->channels[i].sound = NULL;
+			if(!SoundManager::updatePlayback(this, &this->channels[i], type))
+			{
+				this->channels[i].sound = NULL;
+			}
 		}
 	}
+}
+
+void SoundManager::playMIDISounds()
+{
+	SoundManager::playSounds(this, kMIDI);
+}
+
+void SoundManager::playPCMSounds()
+{
+	SoundManager::playSounds(this, kPCM);
 }
 
 /**
@@ -504,6 +565,7 @@ s8 SoundManager::getWaveform(const u8* waveFormData)
 
 	if(NULL != freeWaveform)
 	{
+		freeWaveform->data = waveFormData;
 		return freeWaveform->number;
 	}
 
@@ -622,15 +684,21 @@ u32 SoundManager::play(Sound* sound, bool forceAllChannels)
 
 		VirtualNode node = VirtualList::begin(availableChannels);
 
+		Channel* leaderChannel = node ? (Channel*)VirtualNode::getData(node) : NULL;
+
 		for(i = 0; node; node = VirtualNode::getNext(node), i++)
 		{
 			Channel* channel = (Channel*)VirtualNode::getData(node);
 
 			channel->sound = sound;
 			channel->cursor = 0;
+			channel->delay = 0;
 			channel->soundChannel = i;
 			channel->soundChannelConfiguration = *sound->soundChannels[i]->soundChannelConfiguration;
 			channel->soundChannelConfiguration.SxRAM = waves[i];
+			channel->partners = sound->combineChannels ? soundChannelsCount - 1: 0;
+			channel->leaderChannel = leaderChannel;
+
 
 			SoundManager::configureChannel(this, channel);
 		}
@@ -733,7 +801,7 @@ static void SoundManager::printSound(Sound* sound, u8 soundChannel, u32 cursor, 
 		return;
 	}
 
-	int xDisplacement = 10;
+	int xDisplacement = 9;
 
 //	PRINT_TEXT("Sound: ", x, ++y);
 //	PRINT_HEX((u32)sound, x + xDisplacement, y);
@@ -745,7 +813,9 @@ static void SoundManager::printSound(Sound* sound, u8 soundChannel, u32 cursor, 
 	PRINT_INT(sound->soundChannels[soundChannel]->length, x + xDisplacement, y);
 	
 	PRINT_TEXT("Note: ", x, ++y);
-	PRINT_INT(sound->soundChannels[soundChannel]->soundTrack[cursor], x + xDisplacement, y);
+	u16 note = sound->soundChannels[soundChannel]->soundTrack[cursor];
+
+	PRINT_HEX_EXT(sound->soundChannels[soundChannel]->soundTrack[cursor], x + xDisplacement, y, 2);
 }
 
 static void SoundManager::printChannel(Channel* channel, int x, int y)
@@ -755,14 +825,14 @@ static void SoundManager::printChannel(Channel* channel, int x, int y)
 		return;
 	}
 
-	int xDisplacement = 10;
+	int xDisplacement = 9;
 
 	PRINT_TEXT("CHANNEL: ", x, y);
 	PRINT_INT(channel->number, x + xDisplacement, y);
 
 	PRINT_TEXT("Type: ", x, ++y);
 
-	char* soundType = "Unknown";
+	char* soundType = "?";
 	switch(channel->soundChannelConfiguration.type)
 	{
 		case kMIDI:
@@ -778,9 +848,9 @@ static void SoundManager::printChannel(Channel* channel, int x, int y)
 
 	PRINT_TEXT(soundType, x + xDisplacement, y);
 
-//	PRINT_TEXT("Cursor: ", x, ++y);
-//	PRINT_INT(channel->cursor, x + xDisplacement, y);
-
+	PRINT_TEXT("Cursor: ", x, ++y);
+	PRINT_INT(channel->cursor, x + xDisplacement, y);
+return;
 	PRINT_TEXT("Snd Chnl: ", x, ++y);
 	PRINT_INT(channel->soundChannel, x + xDisplacement, y);
 
@@ -804,10 +874,11 @@ static void SoundManager::printChannel(Channel* channel, int x, int y)
 
 	PRINT_TEXT("SxFQH: ", x, ++y);
 	PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
-
+ 
 	if(NULL == channel->sound)
 	{
-		PRINT_TEXT("Sound: None", x, ++y);
+		PRINT_TEXT("Sound:", x, ++y);
+		PRINT_TEXT("None", x + xDisplacement, y);
 	}
 	else
 	{
@@ -818,10 +889,19 @@ static void SoundManager::printChannel(Channel* channel, int x, int y)
 void SoundManager::print()
 {
 	int i = 0;
+	int x = 1;
+	int y = 1;
 
 	for(; i < __TOTAL_CHANNELS; i++)
 	{
-		SoundManager::printChannel(&this->channels[i], 1, 1);
-		break;
+		SoundManager::printChannel(&this->channels[i], x, y);
+
+		x += 16;
+
+		if(x > 33)
+		{
+			x = 1;
+			y += 15;
+		}
 	}
 }

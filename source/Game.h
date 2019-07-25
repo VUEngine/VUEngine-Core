@@ -36,6 +36,7 @@
 #include <VIPManager.h>
 #include <CommunicationManager.h>
 #include <Profiler.h>
+#include <FrameRate.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,6 +66,8 @@ singleton class Game : Object
 	GameState autoPauseState;
 	// current save data manager
 	Object saveDataManager;
+	//
+	FrameRate frameRate;
 	//
 	Profiler profiler;
 	//
