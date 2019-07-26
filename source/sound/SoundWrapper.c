@@ -128,6 +128,7 @@ bool SoundWrapper::play(const Vector3D* position)
 	}
 
 	this->paused = false;
+	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT | 0x80;	
 
 	if(!isDeleted(this->leadedSoundWrappers))
 	{
@@ -259,9 +260,6 @@ bool SoundWrapper::release()
 		return false;
 	}
 
-	this->channel.cursor = 0;
-	this->channel.sound = NULL;
-
 	if(!isDeleted(this->leadedSoundWrappers))
 	{
 		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
@@ -276,6 +274,8 @@ bool SoundWrapper::release()
 			}
 		}
 	}
+
+	SoundWrapper::reset(this);
 
 	return true;
 }
@@ -356,7 +356,7 @@ void SoundWrapper::configureSoundRegistries()
 	_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL;
 	_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV;
 	_soundRegistries[this->channel.number].SxRAM = this->channel.soundChannelConfiguration.SxRAM;
-	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT | 0x80;	
+	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT;	
 }
 
 void SoundWrapper::addLeadedSound(SoundWrapper leadedSound)

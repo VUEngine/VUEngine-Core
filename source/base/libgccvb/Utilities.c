@@ -138,8 +138,6 @@ static void Utilities::resetRandomSeed()
  */
 static long Utilities::randomSeed()
 {
-	ASSERT(_gameClock, "Utilities::randomSeed: null _gameClock");
-
 	if(!_seed)
 	{
 		_seed = 7;

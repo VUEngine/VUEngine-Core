@@ -375,26 +375,26 @@ void Game::start(GameState state)
 		// Set state
 		Game::setNextState(this, state);
 
+		SoundManager soundManager = SoundManager::getInstance();
+
 		while(true)
 		{
-			while(!this->nextFrameStarted)
+			if(this->nextFrameStarted)
 			{
-				SoundManager::playPCMSounds(SoundManager::getInstance());
+				Game::currentFrameStarted(this);
+
+				Game::updateFrameRate(this);
+
+				Game::run(this);
+
+				Game::debug(this);
+
+				Game::currentFrameEnded(this);
 			}
-
-			Game::currentFrameStarted(this);
-
-			Game::updateFrameRate(this);
-
-			// Execute game frame
-			Game::run(this);
-
-			// Increase the fps counter
-			FrameRate::increaseFps(FrameRate::getInstance());
-
-			Game::debug(this);
-
-			Game::currentFrameEnded(this);
+			else
+			{
+				SoundManager::playPCMSounds(soundManager);
+			}
 		}
 	}
 	else

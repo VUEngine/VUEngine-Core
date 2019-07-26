@@ -39,8 +39,8 @@
 //#define __SHOW_CHAR_MEMORY_STATUS
 //#define __SHOW_SOUND_STATUS
 
-#undef __TIMER_RESOLUTION
-#define __TIMER_RESOLUTION						2500
+//#undef __TIMER_RESOLUTION
+//#define __TIMER_RESOLUTION						10
 
 
 

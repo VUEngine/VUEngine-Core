@@ -183,9 +183,9 @@ void SoundManager::playSounds(u32 type)
 {
 	u16 i = 0;
 	
-	for(i = 0; i < __TOTAL_CHANNELS; i++)
+	for(; i < __TOTAL_CHANNELS; i++)
 	{
-		if(NULL != this->soundWrappers[i] && type == SoundWrapper::getType(this->soundWrappers[i]))
+		if(type == SoundWrapper::getType(this->soundWrappers[i]))
 		{
 			SoundWrapper::updatePlayback(this->soundWrappers[i]);
 		}
