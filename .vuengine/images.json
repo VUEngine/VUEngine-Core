@@ -1,8 +1,116 @@
 {
-	"images": {
-		"folders": {
-			"assets/fonts/VUEngineFont": {
-				"template": "font"
+	"folders": {
+		"assets/fonts/VUEngineFont": {
+			"template": "font"
+		}
+	},
+	"templates": {
+		"animatedEntity": {
+			"name": "Animated Entity",
+			"description": "",
+			"converterConfig": {
+				"tileset": {
+					"shared": false,
+					"reduce": false
+				},
+				"map": {
+					"generate": true,
+					"reduce": {
+						"flipped": false,
+						"unique": false
+					}
+				},
+				"stackFrames": false
+			}
+		},
+		"entity": {
+			"name": "Entity",
+			"description": "",
+			"converterConfig": {
+				"tileset": {
+					"shared": false,
+					"reduce": true
+				},
+				"map": {
+					"generate": true,
+					"reduce": {
+						"flipped": true,
+						"unique": true
+					}
+				},
+				"stackFrames": false
+			}
+		},
+		"entityAffine": {
+			"name": "Entity (Affine Mode)",
+			"description": "",
+			"converterConfig": {
+				"tileset": {
+					"shared": false,
+					"reduce": true
+				},
+				"map": {
+					"generate": true,
+					"reduce": {
+						"flipped": false,
+						"unique": true
+					}
+				},
+				"stackFrames": false
+			}
+		},
+		"entitySharedTileset": {
+			"name": "Entity (Shared Tileset)",
+			"description": "",
+			"converterConfig": {
+				"tileset": {
+					"shared": true,
+					"reduce": true
+				},
+				"map": {
+					"generate": true,
+					"reduce": {
+						"flipped": true,
+						"unique": true
+					}
+				},
+				"stackFrames": false
+			}
+		},
+		"entityStacked": {
+			"name": "Entity (Stacked)",
+			"description": "",
+			"converterConfig": {
+				"tileset": {
+					"shared": false,
+					"reduce": true
+				},
+				"map": {
+					"generate": true,
+					"reduce": {
+						"flipped": true,
+						"unique": true
+					}
+				},
+				"stackFrames": true
+			}
+		},
+		"font": {
+			"name": "Font",
+			"description": "",
+			"converterConfig": {
+				"tileset": {
+					"shared": false,
+					"reduce": false
+				},
+				"map": {
+					"generate": false,
+					"reduce": {
+						"flipped": false,
+						"unique": false
+					}
+				},
+				"stackFrames": false
 			}
 		}
 	}

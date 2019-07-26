@@ -16,7 +16,7 @@
 //												DECLARATIONS
 //---------------------------------------------------------------------------------------------------------
 
-{% for font in fonts -%}
+{% for font in project.fonts -%}
 extern FontSpec {{ font }};
 {% endfor %}
 

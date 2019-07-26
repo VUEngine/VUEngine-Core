@@ -1,78 +1,75 @@
 {
-	"extensions": {
-		"activityBar": {
-			"project": [
-				{
-					"id": "fonts",
-					"label": {
-						"en": "Fonts",
-						"de": "Schriftarten"
-					},
-					"type": "configFile",
-					"icon": "font",
-					"value": "fonts"
+	"activityBar": {
+		"project": [
+			{
+				"id": "fonts",
+				"label": {
+					"en": "Fonts",
+					"de": "Schriftarten"
 				},
-				{
-					"id": "romHeader",
-					"label": {
-						"en": "ROM Header",
-						"de": "ROM Header"
-					},
-					"type": "configFile",
-					"icon": "microchip",
-					"value": "romHeader",
-					"parent": "configuration"
+				"type": "configFile",
+				"icon": "font",
+				"value": "fonts"
+			},
+			{
+				"id": "romHeader",
+				"label": {
+					"en": "ROM Header",
+					"de": "ROM Header"
 				},
-				{
-					"id": "general",
-					"label": {
-						"en": "General",
-						"de": "Generell"
-					},
-					"type": "configFile",
-					"icon": "file-text-o",
-					"value": "settings",
-					"parent": "configuration"
-				}
-			]
-		},
-		"config": [
-			"fonts",
-			"romHeader",
-			"settings"
-		],
-		"configPresets": [],
-		"fileTemplates": [
-			{
-				"file": "config.h",
-				"data": [
-					"romHeader",
-					"settings"
-				],
-				"target": "source/config.h"
+				"type": "configFile",
+				"icon": "microchip",
+				"value": "romHeader",
+				"parent": "configuration"
 			},
 			{
-				"file": "config.make",
-				"data": [
-					"plugins",
-					"settings"
-				],
-				"target": "config.make"
-			},
-			{
-				"file": "Fonts.c",
-				"data": [
-					"fonts"
-				],
-				"target": "assets/fonts/Fonts.c"
-			},
-			{
-				"file": "Fonts.h",
-				"data": [
-					"fonts"
-				],
-				"target": "source/assets/Fonts.h"
+				"id": "general",
+				"label": {
+					"en": "General",
+					"de": "Generell"
+				},
+				"type": "configFile",
+				"icon": "file-text-o",
+				"value": "config",
+				"parent": "configuration"
 			}
 		]
-	}
+	},
+	"config": [
+		"fonts",
+		"romHeader",
+		"config"
+	],
+	"fileTemplates": [
+		{
+			"file": "config.h",
+			"config": [
+				"romHeader",
+				"config"
+			],
+			"target": "source/config.h"
+		},
+		{
+			"file": "config.make",
+			"config": [
+				"plugins",
+				"config"
+			],
+			"target": "config.make"
+		},
+		{
+			"file": "Fonts.c",
+			"config": [
+				"fonts"
+			],
+			"target": "assets/fonts/Fonts.c"
+		},
+		{
+			"file": "Fonts.h",
+			"config": [
+				"fonts"
+			],
+			"target": "source/assets/Fonts.h"
+		}
+	]
 }

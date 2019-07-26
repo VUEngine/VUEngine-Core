@@ -14,7 +14,7 @@
 
 FontSpec* const __FONTS[] =
 {
-	{% for font in fonts -%}
+	{% for font in project.fonts -%}
 	(FontSpec*)&{{ font }},
 	{% endfor %}
 	NULL
