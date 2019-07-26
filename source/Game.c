@@ -377,23 +377,24 @@ void Game::start(GameState state)
 
 		while(true)
 		{
-			Game::currentFrameEnded(this);
-
-			if(this->nextFrameStarted)
-			{
-				Game::run(this);
-				this->nextFrameStarted = false;
-				this->currentFrameEnded = false;
-
-				Game::updateFrameRate(this);
-
-				Game::debug(this);
-			}
-			else
+			while(!this->nextFrameStarted)
 			{
 				SoundManager::playPCMSounds(SoundManager::getInstance());
 			}
 
+			Game::currentFrameStarted(this);
+
+			Game::updateFrameRate(this);
+
+			// Execute game frame
+			Game::run(this);
+
+			// Increase the fps counter
+			FrameRate::increaseFps(FrameRate::getInstance());
+
+			Game::debug(this);
+
+			Game::currentFrameEnded(this);
 		}
 	}
 	else
@@ -1082,11 +1083,16 @@ void Game::nextFrameStarted()
 	this->nextFrameStarted = true;
 }
 
+void Game::currentFrameStarted()
+{
+	this->nextFrameStarted = false;
+	this->currentFrameEnded = false;
+}
+
 void Game::currentFrameEnded()
 {
 	this->currentFrameEnded = true;
 
-	// skip the rest of the cycle if already late
 	if(this->nextFrameStarted)
 	{
 #ifdef __PROFILE_GAME
