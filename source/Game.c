@@ -359,6 +359,7 @@ void Game::debug()
 #endif
 
 }
+
 // set game's initial state
 void Game::start(GameState state)
 {
@@ -1078,9 +1079,11 @@ void Game::updateFrameRate()
 	TimerManager::enable(this->timerManager, true);
 }
 
-void Game::nextFrameStarted()
+void Game::nextFrameStarted(u16 gameFrameDuration)
 {
 	this->nextFrameStarted = true;
+
+	SoundManager::updateFrameRate(SoundManager::getInstance(), gameFrameDuration);
 }
 
 void Game::currentFrameStarted()

@@ -232,7 +232,7 @@ void VIPManager::processInterrupt(u16 interrupt)
 				// increase current game frame's duration
 				Game::increaseGameFrameDuration(Game::getInstance(), __GAME_FRAME_DURATION);
 
-				Game::nextFrameStarted(Game::getInstance());
+				Game::nextFrameStarted(Game::getInstance(), __GAME_FRAME_DURATION);
 
 				if(!_vipManager->processingXPEND)
 				{

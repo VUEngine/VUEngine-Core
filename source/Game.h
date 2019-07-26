@@ -128,7 +128,7 @@ singleton class Game : Object
 	bool isInDebugMode();
 	bool isInStageEditor();
 	bool isInAnimationInspector();
-	void nextFrameStarted();
+	void nextFrameStarted(u16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
 	void increaseGameFrameDuration(u32 gameFrameDuration);
 	void saveProcessNameDuringFRAMESTART();

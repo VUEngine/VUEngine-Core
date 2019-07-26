@@ -176,7 +176,18 @@ void SoundManager::reset()
 		this->waveforms[i].data = NULL;
 	}
 
+	this->playBackCounter = 0;
+	this->playBackDelay = 0;
+	this->targetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+
+	this->pcmFrameRateIsStable = false;
+
 	SoundManager::stopAllSounds(this);
+}
+
+void SoundManager::setTargetPlaybackFrameRate(u16 targetPlaybackFrameRate)
+{
+	this->targetPlaybackFrameRate = targetPlaybackFrameRate;
 }
 
 void SoundManager::playSounds(u32 type)
@@ -185,9 +196,9 @@ void SoundManager::playSounds(u32 type)
 	
 	for(; i < __TOTAL_CHANNELS; i++)
 	{
-		if(type == SoundWrapper::getType(this->soundWrappers[i]))
+		if(NULL != this->soundWrappers[i]->channel.sound && type == this->soundWrappers[i]->channel.soundChannelConfiguration.type)
 		{
-			SoundWrapper::updatePlayback(this->soundWrappers[i]);
+			SoundWrapper::updatePlayback(this->soundWrappers[i], !this->pcmFrameRateIsStable);
 		}
 	}
 }
@@ -199,8 +210,61 @@ void SoundManager::playMIDISounds()
 
 void SoundManager::playPCMSounds()
 {
-	SoundManager::playSounds(this, kPCM);
+	static s16 currentPlayBackDelay = 0;
+
+	if(0 >= --currentPlayBackDelay)
+	{
+		this->playBackCounter++;
+		currentPlayBackDelay = this->playBackDelay;
+
+		SoundManager::playSounds(this, kPCM);
+	}
 }
+
+void SoundManager::rewindAllSounds()
+{
+	u16 i = 0;
+	
+	for(; i < __TOTAL_CHANNELS; i++)
+	{
+		if(NULL != this->soundWrappers[i]->channel.sound)
+		{
+			SoundWrapper::rewind(this->soundWrappers[i]);
+		}
+	}
+}
+
+void SoundManager::updateFrameRate(u16 gameFrameDuration)
+{
+	s16 factor = __MILLISECONDS_IN_SECOND / gameFrameDuration;
+	s16 deviation = (this->playBackCounter - this->targetPlaybackFrameRate / factor);
+
+	if(!this->pcmFrameRateIsStable)
+	{
+		static u16 stableCycles = 0;
+
+		if(0 == deviation / factor)
+		{
+			stableCycles++;	
+		}
+		else
+		{
+			stableCycles = 0;
+		}
+		
+		if(gameFrameDuration / (this->targetPlaybackFrameRate / __DEFAULT_PCM_HZ) < stableCycles)
+		{
+			this->pcmFrameRateIsStable = true;
+
+			SoundManager::rewindAllSounds(this);
+		}
+	}
+
+	this->playBackDelay += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+
+	this->playBackCounter = 0;
+}
+
 
 s8 SoundManager::getWaveform(const u8* waveFormData)
 {

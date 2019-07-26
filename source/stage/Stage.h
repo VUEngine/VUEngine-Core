@@ -59,6 +59,13 @@ typedef struct StageSpec
 
 	} timer;
 
+	// Sound config
+	struct SoundConfig
+	{
+		u16 targetPlaybackFrameRate;
+		
+	} sound;
+
 	// general level's attributes
 	struct Level
 	{

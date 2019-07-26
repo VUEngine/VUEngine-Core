@@ -390,25 +390,32 @@ u32 SoundWrapper::getType()
 	return this->channel.soundChannelConfiguration.type;
 }
 
-void SoundWrapper::updateMIDIPlayback()
+void SoundWrapper::updateMIDIPlayback(bool mute)
 {
 	u16 note = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack[this->channel.cursor];
 	_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL = (note & 0xFF);
 	_soundRegistries[this->channel.number].SxFQH = this->channel.soundChannelConfiguration.SxFQH = (note >> 8);
-	_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV;
+
+	if(mute)
+	{
+		_soundRegistries[this->channel.number].SxLRV = 0;
+	}
+	else
+	{
+		_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV;
+	}
 }
 
-void SoundWrapper::updatePCMPlayback()
+void SoundWrapper::updatePCMPlayback(bool mute)
 {
 	u8 volume = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack[this->channel.cursor];
 
-	u16 maximumAccumulatedVolume = __MAXIMUM_VOLUMEN * (this->channel.partners + 1);
+	//u16 maximumAccumulatedVolume = __MAXIMUM_VOLUMEN * (this->channel.partners + 1);
 
 	// Clamp volume to avoid saturation
-	volume = volume > maximumAccumulatedVolume? maximumAccumulatedVolume : volume;
+	//volume = volume > maximumAccumulatedVolume? maximumAccumulatedVolume : volume;
 
-	s8 finalVolume  = 0;
-	finalVolume  = (s8)volume - __MAXIMUM_VOLUMEN * (this->channel.soundChannel);
+	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUMEN * (this->channel.soundChannel);
 
 	if(finalVolume  < 0)
 	{
@@ -419,10 +426,18 @@ void SoundWrapper::updatePCMPlayback()
 		finalVolume  = __MAXIMUM_VOLUMEN;
 	}			
 
-	u8 leftVolume = ((u8)finalVolume  << 4) & 0xF0;
-	u8 rightVolume = ((u8)finalVolume ) & 0x0F;
-
-	_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV = leftVolume | rightVolume;
+	if(mute)
+	{
+		_soundRegistries[this->channel.number].SxLRV = 0;
+	}
+	else
+	{
+#ifdef __RELEASE
+		_soundRegistries[this->channel.number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+#else
+		_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+#endif
+	}
 
 //	_soundRegistries[this->channel.number].SxEV1 = this->channel.soundChannelConfiguration.SxEV1 = 0x40;
 }
@@ -430,32 +445,25 @@ void SoundWrapper::updatePCMPlayback()
 /**
  * Update sound playback
  */
-void SoundWrapper::updatePlayback()
+void SoundWrapper::updatePlayback(bool mute)
 {
 	if(NULL == this->channel.sound || this->paused)
 	{
 		return;
 	}
 
-	switch(this->channel.soundChannelConfiguration.type)
-	{
-		case kMIDI:
-
-			SoundWrapper::updateMIDIPlayback(this);
-			break;
-
-		case kPCM:
-
-			SoundWrapper::updatePCMPlayback(this);
-			break;
-	}
+	bool updatePlayback = false;
+	bool release = false;
 
 	if(this->channel.partners && this->channel.leaderChannel != &this->channel)
 	{
+		updatePlayback = this->channel.cursor != this->channel.leaderChannel->cursor;
 		this->channel.cursor = this->channel.leaderChannel->cursor;
 	}
 	else if(++this->channel.delay > this->channel.sound->soundChannels[this->channel.soundChannel]->delay)
 	{
+		updatePlayback = true;
+
 		this->channel.delay = 0;
 
 		if(++this->channel.cursor >= this->channel.sound->soundChannels[this->channel.soundChannel]->length)
@@ -465,9 +473,30 @@ void SoundWrapper::updatePlayback()
 
 			if(!this->channel.sound->loop)
 			{
-				SoundWrapper::release(this);
+				release = true;
 			}
 		}
+	}
+
+	if(updatePlayback)
+	{
+		switch(this->channel.soundChannelConfiguration.type)
+		{
+			case kMIDI:
+
+				SoundWrapper::updateMIDIPlayback(this, mute);
+				break;
+
+			case kPCM:
+
+				SoundWrapper::updatePCMPlayback(this, mute);
+				break;
+		}
+	}
+
+	if(release)
+	{
+		SoundWrapper::release(this);
 	}
 }
 

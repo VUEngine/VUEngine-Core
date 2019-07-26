@@ -211,6 +211,7 @@ enum SoundRequestReturnMessages
 };
 
 #define __TOTAL_CHANNELS	6
+#define __DEFAULT_PCM_HZ	8000
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
@@ -221,10 +222,16 @@ singleton class SoundManager : Object
 {
 	SoundWrapper soundWrappers[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
+	u16 playBackCounter;
+	u16 targetPlaybackFrameRate;
+	s16 playBackDelay;
+	bool pcmFrameRateIsStable;
 
 	/// @publicsection
 	static SoundManager getInstance();
 	void reset();
+
+	void setTargetPlaybackFrameRate(u16 targetPlaybackFrameRate);
 
 	void playMIDISounds();
 	void playPCMSounds();
@@ -232,6 +239,8 @@ singleton class SoundManager : Object
 
 	SoundWrapper playSound(Sound* sound, bool forceAllChannels, const Vector3D* position);
 	SoundWrapper getSound(Sound* sound, bool forceAllChannels);
+
+	void updateFrameRate(u16 gameFrameDuration);
 	void print();
 }
 

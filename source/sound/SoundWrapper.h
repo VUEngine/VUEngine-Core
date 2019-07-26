@@ -176,7 +176,7 @@ class SoundWrapper : Object
 	bool release();
 	void setup(Sound* sound, SoundWrapper leaderSound, u8 soundChannel, u8 wave, u8 soundChannelsCount);
 	void addLeadedSound(SoundWrapper leadedSound);
-	void updatePlayback();
+	void updatePlayback(bool mute);
 	bool isFree();
 	u32 getType();
 	void print(int x, int y);
