@@ -1164,7 +1164,12 @@ void Stage::loadBackgroundSounds()
 
 	for(; this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundManager::play(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], false);
+		SoundWrapper soundWrapper = SoundManager::getSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], false);
+
+		if(!isDeleted(soundWrapper))
+		{
+			SoundWrapper::play(soundWrapper, NULL);
+		}
 	}
 }
 

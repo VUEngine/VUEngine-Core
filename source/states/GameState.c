@@ -320,10 +320,10 @@ bool GameState::stream()
 {
 	if(!this->stream)
 	{
-		return;
+		return false;
 	}
 
-	return  Stage::stream(this->stage);
+	return Stage::stream(this->stage);
 }
 
 /**

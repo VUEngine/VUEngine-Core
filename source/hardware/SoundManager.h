@@ -29,27 +29,42 @@
 
 #include <Object.h>
 #include <MiscStructs.h>
+#include <SoundWrapper.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define	BGM0	0x00	// Voluntary bgm channel #1
-#define	BGM1	0x01	// Voluntary bgm channel #2
-#define	SFX0	0x02	// Voluntary sound special effect channel #3
-#define	SFX1	0x03	// Voluntary sound special effectchannel #4
-#define	SWEEP	0x04	// Sweep/modulation (or sound special effect) channel
-#define	NOISE	0x05	// Pseudorandom noise channel
-
-/*
-#define	BGM		0x00	// Background music channel #1
-#define	WAVE2	0x01	// Voluntary wave channel #2
-#define	WAVE3	0x02	// Voluntary wave channel #3
-#define	WAVE4	0x03	// Voluntary wave channel #4
-#define	SWEEP	0x04	// Sweep/modulation channel
-#define	NOISE	0x05	// Pseudorandom noise channel
-*/
+/**
+ * Sound Registry
+ *
+ */
+typedef struct SoundRegistry
+{
+	// this table is for the most part untested, but looks to be accurate
+	//				 	|		D7	   ||		D6	   ||		D5	   ||		D4	   ||		D3	   ||		D2	   ||		D1	   ||		D0	   |
+	u8 SxINT; //		[----Enable----][--XXXXXXXXXX--][-Interval/??--][--------------------------------Interval Data---------------------------------]
+	u8 spacer1[3];
+	u8 SxLRV; //		[---------------------------L Level----------------------------][---------------------------R Level----------------------------]
+	u8 spacer2[3];
+	u8 SxFQL; //		[------------------------------------------------------Frequency Low Byte------------------------------------------------------]
+	u8 spacer3[3];
+	u8 SxFQH; //		[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Frequency High Byte-------------]
+	u8 spacer4[3];
+	u8 SxEV0; //		[---------------------Initial Envelope Value-------------------][------U/D-----][-----------------Envelope Step----------------]
+	u8 spacer5[3];
+			 //Ch. 1-4 	[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+			 //Ch. 5	[--XXXXXXXXXX--][------E/D-----][----?/Short---][--Mod./Sweep--][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+	u8 SxEV1; //Ch. 6	[--XXXXXXXXXX--][----------------------E/D---------------------][--XXXXXXXXXX--][--XXXXXXXXXX--][------R/S-----][----On/Off----]
+	u8 spacer6[3];
+	//Ch. 1-5 only (I believe address is only 3 bits, but may be 4, needs testing)
+	u8 SxRAM; //		[--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--XXXXXXXXXX--][--------------Waveform RAM Address------------]
+	u8 spacer7[3];
+	//Ch. 5 only
+	u8 S5SWP; //		[------CLK-----][-------------Sweep/Modulation Time------------][------U/D-----][----------------Number of Shifts--------------]
+	u8 spacer8[35];
+} SoundRegistry;
 
 // DogP's code
 // musical notes to VB register values (may not be quite correct, based on frequencies from Game Boy)
@@ -187,116 +202,6 @@
 
 
 
-typedef struct SoundChannelConfiguration
-{
-	/// kMIDI, kPCM
-	u32 type;
-
-	/// SxINT
-	u8 SxINT;
-
-	/// Volume SxLRV
-	u8 SxLRV;
-
-	/// SxRAM
-	u8 SxRAM;
-
-	/// SxEV0 
-	u8 SxEV0;
-
-	/// SxEV1
-	u8 SxEV1;
-	
-	/// SxFQH
-	u8 SxFQH;
-
-	/// SxFQL
-	u8 SxFQL;
-
-	/// Ch. 5 only
-	u8 S5SWP; 
-	
-	/// Waveform data pointer
-	const u8* waveFormData;
-
-	/// Is modulation
-	bool isModulation;
-
-} SoundChannelConfiguration;
-
-typedef const SoundChannelConfiguration SoundChannelConfigurationROM;
-
-typedef struct SoundChannel
-{
-	/// Configuration
-	SoundChannelConfiguration* soundChannelConfiguration;
-
-	/// Length
-	u32 length;
-
-	/// Delay before moving the cursor
-	u16 delay;
-
-	/// Sound track
-	const u8* soundTrack;
-
-} SoundChannel;
-
-typedef const SoundChannel SoundChannelROM;
-
-typedef struct Sound
-{
-	/// Play in loop
-	bool loop;
-
-	/// Combine all channels into a single sound
-	bool combineChannels;
-
-	/// Tracks
-	SoundChannel** soundChannels;
-
-} Sound;
-
-typedef const Sound SoundROM;
-
-typedef struct Waveform
-{
-	u8 number;
-	u8* wave;
-	const u8* data;
-
-} Waveform;
-
-typedef struct Channel
-{
-	// Channel configuration
-	SoundChannelConfiguration soundChannelConfiguration;
-
-	/// Sound definition
-	Sound* sound;
-
-	/// Position within the sound track
-	u32 cursor;
-
-	/// Delay before moving the cursor
-	u16 delay;
-
-	/// Leader channel to sync PCM playback on combined channels
-	struct Channel* leaderChannel;
-
-	u8 number;
-	u8 soundChannel;
-	u8 partners;
-	
-} Channel;
-
-enum SoundTrackTypes
-{
-	kUnknownType = 0,
-	kMIDI,
-	kPCM
-};
-
 enum SoundRequestReturnMessages
 {
 	kNullSound = 0,
@@ -314,20 +219,8 @@ enum SoundRequestReturnMessages
 /// @ingroup hardware
 singleton class SoundManager : Object
 {
-	Channel channels[__TOTAL_CHANNELS];
+	SoundWrapper soundWrappers[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
-
-	// actual note of each sound being played
-	int actualNote[__TOTAL_SOUNDS];
-	// note delay for each sound being played
-	BYTE noteWait[__TOTAL_SOUNDS];
-	// background music
-	const u16 (*bgm)[__BGM_CHANNELS];
-	// fx sound
-	const u16* fxSound[__FXS];
-	// output level based on sound position of each fx
-	s16 fxLeftOutput[__FXS];
-	s16 fxRightOutput[__FXS];
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -337,7 +230,8 @@ singleton class SoundManager : Object
 	void playPCMSounds();
 	void stopAllSounds();
 
-	u32 play(Sound* sound, bool forceAllChannels);
+	SoundWrapper playSound(Sound* sound, bool forceAllChannels, const Vector3D* position);
+	SoundWrapper getSound(Sound* sound, bool forceAllChannels);
 	void print();
 }
 
