@@ -378,11 +378,11 @@ void SoundManager::print()
 {
 	int i = 0;
 	int x = 1;
-	int y = 1;
+	int y = 0;
 
 	for(; i < __TOTAL_CHANNELS; i++)
 	{
-		SoundWrapper::print(&this->soundWrappers[i], x, y);
+		SoundWrapper::print(this->soundWrappers[i], x, y);
 
 		x += 16;
 

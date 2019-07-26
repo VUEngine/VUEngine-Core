@@ -495,11 +495,6 @@ void SoundWrapper::printSound(int x, int y)
 
 void SoundWrapper::print(int x, int y)
 {
-	if(NULL == this->channel.sound)
-	{
-		return;
-	}
-
 	int xDisplacement = 9;
 
 	PRINT_TEXT("CHANNEL: ", x, y);

@@ -283,6 +283,82 @@ void Game::initialize()
 	Clock::start(this->clock);
 }
 
+void Game::debug()
+{
+#ifdef __PROFILE_GAME
+	u32 elapsedTime = TimerManager::getMillisecondsElapsed(this->timerManager);
+
+	if(_updateProfiling)
+	{
+		static u32 cycleCount = 0;
+		static u32 totalGameFrameDuration = 0;
+		totalGameFrameDuration += elapsedTime;
+
+		_gameFrameEffectiveDuration = elapsedTime;
+		_gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
+		_gameFrameHighestEffectiveDuration = (s16)elapsedTime > _gameFrameHighestEffectiveDuration ? (s16)elapsedTime : _gameFrameHighestEffectiveDuration;
+	}
+#endif
+
+#ifdef __PRINT_WIREFRAME_MANAGER_STATUS
+		WireframeManager::print(WireframeManager::getInstance(), 1, 1);
+#endif
+
+#ifdef __PROFILE_GAME
+		_waitForFrameStartTotalTime += TimerManager::getMillisecondsElapsed(this->timerManager) - elapsedTime;
+#endif
+
+#ifdef __REGISTER_LAST_PROCESS_NAME
+		this->lastProcessName = "end frame";
+#endif
+
+#ifdef __PROFILE_GAME
+	if(_updateProfiling)
+	{
+		static u32 cycleCount = 0;
+		s32 gameFrameDuration = _waitForFrameStartTotalTime +
+							_renderingProcessTime +
+							_synchronizeGraphicsProcessTime +
+							_updateLogicProcessTime +
+							_streamingProcessTime +
+							_updatePhysicsProcessTime +
+							_updateTransformationsProcessTime +
+							_processUserInputProcessTime +
+							_dispatchDelayedMessageProcessTime +
+							_processingCollisionsProcessTime;
+
+		static s32 totalGameFrameRealDuration = 0;
+		totalGameFrameRealDuration += gameFrameDuration;
+
+		_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;
+		_gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
+
+		if(cycleCount >= (0x000000001 < (sizeof(u32) * 7)))
+		{
+			totalGameFrameRealDuration = 0;
+			cycleCount = 0;
+		}
+	}
+#endif
+
+#ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
+	// Skip the rest of the cycle if already late
+	if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
+	{
+		PRINT_TIME(20, 0);
+		Game::showCurrentGameFrameProfiling(this, 1, 0);
+	}
+#endif
+
+#ifdef __PROFILE_GAME
+	_updateProfiling = !Game::isInSpecialMode(this);
+#endif
+
+#ifdef __SHOW_SOUND_STATUS
+	SoundManager::print(SoundManager::getInstance());
+#endif
+
+}
 // set game's initial state
 void Game::start(GameState state)
 {
@@ -311,94 +387,13 @@ void Game::start(GameState state)
 
 				Game::updateFrameRate(this);
 
-			//SoundManager::print(SoundManager::getInstance());
-			//VIPManager::upBrightness(this->vipManager);
-			//TimerManager::wait(TimerManager::getInstance(), 1000);
+				Game::debug(this);
 			}
 			else
 			{
 				SoundManager::playPCMSounds(SoundManager::getInstance());
 			}
 
-#ifdef __PROFILE_GAME
-			u32 elapsedTime = TimerManager::getMillisecondsElapsed(this->timerManager);
-
-			if(_updateProfiling)
-			{
-				static u32 cycleCount = 0;
-				static u32 totalGameFrameDuration = 0;
-				totalGameFrameDuration += elapsedTime;
-
-				_gameFrameEffectiveDuration = elapsedTime;
-				_gameFrameEffectiveDurationAverage = totalGameFrameDuration / ++cycleCount;
-				_gameFrameHighestEffectiveDuration = (s16)elapsedTime > _gameFrameHighestEffectiveDuration ? (s16)elapsedTime : _gameFrameHighestEffectiveDuration;
-			}
-#endif
-
-
-#ifdef __PRINT_WIREFRAME_MANAGER_STATUS
-			WireframeManager::print(WireframeManager::getInstance(), 1, 1);
-#endif
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = "start frame";
-#endif
-
-#ifdef __PROFILE_GAME
-			_waitForFrameStartTotalTime += TimerManager::getMillisecondsElapsed(this->timerManager) - elapsedTime;
-#endif
-
-
-#ifdef __SHOW_SOUND_STATUS
-			SoundManager::print(SoundManager::getInstance());
-#endif
-
-#ifdef __REGISTER_LAST_PROCESS_NAME
-			this->lastProcessName = "end frame";
-#endif
-
-#ifdef __PROFILE_GAME
-
-			if(_updateProfiling)
-			{
-				static u32 cycleCount = 0;
-				s32 gameFrameDuration = _waitForFrameStartTotalTime +
-									_renderingProcessTime +
-									_synchronizeGraphicsProcessTime +
-									_updateLogicProcessTime +
-									_streamingProcessTime +
-									_updatePhysicsProcessTime +
-									_updateTransformationsProcessTime +
-									_processUserInputProcessTime +
-									_dispatchDelayedMessageProcessTime +
-									_processingCollisionsProcessTime;
-
-				static s32 totalGameFrameRealDuration = 0;
-				totalGameFrameRealDuration += gameFrameDuration;
-
-				_gameFrameRealDuration = gameFrameDuration > _gameFrameRealDuration ? gameFrameDuration : _gameFrameRealDuration;
-				_gameFrameDurationAverage = totalGameFrameRealDuration / ++cycleCount;
-
-				if(cycleCount >= (0x000000001 < (sizeof(u32) * 7)))
-				{
-					totalGameFrameRealDuration = 0;
-					cycleCount = 0;
-				}
-			}
-#endif
-
-#ifdef __SHOW_GAME_PROFILE_DURING_TORN_FRAMES
-			// Skip the rest of the cycle if already late
-			if(_processNameDuringFRAMESTART && strcmp(_processNameDuringFRAMESTART, "end frame"))
-			{
-				PRINT_TIME(20, 0);
-				Game::showCurrentGameFrameProfiling(this, 1, 0);
-			}
-#endif
-
-#ifdef __PROFILE_GAME
-			_updateProfiling = !Game::isInSpecialMode(this);
-#endif
 		}
 	}
 	else
