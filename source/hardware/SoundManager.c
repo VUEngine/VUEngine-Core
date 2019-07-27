@@ -307,7 +307,7 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 
 		for(i = 0; i < 32; i++)
 		{
-			waveform->wave[i * 4] = data[i];
+			waveform->wave[i * 4] = (u8)data[i];
 		}
 	}
 }

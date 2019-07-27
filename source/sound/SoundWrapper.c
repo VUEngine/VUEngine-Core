@@ -150,11 +150,6 @@ bool SoundWrapper::play(const Vector3D* position)
 	{
 		this->channel.soundChannelConfiguration.SxLRV = SoundWrapper::getVolumeFromPosition(this, position);
 	}
-	else
-	{
-		/* TODO extend Thunder's converted to export volume levels */
-		this->channel.soundChannelConfiguration.SxLRV = 0xFF;
-	}
 
 	return true;
 }
@@ -383,9 +378,11 @@ void SoundWrapper::configureSoundRegistries()
 	_soundRegistries[this->channel.number].SxEV1 = this->channel.soundChannelConfiguration.SxEV1;
 	_soundRegistries[this->channel.number].SxFQH = this->channel.soundChannelConfiguration.SxFQH;
 	_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL;
-	_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV;
 	_soundRegistries[this->channel.number].SxRAM = this->channel.soundChannelConfiguration.SxRAM;
-	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT;	
+	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT;
+
+	// Don't raise the volume just yet
+	_soundRegistries[this->channel.number].SxLRV = 0x00;
 }
 
 void SoundWrapper::addLeadedSound(SoundWrapper leadedSound)
