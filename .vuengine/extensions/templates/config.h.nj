@@ -94,7 +94,7 @@
 // maker code (2 chars)		 ##
 #define __MAKER_CODE		"{{ (project.romHeader.makerCode ~ '  ') | truncate(2, true, '') }}"
 // game code (4 chars)		 ####
-#define __GAME_CODE			"{{ (project.romHeader.gameCode ~ '    ') | truncate(4, true, '') }}"
+#define __GAME_CODE			"{{ (project.romHeader.gameCodeSystem ~ ' ') | truncate(1, true, '') }}{{ (project.romHeader.gameCodeId ~ '  ') | truncate(2, true, '') }}{{ (project.romHeader.gameCodeLanguage ~ ' ') | truncate(1, true, '') }}"
 // revision (1.x)			 #
 #define __ROM_VERSION		 {{ (project.romHeader.revision ~ '') | truncate(1, true, '') }}
 

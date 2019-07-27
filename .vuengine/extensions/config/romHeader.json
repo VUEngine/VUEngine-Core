@@ -1,5 +1,7 @@
 {
-	"gameCode": "VXXX",
+	"gameCodeSystem": "V",
+	"gameCodeId": "XX",
+	"gameCodeLanguage": "X",
 	"gameTitle": "VUENGINE PROJECT",
 	"makerCode": "XX",
 	"revision": 0

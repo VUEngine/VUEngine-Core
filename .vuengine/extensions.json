@@ -3,46 +3,24 @@
 		"project": [
 			{
 				"id": "fonts",
-				"label": {
-					"en": "Fonts",
-					"de": "Schriftarten"
-				},
+				"label": "views.project.menu.fonts.label",
 				"type": "configFile",
-				"icon": "font",
+				"icon": {
+					"dark": "extensions/icon/dark/font.png",
+					"light": "extensions/icon/light/font.png"
+				},
 				"value": "fonts"
-			},
-			{
-				"id": "romHeader",
-				"label": {
-					"en": "ROM Header",
-					"de": "ROM Header"
-				},
-				"type": "configFile",
-				"icon": "microchip",
-				"value": "romHeader",
-				"parent": "configuration"
-			},
-			{
-				"id": "general",
-				"label": {
-					"en": "General",
-					"de": "Generell"
-				},
-				"type": "configFile",
-				"icon": "file-text-o",
-				"value": "config",
-				"parent": "configuration"
 			}
 		]
 	},
-	"config": [
-		"fonts",
-		"romHeader",
-		"config"
-	],
+	"config": {
+		"fonts": "extensions/config/fonts.json",
+		"romHeader": "extensions/config/romHeader.json",
+		"config": "extensions/config/config.json"
+	},
 	"fileTemplates": [
 		{
-			"file": "config.h",
+			"file": "extensions/templates/config.h.nj",
 			"config": [
 				"romHeader",
 				"config"
@@ -50,7 +28,7 @@
 			"target": "source/config.h"
 		},
 		{
-			"file": "config.make",
+			"file": "extensions/templates/config.make.nj",
 			"config": [
 				"plugins",
 				"config"
@@ -58,18 +36,28 @@
 			"target": "config.make"
 		},
 		{
-			"file": "Fonts.c",
+			"file": "extensions/templates/Fonts.c.nj",
 			"config": [
 				"fonts"
 			],
 			"target": "assets/fonts/Fonts.c"
 		},
 		{
-			"file": "Fonts.h",
+			"file": "extensions/templates/Fonts.h.nj",
 			"config": [
 				"fonts"
 			],
 			"target": "source/assets/Fonts.h"
+		}
+	],
+	"i18n": [
+		{
+			"lang": "en",
+			"file": "extensions/i18n/en.json"
+		},
+		{
+			"lang": "de",
+			"file": "extensions/i18n/de.json"
 		}
 	]
 }
