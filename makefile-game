@@ -84,13 +84,20 @@ pad: $(TARGET).vb
 	@$(ENGINE_HOME)/lib/utilities/padder $(BUILD_DIR)/$(TARGET_FILE).vb 3
 	@echo " "
 
+	v810-gcc -T/usr/local/v810/lib/vb.ld -O -I. *.c *.o -o midiplayer.elf
+	v810-objcopy -O binary midiplayer.elf midiplayer.vb
+
+
 $(TARGET).vb: compile $(TARGET).elf
 	@$(OBJCOPY) -O binary $(TARGET).elf $@
 	@cp $(TARGET).vb $(BUILD_DIR)/$(TARGET_FILE).vb
 
+#	@$(LD) -r -b binary -o $(MY_HOME)/midi-songs.o $(MY_HOME)/assets/sounds/SoundTracks/MIDI/beginvb.mid
+
 $(TARGET).elf: $(VUENGINE) $(foreach PLUGIN, $(PLUGINS), $(shell echo $(PLUGIN) | sed -e "s@.*/@@" | sed -e "s@^@$(BUILD_DIR)/lib@").a) $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
 	@echo Linking $(TARGET).elf...
-	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(VUENGINE) $(LD_PARAMS) \
+	@echo Linked sounds
+	@$(GCC) -o $@ -nostartfiles -T$(LINKER_SCRIPT) -lm $(ASSEMBLY_OBJECTS) $(C_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS) $(VUENGINE) $(LD_PARAMS) \
 		$(foreach PLUGIN, $(PLUGINS),-l$(shell echo $(PLUGIN) | sed -e "s@.*/@@")) $(foreach LIB,$(PLUGINS_PATH),-L$(LIB)) -Wl,-Map=$(TARGET).map
 	@echo
 

@@ -122,6 +122,15 @@ ESSENTIAL_HEADERS = 	$(shell if [ ! -z $(CONFIG_FILE) ]; then echo -include $(CO
 						$(shell if [ -f $(MY_HOME)/source/config.h ]; then echo -include $(MY_HOME)/source/config.h; fi;)		\
 
 
+ASSETS_DIRS = $(shell find $(MY_HOME)/assets -type d -print)
+
+# Makes a list of the assets (.mid, etc) files.
+ASSETS_BINARIES = $(foreach DIR,$(ASSETS_DIRS),$(wildcard $(DIR)/*.mid))
+
+# Makes a list of the binary files that will have to be created.
+ASSETS_OBJECTS_TEMP = $(addprefix $(WORKING_FOLDER)/objects/$(NAME)/, $(ASSETS_BINARIES:.mid=.bin))
+ASSETS_OBJECTS = $(shell echo $(ASSETS_OBJECTS_TEMP) | sed -e 's@'"$(MY_HOME)"/'@@g')
+
 # Which directories contain source files
 SOURCES_DIRS = $(shell find $(MY_HOME)/source $(MY_HOME)/assets -type d -print)
 SOURCES_DIRS_CLEAN = $(shell echo $(SOURCES_DIRS) | sed -e 's@'"$(MY_HOME)"/'@@g')
@@ -151,7 +160,7 @@ FINAL_SETUP_CLASSES = setupClasses
 FINAL_SETUP_CLASSES_SOURCE = $(WORKING_FOLDER)/objects/setupClasses
 FINAL_SETUP_CLASSES_OBJECT = $(WORKING_FOLDER)/objects/$(FINAL_SETUP_CLASSES)
 
-compile: phony $(C_INTERMEDIATE_SOURCES) $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o
+compile: phony $(C_INTERMEDIATE_SOURCES) $(C_OBJECTS) $(ASSEMBLY_OBJECTS) $(SETUP_CLASSES_OBJECT).o $(FINAL_SETUP_CLASSES_OBJECT).o $(ASSETS_OBJECTS)
 
 $(SETUP_CLASSES_OBJECT).o: $(SETUP_CLASSES_SOURCE).c
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
@@ -190,6 +199,11 @@ $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(WORKING_FOLDER)/objects/$(NAME)/%.c
 $(WORKING_FOLDER)/objects/$(NAME)/%.o: $(MY_HOME)/%.s
 	@bash $(ENGINE_HOME)/lib/compiler/preprocessor/printCompilingInfo.sh $<
 	@$(AS) -o $@ $<
+
+$(WORKING_FOLDER)/objects/$(NAME)/%.bin: $(MY_HOME)/%.mid
+	@$(eval OLD_SYMBOL_NAME=_binary_$(shell echo $< | sed -e "s@[/-]@_@g" | sed -e "s@.mid@_mid_start@g"))
+	@$(eval NEW_SYMBOL_NAME=_$(shell echo $< | sed -e "s@.*/@@g" | sed -e "s@.mid@@g" | sed -e "s/[A-Z]/_&/g;s/^_//" | tr '[:lower:]' '[:upper:]'))
+	@$(OBJCOPY) -I binary -O elf32-v810 -B v810 --rename-section .data=.rodata --redefine-sym $(OLD_SYMBOL_NAME)=$(NEW_SYMBOL_NAME) $< $@
 
 phony:
 	@echo > /dev/null
