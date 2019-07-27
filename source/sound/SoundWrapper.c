@@ -26,6 +26,7 @@
 
 #include <SoundWrapper.h>
 #include <SoundManager.h>
+#include <MIDINotes.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -149,6 +150,11 @@ bool SoundWrapper::play(const Vector3D* position)
 	{
 		this->channel.soundChannelConfiguration.SxLRV = SoundWrapper::getVolumeFromPosition(this, position);
 	}
+	else
+	{
+		/* TODO extend Thunder's converted to export volume levels */
+		this->channel.soundChannelConfiguration.SxLRV = 0xFF;
+	}
 
 	return true;
 }
@@ -260,6 +266,8 @@ bool SoundWrapper::release()
 		return false;
 	}
 
+	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT = 0;	
+
 	if(!isDeleted(this->leadedSoundWrappers))
 	{
 		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
@@ -340,7 +348,28 @@ void SoundWrapper::setup(Sound* sound, SoundWrapper leaderSound, u8 soundChannel
 	this->channel.partners = sound->combineChannels ? soundChannelsCount - 1: 0;
 	this->channel.leaderChannel = &leaderSound->channel;
 
+	this->delay = this->channel.sound->soundChannels[this->channel.soundChannel]->delay;
+	this->length = this->channel.sound->soundChannels[this->channel.soundChannel]->length;
+
+	if(kMIDI == this->channel.soundChannelConfiguration.type)
+	{
+		this->length = SoundWrapper::computeMIDITrackLength(this);
+	}
+
 	SoundWrapper::configureSoundRegistries(this);
+}
+
+u16 SoundWrapper::computeMIDITrackLength()
+{
+	u16 i = 0;
+
+	u16* soundTrackData = (u16*)this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataMIDI;
+
+	NM_ASSERT(soundTrackData, "SoundWrapper::computeMIDITrackLength: null soundTrack");
+
+	for(; soundTrackData[i] != ENDSOUND && soundTrackData[i] != LOOPSOUND; i++);
+
+	return i;
 }
 
 void SoundWrapper::configureSoundRegistries()
@@ -392,28 +421,41 @@ u32 SoundWrapper::getType()
 
 void SoundWrapper::updateMIDIPlayback(bool mute)
 {
-	u16 note = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack[this->channel.cursor];
-	_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL = (note & 0xFF);
-	_soundRegistries[this->channel.number].SxFQH = this->channel.soundChannelConfiguration.SxFQH = (note >> 8);
+	u16 note = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataMIDI[this->channel.cursor];
 
-	if(mute)
+	// Is it a special note?
+	switch(note)
 	{
-		_soundRegistries[this->channel.number].SxLRV = 0;
+		case PAU:
+
+			_soundRegistries[this->channel.number].SxLRV = 0;
+			break;
+	
+		case HOLD:
+			// Continue playing the previous note.
+			break;
+
+		case ENDSOUND:
+
+			SoundWrapper::release(this);
+			break;
+
+		case LOOPSOUND:
+			break;
+
+		default:
+
+			_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL = (note & 0xFF);
+			_soundRegistries[this->channel.number].SxFQH = this->channel.soundChannelConfiguration.SxFQH = (note >> 8);
+
+			_soundRegistries[this->channel.number].SxLRV = mute ? 0 : this->channel.soundChannelConfiguration.SxLRV;
+			break;
 	}
-	else
-	{
-		_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV;
-	}
-}
+ }
 
 void SoundWrapper::updatePCMPlayback(bool mute)
 {
-	u8 volume = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack[this->channel.cursor];
-
-	//u16 maximumAccumulatedVolume = __MAXIMUM_VOLUMEN * (this->channel.partners + 1);
-
-	// Clamp volume to avoid saturation
-	//volume = volume > maximumAccumulatedVolume? maximumAccumulatedVolume : volume;
+	u8 volume = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataPCM[this->channel.cursor];
 
 	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUMEN * (this->channel.soundChannel);
 
@@ -460,13 +502,13 @@ void SoundWrapper::updatePlayback(bool mute)
 		updatePlayback = this->channel.cursor != this->channel.leaderChannel->cursor;
 		this->channel.cursor = this->channel.leaderChannel->cursor;
 	}
-	else if(++this->channel.delay > this->channel.sound->soundChannels[this->channel.soundChannel]->delay)
+	else if(++this->channel.delay > this->delay)
 	{
 		updatePlayback = true;
 
 		this->channel.delay = 0;
 
-		if(++this->channel.cursor >= this->channel.sound->soundChannels[this->channel.soundChannel]->length)
+		if(++this->channel.cursor >= this->length)
 		{
 			this->channel.cursor = 0;
 			SoundWrapper::fireEvent(this, kSoundFinished);
@@ -516,10 +558,22 @@ void SoundWrapper::printSound(int x, int y)
 	PRINT_TEXT(this->channel.sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
 	PRINT_TEXT("Length: ", x, ++y);
-	PRINT_INT(this->channel.sound->soundChannels[this->channel.soundChannel]->length, x + xDisplacement, y);
+	PRINT_INT(this->length, x + xDisplacement, y);
 	
 	PRINT_TEXT("Note: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack[this->channel.cursor], x + xDisplacement, y, 2);
+	switch(this->channel.soundChannelConfiguration.type)
+	{
+		case kMIDI:
+
+			PRINT_HEX_EXT(this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataMIDI[this->channel.cursor], x + xDisplacement, y, 2);
+			break;
+
+		case kPCM:
+
+			PRINT_HEX_EXT(this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataPCM[this->channel.cursor], x + xDisplacement, y, 2);
+			break;
+	}
+
 }
 
 void SoundWrapper::print(int x, int y)

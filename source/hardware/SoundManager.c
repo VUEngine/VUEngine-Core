@@ -33,6 +33,7 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
+
 const unsigned char sawSquareWave[32] =
 {
 	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,	/* Saw + Square */
@@ -182,6 +183,7 @@ void SoundManager::reset()
 
 	this->pcmFrameRateIsStable = false;
 
+
 	SoundManager::stopAllSounds(this);
 }
 
@@ -266,7 +268,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 }
 
 
-s8 SoundManager::getWaveform(const u8* waveFormData)
+s8 SoundManager::getWaveform(const s8* waveFormData)
 {
 	int i = 0;
 
@@ -295,11 +297,11 @@ s8 SoundManager::getWaveform(const u8* waveFormData)
 	return -1;
 }
 
-void SoundManager::setWaveform(Waveform* waveform, const u8* data)
+void SoundManager::setWaveform(Waveform* waveform, const s8* data)
 {
 	if(NULL != waveform)
 	{
-		waveform->data = data;
+		waveform->data = (s8*)data;
 
 		int i;
 
@@ -322,7 +324,7 @@ static u8 SoundManager::getSoundChannelsCount(Sound* sound)
 
 u8 SoundManager::getFreeSoundWrappers(Sound* sound, VirtualList availableSoundWrappers , u8 soundChannelsCount)
 {
-	if(NULL == sound || isDeleted(availableSoundWrappers ))
+	if(NULL == sound || isDeleted(availableSoundWrappers))
 	{
 		return 0;
 	}
@@ -345,6 +347,8 @@ u8 SoundManager::getFreeSoundWrappers(Sound* sound, VirtualList availableSoundWr
 SoundWrapper SoundManager::playSound(Sound* sound, bool forceAllChannels, const Vector3D* position)
 {
 	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, forceAllChannels);
+
+	NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::playSound: could not get any sound");
 
 	if(!isDeleted(soundWrapper))
 	{
@@ -369,9 +373,13 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels)
 	// Compute the number of 
 	u8 soundChannelsCount = SoundManager::getSoundChannelsCount(sound);
 	
+	NM_ASSERT(soundChannelsCount, "SoundManager::getSound: soundChannelsCount = 0");
+
 	// Check for free channels
 	VirtualList availableSoundWrappers  = new VirtualList();
 	u8 usableSoundWrappersCount = SoundManager::getFreeSoundWrappers(this, sound, availableSoundWrappers , soundChannelsCount);
+
+	NM_ASSERT(usableSoundWrappersCount, "SoundManager::getSound: usableSoundWrappersCount = 0");
 
 	if(forceAllChannels)
 	{

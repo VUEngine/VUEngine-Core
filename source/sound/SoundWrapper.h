@@ -74,7 +74,7 @@ typedef struct SoundChannelConfiguration
 	u8 S5SWP; 
 	
 	/// Waveform data pointer
-	const u8* waveFormData;
+	const s8* waveFormData;
 
 	/// Is modulation
 	bool isModulation;
@@ -95,7 +95,15 @@ typedef struct SoundChannel
 	u16 delay;
 
 	/// Sound track
-	const u8* soundTrack;
+	union SoundTrack
+	{
+		/// Sound track 8Bit (PCM)
+		const u8* dataPCM;
+
+		/// Sound track 16Bit (MIDI)
+		const u16* dataMIDI;
+
+	} soundTrack;
 
 } SoundChannel;
 
@@ -120,7 +128,7 @@ typedef struct Waveform
 {
 	u8 number;
 	u8* wave;
-	const u8* data;
+	const s8* data;
 
 } Waveform;
 
@@ -163,7 +171,9 @@ class SoundWrapper : Object
 {
 	Channel channel;
 	VirtualList leadedSoundWrappers;
+	u32 length;
 	u16 channelNumber;
+	u16 delay;
 	bool paused;
 
 	/// @publicsection
