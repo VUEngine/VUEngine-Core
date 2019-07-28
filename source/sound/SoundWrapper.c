@@ -613,8 +613,6 @@ void SoundWrapper::printMetadata(int x, int y)
 {
 	int xDisplacement = 15;
 
-	VirtualNode node = this->channels->head;
-
 	PRINT_TEXT("Name        :                               ", x, y);
 	PRINT_TEXT(this->sound->name, x + xDisplacement, y);
 
