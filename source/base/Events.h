@@ -63,7 +63,8 @@ enum Events
 	kActorBounced,
 
 	kSoundFinished,
-
+	kSoundReleased,
+	
 	// do not remove me
 	kLastEngineEvent
 };

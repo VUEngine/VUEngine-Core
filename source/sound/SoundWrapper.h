@@ -190,6 +190,7 @@ class SoundWrapper : Object
 	/// @publicsection
 	void constructor(Sound* sound, VirtualList channels, s8* waves);
 
+	bool isPaused();
 	void play(const Vector3D* position);
 	void pause();
 	void rewind();

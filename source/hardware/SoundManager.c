@@ -483,7 +483,7 @@ SoundWrapper SoundManager::playSound(Sound* sound, bool forceAllChannels, const 
  *
  * @param sound		Sound*
  */
-SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels)
+SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attribute__((unused)))
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 

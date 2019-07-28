@@ -150,6 +150,16 @@ u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
 }
 
 /**
+ * Is paused?
+ *
+ * @return bool
+ */
+bool SoundWrapper::isPaused()
+{
+	return this->paused;
+}
+
+/**
  * Play
  *
  */
@@ -509,10 +519,10 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 	{
 		SoundWrapper::fireEvent(this, kSoundFinished);
 
-				NM_ASSERT(false, "SoundWrapper::setupChannels: RELEASE");
-
 		if(!this->sound->loop)
 		{
+			SoundWrapper::fireEvent(this, kSoundReleased);
+				
 			SoundWrapper::release(this);
 		}
 	}
