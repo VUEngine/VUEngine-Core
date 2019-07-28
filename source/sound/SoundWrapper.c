@@ -614,34 +614,34 @@ void SoundWrapper::print(int x, int y)
 
 void SoundWrapper::printMetadata(int x, int y)
 {
-	int xDisplacement = 15;
+	int xDisplacement = 13;
 
-	PRINT_TEXT("Name        :                               ", x, y);
+	PRINT_TEXT("Name       :                               ", x, y);
 	PRINT_TEXT(this->sound->name, x + xDisplacement, y);
 
-	PRINT_TEXT("Playing        :", x, ++y);
+	PRINT_TEXT("Playing    :", x, ++y);
 	PRINT_TEXT(!this->paused ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-	PRINT_TEXT("Loop        :", x, ++y);
+	PRINT_TEXT("Loop       :", x, ++y);
 	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-	PRINT_TEXT("Ticks/note  :       ", x, ++y);
+	PRINT_TEXT("Ticks/note :       ", x, ++y);
 	PRINT_INT(this->ticksPerNote, x + xDisplacement, y);
 
 	y++;
 
 	PRINT_TEXT("Track info ", x, ++y);
-	PRINT_TEXT("  Sync      :       ", x, ++y);
-	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-	PRINT_TEXT("  Total     :", x, ++y);
+	PRINT_TEXT("  Total    :", x, ++y);
 	PRINT_INT(VirtualList::getSize(this->channels), x + xDisplacement, y);
 
-	PRINT_TEXT("  MIDI      :       ", x, ++y);
+	PRINT_TEXT("  MIDI     :       ", x, ++y);
 	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-	PRINT_TEXT("  PCM       :       ", x, ++y);
+	PRINT_TEXT("  PCM      :       ", x, ++y);
 	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
+	PRINT_TEXT("  Sync     :       ", x, ++y);
+	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 }
 
