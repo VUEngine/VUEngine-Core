@@ -67,15 +67,13 @@ typedef struct SoundRegistry
 } SoundRegistry;
 
 
-enum SoundRequestReturnMessages
+enum SoundRequestMessages
 {
-	kNullSound = 0,
-	kNotEnoughFreeChannels,
-	kNotEnoughFreeWaveforms,
-	kPlayRequestSuccess,
+	kPlayAll = 0, 					// Sound is not allocated if there are not enough free channels to play all the sound's tracks
+	kPlayAny,						// Plays as many sound's tracks as there are free channels
+	kPlayForce,						// Plays the priority tracks deallocating previous sound if necessary
 };
 
-#define __TOTAL_CHANNELS	6
 #define __DEFAULT_PCM_HZ	8000
 
 //---------------------------------------------------------------------------------------------------------
@@ -85,7 +83,9 @@ enum SoundRequestReturnMessages
 /// @ingroup hardware
 singleton class SoundManager : Object
 {
-	SoundWrapper soundWrappers[__TOTAL_CHANNELS];
+	VirtualList soundWrappers;
+	VirtualList releasedSoundWrappers;
+	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
 	u16 playBackCounter;
 	u16 targetPlaybackFrameRate;
@@ -104,6 +104,8 @@ singleton class SoundManager : Object
 
 	SoundWrapper playSound(Sound* sound, bool forceAllChannels, const Vector3D* position);
 	SoundWrapper getSound(Sound* sound, bool forceAllChannels);
+
+	void releaseSoundWrapper(SoundWrapper soundWrapper);
 
 	void updateFrameRate(u16 gameFrameDuration);
 	void print();

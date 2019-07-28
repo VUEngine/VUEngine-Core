@@ -37,6 +37,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __MAXIMUM_VOLUMEN			0xF
+#define __TOTAL_CHANNELS			6
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -91,8 +92,8 @@ typedef struct SoundChannel
 	/// Length
 	u32 length;
 
-	/// Delay before moving the cursor
-	u16 delay;
+	/// Ticks before moving the cursor
+	u16 ticksPerNote;
 
 	/// Sound track
 	union SoundTrack
@@ -111,11 +112,17 @@ typedef const SoundChannel SoundChannelROM;
 
 typedef struct Sound
 {
+	/// Name
+	char* name;
+
 	/// Play in loop
 	bool loop;
 
-	/// Combine all channels into a single sound
-	bool combineChannels;
+	/// Syncronize channels
+	bool synchronizedPlayback;
+
+	/// Ticks per note to add to all channels
+	u16 ticksPerNote;
 
 	/// Tracks
 	SoundChannel** soundChannels;
@@ -140,18 +147,21 @@ typedef struct Channel
 	/// Sound definition
 	Sound* sound;
 
+	/// Channel's effective length
+	u32 length;
+
 	/// Position within the sound track
 	u32 cursor;
 
-	/// Delay before moving the cursor
-	u16 delay;
+	/// Ticks before moving the cursor
+	u16 ticksPerNote;
 
-	/// Leader channel to sync PCM playback on combined channels
-	struct Channel* leaderChannel;
+	/// Ticks before moving the cursor
+	u16 ticks;
 
 	u8 number;
 	u8 soundChannel;
-	u8 partners;
+	bool finished;
 	
 } Channel;
 
@@ -162,6 +172,7 @@ enum SoundTrackTypes
 	kPCM
 };
 
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -169,27 +180,26 @@ enum SoundTrackTypes
 /// @ingroup stage-entities-particles
 class SoundWrapper : Object
 {
-	Channel channel;
-	VirtualList leadedSoundWrappers;
-	u32 length;
-	u16 channelNumber;
-	u16 delay;
+	Sound* sound;
+	VirtualList channels;
+	u16 ticksPerNote;
 	bool paused;
+	bool hasMIDITracks;
+	bool hasPCMTracks;
 
 	/// @publicsection
-	void constructor(u16 channelNumber);
+	void constructor(Sound* sound, VirtualList channels, s8* waves);
 
-	bool play(const Vector3D* position);
-	bool pause();
-	bool rewind();
-	bool stop();
-	bool release();
-	void setup(Sound* sound, SoundWrapper leaderSound, u8 soundChannel, u8 wave, u8 soundChannelsCount);
-	void addLeadedSound(SoundWrapper leadedSound);
-	void updatePlayback(bool mute);
-	bool isFree();
-	u32 getType();
+	void play(const Vector3D* position);
+	void pause();
+	void rewind();
+	void stop();
+	void release();
+	void updatePlayback(u32 type, bool mute);
+	u16 getTicksPerNote();
+	void setTicksPerNote(u16 ticksPerNote);
 	void print(int x, int y);
+	void printMetadata(int x, int y);
 }
 
 

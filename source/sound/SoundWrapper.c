@@ -38,6 +38,14 @@ extern const Optical* _optical;
 
 
 //---------------------------------------------------------------------------------------------------------
+//												 FRIENDS
+//---------------------------------------------------------------------------------------------------------
+
+friend class VirtualNode;
+friend class VirtualList;
+
+
+//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
@@ -46,15 +54,20 @@ extern const Optical* _optical;
  *
  * @param channel	Channel*
  */
-void SoundWrapper::constructor(u16 channelNumber)
+void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 {
 	// construct base Container
 	Base::constructor();
 
-	this->channelNumber = channelNumber;
-	this->leadedSoundWrappers = NULL;
 	this->paused = true;
-	SoundWrapper::reset(this);
+	this->sound = sound;
+	this->hasMIDITracks = false;
+	this->hasPCMTracks = false;
+	this->ticksPerNote = 0;
+	this->channels = new VirtualList();
+	VirtualList::copy(this->channels, channels);
+	SoundWrapper::setupChannels(this, waves);
+	SoundWrapper::configureSoundRegistries(this);
 }
 
 /**
@@ -62,18 +75,37 @@ void SoundWrapper::constructor(u16 channelNumber)
  */
 void SoundWrapper::destructor()
 {
-	this->channel.sound = NULL;
+	SoundWrapper::stop(this);
 
-	if(!isDeleted(this->leadedSoundWrappers))
+	if(!isDeleted(this->channels))
 	{
-		delete this->leadedSoundWrappers;
-		this->leadedSoundWrappers = NULL;
+		VirtualNode node = this->channels->head;
+
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			channel->sound = NULL;
+		}
+
+		delete this->channels;
+		this->channels = NULL;
 	}
 
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
 }
+
+u16 SoundWrapper::getTicksPerNote()
+{
+	return this->ticksPerNote;
+}
+
+void SoundWrapper::setTicksPerNote(u16 ticksPerNote)
+{
+	this->ticksPerNote = 0 > (s16)ticksPerNote ? 0 : ticksPerNote <= __TARGET_FPS ? ticksPerNote : __TARGET_FPS;
+}
+
 
 /**
  * Calculate sound volume according to its spatial position
@@ -121,244 +153,197 @@ u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
  * Play
  *
  */
-bool SoundWrapper::play(const Vector3D* position)
+void SoundWrapper::play(const Vector3D* position)
 {
-	if(SoundWrapper::isFree(this))
-	{
-		return false;
-	}
-
 	this->paused = false;
-	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT | 0x80;	
 
-	if(!isDeleted(this->leadedSoundWrappers))
-	{
-		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
-
-		for(; node; node = VirtualNode::getNext(node))
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(VirtualNode::getData(node));
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::play(soundWrapper, position);
-			}
-		}
-	}
+	u8 SxLRV = 0x00;
 
 	if(NULL != position)
 	{
-		this->channel.soundChannelConfiguration.SxLRV = SoundWrapper::getVolumeFromPosition(this, position);
+		SxLRV = SoundWrapper::getVolumeFromPosition(this, position);
 	}
 
-	return true;
+	VirtualNode node = this->channels->head;
+
+	// Prepare channels
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->number].SxINT = channel->soundChannelConfiguration.SxINT | 0x80;
+
+		// Don't allow the sound to come out just yet
+		if(position)
+		{
+			channel->soundChannelConfiguration.SxLRV = SxLRV;
+		}
+	}
 }
 
 /**
  * Pause
  *
  */
-bool SoundWrapper::pause()
+void SoundWrapper::pause()
 {
-	if(SoundWrapper::isFree(this))
-	{
-		return false;
-	}
-
 	this->paused = true;
 
-	if(!isDeleted(this->leadedSoundWrappers))
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
 	{
-		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
-
-		for(; node; node = VirtualNode::getNext(node))
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(VirtualNode::getData(node));
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::pause(soundWrapper);
-			}
-		}
+		Channel* channel = (Channel*)node->data;
+		_soundRegistries[channel->number].SxLRV = 0x00;
 	}
-
-	return true;
 }
 
 /**
  * Rewind
  *
  */
-bool SoundWrapper::rewind()
+void SoundWrapper::rewind()
 {
-	if(SoundWrapper::isFree(this))
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
 	{
-		return false;
+		Channel* channel = (Channel*)node->data;
+		channel->cursor = 0;
 	}
-
-	this->channel.cursor = 0;
-
-	if(!isDeleted(this->leadedSoundWrappers))
-	{
-		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
-
-		for(; node; node = VirtualNode::getNext(node))
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(VirtualNode::getData(node));
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::rewind(soundWrapper);
-			}
-		}
-	}
-
-	return true;
 }
 
 /**
  * Stop
  *
  */
-bool SoundWrapper::stop()
+void SoundWrapper::stop()
 {
-	if(SoundWrapper::isFree(this))
-	{
-		return false;
-	}
-
 	this->paused = true;
-	this->channel.cursor = 0;
-	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT = 0;	
 
-	if(!isDeleted(this->leadedSoundWrappers))
+	VirtualNode node = this->channels->head;
+
+	// Silence all channels first
+	for(; node; node = node->next)
 	{
-		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
+		Channel* channel = (Channel*)node->data;
 
-		for(; node; node = VirtualNode::getNext(node))
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(VirtualNode::getData(node));
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::stop(soundWrapper);
-			}
-		}
+		channel->cursor = 0;
+		_soundRegistries[channel->number].SxINT = 0x00;
+		_soundRegistries[channel->number].SxLRV = 0x00;
 	}
-
-	return true;
 }
-
 
 /**
  * Release
  *
  */
-bool SoundWrapper::release()
+void SoundWrapper::release()
 {
-	if(SoundWrapper::isFree(this))
-	{
-		return false;
-	}
-
-	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT = 0;	
-
-	if(!isDeleted(this->leadedSoundWrappers))
-	{
-		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
-
-		for(; node; node = VirtualNode::getNext(node))
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(VirtualNode::getData(node));
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::release(soundWrapper);
-			}
-		}
-	}
-
-	SoundWrapper::reset(this);
-
-	return true;
+	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
 }
 
-/**
- * Reset
- *
- */
-void SoundWrapper::reset()
+
+void SoundWrapper::setupChannels(s8* waves)
 {
-	this->paused = true;
-
-	this->channel.number = this->channelNumber;
-	this->channel.sound = NULL;
-	this->channel.cursor = 0;
-	this->channel.delay = 0;
-	this->channel.soundChannel = 0;
-	this->channel.partners = 0;
-	this->channel.leaderChannel = NULL;
-
-	this->channel.soundChannelConfiguration.type = kUnknownType;
-	this->channel.soundChannelConfiguration.SxLRV = 0;
-	this->channel.soundChannelConfiguration.SxRAM = 0;
-	this->channel.soundChannelConfiguration.SxEV0 = 0;
-	this->channel.soundChannelConfiguration.SxEV1 = 0;
-	this->channel.soundChannelConfiguration.SxFQH = 0;
-	this->channel.soundChannelConfiguration.SxFQL = 0;
-	this->channel.soundChannelConfiguration.waveFormData = NULL;
-	this->channel.soundChannelConfiguration.isModulation = false;
-
-	if(!isDeleted(this->leadedSoundWrappers))
+	if(isDeleted(this->channels))
 	{
-		VirtualNode node = VirtualList::begin(this->leadedSoundWrappers);
-
-		for(; node; node = VirtualNode::getNext(node))
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(VirtualNode::getData(node));
-
-			if(!isDeleted(soundWrapper))
-			{
-				SoundWrapper::reset(soundWrapper);
-			}
-		}
+		return;
 	}
 
-	if(!isDeleted(this->leadedSoundWrappers))
-	{
-		delete this->leadedSoundWrappers;
-	}
+	VirtualNode node = this->channels->head;
 
-	this->leadedSoundWrappers = NULL;
-}
-
-void SoundWrapper::setup(Sound* sound, SoundWrapper leaderSound, u8 soundChannel, u8 wave, u8 soundChannelsCount)
-{
-	this->channel.sound = sound;
-	this->channel.cursor = 0;
-	this->channel.delay = 0;
-	this->channel.soundChannel = soundChannel;
-	this->channel.soundChannelConfiguration = *sound->soundChannels[soundChannel]->soundChannelConfiguration;
-	this->channel.soundChannelConfiguration.SxRAM = wave;
-	this->channel.partners = sound->combineChannels ? soundChannelsCount - 1: 0;
-	this->channel.leaderChannel = &leaderSound->channel;
-
-	this->delay = this->channel.sound->soundChannels[this->channel.soundChannel]->delay;
-	this->length = this->channel.sound->soundChannels[this->channel.soundChannel]->length;
-
-	if(kMIDI == this->channel.soundChannelConfiguration.type)
-	{
-		this->length = SoundWrapper::computeMIDITrackLength(this);
-	}
-
-	SoundWrapper::configureSoundRegistries(this);
-}
-
-u16 SoundWrapper::computeMIDITrackLength()
-{
 	u16 i = 0;
 
-	u16* soundTrackData = (u16*)this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataMIDI;
+	for(; node; node = node->next, i++)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		channel->sound = this->sound;
+		channel->finished = false;
+		channel->cursor = 0;
+		channel->soundChannel = i;
+		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
+		channel->ticks = 0;
+		channel->ticksPerNote = channel->sound->soundChannels[i]->ticksPerNote;
+		channel->soundChannelConfiguration.SxRAM = waves[i];
+
+		switch(channel->soundChannelConfiguration.type)
+		{
+			case kMIDI:
+
+				this->hasMIDITracks = true;
+				channel->length = SoundWrapper::computeMIDITrackLength((u16*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI);
+				break;
+
+			case kPCM:
+
+				this->hasPCMTracks = true;
+				channel->length = this->sound->soundChannels[channel->soundChannel]->length;
+				break;
+			
+			default:
+
+				NM_ASSERT(false, "SoundWrapper::setupChannels: unknown track type");
+				break;
+		}
+
+		//this->delay = channel->sound->soundChannels[channel->soundChannel]->delay;
+	}
+
+	if(this->sound->synchronizedPlayback)
+	{
+		// Put the channel with the longest track first
+		VirtualNode node = this->channels->head;
+
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+
+			VirtualNode auxNode = this->channels->tail;
+
+			for(; auxNode && auxNode != node; auxNode = auxNode->previous)
+			{
+				Channel* auxChannel = (Channel*)auxNode->data;
+
+				if(channel->length < auxChannel->length)
+				{
+					VirtualNode::swapData(node, auxNode);
+				}
+			}
+		}
+	}
+}
+
+void SoundWrapper::configureSoundRegistries()
+{
+	if(NULL == this->sound)
+	{
+		return;
+	}
+
+	VirtualNode node = this->channels->head;
+
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		_soundRegistries[channel->number].SxEV0 = channel->soundChannelConfiguration.SxEV0;
+		_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1;
+		_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH;
+		_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL;
+		_soundRegistries[channel->number].SxRAM = channel->soundChannelConfiguration.SxRAM;
+		_soundRegistries[channel->number].SxINT = 0x00;
+
+		// Don't raise the volume just yet
+		_soundRegistries[channel->number].SxLRV = 0x00;
+	}
+}
+
+static u16 SoundWrapper::computeMIDITrackLength(u16* soundTrackData)
+{
+	u16 i = 0;
 
 	NM_ASSERT(soundTrackData, "SoundWrapper::computeMIDITrackLength: null soundTrack");
 
@@ -367,65 +352,16 @@ u16 SoundWrapper::computeMIDITrackLength()
 	return i;
 }
 
-void SoundWrapper::configureSoundRegistries()
+static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 {
-	if(NULL == this->channel.sound)
-	{
-		return;
-	}
-
-	_soundRegistries[this->channel.number].SxEV0 = this->channel.soundChannelConfiguration.SxEV0;
-	_soundRegistries[this->channel.number].SxEV1 = this->channel.soundChannelConfiguration.SxEV1;
-	_soundRegistries[this->channel.number].SxFQH = this->channel.soundChannelConfiguration.SxFQH;
-	_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL;
-	_soundRegistries[this->channel.number].SxRAM = this->channel.soundChannelConfiguration.SxRAM;
-	_soundRegistries[this->channel.number].SxINT = this->channel.soundChannelConfiguration.SxINT;
-
-	// Don't raise the volume just yet
-	_soundRegistries[this->channel.number].SxLRV = 0x00;
-}
-
-void SoundWrapper::addLeadedSound(SoundWrapper leadedSound)
-{
-	if(this == leadedSound)
-	{
-		return;
-	}
-
-	if(NULL == this->leadedSoundWrappers)
-	{
-		this->leadedSoundWrappers = new VirtualList();
-	}
-
-	VirtualList::pushBack(this->leadedSoundWrappers, leadedSound);
-}
-
-bool SoundWrapper::isSoundLeader(SoundWrapper soundWrapper)
-{
-	return !isDeleted(soundWrapper) ? this->channel.leaderChannel == &soundWrapper->channel : false;
-}
-
-bool SoundWrapper::isFree()
-{
-	return NULL == this->channel.sound;
-}
-
-
-u32 SoundWrapper::getType()
-{
-	return this->channel.soundChannelConfiguration.type;
-}
-
-void SoundWrapper::updateMIDIPlayback(bool mute)
-{
-	u16 note = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataMIDI[this->channel.cursor];
+	u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->cursor];
 
 	// Is it a special note?
 	switch(note)
 	{
 		case PAU:
 
-			_soundRegistries[this->channel.number].SxLRV = 0;
+			_soundRegistries[channel->number].SxLRV = 0;
 			break;
 	
 		case HOLD:
@@ -434,7 +370,7 @@ void SoundWrapper::updateMIDIPlayback(bool mute)
 
 		case ENDSOUND:
 
-			SoundWrapper::release(this);
+			// I handle end sound 
 			break;
 
 		case LOOPSOUND:
@@ -442,19 +378,18 @@ void SoundWrapper::updateMIDIPlayback(bool mute)
 
 		default:
 
-			_soundRegistries[this->channel.number].SxFQL = this->channel.soundChannelConfiguration.SxFQL = (note & 0xFF);
-			_soundRegistries[this->channel.number].SxFQH = this->channel.soundChannelConfiguration.SxFQH = (note >> 8);
-
-			_soundRegistries[this->channel.number].SxLRV = mute ? 0 : this->channel.soundChannelConfiguration.SxLRV;
+			_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+			_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+			_soundRegistries[channel->number].SxLRV = mute ? 0 : channel->soundChannelConfiguration.SxLRV;
 			break;
 	}
- }
+}
 
-void SoundWrapper::updatePCMPlayback(bool mute)
+static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 {
-	u8 volume = this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataPCM[this->channel.cursor];
+	u8 volume = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM[channel->cursor];
 
-	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUMEN * (this->channel.soundChannel);
+	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUMEN * (channel->soundChannel);
 
 	if(finalVolume  < 0)
 	{
@@ -467,171 +402,235 @@ void SoundWrapper::updatePCMPlayback(bool mute)
 
 	if(mute)
 	{
-		_soundRegistries[this->channel.number].SxLRV = 0;
+		_soundRegistries[channel->number].SxLRV = 0;
 	}
 	else
 	{
 #ifdef __RELEASE
-		_soundRegistries[this->channel.number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+		_soundRegistries[channel->number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
 #else
-		_soundRegistries[this->channel.number].SxLRV = this->channel.soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
 #endif
 	}
 
-//	_soundRegistries[this->channel.number].SxEV1 = this->channel.soundChannelConfiguration.SxEV1 = 0x40;
+//	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 = 0x40;
 }
 
 /**
  * Update sound playback
  */
-void SoundWrapper::updatePlayback(bool mute)
+void SoundWrapper::updatePlayback(u32 type, bool mute)
 {
-	if(NULL == this->channel.sound || this->paused)
+	if(NULL == this->sound || this->paused)
 	{
 		return;
 	}
 
 	bool updatePlayback = false;
-	bool release = false;
+	bool finished = true;
 
-	if(this->channel.partners && this->channel.leaderChannel != &this->channel)
+	VirtualNode node = this->channels->head;
+	Channel* firstChannel = this->sound->synchronizedPlayback ? (Channel*)node->data : NULL;
+
+	for(; node; node = node->next)
 	{
-		updatePlayback = this->channel.cursor != this->channel.leaderChannel->cursor;
-		this->channel.cursor = this->channel.leaderChannel->cursor;
-	}
-	else if(++this->channel.delay > this->delay)
-	{
-		updatePlayback = true;
+		Channel* channel = (Channel*)node->data;
 
-		this->channel.delay = 0;
-
-		if(++this->channel.cursor >= this->length)
+		// TODO: optimize playback of types
+		if(type != channel->soundChannelConfiguration.type)
 		{
-			this->channel.cursor = 0;
-			SoundWrapper::fireEvent(this, kSoundFinished);
+			finished &= channel->finished;
+			continue;
+		}
 
-			if(!this->channel.sound->loop)
+		if(NULL != firstChannel && channel != firstChannel)
+		{
+			if(firstChannel->cursor >= channel->length)
 			{
-				release = true;
+				_soundRegistries[channel->number].SxLRV = 0;
+				channel->cursor = channel->length - 1;
+				channel->finished = true;
+			}
+			else
+			{
+				updatePlayback = channel->cursor != firstChannel->cursor;
+				channel->cursor = firstChannel->cursor;
+				channel->finished = false;
+			}
+		}
+		else
+		{
+
+//			PRINT_INT(channel->ticks, 20, 10);
+//			PRINT_INT(channel->ticksPerNote, 20, 11);
+			if(++channel->ticks > channel->ticksPerNote + this->ticksPerNote)
+			{
+				updatePlayback = true;
+
+				channel->ticks = 0;
+
+				if(++channel->cursor >= channel->length)
+				{
+					channel->finished = true;
+
+					if(this->sound->loop)
+					{
+						channel->cursor = 0;
+					}
+					else
+					{
+						channel->finished = true;
+						channel->cursor = channel->length;
+					}
+				}
+			}
+		}
+
+		finished &= channel->finished;
+
+		if(updatePlayback)
+		{
+			switch(channel->soundChannelConfiguration.type)
+			{
+				case kMIDI:
+
+					SoundWrapper::updateMIDIPlayback(channel, mute);
+					break;
+
+				case kPCM:
+
+					SoundWrapper::updatePCMPlayback(channel, mute);
+					break;
 			}
 		}
 	}
 
-	if(updatePlayback)
+	if(finished)
 	{
-		switch(this->channel.soundChannelConfiguration.type)
+		SoundWrapper::fireEvent(this, kSoundFinished);
+
+				NM_ASSERT(false, "SoundWrapper::setupChannels: RELEASE");
+
+		if(!this->sound->loop)
 		{
-			case kMIDI:
-
-				SoundWrapper::updateMIDIPlayback(this, mute);
-				break;
-
-			case kPCM:
-
-				SoundWrapper::updatePCMPlayback(this, mute);
-				break;
+			SoundWrapper::release(this);
 		}
 	}
-
-	if(release)
-	{
-		SoundWrapper::release(this);
-	}
-}
-
-void SoundWrapper::printSound(int x, int y)
-{
-	if(NULL == this->channel.sound)
-	{
-		return;
-	}
-
-	int xDisplacement = 9;
-
-//	PRINT_TEXT("Sound: ", x, ++y);
-//	PRINT_HEX((u32)sound, x + xDisplacement, y);
-
-	PRINT_TEXT("Loop: ", x, ++y);
-	PRINT_TEXT(this->channel.sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
-
-	PRINT_TEXT("Length: ", x, ++y);
-	PRINT_INT(this->length, x + xDisplacement, y);
-	
-	PRINT_TEXT("Note: ", x, ++y);
-	switch(this->channel.soundChannelConfiguration.type)
-	{
-		case kMIDI:
-
-			PRINT_HEX_EXT(this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataMIDI[this->channel.cursor], x + xDisplacement, y, 2);
-			break;
-
-		case kPCM:
-
-			PRINT_HEX_EXT(this->channel.sound->soundChannels[this->channel.soundChannel]->soundTrack.dataPCM[this->channel.cursor], x + xDisplacement, y, 2);
-			break;
-	}
-
 }
 
 void SoundWrapper::print(int x, int y)
 {
 	int xDisplacement = 9;
 
-	PRINT_TEXT("CHANNEL: ", x, y);
-	PRINT_INT(this->channel.number, x + xDisplacement, y);
+	VirtualNode node = this->channels->head;
 
-	PRINT_TEXT("Type: ", x, ++y);
-
-	char* soundType = "?";
-	switch(this->channel.soundChannelConfiguration.type)
+	// Prepare channels
+	for(; node; node = node->next)
 	{
-		case kMIDI:
+		Channel* channel = (Channel*)node->data;
 
-			soundType = "MIDI";
-			break;
+		PRINT_TEXT("CHANNEL: ", x, y);
+		PRINT_INT(channel->number, x + xDisplacement, y);
 
-		case kPCM:
+		PRINT_TEXT("Type: ", x, ++y);
 
-			soundType = "PCM";
-			break;
-	}
+		char* soundType = "?";
+		switch(channel->soundChannelConfiguration.type)
+		{
+			case kMIDI:
 
-	PRINT_TEXT(soundType, x + xDisplacement, y);
+				soundType = "MIDI";
+				break;
 
-	PRINT_TEXT("Cursor: ", x, ++y);
-	PRINT_INT(this->channel.cursor, x + xDisplacement, y);
+			case kPCM:
 
-	PRINT_TEXT("Snd Chnl: ", x, ++y);
-	PRINT_INT(this->channel.soundChannel, x + xDisplacement, y);
+				soundType = "PCM";
+				break;
+		}
 
-	PRINT_TEXT("SxINT: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxINT | (NULL == this->channel.sound ? 0 : 0x80), x + xDisplacement, y, 2);
+		PRINT_TEXT(soundType, x + xDisplacement, y);
 
-	PRINT_TEXT("SxLRV: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxLRV, x + xDisplacement, y, 2);
+		PRINT_TEXT("Cursor:        ", x, ++y);
+		PRINT_INT(channel->cursor, x + xDisplacement, y);
 
-	PRINT_TEXT("SxRAM: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
+		PRINT_TEXT("Snd Chnl: ", x, ++y);
+		PRINT_INT(channel->soundChannel, x + xDisplacement, y);
 
-	PRINT_TEXT("SxEV0: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxEV0, x + xDisplacement, y, 2);
+		PRINT_TEXT("SxINT: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxINT | (NULL == channel->sound ? 0 : 0x80), x + xDisplacement, y, 2);
 
-	PRINT_TEXT("SxEV1: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxEV1, x + xDisplacement, y, 2);
+		PRINT_TEXT("SxLRV: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxLRV, x + xDisplacement, y, 2);
 
-	PRINT_TEXT("SxFQH: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
+		PRINT_TEXT("SxRAM: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
 
-	PRINT_TEXT("SxFQH: ", x, ++y);
-	PRINT_HEX_EXT(this->channel.soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
- 
-	if(NULL == this->channel.sound)
-	{
-		PRINT_TEXT("Sound:", x, ++y);
-		PRINT_TEXT("None", x + xDisplacement, y);
-	}
-	else
-	{
-		SoundWrapper::printSound(this, x, y);
+		PRINT_TEXT("SxEV0: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxEV0, x + xDisplacement, y, 2);
+
+		PRINT_TEXT("SxEV1: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxEV1, x + xDisplacement, y, 2);
+
+		PRINT_TEXT("SxFQH: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
+
+		PRINT_TEXT("SxFQH: ", x, ++y);
+		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
+	
+		PRINT_TEXT("Loop: ", x, ++y);
+		PRINT_TEXT(channel->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+		PRINT_TEXT("Length: ", x, ++y);
+		PRINT_INT(channel->length, x + xDisplacement, y);
+		
+		PRINT_TEXT("Note: ", x, ++y);
+		switch(channel->soundChannelConfiguration.type)
+		{
+			case kMIDI:
+
+				PRINT_HEX_EXT(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->cursor], x + xDisplacement, y, 2);
+				break;
+
+			case kPCM:
+
+				PRINT_HEX_EXT(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM[channel->cursor], x + xDisplacement, y, 2);
+				break;
+		}
 	}
 }
+
+void SoundWrapper::printMetadata(int x, int y)
+{
+	int xDisplacement = 15;
+
+	VirtualNode node = this->channels->head;
+
+	PRINT_TEXT("Name        :                               ", x, y);
+	PRINT_TEXT(this->sound->name, x + xDisplacement, y);
+
+	PRINT_TEXT("Playing        :", x, ++y);
+	PRINT_TEXT(!this->paused ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+	PRINT_TEXT("Loop        :", x, ++y);
+	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+	PRINT_TEXT("Ticks/note  :       ", x, ++y);
+	PRINT_INT(this->ticksPerNote, x + xDisplacement, y);
+
+	y++;
+
+	PRINT_TEXT("Track info ", x, ++y);
+	PRINT_TEXT("  Sync      :       ", x, ++y);
+	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+	PRINT_TEXT("  Total     :", x, ++y);
+	PRINT_INT(VirtualList::getSize(this->channels), x + xDisplacement, y);
+
+	PRINT_TEXT("  MIDI      :       ", x, ++y);
+	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+	PRINT_TEXT("  PCM       :       ", x, ++y);
+	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+
+}
+
