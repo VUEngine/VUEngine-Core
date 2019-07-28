@@ -64,10 +64,13 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
 	this->ticksPerNote = 0;
+	
 	this->channels = new VirtualList();
+	
 	VirtualList::copy(this->channels, channels);
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
+	SoundWrapper::setTicksPerNote(this, sound->ticksPerNote);
 }
 
 /**
