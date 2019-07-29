@@ -19,73 +19,34 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#ifndef TOOL_STATE_H_
+#define TOOL_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
+#include <GameState.h>
 #include <Tool.h>
-
-
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-/**
- * For debugging
- *
- * @memberof	Debug
- */
-typedef struct ClassSizeData
-{
-	/// size
-	int (*classSizeFunction)(void);
-	/// name
-	char* name;
-
-} ClassSizeData;
 
 
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup tools
-singleton class Debug : Tool
+/// @ingroup states
+abstract class ToolState : GameState
 {
-	// pages
-	VirtualList pages;
-	// sub pages
-	VirtualList subPages;
-	// current page
-	VirtualNode currentPage;
-	// current sub page
-	VirtualNode currentSubPage;
-	// current layer
-	u8 currentLayer;
-	// part of bgmap memory current viewed
-	u8 viewedMapPart;
-	// current bgmap
-	int bgmapSegment;
-	// current obj segment
-	int objectSegment;
-	// current char segment
-	int charSegment;
-	// current page in sram inspector
-	int sramPage;
-	// update function pointer
-	void (*update)(void *);
+	Tool tool;
 
 	/// @publicsection
-	static Debug getInstance();
-	override void update();
-	override void render();
-	override void show();
-	override void hide();
-	override void processUserInput(u16 pressedKey);
+	void constructor();
+
+	override void enter(void* owner);
+	override void execute(void* owner);
+	override void exit(void* owner);
+	override void processUserInput(UserInput userInput);
 }
 
 

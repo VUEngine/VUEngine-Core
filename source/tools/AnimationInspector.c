@@ -168,11 +168,10 @@ void AnimationInspector::update()
  *
  * @param gameState Current game state
  */
-void AnimationInspector::show(GameState gameState)
+void AnimationInspector::show()
 {
 	ASSERT(gameState, "AnimationInspector::start: null gameState");
 
-	this->gameState = gameState;
 	this->animatedSprite = NULL;
 
 	this->animationsSelector = NULL;

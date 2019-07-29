@@ -64,6 +64,9 @@
 #ifdef __ANIMATION_INSPECTOR
 #include <AnimationInspectorState.h>
 #endif
+#ifdef __SOUND_TEST
+#include <SoundTestState.h>
+#endif
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -242,6 +245,9 @@ void Game::constructor()
 #endif
 #ifdef __ANIMATION_INSPECTOR
 	AnimationInspectorState::getInstance();
+#endif
+#ifdef __SOUND_TEST
+	SoundTestState::getInstance();
 #endif
 
 	// to make debugging easier
@@ -598,7 +604,7 @@ u32 Game::processUserInput()
 #ifdef __DEBUG_TOOLS
 
 	// check code to access special feature
-	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RL))
+	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RL))
 	{
 		if(Game::isInDebugMode(this))
 		{
@@ -627,7 +633,7 @@ u32 Game::processUserInput()
 #ifdef __STAGE_EDITOR
 
 	// check code to access special feature
-	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RD))
+	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RD))
 	{
 		if(Game::isInStageEditor(this))
 		{
@@ -656,7 +662,7 @@ u32 Game::processUserInput()
 #ifdef __ANIMATION_INSPECTOR
 
 	// check code to access special feature
-	if((userInput.previousKey & K_LT) && (userInput.previousKey & K_RT) && (userInput.pressedKey & K_RR))
+	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RR))
 	{		if(Game::isInAnimationInspector(this))
 		{
 			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
@@ -681,6 +687,36 @@ u32 Game::processUserInput()
 	}
 #endif
 
+#ifdef __SOUND_TEST
+
+	// check code to access special feature
+	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RU))
+	{		
+		if(Game::isInSoundTest(this))
+		{
+			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+			StateMachine::popState(this->stateMachine);
+			this->nextState = NULL;
+		}
+		else
+		{
+			if(Game::isInSpecialMode(this))
+			{
+				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+				StateMachine::popState(this->stateMachine);
+				this->nextState = NULL;
+			}
+
+			this->nextState = GameState::safeCast(SoundTestState::getInstance());
+			StateMachine::pushState(this->stateMachine, (State)this->nextState);
+			this->nextState = NULL;
+		}
+
+		return true;
+	}
+#endif
+
+
 #ifdef __DEBUG_TOOLS
 	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
 	{
@@ -697,6 +733,13 @@ u32 Game::processUserInput()
 
 #ifdef __ANIMATION_INSPECTOR
 	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
+	{
+		return true;
+	}
+#endif
+
+#ifdef __SOUND_TEST
+	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RU)))
 	{
 		return true;
 	}
@@ -1230,6 +1273,14 @@ bool Game::isInAnimationInspector()
 }
 #endif
 
+#ifdef __SOUND_TEST
+bool Game::isInSoundTest()
+{
+	return StateMachine::getCurrentState(this->stateMachine) == (State)SoundTestState::getInstance();
+}
+#endif
+
+
 // whether if a special mode is active
 bool Game::isInSpecialMode()
 {
@@ -1243,6 +1294,9 @@ bool Game::isInSpecialMode()
 #endif
 #ifdef __ANIMATION_INSPECTOR
 	isInSpecialMode |= Game::isInAnimationInspector(this);
+#endif
+#ifdef __SOUND_TEST
+	isInSpecialMode |= Game::isInSoundTest(this);
 #endif
 
 	return isInSpecialMode;
@@ -1261,6 +1315,9 @@ bool Game::isEnteringSpecialMode()
 #ifdef __ANIMATION_INSPECTOR
 	isEnteringSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
 #endif
+#ifdef __SOUND_TEST
+	isEnteringSpecialMode |= GameState::safeCast(SoundTestState::getInstance()) == this->nextState;
+#endif
 
 	return isEnteringSpecialMode;
 }
@@ -1268,18 +1325,21 @@ bool Game::isEnteringSpecialMode()
 // whether if a special mode is being started
 bool Game::isExitingSpecialMode()
 {
-	int isEnteringSpecialMode = false;
+	int isExitingSpecialMode = false;
 #ifdef __DEBUG_TOOLS
-	isEnteringSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
+	isExitingSpecialMode |= GameState::safeCast(DebugState::getInstance()) == this->nextState;
 #endif
 #ifdef __STAGE_EDITOR
-	isEnteringSpecialMode |= GameState::safeCast(StageEditorState::getInstance()) == this->nextState;
+	isExitingSpecialMode |= GameState::safeCast(StageEditorState::getInstance()) == this->nextState;
 #endif
 #ifdef __ANIMATION_INSPECTOR
-	isEnteringSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
+	isExitingSpecialMode |= GameState::safeCast(AnimationInspectorState::getInstance()) == this->nextState;
+#endif
+#ifdef __SOUND_TEST
+	isExitingSpecialMode |= GameState::safeCast(SoundTestState::getInstance()) == this->nextState;
 #endif
 
-	return isEnteringSpecialMode;
+	return isExitingSpecialMode;
 }
 
 // retrieve state machine, use with caution!!!

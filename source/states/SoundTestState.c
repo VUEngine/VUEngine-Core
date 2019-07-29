@@ -19,74 +19,49 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Tool.h>
+#include <SoundTestState.h>
+#include <SoundTest.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * For debugging
+ * Get instance
  *
- * @memberof	Debug
+ * @fn			SoundTestState::getInstance()
+ * @memberof	SoundTestState
+ * @public
+ * @return		SoundTestState instance
  */
-typedef struct ClassSizeData
+
+
+/**
+ * Class constructor
+ *
+ * @private
+ */
+void SoundTestState::constructor()
 {
-	/// size
-	int (*classSizeFunction)(void);
-	/// name
-	char* name;
+	Base::constructor();
 
-} ClassSizeData;
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/// @ingroup tools
-singleton class Debug : Tool
-{
-	// pages
-	VirtualList pages;
-	// sub pages
-	VirtualList subPages;
-	// current page
-	VirtualNode currentPage;
-	// current sub page
-	VirtualNode currentSubPage;
-	// current layer
-	u8 currentLayer;
-	// part of bgmap memory current viewed
-	u8 viewedMapPart;
-	// current bgmap
-	int bgmapSegment;
-	// current obj segment
-	int objectSegment;
-	// current char segment
-	int charSegment;
-	// current page in sram inspector
-	int sramPage;
-	// update function pointer
-	void (*update)(void *);
-
-	/// @publicsection
-	static Debug getInstance();
-	override void update();
-	override void render();
-	override void show();
-	override void hide();
-	override void processUserInput(u16 pressedKey);
+	this->tool = Tool::safeCast(SoundTest::getInstance());
 }
 
+/**
+ * Class destructor
+ *
+ * @private
+ */
+void SoundTestState::destructor()
+{
+	// destroy base
+	Base::destructor();
+}
 
-#endif

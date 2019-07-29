@@ -27,9 +27,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <Tool.h>
 #include <AnimatedEntity.h>
-#include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -56,10 +55,8 @@ typedef struct UserAnimatedEntity
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup tools
-singleton class AnimationInspector : Object
+singleton class AnimationInspector : Tool
 {
-	// current in game gameState
-	GameState gameState;
 	// current animated sprite
 	Sprite animatedSprite;
 	// current animation description
@@ -81,10 +78,10 @@ singleton class AnimationInspector : Object
 
 	/// @publicsection
 	static AnimationInspector getInstance();
-	void update();
-	void show(GameState gameState);
-	void hide();
-	void processUserInput(u16 pressedKey);
+	override void update();
+	override void show();
+	override void hide();
+	override void processUserInput(u16 pressedKey);
 }
 
 

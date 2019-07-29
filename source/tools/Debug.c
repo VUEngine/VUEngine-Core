@@ -223,13 +223,11 @@ void Debug::render()
  *
  * @param gameState Current game state
  */
-void Debug::show(GameState gameState)
+void Debug::show()
 {
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
 	SpriteManager::computeTotalPixelsDrawn(SpriteManager::getInstance());
-
-	this->gameState = gameState;
 
 	Debug::showPage(this, 0);
 }
@@ -252,33 +250,6 @@ void Debug::hide()
 u8 Debug::getCurrentPageNumber()
 {
 	return VirtualList::getNodePosition(this->pages, this->currentPage) + 1;
-}
-
-/**
- * Dimm game to make text easier to read
- *
- * @private
- */
-void Debug::dimmGame()
-{
-	_vipRegisters[__GPLT0] = 0x50;
-	_vipRegisters[__GPLT1] = 0x50;
-	_vipRegisters[__GPLT2] = 0x50;
-	_vipRegisters[__GPLT3] = 0x50;
-	_vipRegisters[__JPLT0] = 0x50;
-	_vipRegisters[__JPLT1] = 0x50;
-	_vipRegisters[__JPLT2] = 0x50;
-	_vipRegisters[__JPLT3] = 0x50;
-
-	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
-}
-
-/**
- * Recover game's colors
- */
-void Debug::lightUpGame()
-{
-	Stage::setupPalettes(GameState::getStage(this->gameState));
 }
 
 void Debug::setBlackBackground()

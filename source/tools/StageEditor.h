@@ -27,9 +27,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Object.h>
+#include <Tool.h>
 #include <Entity.h>
-#include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -57,10 +56,8 @@ typedef struct UserObject
 
 /// In-game stage editor for debug and productivity purposes
 /// @ingroup tools
-singleton class StageEditor : Object
+singleton class StageEditor : Tool
 {
-	// Current game state
-	GameState gameState;
 	// Current in game entity
 	VirtualNode currentEntityNode;
 	// Current entity's shape
@@ -76,10 +73,10 @@ singleton class StageEditor : Object
 
 	/// @publicsection
 	static StageEditor getInstance();
-	void show(GameState gameState);
-	void hide();
-	void update();
-	void processUserInput(u16 pressedKey);
+	override void show();
+	override void hide();
+	override void update();
+	override void processUserInput(u16 pressedKey);
 }
 
 

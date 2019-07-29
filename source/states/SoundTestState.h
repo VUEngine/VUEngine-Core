@@ -1,7 +1,7 @@
 /* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -19,73 +19,32 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+
+#ifndef SOUND_TEST_STATE_H_
+#define SOUND_TEST_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
-//												INCLUDES
+// 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Tool.h>
+#include <ToolState.h>
+#include <GameEvents.h>
+#include <SoundTest.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * For debugging
- *
- * @memberof	Debug
- */
-typedef struct ClassSizeData
-{
-	/// size
-	int (*classSizeFunction)(void);
-	/// name
-	char* name;
-
-} ClassSizeData;
-
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+// 											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup tools
-singleton class Debug : Tool
+singleton class SoundTestState : ToolState
 {
-	// pages
-	VirtualList pages;
-	// sub pages
-	VirtualList subPages;
-	// current page
-	VirtualNode currentPage;
-	// current sub page
-	VirtualNode currentSubPage;
-	// current layer
-	u8 currentLayer;
-	// part of bgmap memory current viewed
-	u8 viewedMapPart;
-	// current bgmap
-	int bgmapSegment;
-	// current obj segment
-	int objectSegment;
-	// current char segment
-	int charSegment;
-	// current page in sram inspector
-	int sramPage;
-	// update function pointer
-	void (*update)(void *);
-
-	/// @publicsection
-	static Debug getInstance();
-	override void update();
-	override void render();
-	override void show();
-	override void hide();
-	override void processUserInput(u16 pressedKey);
+	static SoundTestState getInstance();
 }
 
 

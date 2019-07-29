@@ -19,9 +19,6 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
@@ -31,62 +28,69 @@
 
 
 //---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
+//											CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------------------------------------------
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
 /**
- * For debugging
+ * Get instance
  *
- * @memberof	Debug
+ * @fn			Tool::getInstance()
+ * @memberof	Tool
+ * @public
+ * @return		Tool instance
  */
-typedef struct ClassSizeData
+
+
+/**
+ * Class constructor
+ *
+ * @private
+ */
+void Tool::constructor()
 {
-	/// size
-	int (*classSizeFunction)(void);
-	/// name
-	char* name;
+	Base::constructor();
 
-} ClassSizeData;
-
-
-//---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-/// @ingroup tools
-singleton class Debug : Tool
-{
-	// pages
-	VirtualList pages;
-	// sub pages
-	VirtualList subPages;
-	// current page
-	VirtualNode currentPage;
-	// current sub page
-	VirtualNode currentSubPage;
-	// current layer
-	u8 currentLayer;
-	// part of bgmap memory current viewed
-	u8 viewedMapPart;
-	// current bgmap
-	int bgmapSegment;
-	// current obj segment
-	int objectSegment;
-	// current char segment
-	int charSegment;
-	// current page in sram inspector
-	int sramPage;
-	// update function pointer
-	void (*update)(void *);
-
-	/// @publicsection
-	static Debug getInstance();
-	override void update();
-	override void render();
-	override void show();
-	override void hide();
-	override void processUserInput(u16 pressedKey);
+	this->gameState = NULL;
 }
 
+/**
+ * Class destructor
+ */
+void Tool::destructor()
+{
+	// allow a new construct
+	Base::destructor();
+}
 
-#endif
+void Tool::render()
+{
+}
+
+void Tool::setGameState(GameState gameState)
+{
+	this->gameState = gameState;
+}
+
+void Tool::dimmGame()
+{
+	_vipRegisters[__GPLT0] = 0x50;
+	_vipRegisters[__GPLT1] = 0x50;
+	_vipRegisters[__GPLT2] = 0x50;
+	_vipRegisters[__GPLT3] = 0x50;
+	_vipRegisters[__JPLT0] = 0x50;
+	_vipRegisters[__JPLT1] = 0x50;
+	_vipRegisters[__JPLT2] = 0x50;
+	_vipRegisters[__JPLT3] = 0x50;
+
+	_vipRegisters[0x30 | __PRINTING_PALETTE] = 0xE4;
+}
+
+void Tool::lightUpGame()
+{
+	Stage::setupPalettes(GameState::getStage(this->gameState));
+}

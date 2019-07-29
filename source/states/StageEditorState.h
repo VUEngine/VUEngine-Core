@@ -27,7 +27,7 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <GameState.h>
+#include <ToolState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,14 +35,10 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup states
-singleton class StageEditorState : GameState
+singleton class StageEditorState : ToolState
 {
 	/// @publicsection
 	static StageEditorState getInstance();
-	override void enter(void* owner);
-	override void execute(void* owner);
-	override void exit(void* owner);
-	override void processUserInput(UserInput userInput);
 }
 
 

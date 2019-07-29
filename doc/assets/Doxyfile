@@ -2064,6 +2064,7 @@ PREDEFINED             = __attribute__(x)= 								\
 						__ALERT_TRANSFORMATIONS_NOT_IN_SYNC_WITH_VIP	\
 						__ALERT_VIP_OVERTIME							\
 						__ANIMATION_INSPECTOR							\
+						__SOUND_TEST									\
 						__DEBUG											\
 						__DEBUG_TOOLS									\
 						__PRINT_DETAILED_MEMORY_POOL_STATUS				\

@@ -167,17 +167,10 @@ void Camera::focus(u32 checkIfFocusEntityIsMoving)
 {
 	ASSERT(this->cameraMovementManager, "Camera::focus: null cameraMovementManager");
 
-#ifdef __DEBUG_TOOLS
 	if(!Game::isInSpecialMode(Game::getInstance()))
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game::isInSpecialMode(Game::getInstance()))
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	if(!Game::isInSpecialMode(Game::getInstance()))
-#endif
-
-	CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
+	{
+		CameraMovementManager::focus(this->cameraMovementManager, checkIfFocusEntityIsMoving);
+	}
 
 #ifdef __PRINT_CAMERA_STATUS
 	Camera::print(this, 1, 1);

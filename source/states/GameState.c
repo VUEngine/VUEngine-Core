@@ -213,57 +213,37 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 {
 	NM_ASSERT(this->stage, "GameState::resume: null stage");
 
-#ifdef __DEBUG_TOOLS
 	if(!Game::isExitingSpecialMode(Game::getInstance()))
 	{
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game::isExitingSpecialMode(Game::getInstance()))
-	{
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	if(!Game::isExitingSpecialMode(Game::getInstance()))
-	{
-#endif
+		// Set camera to its previous position
+		Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
+		Camera::setPosition(Camera::getInstance(), this->cameraPosition);
+		Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
 
-	// Set camera to its previous position
-	Camera::setStageSize(Camera::getInstance(), Stage::getSize(this->stage));
-	Camera::setPosition(Camera::getInstance(), this->cameraPosition);
-	Camera::setCameraFrustum(Camera::getInstance(), Stage::getCameraFrustum(this->stage));
+		// Reset the engine state
+		Game::reset(Game::getInstance());
 
-	// Reset the engine state
-	Game::reset(Game::getInstance());
+		// Update the stage
+		Container::resume(this->stage);
 
-	// Update the stage
-	Container::resume(this->stage);
+		// Move the camera to its previous position
+		Camera::focus(Camera::getInstance(), false);
 
-	// Move the camera to its previous position
-	Camera::focus(Camera::getInstance(), false);
+		// Force all transformations to take place again
+		GameState::initialTransform(this);
 
-	// Force all transformations to take place again
-	GameState::initialTransform(this);
+		// Force all streaming right now
+		Stage::streamAll(this->stage);
 
-	// Force all streaming right now
-	Stage::streamAll(this->stage);
+		// Force char memory defragmentation
+		CharSetManager::defragment(CharSetManager::getInstance());
 
-	// Force char memory defragmentation
-	CharSetManager::defragment(CharSetManager::getInstance());
+		// Set up visual representation
+		GameState::synchronizeGraphics(this);
 
-	// Set up visual representation
-	GameState::synchronizeGraphics(this);
-
-	// Make sure everything is properly rendered
-	SpriteManager::prepareAll(SpriteManager::getInstance());
-
-#ifdef __DEBUG_TOOLS
+		// Make sure everything is properly rendered
+		SpriteManager::prepareAll(SpriteManager::getInstance());
 	}
-#endif
-#ifdef __STAGE_EDITOR
-	}
-#endif
-#ifdef __ANIMATION_INSPECTOR
-	}
-#endif
 
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);

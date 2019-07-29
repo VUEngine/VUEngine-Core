@@ -168,18 +168,17 @@ void StageEditor::update()
  *
  * @param gameState Current game state
  */
-void StageEditor::show(GameState gameState)
+void StageEditor::show()
 {
 	ASSERT(gameState, "StageEditor::start: gameState this");
 
-	this->gameState = gameState;
 	this->mode = kFirstMode + 1;
 	this->userObjectSprite = NULL;
 
 	StageEditor::releaseShape(this);
 	StageEditor::setupMode(this);
 
-	Debug::dimmGame(this);
+	StageEditor::dimmGame(this);
 }
 
 /**
@@ -193,7 +192,7 @@ void StageEditor::hide()
 	StageEditor::releaseShape(this);
 	this->currentEntityNode = NULL;
 
-	Debug::lightUpGame(this);
+	Tool::lightUpGame(this);
 }
 
 /**

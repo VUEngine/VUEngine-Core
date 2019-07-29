@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#ifndef SOUND_TEST_H_
+#define SOUND_TEST_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -28,25 +28,13 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <Tool.h>
+#include <SoundWrapper.h>
+#include <SoundManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * For debugging
- *
- * @memberof	Debug
- */
-typedef struct ClassSizeData
-{
-	/// size
-	int (*classSizeFunction)(void);
-	/// name
-	char* name;
-
-} ClassSizeData;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,35 +42,14 @@ typedef struct ClassSizeData
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup tools
-singleton class Debug : Tool
+singleton class SoundTest : Tool
 {
-	// pages
-	VirtualList pages;
-	// sub pages
-	VirtualList subPages;
-	// current page
-	VirtualNode currentPage;
-	// current sub page
-	VirtualNode currentSubPage;
-	// current layer
-	u8 currentLayer;
-	// part of bgmap memory current viewed
-	u8 viewedMapPart;
-	// current bgmap
-	int bgmapSegment;
-	// current obj segment
-	int objectSegment;
-	// current char segment
-	int charSegment;
-	// current page in sram inspector
-	int sramPage;
-	// update function pointer
-	void (*update)(void *);
+	SoundWrapper soundWrapper;
+	u16 selectedSound;
 
 	/// @publicsection
-	static Debug getInstance();
+	static SoundTest getInstance();
 	override void update();
-	override void render();
 	override void show();
 	override void hide();
 	override void processUserInput(u16 pressedKey);

@@ -26,10 +26,6 @@
 
 #include <StageEditorState.h>
 #include <StageEditor.h>
-#include <Game.h>
-#include <MessageDispatcher.h>
-#include <Telegram.h>
-#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,6 +50,8 @@
 void StageEditorState::constructor()
 {
 	Base::constructor();
+
+	this->tool = Tool::safeCast(StageEditor::getInstance());
 }
 
 /**
@@ -65,48 +63,4 @@ void StageEditorState::destructor()
 {
 	// destroy base
 	Base::destructor();
-}
-
-/**
- * Method called when the Game's StateMachine enters to this state
- *
- * @param owner		StateMachine's owner
- */
-void StageEditorState::enter(void* owner __attribute__ ((unused)))
-{
-	Base::enter(this, owner);
-	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
-	StageEditor::show(StageEditor::getInstance(), GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
-}
-
-/**
- * Method called when by the StateMachine's update method
- *
- * @param owner		StateMachine's owner
- */
-void StageEditorState::execute(void* owner __attribute__ ((unused)))
-{
-	StageEditor::update(StageEditor::getInstance());
-}
-
-/**
- * Method called when the Game's StateMachine exits from this state
- *
- * @param owner		StateMachine's owner
- */
-void StageEditorState::exit(void* owner __attribute__ ((unused)))
-{
-	StageEditor::hide(StageEditor::getInstance());
-	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
-	Base::exit(this, owner);
-}
-
-/**
- * Process user input
- *
- * @param userInput		User input
- */
-void StageEditorState::processUserInput(UserInput userInput)
-{
-	StageEditor::processUserInput(StageEditor::getInstance(), userInput.pressedKey);
 }

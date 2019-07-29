@@ -24,8 +24,12 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <DebugState.h>
-#include <Debug.h>
+#include <ToolState.h>
+#include <AnimationInspector.h>
+#include <Game.h>
+#include <MessageDispatcher.h>
+#include <Telegram.h>
+#include <KeypadManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,10 +39,10 @@
 /**
  * Get instance
  *
- * @fn			DebugState::getInstance()
- * @memberof	DebugState
+ * @fn			ToolState::getInstance()
+ * @memberof	ToolState
  * @public
- * @return		DebugState instance
+ * @return		ToolState instance
  */
 
 
@@ -47,11 +51,11 @@
  *
  * @private
  */
-void DebugState::constructor()
+void ToolState::constructor()
 {
 	Base::constructor();
-
-	this->tool = Tool::safeCast(Debug::getInstance());
+	
+	this->tool = NULL;
 }
 
 /**
@@ -59,8 +63,69 @@ void DebugState::constructor()
  *
  * @private
  */
-void DebugState::destructor()
+void ToolState::destructor()
 {
+	this->tool = NULL;
+
 	// destroy base
 	Base::destructor();
+}
+
+/**
+ * Method called when the Game's StateMachine enters to this state
+ *
+ * @param owner		StateMachine's owner
+ */
+void ToolState::enter(void* owner __attribute__ ((unused)))
+{
+	Base::enter(this, owner);
+	GameState::pauseClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+
+	if(!isDeleted(this->tool))
+	{
+		Tool::setGameState(this->tool, GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+		Tool::show(this->tool);
+	}
+}
+
+/**
+ * Method called when by the StateMachine's update method
+ *
+ * @param owner		StateMachine's owner
+ */
+void ToolState::execute(void* owner __attribute__ ((unused)))
+{
+	if(!isDeleted(this->tool))
+	{
+		Tool::update(this->tool);
+	}
+}
+
+/**
+ * Method called when the Game's StateMachine exits from this state
+ *
+ * @param owner		StateMachine's owner
+ */
+void ToolState::exit(void* owner __attribute__ ((unused)))
+{
+	if(!isDeleted(this->tool))
+	{
+		Tool::hide(this->tool);
+	}
+	
+	GameState::resumeClocks(GameState::safeCast(StateMachine::getPreviousState(Game::getStateMachine(Game::getInstance()))));
+	Base::exit(this, owner);
+}
+
+/**
+ * Process user input
+ *
+ * @param userInput		User input
+ */
+void ToolState::processUserInput(UserInput userInput)
+{
+	if(!isDeleted(this->tool))
+	{
+		Tool::processUserInput(this->tool, userInput.releasedKey);
+	}
 }

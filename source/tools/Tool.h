@@ -19,34 +19,21 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef DEBUG_H_
-#define DEBUG_H_
+#ifndef TOOL_H_
+#define TOOL_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <Tool.h>
+#include <Object.h>
+#include <GameState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * For debugging
- *
- * @memberof	Debug
- */
-typedef struct ClassSizeData
-{
-	/// size
-	int (*classSizeFunction)(void);
-	/// name
-	char* name;
-
-} ClassSizeData;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,38 +41,24 @@ typedef struct ClassSizeData
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup tools
-singleton class Debug : Tool
+abstract class Tool : Object
 {
-	// pages
-	VirtualList pages;
-	// sub pages
-	VirtualList subPages;
-	// current page
-	VirtualNode currentPage;
-	// current sub page
-	VirtualNode currentSubPage;
-	// current layer
-	u8 currentLayer;
-	// part of bgmap memory current viewed
-	u8 viewedMapPart;
-	// current bgmap
-	int bgmapSegment;
-	// current obj segment
-	int objectSegment;
-	// current char segment
-	int charSegment;
-	// current page in sram inspector
-	int sramPage;
-	// update function pointer
-	void (*update)(void *);
+	GameState gameState;
 
 	/// @publicsection
-	static Debug getInstance();
-	override void update();
-	override void render();
-	override void show();
-	override void hide();
-	override void processUserInput(u16 pressedKey);
+	void constructor();
+
+	static Tool getInstance();
+
+	void setGameState(GameState gameState);
+
+	virtual void update() = 0;
+	virtual void render();
+	virtual void show() = 0;
+	virtual void hide() = 0;
+	virtual void processUserInput(u16 pressedKey) = 0;
+	virtual void dimmGame();
+	virtual void lightUpGame();
 }
 
 
