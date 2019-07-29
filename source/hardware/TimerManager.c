@@ -96,6 +96,15 @@ void TimerManager::reset()
 	this->resolution = __TIME_MS(__TIMER_RESOLUTION);
 }
 
+/**
+ * Get timer frequency
+ * 
+ * @return frequency in us	u16
+ */
+u16 TimerManager::getFrequencyInUS()
+{
+	return __TIMER_100US == this->frequency ? 100 : 20;
+}
 
 /**
  * Set timer frequency
@@ -105,6 +114,16 @@ void TimerManager::reset()
 void TimerManager::setFrequency(u16 frequency)
 {
 	this->frequency = frequency;
+}
+
+/**
+ * Get timer resolution
+ * 
+ * @return resolution 	u16
+ */
+u16 TimerManager::getResolution()
+{
+	return this->resolution;
 }
 
 /**

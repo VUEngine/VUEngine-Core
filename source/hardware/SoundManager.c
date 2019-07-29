@@ -252,9 +252,11 @@ void SoundManager::reset()
 		this->waveforms[i].data = NULL;
 	}
 
-	this->playBackCounter = 0;
-	this->playBackDelay = 0;
-	this->targetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+	this->pcmPlaybackCycles = 0;
+	this->pcmPlaybackCyclesToSkip = 0;
+	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+	this->pcmReimainingPlaybackCyclesToSkip = 0;
+	this->pcmStablePlaybackCycles = 0;
 
 	this->pcmFrameRateIsStable = false;
 
@@ -262,9 +264,20 @@ void SoundManager::reset()
 	SoundManager::stopAllSounds(this);
 }
 
-void SoundManager::setTargetPlaybackFrameRate(u16 targetPlaybackFrameRate)
+void SoundManager::startPCMPlayback()
 {
-	this->targetPlaybackFrameRate = targetPlaybackFrameRate;
+	this->pcmPlaybackCycles = 0;
+	this->pcmPlaybackCyclesToSkip = 0;
+	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
+	this->pcmReimainingPlaybackCyclesToSkip = 0;
+	this->pcmStablePlaybackCycles = 0;
+
+	this->pcmFrameRateIsStable = false;
+}
+
+void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
+{
+	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
 void SoundManager::playSounds(u32 type, bool mute)
@@ -310,12 +323,10 @@ void SoundManager::playMIDISounds()
 
 void SoundManager::playPCMSounds()
 {
-	static s16 currentPlayBackDelay = 0;
-
-	if(0 >= --currentPlayBackDelay)
+	if(0 >= --this->pcmReimainingPlaybackCyclesToSkip)
 	{
-		this->playBackCounter++;
-		currentPlayBackDelay = this->playBackDelay;
+		this->pcmPlaybackCycles++;
+		this->pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
 
 		SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable);
 	}
@@ -359,22 +370,20 @@ void SoundManager::rewindAllSounds(u32 type)
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
 {
 	s16 factor = __MILLISECONDS_IN_SECOND / gameFrameDuration;
-	s16 deviation = (this->playBackCounter - this->targetPlaybackFrameRate / factor);
+	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate / factor);
 
 	if(!this->pcmFrameRateIsStable)
 	{
-		static u16 stableCycles = 0;
-
 		if(0 == deviation / factor)
 		{
-			stableCycles++;	
+			this->pcmStablePlaybackCycles++;	
 		}
 		else
 		{
-			stableCycles = 0;
+			this->pcmStablePlaybackCycles = 0;
 		}
 		
-		if(gameFrameDuration / (this->targetPlaybackFrameRate / __DEFAULT_PCM_HZ) < stableCycles)
+		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < this->pcmStablePlaybackCycles)
 		{
 			this->pcmFrameRateIsStable = true;
 
@@ -382,9 +391,9 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		}
 	}
 
-	this->playBackDelay += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
-	this->playBackCounter = 0;
+	this->pcmPlaybackCycles = 0;
 }
 
 
@@ -416,19 +425,54 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 	return -1;
 }
-
-void SoundManager::setWaveform(Waveform* waveform, const s8* data)
+void copymem (u8* dest, const u8* src, u16 num)
+{
+	u16 i;
+	for (i = 0; i < num; i++) *dest++ = *src++;
+}
+void SoundManager::setWaveform(Waveform* waveform, const s8* data, u32 type)
 {
 	if(NULL != waveform)
 	{
 		waveform->data = (s8*)data;
 
 		int i;
+		int displacement = 0;
+
+		switch (type)
+		{
+			case kMIDI:
+
+				displacement = 0;
+				break;
+
+			case kPCM:
+
+				displacement = 2;
+				break;
+
+			default:
+				break;
+		}
 
 		for(i = 0; i < 32; i++)
 		{
-			waveform->wave[i * 4] = (u8)data[i];
+			waveform->wave[i << displacement] = (u8)data[i];
 		}
+
+		/*
+		// TODO
+		const u8 kModData[] = {
+		0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 16, 17, 18, 19, 20, 21, -1, -2, -3, -4, -5,
+		-6, -7, -8, -9, -16, -17, -18, -19, -20, -21, -22
+		};
+
+		u8* moddata = __MODDATA;
+		for(i = 0; i <= 0x7C; i++)
+		{
+			moddata[i << 2] = kModData[i];
+		}
+		*/
 	}
 }
 
@@ -528,7 +572,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 
 		for(i = 0; i < soundChannelsCount; i++)
 		{
-			SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
+			SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData, sound->soundChannels[i]->soundChannelConfiguration->type);
 		}
 
 		NM_ASSERT(0 < VirtualList::getSize(availableChannels), "SoundManager::getSound: 0 availableChannels");

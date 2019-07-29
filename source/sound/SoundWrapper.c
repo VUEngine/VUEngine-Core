@@ -25,8 +25,8 @@
 //---------------------------------------------------------------------------------------------------------
 
 #include <SoundWrapper.h>
+#include <TimerManager.h>
 #include <SoundManager.h>
-#include <MIDINotes.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -64,13 +64,20 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
 	this->ticksPerNote = 0;
-	
+
+	// Compute target resolution factor
+	u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
+	u16 frequencyFactor = frequencyUS / __MIDI_CONVERTER_FREQUENCY_US;
+	u16 resolution = TimerManager::getResolution(TimerManager::getInstance()) + 1;
+	u16 timerUsPerInterrupt = resolution * frequencyFactor * __SOUND_TARGET_US_PER_TICK;
+	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
+	this->targetTimerResolutionFactor = __FIX19_13_DIV(__I_TO_FIX19_13(soundTargetUsPerInterrupt), __I_TO_FIX19_13(timerUsPerInterrupt));
+
 	this->channels = new VirtualList();
 	
 	VirtualList::copy(this->channels, channels);
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
-	SoundWrapper::setTicksPerNote(this, sound->ticksPerNote);
 }
 
 /**
@@ -120,15 +127,15 @@ u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
 	// set position inside camera coordinates
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(*position);
 
-	fix10_6 maxOutputLevel = __I_TO_FIX10_6(__MAXIMUM_VOLUMEN);
-	fix10_6 leftDistance = __ABS(__FIX10_6_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
-	fix10_6 rightDistance = __ABS(__FIX10_6_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+	fix19_13 maxOutputLevel = __I_TO_FIX19_13(__MAXIMUM_VOLUMEN);
+	fix19_13 leftDistance = __ABS(__FIX19_13_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+	fix19_13 rightDistance = __ABS(__FIX19_13_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
 
-	fix10_6 leftOutput = maxOutputLevel - __FIX10_6_MULT(maxOutputLevel, __FIX10_6_DIV(leftDistance, _optical->horizontalViewPointCenter));
-	u32 leftVolume = __FIX10_6_TO_I(leftOutput - __FIX10_6_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
+	fix19_13 leftOutput = maxOutputLevel - __FIX19_13_MULT(maxOutputLevel, __FIX19_13_DIV(leftDistance, _optical->horizontalViewPointCenter));
+	u32 leftVolume = __FIX19_13_TO_I(leftOutput - __FIX19_13_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
 
-	fix10_6 rightOutput = maxOutputLevel - __FIX10_6_MULT(maxOutputLevel, __FIX10_6_DIV(rightDistance, _optical->horizontalViewPointCenter));
-	u32 rightVolume = __FIX10_6_TO_I(rightOutput - __FIX10_6_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
+	fix19_13 rightOutput = maxOutputLevel - __FIX19_13_MULT(maxOutputLevel, __FIX19_13_DIV(rightDistance, _optical->horizontalViewPointCenter));
+	u32 rightVolume = __FIX19_13_TO_I(rightOutput - __FIX19_13_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
 
 	u8 volume = 0x00;
 
@@ -190,6 +197,11 @@ void SoundWrapper::play(const Vector3D* position)
 		{
 			channel->soundChannelConfiguration.SxLRV = SxLRV;
 		}
+	}
+
+	if(this->hasPCMTracks)
+	{
+		SoundManager::startPCMPlayback(SoundManager::getInstance());
 	}
 }
 
@@ -279,7 +291,6 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->soundChannel = i;
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
 		channel->ticks = 0;
-		channel->ticksPerNote = channel->sound->soundChannels[i]->ticksPerNote;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
 
 		switch(channel->soundChannelConfiguration.type)
@@ -302,7 +313,7 @@ void SoundWrapper::setupChannels(s8* waves)
 				break;
 		}
 
-		//this->delay = channel->sound->soundChannels[channel->soundChannel]->delay;
+		SoundWrapper::computeNextTicksPerNote(this, channel, 0);
 	}
 
 	if(this->sound->synchronizedPlayback)
@@ -390,10 +401,14 @@ static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 			break;
 
 		default:
+			{
+				u8 volume = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
+				channel->soundChannelConfiguration.SxLRV = (volume << 4) | volume;
 
-			_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-			_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-			_soundRegistries[channel->number].SxLRV = mute ? 0 : channel->soundChannelConfiguration.SxLRV;
+				_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+				_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+				_soundRegistries[channel->number].SxLRV = mute ? 0 : channel->soundChannelConfiguration.SxLRV;
+			}
 			break;
 	}
 }
@@ -427,6 +442,36 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 	}
 
 //	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 = 0x40;
+}
+
+void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix19_13 residue)
+{
+	u16 ticksPerNote = 0;
+
+	switch (channel->soundChannelConfiguration.type)
+	{
+		case kMIDI:
+			{
+				channel->ticks = residue;
+				channel->ticksPerNote = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor];
+
+				fix19_13 effectiveTicksPerNote = __FIX19_13_DIV(__I_TO_FIX19_13(channel->ticksPerNote), this->targetTimerResolutionFactor);
+				channel->tickStep = __FIX19_13_DIV(effectiveTicksPerNote, __I_TO_FIX19_13(channel->ticksPerNote));
+			}
+			break;
+
+		case kPCM:
+
+			channel->ticksPerNote = channel->sound->soundChannels[channel->soundChannel]->ticksPerNote;
+			channel->tickStep = 1;
+			channel->ticks = 0;
+			break;
+
+		default:
+
+			NM_ASSERT(false, "SoundWrapper::computeNextTicksPerNote: unknown track type");
+			break;
+	}
 }
 
 /**
@@ -474,13 +519,16 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 		else
 		{
 
-//			PRINT_INT(channel->ticks, 20, 10);
-//			PRINT_INT(channel->ticksPerNote, 20, 11);
-			if(++channel->ticks > channel->ticksPerNote + this->ticksPerNote)
+//PRINT_TEXT( "                 ", 1, 1);
+//PRINT_FLOAT(channel->ticksPerNote, 1, 1);
+//PRINT_FLOAT(__FIX19_13_TO_F(effectiveTicksPerNote), 10, 1);
+//PRINT_HEX(this->targetTimerResolutionFactor, 10, 2);
+
+			channel->ticks += channel->tickStep;
+			
+			if(channel->ticks >= __I_TO_FIX19_13(channel->ticksPerNote + this->ticksPerNote))
 			{
 				updatePlayback = true;
-
-				channel->ticks = 0;
 
 				if(++channel->cursor >= channel->length)
 				{
@@ -496,6 +544,8 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 						channel->cursor = channel->length;
 					}
 				}
+
+				SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks - __I_TO_FIX19_13(channel->ticksPerNote + this->ticksPerNote));				
 			}
 		}
 
@@ -545,7 +595,7 @@ void SoundWrapper::print(int x, int y)
 		PRINT_TEXT("CHANNEL: ", x, y);
 		PRINT_INT(channel->number, x + xDisplacement, y);
 
-		PRINT_TEXT("Type: ", x, ++y);
+		PRINT_TEXT("Type:         ", x, ++y);
 
 		char* soundType = "?";
 		switch(channel->soundChannelConfiguration.type)

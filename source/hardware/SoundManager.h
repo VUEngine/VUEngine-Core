@@ -87,16 +87,18 @@ singleton class SoundManager : Object
 	VirtualList releasedSoundWrappers;
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
-	u16 playBackCounter;
-	u16 targetPlaybackFrameRate;
-	s16 playBackDelay;
+	u16 pcmPlaybackCycles;
+	u16 pcmTargetPlaybackFrameRate;
+	s16 pcmPlaybackCyclesToSkip;
+	s16 pcmReimainingPlaybackCyclesToSkip;
+	s16 pcmStablePlaybackCycles;
 	bool pcmFrameRateIsStable;
 
 	/// @publicsection
 	static SoundManager getInstance();
 	void reset();
 
-	void setTargetPlaybackFrameRate(u16 targetPlaybackFrameRate);
+	void setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate);
 
 	void playMIDISounds();
 	void playPCMSounds();
@@ -106,6 +108,7 @@ singleton class SoundManager : Object
 	SoundWrapper getSound(Sound* sound, bool forceAllChannels);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
+	void startPCMPlayback();
 
 	void updateFrameRate(u16 gameFrameDuration);
 	void print();

@@ -19,8 +19,8 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef MIDI_NOTES_MANAGER_H_
-#define MIDI_NOTES_MANAGER_H_
+#ifndef MIDI_H_
+#define MIDI_H_
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -167,5 +167,13 @@
 #define ENDSOUND  0xFFFF  // Ends the sound.
 #define LOOPSOUND 0xFFFE  // Repeats the sound from the beginning.
 
+// Commom wave forms
+extern const s8 sineWaveForm[];
+extern const s8 sawtoothWaveForm[];
+extern const s8 triangleWaveForm[];
+extern const s8 squareWaveForm[];
+extern const s8 pianoWaveForm[];
+extern const s8 trumpetWaveForm[];
+extern const s8 violinWaveForm[];
 
 #endif

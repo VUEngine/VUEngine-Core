@@ -1160,7 +1160,7 @@ void Stage::resume()
 
 void Stage::loadBackgroundSounds()
 {
-	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(),  this->stageSpec->sound.targetPlaybackFrameRate);
+	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(),  this->stageSpec->sound.pcmTargetPlaybackFrameRate);
 
 	int i = 0;
 

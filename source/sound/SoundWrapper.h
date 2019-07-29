@@ -27,17 +27,19 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SpatialObject.h>
-#include <Sprite.h>
-#include <Body.h>
+#include <Object.h>
+#include <MIDI.h>
+#include <VirtualList.h>
 
 
 //---------------------------------------------------------------------------------------------------------
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAXIMUM_VOLUMEN			0xF
-#define __TOTAL_CHANNELS			6
+#define __MAXIMUM_VOLUMEN					0xF
+#define __TOTAL_CHANNELS					6
+#define __MIDI_CONVERTER_FREQUENCY_US		20
+#define __SOUND_TARGET_US_PER_TICK			__MIDI_CONVERTER_FREQUENCY_US
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -121,8 +123,8 @@ typedef struct Sound
 	/// Syncronize channels
 	bool synchronizedPlayback;
 
-	/// Ticks per note to add to all channels
-	u16 ticksPerNote;
+	/// Target timer resolution in us
+	u16 targetTimerResolutionUS;
 
 	/// Tracks
 	SoundChannel** soundChannels;
@@ -157,7 +159,10 @@ typedef struct Channel
 	u16 ticksPerNote;
 
 	/// Ticks before moving the cursor
-	u16 ticks;
+	fix19_13 ticks;
+
+	/// Tick step per timer interrupt
+	fix19_13 tickStep;
 
 	u8 number;
 	u8 soundChannel;
@@ -186,6 +191,7 @@ class SoundWrapper : Object
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
+	fix19_13 targetTimerResolutionFactor;
 
 	/// @publicsection
 	void constructor(Sound* sound, VirtualList channels, s8* waves);

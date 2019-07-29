@@ -66,7 +66,10 @@ singleton class TimerManager : Object
 	static TimerManager getInstance();
 	static void interruptHandler();
 	void reset();
+	u16 getFrequency();
 	void setFrequency(u16 frequency);
+	u16 getFrequencyInUS();
+	u16 getResolution();
 	void setResolution(u16 resolution);
 	void enable(bool flag);
 	u32 getMillisecondsElapsed();

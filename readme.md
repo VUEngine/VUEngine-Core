@@ -129,6 +129,7 @@ the tips, suggestions and knowledge about best practices and bad practices (of w
 previously plagued with).
 - Libgccvb has been refactored to accommodate better to this engine, all its code is credited to
 its creators, we do not take any credit on it.
+- Thunderstruck, for sharing with us the source of his MIDI and PCM music players and converters.
 
 V810 is a trade mark of NEC. Virtual Boy is a trade mark of Nintendo.
 Jorge Eremiev and Christian Radke are in no way affiliated with either of these parties.
@@ -168,7 +169,7 @@ In alphabetical order:
 	Kevin L Mellott
 	Larry Anderson
 	Marcus
-	Marten Reiß
+	Marten Reiï¿½
 	Michael Ortega
 	Mike Boodle
 	Nektarios Moulianakis
