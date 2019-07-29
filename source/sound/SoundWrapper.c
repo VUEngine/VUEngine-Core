@@ -63,7 +63,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->sound = sound;
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
-	this->ticksPerNote = 0;
+	this->speed = __I_TO_FIX19_13(1);
 
 	// Compute target resolution factor
 	u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
@@ -106,16 +106,35 @@ void SoundWrapper::destructor()
 	Base::destructor();
 }
 
-u16 SoundWrapper::getTicksPerNote()
+fix19_13 SoundWrapper::getSpeed()
 {
-	return this->ticksPerNote;
+	return this->speed;
 }
 
-void SoundWrapper::setTicksPerNote(u16 ticksPerNote)
+/**
+ * Set playback speed. Changing the speed during playback may cause
+ * the tracks to go out of sync because of the channel's current ticks.
+ *
+ * @speed 	fix19_13 PCM playback max speed is 100%
+ */
+void SoundWrapper::setSpeed(fix19_13 speed)
 {
-	this->ticksPerNote = 0 > (s16)ticksPerNote ? 0 : ticksPerNote <= __TARGET_FPS ? ticksPerNote : __TARGET_FPS;
-}
+	// Prevent timer interrupts to unsync tracks
+	bool paused = this->paused;
+	this->paused = true;
+	this->speed = 0 >= speed ? __F_TO_FIX19_13(0.01f) : speed <= __F_TO_FIX19_13(2.0f) ? speed : __F_TO_FIX19_13(2.0f);
 
+	VirtualNode node = this->channels->head;
+
+	// Prepare channels
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+		SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks);	
+	}
+
+	this->paused = paused;
+}
 
 /**
  * Calculate sound volume according to its spatial position
@@ -236,6 +255,8 @@ void SoundWrapper::rewind()
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->cursor = 0;
+
+		SoundWrapper::computeNextTicksPerNote(this, channel, 0);
 	}
 }
 
@@ -446,24 +467,27 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 
 void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix19_13 residue)
 {
-	u16 ticksPerNote = 0;
-
 	switch (channel->soundChannelConfiguration.type)
 	{
 		case kMIDI:
 			{
 				channel->ticks = residue;
-				channel->ticksPerNote = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor];
+				channel->ticksPerNote = __I_TO_FIX19_13(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
 
-				fix19_13 effectiveTicksPerNote = __FIX19_13_DIV(__I_TO_FIX19_13(channel->ticksPerNote), this->targetTimerResolutionFactor);
-				channel->tickStep = __FIX19_13_DIV(effectiveTicksPerNote, __I_TO_FIX19_13(channel->ticksPerNote));
+				u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
+				fix19_13 frequencyFactor = __I_TO_FIX19_13(frequencyUS / __MIDI_CONVERTER_FREQUENCY_US);
+
+				channel->ticksPerNote = __FIX19_13_DIV(__FIX19_13_DIV(channel->ticksPerNote, this->speed), frequencyFactor);
+
+				fix19_13 effectiveTicksPerNote = __FIX19_13_DIV(channel->ticksPerNote, this->targetTimerResolutionFactor);
+				channel->tickStep = __FIX19_13_DIV(effectiveTicksPerNote, channel->ticksPerNote);
 			}
 			break;
 
 		case kPCM:
 
-			channel->ticksPerNote = channel->sound->soundChannels[channel->soundChannel]->ticksPerNote;
-			channel->tickStep = 1;
+			channel->ticksPerNote = __FIX19_13_DIV(__I_TO_FIX19_13(1), this->speed);
+			channel->tickStep = __I_TO_FIX19_13(1);
 			channel->ticks = 0;
 			break;
 
@@ -518,15 +542,9 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 		}
 		else
 		{
-
-//PRINT_TEXT( "                 ", 1, 1);
-//PRINT_FLOAT(channel->ticksPerNote, 1, 1);
-//PRINT_FLOAT(__FIX19_13_TO_F(effectiveTicksPerNote), 10, 1);
-//PRINT_HEX(this->targetTimerResolutionFactor, 10, 2);
-
 			channel->ticks += channel->tickStep;
 			
-			if(channel->ticks >= __I_TO_FIX19_13(channel->ticksPerNote + this->ticksPerNote))
+			if(channel->ticks >= channel->ticksPerNote)
 			{
 				updatePlayback = true;
 
@@ -545,7 +563,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 					}
 				}
 
-				SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks - __I_TO_FIX19_13(channel->ticksPerNote + this->ticksPerNote));				
+				SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks - channel->ticksPerNote);				
 			}
 		}
 
@@ -675,8 +693,8 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT("Loop       :", x, ++y);
 	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-	PRINT_TEXT("Ticks/note :       ", x, ++y);
-	PRINT_INT(this->ticksPerNote, x + xDisplacement, y);
+	PRINT_TEXT("Speed %    :          ", x, ++y);
+	PRINT_INT(__FIX19_13_TO_I(__FIX19_13_MULT(this->speed, __I_TO_FIX19_13(100))), x + xDisplacement, y);
 
 	y++;
 

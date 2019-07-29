@@ -94,9 +94,6 @@ typedef struct SoundChannel
 	/// Length
 	u32 length;
 
-	/// Ticks before moving the cursor
-	u16 ticksPerNote;
-
 	/// Sound track
 	union SoundTrack
 	{
@@ -156,7 +153,7 @@ typedef struct Channel
 	u32 cursor;
 
 	/// Ticks before moving the cursor
-	u16 ticksPerNote;
+	fix19_13 ticksPerNote;
 
 	/// Ticks before moving the cursor
 	fix19_13 ticks;
@@ -187,7 +184,7 @@ class SoundWrapper : Object
 {
 	Sound* sound;
 	VirtualList channels;
-	u16 ticksPerNote;
+	fix19_13 speed;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
@@ -203,8 +200,8 @@ class SoundWrapper : Object
 	void stop();
 	void release();
 	void updatePlayback(u32 type, bool mute);
-	u16 getTicksPerNote();
-	void setTicksPerNote(u16 ticksPerNote);
+	fix19_13 getSpeed();
+	void setSpeedScale(u16 speed);
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 }
