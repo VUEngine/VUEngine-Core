@@ -153,13 +153,13 @@ typedef struct Channel
 	u32 cursor;
 
 	/// Ticks before moving the cursor
-	fix19_13 ticksPerNote;
+	fix15_17 ticksPerNote;
 
 	/// Ticks before moving the cursor
-	fix19_13 ticks;
+	fix15_17 ticks;
 
 	/// Tick step per timer interrupt
-	fix19_13 tickStep;
+	fix15_17 tickStep;
 
 	u8 number;
 	u8 soundChannel;
@@ -184,11 +184,11 @@ class SoundWrapper : Object
 {
 	Sound* sound;
 	VirtualList channels;
-	fix19_13 speed;
+	fix15_17 speed;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
-	fix19_13 targetTimerResolutionFactor;
+	fix15_17 targetTimerResolutionFactor;
 
 	/// @publicsection
 	void constructor(Sound* sound, VirtualList channels, s8* waves);
@@ -200,8 +200,8 @@ class SoundWrapper : Object
 	void stop();
 	void release();
 	void updatePlayback(u32 type, bool mute);
-	fix19_13 getSpeed();
-	void setSpeedScale(u16 speed);
+	fix15_17 getSpeed();
+	void setSpeed(fix15_17 speed);
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 }

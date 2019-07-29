@@ -63,7 +63,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->sound = sound;
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
-	this->speed = __I_TO_FIX19_13(1);
+	this->speed = __I_TO_FIX15_17(1);
 
 	// Compute target resolution factor
 	u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
@@ -71,7 +71,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	u16 resolution = TimerManager::getResolution(TimerManager::getInstance()) + 1;
 	u16 timerUsPerInterrupt = resolution * frequencyFactor * __SOUND_TARGET_US_PER_TICK;
 	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
-	this->targetTimerResolutionFactor = __FIX19_13_DIV(__I_TO_FIX19_13(soundTargetUsPerInterrupt), __I_TO_FIX19_13(timerUsPerInterrupt));
+	this->targetTimerResolutionFactor = __FIX15_17_DIV(__I_TO_FIX15_17(soundTargetUsPerInterrupt), __I_TO_FIX15_17(timerUsPerInterrupt));
 
 	this->channels = new VirtualList();
 	
@@ -106,7 +106,7 @@ void SoundWrapper::destructor()
 	Base::destructor();
 }
 
-fix19_13 SoundWrapper::getSpeed()
+fix15_17 SoundWrapper::getSpeed()
 {
 	return this->speed;
 }
@@ -115,14 +115,14 @@ fix19_13 SoundWrapper::getSpeed()
  * Set playback speed. Changing the speed during playback may cause
  * the tracks to go out of sync because of the channel's current ticks.
  *
- * @speed 	fix19_13 PCM playback max speed is 100%
+ * @speed 	fix15_17 PCM playback max speed is 100%
  */
-void SoundWrapper::setSpeed(fix19_13 speed)
+void SoundWrapper::setSpeed(fix15_17 speed)
 {
 	// Prevent timer interrupts to unsync tracks
 	bool paused = this->paused;
 	this->paused = true;
-	this->speed = 0 >= speed ? __F_TO_FIX19_13(0.01f) : speed <= __F_TO_FIX19_13(2.0f) ? speed : __F_TO_FIX19_13(2.0f);
+	this->speed = 0 >= speed ? __F_TO_FIX15_17(0.01f) : speed <= __F_TO_FIX15_17(2.0f) ? speed : __F_TO_FIX15_17(2.0f);
 
 	VirtualNode node = this->channels->head;
 
@@ -146,15 +146,15 @@ u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
 	// set position inside camera coordinates
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(*position);
 
-	fix19_13 maxOutputLevel = __I_TO_FIX19_13(__MAXIMUM_VOLUMEN);
-	fix19_13 leftDistance = __ABS(__FIX19_13_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
-	fix19_13 rightDistance = __ABS(__FIX19_13_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+	fix15_17 maxOutputLevel = __I_TO_FIX15_17(__MAXIMUM_VOLUMEN);
+	fix15_17 leftDistance = __ABS(__FIX15_17_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+	fix15_17 rightDistance = __ABS(__FIX15_17_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
 
-	fix19_13 leftOutput = maxOutputLevel - __FIX19_13_MULT(maxOutputLevel, __FIX19_13_DIV(leftDistance, _optical->horizontalViewPointCenter));
-	u32 leftVolume = __FIX19_13_TO_I(leftOutput - __FIX19_13_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
+	fix15_17 leftOutput = maxOutputLevel - __FIX15_17_MULT(maxOutputLevel, __FIX15_17_DIV(leftDistance, _optical->horizontalViewPointCenter));
+	u32 leftVolume = __FIX15_17_TO_I(leftOutput - __FIX15_17_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
 
-	fix19_13 rightOutput = maxOutputLevel - __FIX19_13_MULT(maxOutputLevel, __FIX19_13_DIV(rightDistance, _optical->horizontalViewPointCenter));
-	u32 rightVolume = __FIX19_13_TO_I(rightOutput - __FIX19_13_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
+	fix15_17 rightOutput = maxOutputLevel - __FIX15_17_MULT(maxOutputLevel, __FIX15_17_DIV(rightDistance, _optical->horizontalViewPointCenter));
+	u32 rightVolume = __FIX15_17_TO_I(rightOutput - __FIX15_17_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
 
 	u8 volume = 0x00;
 
@@ -465,29 +465,29 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 //	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 = 0x40;
 }
 
-void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix19_13 residue)
+void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix15_17 residue)
 {
 	switch (channel->soundChannelConfiguration.type)
 	{
 		case kMIDI:
 			{
 				channel->ticks = residue;
-				channel->ticksPerNote = __I_TO_FIX19_13(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
+				channel->ticksPerNote = __I_TO_FIX15_17(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
 
 				u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
-				fix19_13 frequencyFactor = __I_TO_FIX19_13(frequencyUS / __MIDI_CONVERTER_FREQUENCY_US);
+				fix15_17 frequencyFactor = __I_TO_FIX15_17(frequencyUS / __MIDI_CONVERTER_FREQUENCY_US);
 
-				channel->ticksPerNote = __FIX19_13_DIV(__FIX19_13_DIV(channel->ticksPerNote, this->speed), frequencyFactor);
+				channel->ticksPerNote = __FIX15_17_DIV(__FIX15_17_DIV(channel->ticksPerNote, this->speed), frequencyFactor);
 
-				fix19_13 effectiveTicksPerNote = __FIX19_13_DIV(channel->ticksPerNote, this->targetTimerResolutionFactor);
-				channel->tickStep = __FIX19_13_DIV(effectiveTicksPerNote, channel->ticksPerNote);
+				fix15_17 effectiveTicksPerNote = __FIX15_17_DIV(channel->ticksPerNote, this->targetTimerResolutionFactor);
+				channel->tickStep = __FIX15_17_DIV(effectiveTicksPerNote, channel->ticksPerNote);
 			}
 			break;
 
 		case kPCM:
 
-			channel->ticksPerNote = __FIX19_13_DIV(__I_TO_FIX19_13(1), this->speed);
-			channel->tickStep = __I_TO_FIX19_13(1);
+			channel->ticksPerNote = __FIX15_17_DIV(__I_TO_FIX15_17(1), this->speed);
+			channel->tickStep = __I_TO_FIX15_17(1);
 			channel->ticks = 0;
 			break;
 
@@ -694,7 +694,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
 	PRINT_TEXT("Speed %    :          ", x, ++y);
-	PRINT_INT(__FIX19_13_TO_I(__FIX19_13_MULT(this->speed, __I_TO_FIX19_13(100))), x + xDisplacement, y);
+	PRINT_INT(__FIX15_17_TO_I(__FIX15_17_MULT(this->speed, __I_TO_FIX15_17(100))), x + xDisplacement, y);
 
 	y++;
 
