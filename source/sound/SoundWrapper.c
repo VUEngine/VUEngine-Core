@@ -486,7 +486,7 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix15_17 residue)
 
 		case kPCM:
 
-			channel->ticksPerNote = __FIX15_17_DIV(__I_TO_FIX15_17(1), this->speed);
+			channel->ticksPerNote = __FIX15_17_DIV(__I_TO_FIX15_17(1), this->speed) >> 1;
 			channel->tickStep = __I_TO_FIX15_17(1);
 			channel->ticks = 0;
 			break;
