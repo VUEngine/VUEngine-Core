@@ -150,6 +150,11 @@ void SoundTest::printGUI(bool clearScreen)
 
 	Printing::text(Printing::getInstance(), "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 
+	if(isDeleted(this->soundWrapper))
+	{
+		return;
+	}
+
 	int xControls = 38;
 	int yControls = 1;
 
@@ -175,6 +180,11 @@ void SoundTest::printGUI(bool clearScreen)
 
 void SoundTest::processUserInput(u16 pressedKey)
 {
+	if(NULL == _userSounds[this->selectedSound])
+	{
+		return;	
+	}
+
 	bool timerChanged = false;
 
 	// Track controls
@@ -399,6 +409,13 @@ void SoundTest::loadNextSound()
 
 void SoundTest::loadSound()
 {
+	if(NULL == _userSounds[this->selectedSound])
+	{	
+		Printing::text(Printing::getInstance(), "No sounds found", 1, 4, NULL);
+		Printing::text(Printing::getInstance(), "Define some in _userSounds global variable", 1, 6, NULL);
+		return;
+	}
+
 	Game::disableKeypad(Game::getInstance());
 
 	SoundTest::releaseSoundWrapper(this);
@@ -430,6 +447,11 @@ void SoundTest::onSoundReleased(Object eventFirer __attribute__((unused)))
 
 void SoundTest::printTimer()
 {
+	if(NULL == _userSounds[this->selectedSound])
+	{
+		return;	
+	}
+
 	TimerManager::print(TimerManager::getInstance(), 1, 10);
 }
 

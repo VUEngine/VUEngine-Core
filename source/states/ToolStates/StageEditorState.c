@@ -24,8 +24,8 @@
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <DebugState.h>
-#include <Debug.h>
+#include <StageEditorState.h>
+#include <StageEditor.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -35,10 +35,10 @@
 /**
  * Get instance
  *
- * @fn			DebugState::getInstance()
- * @memberof	DebugState
+ * @fn			StageEditorState::getInstance()
+ * @memberof	StageEditorState
  * @public
- * @return		DebugState instance
+ * @return		StageEditorState instance
  */
 
 
@@ -47,11 +47,11 @@
  *
  * @private
  */
-void DebugState::constructor()
+void StageEditorState::constructor()
 {
 	Base::constructor();
 
-	this->tool = Tool::safeCast(Debug::getInstance());
+	this->tool = Tool::safeCast(StageEditor::getInstance());
 }
 
 /**
@@ -59,8 +59,21 @@ void DebugState::constructor()
  *
  * @private
  */
-void DebugState::destructor()
+void StageEditorState::destructor()
 {
 	// destroy base
 	Base::destructor();
+}
+
+/**
+ * Check if key combinations invokes me
+ *
+ * @public
+ * @param userInput		UserInput
+ * 
+ * @return bool
+ */
+bool StageEditorState::isKeyCombination(UserInput userInput)
+{
+	return ((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RL));
 }

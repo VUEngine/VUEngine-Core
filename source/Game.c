@@ -580,6 +580,81 @@ void Game::reset()
 	HardwareManager::enableInterrupts();
 }
 
+#ifdef __TOOLS
+void Game::openTool(ToolState toolState)
+{
+	if(Game::isInToolState(this, toolState))
+	{
+		this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+		StateMachine::popState(this->stateMachine);
+		this->nextState = NULL;
+	}
+	else
+	{
+		if(Game::isInSpecialMode(this))
+		{
+			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
+			StateMachine::popState(this->stateMachine);
+			this->nextState = NULL;
+		}
+
+		this->nextState = GameState::safeCast(toolState);
+		StateMachine::pushState(this->stateMachine, (State)this->nextState);
+		this->nextState = NULL;
+	}
+}
+
+bool Game::checkIfOpenTool(UserInput userInput)
+{
+	ToolState engineToolStates[] =
+	{
+#ifdef __DEBUG_TOOLS
+		ToolState::safeCast(DebugState::getInstance()),
+#endif
+#ifdef __STAGE_EDITOR
+		ToolState::safeCast(StageEditorState::getInstance()),
+#endif
+#ifdef __ANIMATION_INSPECTOR
+		ToolState::safeCast(AnimationInspectorState::getInstance()),
+#endif
+#ifdef __SOUND_TEST
+		ToolState::safeCast(SoundTestState::getInstance()),
+#endif
+		NULL
+	};
+
+	int i = 0;
+
+	for(; engineToolStates[i]; i++)
+	{
+		// check code to access special feature
+		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
+		{
+			Game::openTool(this, engineToolStates[i]);
+			return true;
+		}
+	}
+
+	extern const ToolState _userToolStates[];
+
+	i = 0;
+
+	for(; _userToolStates[i]; i++)
+	{
+		// check code to access special feature
+		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
+		{
+			Game::openTool(this, engineToolStates[i]);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+#endif
+
+
 // process input data according to the actual game status
 u32 Game::processUserInput()
 {
@@ -601,145 +676,8 @@ u32 Game::processUserInput()
 	KeypadManager::captureUserInput(this->keypadManager);
 	UserInput userInput = KeypadManager::getUserInput(this->keypadManager);
 
-#ifdef __DEBUG_TOOLS
-
-	// check code to access special feature
-	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RL))
-	{
-		if(Game::isInDebugMode(this))
-		{
-			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-			StateMachine::popState(this->stateMachine);
-			this->nextState = NULL;
-		}
-		else
-		{
-			if(Game::isInSpecialMode(this))
-			{
-				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-				StateMachine::popState(this->stateMachine);
-				this->nextState = NULL;
-			}
-
-			this->nextState = GameState::safeCast(DebugState::getInstance());
-			StateMachine::pushState(this->stateMachine, (State)this->nextState);
-			this->nextState = NULL;
-		}
-
-		return true;
-	}
-#endif
-
-#ifdef __STAGE_EDITOR
-
-	// check code to access special feature
-	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RD))
-	{
-		if(Game::isInStageEditor(this))
-		{
-			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-			StateMachine::popState(this->stateMachine);
-			this->nextState = NULL;
-		}
-		else
-		{
-			if(Game::isInSpecialMode(this))
-			{
-				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-				StateMachine::popState(this->stateMachine);
-				this->nextState = NULL;
-			}
-
-			this->nextState = GameState::safeCast(StageEditorState::getInstance());
-			StateMachine::pushState(this->stateMachine, (State)this->nextState);
-			this->nextState = NULL;
-		}
-
-		return true;
-	}
-#endif
-
-#ifdef __ANIMATION_INSPECTOR
-
-	// check code to access special feature
-	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RR))
-	{		if(Game::isInAnimationInspector(this))
-		{
-			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-			StateMachine::popState(this->stateMachine);
-			this->nextState = NULL;
-		}
-		else
-		{
-			if(Game::isInSpecialMode(this))
-			{
-				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-				StateMachine::popState(this->stateMachine);
-				this->nextState = NULL;
-			}
-
-			this->nextState = GameState::safeCast(AnimationInspectorState::getInstance());
-			StateMachine::pushState(this->stateMachine, (State)this->nextState);
-			this->nextState = NULL;
-		}
-
-		return true;
-	}
-#endif
-
-#ifdef __SOUND_TEST
-
-	// check code to access special feature
-	if((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RU))
-	{		
-		if(Game::isInSoundTest(this))
-		{
-			this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-			StateMachine::popState(this->stateMachine);
-			this->nextState = NULL;
-		}
-		else
-		{
-			if(Game::isInSpecialMode(this))
-			{
-				this->nextState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
-				StateMachine::popState(this->stateMachine);
-				this->nextState = NULL;
-			}
-
-			this->nextState = GameState::safeCast(SoundTestState::getInstance());
-			StateMachine::pushState(this->stateMachine, (State)this->nextState);
-			this->nextState = NULL;
-		}
-
-		return true;
-	}
-#endif
-
-
-#ifdef __DEBUG_TOOLS
-	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
-	{
-		return true;
-	}
-#endif
-
-#ifdef __STAGE_EDITOR
-	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
-	{
-		return true;
-	}
-#endif
-
-#ifdef __ANIMATION_INSPECTOR
-	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RT)))
-	{
-		return true;
-	}
-#endif
-
-#ifdef __SOUND_TEST
-	if(!Game::isInSpecialMode(this) && ((userInput.pressedKey & K_LT) || (userInput.pressedKey & K_RU)))
+#ifdef __TOOLS
+	if(Game::checkIfOpenTool(this, userInput))
 	{
 		return true;
 	}
@@ -810,27 +748,13 @@ void Game::updateLogic()
 	s32 timeBeforeProcess = TimerManager::getMillisecondsElapsed(this->timerManager);
 #endif
 
-#ifdef __DEBUG_TOOLS
-	if(!Game::isInSpecialMode(this))
-	{
-#endif
-#ifdef __STAGE_EDITOR
-	if(!Game::isInSpecialMode(this))
-	{
-#endif
-#ifdef __ANIMATION_INSPECTOR
+#ifdef __TOOLS
 	if(!Game::isInSpecialMode(this))
 	{
 #endif
 	// it is the update cycle
 	ASSERT(this->stateMachine, "Game::update: no state machine");
-#ifdef __DEBUG_TOOLS
-	}
-#endif
-#ifdef __STAGE_EDITOR
-	}
-#endif
-#ifdef __ANIMATION_INSPECTOR
+#ifdef __TOOLS
 	}
 #endif
 
@@ -1251,6 +1175,13 @@ char* Game::getLastProcessName()
 {
 	return this->lastProcessName;
 }
+
+#ifdef __TOOLS
+bool Game::isInToolState(ToolState toolState)
+{
+	return StateMachine::getCurrentState(this->stateMachine) == State::safeCast(toolState);
+}
+#endif
 
 #ifdef __DEBUG_TOOLS
 bool Game::isInDebugMode()

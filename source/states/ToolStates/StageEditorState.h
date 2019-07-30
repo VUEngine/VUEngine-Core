@@ -19,16 +19,15 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef TOOL_STATE_H_
-#define TOOL_STATE_H_
+#ifndef STAGE_EDITOR_STATE_H_
+#define STAGE_EDITOR_STATE_H_
 
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <GameState.h>
-#include <Tool.h>
+#include <ToolState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -36,17 +35,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 /// @ingroup states
-abstract class ToolState : GameState
+singleton class StageEditorState : ToolState
 {
-	Tool tool;
-
 	/// @publicsection
-	void constructor();
+	static StageEditorState getInstance();
 
-	override void enter(void* owner);
-	override void execute(void* owner);
-	override void exit(void* owner);
-	override void processUserInput(UserInput userInput);
+	override bool isKeyCombination(UserInput userInput);
 }
 
 

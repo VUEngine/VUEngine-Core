@@ -19,27 +19,61 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-#ifndef ANIMATION_INSPECTOR_STATE_H_
-#define ANIMATION_INSPECTOR_STATE_H_
-
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <ToolState.h>
+#include <SoundTestState.h>
+#include <SoundTest.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//											CLASS'S DECLARATION
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-/// @ingroup states
-singleton class AnimationInspectorState : ToolState
+/**
+ * Get instance
+ *
+ * @fn			SoundTestState::getInstance()
+ * @memberof	SoundTestState
+ * @public
+ * @return		SoundTestState instance
+ */
+
+
+/**
+ * Class constructor
+ *
+ * @private
+ */
+void SoundTestState::constructor()
 {
-	/// @publicsection
-	static AnimationInspectorState getInstance();
+	Base::constructor();
+
+	this->tool = Tool::safeCast(SoundTest::getInstance());
 }
 
+/**
+ * Class destructor
+ *
+ * @private
+ */
+void SoundTestState::destructor()
+{
+	// destroy base
+	Base::destructor();
+}
 
-#endif
+/**
+ * Check if key combinations invokes me
+ *
+ * @public
+ * @param userInput		UserInput
+ * 
+ * @return bool
+ */
+bool SoundTestState::isKeyCombination(UserInput userInput)
+{
+	return ((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RD));
+}

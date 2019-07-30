@@ -30,6 +30,7 @@
 #include <Clock.h>
 #include <Stage.h>
 #include <GameState.h>
+#include <ToolState.h>
 #include <StateMachine.h>
 #include <CollisionManager.h>
 #include <PhysicalWorld.h>
@@ -128,6 +129,7 @@ singleton class Game : Object
 	bool isInDebugMode();
 	bool isInStageEditor();
 	bool isInAnimationInspector();
+	void openTool(ToolState toolState);
 	void nextFrameStarted(u16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
 	void increaseGameFrameDuration(u32 gameFrameDuration);

@@ -1,7 +1,7 @@
 /* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -20,31 +20,60 @@
  */
 
 
-#ifndef SOUND_TEST_STATE_H_
-#define SOUND_TEST_STATE_H_
+//---------------------------------------------------------------------------------------------------------
+//												INCLUDES
+//---------------------------------------------------------------------------------------------------------
+
+#include <AnimationInspectorState.h>
+#include <AnimationInspector.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-// 												INCLUDES
+//												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
 
-#include <ToolState.h>
-#include <SoundTest.h>
+/**
+ * Get instance
+ *
+ * @fn			AnimationInspectorState::getInstance()
+ * @memberof	AnimationInspectorState
+ * @public
+ * @return		AnimationInspectorState instance
+ */
 
 
-//---------------------------------------------------------------------------------------------------------
-//											TYPE DEFINITIONS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
-// 											CLASS'S DECLARATION
-//---------------------------------------------------------------------------------------------------------
-
-singleton class SoundTestState : ToolState
+/**
+ * Class constructor
+ *
+ * @private
+ */
+void AnimationInspectorState::constructor()
 {
-	static SoundTestState getInstance();
+	Base::constructor();
+
+	this->tool = Tool::safeCast(AnimationInspector::getInstance());
 }
 
+/**
+ * Class destructor
+ *
+ * @private
+ */
+void AnimationInspectorState::destructor()
+{
+	// destroy base
+	Base::destructor();
+}
 
-#endif
+/**
+ * Check if key combinations invokes me
+ *
+ * @public
+ * @param userInput		UserInput
+ * 
+ * @return bool
+ */
+bool AnimationInspectorState::isKeyCombination(UserInput userInput)
+{
+	return ((userInput.holdKey & K_LT) && (userInput.holdKey & K_RT) && (userInput.releasedKey & K_RR));
+}

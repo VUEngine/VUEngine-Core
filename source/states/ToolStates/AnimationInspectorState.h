@@ -19,48 +19,29 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef ANIMATION_INSPECTOR_STATE_H_
+#define ANIMATION_INSPECTOR_STATE_H_
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <AnimationInspectorState.h>
-#include <AnimationInspector.h>
+#include <ToolState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			AnimationInspectorState::getInstance()
- * @memberof	AnimationInspectorState
- * @public
- * @return		AnimationInspectorState instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void AnimationInspectorState::constructor()
+/// @ingroup states
+singleton class AnimationInspectorState : ToolState
 {
-	Base::constructor();
+	/// @publicsection
+	static AnimationInspectorState getInstance();
 
-	this->tool = Tool::safeCast(AnimationInspector::getInstance());
+	override bool isKeyCombination(UserInput userInput);
 }
 
-/**
- * Class destructor
- *
- * @private
- */
-void AnimationInspectorState::destructor()
-{
-	// destroy base
-	Base::destructor();
-}
+
+#endif

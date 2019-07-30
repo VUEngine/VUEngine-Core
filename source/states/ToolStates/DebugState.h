@@ -19,48 +19,29 @@
  * SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+#ifndef DEBUG_STATE_H_
+#define DEBUG_STATE_H_
+
 
 //---------------------------------------------------------------------------------------------------------
 //												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <StageEditorState.h>
-#include <StageEditor.h>
+#include <ToolState.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			StageEditorState::getInstance()
- * @memberof	StageEditorState
- * @public
- * @return		StageEditorState instance
- */
-
-
-/**
- * Class constructor
- *
- * @private
- */
-void StageEditorState::constructor()
+/// @ingroup states
+singleton class DebugState : ToolState
 {
-	Base::constructor();
+	/// @publicsection
+	static DebugState getInstance();
 
-	this->tool = Tool::safeCast(StageEditor::getInstance());
+	override bool isKeyCombination(UserInput userInput);
 }
 
-/**
- * Class destructor
- *
- * @private
- */
-void StageEditorState::destructor()
-{
-	// destroy base
-	Base::destructor();
-}
+
+#endif

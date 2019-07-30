@@ -1,7 +1,7 @@
 /* VUEngine - Virtual Utopia Engine <http://vuengine.planetvb.com/>
  * A universal game engine for the Nintendo Virtual Boy
  *
- * Copyright (C) 2007, 2018 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
+ * Copyright (C) 2007, 2017 by Jorge Eremiev <jorgech3@gmail.com> and Christian Radke <chris@vr32.de>
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and
  * associated documentation files (the "Software"), to deal in the Software without restriction, including
@@ -20,48 +20,33 @@
  */
 
 
+#ifndef SOUND_TEST_STATE_H_
+#define SOUND_TEST_STATE_H_
+
+
 //---------------------------------------------------------------------------------------------------------
-//												INCLUDES
+// 												INCLUDES
 //---------------------------------------------------------------------------------------------------------
 
-#include <SoundTestState.h>
+#include <ToolState.h>
 #include <SoundTest.h>
 
 
 //---------------------------------------------------------------------------------------------------------
-//												CLASS'S METHODS
+//											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-/**
- * Get instance
- *
- * @fn			SoundTestState::getInstance()
- * @memberof	SoundTestState
- * @public
- * @return		SoundTestState instance
- */
 
+//---------------------------------------------------------------------------------------------------------
+// 											CLASS'S DECLARATION
+//---------------------------------------------------------------------------------------------------------
 
-/**
- * Class constructor
- *
- * @private
- */
-void SoundTestState::constructor()
+singleton class SoundTestState : ToolState
 {
-	Base::constructor();
+	static SoundTestState getInstance();
 
-	this->tool = Tool::safeCast(SoundTest::getInstance());
+	override bool isKeyCombination(UserInput userInput);
 }
 
-/**
- * Class destructor
- *
- * @private
- */
-void SoundTestState::destructor()
-{
-	// destroy base
-	Base::destructor();
-}
 
+#endif
