@@ -65,13 +65,8 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->hasPCMTracks = false;
 	this->speed = __I_TO_FIX15_17(1);
 
-	// Compute target resolution factor
-	u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
-	u16 frequencyFactor = frequencyUS / __MIDI_CONVERTER_FREQUENCY_US;
-	u16 resolution = TimerManager::getResolution(TimerManager::getInstance()) + 1;
-	u16 timerUsPerInterrupt = resolution * frequencyFactor * __SOUND_TARGET_US_PER_TICK;
-	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
-	this->targetTimerResolutionFactor = __FIX15_17_DIV(__I_TO_FIX15_17(soundTargetUsPerInterrupt), __I_TO_FIX15_17(timerUsPerInterrupt));
+	// Compute target timerCounter factor
+	SoundWrapper::computeTimerResolutionFactor(this);
 
 	this->channels = new VirtualList();
 	
@@ -104,6 +99,15 @@ void SoundWrapper::destructor()
 	// destroy the super Container
 	// must always be called at the end of the destructor
 	Base::destructor();
+}
+
+void SoundWrapper::computeTimerResolutionFactor()
+{
+	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
+	u16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + 1;
+	u16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
+	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
+	this->targetTimerResolutionFactor = __FIX15_17_DIV(__I_TO_FIX15_17(soundTargetUsPerInterrupt), __I_TO_FIX15_17(timerUsPerInterrupt));
 }
 
 fix15_17 SoundWrapper::getSpeed()
@@ -474,10 +478,7 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix15_17 residue)
 				channel->ticks = residue;
 				channel->ticksPerNote = __I_TO_FIX15_17(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
 
-				u16 frequencyUS = TimerManager::getFrequencyInUS(TimerManager::getInstance());
-				fix15_17 frequencyFactor = __I_TO_FIX15_17(frequencyUS / __MIDI_CONVERTER_FREQUENCY_US);
-
-				channel->ticksPerNote = __FIX15_17_DIV(__FIX15_17_DIV(channel->ticksPerNote, this->speed), frequencyFactor);
+				channel->ticksPerNote = __FIX15_17_DIV(channel->ticksPerNote, this->speed);
 
 				fix15_17 effectiveTicksPerNote = __FIX15_17_DIV(channel->ticksPerNote, this->targetTimerResolutionFactor);
 				channel->tickStep = __FIX15_17_DIV(effectiveTicksPerNote, channel->ticksPerNote);
@@ -541,9 +542,9 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 			}
 		}
 		else
-		{
+		{			
 			channel->ticks += channel->tickStep;
-			
+
 			if(channel->ticks >= channel->ticksPerNote)
 			{
 				updatePlayback = true;

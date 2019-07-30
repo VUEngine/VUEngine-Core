@@ -90,7 +90,7 @@ singleton class HardwareManager : Object
 	void displayOn();
 	void enableKeypad();
 	void enableRendering();
-	void setupTimer(u16 frequency, u16 resolution);
+	void setupTimer(u16 timerResolution, u16 timePerInterrupt, u16 timePerInterruptUnits);
 	void lowerBrightness();
 	void print(int x, int y);
 	void setInterruptLevel(u8 level);

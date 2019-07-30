@@ -1172,7 +1172,7 @@ void Stage::loadBackgroundSounds()
 
 void Stage::setupTimer()
 {
-	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.frequency, this->stageSpec->timer.resolution);
+	HardwareManager::setupTimer(HardwareManager::getInstance(), this->stageSpec->timer.resolution, this->stageSpec->timer.timePerInterrupt, this->stageSpec->timer.timePerInterruptUnits);
 }
 
 bool Stage::handlePropagatedMessage(int message)

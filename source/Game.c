@@ -280,7 +280,7 @@ void Game::initialize()
 	HardwareManager::clearScreen(HardwareManager::getInstance());
 
 	// make sure timer interrupts are enable
-	HardwareManager::setupTimer(HardwareManager::getInstance(), __TIMER_100US, __TIME_MS(10));
+	HardwareManager::setupTimer(HardwareManager::getInstance(), __TIMER_100US, 10, kMS);
 
 	// Reset sounds
 	SoundManager::reset(SoundManager::getInstance());

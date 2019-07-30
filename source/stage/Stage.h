@@ -54,8 +54,9 @@ typedef struct StageSpec
 	// Timer config
 	struct Timer
 	{
-		u16 frequency;
 		u16 resolution;
+		u16 timePerInterrupt;
+		u16 timePerInterruptUnits;
 
 	} timer;
 
@@ -220,6 +221,7 @@ class Stage : Container
 	void constructor(StageSpec* stageSpec);
 	void setupPalettes();
 	void loadPostProcessingEffects();
+	void setupTimer();
 	Size getSize();
 	CameraFrustum getCameraFrustum();
 	bool registerEntityId(s16 internalId, EntitySpec* entitySpec);

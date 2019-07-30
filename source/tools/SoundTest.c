@@ -30,6 +30,8 @@
 #include <KeypadManager.h>
 #include <VIPManager.h>
 #include <SpriteManager.h>
+#include <BgmapTextureManager.h>
+#include <TimerManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -84,7 +86,6 @@ void SoundTest::destructor()
 	Base::destructor();
 }
 
-
 /**
  * Release sound
  */
@@ -112,9 +113,14 @@ void SoundTest::update()
  */
 void SoundTest::show()
 {
-	HardwareManager::setupTimer(HardwareManager::getInstance(), __TIMER_20US, __TIME_MS(1));
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
+
+	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
+	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
+	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 1);
+
+	SoundTest::applyTimerSettings(this);
 
 	SoundTest::loadSound(this);
 	SoundTest::printGUI(this);
@@ -141,23 +147,39 @@ void SoundTest::printGUI()
 
 	PRINT_TEXT("SOUND TEST", 19, 0);
 
-	PRINT_TEXT("Track  : LU/LD", 1, 20);
+	int xControls = 1;
+	int yControls = 17;
+
+	PRINT_TEXT("CONTROLS", xControls, yControls++);
+	PRINT_TEXT("Track  : LU/LD", xControls, yControls++);
 
 	if(SoundWrapper::isPaused(this->soundWrapper))
 	{
-		PRINT_TEXT("Play   : A", 1, 21);
+		PRINT_TEXT("Play   : A", xControls, yControls++);
 	}
 	else
 	{
-		PRINT_TEXT("Pause  : A", 1, 21);
+		PRINT_TEXT("Pause  : A", xControls, yControls++);
 	}
-	
-	PRINT_TEXT("Rewind : B", 1, 22);
-	PRINT_TEXT("Ticks  : RU/RD", 1, 23);
+
+	PRINT_TEXT("Rewind : B", xControls, yControls++);
+
+	PRINT_TEXT("Speed  : LL/LR", xControls, yControls++);
+
+	++yControls;
+	PRINT_TEXT("TIMER CONTROLS", xControls, yControls++);
+	PRINT_TEXT("T Freq : RU", xControls, yControls++);
+	PRINT_TEXT("T Scl  : RD", xControls, yControls++);
+	PRINT_TEXT("T Res  : RL/RR", xControls, yControls++);
+
+	SoundTest::printTimer(this);
 }
 
 void SoundTest::processUserInput(u16 pressedKey)
 {
+	bool timerChanged = false;
+
+	// Track controls
 	if(K_LU & pressedKey)
 	{
 		SoundTest::loadPreviousSound(this);
@@ -197,25 +219,137 @@ void SoundTest::processUserInput(u16 pressedKey)
 		SoundWrapper::rewind(this->soundWrapper);
 		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
 	}
-	else if(K_RU & pressedKey)
+	else if(K_LL & pressedKey)
 	{
 		if(isDeleted(this->soundWrapper))
 		{
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) + __F_TO_FIX15_17(0.01f));
+		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX15_17(0.01f));
 		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+	}
+	else if(K_LR & pressedKey)
+	{
+		if(isDeleted(this->soundWrapper))
+		{
+			SoundTest::loadSound(this);
+		}
+
+		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX15_17(0.01f));
+		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+	}
+	// Timer controls
+	else if(K_RU & pressedKey)
+	{
+		u16 timerResolution = TimerManager::getResolution(TimerManager::getInstance());
+
+		switch(timerResolution)
+		{
+			case __TIMER_20US:
+
+				timerResolution = __TIMER_100US;
+				break;
+
+			case __TIMER_100US:
+
+				timerResolution = __TIMER_20US;
+				break;
+
+			default:
+
+				ASSERT(false, "SoundTest::processUserInput: wrong timer frequency");
+				break;
+		}
+
+		TimerManager::setResolution(TimerManager::getInstance(), timerResolution);
+		timerChanged = true;
 	}
 	else if(K_RD & pressedKey)
 	{
-		if(isDeleted(this->soundWrapper))
+		u16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
+		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+
+		switch(timePerInterruptUnits)
 		{
-			SoundTest::loadSound(this);
+			case kUS:
+
+				timePerInterruptUnits = kMS;
+				timePerInterrupt = 1;
+				break;
+
+			case kMS:
+
+				timePerInterruptUnits = kUS;
+				timePerInterrupt = 100;
+				break;
+
+			default:
+
+				ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+				break;
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) -  __F_TO_FIX15_17(0.01f));
-		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+		TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), timePerInterruptUnits);
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+		timerChanged = true;
+	}
+	else if(K_RL & pressedKey)
+	{
+		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		u16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
+
+		switch(timePerInterruptUnits)
+		{
+			case kUS:
+
+				timePerInterrupt -= 10;
+				break;
+
+			case kMS:
+
+				timePerInterrupt -= 1;
+				break;
+		}
+
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+		timerChanged = true;
+	}
+	else if(K_RR & pressedKey)
+	{
+		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
+		u16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
+
+		switch(timePerInterruptUnits)
+		{
+			case kUS:
+
+				timePerInterrupt += 10;
+				break;
+
+			case kMS:
+
+				timePerInterrupt += 1;
+				break;
+		}
+
+		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
+		timerChanged = true;
+	}
+
+	if(timerChanged)
+	{
+		SoundTest::applyTimerSettings(this);
+
+		SoundTest::printTimer(this);
+
+		if(!isDeleted(this->soundWrapper))
+		{
+			SoundWrapper::pause(this->soundWrapper);
+			SoundWrapper::rewind(this->soundWrapper);
+			SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
+			SoundWrapper::play(this->soundWrapper, NULL);		
+		}
 	}
 }
 
@@ -288,4 +422,19 @@ void SoundTest::onSoundFinish(Object eventFirer __attribute__((unused)))
 void SoundTest::onSoundReleased(Object eventFirer __attribute__((unused)))
 {
 	this->soundWrapper = NULL;
+}
+
+void SoundTest::printTimer()
+{
+	TimerManager::print(TimerManager::getInstance(), 25, 22);
+}
+
+void SoundTest::applyTimerSettings()
+{
+	TimerManager::enable(TimerManager::getInstance(), false);
+	TimerManager::initialize(TimerManager::getInstance());
+	TimerManager::enable(TimerManager::getInstance(), true);
+
+
+	SoundTest::printTimer(this);
 }

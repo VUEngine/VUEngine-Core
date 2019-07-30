@@ -66,8 +66,9 @@ void TimerManager::constructor()
 	this->tcrValue = 0;
 	this->milliseconds = 0;
 	this->totalMilliseconds = 0;
-	this->frequency = __TIMER_100US;
-	this->resolution = __TIME_MS(__TIMER_RESOLUTION);
+	this->resolution = __TIMER_100US;
+	this->timePerInterrupt = 1;
+	this->timePerInterruptUnits = kMS;
 
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
@@ -92,34 +93,44 @@ void TimerManager::reset()
 	this->tcrValue = 0;
 	this->milliseconds = 0;
 	this->totalMilliseconds = 0;
-	this->frequency = __TIMER_100US;
-	this->resolution = __TIME_MS(__TIMER_RESOLUTION);
+	this->resolution = __TIMER_100US;
+	this->timePerInterrupt = 1;
+	this->timePerInterruptUnits = kMS;
+}
+
+/**
+ * Get resolution in US
+ * 
+ * @return resolution in us	u16
+ */
+u16 TimerManager::getResolutionInUS()
+{
+	switch(this->resolution)
+	{
+		case __TIMER_20US:
+
+			return 20;
+			break;
+
+		case __TIMER_100US:
+
+			return 100;
+			break;
+
+		default:
+
+			ASSERT(false, "TimerManager::getResolutionInUS: wrong timer resolution");
+
+			break;
+	}
+
+	return 0;
 }
 
 /**
  * Get timer frequency
  * 
- * @return frequency in us	u16
- */
-u16 TimerManager::getFrequencyInUS()
-{
-	return __TIMER_100US == this->frequency ? 100 : 20;
-}
-
-/**
- * Set timer frequency
- * 
- * @param frequency 	u16
- */
-void TimerManager::setFrequency(u16 frequency)
-{
-	this->frequency = frequency;
-}
-
-/**
- * Get timer resolution
- * 
- * @return resolution 	u16
+ * @return frequency	u16
  */
 u16 TimerManager::getResolution()
 {
@@ -133,16 +144,164 @@ u16 TimerManager::getResolution()
  */
 void TimerManager::setResolution(u16 resolution)
 {
-	this->resolution = resolution;
+	switch(resolution)
+	{
+		case __TIMER_20US:
+		case __TIMER_100US:
+
+			this->resolution = resolution;
+			break;
+
+		default:
+
+			NM_ASSERT(false, "TimerManager::setResolution: wrong timer resolution");
+			
+			this->resolution =  __TIMER_20US;
+			break;
+	}
 }
+
+/**
+ * Get applied timer counter
+ * 
+ * @return timer counter 	u16
+ */
+u16 TimerManager::getTimerCounter()
+{
+	return TimerManager::computeTimerCounter(this);
+}
+
+/**
+ * Get target time per interrupt
+ * 
+ * @return timePerInterrupt 	u16
+ */
+u16 TimerManager::getTimePerInterrupt()
+{
+	return this->timePerInterrupt;
+}
+
+/**
+ * Set target time per interrupt
+ * 
+ * @param timePerInterrupt 	u16
+ */
+void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
+{
+	u16 minimumTimePerInterrupt = 0;
+	u16 maximumTimePerInterrupt = 0;
+
+	switch(this->timePerInterruptUnits)
+	{
+		case kUS:
+
+			minimumTimePerInterrupt = 100;
+			maximumTimePerInterrupt = 1300;
+			break;
+
+		case kMS:
+
+			minimumTimePerInterrupt = 1;
+			maximumTimePerInterrupt = 6500;
+			break;
+
+		case kSEC:
+			
+			minimumTimePerInterrupt = 1;
+			maximumTimePerInterrupt = 6;
+			break;
+		
+		default:
+
+			ASSERT(false, "TimerManager::setResolution: wrong resolution scale");
+			break;
+	}
+
+	if(timePerInterrupt < minimumTimePerInterrupt)
+	{
+		timePerInterrupt = minimumTimePerInterrupt;
+	}
+	else if(timePerInterrupt > maximumTimePerInterrupt)
+	{
+		timePerInterrupt = maximumTimePerInterrupt;
+	}
+
+	this->timePerInterrupt = timePerInterrupt;
+}
+
+/**
+ * Get target time per interrupt units
+ * 
+ * @return scale 	u16
+ */
+u16 TimerManager::getTimePerInterruptUnits()
+{
+	return this->timePerInterruptUnits;
+}
+
+/**
+ * Set target time per interrupt units
+ * 
+ * @param timePerInterruptUnits 	u16
+ */
+void TimerManager::setTimePerInterruptUnits(u16 timePerInterruptUnits)
+{
+	switch(timePerInterruptUnits)
+	{
+		case kUS:
+		case kMS:
+			
+			this->timePerInterruptUnits = timePerInterruptUnits;
+			break;
+		
+		default:
+
+			ASSERT(false, "TimerManager::setTimePerInterruptUnits: wrong resolution scale");
+			break;
+	}
+	
+	TimerManager::setResolution(this, this->resolution);
+}
+
+u16 TimerManager::computeTimerCounter()
+{
+	u16 timerCounter = 0;
+
+	switch(this->timePerInterruptUnits)
+	{
+		case kUS:
+
+			timerCounter = __TIME_US(this->timePerInterrupt);
+			break;
+
+		case kMS:
+
+			timerCounter = __TIME_MS(this->timePerInterrupt);
+			break;
+
+		case kSEC:
+
+			timerCounter = __TIME_SEC(this->timePerInterrupt);
+			break;
+
+		default:
+
+			NM_ASSERT(false, "TimerManager::setTimePerInterruptUnits: wrong resolution scale");
+			break;
+	}
+
+	return timerCounter;
+}
+
 
 /**
  * Initialize manager
  */
 void TimerManager::initialize()
 {
-	TimerManager::setTimerFrequency(this);
-	TimerManager::setTimerResolution(this); 
+	TimerManager::enableInterrupt(this, false);
+	TimerManager::setTimerResolution(this);
+	TimerManager::setTimerCounter(this); 
 
 	TimerManager::clearStat(this);
 	TimerManager::enable(this, true);
@@ -258,20 +417,23 @@ u32 TimerManager::resetMilliseconds()
  *
  * @param time		New time
  */
-void TimerManager::setTimerResolution()
+void TimerManager::setTimerCounter()
 {
-	_hardwareRegisters[__TLR] = (this->resolution & 0xFF);
-	_hardwareRegisters[__THR] = (this->resolution >> 8);
+	u16 timerCounter = TimerManager::computeTimerCounter(this);
+	_hardwareRegisters[__TLR] = (timerCounter & 0xFF);
+	_hardwareRegisters[__THR] = (timerCounter >> 8);
 }
 
 /**
- * Set Timer's frequency
+ * Set Timer's resolution
  *
- * @param frequency			New frequency
+ * @param resolution			New resolution
  */
-void TimerManager::setTimerFrequency()
+void TimerManager::setTimerResolution()
 {
-	this->tcrValue = (this->tcrValue & 0x0F) | this->frequency;
+	TimerManager::enable(this, false);
+
+	this->tcrValue = (this->tcrValue & 0x0F) | this->resolution;
 	_hardwareRegisters[__TCR] = this->tcrValue;
 }
 
@@ -346,4 +508,54 @@ void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, 
 
 		this->milliseconds = currentMilliseconds;
 	}
+}
+
+void TimerManager::print(int x, int y)
+{
+	PRINT_TEXT("TIMER", x, y++);
+	
+	switch(this->resolution)
+	{
+		case __TIMER_20US:
+
+			PRINT_TEXT("Resolution    : 20 US ", x, y++);
+			break;
+
+		case __TIMER_100US:
+
+			PRINT_TEXT("Resolution    : 100 US ", x, y++);
+			break;
+
+		default:
+
+			PRINT_TEXT("Resolution    : ?      ", x, y++);
+			break;
+	}
+
+	switch(this->timePerInterruptUnits)
+	{
+		case kUS:
+
+			PRINT_TEXT("Counter Units : US ", x, y++);
+			break;
+
+		case kMS:
+
+			PRINT_TEXT("Counter Units : MS ", x, y++);
+			break;
+
+		default:
+
+			PRINT_TEXT("Counter Units : ?  ", x, y++);
+			break;
+	}
+
+	PRINT_TEXT("Timer counter :      ", x, y);
+	PRINT_INT(TimerManager::computeTimerCounter(this), x + 16, y++);
+
+	PRINT_TEXT("Time step     :         ", x, y);
+	PRINT_INT(this->timePerInterrupt, x + 16, y++);
+
+	PRINT_TEXT("US per inter  :         ", x, y);
+	PRINT_INT(this->timePerInterrupt * TimerManager::getResolutionInUS(this), x + 16, y++);
 }

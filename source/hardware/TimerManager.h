@@ -49,6 +49,14 @@
 #define __TIMER_100US		0x00
 
 
+enum TimerResolutionScales
+{
+	kUS = 0,			// Microseconds
+	kMS,				// Milliseconds
+	kSEC				// Seconds
+};
+
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -59,18 +67,22 @@ singleton class TimerManager : Object
 	u32 milliseconds;
 	u32 totalMilliseconds;
 	u16 resolution;
-	u16 frequency;
+	u16 timePerInterrupt;
+	u16 timePerInterruptUnits;
 	u8 tcrValue;
 
 	/// @publicsection
 	static TimerManager getInstance();
 	static void interruptHandler();
 	void reset();
-	u16 getFrequency();
-	void setFrequency(u16 frequency);
-	u16 getFrequencyInUS();
 	u16 getResolution();
+	u16 getResolutionInUS();
+	u16 getTimePerInterrupt();
+	u16 getTimerCounter();
+	u16 getTimePerInterruptUnits();
 	void setResolution(u16 resolution);
+	void setTimePerInterrupt(u16 timePerInterrupt);
+	void setTimePerInterruptUnits(u16 timePerInterruptUnits);
 	void enable(bool flag);
 	u32 getMillisecondsElapsed();
 	u32 getTotalMillisecondsElapsed();
@@ -80,6 +92,7 @@ singleton class TimerManager : Object
 	void initialize();
 	void wait(u32 milliSeconds);
 	void repeatMethodCall(u32 callTimes, u32 duration, Object object, void (*method)(Object, u32));
+	void print(int x, int y);
 }
 
 

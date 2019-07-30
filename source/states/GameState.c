@@ -245,6 +245,9 @@ void GameState::resume(void* owner __attribute__ ((unused)))
 		SpriteManager::prepareAll(SpriteManager::getInstance());
 	}
 
+	// Restore timer
+	Stage::setupTimer(this->stage);
+
 	// load post processing effects
 	Stage::loadPostProcessingEffects(this->stage);
 

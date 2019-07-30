@@ -239,12 +239,13 @@ int HardwareManager::getInterruptLevel()
 /**
  * Initialize the timer
  */
-void HardwareManager::setupTimer(u16 frequency, u16 resolution)
+void HardwareManager::setupTimer(u16 timerResolution, u16 timePerInterrupt, u16 timePerInterruptUnits)
 {
-	TimerManager::enable(this->timerManager, false);
+	PRINT_TIME(1, 0);
 
-	TimerManager::setFrequency(this->timerManager, frequency);
-	TimerManager::setResolution(this->timerManager, resolution);
+	TimerManager::setResolution(this->timerManager, timerResolution);
+	TimerManager::setTimePerInterruptUnits(this->timerManager, timePerInterruptUnits);
+	TimerManager::setTimePerInterrupt(this->timerManager, timePerInterrupt);
 
 	TimerManager::initialize(this->timerManager);
 	TimerManager::enable(this->timerManager, true);

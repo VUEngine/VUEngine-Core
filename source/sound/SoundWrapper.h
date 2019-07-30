@@ -202,6 +202,7 @@ class SoundWrapper : Object
 	void updatePlayback(u32 type, bool mute);
 	fix15_17 getSpeed();
 	void setSpeed(fix15_17 speed);
+	void computeTimerResolutionFactor();
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 }
