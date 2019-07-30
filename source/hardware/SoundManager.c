@@ -372,6 +372,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	s16 factor = __MILLISECONDS_IN_SECOND / gameFrameDuration;
 	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate / factor);
 
+/*
 	if(!this->pcmFrameRateIsStable)
 	{
 		if(0 == deviation / factor)
@@ -389,6 +390,24 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 
 			SoundManager::rewindAllSounds(this, kPCM);
 		}
+	}
+ */
+
+	// It seems that a non fixed pcmPlaybackCyclesToSkip works better
+	if(0 == deviation / factor)
+	{
+		this->pcmStablePlaybackCycles++;	
+	}
+	else
+	{
+		this->pcmStablePlaybackCycles = 0;
+	}
+	
+	if(!this->pcmFrameRateIsStable && gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < this->pcmStablePlaybackCycles)
+	{
+		this->pcmFrameRateIsStable = true;
+
+		SoundManager::rewindAllSounds(this, kPCM);
 	}
 
 	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
