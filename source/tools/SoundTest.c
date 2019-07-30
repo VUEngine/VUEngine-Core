@@ -132,7 +132,7 @@ void SoundTest::show()
 
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
 	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
-	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 1);
+	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 10);
 
 	SoundTest::applyTimerSettings(this);
 	SoundTest::loadSound(this);
@@ -293,13 +293,13 @@ void SoundTest::processUserInput(u16 pressedKey)
 			case kUS:
 
 				timePerInterruptUnits = kMS;
-				timePerInterrupt = 1;
+				timePerInterrupt = 10;
 				break;
 
 			case kMS:
 
 				timePerInterruptUnits = kUS;
-				timePerInterrupt = 100;
+				timePerInterrupt = 1000;
 				break;
 
 			default:
@@ -321,7 +321,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			case kUS:
 
-				timePerInterrupt -= 10;
+				timePerInterrupt -= 50;
 				break;
 
 			case kMS:
@@ -342,7 +342,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			case kUS:
 
-				timePerInterrupt += 10;
+				timePerInterrupt += 50;
 				break;
 
 			case kMS:
