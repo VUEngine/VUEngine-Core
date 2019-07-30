@@ -108,6 +108,14 @@ void SoundWrapper::computeTimerResolutionFactor()
 	u16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
 	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
 	this->targetTimerResolutionFactor = __FIX17_15_DIV(__I_TO_FIX17_15(soundTargetUsPerInterrupt), __I_TO_FIX17_15(timerUsPerInterrupt));
+
+	// Compensate for the difference in speed between 20US and 100US timer resolution
+	fix17_15 timerResolutionRatioReduction = __I_TO_FIX17_15(1) - __FIX17_15_DIV(__I_TO_FIX17_15(timerResolutionUS), __I_TO_FIX17_15(100));
+
+	if(0 != timerResolutionRatioReduction)
+	{	
+		this->targetTimerResolutionFactor = __FIX17_15_MULT(this->targetTimerResolutionFactor, timerResolutionRatioReduction);
+	}
 }
 
 fix17_15 SoundWrapper::getSpeed()
