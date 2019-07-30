@@ -467,10 +467,14 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 	}
 	else
 	{
-#ifdef __RELEASE
-		_soundRegistries[channel->number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
-#else
+#ifdef __TOOLS
 		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+#else
+#ifndef __RELEASE
+		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+#else
+		_soundRegistries[channel->number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+#endif
 #endif
 	}
 

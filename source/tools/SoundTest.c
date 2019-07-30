@@ -215,7 +215,6 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 		
 		SoundTest::printGUI(this, false);
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
 	else if(K_B & pressedKey)
 	{
@@ -225,7 +224,6 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 
 		SoundWrapper::rewind(this->soundWrapper);
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
 	else if(K_LD & pressedKey)
 	{
@@ -235,7 +233,6 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 
 		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX17_15(0.01f));
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
 	else if(K_LU & pressedKey)
 	{
@@ -245,7 +242,6 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 
 		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX17_15(0.01f));
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
 	// Timer controls
 	else if(K_RU & pressedKey)
@@ -311,7 +307,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			case kUS:
 
-				timePerInterrupt -= 50;
+				timePerInterrupt -= 25;
 				break;
 
 			case kMS:
@@ -332,7 +328,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			case kUS:
 
-				timePerInterrupt += 50;
+				timePerInterrupt += 25;
 				break;
 
 			case kMS:
@@ -363,6 +359,8 @@ void SoundTest::processUserInput(u16 pressedKey)
 			}
 		}
 	}
+
+	SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 }
 
 u16 SoundTest::getTotalSounds()
