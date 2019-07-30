@@ -515,22 +515,23 @@ void TimerManager::repeatMethodCall(u32 callTimes, u32 duration, Object object, 
 void TimerManager::print(int x, int y)
 {
 	PRINT_TEXT("TIMER", x, y++);
+	y++;
 	
 	switch(this->resolution)
 	{
 		case __TIMER_20US:
 
-			PRINT_TEXT("Resolution    : 20 US ", x, y++);
+			PRINT_TEXT("Resolution    20 US ", x, y++);
 			break;
 
 		case __TIMER_100US:
 
-			PRINT_TEXT("Resolution    : 100 US ", x, y++);
+			PRINT_TEXT("Resolution    100 US ", x, y++);
 			break;
 
 		default:
 
-			PRINT_TEXT("Resolution    : ?      ", x, y++);
+			PRINT_TEXT("Resolution    ?      ", x, y++);
 			break;
 	}
 
@@ -538,26 +539,26 @@ void TimerManager::print(int x, int y)
 	{
 		case kUS:
 
-			PRINT_TEXT("Counter Units : US ", x, y++);
+			PRINT_TEXT("Counter Units US ", x, y++);
 			break;
 
 		case kMS:
 
-			PRINT_TEXT("Counter Units : MS ", x, y++);
+			PRINT_TEXT("Counter Units MS ", x, y++);
 			break;
 
 		default:
 
-			PRINT_TEXT("Counter Units : ?  ", x, y++);
+			PRINT_TEXT("Counter Units ?  ", x, y++);
 			break;
 	}
 
-	PRINT_TEXT("Timer counter :      ", x, y);
-	PRINT_INT(TimerManager::computeTimerCounter(this), x + 16, y++);
+	PRINT_TEXT("Timer counter       ", x, y);
+	PRINT_INT(TimerManager::computeTimerCounter(this), x + 14, y++);
 
-	PRINT_TEXT("Time step     :         ", x, y);
-	PRINT_INT(this->timePerInterrupt, x + 16, y++);
+	PRINT_TEXT("Time step              ", x, y);
+	PRINT_INT(this->timePerInterrupt, x + 14, y++);
 
-	PRINT_TEXT("US per inter  :         ", x, y);
-	PRINT_INT((TimerManager::computeTimerCounter(this) + 1) * TimerManager::getResolutionInUS(this), x + 16, y++);
+	PRINT_TEXT("US per inter           ", x, y);
+	PRINT_INT((TimerManager::computeTimerCounter(this) + 1) * TimerManager::getResolutionInUS(this), x + 14, y++);
 }

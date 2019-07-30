@@ -36,7 +36,7 @@
 //												MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __MAXIMUM_VOLUMEN					0xF
+#define __MAXIMUM_VOLUME					0xF
 #define __TOTAL_CHANNELS					6
 #define __MIDI_CONVERTER_FREQUENCY_US		20
 #define __SOUND_TARGET_US_PER_TICK			__MIDI_CONVERTER_FREQUENCY_US

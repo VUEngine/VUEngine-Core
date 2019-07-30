@@ -158,7 +158,7 @@ u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
 	// set position inside camera coordinates
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(*position);
 
-	fix17_15 maxOutputLevel = __I_TO_FIX17_15(__MAXIMUM_VOLUMEN);
+	fix17_15 maxOutputLevel = __I_TO_FIX17_15(__MAXIMUM_VOLUME);
 	fix17_15 leftDistance = __ABS(__FIX17_15_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
 	fix17_15 rightDistance = __ABS(__FIX17_15_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
 
@@ -450,15 +450,15 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 {
 	u8 volume = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM[channel->cursor];
 
-	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUMEN * (channel->soundChannel);
+	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUME * (channel->soundChannel);
 
 	if(finalVolume  < 0)
 	{
 		finalVolume  = 0;
 	}
-	else if (finalVolume  > __MAXIMUM_VOLUMEN)
+	else if (finalVolume  > __MAXIMUM_VOLUME)
 	{
-		finalVolume  = __MAXIMUM_VOLUMEN;
+		finalVolume  = __MAXIMUM_VOLUME;
 	}			
 
 	if(mute)
@@ -691,40 +691,50 @@ void SoundWrapper::print(int x, int y)
 
 void SoundWrapper::printMetadata(int x, int y)
 {
-	int xDisplacement = 13;
+	int controlsXOffset = x;
+	int controlsValuesXOffset = 9;
+	int controlsYOffset = y;
+	int trackInfoXOffset = x + 21;
+	int trackInfoValuesXOffset = 9;
+	int trackInfoYOffset = y + 2;
 
-	PRINT_TEXT("Name       :                               ", x, y);
-	PRINT_TEXT(this->sound->name, x + xDisplacement, y);
+	PRINT_TEXT(__CHAR_SELECTOR_LEFT, controlsXOffset, controlsYOffset);
+	PRINT_TEXT(this->sound->name, controlsXOffset + 2, controlsYOffset);
+	FontSize strSoundNameSize = Printing::getTextSize(Printing::getInstance(), this->sound->name, NULL);
+	PRINT_TEXT(__CHAR_SELECTOR, controlsXOffset + strSoundNameSize.x + 3, controlsYOffset++);
+	controlsYOffset++;
 
-	PRINT_TEXT("Playing    :", x, ++y);
-	PRINT_TEXT(!this->paused ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+	PRINT_TEXT("CONTROLS", controlsXOffset, controlsYOffset++);
 
-	PRINT_TEXT("Loop       :", x, ++y);
-	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+	PRINT_TEXT("Playing", controlsXOffset, ++controlsYOffset);
+	PRINT_TEXT(!this->paused ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, controlsXOffset + controlsValuesXOffset, controlsYOffset);
 
-	PRINT_TEXT("Speed %    :          ", x, ++y);
-	PRINT_INT(__FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100))), x + xDisplacement, y);
+	PRINT_TEXT("Loop", controlsXOffset, ++controlsYOffset);
+	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, controlsXOffset + controlsValuesXOffset, controlsYOffset);
 
-	PRINT_TEXT("Track info ", x, ++y);
+	PRINT_TEXT("Speed %               ", controlsXOffset, ++controlsYOffset);
+	PRINT_INT(__FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100))), controlsXOffset + controlsValuesXOffset, controlsYOffset);
 
-	PRINT_TEXT("  Total    :", x, ++y);
-	PRINT_INT(VirtualList::getSize(this->channels), x + xDisplacement, y);
+	PRINT_TEXT("TRACK INFO", trackInfoXOffset, trackInfoYOffset++);
 
-	PRINT_TEXT("  MIDI     :       ", x, ++y);
-	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+	PRINT_TEXT("Channels", trackInfoXOffset, ++trackInfoYOffset);
+	PRINT_INT(VirtualList::getSize(this->channels), trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
 
-	PRINT_TEXT("  PCM      :       ", x, ++y);
-	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+	PRINT_TEXT("MIDI", trackInfoXOffset, ++trackInfoYOffset);
+	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
 
-	PRINT_TEXT("  Sync     :       ", x, ++y);
-	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+	PRINT_TEXT("PCM", trackInfoXOffset, ++trackInfoYOffset);
+	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
+
+	PRINT_TEXT("Sync", trackInfoXOffset, ++trackInfoYOffset);
+	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
 }
 
 void SoundWrapper::printVolume(int x, int y)
 {
 	VirtualNode node = this->channels->head;
 
-	PRINT_TEXT("Volume   :       ", x, ++y);
+	PRINT_TEXT("VOLUME", x, ++y);
 	++y;
 	++y;
 
@@ -745,14 +755,14 @@ void SoundWrapper::printVolume(int x, int y)
 		{
 			case kMIDI:
 
-				PRINT_INT(frequency * leftVolume / __MAXIMUM_VOLUMEN, x - 2, y + 1);
-				PRINT_INT(frequency * rightVolume / __MAXIMUM_VOLUMEN, x + 2, y + 1);
+				PRINT_INT(frequency * leftVolume / __MAXIMUM_VOLUME, x, y + 1);
+				PRINT_INT(frequency * rightVolume / __MAXIMUM_VOLUME, x + 4, y + 1);
 				break;
 
 			case kPCM:
 
-				PRINT_INT(leftVolume, x - 2, y + 1);
-				PRINT_INT(rightVolume, x + 2, y + 1);
+				PRINT_INT(leftVolume, x, y + 1);
+				PRINT_INT(rightVolume, x + 4, y + 1);
 				break;
 			
 			default:
@@ -761,7 +771,7 @@ void SoundWrapper::printVolume(int x, int y)
 				break;
 		}
 
-		x += 8;
+		y += 2;
 	}	
 }
 

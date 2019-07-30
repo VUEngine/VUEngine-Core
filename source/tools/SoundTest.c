@@ -42,23 +42,8 @@ extern SoundROM* _userSounds[];
 
 
 //---------------------------------------------------------------------------------------------------------
-//												ENUMS
-//---------------------------------------------------------------------------------------------------------
-
-
-//---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
 //---------------------------------------------------------------------------------------------------------
-
-/**
- * Get instance
- *
- * @fn			SoundTest::getInstance()
- * @memberof	SoundTest
- * @public
- * @return		SoundTest instance
- */
-
 
 /**
  * Class constructor
@@ -113,7 +98,7 @@ void SoundTest::update()
 
 		if(!isDeleted(this->soundWrapper))
 		{
-			SoundWrapper::printVolume(this->soundWrapper, 4, 11);
+			SoundWrapper::printVolume(this->soundWrapper, 1, 17);
 		}
 	}
 }
@@ -163,32 +148,27 @@ void SoundTest::printGUI(bool clearScreen)
 		Printing::clear(Printing::getInstance());
 	}
 
-	PRINT_TEXT("SOUND TEST", 19, 0);
+	Printing::text(Printing::getInstance(), "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 
-	int xControls = 1;
-	int yControls = 17;
+	int xControls = 38;
+	int yControls = 1;
 
-	PRINT_TEXT("CONTROLS", xControls, yControls++);
-	PRINT_TEXT("Track  : LU/LD", xControls, yControls++);
-
+	// Controls
 	if(SoundWrapper::isPaused(this->soundWrapper))
 	{
-		PRINT_TEXT("Play   : A", xControls, yControls++);
+		Printing::text(Printing::getInstance(), "Play     \x13", xControls, yControls++, NULL);
 	}
 	else
 	{
-		PRINT_TEXT("Pause  : A", xControls, yControls++);
+		Printing::text(Printing::getInstance(), "Pause    \x13", xControls, yControls++, NULL);
 	}
-
-	PRINT_TEXT("Rewind : B", xControls, yControls++);
-
-	PRINT_TEXT("Speed  : LL/LR", xControls, yControls++);
-
-	++yControls;
-	PRINT_TEXT("TIMER CONTROLS", xControls, yControls++);
-	PRINT_TEXT("T Freq : RU", xControls, yControls++);
-	PRINT_TEXT("T Scl  : RD", xControls, yControls++);
-	PRINT_TEXT("T Res  : RL/RR", xControls, yControls++);
+	Printing::text(Printing::getInstance(), "Rewind   \x14", xControls, yControls++, NULL);
+	Printing::text(Printing::getInstance(), "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text(Printing::getInstance(), "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
+	yControls++;
+	Printing::text(Printing::getInstance(), "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
+	Printing::text(Printing::getInstance(), "T.Scale \x1F\x1B", xControls, yControls++, NULL);
+	Printing::text(Printing::getInstance(), "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
 }
@@ -198,11 +178,11 @@ void SoundTest::processUserInput(u16 pressedKey)
 	bool timerChanged = false;
 
 	// Track controls
-	if(K_LU & pressedKey)
+	if(K_LL & pressedKey)
 	{
 		SoundTest::loadPreviousSound(this);
 	}
-	else if(K_LD & pressedKey)
+	else if(K_LR & pressedKey)
 	{
 		SoundTest::loadNextSound(this);
 	}
@@ -225,7 +205,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 		
 		SoundTest::printGUI(this, false);
-		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
 	else if(K_B & pressedKey)
 	{
@@ -235,9 +215,9 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 
 		SoundWrapper::rewind(this->soundWrapper);
-		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
-	else if(K_LL & pressedKey)
+	else if(K_LD & pressedKey)
 	{
 		if(isDeleted(this->soundWrapper))
 		{
@@ -245,9 +225,9 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 
 		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX17_15(0.01f));
-		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
-	else if(K_LR & pressedKey)
+	else if(K_LU & pressedKey)
 	{
 		if(isDeleted(this->soundWrapper))
 		{
@@ -255,7 +235,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 
 		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX17_15(0.01f));
-		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
 	}
 	// Timer controls
 	else if(K_RU & pressedKey)
@@ -429,8 +409,8 @@ void SoundTest::loadSound()
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
-		SoundWrapper::printVolume(this->soundWrapper, 4, 11);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
+		SoundWrapper::printVolume(this->soundWrapper, 1, 17);
 
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);
@@ -450,7 +430,7 @@ void SoundTest::onSoundReleased(Object eventFirer __attribute__((unused)))
 
 void SoundTest::printTimer()
 {
-	TimerManager::print(TimerManager::getInstance(), 25, 22);
+	TimerManager::print(TimerManager::getInstance(), 1, 10);
 }
 
 void SoundTest::applyTimerSettings()
