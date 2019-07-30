@@ -307,12 +307,12 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			case kUS:
 
-				timePerInterrupt -= 25;
+				timePerInterrupt -= __MINIMUM_TIME_PER_INTERRUPT_US;
 				break;
 
 			case kMS:
 
-				timePerInterrupt -= 1;
+				timePerInterrupt -= __MINIMUM_TIME_PER_INTERRUPT_MS;
 				break;
 		}
 
@@ -328,12 +328,12 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			case kUS:
 
-				timePerInterrupt += 25;
+				timePerInterrupt += __MINIMUM_TIME_PER_INTERRUPT_US;
 				break;
 
 			case kMS:
 
-				timePerInterrupt += 1;
+				timePerInterrupt += __MINIMUM_TIME_PER_INTERRUPT_MS;
 				break;
 		}
 

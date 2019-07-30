@@ -39,7 +39,6 @@
 
 //use with 100us timer (range = 0 to 6500, and 0 to 6.5)
 #define __TIME_MS(n)		(((n)*10)-1)
-#define __TIME_SEC(n)		(((n)*10000)-1)
 
 #define __TIMER_ENB			0x01
 #define __TIMER_ZSTAT		0x02
@@ -48,12 +47,15 @@
 #define __TIMER_20US		0x10
 #define __TIMER_100US		0x00
 
+#define __MINIMUM_TIME_PER_INTERRUPT_US			25
+#define __MINIMUM_TIME_PER_INTERRUPT_MS			1
+#define __MAXIMUM_TIME_PER_INTERRUPT_US 		10 * 1000
+#define __MAXIMUM_TIME_PER_INTERRUPT_MS 		50
 
 enum TimerResolutionScales
 {
 	kUS = 0,			// Microseconds
 	kMS,				// Milliseconds
-	kSEC				// Seconds
 };
 
 

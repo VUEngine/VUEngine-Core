@@ -188,27 +188,21 @@ u16 TimerManager::getTimePerInterrupt()
  */
 void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 {
-	u16 minimumTimePerInterrupt = 0;
-	u16 maximumTimePerInterrupt = 0;
+	s16 minimumTimePerInterrupt = 0;
+	s16 maximumTimePerInterrupt = 0;
 
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			minimumTimePerInterrupt = 100;
-			maximumTimePerInterrupt = 1300;
+			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_US;
+			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_US;
 			break;
 
 		case kMS:
 
-			minimumTimePerInterrupt = 1;
-			maximumTimePerInterrupt = 6500;
-			break;
-
-		case kSEC:
-			
-			minimumTimePerInterrupt = 1;
-			maximumTimePerInterrupt = 6;
+			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_MS;
+			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 			break;
 		
 		default:
@@ -217,11 +211,11 @@ void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 			break;
 	}
 
-	if(timePerInterrupt < minimumTimePerInterrupt)
+	if((s16)timePerInterrupt < minimumTimePerInterrupt)
 	{
 		timePerInterrupt = minimumTimePerInterrupt;
 	}
-	else if(timePerInterrupt > maximumTimePerInterrupt)
+	else if((s16)timePerInterrupt > maximumTimePerInterrupt)
 	{
 		timePerInterrupt = maximumTimePerInterrupt;
 	}
@@ -280,13 +274,6 @@ u16 TimerManager::computeTimerCounter()
 
 			timerCounter = __TIME_MS(this->timePerInterrupt * 100 / timerResolutionUS);
 			break;
-
-		case kSEC:
-
-			timerCounter = __TIME_SEC(this->timePerInterrupt * 100 / timerResolutionUS);
-			break;
-
-		default:
 
 			NM_ASSERT(false, "TimerManager::setTimePerInterruptUnits: wrong resolution scale");
 			break;
@@ -556,7 +543,7 @@ void TimerManager::print(int x, int y)
 	PRINT_TEXT("Timer counter       ", x, y);
 	PRINT_INT(TimerManager::computeTimerCounter(this), x + 14, y++);
 
-	PRINT_TEXT("Time step              ", x, y);
+	PRINT_TEXT("Time per in            ", x, y);
 	PRINT_INT(this->timePerInterrupt, x + 14, y++);
 
 	PRINT_TEXT("US per inter           ", x, y);
