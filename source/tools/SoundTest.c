@@ -104,6 +104,18 @@ void SoundTest::releaseSoundWrapper()
  */
 void SoundTest::update()
 {
+	// Don't print at full speed to not affect PCM playback
+	static u16 delay = __TARGET_FPS / 2;
+
+	if(0 == --delay)
+	{
+		delay = __TARGET_FPS / 2;
+
+		if(!isDeleted(this->soundWrapper))
+		{
+			SoundWrapper::printVolume(this->soundWrapper, 4, 11);
+		}
+	}
 }
 
 /**
@@ -121,9 +133,8 @@ void SoundTest::show()
 	TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 1);
 
 	SoundTest::applyTimerSettings(this);
-
 	SoundTest::loadSound(this);
-	SoundTest::printGUI(this);
+	SoundTest::printGUI(this, false);
 	SoundTest::dimmGame(this);
 }
 
@@ -138,11 +149,16 @@ void SoundTest::hide()
 	SoundTest::lightUpGame(this);
 }
 
-void SoundTest::printGUI()
+void SoundTest::printGUI(bool clearScreen)
 {
 	if(isDeleted(this->soundWrapper))
 	{
 		SoundTest::loadSound(this);
+	}
+
+	if(clearScreen)
+	{
+		Printing::clear(Printing::getInstance());
 	}
 
 	PRINT_TEXT("SOUND TEST", 19, 0);
@@ -190,7 +206,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 	}
 	else if(K_A & pressedKey)
 	{
-		SoundTest::printGUI(this);
+		SoundTest::printGUI(this, false);
 
 		if(isDeleted(this->soundWrapper))
 		{
@@ -206,7 +222,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 			SoundWrapper::pause(this->soundWrapper);
 		}
 		
-		SoundTest::printGUI(this);
+		SoundTest::printGUI(this, false);
 		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
 	}
 	else if(K_B & pressedKey)
@@ -375,8 +391,8 @@ void SoundTest::loadPreviousSound()
 		this->selectedSound--;
 	}
 	
+	SoundTest::printGUI(this, true);
 	SoundTest::loadSound(this);
-
 }
 void SoundTest::loadNextSound()
 {
@@ -391,6 +407,7 @@ void SoundTest::loadNextSound()
 		this->selectedSound++;
 	}
 	
+	SoundTest::printGUI(this, true);
 	SoundTest::loadSound(this);
 }
 
@@ -407,6 +424,7 @@ void SoundTest::loadSound()
 	if(!isDeleted(this->soundWrapper))
 	{
 		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
+		SoundWrapper::printVolume(this->soundWrapper, 4, 11);
 
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);

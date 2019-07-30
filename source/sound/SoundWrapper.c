@@ -697,8 +697,6 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT("Speed %    :          ", x, ++y);
 	PRINT_INT(__FIX15_17_TO_I(__FIX15_17_MULT(this->speed, __I_TO_FIX15_17(100))), x + xDisplacement, y);
 
-	y++;
-
 	PRINT_TEXT("Track info ", x, ++y);
 
 	PRINT_TEXT("  Total    :", x, ++y);
@@ -712,5 +710,50 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	PRINT_TEXT("  Sync     :       ", x, ++y);
 	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
+}
+
+void SoundWrapper::printVolume(int x, int y)
+{
+	VirtualNode node = this->channels->head;
+
+	PRINT_TEXT("Volume   :       ", x, ++y);
+	++y;
+	++y;
+
+	for(; node; node = node->next)
+	{
+		Channel* channel = (Channel*)node->data;
+
+		PRINT_TEXT("CH", x, y);
+		PRINT_INT(channel->number, x + 2, y);
+		PRINT_TEXT("        ", x, y + 1);
+
+		u8 leftVolume = (channel->soundChannelConfiguration.SxLRV & 0xF0) >> 4;
+		u8 rightVolume = (channel->soundChannelConfiguration.SxLRV & 0x0F);
+
+		u8 frequency = channel->soundChannelConfiguration.SxFQH | channel->soundChannelConfiguration.SxFQL;
+
+		switch(channel->soundChannelConfiguration.type)
+		{
+			case kMIDI:
+
+				PRINT_INT(frequency * leftVolume / __MAXIMUM_VOLUMEN, x - 2, y + 1);
+				PRINT_INT(frequency * rightVolume / __MAXIMUM_VOLUMEN, x + 2, y + 1);
+				break;
+
+			case kPCM:
+
+				PRINT_INT(leftVolume, x - 2, y + 1);
+				PRINT_INT(rightVolume, x + 2, y + 1);
+				break;
+			
+			default:
+
+				NM_ASSERT(false, "SoundWrapper::printMetadata: unknown track type");
+				break;
+		}
+
+		x += 8;
+	}	
 }
 
