@@ -269,7 +269,6 @@ u16 TimerManager::computeTimerCounter()
 
 	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
 
-
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
