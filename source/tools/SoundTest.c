@@ -244,7 +244,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX15_17(0.01f));
+		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) - __F_TO_FIX17_15(0.01f));
 		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
 	}
 	else if(K_LR & pressedKey)
@@ -254,7 +254,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 			SoundTest::loadSound(this);
 		}
 
-		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX15_17(0.01f));
+		SoundWrapper::setSpeed(this->soundWrapper, SoundWrapper::getSpeed(this->soundWrapper) +  __F_TO_FIX17_15(0.01f));
 		SoundWrapper::printMetadata(this->soundWrapper, 2, 3);
 	}
 	// Timer controls
@@ -366,7 +366,11 @@ void SoundTest::processUserInput(u16 pressedKey)
 			SoundWrapper::pause(this->soundWrapper);
 			SoundWrapper::rewind(this->soundWrapper);
 			SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
-			SoundWrapper::play(this->soundWrapper, NULL);		
+
+			if(!SoundWrapper::isPaused(this->soundWrapper))
+			{
+				SoundWrapper::play(this->soundWrapper, NULL);		
+			}
 		}
 	}
 }

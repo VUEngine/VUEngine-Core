@@ -63,7 +63,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->sound = sound;
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
-	this->speed = __I_TO_FIX15_17(1);
+	this->speed = __I_TO_FIX17_15(1);
 
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
@@ -107,10 +107,17 @@ void SoundWrapper::computeTimerResolutionFactor()
 	u16 timerCounter = TimerManager::getTimerCounter(TimerManager::getInstance()) + 1;
 	u16 timerUsPerInterrupt = timerCounter * timerResolutionUS;
 	u16 soundTargetUsPerInterrupt = (__TIME_US(this->sound->targetTimerResolutionUS) + 1 ) * __SOUND_TARGET_US_PER_TICK;
-	this->targetTimerResolutionFactor = __FIX15_17_DIV(__I_TO_FIX15_17(soundTargetUsPerInterrupt), __I_TO_FIX15_17(timerUsPerInterrupt));
+	this->targetTimerResolutionFactor = __FIX17_15_DIV(__I_TO_FIX17_15(soundTargetUsPerInterrupt), __I_TO_FIX17_15(timerUsPerInterrupt));
+
+	PRINT_TEXT("         ", 30, 10);
+	PRINT_FLOAT(__FIX17_15_TO_F(this->targetTimerResolutionFactor), 30, 10);
+	PRINT_TEXT("         ", 30, 11);
+	PRINT_INT(timerUsPerInterrupt, 30, 11);
+	PRINT_TEXT("         ", 30, 12);
+	PRINT_INT(soundTargetUsPerInterrupt, 30, 12);
 }
 
-fix15_17 SoundWrapper::getSpeed()
+fix17_15 SoundWrapper::getSpeed()
 {
 	return this->speed;
 }
@@ -119,14 +126,14 @@ fix15_17 SoundWrapper::getSpeed()
  * Set playback speed. Changing the speed during playback may cause
  * the tracks to go out of sync because of the channel's current ticks.
  *
- * @speed 	fix15_17 PCM playback max speed is 100%
+ * @speed 	fix17_15 PCM playback max speed is 100%
  */
-void SoundWrapper::setSpeed(fix15_17 speed)
+void SoundWrapper::setSpeed(fix17_15 speed)
 {
 	// Prevent timer interrupts to unsync tracks
 	bool paused = this->paused;
 	this->paused = true;
-	this->speed = 0 >= speed ? __F_TO_FIX15_17(0.01f) : speed <= __F_TO_FIX15_17(2.0f) ? speed : __F_TO_FIX15_17(2.0f);
+	this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(2.0f);
 
 	VirtualNode node = this->channels->head;
 
@@ -150,15 +157,15 @@ u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
 	// set position inside camera coordinates
 	Vector3D relativePosition = Vector3D::getRelativeToCamera(*position);
 
-	fix15_17 maxOutputLevel = __I_TO_FIX15_17(__MAXIMUM_VOLUMEN);
-	fix15_17 leftDistance = __ABS(__FIX15_17_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
-	fix15_17 rightDistance = __ABS(__FIX15_17_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+	fix17_15 maxOutputLevel = __I_TO_FIX17_15(__MAXIMUM_VOLUMEN);
+	fix17_15 leftDistance = __ABS(__FIX17_15_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
+	fix17_15 rightDistance = __ABS(__FIX17_15_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
 
-	fix15_17 leftOutput = maxOutputLevel - __FIX15_17_MULT(maxOutputLevel, __FIX15_17_DIV(leftDistance, _optical->horizontalViewPointCenter));
-	u32 leftVolume = __FIX15_17_TO_I(leftOutput - __FIX15_17_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
+	fix17_15 leftOutput = maxOutputLevel - __FIX17_15_MULT(maxOutputLevel, __FIX17_15_DIV(leftDistance, _optical->horizontalViewPointCenter));
+	u32 leftVolume = __FIX17_15_TO_I(leftOutput - __FIX17_15_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
 
-	fix15_17 rightOutput = maxOutputLevel - __FIX15_17_MULT(maxOutputLevel, __FIX15_17_DIV(rightDistance, _optical->horizontalViewPointCenter));
-	u32 rightVolume = __FIX15_17_TO_I(rightOutput - __FIX15_17_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
+	fix17_15 rightOutput = maxOutputLevel - __FIX17_15_MULT(maxOutputLevel, __FIX17_15_DIV(rightDistance, _optical->horizontalViewPointCenter));
+	u32 rightVolume = __FIX17_15_TO_I(rightOutput - __FIX17_15_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
 
 	u8 volume = 0x00;
 
@@ -469,26 +476,26 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 //	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 = 0x40;
 }
 
-void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix15_17 residue)
+void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
 {
 	switch (channel->soundChannelConfiguration.type)
 	{
 		case kMIDI:
 			{
 				channel->ticks = residue;
-				channel->ticksPerNote = __I_TO_FIX15_17(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
+				channel->ticksPerNote = __I_TO_FIX17_15(channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
 
-				channel->ticksPerNote = __FIX15_17_DIV(channel->ticksPerNote, this->speed);
+				channel->ticksPerNote = __FIX17_15_DIV(channel->ticksPerNote, this->speed);
 
-				fix15_17 effectiveTicksPerNote = __FIX15_17_DIV(channel->ticksPerNote, this->targetTimerResolutionFactor);
-				channel->tickStep = __FIX15_17_DIV(effectiveTicksPerNote, channel->ticksPerNote);
+				fix17_15 effectiveTicksPerNote = __FIX17_15_DIV(channel->ticksPerNote, this->targetTimerResolutionFactor);
+				channel->tickStep = __FIX17_15_DIV(effectiveTicksPerNote, channel->ticksPerNote);
 			}
 			break;
 
 		case kPCM:
 
-			channel->ticksPerNote = __FIX15_17_DIV(__I_TO_FIX15_17(1), this->speed) >> 1;
-			channel->tickStep = __I_TO_FIX15_17(1);
+			channel->ticksPerNote = __FIX17_15_DIV(__I_TO_FIX17_15(1), this->speed) >> 1;
+			channel->tickStep = __I_TO_FIX17_15(1);
 			channel->ticks = 0;
 			break;
 
@@ -695,7 +702,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
 	PRINT_TEXT("Speed %    :          ", x, ++y);
-	PRINT_INT(__FIX15_17_TO_I(__FIX15_17_MULT(this->speed, __I_TO_FIX15_17(100))), x + xDisplacement, y);
+	PRINT_INT(__FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100))), x + xDisplacement, y);
 
 	PRINT_TEXT("Track info ", x, ++y);
 

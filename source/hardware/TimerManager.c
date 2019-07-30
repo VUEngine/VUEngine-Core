@@ -267,21 +267,24 @@ u16 TimerManager::computeTimerCounter()
 {
 	u16 timerCounter = 0;
 
+	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
+
+
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			timerCounter = __TIME_US(this->timePerInterrupt);
+			timerCounter = __TIME_US(this->timePerInterrupt * 100 / timerResolutionUS);
 			break;
 
 		case kMS:
 
-			timerCounter = __TIME_MS(this->timePerInterrupt);
+			timerCounter = __TIME_MS(this->timePerInterrupt * 100 / timerResolutionUS);
 			break;
 
 		case kSEC:
 
-			timerCounter = __TIME_SEC(this->timePerInterrupt);
+			timerCounter = __TIME_SEC(this->timePerInterrupt * 100 / timerResolutionUS);
 			break;
 
 		default:
@@ -557,5 +560,5 @@ void TimerManager::print(int x, int y)
 	PRINT_INT(this->timePerInterrupt, x + 16, y++);
 
 	PRINT_TEXT("US per inter  :         ", x, y);
-	PRINT_INT(this->timePerInterrupt * TimerManager::getResolutionInUS(this), x + 16, y++);
+	PRINT_INT((TimerManager::computeTimerCounter(this) + 1) * TimerManager::getResolutionInUS(this), x + 16, y++);
 }
