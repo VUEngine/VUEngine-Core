@@ -205,6 +205,7 @@ class SoundWrapper : Object
 	void computeTimerResolutionFactor();
 	void print(int x, int y);
 	void printMetadata(int x, int y);
+	void printVolume(int x, int y);
 }
 
 

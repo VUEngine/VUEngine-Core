@@ -545,7 +545,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 		{			
 			channel->ticks += channel->tickStep;
 
-			if(channel->ticks >= channel->ticksPerNote)
+			if(channel->ticks > channel->ticksPerNote)
 			{
 				updatePlayback = true;
 

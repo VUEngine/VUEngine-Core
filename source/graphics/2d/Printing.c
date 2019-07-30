@@ -451,6 +451,9 @@ void Printing::resetCoordinates()
 	this->mx = 0;
 	this->my = 0;
 	this->mp = 0;
+
+	this->w = __SCREEN_WIDTH;
+	this->h = __SCREEN_HEIGHT;
 }
 
 int Printing::getPixelCount()

@@ -125,8 +125,10 @@ void SoundTest::update()
  */
 void SoundTest::show()
 {
+	SoundManager::reset(SoundManager::getInstance());
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
+	Printing::resetCoordinates(Printing::getInstance());
 
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
 	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
