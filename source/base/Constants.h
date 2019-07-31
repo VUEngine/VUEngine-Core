@@ -104,7 +104,9 @@
 #define __NEAR		((int)-1)
 #define __FAR		((int)1)
 
-#define __MILLISECONDS_IN_SECOND	1000
+#define __MILLISECONDS_IN_SECOND			1000
+#define __MICROSECONDS_IN_MILLISECOND		1000
+#define __MICROSECONDS_IN_SECOND			(__MILLISECONDS_IN_SECOND * __MICROSECONDS_IN_MILLISECOND)
 
 // messages
 enum MessagesTypes

@@ -31,6 +31,7 @@
 #include <VIPManager.h>
 #include <SpriteManager.h>
 #include <BgmapTextureManager.h>
+#include <Utilities.h>
 #include <TimerManager.h>
 
 
@@ -89,15 +90,21 @@ void SoundTest::releaseSoundWrapper()
  */
 void SoundTest::update()
 {
-	// Don't print at full speed to not affect PCM playback
-	static u16 delay = __TARGET_FPS / 2;
+}
 
-	if(0 == --delay)
+void SoundTest::update2()
+{
+
+	// Don't print at full speed to not affect PCM playback
+	static s16 delay = 10000;
+
+	if(0 >= --delay)
 	{
-		delay = __TARGET_FPS / 2;
+		delay = 10000;
 
 		if(!isDeleted(this->soundWrapper))
 		{
+			SoundWrapper::printProgress(this->soundWrapper, 1, 6);
 			SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 		}
 	}
@@ -150,13 +157,31 @@ void SoundTest::printGUI(bool clearScreen)
 
 	Printing::text(Printing::getInstance(), "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 
+	if(NULL == _userSounds[this->selectedSound])
+	{
+		Printing::text(Printing::getInstance(), "No sounds found", 1, 4, NULL);
+		Printing::text(Printing::getInstance(), "Define some in _userSounds global variable", 1, 6, NULL);
+		return;
+	}
+
+	Printing::text(Printing::getInstance(), __CHAR_SELECTOR_LEFT, 1, 2, NULL);
+
+	u16 totalSounds = SoundTest::getTotalSounds(this);
+
+	int selectedSoundDigits = Utilities::getDigitCount(this->selectedSound);
+	int totalSoundsDigits = Utilities::getDigitCount(totalSounds);
+	Printing::int(Printing::getInstance(), this->selectedSound + 1, 1 + 1, 2, NULL);
+	Printing::text(Printing::getInstance(), "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
+	Printing::int(Printing::getInstance(), SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
+	Printing::text(Printing::getInstance(), __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
+
 	if(isDeleted(this->soundWrapper))
 	{
 		return;
 	}
 
 	int xControls = 37;
-	int yControls = 2;
+	int yControls = 4;
 
 	// Controls
 	if(SoundWrapper::isPaused(this->soundWrapper))
@@ -360,7 +385,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 	}
 
-	SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
+	SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
 }
 
 u16 SoundTest::getTotalSounds()
@@ -409,8 +434,6 @@ void SoundTest::loadSound()
 {
 	if(NULL == _userSounds[this->selectedSound])
 	{
-		Printing::text(Printing::getInstance(), "No sounds found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userSounds global variable", 1, 6, NULL);
 		return;
 	}
 
@@ -424,7 +447,7 @@ void SoundTest::loadSound()
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
 		SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);

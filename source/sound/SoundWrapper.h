@@ -185,13 +185,14 @@ class SoundWrapper : Object
 	Sound* sound;
 	VirtualList channels;
 	fix17_15 speed;
+	u16 pcmTargetPlaybackFrameRate;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
 	fix17_15 targetTimerResolutionFactor;
 
 	/// @publicsection
-	void constructor(Sound* sound, VirtualList channels, s8* waves);
+	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate);
 
 	bool isPaused();
 	void play(const Vector3D* position);

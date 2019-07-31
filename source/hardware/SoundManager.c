@@ -578,7 +578,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 
 		if(0 < VirtualList::getSize(availableChannels))
 		{
-			soundWrapper = new SoundWrapper(sound, availableChannels, waves);
+			soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate);
 
 			VirtualList::pushBack(this->soundWrappers, soundWrapper);
 		}

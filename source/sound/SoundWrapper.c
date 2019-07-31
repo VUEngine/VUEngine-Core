@@ -27,6 +27,7 @@
 #include <SoundWrapper.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
+#include <Utilities.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -54,7 +55,7 @@ friend class VirtualList;
  *
  * @param channel	Channel*
  */
-void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
+void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate)
 {
 	// construct base Container
 	Base::constructor();
@@ -64,6 +65,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	this->hasMIDITracks = false;
 	this->hasPCMTracks = false;
 	this->speed = __I_TO_FIX17_15(1);
+	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
@@ -206,6 +208,7 @@ bool SoundWrapper::isPaused()
  */
 void SoundWrapper::play(const Vector3D* position)
 {
+	bool wasPaused = this->paused;
 	this->paused = false;
 
 	u8 SxLRV = 0x00;
@@ -230,7 +233,7 @@ void SoundWrapper::play(const Vector3D* position)
 		}
 	}
 
-	if(this->hasPCMTracks)
+	if(!wasPaused && this->hasPCMTracks)
 	{
 		SoundManager::startPCMPlayback(SoundManager::getInstance());
 	}
@@ -693,33 +696,119 @@ void SoundWrapper::print(int x, int y)
 	}
 }
 
-void SoundWrapper::printMetadata(int x, int y)
+u32 SoundWrapper::getTotalPlaybackTime()
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
-	u32 position = (firstChannel->length/2 << 5) / firstChannel->length;
+
+	switch(firstChannel->soundChannelConfiguration.type)
+	{
+		case kMIDI:
+			{
+				u32 totalNotesTiming = 0;
+
+				u16* soundTrackData = (u16*)this->sound->soundChannels[firstChannel->soundChannel]->soundTrack.dataMIDI;
+
+				for(u32 i = 0; i < firstChannel->length; i++, totalNotesTiming += soundTrackData[firstChannel->length + i]);
+
+				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
+			}
+			break;
+
+		case kPCM:
+
+			return firstChannel->length / this->pcmTargetPlaybackFrameRate;
+			break;
+	}
+
+	return 0;
+}
+
+u32 SoundWrapper::getCurrentPlaybackTime()
+{
+	Channel* firstChannel = (Channel*)this->channels->head->data;
+
+	switch(firstChannel->soundChannelConfiguration.type)
+	{
+		case kMIDI:
+			{
+				u32 totalNotesTiming = 0;
+
+				u16* soundTrackData = (u16*)this->sound->soundChannels[firstChannel->soundChannel]->soundTrack.dataMIDI;
+
+				for(u32 i = 0; i < firstChannel->cursor; i++, totalNotesTiming += soundTrackData[firstChannel->length + i]);
+
+				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
+			}
+			break;
+
+		case kPCM:
+
+			return firstChannel->cursor / this->pcmTargetPlaybackFrameRate;
+			break;
+	}
+
+	return 0;
+}
+
+void SoundWrapper::printProgress(int x, int y)
+{
+	Channel* firstChannel = (Channel*)this->channels->head->data;
+	u32 position = (firstChannel->cursor << 5) / firstChannel->length;
+
+	for(u8 i = 0; i < 32; i++)
+	{
+		PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
+	}
+
+	SoundWrapper::printTiming(this, SoundWrapper::getCurrentPlaybackTime(this), x + 23, y + 2);
+}
+
+void SoundWrapper::printTiming(u32 seconds, int x, int y)
+{
+	u32 minutes = seconds / 60;
+	seconds = seconds - minutes * 60;
+
+	int minutesDigits = Utilities::getDigitCount(minutes);
+
+	PRINT_INT(minutes, x, y);
+	PRINT_TEXT(":  ", x + minutesDigits, y);
+	if(seconds < 10)
+	{
+		PRINT_TEXT(":0 ", x + minutesDigits, y);
+		PRINT_INT(seconds, x + minutesDigits + 2, y);
+	}
+	else
+	{
+		PRINT_INT(seconds, x + minutesDigits + 1, y);
+	}
+
+}
+
+void SoundWrapper::printMetadata(int x, int y)
+{
+	PRINT_TEXT(this->sound->name, x, y++);
+	y++;
+
+	SoundWrapper::printProgress(this, x, y++);
+
+	Channel* firstChannel = (Channel*)this->channels->head->data;
+	u32 position = ((firstChannel->cursor / 2) << 5) / firstChannel->length;
+
 	u8 trackInfoXOffset = x + 22;
 	u8 trackInfoValuesXOffset = 9;
 	u16 speed = __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100)));
 
-	PRINT_TEXT(__CHAR_SELECTOR_LEFT, x, y);
-	PRINT_TEXT("1/3", x + 2, y);
-	PRINT_TEXT(__CHAR_SELECTOR, x + 6, y++);
-	y++;
-	PRINT_TEXT(this->sound->name, x, y++);
 	y++;
 
-	for(u8 i=0; i<32; i++)
-	{
-		PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
-	}
-	y+=2;
+	SoundWrapper::printTiming(this, 0, x + 23, y);
+	PRINT_TEXT("/", x + 27, y);
+	SoundWrapper::printTiming(this, SoundWrapper::getTotalPlaybackTime(this), x + 28, y);
 
 	PRINT_TEXT("Speed", x, y);
 	PRINT_TEXT("    ", x + 6, y);
 	PRINT_INT(speed, x + 6, y);
 	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
 	PRINT_TEXT(!this->paused ? "  " : "\x07\x07", x + 15, y);
-	PRINT_TEXT("0:00/0:00", x + 23, y++);
 	y+=2;
 
 	PRINT_TEXT("TRACK INFO", trackInfoXOffset, y++);
