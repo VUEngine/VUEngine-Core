@@ -287,14 +287,14 @@ void StageEditor::setupMode()
 
 			StageEditor::releaseShape(this);
 			StageEditor::printCameraPosition(this);
-			StageEditor::printTranslationStepSize(this, 6);
+			StageEditor::printTranslationStepSize(this, 38, 7);
 			break;
 
 		case kChangeProjection:
 
 			StageEditor::releaseShape(this);
 			StageEditor::printProjectionValues(this);
-			StageEditor::printTranslationStepSize(this, 9);
+			StageEditor::printTranslationStepSize(this, 38, 10);
 			break;
 
 		case kTranslateEntities:
@@ -310,7 +310,7 @@ void StageEditor::setupMode()
 			}
 
 			StageEditor::printEntityPosition(this);
-			StageEditor::printTranslationStepSize(this, 7);
+			StageEditor::printTranslationStepSize(this, 38, 8);
 			break;
 	}
 }
@@ -554,7 +554,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
-		StageEditor::printTranslationStepSize(this, 6);
+		StageEditor::printTranslationStepSize(this, 38, 7);
 	}
 	else if(pressedKey & K_RL)
 	{
@@ -563,7 +563,7 @@ void StageEditor::moveCamera(u32 pressedKey)
 			this->translationStepSize = 1;
 		}
 
-		StageEditor::printTranslationStepSize(this, 6);
+		StageEditor::printTranslationStepSize(this, 38, 7);
 	}
 }
 
@@ -637,7 +637,7 @@ void StageEditor::changeProjection(u32 pressedKey)
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
-		StageEditor::printTranslationStepSize(this, 9);
+		StageEditor::printTranslationStepSize(this, 38, 10);
 	}
 	else if(pressedKey & K_RL)
 	{
@@ -646,7 +646,7 @@ void StageEditor::changeProjection(u32 pressedKey)
 			this->translationStepSize = 1;
 		}
 
-		StageEditor::printTranslationStepSize(this, 9);
+		StageEditor::printTranslationStepSize(this, 38, 10);
 	}
 
 	Camera::setOptical(Camera::getInstance(), optical);
@@ -721,7 +721,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 			this->translationStepSize = __MAX_TRANSLATION_STEP;
 		}
 
-		StageEditor::printTranslationStepSize(this, 7);
+		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
 	else if(pressedKey & K_RL)
 	{
@@ -730,7 +730,7 @@ void StageEditor::translateEntity(u32 pressedKey)
 			this->translationStepSize = 1;
 		}
 
-		StageEditor::printTranslationStepSize(this, 7);
+		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
 	else if(pressedKey & K_RU)
 	{
@@ -799,7 +799,7 @@ void StageEditor::applyTranslationToEntity(Vector3D translation)
 
 		SpriteManager::sortLayers(SpriteManager::getInstance());
 
-		StageEditor::printTranslationStepSize(this, 7);
+		StageEditor::printTranslationStepSize(this, 38, 8);
 	}
 }
 
@@ -936,13 +936,16 @@ void StageEditor::printEntityPosition()
 {
 	int x = 1;
 	int y = 2;
+	u8 controlsXPos = 38;
+	u8 controlsYPos = 2;
 
 	Printing::text(Printing::getInstance(), "MOVE OBJECT", x, y++, NULL);
 
-	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "Next   \x17\x18", 38, 3, NULL);
-	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 4, NULL);
-	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", 38, 5, NULL);
+	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	controlsYPos++;
+	Printing::text(Printing::getInstance(), "Next   \x17\x18", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
 
 	if(this->currentEntityNode)
 	{
@@ -1021,15 +1024,18 @@ void StageEditor::printProjectionValues()
 {
 	int x = 1;
 	int y = 2;
+	u8 controlsXPos = 38;
+	u8 controlsYPos = 2;
+
+	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	controlsYPos++;
+	Printing::text(Printing::getInstance(), "HVPC  \x1E\x1C\x1D", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "VVPC  \x1E\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "DETC  \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "MVD    \x13\x14", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "BD     \x17\x18", controlsXPos, controlsYPos++, NULL);
 
 	Printing::text(Printing::getInstance(), "PROJECTION VALUES", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "HVPC  \x1E\x1C\x1D", 38, 3, NULL);
-	Printing::text(Printing::getInstance(), "VVPC  \x1E\x1A\x1B", 38, 4, NULL);
-	Printing::text(Printing::getInstance(), "DETC  \x1F\x1A\x1B", 38, 5, NULL);
-	Printing::text(Printing::getInstance(), "MVD    \x13\x14", 38, 6, NULL);
-	Printing::text(Printing::getInstance(), "BD     \x17\x18", 38, 7, NULL);
-
 	Printing::text(Printing::getInstance(), "Horz. view point center:        ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), __METERS_TO_PIXELS(_optical->horizontalViewPointCenter), x + 25, y, NULL);
 	Printing::text(Printing::getInstance(), "Vert. view point center:        ", x, ++y, NULL);
@@ -1052,10 +1058,15 @@ void StageEditor::printProjectionValues()
  */
 void StageEditor::printUserObjects()
 {
+	u8 controlsXPos = 38;
+	u8 controlsYPos = 2;
+
 	Printing::text(Printing::getInstance(), "ADD OBJECTS", 1, 2, NULL);
 	Printing::text(Printing::getInstance(), "                       ", 1, 3, NULL);
-	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "Accept  \x13", 38, 3, NULL);
+
+	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	controlsYPos++;
+	Printing::text(Printing::getInstance(), "Accept  \x13", controlsXPos, controlsYPos++, NULL);
 
 	OptionsSelector::printOptions(this->userObjectsSelector, 1, 4);
 }
@@ -1066,9 +1077,9 @@ void StageEditor::printUserObjects()
  * @memberof 	StageEditor
  * @private
  */
-void StageEditor::printTranslationStepSize(u8 y)
+void StageEditor::printTranslationStepSize(u8 x, u8 y)
 {
-	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", 38, y, NULL);
-	Printing::text(Printing::getInstance(), "+     ", 38, ++y, NULL);
-	Printing::int(Printing::getInstance(), this->translationStepSize, 39, y, NULL);
+	Printing::text(Printing::getInstance(), "Step  \x1F\x1C\x1D", x, y, NULL);
+	Printing::text(Printing::getInstance(), "+     ", x, ++y, NULL);
+	Printing::int(Printing::getInstance(), this->translationStepSize, x + 1, y, NULL);
 }

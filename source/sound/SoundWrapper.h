@@ -61,12 +61,12 @@ typedef struct SoundChannelConfiguration
 	/// SxRAM
 	u8 SxRAM;
 
-	/// SxEV0 
+	/// SxEV0
 	u8 SxEV0;
 
 	/// SxEV1
 	u8 SxEV1;
-	
+
 	/// SxFQH
 	u8 SxFQH;
 
@@ -74,8 +74,8 @@ typedef struct SoundChannelConfiguration
 	u8 SxFQL;
 
 	/// Ch. 5 only
-	u8 S5SWP; 
-	
+	u8 S5SWP;
+
 	/// Waveform data pointer
 	const s8* waveFormData;
 
@@ -164,7 +164,7 @@ typedef struct Channel
 	u8 number;
 	u8 soundChannel;
 	bool finished;
-	
+
 } Channel;
 
 enum SoundTrackTypes
