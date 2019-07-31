@@ -15,7 +15,7 @@ ifeq ($(NAME), $(GAME_NAME))
 	-include $(GAME_CONFIG_MAKE_FILE)
 else
 	-include $(GAME_CONFIG_MAKE_FILE)
-	PLUGINS = 
+	PLUGINS =
 	-include $(CONFIG_MAKE_FILE)
 endif
 
@@ -120,7 +120,7 @@ preprocessClasses: dirs $(PREPROCESS_ENGINE) preprocessPlugins printClassPreproc
 
 printClassPreprocessingInfo:
 	@echo
-	@echo "*** Preprocessing $(BASENAME)"
+	@echo -e "\033[1mPreprocessing $(BASENAME) \033[0m"
 	@$(eval PREPROCESSING_CLASSES_START_TIME=$(shell date +%s))
 
 ENGINE_CLASSES_HIERARCHY_FILE = $(WORKING_FOLDER)/classes/hierarchies/$(ENGINE_NAME)/classesHierarchy.txt
@@ -183,7 +183,7 @@ preprocessHeaderFiles:
 		-e MY_HOME=$(MY_HOME)																														\
 		-e CLASSES_HIERARCHY_FILE=$(CLASSES_HIERARCHY_FILE) 																						\
 		-e WORKING_FOLDER=$(WORKING_FOLDER) 																										\
-		-e PLUGINS="$(PLUGINS)"														
+		-e PLUGINS="$(PLUGINS)"
 
 compile:
 	@$(MAKE) --no-print-directory compile																											\

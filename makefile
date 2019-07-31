@@ -33,7 +33,7 @@ printPreBuildingInfo:
 printBuildingInfo:
 	@$(eval START_TIME=$(shell date +%s))
 	@echo ""
-	@echo "*** Building $(BASENAME)"
+	@echo -e "\033[1mBuilding $(BASENAME) \033[0m"
 
 printPostBuildingInfo:
 	@$(eval END_TIME=$(shell date +%s))
