@@ -277,11 +277,11 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	PhysicalWorld::setFrictionCoefficient(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.frictionCoefficient);
 	PhysicalWorld::setGravity(Game::getPhysicalWorld(Game::getInstance()), this->stageSpec->physics.gravity);
 
-	// load background music
-	Stage::loadBackgroundSounds(this);
-
 	// Setup timer
 	Stage::setupTimer(this);
+
+	// load background music
+	Stage::loadBackgroundSounds(this);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -1138,11 +1138,11 @@ void Stage::resume()
 		Camera::setFocusGameEntity(Camera::getInstance(), Entity::safeCast(this->focusEntity));
 	}
 
-	// load background sounds
-	Stage::loadBackgroundSounds(this);
-
 	// Setup timer
 	Stage::setupTimer(this);
+
+	// load background sounds
+	Stage::loadBackgroundSounds(this);
 
 	Base::resume(this);
 
