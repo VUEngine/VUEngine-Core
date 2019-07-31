@@ -791,9 +791,6 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	SoundWrapper::printProgress(this, x, y++);
 
-	Channel* firstChannel = (Channel*)this->channels->head->data;
-	u32 position = ((firstChannel->cursor / 2) << 5) / firstChannel->length;
-
 	u8 trackInfoXOffset = x + 22;
 	u8 trackInfoValuesXOffset = 9;
 	u16 speed = __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100)));
@@ -808,7 +805,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT("    ", x + 6, y);
 	PRINT_INT(speed, x + 6, y);
 	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
-	PRINT_TEXT(!this->paused ? "  " : "\x07\x07", x + 15, y);
+	PRINT_TEXT(!this->paused ? "  " : "\x07\x07", x + 15, y++);
 	y+=2;
 
 	PRINT_TEXT("TRACK INFO", trackInfoXOffset, y++);
