@@ -66,6 +66,22 @@ void SoundTestState::destructor()
 }
 
 /**
+ * Method called when the Game's StateMachine enters to this state
+ *
+ * @param owner		StateMachine's owner
+ */
+void SoundTestState::enter(void* owner __attribute__ ((unused)))
+{
+	Base::enter(this, owner);
+
+	this->stream = false;
+	this->transform = false;
+	this->synchronizeGraphics = false;
+	this->updatePhysics = false;
+	this->processCollisions = false;
+}
+
+/**
  * Check if key combinations invokes me
  *
  * @public
