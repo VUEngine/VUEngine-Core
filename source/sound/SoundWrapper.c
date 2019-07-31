@@ -231,11 +231,19 @@ void SoundWrapper::play(const Vector3D* position)
 		{
 			channel->soundChannelConfiguration.SxLRV = SxLRV;
 		}
+
+		if(!wasPaused)
+		{
+			channel->elapsedTime = 0;
+		}
 	}
 
-	if(!wasPaused && this->hasPCMTracks)
+	if(!wasPaused)
 	{
-		SoundManager::startPCMPlayback(SoundManager::getInstance());
+		if(this->hasPCMTracks)
+		{
+			SoundManager::startPCMPlayback(SoundManager::getInstance());
+		}
 	}
 }
 
@@ -415,6 +423,8 @@ static u16 SoundWrapper::computeMIDITrackLength(u16* soundTrackData)
 static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 {
 	u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->cursor];
+
+	channel->elapsedTime += channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + channel->cursor];
 
 	// Is it a special note?
 	switch(note)
@@ -723,7 +733,7 @@ u32 SoundWrapper::getTotalPlaybackTime()
 	return 0;
 }
 
-u32 SoundWrapper::getCurrentPlaybackTime()
+u32 SoundWrapper::getElapsedTime()
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 
@@ -733,11 +743,7 @@ u32 SoundWrapper::getCurrentPlaybackTime()
 			{
 				u32 totalNotesTiming = 0;
 
-				u16* soundTrackData = (u16*)this->sound->soundChannels[firstChannel->soundChannel]->soundTrack.dataMIDI;
-
-				for(u32 i = 0; i < firstChannel->cursor; i++, totalNotesTiming += soundTrackData[firstChannel->length + i]);
-
-				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
+				return (u32)((long)firstChannel->elapsedTime * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
 			}
 			break;
 
@@ -760,7 +766,7 @@ void SoundWrapper::printProgress(int x, int y)
 		PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
 	}
 
-	SoundWrapper::printTiming(this, SoundWrapper::getCurrentPlaybackTime(this), x + 23, y + 2);
+	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23, y + 2);
 }
 
 void SoundWrapper::printTiming(u32 seconds, int x, int y)
@@ -781,7 +787,6 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 	{
 		PRINT_INT(seconds, x + minutesDigits + 1, y);
 	}
-
 }
 
 void SoundWrapper::printMetadata(int x, int y)
@@ -800,7 +805,7 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	y++;
 
-	SoundWrapper::printTiming(this, 0, x + 23, y);
+	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
 	SoundWrapper::printTiming(this, SoundWrapper::getTotalPlaybackTime(this), x + 28, y);
 

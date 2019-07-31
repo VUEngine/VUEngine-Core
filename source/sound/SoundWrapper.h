@@ -161,6 +161,7 @@ typedef struct Channel
 	/// Tick step per timer interrupt
 	fix17_15 tickStep;
 
+	u32 elapsedTime;
 	u8 number;
 	u8 soundChannel;
 	bool finished;
