@@ -69,7 +69,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves)
 	SoundWrapper::computeTimerResolutionFactor(this);
 
 	this->channels = new VirtualList();
-	
+
 	VirtualList::copy(this->channels, channels);
 	SoundWrapper::setupChannels(this, waves);
 	SoundWrapper::configureSoundRegistries(this);
@@ -113,7 +113,7 @@ void SoundWrapper::computeTimerResolutionFactor()
 	fix17_15 timerResolutionRatioReduction = __I_TO_FIX17_15(1) - __FIX17_15_DIV(__I_TO_FIX17_15(timerResolutionUS), __I_TO_FIX17_15(100));
 
 	if(0 != timerResolutionRatioReduction)
-	{	
+	{
 		this->targetTimerResolutionFactor = __FIX17_15_MULT(this->targetTimerResolutionFactor, timerResolutionRatioReduction);
 	}
 }
@@ -142,7 +142,7 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
-		SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks);	
+		SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks);
 	}
 
 	this->paused = paused;
@@ -339,7 +339,7 @@ void SoundWrapper::setupChannels(s8* waves)
 				this->hasPCMTracks = true;
 				channel->length = this->sound->soundChannels[channel->soundChannel]->length;
 				break;
-			
+
 			default:
 
 				NM_ASSERT(false, "SoundWrapper::setupChannels: unknown track type");
@@ -420,14 +420,14 @@ static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 
 			_soundRegistries[channel->number].SxLRV = 0;
 			break;
-	
+
 		case HOLD:
 			// Continue playing the previous note.
 			break;
 
 		case ENDSOUND:
 
-			// I handle end sound 
+			// I handle end sound
 			break;
 
 		case LOOPSOUND:
@@ -459,7 +459,7 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 	else if (finalVolume  > __MAXIMUM_VOLUME)
 	{
 		finalVolume  = __MAXIMUM_VOLUME;
-	}			
+	}
 
 	if(mute)
 	{
@@ -554,7 +554,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 			}
 		}
 		else
-		{			
+		{
 			channel->ticks += channel->tickStep;
 
 			if(channel->ticks > channel->ticksPerNote)
@@ -576,7 +576,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 					}
 				}
 
-				SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks - channel->ticksPerNote);				
+				SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks - channel->ticksPerNote);
 			}
 		}
 
@@ -606,7 +606,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 		if(!this->sound->loop)
 		{
 			SoundWrapper::fireEvent(this, kSoundReleased);
-				
+
 			SoundWrapper::release(this);
 		}
 	}
@@ -670,13 +670,13 @@ void SoundWrapper::print(int x, int y)
 
 		PRINT_TEXT("SxFQH: ", x, ++y);
 		PRINT_HEX_EXT(channel->soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
-	
+
 		PRINT_TEXT("Loop: ", x, ++y);
 		PRINT_TEXT(channel->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
 		PRINT_TEXT("Length: ", x, ++y);
 		PRINT_INT(channel->length, x + xDisplacement, y);
-		
+
 		PRINT_TEXT("Note: ", x, ++y);
 		switch(channel->soundChannelConfiguration.type)
 		{
@@ -695,43 +695,49 @@ void SoundWrapper::print(int x, int y)
 
 void SoundWrapper::printMetadata(int x, int y)
 {
-	int controlsXOffset = x;
-	int controlsValuesXOffset = 9;
-	int controlsYOffset = y;
-	int trackInfoXOffset = x + 21;
-	int trackInfoValuesXOffset = 9;
-	int trackInfoYOffset = y + 2;
+	Channel* firstChannel = (Channel*)this->channels->head->data;
+	u32 position = (firstChannel->length/2 << 5) / firstChannel->length;
+	u8 trackInfoXOffset = x + 22;
+	u8 trackInfoValuesXOffset = 9;
+	u16 speed = __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100)));
 
-	PRINT_TEXT(__CHAR_SELECTOR_LEFT, controlsXOffset, controlsYOffset);
-	PRINT_TEXT(this->sound->name, controlsXOffset + 2, controlsYOffset);
-	FontSize strSoundNameSize = Printing::getTextSize(Printing::getInstance(), this->sound->name, NULL);
-	PRINT_TEXT(__CHAR_SELECTOR, controlsXOffset + strSoundNameSize.x + 3, controlsYOffset++);
-	controlsYOffset++;
+	PRINT_TEXT(__CHAR_SELECTOR_LEFT, x, y);
+	PRINT_TEXT("1/3", x + 2, y);
+	PRINT_TEXT(__CHAR_SELECTOR, x + 6, y++);
+	y++;
+	PRINT_TEXT(this->sound->name, x, y++);
+	y++;
 
-	PRINT_TEXT("CONTROLS", controlsXOffset, controlsYOffset++);
+	for(u8 i=0; i<32; i++)
+	{
+		PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
+	}
+	y+=2;
 
-	PRINT_TEXT("Playing", controlsXOffset, ++controlsYOffset);
-	PRINT_TEXT(!this->paused ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, controlsXOffset + controlsValuesXOffset, controlsYOffset);
+	PRINT_TEXT("Speed", x, y);
+	PRINT_TEXT("    ", x + 6, y);
+	PRINT_INT(speed, x + 6, y);
+	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
+	PRINT_TEXT(!this->paused ? "  " : "\x07\x07", x + 15, y);
+	PRINT_TEXT("0:00/0:00", x + 23, y++);
+	y+=2;
 
-	PRINT_TEXT("Loop", controlsXOffset, ++controlsYOffset);
-	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, controlsXOffset + controlsValuesXOffset, controlsYOffset);
+	PRINT_TEXT("TRACK INFO", trackInfoXOffset, y++);
 
-	PRINT_TEXT("Speed %               ", controlsXOffset, ++controlsYOffset);
-	PRINT_INT(__FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(100))), controlsXOffset + controlsValuesXOffset, controlsYOffset);
+	PRINT_TEXT("MIDI", trackInfoXOffset, ++y);
+	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
-	PRINT_TEXT("TRACK INFO", trackInfoXOffset, trackInfoYOffset++);
+	PRINT_TEXT("PCM", trackInfoXOffset, ++y);
+	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
-	PRINT_TEXT("Channels", trackInfoXOffset, ++trackInfoYOffset);
-	PRINT_INT(VirtualList::getSize(this->channels), trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
+	PRINT_TEXT("Sync", trackInfoXOffset, ++y);
+	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
-	PRINT_TEXT("MIDI", trackInfoXOffset, ++trackInfoYOffset);
-	PRINT_TEXT(this->hasMIDITracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
+	PRINT_TEXT("Channels", trackInfoXOffset, ++y);
+	PRINT_INT(VirtualList::getSize(this->channels), trackInfoXOffset + trackInfoValuesXOffset, y);
 
-	PRINT_TEXT("PCM", trackInfoXOffset, ++trackInfoYOffset);
-	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
-
-	PRINT_TEXT("Sync", trackInfoXOffset, ++trackInfoYOffset);
-	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, trackInfoYOffset);
+	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
+	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 }
 
 void SoundWrapper::printVolume(int x, int y)
@@ -746,12 +752,12 @@ void SoundWrapper::printVolume(int x, int y)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		PRINT_TEXT("CH", x, y);
-		PRINT_INT(channel->number, x + 2, y);
-		PRINT_TEXT("        ", x, y + 1);
+		PRINT_TEXT("C", x + 15, y);
+		PRINT_INT(channel->number, x + 16, y);
 
 		u8 leftVolume = (channel->soundChannelConfiguration.SxLRV & 0xF0) >> 4;
 		u8 rightVolume = (channel->soundChannelConfiguration.SxLRV & 0x0F);
+		u8 i;
 
 		u8 frequency = channel->soundChannelConfiguration.SxFQH | channel->soundChannelConfiguration.SxFQL;
 
@@ -759,23 +765,27 @@ void SoundWrapper::printVolume(int x, int y)
 		{
 			case kMIDI:
 
-				PRINT_INT(frequency * leftVolume / __MAXIMUM_VOLUME, x, y + 1);
-				PRINT_INT(frequency * rightVolume / __MAXIMUM_VOLUME, x + 4, y + 1);
+				for(i=0; i<15; i++) {
+					PRINT_TEXT(((frequency * leftVolume / __MAXIMUM_VOLUME) >> 4) > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i, y);
+					PRINT_TEXT(((frequency * rightVolume / __MAXIMUM_VOLUME) >> 4) > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i, y);
+				}
 				break;
 
 			case kPCM:
 
-				PRINT_INT(leftVolume, x, y + 1);
-				PRINT_INT(rightVolume, x + 4, y + 1);
+				for(i=0; i<15; i++) {
+					PRINT_TEXT(leftVolume > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i, y);
+					PRINT_TEXT(rightVolume > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i, y);
+				}
 				break;
-			
+
 			default:
 
 				NM_ASSERT(false, "SoundWrapper::printMetadata: unknown track type");
 				break;
 		}
 
-		y += 2;
-	}	
+		y++;
+	}
 }
 

@@ -555,10 +555,14 @@ Vector3D Camera::getFocusEntityPositionDisplacement()
  */
 void Camera::print(int x, int y, bool inPixels)
 {
+	u8 controlsXPos = 38;
+	u8 controlsYPos = 2;
+	Printing::text(Printing::getInstance(), "Mode    \x16", controlsXPos, controlsYPos++, NULL);
+	controlsYPos++;
+	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", controlsXPos, controlsYPos++, NULL);
+	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", controlsXPos, controlsYPos++, NULL);
+
 	Printing::text(Printing::getInstance(), "MOVE CAMERA", x, y++, NULL);
-	Printing::text(Printing::getInstance(), "Mode    \x16", 38, 1, NULL);
-	Printing::text(Printing::getInstance(), "Move\x1E\x1A\x1B\x1C\x1D", 38, 3, NULL);
-	Printing::text(Printing::getInstance(), "      \x1F\x1A\x1B", 38, 4, NULL);
 	Printing::text(Printing::getInstance(), "              X    Y    Z    ", x, ++y, NULL);
 	Printing::text(Printing::getInstance(), "Stage's size:                   ", x, ++y, NULL);
 	Printing::int(Printing::getInstance(), inPixels ? __METERS_TO_PIXELS(this->stageSize.x) : __FIX10_6_TO_I(this->stageSize.x), x + 14, y, NULL);

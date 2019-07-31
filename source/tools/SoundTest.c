@@ -98,7 +98,7 @@ void SoundTest::update()
 
 		if(!isDeleted(this->soundWrapper))
 		{
-			SoundWrapper::printVolume(this->soundWrapper, 1, 17);
+			SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 		}
 	}
 }
@@ -155,8 +155,8 @@ void SoundTest::printGUI(bool clearScreen)
 		return;
 	}
 
-	int xControls = 38;
-	int yControls = 1;
+	int xControls = 37;
+	int yControls = 2;
 
 	// Controls
 	if(SoundWrapper::isPaused(this->soundWrapper))
@@ -182,7 +182,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 {
 	if(NULL == _userSounds[this->selectedSound])
 	{
-		return;	
+		return;
 	}
 
 	bool timerChanged = false;
@@ -204,16 +204,16 @@ void SoundTest::processUserInput(u16 pressedKey)
 		{
 			SoundTest::loadSound(this);
 		}
-		
+
 		if(SoundWrapper::isPaused(this->soundWrapper))
 		{
-			SoundWrapper::play(this->soundWrapper, NULL);		
+			SoundWrapper::play(this->soundWrapper, NULL);
 		}
 		else
 		{
 			SoundWrapper::pause(this->soundWrapper);
 		}
-		
+
 		SoundTest::printGUI(this, false);
 	}
 	else if(K_B & pressedKey)
@@ -355,7 +355,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 
 			if(!SoundWrapper::isPaused(this->soundWrapper))
 			{
-				SoundWrapper::play(this->soundWrapper, NULL);		
+				SoundWrapper::play(this->soundWrapper, NULL);
 			}
 		}
 	}
@@ -384,7 +384,7 @@ void SoundTest::loadPreviousSound()
 	{
 		this->selectedSound--;
 	}
-	
+
 	SoundTest::printGUI(this, true);
 	SoundTest::loadSound(this);
 }
@@ -400,7 +400,7 @@ void SoundTest::loadNextSound()
 	{
 		this->selectedSound++;
 	}
-	
+
 	SoundTest::printGUI(this, true);
 	SoundTest::loadSound(this);
 }
@@ -408,7 +408,7 @@ void SoundTest::loadNextSound()
 void SoundTest::loadSound()
 {
 	if(NULL == _userSounds[this->selectedSound])
-	{	
+	{
 		Printing::text(Printing::getInstance(), "No sounds found", 1, 4, NULL);
 		Printing::text(Printing::getInstance(), "Define some in _userSounds global variable", 1, 6, NULL);
 		return;
@@ -425,7 +425,7 @@ void SoundTest::loadSound()
 	if(!isDeleted(this->soundWrapper))
 	{
 		SoundWrapper::printMetadata(this->soundWrapper, 1, 2);
-		SoundWrapper::printVolume(this->soundWrapper, 1, 17);
+		SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);
@@ -447,10 +447,10 @@ void SoundTest::printTimer()
 {
 	if(NULL == _userSounds[this->selectedSound])
 	{
-		return;	
+		return;
 	}
 
-	TimerManager::print(TimerManager::getInstance(), 1, 10);
+	TimerManager::print(TimerManager::getInstance(), 1, 11);
 }
 
 void SoundTest::applyTimerSettings()
