@@ -439,9 +439,9 @@ static void TimerManager::interruptHandler()
 
 	// update MIDI sounds
 	SoundManager::playMIDISounds(SoundManager::getInstance());
-	
+
 	// enable
-//	TimerManager::enable(_timerManager, true);
+	TimerManager::enable(_timerManager, true);
 }
 
 /**
