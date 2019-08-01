@@ -390,6 +390,8 @@ void Game::start(GameState state)
 			{
 				Game::currentFrameStarted(this);
 
+				SoundManager::updateFrameRate(SoundManager::getInstance(), __GAME_FRAME_DURATION);
+
 				Game::updateFrameRate(this);
 
 				Game::run(this);
@@ -1049,8 +1051,6 @@ void Game::updateFrameRate()
 void Game::nextFrameStarted(u16 gameFrameDuration)
 {
 	this->nextFrameStarted = true;
-
-	SoundManager::updateFrameRate(SoundManager::getInstance(), gameFrameDuration);
 }
 
 void Game::currentFrameStarted()
