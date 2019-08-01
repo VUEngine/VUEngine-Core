@@ -129,6 +129,7 @@ singleton class Game : Object
 	bool isInDebugMode();
 	bool isInStageEditor();
 	bool isInAnimationInspector();
+	bool isInSoundTest();
 	void openTool(ToolState toolState);
 	void nextFrameStarted(u16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
