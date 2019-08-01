@@ -29,6 +29,7 @@
 #include <HardwareManager.h>
 #include <ClockManager.h>
 #include <SoundManager.h>
+#include <SoundTest.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -65,6 +66,7 @@ void TimerManager::constructor()
 
 	this->tcrValue = 0;
 	this->milliseconds = 0;
+	this->microseconds = 0;
 	this->totalMilliseconds = 0;
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
@@ -92,6 +94,7 @@ void TimerManager::reset()
 {
 	this->tcrValue = 0;
 	this->milliseconds = 0;
+	this->microseconds = 0;
 	this->totalMilliseconds = 0;
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
@@ -147,6 +150,10 @@ void TimerManager::setResolution(u16 resolution)
 	switch(resolution)
 	{
 		case __TIMER_20US:
+
+			this->resolution = resolution;
+			break;
+
 		case __TIMER_100US:
 
 			this->resolution = resolution;
@@ -158,6 +165,13 @@ void TimerManager::setResolution(u16 resolution)
 
 			this->resolution =  __TIMER_20US;
 			break;
+	}
+
+	u32 residue = this->timePerInterrupt % TimerManager::getResolutionInUS(this);
+
+	if(this->timePerInterrupt > residue)
+	{
+		this->timePerInterrupt -= residue;
 	}
 }
 
@@ -182,26 +196,52 @@ u16 TimerManager::getTimePerInterrupt()
 }
 
 /**
+ * Get target time per interrupt
+ *
+ * @return timePerInterrupt 	u16
+ */
+u16 TimerManager::getTimePerInterruptInMS()
+{
+	switch(this->timePerInterruptUnits)
+	{
+		case kUS:
+
+			return this->timePerInterrupt / 1000;
+			break;
+
+		case kMS:
+
+			return this->timePerInterrupt;
+			break;
+
+		default:
+
+			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			break;
+	}
+
+	return 0;
+}
+
+/**
  * Set target time per interrupt
  *
  * @param timePerInterrupt 	u16
  */
 void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 {
-	s16 minimumTimePerInterrupt = 0;
+	s16 minimumTimePerInterrupt = TimerManager::getMinimumTimePerInterruptStep(this);
 	s16 maximumTimePerInterrupt = 0;
 
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_US;
 			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_US;
 			break;
 
 		case kMS:
 
-			minimumTimePerInterrupt = __MINIMUM_TIME_PER_INTERRUPT_MS;
 			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 			break;
 
@@ -257,6 +297,24 @@ void TimerManager::setTimePerInterruptUnits(u16 timePerInterruptUnits)
 	TimerManager::setResolution(this, this->resolution);
 }
 
+u16 TimerManager::getMinimumTimePerInterruptStep()
+{
+	switch(this->timePerInterruptUnits)
+	{
+		case kUS:
+
+			return TimerManager::getResolutionInUS(TimerManager::getInstance());
+			break;
+
+		case kMS:
+
+			return __MINIMUM_TIME_PER_INTERRUPT_MS;
+			break;
+	}
+
+	return 0;
+}
+
 u16 TimerManager::computeTimerCounter()
 {
 	u16 timerCounter = 0;
@@ -267,7 +325,7 @@ u16 TimerManager::computeTimerCounter()
 	{
 		case kUS:
 
-			timerCounter = __TIME_US(this->timePerInterrupt * 100 / timerResolutionUS);
+			timerCounter = this->timePerInterrupt / timerResolutionUS - 1;
 			break;
 
 		case kMS:
@@ -348,25 +406,42 @@ static void TimerManager::interruptHandler()
 	HardwareManager::checkStackStatus(HardwareManager::getInstance());
 #endif
 
+	u32 elapsedMilliseconds = 0;
+
 	// update clocks
-	_timerManager->milliseconds += __TIMER_RESOLUTION;
-	_timerManager->totalMilliseconds += __TIMER_RESOLUTION;
-
-	// play sounds
-	static u32 previousHundredthSecond = 0;
-	static u32 currentHundredthSecond = 0;
-	currentHundredthSecond += __TIMER_RESOLUTION;
-
-	if(previousHundredthSecond < (u32)(currentHundredthSecond / 10))
+	switch(_timerManager->timePerInterruptUnits)
 	{
-		previousHundredthSecond = (u32)(currentHundredthSecond / 10);
+		case kUS:
+
+			_timerManager->microseconds += _timerManager->timePerInterrupt ;
+
+			elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_IN_MILLISECOND;
+
+			if(_timerManager->microseconds > __MICROSECONDS_IN_MILLISECOND)
+			{
+				_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_IN_MILLISECOND;
+			}
+			break;
+
+		case kMS:
+
+			elapsedMilliseconds = _timerManager->timePerInterrupt;
+			break;
+
+		default:
+
+			ASSERT(false, "TimerManager::setResolution: wrong resolution scale");
+			break;
 	}
+
+	_timerManager->milliseconds += elapsedMilliseconds;
+	_timerManager->totalMilliseconds += elapsedMilliseconds;
 
 	// update MIDI sounds
 	SoundManager::playMIDISounds(SoundManager::getInstance());
-
+	
 	// enable
-	TimerManager::enable(_timerManager, true);
+//	TimerManager::enable(_timerManager, true);
 }
 
 /**
@@ -397,6 +472,7 @@ u32 TimerManager::resetMilliseconds()
 	u32 milliseconds = this->milliseconds;
 
 	this->milliseconds = 0;
+	this->microseconds = 0;
 
 	return milliseconds;
 }
@@ -526,26 +602,22 @@ void TimerManager::print(int x, int y)
 	{
 		case kUS:
 
-			PRINT_TEXT("Counter Units US ", x, y++);
+			PRINT_TEXT("US/interrupt        ", x, y);
 			break;
 
 		case kMS:
 
-			PRINT_TEXT("Counter Units MS ", x, y++);
+			PRINT_TEXT("MS/interrupt        ", x, y);
 			break;
 
 		default:
 
-			PRINT_TEXT("Counter Units ?  ", x, y++);
+			PRINT_TEXT("??/interrupt        ", x, y);
 			break;
 	}
 
-	PRINT_TEXT("Timer counter        ", x, y);
-	PRINT_INT(TimerManager::computeTimerCounter(this), x + 14, y++);
-
-	PRINT_TEXT("Time per in          ", x, y);
 	PRINT_INT(this->timePerInterrupt, x + 14, y++);
 
-	PRINT_TEXT("US per inter         ", x, y);
-	PRINT_INT((TimerManager::computeTimerCounter(this) + 1) * TimerManager::getResolutionInUS(this), x + 14, y++);
+	PRINT_TEXT("Timer counter               ", x, y);
+	PRINT_INT(TimerManager::computeTimerCounter(this), x + 14, y++);
 }

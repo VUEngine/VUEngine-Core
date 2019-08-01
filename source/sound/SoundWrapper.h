@@ -208,6 +208,7 @@ class SoundWrapper : Object
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 	void printVolume(int x, int y);
+	void printProgress(int x, int y);
 }
 
 

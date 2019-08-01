@@ -183,7 +183,7 @@ static int Utilities::getDigitCount(int value)
 	}
 	while(value);
 
-	return (size) ? size : 1;
+	return size;
 }
 
 static u32 Utilities::reverse(u32 x, int bits)

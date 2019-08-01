@@ -278,6 +278,7 @@ void SoundWrapper::rewind()
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->cursor = 0;
+		channel->elapsedTime = 0;
 
 		SoundWrapper::computeNextTicksPerNote(this, channel, 0);
 	}
@@ -336,6 +337,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
 		channel->ticks = 0;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
+		channel->elapsedTime = 0;
 
 		switch(channel->soundChannelConfiguration.type)
 		{
@@ -423,8 +425,6 @@ static u16 SoundWrapper::computeMIDITrackLength(u16* soundTrackData)
 static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 {
 	u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->cursor];
-
-	channel->elapsedTime += channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->length + channel->cursor];
 
 	// Is it a special note?
 	switch(note)
@@ -534,6 +534,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 		return;
 	}
 
+	u32 elapsedTime = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
 	bool updatePlayback = false;
 	bool finished = true;
 
@@ -543,6 +544,8 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
+
+		channel->elapsedTime += elapsedTime;
 
 		// TODO: optimize playback of types
 		if(type != channel->soundChannelConfiguration.type)
@@ -740,11 +743,8 @@ u32 SoundWrapper::getElapsedTime()
 	switch(firstChannel->soundChannelConfiguration.type)
 	{
 		case kMIDI:
-			{
-				u32 totalNotesTiming = 0;
 
-				return (u32)((long)firstChannel->elapsedTime * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
-			}
+			return (u32)((long)firstChannel->elapsedTime / __MILLISECONDS_IN_SECOND);
 			break;
 
 		case kPCM:
@@ -760,13 +760,13 @@ void SoundWrapper::printProgress(int x, int y)
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 	u32 position = (firstChannel->cursor << 5) / firstChannel->length;
-
+/*
 	for(u8 i = 0; i < 32; i++)
 	{
 		PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
 	}
-
-	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23, y + 2);
+ */
+	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23 - 0, y + 2);
 }
 
 void SoundWrapper::printTiming(u32 seconds, int x, int y)
@@ -778,6 +778,7 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 
 	PRINT_INT(minutes, x, y);
 	PRINT_TEXT(":  ", x + minutesDigits, y);
+
 	if(seconds < 10)
 	{
 		PRINT_TEXT(":0 ", x + minutesDigits, y);
@@ -797,7 +798,6 @@ void SoundWrapper::printMetadata(int x, int y)
 	SoundWrapper::printProgress(this, x, y++);
 
 	Channel* firstChannel = (Channel*)this->channels->head->data;
-	u32 position = ((firstChannel->cursor / 2) << 5) / firstChannel->length;
 
 	u8 trackInfoXOffset = x + 22;
 	u8 trackInfoValuesXOffset = 9;

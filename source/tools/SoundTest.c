@@ -92,20 +92,28 @@ void SoundTest::update()
 {
 }
 
-void SoundTest::update2()
+void SoundTest::printPlaybackState(u32 elapsedMilliseconds)
 {
+	static u32 delay1 = 0;
+	static u32 delay2 = 0;
 
-	// Don't print at full speed to not affect PCM playback
-	static s16 delay = 10000;
+	delay1 += elapsedMilliseconds;
+	delay2 += elapsedMilliseconds;
 
-	if(0 >= --delay)
+	if(delay2 >= __MILLISECONDS_IN_SECOND / 10)
 	{
-		delay = 10000;
+		delay2 = 0;
 
 		if(!isDeleted(this->soundWrapper))
 		{
-			SoundWrapper::printProgress(this->soundWrapper, 1, 6);
-			SoundWrapper::printVolume(this->soundWrapper, 1, 18);
+		//	SoundWrapper::printVolume(this->soundWrapper, 1, 18);
+
+			if(delay1 >= __MILLISECONDS_IN_SECOND)
+			{
+				delay1 = 0;
+
+				SoundWrapper::printProgress(this->soundWrapper, 1, 6);
+			}
 		}
 	}
 }
@@ -326,20 +334,8 @@ void SoundTest::processUserInput(u16 pressedKey)
 	else if(K_RL & pressedKey)
 	{
 		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
-		u16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
 
-		switch(timePerInterruptUnits)
-		{
-			case kUS:
-
-				timePerInterrupt -= __MINIMUM_TIME_PER_INTERRUPT_US;
-				break;
-
-			case kMS:
-
-				timePerInterrupt -= __MINIMUM_TIME_PER_INTERRUPT_MS;
-				break;
-		}
+		timePerInterrupt -= TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
 		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
 		timerChanged = true;
@@ -347,20 +343,8 @@ void SoundTest::processUserInput(u16 pressedKey)
 	else if(K_RR & pressedKey)
 	{
 		u16 timePerInterrupt = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
-		u16 timePerInterruptUnits = TimerManager::getTimePerInterruptUnits(TimerManager::getInstance());
 
-		switch(timePerInterruptUnits)
-		{
-			case kUS:
-
-				timePerInterrupt += __MINIMUM_TIME_PER_INTERRUPT_US;
-				break;
-
-			case kMS:
-
-				timePerInterrupt += __MINIMUM_TIME_PER_INTERRUPT_MS;
-				break;
-		}
+		timePerInterrupt += TimerManager::getMinimumTimePerInterruptStep(TimerManager::getInstance());
 
 		TimerManager::setTimePerInterrupt(TimerManager::getInstance(), timePerInterrupt);
 		timerChanged = true;

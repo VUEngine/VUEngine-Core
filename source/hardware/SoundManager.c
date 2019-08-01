@@ -389,10 +389,29 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 
 			SoundManager::rewindAllSounds(this, kPCM);
 		}
-	}
 
 	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+	}
 
+if(0 > this->pcmPlaybackCyclesToSkip)
+	{
+		this->pcmPlaybackCyclesToSkip = 0;
+	}
+
+//	PRINT_TEXT("          ", 21, 20);
+//	PRINT_INT(this->pcmPlaybackCyclesToSkip, 21, 20);
+
+	if(this->pcmPlaybackCycles*factor > 10000)
+	{
+	PRINT_TEXT("          ", 31, 20);
+	PRINT_INT(this->pcmPlaybackCyclesToSkip, 31, 20);
+	PRINT_INT(this->pcmPlaybackCycles*factor, 34, 20);
+		static u32 counter = 0;
+	PRINT_TEXT("      ", 31, 21);
+	PRINT_INT(++counter, 31, 21);
+//	PRINT_INT(this->pcmPlaybackCycles*factor, 31, 27);
+//PRINT_TIME(20, 27);
+	}
 	this->pcmPlaybackCycles = 0;
 }
 

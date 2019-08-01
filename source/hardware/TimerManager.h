@@ -67,6 +67,7 @@ enum TimerResolutionScales
 singleton class TimerManager : Object
 {
 	u32 milliseconds;
+	u32 microseconds;
 	u32 totalMilliseconds;
 	u16 resolution;
 	u16 timePerInterrupt;
@@ -82,6 +83,7 @@ singleton class TimerManager : Object
 	u16 getTimePerInterrupt();
 	u16 getTimerCounter();
 	u16 getTimePerInterruptUnits();
+	u16 getMinimumTimePerInterruptStep();
 	void setResolution(u16 resolution);
 	void setTimePerInterrupt(u16 timePerInterrupt);
 	void setTimePerInterruptUnits(u16 timePerInterruptUnits);
