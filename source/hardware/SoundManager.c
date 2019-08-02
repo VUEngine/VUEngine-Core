@@ -183,21 +183,18 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	if(!isDeleted(this->releasedSoundWrappers))
+	VirtualNode node = this->releasedSoundWrappers->head;
+
+	for(; node; node = node->next)
 	{
-		VirtualNode node = this->releasedSoundWrappers->head;
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-		for(; node; node = node->next)
-		{
-			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+		VirtualList::removeElement(this->soundWrappers, soundWrapper);
 
-			VirtualList::removeElement(this->soundWrappers, soundWrapper);
-
-			delete soundWrapper;
-		}
-
-		VirtualList::clear(this->releasedSoundWrappers);
+		delete soundWrapper;
 	}
+
+	VirtualList::clear(this->releasedSoundWrappers);
 }
 
 void SoundManager::reset()
@@ -257,7 +254,6 @@ void SoundManager::reset()
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->pcmReimainingPlaybackCyclesToSkip = 0;
 	this->pcmStablePlaybackCycles = 0;
 	this->elapsedMicroseconds = 0;
 
@@ -272,7 +268,6 @@ void SoundManager::startPCMPlayback()
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->pcmReimainingPlaybackCyclesToSkip = 0;
 	this->pcmStablePlaybackCycles = 0;
 
 	this->pcmFrameRateIsStable = false;
@@ -285,13 +280,17 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 
 void SoundManager::playSounds(u32 type, bool mute)
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
 	VirtualNode node = this->soundWrappers->head;
 	
 	for(; node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		// Skip if sound is NULL since this should be purged
+		if(NULL == soundWrapper->sound)
+		{
+			continue;
+		}
 
 		switch(type)
 		{
@@ -326,17 +325,12 @@ void SoundManager::playMIDISounds()
 
 void SoundManager::playPCMSounds()
 {
-	if(0 >= --this->pcmReimainingPlaybackCyclesToSkip)
-	{
-		this->pcmPlaybackCycles++;
-		this->pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
+	// Do not waste CPU cycles returning to the call point
+	volatile int pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
+	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
-		SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable);
-	}
-	else if(this->pcmReimainingPlaybackCyclesToSkip == (this->pcmPlaybackCyclesToSkip >> 1))
-	{
-		SoundManager::purgeReleasedSoundWrappers(this);
-	}
+	this->pcmPlaybackCycles++;
+	SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable);
 }
 
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
@@ -363,11 +357,12 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 
 			SoundManager::rewindAllSounds(this, kPCM);
 		}
-
 	}
 
 	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
+//	PRINT_TEXT("       ", 40, 14);
+//	PRINT_INT(this->pcmPlaybackCyclesToSkip, 40, 14);
 	this->pcmPlaybackCycles = 0;
 }
 

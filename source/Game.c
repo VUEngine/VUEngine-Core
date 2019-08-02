@@ -399,13 +399,6 @@ void Game::start(GameState state)
 				Game::debug(this);
 
 				Game::currentFrameEnded(this);
-
-#ifdef __SOUND_TEST
-				if(Game::isInSoundTest(Game::getInstance()))
-				{
-					SoundTest::printVolumeState(SoundTest::getInstance());
-				}
-#endif
 			}
 			else
 			{

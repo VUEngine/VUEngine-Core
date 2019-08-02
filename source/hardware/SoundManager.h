@@ -91,7 +91,6 @@ singleton class SoundManager : Object
 	u16 pcmPlaybackCycles;
 	u16 pcmTargetPlaybackFrameRate;
 	s16 pcmPlaybackCyclesToSkip;
-	s16 pcmReimainingPlaybackCyclesToSkip;
 	s16 pcmStablePlaybackCycles;
 	bool pcmFrameRateIsStable;
 

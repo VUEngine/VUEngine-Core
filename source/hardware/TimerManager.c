@@ -650,7 +650,7 @@ void TimerManager::print(int x, int y)
 
 		default:
 
-			PRINT_TEXT("??/interrupt        ", x, y);
+			PRINT_TEXT(" ?/interrupt        ", x, y);
 			break;
 	}
 
