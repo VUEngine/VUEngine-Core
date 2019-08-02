@@ -133,7 +133,6 @@ singleton class Game : Object
 	void openTool(ToolState toolState);
 	void nextFrameStarted(u16 gameFrameDuration);
 	bool hasCurrentFrameEnded();
-	void increaseGameFrameDuration(u32 gameFrameDuration);
 	void saveProcessNameDuringFRAMESTART();
 	void saveProcessNameDuringXPEND();
 	override bool handleMessage(Telegram telegram);

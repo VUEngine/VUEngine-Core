@@ -229,9 +229,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 
 				VIPManager::registerCurrentDrawingFrameBufferSet(this);
 
-				// increase current game frame's duration
-				Game::increaseGameFrameDuration(Game::getInstance(), __GAME_FRAME_DURATION);
-
 				Game::nextFrameStarted(Game::getInstance(), __GAME_FRAME_DURATION);
 
 				if(!_vipManager->processingXPEND)
@@ -312,8 +309,6 @@ void VIPManager::processInterrupt(u16 interrupt)
 				break;
 
 			case __TIMEERR:
-
-				Game::increaseGameFrameDuration(Game::getInstance(), __GAME_FRAME_DURATION);
 
 #ifdef __ALERT_VIP_OVERTIME
 				{

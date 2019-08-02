@@ -964,11 +964,6 @@ void Game::checkForNewState()
 	}
 }
 
-void Game::increaseGameFrameDuration(u32 gameFrameDuration)
-{
-	this->gameFrameTotalTime += gameFrameDuration;
-}
-
 void Game::updateFrameRate()
 {
 	if(Game::isInSpecialMode(this))
@@ -1058,6 +1053,7 @@ void Game::updateFrameRate()
 void Game::nextFrameStarted(u16 gameFrameDuration)
 {
 	this->nextFrameStarted = true;
+	this->gameFrameTotalTime += gameFrameDuration;
 }
 
 void Game::currentFrameStarted()
@@ -1070,17 +1066,21 @@ void Game::currentFrameEnded()
 {
 	this->currentFrameEnded = true;
 
+#ifdef __PROFILE_GAME
 	if(this->nextFrameStarted)
 	{
-#ifdef __PROFILE_GAME
 		_tornGameFrameCount++;
-#endif
+	}
+#else
 #ifdef __ALERT_FOR_TORN_FRAMES
+	if(this->nextFrameStarted)
+	{
 		static int counter = 0;
 		PRINT_TEXT("Torn Frames:", 0, 26);
 		PRINT_INT(++counter, 13, 26);
-#endif
 	}
+#endif
+#endif
 }
 
 bool Game::hasCurrentFrameEnded()
