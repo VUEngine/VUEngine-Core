@@ -161,7 +161,7 @@ typedef struct Channel
 	/// Tick step per timer interrupt
 	fix17_15 tickStep;
 
-	u32 elapsedTime;
+	fix17_15 elapsedTimeInMS;
 	u8 number;
 	u8 soundChannel;
 	bool finished;
@@ -201,7 +201,7 @@ class SoundWrapper : Object
 	void rewind();
 	void stop();
 	void release();
-	void updatePlayback(u32 type, bool mute);
+	void updatePlayback(u32 type, bool mute, fix17_15 elapsedTimeInMS);
 	fix17_15 getSpeed();
 	void setSpeed(fix17_15 speed);
 	void computeTimerResolutionFactor();

@@ -90,30 +90,38 @@ void SoundTest::releaseSoundWrapper()
  */
 void SoundTest::update()
 {
+	SoundTest::printPlaybackPosition(this, __GAME_FRAME_DURATION);
 }
 
-void SoundTest::printPlaybackState(u32 elapsedMilliseconds)
+void SoundTest::printPlaybackPosition(u32 elapsedMilliseconds)
 {
-	static u32 delay1 = 0;
-	static u32 delay2 = 0;
+	static u32 delay = 0;
 
-	delay1 += elapsedMilliseconds;
-	delay2 += elapsedMilliseconds;
+	delay += elapsedMilliseconds;
 
-	if(delay2 >= __MILLISECONDS_IN_SECOND / 10)
+	if(!isDeleted(this->soundWrapper))
 	{
-		delay2 = 0;
+	//	if(delay >= __MILLISECONDS_IN_SECOND)
+		{
+			delay = 0;
+
+			SoundWrapper::printProgress(this->soundWrapper, 1, 6);
+		}
+	}
+}
+
+void SoundTest::printVolumeState()
+{
+	static u32 previousTime = 0;
+	u32 currentTime = TimerManager::getTotalMillisecondsElapsed(TimerManager::getInstance());
+
+	if(currentTime - previousTime > __MILLISECONDS_IN_SECOND / 10)
+	{
+		previousTime = currentTime;
 
 		if(!isDeleted(this->soundWrapper))
 		{
-		//	SoundWrapper::printVolume(this->soundWrapper, 1, 18);
-
-			if(delay1 >= __MILLISECONDS_IN_SECOND)
-			{
-				delay1 = 0;
-
-				SoundWrapper::printProgress(this->soundWrapper, 1, 6);
-			}
+			SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 		}
 	}
 }

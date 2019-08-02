@@ -49,7 +49,8 @@ singleton class SoundTest : Tool
 
 	/// @publicsection
 	static SoundTest getInstance();
-	void printPlaybackState(u32 elapsedMilliseconds);
+	void printVolumeState();
+	void printPlaybackPosition(u32 elapsedMilliseconds);
 	override void update();
 	override void show();
 	override void hide();

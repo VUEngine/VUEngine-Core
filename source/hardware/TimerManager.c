@@ -167,12 +167,32 @@ void TimerManager::setResolution(u16 resolution)
 			break;
 	}
 
-	u32 residue = this->timePerInterrupt % TimerManager::getResolutionInUS(this);
+	u32 timePerInterrupt = this->timePerInterrupt;
 
-	if(this->timePerInterrupt > residue)
+	switch(this->timePerInterruptUnits)
 	{
-		this->timePerInterrupt -= residue;
+		case kUS:
+			{
+				u32 residue = timePerInterrupt % TimerManager::getResolutionInUS(this);
+
+				if(timePerInterrupt > residue)
+				{
+					timePerInterrupt -= residue;
+				}
+			}
+			break;
+
+		case kMS:
+
+			break;
+
+		default:
+
+			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			break;
 	}
+
+	TimerManager::setTimePerInterrupt(this, timePerInterrupt);
 }
 
 /**
@@ -195,23 +215,18 @@ u16 TimerManager::getTimePerInterrupt()
 	return this->timePerInterrupt;
 }
 
-/**
- * Get target time per interrupt
- *
- * @return timePerInterrupt 	u16
- */
-u16 TimerManager::getTimePerInterruptInMS()
+fix17_15 TimerManager::getTimePerInterruptInMS()
 {
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			return this->timePerInterrupt / 1000;
+			return __FIX17_15_DIV(__I_TO_FIX17_15(__TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance())), __I_TO_FIX17_15(__MICROSECONDS_IN_MILLISECOND));
 			break;
 
 		case kMS:
 
-			return this->timePerInterrupt;
+			return __I_TO_FIX17_15(this->timePerInterrupt);
 			break;
 
 		default:
@@ -220,7 +235,7 @@ u16 TimerManager::getTimePerInterruptInMS()
 			break;
 	}
 
-	return 0;
+	return 0;	
 }
 
 /**
@@ -325,7 +340,7 @@ u16 TimerManager::computeTimerCounter()
 	{
 		case kUS:
 
-			timerCounter = this->timePerInterrupt / timerResolutionUS - 1;
+			timerCounter = __TIME_US(this->timePerInterrupt);
 			break;
 
 		case kMS:

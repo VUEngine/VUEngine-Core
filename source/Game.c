@@ -402,7 +402,12 @@ void Game::start(GameState state)
 			}
 			else
 			{
+				static bool flag = false;
+				if(!flag)
+				{
 				SoundManager::playPCMSounds(soundManager);
+				}
+					flag = !flag;
 			}
 		}
 	}

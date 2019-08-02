@@ -27,6 +27,8 @@
 #include <SoundManager.h>
 #include <Optics.h>
 #include <VirtualList.h>
+#include <TimerManager.h>
+#include <Game.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -257,6 +259,7 @@ void SoundManager::reset()
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
 	this->pcmReimainingPlaybackCyclesToSkip = 0;
 	this->pcmStablePlaybackCycles = 0;
+	this->elapsedTimeInMS = 0;
 
 	this->pcmFrameRateIsStable = false;
 
@@ -282,10 +285,8 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 
 void SoundManager::playSounds(u32 type, bool mute)
 {
-	SoundManager::purgeReleasedSoundWrappers(this);
-
 	VirtualNode node = this->soundWrappers->head;
-
+	
 	for(; node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
@@ -296,7 +297,7 @@ void SoundManager::playSounds(u32 type, bool mute)
 
 				if(soundWrapper->hasMIDITracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute);
+					SoundWrapper::updatePlayback(soundWrapper, type, mute, this->elapsedTimeInMS);
 				}
 				break;
 
@@ -304,7 +305,7 @@ void SoundManager::playSounds(u32 type, bool mute)
 
 				if(soundWrapper->hasPCMTracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute);
+					SoundWrapper::updatePlayback(soundWrapper, type, mute, this->elapsedTimeInMS);
 				}
 				break;
 
@@ -323,13 +324,70 @@ void SoundManager::playMIDISounds()
 
 void SoundManager::playPCMSounds()
 {
-	if(0 >= --this->pcmReimainingPlaybackCyclesToSkip)
+	if(0 >= this->pcmReimainingPlaybackCyclesToSkip)
 	{
 		this->pcmPlaybackCycles++;
 		this->pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
 
 		SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable);
 	}
+	else if(this->pcmReimainingPlaybackCyclesToSkip == (this->pcmPlaybackCyclesToSkip >> 1))
+	{
+		SoundManager::purgeReleasedSoundWrappers(this);
+	}
+#ifdef __SOUND_TEST
+	else if(this->pcmReimainingPlaybackCyclesToSkip == this->pcmPlaybackCyclesToSkip - 1)
+	{
+	static u32 previousTime = 0;
+	u32 currentTime = TimerManager::getTotalMillisecondsElapsed(TimerManager::getInstance());
+
+	if(currentTime - previousTime > __MILLISECONDS_IN_SECOND)
+	{
+		previousTime = currentTime;
+
+	//			PRINT_TEXT("    ", 30, 20);
+	PRINT_INT(this->pcmPlaybackCyclesToSkip, 30, 20);
+	}
+
+	//	if(Game::isInSoundTest(Game::getInstance()))
+		{
+	//		SoundTest::printVolumeState(SoundTest::getInstance());
+		}
+	}
+#endif
+	this->pcmReimainingPlaybackCyclesToSkip--;
+}
+
+void SoundManager::updateFrameRate(u16 gameFrameDuration)
+{
+	this->elapsedTimeInMS = TimerManager::getTimePerInterruptInMS(TimerManager::getInstance());
+
+	s16 factor = __MILLISECONDS_IN_SECOND / gameFrameDuration;
+	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate / factor);
+
+	if(!this->pcmFrameRateIsStable)
+	{
+		if(0 == deviation / factor)
+		{
+			this->pcmStablePlaybackCycles++;	
+		}
+		else
+		{
+			this->pcmStablePlaybackCycles = 0;
+		}
+		
+		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < this->pcmStablePlaybackCycles)
+		{
+			this->pcmFrameRateIsStable = true;
+
+			SoundManager::rewindAllSounds(this, kPCM);
+		}
+
+	}
+
+	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+
+	this->pcmPlaybackCycles = 0;
 }
 
 void SoundManager::rewindAllSounds(u32 type)
@@ -365,36 +423,6 @@ void SoundManager::rewindAllSounds(u32 type)
 
 		}
 	}
-}
-
-void SoundManager::updateFrameRate(u16 gameFrameDuration)
-{
-	s16 factor = __MILLISECONDS_IN_SECOND / gameFrameDuration;
-	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate / factor);
-
-	if(!this->pcmFrameRateIsStable)
-	{
-		if(0 == deviation / factor)
-		{
-			this->pcmStablePlaybackCycles++;	
-		}
-		else
-		{
-			this->pcmStablePlaybackCycles = 0;
-		}
-		
-		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < this->pcmStablePlaybackCycles)
-		{
-			this->pcmFrameRateIsStable = true;
-
-			SoundManager::rewindAllSounds(this, kPCM);
-		}
-
-	}
-
-	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
-
-	this->pcmPlaybackCycles = 0;
 }
 
 s8 SoundManager::getWaveform(const s8* waveFormData)

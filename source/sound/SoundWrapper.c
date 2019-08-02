@@ -234,7 +234,7 @@ void SoundWrapper::play(const Vector3D* position)
 
 		if(!wasPaused)
 		{
-			channel->elapsedTime = 0;
+			channel->elapsedTimeInMS = 0;
 		}
 	}
 
@@ -278,7 +278,7 @@ void SoundWrapper::rewind()
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->cursor = 0;
-		channel->elapsedTime = 0;
+		channel->elapsedTimeInMS = 0;
 
 		SoundWrapper::computeNextTicksPerNote(this, channel, 0);
 	}
@@ -337,7 +337,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
 		channel->ticks = 0;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
-		channel->elapsedTime = 0;
+		channel->elapsedTimeInMS = 0;
 
 		switch(channel->soundChannelConfiguration.type)
 		{
@@ -527,14 +527,13 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
 /**
  * Update sound playback
  */
-void SoundWrapper::updatePlayback(u32 type, bool mute)
+void SoundWrapper::updatePlayback(u32 type, bool mute, fix17_15 elapsedTimeInMS)
 {
 	if(NULL == this->sound || this->paused)
 	{
 		return;
 	}
 
-	u32 elapsedTime = TimerManager::getTimePerInterrupt(TimerManager::getInstance());
 	bool updatePlayback = false;
 	bool finished = true;
 
@@ -545,7 +544,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		channel->elapsedTime += elapsedTime;
+		channel->elapsedTimeInMS += __FIX17_15_MULT(this->speed, elapsedTimeInMS);		
 
 		// TODO: optimize playback of types
 		if(type != channel->soundChannelConfiguration.type)
@@ -744,7 +743,7 @@ u32 SoundWrapper::getElapsedTime()
 	{
 		case kMIDI:
 
-			return (u32)((long)firstChannel->elapsedTime / __MILLISECONDS_IN_SECOND);
+			return (u32)__FIX17_15_TO_I(__FIX17_15_DIV(firstChannel->elapsedTimeInMS, __I_TO_FIX17_15(__MILLISECONDS_IN_SECOND)));
 			break;
 
 		case kPCM:
@@ -760,12 +759,21 @@ void SoundWrapper::printProgress(int x, int y)
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 	u32 position = (firstChannel->cursor << 5) / firstChannel->length;
-/*
-	for(u8 i = 0; i < 32; i++)
+
+	if(0 == position)
 	{
-		PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
+		for(u8 i = 0; i < 32; i++)
+		{
+			PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
+		}
 	}
- */
+	else
+	{
+		// Prevent skiping
+		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position - 1, y);
+		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position, y);
+	}
+ 
 	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23 - 0, y + 2);
 }
 
