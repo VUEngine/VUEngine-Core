@@ -221,7 +221,7 @@ u32 TimerManager::getTimePerInterruptInMS()
 	{
 		case kUS:
 
-			return __TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance()) / __MICROSECONDS_IN_MILLISECOND;
+			return __TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance()) / __MICROSECONDS_PER_MILLISECOND;
 			break;
 
 		case kMS:
@@ -249,7 +249,7 @@ u32 TimerManager::getTimePerInterruptInUS()
 
 		case kMS:
 
-			return this->timePerInterrupt * __MICROSECONDS_IN_MILLISECOND;
+			return this->timePerInterrupt * __MICROSECONDS_PER_MILLISECOND;
 			break;
 
 		default:
@@ -453,11 +453,11 @@ static void TimerManager::interruptHandler()
 
 			_timerManager->microseconds += _timerManager->timePerInterrupt ;
 
-			elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_IN_MILLISECOND;
+			elapsedMilliseconds = _timerManager->microseconds / __MICROSECONDS_PER_MILLISECOND;
 
-			if(_timerManager->microseconds > __MICROSECONDS_IN_MILLISECOND)
+			if(_timerManager->microseconds > __MICROSECONDS_PER_MILLISECOND)
 			{
-				_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_IN_MILLISECOND;
+				_timerManager->microseconds = _timerManager->microseconds % __MICROSECONDS_PER_MILLISECOND;
 			}
 			break;
 

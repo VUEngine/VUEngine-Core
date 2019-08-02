@@ -151,7 +151,7 @@ u32 Clock::getMilliSeconds()
  */
 u32 Clock::getSeconds()
 {
-	return (u32)(this->milliSeconds / __MILLISECONDS_IN_SECOND);
+	return (u32)(this->milliSeconds / __MILLISECONDS_PER_SECOND);
 }
 
 /**
@@ -161,7 +161,7 @@ u32 Clock::getSeconds()
  */
 u32 Clock::getMinutes()
 {
-	return (u32)(this->milliSeconds / (__MILLISECONDS_IN_SECOND * 60));
+	return (u32)(this->milliSeconds / (__MILLISECONDS_PER_SECOND * 60));
 }
 
 /**
@@ -181,7 +181,7 @@ u32 Clock::getTime()
  */
 int Clock::getTimeInCurrentSecond()
 {
-	return __MILLISECONDS_IN_SECOND * (this->milliSeconds * 0.001f - __F_FLOOR(this->milliSeconds * 0.001f));
+	return __MILLISECONDS_PER_SECOND * (this->milliSeconds * 0.001f - __F_FLOOR(this->milliSeconds * 0.001f));
 }
 
 /**
@@ -191,7 +191,7 @@ int Clock::getTimeInCurrentSecond()
  */
 void Clock::setTimeInSeconds(float totalSeconds)
 {
-	this->milliSeconds = totalSeconds * __MILLISECONDS_IN_SECOND;
+	this->milliSeconds = totalSeconds * __MILLISECONDS_PER_SECOND;
 }
 
 /**

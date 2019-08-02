@@ -171,7 +171,7 @@
 #define __TARGET_FPS 							(50 >> __FRAME_CYCLE)
 
 // Milliseconds that must take to complete a game cycle
-#define __GAME_FRAME_DURATION					(__MILLISECONDS_IN_SECOND / __TARGET_FPS)
+#define __GAME_FRAME_DURATION					(__MILLISECONDS_PER_SECOND / __TARGET_FPS)
 
 // Target frames per second
 #define __OPTIMUM_FPS 							(__TARGET_FPS >> __FRAME_CYCLE)

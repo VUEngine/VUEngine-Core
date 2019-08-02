@@ -337,7 +337,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 {
 	this->elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
 
-	s16 factor = __MILLISECONDS_IN_SECOND / gameFrameDuration;
+	s16 factor = __MILLISECONDS_PER_SECOND / gameFrameDuration;
 	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate / factor);
 
 	if(!this->pcmFrameRateIsStable)
@@ -362,6 +362,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
 //	PRINT_TEXT("       ", 40, 14);
+//	PRINT_INT(this->pcmPlaybackCycles*factor, 40, 14);
 //	PRINT_INT(this->pcmPlaybackCyclesToSkip, 40, 14);
 	this->pcmPlaybackCycles = 0;
 }

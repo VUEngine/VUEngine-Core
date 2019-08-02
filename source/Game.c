@@ -967,7 +967,7 @@ void Game::updateFrameRate()
 	// this method "doesn't" exist
 	TimerManager::enable(this->timerManager, false);
 
-	if(this->gameFrameTotalTime >= __MILLISECONDS_IN_SECOND)
+	if(this->gameFrameTotalTime >= __MILLISECONDS_PER_SECOND)
 	{
 #ifdef __SHOW_GAME_PROFILING
 		if(_updateProfiling)

@@ -92,7 +92,6 @@ void SoundTest::update()
 {
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::printProgress(this->soundWrapper, 1, 6);
 		SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 	}
 }

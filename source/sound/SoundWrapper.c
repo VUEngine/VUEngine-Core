@@ -545,6 +545,16 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 	VirtualNode node = this->channels->head;
 	Channel* firstChannel = this->sound->synchronizedPlayback ? (Channel*)node->data : NULL;
 
+#ifdef __SOUND_TEST
+	u32 currentSecond = 0;
+	u32 newSecond = 0;
+
+	if(Game::isInSoundTest(Game::getInstance()))
+	{
+		currentSecond = SoundWrapper::getElapsedSeconds(this);
+	}
+#endif
+
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
@@ -618,6 +628,20 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 			}
 		}
 	}
+
+#ifdef __SOUND_TEST
+
+	if(Game::isInSoundTest(Game::getInstance()))
+	{
+		u32 newSecond = SoundWrapper::getElapsedSeconds(this);
+
+		if(newSecond > currentSecond)
+		{
+			SoundWrapper::printProgress(this, 1, 6);
+		}
+	}
+
+#endif
 
 	if(finished)
 	{
@@ -725,7 +749,7 @@ u32 SoundWrapper::getTotalPlaybackSeconds(Channel* channel)
 
 				for(u32 i = 0; i < channel->length; i++, totalNotesTiming += soundTrackData[channel->length + i]);
 
-				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
+				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_SECOND);
 			}
 			break;
 
@@ -746,7 +770,7 @@ u32 SoundWrapper::getElapsedSeconds()
 	{
 		case kMIDI:
 
-			return firstChannel->elapsedMicroseconds / __MICROSECONDS_IN_SECOND;
+			return firstChannel->elapsedMicroseconds / __MICROSECONDS_PER_SECOND;
 			break;
 
 		case kPCM:
@@ -777,7 +801,7 @@ void SoundWrapper::printProgress(int x, int y)
 		// Prevent skiping
 		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position - 1, y);
 	}
- 
+
 	SoundWrapper::printTiming(this, elapsedSeconds, x + 23 - 0, y + 2);
 }
 
@@ -850,6 +874,16 @@ void SoundWrapper::printMetadata(int x, int y)
 
 void SoundWrapper::printVolume(int x, int y)
 {
+	static u32 previousTime = 0;
+	u32 currentTime = TimerManager::getTotalMillisecondsElapsed(TimerManager::getInstance());
+
+	if(currentTime - previousTime < __MILLISECONDS_PER_SECOND / 10)
+	{
+		return;
+	}
+
+	previousTime = currentTime;
+
 	VirtualNode node = this->channels->head;
 
 	Channel* firstChannel = (Channel*)node->data;
