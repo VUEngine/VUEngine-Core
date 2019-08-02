@@ -440,7 +440,6 @@ void SoundTest::loadSound()
 	if(!isDeleted(this->soundWrapper))
 	{
 		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
-		SoundWrapper::printVolume(this->soundWrapper, 1, 18);
 
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);

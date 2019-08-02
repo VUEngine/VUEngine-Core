@@ -170,8 +170,6 @@ void AnimationInspector::update()
  */
 void AnimationInspector::show()
 {
-	ASSERT(gameState, "AnimationInspector::start: null gameState");
-
 	this->animatedSprite = NULL;
 
 	this->animationsSelector = NULL;

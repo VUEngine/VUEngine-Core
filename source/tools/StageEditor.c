@@ -170,8 +170,6 @@ void StageEditor::update()
  */
 void StageEditor::show()
 {
-	ASSERT(gameState, "StageEditor::start: gameState this");
-
 	this->mode = kFirstMode + 1;
 	this->userObjectSprite = NULL;
 

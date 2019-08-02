@@ -215,18 +215,41 @@ u16 TimerManager::getTimePerInterrupt()
 	return this->timePerInterrupt;
 }
 
-fix17_15 TimerManager::getTimePerInterruptInMS()
+u32 TimerManager::getTimePerInterruptInMS()
 {
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			return __FIX17_15_DIV(__I_TO_FIX17_15(__TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance())), __I_TO_FIX17_15(__MICROSECONDS_IN_MILLISECOND));
+			return __TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance()) / __MICROSECONDS_IN_MILLISECOND;
 			break;
 
 		case kMS:
 
-			return __I_TO_FIX17_15(this->timePerInterrupt);
+			return this->timePerInterrupt;
+			break;
+
+		default:
+
+			ASSERT(false, "SoundTest::processUserInput: wrong timer resolution scale");
+			break;
+	}
+
+	return 0;	
+}
+
+u32 TimerManager::getTimePerInterruptInUS()
+{
+	switch(this->timePerInterruptUnits)
+	{
+		case kUS:
+
+			return __TIME_US(this->timePerInterrupt) * TimerManager::getResolutionInUS(TimerManager::getInstance());
+			break;
+
+		case kMS:
+
+			return this->timePerInterrupt * __MICROSECONDS_IN_MILLISECOND;
 			break;
 
 		default:

@@ -234,7 +234,7 @@ void SoundWrapper::play(const Vector3D* position)
 
 		if(!wasPaused)
 		{
-			channel->elapsedTimeInMS = 0;
+			channel->elapsedMicroseconds = 0;
 		}
 	}
 
@@ -278,7 +278,9 @@ void SoundWrapper::rewind()
 	{
 		Channel* channel = (Channel*)node->data;
 		channel->cursor = 0;
-		channel->elapsedTimeInMS = 0;
+		channel->elapsedMicroseconds = 0;
+		channel->soundChannelConfiguration.SxLRV = 0;
+		channel->soundChannelConfiguration.SxFQH = channel->soundChannelConfiguration.SxFQL = 0;
 
 		SoundWrapper::computeNextTicksPerNote(this, channel, 0);
 	}
@@ -311,9 +313,11 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
+	this->paused = true;
+	this->sound = NULL;
+
 	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
 }
-
 
 void SoundWrapper::setupChannels(s8* waves)
 {
@@ -337,7 +341,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
 		channel->ticks = 0;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
-		channel->elapsedTimeInMS = 0;
+		channel->elapsedMicroseconds = 0;
 
 		switch(channel->soundChannelConfiguration.type)
 		{
@@ -360,6 +364,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		}
 
 		SoundWrapper::computeNextTicksPerNote(this, channel, 0);
+		channel->totalPlaybackSeconds = SoundWrapper::getTotalPlaybackSeconds(this, channel);
 	}
 
 	if(this->sound->synchronizedPlayback)
@@ -527,7 +532,7 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
 /**
  * Update sound playback
  */
-void SoundWrapper::updatePlayback(u32 type, bool mute, fix17_15 elapsedTimeInMS)
+void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 {
 	if(NULL == this->sound || this->paused)
 	{
@@ -544,8 +549,8 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, fix17_15 elapsedTimeInMS)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		channel->elapsedTimeInMS += __FIX17_15_MULT(this->speed, elapsedTimeInMS);		
-
+		channel->elapsedMicroseconds += __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
+		
 		// TODO: optimize playback of types
 		if(type != channel->soundChannelConfiguration.type)
 		{
@@ -708,19 +713,17 @@ void SoundWrapper::print(int x, int y)
 	}
 }
 
-u32 SoundWrapper::getTotalPlaybackTime()
+u32 SoundWrapper::getTotalPlaybackSeconds(Channel* channel)
 {
-	Channel* firstChannel = (Channel*)this->channels->head->data;
-
-	switch(firstChannel->soundChannelConfiguration.type)
+	switch(channel->soundChannelConfiguration.type)
 	{
 		case kMIDI:
 			{
 				u32 totalNotesTiming = 0;
 
-				u16* soundTrackData = (u16*)this->sound->soundChannels[firstChannel->soundChannel]->soundTrack.dataMIDI;
+				u16* soundTrackData = (u16*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
 
-				for(u32 i = 0; i < firstChannel->length; i++, totalNotesTiming += soundTrackData[firstChannel->length + i]);
+				for(u32 i = 0; i < channel->length; i++, totalNotesTiming += soundTrackData[channel->length + i]);
 
 				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_IN_SECOND);
 			}
@@ -728,14 +731,14 @@ u32 SoundWrapper::getTotalPlaybackTime()
 
 		case kPCM:
 
-			return firstChannel->length / this->pcmTargetPlaybackFrameRate;
+			return channel->length / this->pcmTargetPlaybackFrameRate;
 			break;
 	}
 
 	return 0;
 }
 
-u32 SoundWrapper::getElapsedTime()
+u32 SoundWrapper::getElapsedSeconds()
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 
@@ -743,7 +746,7 @@ u32 SoundWrapper::getElapsedTime()
 	{
 		case kMIDI:
 
-			return (u32)__FIX17_15_TO_I(__FIX17_15_DIV(firstChannel->elapsedTimeInMS, __I_TO_FIX17_15(__MILLISECONDS_IN_SECOND)));
+			return firstChannel->elapsedMicroseconds / __MICROSECONDS_IN_SECOND;
 			break;
 
 		case kPCM:
@@ -757,8 +760,10 @@ u32 SoundWrapper::getElapsedTime()
 
 void SoundWrapper::printProgress(int x, int y)
 {
+	u32 elapsedSeconds = SoundWrapper::getElapsedSeconds(this);
 	Channel* firstChannel = (Channel*)this->channels->head->data;
-	u32 position = (firstChannel->cursor << 5) / firstChannel->length;
+
+	u32 position = (elapsedSeconds << 5) / firstChannel->totalPlaybackSeconds;
 
 	if(0 == position)
 	{
@@ -767,14 +772,13 @@ void SoundWrapper::printProgress(int x, int y)
 			PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
 		}
 	}
-	else
+	else if(0 < position)
 	{
 		// Prevent skiping
 		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position - 1, y);
-		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position, y);
 	}
  
-	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23 - 0, y + 2);
+	SoundWrapper::printTiming(this, elapsedSeconds, x + 23 - 0, y + 2);
 }
 
 void SoundWrapper::printTiming(u32 seconds, int x, int y)
@@ -813,9 +817,9 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	y++;
 
-	SoundWrapper::printTiming(this, SoundWrapper::getElapsedTime(this), x + 23, y);
+	SoundWrapper::printTiming(this, SoundWrapper::getElapsedSeconds(this), x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
-	SoundWrapper::printTiming(this, SoundWrapper::getTotalPlaybackTime(this), x + 28, y);
+	SoundWrapper::printTiming(this, firstChannel->totalPlaybackSeconds, x + 28, y);
 
 	PRINT_TEXT("Speed", x, y);
 	PRINT_TEXT("    ", x + 6, y);
@@ -839,23 +843,52 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_INT(VirtualList::getSize(this->channels), trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
-	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
+	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);
+
+	SoundWrapper::printVolume(this, 1, ++y);
 }
 
 void SoundWrapper::printVolume(int x, int y)
 {
 	VirtualNode node = this->channels->head;
 
-	PRINT_TEXT("VOLUME", x, ++y);
-	++y;
-	++y;
+	Channel* firstChannel = (Channel*)node->data;
 
-	for(; node; node = node->next)
+	if(0 == firstChannel->elapsedMicroseconds)
+	{
+		PRINT_TEXT("VOLUME", x, ++y);
+
+		++y;
+		++y;
+
+		int yDisplacement = 0;
+
+		for(node = this->channels->head; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+
+			PRINT_TEXT("C", x + 15 - 7, y + yDisplacement);
+			PRINT_INT(channel->number, x + 16 - 7, y + yDisplacement);
+
+			for(int i = 0; i < 8; i++) 
+			{
+				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 7, y + yDisplacement);
+				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 7, y + yDisplacement);
+			}
+
+			yDisplacement++;
+		}
+	}
+	else
+	{
+		++y;
+		++y;
+		++y;
+	}	
+
+	for(node = this->channels->head; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
-
-		PRINT_TEXT("C", x + 15, y);
-		PRINT_INT(channel->number, x + 16, y);
 
 		u8 leftVolume = (channel->soundChannelConfiguration.SxLRV & 0xF0) >> 4;
 		u8 rightVolume = (channel->soundChannelConfiguration.SxLRV & 0x0F);
@@ -867,17 +900,19 @@ void SoundWrapper::printVolume(int x, int y)
 		{
 			case kMIDI:
 
-				for(i=0; i<15; i++) {
-					PRINT_TEXT(((frequency * leftVolume / __MAXIMUM_VOLUME) >> 4) > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i, y);
-					PRINT_TEXT(((frequency * rightVolume / __MAXIMUM_VOLUME) >> 4) > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i, y);
+				for(i = 0; i < 8; i++) 
+				{
+					PRINT_TEXT(((frequency * leftVolume / __MAXIMUM_VOLUME) >> 5) > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i - 7, y);
+					PRINT_TEXT(((frequency * rightVolume / __MAXIMUM_VOLUME) >> 5) > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i - 7, y);
 				}
 				break;
 
 			case kPCM:
 
-				for(i=0; i<15; i++) {
-					PRINT_TEXT(leftVolume > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i, y);
-					PRINT_TEXT(rightVolume > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i, y);
+				for(i = 0; i < 8; i++) 
+				{
+					PRINT_TEXT(leftVolume > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i - 7, y);
+					PRINT_TEXT(rightVolume > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i - 7, y);
 				}
 				break;
 

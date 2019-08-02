@@ -399,15 +399,17 @@ void Game::start(GameState state)
 				Game::debug(this);
 
 				Game::currentFrameEnded(this);
+
+#ifdef __SOUND_TEST
+				if(Game::isInSoundTest(Game::getInstance()))
+				{
+					SoundTest::printVolumeState(SoundTest::getInstance());
+				}
+#endif
 			}
 			else
 			{
-				static bool flag = false;
-				if(!flag)
-				{
 				SoundManager::playPCMSounds(soundManager);
-				}
-					flag = !flag;
 			}
 		}
 	}

@@ -87,7 +87,7 @@ singleton class SoundManager : Object
 	VirtualList releasedSoundWrappers;
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
-	fix17_15 elapsedTimeInMS;
+	u32 elapsedMicroseconds;
 	u16 pcmPlaybackCycles;
 	u16 pcmTargetPlaybackFrameRate;
 	s16 pcmPlaybackCyclesToSkip;
