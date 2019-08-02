@@ -845,7 +845,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
 	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);
 
-	SoundWrapper::printVolume(this, 1, ++y);
+	SoundWrapper::printVolume(this, 1, y);
 }
 
 void SoundWrapper::printVolume(int x, int y)
