@@ -377,7 +377,10 @@ void SoundTest::processUserInput(u16 pressedKey)
 		}
 	}
 
-	SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
+	if(!isDeleted(this->soundWrapper))
+	{
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
+	}
 }
 
 u16 SoundTest::getTotalSounds()
