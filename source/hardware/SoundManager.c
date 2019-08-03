@@ -269,7 +269,7 @@ void SoundManager::reset()
 void SoundManager::startPCMPlayback()
 {
 	this->pcmPlaybackCycles = 0;
-	this->pcmPlaybackCyclesToSkip = 0;
+	this->pcmPlaybackCyclesToSkip = 100;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
 	this->pcmStablePlaybackCycles = 0;
 
@@ -364,9 +364,15 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 
 	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
-//	PRINT_TEXT("       ", 40, 14);
-//	PRINT_INT(this->pcmPlaybackCycles*factor, 40, 14);
-//	PRINT_INT(this->pcmPlaybackCyclesToSkip, 40, 14);
+	if(-100 > this->pcmPlaybackCyclesToSkip)
+	{
+		this->pcmPlaybackCyclesToSkip = 10;
+	}
+
+//	PRINT_TEXT("                ", 30, 14);
+//	PRINT_INT(this->pcmPlaybackCycles*factor, 35, 14);
+//	PRINT_INT(this->pcmPlaybackCyclesToSkip, 30, 14);
+
 	this->pcmPlaybackCycles = 0;
 }
 

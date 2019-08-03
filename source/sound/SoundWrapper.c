@@ -134,20 +134,23 @@ fix17_15 SoundWrapper::getSpeed()
 void SoundWrapper::setSpeed(fix17_15 speed)
 {
 	// Prevent timer interrupts to unsync tracks
-	bool paused = this->paused;
-	this->paused = true;
-	this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(2.0f);
-
-	VirtualNode node = this->channels->head;
-
-	// Prepare channels
-	for(; node; node = node->next)
+	if(!this->hasPCMTracks)
 	{
-		Channel* channel = (Channel*)node->data;
-		SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks);
-	}
+		bool paused = this->paused;
+		this->paused = true;
+		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(2.0f);
 
-	this->paused = paused;
+		VirtualNode node = this->channels->head;
+
+		// Prepare channels
+		for(; node; node = node->next)
+		{
+			Channel* channel = (Channel*)node->data;
+			SoundWrapper::computeNextTicksPerNote(this, channel, channel->ticks);
+		}
+
+		this->paused = paused;
+	}
 }
 
 /**
@@ -479,13 +482,13 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 		finalVolume  = __MAXIMUM_VOLUME;
 	}
 
-	if(mute)
+ 	if(mute)
 	{
 		_soundRegistries[channel->number].SxLRV = 0;
 	}
 	else
 	{
-#ifdef __TOOLS
+#ifdef __SOUND_TEST
 		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
 #else
 #ifndef __RELEASE
@@ -495,8 +498,6 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 #endif
 #endif
 	}
-
-//	_soundRegistries[channel->number].SxEV1 = channel->soundChannelConfiguration.SxEV1 = 0x40;
 }
 
 void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
@@ -517,7 +518,7 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
 
 		case kPCM:
 
-			channel->ticksPerNote = __FIX17_15_DIV(__I_TO_FIX17_15(1), this->speed) >> 1;
+			channel->ticksPerNote = 0;
 			channel->tickStep = __I_TO_FIX17_15(1);
 			channel->ticks = 0;
 			break;
@@ -548,26 +549,29 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 #ifdef __SOUND_TEST
 	u32 currentSecond = 0;
 	u32 newSecond = 0;
+	bool isInSoundTest = Game::isInSoundTest(Game::getInstance());
 
-	if(Game::isInSoundTest(Game::getInstance()))
+	if(isInSoundTest)
 	{
 		currentSecond = SoundWrapper::getElapsedSeconds(this);
 	}
 #endif
-
+ 
+	u32 scaledElapsedMicroseconds = this->hasPCMTracks ? __I_TO_FIX17_15(1) : __I_TO_FIX17_15(__FIX17_15_TO_I(__FIX17_15_MULT(this->speed, elapsedMicroseconds)));
+	
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		channel->elapsedMicroseconds += __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
-		
+		channel->elapsedMicroseconds += scaledElapsedMicroseconds;
+
 		// TODO: optimize playback of types
 		if(type != channel->soundChannelConfiguration.type)
 		{
 			finished &= channel->finished;
 			continue;
 		}
-
+ 
 		if(NULL != firstChannel && channel != firstChannel)
 		{
 			if(firstChannel->cursor >= channel->length)
@@ -630,8 +634,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 	}
 
 #ifdef __SOUND_TEST
-
-	if(Game::isInSoundTest(Game::getInstance()))
+	if(isInSoundTest)
 	{
 		u32 newSecond = SoundWrapper::getElapsedSeconds(this);
 
@@ -640,7 +643,6 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 			SoundWrapper::printProgress(this, 1, 6);
 		}
 	}
-
 #endif
 
 	if(finished)
