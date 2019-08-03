@@ -206,6 +206,16 @@ bool SoundWrapper::isPaused()
 }
 
 /**
+ *  Has PCM tracks?
+ *
+ * @return bool
+ */
+bool SoundWrapper::hasPCMTracks()
+{
+	return this->hasPCMTracks;
+}
+
+/**
  * Play
  *
  */
@@ -554,7 +564,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, 
 	}
 #endif
  
-	u32 scaledElapsedMicroseconds = this->hasPCMTracks ? __I_TO_FIX17_15(1) : __I_TO_FIX17_15(__FIX17_15_TO_I(__FIX17_15_MULT(this->speed, elapsedMicroseconds)));
+	u32 scaledElapsedMicroseconds = this->hasPCMTracks ? __I_TO_FIX17_15(1) : __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
 	
 	for(; node; node = node->next)
 	{
@@ -771,19 +781,25 @@ u32 SoundWrapper::getElapsedSeconds()
 
 void SoundWrapper::printProgress(int x, int y, u32 elapsedSeconds)
 {
+	static u16 previousPosition = 0;
+	
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 
-	u32 position = (elapsedSeconds << 5) / firstChannel->totalPlaybackSeconds;
+	u16 position = (elapsedSeconds << 5) / firstChannel->totalPlaybackSeconds;
 
 	if(0 == position)
 	{
+		previousPosition = 0;
+
 		for(u8 i = 0; i < 32; i++)
 		{
 			PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
 		}
 	}
-	else if(0 < position)
+	else if(previousPosition < position)
 	{
+		previousPosition = position;
+
 		// Prevent skiping
 		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position - 1, y);
 	}
@@ -796,7 +812,7 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 	u32 minutes = seconds / 60;
 	seconds = seconds - minutes * 60;
 
-	int minutesDigits = Utilities::getDigitCount(minutes);
+	int minutesDigits = 1;//Utilities::getDigitCount(minutes);
 
 	PRINT_INT(minutes, x, y);
 
@@ -860,16 +876,6 @@ void SoundWrapper::printMetadata(int x, int y)
 
 void SoundWrapper::printVolume(int x, int y)
 {
-	static u32 previousTime = 0;
-	u32 currentTime = TimerManager::getTotalMillisecondsElapsed(TimerManager::getInstance());
-
-	if(currentTime - previousTime < __MILLISECONDS_PER_SECOND / 10)
-	{
-		return;
-	}
-
-	previousTime = currentTime;
-
 	VirtualNode node = this->channels->head;
 
 	Channel* firstChannel = (Channel*)node->data;

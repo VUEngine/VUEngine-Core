@@ -35,7 +35,7 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PLAYBACK_CYCLES_MODIFIER			1
+#define __PLAYBACK_CYCLES_MODIFIER			2
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -366,7 +366,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 			this->pcmStablePlaybackCycles = 0;
 		}
 		
-		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < (this->pcmStablePlaybackCycles >> 0))
+		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < (this->pcmStablePlaybackCycles >> __PLAYBACK_CYCLES_MODIFIER))
 		{
 			this->pcmFrameRateIsStable = true;
 
@@ -376,14 +376,14 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 
 	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
-	if(-100 > this->pcmPlaybackCyclesToSkip)
+	if(0 > this->pcmPlaybackCyclesToSkip)
 	{
 		this->pcmPlaybackCyclesToSkip = 10;
 	}
 
-	PRINT_TEXT("                ", 35, 20);
-	PRINT_INT(this->pcmPlaybackCycles*factor, 40, 20);
-	PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
+//	PRINT_TEXT("                ", 35, 20);
+//	PRINT_INT(this->pcmPlaybackCycles*factor, 40, 20);
+///	PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
 
 	this->pcmPlaybackCycles = 0;
 }

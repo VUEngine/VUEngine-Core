@@ -197,6 +197,7 @@ class SoundWrapper : Object
 	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate);
 
 	bool isPaused();
+	bool hasPCMTracks();
 	void play(const Vector3D* position);
 	void pause();
 	void rewind();

@@ -90,6 +90,15 @@ void SoundTest::releaseSoundWrapper()
  */
 void SoundTest::update()
 {
+	static u16 delay = 0;
+
+	if(++delay < __TARGET_FPS / 5)
+	{
+		return;
+	}
+
+	delay = 0;
+
 	if(!isDeleted(this->soundWrapper))
 	{
 		SoundWrapper::printVolume(this->soundWrapper, 1, 18);
