@@ -183,18 +183,21 @@ void SoundManager::destructor()
 
 void SoundManager::purgeReleasedSoundWrappers()
 {
-	VirtualNode node = this->releasedSoundWrappers->head;
-
-	for(; node; node = node->next)
+	if(!isDeleted(this->releasedSoundWrappers))
 	{
-		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+		VirtualNode node = this->releasedSoundWrappers->head;
 
-		VirtualList::removeElement(this->soundWrappers, soundWrapper);
+		for(; node; node = node->next)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-		delete soundWrapper;
+			VirtualList::removeElement(this->soundWrappers, soundWrapper);
+
+			delete soundWrapper;
+		}
+
+		VirtualList::clear(this->releasedSoundWrappers);
 	}
-
-	VirtualList::clear(this->releasedSoundWrappers);
 }
 
 void SoundManager::reset()
