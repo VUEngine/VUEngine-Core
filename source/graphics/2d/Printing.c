@@ -61,6 +61,12 @@ FontROMData VUENGINE_DEBUG_FONT_DATA =
 	__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE,
 };
 
+//---------------------------------------------------------------------------------------------------------
+//												CLASS'S DEFINITION
+//---------------------------------------------------------------------------------------------------------
+
+// Declare global instance for performance
+Printing _printing = NULL;
 
 //---------------------------------------------------------------------------------------------------------
 //												CLASS'S METHODS
@@ -76,10 +82,14 @@ void Printing::constructor()
 	this->palette = __PRINTING_PALETTE;
 
 	Printing::reset(this);
+
+	_printing = this;
 }
 
 void Printing::destructor()
 {
+	_printing = NULL;
+
 	delete this->fonts;
 
 	// allow a new construct
