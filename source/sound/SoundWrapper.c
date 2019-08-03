@@ -469,6 +469,12 @@ static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 
 static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 {
+	if(mute)
+	{
+		_soundRegistries[channel->number].SxLRV = 0;
+		return;
+	}
+
 	u8 volume = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM[channel->cursor];
 
 	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUME * (channel->soundChannel);
@@ -482,22 +488,15 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 		finalVolume  = __MAXIMUM_VOLUME;
 	}
 
- 	if(mute)
-	{
-		_soundRegistries[channel->number].SxLRV = 0;
-	}
-	else
-	{
 #ifdef __SOUND_TEST
-		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
 #else
 #ifndef __RELEASE
-		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
 #else
-		_soundRegistries[channel->number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
+	_soundRegistries[channel->number].SxLRV = (((u8)finalVolume  << 4) & 0xF0) | (((u8)finalVolume ) & 0x0F);
 #endif
 #endif
-	}
 }
 
 void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
@@ -533,7 +532,7 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
 /**
  * Update sound playback
  */
-void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
+void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, bool isSoundTest)
 {
 	if(NULL == this->sound || this->paused)
 	{
@@ -548,10 +547,8 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 
 #ifdef __SOUND_TEST
 	u32 currentSecond = 0;
-	u32 newSecond = 0;
-	bool isInSoundTest = Game::isInSoundTest(Game::getInstance());
 
-	if(isInSoundTest)
+	if(isSoundTest)
 	{
 		currentSecond = SoundWrapper::getElapsedSeconds(this);
 	}
@@ -634,28 +631,16 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 	}
 
 #ifdef __SOUND_TEST
-	if(isInSoundTest)
+	if(isSoundTest && elapsedMicroseconds)
 	{
 		u32 newSecond = SoundWrapper::getElapsedSeconds(this);
 
 		if(newSecond > currentSecond)
 		{
-			SoundWrapper::printProgress(this, 1, 6);
-		}
+			SoundWrapper::printProgress(this, 1, 6, newSecond);
+		}		
 	}
 #endif
-
-	if(finished)
-	{
-		SoundWrapper::fireEvent(this, kSoundFinished);
-
-		if(!this->sound->loop)
-		{
-			SoundWrapper::fireEvent(this, kSoundReleased);
-
-			SoundWrapper::release(this);
-		}
-	}
 }
 
 void SoundWrapper::print(int x, int y)
@@ -784,9 +769,8 @@ u32 SoundWrapper::getElapsedSeconds()
 	return 0;
 }
 
-void SoundWrapper::printProgress(int x, int y)
+void SoundWrapper::printProgress(int x, int y, u32 elapsedSeconds)
 {
-	u32 elapsedSeconds = SoundWrapper::getElapsedSeconds(this);
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 
 	u32 position = (elapsedSeconds << 5) / firstChannel->totalPlaybackSeconds;
@@ -815,7 +799,6 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 	int minutesDigits = Utilities::getDigitCount(minutes);
 
 	PRINT_INT(minutes, x, y);
-	PRINT_TEXT(":  ", x + minutesDigits, y);
 
 	if(seconds < 10)
 	{
@@ -824,6 +807,7 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 	}
 	else
 	{
+		PRINT_TEXT(":  ", x + minutesDigits, y);
 		PRINT_INT(seconds, x + minutesDigits + 1, y);
 	}
 }
@@ -833,7 +817,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT(this->sound->name, x, y++);
 	y++;
 
-	SoundWrapper::printProgress(this, x, y++);
+	SoundWrapper::printProgress(this, x, y++, SoundWrapper::getElapsedSeconds(this));
 
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 

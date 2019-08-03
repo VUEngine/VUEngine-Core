@@ -202,14 +202,13 @@ class SoundWrapper : Object
 	void rewind();
 	void stop();
 	void release();
-	void updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds);
+	void updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, bool isSoundTest);
 	fix17_15 getSpeed();
 	void setSpeed(fix17_15 speed);
 	void computeTimerResolutionFactor();
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 	void printVolume(int x, int y);
-	void printProgress(int x, int y);
 }
 
 

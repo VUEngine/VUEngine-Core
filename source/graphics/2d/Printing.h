@@ -36,11 +36,11 @@
 //---------------------------------------------------------------------------------------------------------
 
 // some handy macros
-#define PRINT_TEXT(string, x, y)			Printing_text(Printing_getInstance(), string, x, y, NULL)
-#define PRINT_INT(number, x, y)				Printing_int(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_FLOAT(number, x, y)			Printing_float(Printing_getInstance(), number, x, y, NULL)
-#define PRINT_HEX(number, x, y)				Printing_hex(Printing_getInstance(), number, x, y, 8, NULL)
-#define PRINT_HEX_EXT(number, x, y, d)		Printing_hex(Printing_getInstance(), number, x, y, d, NULL)
+#define PRINT_TEXT(string, x, y)			Printing::text(_printing, string, x, y, NULL)
+#define PRINT_INT(number, x, y)				Printing::int(_printing, number, x, y, NULL)
+#define PRINT_FLOAT(number, x, y)			Printing::float(_printing, number, x, y, NULL)
+#define PRINT_HEX(number, x, y)				Printing::hex(_printing, number, x, y, 8, NULL)
+#define PRINT_HEX_EXT(number, x, y, d)		Printing::hex(_printing, number, x, y, d, NULL)
 
 // max length of a font's name
 #define __MAX_FONT_NAME_LENGTH		16
@@ -382,5 +382,7 @@ singleton class Printing : Object
      */
 }
 
+// Declare global instance for performance
+extern Printing _printing;
 
 #endif

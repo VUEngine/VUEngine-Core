@@ -35,6 +35,12 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
+#define __PLAYBACK_CYCLES_MODIFIER			1
+
+
+//---------------------------------------------------------------------------------------------------------
+//											 CLASS' DEFINITIONS
+//---------------------------------------------------------------------------------------------------------
 
 const unsigned char sawSquareWave[32] =
 {
@@ -148,6 +154,7 @@ void SoundManager::constructor()
 
 	this->soundWrappers = NULL;
 	this->releasedSoundWrappers = NULL;
+	this->isSoundTest = false;
 
 	SoundManager::reset(this);
 }
@@ -179,6 +186,11 @@ void SoundManager::destructor()
 	}
 
 	Base::destructor();
+}
+
+void SoundManager::setSoundTest(bool isSoundTest)
+{
+	this->isSoundTest = isSoundTest;
 }
 
 void SoundManager::purgeReleasedSoundWrappers()
@@ -281,10 +293,10 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
-void SoundManager::playSounds(u32 type, bool mute)
+void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 {
 	VirtualNode node = this->soundWrappers->head;
-	
+
 	for(; node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
@@ -301,7 +313,7 @@ void SoundManager::playSounds(u32 type, bool mute)
 
 				if(soundWrapper->hasMIDITracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute, this->elapsedMicroseconds);
+					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds, this->isSoundTest);
 				}
 				break;
 
@@ -309,7 +321,7 @@ void SoundManager::playSounds(u32 type, bool mute)
 
 				if(soundWrapper->hasPCMTracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute, this->elapsedMicroseconds);
+					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds, this->isSoundTest);
 				}
 				break;
 
@@ -323,17 +335,17 @@ void SoundManager::playSounds(u32 type, bool mute)
 
 void SoundManager::playMIDISounds()
 {
-	SoundManager::playSounds(this, kMIDI, false);
+	SoundManager::playSounds(this, kMIDI, false, this->elapsedMicroseconds);
 }
 
 void SoundManager::playPCMSounds()
 {
 	// Do not waste CPU cycles returning to the call point
-	volatile int pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
+	volatile int pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip >> __PLAYBACK_CYCLES_MODIFIER;
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
 	this->pcmPlaybackCycles++;
-	SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable);
+	SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
 }
 
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
@@ -354,7 +366,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 			this->pcmStablePlaybackCycles = 0;
 		}
 		
-		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < this->pcmStablePlaybackCycles)
+		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < (this->pcmStablePlaybackCycles >> 0))
 		{
 			this->pcmFrameRateIsStable = true;
 
@@ -369,9 +381,9 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		this->pcmPlaybackCyclesToSkip = 10;
 	}
 
-//	PRINT_TEXT("                ", 30, 14);
-//	PRINT_INT(this->pcmPlaybackCycles*factor, 35, 14);
-//	PRINT_INT(this->pcmPlaybackCyclesToSkip, 30, 14);
+	PRINT_TEXT("                ", 35, 20);
+	PRINT_INT(this->pcmPlaybackCycles*factor, 40, 20);
+	PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
 
 	this->pcmPlaybackCycles = 0;
 }

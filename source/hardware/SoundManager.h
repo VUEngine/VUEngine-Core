@@ -76,6 +76,7 @@ enum SoundRequestMessages
 
 #define __DEFAULT_PCM_HZ	8000
 
+
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -93,6 +94,7 @@ singleton class SoundManager : Object
 	s16 pcmPlaybackCyclesToSkip;
 	s16 pcmStablePlaybackCycles;
 	bool pcmFrameRateIsStable;
+	bool isSoundTest;
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -111,6 +113,7 @@ singleton class SoundManager : Object
 	void startPCMPlayback();
 
 	void updateFrameRate(u16 gameFrameDuration);
+	void setSoundTest(bool isSoundTest);
 	void print();
 }
 

@@ -104,9 +104,11 @@ void SoundTest::update()
 void SoundTest::show()
 {
 	SoundManager::reset(SoundManager::getInstance());
+	SoundManager::setSoundTest(SoundManager::getInstance(), true);
+
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
-	Printing::resetCoordinates(Printing::getInstance());
+	Printing::resetCoordinates(_printing);
 
 	TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
 	TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
@@ -123,6 +125,7 @@ void SoundTest::show()
  */
 void SoundTest::hide()
 {
+	SoundManager::setSoundTest(SoundManager::getInstance(), false);
 	SoundTest::releaseSoundWrapper(this);
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
@@ -138,28 +141,28 @@ void SoundTest::printGUI(bool clearScreen)
 
 	if(clearScreen)
 	{
-		Printing::clear(Printing::getInstance());
+		Printing::clear(_printing);
 	}
 
-	Printing::text(Printing::getInstance(), "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
+	Printing::text(_printing, "\x08 SOUND TEST \x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08\x08", 0, 0, NULL);
 
 	if(NULL == _userSounds[this->selectedSound])
 	{
-		Printing::text(Printing::getInstance(), "No sounds found", 1, 4, NULL);
-		Printing::text(Printing::getInstance(), "Define some in _userSounds global variable", 1, 6, NULL);
+		Printing::text(_printing, "No sounds found", 1, 4, NULL);
+		Printing::text(_printing, "Define some in _userSounds global variable", 1, 6, NULL);
 		return;
 	}
 
-	Printing::text(Printing::getInstance(), __CHAR_SELECTOR_LEFT, 1, 2, NULL);
+	Printing::text(_printing, __CHAR_SELECTOR_LEFT, 1, 2, NULL);
 
 	u16 totalSounds = SoundTest::getTotalSounds(this);
 
 	int selectedSoundDigits = Utilities::getDigitCount(this->selectedSound);
 	int totalSoundsDigits = Utilities::getDigitCount(totalSounds);
-	Printing::int(Printing::getInstance(), this->selectedSound + 1, 1 + 1, 2, NULL);
-	Printing::text(Printing::getInstance(), "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
-	Printing::int(Printing::getInstance(), SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
-	Printing::text(Printing::getInstance(), __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
+	Printing::int(_printing, this->selectedSound + 1, 1 + 1, 2, NULL);
+	Printing::text(_printing, "/" , 1 + 1 + selectedSoundDigits, 2, NULL);
+	Printing::int(_printing, SoundTest::getTotalSounds(this), 1 + 1 + selectedSoundDigits + 1, 2, NULL);
+	Printing::text(_printing, __CHAR_SELECTOR, 1 + 1 + selectedSoundDigits + 1 + totalSoundsDigits, 2, NULL);
 
 	if(isDeleted(this->soundWrapper))
 	{
@@ -172,19 +175,19 @@ void SoundTest::printGUI(bool clearScreen)
 	// Controls
 	if(SoundWrapper::isPaused(this->soundWrapper))
 	{
-		Printing::text(Printing::getInstance(), "Play     \x13", xControls, yControls++, NULL);
+		Printing::text(_printing, "Play     \x13", xControls, yControls++, NULL);
 	}
 	else
 	{
-		Printing::text(Printing::getInstance(), "Pause    \x13", xControls, yControls++, NULL);
+		Printing::text(_printing, "Pause    \x13", xControls, yControls++, NULL);
 	}
-	Printing::text(Printing::getInstance(), "Rewind   \x14", xControls, yControls++, NULL);
-	Printing::text(Printing::getInstance(), "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
-	Printing::text(Printing::getInstance(), "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
+	Printing::text(_printing, "Rewind   \x14", xControls, yControls++, NULL);
+	Printing::text(_printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text(_printing, "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
 	yControls++;
-	Printing::text(Printing::getInstance(), "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
-	Printing::text(Printing::getInstance(), "T.Scale \x1F\x1B", xControls, yControls++, NULL);
-	Printing::text(Printing::getInstance(), "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
+	Printing::text(_printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
+	Printing::text(_printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
+	Printing::text(_printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
 
 	SoundTest::printTimer(this);
 }
