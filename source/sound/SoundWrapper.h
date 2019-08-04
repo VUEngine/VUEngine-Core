@@ -165,6 +165,7 @@ typedef struct Channel
 	u32 totalPlaybackSeconds;
 	u8 number;
 	u8 soundChannel;
+	u8 volumeReduction;
 	bool finished;
 
 } Channel;
@@ -203,13 +204,15 @@ class SoundWrapper : Object
 	void rewind();
 	void stop();
 	void release();
-	void updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, bool isSoundTest);
+	void updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds);
 	fix17_15 getSpeed();
 	void setSpeed(fix17_15 speed);
 	void computeTimerResolutionFactor();
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 	void printVolume(int x, int y);
+	void printPlaybackTime(int x, int y);
+	void printPlaybackProgress(int x, int y);
 }
 
 

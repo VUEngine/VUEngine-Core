@@ -90,18 +90,19 @@ void SoundTest::releaseSoundWrapper()
  */
 void SoundTest::update()
 {
-	static u16 delay = 0;
-
-	if(++delay < __TARGET_FPS / 5)
-	{
-		return;
-	}
-
-	delay = 0;
-
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::printVolume(this->soundWrapper, 1, 18);
+		static u16 delay = 0;
+
+		if(delay++ > __TARGET_FPS)
+		{
+			SoundWrapper::printPlaybackProgress(this->soundWrapper, 1, 6);
+			delay = 0;
+		}
+		else
+		{
+			SoundWrapper::printVolume(this->soundWrapper, 1, 18);
+		}
 	}
 }
 
@@ -113,7 +114,6 @@ void SoundTest::update()
 void SoundTest::show()
 {
 	SoundManager::reset(SoundManager::getInstance());
-	SoundManager::setSoundTest(SoundManager::getInstance(), true);
 
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::showLayer(SpriteManager::getInstance(), 0);
@@ -134,7 +134,6 @@ void SoundTest::show()
  */
 void SoundTest::hide()
 {
-	SoundManager::setSoundTest(SoundManager::getInstance(), false);
 	SoundTest::releaseSoundWrapper(this);
 	VIPManager::clearBgmapSegment(VIPManager::getInstance(), BgmapTextureManager::getPrintingBgmapSegment(BgmapTextureManager::getInstance()), __PRINTABLE_BGMAP_AREA);
 	SpriteManager::recoverLayers(SpriteManager::getInstance());
@@ -428,6 +427,26 @@ void SoundTest::loadSound()
 
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);
+
+		if(SoundWrapper::hasPCMTracks(this->soundWrapper))
+		{
+			TimerManager::setMaximumTimePerInterruptMS(TimerManager::getInstance(), 10000);
+			TimerManager::setMinimumTimePerInterruptMS(TimerManager::getInstance(), 100);
+			TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
+			TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
+			TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 1000);
+		}
+		else
+		{
+			TimerManager::setMaximumTimePerInterruptMS(TimerManager::getInstance(), 50);
+			TimerManager::setMinimumTimePerInterruptMS(TimerManager::getInstance(), 1);
+			TimerManager::setMaximumTimePerInterruptMS(TimerManager::getInstance(), 50);
+			TimerManager::setResolution(TimerManager::getInstance(), __TIMER_100US);
+			TimerManager::setTimePerInterruptUnits(TimerManager::getInstance(), kMS);
+			TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 10);
+		}
+
+		SoundTest::printTimer(this);
 	}
 
 	Game::enableKeypad(Game::getInstance());

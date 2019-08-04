@@ -71,6 +71,10 @@ void TimerManager::constructor()
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
 	this->timePerInterruptUnits = kMS;
+	this->minimumTimePerInterruptUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
+	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
+	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
+	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 
 	_timerManager = this;
 	_soundManager = SoundManager::getInstance();
@@ -99,6 +103,10 @@ void TimerManager::reset()
 	this->resolution = __TIMER_100US;
 	this->timePerInterrupt = 1;
 	this->timePerInterruptUnits = kMS;
+	this->minimumTimePerInterruptUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
+	this->minimumTimePerInterruptMS = __MINIMUM_TIME_PER_INTERRUPT_MS;
+	this->maximumTimePerInterruptUS = __MAXIMUM_TIME_PER_INTERRUPT_US;
+	this->maximumTimePerInterruptMS = __MAXIMUM_TIME_PER_INTERRUPT_MS;
 }
 
 /**
@@ -269,18 +277,18 @@ u32 TimerManager::getTimePerInterruptInUS()
 void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 {
 	s16 minimumTimePerInterrupt = TimerManager::getMinimumTimePerInterruptStep(this);
-	s16 maximumTimePerInterrupt = 0;
+	s16 maximumTimePerInterrupt = 1000;
 
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
 
-			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_US;
+			maximumTimePerInterrupt = this->maximumTimePerInterruptUS;
 			break;
 
 		case kMS:
 
-			maximumTimePerInterrupt = __MAXIMUM_TIME_PER_INTERRUPT_MS;
+			maximumTimePerInterrupt = this->maximumTimePerInterruptMS;
 			break;
 
 		default:
@@ -299,6 +307,56 @@ void TimerManager::setTimePerInterrupt(u16 timePerInterrupt)
 	}
 
 	this->timePerInterrupt = timePerInterrupt;
+}
+
+void TimerManager::setMinimumTimePerInterruptUS(u16 minimumTimePerInterruptUS)
+{
+	if(minimumTimePerInterruptUS > this->maximumTimePerInterruptUS)
+	{
+		minimumTimePerInterruptUS = this->maximumTimePerInterruptUS;
+	}
+
+	this->minimumTimePerInterruptUS = minimumTimePerInterruptUS;
+}
+
+void TimerManager::setMinimumTimePerInterruptMS(u16 minimumTimePerInterruptMS)
+{
+	if(minimumTimePerInterruptMS > this->maximumTimePerInterruptMS)
+	{
+		minimumTimePerInterruptMS = this->maximumTimePerInterruptMS;
+	}
+
+	this->minimumTimePerInterruptMS = minimumTimePerInterruptMS;
+}
+
+void TimerManager::setMaximumTimePerInterruptUS(u16 maximumTimePerInterruptUS)
+{
+	if(maximumTimePerInterruptUS < this->minimumTimePerInterruptUS)
+	{
+		maximumTimePerInterruptUS = this->minimumTimePerInterruptUS;
+	}
+	else if(__TIME_US(maximumTimePerInterruptUS) > (1 << (sizeof(u16) * 8 - sizeof(u16) * 2)))
+	{
+		maximumTimePerInterruptUS = __TIME_INVERSE_US((1 << (sizeof(u16) * 8 - sizeof(u16) * 2)));
+	}
+
+	this->maximumTimePerInterruptUS = maximumTimePerInterruptUS;
+}
+
+void TimerManager::setMaximumTimePerInterruptMS(u16 maximumTimePerInterruptMS)
+{
+	u16 timerResolutionUS = TimerManager::getResolutionInUS(TimerManager::getInstance());
+
+	if(maximumTimePerInterruptMS < this->minimumTimePerInterruptMS)
+	{
+		maximumTimePerInterruptMS = this->minimumTimePerInterruptMS;
+	}
+	else if(__TIME_MS(maximumTimePerInterruptMS * 100 / timerResolutionUS) > (1 << (sizeof(u16) * 8 - 1)))
+	{
+		maximumTimePerInterruptMS = __TIME_INVERSE_MS((1 << (sizeof(u16) * 8 - 1) / (100 / timerResolutionUS)));
+	}
+
+	this->maximumTimePerInterruptMS = maximumTimePerInterruptMS;
 }
 
 /**
@@ -340,13 +398,12 @@ u16 TimerManager::getMinimumTimePerInterruptStep()
 	switch(this->timePerInterruptUnits)
 	{
 		case kUS:
-
-			return TimerManager::getResolutionInUS(TimerManager::getInstance());
+			return this->minimumTimePerInterruptUS;
 			break;
 
 		case kMS:
 
-			return __MINIMUM_TIME_PER_INTERRUPT_MS;
+			return this->minimumTimePerInterruptMS;
 			break;
 	}
 
@@ -477,6 +534,10 @@ static void TimerManager::interruptHandler()
 
 	// update MIDI sounds
 	SoundManager::playMIDISounds(SoundManager::getInstance());
+
+#ifdef __SOUND_TEST
+	SoundManager::printPlaybackTime(SoundManager::getInstance());
+#endif
 
 	// enable
 	TimerManager::enable(_timerManager, true);

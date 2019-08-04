@@ -35,10 +35,12 @@
 //---------------------------------------------------------------------------------------------------------
 
 //use with 20us timer (range = 0 to 1300)
-#define __TIME_US(n)		(((n)/20)-1)
+#define __TIME_US(n)				(((n) / 20) - 1)
+#define __TIME_INVERSE_US(n)		((n + 1) * 20)
 
 //use with 100us timer (range = 0 to 6500, and 0 to 6.5)
-#define __TIME_MS(n)		(((n)*10)-1)
+#define __TIME_MS(n)				(((n) * 10) - 1)
+#define __TIME_INVERSE_MS(n)		((n + 1) / 10)
 
 #define __TIMER_ENB			0x01
 #define __TIMER_ZSTAT		0x02
@@ -72,6 +74,10 @@ singleton class TimerManager : Object
 	u16 resolution;
 	u16 timePerInterrupt;
 	u16 timePerInterruptUnits;
+	u16 minimumTimePerInterruptUS;
+	u16 minimumTimePerInterruptMS;
+	u16 maximumTimePerInterruptUS;
+	u16 maximumTimePerInterruptMS;
 	u8 tcrValue;
 
 	/// @publicsection
@@ -88,6 +94,10 @@ singleton class TimerManager : Object
 	u16 getMinimumTimePerInterruptStep();
 	void setResolution(u16 resolution);
 	void setTimePerInterrupt(u16 timePerInterrupt);
+	void setMinimumTimePerInterruptUS(u16 minimumTimePerInterruptUS);
+	void setMinimumTimePerInterruptMS(u16 minimumTimePerInterruptMS);
+	void setMaximumTimePerInterruptUS(u16 maximumTimePerInterruptUS);
+	void setMaximumTimePerInterruptMS(u16 maximumTimePerInterruptMS);
 	void setTimePerInterruptUnits(u16 timePerInterruptUnits);
 	void enable(bool flag);
 	u32 getMillisecondsElapsed();

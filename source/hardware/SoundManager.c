@@ -154,7 +154,6 @@ void SoundManager::constructor()
 
 	this->soundWrappers = NULL;
 	this->releasedSoundWrappers = NULL;
-	this->isSoundTest = false;
 
 	SoundManager::reset(this);
 }
@@ -186,11 +185,6 @@ void SoundManager::destructor()
 	}
 
 	Base::destructor();
-}
-
-void SoundManager::setSoundTest(bool isSoundTest)
-{
-	this->isSoundTest = isSoundTest;
 }
 
 void SoundManager::purgeReleasedSoundWrappers()
@@ -313,7 +307,7 @@ void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 
 				if(soundWrapper->hasMIDITracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds, this->isSoundTest);
+					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds);
 				}
 				break;
 
@@ -321,7 +315,7 @@ void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 
 				if(soundWrapper->hasPCMTracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds, this->isSoundTest);
+					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds);
 				}
 				break;
 
@@ -352,12 +346,11 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 {
 	this->elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
 
-	s16 factor = __MILLISECONDS_PER_SECOND / gameFrameDuration;
-	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate / factor);
+	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
 
 	if(!this->pcmFrameRateIsStable)
 	{
-		if(0 == deviation / factor)
+		if(0 == deviation / (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION))
 		{
 			this->pcmStablePlaybackCycles++;	
 		}
@@ -366,7 +359,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 			this->pcmStablePlaybackCycles = 0;
 		}
 		
-		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < (this->pcmStablePlaybackCycles >> __PLAYBACK_CYCLES_MODIFIER))
+		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < (this->pcmStablePlaybackCycles))
 		{
 			this->pcmFrameRateIsStable = true;
 
@@ -374,17 +367,23 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		}
 	}
 
-	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+	this->pcmPlaybackCyclesToSkip += deviation;//0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
 	if(0 > this->pcmPlaybackCyclesToSkip)
 	{
 		this->pcmPlaybackCyclesToSkip = 10;
 	}
 
-//	PRINT_TEXT("                ", 35, 20);
-//	PRINT_INT(this->pcmPlaybackCycles*factor, 40, 20);
-///	PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
+/*	static u16 counter = 20;
 
+	if(++counter > 20) 
+	{
+		counter = 0;
+		PRINT_TEXT("                ", 35, 20);
+		PRINT_INT(this->pcmPlaybackCyclesToSkip  >> __PLAYBACK_CYCLES_MODIFIER, 35, 20);
+		PRINT_INT(this->pcmPlaybackCycles*(__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION), 40, 20);
+	}
+ */
 	this->pcmPlaybackCycles = 0;
 }
 
@@ -744,21 +743,21 @@ void SoundManager::print()
 			yDisplacement += 15;
 		}
 	}
+}
 
-/*	VirtualNode node = this->soundWrappers->head;
+#ifdef __SOUND_TEST
+void SoundManager::printPlaybackTime()
+{
+	VirtualNode node = this->soundWrappers->head;
 
-	for(; node; node = node->next)
+	if(!isDeleted(node))
 	{
-		SoundWrapper::print(SoundWrapper::safeCast(node->data), x, y);
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-		x += 16;
-
-		if(x > 33)
+		if(!isDeleted(soundWrapper))
 		{
-			x = 1;
-			y += 15;
+			SoundWrapper::printPlaybackTime(soundWrapper, 24, 8);
 		}
 	}
-
- */
 }
+#endif

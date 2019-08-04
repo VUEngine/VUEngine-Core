@@ -27,6 +27,7 @@
 #include <SoundWrapper.h>
 #include <TimerManager.h>
 #include <SoundManager.h>
+#include <HardwareManager.h>
 #include <Utilities.h>
 
 
@@ -355,6 +356,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->ticks = 0;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
 		channel->elapsedMicroseconds = 0;
+		channel->volumeReduction = 0;
 
 		switch(channel->soundChannelConfiguration.type)
 		{
@@ -368,6 +370,7 @@ void SoundWrapper::setupChannels(s8* waves)
 
 				this->hasPCMTracks = true;
 				channel->length = this->sound->soundChannels[channel->soundChannel]->length;
+				channel->volumeReduction = SoundWrapper::computePCMVolumeReduction((u8*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM, channel->length);
 				break;
 
 			default:
@@ -440,6 +443,35 @@ static u16 SoundWrapper::computeMIDITrackLength(u16* soundTrackData)
 	return i;
 }
 
+static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 length)
+{
+	u32 i = 0;
+
+	NM_ASSERT(soundTrackData, "SoundWrapper::computePCMVolumeReduction: null soundTrack");
+
+	u8 maximumVolume = 0;
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
+	for(; i < length; i++)
+	{
+		if(soundTrackData[i] > maximumVolume)
+		{
+			maximumVolume = soundTrackData[i];
+		}
+	}
+
+	CACHE_DISABLE;
+	CACHE_CLEAR;
+	CACHE_ENABLE;
+
+	u8 multiple = maximumVolume / __MAXIMUM_VOLUME;
+
+	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
+}
+
 static void SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 {
 	u16 note = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI[channel->cursor];
@@ -487,7 +519,7 @@ static void SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 
 	u8 volume = channel->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM[channel->cursor];
 
-	s8 finalVolume = (s8)volume - __MAXIMUM_VOLUME * (channel->soundChannel);
+	s8 finalVolume = (s8)volume - channel->volumeReduction;
 
 	if(finalVolume  < 0)
 	{
@@ -542,7 +574,7 @@ void SoundWrapper::computeNextTicksPerNote(Channel* channel, fix17_15 residue)
 /**
  * Update sound playback
  */
-void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, bool isSoundTest)
+void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 {
 	if(NULL == this->sound || this->paused)
 	{
@@ -555,15 +587,6 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, 
 	VirtualNode node = this->channels->head;
 	Channel* firstChannel = this->sound->synchronizedPlayback ? (Channel*)node->data : NULL;
 
-#ifdef __SOUND_TEST
-	u32 currentSecond = 0;
-
-	if(isSoundTest)
-	{
-		currentSecond = SoundWrapper::getElapsedSeconds(this);
-	}
-#endif
- 
 	u32 scaledElapsedMicroseconds = this->hasPCMTracks ? __I_TO_FIX17_15(1) : __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
 	
 	for(; node; node = node->next)
@@ -640,17 +663,17 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds, 
 		}
 	}
 
-#ifdef __SOUND_TEST
-	if(isSoundTest && elapsedMicroseconds)
+	if(finished)
 	{
-		u32 newSecond = SoundWrapper::getElapsedSeconds(this);
+		SoundWrapper::fireEvent(this, kSoundFinished);
 
-		if(newSecond > currentSecond)
+		if(!this->sound->loop)
 		{
-			SoundWrapper::printProgress(this, 1, 6, newSecond);
-		}		
+			SoundWrapper::fireEvent(this, kSoundReleased);
+
+			SoundWrapper::release(this);
+		}
 	}
-#endif
 }
 
 void SoundWrapper::print(int x, int y)
@@ -779,8 +802,10 @@ u32 SoundWrapper::getElapsedSeconds()
 	return 0;
 }
 
-void SoundWrapper::printProgress(int x, int y, u32 elapsedSeconds)
+void SoundWrapper::printPlaybackProgress(int x, int y)
 {
+	u32 elapsedSeconds = SoundWrapper::getElapsedSeconds(this);
+
 	static u16 previousPosition = 0;
 	
 	Channel* firstChannel = (Channel*)this->channels->head->data;
@@ -803,8 +828,6 @@ void SoundWrapper::printProgress(int x, int y, u32 elapsedSeconds)
 		// Prevent skiping
 		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position - 1, y);
 	}
-
-	SoundWrapper::printTiming(this, elapsedSeconds, x + 23 - 0, y + 2);
 }
 
 void SoundWrapper::printTiming(u32 seconds, int x, int y)
@@ -816,16 +839,48 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 
 	PRINT_INT(minutes, x, y);
 
-	if(seconds < 10)
+	PRINT_TEXT(":", x + minutesDigits, y);
+
+	if(0 == seconds )
 	{
-		PRINT_TEXT(":0 ", x + minutesDigits, y);
+		PRINT_TEXT("0:00", x, y);
+	}
+	else if(seconds < 10)
+	{
+		PRINT_TEXT("0", x + minutesDigits + 1, y);
 		PRINT_INT(seconds, x + minutesDigits + 2, y);
 	}
 	else
 	{
-		PRINT_TEXT(":  ", x + minutesDigits, y);
 		PRINT_INT(seconds, x + minutesDigits + 1, y);
 	}
+}
+
+void SoundWrapper::printPlaybackTime(int x, int y)
+{
+#ifdef __SOUND_TEST
+	static u32 previousSecond = 0;
+	u32 currentSecond = SoundWrapper::getElapsedSeconds(this);
+
+	if(0 == currentSecond)
+	{
+		previousSecond = 0;
+	}
+
+	if(currentSecond > previousSecond)
+	{
+		previousSecond = currentSecond;
+
+		SoundWrapper::printTiming(this, currentSecond, x, y);
+	}
+#endif
+}
+
+void SoundWrapper::printTotalPlaybackTime(int x, int y)
+{
+	Channel* firstChannel = (Channel*)this->channels->head->data;
+
+	SoundWrapper::printTiming(this, firstChannel->totalPlaybackSeconds, x, y);
 }
 
 void SoundWrapper::printMetadata(int x, int y)
@@ -833,9 +888,7 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT(this->sound->name, x, y++);
 	y++;
 
-	SoundWrapper::printProgress(this, x, y++, SoundWrapper::getElapsedSeconds(this));
-
-	Channel* firstChannel = (Channel*)this->channels->head->data;
+	SoundWrapper::printPlaybackProgress(this, x, y++);
 
 	u8 trackInfoXOffset = x + 22;
 	u8 trackInfoValuesXOffset = 9;
@@ -843,9 +896,9 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	y++;
 
-	SoundWrapper::printTiming(this, SoundWrapper::getElapsedSeconds(this), x + 23, y);
+	SoundWrapper::printTiming(this, 0, x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
-	SoundWrapper::printTiming(this, firstChannel->totalPlaybackSeconds, x + 28, y);
+	SoundWrapper::printTotalPlaybackTime(this, x + 28, y);
 
 	PRINT_TEXT("Speed", x, y);
 	PRINT_TEXT("    ", x + 6, y);
@@ -893,6 +946,12 @@ void SoundWrapper::printVolume(int x, int y)
 		{
 			Channel* channel = (Channel*)node->data;
 
+			if(this->hasPCMTracks)
+			{
+				PRINT_TEXT("VL", x + 15 - 7, y + yDisplacement);
+				break;
+			}
+
 			PRINT_TEXT("C", x + 15 - 7, y + yDisplacement);
 			PRINT_INT(channel->number, x + 16 - 7, y + yDisplacement);
 
@@ -912,7 +971,7 @@ void SoundWrapper::printVolume(int x, int y)
 		++y;
 	}	
 
-	for(node = this->channels->head; node; node = node->next)
+	for(node = this->hasPCMTracks ? this->channels->tail : this->channels->head; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
