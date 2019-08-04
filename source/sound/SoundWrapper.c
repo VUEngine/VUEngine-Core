@@ -857,7 +857,6 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 
 void SoundWrapper::printPlaybackTime(int x, int y)
 {
-#ifdef __SOUND_TEST
 	static u32 previousSecond = 0;
 	u32 currentSecond = SoundWrapper::getElapsedSeconds(this);
 
@@ -872,7 +871,6 @@ void SoundWrapper::printPlaybackTime(int x, int y)
 
 		SoundWrapper::printTiming(this, currentSecond, x, y);
 	}
-#endif
 }
 
 void SoundWrapper::printTotalPlaybackTime(int x, int y)

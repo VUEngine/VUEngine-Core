@@ -536,7 +536,10 @@ static void TimerManager::interruptHandler()
 	SoundManager::playMIDISounds(SoundManager::getInstance());
 
 #ifdef __SOUND_TEST
-	SoundManager::printPlaybackTime(SoundManager::getInstance());
+	if(Game::isInSoundTest(Game::getInstance()))
+	{
+		SoundManager::printPlaybackTime(SoundManager::getInstance());
+	}
 #endif
 
 	// enable
