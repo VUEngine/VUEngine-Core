@@ -446,6 +446,8 @@ void SoundTest::loadSound()
 			TimerManager::setTimePerInterrupt(TimerManager::getInstance(), 10);
 		}
 
+		SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
+
 		SoundTest::printTimer(this);
 	}
 
