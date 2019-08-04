@@ -196,8 +196,6 @@ void SoundTest::printGUI(bool clearScreen)
 	Printing::text(_printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
 	Printing::text(_printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
 	Printing::text(_printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
-
-	SoundTest::printTimer(this);
 }
 
 void SoundTest::processUserInput(u16 pressedKey)
@@ -448,6 +446,7 @@ void SoundTest::loadSound()
 
 		SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
 
+		SoundTest::applyTimerSettings(this);
 		SoundTest::printTimer(this);
 	}
 

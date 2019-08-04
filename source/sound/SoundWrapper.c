@@ -445,8 +445,11 @@ static u16 SoundWrapper::computeMIDITrackLength(u16* soundTrackData)
 
 static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 length)
 {
-	u32 i = 0;
+#ifdef __SOUND_TEST
+	PRINT_TEXT("Loading...", 1, 4);
+#endif
 
+	u32 i = 0;
 	NM_ASSERT(soundTrackData, "SoundWrapper::computePCMVolumeReduction: null soundTrack");
 
 	u8 maximumVolume = 0;
@@ -468,6 +471,10 @@ static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 lengt
 	CACHE_ENABLE;
 
 	u8 multiple = maximumVolume / __MAXIMUM_VOLUME;
+
+#ifdef __SOUND_TEST
+	PRINT_TEXT("          ", 1, 4);
+#endif
 
 	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
 }
@@ -862,9 +869,9 @@ void SoundWrapper::printPlaybackTime(int x, int y)
 	static u32 previousSecond = 0;
 	u32 currentSecond = SoundWrapper::getElapsedSeconds(this);
 
-	if(0 == currentSecond)
+	if(previousSecond > currentSecond)
 	{
-		previousSecond = 0;
+		previousSecond = currentSecond;
 	}
 
 	if(currentSecond > previousSecond)
@@ -896,7 +903,7 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	y++;
 
-	SoundWrapper::printTiming(this, 0, x + 23, y);
+	SoundWrapper::printTiming(this, SoundWrapper::getElapsedSeconds(this), x + 23, y);
 	PRINT_TEXT("/", x + 27, y);
 	SoundWrapper::printTotalPlaybackTime(this, x + 28, y);
 
