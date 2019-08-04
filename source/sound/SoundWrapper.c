@@ -445,10 +445,6 @@ static u16 SoundWrapper::computeMIDITrackLength(u16* soundTrackData)
 
 static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 length)
 {
-#ifdef __SOUND_TEST
-	PRINT_TEXT("Loading...", 1, 4);
-#endif
-
 	u32 i = 0;
 	NM_ASSERT(soundTrackData, "SoundWrapper::computePCMVolumeReduction: null soundTrack");
 
@@ -471,10 +467,6 @@ static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 lengt
 	CACHE_ENABLE;
 
 	u8 multiple = maximumVolume / __MAXIMUM_VOLUME;
-
-#ifdef __SOUND_TEST
-	PRINT_TEXT("          ", 1, 4);
-#endif
 
 	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
 }

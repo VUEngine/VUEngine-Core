@@ -413,6 +413,10 @@ void SoundTest::loadSound()
 
 	Game::disableKeypad(Game::getInstance());
 
+#ifdef __SOUND_TEST
+	PRINT_TEXT("Loading...", 1, 4);
+#endif
+
 	SoundTest::releaseSoundWrapper(this);
 
 	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], true);
@@ -421,8 +425,6 @@ void SoundTest::loadSound()
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
-
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
 		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);
 
@@ -448,6 +450,11 @@ void SoundTest::loadSound()
 
 		SoundTest::applyTimerSettings(this);
 		SoundTest::printTimer(this);
+		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
+
+#ifdef __SOUND_TEST
+	PRINT_TEXT("          ", 1, 4);
+#endif
 	}
 
 	Game::enableKeypad(Game::getInstance());
