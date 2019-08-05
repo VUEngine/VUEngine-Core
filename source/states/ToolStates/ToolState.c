@@ -88,6 +88,11 @@ void ToolState::enter(void* owner __attribute__ ((unused)))
 	}
 }
 
+bool ToolState::stream()
+{
+	return false;
+}
+
 /**
  * Method called when by the StateMachine's update method
  *
