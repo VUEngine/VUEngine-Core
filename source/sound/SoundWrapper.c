@@ -953,13 +953,13 @@ void SoundWrapper::printVolume(int x, int y)
 				break;
 			}
 
-			PRINT_TEXT("C", x + 15 - 7, y + yDisplacement);
-			PRINT_INT(channel->number, x + 16 - 7, y + yDisplacement);
+			PRINT_TEXT("C", x + 15 - 0, y + yDisplacement);
+			PRINT_INT(channel->number, x + 16 - 0, y + yDisplacement);
 
 			for(int i = 0; i < 8; i++) 
 			{
-				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 7, y + yDisplacement);
-				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 7, y + yDisplacement);
+				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y + yDisplacement);
+				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y + yDisplacement);
 			}
 
 			yDisplacement++;
@@ -988,13 +988,13 @@ void SoundWrapper::printVolume(int x, int y)
 		{
 			case kMIDI:
 				{
-					u8 leftValue = (frequency * leftVolume / __MAXIMUM_VOLUME) >> 5;
-					u8 rightValue = (frequency * rightVolume / __MAXIMUM_VOLUME) >> 5;
+					u8 leftValue = (frequency * leftVolume / __MAXIMUM_VOLUME) >> 4;
+					u8 rightValue = (frequency * rightVolume / __MAXIMUM_VOLUME) >> 4;
 
-					for(i = 0; i < 8; i++) 
+					for(i = 0; i < 15; i++) 
 					{
-						PRINT_TEXT(leftValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i - 7, y);
-						PRINT_TEXT(rightValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i - 7, y);
+						PRINT_TEXT(leftValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i - 0, y);
+						PRINT_TEXT(rightValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i - 0, y);
 					}
 				}
 				break;
