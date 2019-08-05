@@ -306,6 +306,8 @@ bool GameState::stream()
 		return false;
 	}
 
+	NM_ASSERT(this->stage, "GameState::stream: null stage");
+
 	return Stage::stream(this->stage);
 }
 
@@ -314,12 +316,12 @@ bool GameState::stream()
  */
 void GameState::transform()
 {
-	ASSERT(this->stage, "GameState::transform: null stage");
-
 	if(!this->transform)
 	{
 		return;
 	}
+
+	NM_ASSERT(this->stage, "GameState::transform: null stage");
 
 	extern Transformation neutralEnvironmentTransformation;
 
@@ -346,11 +348,11 @@ bool GameState::isVersusMode()
  */
 void GameState::initialTransform()
 {
-	ASSERT(this->stage, "GameState::transform: null stage");
+	ASSERT(this->stage, "GameState::initialTransform: null stage");
 
 	extern Transformation neutralEnvironmentTransformation;
 
-		Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
+	Container::initialTransform(this->stage, &neutralEnvironmentTransformation, true);
 }
 
 /**
@@ -358,12 +360,12 @@ void GameState::initialTransform()
  */
 void GameState::synchronizeGraphics()
 {
-	ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
-
 	if(!this->synchronizeGraphics)
 	{
 		return;
 	}
+
+	NM_ASSERT(this->stage, "GameState::synchronizeGraphics: null stage");
 
 	// then transformation loaded entities
 	Container::synchronizeGraphics(this->stage);
@@ -406,7 +408,7 @@ u32 GameState::processCollisions()
  */
 void GameState::loadStage(StageSpec* stageSpec, VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition)
 {
-	ASSERT(stageSpec, "GameState::loadStage: null stageSpec");
+	NM_ASSERT(stageSpec, "GameState::loadStage: null stageSpec");
 
 	if(this->stage)
 	{

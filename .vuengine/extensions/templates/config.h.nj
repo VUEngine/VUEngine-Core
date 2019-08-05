@@ -69,10 +69,21 @@
 #ifdef __TOOLS
 
 // tools
+#ifndef __DEBUG_TOOLS
 #define __DEBUG_TOOLS
+#endif
+
+#ifndef __STAGE_EDITOR
 #define __STAGE_EDITOR
+#endif
+
+#ifndef __ANIMATION_INSPECTOR
 #define __ANIMATION_INSPECTOR
+#endif
+
+#ifndef __SOUND_TEST
 #define __SOUND_TEST
+#endif
 
 #endif
 

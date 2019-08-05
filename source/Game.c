@@ -604,6 +604,8 @@ void Game::openTool(ToolState toolState)
 		StateMachine::pushState(this->stateMachine, (State)this->nextState);
 		this->nextState = NULL;
 	}
+
+	this->currentState = GameState::safeCast(StateMachine::getCurrentState(this->stateMachine));
 }
 
 bool Game::checkIfOpenTool(UserInput userInput)

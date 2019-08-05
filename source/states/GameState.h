@@ -89,7 +89,6 @@ class GameState : State
 	void startDispatchingDelayedMessages();
 	void startPhysics();
 	void stopClocks();
-	bool stream();
 	void updatePhysics();
 	void synchronizeGraphics();
 	virtual void processUserInput(UserInput userInput);
@@ -97,6 +96,7 @@ class GameState : State
 	virtual void transform();
 	virtual bool isVersusMode();
 	virtual Clock getClock();
+	virtual bool stream();
 	override void enter(void* owner);
 	override void execute(void* owner);
 	override void exit(void* owner);
