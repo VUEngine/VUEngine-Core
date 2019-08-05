@@ -644,9 +644,9 @@ bool Game::checkIfOpenTool(UserInput userInput)
 	for(; _userToolStates[i]; i++)
 	{
 		// check code to access special feature
-		if(ToolState::isKeyCombination(engineToolStates[i], userInput))
+		if(ToolState::isKeyCombination(_userToolStates[i], userInput))
 		{
-			Game::openTool(this, engineToolStates[i]);
+			Game::openTool(this, _userToolStates[i]);
 			return true;
 		}
 	}
