@@ -1,0 +1,2 @@
+# Force LF line endings on checkout for scripts
+lib/compiler/preprocessor/* text eol=lf
