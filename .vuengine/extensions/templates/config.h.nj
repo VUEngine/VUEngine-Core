@@ -65,7 +65,22 @@
 //											DEBUGGING TOOLS
 //---------------------------------------------------------------------------------------------------------
 
+// If tools already defined, enable all
 #ifdef __TOOLS
+
+// tools
+#define __DEBUG_TOOLS
+#define __STAGE_EDITOR
+#define __ANIMATION_INSPECTOR
+#define __SOUND_TEST
+
+#endif
+
+// Enable different settings for each tool
+#ifdef __DEBUG_TOOLS
+#ifndef __TOOLS
+#define __TOOLS
+#endif
 
 // print frame rate
 #define __PRINT_FRAMERATE
@@ -77,12 +92,24 @@
 // enable streaming's profiling
 #define __PROFILE_STREAMING
 
-// tools
-#define __DEBUG_TOOLS
-#define __STAGE_EDITOR
-#define __ANIMATION_INSPECTOR
-#define __SOUND_TEST
+#endif
 
+#ifdef __STAGE_EDITOR
+#ifndef __TOOLS
+#define __TOOLS
+#endif
+#endif
+
+#ifdef __ANIMATION_INSPECTOR
+#ifndef __TOOLS
+#define __TOOLS
+#endif
+#endif
+
+#ifdef __SOUND_TEST
+#ifndef __TOOLS
+#define __TOOLS
+#endif
 #endif
 
 
