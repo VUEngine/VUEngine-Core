@@ -35,7 +35,7 @@
 //											 CLASS' MACROS
 //---------------------------------------------------------------------------------------------------------
 
-#define __PLAYBACK_CYCLES_MODIFIER			2
+#define __PLAYBACK_CYCLES_MODIFIER			0
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -334,12 +334,26 @@ void SoundManager::playMIDISounds()
 
 void SoundManager::playPCMSounds()
 {
+	// This is the right way to handle the throttle, but
+	// it wastes CPU cycles on funciton calls and returns
+	static u16 pcmReimainingPlaybackCyclesToSkip = 0;
+
+	if(++pcmReimainingPlaybackCyclesToSkip >= this->pcmPlaybackCyclesToSkip)
+	{
+		pcmReimainingPlaybackCyclesToSkip = 0;
+
+		this->pcmPlaybackCycles++;
+		SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
+	}
+
+	// Dubious optimization
 	// Do not waste CPU cycles returning to the call point
-	volatile int pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip >> __PLAYBACK_CYCLES_MODIFIER;
+/*	volatile int pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip >> __PLAYBACK_CYCLES_MODIFIER;
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
 	this->pcmPlaybackCycles++;
 	SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
+ */
 }
 
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
@@ -367,7 +381,11 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		}
 	}
 
-	this->pcmPlaybackCyclesToSkip += deviation;//0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+	// Proper way to compute the throttle
+	this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
+
+	// Dubious optimization
+	//this->pcmPlaybackCyclesToSkip += deviation;
 
 	if(0 > this->pcmPlaybackCyclesToSkip)
 	{
@@ -383,7 +401,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		PRINT_INT(this->pcmPlaybackCyclesToSkip  >> __PLAYBACK_CYCLES_MODIFIER, 35, 20);
 		PRINT_INT(this->pcmPlaybackCycles*(__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION), 40, 20);
 	}
- */
+*/
 	this->pcmPlaybackCycles = 0;
 }
 

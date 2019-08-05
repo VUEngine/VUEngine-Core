@@ -791,6 +791,13 @@ void Game::synchronizeGraphics()
 	this->lastProcessName = "graphics";
 #endif
 
+#ifdef __TOOLS
+	if(Game::isInSoundTest(this))
+	{
+		return;
+	}
+#endif
+
 	// prevent the VIPManager to modify the DRAM
 	// during the synchronization of the entities'
 	// positions with their sprites
@@ -857,8 +864,16 @@ void Game::updateTransformations()
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "camera";
 #endif
-	// position the camera
-	Camera::focus(this->camera, true);
+
+#ifdef __TOOLS
+	if(!Game::isInSpecialMode(this))
+	{
+#endif
+		// position the camera
+		Camera::focus(this->camera, true);
+#ifdef __TOOLS
+	}
+#endif
 
 #ifdef __REGISTER_LAST_PROCESS_NAME
 	this->lastProcessName = "transforms";

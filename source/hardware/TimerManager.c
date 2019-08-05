@@ -30,6 +30,7 @@
 #include <ClockManager.h>
 #include <SoundManager.h>
 #include <SoundTest.h>
+#include <Game.h>
 
 
 //---------------------------------------------------------------------------------------------------------

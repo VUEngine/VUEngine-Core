@@ -46,7 +46,6 @@
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
 
-
 typedef struct SoundChannelConfiguration
 {
 	/// kMIDI, kPCM
@@ -160,6 +159,9 @@ typedef struct Channel
 
 	/// Tick step per timer interrupt
 	fix17_15 tickStep;
+
+	void (*updatePlayback)(struct Channel*, bool);
+	void (*computeNextTicksPerNote)(struct Channel*, fix17_15, fix17_15, fix17_15);
 
 	u32 elapsedMicroseconds;
 	u32 totalPlaybackSeconds;
