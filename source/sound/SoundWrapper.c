@@ -295,7 +295,9 @@ void SoundWrapper::rewind()
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
+		channel->finished = false;
 		channel->cursor = 0;
+		channel->ticks = 0;
 		channel->elapsedMicroseconds = 0;
 		channel->soundChannelConfiguration.SxLRV = 0;
 		channel->soundChannelConfiguration.SxFQH = channel->soundChannelConfiguration.SxFQL = 0;
@@ -364,7 +366,6 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->soundChannelConfiguration.SxRAM = waves[i];
 		channel->elapsedMicroseconds = 0;
 		channel->volumeReduction = 0;
-
 
 		switch(channel->soundChannelConfiguration.type)
 		{
@@ -664,9 +665,12 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 		if(!this->sound->loop)
 		{
 			SoundWrapper::fireEvent(this, kSoundReleased);
-
 			SoundWrapper::release(this);
 		}
+		else
+		{
+			SoundWrapper::rewind(this);
+		}		
 	}
 }
 
@@ -932,7 +936,7 @@ void SoundWrapper::printVolume(int x, int y)
 
 	if(0 == firstChannel->elapsedMicroseconds)
 	{
-		PRINT_TEXT("VOLUME", x, ++y);
+		PRINT_TEXT("OUTPUT", x, ++y);
 
 		++y;
 		++y;
