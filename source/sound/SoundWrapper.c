@@ -336,7 +336,8 @@ void SoundWrapper::stop()
  */
 void SoundWrapper::release()
 {
-	this->paused = true;
+	SoundWrapper::stop(this);
+
 	this->sound = NULL;
 
 	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
