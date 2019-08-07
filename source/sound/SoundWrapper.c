@@ -527,7 +527,6 @@ static void SoundWrapper::updateMIDIPlayback(Channel* channel)
 	}
 }
 
-
 static inline s8 SoundWrapper::clampPCMValue(s8 value)
 {
     value &= -(value >= 0);
@@ -537,7 +536,6 @@ static inline s8 SoundWrapper::clampPCMValue(s8 value)
 static void SoundWrapper::updatePCMPlayback(Channel* channel)
 {
 	s8 volume = SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
-
 
 #ifdef __SOUND_TEST
 	_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
