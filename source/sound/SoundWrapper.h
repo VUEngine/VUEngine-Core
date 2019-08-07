@@ -116,9 +116,6 @@ typedef struct Sound
 	/// Play in loop
 	bool loop;
 
-	/// Syncronize channels
-	bool synchronizedPlayback;
-
 	/// Target timer resolution in us
 	u16 targetTimerResolutionUS;
 
@@ -159,9 +156,6 @@ typedef struct Channel
 
 	/// Tick step per timer interrupt
 	fix17_15 tickStep;
-
-	void (*updatePlayback)(struct Channel*);
-	void (*computeNextTicksPerNote)(struct Channel*, fix17_15, fix17_15, fix17_15);
 
 	/// Sound track
 	union ChannelSoundTrack

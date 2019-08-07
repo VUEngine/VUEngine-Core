@@ -294,12 +294,6 @@ void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-		// Skip if sound is NULL since this should be purged
-		if(NULL == soundWrapper->sound)
-		{
-			continue;
-		}
-
 		switch(type)
 		{
 			case kMIDI:
@@ -333,9 +327,9 @@ void SoundManager::playMIDISounds()
 
 void SoundManager::playPCMSounds()
 {
-/*	// This is the right way to handle the throttle, but
+	// This is the right way to handle the throttle, but
 	// it wastes CPU cycles on funciton calls and returns
-	static u16 pcmReimainingPlaybackCyclesToSkip = 0;
+/*	static u16 pcmReimainingPlaybackCyclesToSkip = 0;
 
 	if(++pcmReimainingPlaybackCyclesToSkip >= this->pcmPlaybackCyclesToSkip)
 	{
@@ -345,7 +339,8 @@ void SoundManager::playPCMSounds()
 		SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
 	}
 */
-	// Dubious optimization
+	// Dubious optimization since it missed the FRAME START event, but
+	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
 	volatile u16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
@@ -395,7 +390,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	if(++counter > 20) 
 	{
 		counter = 0;
-		PRINT_TEXT("                ", 35, 20);
+		PRINT_TEXT("    ", 35, 20);
 		PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
 //		PRINT_INT(this->pcmPlaybackCycles, 40, 20);
 	}

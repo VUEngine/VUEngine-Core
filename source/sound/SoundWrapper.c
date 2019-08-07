@@ -150,9 +150,17 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 		{
 			Channel* channel = (Channel*)node->data;
 
-			if(channel->computeNextTicksPerNote)
+			switch(channel->soundChannelConfiguration.type)
 			{
-				channel->computeNextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
+				case kMIDI:
+
+					SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
+					break;
+
+				case kPCM:
+
+					SoundWrapper::computePCMNextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
+					break;
 			}
 		}
 
@@ -302,9 +310,17 @@ void SoundWrapper::rewind()
 		channel->soundChannelConfiguration.SxLRV = 0;
 		channel->soundChannelConfiguration.SxFQH = channel->soundChannelConfiguration.SxFQL = 0;
 
-		if(channel->computeNextTicksPerNote)
+		switch(channel->soundChannelConfiguration.type)
 		{
-			channel->computeNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
+			case kMIDI:
+
+				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
+				break;
+
+			case kPCM:
+
+				SoundWrapper::computePCMNextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
+				break;
 		}
 	}
 }
@@ -372,23 +388,18 @@ void SoundWrapper::setupChannels(s8* waves)
 			case kMIDI:
 
 				this->hasMIDITracks = true;
-				channel->updatePlayback = SoundWrapper::updateMIDIPlayback;
-				channel->computeNextTicksPerNote = SoundWrapper::computeMIDINextTicksPerNote;
 				channel->soundTrack.dataMIDI = (u16*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataMIDI;
 				channel->length = SoundWrapper::computeMIDITrackLength((u16*)channel->soundTrack.dataMIDI);
-				channel->computeNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
+				SoundWrapper::computeMIDINextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
 				break;
 
 			case kPCM:
 
 				this->hasPCMTracks = true;
-				channel->updatePlayback = SoundWrapper::updatePCMPlayback;
-				channel->computeNextTicksPerNote = SoundWrapper::computePCMNextTicksPerNote;
 				channel->soundTrack.dataPCM = (u8*)this->sound->soundChannels[channel->soundChannel]->soundTrack.dataPCM;
 				channel->length = this->sound->soundChannels[channel->soundChannel]->length;
-				channel->computeNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
+				SoundWrapper::computePCMNextTicksPerNote(channel, 0, this->speed, this->targetTimerResolutionFactor);
 				channel->volumeReduction = SoundWrapper::computePCMVolumeReduction((u8*)channel->soundTrack.dataPCM, channel->length);
-				channel->computeNextTicksPerNote = NULL;	// Optimization
 				break;
 
 			default:
@@ -402,25 +413,20 @@ void SoundWrapper::setupChannels(s8* waves)
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 	this->totalPlaybackSeconds = SoundWrapper::getTotalPlaybackSeconds(this, firstChannel);
 
-	if(this->sound->synchronizedPlayback)
+	// Put the channel with the longest track first
+	for(node = this->channels->head; node; node = node->next)
 	{
-		// Put the channel with the longest track first
-		VirtualNode node = this->channels->head;
+		Channel* channel = (Channel*)node->data;
 
-		for(; node; node = node->next)
+		VirtualNode auxNode = this->channels->tail;
+
+		for(; auxNode && auxNode != node; auxNode = auxNode->previous)
 		{
-			Channel* channel = (Channel*)node->data;
+			Channel* auxChannel = (Channel*)auxNode->data;
 
-			VirtualNode auxNode = this->channels->tail;
-
-			for(; auxNode && auxNode != node; auxNode = auxNode->previous)
+			if(channel->length < auxChannel->length)
 			{
-				Channel* auxChannel = (Channel*)auxNode->data;
-
-				if(channel->length < auxChannel->length)
-				{
-					VirtualNode::swapData(node, auxNode);
-				}
+				VirtualNode::swapData(node, auxNode);
 			}
 		}
 	}
@@ -490,63 +496,25 @@ static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 lengt
 	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
 }
 
-static void SoundWrapper::updateMIDIPlayback(Channel* channel)
-{
-	u16 note = channel->soundTrack.dataMIDI[channel->cursor];
-
-	// Is it a special note?
-	switch(note)
-	{
-		case PAU:
-
-			_soundRegistries[channel->number].SxLRV = 0;
-			break;
-
-		case HOLD:
-			// Continue playing the previous note.
-			break;
-
-		case ENDSOUND:
-
-			// I handle end sound
-			break;
-
-		case LOOPSOUND:
-			break;
-
-		default:
-			{
-				u8 volume = channel->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
-				channel->soundChannelConfiguration.SxLRV = (volume << 4) | volume;
-
-				_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-				_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-				_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV;
-			}
-			break;
-	}
-}
-
-static inline s8 SoundWrapper::clampPCMValue(s8 value)
+static inline s8 SoundWrapper::clampPCMValue1(s8 value)
 {
     value &= -(value >= 0);
     return value | ((__MAXIMUM_VOLUME - value) >> 7);
 }
 
-static void SoundWrapper::updatePCMPlayback(Channel* channel)
+static inline s8 SoundWrapper::clampPCMValue(s8 n)
 {
-	s8 volume = SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
-
-#ifdef __SOUND_TEST
-	_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
-//	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
-#else
-#ifndef __RELEASE
-	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
-#else
-	_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
-#endif
-#endif
+  n &= -(n >= 0);
+  return n | ~-!(n & -16);
+/*
+    s8 a = __MAXIMUM_VOLUME;
+    a -= n;
+    a >>= 7;
+    a |= n;
+    n >>= 7;
+    n = ~n;
+    n &= a;
+    return n; */
 }
 
 static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix17_15 residue, fix17_15 speed, fix17_15 targetTimerResolutionFactor)
@@ -567,104 +535,182 @@ static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 
 	channel->ticks = 0;
 }
 
-void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
+bool SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 {
-	if(NULL == this->sound || this->paused)
+	channel->ticks += channel->tickStep;
+
+	if(channel->ticks > channel->ticksPerNote)
 	{
-		return;
-	}
-
-	bool updatePlayback = false;
-	bool finished = true;
-
-	VirtualNode node = this->channels->head;
-	Channel* firstChannel = this->sound->synchronizedPlayback ? (Channel*)node->data : NULL;
-
-	this->elapsedMicroseconds += this->hasPCMTracks ? __I_TO_FIX17_15(1) : __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
-	
-	for(; node; node = node->next)
-	{
-		Channel* channel = (Channel*)node->data;
-
-		// TODO: optimize playback of types
-		if(type != channel->soundChannelConfiguration.type)
-		{
-			finished &= channel->finished;
-			continue;
-		}
-
-		if(NULL != firstChannel && channel != firstChannel)
-		{
-			if(firstChannel->cursor >= channel->length)
-			{
-				_soundRegistries[channel->number].SxLRV = 0;
-				channel->cursor = channel->length - 1;
-				channel->finished = true;
-			}
-			else
-			{
-				updatePlayback = channel->cursor != firstChannel->cursor;
-				channel->cursor = firstChannel->cursor;
-				channel->finished = false;
-			}
-		}
-		else
- 		{
-			channel->ticks += channel->tickStep;
-
-			if(channel->ticks > channel->ticksPerNote)
-			{
-				updatePlayback = true;
-
-				if(++channel->cursor >= channel->length)
-				{
-					channel->finished = true;
-
-					if(this->sound->loop)
-					{
-						channel->cursor = 0;
-					}
-					else
-					{
-						channel->finished = true;
-						channel->cursor = channel->length;
-					}
-				}
-
-				if(channel->computeNextTicksPerNote)
-				{
-					channel->computeNextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
-				}
-				else
-				{
-					channel->ticks = 0;
-				}
-			}
-		}
-
-		finished &= channel->finished;
+		channel->cursor++;
 
 		if(mute)
 		{
 			_soundRegistries[channel->number].SxLRV = 0;
 		}
-		else if(updatePlayback)
+		else
 		{
-			switch(channel->soundChannelConfiguration.type)
+			u16 note = channel->soundTrack.dataMIDI[channel->cursor];
+
+			// Is it a special note?
+			switch(note)
 			{
-				case kMIDI:
+				case PAU:
 
-					SoundWrapper::updateMIDIPlayback(channel);
+					_soundRegistries[channel->number].SxLRV = 0;
 					break;
 
-				case kPCM:
-
-					SoundWrapper::updatePCMPlayback(channel);
+				case HOLD:
+					// Continue playing the previous note.
 					break;
-			}
+
+				case ENDSOUND:
+
+					// I handle end sound
+					break;
+
+				case LOOPSOUND:
+					break;
+
+				default:
+					{
+						u8 volume = channel->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
+						channel->soundChannelConfiguration.SxLRV = (volume << 4) | volume;
+
+						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+						_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV;
+					}
+					break;
+			}		
 		}
+
+		SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
+		
+		return true;
 	}
 
+	return false;
+}
+
+bool SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
+{
+	channel->cursor++;
+
+	if(mute)
+	{
+		_soundRegistries[channel->number].SxLRV = 0;
+	}
+	else
+	{
+		s8 volume = SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
+
+#ifdef __SOUND_TEST
+		_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+	//	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+#else
+#ifndef __RELEASE
+		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+#else
+		_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+#endif
+#endif
+	}
+
+	return true;
+}
+
+
+void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
+{
+	// Skip if sound is NULL since this should be purged
+	if(NULL == this->sound || this->paused)
+	{
+		continue;
+	}
+	bool finished = true;
+
+	VirtualNode node = this->channels->head;
+
+	switch(type)
+	{
+		case kMIDI:
+
+			this->elapsedMicroseconds += !this->hasMIDITracks ? 0 :  __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
+
+			for(; node; node = node->next)
+			{
+				Channel* channel = (Channel*)node->data;
+/*
+				// TODO: optimize playback of types
+				if(kMIDI != channel->soundChannelConfiguration.type)
+				{
+					finished &= channel->finished;
+					continue;
+				}
+*/
+				if(SoundWrapper::updateMIDIPlayback(this, channel, mute))
+				{
+					if(channel->cursor >= channel->length)
+					{
+						channel->finished = true;
+
+						if(this->sound->loop)
+						{
+							channel->cursor = 0;
+						}
+						else
+						{
+							channel->finished = true;
+							channel->cursor = channel->length;
+						}
+					}
+				}
+
+				finished &= channel->finished;
+			}
+
+			break;
+
+		case kPCM:
+
+			this->elapsedMicroseconds += !this->hasPCMTracks ? 0 : __I_TO_FIX17_15(1);
+			
+			for(; node; node = node->next)
+			{
+				Channel* channel = (Channel*)node->data;
+/*
+				// TODO: optimize playback of types
+				if(kPCM != channel->soundChannelConfiguration.type)
+				{
+					finished &= channel->finished;
+					continue;
+				}
+ */
+
+				if(SoundWrapper::updatePCMPlayback(this, channel, mute))
+				{
+					if(channel->cursor >= channel->length)
+					{
+						channel->finished = true;
+
+						if(this->sound->loop)
+						{
+							channel->cursor = 0;
+						}
+						else
+						{
+							channel->finished = true;
+							channel->cursor = channel->length;
+						}
+					}
+				}
+
+				finished &= channel->finished;
+			}
+
+			break;
+	}
+	
 	if(finished)
 	{
 		SoundWrapper::fireEvent(this, kSoundFinished);
@@ -679,6 +725,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 			SoundWrapper::rewind(this);
 		}		
 	}
+ 
 }
 
 void SoundWrapper::print(int x, int y)
@@ -908,9 +955,6 @@ void SoundWrapper::printMetadata(int x, int y)
 
 	PRINT_TEXT("PCM", trackInfoXOffset, ++y);
 	PRINT_TEXT(this->hasPCMTracks ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
-
-	PRINT_TEXT("Sync", trackInfoXOffset, ++y);
-	PRINT_TEXT(this->sound->synchronizedPlayback ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y);
 
 	PRINT_TEXT("Channels", trackInfoXOffset, ++y);
 	PRINT_INT(VirtualList::getSize(this->channels), trackInfoXOffset + trackInfoValuesXOffset, y);
