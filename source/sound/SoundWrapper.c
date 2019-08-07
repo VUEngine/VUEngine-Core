@@ -625,8 +625,9 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 	// Skip if sound is NULL since this should be purged
 	if(NULL == this->sound || this->paused)
 	{
-		continue;
+		return;
 	}
+
 	bool finished = true;
 
 	VirtualNode node = this->channels->head;
