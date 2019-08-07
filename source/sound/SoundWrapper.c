@@ -410,26 +410,22 @@ void SoundWrapper::setupChannels(s8* waves)
 
 	}
 
-	Channel* firstChannel = (Channel*)this->channels->head->data;
-	this->totalPlaybackSeconds = SoundWrapper::getTotalPlaybackSeconds(this, firstChannel);
+	node = this->channels->head;
 
-	// Put the channel with the longest track first
-	for(node = this->channels->head; node; node = node->next)
+	Channel* channelWithLongestTrack = (Channel*)node->data;
+
+	// Find the the channel with the longest track
+	for(node = node->next; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 
-		VirtualNode auxNode = this->channels->tail;
-
-		for(; auxNode && auxNode != node; auxNode = auxNode->previous)
+		if(channelWithLongestTrack->length < channel->length)
 		{
-			Channel* auxChannel = (Channel*)auxNode->data;
-
-			if(channel->length < auxChannel->length)
-			{
-				VirtualNode::swapData(node, auxNode);
-			}
+			channelWithLongestTrack = channel;
 		}
 	}
+
+	this->totalPlaybackSeconds = SoundWrapper::getTotalPlaybackSeconds(this, channelWithLongestTrack);
 }
 
 void SoundWrapper::configureSoundRegistries()
@@ -494,27 +490,6 @@ static u16 SoundWrapper::computePCMVolumeReduction(u8* soundTrackData, u32 lengt
 	u8 multiple = maximumVolume / __MAXIMUM_VOLUME;
 
 	return 0 == multiple ? 0 : (multiple - 1) * __MAXIMUM_VOLUME;
-}
-
-static inline s8 SoundWrapper::clampPCMValue1(s8 value)
-{
-    value &= -(value >= 0);
-    return value | ((__MAXIMUM_VOLUME - value) >> 7);
-}
-
-static inline s8 SoundWrapper::clampPCMValue(s8 n)
-{
-  n &= -(n >= 0);
-  return n | ~-!(n & -16);
-/*
-    s8 a = __MAXIMUM_VOLUME;
-    a -= n;
-    a >>= 7;
-    a |= n;
-    n >>= 7;
-    n = ~n;
-    n &= a;
-    return n; */
 }
 
 static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix17_15 residue, fix17_15 speed, fix17_15 targetTimerResolutionFactor)
@@ -592,6 +567,18 @@ bool SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 	return false;
 }
 
+static inline s8 SoundWrapper::clampPCMValue(s8 value)
+{
+    value &= -(value >= 0);
+    return value | ((__MAXIMUM_VOLUME - value) >> 7);
+}
+
+static inline s8 SoundWrapper::clampPCMValue1(s8 n)
+{
+  n &= -(n >= 0);
+  return n | ~-!(n & -(__MAXIMUM_VOLUME - 1));
+}
+
 bool SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 {
 	channel->cursor++;
@@ -606,7 +593,8 @@ bool SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 
 #ifdef __SOUND_TEST
 		_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
-	//	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+		// No volume printing because it is too heavy on hardware
+		// _soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
 #else
 #ifndef __RELEASE
 		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
