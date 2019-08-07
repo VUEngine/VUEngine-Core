@@ -37,7 +37,7 @@
 #include <VIPManager.h>
 #include <CommunicationManager.h>
 #include <Profiler.h>
-#include <FrameRate.h>
+#include <SoundManager.h>
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -63,6 +63,8 @@ singleton class Game : Object
 	TimerManager timerManager;
 	//
 	CommunicationManager communicationManager;
+	//
+	SoundManager soundManager;
 	// current auto pause state
 	GameState autoPauseState;
 	// current save data manager

@@ -160,11 +160,20 @@ typedef struct Channel
 	/// Tick step per timer interrupt
 	fix17_15 tickStep;
 
-	void (*updatePlayback)(struct Channel*, bool);
+	void (*updatePlayback)(struct Channel*);
 	void (*computeNextTicksPerNote)(struct Channel*, fix17_15, fix17_15, fix17_15);
 
-	u32 elapsedMicroseconds;
-	u32 totalPlaybackSeconds;
+	/// Sound track
+	union ChannelSoundTrack
+	{
+		/// Sound track 8Bit (PCM)
+		const u8* dataPCM;
+
+		/// Sound track 16Bit (MIDI)
+		const u16* dataMIDI;
+
+	} soundTrack;
+
 	u8 number;
 	u8 soundChannel;
 	u8 volumeReduction;
@@ -190,11 +199,13 @@ class SoundWrapper : Object
 	Sound* sound;
 	VirtualList channels;
 	fix17_15 speed;
+	fix17_15 targetTimerResolutionFactor;
+	u32 elapsedMicroseconds;
+	u32 totalPlaybackSeconds;
 	u16 pcmTargetPlaybackFrameRate;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
-	fix17_15 targetTimerResolutionFactor;
 
 	/// @publicsection
 	void constructor(Sound* sound, VirtualList channels, s8* waves, u16 pcmTargetPlaybackFrameRate);

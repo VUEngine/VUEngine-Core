@@ -225,8 +225,8 @@ void Game::constructor()
 	this->communicationManager = CommunicationManager::getInstance();
 	this->profiler = Profiler::getInstance();
 	this->frameRate = FrameRate::getInstance();
+	this->soundManager = SoundManager::getInstance();
 
-	SoundManager::getInstance();
 	CharSetManager::getInstance();
 	BgmapTextureManager::getInstance();
 	HardwareManager::getInstance();
@@ -283,7 +283,7 @@ void Game::initialize()
 	HardwareManager::setupTimer(HardwareManager::getInstance(), __TIMER_100US, 10, kMS);
 
 	// Reset sounds
-	SoundManager::reset(SoundManager::getInstance());
+	SoundManager::reset(this->soundManager);
 
 	// start the game's general clock
 	Clock::start(this->clock);
@@ -361,7 +361,7 @@ void Game::debug()
 #endif
 
 #ifdef __SHOW_SOUND_STATUS
-	SoundManager::print(SoundManager::getInstance());
+	SoundManager::print(this->soundManager);
 #endif
 
 }
@@ -382,7 +382,7 @@ void Game::start(GameState state)
 		// Set state
 		Game::setNextState(this, state);
 
-		SoundManager soundManager = SoundManager::getInstance();
+		SoundManager soundManager = this->soundManager;
 
 		while(true)
 		{
@@ -390,7 +390,7 @@ void Game::start(GameState state)
 			{
 				Game::currentFrameStarted(this);
 
-				SoundManager::updateFrameRate(SoundManager::getInstance(), __GAME_FRAME_DURATION);
+				SoundManager::updateFrameRate(soundManager, __GAME_FRAME_DURATION);
 
 				Game::updateFrameRate(this);
 
@@ -561,7 +561,7 @@ void Game::reset()
 
 	// reset managers
 	WireframeManager::reset(WireframeManager::getInstance());
-	SoundManager::reset(SoundManager::getInstance());
+	SoundManager::reset(this->soundManager);
 	TimerManager::resetMilliseconds(this->timerManager);
 	KeypadManager::reset(this->keypadManager);
 
