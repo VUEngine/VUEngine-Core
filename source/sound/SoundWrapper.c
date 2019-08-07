@@ -567,42 +567,29 @@ bool SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 	return false;
 }
 
-static inline s8 SoundWrapper::clampPCMValue(s8 value)
+static inline u8 SoundWrapper::clampPCMValue(s8 value)
 {
     value &= -(value >= 0);
-    return value | ((__MAXIMUM_VOLUME - value) >> 7);
-}
-
-static inline s8 SoundWrapper::clampPCMValue1(s8 n)
-{
-  n &= -(n >= 0);
-  return n | ~-!(n & -(__MAXIMUM_VOLUME - 1));
+    return (u8)(value | ((__MAXIMUM_VOLUME - value) >> 7));
 }
 
 bool SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 {
 	channel->cursor++;
 
-	if(mute)
-	{
-		_soundRegistries[channel->number].SxLRV = 0;
-	}
-	else
-	{
-		s8 volume = SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
+	u8 volume = mute ? 0 : SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
 
 #ifdef __SOUND_TEST
-		_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
-		// No volume printing because it is too heavy on hardware
-		// _soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+	_soundRegistries[channel->number].SxLRV = (volume << 4) | (volume);
+	// No volume printing because it is too heavy on hardware
+	// _soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
 #else
 #ifndef __RELEASE
-		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+	_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
 #else
-		_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+	_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
 #endif
 #endif
-	}
 
 	return true;
 }
@@ -624,12 +611,14 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 	{
 		case kMIDI:
 
-			this->elapsedMicroseconds += !this->hasMIDITracks ? 0 :  __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
+			this->elapsedMicroseconds += __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
 
 			for(; node; node = node->next)
 			{
 				Channel* channel = (Channel*)node->data;
 /*
+				// Since this is commented out, there is no support for sounds
+				// with mixed types of tracks
 				// TODO: optimize playback of types
 				if(kMIDI != channel->soundChannelConfiguration.type)
 				{
@@ -662,7 +651,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 
 		case kPCM:
 
-			this->elapsedMicroseconds += !this->hasPCMTracks ? 0 : __I_TO_FIX17_15(1);
+			this->elapsedMicroseconds += __I_TO_FIX17_15(1);
 			
 			for(; node; node = node->next)
 			{
@@ -675,7 +664,6 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 					continue;
 				}
  */
-
 				if(SoundWrapper::updatePCMPlayback(this, channel, mute))
 				{
 					if(channel->cursor >= channel->length)
