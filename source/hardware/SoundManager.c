@@ -300,7 +300,7 @@ void SoundManager::playSounds(u32 type, bool unmute, u32 elapsedMicroseconds)
 
 				if(soundWrapper->hasMIDITracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, unmute, elapsedMicroseconds);
+					SoundWrapper::updateMIDIPlayback(soundWrapper, unmute, elapsedMicroseconds);
 				}
 				break;
 
@@ -308,7 +308,7 @@ void SoundManager::playSounds(u32 type, bool unmute, u32 elapsedMicroseconds)
 
 				if(soundWrapper->hasPCMTracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, unmute, elapsedMicroseconds);
+					SoundWrapper::updatePCMPlayback(soundWrapper, unmute, elapsedMicroseconds);
 				}
 				break;
 
@@ -384,9 +384,9 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	{
 		this->pcmPlaybackCyclesToSkip = 1;
 	}
-/*
-	static u16 counter = 20;
 
+	static u16 counter = 20;
+/*
 	if(++counter > 20) 
 	{
 		counter = 0;
