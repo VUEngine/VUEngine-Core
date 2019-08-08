@@ -89,14 +89,6 @@ void SoundWrapper::destructor()
 
 	if(!isDeleted(this->channels))
 	{
-		VirtualNode node = this->channels->head;
-
-		for(; node; node = node->next)
-		{
-			Channel* channel = (Channel*)node->data;
-			channel->sound = NULL;
-		}
-
 		delete this->channels;
 		this->channels = NULL;
 	}

@@ -129,6 +129,7 @@ typedef const Sound SoundROM;
 typedef struct Waveform
 {
 	u8 number;
+	s8 usageCount;
 	u8* wave;
 	const s8* data;
 

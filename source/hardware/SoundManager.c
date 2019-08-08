@@ -177,7 +177,18 @@ void SoundManager::destructor()
 
 		for(; node; node = node->next)
 		{
-			delete node->data;
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			VirtualNode auxNode = soundWrapper->channels->head;
+
+			for(; auxNode; auxNode = auxNode->next)
+			{
+				Channel* channel = (Channel*)auxNode->data;
+
+				SoundManager::releaseSoundChannel(this, channel);
+			}
+
+			delete soundWrapper;
 		}
 
 		delete this->soundWrappers;
@@ -196,6 +207,15 @@ void SoundManager::purgeReleasedSoundWrappers()
 		for(; node; node = node->next)
 		{
 			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			VirtualNode auxNode = soundWrapper->channels->head;
+
+			for(; auxNode; auxNode = auxNode->next)
+			{
+				Channel* channel = (Channel*)auxNode->data;
+
+				SoundManager::releaseSoundChannel(this, channel);
+			}
 
 			VirtualList::removeElement(this->soundWrappers, soundWrapper);
 
@@ -256,6 +276,7 @@ void SoundManager::reset()
 		this->channels[i].soundChannelConfiguration.isModulation = false;
 
 		this->waveforms[i].number = i;
+		this->waveforms[i].usageCount = 0;
 		this->waveforms[i].wave = __WAVE_ADDRESS(i + 1);
 		this->waveforms[i].data = NULL;
 	}
@@ -384,17 +405,17 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	{
 		this->pcmPlaybackCyclesToSkip = 1;
 	}
-
-	static u16 counter = 20;
 /*
+	static u16 counter = 20;
+
 	if(++counter > 20) 
 	{
 		counter = 0;
 		PRINT_TEXT("    ", 35, 20);
 		PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
-//		PRINT_INT(this->pcmPlaybackCycles, 40, 20);
+		PRINT_INT(this->pcmPlaybackCycles, 40, 20);
 	}
-*/	
+*/
 	this->pcmPlaybackCycles = 0;
 }
 
@@ -456,11 +477,44 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 	if(NULL != freeWaveform)
 	{
 		freeWaveform->data = waveFormData;
+		freeWaveform->usageCount += 1;
+
 		return freeWaveform->number;
 	}
 
 	return -1;
 }
+
+void SoundManager::releaseWaveform(s8 waveFormIndex, const s8* waveFormData)
+{
+	if(0 <= waveFormIndex && waveFormIndex < __TOTAL_CHANNELS)
+	{
+		if(this->waveforms[waveFormIndex].data == waveFormData)
+		{
+			this->waveforms[waveFormIndex].usageCount -= 1;
+
+			if(0 >= this->waveforms[waveFormIndex].usageCount)
+			{
+				this->waveforms[waveFormIndex].usageCount = 0;
+				this->waveforms[waveFormIndex].data = NULL;
+			}
+		}
+		else
+		{
+			NM_ASSERT(false, "SoundManager::releaseWaveform: mismatch between index and data");
+		}	
+	}
+}
+
+void SoundManager::releaseSoundChannel(Channel* channel)
+{
+	if(channel)
+	{
+		SoundManager::releaseWaveform(this, channel->soundChannelConfiguration.SxRAM, channel->sound->soundChannels[channel->soundChannel]->soundChannelConfiguration->waveFormData);
+		channel->sound = NULL;
+	}
+}
+
 void copymem (u8* dest, const u8* src, u16 num)
 {
 	u16 i;

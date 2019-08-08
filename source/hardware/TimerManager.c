@@ -338,7 +338,7 @@ void TimerManager::setMaximumTimePerInterruptUS(u16 maximumTimePerInterruptUS)
 	}
 	else if(__TIME_US(maximumTimePerInterruptUS) > (1 << (sizeof(u16) * 8 - sizeof(u16) * 2)))
 	{
-		maximumTimePerInterruptUS = __TIME_INVERSE_US((1 << (sizeof(u16) * 8 - sizeof(u16) * 2)));
+		maximumTimePerInterruptUS = (u16)__TIME_INVERSE_US((u16)(1 << (sizeof(u16) * (8 - 2))));
 	}
 
 	this->maximumTimePerInterruptUS = maximumTimePerInterruptUS;
