@@ -591,7 +591,7 @@ bool SoundWrapper::updatePCMPlayback(Channel* channel, bool unmute)
 void SoundWrapper::updatePlayback(u32 type, bool unmute, u32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
-	if(NULL == this->sound || this->paused)
+	if(NULL == this->sound | this->paused)
 	{
 		return;
 	}
@@ -644,12 +644,15 @@ void SoundWrapper::updatePlayback(u32 type, bool unmute, u32 elapsedMicroseconds
 
 		case kPCM:
 
-			this->elapsedMicroseconds += __I_TO_FIX17_15(1);
+			// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
+			//this->elapsedMicroseconds += __I_TO_FIX17_15(1);
 			
 			for(; node; node = node->next)
 			{
 				Channel* channel = (Channel*)node->data;
 /*
+				// Since this is commented out, there is no support for sounds
+				// with mixed types of tracks
 				// TODO: optimize playback of types
 				if(kPCM != channel->soundChannelConfiguration.type)
 				{
