@@ -211,7 +211,7 @@ class SoundWrapper : Object
 	void rewind();
 	void stop();
 	void release();
-	void updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds);
+	void updatePlayback(u32 type, bool unmute, u32 elapsedMicroseconds);
 	fix17_15 getSpeed();
 	void setSpeed(fix17_15 speed);
 	void computeTimerResolutionFactor();

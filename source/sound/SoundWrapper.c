@@ -510,7 +510,7 @@ static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 
 	channel->ticks = 0;
 }
 
-bool SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
+bool SoundWrapper::updateMIDIPlayback(Channel* channel, bool unmute)
 {
 	channel->ticks += channel->tickStep;
 
@@ -518,45 +518,38 @@ bool SoundWrapper::updateMIDIPlayback(Channel* channel, bool mute)
 	{
 		channel->cursor++;
 
-		if(mute)
+		u16 note = channel->soundTrack.dataMIDI[channel->cursor];
+
+		// Is it a special note?
+		switch(note)
 		{
-			_soundRegistries[channel->number].SxLRV = 0;
-		}
-		else
-		{
-			u16 note = channel->soundTrack.dataMIDI[channel->cursor];
+			case PAU:
 
-			// Is it a special note?
-			switch(note)
-			{
-				case PAU:
+				_soundRegistries[channel->number].SxLRV = 0;
+				break;
 
-					_soundRegistries[channel->number].SxLRV = 0;
-					break;
+			case HOLD:
+				// Continue playing the previous note.
+				break;
 
-				case HOLD:
-					// Continue playing the previous note.
-					break;
+			case ENDSOUND:
 
-				case ENDSOUND:
+				// I handle end sound
+				break;
 
-					// I handle end sound
-					break;
+			case LOOPSOUND:
+				break;
 
-				case LOOPSOUND:
-					break;
+			default:
+				{
+					u8 volume = channel->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
+					channel->soundChannelConfiguration.SxLRV = (volume << 4) | volume;
 
-				default:
-					{
-						u8 volume = channel->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
-						channel->soundChannelConfiguration.SxLRV = (volume << 4) | volume;
-
-						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-						_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV;
-					}
-					break;
-			}		
+					_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+					_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+					_soundRegistries[channel->number].SxLRV = unmute * channel->soundChannelConfiguration.SxLRV;
+				}
+				break;
 		}
 
 		SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
@@ -573,11 +566,11 @@ static inline u8 SoundWrapper::clampPCMValue(s8 value)
     return (u8)(value | ((__MAXIMUM_VOLUME - value) >> 7));
 }
 
-bool SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
+bool SoundWrapper::updatePCMPlayback(Channel* channel, bool unmute)
 {
 	channel->cursor++;
 
-	u8 volume = mute ? 0 : SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
+	u8 volume = unmute * SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
 
 #ifdef __SOUND_TEST
 	_soundRegistries[channel->number].SxLRV = (volume << 4) | (volume);
@@ -595,7 +588,7 @@ bool SoundWrapper::updatePCMPlayback(Channel* channel, bool mute)
 }
 
 
-void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
+void SoundWrapper::updatePlayback(u32 type, bool unmute, u32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
 	if(NULL == this->sound || this->paused)
@@ -626,7 +619,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 					continue;
 				}
 */
-				if(SoundWrapper::updateMIDIPlayback(this, channel, mute))
+				if(SoundWrapper::updateMIDIPlayback(this, channel, unmute))
 				{
 					if(channel->cursor >= channel->length)
 					{
@@ -664,7 +657,7 @@ void SoundWrapper::updatePlayback(u32 type, bool mute, u32 elapsedMicroseconds)
 					continue;
 				}
  */
-				if(SoundWrapper::updatePCMPlayback(this, channel, mute))
+				if(SoundWrapper::updatePCMPlayback(this, channel, unmute))
 				{
 					if(channel->cursor >= channel->length)
 					{
