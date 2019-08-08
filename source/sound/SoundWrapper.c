@@ -260,7 +260,7 @@ void SoundWrapper::play(const Vector3D* position)
 			channel->soundChannelConfiguration.SxLRV = SxLRV;
 		}
 	}
-	
+
 	if(!wasPaused)
 	{
 		this->elapsedMicroseconds = 0;
@@ -548,7 +548,7 @@ void SoundWrapper::completedPlayback()
 	else
 	{
 		SoundWrapper::rewind(this);
-	}		
+	}
 }
 
 void SoundWrapper::updateMIDIPlayback(bool unmute, u32 elapsedMicroseconds)
@@ -644,7 +644,7 @@ void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attr
 
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
 	//this->elapsedMicroseconds += __I_TO_FIX17_15(1);
-	
+
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
@@ -675,7 +675,7 @@ void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attr
 #endif
 		finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
 	}
-	
+
 	if(finished)
 	{
 		SoundWrapper::completedPlayback(this);
@@ -813,7 +813,7 @@ void SoundWrapper::printPlaybackProgress(int x, int y)
 	u32 elapsedSeconds = SoundWrapper::getElapsedSeconds(this);
 
 	static u16 previousPosition = 0;
-	
+
 	u16 position = (elapsedSeconds << 5) / this->totalPlaybackSeconds;
 
 	if(0 == position)
@@ -822,15 +822,17 @@ void SoundWrapper::printPlaybackProgress(int x, int y)
 
 		for(u8 i = 0; i < 32; i++)
 		{
-			PRINT_TEXT((position > i) ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + i, y);
+			PRINT_TEXT(__CHAR_DARK_RED_BOX, x + i, y);
 		}
 	}
 	else if(previousPosition < position)
 	{
-		previousPosition = position;
+		for(u8 i = previousPosition; i < position; i++)
+		{
+			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + i, y);
+		}
 
-		// Prevent skiping
-		PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + position - 1, y);
+		previousPosition = position;
 	}
 }
 
@@ -842,12 +844,11 @@ void SoundWrapper::printTiming(u32 seconds, int x, int y)
 	int minutesDigits = 1;//Utilities::getDigitCount(minutes);
 
 	PRINT_INT(minutes, x, y);
-
 	PRINT_TEXT(":", x + minutesDigits, y);
 
-	if(0 == seconds )
+	if(0 == seconds)
 	{
-		PRINT_TEXT("0:00", x, y);
+		PRINT_TEXT("00", x + minutesDigits + 1, y);
 	}
 	else if(seconds < 10)
 	{
@@ -895,10 +896,14 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT("/", x + 27, y);
 	SoundWrapper::printTiming(this, this->totalPlaybackSeconds, x + 28, y);
 
-	PRINT_TEXT("Speed", x, y);
-	PRINT_TEXT("    ", x + 6, y);
-	PRINT_INT(speed, x + 6, y);
-	PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
+	if(!this->hasPCMTracks)
+	{
+		PRINT_TEXT("Speed", x, y);
+		PRINT_TEXT("    ", x + 6, y);
+		PRINT_INT(speed, x + 6, y);
+		PRINT_TEXT("%", x + 6 + ((speed < 10) ? 1 : (speed < 100) ? 2 : 3), y);
+	}
+
 	PRINT_TEXT(!this->paused ? "  " : "\x07\x07", x + 15, y++);
 	y+=2;
 
@@ -950,7 +955,7 @@ void SoundWrapper::printVolume(int x, int y)
 			PRINT_TEXT("C", x + 15 - 0, y + yDisplacement);
 			PRINT_INT(channel->number, x + 16 - 0, y + yDisplacement);
 
-			for(int i = 0; i < 8; i++) 
+			for(int i = 0; i < 8; i++)
 			{
 				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y + yDisplacement);
 				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y + yDisplacement);
@@ -964,7 +969,7 @@ void SoundWrapper::printVolume(int x, int y)
 		++y;
 		++y;
 		++y;
-	}	
+	}
 
 	for(node = this->hasPCMTracks ? this->channels->tail : this->channels->head; node; node = node->next)
 	{
@@ -985,7 +990,7 @@ void SoundWrapper::printVolume(int x, int y)
 					u8 leftValue = (frequency * leftVolume / __MAXIMUM_VOLUME) >> 4;
 					u8 rightValue = (frequency * rightVolume / __MAXIMUM_VOLUME) >> 4;
 
-					for(i = 0; i < 15; i++) 
+					for(i = 0; i < 15; i++)
 					{
 						PRINT_TEXT(leftValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i - 0, y);
 						PRINT_TEXT(rightValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i - 0, y);
@@ -995,22 +1000,22 @@ void SoundWrapper::printVolume(int x, int y)
 
 			case kPCM:
 
-				for(i = 0; i < leftVolume; i++) 
+				for(i = 0; i < leftVolume; i++)
 				{
 					PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 14 - i - 7, y);
 				}
 
-				for(; i < 8; i++) 
+				for(; i < 8; i++)
 				{
 					PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 7, y);
 				}
 
-				for(i = 0; i < rightVolume; i++) 
+				for(i = 0; i < rightVolume; i++)
 				{
 					PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 17 + i - 7, y);
 				}
 
-				for(; i < 8; i++) 
+				for(; i < 8; i++)
 				{
 					PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 7, y);
 				}

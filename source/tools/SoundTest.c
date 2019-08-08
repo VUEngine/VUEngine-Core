@@ -191,11 +191,14 @@ void SoundTest::printGUI(bool clearScreen)
 	}
 	Printing::text(_printing, "Rewind   \x14", xControls, yControls++, NULL);
 	Printing::text(_printing, "Track  \x1E\x1C\x1D", xControls, yControls++, NULL);
-	Printing::text(_printing, "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
+	Printing::text(_printing, SoundWrapper::hasPCMTracks(this->soundWrapper) ? "          " : "Speed  \x1E\x1A\x1B", xControls, yControls++, NULL);
 	yControls++;
 	Printing::text(_printing, "T.Freq. \x1F\x1A", xControls, yControls++, NULL);
 	Printing::text(_printing, "T.Scale \x1F\x1B", xControls, yControls++, NULL);
 	Printing::text(_printing, "T.Res. \x1F\x1C\x1D", xControls, yControls++, NULL);
+
+	SoundTest::printTimer(this);
+	SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
 }
 
 void SoundTest::processUserInput(u16 pressedKey)
@@ -384,8 +387,8 @@ void SoundTest::loadPreviousSound()
 		this->selectedSound--;
 	}
 
-	SoundTest::printGUI(this, true);
 	SoundTest::loadSound(this);
+	SoundTest::printGUI(this, true);
 }
 void SoundTest::loadNextSound()
 {
@@ -400,8 +403,8 @@ void SoundTest::loadNextSound()
 		this->selectedSound++;
 	}
 
-	SoundTest::printGUI(this, true);
 	SoundTest::loadSound(this);
+	SoundTest::printGUI(this, true);
 }
 
 void SoundTest::loadSound()
@@ -414,6 +417,7 @@ void SoundTest::loadSound()
 	Game::disableKeypad(Game::getInstance());
 
 #ifdef __SOUND_TEST
+	Printing::clear(_printing);
 	PRINT_TEXT("Loading...", 1, 4);
 #endif
 
@@ -449,8 +453,6 @@ void SoundTest::loadSound()
 		SoundWrapper::computeTimerResolutionFactor(this->soundWrapper);
 
 		SoundTest::applyTimerSettings(this);
-		SoundTest::printTimer(this);
-		SoundWrapper::printMetadata(this->soundWrapper, 1, 4);
 
 #ifdef __SOUND_TEST
 	PRINT_TEXT("          ", 1, 4);
@@ -488,7 +490,6 @@ void SoundTest::applyTimerSettings()
 	TimerManager::enable(TimerManager::getInstance(), false);
 	TimerManager::initialize(TimerManager::getInstance());
 	TimerManager::enable(TimerManager::getInstance(), true);
-
 
 	SoundTest::printTimer(this);
 }
