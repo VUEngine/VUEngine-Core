@@ -286,7 +286,7 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
-void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
+void SoundManager::playSounds(u32 type, bool unmute, u32 elapsedMicroseconds)
 {
 	VirtualNode node = this->soundWrappers->head;
 
@@ -300,7 +300,7 @@ void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 
 				if(soundWrapper->hasMIDITracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds);
+					SoundWrapper::updatePlayback(soundWrapper, type, unmute, elapsedMicroseconds);
 				}
 				break;
 
@@ -308,7 +308,7 @@ void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 
 				if(soundWrapper->hasPCMTracks)
 				{
-					SoundWrapper::updatePlayback(soundWrapper, type, mute, elapsedMicroseconds);
+					SoundWrapper::updatePlayback(soundWrapper, type, unmute, elapsedMicroseconds);
 				}
 				break;
 
@@ -322,7 +322,7 @@ void SoundManager::playSounds(u32 type, bool mute, u32 elapsedMicroseconds)
 
 void SoundManager::playMIDISounds()
 {
-	SoundManager::playSounds(this, kMIDI, false, this->elapsedMicroseconds);
+	SoundManager::playSounds(this, kMIDI, true, this->elapsedMicroseconds);
 }
 
 void SoundManager::playPCMSounds()
@@ -346,7 +346,7 @@ void SoundManager::playPCMSounds()
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
 	this->pcmPlaybackCycles++;
-	SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
+	SoundManager::playSounds(this, kPCM, this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
 }
 
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
@@ -384,9 +384,9 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	{
 		this->pcmPlaybackCyclesToSkip = 1;
 	}
-
-	static u16 counter = 20;
 /*
+	static u16 counter = 20;
+
 	if(++counter > 20) 
 	{
 		counter = 0;
