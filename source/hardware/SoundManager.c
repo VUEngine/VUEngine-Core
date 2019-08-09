@@ -37,6 +37,7 @@
 
 #define __PLAYBACK_CYCLES_MODIFIER			0
 
+#undef __SOUND_MANAGER_PROFILE
 
 //---------------------------------------------------------------------------------------------------------
 //											 CLASS' DEFINITIONS
@@ -357,6 +358,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		this->pcmPlaybackCyclesToSkip = 1;
 	}
 
+#ifdef __SOUND_MANAGER_PROFILE
 	static u16 counter = 20;
 
 	if(++counter > 20) 
@@ -366,7 +368,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
 	//	PRINT_INT(this->pcmPlaybackCycles, 40, 20);
 	}
-
+#endif
 	this->pcmPlaybackCycles = 0;
 }
 
