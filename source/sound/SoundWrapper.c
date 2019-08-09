@@ -601,7 +601,7 @@ void SoundWrapper::updateMIDIPlayback(bool unmute, u32 elapsedMicroseconds)
 				default:
 					{
 						u8 volume = channel->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
-						channel->soundChannelConfiguration.SxLRV = (volume << 4) | volume;
+						channel->soundChannelConfiguration.SxLRV = ((volume << 4) | volume) & channel->soundChannelConfiguration.volume;
 
 						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
 						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
@@ -655,14 +655,14 @@ void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attr
 		u8 volume = unmute * SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
 
 #ifdef __SOUND_TEST
-		_soundRegistries[channel->number].SxLRV = (volume << 4) | (volume);
+		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
 		// No volume printing because it is too heavy on hardware
-		// _soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+//		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
 #else
 #ifndef __RELEASE
-		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+		_soundRegistries[channel->number].SxLRV = channel->soundChannelConfiguration.SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
 #else
-		_soundRegistries[channel->number].SxLRV = (((u8)volume << 4) & 0xF0) | (((u8)volume ) & 0x0F);
+		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
 #endif
 #endif
 		finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
@@ -963,7 +963,7 @@ void SoundWrapper::printVolume(int x, int y)
 		++y;
 	}
 
-	for(node = this->hasPCMTracks ? this->channels->tail : this->channels->head; node; node = node->next)
+	for(node = this->channels->head; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
 

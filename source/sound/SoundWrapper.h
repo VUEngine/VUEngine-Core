@@ -41,10 +41,21 @@
 #define __MIDI_CONVERTER_FREQUENCY_US		20
 #define __SOUND_TARGET_US_PER_TICK			__MIDI_CONVERTER_FREQUENCY_US
 
+#define __SOUND_LR			0xFF
+#define __SOUND_L			0xF0
+#define __SOUND_R			0x0F
+
 
 //---------------------------------------------------------------------------------------------------------
 //											TYPE DEFINITIONS
 //---------------------------------------------------------------------------------------------------------
+
+enum SoundChannelTypes
+{
+	kSoundNormal = 0,
+	kSoundModulation,
+	kSoundNoise,
+};
 
 typedef struct SoundChannelConfiguration
 {
@@ -78,8 +89,11 @@ typedef struct SoundChannelConfiguration
 	/// Waveform data pointer
 	const s8* waveFormData;
 
-	/// Is modulation
-	bool isModulation;
+	/// kSoundNormal, kSoundModulation, kSoundNoise
+	u16 channelType;
+
+	/// Volumen
+	u8 volume;
 
 } SoundChannelConfiguration;
 

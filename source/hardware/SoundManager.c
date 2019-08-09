@@ -273,7 +273,7 @@ void SoundManager::reset()
 		this->channels[i].soundChannelConfiguration.SxFQH = 0;
 		this->channels[i].soundChannelConfiguration.SxFQL = 0;
 		this->channels[i].soundChannelConfiguration.waveFormData = NULL;
-		this->channels[i].soundChannelConfiguration.isModulation = false;
+		this->channels[i].soundChannelConfiguration.volume = 0xFF;
 
 		this->waveforms[i].number = i;
 		this->waveforms[i].usageCount = 0;
@@ -405,7 +405,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	{
 		this->pcmPlaybackCyclesToSkip = 1;
 	}
-/*
+
 	static u16 counter = 20;
 
 	if(++counter > 20) 
@@ -415,7 +415,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
 		PRINT_INT(this->pcmPlaybackCycles, 40, 20);
 	}
-*/
+
 	this->pcmPlaybackCycles = 0;
 }
 
