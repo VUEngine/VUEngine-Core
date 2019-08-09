@@ -69,6 +69,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 	this->elapsedMicroseconds = 0;
 	this->totalPlaybackSeconds = 0;
+	this->unmute = true;
 
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
@@ -351,6 +352,16 @@ void SoundWrapper::release()
 	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
 }
 
+void SoundWrapper::mute()
+{
+	this->unmute = false;
+}
+
+void SoundWrapper::unmute()
+{
+	this->unmute = true;
+}
+
 void SoundWrapper::setupChannels(s8* waves)
 {
 	if(isDeleted(this->channels))
@@ -543,7 +554,7 @@ void SoundWrapper::completedPlayback()
 	}
 }
 
-void SoundWrapper::updateMIDIPlayback(bool unmute, u32 elapsedMicroseconds)
+void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 {
 	// Skip if sound is NULL since this should be purged
 	if((!this->sound) | (this->paused))
@@ -605,7 +616,7 @@ void SoundWrapper::updateMIDIPlayback(bool unmute, u32 elapsedMicroseconds)
 
 						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
 						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
-						_soundRegistries[channel->number].SxLRV = unmute * channel->soundChannelConfiguration.SxLRV;
+						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
 					}
 					break;
 			}
@@ -622,7 +633,7 @@ void SoundWrapper::updateMIDIPlayback(bool unmute, u32 elapsedMicroseconds)
 	}
 }
 
-void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attribute__((unused)))
+void SoundWrapper::updatePCMPlayback(u32 elapsedMicroseconds __attribute__((unused)))
 {
 	// Skip if sound is NULL since this should be purged
 	if((!this->sound) | (this->paused))
@@ -651,7 +662,7 @@ void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attr
 */
 		channel->cursor++;
 
-		u8 volume = unmute * SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
+		u8 volume = this->unmute * SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
 
 #ifdef __SOUND_TEST
 		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;

@@ -284,10 +284,7 @@ void SoundManager::reset()
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->pcmStablePlaybackCycles = 0;
 	this->elapsedMicroseconds = 0;
-
-	this->pcmFrameRateIsStable = false;
 
 	SoundManager::stopAllSounds(this);
 }
@@ -296,10 +293,8 @@ void SoundManager::startPCMPlayback()
 {
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 100;
-	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->pcmStablePlaybackCycles = 0;
 
-	this->pcmFrameRateIsStable = false;
+	SoundManager::muteAllSounds(this, kPCM);
 }
 
 void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
@@ -307,67 +302,45 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
-void SoundManager::playSounds(u32 type, bool unmute, u32 elapsedMicroseconds)
+void SoundManager::playMIDISounds()
 {
+	u32 elapsedMicroseconds = this->elapsedMicroseconds;
+
 	VirtualNode node = this->soundWrappers->head;
 
 	for(; node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
-		switch(type)
+		if(soundWrapper->hasMIDITracks)
 		{
-			case kMIDI:
-
-				if(soundWrapper->hasMIDITracks)
-				{
-					SoundWrapper::updateMIDIPlayback(soundWrapper, unmute, elapsedMicroseconds);
-				}
-				break;
-
-			case kPCM:
-
-				if(soundWrapper->hasPCMTracks)
-				{
-					SoundWrapper::updatePCMPlayback(soundWrapper, unmute, elapsedMicroseconds);
-				}
-				break;
-
-			default:
-
-				NM_ASSERT(false, "SoundManager::playSounds: unknown track type");
-				break;
+			SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
 		}
 	}
 }
 
-void SoundManager::playMIDISounds()
-{
-	SoundManager::playSounds(this, kMIDI, true, this->elapsedMicroseconds);
-}
-
 void SoundManager::playPCMSounds()
 {
-	// This is the right way to handle the throttle, but
-	// it wastes CPU cycles on funciton calls and returns
-/*	static u16 pcmReimainingPlaybackCyclesToSkip = 0;
-
-	if(++pcmReimainingPlaybackCyclesToSkip >= this->pcmPlaybackCyclesToSkip)
-	{
-		pcmReimainingPlaybackCyclesToSkip = 0;
-
-		this->pcmPlaybackCycles++;
-		SoundManager::playSounds(this, kPCM, !this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
-	}
-*/
-	// Dubious optimization since it missed the FRAME START event, but
 	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
 	volatile u16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
 	while(0 < --pcmReimainingPlaybackCyclesToSkip);
 
 	this->pcmPlaybackCycles++;
-	SoundManager::playSounds(this, kPCM, this->pcmFrameRateIsStable, this->pcmFrameRateIsStable ? this->elapsedMicroseconds : 0);
+
+	u32 elapsedMicroseconds = this->elapsedMicroseconds;
+
+	VirtualNode node = this->soundWrappers->head;
+
+	for(; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		if(soundWrapper->hasPCMTracks)
+		{
+			SoundWrapper::updatePCMPlayback(soundWrapper, elapsedMicroseconds);
+		}
+	}
 }
 
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
@@ -375,28 +348,6 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	this->elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
 
 	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
-
-	if(!this->pcmFrameRateIsStable)
-	{
-		if(0 == deviation / (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION))
-		{
-			this->pcmStablePlaybackCycles++;	
-		}
-		else
-		{
-			this->pcmStablePlaybackCycles = 0;
-		}
-		
-		if(gameFrameDuration / (this->pcmTargetPlaybackFrameRate / __DEFAULT_PCM_HZ) < (this->pcmStablePlaybackCycles))
-		{
-			this->pcmFrameRateIsStable = true;
-
-			SoundManager::rewindAllSounds(this, kPCM);
-		}
-	}
-
-	// Proper way to compute the throttle
-	//this->pcmPlaybackCyclesToSkip += 0 < deviation ? 1 : 0 > deviation ? -1 : 0;
 
 	// Dubious optimization
 	this->pcmPlaybackCyclesToSkip += deviation;
@@ -413,7 +364,7 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 		counter = 0;
 		PRINT_TEXT("    ", 35, 20);
 		PRINT_INT(this->pcmPlaybackCyclesToSkip, 35, 20);
-		PRINT_INT(this->pcmPlaybackCycles, 40, 20);
+	//	PRINT_INT(this->pcmPlaybackCycles, 40, 20);
 	}
 
 	this->pcmPlaybackCycles = 0;
@@ -448,6 +399,77 @@ void SoundManager::rewindAllSounds(u32 type)
 			default:
 
 				NM_ASSERT(false, "SoundManager::playSounds: unknown track type");
+				break;
+
+		}
+	}
+}
+
+void SoundManager::unmuteAllSounds(u32 type)
+{
+	VirtualNode node = this->soundWrappers->head;
+
+	for(; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		switch(type)
+		{
+			case kMIDI:
+
+				if(soundWrapper->hasMIDITracks)
+				{
+					SoundWrapper::unmute(soundWrapper);
+				}
+				break;
+
+			case kPCM:
+
+				if(soundWrapper->hasPCMTracks)
+				{
+					SoundWrapper::unmute(soundWrapper);
+				}
+				break;
+
+			default:
+
+				NM_ASSERT(false, "SoundManager::muteAllSounds: unknown track type");
+				break;
+
+		}
+	}
+}
+
+
+void SoundManager::muteAllSounds(u32 type)
+{
+	VirtualNode node = this->soundWrappers->head;
+
+	for(; node; node = node->next)
+	{
+		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+		switch(type)
+		{
+			case kMIDI:
+
+				if(soundWrapper->hasMIDITracks)
+				{
+					SoundWrapper::mute(soundWrapper);
+				}
+				break;
+
+			case kPCM:
+
+				if(soundWrapper->hasPCMTracks)
+				{
+					SoundWrapper::mute(soundWrapper);
+				}
+				break;
+
+			default:
+
+				NM_ASSERT(false, "SoundManager::muteAllSounds: unknown track type");
 				break;
 
 		}
