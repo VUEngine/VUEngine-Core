@@ -630,16 +630,15 @@ void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attr
 		return;
 	}
 
-	bool finished = true;
-
-	VirtualNode node = this->channels->head;
+	VirtualNode node = this->channels->tail;
 
 	// Elapsed time during PCM playback is based on the cursor, track's length and target Hz
 	//this->elapsedMicroseconds += __I_TO_FIX17_15(1);
+	Channel* channel = NULL;
 
-	for(; node; node = node->next)
+	for(; node; node = node->previous)
 	{
-		Channel* channel = (Channel*)node->data;
+		channel = (Channel*)node->data;
 /*
 		// Since this is commented out, there is no support for sounds
 		// with mixed types of tracks
@@ -665,10 +664,11 @@ void SoundWrapper::updatePCMPlayback(bool unmute, u32 elapsedMicroseconds __attr
 		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
 #endif
 #endif
-		finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
 	}
 
-	if(finished)
+	// PCM playback must be totally sync on all channels, so, check if completed only
+	// in the first one
+	if(SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel))
 	{
 		SoundWrapper::completedPlayback(this);
 	}
