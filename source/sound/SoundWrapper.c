@@ -143,7 +143,7 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 		{
 			Channel* channel = (Channel*)node->data;
 
-			switch(channel->soundChannelConfiguration.type)
+			switch(channel->soundChannelConfiguration.trackType)
 			{
 				case kMIDI:
 
@@ -303,7 +303,7 @@ void SoundWrapper::rewind()
 		channel->soundChannelConfiguration.SxLRV = 0;
 		channel->soundChannelConfiguration.SxFQH = channel->soundChannelConfiguration.SxFQL = 0;
 
-		switch(channel->soundChannelConfiguration.type)
+		switch(channel->soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 
@@ -386,7 +386,7 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->soundChannelConfiguration.SxRAM = waves[i];
 		channel->volumeReduction = 0;
 
-		switch(channel->soundChannelConfiguration.type)
+		switch(channel->soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 
@@ -575,7 +575,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 		// Since this is commented out, there is no support for sounds
 		// with mixed types of tracks
 		// TODO: optimize playback of types
-		if(kMIDI != channel->soundChannelConfiguration.type)
+		if(kMIDI != channel->soundChannelConfiguration.trackType)
 		{
 			finished &= channel->finished;
 			continue;
@@ -654,7 +654,7 @@ void SoundWrapper::updatePCMPlayback(u32 elapsedMicroseconds __attribute__((unus
 		// Since this is commented out, there is no support for sounds
 		// with mixed types of tracks
 		// TODO: optimize playback of types
-		if(kPCM != channel->soundChannelConfiguration.type)
+		if(kPCM != channel->soundChannelConfiguration.trackType)
 		{
 			finished &= channel->finished;
 			continue;
@@ -702,7 +702,7 @@ void SoundWrapper::print(int x, int y)
 		PRINT_TEXT("Type:         ", x, ++y);
 
 		char* soundType = "?";
-		switch(channel->soundChannelConfiguration.type)
+		switch(channel->soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 
@@ -751,7 +751,7 @@ void SoundWrapper::print(int x, int y)
 		PRINT_INT(channel->length, x + xDisplacement, y);
 
 		PRINT_TEXT("Note: ", x, ++y);
-		switch(channel->soundChannelConfiguration.type)
+		switch(channel->soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 
@@ -768,7 +768,7 @@ void SoundWrapper::print(int x, int y)
 
 u32 SoundWrapper::getTotalPlaybackSeconds(Channel* channel)
 {
-	switch(channel->soundChannelConfiguration.type)
+	switch(channel->soundChannelConfiguration.trackType)
 	{
 		case kMIDI:
 			{
@@ -795,7 +795,7 @@ u32 SoundWrapper::getElapsedSeconds()
 {
 	Channel* firstChannel = (Channel*)this->channels->head->data;
 
-	switch(firstChannel->soundChannelConfiguration.type)
+	switch(firstChannel->soundChannelConfiguration.trackType)
 	{
 		case kMIDI:
 
@@ -983,7 +983,7 @@ void SoundWrapper::printVolume(int x, int y, bool printHeader)
 		u8 leftValue = 0;
 		u8 rightValue = 0;
 
-		switch(channel->soundChannelConfiguration.type)
+		switch(channel->soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 

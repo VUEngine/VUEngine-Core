@@ -266,7 +266,7 @@ void SoundManager::reset()
 		this->channels[i].ticksPerNote = 0;
 		this->channels[i].soundChannel = 0;
 
-		this->channels[i].soundChannelConfiguration.type = kUnknownType;
+		this->channels[i].soundChannelConfiguration.trackType = kUnknownType;
 		this->channels[i].soundChannelConfiguration.SxLRV = 0;
 		this->channels[i].soundChannelConfiguration.SxRAM = 0;
 		this->channels[i].soundChannelConfiguration.SxEV0 = 0;
@@ -280,6 +280,21 @@ void SoundManager::reset()
 		this->waveforms[i].usageCount = 0;
 		this->waveforms[i].wave = __WAVE_ADDRESS(i + 1);
 		this->waveforms[i].data = NULL;
+	}
+
+	for(i = 0; i < __TOTAL_NORMAL_CHANNELS; i++)
+	{
+		this->channels[i].type = kChannelNormal;
+	}
+
+	for(i = __TOTAL_NORMAL_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i++)
+	{
+		this->channels[i].type = kChannelModulation;
+	}
+
+	for(i = __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS; i < __TOTAL_NORMAL_CHANNELS + __TOTAL_MODULATION_CHANNELS + __TOTAL_NOISE_CHANNELS; i++)
+	{
+		this->channels[i].type = kChannelNoise;
 	}
 
 	this->pcmPlaybackCycles = 0;
@@ -353,7 +368,7 @@ bool SoundManager::playPCMSounds()
 	return true;
 }
 
-void SoundManager::updateFrameRate(u16 gameFrameDuration)
+void SoundManager::updateFrameRate()
 {
 	if(!this->hasPCMSounds)
 	{
@@ -453,7 +468,6 @@ void SoundManager::unmuteAllSounds(u32 type)
 		}
 	}
 }
-
 
 void SoundManager::muteAllSounds(u32 type)
 {
@@ -603,17 +617,23 @@ void SoundManager::setWaveform(Waveform* waveform, const s8* data, u32 type)
 	}
 }
 
-static u8 SoundManager::getSoundChannelsCount(Sound* sound)
+static u8 SoundManager::getSoundChannelsCount(Sound* sound, u32 channelType)
 {
 	// Compute the number of 
-	u8 soundChannelsCount = 0;
+	u8 channelsCount = 0;
 
-	for(; sound->soundChannels[soundChannelsCount]; soundChannelsCount++);
+	for(u16 i = 0; sound->soundChannels[i] && i < __TOTAL_CHANNELS; i++)
+	{
+		if(channelType == sound->soundChannels[i]->soundChannelConfiguration->channelType)
+		{
+			channelsCount++;
+		}
+	}
 
-	return __TOTAL_CHANNELS < soundChannelsCount ? __TOTAL_CHANNELS : soundChannelsCount;
+	return __TOTAL_CHANNELS < channelsCount ? __TOTAL_CHANNELS : channelsCount;
 }
 
-u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels , u8 soundChannelsCount)
+u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, u8 channelsCount, u32 channelType)
 {
 	if(NULL == sound || isDeleted(availableChannels))
 	{
@@ -623,9 +643,9 @@ u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels , u
 	u16 i = 0;
 	u8 usableChannelsCount = 0;
 
-	for(i = 0; usableChannelsCount < soundChannelsCount && i < __TOTAL_CHANNELS; i++)
+	for(i = 0; usableChannelsCount < channelsCount && i < __TOTAL_CHANNELS; i++)
 	{
-		if(NULL == this->channels[i].sound)
+		if(NULL == this->channels[i].sound && this->channels[i].type & channelType)
 		{
 			usableChannelsCount++;
 			VirtualList::pushBack(availableChannels , &this->channels[i]);
@@ -664,14 +684,20 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 	}
 
 	// Compute the number of 
-	u8 soundChannelsCount = SoundManager::getSoundChannelsCount(sound);
+	u8 normalChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNormal);
+	u8 modulationChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelModulation);
+	u8 noiseChannelsCount = SoundManager::getSoundChannelsCount(sound, kChannelNoise);
 	
-	NM_ASSERT(0 < soundChannelsCount, "SoundManager::getSound: soundChannelsCount = 0");
-
 	// Check for free channels
 	VirtualList availableChannels  = new VirtualList();
-	u8 usableChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels , soundChannelsCount);
-	NM_ASSERT(0 < usableChannelsCount, "SoundManager::getSound: usableChannelsCount = 0");
+
+	u8 usableNormalChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, normalChannelsCount, kChannelNormal | (0 == modulationChannelsCount ? kChannelModulation : kChannelNormal));
+	u8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
+	u8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
+
+	NM_ASSERT(0 == normalChannelsCount || normalChannelsCount <= usableNormalChannelsCount, "SoundManager::getSound: not enough normal channels");
+	NM_ASSERT(0 == modulationChannelsCount || 0 < usableModulationChannelsCount, "SoundManager::getSound: not enough modulation channels");
+	NM_ASSERT(0 == noiseChannelsCount || 0 < usableNoiseChannelsCount, "SoundManager::getSound: not enough noise channels");
 
 	SoundWrapper soundWrapper = NULL;
 
@@ -681,13 +707,13 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 	}
 	// If there are enough usable channels
 	else */
-	if(soundChannelsCount <= usableChannelsCount)
+	if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
 	{
 		s8 waves[__TOTAL_CHANNELS] = {-1, -1, -1, -1, -1};
 
 		u16 i = 0;
 
-		for(; i < soundChannelsCount; i++)
+		for(; i < normalChannelsCount; i++)
 		{
 			waves[i] = SoundManager::getWaveform(this, sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
 
@@ -697,12 +723,12 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 			}
 		}
 
-		for(i = 0; i < soundChannelsCount; i++)
+		for(i = 0; i < normalChannelsCount; i++)
 		{
-			SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData, sound->soundChannels[i]->soundChannelConfiguration->type);
+			SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData, sound->soundChannels[i]->soundChannelConfiguration->trackType);
 		}
 
-		NM_ASSERT(0 < VirtualList::getSize(availableChannels), "SoundManager::getSound: 0 availableChannels");
+		NM_ASSERT(0 < VirtualList::getSize(availableChannels), "SoundManager::getSound: 0 availableNormalChannels");
 
 		if(0 < VirtualList::getSize(availableChannels))
 		{
@@ -712,7 +738,7 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 		}
 	}
 
-	delete availableChannels ;
+	delete availableChannels;
 
 	if(!isDeleted(soundWrapper))
 	{
@@ -764,7 +790,7 @@ void SoundManager::stopAllSounds()
 void SoundManager::print()
 {
 	int x = 1;
-	int xDisplacement = 9;
+	int xDisplacement = 8;
 	int yDisplacement = 0;
 
 	int i = 0;
@@ -774,13 +800,35 @@ void SoundManager::print()
 	{
 		int y = yDisplacement;
 
-		PRINT_TEXT("CHANNEL: ", x, y);
-		PRINT_INT(this->channels[i].number, x + xDisplacement, y);
+		PRINT_TEXT("CHANNEL ", x, y);
+		PRINT_INT(this->channels[i].number + 1, x + xDisplacement, y);
 
-		PRINT_TEXT("Type: ", x, ++y);
+		PRINT_TEXT("Type   : ", x, ++y);
+
+		char* channelType = "?";
+		switch(this->channels[i].type)
+		{
+			case kChannelNormal:
+
+				channelType = "Normal";
+				break;
+
+			case kChannelModulation:
+
+				channelType = "Modulation";
+				break;
+
+			case kChannelNoise:
+
+				channelType = "Noise";
+				break;
+		}
+		PRINT_TEXT(channelType, x + xDisplacement, y);
+
+		PRINT_TEXT("Track  :     ", x, ++y);
 
 		char* soundType = "?";
-		switch(this->channels[i].soundChannelConfiguration.type)
+		switch(this->channels[i].soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 
@@ -795,41 +843,34 @@ void SoundManager::print()
 
 		PRINT_TEXT(soundType, x + xDisplacement, y);
 
-		PRINT_TEXT("Cursor:        ", x, ++y);
+		PRINT_TEXT("Cursor :        ", x, ++y);
 		PRINT_INT(this->channels[i].cursor, x + xDisplacement, y);
 
-		PRINT_TEXT("Snd Chnl: ", x, ++y);
+		PRINT_TEXT("Snd Ch : ", x, ++y);
 		PRINT_INT(this->channels[i].soundChannel, x + xDisplacement, y);
 
-		PRINT_TEXT("SxINT: ", x, ++y);
-		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxINT | (NULL == this->channels[i].sound ? 0 : 0x80), x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxLRV: ", x, ++y);
-		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxLRV, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxRAM: ", x, ++y);
+		PRINT_TEXT("SxRAM  : ", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxRAM, x + xDisplacement, y, 2);
+		PRINT_TEXT("INT/LVR:  /", x, ++y);
+		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxINT | (NULL == this->channels[i].sound ? 0 : 0x80), x + xDisplacement, y, 2);
+		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxLRV, x + xDisplacement + 3, y, 2);
 
-		PRINT_TEXT("SxEV0: ", x, ++y);
+		PRINT_TEXT("EV0/EV1:  /", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxEV0, x + xDisplacement, y, 2);
+		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxEV1, x + xDisplacement + 3, y, 2);
 
-		PRINT_TEXT("SxEV1: ", x, ++y);
-		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxEV1, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxFQH: ", x, ++y);
+		PRINT_TEXT("FQH/FQL:  /", x, ++y);
 		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQH, x + xDisplacement, y, 2);
-
-		PRINT_TEXT("SxFQH: ", x, ++y);
-		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQL, x + xDisplacement, y, 2);
+		PRINT_HEX_EXT(this->channels[i].soundChannelConfiguration.SxFQL, x + xDisplacement + 3, y, 2);
 	
-		PRINT_TEXT("Loop: ", x, ++y);
+		PRINT_TEXT("Loop   : ", x, ++y);
 		PRINT_TEXT(this->channels[i].sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, x + xDisplacement, y);
 
-		PRINT_TEXT("Length: ", x, ++y);
+		PRINT_TEXT("Length : ", x, ++y);
 		PRINT_INT(this->channels[i].length, x + xDisplacement, y);
 		
-		PRINT_TEXT("Note: ", x, ++y);
-		switch(this->channels[i].soundChannelConfiguration.type)
+		PRINT_TEXT("Note   : ", x, ++y);
+		switch(this->channels[i].soundChannelConfiguration.trackType)
 		{
 			case kMIDI:
 

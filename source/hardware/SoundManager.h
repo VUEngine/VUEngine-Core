@@ -74,7 +74,24 @@ enum SoundRequestMessages
 	kPlayForce,						// Plays the priority tracks deallocating previous sound if necessary
 };
 
-#define __DEFAULT_PCM_HZ	8000
+/*
+enum ChannelTypes
+{
+	kChannelNormal0 		= 0,
+	kChannelNormal1 		= 1,
+	kChannelNormal2 		= 2,
+	kChannelNormal3 		= 3,
+	kChannelNormal4 		= 4,
+	kChannelModulation0 	= 5,
+	kChannelNoise0 			= 6,
+};
+*/
+
+#define __DEFAULT_PCM_HZ					8000
+#define __TOTAL_CHANNELS					6
+#define __TOTAL_MODULATION_CHANNELS			1
+#define __TOTAL_NOISE_CHANNELS				1
+#define __TOTAL_NORMAL_CHANNELS				(__TOTAL_CHANNELS - __TOTAL_MODULATION_CHANNELS - __TOTAL_NOISE_CHANNELS)
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -109,7 +126,7 @@ singleton class SoundManager : Object
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
 	void startPCMPlayback();
 
-	void updateFrameRate(u16 gameFrameDuration);
+	void updateFrameRate();
 	void print();
 	void printPlaybackTime();
 }

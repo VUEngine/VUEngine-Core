@@ -502,6 +502,30 @@ void VirtualList::copy(VirtualList sourceList)
 }
 
 /**
+ * Add source list's elements to destination list
+ *
+ * @param sourceList
+ */
+void VirtualList::add(VirtualList sourceList)
+{
+#ifdef __DEBUG
+	int counter = 0;
+#endif
+
+	VirtualNode node = sourceList->head;
+
+	while(node)
+	{
+		// add next node
+		VirtualList::pushBack(this, node->data);
+		// move to next node
+		node = node->next;
+
+		ASSERT(++counter < LIST_MAX_SIZE, "VirtualList::copy: endless list copying");
+	}
+}
+
+/**
  * Retrieve list's head's address
  *
  * @return			Node

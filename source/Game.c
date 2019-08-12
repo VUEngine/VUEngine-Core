@@ -984,7 +984,7 @@ void Game::checkForNewState()
 
 void Game::updateFrameRate()
 {
-	SoundManager::updateFrameRate(this->soundManager, __GAME_FRAME_DURATION);
+	SoundManager::updateFrameRate(this->soundManager);
 
 	if(Game::isInSpecialMode(this))
 	{

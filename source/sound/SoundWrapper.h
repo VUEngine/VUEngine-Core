@@ -37,7 +37,6 @@
 //---------------------------------------------------------------------------------------------------------
 
 #define __MAXIMUM_VOLUME					0xF
-#define __TOTAL_CHANNELS					6
 #define __MIDI_CONVERTER_FREQUENCY_US		20
 #define __SOUND_TARGET_US_PER_TICK			__MIDI_CONVERTER_FREQUENCY_US
 
@@ -52,15 +51,15 @@
 
 enum SoundChannelTypes
 {
-	kSoundNormal = 0,
-	kSoundModulation,
-	kSoundNoise,
+	kChannelNormal 			= (1 << 0),
+	kChannelModulation		= (1 << 1),
+	kChannelNoise			= (1 << 2)
 };
 
 typedef struct SoundChannelConfiguration
 {
 	/// kMIDI, kPCM
-	u32 type;
+	u32 trackType;
 
 	/// SxINT
 	u8 SxINT;
@@ -89,8 +88,8 @@ typedef struct SoundChannelConfiguration
 	/// Waveform data pointer
 	const s8* waveFormData;
 
-	/// kSoundNormal, kSoundModulation, kSoundNoise
-	u16 channelType;
+	/// kChannelNormal, kChannelModulation, kChannelNoise
+	u32 channelType;
 
 	/// Volumen
 	u8 volume;
@@ -182,6 +181,8 @@ typedef struct Channel
 		const u16* dataMIDI;
 
 	} soundTrack;
+
+	u32 type;
 
 	u8 number;
 	u8 soundChannel;
