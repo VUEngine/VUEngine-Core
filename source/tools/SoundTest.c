@@ -79,7 +79,7 @@ void SoundTest::releaseSoundWrapper()
 {
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this->soundWrapper);
+		SoundWrapper::release(this->soundWrapper);
 
 		this->soundWrapper = NULL;
 	}
