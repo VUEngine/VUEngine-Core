@@ -101,7 +101,7 @@ void SoundTest::update()
 		}
 		else
 		{
-			SoundWrapper::printVolume(this->soundWrapper, 1, 17);
+			SoundWrapper::printVolume(this->soundWrapper, 1, 17, false);
 		}
 	}
 }

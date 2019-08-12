@@ -285,7 +285,6 @@ void SoundManager::reset()
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-	this->elapsedMicroseconds = 0;
 
 	SoundManager::stopAllSounds(this);
 }
@@ -305,7 +304,7 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 
 bool SoundManager::playMIDISounds()
 {
-	u32 elapsedMicroseconds = this->elapsedMicroseconds;
+	u32 elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
 
 	VirtualNode node = this->soundWrappers->head;
 
@@ -336,8 +335,6 @@ bool SoundManager::playPCMSounds()
 
 	this->pcmPlaybackCycles++;
 
-	u32 elapsedMicroseconds = this->elapsedMicroseconds;
-
 	VirtualNode node = this->soundWrappers->head;
 
 	this->hasPCMSounds = false;
@@ -349,7 +346,7 @@ bool SoundManager::playPCMSounds()
 		if(soundWrapper->hasPCMTracks)
 		{
 			this->hasPCMSounds = true;
-			SoundWrapper::updatePCMPlayback(soundWrapper, elapsedMicroseconds);
+			SoundWrapper::updatePCMPlayback(soundWrapper, 0);
 		}
 	}
 
@@ -362,8 +359,6 @@ void SoundManager::updateFrameRate(u16 gameFrameDuration)
 	{
 		return;
 	}
-
-	this->elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
 
 	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
 

@@ -924,10 +924,10 @@ void SoundWrapper::printMetadata(int x, int y)
 	PRINT_TEXT("Loop", trackInfoXOffset, ++y);
 	PRINT_TEXT(this->sound->loop ? __CHAR_CHECKBOX_CHECKED : __CHAR_CHECKBOX_UNCHECKED, trackInfoXOffset + trackInfoValuesXOffset, y++);
 
-	SoundWrapper::printVolume(this, 1, y);
+	SoundWrapper::printVolume(this, 1, y, true);
 }
 
-void SoundWrapper::printVolume(int x, int y)
+void SoundWrapper::printVolume(int x, int y, bool printHeader)
 {
 	if(this->hasPCMTracks)
 	{
@@ -936,7 +936,7 @@ void SoundWrapper::printVolume(int x, int y)
 
 	VirtualNode node = this->channels->head;
 
-	if(0 == this->elapsedMicroseconds)
+	if(printHeader)
 	{
 		PRINT_TEXT("OUTPUT", x, ++y);
 
@@ -949,16 +949,10 @@ void SoundWrapper::printVolume(int x, int y)
 		{
 			Channel* channel = (Channel*)node->data;
 
-			if(this->hasPCMTracks)
-			{
-				PRINT_TEXT("VL", x + 15 - 7, y + yDisplacement);
-				break;
-			}
-
 			PRINT_TEXT("C", x + 15 - 0, y + yDisplacement);
 			PRINT_INT(channel->number, x + 16 - 0, y + yDisplacement);
 
-			for(int i = 0; i < 8; i++)
+			for(int i = 0; i < 15; i++)
 			{
 				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y + yDisplacement);
 				PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y + yDisplacement);
@@ -984,50 +978,49 @@ void SoundWrapper::printVolume(int x, int y)
 		u8 rightVolume = (volume & 0x0F);
 		u8 i;
 
-		u8 frequency = channel->soundChannelConfiguration.SxFQH | channel->soundChannelConfiguration.SxFQL;
+		u8 frequency = (channel->soundChannelConfiguration.SxFQH << 4) | channel->soundChannelConfiguration.SxFQL;
+
+		u8 leftValue = 0;
+		u8 rightValue = 0;
 
 		switch(channel->soundChannelConfiguration.type)
 		{
 			case kMIDI:
-				{
-					u8 leftValue = (frequency * leftVolume / __MAXIMUM_VOLUME) >> 4;
-					u8 rightValue = (frequency * rightVolume / __MAXIMUM_VOLUME) >> 4;
 
-					for(i = 0; i < 15; i++)
-					{
-						PRINT_TEXT(leftValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 14 - i - 0, y);
-						PRINT_TEXT(rightValue > i ? __CHAR_BRIGHT_RED_BOX : __CHAR_DARK_RED_BOX, x + 17 + i - 0, y);
-					}
-				}
+				leftValue = ((frequency * leftVolume) / __MAXIMUM_VOLUME) >> 4;
+				rightValue = ((frequency * rightVolume) / __MAXIMUM_VOLUME) >> 4;
 				break;
 
 			case kPCM:
 
-				for(i = 0; i < leftVolume; i++)
-				{
-					PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 14 - i - 7, y);
-				}
-
-				for(; i < 8; i++)
-				{
-					PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 7, y);
-				}
-
-				for(i = 0; i < rightVolume; i++)
-				{
-					PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 17 + i - 7, y);
-				}
-
-				for(; i < 8; i++)
-				{
-					PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 7, y);
-				}
+				leftValue = leftVolume;
+				rightValue = rightVolume;
 				break;
 
 			default:
 
 				NM_ASSERT(false, "SoundWrapper::printMetadata: unknown track type");
 				break;
+		}
+
+		for(i = 0; i < leftValue; i++)
+		{
+			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 14 - i - 0, y);
+		}
+
+		for(; i < 15; i++)
+		{
+			PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 14 - i - 0, y);
+		}
+
+		for(i = 0; i < rightValue; i++)
+		{
+			PRINT_TEXT(__CHAR_BRIGHT_RED_BOX, x + 17 + i - 0, y);
+		}
+
+		for(; i < 15; i++)
+		{
+			PRINT_TEXT(__CHAR_DARK_RED_BOX, x + 17 + i - 0, y);
 		}
 
 		y++;
