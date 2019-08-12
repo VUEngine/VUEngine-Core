@@ -289,6 +289,15 @@ void Game::initialize()
 	Clock::start(this->clock);
 }
 
+bool Game::updateSpecialProcesses()
+{
+	bool result = false;
+
+	result |= SoundManager::playPCMSounds(this->soundManager);
+
+	return result;
+}
+
 void Game::debug()
 {
 #ifdef __PROFILE_GAME
@@ -382,15 +391,11 @@ void Game::start(GameState state)
 		// Set state
 		Game::setNextState(this, state);
 
-		SoundManager soundManager = this->soundManager;
-
 		while(true)
 		{
 			if(this->nextFrameStarted)
 			{
 				Game::currentFrameStarted(this);
-
-				SoundManager::updateFrameRate(soundManager, __GAME_FRAME_DURATION);
 
 				Game::updateFrameRate(this);
 
@@ -402,7 +407,10 @@ void Game::start(GameState state)
 			}
 			else
 			{
-				SoundManager::playPCMSounds(soundManager);
+				if(!Game::updateSpecialProcesses(this))
+				{
+					HardwareManager::halt();
+				}
 			}
 		}
 	}
@@ -976,6 +984,8 @@ void Game::checkForNewState()
 
 void Game::updateFrameRate()
 {
+	SoundManager::updateFrameRate(this->soundManager, __GAME_FRAME_DURATION);
+
 	if(Game::isInSpecialMode(this))
 	{
 		return;

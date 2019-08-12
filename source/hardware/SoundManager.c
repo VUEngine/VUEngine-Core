@@ -154,6 +154,7 @@ void SoundManager::constructor()
 
 	this->soundWrappers = NULL;
 	this->releasedSoundWrappers = NULL;
+	this->hasPCMSounds = false;
 	
 	SoundManager::reset(this);
 }
@@ -302,7 +303,7 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
-void SoundManager::playMIDISounds()
+bool SoundManager::playMIDISounds()
 {
 	u32 elapsedMicroseconds = this->elapsedMicroseconds;
 
@@ -317,10 +318,17 @@ void SoundManager::playMIDISounds()
 			SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
 		}
 	}
+
+	return true;
 }
 
-void SoundManager::playPCMSounds()
+bool SoundManager::playPCMSounds()
 {
+	if(!this->hasPCMSounds)
+	{
+		return false;
+	}
+
 	// Gives good results on hardware
 	// Do not waste CPU cycles returning to the call point
 	volatile u16 pcmReimainingPlaybackCyclesToSkip = this->pcmPlaybackCyclesToSkip;
@@ -332,19 +340,29 @@ void SoundManager::playPCMSounds()
 
 	VirtualNode node = this->soundWrappers->head;
 
+	this->hasPCMSounds = false;
+
 	for(; node; node = node->next)
 	{
 		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
 
 		if(soundWrapper->hasPCMTracks)
 		{
+			this->hasPCMSounds = true;
 			SoundWrapper::updatePCMPlayback(soundWrapper, elapsedMicroseconds);
 		}
 	}
+
+	return true;
 }
 
 void SoundManager::updateFrameRate(u16 gameFrameDuration)
 {
+	if(!this->hasPCMSounds)
+	{
+		return;
+	}
+
 	this->elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
 
 	s16 deviation = (this->pcmPlaybackCycles - this->pcmTargetPlaybackFrameRate/ (__MILLISECONDS_PER_SECOND / __GAME_FRAME_DURATION));
@@ -493,6 +511,7 @@ s8 SoundManager::getWaveform(const s8* waveFormData)
 
 		if(waveFormData == this->waveforms[i].data)
 		{
+			this->waveforms[i].usageCount++;
 			return this->waveforms[i].number;
 		}
 	}
@@ -699,6 +718,11 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 	}
 
 	delete availableChannels ;
+
+	if(!isDeleted(soundWrapper))
+	{
+		this->hasPCMSounds |= soundWrapper->hasPCMTracks;
+	}
 
 	return soundWrapper;
 }

@@ -92,6 +92,7 @@ singleton class SoundManager : Object
 	u16 pcmPlaybackCycles;
 	u16 pcmTargetPlaybackFrameRate;
 	s16 pcmPlaybackCyclesToSkip;
+	bool hasPCMSounds;
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -99,8 +100,8 @@ singleton class SoundManager : Object
 
 	void setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate);
 
-	void playMIDISounds();
-	void playPCMSounds();
+	bool playMIDISounds();
+	bool playPCMSounds();
 	void stopAllSounds();
 
 	SoundWrapper playSound(Sound* sound, bool forceAllChannels, const Vector3D* position);
