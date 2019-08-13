@@ -91,7 +91,7 @@ typedef struct SoundChannelConfiguration
 	/// kChannelNormal, kChannelModulation, kChannelNoise
 	u32 channelType;
 
-	/// Volumen
+	/// Volume
 	u8 volume;
 
 } SoundChannelConfiguration;
@@ -213,6 +213,7 @@ class SoundWrapper : Object
 	u32 elapsedMicroseconds;
 	u32 totalPlaybackSeconds;
 	u16 pcmTargetPlaybackFrameRate;
+	u16 frequencyModifier;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
@@ -235,6 +236,8 @@ class SoundWrapper : Object
 	fix17_15 getSpeed();
 	void setSpeed(fix17_15 speed);
 	void computeTimerResolutionFactor();
+	void setFrequencyModifier(u16 frequencyModifier);
+	u16 getFrequencyModifier();	
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 	void printVolume(int x, int y, bool printHeader);

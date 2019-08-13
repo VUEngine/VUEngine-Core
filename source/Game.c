@@ -372,7 +372,6 @@ void Game::debug()
 #ifdef __SHOW_SOUND_STATUS
 	SoundManager::print(this->soundManager);
 #endif
-
 }
 
 // set game's initial state

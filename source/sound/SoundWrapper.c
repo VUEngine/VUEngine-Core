@@ -70,6 +70,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->elapsedMicroseconds = 0;
 	this->totalPlaybackSeconds = 0;
 	this->unmute = true;
+	this->frequencyModifier = 0;
 
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
@@ -119,6 +120,18 @@ void SoundWrapper::computeTimerResolutionFactor()
 fix17_15 SoundWrapper::getSpeed()
 {
 	return this->speed;
+}
+
+void SoundWrapper::setFrequencyModifier(u16 frequencyModifier)
+{
+	this->frequencyModifier = frequencyModifier;
+
+	SoundWrapper::updateMIDIPlayback(this, 0);
+}
+
+u16 SoundWrapper::getFrequencyModifier()
+{
+	return this->frequencyModifier;
 }
 
 /**
@@ -583,7 +596,7 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 */
 		channel->ticks += channel->tickStep;
 
-		if(channel->ticks > channel->ticksPerNote)
+		if(0 == elapsedMicroseconds || channel->ticks > channel->ticksPerNote)
 		{
 			channel->cursor++;
 
@@ -611,8 +624,10 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 				default:
 					{
-						u8 volume = channel->soundTrack.dataMIDI[channel->length * 2 + 1 + channel->cursor];
+						u8 volume = channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor];
 						channel->soundChannelConfiguration.SxLRV = ((volume << 4) | volume) & channel->soundChannelConfiguration.volume;
+
+						note += this->frequencyModifier;
 
 						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
 						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
