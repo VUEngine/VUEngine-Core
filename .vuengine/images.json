@@ -1,6 +1,6 @@
 {
 	"folders": {
-		"assets/fonts/VUEngineFont": {
+		"VUEngineFont": {
 			"template": "font"
 		}
 	},

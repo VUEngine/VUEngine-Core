@@ -347,19 +347,6 @@
 //												SOUND
 //---------------------------------------------------------------------------------------------------------
 
-// Channels per bgms
-#define __BGM_CHANNELS							2
-
-// Channels per fx
-#define __FX_CHANNELS							1
-
-// Simultaneous bgms
-#define __BGMS									1
-
-// Simultaneous fx
-#define __FXS									2
-
-#define __TOTAL_SOUNDS							(__BGMS + __FXS)
 #define __LEFT_EAR_CENTER						96
 #define __RIGHT_EAR_CENTER						288
 
@@ -393,15 +380,15 @@
 #define __PRINTING_PALETTE						0
 
 // Default palette values, actual values are set in stage specs
-#define __BGMAP_PALETTE_0						0b11100100 // normal progression
-#define __BGMAP_PALETTE_1						0b11100000 // show dark red as black
-#define __BGMAP_PALETTE_2						0b10010000 // background layer
-#define __BGMAP_PALETTE_3						0b01010000 // very dark, used when getting hit
+#define __BGMAP_PALETTE_0						0b11100100
+#define __BGMAP_PALETTE_1						0b11100000
+#define __BGMAP_PALETTE_2						0b10010000
+#define __BGMAP_PALETTE_3						0b01010000
 
-#define __OBJECT_PALETTE_0						__BGMAP_PALETTE_0
-#define __OBJECT_PALETTE_1						__BGMAP_PALETTE_1
-#define __OBJECT_PALETTE_2						__BGMAP_PALETTE_2
-#define __OBJECT_PALETTE_3						__BGMAP_PALETTE_3
+#define __OBJECT_PALETTE_0						0b11100100
+#define __OBJECT_PALETTE_1						0b11100000
+#define __OBJECT_PALETTE_2						0b10010000
+#define __OBJECT_PALETTE_3						0b01010000
 
 
 //---------------------------------------------------------------------------------------------------------
