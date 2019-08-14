@@ -44,6 +44,7 @@ static class PixelVector : Object
 	static inline PixelVector getFromVector3D(Vector3D vector3D, s16 parallax);
 	static inline u32 squareLength(PixelVector vector);
 	static inline fix10_6 length(PixelVector vector);
+	static inline PixelVector getRelativeToCamera(PixelVector vector);
 	static inline void print(PixelVector vector, int x, int y);
 }
 
@@ -86,6 +87,18 @@ static inline u32 PixelVector::squareLength(PixelVector vector)
 static inline fix10_6 PixelVector::length(PixelVector vector)
 {
 	return __F_TO_FIX10_6(Math_squareRoot(PixelVector::squareLength(vector)));
+}
+
+static inline PixelVector PixelVector::getRelativeToCamera(PixelVector vector)
+{
+	extern const Vector3D* _cameraPosition;
+	PixelVector cameraPosition = PixelVector::getFromVector3D(*_cameraPosition, 0);
+
+	vector.x -= cameraPosition.x;
+	vector.y -= cameraPosition.y;
+	vector.z -= cameraPosition.z;
+
+	return vector;
 }
 
 static inline void PixelVector::print(PixelVector vector, int x, int y)

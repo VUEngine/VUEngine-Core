@@ -201,12 +201,12 @@ Direction3D Body::getDirection3D()
 
 fix10_6 Body::getSpeed()
 {
-	return Vector3D::length(this->velocity);
+	return this->speed;
 }
 
 fix10_6_ext Body::getSpeedSquare()
 {
-	return Vector3D::squareLength(this->velocity);
+	return __FIX10_6_MULT(this->speed, this->speed);
 }
 
 void Body::modifyVelocity(const Velocity* modifier)
@@ -618,7 +618,8 @@ MovementResult Body::updateMovement()
 		}
 	}
 	
-	this->direction = Vector3D::normalize(this->velocity);
+	this->speed = Vector3D::length(this->velocity);
+	this->direction = Vector3D::scalarDivision(this->velocity, this->speed);
 
 	Body::clampVelocity(this);
 

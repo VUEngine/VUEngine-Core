@@ -534,7 +534,7 @@ static void TimerManager::interruptHandler()
 	_timerManager->totalMilliseconds += elapsedMilliseconds;
 
 	// update MIDI sounds
-	SoundManager::playMIDISounds(SoundManager::getInstance());
+	SoundManager::playMIDISounds(SoundManager::getInstance(), TimerManager::getTimePerInterruptInUS(_timerManager));
 
 #ifdef __SOUND_TEST
 	if(Game::isInSoundTest(Game::getInstance()))

@@ -281,7 +281,7 @@ void Stage::load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosi
 	Stage::setupTimer(this);
 
 	// load background music
-	Stage::loadBackgroundSounds(this);
+	Stage::setupSounds(this);
 
 	// setup colors and brightness
 	VIPManager::setBackgroundColor(VIPManager::getInstance(), this->stageSpec->rendering.colorConfig.backgroundColor);
@@ -1142,7 +1142,7 @@ void Stage::resume()
 	Stage::setupTimer(this);
 
 	// load background sounds
-	Stage::loadBackgroundSounds(this);
+	Stage::setupSounds(this);
 
 	Base::resume(this);
 
@@ -1158,15 +1158,17 @@ void Stage::resume()
 	this->entityFactory = new EntityFactory();
 }
 
-void Stage::loadBackgroundSounds()
+void Stage::setupSounds()
 {
-	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(),  this->stageSpec->sound.pcmTargetPlaybackFrameRate);
+	SoundManager::deferMIDIPlayback(SoundManager::getInstance(), this->stageSpec->sound.deferMIDIPlayback);
+
+	SoundManager::setTargetPlaybackFrameRate(SoundManager::getInstance(), this->stageSpec->sound.pcmTargetPlaybackFrameRate);
 
 	int i = 0;
 
 	for(; this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundManager::playSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], false, NULL);
+		SoundManager::playSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, NULL);
 	}
 }
 

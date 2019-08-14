@@ -195,9 +195,9 @@ void Sprite::calculateParallax(fix10_6 z __attribute__ ((unused)))
  *
  * @return			Position relative to camera
  */
-PixelVector Sprite::getPosition()
+const PixelVector* Sprite::getPosition()
 {
-	return this->position;
+	return (const PixelVector*)&this->position;
 }
 
 /**

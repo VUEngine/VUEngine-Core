@@ -103,6 +103,8 @@ class Body : Object
 	Velocity velocity;
 	// direction
 	Direction3D direction;
+	// speed
+	fix10_6 speed;
 	// maximum velocity on each instance
 	Velocity maximumVelocity;
 	// maximum speed

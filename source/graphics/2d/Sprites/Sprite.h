@@ -175,7 +175,7 @@ abstract class Sprite : Object
 
 	/// @publicsection
 	void constructor(const SpriteSpec* spriteSpec, Object owner);
-	PixelVector getPosition();
+	const PixelVector* getPosition();
 	PixelVector getDisplacedPosition();
 	u16 getHead();
 	u16 getMode();

@@ -207,6 +207,7 @@ enum SoundTrackTypes
 class SoundWrapper : Object
 {
 	Sound* sound;
+	const Vector3D* position;
 	VirtualList channels;
 	fix17_15 speed;
 	fix17_15 targetTimerResolutionFactor;

@@ -114,7 +114,7 @@
 		"fxs": 2,
 		"leftEarCenter": 96,
 		"rightEarCenter": 288,
-		"stereoAttenuationFactor": 0.75
+		"stereoAttenuationFactor": 75
 	},
 	"sprite": {
 		"totalLayers": 32

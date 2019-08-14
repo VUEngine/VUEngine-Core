@@ -71,7 +71,8 @@ enum SoundRequestMessages
 {
 	kPlayAll = 0, 					// Sound is not allocated if there are not enough free channels to play all the sound's tracks
 	kPlayAny,						// Plays as many sound's tracks as there are free channels
-	kPlayForce,						// Plays the priority tracks deallocating previous sound if necessary
+	kPlayForceAny,					// Plays the priority tracks deallocating previous sound if necessary
+	kPlayForceAll,					// Plays all tracks deallocating previous sound if necessary
 };
 
 /*
@@ -109,6 +110,7 @@ singleton class SoundManager : Object
 	u16 pcmTargetPlaybackFrameRate;
 	s16 pcmPlaybackCyclesToSkip;
 	bool hasPCMSounds;
+	bool deferMIDIPlayback;
 
 	/// @publicsection
 	static SoundManager getInstance();
@@ -116,14 +118,15 @@ singleton class SoundManager : Object
 
 	void setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate);
 
-	bool playMIDISounds();
+	bool playMIDISounds(u32 elapsedMicroseconds);
 	bool playPCMSounds();
 	void stopAllSounds();
 
-	SoundWrapper playSound(Sound* sound, bool forceAllChannels, const Vector3D* position);
-	SoundWrapper getSound(Sound* sound, bool forceAllChannels);
+	SoundWrapper playSound(Sound* sound, u32 command, const Vector3D* position);
+	SoundWrapper getSound(Sound* sound, u32 command);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);
+	void deferMIDIPlayback(bool deferMIDIPlayback);
 	void startPCMPlayback();
 
 	void updateFrameRate();

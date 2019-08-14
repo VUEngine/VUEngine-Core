@@ -71,6 +71,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->totalPlaybackSeconds = 0;
 	this->unmute = true;
 	this->frequencyModifier = 0;
+	this->position = NULL;
 
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
@@ -175,48 +176,6 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 }
 
 /**
- * Calculate sound volume according to its spatial position
- *
- * @private
- */
-u8 SoundWrapper::getVolumeFromPosition(const Vector3D* position)
-{
-	// set position inside camera coordinates
-	Vector3D relativePosition = Vector3D::getRelativeToCamera(*position);
-
-	fix17_15 maxOutputLevel = __I_TO_FIX17_15(__MAXIMUM_VOLUME);
-	fix17_15 leftDistance = __ABS(__FIX17_15_MULT(relativePosition.x - __PIXELS_TO_METERS(__LEFT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
-	fix17_15 rightDistance = __ABS(__FIX17_15_MULT(relativePosition.x - __PIXELS_TO_METERS(__RIGHT_EAR_CENTER), __SOUND_STEREO_ATTENUATION_FACTOR));
-
-	fix17_15 leftOutput = maxOutputLevel - __FIX17_15_MULT(maxOutputLevel, __FIX17_15_DIV(leftDistance, _optical->horizontalViewPointCenter));
-	u32 leftVolume = __FIX17_15_TO_I(leftOutput - __FIX17_15_MULT(leftOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
-
-	fix17_15 rightOutput = maxOutputLevel - __FIX17_15_MULT(maxOutputLevel, __FIX17_15_DIV(rightDistance, _optical->horizontalViewPointCenter));
-	u32 rightVolume = __FIX17_15_TO_I(rightOutput - __FIX17_15_MULT(rightOutput, relativePosition.z >> _optical->maximumXViewDistancePower));
-
-	u8 volume = 0x00;
-
-	/* The maximum sound level for each side is 0xF
-	 * In the center position the output level is the one
-	 * defined in the sound's spec */
-	if(0 < leftVolume)
-	{
-		volume |= (leftVolume << 4);
-	}
-
-	if(0 < rightVolume)
-	{
-		volume |= rightVolume;
-	}
-	else
-	{
-		volume &= 0xF0;
-	}
-
-	return volume;
-}
-
-/**
  * Is paused?
  *
  * @return bool
@@ -247,10 +206,7 @@ void SoundWrapper::play(const Vector3D* position)
 
 	u8 SxLRV = 0x00;
 
-	if(NULL != position)
-	{
-		SxLRV = SoundWrapper::getVolumeFromPosition(this, position);
-	}
+	this->position = position;
 
 	VirtualNode node = this->channels->head;
 
@@ -554,11 +510,18 @@ bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 
 void SoundWrapper::completedPlayback()
 {
-	SoundWrapper::fireEvent(this, kSoundFinished);
+	if(this->events)
+	{
+		SoundWrapper::fireEvent(this, kSoundFinished);
+	}
 
 	if(!this->sound->loop)
 	{
-		SoundWrapper::fireEvent(this, kSoundReleased);
+		if(this->events)
+		{
+			SoundWrapper::fireEvent(this, kSoundReleased);
+		}
+		
 		SoundWrapper::release(this);
 	}
 	else
@@ -581,6 +544,21 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 	this->elapsedMicroseconds += __FIX17_15_TO_I(__FIX17_15_MULT(this->speed, __I_TO_FIX17_15(elapsedMicroseconds)));
 
+	s16 leftVolumeFactor = 0;
+	s16 rightVolumeFactor = 0;
+
+	if(NULL != this->position)
+	{
+		PixelVector relativePosition = PixelVector::getRelativeToCamera(PixelVector::getFromVector3D(*this->position, 0));
+
+		s16 verticalDistance = (__ABS(relativePosition.y - __HALF_SCREEN_HEIGHT) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
+		s16 leftDistance = (__ABS(relativePosition.x - __LEFT_EAR_CENTER) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
+		s16 rightDistance = (__ABS(relativePosition.x - __RIGHT_EAR_CENTER) * __SOUND_STEREO_ATTENUATION_FACTOR) / 100;
+		
+		leftVolumeFactor = (leftDistance + verticalDistance);
+		rightVolumeFactor = (rightDistance + verticalDistance);
+	}
+
 	for(; node; node = node->next)
 	{
 		Channel* channel = (Channel*)node->data;
@@ -598,7 +576,12 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 
 		if(0 == elapsedMicroseconds || channel->ticks > channel->ticksPerNote)
 		{
-			channel->cursor++;
+			if(elapsedMicroseconds)
+			{
+				channel->cursor++;
+
+				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
+			}
 
 			u16 note = channel->soundTrack.dataMIDI[channel->cursor];
 
@@ -625,7 +608,32 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 				default:
 					{
 						u8 volume = channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor];
-						channel->soundChannelConfiguration.SxLRV = ((volume << 4) | volume) & channel->soundChannelConfiguration.volume;
+						s8 leftVolume = volume;
+						s8 rightVolume = volume;
+
+						if(0 < leftVolumeFactor + rightVolumeFactor)
+						{
+							leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
+							//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+
+							rightVolume -= (rightVolume * rightVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
+							//rightVolume -= rightVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
+
+							/* The maximum sound level for each side is 0xF
+							* In the center position the output level is the one
+							* defined in the sound's spec */
+							if(0 > leftVolume)
+							{
+								leftVolume = 0;
+							}
+
+							if(0 > rightVolume)
+							{
+								rightVolume = 0;
+							}
+						}
+
+						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
 
 						note += this->frequencyModifier;
 
@@ -635,8 +643,6 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 					}
 					break;
 			}
-
-			SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
 		}
 
 		finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);

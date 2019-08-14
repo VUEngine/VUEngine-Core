@@ -64,6 +64,7 @@ typedef struct StageSpec
 	struct SoundConfig
 	{
 		u16 pcmTargetPlaybackFrameRate;
+		bool deferMIDIPlayback;
 		
 	} sound;
 

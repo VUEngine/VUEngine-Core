@@ -155,7 +155,8 @@ void SoundManager::constructor()
 	this->soundWrappers = NULL;
 	this->releasedSoundWrappers = NULL;
 	this->hasPCMSounds = false;
-	
+	this->deferMIDIPlayback = false;
+
 	SoundManager::reset(this);
 }
 
@@ -300,8 +301,14 @@ void SoundManager::reset()
 	this->pcmPlaybackCycles = 0;
 	this->pcmPlaybackCyclesToSkip = 0;
 	this->pcmTargetPlaybackFrameRate = __DEFAULT_PCM_HZ;
-
+	this->deferMIDIPlayback = false;
+	
 	SoundManager::stopAllSounds(this);
+}
+
+void SoundManager::deferMIDIPlayback(bool deferMIDIPlayback)
+{
+	this->deferMIDIPlayback = deferMIDIPlayback;
 }
 
 void SoundManager::startPCMPlayback()
@@ -317,19 +324,45 @@ void SoundManager::setTargetPlaybackFrameRate(u16 pcmTargetPlaybackFrameRate)
 	this->pcmTargetPlaybackFrameRate = pcmTargetPlaybackFrameRate;
 }
 
-bool SoundManager::playMIDISounds()
+bool SoundManager::playMIDISounds(u32 elapsedMicroseconds)
 {
-	u32 elapsedMicroseconds = TimerManager::getTimePerInterruptInUS(TimerManager::getInstance());
-
-	VirtualNode node = this->soundWrappers->head;
-
-	for(; node; node = node->next)
+	if(this->deferMIDIPlayback)
 	{
-		SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+		static u32 accumulatedElapsedMicroseconds = 0; 
+		accumulatedElapsedMicroseconds += elapsedMicroseconds;
 
-		if(soundWrapper->hasMIDITracks)
+		static VirtualNode node = NULL; 
+
+		if(NULL == node)
 		{
-			SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
+			node = this->soundWrappers->head;
+			elapsedMicroseconds = elapsedMicroseconds;
+		}
+
+		if(node)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			if(soundWrapper->hasMIDITracks)
+			{
+				SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
+			}
+
+			node = node->next;
+		}
+	}
+	else
+	{
+		VirtualNode node = this->soundWrappers->head;
+
+		for(; node; node = node->next)
+		{
+			SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+
+			if(soundWrapper->hasMIDITracks)
+			{
+				SoundWrapper::updateMIDIPlayback(soundWrapper, elapsedMicroseconds);
+			}
 		}
 	}
 
@@ -655,9 +688,9 @@ u8 SoundManager::getFreeChannels(Sound* sound, VirtualList availableChannels, u8
 	return usableChannelsCount;
 }
 
-SoundWrapper SoundManager::playSound(Sound* sound, bool forceAllChannels, const Vector3D* position)
+SoundWrapper SoundManager::playSound(Sound* sound, u32 command, const Vector3D* position)
 {
-	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, forceAllChannels);
+	SoundWrapper soundWrapper = SoundManager::getSound(this, sound, command);
 
 	NM_ASSERT(!isDeleted(soundWrapper), "SoundManager::playSound: could not get any sound");
 
@@ -674,7 +707,7 @@ SoundWrapper SoundManager::playSound(Sound* sound, bool forceAllChannels, const 
  *
  * @param sound		Sound*
  */
-SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attribute__((unused)))
+SoundWrapper SoundManager::getSound(Sound* sound, u32 command)
 {
 	SoundManager::purgeReleasedSoundWrappers(this);
 
@@ -695,9 +728,12 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 	u8 usableModulationChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, modulationChannelsCount, kChannelModulation);
 	u8 usableNoiseChannelsCount = SoundManager::getFreeChannels(this, sound, availableChannels, noiseChannelsCount, kChannelNoise);
 
-	NM_ASSERT(0 == normalChannelsCount || normalChannelsCount <= usableNormalChannelsCount, "SoundManager::getSound: not enough normal channels");
-	NM_ASSERT(0 == modulationChannelsCount || 0 < usableModulationChannelsCount, "SoundManager::getSound: not enough modulation channels");
-	NM_ASSERT(0 == noiseChannelsCount || 0 < usableNoiseChannelsCount, "SoundManager::getSound: not enough noise channels");
+	if(kPlayAll != command)
+	{
+		NM_ASSERT(0 == normalChannelsCount || normalChannelsCount <= usableNormalChannelsCount, "SoundManager::getSound: not enough normal channels");
+		NM_ASSERT(0 == modulationChannelsCount || 0 < usableModulationChannelsCount, "SoundManager::getSound: not enough modulation channels");
+		NM_ASSERT(0 == noiseChannelsCount || 0 < usableNoiseChannelsCount, "SoundManager::getSound: not enough noise channels");
+	}
 
 	SoundWrapper soundWrapper = NULL;
 
@@ -707,35 +743,47 @@ SoundWrapper SoundManager::getSound(Sound* sound, bool forceAllChannels __attrib
 	}
 	// If there are enough usable channels
 	else */
-	if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
+	switch(command)
 	{
-		s8 waves[__TOTAL_CHANNELS] = {-1, -1, -1, -1, -1};
+		case kPlayAll:
 
-		u16 i = 0;
-
-		for(; i < normalChannelsCount; i++)
-		{
-			waves[i] = SoundManager::getWaveform(this, sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
-
-			if(0 > waves[i])
+			if(normalChannelsCount <= usableNormalChannelsCount && modulationChannelsCount <= usableModulationChannelsCount && noiseChannelsCount <= usableNoiseChannelsCount)
 			{
-				return NULL;
+				s8 waves[__TOTAL_CHANNELS] = {-1, -1, -1, -1, -1};
+
+				u16 i = 0;
+
+				for(; i < normalChannelsCount; i++)
+				{
+					waves[i] = SoundManager::getWaveform(this, sound->soundChannels[i]->soundChannelConfiguration->waveFormData);
+
+					if(0 > waves[i])
+					{
+						return NULL;
+					}
+				}
+
+				for(i = 0; i < normalChannelsCount; i++)
+				{
+					SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData, sound->soundChannels[i]->soundChannelConfiguration->trackType);
+				}
+
+				//NM_ASSERT(0 < VirtualList::getSize(availableChannels), "SoundManager::getSound: 0 availableNormalChannels");
+
+				if(0 < VirtualList::getSize(availableChannels))
+				{
+					soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate);
+
+					VirtualList::pushBack(this->soundWrappers, soundWrapper);
+				}
 			}
-		}
+			break;
 
-		for(i = 0; i < normalChannelsCount; i++)
-		{
-			SoundManager::setWaveform(this, &this->waveforms[waves[i]], sound->soundChannels[i]->soundChannelConfiguration->waveFormData, sound->soundChannels[i]->soundChannelConfiguration->trackType);
-		}
+		case kPlayAny:
+		case kPlayForceAny:
+		case kPlayForceAll:
 
-		NM_ASSERT(0 < VirtualList::getSize(availableChannels), "SoundManager::getSound: 0 availableNormalChannels");
-
-		if(0 < VirtualList::getSize(availableChannels))
-		{
-			soundWrapper = new SoundWrapper(sound, availableChannels, waves, this->pcmTargetPlaybackFrameRate);
-
-			VirtualList::pushBack(this->soundWrappers, soundWrapper);
-		}
+			break;
 	}
 
 	delete availableChannels;
