@@ -14,8 +14,8 @@
 
 FontSpec* const __FONTS[] =
 {
-	{% for font in project.fonts -%}
-	(FontSpec*)&{{ font }},
+	{% for font in combined.fonts -%}
+	(FontSpec*)&{{ font.name | toUpperSnakeCase }}_FONT,
 	{% endfor %}
 	NULL
 };

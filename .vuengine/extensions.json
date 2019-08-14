@@ -48,6 +48,17 @@
 				"fonts"
 			],
 			"target": "source/assets/Fonts.h"
+		},
+		{
+			"file": "extensions/templates/Font.c.nj",
+			"config": [
+				"fonts"
+			],
+			"loop": {
+				"config": "fonts",
+				"path": "project.fonts"
+			},
+			"target": "/assets/fonts/{name}FontSpec.c"
 		}
 	],
 	"i18n": [

@@ -40,7 +40,7 @@
 //---------------------------------------------------------------------------------------------------------
 
 extern FontROMSpec* const __FONTS[];
-extern FontROMSpec VUENGINE_FONT;
+extern FontROMSpec DEFAULT_FONT;
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -55,7 +55,7 @@ extern FontROMSpec VUENGINE_FONT;
 FontROMData VUENGINE_DEBUG_FONT_DATA =
 {
 	// font spec
-	(FontSpec*)&VUENGINE_FONT,
+	(FontSpec*)&DEFAULT_FONT,
 
 	// offset of font in char memory
 	__CHAR_MEMORY_TOTAL_CHARS - VUENGINE_DEBUG_FONT_SIZE,
