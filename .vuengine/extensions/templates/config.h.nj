@@ -18,8 +18,8 @@
 //											GAME SPECIFIC MACROS
 //---------------------------------------------------------------------------------------------------------
 
-{% for key, value in project.config.game -%}
-#define {{ key | toUpperSnakeCase }} {{ value | safe }}
+{% for gameConfig in project.config.game -%}
+#define {{ gameConfig.key | toUpperSnakeCase }} {{ gameConfig.value | safe }}
 {% endfor %}
 
 {% endif -%}
@@ -235,15 +235,15 @@
 #undef __MEMORY_POOL_ARRAYS
 #define __MEMORY_POOL_ARRAYS \
 {%- set poolBlockDefinitions = '' -%}
-{% for size, number in project.config.memoryPools.pools %}
-	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ size ~ ', ' ~  number ~') \\\n' ~ poolBlockDefinitions -%}
+{% for pool in project.config.memoryPools.pools %}
+	{%- set poolBlockDefinitions = '	__BLOCK_DEFINITION(' ~ pool.size ~ ', ' ~  pool.objects ~') \\\n' ~ poolBlockDefinitions -%}
 {% endfor %}
 {{ poolBlockDefinitions }}
 #undef __SET_MEMORY_POOL_ARRAYS
 #define __SET_MEMORY_POOL_ARRAYS \
 {%- set poolArrayDefinitions = '' -%}
-{% for size, number in project.config.memoryPools.pools -%}
-	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ size ~ ') \\\n' ~ poolArrayDefinitions -%}
+{% for pool in project.config.memoryPools.pools -%}
+	{%- set poolArrayDefinitions = '	__SET_MEMORY_POOL_ARRAY(' ~ pool.size ~ ') \\\n' ~ poolArrayDefinitions -%}
 {% endfor %}
 {{ poolArrayDefinitions }}
 // percentage (0-100) above which the memory pool's status shows the pool usage
