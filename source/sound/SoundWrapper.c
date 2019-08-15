@@ -554,11 +554,11 @@ bool SoundWrapper::checkIfPlaybackFinishedOnChannel(Channel* channel)
 
 void SoundWrapper::completedPlayback()
 {
-	SoundWrapper::fireEvent(this, kSoundFinished);
+	SoundWrapper::fireEvent(this, kEventSoundFinished);
 
 	if(!this->sound->loop)
 	{
-		SoundWrapper::fireEvent(this, kSoundReleased);
+		SoundWrapper::fireEvent(this, kEventSoundReleased);
 		SoundWrapper::release(this);
 	}
 	else

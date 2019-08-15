@@ -486,8 +486,8 @@ void Stage::unloadChild(Container child)
 	}
 
 	Base::removeChild(this, child, true);
-	Object::fireEvent(child, kStageChildStreamedOut);
-	Object::removeAllEventListeners(child, kStageChildStreamedOut);
+	Object::fireEvent(child, kEventStageChildStreamedOut);
+	Object::removeAllEventListeners(child, kEventStageChildStreamedOut);
 	MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(child));
 	MessageDispatcher::discardAllDelayedMessagesForReceiver(MessageDispatcher::getInstance(), Object::safeCast(child));
 

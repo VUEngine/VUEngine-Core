@@ -429,8 +429,8 @@ void SoundTest::loadSound()
 
 	if(!isDeleted(this->soundWrapper))
 	{
-		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kSoundFinished);
-		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kSoundReleased);
+		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundFinish, kEventSoundFinished);
+		SoundWrapper::addEventListener(this->soundWrapper, Object::safeCast(this), (EventListener)SoundTest::onSoundReleased, kEventSoundReleased);
 
 		if(SoundWrapper::hasPCMTracks(this->soundWrapper))
 		{

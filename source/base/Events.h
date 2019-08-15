@@ -30,13 +30,13 @@
 enum Events
 {
 	// do not remove me
-	kFirstEngineEvent = 0,
+	kEventEngineFirst = 0,
 
 	// add events here
 	kEventSpatialObjectDeleted,
 	kEventContainerDeleted,
 	kEventEntityLoaded,
-	kStageChildStreamedOut,
+	kEventStageChildStreamedOut,
 	kEventShapeDeleted,
 	kEventShapeChanged,
 
@@ -60,13 +60,13 @@ enum Events
 	kEventCommunicationsConnected,
 	kEventCommunicationsTransmissionCompleted,
 
-	kActorBounced,
+	kEventActorBounced,
 
-	kSoundFinished,
-	kSoundReleased,
+	kEventSoundFinished,
+	kEventSoundReleased,
 	
 	// do not remove me
-	kLastEngineEvent
+	kEventEngineLast
 };
 
 
