@@ -28,6 +28,7 @@
 #include <TimerManager.h>
 #include <SoundManager.h>
 #include <HardwareManager.h>
+#include <MessageDispatcher.h>
 #include <Utilities.h>
 
 
@@ -72,6 +73,7 @@ void SoundWrapper::constructor(Sound* sound, VirtualList channels, s8* waves, u1
 	this->unmute = true;
 	this->frequencyModifier = 0;
 	this->position = NULL;
+	this->volumeReduction = 0;
 
 	// Compute target timerCounter factor
 	SoundWrapper::computeTimerResolutionFactor(this);
@@ -118,16 +120,9 @@ void SoundWrapper::computeTimerResolutionFactor()
 	}
 }
 
-fix17_15 SoundWrapper::getSpeed()
-{
-	return this->speed;
-}
-
 void SoundWrapper::setFrequencyModifier(u16 frequencyModifier)
 {
 	this->frequencyModifier = frequencyModifier;
-
-	SoundWrapper::updateMIDIPlayback(this, 0);
 }
 
 u16 SoundWrapper::getFrequencyModifier()
@@ -148,31 +143,65 @@ void SoundWrapper::setSpeed(fix17_15 speed)
 	{
 		bool paused = this->paused;
 		this->paused = true;
-		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(2.0f);
-
-		VirtualNode node = this->channels->head;
-
-		// Prepare channels
-		for(; node; node = node->next)
-		{
-			Channel* channel = (Channel*)node->data;
-
-			switch(channel->soundChannelConfiguration.trackType)
-			{
-				case kMIDI:
-
-					SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
-					break;
-
-				case kPCM:
-
-					SoundWrapper::computePCMNextTicksPerNote(channel, channel->ticks, this->speed, this->targetTimerResolutionFactor);
-					break;
-			}
-		}
+		this->speed = 0 >= speed ? __F_TO_FIX17_15(0.01f) : speed <= __F_TO_FIX17_15(2.0f) ? speed : __F_TO_FIX17_15(10.0f);
 
 		this->paused = paused;
 	}
+}
+
+/**
+ * Return playback speed. 
+ */
+fix17_15 SoundWrapper::getSpeed()
+{
+	return this->speed;
+}
+
+/**
+ * Set volume reduction
+ */
+void SoundWrapper::setVolumeReduction(s8 volumeReduction)
+{
+	this->volumeReduction = volumeReduction;
+}
+
+bool SoundWrapper::handleMessage(Telegram telegram)
+{
+	switch(Telegram::getMessage(telegram))
+	{
+		case kSoundWrapperFadeIn:
+
+			if(0 < SoundWrapper::getVolumeReduction(this))
+			{
+				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) - 1);
+				MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
+			}
+			break;
+
+		case kSoundWrapperFadeOut:
+
+			if(__MAXIMUM_VOLUME > SoundWrapper::getVolumeReduction(this))
+			{
+				SoundWrapper::setVolumeReduction(this, SoundWrapper::getVolumeReduction(this) + 1);
+				MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
+			}
+			else
+			{
+				SoundWrapper::release(this);
+			}
+			
+			break;
+	}
+
+	return Base::handleMessage(this, telegram);
+}
+
+/**
+ * Get volume reduction
+ */
+s8 SoundWrapper::getVolumeReduction()
+{
+	return this->volumeReduction;
 }
 
 /**
@@ -199,7 +228,7 @@ bool SoundWrapper::hasPCMTracks()
  * Play
  *
  */
-void SoundWrapper::play(const Vector3D* position)
+void SoundWrapper::play(const Vector3D* position, u32 playbackType)
 {
 	bool wasPaused = this->paused;
 	this->paused = false;
@@ -232,6 +261,26 @@ void SoundWrapper::play(const Vector3D* position)
 			SoundManager::startPCMPlayback(SoundManager::getInstance());
 		}
 	}
+
+	switch(playbackType)
+	{
+		case kSoundWrapperPlaybackFadeIn:
+
+			SoundWrapper::setVolumeReduction(this, __MAXIMUM_VOLUME);
+			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
+			MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeIn, NULL);
+			break;
+
+		case kSoundWrapperPlaybackFadeOut:
+
+			MessageDispatcher::discardAllDelayedMessagesFromSender(MessageDispatcher::getInstance(), Object::safeCast(this));
+			MessageDispatcher::dispatchMessage(100 + Utilities::random(Utilities::randomSeed(), 50), Object::safeCast(this), Object::safeCast(this), kSoundWrapperFadeOut, NULL);
+			break;
+
+		case kSoundWrapperPlaybackNormal:
+		default:
+			break;
+	}
 }
 
 /**
@@ -250,6 +299,15 @@ void SoundWrapper::pause()
 		Channel* channel = (Channel*)node->data;
 		_soundRegistries[channel->number].SxLRV = 0x00;
 	}
+}
+
+/**
+ * Unpause
+ *
+ */
+void SoundWrapper::unpause()
+{
+	this->paused = false;
 }
 
 /**
@@ -319,6 +377,11 @@ void SoundWrapper::release()
 	this->sound = NULL;
 
 	SoundManager::releaseSoundWrapper(SoundManager::getInstance(), this);
+
+	if(this->events)
+	{
+		SoundWrapper::fireEvent(this, kSoundReleased);
+	}
 }
 
 void SoundWrapper::mute()
@@ -351,7 +414,6 @@ void SoundWrapper::setupChannels(s8* waves)
 		channel->cursor = 0;
 		channel->soundChannel = i;
 		channel->soundChannelConfiguration = *channel->sound->soundChannels[i]->soundChannelConfiguration;
-		channel->ticks = 0;
 		channel->soundChannelConfiguration.SxRAM = waves[i];
 		channel->volumeReduction = 0;
 
@@ -380,6 +442,7 @@ void SoundWrapper::setupChannels(s8* waves)
 				break;
 		}
 
+		channel->ticks = 0;
 	}
 
 	node = this->channels->head;
@@ -468,7 +531,6 @@ static void SoundWrapper::computeMIDINextTicksPerNote(Channel* channel, fix17_15
 {
 	channel->ticks = residue;
 	channel->ticksPerNote = __I_TO_FIX17_15(channel->soundTrack.dataMIDI[channel->length + 1 + channel->cursor]);
-
 	channel->ticksPerNote = __FIX17_15_DIV(channel->ticksPerNote, speed);
 
 	fix17_15 effectiveTicksPerNote = __FIX17_15_DIV(channel->ticksPerNote, targetTimerResolutionFactor);
@@ -482,7 +544,21 @@ static void SoundWrapper::computePCMNextTicksPerNote(Channel* channel, fix17_15 
 	channel->ticks = 0;
 }
 
-static inline u8 SoundWrapper::clampPCMValue(s8 value)
+static inline u8 SoundWrapper::clampMIDIOutputValue(s8 value)
+{
+	if(value < 0)
+	{
+		return 0;
+	}
+	else if(value > __MAXIMUM_VOLUME)
+	{
+		return __MAXIMUM_VOLUME;
+	}
+
+	return (u8)value;
+}
+
+static inline u8 SoundWrapper::clampPCMOutputValue(s8 value)
 {
     value &= -(value >= 0);
     return (u8)(value | ((__MAXIMUM_VOLUME - value) >> 7));
@@ -517,11 +593,6 @@ void SoundWrapper::completedPlayback()
 
 	if(!this->sound->loop)
 	{
-		if(this->events)
-		{
-			SoundWrapper::fireEvent(this, kSoundReleased);
-		}
-		
 		SoundWrapper::release(this);
 	}
 	else
@@ -574,16 +645,18 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 */
 		channel->ticks += channel->tickStep;
 
-		if(0 == elapsedMicroseconds || channel->ticks > channel->ticksPerNote)
+		if(0 == elapsedMicroseconds || channel->ticks >= channel->ticksPerNote)
 		{
 			if(elapsedMicroseconds)
 			{
 				channel->cursor++;
 
+				finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
+		
 				SoundWrapper::computeMIDINextTicksPerNote(channel, channel->ticks - channel->ticksPerNote, this->speed, this->targetTimerResolutionFactor);
 			}
 
-			u16 note = channel->soundTrack.dataMIDI[channel->cursor];
+			s16 note = channel->soundTrack.dataMIDI[channel->cursor];
 
 			// Is it a special note?
 			switch(note)
@@ -593,25 +666,28 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 					_soundRegistries[channel->number].SxLRV = 0;
 					break;
 
+				default:				
+
+						note += this->frequencyModifier;
+
+						if(0 > note)
+						{
+							note = 0;
+						}
+						
+						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
+						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
+
 				case HOLD:
-					// Continue playing the previous note.
-					break;
-
-				case ENDSOUND:
-
-					// I handle end sound
-					break;
-
-				case LOOPSOUND:
-					break;
-
-				default:
+					// Continue playing the previous note
 					{
-						u8 volume = channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor];
+						u8 volume = SoundWrapper::clampMIDIOutputValue(channel->soundTrack.dataMIDI[(channel->length << 1) + 1 + channel->cursor] - this->volumeReduction);
+
+
 						s8 leftVolume = volume;
 						s8 rightVolume = volume;
 
-						if(0 < leftVolumeFactor + rightVolumeFactor)
+						if(volume && 0 < leftVolumeFactor + rightVolumeFactor)
 						{
 							leftVolume -= (leftVolume * leftVolumeFactor) / __METERS_TO_PIXELS(_optical->horizontalViewPointCenter);
 							//leftVolume -= leftVolume * (relativePosition.z >> _optical->maximumXViewDistancePower);
@@ -634,18 +710,16 @@ void SoundWrapper::updateMIDIPlayback(u32 elapsedMicroseconds)
 						}
 
 						channel->soundChannelConfiguration.SxLRV = ((leftVolume << 4) | rightVolume) & channel->soundChannelConfiguration.volume;
-
-						note += this->frequencyModifier;
-
-						_soundRegistries[channel->number].SxFQL = channel->soundChannelConfiguration.SxFQL = (note & 0xFF);
-						_soundRegistries[channel->number].SxFQH = channel->soundChannelConfiguration.SxFQH = (note >> 8);
 						_soundRegistries[channel->number].SxLRV = this->unmute * channel->soundChannelConfiguration.SxLRV;
 					}
 					break;
+
 			}
 		}
-
-		finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
+		else
+		{
+			finished &= SoundWrapper::checkIfPlaybackFinishedOnChannel(this, channel);
+		}
 	}
 
 	if(finished)
@@ -683,7 +757,7 @@ void SoundWrapper::updatePCMPlayback(u32 elapsedMicroseconds __attribute__((unus
 */
 		channel->cursor++;
 
-		u8 volume = this->unmute * SoundWrapper::clampPCMValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction);
+		u8 volume = this->unmute * SoundWrapper::clampPCMOutputValue(channel->soundTrack.dataPCM[channel->cursor] - channel->volumeReduction - this->volumeReduction);
 
 #ifdef __SOUND_TEST
 		_soundRegistries[channel->number].SxLRV = ((volume << 4) | (volume)) & channel->soundChannelConfiguration.volume;
@@ -799,7 +873,7 @@ u32 SoundWrapper::getTotalPlaybackSeconds(Channel* channel)
 
 				for(u32 i = 0; i < channel->length; i++, totalNotesTiming += soundTrackData[channel->length + i]);
 
-				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_SECOND);
+				return (u32)((long)totalNotesTiming * this->sound->targetTimerResolutionUS / __MICROSECONDS_PER_SECOND) + 1;
 			}
 			break;
 

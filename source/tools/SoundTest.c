@@ -230,7 +230,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 
 		if(SoundWrapper::isPaused(this->soundWrapper))
 		{
-			SoundWrapper::play(this->soundWrapper, NULL);
+			SoundWrapper::play(this->soundWrapper, NULL, kSoundWrapperPlaybackNormal);
 		}
 		else
 		{
@@ -354,7 +354,7 @@ void SoundTest::processUserInput(u16 pressedKey)
 
 			if(!SoundWrapper::isPaused(this->soundWrapper))
 			{
-				SoundWrapper::play(this->soundWrapper, NULL);
+				SoundWrapper::play(this->soundWrapper, NULL, kSoundWrapperPlaybackFadeIn);
 			}
 		}
 	}
@@ -423,7 +423,7 @@ void SoundTest::loadSound()
 
 	SoundTest::releaseSoundWrapper(this);
 
-	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], true);
+	this->soundWrapper = SoundManager::getSound(SoundManager::getInstance(), (Sound*)_userSounds[this->selectedSound], kPlayAll);
 
 	NM_ASSERT(!isDeleted(this->soundWrapper), "SoundTest::loadSound: no sound");
 

@@ -140,12 +140,30 @@ void Stage::constructor(StageSpec *stageSpec)
 	this->nextEntityId = 0;
 	this->streamingPhase = 0;
 	this->streamingCycleCounter = 0;
+	this->soundWrappers = NULL;
 }
 
 // class's destructor
 void Stage::destructor()
 {
 	Stage::setFocusEntity(this, NULL);
+
+	if(!isDeleted(this->soundWrappers))
+	{
+		VirtualNode node = this->soundWrappers->head;
+
+		for(; node; node = node->next)
+		{
+			if(!isDeleted(node->data))
+			{
+				SoundWrapper soundWrapper = SoundWrapper::safeCast(node->data);
+				SoundWrapper::release(soundWrapper);
+			}
+		}
+
+		delete this->soundWrappers;
+		this->soundWrappers = NULL;
+	}
 
 	delete this->particleRemover;
 	this->particleRemover = NULL;
@@ -992,6 +1010,11 @@ bool Stage::updateEntityFactory()
 	return preparingEntities;
 }
 
+VirtualList Stage::getSoundWrappers()
+{
+	return this->soundWrappers;
+}
+
 bool Stage::stream()
 {
 #ifdef __SHOW_STREAMING_PROFILING
@@ -1168,7 +1191,17 @@ void Stage::setupSounds()
 
 	for(; this->stageSpec->assets.sounds[i]; i++)
 	{
-		SoundManager::playSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, NULL);
+		SoundWrapper soundWrapper = SoundManager::playSound(SoundManager::getInstance(), this->stageSpec->assets.sounds[i], kPlayAll, NULL, kSoundWrapperPlaybackFadeIn);
+
+		if(!isDeleted(soundWrapper))
+		{
+			if(isDeleted(this->soundWrappers))
+			{
+				this->soundWrappers = new VirtualList();
+			}
+
+			VirtualList::pushBack(this->soundWrappers, soundWrapper);
+		}
 	}
 }
 

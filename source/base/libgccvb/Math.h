@@ -121,6 +121,7 @@ inline int customAbs(int number)
 #define __FIX7_9_TO_FIX13_3(n)		(fix13_3)		((n) >> 6)
 #define __FIX7_9_TO_FIX10_6(n)		(fix10_6)		((n) >> 3)
 #define __FIX19_13_TO_FIX10_6(n)	(fix10_6)		((n) >> 7)
+#define __FIX10_6_TO_FIX17_15(n)	(fix17_15)		(((u32)n) << 9)
 
 // return the integral part
 #define __FIX7_9_INT_PART(n)		(((fix7_9)n) 	& 0xFE00)

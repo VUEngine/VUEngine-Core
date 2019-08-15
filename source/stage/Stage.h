@@ -203,6 +203,8 @@ class Stage : Container
 	VirtualNode streamingHeadNode;
 	// the stage entities to test for streaming
 	VirtualList loadedStageEntities;
+	// The sounds
+	VirtualList soundWrappers;
 	// counter to control the streaming phases
 	int streamingCycleCounter;
 	// index for method to execute
@@ -236,6 +238,7 @@ class Stage : Container
     bool loadInRangeEntities(int defer);
 	Entity findChildByInternalId(s16 internalId);
 	bool updateEntityFactory();
+	VirtualList getSoundWrappers();
 
 	virtual void load(VirtualList positionedEntitiesToIgnore, bool overrideCameraPosition);
 	virtual bool stream();

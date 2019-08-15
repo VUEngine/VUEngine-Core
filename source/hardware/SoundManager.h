@@ -104,6 +104,7 @@ singleton class SoundManager : Object
 {
 	VirtualList soundWrappers;
 	VirtualList releasedSoundWrappers;
+	VirtualNode soundWrapperMIDINode;
 	Channel channels[__TOTAL_CHANNELS];
 	Waveform waveforms[__TOTAL_CHANNELS];
 	u16 pcmPlaybackCycles;
@@ -122,7 +123,7 @@ singleton class SoundManager : Object
 	bool playPCMSounds();
 	void stopAllSounds();
 
-	SoundWrapper playSound(Sound* sound, u32 command, const Vector3D* position);
+	SoundWrapper playSound(Sound* sound, u32 command, const Vector3D* position, u32 playbackType);
 	SoundWrapper getSound(Sound* sound, u32 command);
 
 	void releaseSoundWrapper(SoundWrapper soundWrapper);

@@ -40,9 +40,11 @@
 #define __MIDI_CONVERTER_FREQUENCY_US		20
 #define __SOUND_TARGET_US_PER_TICK			__MIDI_CONVERTER_FREQUENCY_US
 
-#define __SOUND_LR			0xFF
-#define __SOUND_L			0xF0
-#define __SOUND_R			0x0F
+#define __SOUND_LR							0xFF
+#define __SOUND_L							0xF0
+#define __SOUND_R							0x0F
+
+#define __MAXIMUM_MIDI_FREQUENCY			D_8
 
 
 //---------------------------------------------------------------------------------------------------------
@@ -198,7 +200,18 @@ enum SoundTrackTypes
 	kPCM
 };
 
+enum SoundWrapperPlaybackTypes
+{
+	kSoundWrapperPlaybackNormal = 0,
+	kSoundWrapperPlaybackFadeIn,
+	kSoundWrapperPlaybackFadeOut,
+};
 
+enum SoundWrapperMessages
+{
+	kSoundWrapperFadeIn = 0,
+	kSoundWrapperFadeOut,
+};
 //---------------------------------------------------------------------------------------------------------
 //											CLASS'S DECLARATION
 //---------------------------------------------------------------------------------------------------------
@@ -215,6 +228,7 @@ class SoundWrapper : Object
 	u32 totalPlaybackSeconds;
 	u16 pcmTargetPlaybackFrameRate;
 	u16 frequencyModifier;
+	s8 volumeReduction;
 	bool paused;
 	bool hasMIDITracks;
 	bool hasPCMTracks;
@@ -225,8 +239,9 @@ class SoundWrapper : Object
 
 	bool isPaused();
 	bool hasPCMTracks();
-	void play(const Vector3D* position);
+	void play(const Vector3D* position, u32 playbackType);
 	void pause();
+	void unpause();
 	void rewind();
 	void stop();
 	void release();
@@ -234,16 +249,20 @@ class SoundWrapper : Object
 	void unmute();
 	void updateMIDIPlayback(u32 elapsedMicroseconds);
 	void updatePCMPlayback(u32 elapsedMicroseconds);
-	fix17_15 getSpeed();
 	void setSpeed(fix17_15 speed);
+	void setVolumeReduction(s8 volumeReduction);
+	s8 getVolumeReduction();
+	fix17_15 getSpeed();
 	void computeTimerResolutionFactor();
 	void setFrequencyModifier(u16 frequencyModifier);
-	u16 getFrequencyModifier();	
+	u16 getFrequencyModifier();
 	void print(int x, int y);
 	void printMetadata(int x, int y);
 	void printVolume(int x, int y, bool printHeader);
 	void printPlaybackTime(int x, int y);
 	void printPlaybackProgress(int x, int y);
+
+	override bool handleMessage(Telegram telegram);
 }
 
 
