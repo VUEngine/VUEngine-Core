@@ -39,49 +39,69 @@
 // defines a singleton (unique instance of a class)
 #define __MEMORY_POOL_SINGLETON(ClassName)																\
 																										\
-	/* declare the static instance */																	\
-	static ClassName ## _str _instance ## ClassName __MEMORY_POOL_SECTION_ATTRIBUTE;					\
-																										\
-	/* global pointer to speed up allocation and free */												\
-	ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = &_instance ## ClassName;				\
-																										\
-	/* a flag to know when to allow construction */														\
-	static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE								\
-									= __SINGLETON_NOT_CONSTRUCTED;										\
-																										\
-	/* define get instance method */																	\
-	static void ClassName ## _instantiate()																\
-	{																									\
-		NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,								\
-			ClassName get instance during construction);												\
-																										\
-		_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;											\
-																										\
-		/* set the vtable pointer */																	\
-		_instance ## ClassName.vTable = &ClassName ## _vTable;											\
-																										\
-		/* call constructor */																			\
-		ClassName ## _constructor(&_instance ## ClassName);												\
-																										\
-		/* set the vtable pointer */																	\
-		_instance ## ClassName.vTable = &ClassName ## _vTable;											\
-																										\
-		/* don't allow more constructs */																\
-		_singletonConstructed = __SINGLETON_CONSTRUCTED;												\
-	}																									\
-																										\
-	/* define get instance method */																	\
-	ClassName ClassName ## _getInstance()																\
-	{																									\
-		/* first check if not constructed yet */														\
-		if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)										\
+		/* declare the static instance */																\
+		typedef struct SingletonWrapper ## ClassName													\
 		{																								\
-			ClassName ## _instantiate();																\
+			/* footprint to differentiate between objects and structs */								\
+			u32 objectMemoryFootprint;																	\
+			/* declare the static instance */															\
+			ClassName ## _str instance;																	\
+		} SingletonWrapper ## ClassName;																\
+																										\
+		static SingletonWrapper ## ClassName _singletonWrapper ## ClassName 							\
+				__MEMORY_POOL_SECTION_ATTRIBUTE;														\
+																										\
+		/* global pointer to speed up allocation and free */											\
+		ClassName _memoryPool __INITIALIZED_DATA_SECTION_ATTRIBUTE = 									\	
+			&_singletonWrapper ## ClassName.instance;													\
+																										\
+		/* a flag to know when to allow construction */													\
+		static s8 _singletonConstructed __INITIALIZED_DATA_SECTION_ATTRIBUTE							\
+										= __SINGLETON_NOT_CONSTRUCTED;									\
+																										\
+		/* define get instance method */																\
+		static void __attribute__ ((noinline)) ClassName ## _instantiate()								\
+		{																								\
+			NM_ASSERT(__SINGLETON_BEING_CONSTRUCTED != _singletonConstructed,							\
+				ClassName get instance during construction);											\
+																										\
+			_singletonConstructed = __SINGLETON_BEING_CONSTRUCTED;										\
+																										\
+			/* make sure that the class is properly set */												\
+			ClassName ## _checkVTable();																\
+																										\
+			/*  */																						\
+			ClassName instance = &_singletonWrapper ## ClassName.instance;								\
+			_singletonWrapper ## ClassName.objectMemoryFootprint = __OBJECT_MEMORY_FOOT_PRINT;			\
+																										\
+			/* set the vtable pointer */																\
+			instance->vTable = &ClassName ## _vTable;													\
+																										\
+			/* call constructor */																		\
+			ClassName ## _constructor(instance);														\
+																										\
+			/* set the vtable pointer */																\
+			instance->vTable = &ClassName ## _vTable;													\
+																										\
+			/* don't allow more constructs */															\
+			_singletonConstructed = __SINGLETON_CONSTRUCTED;											\
 		}																								\
 																										\
-		/* return the created singleton */																\
-		return &_instance ## ClassName;																	\
-	}
+		/* define get instance method */																\
+		ClassName ClassName ## _getInstance()															\
+		{																								\
+			/* first check if not constructed yet */													\
+			if(__SINGLETON_NOT_CONSTRUCTED == _singletonConstructed)									\
+			{																							\
+				ClassName ## _instantiate();															\
+			}																							\
+																										\
+			/* return the created singleton */															\
+			return &_singletonWrapper ## ClassName.instance;											\
+		}																								\
+																										\
+		/* dummy redeclaration to avoid warning when compiling with -pedantic */						\
+		void ClassName ## dummyMethodSingleton()
 
 /**
  * Class constructor

@@ -181,7 +181,7 @@
 #define __IS_OBJECT_ALIVE(object)																		\
 																										\
 		/* test if object has not been deleted */														\
-		(object && (__MEMORY_FREE_BLOCK_FLAG != *(u32*)object - __DYNAMIC_STRUCT_PAD))					\
+		(object && (__MEMORY_FREE_BLOCK_FLAG != *(u32*)((u32)object - __DYNAMIC_STRUCT_PAD)))			\
 
 
 #define isDeleted(object)					(!__IS_OBJECT_ALIVE(object))

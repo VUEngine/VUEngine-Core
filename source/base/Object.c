@@ -253,7 +253,7 @@ void Object::removeAllEventListeners(u32 eventCode)
  */
 bool Object::hasActiveEventListeners()
 {
-	return NULL != this->events ? 0 < VirtualList::getSize(this->events) : false;
+	return !isDeleted(this->events) ? 0 < VirtualList::getSize(this->events) : false;
 }
 
 /**
