@@ -14,6 +14,7 @@
 		]
 	},
 	"config": {
+		"events": "extensions/config/events.json",
 		"fonts": "extensions/config/fonts.json",
 		"romHeader": "extensions/config/romHeader.json",
 		"config": "extensions/config/config.json"
@@ -34,6 +35,13 @@
 				"config"
 			],
 			"target": "config.make"
+		},
+		{
+			"file": "extensions/templates/gameEvents.h.nj",
+			"config": [
+				"events"
+			],
+			"target": "source/gameEvents.h"
 		},
 		{
 			"file": "extensions/templates/Fonts.c.nj",
