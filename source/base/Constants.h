@@ -111,37 +111,38 @@
 // messages
 enum MessagesTypes
 {
-	kNoMessage = 0,
+	kMessageNone = 0,
+
 	// general purpose messages
-	kHighFps,
-	kEntityRemoved,
+	kMessageHighFps,
+	kMessageEntityRemoved,
 
 	// physics messages
-	kBodyStopped,
-	kBodyBounced,
-	kBodyStartedMoving,
-	kBodyChangedDirection,
+	kMessageBodyStopped,
+	kMessageBodyBounced,
+	kMessageBodyStartedMoving,
+	kMessageBodyChangedDirection,
 
 	// keypad massages
-	kKeyPressed,
-	kKeyReleased,
-	kKeyHold,
+	kMessageKeyPressed,
+	kMessageKeyReleased,
+	kMessageKeyHold,
 
 	// Communication messages
-	kCommunicationCheckIfRemoteIsReady,
+	kMessageCheckIfRemoteIsReady,
 
 	// don't place messages below this
-	kLastEngineMessage
+	kMessageLastEngine
 };
 
 enum DefaultInGameTypes
 {
-	kNoType = 0,
+	kTypeNone = 0,
 };
 
 enum DefaulCollisionLayers
 {
-    kNoLayer = 0,
+    kLayerNone = 0,
 };
 
 #undef NM_ASSERT

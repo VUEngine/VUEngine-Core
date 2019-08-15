@@ -538,7 +538,7 @@ bool Actor::handleMessage(Telegram telegram)
 		{
 			switch(message)
 			{
-				case kBodyStartedMoving:
+				case kMessageBodyStartedMoving:
 
 					if(this->allowCollisions && this->shapes)
 					{
@@ -547,7 +547,7 @@ bool Actor::handleMessage(Telegram telegram)
 					}
 					break;
 
-				case kBodyStopped:
+				case kMessageBodyStopped:
 
 					if(!Body::getMovementOnAllAxis(this->body) && this->shapes)
 					{
@@ -555,7 +555,7 @@ bool Actor::handleMessage(Telegram telegram)
 					}
 					break;
 
-				case kBodyChangedDirection:
+				case kMessageBodyChangedDirection:
 
 					Actor::changeDirectionOnAxis(this, *(int*)Telegram::getExtraInfo(telegram));
 					return true;

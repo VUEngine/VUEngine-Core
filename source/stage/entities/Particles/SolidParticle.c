@@ -249,13 +249,13 @@ bool SolidParticle::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
 	{
-		case kBodyStartedMoving:
+		case kMessageBodyStartedMoving:
 
 			Shape::activeCollisionChecks(this->shape, true);
 			return true;
 			break;
 
-		case kBodyStopped:
+		case kMessageBodyStopped:
 
 			if(this->solidParticleSpec->disableCollisionOnStop && !Body::getMovementOnAllAxis(this->body))
 			{

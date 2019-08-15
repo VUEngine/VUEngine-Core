@@ -258,14 +258,14 @@ void CommunicationManager::startClockSignal()
 
 void CommunicationManager::waitForRemote()
 {
-	MessageDispatcher::dispatchMessage(1, Object::safeCast(this), Object::safeCast(this), kCommunicationCheckIfRemoteIsReady, NULL);
+	MessageDispatcher::dispatchMessage(1, Object::safeCast(this), Object::safeCast(this), kMessageCheckIfRemoteIsReady, NULL);
 }
 
 bool CommunicationManager::handleMessage(Telegram telegram)
 {
 	switch(Telegram::getMessage(telegram))
 	{
-		case kCommunicationCheckIfRemoteIsReady:
+		case kMessageCheckIfRemoteIsReady:
 
 			if(CommunicationManager::isRemoteReady(this))
 			{

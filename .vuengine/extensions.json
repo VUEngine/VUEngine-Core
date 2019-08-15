@@ -37,11 +37,11 @@
 			"target": "config.make"
 		},
 		{
-			"file": "extensions/templates/gameEvents.h.nj",
+			"file": "extensions/templates/GameEvents.h.nj",
 			"config": [
 				"events"
 			],
-			"target": "source/gameEvents.h"
+			"target": "source/GameEvents.h"
 		},
 		{
 			"file": "extensions/templates/Fonts.c.nj",
