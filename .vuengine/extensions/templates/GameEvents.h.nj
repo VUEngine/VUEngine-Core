@@ -17,7 +17,7 @@
 
 enum GameEvents
 {
-	{%- for event in project.events %}
+	{%- for event in project.enums.events %}
 	kEvent{{ event.name }}{% if loop.first %} = kEventEngineLast + 1{% endif %},
 	{%- endfor %}
 };

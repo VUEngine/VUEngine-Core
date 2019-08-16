@@ -14,7 +14,7 @@
 		]
 	},
 	"config": {
-		"events": "extensions/config/events.json",
+		"enums": "extensions/config/enums.json",
 		"fonts": "extensions/config/fonts.json",
 		"romHeader": "extensions/config/romHeader.json",
 		"config": "extensions/config/config.json"
@@ -39,7 +39,7 @@
 		{
 			"file": "extensions/templates/GameEvents.h.nj",
 			"config": [
-				"events"
+				"enums"
 			],
 			"target": "source/GameEvents.h"
 		},
